@@ -1,6 +1,6 @@
 {
   "components": [
-    "AddressPlayerComponent",
+    "AddressOperatorComponent",
     "AffinityComponent",
     "BalanceComponent",
     "PowerComponent",
@@ -150,7 +150,7 @@
       "name": "AccountSetSystem",
       "writeAccess": [
         "IsAccountComponent",
-        "AddressPlayerComponent",
+        "AddressOperatorComponent",
         "IdOwnerComponent",
         "LocationComponent",
         "NameComponent"

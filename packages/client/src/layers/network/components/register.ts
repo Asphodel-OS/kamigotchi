@@ -74,6 +74,6 @@ export function createComponents(world: any) {
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringComponent(world, { id: "MediaURI", metadata: { contractId: "component.MediaURI" } }),
     Name: defineStringComponent(world, { id: "Name", metadata: { contractId: "component.Name" } }),
-    PlayerAddress: defineStringComponent(world, { id: "PlayerAddress", metadata: { contractId: "component.AddressPlayer" } }),
+    PlayerAddress: defineStringComponent(world, { id: "PlayerAddress", metadata: { contractId: "component.Address.Operator" } }),
   }
 }

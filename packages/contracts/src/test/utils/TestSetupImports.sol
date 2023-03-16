@@ -23,7 +23,7 @@ import { LibStat } from "libraries/LibStat.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
 // Components
-import { AddressPlayerComponent, ID as AddressPlayerComponentID } from "components/AddressPlayerComponent.sol";
+import { AddressOperatorComponent, ID as AddressOperatorComponentID } from "components/AddressOperatorComponent.sol";
 import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceComponentID } from "components/BalanceComponent.sol";
 import { PowerComponent, ID as PowerComponentID } from "components/PowerComponent.sol";
@@ -111,7 +111,7 @@ import { AccountNameSystem, ID as AccountNameSystemID } from "systems/AccountNam
 
 abstract contract TestSetupImports is MudTest {
 // Components vars
-AddressPlayerComponent _AddressPlayerComponent;
+AddressOperatorComponent _AddressOperatorComponent;
 AffinityComponent _AffinityComponent;
 BalanceComponent _BalanceComponent;
 PowerComponent _PowerComponent;
@@ -200,7 +200,7 @@ AccountNameSystem _AccountNameSystem;
 function setUp() public virtual override {
 super.setUp();
 
-_AddressPlayerComponent = AddressPlayerComponent(component(AddressPlayerComponentID));
+_AddressOperatorComponent = AddressOperatorComponent(component(AddressOperatorComponentID));
 _AffinityComponent = AffinityComponent(component(AffinityComponentID));
 _BalanceComponent = BalanceComponent(component(BalanceComponentID));
 _PowerComponent = PowerComponent(component(PowerComponentID));

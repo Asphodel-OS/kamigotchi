@@ -9,7 +9,7 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 
 import { IdOwnerComponent, ID as IdOwnerCompID } from "components/IdOwnerComponent.sol";
 import { IsAccountComponent, ID as IsAccountCompID } from "components/IsAccountComponent.sol";
-import { AddressPlayerComponent, ID as AddrPlayerCompID } from "components/AddressPlayerComponent.sol";
+import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -23,14 +23,14 @@ library LibAccount {
   function create(
     IWorld world,
     IUintComp components,
-    address playerAddr,
+    address operatorAddr,
     address ownerAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsAccountComponent(getAddressById(components, IsAccountCompID)).set(id);
     IdOwnerComponent(getAddressById(components, IdOwnerCompID)).set(id, addressToEntity(ownerAddr));
     LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
-    AddressPlayerComponent(getAddressById(components, AddrPlayerCompID)).set(id, playerAddr);
+    AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     return id;
   }
 
@@ -43,7 +43,7 @@ library LibAccount {
   // SETTERS
 
   function setAddress(IUintComp components, uint256 id, address addr) internal returns (uint256) {
-    AddressPlayerComponent(getAddressById(components, AddrPlayerCompID)).set(id, addr);
+    AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
     return id;
   }
 
@@ -72,7 +72,7 @@ library LibAccount {
 
   // get the address of an account
   function getAddress(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressPlayerComponent(getAddressById(components, AddrPlayerCompID)).getValue(id);
+    return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).getValue(id);
   }
 
   // gets the location of a specified account account
@@ -134,7 +134,7 @@ library LibAccount {
     if (wallet != address(0)) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, AddrPlayerCompID),
+        getComponentById(components, AddrOperatorCompID),
         abi.encode(wallet)
       );
     }

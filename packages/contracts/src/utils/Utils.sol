@@ -6,7 +6,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { ID as AddrPlayerCompID } from "components/AddressPlayerComponent.sol";
+import { ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { ID as IsRequestCompID } from "components/IsRequestComponent.sol";
 import { ID as IsTradeCompID } from "components/IsTradeComponent.sol";
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
@@ -74,7 +74,7 @@ library Utils {
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, AddrPlayerCompID),
+      getComponentById(components, AddrOperatorCompID),
       abi.encode(wallet)
     );
     uint256[] memory results = LibQuery.query(fragments);
