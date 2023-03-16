@@ -15,7 +15,7 @@ import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellC
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 
 /*
  * LibListing handles all operations interacting with Listings
@@ -49,12 +49,12 @@ library LibListing {
     return id;
   }
 
-  // processes a buy for amt of item from a listing to an operator. assumes the operator already
+  // processes a buy for amt of item from a listing to an account. assumes the account already
   // has the appropriate inventory entity
   function buyFrom(
     IUintComp components,
     uint256 id,
-    uint256 operatorID,
+    uint256 accountID,
     uint256 amt
   ) internal returns (bool) {
     uint256 itemIndex = IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(
@@ -65,17 +65,17 @@ library LibListing {
       return false;
     }
 
-    uint256 inventoryID = LibInventory.get(components, operatorID, itemIndex);
+    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
     LibInventory.inc(components, inventoryID, amt);
-    LibCoin.dec(components, operatorID, amt * price);
+    LibCoin.dec(components, accountID, amt * price);
     return true;
   }
 
-  // processes a sell for amt of item from an operator to a listing
+  // processes a sell for amt of item from an account to a listing
   function sellTo(
     IUintComp components,
     uint256 id,
-    uint256 operatorID,
+    uint256 accountID,
     uint256 amt
   ) internal returns (bool) {
     uint256 itemIndex = IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(
@@ -86,9 +86,9 @@ library LibListing {
       return false;
     }
 
-    uint256 inventoryID = LibInventory.get(components, operatorID, itemIndex);
+    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
     LibInventory.dec(components, inventoryID, amt);
-    LibCoin.inc(components, operatorID, amt * price);
+    LibCoin.inc(components, accountID, amt * price);
     return true;
   }
 
@@ -121,11 +121,10 @@ library LibListing {
   }
 
   // gets all listings from a merchant
-  function getAllForMerchant(IUintComp components, uint256 merchantID)
-    internal
-    view
-    returns (uint256[] memory)
-  {
+  function getAllForMerchant(
+    IUintComp components,
+    uint256 merchantID
+  ) internal view returns (uint256[] memory) {
     return _getAllX(components, merchantID, 0);
   }
 

@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibModifier } from "libraries/LibModifier.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { Utils } from "utils/Utils.sol";
 

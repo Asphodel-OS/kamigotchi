@@ -6,30 +6,30 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.ListingBuy"));
 
-// ListingBuySystem allows a operator to buy an item listed with a merchant
+// ListingBuySystem allows a account to buy an item listed with a merchant
 contract ListingBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 listingID, uint256 amt) = abi.decode(arguments, (uint256, uint256));
-    uint256 operatorID = LibOperator.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     uint256 merchantID = LibListing.getMerchant(components, listingID);
 
-    require(Utils.sameRoom(components, merchantID, operatorID), "Merchant: must be in room");
+    require(Utils.sameRoom(components, merchantID, accountID), "Merchant: must be in room");
 
-    // create an inventory for the operator first if one doesn't exist
+    // create an inventory for the account first if one doesn't exist
     uint256 itemIndex = LibListing.getItemIndex(components, listingID);
-    if (LibInventory.get(components, operatorID, itemIndex) == 0) {
-      LibInventory.create(world, components, operatorID, itemIndex);
+    if (LibInventory.get(components, accountID, itemIndex) == 0) {
+      LibInventory.create(world, components, accountID, itemIndex);
     }
-    LibListing.buyFrom(components, listingID, operatorID, amt);
+    LibListing.buyFrom(components, listingID, accountID, amt);
 
-    Utils.updateLastBlock(components, operatorID);
+    Utils.updateLastBlock(components, accountID);
     return "";
   }
 

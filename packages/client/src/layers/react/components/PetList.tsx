@@ -56,7 +56,7 @@ export function registerPetList() {
             HolderID,
             IsInventory,
             IsNode,
-            IsOperator,
+            IsAccount,
             IsProduction,
             IsPet,
             ItemIndex,
@@ -65,7 +65,7 @@ export function registerPetList() {
             MediaURI,
             Name,
             NodeID,
-            OperatorID,
+            AccountID,
             OwnerID,
             PetID,
             PetIndex,
@@ -120,7 +120,7 @@ export function registerPetList() {
       };
 
       // this is about to be the jankiest bit inventory retrieval we will see..
-      const getConsumables = (operatorIndex: EntityIndex) => {
+      const getConsumables = (accountIndex: EntityIndex) => {
         // pompom
         // gakki
         // ribbon
@@ -167,7 +167,7 @@ export function registerPetList() {
 
       return merge(
         OwnerID.update$,
-        OperatorID.update$,
+        AccountID.update$,
         Location.update$,
         Balance.update$,
         Coin.update$,
@@ -176,29 +176,29 @@ export function registerPetList() {
         MediaURI.update$
       ).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorEntityIndex = Array.from(
+          // get the account entity of the controlling wallet
+          const accountEntityIndex = Array.from(
             runQuery([
-              Has(IsOperator),
+              Has(IsAccount),
               HasValue(PlayerAddress, {
                 value: network.connectedAddress.get(),
               }),
             ])
           )[0];
-          const operatorID = world.entities[operatorEntityIndex];
-          const bytes = getComponentValue(Coin, operatorEntityIndex)
+          const accountID = world.entities[accountEntityIndex];
+          const bytes = getComponentValue(Coin, accountEntityIndex)
             ?.value as number;
 
           // get the list of inventory indices for this account
           const inventoryResults = Array.from(
             runQuery([
               Has(IsInventory),
-              HasValue(HolderID, { value: operatorID }),
+              HasValue(HolderID, { value: accountID }),
             ])
           );
           let inventories: any = hardCodeInventory(); // the hardcoded slots we want for consumables
 
-          // if we have inventories for the operator, generate a list of inventory objects
+          // if we have inventories for the account, generate a list of inventory objects
           let itemIndex;
           for (let i = 0; i < inventoryResults.length; i++) {
             // match indices to the existing consumables
@@ -216,7 +216,7 @@ export function registerPetList() {
           // get all indices of pets linked to this account and create object array
           let pets: any = [];
           const petResults = Array.from(
-            runQuery([Has(IsPet), HasValue(OperatorID, { value: operatorID })])
+            runQuery([Has(IsPet), HasValue(AccountID, { value: accountID })])
           );
           for (let i = 0; i < petResults.length; i++) {
             pets.push(getPet(petResults[i]));
@@ -224,7 +224,7 @@ export function registerPetList() {
 
           // get the node of the current room for starting productions
           let nodeID;
-          let location = getComponentValue(Location, operatorEntityIndex)
+          let location = getComponentValue(Location, accountEntityIndex)
             ?.value as number;
           const nodeResults = Array.from(
             runQuery([Has(IsNode), HasValue(Location, { value: location })])
@@ -237,8 +237,8 @@ export function registerPetList() {
             actions,
             api: player,
             data: {
-              operator: {
-                id: operatorID,
+              account: {
+                id: accountID,
                 inventories,
                 bytes,
               },
@@ -468,11 +468,11 @@ export function registerPetList() {
           <ModalContent>
             <TopGrid>
               <TopDescription>
-                Bytes: {data.operator.bytes ? data.operator.bytes * 1 : '0'}
+                Bytes: {data.account.bytes ? data.account.bytes * 1 : '0'}
               </TopDescription>
             </TopGrid>
             <ConsumableGrid>
-              {ConsumableCells(data.operator.inventories)}
+              {ConsumableCells(data.account.inventories)}
             </ConsumableGrid>
             <Scrollable>{KamiCards(data.pets)}</Scrollable>
           </ModalContent>

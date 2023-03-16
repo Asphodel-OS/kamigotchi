@@ -26,24 +26,24 @@ export function registerWorldMap() {
         network: {
           api: { player },
           network: { connectedAddress },
-          components: { IsOperator, Location, PlayerAddress },
+          components: { IsAccount, Location, PlayerAddress },
           actions,
         },
       } = layers;
 
       return merge(Location.update$, PlayerAddress.update$).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorEntityIndex = Array.from(
+          // get the account entity of the controlling wallet
+          const accountEntityIndex = Array.from(
             runQuery([
-              Has(IsOperator),
+              Has(IsAccount),
               HasValue(PlayerAddress, {
                 value: connectedAddress.get(),
               }),
             ])
           )[0];
 
-          const currentRoom = getCurrentRoom(Location, operatorEntityIndex);
+          const currentRoom = getCurrentRoom(Location, accountEntityIndex);
           return {
             actions,
             api: player,
@@ -82,7 +82,7 @@ export function registerWorldMap() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.operator.move(side);
+            return api.account.move(side);
           },
         });
       };

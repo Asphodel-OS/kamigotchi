@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { ERC721 } from "solmate/tokens/ERC721.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { PetMetadataSystem, ID as PetMetadataSystemID } from "systems/PetMetadataSystem.sol";
 
@@ -23,10 +23,10 @@ contract ERC721PetSystem is System, ERC721 {
    ********************************/
   // uint256 public totalSupply;
 
-  constructor(IWorld _world, address _components)
-    System(_world, _components)
-    ERC721(NFT_NAME, NFT_SYMBOL)
-  {}
+  constructor(
+    IWorld _world,
+    address _components
+  ) System(_world, _components) ERC721(NFT_NAME, NFT_SYMBOL) {}
 
   /*********************
    *  Public Functions
@@ -38,14 +38,14 @@ contract ERC721PetSystem is System, ERC721 {
     // ++totalSupply; // arrays start at 1 here :3
     uint256 nextMint = nextMintID();
 
-    // Get the operator for this owner(to). Create one if it doesn't exist.
-    uint256 operatorID = LibOperator.getByOwner(components, to);
-    if (operatorID == 0) {
-      operatorID = LibOperator.create(world, components, to, to);
+    // Get the account for this owner(to). Create one if it doesn't exist.
+    uint256 accountID = LibAccount.getByOwner(components, to);
+    if (accountID == 0) {
+      accountID = LibAccount.create(world, components, to, to);
     }
 
     // TODO: set stats based on the generated traits of the pet.
-    uint256 petID = LibPet.create(world, components, to, operatorID, nextMint, UNREVEALED_URI);
+    uint256 petID = LibPet.create(world, components, to, accountID, nextMint, UNREVEALED_URI);
 
     LibPet.setStats(components, petID);
 
@@ -78,19 +78,15 @@ contract ERC721PetSystem is System, ERC721 {
   }
 
   // NOTE: the id here is actually the ERC721 id, aka the pet index in our world
-  function transferFrom(
-    address from,
-    address to,
-    uint256 id
-  ) public virtual override {
-    // Get the operator for the new owner(to). Create one if it doesn't exist.
-    uint256 operatorID = LibOperator.getByOwner(components, to);
-    if (operatorID == 0) {
-      operatorID = LibOperator.create(world, components, to, to);
+  function transferFrom(address from, address to, uint256 id) public virtual override {
+    // Get the account for the new owner(to). Create one if it doesn't exist.
+    uint256 accountID = LibAccount.getByOwner(components, to);
+    if (accountID == 0) {
+      accountID = LibAccount.create(world, components, to, to);
     }
 
     // ownership checks and updates should keep us safe from the ERC721 side
-    LibPet.transfer(components, id, operatorID);
+    LibPet.transfer(components, id, accountID);
     super.transferFrom(from, to, id);
   }
 

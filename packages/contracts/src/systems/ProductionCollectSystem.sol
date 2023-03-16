@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { Strings } from "utils/Strings.sol";
@@ -21,18 +21,18 @@ contract ProductionCollectSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
-    uint256 operatorID = LibOperator.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     uint256 petID = LibProduction.getPet(components, id);
 
-    require(LibPet.isOperator(components, petID, operatorID), "Pet: not urs");
+    require(LibPet.isAccount(components, petID, accountID), "Pet: not urs");
     require(LibPet.isProducing(components, petID), "Pet: must be producing");
     require(LibPet.syncHealth(components, petID) != 0, "Pet: is dead (pls revive)");
 
     uint256 amt = LibProduction.getOutput(components, id);
-    LibCoin.inc(components, operatorID, amt);
+    LibCoin.inc(components, accountID, amt);
     LibProduction.reset(components, id);
 
-    Utils.updateLastBlock(components, operatorID);
+    Utils.updateLastBlock(components, accountID);
     return abi.encode(amt);
   }
 

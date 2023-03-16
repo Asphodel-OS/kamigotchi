@@ -7,11 +7,11 @@ import { getAddressById, addressToEntity } from "solecs/utils.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
 
-uint256 constant ID = uint256(keccak256("system.PetSetOperator"));
+uint256 constant ID = uint256(keccak256("system.PetSetAccount"));
 
-// NOTE: this may not be the ideal flow for setting operators. likely, we'll instead
-// want to update the owner on transfer and just clear out the operator
-contract PetSetOperatorSystem is System {
+// NOTE: this may not be the ideal flow for setting accounts. likely, we'll instead
+// want to update the owner on transfer and just clear out the account
+contract PetSetAccountSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -19,7 +19,7 @@ contract PetSetOperatorSystem is System {
 
     require(LibPet.getOwner(components, entityID) == addressToEntity(msg.sender), "Pet: not urs");
 
-    LibPet.setOperator(components, entityID, addressToEntity(to));
+    LibPet.setAccount(components, entityID, addressToEntity(to));
 
     return abi.encode(to);
   }

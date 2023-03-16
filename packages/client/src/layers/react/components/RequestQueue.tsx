@@ -25,10 +25,10 @@ export function registerRequestQueue() {
           api: { player },
           network,
           components: {
-            IsOperator,
+            IsAccount,
             IsRequest,
             IsTrade,
-            OperatorID,
+            AccountID,
             PlayerAddress,
             RequesteeID,
             RequesterID,
@@ -47,21 +47,21 @@ export function registerRequestQueue() {
         }
       }
 
-      return merge(OperatorID.update$, RequesteeID.update$).pipe(
+      return merge(AccountID.update$, RequesteeID.update$).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorIndex = Array.from(runQuery([
-            Has(IsOperator),
+          // get the account entity of the controlling wallet
+          const accountIndex = Array.from(runQuery([
+            Has(IsAccount),
             HasValue(PlayerAddress, { value: network.connectedAddress.get() })
           ]))[0];
-          const operatorID = world.entities[operatorIndex];
+          const accountID = world.entities[accountIndex];
 
           // get all requests based on type
           let tradeRequests: any = [];
           const tradeResults = Array.from(runQuery([
             Has(IsRequest),
             Has(IsTrade),
-            HasValue(RequesteeID, { value: world.entities[operatorIndex] }),
+            HasValue(RequesteeID, { value: world.entities[accountIndex] }),
             NotValue(State, { value: "CANCELED" }),
           ]));
           for (let i = 0; i < tradeResults.length; i++) {
@@ -73,9 +73,9 @@ export function registerRequestQueue() {
             actions,
             api: player,
             data: {
-              operator: {
-                id: operatorID,
-                index: operatorIndex,
+              account: {
+                id: accountID,
+                index: accountIndex,
               },
               requests: {
                 // guild: guildRequests,

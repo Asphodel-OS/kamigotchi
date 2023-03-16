@@ -10,7 +10,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibMetadata } from "libraries/LibMetadata.sol";
 import { LibModifier, ModStatus } from "libraries/LibModifier.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { ERC721PetSystem, UNREVEALED_URI, ID as PetSystemID } from "systems/ERC721PetSystem.sol";
@@ -43,8 +43,8 @@ contract PetMetadataSystem is System {
     uint256 tokenID = abi.decode(arguments, (uint256));
     uint256 entityID = LibPet.indexToID(components, tokenID);
 
-    uint256 operatorID = LibOperator.getByAddress(components, msg.sender);
-    require(LibPet.getOperator(components, entityID) == operatorID, "Pet: not urs");
+    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    require(LibPet.getAccount(components, entityID) == accountID, "Pet: not urs");
 
     MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
 

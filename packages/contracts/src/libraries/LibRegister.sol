@@ -17,11 +17,11 @@ import { Strings } from "utils/Strings.sol";
 
 // A Register is an intermediary for a list of items being delegated from one entity to
 // another (from delegator, to delegatee). This entity anchors a list of inventory slots.
-// The actual data mapping goes from Inventory => Register, where IdOperator = registerID.
-// In the example of Trade, the Trade entity is the Delegatee, while the Operator entity
+// The actual data mapping goes from Inventory => Register, where IdAccount = registerID.
+// In the example of Trade, the Trade entity is the Delegatee, while the Account entity
 // adding to the trade is the Delegator.
 // @dev State = [ ACTIVE | CONFIRMED | CANCELED ]
-// TODO: generalize LibInventory ownership component (currently IdOperatorComponent).
+// TODO: generalize LibInventory ownership component (currently IdAccountComponent).
 library LibRegister {
   /////////////////
   // INTERACTIONS
@@ -74,12 +74,7 @@ library LibRegister {
   }
 
   // Process the contents of a register from the register to the specified entity.
-  function process(
-    IWorld world,
-    IUintComp components,
-    uint256 id,
-    bool reversed
-  ) internal {
+  function process(IWorld world, IUintComp components, uint256 id, bool reversed) internal {
     uint256 balance;
     uint256 itemIndex;
     uint256 toInventoryID;
@@ -107,11 +102,7 @@ library LibRegister {
   }
 
   // Revert all inventory and token balances in a register back to the delegator of the register.
-  function reverse(
-    IWorld world,
-    IUintComp components,
-    uint256 id
-  ) internal {
+  function reverse(IWorld world, IUintComp components, uint256 id) internal {
     process(world, components, id, true);
     cancel(components, id);
   }

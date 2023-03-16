@@ -32,11 +32,11 @@ export function registerTradeWindow() {
             DelegatorID,
             HolderID,
             IsInventory,
-            IsOperator,
+            IsAccount,
             IsRegister,
             IsTrade,
             ItemIndex,
-            OperatorID,
+            AccountID,
             PlayerAddress,
             RequesterID,
             RequesteeID,
@@ -47,19 +47,19 @@ export function registerTradeWindow() {
       } = layers;
 
       // only grabs the first one we find. we should restrict trades to one per active
-      const getActiveTradeIndex = (operatorIndex: EntityIndex) => {
+      const getActiveTradeIndex = (accountIndex: EntityIndex) => {
         let index = 0;
         // get the active trades for this player on the requestee side
         const activeRequesteeTrades = runQuery([
           Has(IsTrade),
-          HasValue(RequesteeID, { value: world.entities[operatorIndex] }),
+          HasValue(RequesteeID, { value: world.entities[accountIndex] }),
           HasValue(State, { value: "ACCEPTED" }),
         ]);
 
         // get the active trades for this player on the requester side
         const activeRequesterTrades = runQuery([
           Has(IsTrade),
-          HasValue(RequesterID, { value: world.entities[operatorIndex] }),
+          HasValue(RequesterID, { value: world.entities[accountIndex] }),
           HasValue(State, { value: "ACCEPTED" }),
         ]);
 
@@ -101,16 +101,16 @@ export function registerTradeWindow() {
       }
 
       // NOTE: we really want precise data subscriptions for this one, a nightmare without
-      return merge(OperatorID.update$, State.update$, DelegateeID.update$, IsInventory.update$).pipe(
+      return merge(AccountID.update$, State.update$, DelegateeID.update$, IsInventory.update$).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorIndex = Array.from(runQuery([
-            Has(IsOperator),
+          // get the account entity of the controlling wallet
+          const accountIndex = Array.from(runQuery([
+            Has(IsAccount),
             HasValue(PlayerAddress, { value: network.connectedAddress.get() })
           ]))[0];
-          const operatorID = world.entities[operatorIndex];
+          const accountID = world.entities[accountIndex];
 
-          const tradeIndex = getActiveTradeIndex(operatorIndex);
+          const tradeIndex = getActiveTradeIndex(accountIndex);
           let myRegisterIndex, myRegister;
           let yourRegisterIndex, yourRegister;
 
@@ -119,13 +119,13 @@ export function registerTradeWindow() {
             myRegisterIndex = Array.from(runQuery([
               Has(IsRegister),
               HasValue(DelegateeID, { value: world.entities[tradeIndex] }),
-              HasValue(DelegatorID, { value: world.entities[operatorIndex] }),
+              HasValue(DelegatorID, { value: world.entities[accountIndex] }),
               HasValue(State, { value: "ACTIVE" }), // this filter not actually necessary
             ]))[0] as EntityIndex;
             yourRegisterIndex = Array.from(runQuery([
               Has(IsRegister),
               HasValue(DelegateeID, { value: world.entities[tradeIndex] }),
-              NotValue(DelegatorID, { value: world.entities[operatorIndex] }),
+              NotValue(DelegatorID, { value: world.entities[accountIndex] }),
               HasValue(State, { value: "ACTIVE" }), // this filter not actually necessary
             ]))[0] as EntityIndex;
             myRegister = getRegister(myRegisterIndex);
@@ -137,8 +137,8 @@ export function registerTradeWindow() {
             actions,
             api: player,
             data: {
-              operator: {
-                id: operatorID,
+              account: {
+                id: accountID,
               },
               trade: {
                 id: world.entities[tradeIndex],

@@ -55,12 +55,12 @@ export function registerMerchantWindow() {
             IsListing,
             IsInventory,
             IsMerchant,
-            IsOperator,
+            IsAccount,
             ItemIndex,
             Location,
             MerchantID,
             Name,
-            OperatorID,
+            AccountID,
             PlayerAddress,
             PriceBuy,
             PriceSell,
@@ -90,21 +90,21 @@ export function registerMerchantWindow() {
         };
       };
 
-      return merge(OperatorID.update$, Location.update$).pipe(
+      return merge(AccountID.update$, Location.update$).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorIndex = Array.from(
+          // get the account entity of the controlling wallet
+          const accountIndex = Array.from(
             runQuery([
-              Has(IsOperator),
+              Has(IsAccount),
               HasValue(PlayerAddress, {
                 value: network.connectedAddress.get(),
               }),
             ])
           )[0];
-          const operatorID = world.entities[operatorIndex];
+          const accountID = world.entities[accountIndex];
 
           // get player location and list of merchants in this room
-          const location = getComponentValue(Location, operatorIndex)
+          const location = getComponentValue(Location, accountIndex)
             ?.value as number;
           const merchantResults = runQuery([
             Has(IsMerchant),
@@ -135,10 +135,10 @@ export function registerMerchantWindow() {
             actions,
             api: player,
             data: {
-              operator: {
-                id: operatorID,
+              account: {
+                id: accountID,
                 // inventory, // we probably want this, filtered by the sellable items
-                coin: getComponentValue(Coin, operatorIndex)?.value as number,
+                coin: getComponentValue(Coin, accountIndex)?.value as number,
               },
               merchant,
               listings,
@@ -158,13 +158,12 @@ export function registerMerchantWindow() {
 
       // buy from a listing
       const buy = (listing: any, amt: number) => {
-        const actionID = `Buying ${amt} of ${
-          listing.itemType
-        } at ${Date.now()}` as EntityID; // itemType should be replaced with the item's name
+        const actionID = `Buying ${amt} of ${listing.itemType
+          } at ${Date.now()}` as EntityID; // itemType should be replaced with the item's name
         actions.add({
           id: actionID,
           components: {},
-          // on: data.operator.index, // what's the appropriate value here?
+          // on: data.account.index, // what's the appropriate value here?
           requirement: () => true,
           updates: () => [],
           execute: async () => {
@@ -175,13 +174,12 @@ export function registerMerchantWindow() {
 
       // sell to a listing
       const sell = (listing: any, amt: number) => {
-        const actionID = `Selling ${amt} of ${
-          listing.itemType
-        } at ${Date.now()}` as EntityID; // itemType should be replaced with the item's name
+        const actionID = `Selling ${amt} of ${listing.itemType
+          } at ${Date.now()}` as EntityID; // itemType should be replaced with the item's name
         actions.add({
           id: actionID,
           components: {},
-          // on: data.operator.index, // what's the appropriate value here?
+          // on: data.account.index, // what's the appropriate value here?
           requirement: () => true,
           updates: () => [],
           execute: async () => {

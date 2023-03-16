@@ -30,9 +30,9 @@ export function registerInventory() {
             Coin,
             HolderID,
             IsInventory,
-            IsOperator,
+            IsAccount,
             ItemIndex,
-            OperatorID,
+            AccountID,
             PlayerAddress,
           },
           actions,
@@ -55,23 +55,23 @@ export function registerInventory() {
         }
       }
 
-      return merge(OperatorID.update$, Balance.update$).pipe(
+      return merge(AccountID.update$, Balance.update$).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorIndex = Array.from(runQuery([
-            Has(IsOperator),
+          // get the account entity of the controlling wallet
+          const accountIndex = Array.from(runQuery([
+            Has(IsAccount),
             HasValue(PlayerAddress, { value: network.connectedAddress.get() })
           ]))[0];
-          const operatorID = world.entities[operatorIndex];
+          const accountID = world.entities[accountIndex];
 
           // get the list of inventory indices for this account
           const inventoryResults = runQuery([
             Has(IsInventory),
-            HasValue(HolderID, { value: operatorID }),
+            HasValue(HolderID, { value: accountID }),
             NotValue(Balance, { value: 0 }),
           ]);
 
-          // if we have inventories for the operator, generate a list of inventory objects
+          // if we have inventories for the account, generate a list of inventory objects
           let inventories: any = [];
           let inventory, inventoryIndex;
           if (inventoryResults.size != 0) {
@@ -85,10 +85,10 @@ export function registerInventory() {
             actions,
             api: player,
             data: {
-              operator: {
-                id: operatorID,
+              account: {
+                id: accountID,
                 inventories,
-                coin: getComponentValue(Coin, operatorIndex)?.value as number,
+                coin: getComponentValue(Coin, accountIndex)?.value as number,
               },
             } as any,
           };

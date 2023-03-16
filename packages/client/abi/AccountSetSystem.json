@@ -68,7 +68,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "operator",
+          "name": "account",
           "type": "address"
         },
         {

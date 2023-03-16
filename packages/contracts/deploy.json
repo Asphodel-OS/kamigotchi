@@ -11,12 +11,12 @@
     "CoinComponent",
     "ExitsComponent",
     "GenusComponent",
+    "IdAccountComponent",
     "IdDelegateeComponent",
     "IdDelegatorComponent",
     "IdHolderComponent",
     "IdMerchantComponent",
     "IdNodeComponent",
-    "IdOperatorComponent",
     "IdOwnerComponent",
     "IdPetComponent",
     "IdRequesteeComponent",
@@ -26,6 +26,7 @@
     "IndexItemComponent",
     "IndexModComponent",
     "IndexPetComponent",
+    "IsAccountComponent",
     "IsFoodComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
@@ -34,7 +35,6 @@
     "IsModComponent",
     "IsNodeComponent",
     "IsNonFungibleComponent",
-    "IsOperatorComponent",
     "IsPetComponent",
     "IsProductionComponent",
     "IsRegisterComponent",
@@ -140,16 +140,16 @@
       ]
     },
     {
-      "name": "OperatorMoveSystem",
+      "name": "AccountMoveSystem",
       "writeAccess": [
         "BlockLastComponent",
         "LocationComponent"
       ]
     },
     {
-      "name": "OperatorSetSystem",
+      "name": "AccountSetSystem",
       "writeAccess": [
-        "IsOperatorComponent",
+        "IsAccountComponent",
         "AddressPlayerComponent",
         "IdOwnerComponent",
         "LocationComponent",
@@ -157,9 +157,9 @@
       ]
     },
     {
-      "name": "PetSetOperatorSystem",
+      "name": "PetSetAccountSystem",
       "writeAccess": [
-        "IdOperatorComponent"
+        "IdAccountComponent"
       ]
     },
     {
@@ -265,20 +265,20 @@
       ]
     },
     {
-      "name": "OperatorNameSystem",
+      "name": "AccountNameSystem",
       "writeAccess": [
         "NameComponent"
       ]
     }
   ],
   "libraries": [
+    "LibAccount",
     "LibCoin",
     "LibInventory",
     "LibListing",
     "LibMerchant",
     "LibModifier",
     "LibNode",
-    "LibOperator",
     "LibPet",
     "LibProduction",
     "LibPrototype",

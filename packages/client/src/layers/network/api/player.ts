@@ -24,26 +24,26 @@ export function createPlayerAPI(systems: any) {
   }
 
   /*********************
-   *     OPERATOR
+   *     Account
    *********************/
-  // @dev moves the operator to another room from their current location
+  // @dev moves the account to another room from their current location
   // @param location  destination room location
-  function moveOperator(location: number) {
-    return systems["system.OperatorMove"].executeTyped(location);
+  function moveAccount(location: number) {
+    return systems["system.Account.Move"].executeTyped(location);
   }
 
-  // @dev   renames operator, ignoring previous name
+  // @dev   renames account, ignoring previous name
   // @param entityID   pet entity
   // @param name       name
-  function nameOperator(operator: BigNumberish, name: string) {
-    return systems["system.OperatorName"].executeTyped(operator, name);
+  function nameAccount(account: BigNumberish, name: string) {
+    return systems["system.Account.Name"].executeTyped(account, name);
   }
 
-  // @dev sets the operator of an Owner wallet. should be set by Owner wallet
-  // @param operator  address of the operator wallet
+  // @dev sets the account of an Owner wallet. should be set by Owner wallet
+  // @param account  address of the account wallet
   // @param name      name of the account
-  function setOperator(operator: BigNumberish, name: string) {
-    return systems["system.OperatorSet"].executeTyped(operator, name);
+  function setAccount(account: BigNumberish, name: string) {
+    return systems["system.Account.Set"].executeTyped(account, name);
   }
 
   /*********************
@@ -95,7 +95,7 @@ export function createPlayerAPI(systems: any) {
   }
 
   // @dev creates an itemInventory entity, assigns to trade register and transfers the
-  // item balance specified amount of the item from the operator to trade register
+  // item balance specified amount of the item from the account to trade register
   // @param tradeID   entityID of the trade log
   // @param itemType  the id of the item being added, 0 for merit
   // @param amt       quantity of item being added
@@ -109,28 +109,28 @@ export function createPlayerAPI(systems: any) {
     return systems["system.TradeCancel"].executeTyped(tradeID);
   }
 
-  // @dev Updates Trade ACCEPTED->?COMPLETE, updates operator's register ACTIVE->CONFIRMED
+  // @dev Updates Trade ACCEPTED->?COMPLETE, updates account's register ACTIVE->CONFIRMED
   // @param tradeID   entityID of the trade log
   function confirmTrade(tradeID: BigNumberish) {
     return systems["system.TradeConfirm"].executeTyped(tradeID);
   }
 
-  // @dev Creates an INITIATED Trade between Operator and toID, with IsRequest Component
+  // @dev Creates an INITIATED Trade between Account and toID, with IsRequest Component
   // @param toID  entityID of the trade request receiver
   function initiateTrade(toID: BigNumberish) {
     return systems["system.TradeInitiate"].executeTyped(toID);
   }
 
-   /*********************
-   *       TRADE
-   *********************/
-  
-   // @dev feeds pet
-   // @param petID
-   // @param food type
-   function feedPet(petID: BigNumberish, food: number) {
+  /*********************
+  *       TRADE
+  *********************/
+
+  // @dev feeds pet
+  // @param petID
+  // @param food type
+  function feedPet(petID: BigNumberish, food: number) {
     return systems["system.Pet.Food"].executeTyped(petID, food);
-   }
+  }
 
   return {
     ERC721: {
@@ -142,10 +142,10 @@ export function createPlayerAPI(systems: any) {
       buy: buyFromListing,
       sell: sellToListing,
     },
-    operator: {
-      move: moveOperator,
-      name: nameOperator,
-      set: setOperator,
+    account: {
+      move: moveAccount,
+      name: nameAccount,
+      set: setAccount,
     },
     production: {
       collect: collectProduction,

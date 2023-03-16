@@ -7,7 +7,7 @@ import { HasValue, runQuery } from '@latticexyz/recs';
 import mintSound from '../../../public/sound/sound_effects/tami_mint_vending_sound.mp3'
 import { dataStore } from '../store/createStore';
 
-export function registerDetectOperatorName() {
+export function registerDetectAccountName() {
   registerUIComponent(
     'DetectMint',
     {
@@ -45,7 +45,7 @@ export function registerDetectOperatorName() {
       const [name, setName] = useState("");
       const { volume } = dataStore((state) => state.sound);
 
-      const hasOperator = Array.from(
+      const hasAccount = Array.from(
         runQuery([HasValue(PlayerAddress, { value: connectedAddress.get() })])
       )[0];
 
@@ -57,9 +57,9 @@ export function registerDetectOperatorName() {
             mintFX.volume = volume;
             mintFX.play()
 
-            await player.operator.set(connectedAddress.get()!, name);
+            await player.account.set(connectedAddress.get()!, name);
 
-            document.getElementById('detectOperatorName')!.style.display = 'none';
+            document.getElementById('detectAccountName')!.style.display = 'none';
             document.getElementById('mint_process')!.style.display = 'block';
           } catch (e) {
             //
@@ -80,18 +80,18 @@ export function registerDetectOperatorName() {
       };
 
       useEffect(() => {
-        if (hasOperator != undefined) return setIsDivVisible(false);
+        if (hasAccount != undefined) return setIsDivVisible(false);
         return setIsDivVisible(true);
-      }, [setIsDivVisible, hasOperator]);
+      }, [setIsDivVisible, hasAccount]);
 
       return (
         <ModalWrapper
-          id="detectOperatorName"
+          id="detectAccountName"
           style={{ display: isDivVisible ? 'block' : 'none' }}
         >
           <ModalContent>
             <Description style={{ gridRow: 1 }}>
-              Name Operator
+              Your Name
             </Description>
             <Input style={{ gridRow: 2, pointerEvents: 'auto' }}
               type="text"

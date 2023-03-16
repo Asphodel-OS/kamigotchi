@@ -10,7 +10,7 @@ import { registerFoodShopButton } from './FoodShopButton';
 import { registerPetList } from './PetList';
 import { registerRequestQueue } from './RequestQueue';
 import { registerTradeWindow } from './TradeWindow';
-import { registerDetectOperatorName } from './DetectOperatorName';
+import { registerDetectAccountName } from './DetectAccountName';
 import { registerMintProcess } from './MintProcess';
 import { registerPetMint } from './PetMint';
 import { registerPetDetails } from './PetDetails';
@@ -19,7 +19,7 @@ import { registerWorldMap } from './WorldMap';
 
 export function registerUIComponents() {
   registerLoadingState();
-  registerDetectOperatorName();
+  registerDetectAccountName();
   registerPetList();
   registerMerchantWindow();
   registerMiningModal();

@@ -4,7 +4,7 @@ export const changeRoom = (object: Phaser.GameObjects.Image, to: number) => {
   const {
     network: {
       network,
-      api: { player: { operator: { move } } },
+      api: { player: { account: { move } } },
       world,
       actions,
     },

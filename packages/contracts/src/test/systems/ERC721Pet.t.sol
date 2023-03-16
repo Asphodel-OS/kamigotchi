@@ -14,8 +14,8 @@ contract ERC721PetTest is SetupTemplate {
     assertEq(_ERC721PetSystem.ownerOf(tokenID), addy);
   }
 
-  function _assertOperator(uint256 entityID, address operator) internal {
-    // assertEq(_IdOperatorComponent.getValue(entityID), addressToEntity(operator));
+  function _assertAccount(uint256 entityID, address account) internal {
+    // assertEq(_IdAccountComponent.getValue(entityID), addressToEntity(account));
   }
 
   function entityToAddress(uint256 entityID) internal returns (address) {
@@ -26,7 +26,7 @@ contract ERC721PetTest is SetupTemplate {
     _mintPets(1);
 
     _assertOwnership(1, alice);
-    _assertOperator(petOneEntityID, alice);
+    _assertAccount(petOneEntityID, alice);
   }
 
   function testTransfer() public {
@@ -35,7 +35,7 @@ contract ERC721PetTest is SetupTemplate {
     _transferPetNFT(alice, bob, 1);
 
     _assertOwnership(1, bob);
-    _assertOperator(petOneEntityID, bob);
+    _assertAccount(petOneEntityID, bob);
   }
 
   function testSafeTransfer() public {
@@ -45,31 +45,29 @@ contract ERC721PetTest is SetupTemplate {
     _ERC721PetSystem.safeTransferFrom(alice, bob, 1);
 
     _assertOwnership(1, bob);
-    _assertOperator(petOneEntityID, bob);
+    _assertAccount(petOneEntityID, bob);
 
     vm.prank(bob);
     _ERC721PetSystem.safeTransferFrom(bob, eve, 1, "");
 
     _assertOwnership(1, eve);
-    _assertOperator(petOneEntityID, eve);
+    _assertAccount(petOneEntityID, eve);
   }
 
-  function testChangeOperator() public {
+  function testChangeAccount() public {
     _mintPets(1);
 
     vm.prank(alice);
-    _PetSetOperatorSystem.executeTyped(petOneEntityID, bob);
+    _PetSetAccountSystem.executeTyped(petOneEntityID, bob);
 
     _assertOwnership(1, alice);
-    _assertOperator(petOneEntityID, bob);
+    _assertAccount(petOneEntityID, bob);
   }
 
   function testMetadataPrint() public {
     _mintPets(1);
 
-    console.log(
-      _ERC721PetSystem.tokenURI(1)
-    );
+    console.log(_ERC721PetSystem.tokenURI(1));
   }
 
   function testMetadataFuzz() public {

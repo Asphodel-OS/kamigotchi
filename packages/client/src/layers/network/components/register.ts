@@ -14,12 +14,12 @@ import {
 export function createComponents(world: any) {
   return {
     // Archetypes
+    IsAccount: defineBoolComponent(world, { id: "IsAccount", metadata: { contractId: "component.Is.Account" } }),
     IsInventory: defineBoolComponent(world, { id: "IsInventory", metadata: { contractId: "component.Is.Inventory" } }),
     IsListing: defineBoolComponent(world, { id: "IsListing", metadata: { contractId: "component.Is.Listing" } }),
     IsMerchant: defineBoolComponent(world, { id: "IsMerchant", metadata: { contractId: "component.Is.Merchant" } }),
     IsMod: defineBoolComponent(world, { id: "IsMod", metadata: { contractId: "component.Is.Mod" } }),
     IsNode: defineBoolComponent(world, { id: "IsNode", metadata: { contractId: "component.Is.Node" } }),
-    IsOperator: defineBoolComponent(world, { id: "IsOperator", metadata: { contractId: "component.Is.Operator" } }),
     IsPet: defineBoolComponent(world, { id: "IsPet", metadata: { contractId: "component.Is.Pet" } }),
     IsProduction: defineBoolComponent(world, { id: "IsProduction", metadata: { contractId: "component.Is.Production" } }),
     IsRegister: defineBoolComponent(world, { id: "IsRegister", metadata: { contractId: "component.Is.Register" } }),
@@ -29,12 +29,12 @@ export function createComponents(world: any) {
     IsTrade: defineBoolComponent(world, { id: "IsTrade", metadata: { contractId: "component.Is.Trade" } }),
 
     // IDs
+    AccountID: defineStringComponent(world, { id: "AccountID", metadata: { contractId: "component.Id.Account" } }),
     DelegateeID: defineStringComponent(world, { id: "DelegateeID", metadata: { contractId: "component.Id.Delegatee" } }),
     DelegatorID: defineStringComponent(world, { id: "DelegatorID", metadata: { contractId: "component.Id.Delegator" } }),
     HolderID: defineStringComponent(world, { id: "HolderID", metadata: { contractId: "component.Id.Holder" } }),
     MerchantID: defineStringComponent(world, { id: "MerchantID", metadata: { contractId: "component.Id.Merchant" } }),
     NodeID: defineStringComponent(world, { id: "NodeID", metadata: { contractId: "component.Id.Node" } }),
-    OperatorID: defineStringComponent(world, { id: "OperatorID", metadata: { contractId: "component.Id.Operator" } }),
     OwnerID: defineStringComponent(world, { id: "OwnerID", metadata: { contractId: "component.Id.Owner" } }),
     RequesteeID: defineStringComponent(world, { id: "RequesteeID", metadata: { contractId: "component.Id.Requestee" } }),
     RequesterID: defineStringComponent(world, { id: "RequesterID", metadata: { contractId: "component.Id.Requester" } }),
@@ -56,7 +56,6 @@ export function createComponents(world: any) {
     HealthCurrent: defineNumberComponent(world, { id: "HealthCurrent", metadata: { contractId: "component.HealthCurrent" } }),
     Location: defineNumberComponent(world, { id: "Location", metadata: { contractId: "component.Location" } }),
     Status: defineStringComponent(world, { id: "Status", metadata: { contractId: "component.Status" } }),
-    Type: defineStringComponent(world, { id: "Type", metadata: { contractId: "component.Type" } }),
     Value: defineStringComponent(world, { id: "Value", metadata: { contractId: "component.Value" } }),
     Affinity: defineStringComponent(world, { id: "Affinity", metadata: { contractId: "component.Affinity" } }),
     Power: defineNumberComponent(world, { id: "Power", metadata: { contractId: "component.Power" } }),

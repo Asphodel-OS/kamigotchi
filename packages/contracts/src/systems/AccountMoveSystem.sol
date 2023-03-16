@@ -4,23 +4,23 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { Utils } from "utils/Utils.sol";
 
-uint256 constant ID = uint256(keccak256("system.OperatorMove"));
+uint256 constant ID = uint256(keccak256("system.Account.Move"));
 
-// OperatorMoveSystem moves the operator to a valid room location
-contract OperatorMoveSystem is System {
+// AccountMoveSystem moves the account to a valid room location
+contract AccountMoveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 to = abi.decode(arguments, (uint256));
-    uint256 operatorID = LibOperator.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
-    require(LibOperator.canMoveTo(components, operatorID, to), "Operator: unreachable location");
+    require(LibAccount.canMoveTo(components, accountID, to), "Account: unreachable location");
 
-    LibOperator.move(components, operatorID, to);
-    Utils.updateLastBlock(components, operatorID);
+    LibAccount.move(components, accountID, to);
+    Utils.updateLastBlock(components, accountID);
     return "";
   }
 

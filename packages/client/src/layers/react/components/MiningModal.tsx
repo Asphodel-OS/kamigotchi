@@ -28,12 +28,12 @@ export function registerMiningModal() {
           components: {
             IsPet,
             IsNode,
-            IsOperator,
+            IsAccount,
             IsProduction,
             Location,
             Name,
             NodeID,
-            OperatorID,
+            AccountID,
             PetID,
             PlayerAddress,
             State,
@@ -43,11 +43,11 @@ export function registerMiningModal() {
         },
       } = layers;
 
-      // get the production for an operator on a node
-      const getMatchingProductionIndex = (operatorIndex: EntityIndex, nodeIndex: EntityIndex) => {
+      // get the production for an account on a node
+      const getMatchingProductionIndex = (accountIndex: EntityIndex, nodeIndex: EntityIndex) => {
         const petIndices = Array.from(runQuery([
           Has(IsPet),
-          HasValue(OperatorID, { value: world.entities[operatorIndex] }),
+          HasValue(AccountID, { value: world.entities[accountIndex] }),
         ]));
 
         let petID, results;
@@ -84,17 +84,17 @@ export function registerMiningModal() {
         }
       }
 
-      return merge(OperatorID.update$, Location.update$, StartTime.update$, State.update$).pipe(
+      return merge(AccountID.update$, Location.update$, StartTime.update$, State.update$).pipe(
         map(() => {
-          // get the operator entity of the controlling wallet
-          const operatorIndex = Array.from(runQuery([
-            Has(IsOperator),
+          // get the account entity of the controlling wallet
+          const accountIndex = Array.from(runQuery([
+            Has(IsAccount),
             HasValue(PlayerAddress, { value: network.connectedAddress.get() })
           ]))[0];
-          const operatorID = world.entities[operatorIndex];
+          const accountID = world.entities[accountIndex];
 
           // get player location and list of nodes in this room
-          const location = getComponentValue(Location, operatorIndex)?.value as number;
+          const location = getComponentValue(Location, accountIndex)?.value as number;
           const nodeResults = runQuery([
             Has(IsNode),
             HasValue(Location, { value: location }),
@@ -105,7 +105,7 @@ export function registerMiningModal() {
             nodeIndex = Array.from(nodeResults)[0];
             node = getNode(nodeIndex);
 
-            const productionIndex = getMatchingProductionIndex(operatorIndex, nodeIndex);
+            const productionIndex = getMatchingProductionIndex(accountIndex, nodeIndex);
             if (productionIndex != 0) {
               production = getProduction(productionIndex);
             }
@@ -116,8 +116,8 @@ export function registerMiningModal() {
             actions,
             api: player,
             data: {
-              operator: {
-                id: operatorID,
+              account: {
+                id: accountID,
               },
               node,
               production,

@@ -5,23 +5,23 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { Utils } from "utils/Utils.sol";
 
-uint256 constant ID = uint256(keccak256("system.OperatorName"));
+uint256 constant ID = uint256(keccak256("system.Account.Name"));
 
-// names an existing operator, identified by the calling account
-contract OperatorNameSystem is System {
+// names an existing account, identified by the calling account
+contract AccountNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     string memory name = abi.decode(arguments, (string));
-    uint256 operatorID = LibOperator.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
-    require(operatorID != 0, "Operator: does not exist");
+    require(accountID != 0, "Account: does not exist");
 
-    LibOperator.setName(components, operatorID, name);
-    Utils.updateLastBlock(components, operatorID);
+    LibAccount.setName(components, accountID, name);
+    Utils.updateLastBlock(components, accountID);
     return "";
   }
 

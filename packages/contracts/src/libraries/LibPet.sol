@@ -6,7 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById, entityToAddress, addressToEntity } from "solecs/utils.sol";
 
-import { IdOperatorComponent, ID as IdOpCompID } from "components/IdOperatorComponent.sol";
+import { IdAccountComponent, ID as IdOpCompID } from "components/IdAccountComponent.sol";
 import { IdOwnerComponent, ID as IdOwnerCompID } from "components/IdOwnerComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
@@ -31,14 +31,14 @@ library LibPet {
   /////////////////
   // INTERACTIONS
 
-  // create a pet entity, set its owner and operator for an entity
-  // NOTE: we may need to create an Operator/Owner entities here if they dont exist
+  // create a pet entity, set its owner and account for an entity
+  // NOTE: we may need to create an Account/Owner entities here if they dont exist
   // TODO: include attributes in this generation
   function create(
     IWorld world,
     IUintComp components,
     address owner,
-    uint256 operatorID,
+    uint256 accountID,
     uint256 index,
     string memory uri
   ) internal returns (uint256) {
@@ -49,7 +49,7 @@ library LibPet {
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
     setOwner(components, id, addressToEntity(owner));
-    setOperator(components, id, operatorID);
+    setAccount(components, id, accountID);
     setMediaURI(components, id, uri);
     setLastTs(components, id, block.timestamp);
     revive(components, id);
@@ -138,13 +138,13 @@ library LibPet {
     return getCurrHealth(components, id) == 0;
   }
 
-  // Check whether an operator is the pet's operator.
-  function isOperator(
+  // Check whether an account is the pet's account.
+  function isAccount(
     IUintComp components,
     uint256 id,
-    uint256 operatorID
+    uint256 accountID
   ) internal view returns (bool) {
-    return getOperator(components, id) == operatorID;
+    return getAccount(components, id) == accountID;
   }
 
   // Check whether a pet has an ongoing production.
@@ -184,8 +184,8 @@ library LibPet {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
-  function setOperator(IUintComp components, uint256 id, uint256 operatorID) internal {
-    IdOperatorComponent(getAddressById(components, IdOpCompID)).set(id, operatorID);
+  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
+    IdAccountComponent(getAddressById(components, IdOpCompID)).set(id, accountID);
   }
 
   function setOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
@@ -215,9 +215,9 @@ library LibPet {
     return MediaURIComponent(getAddressById(components, MediaURICompID)).getValue(id);
   }
 
-  // get the entity ID of the pet operator
-  function getOperator(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdOperatorComponent(getAddressById(components, IdOpCompID)).getValue(id);
+  // get the entity ID of the pet account
+  function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IdAccountComponent(getAddressById(components, IdOpCompID)).getValue(id);
   }
 
   // get the entity ID of the pet owner
@@ -252,24 +252,24 @@ library LibPet {
 
   // transfer ERC721 pet
   // NOTE: it doesnt seem we actually need IdOwner directly on the pet as it can be
-  // directly accessed through the operator entity.
-  function transfer(IUintComp components, uint256 index, uint256 operatorID) internal {
+  // directly accessed through the account entity.
+  function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = indexToID(components, index);
-    uint256 ownerID = getOwner(components, operatorID);
+    uint256 ownerID = getOwner(components, accountID);
 
     setOwner(components, id, ownerID);
-    setOperator(components, id, operatorID);
+    setAccount(components, id, accountID);
   }
 
-  // return whether owner or operator
-  function isOwnerOrOperator(
+  // return whether owner or account
+  function isOwnerOrAccount(
     IUintComp components,
     uint256 id,
     address sender
   ) internal view returns (bool) {
     uint256 senderAsID = addressToEntity(sender);
-    return getOwner(components, id) == senderAsID || getOperator(components, id) == senderAsID;
+    return getOwner(components, id) == senderAsID || getAccount(components, id) == senderAsID;
   }
 
   /////////////////

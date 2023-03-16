@@ -7,7 +7,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdOperatorComponent, ID as IdOperatorCompID } from "components/IdOperatorComponent.sol";
+import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdRequesteeComponent, ID as IdReqeeCompID } from "components/IdRequesteeComponent.sol";
 import { IdRequesterComponent, ID as IdReqerCompID } from "components/IdRequesterComponent.sol";
 import { IsRequestComponent, ID as IsRequestCompID } from "components/IsRequestComponent.sol";
@@ -39,11 +39,7 @@ library LibTrade {
   }
 
   // Accept the trade and create a register for both parties
-  function accept(
-    IWorld world,
-    IUintComp components,
-    uint256 id
-  ) internal {
+  function accept(IWorld world, IUintComp components, uint256 id) internal {
     IsRequestComponent(getAddressById(components, IsRequestCompID)).remove(id);
     StateComponent(getAddressById(components, StateCompID)).set(id, string("ACCEPTED"));
 
@@ -54,11 +50,7 @@ library LibTrade {
   }
 
   // Cancel an existing trade. World required bc LibRegister.reverse calls LibRegister.process
-  function cancel(
-    IWorld world,
-    IUintComp components,
-    uint256 id
-  ) internal {
+  function cancel(IWorld world, IUintComp components, uint256 id) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("CANCELED"));
 
     // Check whether it's just a request. If so, no registers have been created.
@@ -78,11 +70,7 @@ library LibTrade {
 
   // Process a trade upon confirmation from both parties
   // TODO(jb): ? delete all the created inventory components
-  function process(
-    IWorld world,
-    IUintComp components,
-    uint256 id
-  ) internal returns (bool) {
+  function process(IWorld world, IUintComp components, uint256 id) internal returns (bool) {
     uint256 requesterID = getRequestee(components, id);
     uint256 requesteeID = getRequester(components, id);
     uint256 requesterRegisterID = LibRegister.get(components, requesterID, id);
@@ -96,7 +84,7 @@ library LibTrade {
   /////////////////
   // CHECKS
 
-  // Check whether an operator is the requester or requestee in a trade.
+  // Check whether an account is the requester or requestee in a trade.
   function hasParticipant(
     IUintComp components,
     uint256 id,

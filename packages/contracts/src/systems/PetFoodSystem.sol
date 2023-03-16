@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibOperator } from "libraries/LibOperator.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Food"));
@@ -16,10 +16,10 @@ contract PetFoodSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (uint256 petID, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
-    uint256 operatorID = LibOperator.getByAddress(components, msg.sender);
-    uint256 inventoryID = LibInventory.get(components, operatorID, foodIndex);
+    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 inventoryID = LibInventory.get(components, accountID, foodIndex);
 
-    require(LibPet.getOperator(components, petID) == operatorID, "Pet: not urs");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(inventoryID != 0, "Inventory: no food");
 
     LibInventory.dec(components, inventoryID, 1); // inherent check for insufficient balance
