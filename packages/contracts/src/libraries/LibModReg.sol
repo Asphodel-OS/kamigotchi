@@ -10,8 +10,8 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { LibPrototype } from "libraries/LibPrototype.sol";
 
 import { IsRegistryEntryComponent, ID as IsRegistryEntryCompID } from "components/IsRegistryEntryComponent.sol";
-// import name 
-import { IndexModifierComponent as IndexComp, ID as IndexCompID } from "components/IndexModifierComponent.sol";
+// import name
+import { IndexModComponent as IndexComp, ID as IndexCompID } from "components/IndexModComponent.sol";
 import { GenusComponent as GenusComp, ID as GenusCompID } from "components/GenusComponent.sol";
 
 /** !
@@ -23,7 +23,7 @@ import { GenusComponent as GenusComp, ID as GenusCompID } from "components/Genus
  *    face  [base]
  *    background  [base]
  *    equipped (to add)
-  */
+ */
 
 library LibModReg {
   // returns entity at registry
@@ -48,7 +48,7 @@ library LibModReg {
       getComponentById(components, GenusCompID),
       abi.encode(genus)
     );
-    
+
     uint256[] memory results = LibQuery.query(fragments);
 
     require(results.length == 1, "index does not exist in registry");
@@ -65,9 +65,11 @@ library LibModReg {
   ) internal {
     // no check
     Uint256Component comp = Uint256Component(getAddressById(components, IndexCompID));
-    IsRegistryEntryComponent isComp = IsRegistryEntryComponent(getAddressById(components, IsRegistryEntryCompID));
+    IsRegistryEntryComponent isComp = IsRegistryEntryComponent(
+      getAddressById(components, IsRegistryEntryCompID)
+    );
     GenusComp gComp = GenusComp(getAddressById(components, GenusCompID));
-    
+
     comp.set(entityToAdd, index);
     isComp.set(entityToAdd);
     gComp.set(entityToAdd, genus);

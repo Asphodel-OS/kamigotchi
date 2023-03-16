@@ -10,12 +10,12 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibModReg } from "libraries/LibModReg.sol";
 import { LibPrototype } from "libraries/LibPrototype.sol";
 
-import { ModifierPetTypeComponent, ID as ModifierPetTypeComponentID } from "components/ModifierPetTypeComponent.sol";
-import { ModifierStatusComponent, ID as ModifierStatusComponentID } from "components/ModifierStatusComponent.sol";
-import { ModifierTypeComponent, ID as ModifierTypeComponentID } from "components/ModifierTypeComponent.sol";
-import { ModifierValueComponent, ID as ModifierValueComponentID } from "components/ModifierValueComponent.sol";
-import { IsModifierComponent, ID as IsModifierComponentID } from "components/IsModifierComponent.sol";
-import { IndexModifierComponent, ID as IndexModifierComponentID } from "components/IndexModifierComponent.sol";
+import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
+import { StatusComponent, ID as StatusComponentID } from "components/StatusComponent.sol";
+import { TypeComponent, ID as TypeComponentID } from "components/TypeComponent.sol";
+import { ValueComponent, ID as ValueComponentID } from "components/ValueComponent.sol";
+import { IsModComponent, ID as IsModComponentID } from "components/IsModComponent.sol";
+import { IndexModComponent, ID as IndexModComponentID } from "components/IndexModComponent.sol";
 import { GenusComponent, ID as GenusComponentID } from "components/GenusComponent.sol";
 import { IdPetComponent, ID as IdPetComponentID } from "components/IdPetComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -65,11 +65,7 @@ library LibModifier {
 
   // transfers modifier from entities
   // sets entity as inactive
-  function transfer(
-    IUint256Component components,
-    uint256 entityID,
-    uint256 to
-  ) internal {
+  function transfer(IUint256Component components, uint256 entityID, uint256 to) internal {
     IdPetComponent(getAddressById(components, IdPetComponentID)).set(entityID, to);
   }
 
@@ -144,13 +140,13 @@ library LibModifier {
     uint256 entityID = world.getUniqueEntityId();
 
     uint256[] memory componentIDs = new uint256[](8);
-    componentIDs[0] = ModifierValueComponentID;
-    componentIDs[1] = ModifierTypeComponentID;
-    componentIDs[2] = ModifierStatusComponentID;
-    componentIDs[3] = ModifierPetTypeComponentID; // would it be justified for a separate function here?
+    componentIDs[0] = ValueComponentID;
+    componentIDs[1] = TypeComponentID;
+    componentIDs[2] = StatusComponentID;
+    componentIDs[3] = AffinityComponentID; // would it be justified for a separate function here?
     componentIDs[4] = NameCompID;
     componentIDs[5] = GenusComponentID;
-    componentIDs[6] = IsModifierComponentID;
+    componentIDs[6] = IsModComponentID;
     componentIDs[7] = PrototypeComponentID;
 
     bytes[] memory values = new bytes[](8);
@@ -170,38 +166,34 @@ library LibModifier {
 
   /////////////////
   // COMPONENT RETRIEVAL
-  function getModType(IUint256Component components, uint256 id)
-    internal
-    view
-    returns (string memory)
-  {
-    return ModifierTypeComponent(getAddressById(components, ModifierTypeComponentID)).getValue(id);
+  function getModType(
+    IUint256Component components,
+    uint256 id
+  ) internal view returns (string memory) {
+    return TypeComponent(getAddressById(components, TypeComponentID)).getValue(id);
   }
 
   function getValue(IUint256Component components, uint256 id) internal view returns (uint256) {
-    return
-      ModifierValueComponent(getAddressById(components, ModifierValueComponentID)).getValue(id);
+    return ValueComponent(getAddressById(components, ValueComponentID)).getValue(id);
   }
 
   function getIndex(IUint256Component components, uint256 id) internal view returns (uint256) {
-    return
-      IndexModifierComponent(getAddressById(components, IndexModifierComponentID)).getValue(id);
+    return IndexModComponent(getAddressById(components, IndexModComponentID)).getValue(id);
   }
 
   function getName(IUint256Component components, uint256 id) internal view returns (string memory) {
     return NameComponent(getAddressById(components, NameCompID)).getValue(id);
   }
 
-  function getPetTypes(IUint256Component components, uint256 id)
-    internal
-    view
-    returns (string[] memory)
-  {
+  function getPetTypes(
+    IUint256Component components,
+    uint256 id
+  ) internal view returns (string[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
 
     fragments[0] = QueryFragment(
       QueryType.Has,
-      getComponentById(components, ModifierPetTypeComponentID),
+      getComponentById(components, AffinityComponentID),
       abi.encode(0)
     );
     fragments[1] = QueryFragment(
@@ -214,8 +206,8 @@ library LibModifier {
 
     // converts to name array
     string[] memory names = new string[](queried.length);
-    ModifierPetTypeComponent petTypeComp = ModifierPetTypeComponent(
-      getAddressById(components, ModifierPetTypeComponentID)
+    AffinityComponent petTypeComp = AffinityComponent(
+      getAddressById(components, AffinityComponentID)
     );
     for (uint256 i; i < queried.length; i++) {
       names[i] = petTypeComp.getValue(id);
@@ -244,11 +236,7 @@ library LibModifier {
     if (!Strings.equal(petType, "")) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsModifierComponentID),
-      ""
-    );
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsModComponentID), "");
 
     uint256 filterCount;
     if (petID != 0) {
@@ -268,28 +256,28 @@ library LibModifier {
     if (index != 0) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IndexModifierComponentID),
+        getComponentById(components, IndexModComponentID),
         abi.encode(index)
       );
     }
     if (modStatus != ModStatus.NULL) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, ModifierStatusComponentID),
+        getComponentById(components, StatusComponentID),
         abi.encode(statusToUint256(modStatus))
       );
     }
     if (!Strings.equal(modType, "")) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, ModifierTypeComponentID),
+        getComponentById(components, TypeComponentID),
         abi.encode(modType)
       );
     }
     if (!Strings.equal(petType, "")) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, ModifierTypeComponentID),
+        getComponentById(components, TypeComponentID),
         abi.encode(petType)
       );
     }
@@ -306,12 +294,8 @@ library LibModifier {
   }
 
   // writes status to component from enum
-  function writeStatus(
-    IUint256Component components,
-    uint256 entityID,
-    ModStatus status
-  ) internal {
-    ModifierStatusComponent(getAddressById(components, ModifierStatusComponentID)).set(
+  function writeStatus(IUint256Component components, uint256 entityID, ModStatus status) internal {
+    StatusComponent(getAddressById(components, StatusComponentID)).set(
       entityID,
       statusToUint256(status)
     );

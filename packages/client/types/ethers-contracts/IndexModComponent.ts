@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ModifierValueComponentInterface extends utils.Interface {
+export interface IndexModComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
@@ -213,12 +213,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ModifierValueComponent extends BaseContract {
+export interface IndexModComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ModifierValueComponentInterface;
+  interface: IndexModComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -24,6 +24,7 @@ import { LibTrade } from "libraries/LibTrade.sol";
 
 // Components
 import { AddressPlayerComponent, ID as AddressPlayerComponentID } from "components/AddressPlayerComponent.sol";
+import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceComponentID } from "components/BalanceComponent.sol";
 import { PowerComponent, ID as PowerComponentID } from "components/PowerComponent.sol";
 import { BlockLastComponent, ID as BlockLastComponentID } from "components/BlockLastComponent.sol";
@@ -46,14 +47,14 @@ import { IdRequesterComponent, ID as IdRequesterComponentID } from "components/I
 import { IndexEquipComponent, ID as IndexEquipComponentID } from "components/IndexEquipComponent.sol";
 import { IndexFoodComponent, ID as IndexFoodComponentID } from "components/IndexFoodComponent.sol";
 import { IndexItemComponent, ID as IndexItemComponentID } from "components/IndexItemComponent.sol";
-import { IndexModifierComponent, ID as IndexModifierComponentID } from "components/IndexModifierComponent.sol";
+import { IndexModComponent, ID as IndexModComponentID } from "components/IndexModComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsFoodComponent, ID as IsFoodComponentID } from "components/IsFoodComponent.sol";
 import { IsFungibleComponent, ID as IsFungibleComponentID } from "components/IsFungibleComponent.sol";
 import { IsInventoryComponent, ID as IsInventoryComponentID } from "components/IsInventoryComponent.sol";
 import { IsListingComponent, ID as IsListingComponentID } from "components/IsListingComponent.sol";
 import { IsMerchantComponent, ID as IsMerchantComponentID } from "components/IsMerchantComponent.sol";
-import { IsModifierComponent, ID as IsModifierComponentID } from "components/IsModifierComponent.sol";
+import { IsModComponent, ID as IsModComponentID } from "components/IsModComponent.sol";
 import { IsNodeComponent, ID as IsNodeComponentID } from "components/IsNodeComponent.sol";
 import { IsNonFungibleComponent, ID as IsNonFungibleComponentID } from "components/IsNonFungibleComponent.sol";
 import { IsOperatorComponent, ID as IsOperatorComponentID } from "components/IsOperatorComponent.sol";
@@ -67,20 +68,18 @@ import { IsRoomComponent, ID as IsRoomComponentID } from "components/IsRoomCompo
 import { IsTradeComponent, ID as IsTradeComponentID } from "components/IsTradeComponent.sol";
 import { LocationComponent, ID as LocationComponentID } from "components/LocationComponent.sol";
 import { MediaURIComponent, ID as MediaURIComponentID } from "components/MediaURIComponent.sol";
-import { ModifierPetTypeComponent, ID as ModifierPetTypeComponentID } from "components/ModifierPetTypeComponent.sol";
-import { ModifierStatusComponent, ID as ModifierStatusComponentID } from "components/ModifierStatusComponent.sol";
-import { ModifierTypeComponent, ID as ModifierTypeComponentID } from "components/ModifierTypeComponent.sol";
-import { ModifierValueComponent, ID as ModifierValueComponentID } from "components/ModifierValueComponent.sol";
 import { NameComponent, ID as NameComponentID } from "components/NameComponent.sol";
 import { PriceBuyComponent, ID as PriceBuyComponentID } from "components/PriceBuyComponent.sol";
 import { PriceSellComponent, ID as PriceSellComponentID } from "components/PriceSellComponent.sol";
 import { PrototypeComponent, ID as PrototypeComponentID } from "components/PrototypeComponent.sol";
 import { SlotsComponent, ID as SlotsComponentID } from "components/SlotsComponent.sol";
 import { StateComponent, ID as StateComponentID } from "components/StateComponent.sol";
+import { StatusComponent, ID as StatusComponentID } from "components/StatusComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActionComponentID } from "components/TimeLastActionComponent.sol";
 import { TimeStartComponent, ID as TimeStartComponentID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeComponentID } from "components/TypeComponent.sol";
 import { UpgradesComponent, ID as UpgradesComponentID } from "components/UpgradesComponent.sol";
+import { ValueComponent, ID as ValueComponentID } from "components/ValueComponent.sol";
 import { ViolenceComponent, ID as ViolenceComponentID } from "components/ViolenceComponent.sol";
 
 // Systems
@@ -113,6 +112,7 @@ import { OperatorNameSystem, ID as OperatorNameSystemID } from "systems/Operator
 abstract contract TestSetupImports is MudTest {
 // Components vars
 AddressPlayerComponent _AddressPlayerComponent;
+AffinityComponent _AffinityComponent;
 BalanceComponent _BalanceComponent;
 PowerComponent _PowerComponent;
 BlockLastComponent _BlockLastComponent;
@@ -135,14 +135,14 @@ IdRequesterComponent _IdRequesterComponent;
 IndexEquipComponent _IndexEquipComponent;
 IndexFoodComponent _IndexFoodComponent;
 IndexItemComponent _IndexItemComponent;
-IndexModifierComponent _IndexModifierComponent;
+IndexModComponent _IndexModComponent;
 IndexPetComponent _IndexPetComponent;
 IsFoodComponent _IsFoodComponent;
 IsFungibleComponent _IsFungibleComponent;
 IsInventoryComponent _IsInventoryComponent;
 IsListingComponent _IsListingComponent;
 IsMerchantComponent _IsMerchantComponent;
-IsModifierComponent _IsModifierComponent;
+IsModComponent _IsModComponent;
 IsNodeComponent _IsNodeComponent;
 IsNonFungibleComponent _IsNonFungibleComponent;
 IsOperatorComponent _IsOperatorComponent;
@@ -156,20 +156,18 @@ IsRoomComponent _IsRoomComponent;
 IsTradeComponent _IsTradeComponent;
 LocationComponent _LocationComponent;
 MediaURIComponent _MediaURIComponent;
-ModifierPetTypeComponent _ModifierPetTypeComponent;
-ModifierStatusComponent _ModifierStatusComponent;
-ModifierTypeComponent _ModifierTypeComponent;
-ModifierValueComponent _ModifierValueComponent;
 NameComponent _NameComponent;
 PriceBuyComponent _PriceBuyComponent;
 PriceSellComponent _PriceSellComponent;
 PrototypeComponent _PrototypeComponent;
 SlotsComponent _SlotsComponent;
 StateComponent _StateComponent;
+StatusComponent _StatusComponent;
 TimeLastActionComponent _TimeLastActionComponent;
 TimeStartComponent _TimeStartComponent;
 TypeComponent _TypeComponent;
 UpgradesComponent _UpgradesComponent;
+ValueComponent _ValueComponent;
 ViolenceComponent _ViolenceComponent;
 
 // System vars
@@ -203,6 +201,7 @@ function setUp() public virtual override {
 super.setUp();
 
 _AddressPlayerComponent = AddressPlayerComponent(component(AddressPlayerComponentID));
+_AffinityComponent = AffinityComponent(component(AffinityComponentID));
 _BalanceComponent = BalanceComponent(component(BalanceComponentID));
 _PowerComponent = PowerComponent(component(PowerComponentID));
 _BlockLastComponent = BlockLastComponent(component(BlockLastComponentID));
@@ -225,14 +224,14 @@ _IdRequesterComponent = IdRequesterComponent(component(IdRequesterComponentID));
 _IndexEquipComponent = IndexEquipComponent(component(IndexEquipComponentID));
 _IndexFoodComponent = IndexFoodComponent(component(IndexFoodComponentID));
 _IndexItemComponent = IndexItemComponent(component(IndexItemComponentID));
-_IndexModifierComponent = IndexModifierComponent(component(IndexModifierComponentID));
+_IndexModComponent = IndexModComponent(component(IndexModComponentID));
 _IndexPetComponent = IndexPetComponent(component(IndexPetComponentID));
 _IsFoodComponent = IsFoodComponent(component(IsFoodComponentID));
 _IsFungibleComponent = IsFungibleComponent(component(IsFungibleComponentID));
 _IsInventoryComponent = IsInventoryComponent(component(IsInventoryComponentID));
 _IsListingComponent = IsListingComponent(component(IsListingComponentID));
 _IsMerchantComponent = IsMerchantComponent(component(IsMerchantComponentID));
-_IsModifierComponent = IsModifierComponent(component(IsModifierComponentID));
+_IsModComponent = IsModComponent(component(IsModComponentID));
 _IsNodeComponent = IsNodeComponent(component(IsNodeComponentID));
 _IsNonFungibleComponent = IsNonFungibleComponent(component(IsNonFungibleComponentID));
 _IsOperatorComponent = IsOperatorComponent(component(IsOperatorComponentID));
@@ -246,20 +245,18 @@ _IsRoomComponent = IsRoomComponent(component(IsRoomComponentID));
 _IsTradeComponent = IsTradeComponent(component(IsTradeComponentID));
 _LocationComponent = LocationComponent(component(LocationComponentID));
 _MediaURIComponent = MediaURIComponent(component(MediaURIComponentID));
-_ModifierPetTypeComponent = ModifierPetTypeComponent(component(ModifierPetTypeComponentID));
-_ModifierStatusComponent = ModifierStatusComponent(component(ModifierStatusComponentID));
-_ModifierTypeComponent = ModifierTypeComponent(component(ModifierTypeComponentID));
-_ModifierValueComponent = ModifierValueComponent(component(ModifierValueComponentID));
 _NameComponent = NameComponent(component(NameComponentID));
 _PriceBuyComponent = PriceBuyComponent(component(PriceBuyComponentID));
 _PriceSellComponent = PriceSellComponent(component(PriceSellComponentID));
 _PrototypeComponent = PrototypeComponent(component(PrototypeComponentID));
 _SlotsComponent = SlotsComponent(component(SlotsComponentID));
 _StateComponent = StateComponent(component(StateComponentID));
+_StatusComponent = StatusComponent(component(StatusComponentID));
 _TimeLastActionComponent = TimeLastActionComponent(component(TimeLastActionComponentID));
 _TimeStartComponent = TimeStartComponent(component(TimeStartComponentID));
 _TypeComponent = TypeComponent(component(TypeComponentID));
 _UpgradesComponent = UpgradesComponent(component(UpgradesComponentID));
+_ValueComponent = ValueComponent(component(ValueComponentID));
 _ViolenceComponent = ViolenceComponent(component(ViolenceComponentID));
 
 __InitSystem = _InitSystem(system(_InitSystemID));

@@ -45,13 +45,13 @@ export function registerPetDetails() {
     (layers) => {
       const {
         network: {
-          components: { Balance, Genus, IsPet, IsModifier, MediaURI, PetID },
+          components: { Balance, Genus, IsPet, IsMod, MediaURI, PetID },
         },
       } = layers;
 
       return merge(
         IsPet.update$,
-        IsModifier.update$,
+        IsMod.update$,
         Balance.update$,
         PetID.update$,
         Genus.update$,
@@ -72,11 +72,11 @@ export function registerPetDetails() {
             Genus,
             Health,
             IsPet,
-            IsModifier,
+            IsMod,
             MediaURI,
-            ModifierValue,
-            ModifierType,
-            ModifierPetType,
+            Value,
+            Type,
+            Affinity,
             Name,
             PetIndex,
             PetID,
@@ -145,7 +145,7 @@ export function registerPetDetails() {
       const getTrait = (petIndex: EntityIndex, genus: string) => {
         const entity = Array.from(
           runQuery([
-            Has(IsModifier),
+            Has(IsMod),
             HasValue(Genus, {
               value: genus,
             }),
@@ -158,11 +158,11 @@ export function registerPetDetails() {
         return {
           Individual: {
             Name: getComponentValue(Name, entity)?.value as string,
-            Type: getComponentValue(ModifierType, entity)?.value as string,
-            Value: getComponentValue(ModifierValue, entity)?.value as string,
+            Type: getComponentValue(Type, entity)?.value as string,
+            Value: getComponentValue(Value, entity)?.value as string,
           },
           PetType: {
-            petType: getComponentValue(ModifierPetType, entity)
+            petType: getComponentValue(Affinity, entity)
               ?.value as string,
           },
         };

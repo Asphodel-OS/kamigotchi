@@ -10,7 +10,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { LibPrototype } from "libraries/LibPrototype.sol";
 
 import { IsRegistryEntryComponent, ID as IsRegistryEntryCompID } from "components/IsRegistryEntryComponent.sol";
-import { IndexModifierComponent, ID as IndexModifierCompID } from "components/IndexModifierComponent.sol";
+import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComponent.sol";
 
 // DEPRECIATED, still in for battery
 
@@ -32,7 +32,7 @@ library LibRegistry {
       getComponentById(components, registryID),
       abi.encode(index)
     );
-    
+
     uint256[] memory results = LibQuery.query(fragments);
 
     require(results.length == 1, "index does not exist in registry");
@@ -49,7 +49,9 @@ library LibRegistry {
   ) internal {
     // no check
     Uint256Component comp = Uint256Component(getAddressById(components, registryID));
-    IsRegistryEntryComponent isComp = IsRegistryEntryComponent(getAddressById(components, IsRegistryEntryCompID));
+    IsRegistryEntryComponent isComp = IsRegistryEntryComponent(
+      getAddressById(components, IsRegistryEntryCompID)
+    );
     comp.set(entityToAdd, index);
     isComp.set(entityToAdd);
   }

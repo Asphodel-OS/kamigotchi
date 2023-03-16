@@ -17,7 +17,7 @@ export function createComponents(world: any) {
     IsInventory: defineBoolComponent(world, { id: "IsInventory", metadata: { contractId: "component.Is.Inventory" } }),
     IsListing: defineBoolComponent(world, { id: "IsListing", metadata: { contractId: "component.Is.Listing" } }),
     IsMerchant: defineBoolComponent(world, { id: "IsMerchant", metadata: { contractId: "component.Is.Merchant" } }),
-    IsModifier: defineBoolComponent(world, { id: "IsModifier", metadata: { contractId: "component.Is.Modifier" } }),
+    IsMod: defineBoolComponent(world, { id: "IsMod", metadata: { contractId: "component.Is.Mod" } }),
     IsNode: defineBoolComponent(world, { id: "IsNode", metadata: { contractId: "component.Is.Node" } }),
     IsOperator: defineBoolComponent(world, { id: "IsOperator", metadata: { contractId: "component.Is.Operator" } }),
     IsPet: defineBoolComponent(world, { id: "IsPet", metadata: { contractId: "component.Is.Pet" } }),
@@ -42,7 +42,7 @@ export function createComponents(world: any) {
 
     // Indices
     ItemIndex: defineNumberComponent(world, { id: "ItemIndex", metadata: { contractId: "component.Index.Item" } }),
-    ModifierIndex: defineNumberComponent(world, { id: "ModifierIndex", metadata: { contractId: "component.Index.Modifier" } }),
+    ModifierIndex: defineNumberComponent(world, { id: "ModifierIndex", metadata: { contractId: "component.Index.Mod" } }),
     PetIndex: defineStringComponent(world, { id: "PetIndex", metadata: { contractId: "component.Index.Pet" } }),
 
     // Values
@@ -55,10 +55,10 @@ export function createComponents(world: any) {
     Health: defineNumberComponent(world, { id: "Health", metadata: { contractId: "component.Health" } }),
     HealthCurrent: defineNumberComponent(world, { id: "HealthCurrent", metadata: { contractId: "component.HealthCurrent" } }),
     Location: defineNumberComponent(world, { id: "Location", metadata: { contractId: "component.Location" } }),
-    ModifierStatus: defineStringComponent(world, { id: "ModifierStatus", metadata: { contractId: "component.Modifier.Status" } }),
-    ModifierType: defineStringComponent(world, { id: "ModifierType", metadata: { contractId: "component.Modifier.Type" } }),
-    ModifierValue: defineStringComponent(world, { id: "ModifierValue", metadata: { contractId: "component.Modifier.Value" } }),
-    ModifierPetType: defineStringComponent(world, { id: "ModifierPetType", metadata: { contractId: "component.Modifier.PetType" } }),
+    Status: defineStringComponent(world, { id: "Status", metadata: { contractId: "component.Status" } }),
+    Type: defineStringComponent(world, { id: "Type", metadata: { contractId: "component.Type" } }),
+    Value: defineStringComponent(world, { id: "Value", metadata: { contractId: "component.Value" } }),
+    Affinity: defineStringComponent(world, { id: "Affinity", metadata: { contractId: "component.Affinity" } }),
     Power: defineNumberComponent(world, { id: "Power", metadata: { contractId: "component.Power" } }),
     PriceBuy: defineNumberComponent(world, { id: "PriceBuy", metadata: { contractId: "component.PriceBuy" } }),
     PriceSell: defineNumberComponent(world, { id: "PriceSell", metadata: { contractId: "component.PriceSell" } }),

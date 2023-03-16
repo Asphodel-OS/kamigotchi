@@ -11,7 +11,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexFoodComponent, ID as IndexFoodCompID } from "components/IndexFoodComponent.sol";
 import { IndexEquipComponent, ID as IndexEquipCompID } from "components/IndexEquipComponent.sol";
-import { IndexModifierComponent, ID as IndexModCompID } from "components/IndexModifierComponent.sol";
+import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComponent.sol";
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsNonFungibleComponent, ID as IsNonFungCompID } from "components/IsNonFungibleComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -81,7 +81,7 @@ library LibRegistryItem {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
-    IndexModifierComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
+    IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
     if (health > 0) LibStat.setHealth(components, id, health);
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
@@ -158,7 +158,7 @@ library LibRegistryItem {
   }
 
   function hasModIndex(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexModifierComponent(getAddressById(components, IndexModCompID)).has(id);
+    return IndexModComponent(getAddressById(components, IndexModCompID)).has(id);
   }
 
   function hasName(IUintComp components, uint256 id) internal view returns (bool) {
@@ -185,7 +185,7 @@ library LibRegistryItem {
   }
 
   function getModIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexModifierComponent(getAddressById(components, IndexModCompID)).getValue(id);
+    return IndexModComponent(getAddressById(components, IndexModCompID)).getValue(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -208,41 +208,37 @@ library LibRegistryItem {
   }
 
   // get the registry entry by item index
-  function getByItemIndex(IUintComp components, uint256 itemIndex)
-    internal
-    view
-    returns (uint256 result)
-  {
+  function getByItemIndex(
+    IUintComp components,
+    uint256 itemIndex
+  ) internal view returns (uint256 result) {
     uint256[] memory results = _getAllX(components, itemIndex, 0, 0, 0);
     if (results.length != 0) result = results[0];
   }
 
   // get the registry entry by item index
-  function getByEquipIndex(IUintComp components, uint256 equipIndex)
-    internal
-    view
-    returns (uint256 result)
-  {
+  function getByEquipIndex(
+    IUintComp components,
+    uint256 equipIndex
+  ) internal view returns (uint256 result) {
     uint256[] memory results = _getAllX(components, 0, equipIndex, 0, 0);
     if (results.length != 0) result = results[0];
   }
 
   // get the registry entry by item index
-  function getByFoodIndex(IUintComp components, uint256 foodIndex)
-    internal
-    view
-    returns (uint256 result)
-  {
+  function getByFoodIndex(
+    IUintComp components,
+    uint256 foodIndex
+  ) internal view returns (uint256 result) {
     uint256[] memory results = _getAllX(components, 0, 0, foodIndex, 0);
     if (results.length != 0) result = results[0];
   }
 
   // get the registry entry by item index
-  function getByModIndex(IUintComp components, uint256 modIndex)
-    internal
-    view
-    returns (uint256 result)
-  {
+  function getByModIndex(
+    IUintComp components,
+    uint256 modIndex
+  ) internal view returns (uint256 result) {
     uint256[] memory results = _getAllX(components, 0, 0, 0, modIndex);
     if (results.length != 0) result = results[0];
   }

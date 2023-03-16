@@ -27,12 +27,12 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ModifierTypeComponentInterface extends utils.Interface {
+export interface ValueComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
-    "getEntitiesWithValue(string)": FunctionFragment;
+    "getEntitiesWithValue(uint256)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
     "getSchema()": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
@@ -42,7 +42,7 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
     "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "set(uint256,string)": FunctionFragment;
+    "set(uint256,uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
@@ -55,7 +55,7 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "getEntities"
       | "getEntitiesWithValue(bytes)"
-      | "getEntitiesWithValue(string)"
+      | "getEntitiesWithValue(uint256)"
       | "getRawValue"
       | "getSchema"
       | "getValue"
@@ -65,7 +65,7 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
       | "registerIndexer"
       | "registerWorld"
       | "remove"
-      | "set(uint256,string)"
+      | "set(uint256,uint256)"
       | "set(uint256,bytes)"
       | "transferOwnership"
       | "unauthorizeWriter"
@@ -86,8 +86,8 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(string)",
-    values: [PromiseOrValue<string>]
+    functionFragment: "getEntitiesWithValue(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRawValue",
@@ -117,8 +117,8 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,string)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    functionFragment: "set(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
@@ -151,7 +151,7 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(string)",
+    functionFragment: "getEntitiesWithValue(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -173,7 +173,7 @@ export interface ModifierTypeComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,string)",
+    functionFragment: "set(uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -213,12 +213,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ModifierTypeComponent extends BaseContract {
+export interface ValueComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ModifierTypeComponentInterface;
+  interface: ValueComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -252,8 +252,8 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    "getEntitiesWithValue(string)"(
-      value: PromiseOrValue<string>,
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -269,7 +269,7 @@ export interface ModifierTypeComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -295,9 +295,9 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,string)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -337,8 +337,8 @@ export interface ModifierTypeComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  "getEntitiesWithValue(string)"(
-    value: PromiseOrValue<string>,
+  "getEntitiesWithValue(uint256)"(
+    value: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -354,7 +354,7 @@ export interface ModifierTypeComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -380,9 +380,9 @@ export interface ModifierTypeComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,string)"(
+  "set(uint256,uint256)"(
     entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -422,8 +422,8 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    "getEntitiesWithValue(string)"(
-      value: PromiseOrValue<string>,
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -439,7 +439,7 @@ export interface ModifierTypeComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -465,9 +465,9 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,string)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -519,8 +519,8 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getEntitiesWithValue(string)"(
-      value: PromiseOrValue<string>,
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -560,9 +560,9 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,string)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -603,8 +603,8 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getEntitiesWithValue(string)"(
-      value: PromiseOrValue<string>,
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -644,9 +644,9 @@ export interface ModifierTypeComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,string)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
