@@ -18,8 +18,8 @@ contract PetFoodSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (uint256 petID, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
-    uint itemIndex = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
+    // uint itemIndex = LibRegistryItem.getByFoodIndex(components, foodIndex);
+    uint256 inventoryID = LibInventory.get(components, accountID, foodIndex);
 
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(inventoryID != 0, "Inventory: no food");
