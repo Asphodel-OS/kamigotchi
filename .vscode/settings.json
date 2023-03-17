@@ -1,4 +1,9 @@
 {
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.tabSize": 2,
+  "html.format.templating": true,
   "solidity.remappings": [
     "components/=./packages/contracts/src/components",
     "libraries/=./packages/contracts/src/libraries",
@@ -13,4 +18,14 @@
     "std-contracts/=./node_modules/@latticexyz/std-contracts/src/",
     "solmate/=./node_modules/@rari-capital/solmate/src/",
   ],
+  "solidity.solhintRules": {
+    "no-global-import": true,
+    "no-empty-blocks": true,
+    "no-unused-vars": true,
+    "payable-fallback": true,
+    "const-name-snakecase": true,
+    "contract-name-camelcase": true,
+    "event-name-camelcase": true,
+    "func-name-mixedcase": true,
+  },
 }
