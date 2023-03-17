@@ -111,7 +111,19 @@
       ]
     },
     {
-      "name": "_RegistrySetModSystem",
+      "name": "_RegistryUpdateModSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateEquipSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateEquipSystem",
       "writeAccess": [
         "*"
       ]
@@ -287,6 +299,7 @@
     "LibAccount",
     "LibCoin",
     "LibInventory",
+    "LibInventoryNF",
     "LibListing",
     "LibMerchant",
     "LibModifier",

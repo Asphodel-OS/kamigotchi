@@ -82,6 +82,48 @@ export function createAdminAPI(systems: any) {
   /////////////////
   //  REGISTRIES
 
+  // @dev add an equipment item registry entry
+  function registerEquipment(
+    equipIndex: number,
+    name: string,
+    type_: string,
+    health: number,
+    power: number,
+    violence: number,
+    harmony: number,
+    slots: number
+  ) {
+    return systems["system._Registry.Equip.Create"].executeTyped(
+      equipIndex,
+      name,
+      type_,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+    )
+  }
+
+  // @dev add a modification item registry entry
+  function registerModification(
+    modIndex: number,
+    name: string,
+    health: number,
+    power: number,
+    harmony: number,
+    violence: number
+  ) {
+    return systems["system._Registry.Mod.Create"].executeTyped(
+      modIndex,
+      name,
+      health,
+      power,
+      violence,
+      harmony,
+    );
+  }
+
   // @dev adds a modifier registry
   function registerModifier(
     index: number,
@@ -97,24 +139,30 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  function registerModification(
-    modIndex: number,
+  // @dev update an equipment item registry entry
+  function updateRegistryEquipment(
+    equipIndex: number,
     name: string,
+    type_: string,
     health: number,
     power: number,
+    violence: number,
     harmony: number,
-    violence: number
+    slots: number
   ) {
-    return systems["system._Registry.Mod.Create"].executeTyped(
-      modIndex,
+    return systems["system._Registry.Equip.Update"].executeTyped(
+      equipIndex,
       name,
+      type_,
       health,
       power,
+      violence,
       harmony,
-      violence
-    );
+      slots,
+    )
   }
 
+  // @dev update a modification item registry entry
   function updateRegistryModification(
     modIndex: number,
     name: string,
@@ -123,13 +171,13 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
-    return systems["system._Registry.Mod.Set"].executeTyped(
+    return systems["system._Registry.Mod.Update"].executeTyped(
       modIndex,
       name,
       health,
       power,
+      violence,
       harmony,
-      violence
     );
   }
 
@@ -137,6 +185,10 @@ export function createAdminAPI(systems: any) {
     init,
     giveCoins,
     registry: {
+      equipment: {
+        create: registerEquipment,
+        update: updateRegistryEquipment,
+      },
       modifier: {
         create: registerModifier,
       },
