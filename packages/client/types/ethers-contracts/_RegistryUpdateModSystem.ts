@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _RegistryCreateModSystemInterface extends utils.Interface {
+export interface _RegistryUpdateModSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256,string,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -94,12 +94,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _RegistryCreateModSystem extends BaseContract {
+export interface _RegistryUpdateModSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _RegistryCreateModSystemInterface;
+  interface: _RegistryUpdateModSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

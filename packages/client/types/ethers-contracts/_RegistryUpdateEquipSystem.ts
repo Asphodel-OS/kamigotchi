@@ -27,10 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _RegistryCreateModSystemInterface extends utils.Interface {
+export interface _RegistryUpdateEquipSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,string,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,6 +52,8 @@ export interface _RegistryCreateModSystemInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -94,12 +96,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _RegistryCreateModSystem extends BaseContract {
+export interface _RegistryUpdateEquipSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _RegistryCreateModSystemInterface;
+  interface: _RegistryUpdateEquipSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -127,12 +129,14 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      modIndex: PromiseOrValue<BigNumberish>,
+      equipIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -150,12 +154,14 @@ export interface _RegistryCreateModSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    modIndex: PromiseOrValue<BigNumberish>,
+    equipIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
+    type_: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
     power: PromiseOrValue<BigNumberish>,
     violence: PromiseOrValue<BigNumberish>,
     harmony: PromiseOrValue<BigNumberish>,
+    slots: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -173,12 +179,14 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      modIndex: PromiseOrValue<BigNumberish>,
+      equipIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -208,12 +216,14 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      modIndex: PromiseOrValue<BigNumberish>,
+      equipIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -232,12 +242,14 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      modIndex: PromiseOrValue<BigNumberish>,
+      equipIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

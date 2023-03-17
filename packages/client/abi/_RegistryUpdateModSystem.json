@@ -88,12 +88,12 @@
         },
         {
           "internalType": "uint256",
-          "name": "harmony",
+          "name": "violence",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "violence",
+          "name": "harmony",
           "type": "uint256"
         }
       ],

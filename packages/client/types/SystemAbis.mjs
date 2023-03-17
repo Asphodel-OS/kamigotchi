@@ -5,8 +5,10 @@ import _InitSystem from "../abi/_InitSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _MerchantCreateSystem from "../abi/_MerchantCreateSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
+import _RegistryCreateEquipSystem from "../abi/_RegistryCreateEquipSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
-import _RegistrySetModSystem from "../abi/_RegistrySetModSystem.json";
+import _RegistryUpdateEquipSystem from "../abi/_RegistryUpdateEquipSystem.json";
+import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountNameSystem from "../abi/AccountNameSystem.json";
@@ -34,8 +36,10 @@ export const SystemAbis = {
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Merchant.Create": _MerchantCreateSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
+  "system._Registry.Equip.Create": _RegistryCreateEquipSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
-  "system._Registry.Mod.Set": _RegistrySetModSystem.abi,
+  "system._Registry.Equip.Update": _RegistryUpdateEquipSystem.abi,
+  "system._Registry.Mod.Set": _RegistryUpdateModSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Name": AccountNameSystem.abi,
