@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
-uint constant ID = uint(keccak256("system._Registry.Mod.Create"));
+uint constant ID = uint(keccak256("system._Registry.Mod.Set"));
 
 // _RegistryCreateModSystem creates an item registry entry for a Mod item
 contract _RegistryCreateModSystem is System {
@@ -18,9 +18,9 @@ contract _RegistryCreateModSystem is System {
       .decode(arguments, (uint, string, uint, uint, uint, uint));
     uint registryID = LibRegistryItem.getByModIndex(components, modIndex);
 
-    require(registryID == 0, "Item Registry: Mod index already exists");
+    require(registryID != 0, "Item Registry: Mod index does not exist");
 
-    LibRegistryItem.createMod(world, components, modIndex, name, health, power, harmony, violence);
+    LibRegistryItem.setMod(components, modIndex, name, health, power, harmony, violence);
     return "";
   }
 
