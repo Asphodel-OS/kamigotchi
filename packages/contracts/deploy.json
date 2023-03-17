@@ -105,10 +105,45 @@
       ]
     },
     {
+      "name": "_RegistryCreateModSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistrySetModSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_RoomCreateSystem",
       "writeAccess": [
         "IsRoomComponent",
         "ExitsComponent",
+        "LocationComponent",
+        "NameComponent"
+      ]
+    },
+    {
+      "name": "AccountMoveSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "LocationComponent"
+      ]
+    },
+    {
+      "name": "AccountNameSystem",
+      "writeAccess": [
+        "NameComponent"
+      ]
+    },
+    {
+      "name": "AccountSetSystem",
+      "writeAccess": [
+        "IsAccountComponent",
+        "AddressOperatorComponent",
+        "IdOwnerComponent",
         "LocationComponent",
         "NameComponent"
       ]
@@ -140,19 +175,22 @@
       ]
     },
     {
-      "name": "AccountMoveSystem",
+      "name": "PetFoodSystem",
       "writeAccess": [
-        "BlockLastComponent",
-        "LocationComponent"
+        "HealthCurrentComponent",
+        "TimeLastActionComponent",
+        "BalanceComponent"
       ]
     },
     {
-      "name": "AccountSetSystem",
+      "name": "PetMetadataSystem",
       "writeAccess": [
-        "IsAccountComponent",
-        "AddressOperatorComponent",
-        "IdOwnerComponent",
-        "LocationComponent",
+        "*"
+      ]
+    },
+    {
+      "name": "PetNameSystem",
+      "writeAccess": [
         "NameComponent"
       ]
     },
@@ -193,20 +231,6 @@
         "CoinComponent",
         "StateComponent",
         "TimeLastActionComponent"
-      ]
-    },
-    {
-      "name": "PetMetadataSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "PetFoodSystem",
-      "writeAccess": [
-        "HealthCurrentComponent",
-        "TimeLastActionComponent",
-        "BalanceComponent"
       ]
     },
     {
@@ -257,18 +281,6 @@
         "IdRequesterComponent",
         "StateComponent"
       ]
-    },
-    {
-      "name": "PetNameSystem",
-      "writeAccess": [
-        "NameComponent"
-      ]
-    },
-    {
-      "name": "AccountNameSystem",
-      "writeAccess": [
-        "NameComponent"
-      ]
     }
   ],
   "libraries": [
@@ -283,7 +295,6 @@
     "LibProduction",
     "LibPrototype",
     "LibRegister",
-    "LibRegistry",
     "LibRegistryItem",
     "LibRegistryModifier",
     "LibRoom",

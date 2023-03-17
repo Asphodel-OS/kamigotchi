@@ -105,7 +105,7 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
-    return systems["system._Modification.Create"].executeTyped(
+    return systems["system._Registry.Mod.Create"].executeTyped(
       modIndex,
       name,
       health,
@@ -123,7 +123,7 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
-    return systems["system._Modification.Set"].executeTyped(
+    return systems["system._Registry.Mod.Set"].executeTyped(
       modIndex,
       name,
       health,

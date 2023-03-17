@@ -82,7 +82,7 @@ library LibRegistryItem {
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
     setItemIndex(components, id, itemIndex);
     setModIndex(components, id, modIndex);
-    uint foundID = setMod(components, modIndex, name, health, power, harmony, violence);
+    uint256 foundID = setMod(components, modIndex, name, health, power, harmony, violence);
     require(foundID == id, "LibRegistryItem.createMod(): entity ID mismatch");
     return id;
   }
@@ -134,7 +134,7 @@ library LibRegistryItem {
     setItemIndex(components, id, itemIndex);
     setFoodIndex(components, id, foodIndex);
 
-    uint foundID = setFood(components, foodIndex, name, health);
+    uint256 foundID = setFood(components, foodIndex, name, health);
     require(foundID == id, "LibRegistryItem.createFood(): entity ID mismatch");
     return id;
   }
