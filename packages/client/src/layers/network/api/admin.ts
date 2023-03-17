@@ -35,12 +35,6 @@ export function createAdminAPI(systems: any) {
 
     createPlayerAPI(systems).ERC721.mint('0x7681A73aed06bfb648a5818B978fb018019F6900');
 
-    // TODO: can only set listings after know merchant IDs, how to address this?
-  }
-
-  // @dev adds a modifier registry
-  function addModReg(index: number, value: number, type: string, name: string) {
-    return systems["system._AddModifier"].executeTyped(index, value, type, name);
   }
 
   // @dev creates a merchant with the name at the specified location
@@ -48,7 +42,7 @@ export function createAdminAPI(systems: any) {
   // @param name      name of the merchant
   // @return uint     (promise) entity ID of the merchant
   function createMerchant(name: string, location: number) {
-    return systems["system._MerchantCreate"].executeTyped(name, location);
+    return systems["system._Merchant.Create"].executeTyped(name, location);
   }
 
   // @dev creates an emission node at the specified location
@@ -56,12 +50,12 @@ export function createAdminAPI(systems: any) {
   // @param location  index of the room location
   // @return uint     entity ID of the deposit
   function createNode(name: string, location: number) {
-    return systems["system._NodeCreate"].executeTyped(name, location);
+    return systems["system._Node.Create"].executeTyped(name, location);
   }
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
   function createRoom(name: string, location: number, exits: number[]) {
-    return systems["system._RoomCreate"].executeTyped(name, location, exits);
+    return systems["system._Room.Create"].executeTyped(name, location, exits);
   }
 
   // @dev give coins for testing. to be removed for live
@@ -82,15 +76,78 @@ export function createAdminAPI(systems: any) {
     buyPrice: number,
     sellPrice: number
   ) {
-    return systems["system._ListingSet"].executeTyped(location, itemIndex, buyPrice, sellPrice);
+    return systems["system._Listing.Set"].executeTyped(location, itemIndex, buyPrice, sellPrice);
+  }
+
+  /////////////////
+  //  REGISTRIES
+
+  // @dev adds a modifier registry
+  function registerModifier(
+    index: number,
+    value: number,
+    type: string,
+    name: string
+  ) {
+    return systems["system._Modifier.Add"].executeTyped(
+      index,
+      value,
+      type,
+      name
+    );
+  }
+
+  function registerModification(
+    modIndex: number,
+    name: string,
+    health: number,
+    power: number,
+    harmony: number,
+    violence: number
+  ) {
+    return systems["system._Modification.Create"].executeTyped(
+      modIndex,
+      name,
+      health,
+      power,
+      harmony,
+      violence
+    );
+  }
+
+  function updateRegistryModification(
+    modIndex: number,
+    name: string,
+    health: number,
+    power: number,
+    harmony: number,
+    violence: number
+  ) {
+    return systems["system._Modification.Set"].executeTyped(
+      modIndex,
+      name,
+      health,
+      power,
+      harmony,
+      violence
+    );
   }
 
   return {
     init,
-    createMerchant,
-    createNode,
-    createRoom,
-    setListing,
     giveCoins,
+    registry: {
+      modifier: {
+        create: registerModifier,
+      },
+      modification: {
+        create: registerModification,
+        update: updateRegistryModification,
+      }
+    },
+    merchant: { create: createMerchant },
+    node: { create: createNode },
+    room: { create: createRoom },
+    listing: { set: setListing },
   };
 }

@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
 
-uint256 constant ID = uint256(keccak256("system._ListingSet"));
+uint256 constant ID = uint256(keccak256("system._Listing.Set"));
 
 // _ListingSetSystem creates or updates a listing on a merchant by its location
 // this assumes a merchant exists at the specified location

@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibNode } from "libraries/LibNode.sol";
 
-uint256 constant ID = uint256(keccak256("system._NodeCreate"));
+uint256 constant ID = uint256(keccak256("system._Node.Create"));
 
 // _NodeCreateSystem creates a mining node as specified and returns the entity id
 contract _NodeCreateSystem is System {
@@ -18,11 +18,10 @@ contract _NodeCreateSystem is System {
     return abi.encode(LibNode.create(world, components, name, location));
   }
 
-  function executeTyped(string memory name, uint256 location)
-    public
-    onlyOwner
-    returns (bytes memory)
-  {
+  function executeTyped(
+    string memory name,
+    uint256 location
+  ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(name, location));
   }
 }

@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibMerchant } from "libraries/LibMerchant.sol";
 
-uint256 constant ID = uint256(keccak256("system._MerchantCreate"));
+uint256 constant ID = uint256(keccak256("system._Merchant.Create"));
 
 // _MerchantCreateSystem creates or updates a merchant listing from the provided parameters
 contract _MerchantCreateSystem is System {
@@ -18,11 +18,10 @@ contract _MerchantCreateSystem is System {
     return abi.encode(LibMerchant.create(world, components, location, name));
   }
 
-  function executeTyped(string memory name, uint256 location)
-    public
-    onlyOwner
-    returns (bytes memory)
-  {
+  function executeTyped(
+    string memory name,
+    uint256 location
+  ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(name, location));
   }
 }

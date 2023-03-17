@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibRoom } from "libraries/LibRoom.sol";
 
-uint256 constant ID = uint256(keccak256("system._RoomCreate"));
+uint256 constant ID = uint256(keccak256("system._Room.Create"));
 
 // _RoomCreateSystem creates a mining node as specified and returns the entity id
 contract _RoomCreateSystem is System {

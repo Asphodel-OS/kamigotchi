@@ -7,27 +7,22 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibModifier } from "libraries/LibModifier.sol";
 
-uint256 constant ID = uint256(keccak256("system._AddModifier"));
+uint256 constant ID = uint256(keccak256("system._Modifier.Add"));
 
 contract _AddModifierSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory genus, uint256 index, uint256 modValue, string memory modType, string memory petType, string memory name) = abi.decode(
-      arguments,
-      (string, uint256, uint256, string, string, string)
-    );
+    (
+      string memory genus,
+      uint256 index,
+      uint256 modValue,
+      string memory modType,
+      string memory petType,
+      string memory name
+    ) = abi.decode(arguments, (string, uint256, uint256, string, string, string));
 
-    LibModifier.createIndex(
-      components,
-      world,
-      genus,
-      index,
-      modValue,
-      modType,
-      petType,
-      name
-    );
+    LibModifier.createIndex(components, world, genus, index, modValue, modType, petType, name);
 
     return "";
   }
