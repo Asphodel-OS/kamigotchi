@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 import "std-contracts/components/BoolComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Is.Mod"));
+uint256 constant ID = uint256(keccak256("component.Is.Modifier"));
 
 // identifies an entity as a Modifier
-contract IsModComponent is BoolComponent {
+contract IsModifierComponent is BoolComponent {
   constructor(address world) BoolComponent(world, ID) {}
 }

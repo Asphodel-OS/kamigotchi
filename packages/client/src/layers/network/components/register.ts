@@ -36,7 +36,7 @@ export function createComponents(world: any) {
     IsInventory: defineBoolEZ(world, "IsInventory", "component.Is.Inventory"),
     IsListing: defineBoolEZ(world, "IsListing", "component.Is.Listing"),
     IsMerchant: defineBoolEZ(world, "IsMerchant", "component.Is.Merchant"),
-    IsMod: defineBoolEZ(world, "IsMod", "component.Is.Mod"),
+    IsModifier: defineBoolEZ(world, "IsModifier", "component.Is.Modifier"),
     IsNode: defineBoolEZ(world, "IsNode", "component.Is.Node"),
     IsNonFungible: defineBoolEZ(world, "IsNonFungible", "component.Is.NonFungible"),
     IsPet: defineBoolEZ(world, "IsPet", "component.Is.Pet"),
@@ -64,8 +64,8 @@ export function createComponents(world: any) {
     EquipIndex: defineNumberEZ(world, "EquipIndex", "component.Index.Equip"),
     FoodIndex: defineNumberEZ(world, "FoodIndex", "component.Index.Food"),
     ItemIndex: defineNumberEZ(world, "ItemIndex", "component.Index.Item"),
-    ModIndex: defineNumberEZ(world, "ModIndex", "component.Index.Mod"),
-    PetIndex: defineStringEZ(world, "PetIndex", "component.Index.Pet"),
+    ModifierIndex: defineNumberEZ(world, "ModifierIndex", "component.Index.Modifier"),
+    PetIndex: defineStringEZ(world, "PetIndex", "component.Index.Pet"), // this should be updated to be a number component
 
     // Values
     Affinity: defineStringEZ(world, "Affinity", "component.Affinity"),

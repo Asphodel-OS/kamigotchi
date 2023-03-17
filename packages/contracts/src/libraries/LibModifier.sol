@@ -1,27 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { LibModReg } from "libraries/LibModReg.sol";
-import { LibPrototype } from "libraries/LibPrototype.sol";
-
 import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
+import { GenusComponent, ID as GenusComponentID } from "components/GenusComponent.sol";
+import { IdPetComponent, ID as IdPetComponentID } from "components/IdPetComponent.sol";
+import { IndexModifierComponent, ID as IndexModifierComponentID } from "components/IndexModifierComponent.sol";
+import { IsModifierComponent, ID as IsModifierComponentID } from "components/IsModifierComponent.sol";
+import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StatusComponent, ID as StatusComponentID } from "components/StatusComponent.sol";
 import { TypeComponent, ID as TypeComponentID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueComponentID } from "components/ValueComponent.sol";
-import { IsModComponent, ID as IsModComponentID } from "components/IsModComponent.sol";
-import { IndexModComponent, ID as IndexModComponentID } from "components/IndexModComponent.sol";
-import { GenusComponent, ID as GenusComponentID } from "components/GenusComponent.sol";
-import { IdPetComponent, ID as IdPetComponentID } from "components/IdPetComponent.sol";
-import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { ID as PrototypeComponentID } from "components/PrototypeComponent.sol";
-
-import { Strings } from "utils/Strings.sol";
+import { LibRegistryModifier } from "libraries/LibRegistryModifier.sol";
+import { LibPrototype } from "libraries/LibPrototype.sol";
 
 enum ModStatus {
   NULL,
@@ -52,7 +50,7 @@ library LibModifier {
     uint256 index
   ) internal returns (uint256) {
     uint256 entityID = world.getUniqueEntityId();
-    LibModReg.copyPrototype(components, genus, index, entityID);
+    LibRegistryModifier.copyPrototype(components, genus, index, entityID);
     IdPetComponent(getAddressById(components, IdPetComponentID)).set(entityID, petID);
     return entityID;
   }
@@ -101,15 +99,15 @@ library LibModifier {
       uint256 val = getValue(components, arr[i]);
       string memory modType = getModType(components, arr[i]);
 
-      if (Strings.equal(modType, "ADD")) {
+      if (LibString.eq(modType, "ADD")) {
         add = add + val;
-      } else if (Strings.equal(modType, "MUL")) {
+      } else if (LibString.eq(modType, "MUL")) {
         // value is a %
         mul = (mul * (100 + val)) / 100;
-      } else if (Strings.equal(modType, "UMUL")) {
+      } else if (LibString.eq(modType, "UMUL")) {
         // value is a %
         umul = (umul * (100 + val)) / 100;
-      } else if (Strings.equal(modType, "STORAGE")) {
+      } else if (LibString.eq(modType, "STORAGE")) {
         store = store + val;
       } else {
         require(false, "unspecified mod type");
@@ -146,7 +144,7 @@ library LibModifier {
     componentIDs[3] = AffinityComponentID; // would it be justified for a separate function here?
     componentIDs[4] = NameCompID;
     componentIDs[5] = GenusComponentID;
-    componentIDs[6] = IsModComponentID;
+    componentIDs[6] = IsModifierComponentID;
     componentIDs[7] = PrototypeComponentID;
 
     bytes[] memory values = new bytes[](8);
@@ -159,7 +157,7 @@ library LibModifier {
     values[6] = abi.encode(true);
     values[7] = new bytes(0);
 
-    LibModReg.addPrototype(components, genus, index, entityID, componentIDs, values);
+    LibRegistryModifier.addPrototype(components, genus, index, entityID, componentIDs, values);
 
     return entityID;
   }
@@ -178,7 +176,8 @@ library LibModifier {
   }
 
   function getIndex(IUint256Component components, uint256 id) internal view returns (uint256) {
-    return IndexModComponent(getAddressById(components, IndexModComponentID)).getValue(id);
+    return
+      IndexModifierComponent(getAddressById(components, IndexModifierComponentID)).getValue(id);
   }
 
   function getName(IUint256Component components, uint256 id) internal view returns (string memory) {
@@ -229,14 +228,18 @@ library LibModifier {
   ) internal view returns (uint256[] memory) {
     uint256 numFilters;
     if (petID != 0) numFilters++;
-    if (!Strings.equal(genus, "")) numFilters++;
+    if (!LibString.eq(genus, "")) numFilters++;
     if (index != 0) numFilters++;
     if (modStatus != ModStatus.NULL) numFilters++;
-    if (!Strings.equal(modType, "")) numFilters++;
-    if (!Strings.equal(petType, "")) numFilters++;
+    if (!LibString.eq(modType, "")) numFilters++;
+    if (!LibString.eq(petType, "")) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsModComponentID), "");
+    fragments[0] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsModifierComponentID),
+      ""
+    );
 
     uint256 filterCount;
     if (petID != 0) {
@@ -246,7 +249,7 @@ library LibModifier {
         abi.encode(petID)
       );
     }
-    if (!Strings.equal(genus, "")) {
+    if (!LibString.eq(genus, "")) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, GenusComponentID),
@@ -256,7 +259,7 @@ library LibModifier {
     if (index != 0) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IndexModComponentID),
+        getComponentById(components, IndexModifierComponentID),
         abi.encode(index)
       );
     }
@@ -267,14 +270,14 @@ library LibModifier {
         abi.encode(statusToUint256(modStatus))
       );
     }
-    if (!Strings.equal(modType, "")) {
+    if (!LibString.eq(modType, "")) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, TypeComponentID),
         abi.encode(modType)
       );
     }
-    if (!Strings.equal(petType, "")) {
+    if (!LibString.eq(petType, "")) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, TypeComponentID),
