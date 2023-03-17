@@ -72,26 +72,54 @@ library LibRegistryItem {
     uint256 modIndex,
     string memory name,
     uint256 health,
-    uint256 harmony,
     uint256 power,
+    uint256 harmony,
     uint256 violence
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 itemIndex = getItemCount(components) + 1;
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
-    IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    setItemIndex(components, id, itemIndex);
+    setModIndex(components, id, modIndex);
+    uint foundID = setMod(components, modIndex, name, health, power, harmony, violence);
+    require(foundID == id, "LibRegistryItem.createMod(): entity ID mismatch");
+    return id;
+  }
+
+  // set the field values of a mod item registry entry
+  // 0 values mean the component should not be set
+  function setMod(
+    IUintComp components,
+    uint256 modIndex,
+    string memory name,
+    uint256 health,
+    uint256 power,
+    uint256 harmony,
+    uint256 violence
+  ) internal returns (uint256) {
+    uint256 id = getByModIndex(components, modIndex);
+    require(id != 0, "LibRegistryItem.setMod(): modIndex not found");
+    require(!LibString.eq(name, ""), "LibRegistryItem.setMod(): name cannot be empty");
+
+    setName(components, id, name);
+
     if (health > 0) LibStat.setHealth(components, id, health);
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHealth(components, id);
+
     if (power > 0) LibStat.setPower(components, id, power);
+    else LibStat.removePower(components, id);
+
+    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHarmony(components, id);
+
     if (violence > 0) LibStat.setViolence(components, id, violence);
+    else LibStat.removeViolence(components, id);
+
     return id;
   }
 
   // Create a Registry entry for a Food item. (e.g. cpu, gem, etc.)
-  // Q: should we run zero-value checks for name and health? (probably on system level)
   function createFood(
     IWorld world,
     IUintComp components,
@@ -103,14 +131,13 @@ library LibRegistryItem {
     uint256 itemIndex = getItemCount(components) + 1;
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
-    IndexFoodComponent(getAddressById(components, IndexFoodCompID)).set(id, foodIndex);
-    setFood(components, foodIndex, name, health);
+    setItemIndex(components, id, itemIndex);
+    setFoodIndex(components, id, foodIndex);
+
+    uint foundID = setFood(components, foodIndex, name, health);
+    require(foundID == id, "LibRegistryItem.createFood(): entity ID mismatch");
     return id;
   }
-
-  /////////////////
-  // SETTERS
 
   // set the field values of a food item registry entry
   function setFood(
@@ -118,12 +145,15 @@ library LibRegistryItem {
     uint256 foodIndex,
     string memory name,
     uint256 health
-  ) internal {
+  ) internal returns (uint256) {
     uint256 id = getByFoodIndex(components, foodIndex);
-    IndexFoodComponent(getAddressById(components, IndexFoodCompID)).set(id, foodIndex);
-    if (!LibString.eq(name, ""))
-      NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    if (health > 0) LibStat.setHealth(components, id, health);
+    require(id != 0, "LibRegistryItem.setFood(): foodIndex not found");
+    require(!LibString.eq(name, ""), "LibRegistryItem.setFood(): name cannot be empty");
+    require(health > 0, "LibRegistryItem.setFood(): health must be greater than 0");
+
+    setName(components, id, name);
+    LibStat.setHealth(components, id, health);
+    return id;
   }
 
   /////////////////
@@ -167,6 +197,32 @@ library LibRegistryItem {
 
   function hasType(IUintComp components, uint256 id) internal view returns (bool) {
     return TypeComponent(getAddressById(components, TypeCompID)).has(id);
+  }
+
+  /////////////////
+  // SETTERS
+  function setEquipIndex(IUintComp components, uint256 id, uint256 equipIndex) internal {
+    IndexEquipComponent(getAddressById(components, IndexEquipCompID)).set(id, equipIndex);
+  }
+
+  function setFoodIndex(IUintComp components, uint256 id, uint256 foodIndex) internal {
+    IndexFoodComponent(getAddressById(components, IndexFoodCompID)).set(id, foodIndex);
+  }
+
+  function setItemIndex(IUintComp components, uint256 id, uint256 itemIndex) internal {
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
+  }
+
+  function setModIndex(IUintComp components, uint256 id, uint256 modIndex) internal {
+    IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
+  }
+
+  function setName(IUintComp components, uint256 id, string memory name) internal {
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  function setType(IUintComp components, uint256 id, string memory type_) internal {
+    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
 
   /////////////////
