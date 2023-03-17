@@ -29,7 +29,7 @@ import { LibStat } from "libraries/LibStat.sol";
 // Category Indices should be explicitly defined/referenced for human-readablility. These
 // tiers of taxonomization are elaborated upon for the sake of a shared language, and we
 // should revisit their naming if use cases demand further tiering. Very likely we will
-// have for the equipment use case. There is no requirement to use these taxonomic tiers
+// for the equipment use case. There is no requirement to use these taxonomic tiers
 // exhaustively, but we should be consistent on depth within a given context.
 library LibRegistryItem {
   /////////////////
@@ -44,24 +44,59 @@ library LibRegistryItem {
     string memory name,
     string memory type_,
     uint256 health,
-    uint256 harmony,
     uint256 power,
     uint256 violence,
+    uint256 harmony,
     uint256 slots
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 itemIndex = getItemCount(components) + 1;
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
-    IndexEquipComponent(getAddressById(components, IndexEquipCompID)).set(id, equipIndex);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_); // body type
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    setItemIndex(components, id, itemIndex);
+    setEquipIndex(components, id, equipIndex);
+
+    uint256 gotID = setEquip(components, id, name, type_, health, power, violence, harmony, slots);
+    require(gotID == id, "LibRegistryItem.createEquip(): id mismatch");
+    return id;
+  }
+
+  // Set the field values of an existing equipment item registry entry
+  // NOTE: 0 values mean the component should be unset
+  function setEquip(
+    IUintComp components,
+    uint256 equipIndex,
+    string memory name,
+    string memory type_,
+    uint256 health,
+    uint256 power,
+    uint256 violence,
+    uint256 harmony,
+    uint256 slots
+  ) internal returns (uint256) {
+    uint256 id = getByEquipIndex(components, equipIndex);
+    require(id != 0, "LibRegistryItem.setEquip(): equipIndex not found");
+    require(!LibString.eq(name, ""), "LibRegistryItem.setEquip(): name cannot be empty");
+    require(!LibString.eq(type_, ""), "LibRegistryItem.setEquip(): type cannot be empty");
+
+    setName(components, id, name);
+    setType(components, id, type_);
+
     if (health > 0) LibStat.setHealth(components, id, health);
+    else LibStat.removeHealth(components, id);
+
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHarmony(components, id);
+
     if (power > 0) LibStat.setPower(components, id, power);
+    else LibStat.removePower(components, id);
+
     if (violence > 0) LibStat.setViolence(components, id, violence);
+    else LibStat.removeViolence(components, id);
+
     if (slots > 0) LibStat.setSlots(components, id, slots);
+    else LibStat.removeSlots(components, id);
+
     return id;
   }
 
@@ -73,8 +108,8 @@ library LibRegistryItem {
     string memory name,
     uint256 health,
     uint256 power,
-    uint256 harmony,
-    uint256 violence
+    uint256 violence,
+    uint256 harmony
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 itemIndex = getItemCount(components) + 1;
@@ -82,21 +117,22 @@ library LibRegistryItem {
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
     setItemIndex(components, id, itemIndex);
     setModIndex(components, id, modIndex);
-    uint256 foundID = setMod(components, modIndex, name, health, power, harmony, violence);
-    require(foundID == id, "LibRegistryItem.createMod(): entity ID mismatch");
+
+    uint256 gotID = setMod(components, modIndex, name, health, power, violence, harmony);
+    require(gotID == id, "LibRegistryItem.createMod(): entity ID mismatch");
     return id;
   }
 
-  // set the field values of a mod item registry entry
-  // 0 values mean the component should not be set
+  // Set the field values of an existing mod item registry entry
+  // NOTE: 0 values mean the component should be unset
   function setMod(
     IUintComp components,
     uint256 modIndex,
     string memory name,
     uint256 health,
     uint256 power,
-    uint256 harmony,
-    uint256 violence
+    uint256 violence,
+    uint256 harmony
   ) internal returns (uint256) {
     uint256 id = getByModIndex(components, modIndex);
     require(id != 0, "LibRegistryItem.setMod(): modIndex not found");
@@ -134,12 +170,12 @@ library LibRegistryItem {
     setItemIndex(components, id, itemIndex);
     setFoodIndex(components, id, foodIndex);
 
-    uint256 foundID = setFood(components, foodIndex, name, health);
-    require(foundID == id, "LibRegistryItem.createFood(): entity ID mismatch");
+    uint256 gotID = setFood(components, foodIndex, name, health);
+    require(gotID == id, "LibRegistryItem.createFood(): entity ID mismatch");
     return id;
   }
 
-  // set the field values of a food item registry entry
+  // Set the field values of a food item registry entry
   function setFood(
     IUintComp components,
     uint256 foodIndex,
@@ -201,6 +237,7 @@ library LibRegistryItem {
 
   /////////////////
   // SETTERS
+
   function setEquipIndex(IUintComp components, uint256 id, uint256 equipIndex) internal {
     IndexEquipComponent(getAddressById(components, IndexEquipCompID)).set(id, equipIndex);
   }
