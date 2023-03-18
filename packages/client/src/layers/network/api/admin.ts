@@ -29,7 +29,7 @@ export function createAdminAPI(systems: any) {
 
     // init general
     systems["system._Init"].executeTyped(); // creates food and modifier registry  
-    systems["system.ERC721.metadata"]._setRevealed("123", "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/images%2F");
+    systems["system.ERC721.metadata"]._setRevealed("123", "http://159.223.244.145:8080/image/");
     // systems["system.ERC721.metadata"]._setMaxElements(['9', '1', '7', '8', '1']); 
     systems["system.ERC721.metadata"]._setMaxElements(['2', '1', '2', '2', '1']);
 

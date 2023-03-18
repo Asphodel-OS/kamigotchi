@@ -58,7 +58,8 @@ contract PetMetadataSystem is System {
     );
     mediaComp.set(
       entityID,
-      LibString.concat(_baseURI, LibString.concat(LibString.toString(packed), ".gif"))
+      // LibString.concat(_baseURI, LibString.concat(LibString.toString(packed), ".gif"))
+      LibString.concat(_baseURI, LibString.toString(packed))
     );
 
     uint256[] memory permTraits = LibMetadata._packedToArray(packed, _numElements);
