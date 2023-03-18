@@ -23,6 +23,7 @@ import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
+import SetLeaderboardEpochSystem from "../abi/SetLeaderboardEpochSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
 import TradeCancelSystem from "../abi/TradeCancelSystem.json";
@@ -54,6 +55,7 @@ export const SystemAbis = {
   "system.ProductionCollect": ProductionCollectSystem.abi,
   "system.ProductionStart": ProductionStartSystem.abi,
   "system.ProductionStop": ProductionStopSystem.abi,
+  "system.Leaderboard.Epoch": SetLeaderboardEpochSystem.abi,
   "system.TradeAccept": TradeAcceptSystem.abi,
   "system.TradeAddTo": TradeAddToSystem.abi,
   "system.TradeCancel": TradeCancelSystem.abi,

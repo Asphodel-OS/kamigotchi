@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibScore } from "libraries/LibScore.sol";
 import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.ListingBuy"));
@@ -28,6 +29,9 @@ contract ListingBuySystem is System {
       LibInventory.create(world, components, accountID, itemIndex);
     }
     LibListing.buyFrom(components, listingID, accountID, amt);
+
+    // NOTE: the type can be updated to include the item bought in the future
+    LibScore.update(world, components, accountID, "BUY", 1);
 
     Utils.updateLastBlock(components, accountID);
     return "";

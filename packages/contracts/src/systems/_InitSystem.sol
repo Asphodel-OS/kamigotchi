@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibModifier } from "libraries/LibModifier.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibScore, LEADERBOARD_EPOCH_ID } from "libraries/LibScore.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { Utils } from "utils/Utils.sol";
 
@@ -22,6 +23,7 @@ contract _InitSystem is System {
     arguments = "";
 
     initFood();
+    initLeaderboard();
     initMods();
 
     // for erc721 pet
@@ -38,6 +40,11 @@ contract _InitSystem is System {
     LibRegistryItem.createFood(world, components, 1, "food 1", 25);
     LibRegistryItem.createFood(world, components, 2, "food 2", 100);
     LibRegistryItem.createFood(world, components, 3, "food 3", 200);
+  }
+
+  // sets leaderboard epoch to one
+  function initLeaderboard() internal {
+    LibScore.setLeaderboardEpoch(components, 1);
   }
 
   function initMods() internal {

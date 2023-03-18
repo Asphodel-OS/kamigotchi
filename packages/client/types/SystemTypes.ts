@@ -23,6 +23,7 @@ import { PetSetAccountSystem } from "./ethers-contracts/PetSetAccountSystem";
 import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSystem";
 import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem";
 import { ProductionStopSystem } from "./ethers-contracts/ProductionStopSystem";
+import { SetLeaderboardEpochSystem } from "./ethers-contracts/SetLeaderboardEpochSystem";
 import { TradeAcceptSystem } from "./ethers-contracts/TradeAcceptSystem";
 import { TradeAddToSystem } from "./ethers-contracts/TradeAddToSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
@@ -54,6 +55,7 @@ export type SystemTypes = {
   "system.ProductionCollect": ProductionCollectSystem;
   "system.ProductionStart": ProductionStartSystem;
   "system.ProductionStop": ProductionStopSystem;
+  "system.Leaderboard.Epoch": SetLeaderboardEpochSystem;
   "system.TradeAccept": TradeAcceptSystem;
   "system.TradeAddTo": TradeAddToSystem;
   "system.TradeCancel": TradeCancelSystem;

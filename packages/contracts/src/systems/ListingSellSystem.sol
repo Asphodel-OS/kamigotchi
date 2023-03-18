@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibListing } from "libraries/LibListing.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibScore } from "libraries/LibScore.sol";
 import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.ListingSell"));
@@ -22,6 +23,10 @@ contract ListingSellSystem is System {
     require(Utils.sameRoom(components, merchantID, accountID), "Merchant: must be in room");
 
     LibListing.sellTo(components, listingID, accountID, amt);
+
+    // NOTE: the type can be updated to include the item sold in the future
+    LibScore.update(world, components, accountID, "SELL", 1);
+
     Utils.updateLastBlock(components, accountID);
     return "";
   }

@@ -9,6 +9,7 @@ import { LibCoin } from "libraries/LibCoin.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
+import { LibScore } from "libraries/LibScore.sol";
 import { Strings } from "utils/Strings.sol";
 import { Utils } from "utils/Utils.sol";
 
@@ -33,6 +34,9 @@ contract ProductionCollectSystem is System {
     LibProduction.reset(components, id);
 
     Utils.updateLastBlock(components, accountID);
+
+    // NOTE: likely to fine tune the score type here – could use affinities and such
+    LibScore.update(world, components, accountID, "PRODUCE", 1);
     return abi.encode(amt);
   }
 

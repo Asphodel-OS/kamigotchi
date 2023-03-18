@@ -10,6 +10,7 @@
     "HealthCurrentComponent",
     "CoinComponent",
     "ExitsComponent",
+    "EpochComponent",
     "GenusComponent",
     "IdAccountComponent",
     "IdDelegateeComponent",
@@ -42,6 +43,7 @@
     "IsRegistryEntryComponent",
     "IsRequestComponent",
     "IsRoomComponent",
+    "IsScoreComponent",
     "IsTradeComponent",
     "LocationComponent",
     "MediaURIComponent",
@@ -246,6 +248,12 @@
       ]
     },
     {
+      "name": "SetLeaderboardEpochSystem",
+      "writeAccess": [
+        "EpochComponent"
+      ]
+    },
+    {
       "name": "TradeAcceptSystem",
       "writeAccess": [
         "IsRegisterComponent",
@@ -312,6 +320,7 @@
     "LibRegistryModifier",
     "LibRoom",
     "LibStat",
+    "LibScore",
     "LibTrade"
   ]
 }

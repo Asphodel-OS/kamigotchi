@@ -36,22 +36,13 @@ library LibInventory {
   }
 
   // Transfer the specified inventory amt from=>to entity by incrementing/decrementing balances
-  function transfer(
-    IUintComp components,
-    uint256 fromID,
-    uint256 toID,
-    uint256 amt
-  ) internal {
+  function transfer(IUintComp components, uint256 fromID, uint256 toID, uint256 amt) internal {
     dec(components, fromID, amt);
     inc(components, toID, amt);
   }
 
   // Increase an inventory balance by the specified amount
-  function inc(
-    IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal returns (uint256) {
+  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
     uint256 bal = getBalance(components, id);
     bal += amt;
     _set(components, id, bal);
@@ -59,11 +50,7 @@ library LibInventory {
   }
 
   // Decrease an inventory balance by the specified amount
-  function dec(
-    IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal returns (uint256) {
+  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
     uint256 bal = getBalance(components, id);
     require(bal >= amt, "Inventory: insufficient balance");
     bal -= amt;
@@ -98,11 +85,7 @@ library LibInventory {
   // SETTERS
 
   // Set the balance of an existing inventory entity
-  function _set(
-    IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal {
+  function _set(IUintComp components, uint256 id, uint256 amt) internal {
     BalanceComponent(getAddressById(components, BalanceCompID)).set(id, amt);
   }
 
@@ -138,11 +121,10 @@ library LibInventory {
     if (results.length > 0) result = results[0];
   }
 
-  function getAllForHolder(IUintComp components, uint256 holderID)
-    internal
-    view
-    returns (uint256[] memory)
-  {
+  function getAllForHolder(
+    IUintComp components,
+    uint256 holderID
+  ) internal view returns (uint256[] memory) {
     return _getAllX(components, holderID, 0);
   }
 
