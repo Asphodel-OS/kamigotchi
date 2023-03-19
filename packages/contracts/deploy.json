@@ -28,6 +28,7 @@
     "IndexModifierComponent",
     "IndexPetComponent",
     "IsAccountComponent",
+    "IsEquippedComponent",
     "IsFoodComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
@@ -192,9 +193,6 @@
       "writeAccess": [
         "BalanceComponent",
         "HealthCurrentComponent",
-        "IdHolderComponent",
-        "IndexItemComponent",
-        "IsInventoryComponent",
         "TimeLastActionComponent"
       ]
     },
