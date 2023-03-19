@@ -7,15 +7,15 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.Equip.Update"));
+uint256 constant ID = uint256(keccak256("system._Registry.Gear.Create"));
 
-// update an item registry entry for an equipment item
-contract _RegistryUpdateEquipSystem is System {
+// create an item registry entry for a Gear item
+contract _RegistryCreateGearSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 equipIndex,
+      uint256 gearIndex,
       string memory name,
       string memory type_,
       uint256 health,
@@ -27,26 +27,27 @@ contract _RegistryUpdateEquipSystem is System {
         arguments,
         (uint256, string, string, uint256, uint256, uint256, uint256, uint256)
       );
-    uint256 registryID = LibRegistryItem.getByEquipIndex(components, equipIndex);
+    uint256 registryID = LibRegistryItem.getByGearIndex(components, gearIndex);
 
-    require(registryID != 0, "Item Registry: Equip index does not exist");
+    require(registryID == 0, "Item Registry: Equip index already exists");
 
-    LibRegistryItem.setEquip(
+    LibRegistryItem.createGear(
+      world,
       components,
-      equipIndex,
+      gearIndex,
       name,
       type_,
       health,
       power,
-      harmony,
       violence,
+      harmony,
       slots
     );
     return "";
   }
 
   function executeTyped(
-    uint256 equipIndex,
+    uint256 gearIndex,
     string memory name,
     string memory type_,
     uint256 health,
@@ -55,6 +56,6 @@ contract _RegistryUpdateEquipSystem is System {
     uint256 harmony,
     uint256 slots
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(equipIndex, name, type_, health, power, violence, harmony, slots));
+    return execute(abi.encode(gearIndex, name, type_, health, power, violence, harmony, slots));
   }
 }

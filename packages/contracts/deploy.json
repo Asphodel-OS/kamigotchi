@@ -21,9 +21,10 @@
     "IdPetComponent",
     "IdRequesteeComponent",
     "IdRequesterComponent",
-    "IndexEquipComponent",
     "IndexFoodComponent",
+    "IndexGearComponent",
     "IndexItemComponent",
+    "IndexModComponent",
     "IndexModifierComponent",
     "IndexPetComponent",
     "IsAccountComponent",
@@ -117,13 +118,13 @@
       ]
     },
     {
-      "name": "_RegistryCreateEquipSystem",
+      "name": "_RegistryCreateGearSystem",
       "writeAccess": [
         "*"
       ]
     },
     {
-      "name": "_RegistryUpdateEquipSystem",
+      "name": "_RegistryUpdateGearSystem",
       "writeAccess": [
         "*"
       ]

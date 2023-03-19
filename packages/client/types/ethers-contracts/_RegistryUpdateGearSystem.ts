@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _RegistryUpdateEquipSystemInterface extends utils.Interface {
+export interface _RegistryUpdateGearSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256,string,string,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -96,12 +96,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _RegistryUpdateEquipSystem extends BaseContract {
+export interface _RegistryUpdateGearSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _RegistryUpdateEquipSystemInterface;
+  interface: _RegistryUpdateGearSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -129,7 +129,7 @@ export interface _RegistryUpdateEquipSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      equipIndex: PromiseOrValue<BigNumberish>,
+      GearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -154,7 +154,7 @@ export interface _RegistryUpdateEquipSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    equipIndex: PromiseOrValue<BigNumberish>,
+    GearIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
@@ -179,7 +179,7 @@ export interface _RegistryUpdateEquipSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      equipIndex: PromiseOrValue<BigNumberish>,
+      GearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -216,7 +216,7 @@ export interface _RegistryUpdateEquipSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      equipIndex: PromiseOrValue<BigNumberish>,
+      GearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -242,7 +242,7 @@ export interface _RegistryUpdateEquipSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      equipIndex: PromiseOrValue<BigNumberish>,
+      GearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,

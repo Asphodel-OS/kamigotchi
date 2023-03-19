@@ -68,7 +68,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "equipIndex",
+          "name": "GearIndex",
           "type": "uint256"
         },
         {

@@ -84,7 +84,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev add an equipment item registry entry
   function registerEquipment(
-    equipIndex: number,
+    GearIndex: number,
     name: string,
     type_: string,
     health: number,
@@ -93,8 +93,8 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     slots: number
   ) {
-    return systems["system._Registry.Equip.Create"].executeTyped(
-      equipIndex,
+    return systems["system._Registry.Gear.Create"].executeTyped(
+      GearIndex,
       name,
       type_,
       health,
@@ -141,7 +141,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev update an equipment item registry entry
   function updateRegistryEquipment(
-    equipIndex: number,
+    GearIndex: number,
     name: string,
     type_: string,
     health: number,
@@ -150,8 +150,8 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     slots: number
   ) {
-    return systems["system._Registry.Equip.Update"].executeTyped(
-      equipIndex,
+    return systems["system._Registry.Gear.Update"].executeTyped(
+      GearIndex,
       name,
       type_,
       health,
@@ -185,7 +185,7 @@ export function createAdminAPI(systems: any) {
     init,
     giveCoins,
     registry: {
-      equipment: {
+      gear: {
         create: registerEquipment,
         update: updateRegistryEquipment,
       },
