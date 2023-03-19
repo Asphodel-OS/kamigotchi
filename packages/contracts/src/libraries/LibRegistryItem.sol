@@ -196,7 +196,7 @@ library LibRegistryItem {
   // CHECKERS
 
   function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
-    return isRegistry(components, id) && hasItemIndex(components, id);
+    return isRegistry(components, id) && isItem(components, id);
   }
 
   function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
@@ -211,19 +211,19 @@ library LibRegistryItem {
     return IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).has(id);
   }
 
-  function hasFoodIndex(IUintComp components, uint256 id) internal view returns (bool) {
+  function isFood(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexFoodComponent(getAddressById(components, IndexFoodCompID)).has(id);
   }
 
-  function hasGearIndex(IUintComp components, uint256 id) internal view returns (bool) {
+  function isGear(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexGearComponent(getAddressById(components, IndexGearCompID)).has(id);
   }
 
-  function hasItemIndex(IUintComp components, uint256 id) internal view returns (bool) {
+  function isItem(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id);
   }
 
-  function hasModIndex(IUintComp components, uint256 id) internal view returns (bool) {
+  function isMod(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexModComponent(getAddressById(components, IndexModCompID)).has(id);
   }
 
@@ -300,10 +300,27 @@ library LibRegistryItem {
     return LibQuery.query(fragments).length;
   }
 
-  // get the associated item registry entry of a given entity. assume the entity has an item index
-  function getByEntityId(IUintComp components, uint entityID) internal view returns (uint) {
-    uint256 itemIndex = getItemIndex(components, entityID);
-    return getByItemIndex(components, itemIndex);
+  // get the associated item registry entry of a given instance entity
+  function getByInstance(
+    IUintComp components,
+    uint instanceID
+  ) internal view returns (uint result) {
+    uint index;
+    if (isItem(components, instanceID)) {
+      index = getItemIndex(components, instanceID);
+      result = getByItemIndex(components, index);
+    } else if (isFood(components, instanceID)) {
+      index = getFoodIndex(components, instanceID);
+      result = getByFoodIndex(components, index);
+    } else if (isGear(components, instanceID)) {
+      index = getGearIndex(components, instanceID);
+      result = getByGearIndex(components, index);
+    } else if (isMod(components, instanceID)) {
+      index = getModIndex(components, instanceID);
+      result = getByModIndex(components, index);
+    } else {
+      revert("LibRegistryItem.getByInstance(): Entity does not have any associated indices");
+    }
   }
 
   // get the registry entry by item index

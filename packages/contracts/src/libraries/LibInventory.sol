@@ -51,7 +51,7 @@ library LibInventory {
     getComponentById(components, IndexItemCompID).remove(id);
 
     // remove the appropriate fields depending on whether this item is fungible
-    uint registryID = LibRegistryItem.getByEntityId(components, id);
+    uint registryID = LibRegistryItem.getByInstance(components, id);
     if (LibRegistryItem.isFungible(components, registryID)) {
       removeBalance(components, id);
     } else {
@@ -68,14 +68,12 @@ library LibInventory {
   }
 
   // Decrease a fungible inventory balance by the specified amount
+  // NOTE: this does not clear out 0 balance inventories
   function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
     uint256 bal = getBalance(components, id);
     require(bal >= amt, "Inventory: insufficient balance");
     bal -= amt;
     setBalance(components, id, bal); // implicit check for fungible
-    if (bal == 0) {
-      del(components, id);
-    }
     return bal;
   }
 
@@ -97,7 +95,7 @@ library LibInventory {
 
   // Check if the specified entity is a fungible inventory instance
   function isInstanceFungible(IUintComp components, uint256 id) internal view returns (bool) {
-    uint registryID = LibRegistryItem.getByEntityId(components, id);
+    uint registryID = LibRegistryItem.getByInstance(components, id);
     return
       IsInventoryComponent(getAddressById(components, IsInvCompID)).has(id) &&
       LibRegistryItem.isFungible(components, registryID);
@@ -105,7 +103,7 @@ library LibInventory {
 
   // Check if the specified entity is a non-fungible inventory instance
   function isInstanceNonFungible(IUintComp components, uint256 id) internal view returns (bool) {
-    uint registryID = LibRegistryItem.getByEntityId(components, id);
+    uint registryID = LibRegistryItem.getByInstance(components, id);
     return
       IsInventoryComponent(getAddressById(components, IsInvCompID)).has(id) &&
       LibRegistryItem.isNonFungible(components, registryID);
@@ -117,13 +115,13 @@ library LibInventory {
 
   // Check if the associated registry entry has a name
   function hasName(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 registryID = LibRegistryItem.getByEntityId(components, id);
+    uint256 registryID = LibRegistryItem.getByInstance(components, id);
     return LibRegistryItem.hasName(components, registryID);
   }
 
   // Check if the associated registry entry has a type
   function hasType(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 registryID = LibRegistryItem.getByEntityId(components, id);
+    uint256 registryID = LibRegistryItem.getByInstance(components, id);
     return LibRegistryItem.hasType(components, registryID);
   }
 
@@ -167,7 +165,7 @@ library LibInventory {
   // Get the name from the registry entry if it exists.
   function getName(IUintComp components, uint256 id) internal view returns (string memory v) {
     if (hasName(components, id)) {
-      uint256 registryID = LibRegistryItem.getByEntityId(components, id);
+      uint256 registryID = LibRegistryItem.getByInstance(components, id);
       v = LibRegistryItem.getName(components, registryID);
     }
   }
@@ -175,7 +173,7 @@ library LibInventory {
   // Get the type from the registry entry if it exists.
   function getType(IUintComp components, uint256 id) internal view returns (string memory v) {
     if (hasType(components, id)) {
-      uint256 registryID = LibRegistryItem.getByEntityId(components, id);
+      uint256 registryID = LibRegistryItem.getByInstance(components, id);
       v = LibRegistryItem.getType(components, registryID);
     }
   }
