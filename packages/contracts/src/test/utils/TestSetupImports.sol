@@ -7,7 +7,6 @@ import "std-contracts/test/MudTest.t.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibInventoryNF } from "libraries/LibInventoryNF.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
 import { LibModifier } from "libraries/LibModifier.sol";

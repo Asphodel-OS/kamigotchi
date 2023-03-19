@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { LibInventory } from "libraries/LibInventory.sol";
-import { LibModifier } from "libraries/LibModifier.sol";
+import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibModifier } from "libraries/LibModifier.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { Utils } from "utils/Utils.sol";
 
@@ -25,7 +26,7 @@ contract _InitSystem is System {
     initMods();
 
     // for erc721 pet
-    LibInventory._set(components, PetSysID, 0);
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(PetSysID, 0);
 
     return "";
   }

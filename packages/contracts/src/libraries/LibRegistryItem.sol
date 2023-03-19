@@ -292,18 +292,18 @@ library LibRegistryItem {
   /////////////////
   // QUERIES
 
-  // get the associated item registry entry of a given entity. assume the entity has an item index
-  function getEntry(IUintComp components, uint entityID) internal view returns (uint) {
-    uint256 itemIndex = getItemIndex(components, entityID);
-    return getByItemIndex(components, itemIndex);
-  }
-
   // get the number of item registry entries
   function getItemCount(IUintComp components) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
     return LibQuery.query(fragments).length;
+  }
+
+  // get the associated item registry entry of a given entity. assume the entity has an item index
+  function getByEntityId(IUintComp components, uint entityID) internal view returns (uint) {
+    uint256 itemIndex = getItemIndex(components, entityID);
+    return getByItemIndex(components, itemIndex);
   }
 
   // get the registry entry by item index
@@ -368,18 +368,18 @@ library LibRegistryItem {
         abi.encode(itemIndex)
       );
     }
-    if (gearIndex != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexGearCompID),
-        abi.encode(gearIndex)
-      );
-    }
     if (foodIndex != 0) {
       fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IndexFoodCompID),
         abi.encode(foodIndex)
+      );
+    }
+    if (gearIndex != 0) {
+      fragments[filterCount++] = QueryFragment(
+        QueryType.HasValue,
+        getComponentById(components, IndexGearCompID),
+        abi.encode(gearIndex)
       );
     }
     if (modIndex != 0) {

@@ -12,6 +12,7 @@ import { Utils } from "utils/Utils.sol";
 uint256 constant ID = uint256(keccak256("system.ListingBuy"));
 
 // ListingBuySystem allows a account to buy an item listed with a merchant
+// NOTE: this currently assumes all purchases are for fungible items. need to generalize
 contract ListingBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
