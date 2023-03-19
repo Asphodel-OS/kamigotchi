@@ -12,6 +12,7 @@ import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemC
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 // handles fungible inventory instances
 library LibInventory {
@@ -28,7 +29,6 @@ library LibInventory {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsInventoryComponent(getAddressById(components, IsInvCompID)).set(id);
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
     BalanceComponent(getAddressById(components, BalanceCompID)).set(id, 0);
@@ -36,22 +36,13 @@ library LibInventory {
   }
 
   // Transfer the specified inventory amt from=>to entity by incrementing/decrementing balances
-  function transfer(
-    IUintComp components,
-    uint256 fromID,
-    uint256 toID,
-    uint256 amt
-  ) internal {
+  function transfer(IUintComp components, uint256 fromID, uint256 toID, uint256 amt) internal {
     dec(components, fromID, amt);
     inc(components, toID, amt);
   }
 
   // Increase an inventory balance by the specified amount
-  function inc(
-    IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal returns (uint256) {
+  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
     uint256 bal = getBalance(components, id);
     bal += amt;
     _set(components, id, bal);
@@ -59,11 +50,7 @@ library LibInventory {
   }
 
   // Decrease an inventory balance by the specified amount
-  function dec(
-    IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal returns (uint256) {
+  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
     uint256 bal = getBalance(components, id);
     require(bal >= amt, "Inventory: insufficient balance");
     bal -= amt;
@@ -78,7 +65,6 @@ library LibInventory {
   // Delete the inventory instance
   function del(IUintComp components, uint256 id) internal {
     IsInventoryComponent(getAddressById(components, IsInvCompID)).remove(id);
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).remove(id);
     IdHolderComponent(getAddressById(components, IdHolderCompID)).remove(id);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
     BalanceComponent(getAddressById(components, BalanceCompID)).remove(id);
@@ -89,20 +75,17 @@ library LibInventory {
 
   // Check if the specified entity is a fungible inventory instance
   function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
+    uint registryID = LibRegistryItem.getEntry(components, id);
     return
       IsInventoryComponent(getAddressById(components, IsInvCompID)).has(id) &&
-      IsFungibleComponent(getAddressById(components, IsFungCompID)).has(id);
+      LibRegistryItem.isFungible(components, registryID);
   }
 
   /////////////////
   // SETTERS
 
   // Set the balance of an existing inventory entity
-  function _set(
-    IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal {
+  function _set(IUintComp components, uint256 id, uint256 amt) internal {
     BalanceComponent(getAddressById(components, BalanceCompID)).set(id, amt);
   }
 
@@ -138,11 +121,10 @@ library LibInventory {
     if (results.length > 0) result = results[0];
   }
 
-  function getAllForHolder(IUintComp components, uint256 holderID)
-    internal
-    view
-    returns (uint256[] memory)
-  {
+  function getAllForHolder(
+    IUintComp components,
+    uint256 holderID
+  ) internal view returns (uint256[] memory) {
     return _getAllX(components, holderID, 0);
   }
 
@@ -156,10 +138,9 @@ library LibInventory {
     if (holderID != 0) setFilters++;
     if (itemIndex != 0) setFilters++;
 
-    uint256 filterCount = 2; // number of mandatory filters
+    uint256 filterCount = 1; // number of mandatory filters
     QueryFragment[] memory fragments = new QueryFragment[](setFilters + filterCount);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsFungCompID), "");
 
     if (holderID != 0) {
       fragments[filterCount++] = QueryFragment(

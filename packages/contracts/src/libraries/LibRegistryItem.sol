@@ -52,7 +52,7 @@ library LibRegistryItem {
     setFoodIndex(components, id, foodIndex);
 
     uint256 gotID = setFood(components, foodIndex, name, health);
-    require(gotID == id, "LibRegistryItem.createFood(): entity ID mismatch");
+    require(gotID == id, "LibRegistryItem.createFood(): entity ID mismatch"); // prevents duplicates
     return id;
   }
 
@@ -145,14 +145,14 @@ library LibRegistryItem {
     if (health > 0) LibStat.setHealth(components, id, health);
     else LibStat.removeHealth(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
-
     if (power > 0) LibStat.setPower(components, id, power);
     else LibStat.removePower(components, id);
 
     if (violence > 0) LibStat.setViolence(components, id, violence);
     else LibStat.removeViolence(components, id);
+
+    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHarmony(components, id);
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
@@ -183,11 +183,11 @@ library LibRegistryItem {
     if (power > 0) LibStat.setPower(components, id, power);
     else LibStat.removePower(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
-
     if (violence > 0) LibStat.setViolence(components, id, violence);
     else LibStat.removeViolence(components, id);
+
+    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHarmony(components, id);
 
     return id;
   }
@@ -292,18 +292,18 @@ library LibRegistryItem {
   /////////////////
   // QUERIES
 
+  // get the associated item registry entry of a given entity. assume the entity has an item index
+  function getEntry(IUintComp components, uint entityID) internal view returns (uint) {
+    uint256 itemIndex = getItemIndex(components, entityID);
+    return getByItemIndex(components, itemIndex);
+  }
+
   // get the number of item registry entries
   function getItemCount(IUintComp components) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
     return LibQuery.query(fragments).length;
-  }
-
-  // gets the associated item registry entry of a given entity
-  function getEntry(IUintComp components, uint entityID) internal view returns (uint) {
-    uint256 itemIndex = getItemIndex(components, entityID);
-    return getByItemIndex(components, itemIndex);
   }
 
   // get the registry entry by item index
@@ -315,16 +315,7 @@ library LibRegistryItem {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by item index
-  function getByGearIndex(
-    IUintComp components,
-    uint256 gearIndex
-  ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, 0, gearIndex, 0, 0);
-    if (results.length != 0) result = results[0];
-  }
-
-  // get the registry entry by item index
+  // get the registry entry by food index
   function getByFoodIndex(
     IUintComp components,
     uint256 foodIndex
@@ -333,7 +324,16 @@ library LibRegistryItem {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by item index
+  // get the registry entry by gear index
+  function getByGearIndex(
+    IUintComp components,
+    uint256 gearIndex
+  ) internal view returns (uint256 result) {
+    uint256[] memory results = _getAllX(components, 0, gearIndex, 0, 0);
+    if (results.length != 0) result = results[0];
+  }
+
+  // get the registry entry by mod index
   function getByModIndex(
     IUintComp components,
     uint256 modIndex
