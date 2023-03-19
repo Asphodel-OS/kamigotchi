@@ -9,10 +9,10 @@ import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
-uint256 constant ID = uint256(keccak256("system.Pet.Food"));
+uint256 constant ID = uint256(keccak256("system.Pet.Feed"));
 
 // eat one snack
-contract PetFoodSystem is System {
+contract PetFeedSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

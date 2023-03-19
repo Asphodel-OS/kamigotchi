@@ -188,11 +188,14 @@
       ]
     },
     {
-      "name": "PetFoodSystem",
+      "name": "PetFeedSystem",
       "writeAccess": [
+        "BalanceComponent",
         "HealthCurrentComponent",
-        "TimeLastActionComponent",
-        "BalanceComponent"
+        "IdHolderComponent",
+        "IndexItemComponent",
+        "IsInventoryComponent",
+        "TimeLastActionComponent"
       ]
     },
     {

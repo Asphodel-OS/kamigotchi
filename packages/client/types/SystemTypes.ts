@@ -16,7 +16,7 @@ import { AccountSetSystem } from "./ethers-contracts/AccountSetSystem";
 import { ERC721PetSystem } from "./ethers-contracts/ERC721PetSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
-import { PetFoodSystem } from "./ethers-contracts/PetFoodSystem";
+import { PetFeedSystem } from "./ethers-contracts/PetFeedSystem";
 import { PetMetadataSystem } from "./ethers-contracts/PetMetadataSystem";
 import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetSetAccountSystem } from "./ethers-contracts/PetSetAccountSystem";
@@ -47,7 +47,7 @@ export type SystemTypes = {
   "system.ERC721.pet": ERC721PetSystem;
   "system.ListingBuy": ListingBuySystem;
   "system.ListingSell": ListingSellSystem;
-  "system.Pet.Food": PetFoodSystem;
+  "system.Pet.Feed": PetFeedSystem;
   "system.ERC721.metadata": PetMetadataSystem;
   "system.PetName": PetNameSystem;
   "system.PetSetAccount": PetSetAccountSystem;

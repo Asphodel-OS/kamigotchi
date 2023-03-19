@@ -54,7 +54,7 @@ export type { ListingSellSystem } from "./ListingSellSystem";
 export type { LocationComponent } from "./LocationComponent";
 export type { MediaURIComponent } from "./MediaURIComponent";
 export type { NameComponent } from "./NameComponent";
-export type { PetFoodSystem } from "./PetFoodSystem";
+export type { PetFeedSystem } from "./PetFeedSystem";
 export type { PetMetadataSystem } from "./PetMetadataSystem";
 export type { PetNameSystem } from "./PetNameSystem";
 export type { PetSetAccountSystem } from "./PetSetAccountSystem";
@@ -148,7 +148,7 @@ export { ListingSellSystem__factory } from "./factories/ListingSellSystem__facto
 export { LocationComponent__factory } from "./factories/LocationComponent__factory";
 export { MediaURIComponent__factory } from "./factories/MediaURIComponent__factory";
 export { NameComponent__factory } from "./factories/NameComponent__factory";
-export { PetFoodSystem__factory } from "./factories/PetFoodSystem__factory";
+export { PetFeedSystem__factory } from "./factories/PetFeedSystem__factory";
 export { PetMetadataSystem__factory } from "./factories/PetMetadataSystem__factory";
 export { PetNameSystem__factory } from "./factories/PetNameSystem__factory";
 export { PetSetAccountSystem__factory } from "./factories/PetSetAccountSystem__factory";

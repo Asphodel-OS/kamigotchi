@@ -16,7 +16,7 @@ import AccountSetSystem from "../abi/AccountSetSystem.json";
 import ERC721PetSystem from "../abi/ERC721PetSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
-import PetFoodSystem from "../abi/PetFoodSystem.json";
+import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetMetadataSystem from "../abi/PetMetadataSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
@@ -47,7 +47,7 @@ export const SystemAbis = {
   "system.ERC721.pet": ERC721PetSystem.abi,
   "system.ListingBuy": ListingBuySystem.abi,
   "system.ListingSell": ListingSellSystem.abi,
-  "system.Pet.Food": PetFoodSystem.abi,
+  "system.Pet.Feed": PetFeedSystem.abi,
   "system.ERC721.metadata": PetMetadataSystem.abi,
   "system.PetName": PetNameSystem.abi,
   "system.PetSetAccount": PetSetAccountSystem.abi,

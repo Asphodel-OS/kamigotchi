@@ -4,16 +4,18 @@ export function createPlayerAPI(systems: any) {
   /*********************
    *    Pet ERC721
    *********************/
+
+  // @dev feeds pet
+  // @param petID
+  // @param food index (of registry entry)
+  function feedPet(petID: BigNumberish, food: number) {
+    return systems["system.Pet.Feed"].executeTyped(petID, food);
+  }
+
   // @dev 
   // @param address   address to mint to
   function mintPet(address: BigNumberish) {
     return systems["system.ERC721.pet"].mint(address);
-  }
-
-  // @dev commit reveal 
-  // @param tokenID   ERC721 petID, not MUD
-  function revealPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.metadata"].executeTyped(tokenID);
   }
 
   // @dev
@@ -21,6 +23,12 @@ export function createPlayerAPI(systems: any) {
   // @param name       name
   function namePet(petID: BigNumberish, name: string) {
     return systems["system.PetName"].executeTyped(petID, name);
+  }
+
+  // @dev commit reveal 
+  // @param tokenID   ERC721 petID, not MUD
+  function revealPet(tokenID: BigNumberish) {
+    return systems["system.ERC721.metadata"].executeTyped(tokenID);
   }
 
   /*********************
@@ -125,12 +133,7 @@ export function createPlayerAPI(systems: any) {
   *       TRADE
   *********************/
 
-  // @dev feeds pet
-  // @param petID
-  // @param food type
-  function feedPet(petID: BigNumberish, food: number) {
-    return systems["system.Pet.Food"].executeTyped(petID, food);
-  }
+
 
   return {
     ERC721: {
