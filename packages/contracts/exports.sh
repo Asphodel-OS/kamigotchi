@@ -13,6 +13,7 @@ EXCLUDE=(
   IComponent        # only include this if *Component is uncommented above 
   BareComponent     # only include this if *Component is uncommented above 
   IUint256Component # only include this if *Component is uncommented above 
+  Uint256Component  # only include this if *Component is uncommented above 
   System            # only include this if *System is uncommented above 
   ISystem           # only include this if *System is uncommented above 
 )
