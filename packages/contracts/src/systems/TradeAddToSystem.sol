@@ -7,7 +7,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
-import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.TradeAddTo"));
 
@@ -25,13 +24,13 @@ contract TradeAddToSystem is System {
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
     // TODO: add restriction from adding to register when already confirmed
-    require(Utils.isTrade(components, tradeID), "Trade: not a trade");
+    require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
     require(LibTrade.hasParticipant(components, tradeID, accountID), "Trade: must be participant");
-    require(Utils.hasState(components, tradeID, "ACCEPTED"), "Trade: must be accepted");
+    require(LibTrade.hasState(components, tradeID, "ACCEPTED"), "Trade: must be accepted");
 
     uint256 registerID = LibRegister.get(components, accountID, tradeID);
     LibRegister.addTo(world, components, registerID, itemIndex, amt);
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

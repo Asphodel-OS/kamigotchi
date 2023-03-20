@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
-import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.TradeInitiate"));
 
@@ -20,11 +19,11 @@ contract TradeInitiateSystem is System {
 
     // requirements
     require(accountID != toID, "Trade: no self-trade !!");
-    require(Utils.sameRoom(components, accountID, toID), "Trade: must be in same room");
+    require(LibTrade.canTrade(components, accountID, toID), "Trade: must be in same room");
     require(LibTrade.getRequest(components, accountID, toID) == 0, "Trade: request exists");
 
     uint256 tradeID = LibTrade.create(world, components, accountID, toID);
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return abi.encode(tradeID);
   }
 

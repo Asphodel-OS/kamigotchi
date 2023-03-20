@@ -21,7 +21,7 @@ contract AccountNameSystem is System {
     require(accountID != 0, "Account: does not exist");
 
     LibAccount.setName(components, accountID, name);
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

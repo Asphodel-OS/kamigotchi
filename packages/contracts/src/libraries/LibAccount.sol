@@ -39,6 +39,11 @@ library LibAccount {
     LocationComponent(getAddressById(components, LocCompID)).set(id, to);
   }
 
+  // Update the BlockLast of an entity. Used to track the block in which an Account last interacted.
+  function updateLastBlock(IUintComp components, uint256 id) internal {
+    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, block.number);
+  }
+
   /////////////////
   // SETTERS
 

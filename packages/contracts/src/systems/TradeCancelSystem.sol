@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
-import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.TradeCancel"));
 
@@ -20,13 +19,13 @@ contract TradeCancelSystem is System {
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
-    require(Utils.isTrade(components, tradeID), "Trade: not a trade");
+    require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
     require(LibTrade.hasParticipant(components, tradeID, accountID), "Trade: must be participant");
-    require(!Utils.hasState(components, tradeID, "CANCELED"), "Trade: already canceled");
-    require(!Utils.hasState(components, tradeID, "COMPLETE"), "Trade: already complete");
+    require(!LibTrade.hasState(components, tradeID, "CANCELED"), "Trade: already canceled");
+    require(!LibTrade.hasState(components, tradeID, "COMPLETE"), "Trade: already complete");
 
     LibTrade.cancel(world, components, tradeID);
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

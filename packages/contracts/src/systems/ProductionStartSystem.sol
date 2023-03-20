@@ -8,7 +8,6 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
-import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.ProductionStart"));
 
@@ -34,7 +33,7 @@ contract ProductionStartSystem is System {
       LibProduction.start(components, id);
     }
 
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return abi.encode(id);
   }
 

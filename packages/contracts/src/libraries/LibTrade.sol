@@ -13,9 +13,9 @@ import { IdRequesterComponent, ID as IdReqerCompID } from "components/IdRequeste
 import { IsRequestComponent, ID as IsRequestCompID } from "components/IsRequestComponent.sol";
 import { IsTradeComponent, ID as IsTradeCompID } from "components/IsTradeComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { Strings } from "utils/Strings.sol";
-import { Utils } from "utils/Utils.sol";
 
 // @dev State = [ INITIATED | ACCEPTED | CONFIRMED | CANCELED ]
 library LibTrade {
@@ -82,7 +82,12 @@ library LibTrade {
   }
 
   /////////////////
-  // CHECKS
+  // CHECKERS
+
+  // Check whether two parties can interact in a trade with one another
+  function canTrade(IUintComp components, uint256 aID, uint256 bID) internal view returns (bool) {
+    return LibAccount.getLocation(components, aID) == LibAccount.getLocation(components, bID);
+  }
 
   // Check whether an account is the requester or requestee in a trade.
   function hasParticipant(
@@ -106,12 +111,20 @@ library LibTrade {
   function isDoubleConfirmed(IUintComp components, uint256 id) internal view returns (bool) {
     uint256[] memory registers = LibTrade.getRegisters(components, id);
     return
-      Utils.hasState(components, registers[0], "CONFIRMED") &&
-      Utils.hasState(components, registers[1], "CONFIRMED");
+      hasState(components, registers[0], "CONFIRMED") &&
+      hasState(components, registers[1], "CONFIRMED");
+  }
+
+  function isRequest(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsRequestComponent(getAddressById(components, IsRequestCompID)).has(id);
+  }
+
+  function isTrade(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsTradeComponent(getAddressById(components, IsTradeCompID)).has(id);
   }
 
   /////////////////
-  // COMPONENT RETRIEVAL
+  // GETTERS
 
   function getRequestee(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).getValue(id);

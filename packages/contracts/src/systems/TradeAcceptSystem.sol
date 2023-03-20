@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
-import { Utils } from "utils/Utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.TradeAccept"));
 
@@ -21,12 +20,12 @@ contract TradeAcceptSystem is System {
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
     // TODO: ? add restriction against multiple ongoing trades
-    require(Utils.isTrade(components, tradeID), "Trade: not a trade");
-    require(Utils.isRequest(components, tradeID), "Trade: not a request");
+    require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
+    require(LibTrade.isRequest(components, tradeID), "Trade: not a request");
     require(LibTrade.getRequestee(components, tradeID) == accountID, "Trade: must be requestee");
 
     LibTrade.accept(world, components, tradeID);
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 
