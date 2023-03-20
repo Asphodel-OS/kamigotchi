@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibScore } from "libraries/LibScore.sol";
+// import { LibScore } from "libraries/LibScore.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Food"));
@@ -28,7 +28,7 @@ contract PetFoodSystem is System {
     LibInventory.dec(components, inventoryID, 1); // inherent check for insufficient balance
     LibPet.feed(components, petID, foodIndex);
 
-    LibScore.update(world, components, accountID, "FEED", 1);
+    // LibScore.update(world, components, accountID, "FEED", 1);
     return "";
   }
 
