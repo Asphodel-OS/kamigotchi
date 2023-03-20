@@ -39,14 +39,17 @@ library LibListing {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
-    if (buyPrice != 0) {
-      PriceBuyComponent(getAddressById(components, PriceBuyCompID)).set(id, buyPrice);
-    }
-    if (sellPrice != 0) {
-      PriceSellComponent(getAddressById(components, PriceSellCompID)).set(id, sellPrice);
-    }
-
+    if (buyPrice != 0) setBuyPrice(components, id, buyPrice);
+    if (sellPrice != 0) setSellPrice(components, id, sellPrice);
     return id;
+  }
+
+  // sets the prices of a listing. 0 values for price indicate no listing
+  function update(IUintComp components, uint256 id, uint256 buyPrice, uint256 sellPrice) internal {
+    if (buyPrice == 0) removeBuyPrice(components, id);
+    else setBuyPrice(components, id, buyPrice);
+    if (sellPrice != 0) removeSellPrice(components, id);
+    else setSellPrice(components, id, sellPrice);
   }
 
   // processes a buy for amt of item from a listing to an account. assumes the account already
@@ -57,10 +60,8 @@ library LibListing {
     uint256 accountID,
     uint256 amt
   ) internal returns (bool) {
-    uint256 itemIndex = IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(
-      id
-    );
-    uint256 price = PriceBuyComponent(getAddressById(components, PriceBuyCompID)).getValue(id);
+    uint256 itemIndex = getItemIndex(components, id);
+    uint256 price = getBuyPrice(components, id);
     if (price == 0) {
       return false;
     }
@@ -78,10 +79,8 @@ library LibListing {
     uint256 accountID,
     uint256 amt
   ) internal returns (bool) {
-    uint256 itemIndex = IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(
-      id
-    );
-    uint256 price = PriceSellComponent(getAddressById(components, PriceSellCompID)).getValue(id);
+    uint256 itemIndex = getItemIndex(components, id);
+    uint256 price = getSellPrice(components, id);
     if (price == 0) {
       return false;
     }
@@ -93,7 +92,39 @@ library LibListing {
   }
 
   /////////////////
-  // COMPONENT RETRIEVAL
+  // CHECKERS
+
+  function hasBuyPrice(IUintComp components, uint256 id) internal view returns (bool) {
+    return PriceBuyComponent(getAddressById(components, PriceBuyCompID)).has(id);
+  }
+
+  function hasSellPrice(IUintComp components, uint256 id) internal view returns (bool) {
+    return PriceSellComponent(getAddressById(components, PriceSellCompID)).has(id);
+  }
+
+  /////////////////
+  // SETTERS
+
+  function removeBuyPrice(IUintComp components, uint256 id) internal {
+    if (hasBuyPrice(components, id))
+      PriceBuyComponent(getAddressById(components, PriceBuyCompID)).remove(id);
+  }
+
+  function removeSellPrice(IUintComp components, uint256 id) internal {
+    if (hasSellPrice(components, id))
+      PriceSellComponent(getAddressById(components, PriceSellCompID)).remove(id);
+  }
+
+  function setBuyPrice(IUintComp components, uint256 id, uint256 price) internal {
+    PriceBuyComponent(getAddressById(components, PriceBuyCompID)).set(id, price);
+  }
+
+  function setSellPrice(IUintComp components, uint256 id, uint256 price) internal {
+    PriceSellComponent(getAddressById(components, PriceSellCompID)).set(id, price);
+  }
+
+  /////////////////
+  // GETTERS
 
   // return the merchant ID of a listing
   function getMerchant(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -103,6 +134,16 @@ library LibListing {
   // return the item index of a listing
   function getItemIndex(IUintComp components, uint256 id) internal view returns (uint256) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
+  }
+
+  function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
+    if (hasBuyPrice(components, id))
+      price = PriceBuyComponent(getAddressById(components, PriceBuyCompID)).getValue(id);
+  }
+
+  function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
+    if (hasSellPrice(components, id))
+      price = PriceSellComponent(getAddressById(components, PriceSellCompID)).getValue(id);
   }
 
   /////////////////

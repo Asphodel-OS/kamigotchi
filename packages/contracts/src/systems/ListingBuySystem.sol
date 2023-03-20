@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
-import { LibAccount } from "libraries/LibAccount.sol";
-import { Utils } from "utils/Utils.sol";
+import { LibMerchant } from "libraries/LibMerchant.sol";
 
-uint256 constant ID = uint256(keccak256("system.ListingBuy"));
+uint256 constant ID = uint256(keccak256("system.Listing.Buy"));
 
 // ListingBuySystem allows a account to buy an item listed with a merchant
 // NOTE: this currently assumes all purchases are for fungible items. need to generalize
@@ -21,7 +21,14 @@ contract ListingBuySystem is System {
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     uint256 merchantID = LibListing.getMerchant(components, listingID);
 
-    require(Utils.sameRoom(components, merchantID, accountID), "Merchant: must be in room");
+    require(
+      LibMerchant.sharesRoomWith(components, merchantID, accountID),
+      "Listing.Buy(): must be in same room as merchant"
+    );
+    require(
+      LibListing.getBuyPrice(components, listingID) != 0,
+      "Listing.Buy(): invalid listing!!!"
+    );
 
     // create an inventory for the account first if one doesn't exist
     uint256 itemIndex = LibListing.getItemIndex(components, listingID);
@@ -29,8 +36,7 @@ contract ListingBuySystem is System {
       LibInventory.create(world, components, accountID, itemIndex);
     }
     LibListing.buyFrom(components, listingID, accountID, amt);
-
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

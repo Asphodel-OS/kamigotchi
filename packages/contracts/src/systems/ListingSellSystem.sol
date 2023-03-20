@@ -4,11 +4,11 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibListing } from "libraries/LibListing.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
-import { Utils } from "utils/Utils.sol";
+import { LibListing } from "libraries/LibListing.sol";
+import { LibMerchant } from "libraries/LibMerchant.sol";
 
-uint256 constant ID = uint256(keccak256("system.ListingSell"));
+uint256 constant ID = uint256(keccak256("system.Listing.Sell"));
 
 // ListingSellSystem allows a character to buy an item listed with a merchant
 // NOTE: this currently assumes all purchases are for fungible items. need to generalize
@@ -20,10 +20,17 @@ contract ListingSellSystem is System {
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     uint256 merchantID = LibListing.getMerchant(components, listingID);
 
-    require(Utils.sameRoom(components, merchantID, accountID), "Merchant: must be in room");
+    require(
+      LibMerchant.sharesRoomWith(components, merchantID, accountID),
+      "Listing.Sell(): must be in same room as merchant"
+    );
+    require(
+      LibListing.getSellPrice(components, listingID) != 0,
+      "Listing.Sell(): invalid listing!"
+    );
 
     LibListing.sellTo(components, listingID, accountID, amt);
-    Utils.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

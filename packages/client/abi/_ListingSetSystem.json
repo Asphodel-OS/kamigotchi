@@ -67,9 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "location",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
         },
         {
           "internalType": "uint256",
@@ -127,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,uint256,uint256)": "9edb768e",
+    "executeTyped(string,uint256,uint256,uint256)": "06745404",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

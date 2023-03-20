@@ -15,25 +15,26 @@ contract _ListingSetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 location, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
+    (string memory name, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
       arguments,
-      (uint256, uint256, uint256, uint256)
+      (string, uint256, uint256, uint256)
     );
+    uint256 merchantID = LibMerchant.getByName(components, name);
 
-    uint256 merchantID = LibMerchant.getAtLocation(components, location);
+    require(merchantID != 0, "Merchant: does not exist");
+
     uint256 id = LibListing.get(components, merchantID, itemIndex);
-    if (id == 0) {
-      id = LibListing.create(world, components, merchantID, itemIndex, buyPrice, sellPrice);
-    }
-    return abi.encode(id);
+    if (id == 0) LibListing.create(world, components, merchantID, itemIndex, buyPrice, sellPrice);
+    else LibListing.update(components, id, buyPrice, sellPrice);
+    return "";
   }
 
   function executeTyped(
-    uint256 location,
+    string memory name,
     uint256 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(location, itemIndex, buyPrice, sellPrice));
+    return execute(abi.encode(name, itemIndex, buyPrice, sellPrice));
   }
 }
