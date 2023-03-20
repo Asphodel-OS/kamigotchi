@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
-uint256 constant ID = uint256(keccak256("system.TradeAccept"));
+uint256 constant ID = uint256(keccak256("system.Trade.Accept"));
 
 // TradeAcceptSystem allows an account to accept a trade request by another account
 contract TradeAcceptSystem is System {

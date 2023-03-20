@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
-uint256 constant ID = uint256(keccak256("system.TradeAddTo"));
+uint256 constant ID = uint256(keccak256("system.Trade.AddTo"));
 
 // TradeAddToSystem allows an account to add to their register in an ACCEPTED trade
 contract TradeAddToSystem is System {

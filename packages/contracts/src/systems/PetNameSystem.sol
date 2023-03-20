@@ -8,7 +8,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
-uint256 constant ID = uint256(keccak256("system.PetName"));
+uint256 constant ID = uint256(keccak256("system.Pet.Name"));
 
 // name pet. assumes account already created
 contract PetNameSystem is System {

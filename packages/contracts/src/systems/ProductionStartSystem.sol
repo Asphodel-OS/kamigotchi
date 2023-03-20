@@ -9,7 +9,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 
-uint256 constant ID = uint256(keccak256("system.ProductionStart"));
+uint256 constant ID = uint256(keccak256("system.Production.Start"));
 
 // ProductionStartSystem activates a pet production on a node. If it doesn't exist, we create one.
 // We limit to one production per pet, and one production on a node per character.

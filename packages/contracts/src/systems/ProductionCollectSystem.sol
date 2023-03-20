@@ -11,7 +11,7 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { Strings } from "utils/Strings.sol";
 
-uint256 constant ID = uint256(keccak256("system.ProductionCollect"));
+uint256 constant ID = uint256(keccak256("system.Production.Collect"));
 
 // ProductionCollectSystem collects on an active pet production.
 // TODO: update this to kill the pet off if health is at 0

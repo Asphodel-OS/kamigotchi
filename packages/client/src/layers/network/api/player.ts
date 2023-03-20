@@ -22,7 +22,7 @@ export function createPlayerAPI(systems: any) {
   // @param entityID   pet entity
   // @param name       name
   function namePet(petID: BigNumberish, name: string) {
-    return systems["system.PetName"].executeTyped(petID, name);
+    return systems["system.Pet.Name"].executeTyped(petID, name);
   }
 
   // @dev commit reveal 
@@ -62,14 +62,14 @@ export function createPlayerAPI(systems: any) {
   // @param listingID    entity ID of listing
   // @param amt          amount to buy
   function buyFromListing(listingID: BigNumberish, amt: number) {
-    return systems["system.ListingBuy"].executeTyped(listingID, amt);
+    return systems["system.Listing.Buy"].executeTyped(listingID, amt);
   }
 
   // @dev allows a character to sell an item through a merchant listing entity
   // @param listingID    entity ID of listing
   // @param amt          amount to sell
   function sellToListing(listingID: BigNumberish, amt: number) {
-    return systems["system.ListingSell"].executeTyped(listingID, amt);
+    return systems["system.Listing.Sell"].executeTyped(listingID, amt);
   }
 
   /*********************
@@ -78,17 +78,17 @@ export function createPlayerAPI(systems: any) {
 
   // @dev retrieves the amount due from a passive deposit production and resets the starting point
   function collectProduction(productionID: BigNumberish) {
-    return systems["system.ProductionCollect"].executeTyped(productionID);
+    return systems["system.Production.Collect"].executeTyped(productionID);
   }
 
   // @dev starts a deposit production for a character. If none exists, it creates one.
   function startProduction(petID: BigNumberish, nodeID: BigNumberish) {
-    return systems["system.ProductionStart"].executeTyped(petID, nodeID);
+    return systems["system.Production.Start"].executeTyped(petID, nodeID);
   }
 
   // @dev retrieves the amount due from a passive deposit production and stops it.
   function stopProduction(productionID: BigNumberish) {
-    return systems["system.ProductionStop"].executeTyped(productionID);
+    return systems["system.Production.Stop"].executeTyped(productionID);
   }
 
 
@@ -99,7 +99,7 @@ export function createPlayerAPI(systems: any) {
   // @dev Updates Trade to ACCEPTED, removes IsRequest Component, creates ACTIVE Registers
   // @param tradeID   entityID of the trade log
   function acceptTrade(tradeID: BigNumberish) {
-    return systems["system.TradeAccept"].executeTyped(tradeID);
+    return systems["system.Trade.Accept"].executeTyped(tradeID);
   }
 
   // @dev creates an itemInventory entity, assigns to trade register and transfers the
@@ -108,25 +108,25 @@ export function createPlayerAPI(systems: any) {
   // @param itemType  the id of the item being added, 0 for merit
   // @param amt       quantity of item being added
   function addToTrade(tradeID: BigNumberish, itemType: number, amt: number) {
-    return systems["system.TradeAddTo"].executeTyped(tradeID, itemType, amt);
+    return systems["system.Trade.AddTo"].executeTyped(tradeID, itemType, amt);
   }
 
   // @dev Updates Trade to CANCELED, updates both Registers ACTIVE->CANCELED
   // @param tradeID entityID of the trade log
   function cancelTrade(tradeID: BigNumberish) {
-    return systems["system.TradeCancel"].executeTyped(tradeID);
+    return systems["system.Trade.Cancel"].executeTyped(tradeID);
   }
 
   // @dev Updates Trade ACCEPTED->?COMPLETE, updates account's register ACTIVE->CONFIRMED
   // @param tradeID   entityID of the trade log
   function confirmTrade(tradeID: BigNumberish) {
-    return systems["system.TradeConfirm"].executeTyped(tradeID);
+    return systems["system.Trade.Confirm"].executeTyped(tradeID);
   }
 
   // @dev Creates an INITIATED Trade between Account and toID, with IsRequest Component
   // @param toID  entityID of the trade request receiver
   function initiateTrade(toID: BigNumberish) {
-    return systems["system.TradeInitiate"].executeTyped(toID);
+    return systems["system.Trade.Initiate"].executeTyped(toID);
   }
 
   /*********************

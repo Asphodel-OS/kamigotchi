@@ -7,7 +7,7 @@ import { getAddressById, addressToEntity } from "solecs/utils.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
 
-uint256 constant ID = uint256(keccak256("system.PetSetAccount"));
+uint256 constant ID = uint256(keccak256("system.Pet.SetAccount"));
 
 // NOTE: this may not be the ideal flow for setting accounts. likely, we'll instead
 // want to update the owner on transfer and just clear out the account
