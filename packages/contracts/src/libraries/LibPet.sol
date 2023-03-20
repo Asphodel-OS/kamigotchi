@@ -20,7 +20,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
-import { LibModifier } from "libraries/LibModifier.sol";
+import { LibTrait } from "libraries/LibTrait.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";

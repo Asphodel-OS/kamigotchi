@@ -4,7 +4,7 @@ import "std-contracts/components/Uint256Component.sol";
 
 uint256 constant ID = uint256(keccak256("component.Status"));
 
-// actual value is represented in a Enum in LibModifier
+// actual value is represented in a Enum in LibTrait
 contract StatusComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }
