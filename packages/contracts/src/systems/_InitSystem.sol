@@ -7,7 +7,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibModifier } from "libraries/LibModifier.sol";
+import { LibTrait } from "libraries/LibTrait.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { Utils } from "utils/Utils.sol";
 
@@ -42,7 +42,7 @@ contract _InitSystem is System {
   }
 
   function initMods() internal {
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "BODY",
@@ -52,7 +52,7 @@ contract _InitSystem is System {
       "INSECT",
       "Butterfly"
     );
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "BODY",
@@ -63,7 +63,7 @@ contract _InitSystem is System {
       "Cube"
     );
 
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "COLOR",
@@ -74,7 +74,7 @@ contract _InitSystem is System {
       "Canto Green"
     );
 
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "FACE",
@@ -84,7 +84,7 @@ contract _InitSystem is System {
       "",
       "c-c"
     );
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "FACE",
@@ -95,7 +95,7 @@ contract _InitSystem is System {
       "uwu"
     );
 
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "HAND",
@@ -105,7 +105,7 @@ contract _InitSystem is System {
       "INSECT",
       "Slicers"
     );
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "HAND",
@@ -116,7 +116,7 @@ contract _InitSystem is System {
       "Paws"
     );
 
-    LibModifier.createIndex(
+    LibTrait.createIndex(
       components,
       world,
       "BACKGROUND",

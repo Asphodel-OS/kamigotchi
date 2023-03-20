@@ -5,6 +5,6 @@ import "std-contracts/components/BoolComponent.sol";
 uint256 constant ID = uint256(keccak256("component.Is.Modifier"));
 
 // identifies an entity as a Modifier
-contract IsModifierComponent is BoolComponent {
+contract IsTraitComponent is BoolComponent {
   constructor(address world) BoolComponent(world, ID) {}
 }

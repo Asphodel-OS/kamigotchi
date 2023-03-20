@@ -131,7 +131,7 @@ export interface _AddModifierSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
       modType: PromiseOrValue<string>,
-      petType: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -154,7 +154,7 @@ export interface _AddModifierSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     modValue: PromiseOrValue<BigNumberish>,
     modType: PromiseOrValue<string>,
-    petType: PromiseOrValue<string>,
+    affinity: PromiseOrValue<string>,
     name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -177,7 +177,7 @@ export interface _AddModifierSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
       modType: PromiseOrValue<string>,
-      petType: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -212,7 +212,7 @@ export interface _AddModifierSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
       modType: PromiseOrValue<string>,
-      petType: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -236,7 +236,7 @@ export interface _AddModifierSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
       modType: PromiseOrValue<string>,
-      petType: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
