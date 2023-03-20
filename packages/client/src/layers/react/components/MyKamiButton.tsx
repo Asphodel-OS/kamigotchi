@@ -31,7 +31,6 @@ export function registerMyKamiButton() {
 
         setVisibleDivs({ ...visibleDivs, petList: !visibleDivs.petList });
       };
-      console.log(visibleDivs);
 
       return (
         <ModalWrapper id="mykami_button">

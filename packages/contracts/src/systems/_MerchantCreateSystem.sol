@@ -14,6 +14,9 @@ contract _MerchantCreateSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (string memory name, uint256 location) = abi.decode(arguments, (string, uint256));
+    uint256 id = LibMerchant.getByName(components, name);
+
+    require(id == 0, "Merchant: already exists");
 
     return abi.encode(LibMerchant.create(world, components, location, name));
   }

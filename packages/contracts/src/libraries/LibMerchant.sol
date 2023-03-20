@@ -25,13 +25,42 @@ library LibMerchant {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsMerchantComponent(getAddressById(components, IsMerchantCompID)).set(id);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
+    setName(components, id, name);
+    setLocation(components, id, location);
     return id;
   }
 
   /////////////////
-  // COMPONENT RETRIEVAL
+  // CHECKERS
+
+  // Check whether a user account shares a room with the specified merchant
+  // Merchants with location 0 are considered global and are always accessible
+  function sharesRoomWith(
+    IUintComp components,
+    uint256 id,
+    uint256 accountID
+  ) internal view returns (bool) {
+    uint256 location = getLocation(components, id);
+    return location == 0 || location == getLocation(components, accountID);
+  }
+
+  /////////////////
+  // SETTERS
+
+  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+    LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
+  }
+
+  function setName(IUintComp components, uint256 id, string memory name) internal {
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  /////////////////
+  // GETTERS
+
+  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
+  }
 
   // gets the name of a specified merchant
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -42,12 +71,21 @@ library LibMerchant {
   // QUERIES
 
   // get a specified merchant by location. return only the first result
-  function getAtLocation(IUintComp components, uint256 location)
-    internal
-    view
-    returns (uint256 result)
-  {
+  function getAtLocation(
+    IUintComp components,
+    uint256 location
+  ) internal view returns (uint256 result) {
     uint256[] memory results = _getAllX(components, location, "");
+    if (results.length != 0) {
+      result = results[0];
+    }
+  }
+
+  function getByName(
+    IUintComp components,
+    string memory name
+  ) internal view returns (uint256 result) {
+    uint256[] memory results = _getAllX(components, 0, name);
     if (results.length != 0) {
       result = results[0];
     }

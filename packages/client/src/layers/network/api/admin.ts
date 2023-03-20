@@ -14,18 +14,18 @@ export function createAdminAPI(systems: any) {
     createNode("Pristine Couch", 3);
     createNode("Cash Register", 4);
 
-    // createMerchant("ugajin", 4);
-    // setListing(4, 1, 10, 5); // merchant, item index, buy price, sell price
-    // setListing(4, 2, 30, 15);
-    // setListing(4, 3, 50, 25);
+    // create our hottie merchant ugajin. names are unique
+    createMerchant("ugajin", 4);
+    setListing("ugajin", 1, 10, 5); // merchant, item index, buy price, sell price
+    setListing("ugajin", 2, 30, 15);
+    setListing("ugajin", 3, 50, 25);
 
-    // set food merchant for each room
-    for (let i = 1; i < 5; i++) {
-      createMerchant("hawker", i);
-      setListing(i, 1, 10, 5); // merchant, item index, buy price, sell price
-      setListing(i, 2, 30, 15);
-      setListing(i, 3, 50, 25);
-    }
+    // global merchant
+    createMerchant("hawker", 0);
+    setListing("hawker", 1, 10, 5); // merchant, item index, buy price, sell price
+    setListing("hawker", 2, 30, 15);
+    setListing("hawker", 3, 50, 25);
+
 
     // init general
     systems["system._Init"].executeTyped(); // creates food and modifier registry  
@@ -39,7 +39,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev creates a merchant with the name at the specified location
   // @param location  room ID
-  // @param name      name of the merchant
+  // @param name      name of the merchant (must be unique)
   // @return uint     (promise) entity ID of the merchant
   function createMerchant(name: string, location: number) {
     return systems["system._Merchant.Create"].executeTyped(name, location);
@@ -65,18 +65,18 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev sets the prices for the merchant at the specified location
-  // @param location    location of the merchant
+  // @param name        name of the merchant
   // @param itemIndex   index of item to list
   // @param buyPrice    sell price of item listing (pass in 0 to leave blank)
   // @param sellPrice   buy price of item listing (pass in 0 to leave blank)
   // @return uint       (promise) entity ID of the listing
   function setListing(
-    location: number,
+    name: string,
     itemIndex: number,
     buyPrice: number,
     sellPrice: number
   ) {
-    return systems["system._Listing.Set"].executeTyped(location, itemIndex, buyPrice, sellPrice);
+    return systems["system._Listing.Set"].executeTyped(name, itemIndex, buyPrice, sellPrice);
   }
 
   /////////////////

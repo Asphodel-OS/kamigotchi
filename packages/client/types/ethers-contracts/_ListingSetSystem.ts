@@ -30,7 +30,7 @@ import type {
 export interface _ListingSetSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "executeTyped(string,uint256,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,7 +50,7 @@ export interface _ListingSetSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -125,7 +125,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
@@ -146,7 +146,7 @@ export interface _ListingSetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    location: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
     itemIndex: PromiseOrValue<BigNumberish>,
     buyPrice: PromiseOrValue<BigNumberish>,
     sellPrice: PromiseOrValue<BigNumberish>,
@@ -167,7 +167,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
@@ -200,7 +200,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
@@ -222,7 +222,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,

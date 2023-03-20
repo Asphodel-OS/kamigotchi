@@ -104,11 +104,18 @@ export function registerMerchantWindow() {
           const accountID = world.entities[accountIndex];
 
           // get player location and list of merchants in this room
-          const location = getComponentValue(Location, accountIndex)
-            ?.value as number;
+          // const location = getComponentValue(Location, accountIndex)?.value as number;
+          // const merchantResults = runQuery([
+          //   Has(IsMerchant),
+          //   HasValue(Location, { value: location }),
+          // ]);
+
+          // console.log(location);
+          // console.log("local merchant", merchantResults);
+
           const merchantResults = runQuery([
             Has(IsMerchant),
-            HasValue(Location, { value: location }),
+            HasValue(Location, { value: "0x00" as any }), // this is set to the global merchant for now
           ]);
 
           // if we have a merchant retrieve its listings
@@ -130,6 +137,9 @@ export function registerMerchantWindow() {
               listings.push(listing);
             }
           }
+
+          console.log("merchant", merchant)
+          console.log("listings", listings)
 
           return {
             actions,
