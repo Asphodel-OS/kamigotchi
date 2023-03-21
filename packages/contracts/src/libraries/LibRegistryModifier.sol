@@ -12,6 +12,7 @@ import { LibPrototype } from "libraries/LibPrototype.sol";
 import { IsRegistryEntryComponent, ID as IsRegistryEntryCompID } from "components/IsRegistryEntryComponent.sol";
 import { IndexModifierComponent as IndexComp, ID as IndexCompID } from "components/IndexModifierComponent.sol";
 import { GenusComponent as GenusComp, ID as GenusCompID } from "components/GenusComponent.sol";
+import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 /** !
  * (domain > genus)
@@ -29,7 +30,7 @@ library LibRegistryModifier {
   function get(
     IUint256Component components,
     string memory genus,
-    uint256 index
+    string memory _type
   ) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(
@@ -39,8 +40,8 @@ library LibRegistryModifier {
     );
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IndexCompID),
-      abi.encode(index)
+      getComponentById(components, TypeCompID),
+      abi.encode(_type)
     );
     fragments[2] = QueryFragment(
       QueryType.HasValue,
@@ -91,10 +92,10 @@ library LibRegistryModifier {
   function copyPrototype(
     IUint256Component components,
     string memory genus,
-    uint256 index,
+    string memory _type,
     uint256 entityID
   ) internal {
-    uint256 prototypeID = get(components, genus, index);
+    uint256 prototypeID = get(components, genus, _type);
 
     LibPrototype.copy(components, entityID, prototypeID);
   }

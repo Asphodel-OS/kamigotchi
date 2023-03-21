@@ -6,6 +6,7 @@ import { SystemAbis } from "../../../types/SystemAbis.mjs";
 import { GameConfig, getNetworkConfig } from "./config";
 import { createAdminAPI } from "./api/admin";
 import { createPlayerAPI } from "./api/player";
+import { setUpWorldAPI } from "./api/worldSetUp";
 import { createComponents } from "./components/register";
 
 export async function createNetworkLayer(config: GameConfig) {
@@ -43,6 +44,7 @@ export async function createNetworkLayer(config: GameConfig) {
 
   const adminAPI = createAdminAPI(systems);
   const playerAPI = createPlayerAPI(systems);
+  const worldAPI = setUpWorldAPI(systems);
 
 
   // --- CONTEXT --------------------------------------------------------------------
@@ -58,6 +60,7 @@ export async function createNetworkLayer(config: GameConfig) {
     api: {
       admin: adminAPI,
       player: playerAPI,
+      world: worldAPI,
     },
     faucet,
   };
