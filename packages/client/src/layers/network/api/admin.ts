@@ -1,5 +1,6 @@
 import { BigNumberish } from "ethers";
 import { createPlayerAPI } from "./player";
+import { setUpWorldAPI } from "./worldSetUp";
 
 export function createAdminAPI(systems: any) {
   function init() {
@@ -34,6 +35,7 @@ export function createAdminAPI(systems: any) {
     systems["system.ERC721.metadata"]._setMaxElements(['13', '26', '14', '15', '30']);
 
     createPlayerAPI(systems).ERC721.mint('0x7681A73aed06bfb648a5818B978fb018019F6900');
+    setUpWorldAPI(systems).initWorld();
 
   }
 

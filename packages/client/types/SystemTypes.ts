@@ -30,7 +30,7 @@ import { TradeConfirmSystem } from "./ethers-contracts/TradeConfirmSystem";
 import { TradeInitiateSystem } from "./ethers-contracts/TradeInitiateSystem";
  
 export type SystemTypes = {
-  "system.admin.Trait.Add": _AddTraitSystem;
+  "system._Trait.Add": _AddTraitSystem;
   "system._devGiveTokens": _devGiveTokensSystem;
   "system._Init": _InitSystem;
   "system._Listing.Set": _ListingSetSystem;
