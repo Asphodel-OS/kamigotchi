@@ -37,7 +37,6 @@ export function createComponents(world: any) {
     IsInventory: defineBoolEZ(world, "IsInventory", "component.Is.Inventory"),
     IsListing: defineBoolEZ(world, "IsListing", "component.Is.Listing"),
     IsMerchant: defineBoolEZ(world, "IsMerchant", "component.Is.Merchant"),
-    IsModifier: defineBoolEZ(world, "IsModifier", "component.Is.Modifier"),
     IsNode: defineBoolEZ(world, "IsNode", "component.Is.Node"),
     IsNonFungible: defineBoolEZ(world, "IsNonFungible", "component.Is.NonFungible"),
     IsPet: defineBoolEZ(world, "IsPet", "component.Is.Pet"),
@@ -48,6 +47,7 @@ export function createComponents(world: any) {
     IsRequest: defineBoolEZ(world, "IsRequest", "component.Is.Request"),
     IsRoom: defineBoolEZ(world, "IsRoom", "component.Is.Room"),
     IsTrade: defineBoolEZ(world, "IsTrade", "component.Is.Trade"),
+    IsTrait: defineBoolEZ(world, "IsModifier", "component.Is.Modifier"),
 
     // IDs
     AccountID: defineStringEZ(world, "AccountID", "component.Id.Account"),

@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibTrait } from "libraries/LibTrait.sol";
 
-uint256 constant ID = uint256(keccak256("system.admin.Trait.Add"));
+uint256 constant ID = uint256(keccak256("system._Trait.Add"));
 
 contract _AddTraitSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
