@@ -30,7 +30,7 @@ import TradeConfirmSystem from "../abi/TradeConfirmSystem.json";
 import TradeInitiateSystem from "../abi/TradeInitiateSystem.json";
 
 export const SystemAbis = {
-  "system.admin.Trait.Add": _AddTraitSystem.abi,
+  "system._Trait.Add": _AddTraitSystem.abi,
   "system._devGiveTokens": _devGiveTokensSystem.abi,
   "system._Init": _InitSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
