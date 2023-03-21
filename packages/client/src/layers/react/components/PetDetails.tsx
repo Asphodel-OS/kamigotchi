@@ -19,18 +19,21 @@ import { useModalVisibility } from '../hooks/useHandleModalVisibilty';
 
 type TraitDetails = {
   Name: string;
-  Type: string;
-  Value: string;
+  // Type: string;
+  // Value: string;
 };
 
 type Details = {
   nftID: string;
   petName: string;
   uri: string;
-  power: string;
+  // harmony: string;
   health: string;
+  power: string;
+  // slots: string;
+  // violence: string;
+  // affinity: string;
   traits: TraitDetails[];
-  petTypes: string[];
 };
 
 export function registerPetDetails() {
@@ -45,13 +48,13 @@ export function registerPetDetails() {
     (layers) => {
       const {
         network: {
-          components: { Balance, Genus, IsPet, IsModifier, MediaURI, PetID },
+          components: { Balance, Genus, IsPet, IsTrait, MediaURI, PetID },
         },
       } = layers;
 
       return merge(
         IsPet.update$,
-        IsModifier.update$,
+        IsTrait.update$,
         Balance.update$,
         PetID.update$,
         Genus.update$,
@@ -72,16 +75,17 @@ export function registerPetDetails() {
             Genus,
             Health,
             IsPet,
-            IsModifier,
+            IsTrait,
             MediaURI,
-            Value,
             Type,
             Affinity,
             Name,
+            Harmony,
             PetIndex,
             PetID,
             Power,
-            State,
+            Slots,
+            Violence,
           },
           world,
         },
@@ -110,41 +114,39 @@ export function registerPetDetails() {
           nftID: getComponentValue(PetIndex, index)?.value as string,
           petName: getComponentValue(Name, index)?.value as string,
           uri: getComponentValue(MediaURI, index)?.value as string,
-          power: hexToString(getComponentValue(Power, index)?.value as number),
+          // harmony: hexToString(getComponentValue(Harmony, index)?.value as number),
           health: hexToString(
             getComponentValue(Health, index)?.value as number
           ),
+          power: hexToString(getComponentValue(Power, index)?.value as number),
+          // slots: hexToString(getComponentValue(Slots, index)?.value as number),
+          // violence: hexToString(getComponentValue(Violence, index)?.value as number),
+          // affinity: hexToString(getComponentValue(Affinity, index)?.value as string),
           traits: traitsHopper?.value as TraitDetails[],
-          petTypes: traitsHopper?.petTypes as string[],
         };
       };
 
       const getBaseTraits = (petIndex: EntityIndex) => {
-        const genusArr = ['COLOR', 'BODY', 'HAND', 'FACE', 'BACKGROUND'];
+        const typeArr = ['COLOR', 'BODY', 'HAND', 'FACE', 'BACKGROUND'];
         let result: Array<TraitDetails> = [];
         let petTypes: Array<string> = [];
 
-        for (let i = 0; i < genusArr.length; i++) {
-          let details = getTrait(petIndex, genusArr[i]);
+        for (let i = 0; i < typeArr.length; i++) {
+          let details = getTrait(petIndex, typeArr[i]);
           result.push(details.Individual);
-
-          if (details.PetType.petType && details.PetType.petType != '') {
-            petTypes.push(details.PetType.petType);
-          }
         }
 
         return {
           value: result,
-          petTypes: petTypes,
         };
       };
 
-      const getTrait = (petIndex: EntityIndex, genus: string) => {
+      const getTrait = (petIndex: EntityIndex, type: string) => {
         const entity = Array.from(
           runQuery([
-            Has(IsModifier),
-            HasValue(Genus, {
-              value: genus,
+            Has(Type),
+            HasValue(Type, {
+              value: type,
             }),
             HasValue(PetID, {
               value: world.entities[petIndex],
@@ -155,13 +157,9 @@ export function registerPetDetails() {
         return {
           Individual: {
             Name: getComponentValue(Name, entity)?.value as string,
-            Type: getComponentValue(Type, entity)?.value as string,
-            Value: getComponentValue(Value, entity)?.value as string,
-          },
-          PetType: {
-            petType: getComponentValue(Affinity, entity)
-              ?.value as string,
-          },
+            // Type: getComponentValue(Type, entity)?.value as string,
+            // Value: getComponentValue(Value, entity)?.value as string,
+          }
         };
       };
 
@@ -194,9 +192,9 @@ export function registerPetDetails() {
         return (
           <KamiList key={trait.Name}>
             {`${trait.Name}`}
-            <KamiText
+            {/* <KamiText
               style={{ paddingTop: '20px' }}
-            >{`${trait.Type} | {${trait.Value}}`}</KamiText>
+            >{`${trait.Type} | {${trait.Value}}`}</KamiText> */}
           </KamiList>
         );
       });
@@ -215,14 +213,17 @@ export function registerPetDetails() {
               <KamiBox>
                 <KamiBox style={{ gridColumn: 1, gridRow: 1 }}>
                   <KamiName>{dets?.petName} </KamiName>
-                  <KamiType>{petTypes(dets?.petTypes)}</KamiType>
                   <KamiImage src={dets?.uri} />
                 </KamiBox>
                 <KamiBox
                   style={{ gridColumn: 1, gridRow: 2, justifyItems: 'end' }}
                 >
-                  <KamiFacts>Power: {dets?.power} </KamiFacts>
                   <KamiFacts>Health: {dets?.health} </KamiFacts>
+                  <KamiFacts>Harmony: {dets?.harmony}</KamiFacts>
+                  <KamiFacts>Power: {dets?.power} </KamiFacts>
+                  <KamiFacts>Slots: {dets?.slots} </KamiFacts>
+                  <KamiFacts>Violence: {dets?.violence} </KamiFacts>
+                  <KamiFacts>Affinity: {dets?.affinity} </KamiFacts>
                 </KamiBox>
               </KamiBox>
               <KamiBox style={{ gridColumnStart: 2 }}>{traitLines}</KamiBox>
