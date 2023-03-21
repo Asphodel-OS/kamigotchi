@@ -1,0 +1,17 @@
+﻿Name,Index,Image,Rarity,Type,Power,Violence,Harmony,HP,Slot
+Orbs,4,Hand%20c3f0ea61431749dab62a867a500a4c3e/default.png,Common,Normal,0,0,0,35,0
+Eyeballs,5,Hand%20c3f0ea61431749dab62a867a500a4c3e/eyes.png,Common,Eerie,3,0,0,0,0
+Wrenches,15,Hand%20c3f0ea61431749dab62a867a500a4c3e/wrenches_alternatively_known_as_5_dollar_attack.png,Rare,Scrap,0,5,0,0,0
+Plugs,10,Hand%20c3f0ea61431749dab62a867a500a4c3e/plugs.png,Common,Scrap,0,0,3,0,0
+Tentacles,12,Hand%20c3f0ea61431749dab62a867a500a4c3e/tentacles.png,Rare,Eerie,5,0,0,0,0
+Scorpion,11,Hand%20c3f0ea61431749dab62a867a500a4c3e/scorpion_claws.png,Rare,Insect,0,5,0,0,0
+Paws,9,Hand%20c3f0ea61431749dab62a867a500a4c3e/paws.png,Rare,Normal,0,0,5,0,0
+Toasters,13,Hand%20c3f0ea61431749dab62a867a500a4c3e/toasters.png,Rare,Scrap,0,0,0,0,1
+UFO Catcher,14,Hand%20c3f0ea61431749dab62a867a500a4c3e/catcher_claws.png,Rare,Scrap,0,0,6,0,0
+Mantis,8,Hand%20c3f0ea61431749dab62a867a500a4c3e/mantis.png,Epic,Insect,0,7,0,0,0
+Fan Blades,6,Hand%20c3f0ea61431749dab62a867a500a4c3e/fan_blades.png,Epic,Scrap,0,0,7,0,0
+Candles,0,,Epic,Eerie,7,0,0,0,0
+Claws,1,,Rare,Eerie,0,5,0,0,0
+Common Insect,7,,Common,Insect,0,3,0,0,0
+Static Coins,3,,Rare,Normal,0,0,0,60,0
+Spinning Coins,2,,Epic,Normal,0,0,0,80,0

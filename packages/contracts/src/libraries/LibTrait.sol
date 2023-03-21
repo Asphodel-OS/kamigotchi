@@ -33,17 +33,16 @@ library LibTrait {
   ///////////////
   // PETS
 
-  // creates a new entity from registry
-  // does not set as active
+  // creates a new entity from registry, adds it to the pet
   function addToPet(
     IUint256Component components,
     IWorld world,
     uint256 petID,
     string memory genus,
-    uint256 index
+    string memory _type
   ) internal returns (uint256) {
     uint256 entityID = world.getUniqueEntityId();
-    LibRegistryModifier.copyPrototype(components, genus, index, entityID);
+    LibRegistryModifier.copyPrototype(components, genus, _type, entityID);
     IdPetComponent(getAddressById(components, IdPetComponentID)).set(entityID, petID);
     return entityID;
   }

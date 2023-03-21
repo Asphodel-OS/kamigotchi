@@ -27,10 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _AddModifierSystemInterface extends utils.Interface {
+export interface _AddTraitSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(string,uint256,uint256,string,string,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,string,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,9 +50,9 @@ export interface _AddModifierSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>
@@ -94,12 +94,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _AddModifierSystem extends BaseContract {
+export interface _AddTraitSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _AddModifierSystemInterface;
+  interface: _AddTraitSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -127,9 +127,9 @@ export interface _AddModifierSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      genus: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
+      genus: PromiseOrValue<string>,
       modType: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
@@ -150,9 +150,9 @@ export interface _AddModifierSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    genus: PromiseOrValue<string>,
     index: PromiseOrValue<BigNumberish>,
     modValue: PromiseOrValue<BigNumberish>,
+    genus: PromiseOrValue<string>,
     modType: PromiseOrValue<string>,
     affinity: PromiseOrValue<string>,
     name: PromiseOrValue<string>,
@@ -173,9 +173,9 @@ export interface _AddModifierSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      genus: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
+      genus: PromiseOrValue<string>,
       modType: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
@@ -208,9 +208,9 @@ export interface _AddModifierSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      genus: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
+      genus: PromiseOrValue<string>,
       modType: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
@@ -232,9 +232,9 @@ export interface _AddModifierSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      genus: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       modValue: PromiseOrValue<BigNumberish>,
+      genus: PromiseOrValue<string>,
       modType: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,

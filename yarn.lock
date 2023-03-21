@@ -1318,7 +1318,7 @@
     "@parcel/utils" "2.8.3"
     posthtml "^0.16.4"
 
-"@parcel/plugin@2.8.3", "@parcel/plugin@^2.0.0-beta.1":
+"@parcel/plugin@2.8.3", "@parcel/plugin@^2.0.0-beta.1", "@parcel/plugin@^2.4.1":
   version "2.8.3"
   resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.8.3.tgz#7bb30a5775eaa6473c27f002a0a3ee7308d6d669"
   integrity sha512-jZ6mnsS4D9X9GaNnvrixDQwlUQJCohDX2hGyM0U0bY2NWU8Km97SjtoCpWjq+XBCx/gpC4g58+fk9VQeZq2vlw==
@@ -5954,12 +5954,25 @@ p-wait-for@^4.0.0:
   dependencies:
     p-timeout "^5.0.0"
 
+papaparse@^5.3.2:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.4.0.tgz#a3e47c32f32466d30af67ce2fef7910b3c3d4d91"
+  integrity sha512-ZBQABWG09p+u8rFoJVl/GhgxZ5zy9Zh1Lu/LVc7VX5T4nljjC14/YTcpebYwqP218B9X307eBOP7Tuhoqv7v7w==
+
 parcel-reporter-static-files-copy@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/parcel-reporter-static-files-copy/-/parcel-reporter-static-files-copy-1.5.0.tgz#8ca7d7e4d1f0f52c30853117403696decf64da24"
   integrity sha512-dsY3MQkbYSgEqS0/22vtD2mZtel8UC0ItH0ok8LmgFeCMTsdhyOtJgvt945ODIzu9lYc/sCIzksM8C77uSE3Fg==
   dependencies:
     "@parcel/plugin" "^2.0.0-beta.1"
+
+parcel-transformer-csv@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/parcel-transformer-csv/-/parcel-transformer-csv-0.0.3.tgz#45d8bbc7e37f0fef9dd3afe483f5004c6b9c974e"
+  integrity sha512-cYmz14qv4fNlzO3DDzy7MMc6d5yG7N4432eODROQev9pHfhskaNdARdJeYzibXWvPob1/aKQLpOsrQpEj9xPSA==
+  dependencies:
+    "@parcel/plugin" "^2.4.1"
+    papaparse "^5.3.2"
 
 parcel@^2.8.0:
   version "2.8.3"
@@ -6005,6 +6018,11 @@ parse-json@^5.0.0:
     error-ex "^1.3.1"
     json-parse-even-better-errors "^2.3.0"
     lines-and-columns "^1.1.6"
+
+path-browserify@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz#d98454a9c3753d5790860f16f68867b9e46be1fd"
+  integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
 
 path-exists@^4.0.0:
   version "4.0.0"

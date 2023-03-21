@@ -1,7 +1,14 @@
 {
   "extends": "@parcel/config-default",
   "transformers": {
-      "*.mp3": ["@parcel/transformer-raw"],
-      "*.wav": ["@parcel/transformer-raw"]
+    "*.csv": [
+      "parcel-transformer-csv"
+    ],
+    "*.mp3": [
+      "@parcel/transformer-raw"
+    ],
+    "*.wav": [
+      "@parcel/transformer-raw"
+    ]
   }
 }

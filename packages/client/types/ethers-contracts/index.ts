@@ -82,7 +82,7 @@ export type { Uint256ArrayComponent } from "./Uint256ArrayComponent";
 export type { Uint256BareComponent } from "./Uint256BareComponent";
 export type { ValueComponent } from "./ValueComponent";
 export type { ViolenceComponent } from "./ViolenceComponent";
-export type { _AddModifierSystem } from "./_AddModifierSystem";
+export type { _AddTraitSystem } from "./_AddTraitSystem";
 export type { _InitSystem } from "./_InitSystem";
 export type { _ListingSetSystem } from "./_ListingSetSystem";
 export type { _MerchantCreateSystem } from "./_MerchantCreateSystem";
@@ -175,7 +175,7 @@ export { Uint256ArrayComponent__factory } from "./factories/Uint256ArrayComponen
 export { Uint256BareComponent__factory } from "./factories/Uint256BareComponent__factory";
 export { ValueComponent__factory } from "./factories/ValueComponent__factory";
 export { ViolenceComponent__factory } from "./factories/ViolenceComponent__factory";
-export { _AddModifierSystem__factory } from "./factories/_AddModifierSystem__factory";
+export { _AddTraitSystem__factory } from "./factories/_AddTraitSystem__factory";
 export { _InitSystem__factory } from "./factories/_InitSystem__factory";
 export { _ListingSetSystem__factory } from "./factories/_ListingSetSystem__factory";
 export { _MerchantCreateSystem__factory } from "./factories/_MerchantCreateSystem__factory";

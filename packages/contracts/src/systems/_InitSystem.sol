@@ -23,7 +23,7 @@ contract _InitSystem is System {
     arguments = "";
 
     initFood();
-    initMods();
+    // initMods();
 
     // for erc721 pet
     BalanceComponent(getAddressById(components, BalanceCompID)).set(PetSysID, 0);

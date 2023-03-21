@@ -7,20 +7,20 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibTrait } from "libraries/LibTrait.sol";
 
-uint256 constant ID = uint256(keccak256("system._Modifier.Add"));
+uint256 constant ID = uint256(keccak256("system.admin.Trait.Add"));
 
-contract _AddModifierSystem is System {
+contract _AddTraitSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      string memory genus,
       uint256 index,
       uint256 modValue,
+      string memory genus,
       string memory modType,
       string memory affinity,
       string memory name
-    ) = abi.decode(arguments, (string, uint256, uint256, string, string, string));
+    ) = abi.decode(arguments, (uint256, uint256, string, string, string, string));
 
     LibTrait.createIndex(components, world, genus, index, modValue, modType, affinity, name);
 
@@ -28,13 +28,13 @@ contract _AddModifierSystem is System {
   }
 
   function executeTyped(
-    string memory genus,
     uint256 index,
     uint256 modValue,
+    string memory genus,
     string memory modType,
     string memory affinity,
     string memory name
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(genus, index, modValue, modType, affinity, name));
+    return execute(abi.encode(index, modValue, genus, modType, affinity, name));
   }
 }

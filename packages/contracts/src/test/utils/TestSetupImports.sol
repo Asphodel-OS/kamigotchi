@@ -85,7 +85,7 @@ import { ViolenceComponent, ID as ViolenceComponentID } from "components/Violenc
 // Systems
 import { _InitSystem, ID as _InitSystemID } from "systems/_InitSystem.sol";
 import { _devGiveTokensSystem, ID as _devGiveTokensSystemID } from "systems/_devGiveTokensSystem.sol";
-import { _AddModifierSystem, ID as _AddModifierSystemID } from "systems/_AddModifierSystem.sol";
+import { _AddTraitSystem, ID as _AddTraitSystemID } from "systems/_AddTraitSystem.sol";
 import { _ListingSetSystem, ID as _ListingSetSystemID } from "systems/_ListingSetSystem.sol";
 import { _MerchantCreateSystem, ID as _MerchantCreateSystemID } from "systems/_MerchantCreateSystem.sol";
 import { _NodeCreateSystem, ID as _NodeCreateSystemID } from "systems/_NodeCreateSystem.sol";
@@ -178,7 +178,7 @@ ViolenceComponent _ViolenceComponent;
 // System vars
 _InitSystem __InitSystem;
 _devGiveTokensSystem __devGiveTokensSystem;
-_AddModifierSystem __AddModifierSystem;
+_AddTraitSystem __AddTraitSystem;
 _ListingSetSystem __ListingSetSystem;
 _MerchantCreateSystem __MerchantCreateSystem;
 _NodeCreateSystem __NodeCreateSystem;
@@ -271,7 +271,7 @@ _ViolenceComponent = ViolenceComponent(component(ViolenceComponentID));
 
 __InitSystem = _InitSystem(system(_InitSystemID));
 __devGiveTokensSystem = _devGiveTokensSystem(system(_devGiveTokensSystemID));
-__AddModifierSystem = _AddModifierSystem(system(_AddModifierSystemID));
+__AddTraitSystem = _AddTraitSystem(system(_AddTraitSystemID));
 __ListingSetSystem = _ListingSetSystem(system(_ListingSetSystemID));
 __MerchantCreateSystem = _MerchantCreateSystem(system(_MerchantCreateSystemID));
 __NodeCreateSystem = _NodeCreateSystem(system(_NodeCreateSystemID));

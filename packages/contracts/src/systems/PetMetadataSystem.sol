@@ -65,11 +65,11 @@ contract PetMetadataSystem is System {
     uint256[] memory permTraits = LibMetadata._packedToArray(packed, _numElements);
     // assigning initial traits. genus is hardcoded
     string[] memory names = new string[](5);
-    names[0] = "BODY";
-    names[1] = "COLOR";
-    names[2] = "FACE";
+    names[0] = "COLOR";
+    names[1] = "BACKGROUND";
+    names[2] = "BODY";
     names[3] = "HAND";
-    names[4] = "BACKGROUND";
+    names[4] = "FACE";
     for (uint256 i; i < permTraits.length; i++) {
       // console.log(names[i]);
       // console.log(permTraits[i]);
@@ -77,8 +77,8 @@ contract PetMetadataSystem is System {
         components,
         world,
         entityID,
-        names[i], // genus
-        permTraits[i] // index
+        LibString.toString(permTraits[i]), // genus, ie string based index
+        names[i] // type (body, color, etc)
       );
     }
 
