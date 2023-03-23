@@ -6,7 +6,7 @@ import { SystemAbis } from "../../../types/SystemAbis.mjs";
 import { GameConfig, getNetworkConfig } from "./config";
 import { createAdminAPI } from "./api/admin";
 import { createPlayerAPI } from "./api/player";
-import { setUpWorldAPI } from "./api/worldSetUp";
+import { setUpWorldAPI } from "./api/world";
 import { createComponents } from "./components/register";
 
 export async function createNetworkLayer(config: GameConfig) {
