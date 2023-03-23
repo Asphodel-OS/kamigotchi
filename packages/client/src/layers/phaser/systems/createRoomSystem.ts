@@ -30,11 +30,10 @@ export function createRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
     )[0];
 
     if (characterEntityNumber == update.entity) {
-      
       const currentRoom = getCurrentRoom(Location, update.entity);
-      
-      dataStore.setState({ roomExits: roomExits[currentRoom]  });
-      
+
+      dataStore.setState({ roomExits: roomExits[currentRoom] });
+
       myMain.interactiveObjects.forEach((object: any) => {
         try {
           object.removeInteractive();
@@ -44,7 +43,7 @@ export function createRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
         }
       });
       myMain.interactiveObjects = [];
-      closeModalsOnRoomChange()
+      closeModalsOnRoomChange();
 
       myMain.rooms![currentRoom].create(myMain);
     }

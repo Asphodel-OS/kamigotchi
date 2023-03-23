@@ -22,7 +22,6 @@ export const useModalVisibility = ({
     if (soundUrl) {
       const clickSound = new Audio(soundUrl);
       clickSound.volume = volume * 0.6;
-      console.log(volume * 0.6);
       clickSound.play();
     }
     setVisibleDivs({ ...visibleDivs, [divName]: !visibleDivs[divName] });
