@@ -58,7 +58,7 @@ export const dataStore = create<StoreState & StoreActions>((set) => {
       worldMap: false,
     },
     sound: {
-      volume: localStorage.getItem('isSoundMuted') == 'true' ? 0 : 0.5,
+      volume: 0.5,
     },
   };
 

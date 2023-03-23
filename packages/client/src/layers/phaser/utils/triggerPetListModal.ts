@@ -1,10 +1,11 @@
-export const triggerPetListModal = (
-  object: Phaser.GameObjects.GameObject,
-) => {
+import { dataStore } from '../../react/store/createStore';
+
+export const triggerPetListModal = (object: Phaser.GameObjects.GameObject) => {
   return object.setInteractive().on('pointerdown', () => {
-    const objectId = document.getElementById('petlist_modal');
-    if (objectId) {
-      objectId.style.display = 'block';
-    }
+    const { visibleDivs } = dataStore.getState();
+
+    dataStore.setState({
+      visibleDivs: { ...visibleDivs, petList: !visibleDivs.petList },
+    });
   });
 };

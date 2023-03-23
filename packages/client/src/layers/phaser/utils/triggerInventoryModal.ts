@@ -1,11 +1,13 @@
+import { dataStore } from '../../react/store/createStore';
+
 export const triggerInventoryModal = (
-  object: Phaser.GameObjects.GameObject,
-  description: string
+  object: Phaser.GameObjects.GameObject
 ) => {
   return object.setInteractive().on('pointerdown', () => {
-    const objectId = document.getElementById('inventory_modal');
-    if (objectId) {
-      objectId.style.display = 'block';
-    }
+    const { visibleDivs } = dataStore.getState();
+
+    dataStore.setState({
+      visibleDivs: { ...visibleDivs, inventory: !visibleDivs.inventory },
+    });
   });
 };
