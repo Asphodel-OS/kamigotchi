@@ -1,6 +1,6 @@
 import { BigNumberish } from "ethers";
 import { createPlayerAPI } from "./player";
-import { setUpWorldAPI } from "./worldSetUp";
+import { setUpWorldAPI } from "./world";
 
 export function createAdminAPI(systems: any) {
   function init() {
