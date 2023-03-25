@@ -117,7 +117,7 @@ export function registerInventoryModal() {
               </Button>
             </div>
           </ModalContent>
-        </ModalWrapper>
+        </ModalWrapperLite>
       );
     }
   );

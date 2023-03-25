@@ -14,7 +14,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
-import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
+import { ModalWrapperLite, ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const ItemImages = new Map([
@@ -206,21 +206,10 @@ export function registerMerchantModal() {
           </ShopEntry>
         ));
 
-      const { handleClick, visibleDiv } = useModalVisibility({
-        soundUrl: null,
-        divName: 'merchant',
-        elementId: 'merchant',
-      });
-
       return (
-        <ModalWrapper id="merchant" isOpen={visibleDiv}>
-          <ModalContent>
-            <TopButton style={{ pointerEvents: 'auto' }} onClick={handleClick}>
-              X
-            </TopButton>
-            <ShopList>{listings(data.listings)}</ShopList>
-          </ModalContent>
-        </ModalWrapper>
+        <ModalWrapperFull divName="merchant" elementId="merchant">
+          <ShopList>{listings(data.listings)}</ShopList>
+        </ModalWrapperFull>
       );
     }
   );
@@ -246,36 +235,16 @@ const Button = styled.button`
   align-self: center;
 `;
 
-const ModalContent = styled.div`
-  display: grid;
-  background-color: white;
-  border-radius: 10px;
-  padding: 8px;
-  width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
+const ItemImage = styled.img`
   font-family: Pixel;
   grid-column: 1;
-  grid-row: 1;
-  width: 30px;
-  &:active {
-    background-color: #c2c2c2;
-  }
-  justify-self: right;
+  align-self: center;
+  width: 50px;
+  border-style: solid;
+  border-width: 0px 2px 0px 0px;
+  border-color: black;
+  padding: 5px;
+  margin: 0px;
 `;
 
 const ItemName = styled.p`
@@ -314,14 +283,3 @@ const ShopList = styled.ul`
   border-radius: 5px;
 `;
 
-const ItemImage = styled.img`
-  font-family: Pixel;
-  grid-column: 1;
-  align-self: center;
-  width: 50px;
-  border-style: solid;
-  border-width: 0px 2px 0px 0px;
-  border-color: black;
-  padding: 5px;
-  margin: 0px;
-`;

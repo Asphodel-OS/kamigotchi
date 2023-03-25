@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { BigNumber, utils } from 'ethers';
 import React from 'react';
 import { map, merge } from 'rxjs';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
 import styled from 'styled-components';
+import { registerUIComponent } from 'layers/react/engine/store';
 import {
   EntityID,
   EntityIndex,
   getComponentValue,
 } from '@latticexyz/recs';
+import { dataStore } from 'layers/react/store/createStore';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3';
-import clickSound from 'assets/sound/fx/mouseclick.wav';
-import { BigNumber, utils } from 'ethers';
-import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 
 const SystemBalID = BigNumber.from(utils.id('system.ERC721.pet'));
 
@@ -132,58 +130,27 @@ export function registerKamiMintModal() {
         }
       };
 
-      const { handleClick, visibleDiv } = useModalVisibility({
-        soundUrl: clickSound,
-        divName: 'petMint',
-        elementId: 'petmint_modal',
-      });
-
       return (
-        <ModalWrapper id="petmint_modal" isOpen={visibleDiv}>
-          <ModalContent>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                width: '100%',
-              }}
-            >
-              <TopButton onClick={handleClick}>X</TopButton>
-            </div>
-            <CenterBox>
-              <KamiImage src="https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif" />
-              <Description>Kamigotchi?</Description>
-            </CenterBox>
-            <Button
-              style={{
-                gridRowEnd: 5,
-                justifySelf: 'center',
-                pointerEvents: 'auto',
-              }}
-              onClick={handleMinting}
-            >
-              Mint
-            </Button>
-          </ModalContent>
-        </ModalWrapper>
+        <ModalWrapperFull divName="petMint" elementId='petmint_modal'>
+          <CenterBox>
+            <KamiImage src="https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif" />
+            <Description>Kamigotchi?</Description>
+          </CenterBox>
+          <Button
+            style={{
+              gridRowEnd: 5,
+              justifySelf: 'center',
+              pointerEvents: 'auto',
+            }}
+            onClick={handleMinting}
+          >
+            Mint
+          </Button>
+        </ModalWrapperFull>
       );
     }
   );
 }
-
-const ModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border-radius: 10px;
-  padding: 8px;
-  width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  justify-content: center;
-  align-items: center;
-`;
 
 const CenterBox = styled.div`
   display: flex;
@@ -216,26 +183,6 @@ const Description = styled.p`
   text-align: center;
   padding: 10px;
   font-family: Pixel;
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  grid-column: 5;
-  width: 30px;
-  &:active {
-    background-color: #c2c2c2;
-  }
-  justify-self: right;
 `;
 
 const KamiImage = styled.img`

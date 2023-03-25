@@ -12,10 +12,8 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
-import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { BigNumber, BigNumberish } from 'ethers';
-import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 
 type TraitDetails = {
   Name: string;
@@ -197,52 +195,32 @@ export function registerKamiModal() {
         );
       });
 
-      const { handleClick, visibleDiv } = useModalVisibility({
-        soundUrl: clickSound,
-        divName: 'petDetails',
-        elementId: 'petdetails_modal',
-      });
-
       return (
-        <ModalWrapper id="petdetails_modal" isOpen={visibleDiv}>
-          <ModalContent>
-            <TopButton onClick={handleClick}>X</TopButton>
+        <ModalWrapperFull divName='petDetails' elementId='petdetails_modal'>
+          <KamiBox>
             <KamiBox>
-              <KamiBox>
-                <KamiBox style={{ gridColumn: 1, gridRow: 1 }}>
-                  <KamiName>{dets?.petName} </KamiName>
-                  <KamiImage src={dets?.uri} />
-                </KamiBox>
-                <KamiBox
-                  style={{ gridColumn: 1, gridRow: 2, justifyItems: 'end' }}
-                >
-                  <KamiFacts>Affinity: {dets?.affinity} </KamiFacts>
-                  <KamiFacts>Health: {dets?.health} </KamiFacts>
-                  <KamiFacts>Power: {dets?.power} </KamiFacts>
-                  <KamiFacts>Violence: {dets?.violence} </KamiFacts>
-                  <KamiFacts>Harmony: {dets?.harmony}</KamiFacts>
-                  <KamiFacts>Slots: {dets?.slots} </KamiFacts>
-                </KamiBox>
+              <KamiBox style={{ gridColumn: 1, gridRow: 1 }}>
+                <KamiName>{dets?.petName} </KamiName>
+                <KamiImage src={dets?.uri} />
               </KamiBox>
-              <KamiBox style={{ gridColumnStart: 2 }}>{traitLines}</KamiBox>
+              <KamiBox
+                style={{ gridColumn: 1, gridRow: 2, justifyItems: 'end' }}
+              >
+                <KamiFacts>Affinity: {dets?.affinity} </KamiFacts>
+                <KamiFacts>Health: {dets?.health} </KamiFacts>
+                <KamiFacts>Power: {dets?.power} </KamiFacts>
+                <KamiFacts>Violence: {dets?.violence} </KamiFacts>
+                <KamiFacts>Harmony: {dets?.harmony}</KamiFacts>
+                <KamiFacts>Slots: {dets?.slots} </KamiFacts>
+              </KamiBox>
             </KamiBox>
-          </ModalContent>
-        </ModalWrapper>
+            <KamiBox style={{ gridColumnStart: 2 }}>{traitLines}</KamiBox>
+          </KamiBox>
+        </ModalWrapperFull>
       );
     }
   );
 }
-
-const ModalContent = styled.div`
-  display: grid;
-  background-color: white;
-  border-radius: 10px;
-  padding: 20px 20px 40px 20px;
-  width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-`;
 
 const KamiBox = styled.div`
   background-color: #ffffff;
@@ -320,49 +298,4 @@ const KamiImage = styled.img`
   margin: 0px;
   padding: 0px;
   grid-row: 1 / span 1;
-`;
-
-const Button = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-family: Pixel;
-
-  &:active {
-    background-color: #c2c2c2;
-  }
-`;
-
-const Description = styled.p`
-  font-size: 22px;
-  color: #333;
-  text-align: center;
-  padding: 20px;
-  font-family: Pixel;
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c2c2c2;
-  }
-  justify-self: right;
 `;

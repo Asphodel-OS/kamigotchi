@@ -1,23 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import clickSound from 'assets/sound/fx/mouseclick.wav';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
-
-
-const ExitButton = (props: any) => {
-  const { handleClick, visibleDiv } = useModalVisibility({
-    soundUrl: clickSound,
-    divName: props.divName,
-    elementId: props.elementId,
-  });
-
-  return <TopButton style={{ pointerEvents: 'auto' }} onClick={handleClick}>
+export const ExitButton = (props: any) => {
+  return <TopButton style={{ pointerEvents: 'auto' }} onClick={() => props.onClick()}>
     X
   </TopButton>
 }
-
-export default ExitButton;
 
 const TopButton = styled.button`
   background-color: #ffffff;

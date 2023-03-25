@@ -34,5 +34,5 @@ export const useModalVisibility = ({
     }
   }, [visibleDivs[divName], elementId]);
 
-  return { handleClick, visibleDiv: visibleDivs[divName] };
+  return { handleClick, isVisible: visibleDivs[divName] };
 };

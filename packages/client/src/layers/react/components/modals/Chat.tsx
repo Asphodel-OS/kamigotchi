@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { map, merge } from 'rxjs';
+import styled from 'styled-components';
 import {
   EntityIndex,
   Has,
@@ -7,14 +8,12 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
-import { registerUIComponent } from 'layers/react/engine/store';
-import styled from 'styled-components';
-import 'layers/react/styles/font.css';
-import clickSound from 'assets/sound/fx/mouseclick.wav';
-import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
-
 import * as mqtt from 'mqtt';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
+
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import 'layers/react/styles/font.css';
+
 
 const mqttServerUrl = 'wss://chatserver.asphodel.io:8083/mqtt';
 const mqttTopic = 'kamigotchi';
@@ -142,31 +141,22 @@ export function registerChatModal() {
         </li>
       ));
 
-      const { handleClick, visibleDiv } = useModalVisibility({
-        soundUrl: clickSound,
-        divName: 'chat',
-        elementId: 'chat_modal',
-      });
-
       return (
-        <ModalWrapper id="chat_modal" isOpen={visibleDiv}>
-          <ModalContent>
-            <TopButton onClick={handleClick}>X</TopButton>
-            <ChatWrapper>
-              <ChatBox style={{ pointerEvents: 'auto' }}>
-                {messageLines}
-                <div id="botElement"> </div>
-              </ChatBox>
-              <ChatInput
-                style={{ pointerEvents: 'auto' }}
-                type="text"
-                onKeyDown={(e) => catchKeys(e)}
-                value={chatInput}
-                onChange={(e) => handleChange(e)}
-              />
-            </ChatWrapper>
-          </ModalContent>
-        </ModalWrapper>
+        <ModalWrapperFull divName="chat" elementId="chat_modal">
+          <ChatWrapper>
+            <ChatBox style={{ pointerEvents: 'auto' }}>
+              {messageLines}
+              <div id="botElement"> </div>
+            </ChatBox>
+            <ChatInput
+              style={{ pointerEvents: 'auto' }}
+              type="text"
+              onKeyDown={(e) => catchKeys(e)}
+              value={chatInput}
+              onChange={(e) => handleChange(e)}
+            />
+          </ChatWrapper>
+        </ModalWrapperFull>
       );
     }
   );
@@ -212,74 +202,4 @@ const ChatInput = styled.input`
   border-radius: 5px;
   justify-content: center;
   font-family: Pixel;
-`;
-
-const ModalContent = styled.div`
-  display: grid;
-  background-color: white;
-  border-radius: 10px;
-  padding: 8px;
-  width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-`;
-
-const Button = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 15px;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-family: Pixel;
-
-  &:active {
-    background-color: #c2c2c2;
-  }
-`;
-
-const Description = styled.p`
-  font-size: 16px;
-  color: #333;
-  text-align: left;
-  padding: 20px;
-  font-family: Pixel;
-`;
-
-const TypeHeading = styled.p`
-  font-size: 20px;
-  color: #333;
-  font-family: Pixel;
-  grid-column: 1;
-  justify-self: left;
-  align-self: middle;
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c2c2c2;
-  }
-  justify-self: right;
-`;
-
-const TopGrid = styled.div`
-  display: grid;
-  margin: 2px;
 `;

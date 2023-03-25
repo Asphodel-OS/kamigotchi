@@ -10,7 +10,7 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { dataStore } from 'layers/react/store/createStore';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
@@ -448,31 +448,22 @@ export function registerPartyModal() {
         });
       };
 
-
-      const { visibleDiv } = useModalVisibility({
-        soundUrl: clickSound,
-        divName: 'party',
-        elementId: 'party_modal',
-      });
-
       return (
-        <ModalWrapper
-          id="party_modal"
-          isOpen={visibleDiv}
-          style={{ height: '75vh' }}
+        <ModalWrapperFull
+          divName='party'
+          elementId='party_modal'
+          fill={true}
         >
-          <ModalContent>
-            <TopGrid>
-              <TopDescription>
-                Bytes: {data.account.bytes ? data.account.bytes * 1 : '0'}
-              </TopDescription>
-            </TopGrid>
-            <ConsumableGrid>
-              {ConsumableCells(data.account.inventories)}
-            </ConsumableGrid>
-            <Scrollable>{KamiCards(data.pets)}</Scrollable>
-          </ModalContent>
-        </ModalWrapper>
+          <TopGrid>
+            <TopDescription>
+              Bytes: {data.account.bytes ? data.account.bytes * 1 : '0'}
+            </TopDescription>
+          </TopGrid>
+          <ConsumableGrid>
+            {ConsumableCells(data.account.inventories)}
+          </ConsumableGrid>
+          <Scrollable>{KamiCards(data.pets)}</Scrollable>
+        </ModalWrapperFull>
       );
     }
   );
@@ -481,39 +472,6 @@ export function registerPartyModal() {
 const Scrollable = styled.div`
   overflow: auto;
   max-height: 100%;
-`;
-
-const ModalContent = styled.div`
-  display: grid;
-  background-color: white;
-  border-radius: 10px;
-  padding: 8px;
-  width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-
-  height: 100%;
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  grid-column: 5;
-  width: 30px;
-  &:active {
-    background-color: #c2c2c2;
-}
-  justify-self: right;
 `;
 
 const ThinButton = styled.button`

@@ -8,7 +8,7 @@ import { gridRooms } from '../../../../constants';
 import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { getCurrentRoom } from '../../../phaser/utils';
-import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
+import { ModalWrapperLite } from 'layers/react/components/library/ModalWrapper';
 
 const objectKeys = Object.keys(gridRooms);
 
@@ -120,7 +120,7 @@ export function registerMapModal() {
 
       // <ModalWrapper id="world_map">
       return (
-        <ModalWrapper id="world_map" isOpen={visibleDivs.worldMap}>
+        <ModalWrapperLite id="world_map" isOpen={visibleDivs.worldMap}>
           <ModalContent>
             <TopButton style={{ pointerEvents: 'auto' }} onClick={toggleModal}>
               X
@@ -151,7 +151,7 @@ export function registerMapModal() {
               ↓
             </Button>
           </ButtonWrapper>
-        </ModalWrapper>
+        </ModalWrapperLite>
       );
     }
   );

@@ -4,7 +4,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import styled from 'styled-components';
 import 'layers/react/styles/font.css';
-import { ModalWrapper } from './library/AnimModalWrapper';
+import { ModalWrapperLite } from './library/ModalWrapper';
 
 // TODO: update this file and component name to be more desctiptive
 export function registerObjectModal() {
@@ -44,7 +44,7 @@ export function registerObjectModal() {
       }, [visibleDivs.objectModal]);
 
       return (
-        <ModalWrapper id="object_modal" isOpen={visibleDivs.objectModal}>
+        <ModalWrapperLite id="object_modal" isOpen={visibleDivs.objectModal}>
           <ModalContent>
             <AlignRight>
               <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
@@ -58,7 +58,7 @@ export function registerObjectModal() {
               </Button>
             </div>
           </ModalContent>
-        </ModalWrapper>
+        </ModalWrapperLite>
       );
     }
   );
