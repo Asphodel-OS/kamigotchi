@@ -36,7 +36,7 @@ type Details = {
   traits: TraitDetails[];
 };
 
-export function registerPetDetails() {
+export function registerKamiModal() {
   registerUIComponent(
     'PetDetails',
     {

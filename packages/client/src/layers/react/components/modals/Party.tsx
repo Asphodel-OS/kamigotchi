@@ -33,7 +33,7 @@ const ItemNames = new Map([
   [3, 'Gakki'],
 ]);
 
-export function registerPetList() {
+export function registerPartyModal() {
   registerUIComponent(
     'PetList',
     {
@@ -451,13 +451,13 @@ export function registerPetList() {
 
       const { visibleDiv } = useModalVisibility({
         soundUrl: clickSound,
-        divName: 'petList',
-        elementId: 'petlist_modal',
+        divName: 'party',
+        elementId: 'party_modal',
       });
 
       return (
         <ModalWrapper
-          id="petlist_modal"
+          id="party_modal"
           isOpen={visibleDiv}
           style={{ height: '75vh' }}
         >

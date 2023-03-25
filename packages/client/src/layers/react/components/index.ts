@@ -2,20 +2,20 @@ import { registerActionQueue } from './ActionQueue';
 import { registerLoadingState } from './LoadingState';
 import { registerObjectModal } from './ObjectModal';
 
-import { registerChatButton } from './buttons/ChatButton';
-import { registerFoodShopButton } from './buttons/FoodShopButton';
-import { registerMyKamiButton } from './buttons/MyKamiButton';
-import { registerMapButton } from './buttons/MapButton';
+import { registerChatButton } from './buttons/Chat';
+import { registerFoodShopButton } from './buttons/FoodShop';
+import { registerMapButton } from './buttons/Map';
+import { registerPartyButton } from './buttons/Party';
 
-import { registerChat } from './modals/Chat';
+import { registerChatModal } from './modals/Chat';
 import { registerDetectAccount } from './modals/DetectAccount';
-import { registerMerchantWindow } from './modals/MerchantWindow';
-import { registerPetList } from './modals/PetList';
-import { registerPetMint } from './modals/PetMint';
-import { registerPetDetails } from './modals/PetDetails';
+import { registerKamiMintModal } from './modals/KamiMint';
+import { registerKamiModal } from './modals/Kami';
+import { registerMapModal } from './modals/Map';
+import { registerMerchantModal } from './modals/Merchant';
+import { registerPartyModal } from './modals/Party';
 import { registerRequestQueue } from './modals/RequestQueue';
-import { registerTradeWindow } from './modals/TradeWindow';
-import { registerWorldMap } from './modals/WorldMap';
+import { registerTradeModal } from './modals/Trade';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -25,15 +25,15 @@ export function registerUIComponents() {
   registerChatButton();
   registerFoodShopButton();
   registerMapButton();
-  registerMyKamiButton();
+  registerPartyButton();
 
-  registerChat();
+  registerChatModal();
   registerDetectAccount();
-  registerMerchantWindow();
-  registerPetList();
-  registerPetMint();
-  registerPetDetails();
+  registerKamiMintModal();
+  registerKamiModal();
+  registerMapModal();
+  registerMerchantModal();
+  registerPartyModal();
   registerRequestQueue();
-  registerTradeWindow();
-  registerWorldMap();
+  registerTradeModal();
 }

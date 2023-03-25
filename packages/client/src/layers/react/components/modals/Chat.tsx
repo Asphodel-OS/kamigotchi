@@ -19,7 +19,7 @@ import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 const mqttServerUrl = 'wss://chatserver.asphodel.io:8083/mqtt';
 const mqttTopic = 'kamigotchi';
 
-export function registerChat() {
+export function registerChatModal() {
   registerUIComponent(
     'Chat',
     {

@@ -18,7 +18,7 @@ import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const SystemBalID = BigNumber.from(utils.id('system.ERC721.pet'));
 
-export function registerPetMint() {
+export function registerKamiMintModal() {
   registerUIComponent(
     'PetMint',
     {

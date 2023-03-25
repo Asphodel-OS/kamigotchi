@@ -12,7 +12,7 @@ import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
 
 const objectKeys = Object.keys(gridRooms);
 
-export function registerWorldMap() {
+export function registerMapModal() {
   registerUIComponent(
     'WorldMap',
     {

@@ -9,7 +9,7 @@ import 'layers/react/styles/font.css';
 // import ribbon from 'assets/images/ribbon.png'
 // import gum from 'assets/images/gum.png'
 
-export function registerInventory() {
+export function registerInventoryModal() {
   registerUIComponent(
     'Inventory',
     {

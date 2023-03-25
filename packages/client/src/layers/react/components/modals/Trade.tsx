@@ -6,7 +6,7 @@ import { EntityIndex, Has, HasValue, NotValue, getComponentValue, runQuery, } fr
 import { registerUIComponent } from "layers/react/engine/store";
 
 // NOTE(ja): potentially may want to split this up into two components (main window + registers)
-export function registerTradeWindow() {
+export function registerTradeModal() {
   registerUIComponent(
     "TradeWindow",
 

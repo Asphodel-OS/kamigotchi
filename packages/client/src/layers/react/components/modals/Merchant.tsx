@@ -30,7 +30,7 @@ const ItemNames = new Map([
 ]);
 
 // merchant window with listings. assumes at most 1 merchant per room
-export function registerMerchantWindow() {
+export function registerMerchantModal() {
   registerUIComponent(
     'MerchantWindow',
 

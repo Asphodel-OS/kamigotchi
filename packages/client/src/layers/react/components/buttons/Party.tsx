@@ -6,7 +6,7 @@ import 'layers/react/styles/font.css';
 import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
-export function registerMyKamiButton() {
+export function registerPartyButton() {
   registerUIComponent(
     'MyKamiButton',
     {
@@ -19,12 +19,12 @@ export function registerMyKamiButton() {
     () => {
       const { handleClick } = useModalVisibility({
         soundUrl: clickSound,
-        divName: 'petList',
-        elementId: 'petlist_modal',
+        divName: 'party',
+        elementId: 'party_modal',
       });
 
       return (
-        <ModalWrapper id="mykami_button">
+        <ModalWrapper id="party_button">
           <ModalContent>
             <Button style={{ pointerEvents: 'auto' }} onClick={handleClick}>
               My Kami
