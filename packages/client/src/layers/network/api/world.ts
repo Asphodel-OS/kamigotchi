@@ -28,19 +28,17 @@ export function setUpWorldAPI(systems: any) {
   }
 
   async function initTraits() {
-
-    let count = 0;
-
     function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
       for (let i = 0; i < data.length; i++) {
         createAdminAPI(systems).registry.trait.create(
-          count++, // registry index
-          data[i].get("Harmony"), // value, chenge to individual stats. only harmony for now
-          data[i].get("Index"), // genus, equiv to individual item index
+          data[i].get("Index"), // individual trait index
+          data[i].get("Health") ? data[i].get("Health") : "0",
+          data[i].get("Power") ? data[i].get("Power") : "0",
+          data[i].get("Violence") ? data[i].get("Violence") : "0",
+          data[i].get("Harmony") ? data[i].get("Harmony") : "0",
+          data[i].get("Name"), // name of trait
           type, // type: body, color, etc
-          data[i].has("Affinity") ? data[i].get("Affinity") : "", // affinity: may not have
-          data[i].get("Name") // name of trait
         );
       }
     }

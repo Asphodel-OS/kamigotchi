@@ -64,23 +64,11 @@ contract PetMetadataSystem is System {
 
     uint256[] memory permTraits = LibMetadata._packedToArray(packed, _numElements);
     // assigning initial traits. genus is hardcoded
-    string[] memory names = new string[](5);
-    names[0] = "COLOR";
-    names[1] = "BACKGROUND";
-    names[2] = "BODY";
-    names[3] = "HAND";
-    names[4] = "FACE";
-    for (uint256 i; i < permTraits.length; i++) {
-      // console.log(names[i]);
-      // console.log(permTraits[i]);
-      LibTrait.addToPet(
-        components,
-        world,
-        entityID,
-        LibString.toString(permTraits[i]), // genus, ie string based index
-        names[i] // type (body, color, etc)
-      );
-    }
+    LibTrait.assignColor(components, entityID, permTraits[0]);
+    LibTrait.assignBackground(components, entityID, permTraits[1]);
+    LibTrait.assignBody(components, entityID, permTraits[2]);
+    LibTrait.assignHand(components, entityID, permTraits[3]);
+    LibTrait.assignFace(components, entityID, permTraits[4]);
 
     return "";
   }
@@ -134,49 +122,27 @@ contract PetMetadataSystem is System {
       );
   }
 
-  function _getPetType(uint256 entityID) public view returns (string memory) {
-    string[] memory types = LibTrait.getAffinities(components, entityID);
-    return
-      string(
-        abi.encodePacked(
-          '{"trait_type": "',
-          "Type",
-          '", "value": "',
-          types[0],
-          " | ",
-          types[1],
-          '"},\n'
-        )
-      );
-  }
-
   function _getBaseTraits(uint256 entityID) public view returns (string memory) {
     string memory result = "";
 
     // getting values of base traits. values are hardcoded to array position
+    string[] memory comps = new string[](5);
+    comps[0] = "Body";
+    comps[1] = "Color";
+    comps[2] = "Face";
+    comps[3] = "Hand";
+    comps[4] = "Background";
+
     string[] memory names = new string[](5);
-    names[0] = "Body";
-    names[1] = "Color";
-    names[2] = "Face";
-    names[3] = "Hand";
-    names[4] = "Background";
-    // string[] memory values = LibPetTraits.getNames(
-    //   components,
-    //   LibPetTraits.getPermArray(components, entityID)
-    // );
+    names[0] = LibTrait.getBodyName(components, entityID);
+    names[1] = LibTrait.getColorName(components, entityID);
+    names[2] = LibTrait.getFaceName(components, entityID);
+    names[3] = LibTrait.getHandName(components, entityID);
+    names[4] = LibTrait.getBackgroundName(components, entityID);
 
     for (uint256 i; i < names.length; i++) {
-      uint256 curID = LibTrait._getAllX(
-        components,
-        entityID, // petID
-        "", // genus, not searching
-        0, // index, can vary
-        LibString.toCase(names[i], true), // mode type, all caps
-        "" // affinity, not searching
-      )[0];
-      string memory valName = LibTrait.getName(components, curID);
       string memory entry = string(
-        abi.encodePacked('{"trait_type": "', names[i], '", "value": "', valName, '"},\n')
+        abi.encodePacked('{"trait_type": "', comps[i], '", "value": "', names[i], '"},\n')
       );
 
       result = string(abi.encodePacked(result, entry));

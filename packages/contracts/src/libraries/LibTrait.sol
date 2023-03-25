@@ -8,257 +8,125 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
-import { GenusComponent, ID as GenusComponentID } from "components/GenusComponent.sol";
-import { IdPetComponent, ID as IdPetComponentID } from "components/IdPetComponent.sol";
-import { IndexModifierComponent, ID as IndexModifierComponentID } from "components/IndexModifierComponent.sol";
-import { IsTraitComponent, ID as IsTraitComponentID } from "components/IsTraitComponent.sol";
-import { IsEquippedComponent, ID as IsEquipCompID } from "components/IsEquippedComponent.sol";
+import { IdHolderComponent, ID as IdHolderComponentID } from "components/IdHolderComponent.sol";
+import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
+import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
+import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
+import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
+import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { TypeComponent, ID as TypeComponentID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueComponentID } from "components/ValueComponent.sol";
-import { ID as PrototypeComponentID } from "components/PrototypeComponent.sol";
-import { LibRegistryModifier } from "libraries/LibRegistryModifier.sol";
-import { LibPrototype } from "libraries/LibPrototype.sol";
 
-// This library would move to LibEquipmet in the future
+import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
-// COMPONENTS: Component shapes are defined in createIndex, key components are described below
-// Affinity
-// Genus: Numerical index for 2D referencing - implemented as string for consistency
-// Type: Trait category, ie Face, Body, Color
-// IsEquipped: All traits are considered permanently equipped. Component is added for compatibility
-
+// Library specifically for permanent traits. Removing/swapping is not supported, but can be added
 library LibTrait {
   ///////////////
-  // PETS
+  // ASSIGNING
+  function assignBody(IUint256Component components, uint256 holderID, uint256 index) internal {
+    IndexBodyComponent(getAddressById(components, IndexBodyCompID)).set(holderID, index);
+    LibStat.incAll(components, holderID, LibRegistryItem.getByBodyIndex(components, index));
+  }
 
-  // creates a new entity from registry, adds it to the pet
-  function addToPet(
+  function assignBackground(
     IUint256Component components,
-    IWorld world,
-    uint256 petID,
-    string memory genus,
-    string memory _type
-  ) internal returns (uint256) {
-    uint256 entityID = world.getUniqueEntityId();
-    LibRegistryModifier.copyPrototype(components, genus, _type, entityID);
-    IdPetComponent(getAddressById(components, IdPetComponentID)).set(entityID, petID);
-    return entityID;
+    uint256 holderID,
+    uint256 index
+  ) internal {
+    IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).set(
+      holderID,
+      index
+    );
+    LibStat.incAll(components, holderID, LibRegistryItem.getByBackgroundIndex(components, index));
   }
 
-  // completely deletes the modifier entity
-  function remove(IUint256Component components, uint256 entityID) internal {
-    LibPrototype.remove(components, entityID);
-    IdPetComponent(getAddressById(components, IdPetComponentID)).remove(entityID);
+  function assignColor(IUint256Component components, uint256 holderID, uint256 index) internal {
+    IndexColorComponent(getAddressById(components, IndexColorCompID)).set(holderID, index);
+    LibStat.incAll(components, holderID, LibRegistryItem.getByColorIndex(components, index));
   }
 
-  // transfers modifier from entities
-  // sets entity as inactive
-  function transfer(IUint256Component components, uint256 entityID, uint256 to) internal {
-    IdPetComponent(getAddressById(components, IdPetComponentID)).set(entityID, to);
+  function assignFace(IUint256Component components, uint256 holderID, uint256 index) internal {
+    IndexFaceComponent(getAddressById(components, IndexFaceCompID)).set(holderID, index);
+    LibStat.incAll(components, holderID, LibRegistryItem.getByFaceIndex(components, index));
   }
 
-  ///////////////
-  // REGISTRY
-
-  function createIndex(
-    IUint256Component components,
-    IWorld world,
-    string memory genus,
-    uint256 index,
-    uint256 modValue,
-    string memory modType,
-    string memory affinity,
-    string memory name
-  ) internal returns (uint256) {
-    uint256 entityID = world.getUniqueEntityId();
-
-    uint256[] memory componentIDs = new uint256[](8);
-    componentIDs[0] = ValueComponentID;
-    componentIDs[1] = TypeComponentID;
-    componentIDs[2] = IsEquipCompID;
-    componentIDs[3] = AffinityComponentID;
-    componentIDs[4] = NameCompID;
-    componentIDs[5] = GenusComponentID;
-    componentIDs[6] = IsTraitComponentID;
-    componentIDs[7] = PrototypeComponentID;
-
-    bytes[] memory values = new bytes[](8);
-    values[0] = abi.encode(modValue);
-    values[1] = abi.encode(modType);
-    values[2] = abi.encode(true);
-    values[3] = abi.encode(affinity);
-    values[4] = abi.encode(name);
-    values[5] = abi.encode(genus);
-    values[6] = abi.encode(true);
-    values[7] = new bytes(0);
-
-    LibRegistryModifier.addPrototype(components, genus, index, entityID, componentIDs, values);
-
-    return entityID;
+  function assignHand(IUint256Component components, uint256 holderID, uint256 index) internal {
+    IndexHandComponent(getAddressById(components, IndexHandCompID)).set(holderID, index);
+    LibStat.incAll(components, holderID, LibRegistryItem.getByHandIndex(components, index));
   }
 
   /////////////////
   // COMPONENT RETRIEVAL
-  function getModType(
+  function getBody(IUint256Component components, uint256 holderID) internal view returns (uint256) {
+    return IndexBodyComponent(getAddressById(components, IndexBodyCompID)).getValue(holderID);
+  }
+
+  function getBackground(
     IUint256Component components,
-    uint256 id
-  ) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeComponentID)).getValue(id);
-  }
-
-  function getValue(IUint256Component components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueComponentID)).getValue(id);
-  }
-
-  function getIndex(IUint256Component components, uint256 id) internal view returns (uint256) {
+    uint256 holderID
+  ) internal view returns (uint256) {
     return
-      IndexModifierComponent(getAddressById(components, IndexModifierComponentID)).getValue(id);
+      IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).getValue(
+        holderID
+      );
   }
 
-  function getName(IUint256Component components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
-  }
-
-  ///////////////
-  // QUERY
-  function _getAllX(
+  function getColor(
     IUint256Component components,
-    uint256 petID,
-    string memory genus,
-    uint256 index,
-    string memory modType,
-    string memory affinity
-  ) internal view returns (uint256[] memory) {
-    uint256 numFilters;
-    if (petID != 0) numFilters++;
-    if (!LibString.eq(genus, "")) numFilters++;
-    if (index != 0) numFilters++;
-    if (!LibString.eq(modType, "")) numFilters++;
-    if (!LibString.eq(affinity, "")) numFilters++;
-
-    QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsTraitComponentID),
-      ""
-    );
-
-    uint256 filterCount;
-    if (petID != 0) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IdPetComponentID),
-        abi.encode(petID)
-      );
-    }
-    if (!LibString.eq(genus, "")) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, GenusComponentID),
-        abi.encode(genus)
-      );
-    }
-    if (index != 0) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexModifierComponentID),
-        abi.encode(index)
-      );
-    }
-    if (!LibString.eq(modType, "")) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, TypeComponentID),
-        abi.encode(modType)
-      );
-    }
-    if (!LibString.eq(affinity, "")) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, TypeComponentID),
-        abi.encode(affinity)
-      );
-    }
-
-    return LibQuery.query(fragments);
+    uint256 holderID
+  ) internal view returns (uint256) {
+    return IndexColorComponent(getAddressById(components, IndexColorCompID)).getValue(holderID);
   }
 
-  // deprecated
-  function getAffinities(
-    IUint256Component components,
-    uint256 id
-  ) internal view returns (string[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, AffinityComponentID),
-      abi.encode(0)
-    );
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdPetComponentID),
-      abi.encode(id)
-    );
-
-    uint256[] memory queried = LibQuery.query(fragments);
-
-    // converts to name array
-    string[] memory names = new string[](queried.length);
-    AffinityComponent affinityComp = AffinityComponent(
-      getAddressById(components, AffinityComponentID)
-    );
-    for (uint256 i; i < queried.length; i++) {
-      names[i] = affinityComp.getValue(id);
-    }
-
-    return names;
+  function getFace(IUint256Component components, uint256 holderID) internal view returns (uint256) {
+    return IndexFaceComponent(getAddressById(components, IndexFaceCompID)).getValue(holderID);
   }
 
-  //////////////////
-  // CALCULATION
+  function getHand(IUint256Component components, uint256 holderID) internal view returns (uint256) {
+    return IndexHandComponent(getAddressById(components, IndexHandCompID)).getValue(holderID);
+  }
 
-  // second step for calculation: better to query once and run the new array
-  // depreciated
-  function calArray(
+  /////////////////
+  // QUERYING
+
+  function getBodyName(
     IUint256Component components,
-    uint256 baseValue,
-    uint256[] memory arr
-  ) internal view returns (uint256 power) {
-    // assumes all components in array is activated
-    uint256 store;
-    uint256 add;
-    uint256 mul = 100;
-    uint256 umul = 100;
+    uint256 entityID
+  ) internal view returns (string memory) {
+    uint256 index = getBody(components, entityID);
+    return LibRegistryItem.getName(components, LibRegistryItem.getByBodyIndex(components, index));
+  }
 
-    for (uint256 i; i < arr.length; i++) {
-      if (arr[i] == 0) continue;
+  function getBackgroundName(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (string memory) {
+    uint256 index = getBackground(components, entityID);
+    return
+      LibRegistryItem.getName(components, LibRegistryItem.getByBackgroundIndex(components, index));
+  }
 
-      uint256 val = getValue(components, arr[i]);
-      string memory modType = getModType(components, arr[i]);
+  function getColorName(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (string memory) {
+    uint256 index = getColor(components, entityID);
+    return LibRegistryItem.getName(components, LibRegistryItem.getByColorIndex(components, index));
+  }
 
-      if (LibString.eq(modType, "ADD")) {
-        add = add + val;
-      } else if (LibString.eq(modType, "MUL")) {
-        // value is a %
-        mul = (mul * (100 + val)) / 100;
-      } else if (LibString.eq(modType, "UMUL")) {
-        // value is a %
-        umul = (umul * (100 + val)) / 100;
-      } else if (LibString.eq(modType, "STORAGE")) {
-        store = store + val;
-      } else {
-        require(false, "unspecified mod type");
-      }
-    }
+  function getFaceName(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (string memory) {
+    uint256 index = getFace(components, entityID);
+    return LibRegistryItem.getName(components, LibRegistryItem.getByFaceIndex(components, index));
+  }
 
-    // if baseValue is 0, can assume this is calculating for base value
-    if (baseValue > 0) {
-      power = ((((baseValue * mul) / 100) + add) * umul) / 100;
-    } else {
-      power = (add * mul * umul) / 10000;
-    }
+  function getHandName(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (string memory) {
+    uint256 index = getHand(components, entityID);
+    return LibRegistryItem.getName(components, LibRegistryItem.getByHandIndex(components, index));
   }
 }
