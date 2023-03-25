@@ -10,8 +10,8 @@ import {
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 import 'layers/react/styles/font.css';
-import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
-import { ModalWrapper } from '../library/AnimModalWrapper';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
+import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
 
 import * as mqtt from 'mqtt';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';

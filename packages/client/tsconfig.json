@@ -9,6 +9,10 @@
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
     "baseUrl": "./",
     "paths": {
+      "assets/*": [
+        "./src/assets/*",
+        "./src/assets"
+      ],
       "layers/*": [
         "./src/layers/*",
         "./src/layers"

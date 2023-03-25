@@ -1,0 +1,16 @@
+﻿Name,Index,Image,Rarity,Type,Harmony,HP,Power,Violence,Slots
+Octopus,11,Body%2037ffb22974744a248c6d42ba98c90963/octopus.png,Common,Eerie,0,0,4,0,0
+Lightbulb,7,Body%2037ffb22974744a248c6d42ba98c90963/lightbulb.png,Common,Scrap,4,0,0,0,0
+Ghost,5,Body%2037ffb22974744a248c6d42ba98c90963/ghost.png,Common,Normal,0,0,4,0,0
+Caterpillar,3,,Common,Insect,0,0,0,4,0
+Melting,6,Body%2037ffb22974744a248c6d42ba98c90963/melting.png,Rare,Eerie,0,0,6,0,0
+Battery,0,Body%2037ffb22974744a248c6d42ba98c90963/battery.png,Rare,Scrap,0,75,0,0,0
+Bee,1,Body%2037ffb22974744a248c6d42ba98c90963/bee.png,Rare,Insect,0,0,0,6,0
+Orb,12,Body%2037ffb22974744a248c6d42ba98c90963/orb.png,Rare,Normal,6,0,0,0,0
+Tube,14,Body%2037ffb22974744a248c6d42ba98c90963/tube.png,Rare,Normal,0,60,0,0,0
+Cube,4,Body%2037ffb22974744a248c6d42ba98c90963/cube.png,Rare,Normal,0,0,0,0,1
+CRT Monitor (Inactive),8,Body%2037ffb22974744a248c6d42ba98c90963/crt_inactive.png,Epic,Scrap,,,,,
+CRT Monitor (Broken),9,Body%2037ffb22974744a248c6d42ba98c90963/crt_broken.png,Epic,Scrap,,,,,
+Butterfly,2,Body%2037ffb22974744a248c6d42ba98c90963/butterfly.png,Epic,Insect,0,0,0,8,0
+Octahedron,10,Body%2037ffb22974744a248c6d42ba98c90963/octahedron.png,Epic,Normal,0,0,0,0,2
+Pumpkin,13,,Epic,Eerie,9,0,8,0,0

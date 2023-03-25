@@ -1,10 +1,9 @@
 import React from 'react';
 import { of } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
 import styled from 'styled-components';
 import 'layers/react/styles/font.css';
-import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 export function registerMapButton() {

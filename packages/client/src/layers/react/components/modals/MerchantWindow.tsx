@@ -11,11 +11,10 @@ import {
 } from '@latticexyz/recs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
-import pompom from '../../../../public/img/pompom.png';
-import gakki from '../../../../public/img/gakki.png';
-import ribbon from '../../../../public/img/ribbon.png';
-import gum from '../../../../public/img/gum.png';
-import { ModalWrapper } from '../library/AnimModalWrapper';
+import pompom from 'assets/images/food/pompom.png';
+import gakki from 'assets/images/food/gakki.png';
+import gum from 'assets/images/food/gum.png';
+import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const ItemImages = new Map([

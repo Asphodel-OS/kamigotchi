@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { of } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import 'layers/react/styles/font.css';
 import { ModalWrapper } from './library/AnimModalWrapper';
 

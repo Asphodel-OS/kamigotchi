@@ -1,6 +1,6 @@
 import { PhaserScene } from '../types';
 import { resizePicture } from '../utils/resizePicture';
-import room004image from '../../../public/assets/room4.png';
+import room004image from 'assets/images/rooms/room4.png';
 import { getGirlCoordinates } from '../utils/coordinates';
 import { triggerObjectModal } from '../utils/triggerObjectModal';
 

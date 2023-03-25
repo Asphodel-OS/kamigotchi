@@ -55,6 +55,7 @@
     "staticPath": "src/public"
   },
   "alias": {
+    "assets": "./src/assets",
     "layers": "./src/layers"
   }
 }

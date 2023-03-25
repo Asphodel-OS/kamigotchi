@@ -1,8 +1,7 @@
 import React from 'react';
 import { of } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import 'layers/react/styles/font.css';
 
 export function registerInventoryButton() {
@@ -16,10 +15,6 @@ export function registerInventoryButton() {
     },
     (layers) => of(layers),
     () => {
-      const {
-        objectData: { description },
-      } = dataStore();
-
       const showInventory = () => {
         const modalId = window.document.getElementById('inventory_modal');
         if (modalId) modalId.style.display = 'block';

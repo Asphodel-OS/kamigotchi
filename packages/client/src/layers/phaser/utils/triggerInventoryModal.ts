@@ -1,4 +1,4 @@
-import { dataStore } from '../../react/store/createStore';
+import { dataStore } from 'layers/react/store/createStore';
 
 export const triggerInventoryModal = (
   object: Phaser.GameObjects.GameObject

@@ -2,7 +2,7 @@
 import { defineSystem, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { roomExits } from '../../../constants';
 import { NetworkLayer } from '../../network/types';
-import { dataStore } from '../../react/store/createStore';
+import { dataStore } from 'layers/react/store/createStore';
 import { PhaserLayer, PhaserScene } from '../types';
 import { getCurrentRoom } from '../utils';
 import { closeModalsOnRoomChange } from '../utils/closeModalsOnRoomChange';

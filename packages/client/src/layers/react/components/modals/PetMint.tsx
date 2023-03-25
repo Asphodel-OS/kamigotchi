@@ -10,10 +10,10 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import mintSound from '../../../../public/sound/sound_effects/tami_mint_vending_sound.mp3';
-import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { BigNumber, utils } from 'ethers';
-import { ModalWrapper } from '../library/AnimModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const SystemBalID = BigNumber.from(utils.id('system.ERC721.pet'));

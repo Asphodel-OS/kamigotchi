@@ -4,10 +4,10 @@ import styled, { keyframes } from 'styled-components';
 import { EntityIndex, Has, HasValue, NotValue, getComponentValue, runQuery } from "@latticexyz/recs";
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
-import pompom from '../../../../public/img/pompom.png'
-import gakki from '../../../../public/img/gakki.png'
-import ribbon from '../../../../public/img/ribbon.png'
-import gum from '../../../../public/img/gum.png'
+// import pompom from 'assets/images/pompom.png'
+// import gakki from 'assets/images/gakki.png'
+// import ribbon from 'assets/images/ribbon.png'
+// import gum from 'assets/images/gum.png'
 
 export function registerInventory() {
   registerUIComponent(

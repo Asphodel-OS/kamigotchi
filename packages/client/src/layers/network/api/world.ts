@@ -1,9 +1,9 @@
-import { createAdminAPI } from "./admin";
-import background from "../../../public/world-elements/kami-traits/Background.csv";
-import body from "../../../public/world-elements/kami-traits/Body.csv";
-import color from "../../../public/world-elements/kami-traits/Color.csv";
-import face from "../../../public/world-elements/kami-traits/Face.csv";
-import hand from "../../../public/world-elements/kami-traits/Hand.csv";
+import { createAdminAPI } from './admin';
+import background from 'assets/data/kami/Background.csv';
+import body from 'assets/data/kami/Body.csv';
+import color from 'assets/data/kami/Color.csv';
+import face from 'assets/data/kami/Face.csv';
+import hand from 'assets/data/kami/Hand.csv';
 
 export function setUpWorldAPI(systems: any) {
   function initWorld() {

@@ -1,0 +1,15 @@
+﻿Name,Index,Hex,Rarity,Done,Harmony,Violence,Health,Power
+Default Green,5,42F771,Common,Yes,0,0,25,0
+Yellow,13,FFED15,Common,Yes,0,3,0,0
+Blue,4,3BECFF,Common,Yes,2,0,0,0
+Red,11,FF2B1E,Common,Yes,0,2,0,0
+Pink,9,FF77E1,Common,Yes,0,0,0,2
+Orange,8,FFB226,Common,Yes,0,0,20,0
+Lime Green,7,ADFF3A,Uncommon,Yes,0,0,35,0
+Purple,10,BF6CFF,Uncommon,Yes,0,0,0,3
+Grey,6,AAA398,Uncommon,Yes,0,3,0,0
+White,12,F7F2ED,Uncommon,Yes,3,0,0,0
+"Gameboy Grayscale, “Classic”",0,,Rare,No,,,,
+"Inverted Canto Green, “Invert”",1,,Rare,No,,,,
+Black w/White Face. “Shadow”,2,,Rare,No,,,,
+"Transparent Pale Blue, “Ghost”",3,,Rare,No,,,,

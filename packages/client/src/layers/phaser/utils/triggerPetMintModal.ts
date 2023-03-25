@@ -1,4 +1,4 @@
-import { dataStore } from '../../react/store/createStore';
+import { dataStore } from 'layers/react/store/createStore';
 
 export const triggerPetMintModal = (object: Phaser.GameObjects.GameObject) => {
   return object.setInteractive().on('pointerdown', () => {

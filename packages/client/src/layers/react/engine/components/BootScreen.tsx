@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import mud from '../../../../public/img/mud.png'
+import mud from 'assets/images/mud.png'
 
 export const BootScreen: React.FC<{ initialOpacity?: number }> = ({ children, initialOpacity }) => {
   const [opacity, setOpacity] = useState(initialOpacity ?? 0);
@@ -9,7 +9,7 @@ export const BootScreen: React.FC<{ initialOpacity?: number }> = ({ children, in
 
   return (
     <Container>
-      <Logo src={mud}/>
+      <Logo src={mud} />
       <div>{children || <>&nbsp;</>}</div>
     </Container>
   );

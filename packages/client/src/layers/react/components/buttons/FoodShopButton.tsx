@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 import 'layers/react/styles/font.css';
-import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 export function registerFoodShopButton() {

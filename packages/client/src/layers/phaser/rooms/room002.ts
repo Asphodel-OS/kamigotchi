@@ -1,5 +1,5 @@
 import { PhaserScene } from '../types';
-import room002image from '../../../public/assets/room2.png';
+import room002image from 'assets/images/rooms/room2.png';
 import { resizePicture } from '../utils/resizePicture';
 import { triggerPetMintModal } from '../utils/triggerPetMintModal';
 import { getVendMachineCoordinates } from '../utils/coordinates';

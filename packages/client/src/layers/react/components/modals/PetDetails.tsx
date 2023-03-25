@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import {
   EntityIndex,
   EntityID,
@@ -12,9 +12,9 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
-import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { BigNumber, BigNumberish } from 'ethers';
-import { ModalWrapper } from '../library/AnimModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 type TraitDetails = {

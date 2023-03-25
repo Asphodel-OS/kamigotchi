@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import { dataStore } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
 import { gridRooms } from '../../../../constants';
-import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { getCurrentRoom } from '../../../phaser/utils';
-import { ModalWrapper } from '../library/AnimModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/AnimModalWrapper';
 
 const objectKeys = Object.keys(gridRooms);
 
