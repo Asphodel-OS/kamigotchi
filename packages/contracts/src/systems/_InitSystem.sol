@@ -22,7 +22,7 @@ contract _InitSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     arguments = "";
 
-    initFood();
+    // initFood();
     // initMods();
 
     // for erc721 pet
@@ -39,92 +39,5 @@ contract _InitSystem is System {
     LibRegistryItem.createFood(world, components, 1, "food 1", 25);
     LibRegistryItem.createFood(world, components, 2, "food 2", 100);
     LibRegistryItem.createFood(world, components, 3, "food 3", 200);
-  }
-
-  function initMods() internal {
-    LibTrait.createIndex(
-      components,
-      world,
-      "BODY",
-      1, // index
-      1, // mod value
-      "MUL",
-      "INSECT",
-      "Butterfly"
-    );
-    LibTrait.createIndex(
-      components,
-      world,
-      "BODY",
-      2, // index
-      2, // mod value
-      "MUL",
-      "MECH",
-      "Cube"
-    );
-
-    LibTrait.createIndex(
-      components,
-      world,
-      "COLOR",
-      1, // index
-      1, // mod value
-      "ADD",
-      "",
-      "Canto Green"
-    );
-
-    LibTrait.createIndex(
-      components,
-      world,
-      "FACE",
-      1, // index
-      1, // mod value
-      "UMUL",
-      "",
-      "c-c"
-    );
-    LibTrait.createIndex(
-      components,
-      world,
-      "FACE",
-      2, // index
-      2, // mod value
-      "UMUL",
-      "",
-      "uwu"
-    );
-
-    LibTrait.createIndex(
-      components,
-      world,
-      "HAND",
-      1, // index
-      1, // mod value
-      "STORAGE",
-      "INSECT",
-      "Slicers"
-    );
-    LibTrait.createIndex(
-      components,
-      world,
-      "HAND",
-      2, // index
-      2, // mod value
-      "STORAGE",
-      "NORMAL",
-      "Paws"
-    );
-
-    LibTrait.createIndex(
-      components,
-      world,
-      "BACKGROUND",
-      1, // index
-      1, // mod value
-      "UMUL",
-      "",
-      "background1"
-    );
   }
 }

@@ -62,11 +62,15 @@ export function createComponents(world: any) {
     RequesterID: defineStringEZ(world, "RequesterID", "component.Id.Requester"),
 
     // Indices
+    BodyIndex: defineNumberEZ(world, "BodyIndex", "component.Index.Body"),
+    BackgroundIndex: defineNumberEZ(world, "BackgroundIndex", "component.Index.Background"),
+    ColorIndex: defineNumberEZ(world, "ColorIndex", "component.Index.Color"),
+    FaceIndex: defineNumberEZ(world, "FaceIndex", "component.Index.Face"),
+    HandIndex: defineNumberEZ(world, "HandIndex", "component.Index.Hand"),
     FoodIndex: defineNumberEZ(world, "FoodIndex", "component.Index.Food"),
     GearIndex: defineNumberEZ(world, "GearIndex", "component.Index.Gear"),
     ItemIndex: defineNumberEZ(world, "ItemIndex", "component.Index.Item"),
     ModIndex: defineNumberEZ(world, "ModIndex", "component.Index.Mod"),
-    ModifierIndex: defineNumberEZ(world, "ModifierIndex", "component.Index.Modifier"),
     PetIndex: defineStringEZ(world, "PetIndex", "component.Index.Pet"), // this should be updated to be a number component
 
     // Values

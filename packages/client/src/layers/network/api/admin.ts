@@ -129,19 +129,21 @@ export function createAdminAPI(systems: any) {
   // @dev adds a trait in registry
   function registerTrait(
     index: number,
-    value: number,
-    genus: string,
-    type: string,
-    affinity: string,
-    name: string
+    health: number,
+    power: number,
+    violence: number,
+    harmony: number,
+    name: string,
+    type: string
   ) {
-    return systems["system._Trait.Add"].executeTyped(
+    return systems["system._Registry.Trait.Create"].executeTyped(
       index,
-      value,
-      genus,
-      type,
-      affinity,
-      name
+      health,
+      power,
+      violence,
+      harmony,
+      name,
+      type
     );
   }
 

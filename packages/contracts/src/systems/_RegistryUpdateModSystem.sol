@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.Mod.Set"));
+uint256 constant ID = uint256(keccak256("system._Registry.Mod.Update"));
 
 // update an item registry entry for a Modification item
 contract _RegistryUpdateModSystem is System {

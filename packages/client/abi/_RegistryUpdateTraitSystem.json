@@ -48,75 +48,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "entityID",
-          "type": "uint256"
-        }
-      ],
-      "name": "_getBaseTraits",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "entityID",
-          "type": "uint256"
-        }
-      ],
-      "name": "_getHealth",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256[]",
-          "name": "max",
-          "type": "uint256[]"
-        }
-      ],
-      "name": "_setMaxElements",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "seed",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "baseURI",
-          "type": "string"
-        }
-      ],
-      "name": "_setRevealed",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes",
           "name": "arguments",
           "type": "bytes"
@@ -137,8 +68,38 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "tokenID",
+          "name": "index",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "health",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "power",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "violence",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "harmony",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "traitType",
+          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -168,25 +129,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "tokenID",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenURI",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "account",
           "type": "address"
@@ -199,14 +141,9 @@
     }
   ],
   "methodIdentifiers": {
-    "_getBaseTraits(uint256)": "37d92217",
-    "_getHealth(uint256)": "df5271db",
-    "_setMaxElements(uint256[])": "331343c1",
-    "_setRevealed(uint256,string)": "2f2b1708",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(uint256,uint256,uint256,uint256,uint256,string,string)": "c2a01bc4",
     "owner()": "8da5cb5b",
-    "tokenURI(uint256)": "c87b56dd",
     "transferOwnership(address)": "f2fde38b"
   }
 }

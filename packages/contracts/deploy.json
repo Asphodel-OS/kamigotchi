@@ -25,7 +25,11 @@
     "IndexGearComponent",
     "IndexItemComponent",
     "IndexModComponent",
-    "IndexModifierComponent",
+    "IndexBackgroundComponent",
+    "IndexBodyComponent",
+    "IndexColorComponent",
+    "IndexFaceComponent",
+    "IndexHandComponent",
     "IndexPetComponent",
     "IsAccountComponent",
     "IsEquippedComponent",
@@ -74,12 +78,6 @@
       ]
     },
     {
-      "name": "_AddTraitSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
       "name": "_ListingSetSystem",
       "writeAccess": [
         "IsListingComponent",
@@ -125,6 +123,18 @@
     },
     {
       "name": "_RegistryUpdateGearSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateTraitSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateTraitSystem",
       "writeAccess": [
         "*"
       ]
@@ -309,7 +319,6 @@
     "LibPrototype",
     "LibRegister",
     "LibRegistryItem",
-    "LibRegistryModifier",
     "LibRoom",
     "LibStat",
     "LibTrade"

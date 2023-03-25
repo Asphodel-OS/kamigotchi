@@ -10,6 +10,7 @@ import {
   Has,
   runQuery,
   getComponentValue,
+  Component,
 } from '@latticexyz/recs';
 import { dataStore } from '../store/createStore';
 import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
@@ -72,10 +73,8 @@ export function registerPetDetails() {
       const {
         network: {
           components: {
-            Genus,
             Health,
             IsPet,
-            IsTrait,
             MediaURI,
             Type,
             Affinity,
@@ -86,6 +85,12 @@ export function registerPetDetails() {
             Power,
             Slots,
             Violence,
+            BodyIndex,
+            BackgroundIndex,
+            ColorIndex,
+            FaceIndex,
+            HandIndex,
+            ItemIndex,
           },
           world,
         },
@@ -127,7 +132,7 @@ export function registerPetDetails() {
       };
 
       const getBaseTraits = (petIndex: EntityIndex) => {
-        const typeArr = ['COLOR', 'BODY', 'HAND', 'FACE', 'BACKGROUND'];
+        const typeArr = [ColorIndex, FaceIndex, HandIndex, BodyIndex, BackgroundIndex];
         let result: Array<TraitDetails> = [];
         let petTypes: Array<string> = [];
 
@@ -141,15 +146,14 @@ export function registerPetDetails() {
         };
       };
 
-      const getTrait = (petIndex: EntityIndex, type: string) => {
+      const getTrait = (petIndex: EntityIndex, type: Component) => {
+        const index = getComponentValue(type, petIndex)?.value as number;
+        // console.log(index);
         const entity = Array.from(
           runQuery([
-            Has(Type),
-            HasValue(Type, {
-              value: type,
-            }),
-            HasValue(PetID, {
-              value: world.entities[petIndex],
+            Has(ItemIndex),
+            HasValue(type, {
+              value: index,
             }),
           ])
         )[0];
@@ -199,7 +203,7 @@ export function registerPetDetails() {
         );
       });
 
-      const { handleClick ,visibleDiv } = useModalVisibility({
+      const { handleClick, visibleDiv } = useModalVisibility({
         soundUrl: clickSound,
         divName: 'petDetails',
         elementId: 'petdetails_modal',
