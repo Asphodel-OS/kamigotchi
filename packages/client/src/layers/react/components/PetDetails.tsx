@@ -15,7 +15,7 @@ import { dataStore } from '../store/createStore';
 import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
 import { BigNumber, BigNumberish } from 'ethers';
 import { ModalWrapper } from './styled/AnimModalWrapper';
-import { useModalVisibility } from '../hooks/useHandleModalVisibilty';
+import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 type TraitDetails = {
   Name: string;
@@ -199,7 +199,7 @@ export function registerPetDetails() {
         );
       });
 
-      const { handleClick ,visibleDiv } = useModalVisibility({
+      const { handleClick, visibleDiv } = useModalVisibility({
         soundUrl: clickSound,
         divName: 'petDetails',
         elementId: 'petdetails_modal',

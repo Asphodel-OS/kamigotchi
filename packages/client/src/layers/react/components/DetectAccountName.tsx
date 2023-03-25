@@ -5,7 +5,7 @@ import { registerUIComponent } from '../engine/store';
 import styled, { keyframes } from 'styled-components';
 import { HasValue, runQuery } from '@latticexyz/recs';
 import mintSound from '../../../public/sound/sound_effects/tami_mint_vending_sound.mp3'
-import { dataStore } from '../store/createStore';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerDetectAccountName() {
   registerUIComponent(

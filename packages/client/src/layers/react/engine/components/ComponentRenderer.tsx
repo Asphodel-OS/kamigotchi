@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
-import { useLayers, useEngineStore } from "../hooks";
+import { useLayers, useEngineStore } from "layers/react/engine/hooks";
 import { filterNullishValues } from "@latticexyz/utils";
 import { Cell } from "./Cell";
 import styled from "styled-components";

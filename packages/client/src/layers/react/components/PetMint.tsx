@@ -14,7 +14,7 @@ import mintSound from '../../../public/sound/sound_effects/tami_mint_vending_sou
 import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
 import { BigNumber, utils } from 'ethers';
 import { ModalWrapper } from './styled/AnimModalWrapper';
-import { useModalVisibility } from '../hooks/useHandleModalVisibilty';
+import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const SystemBalID = BigNumber.from(utils.id('system.ERC721.pet'));
 

@@ -4,7 +4,7 @@ import { registerUIComponent } from '../engine/store';
 import styled from 'styled-components';
 import './font.css';
 import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
-import { useModalVisibility } from '../hooks/useHandleModalVisibilty';
+import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 export function registerMyKamiButton() {
   registerUIComponent(

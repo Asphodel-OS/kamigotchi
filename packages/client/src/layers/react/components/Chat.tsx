@@ -14,7 +14,7 @@ import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
 import { ModalWrapper } from './styled/AnimModalWrapper';
 
 import * as mqtt from 'mqtt';
-import { useModalVisibility } from '../hooks/useHandleModalVisibilty';
+import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const mqttServerUrl = 'wss://chatserver.asphodel.io:8083/mqtt';
 const mqttTopic = 'kamigotchi';

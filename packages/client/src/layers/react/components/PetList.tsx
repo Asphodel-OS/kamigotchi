@@ -17,7 +17,7 @@ import gakki from '../../../public/img/gakki.png';
 import gum from '../../../public/img/gum.png';
 import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
 import { ModalWrapper } from './styled/AnimModalWrapper';
-import { useModalVisibility } from '../hooks/useHandleModalVisibilty';
+import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const ItemImages = new Map([
   [1, gum],

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { observer } from "mobx-react-lite";
-import { useLayers } from "../hooks";
+import { useLayers } from "layers/react/engine/hooks";
 import { filter, fromEvent } from "rxjs";
 
 const WINDOW_CLASSNAME = "react-ui-window";
