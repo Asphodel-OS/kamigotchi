@@ -27,12 +27,12 @@ type Details = {
   nftID: string;
   petName: string;
   uri: string;
-  // harmony: string;
+  harmony: string;
   health: string;
   power: string;
-  // slots: string;
-  // violence: string;
-  // affinity: string;
+  slots: string;
+  violence: string;
+  affinity: string;
   traits: TraitDetails[];
 };
 
@@ -114,15 +114,13 @@ export function registerKamiModal() {
           nftID: getComponentValue(PetIndex, index)?.value as string,
           petName: getComponentValue(Name, index)?.value as string,
           uri: getComponentValue(MediaURI, index)?.value as string,
-          // harmony: hexToString(getComponentValue(Harmony, index)?.value as number),
-          health: hexToString(
-            getComponentValue(Health, index)?.value as number
-          ),
-          power: hexToString(getComponentValue(Power, index)?.value as number),
-          // slots: hexToString(getComponentValue(Slots, index)?.value as number),
-          // violence: hexToString(getComponentValue(Violence, index)?.value as number),
-          // affinity: hexToString(getComponentValue(Affinity, index)?.value as string),
           traits: traitsHopper?.value as TraitDetails[],
+          affinity: '??',
+          health: hexToString(getComponentValue(Health, index)?.value as number),
+          power: hexToString(getComponentValue(Power, index)?.value as number),
+          violence: '??',
+          harmony: '??',
+          slots: '??',
         };
       };
 
@@ -218,12 +216,12 @@ export function registerKamiModal() {
                 <KamiBox
                   style={{ gridColumn: 1, gridRow: 2, justifyItems: 'end' }}
                 >
-                  <KamiFacts>Health: {dets?.health} </KamiFacts>
-                  <KamiFacts>Harmony: {dets?.harmony}</KamiFacts>
-                  <KamiFacts>Power: {dets?.power} </KamiFacts>
-                  <KamiFacts>Slots: {dets?.slots} </KamiFacts>
-                  <KamiFacts>Violence: {dets?.violence} </KamiFacts>
                   <KamiFacts>Affinity: {dets?.affinity} </KamiFacts>
+                  <KamiFacts>Health: {dets?.health} </KamiFacts>
+                  <KamiFacts>Power: {dets?.power} </KamiFacts>
+                  <KamiFacts>Violence: {dets?.violence} </KamiFacts>
+                  <KamiFacts>Harmony: {dets?.harmony}</KamiFacts>
+                  <KamiFacts>Slots: {dets?.slots} </KamiFacts>
                 </KamiBox>
               </KamiBox>
               <KamiBox style={{ gridColumnStart: 2 }}>{traitLines}</KamiBox>
