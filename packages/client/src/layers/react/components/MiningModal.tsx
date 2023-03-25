@@ -35,7 +35,7 @@ export function registerMiningModal() {
             NodeID,
             AccountID,
             PetID,
-            PlayerAddress,
+            OperatorAddress,
             State,
             StartTime,
           },
@@ -89,7 +89,7 @@ export function registerMiningModal() {
           // get the account entity of the controlling wallet
           const accountIndex = Array.from(runQuery([
             Has(IsAccount),
-            HasValue(PlayerAddress, { value: network.connectedAddress.get() })
+            HasValue(OperatorAddress, { value: network.connectedAddress.get() })
           ]))[0];
           const accountID = world.entities[accountIndex];
 

@@ -11,7 +11,7 @@ export function createRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     network: { connectedAddress },
     world,
-    components: { Location, PlayerAddress },
+    components: { Location, OperatorAddress },
   } = network;
 
   const {
@@ -24,9 +24,9 @@ export function createRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
   const myMain = Main as PhaserScene;
 
-  defineSystem(world, [Has(PlayerAddress), Has(Location)], async (update) => {
+  defineSystem(world, [Has(OperatorAddress), Has(Location)], async (update) => {
     const characterEntityNumber = Array.from(
-      runQuery([HasValue(PlayerAddress, { value: connectedAddress.get() })])
+      runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
     )[0];
 
     if (characterEntityNumber == update.entity) {

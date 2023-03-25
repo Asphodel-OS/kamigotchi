@@ -19,11 +19,11 @@ export function registerDetectAccountName() {
     (layers) => {
       const {
         network: {
-          components: { PlayerAddress },
+          components: { OperatorAddress },
         },
       } = layers;
 
-      return PlayerAddress.update$.pipe(
+      return OperatorAddress.update$.pipe(
         map(() => {
           return {
             layers,
@@ -35,7 +35,7 @@ export function registerDetectAccountName() {
     ({ layers }) => {
       const {
         network: {
-          components: { PlayerAddress },
+          components: { OperatorAddress },
           api: { player },
           network: { connectedAddress },
         },
@@ -46,7 +46,7 @@ export function registerDetectAccountName() {
       const { volume } = dataStore((state) => state.sound);
 
       const hasAccount = Array.from(
-        runQuery([HasValue(PlayerAddress, { value: connectedAddress.get() })])
+        runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
       )[0];
 
       const handleMinting = useCallback(

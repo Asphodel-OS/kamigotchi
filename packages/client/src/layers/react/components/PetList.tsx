@@ -49,15 +49,16 @@ export function registerPetList() {
           api: { player },
           network,
           components: {
+            AccountID,
             Balance,
             Health,
             HealthCurrent,
             Coin,
             Power,
             HolderID,
+            IsAccount,
             IsInventory,
             IsNode,
-            IsAccount,
             IsProduction,
             IsPet,
             ItemIndex,
@@ -66,11 +67,10 @@ export function registerPetList() {
             MediaURI,
             Name,
             NodeID,
-            AccountID,
+            OperatorAddress,
             OwnerID,
             PetID,
             PetIndex,
-            PlayerAddress,
             State,
             StartTime,
           },
@@ -181,7 +181,7 @@ export function registerPetList() {
           const accountEntityIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(PlayerAddress, {
+              HasValue(OperatorAddress, {
                 value: network.connectedAddress.get(),
               }),
             ])

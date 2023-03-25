@@ -7,8 +7,8 @@ import { getCurrentRoom } from "../utils";
 export function createMusicSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Location, PlayerAddress },
-    network: {connectedAddress}
+    components: { Location, OperatorAddress },
+    network: { connectedAddress }
   } = network;
 
   const {
@@ -21,11 +21,11 @@ export function createMusicSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
   const myMain = Main as PhaserScene;
 
-  defineSystem(world, [Has(PlayerAddress), Has(Location)], (update) => {
+  defineSystem(world, [Has(OperatorAddress), Has(Location)], (update) => {
     const gNFTIDalt = Array.from(
-        runQuery([HasValue(PlayerAddress, { value: connectedAddress.get() })])
-      )[0];
-      const currentRoom = getCurrentRoom(Location, update.entity);
+      runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
+    )[0];
+    const currentRoom = getCurrentRoom(Location, update.entity);
 
     if (update.entity == gNFTIDalt) {
       if (myMain.gmusic) myMain.gmusic.stop();

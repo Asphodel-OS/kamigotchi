@@ -26,18 +26,18 @@ export function registerWorldMap() {
         network: {
           api: { player },
           network: { connectedAddress },
-          components: { IsAccount, Location, PlayerAddress },
+          components: { IsAccount, Location, OperatorAddress },
           actions,
         },
       } = layers;
 
-      return merge(Location.update$, PlayerAddress.update$).pipe(
+      return merge(Location.update$, OperatorAddress.update$).pipe(
         map(() => {
           // get the account entity of the controlling wallet
           const accountEntityIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(PlayerAddress, {
+              HasValue(OperatorAddress, {
                 value: connectedAddress.get(),
               }),
             ])

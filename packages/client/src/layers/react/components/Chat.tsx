@@ -34,7 +34,7 @@ export function registerChat() {
         network: {
           world,
           network,
-          components: { IsAccount, AccountID, PlayerAddress, Name },
+          components: { IsAccount, AccountID, OperatorAddress, Name },
         },
         phaser: {
           game: {
@@ -54,7 +54,7 @@ export function registerChat() {
           const accountIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(PlayerAddress, {
+              HasValue(OperatorAddress, {
                 value: network.connectedAddress.get(),
               }),
             ])
@@ -102,7 +102,7 @@ export function registerChat() {
 
         return () => {
           postMessage('<['.concat(chatName, '] went offline>'));
-          sub.unsubscribe(mqttTopic, function (err: any) {});
+          sub.unsubscribe(mqttTopic, function (err: any) { });
         };
       }, [chatName]);
 

@@ -47,7 +47,7 @@ export function createComponents(world: any) {
     IsRequest: defineBoolEZ(world, "IsRequest", "component.Is.Request"),
     IsRoom: defineBoolEZ(world, "IsRoom", "component.Is.Room"),
     IsTrade: defineBoolEZ(world, "IsTrade", "component.Is.Trade"),
-    IsTrait: defineBoolEZ(world, "IsModifier", "component.Is.Trait"),
+    IsTrait: defineBoolEZ(world, "IsTrait", "component.Is.Trait"),
 
     // IDs
     AccountID: defineStringEZ(world, "AccountID", "component.Id.Account"),
@@ -100,6 +100,6 @@ export function createComponents(world: any) {
     // speeeecial
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ(world, "MediaURI", "component.MediaURI"),
-    PlayerAddress: defineStringEZ(world, "PlayerAddress", "component.Address.Operator"),
+    OperatorAddress: defineStringEZ(world, "OperatorAddress", "component.Address.Operator"),
   }
 }

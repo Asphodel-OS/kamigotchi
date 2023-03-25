@@ -61,7 +61,7 @@ export function registerMerchantWindow() {
             MerchantID,
             Name,
             AccountID,
-            PlayerAddress,
+            OperatorAddress,
             PriceBuy,
             PriceSell,
           },
@@ -96,7 +96,7 @@ export function registerMerchantWindow() {
           const accountIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(PlayerAddress, {
+              HasValue(OperatorAddress, {
                 value: network.connectedAddress.get(),
               }),
             ])
@@ -207,11 +207,11 @@ export function registerMerchantWindow() {
           </ShopEntry>
         ));
 
-        const { handleClick, visibleDiv } = useModalVisibility({
-          soundUrl: null,
-          divName: 'merchant',
-          elementId: 'merchant',
-        });
+      const { handleClick, visibleDiv } = useModalVisibility({
+        soundUrl: null,
+        divName: 'merchant',
+        elementId: 'merchant',
+      });
 
       return (
         <ModalWrapper id="merchant" isOpen={visibleDiv}>

@@ -37,7 +37,7 @@ export function registerTradeWindow() {
             IsTrade,
             ItemIndex,
             AccountID,
-            PlayerAddress,
+            OperatorAddress,
             RequesterID,
             RequesteeID,
             State
@@ -106,7 +106,7 @@ export function registerTradeWindow() {
           // get the account entity of the controlling wallet
           const accountIndex = Array.from(runQuery([
             Has(IsAccount),
-            HasValue(PlayerAddress, { value: network.connectedAddress.get() })
+            HasValue(OperatorAddress, { value: network.connectedAddress.get() })
           ]))[0];
           const accountID = world.entities[accountIndex];
 
