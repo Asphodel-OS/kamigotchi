@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { of } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
-import { dataStore } from '../store/createStore';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 import styled, { keyframes } from 'styled-components';
-import './font.css';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import 'layers/react/styles/font.css';
+import { ModalWrapper } from './library/AnimModalWrapper';
 
+// TODO: update this file and component name to be more desctiptive
 export function registerObjectModal() {
   registerUIComponent(
     'ObjectModal',

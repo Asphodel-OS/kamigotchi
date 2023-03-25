@@ -9,14 +9,14 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
-import { registerUIComponent } from '../engine/store';
-import { dataStore } from '../store/createStore';
-import './font.css';
-import pompom from '../../../public/img/pompom.png';
-import gakki from '../../../public/img/gakki.png';
-import gum from '../../../public/img/gum.png';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
+import 'layers/react/styles/font.css';
+import pompom from '../../../../public/img/pompom.png';
+import gakki from '../../../../public/img/gakki.png';
+import gum from '../../../../public/img/gum.png';
+import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import { ModalWrapper } from '../library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const ItemImages = new Map([

@@ -7,11 +7,11 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
-import { registerUIComponent } from '../engine/store';
+import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
-import './font.css';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import 'layers/react/styles/font.css';
+import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
+import { ModalWrapper } from '../library/AnimModalWrapper';
 
 import * as mqtt from 'mqtt';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';

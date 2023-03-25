@@ -3,7 +3,7 @@ import { map, merge } from "rxjs";
 import { BigNumber } from "ethers";
 import { EntityIndex, Has, HasValue, NotValue, getComponentValue, runQuery, } from "@latticexyz/recs";
 
-import { registerUIComponent } from "../engine/store";
+import { registerUIComponent } from "layers/react/engine/store";
 
 export function registerRequestQueue() {
   registerUIComponent(

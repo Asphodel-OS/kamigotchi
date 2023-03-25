@@ -1,34 +1,35 @@
 import React from 'react';
 import { of } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
-import { dataStore } from '../store/createStore';
-import styled from 'styled-components';
-import './font.css';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
+import styled, { keyframes } from 'styled-components';
+import 'layers/react/styles/font.css';
 
-export function registerMapButton() {
+export function registerInventoryButton() {
   registerUIComponent(
-    'MapButton',
+    'InventoryButton',
     {
-      colStart: 88,
-      colEnd: 100,
-      rowStart: 66,
-      rowEnd: 70,
+      colStart: 87,
+      colEnd: 99,
+      rowStart: 87,
+      rowEnd: 99,
     },
     (layers) => of(layers),
     () => {
-      const { handleClick } = useModalVisibility({
-        soundUrl: clickSound,
-        divName: 'worldMap',
-        elementId: 'world_map',
-      });
+      const {
+        objectData: { description },
+      } = dataStore();
+
+      const showInventory = () => {
+        const modalId = window.document.getElementById('inventory_modal');
+        if (modalId) modalId.style.display = 'block';
+      };
 
       return (
-        <ModalWrapper id="map_button">
+        <ModalWrapper id="inventory_button">
           <ModalContent>
-            <Button style={{ pointerEvents: 'auto' }} onClick={handleClick}>
-              World Map
+            <Button style={{ pointerEvents: 'auto' }} onClick={showInventory}>
+              Inventory
             </Button>
           </ModalContent>
         </ModalWrapper>

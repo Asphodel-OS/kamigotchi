@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react';
 import { map, merge } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
-import { dataStore } from '../store/createStore';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 import styled from 'styled-components';
 import {
   EntityID,
@@ -10,10 +10,10 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import mintSound from '../../../public/sound/sound_effects/tami_mint_vending_sound.mp3';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
+import mintSound from '../../../../public/sound/sound_effects/tami_mint_vending_sound.mp3';
+import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
 import { BigNumber, utils } from 'ethers';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import { ModalWrapper } from '../library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const SystemBalID = BigNumber.from(utils.id('system.ERC721.pet'));

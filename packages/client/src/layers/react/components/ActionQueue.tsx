@@ -5,7 +5,7 @@ import {
 } from '@latticexyz/recs';
 import { map } from 'rxjs';
 import { ActionStateString, ActionState } from '@latticexyz/std-client';
-import { registerUIComponent } from '../engine/store';
+import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 
 // Color coding of action queue

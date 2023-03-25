@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { dataStore, VisibleDivs } from '../store/createStore';
+import { dataStore, VisibleDivs } from 'layers/react/store/createStore';
 
 type UseModalVisibilityParams = {
   soundUrl: string | null;

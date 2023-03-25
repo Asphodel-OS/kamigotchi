@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo } from 'react';
 import { map, merge } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
+import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
-import { dataStore } from '../store/createStore';
-import './font.css';
-import { gridRooms } from '../../../constants';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
+import { dataStore } from 'layers/react/store/createStore';
+import 'layers/react/styles/font.css';
+import { gridRooms } from '../../../../constants';
+import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
 import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
-import { getCurrentRoom } from '../../phaser/utils';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import { getCurrentRoom } from '../../../phaser/utils';
+import { ModalWrapper } from '../library/AnimModalWrapper';
 
 const objectKeys = Object.keys(gridRooms);
 

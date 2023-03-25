@@ -10,12 +10,12 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { registerUIComponent } from '../engine/store';
-import pompom from '../../../public/img/pompom.png';
-import gakki from '../../../public/img/gakki.png';
-import ribbon from '../../../public/img/ribbon.png';
-import gum from '../../../public/img/gum.png';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import pompom from '../../../../public/img/pompom.png';
+import gakki from '../../../../public/img/gakki.png';
+import ribbon from '../../../../public/img/ribbon.png';
+import gum from '../../../../public/img/gum.png';
+import { ModalWrapper } from '../library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const ItemImages = new Map([

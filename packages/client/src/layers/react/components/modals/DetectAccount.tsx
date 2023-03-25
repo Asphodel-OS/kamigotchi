@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState, useCallback } from 'react';
 import { map } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
+import { registerUIComponent } from 'layers/react/engine/store';
 import styled, { keyframes } from 'styled-components';
 import { HasValue, runQuery } from '@latticexyz/recs';
-import mintSound from '../../../public/sound/sound_effects/tami_mint_vending_sound.mp3'
+import mintSound from '../../../../public/sound/sound_effects/tami_mint_vending_sound.mp3'
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerDetectAccountName() {
+export function registerDetectAccount() {
   registerUIComponent(
     'DetectMint',
     {
@@ -59,7 +59,7 @@ export function registerDetectAccountName() {
 
             await player.account.set(connectedAddress.get()!, name);
 
-            document.getElementById('detectAccountName')!.style.display = 'none';
+            document.getElementById('detectAccount')!.style.display = 'none';
             document.getElementById('mint_process')!.style.display = 'block';
           } catch (e) {
             //
@@ -86,7 +86,7 @@ export function registerDetectAccountName() {
 
       return (
         <ModalWrapper
-          id="detectAccountName"
+          id="detectAccount"
           style={{ display: isDivVisible ? 'block' : 'none' }}
         >
           <ModalContent>

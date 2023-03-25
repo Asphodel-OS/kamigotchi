@@ -1,33 +1,33 @@
 import React from 'react';
 import { of } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
+import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
-import './font.css';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
+import 'layers/react/styles/font.css';
+import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
-export function registerMyKamiButton() {
+export function registerChatButton() {
   registerUIComponent(
-    'MyKamiButton',
+    'ChatButton',
     {
       colStart: 88,
       colEnd: 100,
-      rowStart: 90,
-      rowEnd: 98,
+      rowStart: 82,
+      rowEnd: 86,
     },
     (layers) => of(layers),
     () => {
       const { handleClick } = useModalVisibility({
         soundUrl: clickSound,
-        divName: 'petList',
-        elementId: 'petlist_modal',
+        divName: 'chat',
+        elementId: 'chat_modal',
       });
 
       return (
-        <ModalWrapper id="mykami_button">
+        <ModalWrapper id="chat_button">
           <ModalContent>
             <Button style={{ pointerEvents: 'auto' }} onClick={handleClick}>
-              My Kami
+              Chat
             </Button>
           </ModalContent>
         </ModalWrapper>

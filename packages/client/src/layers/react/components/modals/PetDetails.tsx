@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { registerUIComponent } from '../engine/store';
+import { registerUIComponent } from 'layers/react/engine/store';
 import styled, { keyframes } from 'styled-components';
 import {
   EntityIndex,
@@ -11,10 +11,10 @@ import {
   runQuery,
   getComponentValue,
 } from '@latticexyz/recs';
-import { dataStore } from '../store/createStore';
-import clickSound from '../../../public/sound/sound_effects/mouseclick.wav';
+import { dataStore } from 'layers/react/store/createStore';
+import clickSound from '../../../../public/sound/sound_effects/mouseclick.wav';
 import { BigNumber, BigNumberish } from 'ethers';
-import { ModalWrapper } from './styled/AnimModalWrapper';
+import { ModalWrapper } from '../library/AnimModalWrapper';
 import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 type TraitDetails = {

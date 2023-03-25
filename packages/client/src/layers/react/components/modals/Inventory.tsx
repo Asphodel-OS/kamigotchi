@@ -2,12 +2,12 @@ import React from 'react';
 import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { EntityIndex, Has, HasValue, NotValue, getComponentValue, runQuery } from "@latticexyz/recs";
-import { registerUIComponent } from '../engine/store';
-import './font.css';
-import pompom from '../../../public/img/pompom.png'
-import gakki from '../../../public/img/gakki.png'
-import ribbon from '../../../public/img/ribbon.png'
-import gum from '../../../public/img/gum.png'
+import { registerUIComponent } from 'layers/react/engine/store';
+import 'layers/react/styles/font.css';
+import pompom from '../../../../public/img/pompom.png'
+import gakki from '../../../../public/img/gakki.png'
+import ribbon from '../../../../public/img/ribbon.png'
+import gum from '../../../../public/img/gum.png'
 
 export function registerInventory() {
   registerUIComponent(
