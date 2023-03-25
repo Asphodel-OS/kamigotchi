@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
     "isolatedModules": true /* Ensure that each file can be safely transpiled without relying on other imports. */,
@@ -8,25 +7,11 @@
     "module": "esnext" /* Specify what module code is generated. */,
     "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
+    "baseUrl": "./",
     "paths": {
-      "src/*": [
-        "./src/*"
-      ],
-      "assets/*": [
-        "./src/assets/*",
-        "./src/assets"
-      ],
-      "network/*": [
-        "./src/layers/network/*",
-        "./src/layers/network"
-      ],
-      "phaser/*": [
-        "./src/layers/phaser/*",
-        "./src/layers/phaser"
-      ],
-      "react/*": [
-        "./src/layers/react/*",
-        "./src/layers/react"
+      "layers/*": [
+        "./src/layers/*",
+        "./src/layers"
       ],
       "utils/*": [
         "./src/utils/*",
