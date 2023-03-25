@@ -5,4 +5,5 @@ cypress/videos
 cypress/screenshots
 cypress/reports
 .yarn/install-state.gz
+yarn-error.log
 .DS_Store
