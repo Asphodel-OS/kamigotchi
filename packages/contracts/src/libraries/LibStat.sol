@@ -56,6 +56,61 @@ library LibStat {
     if (hasSlots(components, fromID)) decSlots(components, toID, getSlots(components, fromID));
   }
 
+  function incHarmony(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getHarmony(components, id);
+    setHarmony(components, id, oldValue + value);
+  }
+
+  function incHealth(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getHealth(components, id);
+    setHealth(components, id, oldValue + value);
+  }
+
+  function incPower(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getPower(components, id);
+    setPower(components, id, oldValue + value);
+  }
+
+  function incSlots(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getSlots(components, id);
+    setSlots(components, id, oldValue + value);
+  }
+
+  function incViolence(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getViolence(components, id);
+    setViolence(components, id, oldValue + value);
+  }
+
+  function decHarmony(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getHarmony(components, id);
+    if (oldValue > value) oldValue = value;
+    setHarmony(components, id, oldValue - value);
+  }
+
+  function decHealth(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getHealth(components, id);
+    if (oldValue > value) oldValue = value;
+    setHealth(components, id, oldValue - value);
+  }
+
+  function decPower(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getPower(components, id);
+    if (oldValue > value) oldValue = value;
+    setPower(components, id, oldValue - value);
+  }
+
+  function decSlots(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getSlots(components, id);
+    if (oldValue > value) oldValue = value;
+    setSlots(components, id, oldValue - value);
+  }
+
+  function decViolence(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 oldValue = getViolence(components, id);
+    if (oldValue > value) oldValue = value;
+    setViolence(components, id, oldValue - value);
+  }
+
   /////////////////
   // CALCULATIONS
 
@@ -154,64 +209,6 @@ library LibStat {
   function getViolence(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!hasViolence(components, id)) return 0;
     return ViolenceComponent(getAddressById(components, ViolenceCompID)).getValue(id);
-  }
-
-  /////////////////
-  // CALCULATIONS
-
-  function incHarmony(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getHarmony(components, id);
-    setHarmony(components, id, oldValue + value);
-  }
-
-  function incHealth(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getHealth(components, id);
-    setHealth(components, id, oldValue + value);
-  }
-
-  function incPower(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getPower(components, id);
-    setPower(components, id, oldValue + value);
-  }
-
-  function incSlots(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getSlots(components, id);
-    setSlots(components, id, oldValue + value);
-  }
-
-  function incViolence(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getViolence(components, id);
-    setViolence(components, id, oldValue + value);
-  }
-
-  function decHarmony(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getHarmony(components, id);
-    if (oldValue > value) oldValue = value;
-    setHarmony(components, id, oldValue - value);
-  }
-
-  function decHealth(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getHealth(components, id);
-    if (oldValue > value) oldValue = value;
-    setHealth(components, id, oldValue - value);
-  }
-
-  function decPower(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getPower(components, id);
-    if (oldValue > value) oldValue = value;
-    setPower(components, id, oldValue - value);
-  }
-
-  function decSlots(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getSlots(components, id);
-    if (oldValue > value) oldValue = value;
-    setSlots(components, id, oldValue - value);
-  }
-
-  function decViolence(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 oldValue = getViolence(components, id);
-    if (oldValue > value) oldValue = value;
-    setViolence(components, id, oldValue - value);
   }
 
   /////////////////

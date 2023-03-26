@@ -16,7 +16,7 @@ import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceC
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // Library specifically for permanent traits. Removing/swapping is not supported, but can be added
@@ -25,7 +25,7 @@ library LibTrait {
   // ASSIGNING
   function assignBody(IUint256Component components, uint256 holderID, uint256 index) internal {
     IndexBodyComponent(getAddressById(components, IndexBodyCompID)).set(holderID, index);
-    LibStat.incAll(components, holderID, LibRegistryItem.getByBodyIndex(components, index));
+    LibStat.incAll(components, holderID, LibRegistryTrait.getByBodyIndex(components, index));
   }
 
   function assignBackground(
@@ -37,22 +37,22 @@ library LibTrait {
       holderID,
       index
     );
-    LibStat.incAll(components, holderID, LibRegistryItem.getByBackgroundIndex(components, index));
+    LibStat.incAll(components, holderID, LibRegistryTrait.getByBackgroundIndex(components, index));
   }
 
   function assignColor(IUint256Component components, uint256 holderID, uint256 index) internal {
     IndexColorComponent(getAddressById(components, IndexColorCompID)).set(holderID, index);
-    LibStat.incAll(components, holderID, LibRegistryItem.getByColorIndex(components, index));
+    LibStat.incAll(components, holderID, LibRegistryTrait.getByColorIndex(components, index));
   }
 
   function assignFace(IUint256Component components, uint256 holderID, uint256 index) internal {
     IndexFaceComponent(getAddressById(components, IndexFaceCompID)).set(holderID, index);
-    LibStat.incAll(components, holderID, LibRegistryItem.getByFaceIndex(components, index));
+    LibStat.incAll(components, holderID, LibRegistryTrait.getByFaceIndex(components, index));
   }
 
   function assignHand(IUint256Component components, uint256 holderID, uint256 index) internal {
     IndexHandComponent(getAddressById(components, IndexHandCompID)).set(holderID, index);
-    LibStat.incAll(components, holderID, LibRegistryItem.getByHandIndex(components, index));
+    LibStat.incAll(components, holderID, LibRegistryTrait.getByHandIndex(components, index));
   }
 
   /////////////////
@@ -94,7 +94,7 @@ library LibTrait {
     uint256 entityID
   ) internal view returns (string memory) {
     uint256 index = getBody(components, entityID);
-    return LibRegistryItem.getName(components, LibRegistryItem.getByBodyIndex(components, index));
+    return LibRegistryTrait.getName(components, LibRegistryTrait.getByBodyIndex(components, index));
   }
 
   function getBackgroundName(
@@ -103,7 +103,10 @@ library LibTrait {
   ) internal view returns (string memory) {
     uint256 index = getBackground(components, entityID);
     return
-      LibRegistryItem.getName(components, LibRegistryItem.getByBackgroundIndex(components, index));
+      LibRegistryTrait.getName(
+        components,
+        LibRegistryTrait.getByBackgroundIndex(components, index)
+      );
   }
 
   function getColorName(
@@ -111,7 +114,8 @@ library LibTrait {
     uint256 entityID
   ) internal view returns (string memory) {
     uint256 index = getColor(components, entityID);
-    return LibRegistryItem.getName(components, LibRegistryItem.getByColorIndex(components, index));
+    return
+      LibRegistryTrait.getName(components, LibRegistryTrait.getByColorIndex(components, index));
   }
 
   function getFaceName(
@@ -119,7 +123,7 @@ library LibTrait {
     uint256 entityID
   ) internal view returns (string memory) {
     uint256 index = getFace(components, entityID);
-    return LibRegistryItem.getName(components, LibRegistryItem.getByFaceIndex(components, index));
+    return LibRegistryTrait.getName(components, LibRegistryTrait.getByFaceIndex(components, index));
   }
 
   function getHandName(
@@ -127,6 +131,6 @@ library LibTrait {
     uint256 entityID
   ) internal view returns (string memory) {
     uint256 index = getHand(components, entityID);
-    return LibRegistryItem.getName(components, LibRegistryItem.getByHandIndex(components, index));
+    return LibRegistryTrait.getName(components, LibRegistryTrait.getByHandIndex(components, index));
   }
 }

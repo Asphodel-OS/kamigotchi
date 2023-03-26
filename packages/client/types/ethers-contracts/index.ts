@@ -35,6 +35,7 @@ export type { IndexHandComponent } from "./IndexHandComponent";
 export type { IndexItemComponent } from "./IndexItemComponent";
 export type { IndexModComponent } from "./IndexModComponent";
 export type { IndexPetComponent } from "./IndexPetComponent";
+export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsEquippedComponent } from "./IsEquippedComponent";
 export type { IsFungibleComponent } from "./IsFungibleComponent";
@@ -126,6 +127,7 @@ export { IndexHandComponent__factory } from "./factories/IndexHandComponent__fac
 export { IndexItemComponent__factory } from "./factories/IndexItemComponent__factory";
 export { IndexModComponent__factory } from "./factories/IndexModComponent__factory";
 export { IndexPetComponent__factory } from "./factories/IndexPetComponent__factory";
+export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
 export { IsEquippedComponent__factory } from "./factories/IsEquippedComponent__factory";
 export { IsFungibleComponent__factory } from "./factories/IsFungibleComponent__factory";

@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateTraitSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,string,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,6 +50,7 @@ export interface _RegistryCreateTraitSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -133,6 +134,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -157,6 +159,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
     power: PromiseOrValue<BigNumberish>,
     violence: PromiseOrValue<BigNumberish>,
     harmony: PromiseOrValue<BigNumberish>,
+    slots: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     traitType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -181,6 +184,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -217,6 +221,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -242,6 +247,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      slots: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

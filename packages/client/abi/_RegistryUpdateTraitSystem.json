@@ -92,6 +92,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "slots",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
           "name": "name",
           "type": "string"
@@ -142,7 +147,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,string,string)": "c2a01bc4",
+    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,string,string)": "1355bc56",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

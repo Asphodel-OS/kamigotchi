@@ -37,6 +37,7 @@ export function setUpWorldAPI(systems: any) {
           data[i].get("Power") ? data[i].get("Power") : "0",
           data[i].get("Violence") ? data[i].get("Violence") : "0",
           data[i].get("Harmony") ? data[i].get("Harmony") : "0",
+          data[i].get("Slots") ? data[i].get("Slots") : "0",
           data[i].get("Name"), // name of trait
           type, // type: body, color, etc
         );
