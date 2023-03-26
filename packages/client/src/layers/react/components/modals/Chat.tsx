@@ -121,10 +121,8 @@ export function registerChatModal() {
       );
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.keyCode === 13) {
+        if (event.key === 'Enter') {
           postMessage(chatInput);
-        }
-        if (event.keyCode === 27) {
         }
       };
 
@@ -142,7 +140,7 @@ export function registerChatModal() {
       ));
 
       return (
-        <ModalWrapperFull divName="chat" elementId="chat_modal">
+        <ModalWrapperFull divName="chat" id="chat_modal">
           <ChatWrapper>
             <ChatBox style={{ pointerEvents: 'auto' }}>
               {messageLines}

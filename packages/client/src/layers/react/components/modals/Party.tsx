@@ -10,16 +10,14 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { dataStore } from 'layers/react/store/createStore';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 import 'layers/react/styles/font.css';
 
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
-import clickSound from 'assets/sound/fx/mouseclick.wav';
 
 const ItemImages = new Map([
   [1, gum],
@@ -248,21 +246,13 @@ export function registerPartyModal() {
               pets,
               node: { id: nodeID },
             } as any,
-            world,
           };
         })
       );
     },
 
     // Render
-    ({ actions, api, data, world }) => {
-      const {
-        visibleDivs,
-        setVisibleDivs,
-        sound: { volume },
-      } = dataStore();
-      // console.log(data.pets);
-
+    ({ actions, api, data }) => {
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       /////////////////
@@ -328,7 +318,7 @@ export function registerPartyModal() {
       };
 
       // feed pet, no inventory check
-      const feedPet = (petID: EntityID, food: number) => {
+      const feed = (petID: EntityID, food: number) => {
         const actionID = `Feeding Kami` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
@@ -404,28 +394,42 @@ export function registerPartyModal() {
                     <br />
                   </Description>
                   {(kami.production && kami.production.state === 'ACTIVE')
-                    ? <ThinButton onClick={() => stopProduction(kami.production.id)}>
+                    ? <ActionButton
+                      id={`action-${kami.id}-harvest-stop`}
+                      onClick={() => stopProduction(kami.production.id)}
+                    >
                       Stop
-                    </ThinButton>
-                    : <ThinButton onClick={() => startProduction(kami.id)}>
+                    </ActionButton>
+                    : <ActionButton
+                      id={`action-${kami.id}-harvest-start`}
+                      onClick={() => startProduction(kami.id)}
+                    >
                       Start
-                    </ThinButton>
+                    </ActionButton>
                   }
                   {(kami.production && kami.production.state === 'ACTIVE')
-                    ? <ThinButton onClick={() => reapProduction(kami.production.id)}>
+                    ? <ActionButton
+                      id={`action-${kami.id}-harvest-collect`}
+                      onClick={() => reapProduction(kami.production.id)}
+                    >
                       Collect
-                    </ThinButton>
-                    : <ThinButton>Select Node</ThinButton>
+                    </ActionButton>
+                    : <ActionButton
+                      id={`action-${kami.id}-harvest-start`}
+                      onClick={() => null}
+                    >
+                      Select Node
+                    </ActionButton>
                   }
-                  <ThinButton onClick={() => feedPet(kami.id, 1)}>
+                  <ActionButton id={`action-${kami.id}-feed-1`} onClick={() => feed(kami.id, 1)}>
                     Feed 1
-                  </ThinButton>
-                  <ThinButton onClick={() => feedPet(kami.id, 2)}>
+                  </ActionButton>
+                  <ActionButton id={`action-${kami.id}-feed-2`} onClick={() => feed(kami.id, 2)}>
                     Feed 2
-                  </ThinButton>
-                  <ThinButton onClick={() => feedPet(kami.id, 3)}>
+                  </ActionButton>
+                  <ActionButton id={`action-${kami.id}-feed-3`} onClick={() => feed(kami.id, 3)}>
                     Feed 3
-                  </ThinButton>
+                  </ActionButton>
                 </KamiDetails>
               </KamiFacts>
             </KamiBox>
@@ -449,11 +453,7 @@ export function registerPartyModal() {
       };
 
       return (
-        <ModalWrapperFull
-          divName='party'
-          elementId='party_modal'
-          fill={true}
-        >
+        <ModalWrapperFull id='party_modal' divName='party' fill={true}>
           <TopGrid>
             <TopDescription>
               Bytes: {data.account.bytes ? data.account.bytes * 1 : '0'}
@@ -472,25 +472,6 @@ export function registerPartyModal() {
 const Scrollable = styled.div`
   overflow: auto;
   max-height: 100%;
-`;
-
-const ThinButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  margin: 3px;
-  &:active {
-    background-color: #c2c2c2;
-  }
 `;
 
 const KamiBox = styled.div`
@@ -548,14 +529,6 @@ const TopDescription = styled.p`
   border-color: black;
   border-radius: 5px;
   padding: 5px;
-`;
-
-const TypeHeading = styled.p`
-  font-size: 20px;
-  color: #333;
-  text-align: left;
-  padding: 20px;
-  font-family: Pixel;
 `;
 
 const KamiImage = styled.img`

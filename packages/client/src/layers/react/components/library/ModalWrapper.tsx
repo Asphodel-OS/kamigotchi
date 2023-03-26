@@ -16,11 +16,11 @@ export const ModalWrapperFull = (props: Props) => {
 
   // Updates modal visibility if the divName is updated to visible in the store.
   useEffect(() => {
-    const element = document.getElementById(props.elementId);
+    const element = document.getElementById(props.id);
     if (element && visibleDivs[props.divName]) {
       element.style.display = 'block';
     }
-  }, [visibleDivs[props.divName], props.elementId]);
+  }, [visibleDivs[props.divName], props.id]);
 
   // closes the modal
   const handleClose = () => {
@@ -36,12 +36,12 @@ export const ModalWrapperFull = (props: Props) => {
 
   return (
     <Wrapper
-      id={props.elementId}
+      id={props.id}
       isOpen={visibleDivs[props.divName]}
       style={wrapperStyle}
     >
       <Content style={contentStyle}>
-        <ExitButton style={{ pointerEvents: 'auto' }} onClick={handleClose} />
+        <ExitButton onClick={handleClose} />
         {props.children}
       </Content>
     </Wrapper>
@@ -50,7 +50,7 @@ export const ModalWrapperFull = (props: Props) => {
 
 interface Props {
   divName: keyof VisibleDivs;
-  elementId: string;
+  id: string;
   fill?: boolean; // whether the content should fit to the entire modal
   children: React.ReactNode;
 }

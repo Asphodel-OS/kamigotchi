@@ -68,11 +68,10 @@ export function registerDetectAccount() {
       );
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.keyCode === 13) {
+        if (event.key === 'Enter') {
           handleMinting(name);
         }
-        if (event.keyCode === 27) {
-        }
+        // if (event.keyCode === 27) {}
       };
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,24 +153,6 @@ const ModalContent = styled.div`
   border-style: solid;
   border-width: 2px;
   border-color: black;
-`;
-
-const Button = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 18px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
 
 const Description = styled.p`

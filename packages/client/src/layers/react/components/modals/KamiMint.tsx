@@ -9,10 +9,12 @@ import {
   EntityIndex,
   getComponentValue,
 } from '@latticexyz/recs';
-import { dataStore } from 'layers/react/store/createStore';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+
 import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3';
+import { dataStore } from 'layers/react/store/createStore';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 const SystemBalID = BigNumber.from(utils.id('system.ERC721.pet'));
 
@@ -54,7 +56,6 @@ export function registerKamiMintModal() {
     ({ layers, nextToken }) => {
       const {
         network: {
-          components: { OwnerID, IsPet, Balance },
           api: { player },
           network: { connectedAddress },
           actions,
@@ -65,10 +66,11 @@ export function registerKamiMintModal() {
       const {
         visibleDivs,
         setVisibleDivs,
-        setSelectedPet,
-        selectedPet,
         sound: { volume },
       } = dataStore();
+
+      /////////////////
+      // ACTIONS
 
       const mintTx = (address: string) => {
         const actionID = `Minting Kami` as EntityID;
@@ -83,6 +85,7 @@ export function registerKamiMintModal() {
         });
         return actionID;
       };
+
       const revealTx = (tokenID: string) => {
         const actionID = `Revealing Kami` as EntityID;
         actions.add({
@@ -99,11 +102,6 @@ export function registerKamiMintModal() {
 
       const handleMinting = async () => {
         try {
-          const mintFX = new Audio(mintSound);
-
-          mintFX.volume = volume;
-          mintFX.play();
-
           const mintActionID = mintTx(connectedAddress.get()!);
           await waitForActionCompletion(
             actions.Action,
@@ -125,27 +123,24 @@ export function registerKamiMintModal() {
             ...visibleDivs,
             petDetails: !visibleDivs.petDetails,
           });
+
+          const mintFX = new Audio(mintSound);
+          mintFX.volume = volume * .6;
+          mintFX.play();
         } catch (e) {
           //
         }
       };
 
       return (
-        <ModalWrapperFull divName="petMint" elementId='petmint_modal'>
+        <ModalWrapperFull divName="petMint" id='petmint_modal'>
           <CenterBox>
             <KamiImage src="https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif" />
             <Description>Kamigotchi?</Description>
           </CenterBox>
-          <Button
-            style={{
-              gridRowEnd: 5,
-              justifySelf: 'center',
-              pointerEvents: 'auto',
-            }}
-            onClick={handleMinting}
-          >
+          <ActionButton id='button-mint' onClick={handleMinting} size='large'>
             Mint
-          </Button>
+          </ActionButton>
         </ModalWrapperFull>
       );
     }
@@ -157,24 +152,6 @@ const CenterBox = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px;
-`;
-
-const Button = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 18px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
 
 const Description = styled.p`

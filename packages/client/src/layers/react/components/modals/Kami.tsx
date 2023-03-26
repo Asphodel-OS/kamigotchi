@@ -196,7 +196,7 @@ export function registerKamiModal() {
       });
 
       return (
-        <ModalWrapperFull divName='petDetails' elementId='petdetails_modal'>
+        <ModalWrapperFull divName='petDetails' id='petdetails_modal'>
           <KamiBox>
             <KamiBox>
               <KamiBox style={{ gridColumn: 1, gridRow: 1 }}>

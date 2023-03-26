@@ -11,11 +11,12 @@ import {
 } from '@latticexyz/recs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
-import { ModalWrapperLite, ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { useModalVisibility } from 'layers/react/hooks/useHandleModalVisibilty';
 
 const ItemImages = new Map([
   [1, gum],
@@ -83,7 +84,7 @@ export function registerMerchantModal() {
         return {
           id: world.entities[index],
           index,
-          itemType: getComponentValue(ItemIndex, index)?.value as number,
+          itemIndex: getComponentValue(ItemIndex, index)?.value as number,
           buyPrice: getComponentValue(PriceBuy, index)?.value as number,
           sellPrice: getComponentValue(PriceSell, index)?.value as number,
         };
@@ -155,8 +156,8 @@ export function registerMerchantModal() {
 
       // buy from a listing
       const buy = (listing: any, amt: number) => {
-        const actionID = `Buying ${amt} of ${listing.itemType
-          } at ${Date.now()}` as EntityID; // itemType should be replaced with the item's name
+        const actionID = `Buying ${amt} of ${listing.itemIndex
+          } at ${Date.now()}` as EntityID; // itemIndex should be replaced with the item's name
         actions.add({
           id: actionID,
           components: {},
@@ -169,45 +170,32 @@ export function registerMerchantModal() {
         });
       };
 
-      // sell to a listing
-      const sell = (listing: any, amt: number) => {
-        const actionID = `Selling ${amt} of ${listing.itemType
-          } at ${Date.now()}` as EntityID; // itemType should be replaced with the item's name
-        actions.add({
-          id: actionID,
-          components: {},
-          // on: data.account.index, // what's the appropriate value here?
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.listing.sell(listing.id, amt);
-          },
-        });
-      };
-
       ///////////////////
       // DISPLAY
 
-      // [listing: {id, index, itemType, buyPrice, sellPrice}]
+      // [listing: {id, index, itemIndex, buyPrice, sellPrice}]
       const listings = (slots: any) =>
         slots.map((listing: any) => (
-          <ShopEntry key={listing.itemType}>
-            <ItemImage src={ItemImages.get(parseInt(listing.itemType, 16))} />
+          <ShopEntry key={listing.itemIndex}>
+            <ItemImage src={ItemImages.get(parseInt(listing.itemIndex, 16))} />
             <ItemName>
-              {ItemNames.get(parseInt(listing.itemType, 16))}{' '}
+              {ItemNames.get(parseInt(listing.itemIndex, 16))}{' '}
             </ItemName>
             <ItemPrice>{parseInt(listing.buyPrice, 16)}</ItemPrice>
-            <Button
-              style={{ pointerEvents: 'auto' }}
-              onClick={() => buy(listing, 1)}
-            >
-              Buy
-            </Button>
+            <ButtonWrapper>
+              <ActionButton
+                id={`button-buy-${listing.itemIndex}`}
+                disabled={data.coin < parseInt(listing.buyPrice, 16)}
+                onClick={() => buy(listing, 1)}
+              >
+                Buy
+              </ActionButton>
+            </ButtonWrapper>
           </ShopEntry>
         ));
 
       return (
-        <ModalWrapperFull divName="merchant" elementId="merchant">
+        <ModalWrapperFull divName="merchant" id="merchant">
           <ShopList>{listings(data.listings)}</ShopList>
         </ModalWrapperFull>
       );
@@ -215,25 +203,10 @@ export function registerMerchantModal() {
   );
 }
 
-const Button = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
+const ButtonWrapper = styled.div`
   grid-column: 4;
-  width: 50px;
   align-self: center;
-`;
+`
 
 const ItemImage = styled.img`
   font-family: Pixel;
