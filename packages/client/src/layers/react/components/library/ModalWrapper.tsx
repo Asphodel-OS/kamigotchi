@@ -17,8 +17,9 @@ export const ModalWrapperFull = (props: Props) => {
   // Updates modal visibility if the divName is updated to visible in the store.
   useEffect(() => {
     const element = document.getElementById(props.id);
-    if (element && visibleDivs[props.divName]) {
-      element.style.display = 'block';
+    if (element) {
+      const isVisible = visibleDivs[props.divName];
+      element.style.display = isVisible ? 'block' : 'none';
     }
   }, [visibleDivs[props.divName], props.id]);
 
