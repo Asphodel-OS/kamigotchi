@@ -35,19 +35,18 @@ export const ModalWrapperFull = (props: Props) => {
   const contentStyle = props.fill ? { height: '100%' } : {};
 
   return (
-    <ModalWrapperLite
+    <Wrapper
       id={props.elementId}
       isOpen={visibleDivs[props.divName]}
       style={wrapperStyle}
     >
-      <ModalContent style={contentStyle}>
+      <Content style={contentStyle}>
         <ExitButton style={{ pointerEvents: 'auto' }} onClick={handleClose} />
         {props.children}
-      </ModalContent>
-    </ModalWrapperLite>
+      </Content>
+    </Wrapper>
   );
 }
-
 
 interface Props {
   divName: keyof VisibleDivs;
@@ -56,12 +55,12 @@ interface Props {
   children: React.ReactNode;
 }
 
-interface ModalWrapperLite {
+interface Wrapper {
   isOpen: boolean;
 }
 
-// ModalWrapperLite is an invisible animated wrapper around all modals sans any frills.
-export const ModalWrapperLite = styled.div<ModalWrapperLite>`
+// Wrapper is an invisible animated wrapper around all modals sans any frills.
+const Wrapper = styled.div<Wrapper>`
   display: none;
   justify-content: center;
   align-items: center;
@@ -71,7 +70,7 @@ export const ModalWrapperLite = styled.div<ModalWrapperLite>`
   pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
 `;
 
-const ModalContent = styled.div`
+const Content = styled.div`
   display: grid;
   background-color: white;
   border-radius: 10px;
@@ -99,3 +98,5 @@ const fadeOut = keyframes`
     opacity: 0;
   }
 `;
+
+export { Wrapper as ModalWrapperLite };

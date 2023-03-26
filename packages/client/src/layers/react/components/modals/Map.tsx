@@ -61,9 +61,9 @@ export function registerMapModal() {
       } = dataStore();
 
       useEffect(() => {
-        if (visibleDivs.worldMap === true)
+        if (visibleDivs.map === true)
           document.getElementById('world_map')!.style.display = 'block';
-      }, [visibleDivs.worldMap]);
+      }, [visibleDivs.map]);
 
       ///////////////////
       // ACTTONS
@@ -94,7 +94,7 @@ export function registerMapModal() {
       const toggleModal = () => {
         setVisibleDivs({
           ...visibleDivs,
-          worldMap: !visibleDivs.worldMap,
+          map: !visibleDivs.map,
         });
       };
 
@@ -120,7 +120,7 @@ export function registerMapModal() {
 
       // <ModalWrapper id="world_map">
       return (
-        <ModalWrapperLite id="world_map" isOpen={visibleDivs.worldMap}>
+        <ModalWrapperLite id="world_map" isOpen={visibleDivs.map}>
           <ModalContent>
             <TopButton style={{ pointerEvents: 'auto' }} onClick={toggleModal}>
               X

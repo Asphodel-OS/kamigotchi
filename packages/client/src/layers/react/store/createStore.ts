@@ -18,7 +18,7 @@ export interface VisibleDivs {
   chat: boolean;
   merchant: boolean;
   party: boolean;
-  worldMap: boolean;
+  map: boolean;
 }
 
 export interface SoundState {
@@ -55,7 +55,7 @@ export const dataStore = create<StoreState & StoreActions>((set) => {
       chat: false,
       merchant: false,
       party: false,
-      worldMap: false,
+      map: false,
     },
     sound: {
       volume: 0.5,
