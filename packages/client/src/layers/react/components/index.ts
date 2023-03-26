@@ -1,6 +1,6 @@
 import { registerActionQueue } from './ActionQueue';
 import { registerLoadingState } from './LoadingState';
-import { registerObjectModal } from './ObjectModal';
+import { registerDialogueModal } from './modals/Dialogue';
 
 import { registerChatButton } from './buttons/Chat';
 import { registerFoodShopButton } from './buttons/FoodShop';
@@ -8,7 +8,7 @@ import { registerMapButton } from './buttons/Map';
 import { registerPartyButton } from './buttons/Party';
 
 import { registerChatModal } from './modals/Chat';
-import { registerDetectAccount } from './modals/DetectAccount';
+import { regiesterDetectAccountModal } from './modals/DetectAccount';
 import { registerKamiMintModal } from './modals/KamiMint';
 import { registerKamiModal } from './modals/Kami';
 import { registerMapModal } from './modals/Map';
@@ -20,7 +20,7 @@ import { registerTradeModal } from './modals/Trade';
 export function registerUIComponents() {
   registerActionQueue();
   registerLoadingState();
-  registerObjectModal();
+  registerDialogueModal();
 
   registerChatButton();
   registerFoodShopButton();
@@ -28,7 +28,7 @@ export function registerUIComponents() {
   registerPartyButton();
 
   registerChatModal();
-  registerDetectAccount();
+  regiesterDetectAccountModal();
   registerKamiMintModal();
   registerKamiModal();
   registerMapModal();

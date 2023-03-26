@@ -1,7 +1,7 @@
 import { dataStore } from 'layers/react/store/createStore';
 import dialogueSound from 'assets/sound/fx/speech3.mp3';
 
-export const triggerObjectModal = (
+export const triggerDialogueModal = (
   object: Phaser.GameObjects.GameObject,
   description: string
 ) => {

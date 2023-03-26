@@ -4,12 +4,12 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import styled from 'styled-components';
 import 'layers/react/styles/font.css';
-import { ModalWrapperLite } from './library/ModalWrapper';
+import { ModalWrapperLite } from '../library/ModalWrapper';
 
 // TODO: update this file and component name to be more desctiptive
-export function registerObjectModal() {
+export function registerDialogueModal() {
   registerUIComponent(
-    'ObjectModal',
+    'DialogueModal',
     {
       colStart: 3,
       colEnd: 82,

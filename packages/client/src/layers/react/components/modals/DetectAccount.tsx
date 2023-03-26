@@ -7,7 +7,7 @@ import { HasValue, runQuery } from '@latticexyz/recs';
 import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3'
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerDetectAccount() {
+export function regiesterDetectAccountModal() {
   registerUIComponent(
     'DetectMint',
     {

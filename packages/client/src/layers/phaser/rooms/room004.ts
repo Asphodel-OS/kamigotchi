@@ -2,7 +2,7 @@ import { PhaserScene } from '../types';
 import { resizePicture } from '../utils/resizePicture';
 import room004image from 'assets/images/rooms/room4.png';
 import { getGirlCoordinates } from '../utils/coordinates';
-import { triggerObjectModal } from '../utils/triggerObjectModal';
+import { triggerDialogueModal } from '../utils/triggerDialogueModal';
 
 const { scale, diff } = resizePicture();
 
@@ -26,7 +26,7 @@ export function room004() {
       );
 
       scene.interactiveObjects.push(
-        triggerObjectModal(girl, 'Buy something or get out.')
+        triggerDialogueModal(girl, 'Buy something or get out.')
       );
     },
   };
