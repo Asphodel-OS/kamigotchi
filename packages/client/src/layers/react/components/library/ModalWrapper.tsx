@@ -3,14 +3,14 @@ import styled, { keyframes } from 'styled-components';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { ExitButton } from 'layers/react/components/library/ExitButton';
-import { dataStore, VisibleDivs } from 'layers/react/store/createStore';
+import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 
 // ModalWrapperFull is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapperFull = (props: Props) => {
   const {
-    visibleDivs,
-    setVisibleDivs,
+    visibleModals,
+    setVisibleModals,
     sound: { volume },
   } = dataStore();
 
@@ -18,17 +18,17 @@ export const ModalWrapperFull = (props: Props) => {
   useEffect(() => {
     const element = document.getElementById(props.id);
     if (element) {
-      const isVisible = visibleDivs[props.divName];
+      const isVisible = visibleModals[props.divName];
       element.style.display = isVisible ? 'block' : 'none';
     }
-  }, [visibleDivs[props.divName], props.id]);
+  }, [visibleModals[props.divName], props.id]);
 
   // closes the modal
   const handleClose = () => {
     const clickSound = new Audio(clickSoundUrl);
     clickSound.volume = volume * 0.6;
     clickSound.play();
-    setVisibleDivs({ ...visibleDivs, [props.divName]: false });
+    setVisibleModals({ ...visibleModals, [props.divName]: false });
   };
 
   // Some conditional styling to adapt the content to the wrapper.
@@ -38,7 +38,7 @@ export const ModalWrapperFull = (props: Props) => {
   return (
     <Wrapper
       id={props.id}
-      isOpen={visibleDivs[props.divName]}
+      isOpen={visibleModals[props.divName]}
       style={wrapperStyle}
     >
       <Content style={contentStyle}>
@@ -50,7 +50,7 @@ export const ModalWrapperFull = (props: Props) => {
 }
 
 interface Props {
-  divName: keyof VisibleDivs;
+  divName: keyof VisibleModals;
   id: string;
   fill?: boolean; // whether the content should fit to the entire modal
   children: React.ReactNode;

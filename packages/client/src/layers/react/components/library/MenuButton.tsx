@@ -2,15 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { dataStore, VisibleDivs } from 'layers/react/store/createStore';
+import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
 
 // MenuButton renders a button that toggles a target modal. It supports a generic
 // input of children, though this will usually just be text.
 export const MenuButton = (props: Props) => {
   const {
-    visibleDivs,
-    setVisibleDivs,
+    visibleModals,
+    setVisibleModals,
     sound: { volume },
   } = dataStore();
 
@@ -19,7 +19,7 @@ export const MenuButton = (props: Props) => {
     const clickSound = new Audio(clickSoundUrl);
     clickSound.volume = volume * 0.6;
     clickSound.play();
-    setVisibleDivs({ ...visibleDivs, [props.targetDiv]: !visibleDivs[props.targetDiv] });
+    setVisibleModals({ ...visibleModals, [props.targetDiv]: !visibleModals[props.targetDiv] });
   };
 
   return (
@@ -35,7 +35,7 @@ export const MenuButton = (props: Props) => {
 
 interface Props {
   id: string;
-  targetDiv: keyof VisibleDivs;
+  targetDiv: keyof VisibleModals;
   children: React.ReactNode;
 }
 

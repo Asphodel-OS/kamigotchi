@@ -90,7 +90,7 @@ export function registerKamiModal() {
       } = layers;
 
       const {
-        selectedPet: { description },
+        selectedKami: { description },
       } = dataStore();
 
       /////////////////
@@ -196,7 +196,7 @@ export function registerKamiModal() {
       });
 
       return (
-        <ModalWrapperFull divName='petDetails' id='petdetails_modal'>
+        <ModalWrapperFull divName='kami' id='petdetails_modal'>
           <KamiBox>
             <KamiBox>
               <KamiBox style={{ gridColumn: 1, gridRow: 1 }}>

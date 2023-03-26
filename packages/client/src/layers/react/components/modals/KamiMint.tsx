@@ -64,8 +64,8 @@ export function registerKamiMintModal() {
       } = layers;
 
       const {
-        visibleDivs,
-        setVisibleDivs,
+        visibleModals,
+        setVisibleModals,
         sound: { volume },
       } = dataStore();
 
@@ -117,11 +117,11 @@ export function registerKamiMintModal() {
             world.entityToIndex.get(revealActionID) as EntityIndex
           );
 
-          dataStore.setState({ selectedPet: { description } });
-          setVisibleDivs({ ...visibleDivs, petMint: !visibleDivs.petMint });
-          setVisibleDivs({
-            ...visibleDivs,
-            petDetails: !visibleDivs.petDetails,
+          dataStore.setState({ selectedKami: { description } });
+          setVisibleModals({ ...visibleModals, kamiMint: !visibleModals.kamiMint });
+          setVisibleModals({
+            ...visibleModals,
+            kami: !visibleModals.kami,
           });
 
           const mintFX = new Audio(mintSound);
@@ -133,7 +133,7 @@ export function registerKamiMintModal() {
       };
 
       return (
-        <ModalWrapperFull divName="petMint" id='petmint_modal'>
+        <ModalWrapperFull divName="kamiMint" id='petmint_modal'>
           <CenterBox>
             <KamiImage src="https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif" />
             <Description>Kamigotchi?</Description>

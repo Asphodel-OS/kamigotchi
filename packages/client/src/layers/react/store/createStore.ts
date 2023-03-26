@@ -1,6 +1,10 @@
 import create from 'zustand';
 
-export interface DataObject {
+export interface Dialogue {
+  description: string;
+}
+
+export interface Kami {
   description: string;
 }
 
@@ -9,16 +13,15 @@ export interface RoomExits {
   down: number;
 }
 
-export interface VisibleDivs {
-  petMint: boolean;
-  petDetails: boolean;
-  objectModal: boolean;
-  mintProcess: boolean;
-  inventory: boolean;
+export interface VisibleModals {
   chat: boolean;
+  dialogue: boolean;
+  inventory: boolean;
+  kamiMint: boolean;
+  kami: boolean;
+  map: boolean;
   merchant: boolean;
   party: boolean;
-  map: boolean;
 }
 
 export interface SoundState {
@@ -26,52 +29,51 @@ export interface SoundState {
 }
 
 export interface StoreState {
-  objectData: DataObject;
+  dialogue: Dialogue;
   roomExits: RoomExits;
-  selectedPet: DataObject;
-  visibleDivs: VisibleDivs;
+  selectedKami: Dialogue;
+  visibleModals: VisibleModals;
   sound: SoundState;
 }
 
 interface StoreActions {
-  setObjectData: (data: DataObject) => void;
+  setObjectData: (data: Dialogue) => void;
   setRoomExits: (data: RoomExits) => void;
-  setSelectedPet: (data: DataObject) => void;
-  setVisibleDivs: (data: VisibleDivs) => void;
+  setSelectedKami: (data: Dialogue) => void;
+  setVisibleModals: (data: VisibleModals) => void;
   setSoundState: (data: SoundState) => void;
 }
 
 export const dataStore = create<StoreState & StoreActions>((set) => {
   const initialState: StoreState = {
-    objectData: { description: '' },
+    dialogue: { description: '' },
     roomExits: { up: 0, down: 0 },
-    selectedPet: { description: '' },
-    visibleDivs: {
-      petMint: false,
-      petDetails: false,
-      objectModal: false,
-      mintProcess: false,
-      inventory: false,
+    selectedKami: { description: '' },
+    visibleModals: {
       chat: false,
+      dialogue: false,
+      inventory: false,
+      kami: false,
+      kamiMint: false,
+      map: false,
       merchant: false,
       party: false,
-      map: false,
     },
     sound: {
-      volume: 0.5,
+      volume: 0.7,
     },
   };
 
   return {
     ...initialState,
-    setObjectData: (data: DataObject) =>
-      set((state: StoreState) => ({ ...state, objectData: data })),
+    setObjectData: (data: Dialogue) =>
+      set((state: StoreState) => ({ ...state, dialogue: data })),
     setRoomExits: (data: RoomExits) =>
       set((state: StoreState) => ({ ...state, roomExits: data })),
-    setSelectedPet: (data: DataObject) =>
-      set((state: StoreState) => ({ ...state, objectData: data })),
-    setVisibleDivs: (data: VisibleDivs) =>
-      set((state: StoreState) => ({ ...state, visibleDivs: data })),
+    setSelectedKami: (data: Dialogue) =>
+      set((state: StoreState) => ({ ...state, dialogue: data })),
+    setVisibleModals: (data: VisibleModals) =>
+      set((state: StoreState) => ({ ...state, visibleModals: data })),
     setSoundState: (data: SoundState) =>
       set((state: StoreState) => ({ ...state, sound: data })),
   };

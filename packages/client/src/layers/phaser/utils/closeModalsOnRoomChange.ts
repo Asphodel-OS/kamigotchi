@@ -1,9 +1,9 @@
 import { dataStore } from 'layers/react/store/createStore';
 
 export const closeModalsOnRoomChange = () => {
-  const { visibleDivs } = dataStore.getState();
+  const { visibleModals } = dataStore.getState();
 
   dataStore.setState({
-    visibleDivs: { ...visibleDivs, objectModal: false, merchant: false, mintProcess: false, petMint: false },
+    visibleModals: { ...visibleModals, dialogue: false, merchant: false, kamiMint: false },
   });
 };

@@ -19,32 +19,32 @@ export function registerObjectModal() {
     (layers) => of(layers),
     () => {
       const {
-        visibleDivs,
-        setVisibleDivs,
-        objectData: { description },
+        visibleModals,
+        setVisibleModals,
+        dialogue: { description },
       } = dataStore();
 
       const hideModal = () => {
-        setVisibleDivs({
-          ...visibleDivs,
-          objectModal: !visibleDivs.objectModal,
+        setVisibleModals({
+          ...visibleModals,
+          dialogue: !visibleModals.dialogue,
         });
       };
 
       const showShop = () => {
-        setVisibleDivs({
-          ...visibleDivs,
-          merchant: !visibleDivs.merchant,
+        setVisibleModals({
+          ...visibleModals,
+          merchant: !visibleModals.merchant,
         });
       };
 
       useEffect(() => {
-        if (visibleDivs.objectModal === true)
+        if (visibleModals.dialogue === true)
           document.getElementById('object_modal')!.style.display = 'block';
-      }, [visibleDivs.objectModal]);
+      }, [visibleModals.dialogue]);
 
       return (
-        <ModalWrapperLite id="object_modal" isOpen={visibleDivs.objectModal}>
+        <ModalWrapperLite id="object_modal" isOpen={visibleModals.dialogue}>
           <ModalContent>
             <AlignRight>
               <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { dataStore, VisibleDivs } from 'layers/react/store/createStore';
+import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 
 type UseModalVisibilityParams = {
   soundUrl: string | null;
-  divName: keyof VisibleDivs;
+  divName: keyof VisibleModals;
   elementId: string;
 };
 
@@ -13,8 +13,8 @@ export const useModalVisibility = ({
   elementId,
 }: UseModalVisibilityParams) => {
   const {
-    visibleDivs,
-    setVisibleDivs,
+    visibleModals,
+    setVisibleModals,
     sound: { volume },
   } = dataStore();
 
@@ -24,15 +24,15 @@ export const useModalVisibility = ({
       clickSound.volume = volume * 0.6;
       clickSound.play();
     }
-    setVisibleDivs({ ...visibleDivs, [divName]: !visibleDivs[divName] });
+    setVisibleModals({ ...visibleModals, [divName]: !visibleModals[divName] });
   };
 
   useEffect(() => {
     const element = document.getElementById(elementId);
-    if (element && visibleDivs[divName]) {
+    if (element && visibleModals[divName]) {
       element.style.display = 'block';
     }
-  }, [visibleDivs[divName], elementId]);
+  }, [visibleModals[divName], elementId]);
 
-  return { handleClick, isVisible: visibleDivs[divName] };
+  return { handleClick, isVisible: visibleModals[divName] };
 };

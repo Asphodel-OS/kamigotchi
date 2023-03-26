@@ -54,14 +54,14 @@ export function registerMapModal() {
     },
     ({ actions, api, data }) => {
       const {
-        visibleDivs,
+        visibleModals,
         roomExits: { down, up },
       } = dataStore();
 
       useEffect(() => {
-        if (visibleDivs.map === true)
+        if (visibleModals.map === true)
           document.getElementById('world_map')!.style.display = 'block';
-      }, [visibleDivs.map]);
+      }, [visibleModals.map]);
 
       ///////////////////
       // ACTTONS

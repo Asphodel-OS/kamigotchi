@@ -4,10 +4,10 @@ export const triggerInventoryModal = (
   object: Phaser.GameObjects.GameObject
 ) => {
   return object.setInteractive().on('pointerdown', () => {
-    const { visibleDivs } = dataStore.getState();
+    const { visibleModals } = dataStore.getState();
 
     dataStore.setState({
-      visibleDivs: { ...visibleDivs, inventory: !visibleDivs.inventory },
+      visibleModals: { ...visibleModals, inventory: !visibleModals.inventory },
     });
   });
 };
