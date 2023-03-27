@@ -5,8 +5,8 @@ interface Props {
   kami: Kami;
   title: string;
   image: string;
-  owner: string;
-  description: React.ReactNode;
+  subtext: string;
+  description: string[];
   cornerContent?: React.ReactNode;
   action: React.ReactNode;
 }
@@ -36,6 +36,15 @@ interface Production {
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
 
+  const Description = () => {
+    const header = [<TextBig>{props.description[0]}</TextBig>];
+
+    const details = props.description.slice(1).map((line) => (
+      <TextMedium>{line}</TextMedium>
+    ));
+    return [...header, ...details];
+  };
+
   return (
     <Card key={props.kami.id}>
       <Image src={props.image} />
@@ -45,9 +54,9 @@ export const KamiCard = (props: Props) => {
           <TitleCorner>{props.cornerContent}</TitleCorner>
         </TitleBar>
         <Content>
-          <ContentColumn>{props.description}</ContentColumn>
+          <ContentColumn>{Description()}</ContentColumn>
           <ContentColumn>
-            <ContentSubtext>{props.owner}</ContentSubtext>
+            <ContentSubtext>{props.subtext}</ContentSubtext>
             <ContentActions>
               {props.action}
             </ContentActions>
@@ -157,5 +166,19 @@ const ContentActions = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+`;
+
+const TextBig = styled.p`
+  font-size: 14px;
+  font-family: Pixel;
+  text-align: left;
+  padding: 7px 10px 5px 10px;
+`;
+
+const TextMedium = styled.p`
+  font-size: 12px;
+  font-family: Pixel;
+  text-align: left;
+  padding: 3px 10px;
 `;
 
