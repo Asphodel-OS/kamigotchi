@@ -168,11 +168,12 @@ export function registerPartyModal() {
       };
 
       return merge(
-        OwnerID.update$,
         AccountID.update$,
-        Location.update$,
         Balance.update$,
         Coin.update$,
+        HealthCurrent.update$,
+        Location.update$,
+        OwnerID.update$,
         State.update$,
         StartTime.update$,
         MediaURI.update$
@@ -345,11 +346,6 @@ export function registerPartyModal() {
         return rate;
       };
 
-      // calculate health %
-      const calcHealthPercent = (kami: any) => {
-        return ((100 * calcHealth(kami)) / kami.health);
-      };
-
       // calculate health based on the drain against last confirmed health
       const calcHealth = (kami: any) => {
         // calculate the health drain on the kami since the last health update
@@ -371,6 +367,7 @@ export function registerPartyModal() {
         return 0;
       };
 
+      // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: any) => {
         return calcHealth(kami) == 0;
       }
@@ -381,6 +378,7 @@ export function registerPartyModal() {
         return kami.production && kami.production.state === 'ACTIVE';
       };
 
+      // get the title of the kami as 'name (health / totHealth)'
       const getTitle = (kami: any) => {
         const health = calcHealth(kami).toFixed();
         return kami.name + ` (${health}/${parseInt(kami.health)})`;
@@ -413,20 +411,20 @@ export function registerPartyModal() {
       /////////////////
       // DISPLAY
 
-      const Details = (kami: any) => (
-        <Description>
-          Energy: {calcHealthPercent(kami).toFixed(1)} %
-          <br />
-          Power: {kami.power * 1} / hr
-          <br />
-          Harvest: {
-            (calcHealthPercent(kami) != 0)
-              ? calcOutput(kami)
-              : "lol "
-          } BYTES
-          <br />
-        </Description>
-      );
+      // get the row of consumable items to display in the player inventory
+      // NOTE: does not render until player inventories are populated
+      const ConsumableCells = (inventories: any[]) => {
+        return inventories.map((inv) => {
+          return (
+            <CellBordered style={{ gridColumn: `${inv.id}` }}>
+              <CellGrid>
+                <Icon src={inv.image} />
+                <ItemNumber>{inv.balance ?? 0}</ItemNumber>
+              </CellGrid>
+            </CellBordered>
+          );
+        });
+      };
 
       const CollectButton = (kami: any) => (
         <ActionButton
@@ -456,7 +454,7 @@ export function registerPartyModal() {
           text='Stop' />
       );
 
-      const KamiCardsLite = (kamis: any[]) => {
+      const KamiCards = (kamis: any[]) => {
         return kamis.map((kami) => {
           const title = getTitle(kami);
           const description = getDescription(kami);
@@ -464,7 +462,7 @@ export function registerPartyModal() {
 
           return (
             <KamiCard
-              kami={kami}
+              key={kami.id}
               title={title}
               image={kami.uri}
               subtext={`+${calcOutput(kami).toFixed(1)} $KAMI`}
@@ -476,58 +474,6 @@ export function registerPartyModal() {
         })
       };
 
-
-      // Generate the list of Kami cards
-      // TODO: grab uri from SC side
-      const KamiCards = (kamis: any[]) => {
-        return kamis.map((kami) => {
-          return (
-            <KamiBox key={kami.id}>
-              <KamiImage src={kami.uri} />
-              <KamiFacts>
-                <KamiName>
-                  <Description>{kami.name}</Description>
-                </KamiName>
-                <KamiDetails>
-                  {Details(kami)}
-                  {(kami.production && kami.production.state === 'ACTIVE')
-                    ? StopButton(kami)
-                    : StartButton(kami)
-                  }
-                  {(kami.production && kami.production.state === 'ACTIVE')
-                    ? CollectButton(kami)
-                    : <ActionButton
-                      id={`node-select`}
-                      onClick={() => null}
-                      disabled={true}
-                      text='Node' />
-                  }
-                  {FeedButton(kami, 1)}
-                  {FeedButton(kami, 2)}
-                  {FeedButton(kami, 3)}
-                </KamiDetails>
-              </KamiFacts>
-            </KamiBox>
-          );
-        });
-      };
-
-      // get the row of consumable items to display in the player inventory
-      // NOTE: does not render until player inventories are populated
-      const ConsumableCells = (inventories: any[]) => {
-        return inventories.map((inv) => {
-          return (
-            <CellBordered style={{ gridColumn: `${inv.id}` }}>
-              <CellGrid>
-                <Icon src={inv.image} />
-                <ItemNumber>{inv.balance ?? 0}</ItemNumber>
-              </CellGrid>
-            </CellBordered>
-          );
-        });
-      };
-
-      console.log('rendering party modal')
       return (
         <ModalWrapperFull id='party_modal' divName='party' fill={true}>
           <TopGrid>
@@ -540,7 +486,6 @@ export function registerPartyModal() {
           </ConsumableGrid>
           <Scrollable>
             {KamiCards(data.pets)}
-            {KamiCardsLite(data.pets)}
           </Scrollable>
         </ModalWrapperFull>
       );
@@ -551,49 +496,6 @@ export function registerPartyModal() {
 const Scrollable = styled.div`
   overflow: auto;
   max-height: 100%;
-`;
-
-const KamiBox = styled.div`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  text-decoration: none;
-  display: grid;
-  font-size: 18px;
-  margin: 4px 2px;
-  border-radius: 5px;
-  font-family: Pixel;
-`;
-
-const KamiFacts = styled.div`
-  background-color: #ffffff;
-  color: black;
-  font-size: 18px;
-  margin: 0px;
-  padding: 0px;
-  grid-column: 2 / span 1000;
-  display: grid;
-`;
-
-const KamiName = styled.div`
-  grid-row: 1;
-  border-style: solid;
-  border-width: 0px 0px 2px 0px;
-  border-color: black;
-`;
-
-const KamiDetails = styled.div`
-  grid-row: 2 / 5;
-`;
-
-const Description = styled.p`
-  font-size: 14px;
-  color: #333;
-  text-align: left;
-  padding: 2px;
-  font-family: Pixel;
 `;
 
 const TopDescription = styled.p`
@@ -608,16 +510,6 @@ const TopDescription = styled.p`
   border-color: black;
   border-radius: 5px;
   padding: 5px;
-`;
-
-const KamiImage = styled.img`
-  border-style: solid;
-  border-width: 0px 2px 0px 0px;
-  border-color: black;
-  height: 110px;
-  margin: 0px;
-  padding: 0px;
-  grid-column: 1 / span 1;
 `;
 
 const ConsumableGrid = styled.div`
