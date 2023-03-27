@@ -1,0 +1,16 @@
+Index,Name,Type,Rarity,BPs,Harmony,Health,Power,Violence,Slots
+0,Battery,Scrap,Rare,500,0,75,0,0,0
+1,Bee,Insect,Rare,500,0,0,0,6,0
+2,Butterfly,Insect,Epic,100,0,0,0,8,0
+3,Caterpillar,Insect,Common,1500,0,0,0,4,0
+4,Cube,Normal,Rare,550,0,0,0,0,1
+5,Default,Normal,Common,2100,0,40,,0,0
+6,Drip,Eerie,Rare,500,0,0,6,0,0
+7,Lightbulb,Scrap,Common,1500,4,0,0,0,0
+8,CRT Monitor (Inactive),Scrap,NYI,0,,,,,
+9,CRT Monitor (Broken),Scrap,Epic,100,,,,,
+10,Octahedron,Normal,Epic,50,0,0,0,0,2
+11,Octopus,Eerie,Common,1500,0,0,4,0,0
+12,Orb,Normal,Common,500,6,0,0,0,0
+13,Pumpkin,Eerie,Epic,100,9,0,8,0,0
+14,Tube,Normal,Common,500,0,60,0,0,0

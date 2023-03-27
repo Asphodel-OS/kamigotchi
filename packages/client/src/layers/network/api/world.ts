@@ -11,7 +11,6 @@ export function setUpWorldAPI(systems: any) {
   }
 
   function csvToMap(arr: any) {
-    console.log(arr);
     let jsonObj = [];
     let headers = arr[0];
     for (let i = 1; i < arr.length; i++) {

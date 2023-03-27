@@ -416,7 +416,10 @@ export function registerPartyModal() {
       const ConsumableCells = (inventories: any[]) => {
         return inventories.map((inv) => {
           return (
-            <CellBordered style={{ gridColumn: `${inv.id}` }}>
+            <CellBordered
+              key={inv.id}
+              style={{ gridColumn: `${inv.id}` }}
+            >
               <CellGrid>
                 <Icon src={inv.image} />
                 <ItemNumber>{inv.balance ?? 0}</ItemNumber>
