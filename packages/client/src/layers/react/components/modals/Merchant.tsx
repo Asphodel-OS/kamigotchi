@@ -173,6 +173,14 @@ export function registerMerchantModal() {
       ///////////////////
       // DISPLAY
 
+      const BuyButton = (listing: any) => (
+        <ActionButton
+          id={`button-buy-${listing.itemIndex}`}
+          disabled={data.coin < parseInt(listing.buyPrice, 16)}
+          onClick={() => buy(listing, 1)}
+          text="Buy" />
+      );
+
       // [listing: {id, index, itemIndex, buyPrice, sellPrice}]
       const listings = (slots: any) =>
         slots.map((listing: any) => (
@@ -183,11 +191,7 @@ export function registerMerchantModal() {
             </ItemName>
             <ItemPrice>{parseInt(listing.buyPrice, 16)}</ItemPrice>
             <ButtonWrapper>
-              <ActionButton
-                id={`button-buy-${listing.itemIndex}`}
-                disabled={data.coin < parseInt(listing.buyPrice, 16)}
-                onClick={() => buy(listing, 1)}
-                text="Buy" />
+              {BuyButton(listing)}
             </ButtonWrapper>
           </ShopEntry>
         ));

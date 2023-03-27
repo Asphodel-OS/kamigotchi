@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { BigNumber, utils } from 'ethers';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -131,19 +131,26 @@ export function registerKamiMintModal() {
           //
         }
       };
-      console.log("Rendering Mint Modal");
+
+      ///////////////
+      // DISPLAY
+
+      const MintButton = (
+        <ActionButton
+          id='button-mint'
+          onClick={handleMinting}
+          size='large'
+          text='Mint'
+        />
+      );
+
       return (
         <ModalWrapperFull divName="kamiMint" id='petmint_modal'>
           <CenterBox>
             <KamiImage src="https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif" />
             <Description>Kamigotchi?</Description>
           </CenterBox>
-          <ActionButton
-            id='button-mint'
-            onClick={handleMinting}
-            size='large'
-            text='Mint'
-          />
+          {MintButton}
         </ModalWrapperFull>
       );
     }

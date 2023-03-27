@@ -369,11 +369,47 @@ export function registerPartyModal() {
       /////////////////
       // DISPLAY
 
-      const FeedButton = (kamiID: any, foodIndex: number) => (
+      const Details = (kami: any) => (
+        <Description>
+          Energy: {calcHealth(kami)} %
+          <br />
+          Power: {kami.power * 1} / hr
+          <br />
+          Harvest: {
+            (calcHealth(kami) != '0.0')
+              ? calcOutput(kami)
+              : "lol "
+          } BYTES
+          <br />
+        </Description>
+      );
+
+      const CollectButton = (kami: any) => (
+        <ActionButton
+          id={`harvest-collect`}
+          onClick={() => reapProduction(kami.production.id)}
+          text='Collect' />
+      );
+
+      const FeedButton = (kami: any, foodIndex: number) => (
         <ActionButton
           id={`feed-${foodIndex}`}
-          onClick={() => feed(kamiID, foodIndex)}
+          onClick={() => feed(kami.id, foodIndex)}
           text={`Feed ${foodIndex}`} />
+      );
+
+      const StartButton = (kami: any) => (
+        <ActionButton
+          id={`harvest-start`}
+          onClick={() => startProduction(kami.id)}
+          text='Start' />
+      );
+
+      const StopButton = (kami: any) => (
+        <ActionButton
+          id={`harvest-stop`}
+          onClick={() => stopProduction(kami.production.id)}
+          text='Stop' />
       );
 
 
@@ -389,41 +425,22 @@ export function registerPartyModal() {
                   <Description>{kami.name}</Description>
                 </KamiName>
                 <KamiDetails>
-                  <Description>
-                    Energy: {calcHealth(kami)} %
-                    <br />
-                    Power: {kami.power * 1} / hr
-                    <br />
-                    Harvest: {
-                      (calcHealth(kami) != '0.0')
-                        ? calcOutput(kami)
-                        : "lol "
-                    } BYTES
-                    <br />
-                  </Description>
+                  {Details(kami)}
                   {(kami.production && kami.production.state === 'ACTIVE')
-                    ? <ActionButton
-                      id={`action-${kami.id}-harvest-stop`}
-                      onClick={() => stopProduction(kami.production.id)}
-                      text='Stop' />
-                    : <ActionButton
-                      id={`action-${kami.id}-harvest-start`}
-                      onClick={() => startProduction(kami.id)}
-                      text='Start' />
+                    ? StopButton(kami)
+                    : StartButton(kami)
                   }
                   {(kami.production && kami.production.state === 'ACTIVE')
-                    ? <ActionButton
-                      id={`action-${kami.id}-harvest-collect`}
-                      onClick={() => reapProduction(kami.production.id)}
-                      text='Collect' />
+                    ? CollectButton(kami)
                     : <ActionButton
-                      id={`action-${kami.id}-harvest-start`}
+                      id={`node-select`}
                       onClick={() => null}
+                      disabled={true}
                       text='Node' />
                   }
-                  {FeedButton(kami.id, 1)}
-                  {FeedButton(kami.id, 2)}
-                  {FeedButton(kami.id, 3)}
+                  {FeedButton(kami, 1)}
+                  {FeedButton(kami, 2)}
+                  {FeedButton(kami, 3)}
                 </KamiDetails>
               </KamiFacts>
             </KamiBox>
@@ -446,6 +463,7 @@ export function registerPartyModal() {
         });
       };
 
+      console.log('rendering party modal')
       return (
         <ModalWrapperFull id='party_modal' divName='party' fill={true}>
           <TopGrid>

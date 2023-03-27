@@ -83,7 +83,7 @@ export function registerMapModal() {
       ///////////////////
       // DISPLAY
 
-      // generate the grid of rooms
+      // Grid display of rooms
       const RoomGrid = useMemo(() => {
         const result = [];
         for (let i = 1; i <= 100; i++) {
@@ -103,6 +103,26 @@ export function registerMapModal() {
         return result;
       }, [objectKeys, data.currentRoom]);
 
+      // Travel button for moving up
+      const UpButton = (
+        <ActionButton
+          id='button-up'
+          disabled={up === 0}
+          onClick={() => move(up)}
+          size='medium'
+          text='↑' />
+      );
+
+      // Travel button for moving down
+      const DownButton = (
+        <ActionButton
+          id='button-down'
+          disabled={down === 0}
+          onClick={() => move(down)}
+          size='medium'
+          text='↓' />
+      );
+
       return (
         <ModalWrapperFull id='world_map' divName='map'>
           <GridWrapper>
@@ -110,18 +130,8 @@ export function registerMapModal() {
             {RoomGrid}
           </GridWrapper>
           <ButtonWrapper>
-            <ActionButton
-              id='button-up'
-              disabled={up === 0}
-              onClick={() => move(up)}
-              size='medium'
-              text='↑' />
-            <ActionButton
-              id='button-down'
-              disabled={down === 0}
-              onClick={() => move(down)}
-              size='medium'
-              text='↓' />
+            {UpButton}
+            {DownButton}
           </ButtonWrapper>
         </ModalWrapperFull>
       );
