@@ -187,9 +187,7 @@ export function registerMerchantModal() {
                 id={`button-buy-${listing.itemIndex}`}
                 disabled={data.coin < parseInt(listing.buyPrice, 16)}
                 onClick={() => buy(listing, 1)}
-              >
-                Buy
-              </ActionButton>
+                text="Buy" />
             </ButtonWrapper>
           </ShopEntry>
         ));

@@ -115,17 +115,13 @@ export function registerMapModal() {
               disabled={up === 0}
               onClick={() => move(up)}
               size='medium'
-            >
-              ↑
-            </ActionButton>
+              text='↑' />
             <ActionButton
               id='button-down'
               disabled={down === 0}
               onClick={() => move(down)}
               size='medium'
-            >
-              ↓
-            </ActionButton>
+              text='↓' />
           </ButtonWrapper>
         </ModalWrapperFull>
       );

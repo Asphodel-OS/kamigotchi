@@ -4,8 +4,15 @@ import styled, { keyframes } from 'styled-components';
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { dataStore } from 'layers/react/store/createStore';
 
-// ActionButton is a button that triggers an Action when clicked. It can host
-// generalized visual content, though this will usually be text.
+interface Props {
+  id: string;
+  onClick: Function;
+  text: string;
+  disabled?: boolean;
+  size?: 'small' | 'medium' | 'large';
+}
+
+// ActionButton is a text button that triggers an Action when clicked
 export const ActionButton = (props: Props) => {
   const { sound: { volume } } = dataStore();
 
@@ -41,17 +48,9 @@ export const ActionButton = (props: Props) => {
       onClick={!props.disabled ? handleClick : () => { }}
       style={overrideStyles()}
     >
-      {props.children}
+      {props.text}
     </Button>
   );
-}
-
-interface Props {
-  id: string;
-  children: React.ReactNode;
-  disabled?: boolean;
-  onClick: Function;
-  size?: 'small' | 'medium' | 'large';
 }
 
 const Button = styled.button`

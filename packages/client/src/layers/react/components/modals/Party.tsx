@@ -369,6 +369,14 @@ export function registerPartyModal() {
       /////////////////
       // DISPLAY
 
+      const FeedButton = (kamiID: any, foodIndex: number) => (
+        <ActionButton
+          id={`feed-${foodIndex}`}
+          onClick={() => feed(kamiID, foodIndex)}
+          text={`Feed ${foodIndex}`} />
+      );
+
+
       // Generate the list of Kami cards
       // TODO: grab uri from SC side
       const KamiCards = (kamis: any[]) => {
@@ -397,39 +405,25 @@ export function registerPartyModal() {
                     ? <ActionButton
                       id={`action-${kami.id}-harvest-stop`}
                       onClick={() => stopProduction(kami.production.id)}
-                    >
-                      Stop
-                    </ActionButton>
+                      text='Stop' />
                     : <ActionButton
                       id={`action-${kami.id}-harvest-start`}
                       onClick={() => startProduction(kami.id)}
-                    >
-                      Start
-                    </ActionButton>
+                      text='Start' />
                   }
                   {(kami.production && kami.production.state === 'ACTIVE')
                     ? <ActionButton
                       id={`action-${kami.id}-harvest-collect`}
                       onClick={() => reapProduction(kami.production.id)}
-                    >
-                      Collect
-                    </ActionButton>
+                      text='Collect' />
                     : <ActionButton
                       id={`action-${kami.id}-harvest-start`}
                       onClick={() => null}
-                    >
-                      Select Node
-                    </ActionButton>
+                      text='Node' />
                   }
-                  <ActionButton id={`action-${kami.id}-feed-1`} onClick={() => feed(kami.id, 1)}>
-                    Feed 1
-                  </ActionButton>
-                  <ActionButton id={`action-${kami.id}-feed-2`} onClick={() => feed(kami.id, 2)}>
-                    Feed 2
-                  </ActionButton>
-                  <ActionButton id={`action-${kami.id}-feed-3`} onClick={() => feed(kami.id, 3)}>
-                    Feed 3
-                  </ActionButton>
+                  {FeedButton(kami.id, 1)}
+                  {FeedButton(kami.id, 2)}
+                  {FeedButton(kami.id, 3)}
                 </KamiDetails>
               </KamiFacts>
             </KamiBox>

@@ -131,16 +131,19 @@ export function registerKamiMintModal() {
           //
         }
       };
-
+      console.log("Rendering Mint Modal");
       return (
         <ModalWrapperFull divName="kamiMint" id='petmint_modal'>
           <CenterBox>
             <KamiImage src="https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif" />
             <Description>Kamigotchi?</Description>
           </CenterBox>
-          <ActionButton id='button-mint' onClick={handleMinting} size='large'>
-            Mint
-          </ActionButton>
+          <ActionButton
+            id='button-mint'
+            onClick={handleMinting}
+            size='large'
+            text='Mint'
+          />
         </ModalWrapperFull>
       );
     }
