@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Set"));
 
-// AccountSetSystem sets the address of an account, identified by its owner
+// sets the operating address of an account, identified by its owner
 contract AccountSetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
