@@ -1,37 +1,55 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "forge-std/console.sol";
+import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
+import { IComponent } from "solecs/interfaces/IComponent.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddressById } from "solecs/utils.sol";
 
 library LibRandom {
   //////////////////
-  // BITPACKED
+  // WEIGHTED
+  // unpacked arrays with weighted random values. with replacement
+  // functions are prefixed with w
 
-  // @dev: updates a bitpacked value at a specific position. returns the new packed array
-  // @param newElement: the new value to set
-  // @param position: the position to set
-  // @param maxPos: the number of elements in array
-  // @param SIZE: the size of each element (eg 8 for uint8, which allows for 32 values packed)
-  // @param packed: the original packed value
-  function _bpUpdateIndividual(
-    uint256 newElement,
-    uint256 position,
-    uint256 maxPos,
-    uint256 SIZE,
-    uint256 packed
+  // @dev: generates a weighted random array from a seed. returns itemID
+  // @param weights: the weights for each item
+  // @param keys: keys, position correspnds to weights
+  function wGenerateFromSeed(
+    uint256[] memory keys,
+    uint256[] memory weights,
+    uint256 seed
   ) internal pure returns (uint256) {
-    require(position < (256 / SIZE) && position <= maxPos, "out of bounds");
-    require(newElement < (1 << SIZE), "new num out of bounds");
+    uint256 totalWeight;
+    for (uint256 i; i < weights.length; i++) {
+      totalWeight += weights[i];
+    }
 
-    return
-      (packed & ~(((1 << SIZE) - 1) << (SIZE * (maxPos - position)))) |
-      (newElement << (SIZE * (maxPos - position)));
+    // get random number
+    uint256 rand = seed % totalWeight;
+
+    // iterate to find item
+    uint256 currentWeight;
+    for (uint256 i; i < weights.length; i++) {
+      currentWeight += weights[i];
+      if (rand < currentWeight) {
+        return keys[i];
+      }
+    }
+
+    // should never get here
+    revert("LibRandom: no item found");
   }
+
+  //////////////////
+  // PACKED UNWEIGHTED
+  // bitpacked arrays with random values, no weights
+  // functions are prefixed with p
 
   // generates a non-weighted random bitpacked array from a seed
   // it uses a MaxElements packed array to determine the max value for each element
   // MaxElements can be generated
-  function _bpGenerateFromSeed(
+  function pGenerateFromSeed(
     uint256 seed,
     uint256 pMax,
     uint256 numElements,
@@ -59,8 +77,49 @@ library LibRandom {
     return result;
   }
 
+  //////////////////
+  // HELPERS
+
+  // generates a key pair array from an array of componentIDs
+  // assumes both rarity and key components are uint256
+  function getRarityKeyValueArr(
+    IUint256Component components,
+    uint256[] memory compIDs,
+    uint256 rareComp,
+    uint256 keyComp
+  ) internal view returns (uint256[] memory keys, uint256[] memory rarities) {
+    for (uint256 i; i < compIDs.length; i++) {
+      rarities[i] = IUint256Component(getAddressById(components, rareComp)).getValue(compIDs[i]);
+      keys[i] = IUint256Component(getAddressById(components, keyComp)).getValue(compIDs[i]);
+    }
+  }
+
+  //////////////////
+  // BITPACK HELPERS
+
+  // @dev: updates a bitpacked value at a specific position. returns the new packed array
+  // @param newElement: the new value to set
+  // @param position: the position to set
+  // @param maxPos: the number of elements in array
+  // @param SIZE: the size of each element (eg 8 for uint8, which allows for 32 values packed)
+  // @param packed: the original packed value
+  function pUpdateElement(
+    uint256 newElement,
+    uint256 position,
+    uint256 maxPos,
+    uint256 SIZE,
+    uint256 packed
+  ) internal pure returns (uint256) {
+    require(position < (256 / SIZE) && position <= maxPos, "out of bounds");
+    require(newElement < (1 << SIZE), "new num out of bounds");
+
+    return
+      (packed & ~(((1 << SIZE) - 1) << (SIZE * (maxPos - position)))) |
+      (newElement << (SIZE * (maxPos - position)));
+  }
+
   // converts a regular array to a bitpacked array
-  function _arrayToPacked(uint256[] memory arr, uint256 SIZE) internal pure returns (uint256) {
+  function packArray(uint256[] memory arr, uint256 SIZE) internal pure returns (uint256) {
     uint256 result;
     for (uint256 i; i < arr.length; i++) {
       require(arr[i] < (1 << SIZE) - 1, "max over limit");
@@ -71,7 +130,7 @@ library LibRandom {
   }
 
   // converts a bitpacked array to a regular array
-  function _packedToArray(
+  function unpackArray(
     uint256 packed,
     uint256 numElements,
     uint256 SIZE

@@ -10,6 +10,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
+import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -33,7 +34,7 @@ contract PetMetadataSystem is System {
   // sets metadata with a random seed
   // second phase of commit/reveal scheme. pet owners call directly
   function execute(bytes memory arguments) public returns (bytes memory) {
-    // reveals individual metadata
+    // checks
     require(_revealed, "collection not yet revealed");
     uint256 tokenID = abi.decode(arguments, (uint256));
     uint256 entityID = LibPet.indexToID(components, tokenID);
@@ -45,26 +46,81 @@ contract PetMetadataSystem is System {
 
     require(LibString.eq(mediaComp.getValue(entityID), UNREVEALED_URI), "alr revealed!");
 
-    // generate packed result, set image
-    uint256 packed = LibRandom._bpGenerateFromSeed(
-      uint256(keccak256(abi.encode(_seed, entityID))),
-      _maxElements,
-      _numElements,
-      8
-    );
+    // generates array of traits with weighted random
+    uint256[] memory traits = new uint256[](_numElements);
+    // scoping is used to save memory while execution
+    {
+      // color
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
+        components
+      );
+      traits[0] = LibRandom.wGenerateFromSeed(
+        keys,
+        weights,
+        uint256(keccak256(abi.encode(_seed, entityID, "Color")))
+      );
+    }
+    {
+      // background
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
+        components
+      );
+      traits[1] = LibRandom.wGenerateFromSeed(
+        keys,
+        weights,
+        uint256(keccak256(abi.encode(_seed, entityID, "Background")))
+      );
+    }
+    {
+      // body
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
+        components
+      );
+      traits[2] = LibRandom.wGenerateFromSeed(
+        keys,
+        weights,
+        uint256(keccak256(abi.encode(_seed, entityID, "Body")))
+      );
+    }
+    {
+      // hand
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
+        components
+      );
+      traits[3] = LibRandom.wGenerateFromSeed(
+        keys,
+        weights,
+        uint256(keccak256(abi.encode(_seed, entityID, "Hand")))
+      );
+    }
+    {
+      // face
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
+        components
+      );
+      traits[4] = LibRandom.wGenerateFromSeed(
+        keys,
+        weights,
+        uint256(keccak256(abi.encode(_seed, entityID, "Face")))
+      );
+    }
+
+    // assigning initial traits from generated stats
+    LibTrait.assignColor(components, entityID, traits[0]);
+    LibTrait.assignBackground(components, entityID, traits[1]);
+    LibTrait.assignBody(components, entityID, traits[2]);
+    LibTrait.assignHand(components, entityID, traits[3]);
+    LibTrait.assignFace(components, entityID, traits[4]);
+
+    // generate packed result
+    uint256 packed = LibRandom.packArray(traits, 8);
+
+    // set media uri with packed
     mediaComp.set(
       entityID,
       // LibString.concat(_baseURI, LibString.concat(LibString.toString(packed), ".gif"))
       LibString.concat(_baseURI, LibString.toString(packed))
     );
-
-    uint256[] memory permTraits = LibRandom._packedToArray(packed, _numElements, 8);
-    // assigning initial traits. genus is hardcoded
-    LibTrait.assignColor(components, entityID, permTraits[0]);
-    LibTrait.assignBackground(components, entityID, permTraits[1]);
-    LibTrait.assignBody(components, entityID, permTraits[2]);
-    LibTrait.assignHand(components, entityID, permTraits[3]);
-    LibTrait.assignFace(components, entityID, permTraits[4]);
 
     return "";
   }
@@ -154,7 +210,7 @@ contract PetMetadataSystem is System {
   // set max variables for metadata lib
   function _setMaxElements(uint256[] memory max) public onlyOwner {
     _numElements = max.length;
-    _maxElements = LibRandom._arrayToPacked(max, 8);
+    _maxElements = LibRandom.packArray(max, 8);
   }
 
   // sets a seed. maybe VRF in future

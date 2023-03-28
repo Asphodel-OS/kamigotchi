@@ -59,7 +59,7 @@
     "PriceBuyComponent",
     "PriceSellComponent",
     "PrototypeComponent",
-    "RateComponent",
+    "RarityComponent",
     "SlotsComponent",
     "StateComponent",
     "TimeComponent",
@@ -219,7 +219,6 @@
       "name": "PetFeedSystem",
       "writeAccess": [
         "BalanceComponent",
-        "BlockLastComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent"
       ]
@@ -248,7 +247,6 @@
         "BlockLastComponent",
         "CoinComponent",
         "HealthCurrentComponent",
-        "RateComponent",
         "TimeLastActionComponent",
         "TimeStartComponent"
       ]
@@ -277,7 +275,6 @@
         "HealthCurrentComponent",
         "IdNodeComponent",
         "IdPetComponent",
-        "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
         "TimeStartComponent"
@@ -287,9 +284,8 @@
       "name": "ProductionStopSystem",
       "writeAccess": [
         "BlockLastComponent",
-        "CoinComponent",
         "HealthCurrentComponent",
-        "RateComponent",
+        "CoinComponent",
         "StateComponent",
         "TimeLastActionComponent"
       ]
