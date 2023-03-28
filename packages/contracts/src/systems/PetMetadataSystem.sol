@@ -8,7 +8,7 @@ import { getAddressById } from "solecs/utils.sol";
 // import "forge-std/console.sol";
 
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
-import { LibMetadata } from "libraries/LibMetadata.sol";
+import { LibRandom } from "libraries/LibRandom.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -30,11 +30,6 @@ contract PetMetadataSystem is System {
    *  PET SET PIC
    **********************/
 
-  modifier onlyPetSystem() {
-    require(msg.sender == getAddressById(world.systems(), PetSystemID), "not Pet System");
-    _;
-  }
-
   // sets metadata with a random seed
   // second phase of commit/reveal scheme. pet owners call directly
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -51,10 +46,11 @@ contract PetMetadataSystem is System {
     require(LibString.eq(mediaComp.getValue(entityID), UNREVEALED_URI), "alr revealed!");
 
     // generate packed result, set image
-    uint256 packed = LibMetadata._generateFromSeed(
+    uint256 packed = LibRandom._bpGenerateFromSeed(
       uint256(keccak256(abi.encode(_seed, entityID))),
       _maxElements,
-      _numElements
+      _numElements,
+      8
     );
     mediaComp.set(
       entityID,
@@ -62,7 +58,7 @@ contract PetMetadataSystem is System {
       LibString.concat(_baseURI, LibString.toString(packed))
     );
 
-    uint256[] memory permTraits = LibMetadata._packedToArray(packed, _numElements);
+    uint256[] memory permTraits = LibRandom._packedToArray(packed, _numElements, 8);
     // assigning initial traits. genus is hardcoded
     LibTrait.assignColor(components, entityID, permTraits[0]);
     LibTrait.assignBackground(components, entityID, permTraits[1]);
@@ -158,7 +154,7 @@ contract PetMetadataSystem is System {
   // set max variables for metadata lib
   function _setMaxElements(uint256[] memory max) public onlyOwner {
     _numElements = max.length;
-    _maxElements = LibMetadata._generateMaxElements(max);
+    _maxElements = LibRandom._arrayToPacked(max, 8);
   }
 
   // sets a seed. maybe VRF in future
