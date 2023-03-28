@@ -228,10 +228,20 @@
       "name": "ProductionCollectSystem",
       "writeAccess": [
         "BlockLastComponent",
-        "HealthCurrentComponent",
         "CoinComponent",
+        "HealthCurrentComponent",
         "TimeLastActionComponent",
         "TimeStartComponent"
+      ]
+    },
+    {
+      "name": "ProductionLiquidateSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "CoinComponent",
+        "HealthCurrentComponent",
+        "StateComponent",
+        "TimeLastActionComponent"
       ]
     },
     {

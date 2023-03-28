@@ -81,6 +81,11 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Production.Collect"].executeTyped(productionID);
   }
 
+  // @dev liquidates a production, if able to, using the specified pet
+  function liquidateProduction(productionID: BigNumberish, petID: BigNumberish) {
+    return systems["system.Production.Liquidate"].executeTyped(productionID, petID);
+  }
+
   // @dev starts a deposit production for a character. If none exists, it creates one.
   function startProduction(petID: BigNumberish, nodeID: BigNumberish) {
     return systems["system.Production.Start"].executeTyped(petID, nodeID);
@@ -152,6 +157,7 @@ export function createPlayerAPI(systems: any) {
     },
     production: {
       collect: collectProduction,
+      liquidate: liquidateProduction,
       start: startProduction,
       stop: stopProduction,
     },

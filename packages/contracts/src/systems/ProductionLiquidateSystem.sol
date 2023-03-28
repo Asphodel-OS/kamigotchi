@@ -18,7 +18,7 @@ contract ProductionLiquidateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 petID, uint256 targetProductionID) = abi.decode(arguments, (uint256, uint256));
+    (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
     // standard checks
@@ -58,7 +58,7 @@ contract ProductionLiquidateSystem is System {
     return abi.encode(amt);
   }
 
-  function executeTyped(uint256 petID, uint256 targetProductionID) public returns (bytes memory) {
-    return execute(abi.encode(petID, targetProductionID));
+  function executeTyped(uint256 targetProductionID, uint256 petID) public returns (bytes memory) {
+    return execute(abi.encode(targetProductionID, petID));
   }
 }
