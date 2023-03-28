@@ -32,6 +32,7 @@ export interface RarityComponentInterface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getEntitiesWithValue(uint256)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
     "getSchema()": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
@@ -53,7 +54,8 @@ export interface RarityComponentInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "authorizeWriter"
       | "getEntities"
-      | "getEntitiesWithValue"
+      | "getEntitiesWithValue(bytes)"
+      | "getEntitiesWithValue(uint256)"
       | "getRawValue"
       | "getSchema"
       | "getValue"
@@ -80,8 +82,12 @@ export interface RarityComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue",
+    functionFragment: "getEntitiesWithValue(bytes)",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesWithValue(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRawValue",
@@ -141,7 +147,11 @@ export interface RarityComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue",
+    functionFragment: "getEntitiesWithValue(bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesWithValue(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -237,8 +247,13 @@ export interface RarityComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -266,7 +281,7 @@ export interface RarityComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -317,8 +332,13 @@ export interface RarityComponent extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  getEntitiesWithValue(
-    arg0: PromiseOrValue<BytesLike>,
+  "getEntitiesWithValue(bytes)"(
+    value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getEntitiesWithValue(uint256)"(
+    value: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -346,7 +366,7 @@ export interface RarityComponent extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   registerIndexer(
-    arg0: PromiseOrValue<string>,
+    indexer: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -397,8 +417,13 @@ export interface RarityComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -426,7 +451,7 @@ export interface RarityComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -489,8 +514,13 @@ export interface RarityComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -516,7 +546,7 @@ export interface RarityComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -568,8 +598,13 @@ export interface RarityComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -595,7 +630,7 @@ export interface RarityComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

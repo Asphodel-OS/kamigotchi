@@ -88,8 +88,15 @@ library LibRandom {
     uint256 rareComp,
     uint256 keyComp
   ) internal view returns (uint256[] memory keys, uint256[] memory rarities) {
+    keys = new uint256[](compIDs.length);
+    rarities = new uint256[](compIDs.length);
     for (uint256 i; i < compIDs.length; i++) {
-      rarities[i] = IUint256Component(getAddressById(components, rareComp)).getValue(compIDs[i]);
+      IUint256Component rComp = IUint256Component(getAddressById(components, rareComp));
+      if (rComp.has(compIDs[i])) {
+        rarities[i] = rComp.getValue(compIDs[i]);
+      } else {
+        rarities[i] = 0;
+      }
       keys[i] = IUint256Component(getAddressById(components, keyComp)).getValue(compIDs[i]);
     }
   }
