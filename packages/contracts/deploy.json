@@ -105,13 +105,7 @@
       ]
     },
     {
-      "name": "_RegistryCreateModSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "_RegistryUpdateModSystem",
+      "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
         "*"
       ]
@@ -123,13 +117,31 @@
       ]
     },
     {
-      "name": "_RegistryUpdateGearSystem",
+      "name": "_RegistryCreateModSystem",
       "writeAccess": [
         "*"
       ]
     },
     {
       "name": "_RegistryCreateTraitSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateFoodSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateGearSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateModSystem",
       "writeAccess": [
         "*"
       ]

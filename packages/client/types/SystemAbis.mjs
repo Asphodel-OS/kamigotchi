@@ -4,9 +4,11 @@ import _InitSystem from "../abi/_InitSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _MerchantCreateSystem from "../abi/_MerchantCreateSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
+import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
+import _RegistryUpdateFoodSystem from "../abi/_RegistryUpdateFoodSystem.json";
 import _RegistryUpdateGearSystem from "../abi/_RegistryUpdateGearSystem.json";
 import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
@@ -22,6 +24,7 @@ import PetMetadataSystem from "../abi/PetMetadataSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
+import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
@@ -36,9 +39,11 @@ export const SystemAbis = {
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Merchant.Create": _MerchantCreateSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
+  "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
+  "system._Registry.Food.Update": _RegistryUpdateFoodSystem.abi,
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem.abi,
   "system._Registry.Mod.Update": _RegistryUpdateModSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
@@ -54,6 +59,7 @@ export const SystemAbis = {
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.SetAccount": PetSetAccountSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
+  "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,
   "system.Production.Stop": ProductionStopSystem.abi,
   "system.Trade.Accept": TradeAcceptSystem.abi,

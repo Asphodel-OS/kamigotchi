@@ -27,7 +27,7 @@ const ItemImages = new Map([
 const ItemNames = new Map([
   [1, 'Maple-Flavor Ghost Gum'],
   [2, 'Pom-Pom Fruit Candy'],
-  [3, 'Cookie Sticks'],
+  [3, 'Gakki Cookie Sticks'],
 ]);
 
 // merchant window with listings. assumes at most 1 merchant per room

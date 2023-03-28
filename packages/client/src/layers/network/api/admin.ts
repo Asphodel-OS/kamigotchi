@@ -4,12 +4,14 @@ import { setUpWorldAPI } from "./world";
 
 export function createAdminAPI(systems: any) {
   function init() {
+    // create our rooms
     createRoom("deadzone", 0, [1]); // in case we need this
     createRoom("Quiet Forest", 1, [2]);
     createRoom("Vending Machine", 2, [1, 3]);
     createRoom("Corridor", 3, [2, 4]);
     createRoom("Kami Shop", 4, [3]);
 
+    // create our nodes
     createNode("Eerie Willow", 1);
     createNode("Trash Compactor", 2);
     createNode("Pristine Couch", 3);
@@ -21,11 +23,16 @@ export function createAdminAPI(systems: any) {
     setListing("ugajin", 2, 30, 15);
     setListing("ugajin", 3, 50, 25);
 
-    // global merchant
+    // create our global merchant
     createMerchant("hawker", 0);
     setListing("hawker", 1, 10, 5); // merchant, item index, buy price, sell price
     setListing("hawker", 2, 30, 15);
     setListing("hawker", 3, 50, 25);
+
+    // register our food
+    registerFood(1, "Gum", 25);
+    registerFood(2, "Pom Poms", 100);
+    registerFood(3, "Gakki", 200);
 
 
     // init general, TODO: move to worldSetUp
@@ -84,9 +91,22 @@ export function createAdminAPI(systems: any) {
   /////////////////
   //  REGISTRIES
 
+  // @dev add a food item registry entry
+  function registerFood(
+    foodIndex: number,
+    name: string,
+    health: number,
+  ) {
+    return systems["system._Registry.Food.Create"].executeTyped(
+      foodIndex,
+      name,
+      health,
+    );
+  }
+
   // @dev add an equipment item registry entry
-  function registerEquipment(
-    GearIndex: number,
+  function registerGear(
+    gearIndex: number,
     name: string,
     type_: string,
     health: number,
@@ -96,7 +116,7 @@ export function createAdminAPI(systems: any) {
     slots: number
   ) {
     return systems["system._Registry.Gear.Create"].executeTyped(
-      GearIndex,
+      gearIndex,
       name,
       type_,
       health,
@@ -149,9 +169,22 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+  // @dev update a food item registry entry
+  function updateRegistryFood(
+    foodIndex: number,
+    name: string,
+    health: number,
+  ) {
+    return systems["system._Registry.Food.Update"].executeTyped(
+      foodIndex,
+      name,
+      health,
+    );
+  }
+
   // @dev update an equipment item registry entry
-  function updateRegistryEquipment(
-    GearIndex: number,
+  function updateRegistryGear(
+    gearIndex: number,
     name: string,
     type_: string,
     health: number,
@@ -161,7 +194,7 @@ export function createAdminAPI(systems: any) {
     slots: number
   ) {
     return systems["system._Registry.Gear.Update"].executeTyped(
-      GearIndex,
+      gearIndex,
       name,
       type_,
       health,
@@ -194,10 +227,16 @@ export function createAdminAPI(systems: any) {
   return {
     init,
     giveCoins,
+    listing: { set: setListing },
+    merchant: { create: createMerchant },
+    node: { create: createNode },
     registry: {
+      food: {
+        create: registerFood,
+      },
       gear: {
-        create: registerEquipment,
-        update: updateRegistryEquipment,
+        create: registerGear,
+        update: updateRegistryGear,
       },
       trait: {
         create: registerTrait,
@@ -207,9 +246,6 @@ export function createAdminAPI(systems: any) {
         update: updateRegistryModification,
       }
     },
-    merchant: { create: createMerchant },
-    node: { create: createNode },
     room: { create: createRoom },
-    listing: { set: setListing },
   };
 }
