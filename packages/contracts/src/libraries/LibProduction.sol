@@ -16,6 +16,8 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { LibPet } from "libraries/LibPet.sol";
 import { Strings } from "utils/Strings.sol";
 
+uint256 constant BOUNTY_RATIO = 50; // reward per 100 KAMI liquidated
+
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
  */
@@ -65,23 +67,23 @@ library LibProduction {
   // CALCULATIONS
 
   // Calculate the duration since a production last started, measured in seconds.
-  function getDuration(IUintComp components, uint256 id) internal view returns (uint256) {
+  function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
     return
       block.timestamp -
       TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
   }
 
   // Calculate the reward we would expect from a production, collected at the
-  // current time, measured in BYTES. INACTIVE productions will return 0.
-  function getOutput(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 rate = getRate(components, id);
-    uint256 duration = getDuration(components, id);
+  // current time, measured in KAMI. INACTIVE productions will return 0.
+  function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 rate = calcRate(components, id);
+    uint256 duration = calcDuration(components, id);
     return (rate * duration) / 1e18;
   }
 
-  // Calculate the rate of a production, measured in BYTES/s (1e18 precision).
+  // Calculate the rate of a production, measured in KAMI/s (1e18 precision).
   // TODO: Account for affinity boosts.
-  function getRate(IUintComp components, uint256 id) internal view returns (uint256) {
+  function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
 
     uint256 petID = getPet(components, id);
@@ -90,10 +92,33 @@ library LibProduction {
     return (((1e18 * affinityMultiplier) / 100) * power) / 3600;
   }
 
+  // Calculate the reward for liquidating this production, measured in KAMI
+  // TODO: introduce stat to replace BOUNTY_RATIO calculation
+  function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 output = calcOutput(components, id);
+    return (output * BOUNTY_RATIO) / 100;
+  }
+
   /////////////////
   // CHECKERS
+
   function isActive(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq("ACTIVE", getState(components, id));
+  }
+
+  // Check whether the source pet can liquidate the target production, based on pet stats.
+  // NOTE: this asssumes that the source pet's health has been synced in this block and
+  // that the source can attack the target.
+  function isLiquidatableBy(
+    IUintComp components,
+    uint256 id,
+    uint256 sourcePetID
+  ) internal view returns (bool) {
+    uint256 targetPetID = getPet(components, id);
+    uint256 targetHealth = LibPet.getCurrHealth(components, targetPetID);
+    uint256 targetTotalHealth = LibPet.calcTotalHealth(components, targetPetID);
+    uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
+    return threshold * targetTotalHealth > targetHealth * 1e18;
   }
 
   /////////////////

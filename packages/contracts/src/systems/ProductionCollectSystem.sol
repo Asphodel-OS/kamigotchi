@@ -27,7 +27,7 @@ contract ProductionCollectSystem is System {
     require(LibPet.isProducing(components, petID), "Pet: must be producing");
     require(LibPet.syncHealth(components, petID) != 0, "Pet: is dead (pls revive)");
 
-    uint256 amt = LibProduction.getOutput(components, id);
+    uint256 amt = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, amt);
     LibProduction.reset(components, id);
 

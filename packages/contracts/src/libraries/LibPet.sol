@@ -26,8 +26,7 @@ import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant BASE_HEALTH = 150;
 uint256 constant BASE_POWER = 150;
-uint256 constant BURN_RATIO = 50; // energy burned per 100 BYTES produced
-uint256 constant REAP_RATIO = 50; // energy burned per 100 BYTES produced
+uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant DEMO_MULTIPLIER = 100;
 
 library LibPet {
@@ -86,12 +85,10 @@ library LibPet {
     setCurrHealth(components, id, newHealth);
   }
 
-  // Update a pet's state to DEAD
+  // Update a pet's health to 0 and its state to DEAD
   function kill(IUintComp components, uint256 id) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("DEAD"));
     setCurrHealth(components, id, 0);
-    uint256 productionID = LibProduction.getForPet(components, id);
-    LibProduction.stop(components, productionID);
   }
 
   // Update a pet's state to ALIVE
@@ -122,7 +119,7 @@ library LibPet {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
-  ) internal view returns (uint256) {
+  ) internal pure returns (uint256) {
     // string sourceAff = getAffinity(components, sourceID);
     components;
     sourceID;
@@ -131,12 +128,12 @@ library LibPet {
   }
 
   // Calculate the total health drain since the last check (rounded up), based on production
-  // NOTE: we can't just use LibProd.getOutput() here because that rounds down, while here
+  // NOTE: we can't just use LibProd.calcOutput() here because that rounds down, while here
   // we want to properly round. We need a game design discussion on how we want to do this.
   function calcDrain(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isProducing(components, id)) return 0;
     uint256 productionID = getProduction(components, id);
-    uint256 prodRate = LibProduction.getRate(components, productionID); // KAMI/s (1e18 precision)
+    uint256 prodRate = LibProduction.calcRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
     uint256 totalPrecision = 1e20; // BURN_RATIO(1e2) * prodRate(1e18)
     return (duration * prodRate * BURN_RATIO + (totalPrecision / 2)) / totalPrecision;
@@ -210,20 +207,6 @@ library LibPet {
 
   /////////////////
   // CHECKERS
-
-  // Check whether the source pet can liquidate the target pet, based on their stats.
-  // NOTE: this asssumes that the source pet's health has been synced in this block and
-  // that the source can attack the target.
-  function canLiquidate(
-    IUintComp components,
-    uint256 sourceID,
-    uint256 targetID
-  ) internal view returns (bool) {
-    uint256 targetHealth = getCurrHealth(components, targetID);
-    uint256 targetTotalHealth = calcTotalHealth(components, targetID);
-    uint256 threshold = calcThreshold(components, sourceID, targetID); // 1e18 precision
-    return threshold * targetTotalHealth > targetHealth * 1e18;
-  }
 
   // Check whether an account is the pet's account.
   function isAccount(
