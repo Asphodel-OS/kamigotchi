@@ -122,6 +122,14 @@ contract PetMetadataSystem is System {
       LibString.concat(_baseURI, LibString.toString(packed))
     );
 
+    uint256[] memory permTraits = LibRandom._packedToArray(packed, _numElements, 8);
+    // assigning initial traits. genus is hardcoded
+    LibTrait.assignColor(components, entityID, permTraits[0]);
+    LibTrait.assignBackground(components, entityID, permTraits[1]);
+    LibTrait.assignBody(components, entityID, permTraits[2]);
+    LibTrait.assignHand(components, entityID, permTraits[3]);
+    LibTrait.assignFace(components, entityID, permTraits[4]);
+
     return "";
   }
 
@@ -210,7 +218,7 @@ contract PetMetadataSystem is System {
   // set max variables for metadata lib
   function _setMaxElements(uint256[] memory max) public onlyOwner {
     _numElements = max.length;
-    _maxElements = LibRandom.packArray(max, 8);
+    _maxElements = LibRandom._arrayToPacked(max, 8);
   }
 
   // sets a seed. maybe VRF in future
