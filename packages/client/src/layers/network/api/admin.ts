@@ -1,5 +1,4 @@
 import { BigNumberish } from 'ethers';
-import { regiesterDetectAccountModal } from 'layers/react/components/modals/DetectAccount';
 import { createPlayerAPI } from './player';
 import { setUpWorldAPI } from './world';
 
@@ -22,32 +21,26 @@ export function createAdminAPI(systems: any) {
     createRoom('Convenience Store', 13, [2]);
     createRoom("Manager's Office", 14, [7]);
 
-    // create nodes
     createNode('Eerie Willow', 3);
     createNode('Trash Compactor', 7);
     createNode('Pristine Couch', 10);
     createNode('Cash Register', 11);
     createNode('Danger zone', 12);
 
-    // create food registry items
-    registerFood(1, 'Maple-Flavor Ghost Gum', 25);
-    registerFood(2, 'Pom-Pom Fruit Candy', 100);
-    registerFood(3, 'Gakki Cookie Sticks', 200);
+    // create our hottie merchant ugajin. names are unique
+    createMerchant('ugajin', 13);
+    setListing('ugajin', 1, 10, 5); // merchant, item index, buy price, sell price
+    setListing('ugajin', 2, 30, 15);
+    setListing('ugajin', 3, 50, 25);
 
-    // set listings on global merchant
+    // global merchant
     createMerchant('hawker', 0);
-    setListing('hawker', 1, 25, 0); // merchant, item index, buy price, sell price
-    setListing('hawker', 2, 90, 0);
-    setListing('hawker', 3, 150, 0);
-
-    // // create our hottie merchant ugajin. names are unique
-    // createMerchant('ugajin', 13);
-    // setListing('ugajin', 1, 25, 0); // merchant, item index, buy price, sell price
-    // setListing('ugajin', 2, 90, 0);
-    // setListing('ugajin', 3, 150, 0);
+    setListing('hawker', 1, 10, 5); // merchant, item index, buy price, sell price
+    setListing('hawker', 2, 30, 15);
+    setListing('hawker', 3, 50, 25);
 
     // init general, TODO: move to worldSetUp
-    systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
+    systems['system._Init'].executeTyped(); // creates food and modifier registry
     systems['system.ERC721.metadata']._setRevealed(
       '123',
       'http://159.223.244.145:8080/image/'
@@ -138,7 +131,7 @@ export function createAdminAPI(systems: any) {
     slots: number
   ) {
     return systems['system._Registry.Gear.Create'].executeTyped(
-      gearIndex,
+      GearIndex,
       name,
       type_,
       health,
@@ -176,7 +169,7 @@ export function createAdminAPI(systems: any) {
     violence: number,
     harmony: number,
     slots: number,
-    affinity: string,
+    rarity: number,
     name: string,
     type: string
   ) {
@@ -187,7 +180,7 @@ export function createAdminAPI(systems: any) {
       violence,
       harmony,
       slots,
-      affinity,
+      rarity,
       name,
       type
     );
@@ -214,7 +207,7 @@ export function createAdminAPI(systems: any) {
     slots: number
   ) {
     return systems['system._Registry.Gear.Update'].executeTyped(
-      gearIndex,
+      GearIndex,
       name,
       type_,
       health,
