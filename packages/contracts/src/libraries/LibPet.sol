@@ -24,8 +24,11 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
+uint256 constant BASE_HARMONY = 0;
 uint256 constant BASE_HEALTH = 150;
 uint256 constant BASE_POWER = 150;
+uint256 constant BASE_SLOTS = 0;
+uint256 constant BASE_VIOLENCE = 0;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant DEMO_MULTIPLIER = 100;
 
@@ -57,6 +60,13 @@ library LibPet {
     setMediaURI(components, id, uri);
     setLastTs(components, id, block.timestamp);
     revive(components, id);
+
+    // set initial stats at 0 to prevent null values
+    LibStat.setHarmony(components, id, BASE_HARMONY);
+    LibStat.setHealth(components, id, BASE_HEALTH);
+    LibStat.setPower(components, id, BASE_POWER);
+    LibStat.setSlots(components, id, BASE_SLOTS);
+    LibStat.setViolence(components, id, BASE_VIOLENCE);
     return id;
   }
 

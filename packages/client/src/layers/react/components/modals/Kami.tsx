@@ -10,6 +10,7 @@ import {
   Has,
   runQuery,
   getComponentValue,
+  Component,
 } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
 import { BigNumber, BigNumberish } from 'ethers';
@@ -38,24 +39,22 @@ export function registerKamiModal() {
   registerUIComponent(
     'PetDetails',
     {
-      colStart: 31,
-      colEnd: 72,
+      colStart: 28,
+      colEnd: 75,
       rowStart: 30,
-      rowEnd: 80,
+      rowEnd: 70,
     },
     (layers) => {
       const {
         network: {
-          components: { Balance, Genus, IsPet, IsTrait, MediaURI, PetID },
+          components: { Balance, IsPet, MediaURI, PetID },
         },
       } = layers;
 
       return merge(
         IsPet.update$,
-        IsTrait.update$,
         Balance.update$,
         PetID.update$,
-        Genus.update$,
         MediaURI.update$
       ).pipe(
         map(() => {
@@ -70,20 +69,22 @@ export function registerKamiModal() {
       const {
         network: {
           components: {
-            Genus,
             Health,
             IsPet,
-            IsTrait,
             MediaURI,
-            Type,
             Affinity,
             Name,
             Harmony,
             PetIndex,
-            PetID,
             Power,
             Slots,
             Violence,
+            BodyIndex,
+            BackgroundIndex,
+            ColorIndex,
+            FaceIndex,
+            HandIndex,
+            TraitIndex
           },
           world,
         },
@@ -113,17 +114,17 @@ export function registerKamiModal() {
           petName: getComponentValue(Name, index)?.value as string,
           uri: getComponentValue(MediaURI, index)?.value as string,
           traits: traitsHopper?.value as TraitDetails[],
-          affinity: '??',
+          affinity: "??",
           health: hexToString(getComponentValue(Health, index)?.value as number),
           power: hexToString(getComponentValue(Power, index)?.value as number),
-          violence: '??',
-          harmony: '??',
-          slots: '??',
+          violence: hexToString(getComponentValue(Violence, index)?.value as number),
+          harmony: hexToString(getComponentValue(Harmony, index)?.value as number),
+          slots: hexToString(getComponentValue(Slots, index)?.value as number),
         };
       };
 
       const getBaseTraits = (petIndex: EntityIndex) => {
-        const typeArr = ['COLOR', 'BODY', 'HAND', 'FACE', 'BACKGROUND'];
+        const typeArr = [ColorIndex, BodyIndex, HandIndex, FaceIndex, BackgroundIndex];
         let result: Array<TraitDetails> = [];
         let petTypes: Array<string> = [];
 
@@ -137,15 +138,13 @@ export function registerKamiModal() {
         };
       };
 
-      const getTrait = (petIndex: EntityIndex, type: string) => {
+      const getTrait = (petIndex: EntityIndex, type: Component) => {
+        const index = getComponentValue(type, petIndex)?.value as number;
         const entity = Array.from(
           runQuery([
-            Has(Type),
-            HasValue(Type, {
-              value: type,
-            }),
-            HasValue(PetID, {
-              value: world.entities[petIndex],
+            Has(TraitIndex),
+            HasValue(type, {
+              value: index,
             }),
           ])
         )[0];
@@ -188,9 +187,6 @@ export function registerKamiModal() {
         return (
           <KamiList key={trait.Name}>
             {`${trait.Name}`}
-            {/* <KamiText
-              style={{ paddingTop: '20px' }}
-            >{`${trait.Type} | {${trait.Value}}`}</KamiText> */}
           </KamiList>
         );
       });
@@ -203,8 +199,9 @@ export function registerKamiModal() {
                 <KamiName>{dets?.petName} </KamiName>
                 <KamiImage src={dets?.uri} />
               </KamiBox>
+              <KamiBox style={{ gridColumn: 1, gridRow: 2, }}>{traitLines}</KamiBox>
               <KamiBox
-                style={{ gridColumn: 1, gridRow: 2, justifyItems: 'end' }}
+                style={{ gridColumn: 3, gridRowStart: 1, gridRowEnd: 3 }}
               >
                 <KamiFacts>Affinity: {dets?.affinity} </KamiFacts>
                 <KamiFacts>Health: {dets?.health} </KamiFacts>
@@ -214,7 +211,6 @@ export function registerKamiModal() {
                 <KamiFacts>Slots: {dets?.slots} </KamiFacts>
               </KamiBox>
             </KamiBox>
-            <KamiBox style={{ gridColumnStart: 2 }}>{traitLines}</KamiBox>
           </KamiBox>
         </ModalWrapperFull>
       );

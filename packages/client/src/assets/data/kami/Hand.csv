@@ -1,17 +1,18 @@
-﻿Name,Index,Image,Rarity,Type,Power,Violence,Harmony,Health,Slots
-Orbs,4,Hand%20c3f0ea61431749dab62a867a500a4c3e/default.png,Common,Normal,0,0,0,35,0
-Eyeballs,5,Hand%20c3f0ea61431749dab62a867a500a4c3e/eyes.png,Common,Eerie,3,0,0,0,0
-Wrenches,15,Hand%20c3f0ea61431749dab62a867a500a4c3e/wrenches_alternatively_known_as_5_dollar_attack.png,Rare,Scrap,0,5,0,0,0
-Plugs,10,Hand%20c3f0ea61431749dab62a867a500a4c3e/plugs.png,Common,Scrap,0,0,3,0,0
-Tentacles,12,Hand%20c3f0ea61431749dab62a867a500a4c3e/tentacles.png,Rare,Eerie,5,0,0,0,0
-Scorpion,11,Hand%20c3f0ea61431749dab62a867a500a4c3e/scorpion_claws.png,Rare,Insect,0,5,0,0,0
-Paws,9,Hand%20c3f0ea61431749dab62a867a500a4c3e/paws.png,Rare,Normal,0,0,5,0,0
-Toasters,13,Hand%20c3f0ea61431749dab62a867a500a4c3e/toasters.png,Rare,Scrap,0,0,0,0,1
-UFO Catcher,14,Hand%20c3f0ea61431749dab62a867a500a4c3e/catcher_claws.png,Rare,Scrap,0,0,6,0,0
-Mantis,8,Hand%20c3f0ea61431749dab62a867a500a4c3e/mantis.png,Epic,Insect,0,7,0,0,0
-Fan Blades,6,Hand%20c3f0ea61431749dab62a867a500a4c3e/fan_blades.png,Epic,Scrap,0,0,7,0,0
-Candles,0,,Epic,Eerie,7,0,0,0,0
-Claws,1,,Rare,Eerie,0,5,0,0,0
-Common Insect,7,,Common,Insect,0,3,0,0,0
-Static Coins,3,,Rare,Normal,0,0,0,60,0
-Spinning Coins,2,,Epic,Normal,0,0,0,80,0
+﻿Index,Image,Name,Rarity,Type,BPs,Power,Violence,Harmony,Health,Slot
+0,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_candles_default_green_0000.png,Candles,Epic,Eerie,100,7,0,0,0,0
+1,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_claws_default_green_0000.png,Claws,Common,Eerie,750,0,3,0,0,0
+2,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_coins_default_green_0000.png,Spinning Coins,Epic,Normal,50,3,0,0,30,1
+3,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_coins_static_default_green_0000.png,Static Coins,Rare,Normal,550,2,0,0,30,0
+4,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_default_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/default.png",Default,Common,Normal,1550,1,1,1,5,0
+5,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_eyeballs_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/eyes.png",Eyeballs,Common,Eerie,750,4,0,0,0,0
+6,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_fan_front_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_fan_back_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/fan_blades.png",Fan Blades,Epic,Scrap,100,0,3,3,20,0
+7,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_insect_basic_default_green_0000.png,Common Insect,Common,Insect,1500,0,4,0,0,0
+8,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_mantis_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/mantis.png",Mantis,Epic,Insect,100,0,8,0,0,0
+9,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_paws_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/paws.png",Orbs,Common,Normal,1550,0,0,3,0,0
+10,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_plugs_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/plugs.png",Plugs,Common,Scrap,750,0,0,4,0,0
+11,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_scorpion_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/scorpion_claws.png",Scorpion,Rare,Insect,500,0,5,0,0,0
+12,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_tentacles_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/tentacles.png",Tentacles,Rare,Eerie,500,5,0,0,0,0
+13,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_toasters_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/toasters.png",Toasters,Rare,Scrap,250,0,0,4,20,0
+14,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_ufo_catcher_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/catcher_claws.png",UFO Catcher,Rare,Scrap,250,0,4,0,0,0
+15,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_wrenches_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/wrenches_alternatively_known_as_5_dollar_attack.png",Wrenches,Common,Scrap,750,0,3,0,0,0
+,,,,,,,,,,
