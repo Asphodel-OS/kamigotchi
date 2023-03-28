@@ -21,7 +21,7 @@ contract ProductionStartSystem is System {
     (uint256 petID, uint256 nodeID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
-    require(LibPet.isAccount(components, petID, accountID), "Pet: not urs");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(!LibPet.isProducing(components, petID), "Pet: already producing");
     require(LibPet.syncHealth(components, petID) != 0, "Pet: is dead (pls revive)");
 

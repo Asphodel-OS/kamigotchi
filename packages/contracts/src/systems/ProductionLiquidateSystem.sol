@@ -12,8 +12,8 @@ import { LibProduction } from "libraries/LibProduction.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
-// ProductionLiquidateSystem collects on an active pet production.
-// TODO: update this to kill the pet off if health is at 0
+// liquidates a target production using a player's pet.
+// TODO: support kill logs
 contract ProductionLiquidateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -22,9 +22,13 @@ contract ProductionLiquidateSystem is System {
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
     // standard checks
-    require(LibPet.isAccount(components, petID, accountID), "Pet: not urs");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(LibPet.syncHealth(components, petID) != 0, "Pet: is dead (pls revive)");
     require(LibProduction.isActive(components, targetProductionID), "Production: not active");
+
+    // ensure we're not targeting one of our own
+    uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
+    require(LibPet.getAccount(components, targetPetID) != accountID, "Pet: the ultimate betrayal");
 
     // check that the target production is active
     uint256 productionID = LibPet.getProduction(components, petID);
@@ -40,8 +44,6 @@ contract ProductionLiquidateSystem is System {
       LibProduction.isLiquidatableBy(components, targetProductionID, petID),
       "Production: YOU HAVE NO POWER HERE (need moar violence)"
     );
-
-    uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
 
     // collect the money
     // NOTE: this could be sent to the kami in future mechanics

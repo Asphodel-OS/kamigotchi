@@ -25,7 +25,7 @@ contract ProductionStopSystem is System {
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     uint256 petID = LibProduction.getPet(components, id);
 
-    require(LibPet.isAccount(components, petID, accountID), "Pet: not urs");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(LibPet.isProducing(components, petID), "Pet: must be producing");
     require(LibPet.syncHealth(components, petID) != 0, "Pet: is dead (pls revive)");
 
