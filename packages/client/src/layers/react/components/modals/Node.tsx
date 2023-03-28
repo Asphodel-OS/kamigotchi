@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
@@ -16,6 +16,8 @@ import { getAccount } from 'layers/react/components/shapes/Account';
 import { Kami } from 'layers/react/components/shapes/Kami';
 import { getNode, Node } from 'layers/react/components/shapes/Node';
 import { Production } from 'layers/react/components/shapes/Production';
+import { KamiCard } from '../library/KamiCard';
+import Battery from '../library/Battery';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerNodeModal() {
@@ -59,35 +61,45 @@ export function registerNodeModal() {
               }),
             ])
           )[0];
-          const account = getAccount(layers, accountIndex, { kamis: true });
 
+          const account =
+            accountIndex !== undefined
+              ? getAccount(layers, accountIndex, { kamis: true })
+              : false;
 
-          // get the current room node, if there is one
-          // TODO: update this to support node input as props
           let node: Node;
-          const nodeResults = Array.from(
-            runQuery([Has(IsNode), HasValue(Location, { value: account.location })])
-          );
-          if (nodeResults.length > 0) {
-            node = getNode(layers, nodeResults[0], { productions: true });
+          let kamis: any;
+          // Prevent multiple computations on undefined values.
+          if (account) {
+            // get the current room node, if there is one
+            // TODO: update this to support node input as props
+            const nodeResults = Array.from(
+              runQuery([
+                Has(IsNode),
+                HasValue(Location, { value: account.location }),
+              ])
+            );
+            if (nodeResults.length > 0) {
+              node = getNode(layers, nodeResults[0], { productions: true });
+            }
+            kamis = account.kamis;
+            // filter by just the kamis active on the current node
+            if (account.kamis) {
+              const kamisOnNode = account.kamis.filter((kami) => {
+                if (!node) return false;
+
+                if (kami.production && kami.production.state === 'ACTIVE') {
+                  return kami.production?.node?.id === node.id;
+                }
+              });
+              account.kamis = kamisOnNode;
+            }
           }
-
-          // filter by just the kamis active on the current node
-          if (account.kamis) {
-            const kamisOnNode = account.kamis.filter((kami) => {
-              if (!node) return false;
-
-              if (kami.production && kami.production.state === 'ACTIVE') {
-                return kami.production?.node?.id === node.id;
-              }
-            });
-            account.kamis = kamisOnNode;
-          }
-
 
           return {
             actions,
             api: player,
+            kamis,
             data: {
               account, // account => kami[] => production
               node, // node => production[] => kami
@@ -98,7 +110,7 @@ export function registerNodeModal() {
     },
 
     // Render
-    ({ actions, api, data }) => {
+    ({ actions, api, data, kamis }) => {
       // hide this component if merchant.index == 0
 
       ///////////////////
@@ -157,7 +169,8 @@ export function registerNodeModal() {
         <ActionButton
           id={`harvest-collect`}
           onClick={() => collect(kami.production!)}
-          text='Collect' />
+          text="Collect"
+        />
       );
 
       // stop production action button
@@ -165,7 +178,8 @@ export function registerNodeModal() {
         <ActionButton
           id={`harvest-stop`}
           onClick={() => stop(kami.production!)}
-          text='Stop' />
+          text="Stop"
+        />
       );
 
       // liquidate production action button
@@ -173,8 +187,13 @@ export function registerNodeModal() {
         <ActionButton
           id={`harvest-stop`}
           onClick={() => liquidate(kami.production!, kami)}
-          text='Stop' />
+          text="Stop"
+        />
       );
+
+      const isHarvesting = (kami: any): boolean => {
+        return kami.production && kami.production.state === 'ACTIVE';
+      };
 
       // rendering of my kami on this node
       // NOTE: the smart contract does not currently gate multiple kamis being
@@ -182,25 +201,54 @@ export function registerNodeModal() {
       const MyKami = (kami: Kami) => {
         // @DV implement me
         // no need to add a collect button just yet (single action should be easier)
-      }
+        const description = () => {
+          const description = [];
+          description.push(`${parseInt(kami.health)}/${parseInt(kami.health)}`);
+          description.push(`Violence: 42`);
+          description.push(`$KAMI: ${5000} (${5}/hr)`);
+
+          return description;
+        };
+
+        const action = isHarvesting(kami)
+          ? StopButton(kami)
+          : CollectButton(kami);
+
+        return (
+          <KamiCard
+            key={kami.id}
+            title={kami.name}
+            image={kami.uri}
+            subtext={'you'}
+            action={action}
+            cornerContent={<Battery percentage={55} />}
+            description={description()}
+          />
+        );
+      };
 
       // the rendering of all the enemy kamis on this node
       // may be easier/better to pass in the list of Productions instead
       const EnemyProductions = (productions: Production[]) => {
         // @DV implement me
-      }
+      };
 
       // rendering will depend on whether a node is present in the room
       const NodeInfo = (node: Node) => {
         // @DV implement me
-      }
-
+      };
 
       return (
-        <ModalWrapperFull id="node" divName="node" >
+        <ModalWrapperFull id="node" divName="node">
           {/* @DV implement me, look at rendering step of Party.tsx for reference */}
+          <Scrollable>{kamis?.length && MyKami(kamis[0])}</Scrollable>
         </ModalWrapperFull>
       );
     }
   );
 }
+
+const Scrollable = styled.div`
+  overflow: auto;
+  max-height: 100%;
+`;

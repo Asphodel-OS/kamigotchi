@@ -13,14 +13,15 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-
   // generate the styled text divs for the description
   const Description = () => {
-    const header = [<TextBig key='header'>{props.description[0]}</TextBig>];
+    const header = [<TextBig key="header">{props.description[0]}</TextBig>];
 
-    const details = props.description.slice(1).map((line, index) => (
-      <TextMedium key={`description-${index}`}>{line}</TextMedium>
-    ));
+    const details = props.description
+      .slice(1)
+      .map((line, index) => (
+        <TextMedium key={`description-${index}`}>{line}</TextMedium>
+      ));
     return [...header, ...details];
   };
 
@@ -36,16 +37,13 @@ export const KamiCard = (props: Props) => {
           <ContentColumn>{Description()}</ContentColumn>
           <ContentColumn>
             <ContentSubtext>{props.subtext}</ContentSubtext>
-            <ContentActions>
-              {props.action}
-            </ContentActions>
+            <ContentActions>{props.action}</ContentActions>
           </ContentColumn>
         </Content>
       </Container>
     </Card>
-  )
-}
-
+  );
+};
 
 const Card = styled.div`
   background-color: #fff;
@@ -95,7 +93,7 @@ const TitleBar = styled.div`
 const TitleText = styled.p`
   color: #111;
   padding: 6px;
-  
+
   font-family: Pixel;
   font-size: 14px;
   text-align: left;
@@ -110,7 +108,7 @@ const TitleCorner = styled.div`
 
 const Content = styled.div`
   flex-grow: 1;
-  
+
   display: flex;
   flex-flow: row nowrap;
   align-items: stretch;
@@ -152,4 +150,3 @@ const TextMedium = styled.p`
   text-align: left;
   padding: 6px 0px 0px 3px;
 `;
-

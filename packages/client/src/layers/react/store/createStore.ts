@@ -60,7 +60,7 @@ export const dataStore = create<StoreState & StoreActions>((set) => {
       kamiMint: false,
       map: false,
       merchant: false,
-      node: false,
+      node: true,
       party: false,
     },
     sound: {

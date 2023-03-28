@@ -16,6 +16,7 @@ import { registerMerchantModal } from './modals/Merchant';
 import { registerPartyModal } from './modals/Party';
 import { registerRequestQueue } from './modals/RequestQueue';
 import { registerTradeModal } from './modals/Trade';
+import { registerNodeModal } from './modals/Node';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -32,6 +33,7 @@ export function registerUIComponents() {
   registerKamiMintModal();
   registerKamiModal();
   registerMapModal();
+  registerNodeModal();
   registerMerchantModal();
   registerPartyModal();
   registerRequestQueue();
