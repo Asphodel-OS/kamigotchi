@@ -80,27 +80,8 @@
       "inputs": [
         {
           "internalType": "bytes",
-          "name": "value",
-          "type": "bytes"
-        }
-      ],
-      "name": "getEntitiesWithValue",
-      "outputs": [
-        {
-          "internalType": "uint256[]",
           "name": "",
-          "type": "uint256[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
+          "type": "bytes"
         }
       ],
       "name": "getEntitiesWithValue",
@@ -219,7 +200,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "indexer",
+          "name": "",
           "type": "address"
         }
       ],
@@ -353,7 +334,6 @@
     "authorizeWriter(address)": "4fef6a38",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
-    "getEntitiesWithValue(uint256)": "fbdfa1ea",
     "getRawValue(uint256)": "b8bc073d",
     "getSchema()": "6b122fe0",
     "getValue(uint256)": "0ff4c916",
