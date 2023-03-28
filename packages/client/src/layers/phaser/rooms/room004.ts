@@ -1,8 +1,8 @@
 import { PhaserScene } from '../types';
 import { resizePicture } from '../utils/resizePicture';
-import room004image from 'assets/images/rooms/room4.png';
-import { getGirlCoordinates } from '../utils/coordinates';
-import { triggerDialogueModal } from '../utils/triggerDialogueModal';
+import { getVendMachineCoordinates } from '../utils/coordinates';
+import { triggerPetMintModal } from '../utils/triggerPetMintModal';
+import room004image from 'assets/images/rooms/4_vendnight.png';
 
 const { scale, diff } = resizePicture();
 
@@ -16,18 +16,16 @@ export function room004() {
         .image(window.innerWidth / 2, window.innerHeight / 2, 'room004')
         .setScale(scale * 8.3);
 
-      const girlCoordinates = getGirlCoordinates(scale);
+      const vendMachineCoordinates = getVendMachineCoordinates(scale);
 
-      const girl = scene.add.rectangle(
-        girlCoordinates.x - diff.widthDiff,
-        girlCoordinates.y - diff.heightDiff,
-        girlCoordinates.width - diff.widthDiff / 4,
-        girlCoordinates.height - diff.heightDiff / 4,
+      const vend = scene.add.rectangle(
+        vendMachineCoordinates.x - diff.widthDiff,
+        vendMachineCoordinates.y - diff.heightDiff,
+        vendMachineCoordinates.width - diff.widthDiff / 4,
+        vendMachineCoordinates.height - diff.heightDiff / 4
       );
 
-      scene.interactiveObjects.push(
-        triggerDialogueModal(girl, 'Buy something or get out.')
-      );
+      scene.interactiveObjects.push(triggerPetMintModal(vend));
     },
   };
 }

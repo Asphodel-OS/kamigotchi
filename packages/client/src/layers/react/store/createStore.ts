@@ -9,8 +9,10 @@ export interface Kami {
 }
 
 export interface RoomExits {
-  up: number;
-  down: number;
+  up?: number;
+  down?: number;
+  left?: number;
+  right?: number;
 }
 
 export interface VisibleModals {
@@ -47,7 +49,7 @@ interface StoreActions {
 export const dataStore = create<StoreState & StoreActions>((set) => {
   const initialState: StoreState = {
     dialogue: { description: '' },
-    roomExits: { up: 0, down: 0 },
+    roomExits: { up: 0, down: 0, left: 0, right: 0 },
     selectedKami: { description: '' },
     visibleModals: {
       chat: false,

@@ -1,17 +1,17 @@
 import { PhaserScene } from '../types';
 import { resizePicture } from '../utils/resizePicture';
-import room003image from 'assets/images/rooms/3_gate.png';
+import room006image from 'assets/images/rooms/6_afront.png';
 
 const { scale } = resizePicture();
 
-export function room003() {
+export function room006() {
   return {
     preload: (scene: PhaserScene) => {
-      scene.load.image('room003', room003image);
+      scene.load.image('room006', room006image);
     },
     create: (scene: PhaserScene) => {
       scene.add
-        .image(window.innerWidth / 2, window.innerHeight / 2, 'room003')
+        .image(window.innerWidth / 2, window.innerHeight / 2, 'room006')
         .setScale(scale * 8.3);
     },
   };

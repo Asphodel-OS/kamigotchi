@@ -1,6 +1,6 @@
 import { PhaserScene } from '../types';
-import room001image from 'assets/images/rooms/room1.png';
 import { resizePicture } from '../utils/resizePicture';
+import room001image from 'assets/images/rooms/1_mistyriver.png';
 
 const { scale } = resizePicture();
 

@@ -1,10 +1,8 @@
 import { PhaserScene } from '../types';
-import room002image from 'assets/images/rooms/room2.png';
 import { resizePicture } from '../utils/resizePicture';
-import { triggerPetMintModal } from '../utils/triggerPetMintModal';
-import { getVendMachineCoordinates } from '../utils/coordinates';
+import room002image from 'assets/images/rooms/2_treetunnelshop.png';
 
-const { scale, diff } = resizePicture();
+const { scale } = resizePicture();
 
 export function room002() {
   return {
@@ -15,17 +13,6 @@ export function room002() {
       scene.add
         .image(window.innerWidth / 2, window.innerHeight / 2, 'room002')
         .setScale(scale * 8.3);
-
-      const vendMachineCoordinates = getVendMachineCoordinates(scale);
-
-      const vend = scene.add.rectangle(
-        vendMachineCoordinates.x - diff.widthDiff,
-        vendMachineCoordinates.y - diff.heightDiff,
-        vendMachineCoordinates.width - diff.widthDiff / 4,
-        vendMachineCoordinates.height - diff.heightDiff / 4
-      );
-
-      scene.interactiveObjects.push(triggerPetMintModal(vend));
     },
   };
 }

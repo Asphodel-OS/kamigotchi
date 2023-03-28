@@ -1,49 +1,63 @@
-import { BigNumberish } from "ethers";
-import { createPlayerAPI } from "./player";
-import { setUpWorldAPI } from "./world";
+import { BigNumberish } from 'ethers';
+import { createPlayerAPI } from './player';
+import { setUpWorldAPI } from './world';
 
 export function createAdminAPI(systems: any) {
   function init() {
     // create our rooms
-    createRoom("deadzone", 0, [1]); // in case we need this
-    createRoom("Quiet Forest", 1, [2]);
-    createRoom("Vending Machine", 2, [1, 3]);
-    createRoom("Corridor", 3, [2, 4]);
-    createRoom("Kami Shop", 4, [3]);
+    createRoom('deadzone', 0, [1]); // in case we need this
+    createRoom('Misty Riverside', 1, [2]);
+    createRoom('Tunnel of Trees', 2, [1, 3, 13]);
+    createRoom('Torii Gate', 3, [2, 4]);
+    createRoom('Vending Machine', 4, [3, 5, 12]);
+    createRoom('Restricted Area', 5, [4, 6, 9]);
+    createRoom('Labs Entrance', 6, [5, 7]);
+    createRoom('Lobby', 7, [6, 8, 14]);
+    createRoom('Junk Shop', 8, [7]);
+    createRoom('Forest: Old Growth', 9, [5, 10, 11]);
+    createRoom('Fores: Insect Node', 10, [9]);
+    createRoom('Waterfall Shrine', 11, [9]);
+    createRoom('Machine Node', 12, [4]);
+    createRoom('Convenience Store', 13, [2]);
+    createRoom("Manager's Office", 14, [7]);
 
-    // create our nodes
-    createNode("Eerie Willow", 1);
-    createNode("Trash Compactor", 2);
-    createNode("Pristine Couch", 3);
-    createNode("Cash Register", 4);
+    createNode('Eerie Willow', 3);
+    createNode('Trash Compactor', 7);
+    createNode('Pristine Couch', 10);
+    createNode('Cash Register', 11);
+    createNode('Danger zone', 12);
 
     // create our hottie merchant ugajin. names are unique
-    createMerchant("ugajin", 4);
-    setListing("ugajin", 1, 10, 5); // merchant, item index, buy price, sell price
-    setListing("ugajin", 2, 30, 15);
-    setListing("ugajin", 3, 50, 25);
+    createMerchant('ugajin', 13);
+    setListing('ugajin', 1, 10, 5); // merchant, item index, buy price, sell price
+    setListing('ugajin', 2, 30, 15);
+    setListing('ugajin', 3, 50, 25);
 
-    // create our global merchant
-    createMerchant("hawker", 0);
-    setListing("hawker", 1, 10, 5); // merchant, item index, buy price, sell price
-    setListing("hawker", 2, 30, 15);
-    setListing("hawker", 3, 50, 25);
-
-    // register our food
-    registerFood(1, "Gum", 25);
-    registerFood(2, "Pom Poms", 100);
-    registerFood(3, "Gakki", 200);
-
+    // global merchant
+    createMerchant('hawker', 0);
+    setListing('hawker', 1, 10, 5); // merchant, item index, buy price, sell price
+    setListing('hawker', 2, 30, 15);
+    setListing('hawker', 3, 50, 25);
 
     // init general, TODO: move to worldSetUp
-    systems["system._Init"].executeTyped(); // creates food and modifier registry  
-    systems["system.ERC721.metadata"]._setRevealed("123", "http://159.223.244.145:8080/image/");
+    systems['system._Init'].executeTyped(); // creates food and modifier registry
+    systems['system.ERC721.metadata']._setRevealed(
+      '123',
+      'http://159.223.244.145:8080/image/'
+    );
     // systems["system.ERC721.metadata"]._setRevealed("123", "http://localhost:8080/image/");
-    systems["system.ERC721.metadata"]._setMaxElements(['13', '26', '14', '15', '30']);
+    systems['system.ERC721.metadata']._setMaxElements([
+      '13',
+      '26',
+      '14',
+      '15',
+      '30',
+    ]);
 
-    createPlayerAPI(systems).ERC721.mint('0x7681A73aed06bfb648a5818B978fb018019F6900');
+    createPlayerAPI(systems).ERC721.mint(
+      '0x7681A73aed06bfb648a5818B978fb018019F6900'
+    );
     setUpWorldAPI(systems).initWorld();
-
   }
 
   // @dev creates a merchant with the name at the specified location
@@ -51,7 +65,7 @@ export function createAdminAPI(systems: any) {
   // @param name      name of the merchant (must be unique)
   // @return uint     (promise) entity ID of the merchant
   function createMerchant(name: string, location: number) {
-    return systems["system._Merchant.Create"].executeTyped(name, location);
+    return systems['system._Merchant.Create'].executeTyped(name, location);
   }
 
   // @dev creates an emission node at the specified location
@@ -59,18 +73,18 @@ export function createAdminAPI(systems: any) {
   // @param location  index of the room location
   // @return uint     entity ID of the deposit
   function createNode(name: string, location: number) {
-    return systems["system._Node.Create"].executeTyped(name, location);
+    return systems['system._Node.Create'].executeTyped(name, location);
   }
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
   function createRoom(name: string, location: number, exits: number[]) {
-    return systems["system._Room.Create"].executeTyped(name, location, exits);
+    return systems['system._Room.Create'].executeTyped(name, location, exits);
   }
 
   // @dev give coins for testing. to be removed for live
   // @param amount      amount
   function giveCoins(amount: number) {
-    return systems["system._devGiveTokens"].executeTyped(amount);
+    return systems['system._devGiveTokens'].executeTyped(amount);
   }
 
   // @dev sets the prices for the merchant at the specified location
@@ -85,22 +99,23 @@ export function createAdminAPI(systems: any) {
     buyPrice: number,
     sellPrice: number
   ) {
-    return systems["system._Listing.Set"].executeTyped(name, itemIndex, buyPrice, sellPrice);
+    return systems['system._Listing.Set'].executeTyped(
+      name,
+      itemIndex,
+      buyPrice,
+      sellPrice
+    );
   }
 
   /////////////////
   //  REGISTRIES
 
   // @dev add a food item registry entry
-  function registerFood(
-    foodIndex: number,
-    name: string,
-    health: number,
-  ) {
-    return systems["system._Registry.Food.Create"].executeTyped(
+  function registerFood(foodIndex: number, name: string, health: number) {
+    return systems['system._Registry.Food.Create'].executeTyped(
       foodIndex,
       name,
-      health,
+      health
     );
   }
 
@@ -115,16 +130,16 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     slots: number
   ) {
-    return systems["system._Registry.Gear.Create"].executeTyped(
-      gearIndex,
+    return systems['system._Registry.Gear.Create'].executeTyped(
+      GearIndex,
       name,
       type_,
       health,
       power,
       violence,
       harmony,
-      slots,
-    )
+      slots
+    );
   }
 
   // @dev add a modification item registry entry
@@ -136,13 +151,13 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
-    return systems["system._Registry.Mod.Create"].executeTyped(
+    return systems['system._Registry.Mod.Create'].executeTyped(
       modIndex,
       name,
       health,
       power,
       violence,
-      harmony,
+      harmony
     );
   }
 
@@ -157,7 +172,7 @@ export function createAdminAPI(systems: any) {
     name: string,
     type: string
   ) {
-    return systems["system._Registry.Trait.Create"].executeTyped(
+    return systems['system._Registry.Trait.Create'].executeTyped(
       index,
       health,
       power,
@@ -170,15 +185,11 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev update a food item registry entry
-  function updateRegistryFood(
-    foodIndex: number,
-    name: string,
-    health: number,
-  ) {
-    return systems["system._Registry.Food.Update"].executeTyped(
+  function updateRegistryFood(foodIndex: number, name: string, health: number) {
+    return systems['system._Registry.Food.Update'].executeTyped(
       foodIndex,
       name,
-      health,
+      health
     );
   }
 
@@ -193,16 +204,16 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     slots: number
   ) {
-    return systems["system._Registry.Gear.Update"].executeTyped(
-      gearIndex,
+    return systems['system._Registry.Gear.Update'].executeTyped(
+      GearIndex,
       name,
       type_,
       health,
       power,
       violence,
       harmony,
-      slots,
-    )
+      slots
+    );
   }
 
   // @dev update a modification item registry entry
@@ -214,13 +225,13 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
-    return systems["system._Registry.Mod.Update"].executeTyped(
+    return systems['system._Registry.Mod.Update'].executeTyped(
       modIndex,
       name,
       health,
       power,
       violence,
-      harmony,
+      harmony
     );
   }
 
@@ -244,7 +255,7 @@ export function createAdminAPI(systems: any) {
       modification: {
         create: registerModification,
         update: updateRegistryModification,
-      }
+      },
     },
     room: { create: createRoom },
   };

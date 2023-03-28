@@ -55,7 +55,7 @@ export function registerMapModal() {
     ({ actions, api, data }) => {
       const {
         visibleModals,
-        roomExits: { down, up },
+        roomExits: { down, up, left, right },
       } = dataStore();
 
       useEffect(() => {
@@ -89,9 +89,7 @@ export function registerMapModal() {
         for (let i = 1; i <= 100; i++) {
           const roomStyle: any = { borderRadius: '0', border: '0' };
           if (objectKeys.includes(i.toString())) {
-            if (gridRooms[i].available === false) {
-              roomStyle.backgroundColor = 'gray';
-            } else if (data.currentRoom === gridRooms[i].room) {
+            if (data.currentRoom === gridRooms[i].room) {
               roomStyle.backgroundColor = 'green';
             } else {
               roomStyle.backgroundColor = 'yellow';
@@ -106,32 +104,60 @@ export function registerMapModal() {
       // Travel button for moving up
       const UpButton = (
         <ActionButton
-          id='button-up'
-          disabled={up === 0}
-          onClick={() => move(up)}
-          size='medium'
-          text='↑' />
+          id="button-up"
+          disabled={up === undefined}
+          onClick={() => move(up !== undefined ? up : 0)}
+          size="medium"
+          text="↑"
+        />
       );
 
       // Travel button for moving down
       const DownButton = (
         <ActionButton
-          id='button-down'
-          disabled={down === 0}
-          onClick={() => move(down)}
-          size='medium'
-          text='↓' />
+          id="button-down"
+          disabled={down === undefined}
+          onClick={() => move(down !== undefined ? down : 0)}
+          size="medium"
+          text="↓"
+        />
+      );
+
+      // Travel button for moving left
+      const LeftButton = (
+        <ActionButton
+          id="button-left"
+          disabled={left === undefined}
+          onClick={() => move(left !== undefined ? left : 0)}
+          size="medium"
+          text="←"
+        />
+      );
+
+      // Travel button for moving right
+      const RightButton = (
+        <ActionButton
+          id="button-right"
+          disabled={right === undefined}
+          onClick={() => move(right !== undefined ? right : 0)}
+          size="medium"
+          text="→"
+        />
       );
 
       return (
-        <ModalWrapperFull id='world_map' divName='map'>
+        <ModalWrapperFull id="world_map" divName="map">
           <GridWrapper>
             <LoadBearingDiv>X</LoadBearingDiv>
             {RoomGrid}
           </GridWrapper>
-          <ButtonWrapper>
+          <ButtonWrapper style={{ marginRight: '8.5%' }}>
             {UpButton}
+          </ButtonWrapper>
+          <ButtonWrapper>
+            {LeftButton}
             {DownButton}
+            {RightButton}
           </ButtonWrapper>
         </ModalWrapperFull>
       );
