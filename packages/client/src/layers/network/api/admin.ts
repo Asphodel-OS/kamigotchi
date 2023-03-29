@@ -131,7 +131,7 @@ export function createAdminAPI(systems: any) {
     slots: number
   ) {
     return systems['system._Registry.Gear.Create'].executeTyped(
-      GearIndex,
+      gearIndex,
       name,
       type_,
       health,
@@ -205,7 +205,7 @@ export function createAdminAPI(systems: any) {
     slots: number
   ) {
     return systems['system._Registry.Gear.Update'].executeTyped(
-      GearIndex,
+      gearIndex,
       name,
       type_,
       health,
