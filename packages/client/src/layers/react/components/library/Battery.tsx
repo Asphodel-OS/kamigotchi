@@ -40,7 +40,7 @@ const Battery: React.FC<BatteryProps> = ({ percentage }) => {
     <BatteryContainer>
       <span>{percentage} %</span>
       <BatteryBar percentage={percentage}>
-        <BatteryText>{`${percentage}%`}</BatteryText>
+        <BatteryText />
       </BatteryBar>
     </BatteryContainer>
   );

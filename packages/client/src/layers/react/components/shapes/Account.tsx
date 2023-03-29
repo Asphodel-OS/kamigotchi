@@ -29,7 +29,7 @@ export interface AccountOptions {
 export const getAccount = (
   layers: Layers,
   index: EntityIndex,
-  options?: AccountOptions,
+  options?: AccountOptions
 ): Account => {
   const {
     network: {
@@ -63,15 +63,12 @@ export const getAccount = (
   // populate Kamis
   if (options.kamis) {
     const kamiIndices = Array.from(
-      runQuery([
-        Has(IsPet),
-        HasValue(AccountID, { value: account.id, }),
-      ])
+      runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
     );
 
-    account.kamis = kamiIndices.map((index): Kami => (
-      getKami(layers, index, { production: true, stats: true })
-    ));
+    account.kamis = kamiIndices.map(
+      (index): Kami => getKami(layers, index, { production: true, stats: true })
+    );
   }
   return account;
-}
+};

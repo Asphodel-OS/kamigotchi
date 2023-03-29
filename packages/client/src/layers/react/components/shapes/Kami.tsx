@@ -81,9 +81,10 @@ export const getKami = (
   // populate Production
   if (options.production) {
     const productionIndex = Array.from(
-      runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id, })])
+      runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
     )[0];
-    if (productionIndex) kami.production = getProduction(layers, productionIndex, { node: true });
+    if (productionIndex)
+      kami.production = getProduction(layers, productionIndex, { node: true });
   }
 
   // populate Kami Stats
@@ -91,7 +92,6 @@ export const getKami = (
     const stats = getStats(layers, index);
     kami.stats = stats;
   }
-
 
   return kami;
 };

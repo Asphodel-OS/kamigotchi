@@ -68,7 +68,7 @@ export function registerNodeModal() {
               : false;
 
           let node: Node;
-          let kamis: any;
+          let kamis: any; // delete
           // Prevent multiple computations on undefined values.
           if (account) {
             // get the current room node, if there is one
@@ -82,7 +82,7 @@ export function registerNodeModal() {
             if (nodeResults.length > 0) {
               node = getNode(layers, nodeResults[0], { productions: true });
             }
-            kamis = account.kamis;
+            console.log(account, 'account');
             // filter by just the kamis active on the current node
             if (account.kamis) {
               const kamisOnNode = account.kamis.filter((kami) => {
@@ -110,9 +110,15 @@ export function registerNodeModal() {
     },
 
     // Render
-    ({ actions, api, data, kamis }) => {
+    ({
+      actions,
+      api,
+      data: {
+        account: { kamis },
+        node,
+      },
+    }) => {
       // hide this component if merchant.index == 0
-
       ///////////////////
       // ACTIONS
 
@@ -199,7 +205,6 @@ export function registerNodeModal() {
       // NOTE: the smart contract does not currently gate multiple kamis being
       // on the same node. The above data population just grabs the first one.
       const MyKami = (kami: Kami) => {
-        // @DV implement me
         // no need to add a collect button just yet (single action should be easier)
         const description = () => {
           const description = [];
@@ -210,18 +215,14 @@ export function registerNodeModal() {
           return description;
         };
 
-        const action = isHarvesting(kami)
-          ? StopButton(kami)
-          : CollectButton(kami);
-
         return (
           <KamiCard
             key={kami.id}
             title={kami.name}
             image={kami.uri}
             subtext={'you'}
-            action={action}
-            cornerContent={<Battery percentage={55} />}
+            action={[CollectButton(kami), StopButton(kami)]}
+            cornerContent={<Battery percentage={100} />}
             description={description()}
           />
         );
@@ -240,8 +241,9 @@ export function registerNodeModal() {
 
       return (
         <ModalWrapperFull id="node" divName="node">
-          {/* @DV implement me, look at rendering step of Party.tsx for reference */}
-          <Scrollable>{kamis?.length && MyKami(kamis[0])}</Scrollable>
+          {kamis && kamis.map((kami: Kami) => MyKami(kami))}
+          <Underline />
+          <Scrollable></Scrollable>
         </ModalWrapperFull>
       );
     }
@@ -251,4 +253,12 @@ export function registerNodeModal() {
 const Scrollable = styled.div`
   overflow: auto;
   max-height: 100%;
+`;
+
+const Underline = styled.div`
+  width: 80%;
+  margin-top: 5%;
+  margin: 0 auto;
+  border-bottom: 2px solid silver;
+  font-weight: bold;
 `;
