@@ -42,7 +42,7 @@ export function registerKamiModal() {
       colStart: 28,
       colEnd: 75,
       rowStart: 30,
-      rowEnd: 70,
+      rowEnd: 80,
     },
     (layers) => {
       const {
@@ -84,7 +84,7 @@ export function registerKamiModal() {
             ColorIndex,
             FaceIndex,
             HandIndex,
-            TraitIndex
+            TraitIndex,
           },
           world,
         },
@@ -114,17 +114,29 @@ export function registerKamiModal() {
           petName: getComponentValue(Name, index)?.value as string,
           uri: getComponentValue(MediaURI, index)?.value as string,
           traits: traitsHopper?.value as TraitDetails[],
-          affinity: "??",
-          health: hexToString(getComponentValue(Health, index)?.value as number),
+          affinity: '??',
+          health: hexToString(
+            getComponentValue(Health, index)?.value as number
+          ),
           power: hexToString(getComponentValue(Power, index)?.value as number),
-          violence: hexToString(getComponentValue(Violence, index)?.value as number),
-          harmony: hexToString(getComponentValue(Harmony, index)?.value as number),
+          violence: hexToString(
+            getComponentValue(Violence, index)?.value as number
+          ),
+          harmony: hexToString(
+            getComponentValue(Harmony, index)?.value as number
+          ),
           slots: hexToString(getComponentValue(Slots, index)?.value as number),
         };
       };
 
       const getBaseTraits = (petIndex: EntityIndex) => {
-        const typeArr = [ColorIndex, BodyIndex, HandIndex, FaceIndex, BackgroundIndex];
+        const typeArr = [
+          ColorIndex,
+          BodyIndex,
+          HandIndex,
+          FaceIndex,
+          BackgroundIndex,
+        ];
         let result: Array<TraitDetails> = [];
         let petTypes: Array<string> = [];
 
@@ -154,7 +166,7 @@ export function registerKamiModal() {
             Name: getComponentValue(Name, entity)?.value as string,
             // Type: getComponentValue(Type, entity)?.value as string,
             // Value: getComponentValue(Value, entity)?.value as string,
-          }
+          },
         };
       };
 
@@ -185,30 +197,39 @@ export function registerKamiModal() {
 
       const traitLines = dets?.traits.map((trait) => {
         return (
-          <KamiList key={trait.Name}>
-            {`${trait.Name}`}
-          </KamiList>
+          <KamiList key={trait.Name}>{`${trait.Name.toUpperCase()}`}</KamiList>
         );
       });
 
       return (
-        <ModalWrapperFull divName='kami' id='petdetails_modal'>
+        <ModalWrapperFull divName="kami" id="petdetails_modal">
           <KamiBox>
             <KamiBox>
-              <KamiBox style={{ gridColumn: 1, gridRow: 1 }}>
-                <KamiName>{dets?.petName} </KamiName>
+              <KamiBox>
                 <KamiImage src={dets?.uri} />
+                <KamiBox
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {traitLines}
+                </KamiBox>
               </KamiBox>
-              <KamiBox style={{ gridColumn: 1, gridRow: 2, }}>{traitLines}</KamiBox>
               <KamiBox
                 style={{ gridColumn: 3, gridRowStart: 1, gridRowEnd: 3 }}
               >
-                <KamiFacts>Affinity: {dets?.affinity} </KamiFacts>
-                <KamiFacts>Health: {dets?.health} </KamiFacts>
-                <KamiFacts>Power: {dets?.power} </KamiFacts>
-                <KamiFacts>Violence: {dets?.violence} </KamiFacts>
-                <KamiFacts>Harmony: {dets?.harmony}</KamiFacts>
-                <KamiFacts>Slots: {dets?.slots} </KamiFacts>
+                <KamiFacts>
+                  <KamiName>{dets?.petName.toUpperCase()} </KamiName>
+                </KamiFacts>
+                <KamiFacts>AFFINITY: {dets?.affinity} </KamiFacts>
+                <KamiFacts>HEALTH: {dets?.health} </KamiFacts>
+                <KamiFacts>POWER: {dets?.power} </KamiFacts>
+                <KamiFacts>VIOLENCE: {dets?.violence} </KamiFacts>
+                <KamiFacts>HARMONY: {dets?.harmony}</KamiFacts>
+                <KamiFacts>SLOTS: {dets?.slots} </KamiFacts>
               </KamiBox>
             </KamiBox>
           </KamiBox>
@@ -226,7 +247,7 @@ const KamiBox = styled.div`
   color: black;
   text-decoration: none;
   font-size: 18px;
-  margin: 4px 2px;
+  margin: 2px 1px;
   padding: 0px 0px;
   border-radius: 5px;
   font-family: Pixel;
@@ -235,14 +256,15 @@ const KamiBox = styled.div`
   justify-items: center;
   justify-content: center;
   align-items: center;
-  grid-row-gap: 8px;
-  grid-column-gap: 24px;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
 `;
 
 const KamiFacts = styled.div`
   background-color: #ffffff;
   color: black;
-  font-size: 18px;
+  font-size: 25px;
+  font-weight: 600;
   font-family: Pixel;
   margin: 0px;
   padding: 10px;
@@ -251,10 +273,10 @@ const KamiFacts = styled.div`
 const KamiList = styled.li`
   background-color: #ffffff;
   color: black;
-  font-size: 18px;
+  font-size: 16px;
   font-family: Pixel;
   margin: 0px;
-
+  list-style-type: none;
   justify-self: start;
 `;
 
@@ -269,10 +291,11 @@ const KamiText = styled.p`
 
 const KamiName = styled.div`
   grid-row: 2;
-  font-size: 22px;
+  font-size: 45px;
   color: #333;
   text-align: center;
-  padding: 0px 0px 0px 0px;
+  font-weight: bold;
+  padding: 0px 0px 20px 0px;
   font-family: Pixel;
 `;
 
@@ -290,8 +313,9 @@ const KamiDetails = styled.div`
 `;
 
 const KamiImage = styled.img`
-  height: 90px;
+  height: 300px;
+  width: 300px;
   margin: 0px;
-  padding: 0px;
+  padding-bottom: 10px;
   grid-row: 1 / span 1;
 `;
