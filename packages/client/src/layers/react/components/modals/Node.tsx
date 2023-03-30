@@ -49,14 +49,24 @@ export function registerNodeModal() {
             IsProduction,
             Location,
             OperatorAddress,
+            Rate,
+            StartTime,
             State,
           },
         },
       } = layers;
 
       // TODO: update this to support node input as props
-      return merge(AccountID.update$, Location.update$, State.update$).pipe(
+      return merge(
+        AccountID.update$,
+        Location.update$,
+        Rate.update$,
+        StartTime.update$,
+        State.update$
+      ).pipe(
         map(() => {
+          /////////////////
+          // ROOT DATA
 
           // get the account through the account entity of the controlling wallet
           const accountIndex = Array.from(
@@ -65,9 +75,6 @@ export function registerNodeModal() {
               HasValue(OperatorAddress, { value: network.connectedAddress.get() }),
             ])
           )[0];
-
-          /////////////////
-          // ROOT DATA
 
           const account = (accountIndex !== undefined)
             ? getAccount(layers, accountIndex)
@@ -161,7 +168,6 @@ export function registerNodeModal() {
       data,
     }) => {
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      console.log(data);
       /////////////////
       // TICKING
 
@@ -226,36 +232,47 @@ export function registerNodeModal() {
 
       /////////////////
       // DATA INTERPRETATION
+      const RATE_PRECISION = 1e6;
 
-      // get the production rate of the kami, only based on power right now (KAMI/hr)
+      // get the health drain rate, based on the kami's production
+      // this is based on a hardcoded value for the time being
+      const calcDrainRate = (kami: Kami) => {
+        return calcProductionRate(kami) / 2.0;
+      }
+
+      // get emission rate of the Kami's production. measured in (KAMI/s)
       const calcProductionRate = (kami: Kami) => {
         let rate = 0;
-        if (kami.production && kami.production.state === 'ACTIVE') {
-          rate = kami.stats!.power;
+        if (isHarvesting(kami)) {
+          rate = kami.production!.rate / RATE_PRECISION;
         }
         return rate;
-      };
+      }
 
       // calculate health based on the drain against last confirmed health
       const calcHealth = (kami: Kami) => {
-        // calculate the health drain on the kami since the last health update
-        let duration = lastRefresh / 1000 - kami.lastUpdated;
-        let drainRate = calcProductionRate(kami) / 3600 / 2;
-        let healthDrain = drainRate * duration;
+        let health = kami.health;
 
-        return Math.max(kami.health - healthDrain, 0);
-      };
+        // calculate the health drain on the kami since the last health update
+        if (isHarvesting(kami)) {
+          let duration = lastRefresh / 1000 - kami.lastUpdated;
+          let drainRate = calcDrainRate(kami);
+          let healthDrain = drainRate * duration;
+          health -= healthDrain;
+        }
+        return Math.max(health, 0);
+      }
 
       // calculate the expected output from a pet production based on starttime
       // set to N/A if dead
       const calcOutput = (kami: Kami) => {
+        let output = 0;
         if (isHarvesting(kami) && !isDead(kami)) {
           let duration = lastRefresh / 1000 - kami.production!.startTime;
-          let output = Math.round(duration * calcProductionRate(kami) / 3600);
-          return Math.max(output, 0);
+          output = Math.round(duration * calcProductionRate(kami));
         }
-        return 0;
-      };
+        return Math.max(output, 0);
+      }
 
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami) => {
@@ -265,9 +282,12 @@ export function registerNodeModal() {
       // check whether the kami is currently harvesting
       // TODO: replace this with a general state check
       const isHarvesting = (kami: Kami): boolean => {
-        return kami.production && kami.production.state === 'ACTIVE';
+        let result = false;
+        if (kami.production) {
+          result = kami.production.state === 'ACTIVE';
+        }
+        return result;
       };
-
 
       ///////////////////
       // DISPLAY
@@ -303,16 +323,14 @@ export function registerNodeModal() {
       // NOTE: the smart contract does not currently gate multiple kamis being
       // on the same node. The above data population just grabs the first one.
       const MyKami = (kami: Kami) => {
-        const currHealth = calcHealth(kami).toFixed(0);
-        const output = calcOutput(kami).toFixed(0);
-        const rate = calcProductionRate(kami);
-        console.log(currHealth, output, rate);
+        const health = calcHealth(kami);
+        const harvestRate = calcProductionRate(kami) * 3600;
 
         const description = [
           '',
-          `${currHealth}/${kami.stats!.health * 1}`, // multiply by 1 to interpret hex
+          `Health: ${health.toFixed(1)}/${kami.stats!.health * 1}`, // multiply by 1 to interpret hex
           `Violence: ${kami.stats!.violence * 1}`,
-          `$KAMI: ${output} (${rate}/hr)`,
+          `$KAMI: ${calcOutput(kami)} (${harvestRate.toFixed(1)}/hr)`,
         ];
 
         return (
@@ -320,7 +338,7 @@ export function registerNodeModal() {
             key={kami.id}
             title={kami.name}
             image={kami.uri}
-            subtext={'you'}
+            subtext={'yours'}
             action={[CollectButton(kami), StopButton(kami)]}
             cornerContent={<Battery percentage={100} />}
             description={description}
