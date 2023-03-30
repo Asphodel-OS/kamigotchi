@@ -15,6 +15,7 @@ import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Node, getNode } from 'layers/react/components/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
@@ -108,40 +109,6 @@ export function registerPartyModal() {
         ];
       };
 
-      // get an Inventory object by index
-      // TODO: get name and decription here once we have item registry support
-      // NOTE: we need to do something about th FE/SC side overloading the term 'index'
-      const getInventory = (index: EntityIndex) => {
-        const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
-        return {
-          id: world.entities[index],
-          item: {
-            index: itemIndex, // this is the solecs index rather than the cached index
-            // name: getComponentValue(Name, itemIndex)?.value as string,
-            // description: ???, // are we intending to save this onchain or on FE?
-          },
-          balance: getComponentValue(Balance, index)?.value as number,
-        };
-      };
-
-      // this is about to be the jankiest bit inventory retrieval we will see..
-      const getConsumables = (accountIndex: EntityIndex) => {
-        // pompom
-        // gakki
-        // ribbon
-        // gum
-      };
-
-      // gets a Production object from an index
-      const getProduction = (index: EntityIndex) => {
-        return {
-          id: world.entities[index],
-          nodeId: getComponentValue(NodeID, index)?.value as string,
-          state: getComponentValue(State, index)?.value as string,
-          startTime: getComponentValue(StartTime, index)?.value as number,
-        };
-      };
-
       return merge(
         AccountID.update$,
         Balance.update$,
@@ -155,76 +122,85 @@ export function registerPartyModal() {
         MediaURI.update$
       ).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
-          const accountEntityIndex = Array.from(
+          /////////////////
+          // ROOT DATA
+
+          // get the account through the account entity of the controlling wallet
+          const accountIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
+              HasValue(OperatorAddress, { value: network.connectedAddress.get() }),
             ])
           )[0];
-          const accountID = world.entities[accountEntityIndex];
-          const bytes = getComponentValue(Coin, accountEntityIndex)
-            ?.value as number;
+
+          const account = (accountIndex !== undefined)
+            ? getAccount(layers, accountIndex)
+            : {} as Account;
+
+          // get the node through the location of the linked account
+          const nodeIndex = Array.from(
+            runQuery([
+              Has(IsNode),
+              HasValue(Location, { value: account.location }),
+            ])
+          )[0];
+
+          const node = (nodeIndex !== undefined)
+            ? getNode(layers, nodeIndex)
+            : {} as Node;
 
           // get the list of inventory indices for this account
           const inventoryResults = Array.from(
             runQuery([
               Has(IsInventory),
-              HasValue(HolderID, { value: accountID }),
+              HasValue(HolderID, { value: account.id }),
             ])
           );
-          let inventories: any = hardCodeInventory(); // the hardcoded slots we want for consumables
 
           // if we have inventories for the account, generate a list of inventory objects
-          let itemIndex;
-          for (let i = 0; i < inventoryResults.length; i++) {
-            // match indices to the existing consumables
-            itemIndex = getComponentValue(ItemIndex, inventoryResults[i])
-              ?.value as number;
-            for (let j = 0; j < inventories.length; j++) {
-              if (inventories[j].itemIndex == itemIndex) {
-                let balance = getComponentValue(Balance, inventoryResults[j])
-                  ?.value as number;
-                inventories[j].balance = balance ? balance * 1 : 0;
+          let kamis: Kami[] = [];
+          let inventories: any = hardCodeInventory();
+          if (account) {
+            // get the kamis on this account
+            const kamiIndices = Array.from(
+              runQuery([
+                Has(IsPet),
+                HasValue(AccountID, { value: account.id }),
+              ])
+            );
+
+            // get all kamis on the node
+            for (let i = 0; i < kamiIndices.length; i++) {
+              kamis.push(getKami(
+                layers,
+                kamiIndices[i],
+                { production: true, stats: true },
+              ));
+            }
+
+
+            // (hardcoded structures) populate inventory balances
+            let itemIndex;
+            for (let i = 0; i < inventoryResults.length; i++) {
+              // match indices to the existing consumables
+              itemIndex = getComponentValue(ItemIndex, inventoryResults[i])
+                ?.value as number;
+              for (let j = 0; j < inventories.length; j++) {
+                if (inventories[j].itemIndex == itemIndex) {
+                  let balance = getComponentValue(Balance, inventoryResults[j])
+                    ?.value as number;
+                  inventories[j].balance = balance ? balance * 1 : 0;
+                }
               }
             }
-          }
-
-          // get all indices of pets linked to this account and create object array
-          let pets: any = [];
-          let kamis: Kami[] = [];
-          const petResults = Array.from(
-            runQuery([Has(IsPet), HasValue(AccountID, { value: accountID })])
-          );
-          for (let i = 0; i < petResults.length; i++) {
-            kamis.push(getKami(layers, petResults[i], { production: true, stats: true }));
-          }
-
-          // get the node of the current room for starting productions
-          let nodeID;
-          let location = getComponentValue(Location, accountEntityIndex)
-            ?.value as number;
-          const nodeResults = Array.from(
-            runQuery([Has(IsNode), HasValue(Location, { value: location })])
-          );
-          if (nodeResults.length > 0) {
-            nodeID = world.entities[nodeResults[0]];
           }
 
           return {
             actions,
             api: player,
             data: {
-              account: {
-                id: accountID,
-                inventories,
-                bytes,
-                kamis,
-              },
-              pets,
-              node: { id: nodeID },
+              account: { ...account, inventories, kamis },
+              node,
             } as any,
           };
         })
@@ -233,6 +209,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data }) => {
+      console.log(data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       /////////////////
       // TICKING
