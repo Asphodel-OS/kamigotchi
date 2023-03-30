@@ -12,10 +12,10 @@ import {
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { getAccount } from 'layers/react/components/shapes/Account';
-import { Kami } from 'layers/react/components/shapes/Kami';
-import { getNode, Node } from 'layers/react/components/shapes/Node';
-import { Production } from 'layers/react/components/shapes/Production';
+import { Account, getAccount } from 'layers/react/components/shapes/Account';
+import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Node, getNode } from 'layers/react/components/shapes/Node';
+import { Production, getProduction } from 'layers/react/components/shapes/Production';
 import { KamiCard } from '../library/KamiCard';
 import Battery from '../library/Battery';
 
@@ -37,72 +37,113 @@ export function registerNodeModal() {
       const {
         network: {
           world,
+          actions,
           api: { player },
           network,
           components: {
-            IsNode,
-            IsAccount,
-            Location,
             AccountID,
+            NodeID,
+            IsAccount,
+            IsNode,
+            IsPet,
+            IsProduction,
+            Location,
             OperatorAddress,
+            State,
           },
-          actions,
         },
       } = layers;
 
-      return merge(AccountID.update$, Location.update$).pipe(
+      // TODO: update this to support node input as props
+      return merge(AccountID.update$, Location.update$, State.update$).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
+
+          // get the account through the account entity of the controlling wallet
           const accountIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
+              HasValue(OperatorAddress, { value: network.connectedAddress.get() }),
             ])
           )[0];
 
-          const account =
-            accountIndex !== undefined
-              ? getAccount(layers, accountIndex, { kamis: true })
-              : false;
+          /////////////////
+          // ROOT DATA
 
-          let node: Node;
-          let kamis: any; // delete
-          // Prevent multiple computations on undefined values.
-          if (account) {
-            // get the current room node, if there is one
-            // TODO: update this to support node input as props
-            const nodeResults = Array.from(
+          const account = (accountIndex !== undefined)
+            ? getAccount(layers, accountIndex)
+            : {} as Account;
+
+          // get the node through the location of the linked account
+          const nodeIndex = Array.from(
+            runQuery([
+              Has(IsNode),
+              HasValue(Location, { value: account.location }),
+            ])
+          )[0];
+
+          const node = (nodeIndex !== undefined)
+            ? getNode(layers, nodeIndex)
+            : {} as Node;
+
+
+
+          /////////////////
+          // DEPENDENT DATA
+
+          // get the kamis on this account
+          let accountKamis: Kami[] = [];
+          if (account && node) {
+            const accountKamiIndices = Array.from(
               runQuery([
-                Has(IsNode),
-                HasValue(Location, { value: account.location }),
+                Has(IsPet),
+                HasValue(AccountID, { value: account.id }),
               ])
             );
-            if (nodeResults.length > 0) {
-              node = getNode(layers, nodeResults[0], { productions: true });
+
+            // get all kamis on the node
+            for (let i = 0; i < accountKamiIndices.length; i++) {
+              accountKamis.push(getKami(
+                layers,
+                accountKamiIndices[i],
+                { production: true, stats: true },
+              ));
             }
-            console.log(account, 'account');
-            // filter by just the kamis active on the current node
-            if (account.kamis) {
-              const kamisOnNode = account.kamis.filter((kami) => {
+
+            // filter by the kamis with active productions on the current node
+            if (accountKamis) {
+              const kamisOnNode = accountKamis.filter((kami) => {
                 if (!node) return false;
 
                 if (kami.production && kami.production.state === 'ACTIVE') {
-                  return kami.production?.node?.id === node.id;
+                  return kami.production.node!.id === node.id;
                 }
               });
-              account.kamis = kamisOnNode;
+              accountKamis = kamisOnNode;
+            }
+          }
+
+          // get the productions on this node
+          let nodeProductions: Production[] = [];
+          if (node) {
+            // populate the account Kamis
+            const nodeProductionIndices = Array.from(
+              runQuery([Has(IsProduction), HasValue(NodeID, { value: node.id })])
+            );
+            for (let i = 0; i < nodeProductionIndices.length; i++) {
+              nodeProductions.push(getProduction(
+                layers,
+                nodeProductionIndices[i],
+                { kami: true },
+              ));
             }
           }
 
           return {
             actions,
             api: player,
-            kamis,
             data: {
-              account, // account => kami[] => production
-              node, // node => production[] => kami
+              account: { ...account, kamis: accountKamis }, // account => kami[] => production
+              node: { ...node, productions: nodeProductions }, // node => production[] => kami
             } as any,
           };
         })
@@ -117,10 +158,12 @@ export function registerNodeModal() {
         account: { kamis },
         node,
       },
+      data,
     }) => {
       // hide this component if merchant.index == 0
       ///////////////////
       // ACTIONS
+      console.log(data);
 
       // collects on an existing production
       const collect = (production: Production) => {

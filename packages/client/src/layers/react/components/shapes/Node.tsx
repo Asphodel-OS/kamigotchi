@@ -54,6 +54,7 @@ export const getNode = (
   if (!options) return node;
 
   // populate Productions
+  // NOTE: we can't rely on this function. see Account.tsx for failed attempts at debugging.
   if (options.productions) {
     const productionIndices = Array.from(
       runQuery([

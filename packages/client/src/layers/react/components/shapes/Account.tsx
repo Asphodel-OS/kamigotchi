@@ -58,17 +58,32 @@ export const getAccount = (
   /////////////////
   // OPTIONAL DATA
 
-  if (!options) return account;
 
   // populate Kamis
-  if (options.kamis) {
-    const kamiIndices = Array.from(
-      runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
-    );
+  // NOTE: we can't rely on this function. oddly, there's an eager return of the object
+  // prior to the kamis field being set. spreading the {...account, kamis} doesn't work.
+  // neither does returning within this if-block or setting the kamis array explicitly
+  // attempting to set the whole object at once also fails. suspecting it has something
+  // to do with how runQuery operates.
+  // if (options.kamis) {
+  //   const kamiIndices = Array.from(
+  //     runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
+  //   );
 
-    account.kamis = kamiIndices.map(
-      (index): Kami => getKami(layers, index, { production: true, stats: true })
-    );
-  }
+  //   account.kamis = kamiIndices.map(
+  //     (index): Kami => getKami(layers, index, { production: true, stats: true })
+  //   );
+
+  //   // // like wtf man.. leaving this here so everyone can witness the absurdity
+  //   // let kami: Kami;
+  //   // let kamis: Kami[] = [];
+  //   // for (let i = 0; i < account.kamis.length; i++) {
+  //   //   kami = getKami(layers, index, { production: true, stats: true });
+  //   //   kamis.push(kami);
+  //   // }
+  //   // console.log('getAccount(): kamis', kamis);
+  //   // account.kamis = kamis;
+  //   // console.log('getAccount(): account', account);
+  // }
   return account;
 };

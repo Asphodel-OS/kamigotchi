@@ -219,6 +219,7 @@ export function registerPartyModal() {
 
           // get all indices of pets linked to this account and create object array
           let pets: any = [];
+          let kamis: any = [];
           const petResults = Array.from(
             runQuery([Has(IsPet), HasValue(AccountID, { value: accountID })])
           );
@@ -236,14 +237,7 @@ export function registerPartyModal() {
             //   'kami with production',
             //   getKami(layers, petResults[i], { production: true })
             // );
-            // console.log(
-            //   'all kami',
-            //   getKami(layers, petResults[i], {
-            //     account: true,
-            //     production: true,
-            //     stats: true,
-            //   })
-            // );
+            kamis.push(getKami(layers, petResults[i], { account: true, production: true, stats: true }));
             pets.push(getPet(petResults[i]));
           }
 
@@ -268,6 +262,7 @@ export function registerPartyModal() {
                 bytes,
               },
               pets,
+              kamis,
               node: { id: nodeID },
             } as any,
           };
@@ -278,7 +273,6 @@ export function registerPartyModal() {
     // Render
     ({ actions, api, data }) => {
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-
       /////////////////
       // TICKING
 
