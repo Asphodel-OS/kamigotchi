@@ -13,9 +13,10 @@ import {
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { Account, getAccount } from 'layers/react/components/shapes/Account';
+import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
-import { getKami } from 'layers/react/components/shapes/Kami';
 
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
@@ -73,6 +74,7 @@ export function registerPartyModal() {
             OwnerID,
             PetID,
             PetIndex,
+            Rate,
             State,
             StartTime,
           },
@@ -140,34 +142,6 @@ export function registerPartyModal() {
         };
       };
 
-      // gets a Pet object from an index
-      // TODO(ja): support names, equips, stats and production details
-      const getPet = (index: EntityIndex) => {
-        const id = world.entities[index];
-
-        // get the pet's prodcution object if it exists
-        let production;
-        const productionResults = Array.from(
-          runQuery([Has(IsProduction), HasValue(PetID, { value: id })])
-        );
-        if (productionResults.length > 0) {
-          production = getProduction(productionResults[0]);
-        }
-
-        return {
-          id,
-          index: getComponentValue(PetIndex, index)?.value as string,
-          name: getComponentValue(Name, index)?.value as string,
-          uri: getComponentValue(MediaURI, index)?.value as string,
-          power: getComponentValue(Power, index)?.value as number,
-          health: getComponentValue(Health, index)?.value as number,
-          currHealth: getComponentValue(HealthCurrent, index)?.value as number,
-          lastHealthTime: getComponentValue(LastActionTime, index)
-            ?.value as number,
-          production,
-        };
-      };
-
       return merge(
         AccountID.update$,
         Balance.update$,
@@ -175,6 +149,7 @@ export function registerPartyModal() {
         HealthCurrent.update$,
         Location.update$,
         OwnerID.update$,
+        Rate.update$,
         State.update$,
         StartTime.update$,
         MediaURI.update$
@@ -219,26 +194,12 @@ export function registerPartyModal() {
 
           // get all indices of pets linked to this account and create object array
           let pets: any = [];
-          let kamis: any = [];
+          let kamis: Kami[] = [];
           const petResults = Array.from(
             runQuery([Has(IsPet), HasValue(AccountID, { value: accountID })])
           );
           for (let i = 0; i < petResults.length; i++) {
-            // console.log('base kami', getKami(layers, petResults[i]));
-            // console.log(
-            //   'kami with account',
-            //   getKami(layers, petResults[i], { account: true })
-            // );
-            // console.log(
-            //   'kami with stats',
-            //   getKami(layers, petResults[i], { stats: true })
-            // );
-            // console.log(
-            //   'kami with production',
-            //   getKami(layers, petResults[i], { production: true })
-            // );
-            kamis.push(getKami(layers, petResults[i], { account: true, production: true, stats: true }));
-            pets.push(getPet(petResults[i]));
+            kamis.push(getKami(layers, petResults[i], { production: true, stats: true }));
           }
 
           // get the node of the current room for starting productions
@@ -260,9 +221,9 @@ export function registerPartyModal() {
                 id: accountID,
                 inventories,
                 bytes,
+                kamis,
               },
               pets,
-              kamis,
               node: { id: nodeID },
             } as any,
           };
@@ -352,77 +313,91 @@ export function registerPartyModal() {
 
       /////////////////
       // DATA INTERPRETATION
+      const RATE_PRECISION = 1e6;
 
-      // get the production rate of the kami, only based on power right now
-      const calcProductionRate = (kami: any) => {
+      // get the health drain rate, based on the kami's production
+      // this is based on a hardcoded value for the time being
+      const calcDrainRate = (kami: Kami) => {
+        return calcProductionRate(kami) / 2.0;
+      }
+
+      // get emission rate of the Kami's production. measured in (KAMI/s)
+      const calcProductionRate = (kami: Kami) => {
         let rate = 0;
-        if (kami.production && kami.production.state === 'ACTIVE') {
-          rate = kami.power / 3600;
+        if (isHarvesting(kami)) {
+          rate = kami.production!.rate / RATE_PRECISION;
         }
         return rate;
-      };
+      }
 
       // calculate health based on the drain against last confirmed health
-      const calcHealth = (kami: any) => {
-        // calculate the health drain on the kami since the last health update
-        let duration = lastRefresh / 1000 - kami.lastHealthTime;
-        let drainRate = calcProductionRate(kami) / 2;
-        let healthDrain = drainRate * duration;
+      const calcHealth = (kami: Kami) => {
+        let health = kami.health;
 
-        return Math.max(kami.currHealth - healthDrain, 0);
-      };
+        // calculate the health drain on the kami since the last health update
+        if (isHarvesting(kami)) {
+          let duration = lastRefresh / 1000 - kami.lastUpdated;
+          let drainRate = calcDrainRate(kami);
+          let healthDrain = drainRate * duration;
+          health -= healthDrain;
+        }
+        return Math.max(health, 0);
+      }
 
       // calculate the expected output from a pet production based on starttime
       // set to N/A if dead
-      const calcOutput = (kami: any) => {
+      const calcOutput = (kami: Kami) => {
+        let output = 0;
         if (isHarvesting(kami) && !isDead(kami)) {
-          let duration = lastRefresh / 1000 - kami.production.startTime;
-          let output = Math.round(duration * calcProductionRate(kami));
-          return Math.max(output, 0);
+          let duration = lastRefresh / 1000 - kami.production!.startTime;
+          output = Math.round(duration * calcProductionRate(kami));
         }
-        return 0;
-      };
+        return Math.max(output, 0);
+      }
 
       // naive check right now, needs to be updated with murder check as well
-      const isDead = (kami: any) => {
+      const isDead = (kami: Kami) => {
         return calcHealth(kami) == 0;
       };
 
       // check whether the kami is currently harvesting
       // TODO: replace this with a general state check
-      const isHarvesting = (kami: any): boolean => {
-        return kami.production && kami.production.state === 'ACTIVE';
+      const isHarvesting = (kami: Kami): boolean => {
+        let result = false;
+        if (kami.production) {
+          result = kami.production.state === 'ACTIVE';
+        }
+        return result;
       };
 
       // get the title of the kami as 'name (health / totHealth)'
-      const getTitle = (kami: any) => {
-        const health = calcHealth(kami).toFixed();
-        return kami.name + ` (${health}/${parseInt(kami.health)})`;
+      const getTitle = (kami: Kami) => {
+        const health = calcHealth(kami);
+        return kami.name + ` (${health.toFixed()}/${kami.stats!.health * 1})`;
       };
 
       // get the description of the kami as a list of lines
       // TODO: clean this up
-      const getDescription = (kami: any) => {
-        let description: string[] = [];
-        const health = calcHealth(kami);
+      const getDescription = (kami: Kami): string[] => {
+        let description: string[];
 
         if (isHarvesting(kami)) {
-          if (health == 0) {
-            description.push('died (of neglect)');
+          if (!isDead(kami)) {
+            const harvestRate = calcProductionRate(kami) * 3600; //hourly
+            const drainRate = calcDrainRate(kami) * 3600; //hourly
+            description = [
+              `Harvesting on ${kami.production!.node!.name}`,
+              `+${harvestRate.toFixed(1)} $KAMI/hr`,
+              `-${drainRate.toFixed(1)} HP/hr`,
+            ];
           } else {
-            description.push(
-              `Harvesting on ${kami.production.nodeId.slice(0, 6)}`
-            );
-            description.push(`+${kami.power * 1} $KAMI/hr`);
-            description.push(`-${kami.power / 2} HP/hr`);
+            description = ['died (of neglect)'];
           }
         } else {
-          if (health == 0) {
-            description.push(
-              `Murdered on ${kami.production.nodeId.slice(0, 6)}`
-            );
+          if (isDead(kami)) {
+            description = [`Murdered by ???`];
           } else {
-            description.push('chillin');
+            description = ['chillin'];
           }
         }
         return description;
@@ -491,7 +466,7 @@ export function registerPartyModal() {
               key={kami.id}
               title={title}
               image={kami.uri}
-              subtext={`+${calcOutput(kami).toFixed(1)} $KAMI`}
+              subtext={`+${calcOutput(kami)} $KAMI`}
               action={action}
               cornerContent={FeedButton(kami, 1)}
               description={description}
@@ -510,7 +485,7 @@ export function registerPartyModal() {
           <ConsumableGrid>
             {ConsumableCells(data.account.inventories)}
           </ConsumableGrid>
-          <Scrollable>{KamiCards(data.pets)}</Scrollable>
+          <Scrollable>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
       );
     }

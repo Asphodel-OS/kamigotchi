@@ -11,6 +11,7 @@ import { Node, getNode } from './Node';
 // standardized shape of an Production Entity
 export interface Production {
   id: EntityID;
+  rate: number;
   state: string;
   startTime: number;
   kami?: Kami;
@@ -35,6 +36,7 @@ export const getProduction = (
       components: {
         NodeID,
         PetID,
+        Rate,
         State,
         StartTime,
       },
@@ -43,6 +45,7 @@ export const getProduction = (
 
   let production: Production = {
     id: world.entities[index],
+    rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
     startTime: getComponentValue(StartTime, index)?.value as number,
   };

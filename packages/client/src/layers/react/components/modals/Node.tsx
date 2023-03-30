@@ -161,6 +161,7 @@ export function registerNodeModal() {
       data,
     }) => {
       const [lastRefresh, setLastRefresh] = useState(Date.now());
+      console.log(data);
       /////////////////
       // TICKING
 
@@ -336,11 +337,13 @@ export function registerNodeModal() {
       // rendering will depend on whether a node is present in the room
       const NodeInfo = (node: Node) => {
         // @DV implement me
+        return (<p>{node?.name}</p>);
       };
 
       return (
         <ModalWrapperFull id="node" divName="node">
-          {kamis && kamis.map((kami: Kami) => MyKami(kami))}
+          {NodeInfo(data.node)}
+          {data.account.kamis.map((kami: Kami) => MyKami(kami))}
           <Underline />
           <Scrollable></Scrollable>
         </ModalWrapperFull>
