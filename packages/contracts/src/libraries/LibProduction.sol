@@ -17,6 +17,8 @@ import { LibPet } from "libraries/LibPet.sol";
 import { Strings } from "utils/Strings.sol";
 
 uint256 constant BOUNTY_RATIO = 50; // reward per 100 KAMI liquidated
+uint256 constant BOUNTY_RATIO_PRECISION = 1e3; // i.e. denominator of the bounty ratio
+uint256 constant RATE_PRECISION = 1e3; // precsion on production rate calculations
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -78,10 +80,10 @@ library LibProduction {
   function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 rate = calcRate(components, id);
     uint256 duration = calcDuration(components, id);
-    return (rate * duration) / 1e18;
+    return (rate * duration) / RATE_PRECISION;
   }
 
-  // Calculate the rate of a production, measured in KAMI/s (1e18 precision).
+  // Calculate the rate of a production, measured in KAMI/s (1e3 precision).
   // TODO: Account for affinity boosts.
   function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
@@ -89,14 +91,14 @@ library LibProduction {
     uint256 petID = getPet(components, id);
     uint256 power = LibPet.calcTotalPower(components, petID);
     uint256 affinityMultiplier = 100; // defined as out of 100
-    return (((1e18 * affinityMultiplier) / 100) * power) / 3600;
+    return (((RATE_PRECISION * affinityMultiplier) / 100) * power) / 3600;
   }
 
   // Calculate the reward for liquidating this production, measured in KAMI
   // TODO: introduce stat to replace BOUNTY_RATIO calculation
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 output = calcOutput(components, id);
-    return (output * BOUNTY_RATIO) / 100;
+    return (output * BOUNTY_RATIO) / BOUNTY_RATIO_PRECISION;
   }
 
   /////////////////

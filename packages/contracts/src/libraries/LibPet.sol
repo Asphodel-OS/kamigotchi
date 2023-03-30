@@ -20,7 +20,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
-import { LibProduction } from "libraries/LibProduction.sol";
+import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -30,7 +30,8 @@ uint256 constant BASE_POWER = 150;
 uint256 constant BASE_SLOTS = 0;
 uint256 constant BASE_VIOLENCE = 0;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
-uint256 constant DEMO_MULTIPLIER = 100;
+uint256 constant BURN_RATIO_PRECISION = 1e2;
+uint256 constant DEMO_POWER_MULTIPLIER = 50;
 
 library LibPet {
   using LibFPMath for int256;
@@ -145,7 +146,7 @@ library LibPet {
     uint256 productionID = getProduction(components, id);
     uint256 prodRate = LibProduction.calcRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 totalPrecision = 1e20; // BURN_RATIO(1e2) * prodRate(1e18)
+    uint256 totalPrecision = BURN_RATIO_PRECISION * PRODUCTION_PRECISION; // BURN_RATIO(1e2) * prodRate(1e18)
     return (duration * prodRate * BURN_RATIO + (totalPrecision / 2)) / totalPrecision;
   }
 
@@ -245,7 +246,7 @@ library LibPet {
   // set a pet's stats from its traits
   // TODO: actually set stats from traits. hardcoded currently
   function setStats(IUintComp components, uint256 id) internal {
-    uint256 power = BASE_POWER * DEMO_MULTIPLIER;
+    uint256 power = BASE_POWER * DEMO_POWER_MULTIPLIER;
     PowerComponent(getAddressById(components, PowerCompID)).set(id, power);
 
     uint256 totalHealth = _smolRandom(BASE_HEALTH, id);
