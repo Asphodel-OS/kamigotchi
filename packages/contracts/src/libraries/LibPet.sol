@@ -31,7 +31,7 @@ uint256 constant BASE_SLOTS = 0;
 uint256 constant BASE_VIOLENCE = 0;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
-uint256 constant DEMO_POWER_MULTIPLIER = 50;
+uint256 constant DEMO_POWER_MULTIPLIER = 20;
 
 library LibPet {
   using LibFPMath for int256;
@@ -144,7 +144,7 @@ library LibPet {
   function calcDrain(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isProducing(components, id)) return 0;
     uint256 productionID = getProduction(components, id);
-    uint256 prodRate = LibProduction.calcRate(components, productionID); // KAMI/s (1e18 precision)
+    uint256 prodRate = LibProduction.getRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
     uint256 totalPrecision = BURN_RATIO_PRECISION * PRODUCTION_PRECISION; // BURN_RATIO(1e2) * prodRate(1e18)
     return (duration * prodRate * BURN_RATIO + (totalPrecision / 2)) / totalPrecision;

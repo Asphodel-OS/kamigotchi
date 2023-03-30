@@ -28,6 +28,7 @@ contract ProductionStartSystem is System {
     uint256 id = LibProduction.getForPet(components, petID);
     if (id == 0) {
       id = LibProduction.create(world, components, nodeID, petID);
+      LibProduction.start(components, id);
     } else {
       LibProduction.setNode(components, id, nodeID);
       LibProduction.start(components, id);
