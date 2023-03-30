@@ -10,8 +10,8 @@ export function registerNodeButton() {
     {
       colStart: 88,
       colEnd: 100,
-      rowStart: 58,
-      rowEnd: 62,
+      rowStart: 66,
+      rowEnd: 70,
     },
     (layers) => of(layers),
     () => {
