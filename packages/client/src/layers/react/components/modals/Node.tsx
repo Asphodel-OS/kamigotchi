@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
@@ -160,10 +160,23 @@ export function registerNodeModal() {
       },
       data,
     }) => {
-      // hide this component if merchant.index == 0
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
+      /////////////////
+      // TICKING
+
+      function refreshClock() {
+        setLastRefresh(Date.now());
+      }
+
+      useEffect(() => {
+        const timerId = setInterval(refreshClock, 1000);
+        return function cleanup() {
+          clearInterval(timerId);
+        };
+      }, []);
+
       ///////////////////
       // ACTIONS
-      console.log(data);
 
       // collects on an existing production
       const collect = (production: Production) => {
@@ -210,6 +223,51 @@ export function registerNodeModal() {
         });
       };
 
+      /////////////////
+      // DATA INTERPRETATION
+
+      // get the production rate of the kami, only based on power right now (KAMI/hr)
+      const calcProductionRate = (kami: Kami) => {
+        let rate = 0;
+        if (kami.production && kami.production.state === 'ACTIVE') {
+          rate = kami.stats!.power;
+        }
+        return rate;
+      };
+
+      // calculate health based on the drain against last confirmed health
+      const calcHealth = (kami: Kami) => {
+        // calculate the health drain on the kami since the last health update
+        let duration = lastRefresh / 1000 - kami.lastUpdated;
+        let drainRate = calcProductionRate(kami) / 3600 / 2;
+        let healthDrain = drainRate * duration;
+
+        return Math.max(kami.health - healthDrain, 0);
+      };
+
+      // calculate the expected output from a pet production based on starttime
+      // set to N/A if dead
+      const calcOutput = (kami: Kami) => {
+        if (isHarvesting(kami) && !isDead(kami)) {
+          let duration = lastRefresh / 1000 - kami.production!.startTime;
+          let output = Math.round(duration * calcProductionRate(kami) / 3600);
+          return Math.max(output, 0);
+        }
+        return 0;
+      };
+
+      // naive check right now, needs to be updated with murder check as well
+      const isDead = (kami: Kami) => {
+        return calcHealth(kami) == 0;
+      };
+
+      // check whether the kami is currently harvesting
+      // TODO: replace this with a general state check
+      const isHarvesting = (kami: Kami): boolean => {
+        return kami.production && kami.production.state === 'ACTIVE';
+      };
+
+
       ///////////////////
       // DISPLAY
 
@@ -240,23 +298,21 @@ export function registerNodeModal() {
         />
       );
 
-      const isHarvesting = (kami: any): boolean => {
-        return kami.production && kami.production.state === 'ACTIVE';
-      };
-
       // rendering of my kami on this node
       // NOTE: the smart contract does not currently gate multiple kamis being
       // on the same node. The above data population just grabs the first one.
       const MyKami = (kami: Kami) => {
-        // no need to add a collect button just yet (single action should be easier)
-        const description = () => {
-          const description = [];
-          description.push(`${parseInt(kami.health)}/${parseInt(kami.health)}`);
-          description.push(`Violence: 42`);
-          description.push(`$KAMI: ${5000} (${5}/hr)`);
+        const currHealth = calcHealth(kami).toFixed(0);
+        const output = calcOutput(kami).toFixed(0);
+        const rate = calcProductionRate(kami);
+        console.log(currHealth, output, rate);
 
-          return description;
-        };
+        const description = [
+          '',
+          `${currHealth}/${kami.stats!.health * 1}`, // multiply by 1 to interpret hex
+          `Violence: ${kami.stats!.violence * 1}`,
+          `$KAMI: ${output} (${rate}/hr)`,
+        ];
 
         return (
           <KamiCard
@@ -266,7 +322,7 @@ export function registerNodeModal() {
             subtext={'you'}
             action={[CollectButton(kami), StopButton(kami)]}
             cornerContent={<Battery percentage={100} />}
-            description={description()}
+            description={description}
           />
         );
       };

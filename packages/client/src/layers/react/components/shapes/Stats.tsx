@@ -11,9 +11,9 @@ import { Layers } from 'src/types';
 export interface Stats {
   health: number;
   power: number;
-  violence?: number;
-  harmony?: number;
-  slots?: number;
+  violence: number;
+  harmony: number;
+  slots: number;
 }
 
 // get the stats of an entity
