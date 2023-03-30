@@ -15,9 +15,13 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 import { Node, getNode } from 'layers/react/components/shapes/Node';
-import { Production, getProduction } from 'layers/react/components/shapes/Production';
+import {
+  Production,
+  getProduction,
+} from 'layers/react/components/shapes/Production';
 import { KamiCard } from '../library/KamiCard';
-import Battery from '../library/Battery';
+import { BatteryComponent } from '../library/Battery';
+import { NodeInfo } from '../library/NodeContainer';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerNodeModal() {
@@ -72,13 +76,16 @@ export function registerNodeModal() {
           const accountIndex = Array.from(
             runQuery([
               Has(IsAccount),
-              HasValue(OperatorAddress, { value: network.connectedAddress.get() }),
+              HasValue(OperatorAddress, {
+                value: network.connectedAddress.get(),
+              }),
             ])
           )[0];
 
-          const account = (accountIndex !== undefined)
-            ? getAccount(layers, accountIndex)
-            : {} as Account;
+          const account =
+            accountIndex !== undefined
+              ? getAccount(layers, accountIndex)
+              : ({} as Account);
 
           // get the node through the location of the linked account
           const nodeIndex = Array.from(
@@ -88,11 +95,8 @@ export function registerNodeModal() {
             ])
           )[0];
 
-          const node = (nodeIndex !== undefined)
-            ? getNode(layers, nodeIndex)
-            : {} as Node;
-
-
+          const node =
+            nodeIndex !== undefined ? getNode(layers, nodeIndex) : ({} as Node);
 
           /////////////////
           // DEPENDENT DATA
@@ -101,19 +105,17 @@ export function registerNodeModal() {
           let accountKamis: Kami[] = [];
           if (account && node) {
             const accountKamiIndices = Array.from(
-              runQuery([
-                Has(IsPet),
-                HasValue(AccountID, { value: account.id }),
-              ])
+              runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
             );
 
             // get all kamis on the node
             for (let i = 0; i < accountKamiIndices.length; i++) {
-              accountKamis.push(getKami(
-                layers,
-                accountKamiIndices[i],
-                { production: true, stats: true },
-              ));
+              accountKamis.push(
+                getKami(layers, accountKamiIndices[i], {
+                  production: true,
+                  stats: true,
+                })
+              );
             }
 
             // filter by the kamis with active productions on the current node
@@ -134,14 +136,15 @@ export function registerNodeModal() {
           if (node) {
             // populate the account Kamis
             const nodeProductionIndices = Array.from(
-              runQuery([Has(IsProduction), HasValue(NodeID, { value: node.id })])
+              runQuery([
+                Has(IsProduction),
+                HasValue(NodeID, { value: node.id }),
+              ])
             );
             for (let i = 0; i < nodeProductionIndices.length; i++) {
-              nodeProductions.push(getProduction(
-                layers,
-                nodeProductionIndices[i],
-                { kami: true },
-              ));
+              nodeProductions.push(
+                getProduction(layers, nodeProductionIndices[i], { kami: true })
+              );
             }
           }
 
@@ -158,15 +161,8 @@ export function registerNodeModal() {
     },
 
     // Render
-    ({
-      actions,
-      api,
-      data: {
-        account: { kamis },
-        node,
-      },
-      data,
-    }) => {
+    ({ actions, api, data: { account: kamis, node } }) => {
+      console.log(node.productions, 'data');
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       /////////////////
       // TICKING
@@ -238,7 +234,7 @@ export function registerNodeModal() {
       // this is based on a hardcoded value for the time being
       const calcDrainRate = (kami: Kami) => {
         return calcProductionRate(kami) / 2.0;
-      }
+      };
 
       // get emission rate of the Kami's production. measured in (KAMI/s)
       const calcProductionRate = (kami: Kami) => {
@@ -247,7 +243,7 @@ export function registerNodeModal() {
           rate = kami.production!.rate / RATE_PRECISION;
         }
         return rate;
-      }
+      };
 
       // calculate health based on the drain against last confirmed health
       const calcHealth = (kami: Kami) => {
@@ -261,7 +257,7 @@ export function registerNodeModal() {
           health -= healthDrain;
         }
         return Math.max(health, 0);
-      }
+      };
 
       // calculate the expected output from a pet production based on starttime
       // set to N/A if dead
@@ -272,7 +268,7 @@ export function registerNodeModal() {
           output = Math.round(duration * calcProductionRate(kami));
         }
         return Math.max(output, 0);
-      }
+      };
 
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami) => {
@@ -319,6 +315,11 @@ export function registerNodeModal() {
         />
       );
 
+      function calculateHealthPercentage(currentHP: number, maxHP: number) {
+        const percentage = (currentHP / maxHP) * 100;
+        return +percentage.toFixed(2);
+      }
+
       // rendering of my kami on this node
       // NOTE: the smart contract does not currently gate multiple kamis being
       // on the same node. The above data population just grabs the first one.
@@ -332,6 +333,10 @@ export function registerNodeModal() {
           `Violence: ${kami.stats!.violence * 1}`,
           `$KAMI: ${calcOutput(kami)} (${harvestRate.toFixed(1)}/hr)`,
         ];
+        const healthPercentage = calculateHealthPercentage(
+          +health.toFixed(1),
+          kami.stats!.health * 1
+        );
 
         return (
           <KamiCard
@@ -340,7 +345,7 @@ export function registerNodeModal() {
             image={kami.uri}
             subtext={'yours'}
             action={[CollectButton(kami), StopButton(kami)]}
-            cornerContent={<Battery percentage={100} />}
+            cornerContent={<BatteryComponent level={healthPercentage} />}
             description={description}
           />
         );
@@ -349,21 +354,55 @@ export function registerNodeModal() {
       // the rendering of all the enemy kamis on this node
       // may be easier/better to pass in the list of Productions instead
       const EnemyProductions = (productions: Production[]) => {
-        // @DV implement me
-      };
+        return productions.map((production: Production) => {
+          if (production.kami) {
+            const health = calcHealth(production.kami);
+            const harvestRate = calcProductionRate(production.kami) * 3600;
 
-      // rendering will depend on whether a node is present in the room
-      const NodeInfo = (node: Node) => {
-        // @DV implement me
-        return (<p>{node?.name}</p>);
+            const description = [
+              '',
+              `Health: ${health.toFixed(1)}/${
+                production.kami.stats!.health * 1
+              }`, // multiply by 1 to interpret hex
+              `Violence: ${production.kami.stats!.violence * 1}`,
+              `$KAMI: ${calcOutput(production.kami)} (${harvestRate.toFixed(
+                1
+              )}/hr)`,
+            ];
+            const healthPercentage = calculateHealthPercentage(
+              +health.toFixed(1),
+              production.kami.stats!.health * 1
+            );
+
+            return (
+              <KamiCard
+                key={production.kami.id}
+                title={production.kami.name}
+                image={production.kami.uri}
+                subtext={production.kami.account!.name}
+                action={LiquidateButton(production, production.kami)}
+                cornerContent={<BatteryComponent level={healthPercentage} />}
+                description={description}
+              />
+            );
+          } else {
+            return null;
+          }
+        });
       };
 
       return (
         <ModalWrapperFull id="node" divName="node">
-          {NodeInfo(data.node)}
-          {data.account.kamis.map((kami: Kami) => MyKami(kami))}
+          {node.name && <NodeInfo node={node} />}
+          {kamis.kamis.length > 0 &&
+            kamis.kamis.map((kami: Kami) => MyKami(kami))}
           <Underline />
-          <Scrollable></Scrollable>
+          <Scrollable>
+            <WrappedEnemyProductions>
+              {node.productions.length > 0 &&
+                EnemyProductions(node.productions)}
+            </WrappedEnemyProductions>
+          </Scrollable>
         </ModalWrapperFull>
       );
     }
@@ -381,4 +420,9 @@ const Underline = styled.div`
   margin: 0 auto;
   border-bottom: 2px solid silver;
   font-weight: bold;
+`;
+
+const WrappedEnemyProductions = styled.div`
+  display: 'flex';
+  flex-direction: column;
 `;
