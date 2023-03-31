@@ -22,7 +22,7 @@ export interface Kami {
   lastUpdated: number;
   account?: Account;
   production?: Production;
-  stats?: Stats;
+  stats: Stats;
   // traits?: Traits;
 }
 
@@ -30,7 +30,6 @@ export interface Kami {
 export interface KamiOptions {
   account?: boolean;
   production?: boolean;
-  stats?: boolean;
   traits?: boolean;
 }
 
@@ -64,6 +63,7 @@ export const getKami = (
     uri: getComponentValue(MediaURI, index)?.value as string,
     health: getComponentValue(HealthCurrent, index)?.value as number,
     lastUpdated: getComponentValue(LastActionTime, index)?.value as number,
+    stats: getStats(layers, index),
   };
 
   /////////////////
@@ -85,12 +85,6 @@ export const getKami = (
     )[0];
     if (productionIndex)
       kami.production = getProduction(layers, productionIndex, { node: true });
-  }
-
-  // populate Kami Stats
-  if (options.stats) {
-    const stats = getStats(layers, index);
-    kami.stats = stats;
   }
 
   return kami;

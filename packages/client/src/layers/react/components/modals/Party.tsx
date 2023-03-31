@@ -3,7 +3,6 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
   EntityID,
-  EntityIndex,
   Has,
   HasValue,
   getComponentValue,
@@ -23,18 +22,6 @@ import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
 
-const ItemImages = new Map([
-  [1, gum],
-  [2, pompom],
-  [3, gakki],
-]);
-
-const ItemNames = new Map([
-  [1, 'Gum'],
-  [2, 'Pompom'],
-  [3, 'Gakki'],
-]);
-
 export function registerPartyModal() {
   registerUIComponent(
     'PetList',
@@ -49,32 +36,23 @@ export function registerPartyModal() {
     (layers) => {
       const {
         network: {
-          world,
           api: { player },
           network,
           components: {
             AccountID,
             Balance,
-            Health,
             HealthCurrent,
             Coin,
-            Power,
             HolderID,
             IsAccount,
             IsInventory,
             IsNode,
-            IsProduction,
             IsPet,
             ItemIndex,
-            LastActionTime,
             Location,
             MediaURI,
-            Name,
-            NodeID,
             OperatorAddress,
             OwnerID,
-            PetID,
-            PetIndex,
             Rate,
             State,
             StartTime,
@@ -117,8 +95,8 @@ export function registerPartyModal() {
         Location.update$,
         OwnerID.update$,
         Rate.update$,
-        State.update$,
         StartTime.update$,
+        State.update$,
         MediaURI.update$
       ).pipe(
         map(() => {
@@ -135,10 +113,9 @@ export function registerPartyModal() {
             ])
           )[0];
 
-          const account =
-            accountIndex !== undefined
-              ? getAccount(layers, accountIndex)
-              : ({} as Account);
+          const account = (accountIndex !== undefined)
+            ? getAccount(layers, accountIndex)
+            : {} as Account;
 
           // get the node through the location of the linked account
           const nodeIndex = Array.from(
@@ -148,8 +125,9 @@ export function registerPartyModal() {
             ])
           )[0];
 
-          const node =
-            nodeIndex !== undefined ? getNode(layers, nodeIndex) : ({} as Node);
+          const node = (nodeIndex !== undefined)
+            ? getNode(layers, nodeIndex)
+            : {} as Node;
 
           // get the list of inventory indices for this account
           const inventoryResults = Array.from(
@@ -170,12 +148,7 @@ export function registerPartyModal() {
 
             // get all kamis on the node
             for (let i = 0; i < kamiIndices.length; i++) {
-              kamis.push(
-                getKami(layers, kamiIndices[i], {
-                  production: true,
-                  stats: true,
-                })
-              );
+              kamis.push(getKami(layers, kamiIndices[i], { production: true }));
             }
 
             // (hardcoded structures) populate inventory balances
@@ -349,7 +322,7 @@ export function registerPartyModal() {
       // get the title of the kami as 'name (health / totHealth)'
       const getTitle = (kami: Kami) => {
         const health = calcHealth(kami);
-        return kami.name + ` (${health.toFixed()}/${kami.stats!.health * 1})`;
+        return kami.name + ` (${health.toFixed()}/${kami.stats.health * 1})`;
       };
 
       // get the description of the kami as a list of lines
