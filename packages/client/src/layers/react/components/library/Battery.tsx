@@ -19,7 +19,7 @@ const Battery = styled.div`
   &:before {
     content: '';
     height: 3px;
-    width: 18px;
+    width: 10px;
     background: #333;
     display: block;
     position: absolute;

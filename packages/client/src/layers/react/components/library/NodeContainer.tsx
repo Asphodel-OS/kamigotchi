@@ -15,14 +15,12 @@ const NodeInfoContainer = styled.div`
   display: flex;
   align-items: center;
   color: black;
-  margin: 10px;
-  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 
   img {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     margin-right: 20px;
   }
@@ -33,17 +31,17 @@ const NodeInfoContainer = styled.div`
 
     p {
       margin: 0;
-      font-size: 18px;
+      font-size: 28px;
       font-weight: bold;
     }
 
     .text1 {
-      font-size: 16px;
+      font-size: 18px;
       margin-top: 10px;
     }
 
     .text2 {
-      font-size: 14px;
+      font-size: 16px;
       margin-top: 5px;
     }
   }

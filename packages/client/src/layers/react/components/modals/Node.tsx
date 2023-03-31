@@ -23,7 +23,6 @@ import { KamiCard } from '../library/KamiCard';
 import { BatteryComponent } from '../library/Battery';
 import { NodeInfo } from '../library/NodeContainer';
 
-
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerNodeModal() {
   registerUIComponent(
@@ -86,9 +85,10 @@ export function registerNodeModal() {
             ])
           )[0];
 
-          const account = (accountIndex !== undefined)
-            ? getAccount(layers, accountIndex)
-            : {} as Account;
+          const account =
+            accountIndex !== undefined
+              ? getAccount(layers, accountIndex)
+              : ({} as Account);
 
           // get the node through the location of the linked account
           const nodeIndex = Array.from(
@@ -98,9 +98,8 @@ export function registerNodeModal() {
             ])
           )[0];
 
-          const node = (nodeIndex !== undefined)
-            ? getNode(layers, nodeIndex)
-            : {} as Node;
+          const node =
+            nodeIndex !== undefined ? getNode(layers, nodeIndex) : ({} as Node);
 
           /////////////////
           // DEPENDENT DATA
@@ -148,9 +147,12 @@ export function registerNodeModal() {
               const productionIndex = nodeProductionIndices[i];
 
               // kami:production is 1:1, so we're guaranteed to find one here
-              const kamiID = getComponentValue(PetID, productionIndex)?.value as EntityID;
+              const kamiID = getComponentValue(PetID, productionIndex)
+                ?.value as EntityID;
               const kamiIndex = world.entityToIndex.get(kamiID);
-              nodeKamis.push(getKami(layers, kamiIndex!, { account: true, production: true }));
+              nodeKamis.push(
+                getKami(layers, kamiIndex!, { account: true, production: true })
+              );
             }
           }
 
@@ -245,7 +247,9 @@ export function registerNodeModal() {
       // this is based on a hardcoded value for the time being
       const calcDrainRate = (kami: Kami, precision?: number) => {
         const drainRate = calcProductionRate(kami) / 2.0;
-        return (precision == undefined) ? drainRate : roundTo(drainRate, precision);
+        return precision == undefined
+          ? drainRate
+          : roundTo(drainRate, precision);
       };
 
       // get emission rate of the Kami's production. measured in (KAMI/s)
@@ -254,7 +258,7 @@ export function registerNodeModal() {
         if (isHarvesting(kami)) {
           rate = kami.production!.rate / RATE_PRECISION;
         }
-        return (precision == undefined) ? rate : roundTo(rate, precision);
+        return precision == undefined ? rate : roundTo(rate, precision);
       };
 
       // calculate health based on the drain against last confirmed health
@@ -267,7 +271,7 @@ export function registerNodeModal() {
           health -= healthDrain;
         }
         health = Math.max(health, 0);
-        return (precision == undefined) ? health : roundTo(health, precision);
+        return precision == undefined ? health : roundTo(health, precision);
       };
 
       // calculate the expected output from a pet production based on starttime
@@ -278,13 +282,15 @@ export function registerNodeModal() {
           let duration = lastRefresh / 1000 - kami.production!.startTime;
           output = Math.round(duration * calcProductionRate(kami));
         }
-        return (precision == undefined) ? output : roundTo(output, precision);
+        return precision == undefined ? output : roundTo(output, precision);
       };
 
       const calcHealthPercent = (kami: Kami, precision?: number) => {
         let healthPercent = 0;
         healthPercent = calcHealth(kami) / kami.stats.health;
-        return (precision == undefined) ? healthPercent : roundTo(healthPercent, precision);
+        return precision == undefined
+          ? healthPercent
+          : roundTo(healthPercent, precision);
       };
 
       // naive check right now, needs to be updated with murder check as well
@@ -330,7 +336,7 @@ export function registerNodeModal() {
       const MyKamiCard = (kami: Kami) => {
         const health = calcHealth(kami, 0);
         const harvestRate = roundTo(calcProductionRate(kami) * 3600, 1);
-        const healthPercent = Math.round(health / kami.stats.health * 100);
+        const healthPercent = Math.round((health / kami.stats.health) * 100);
         console.log(health);
 
         const description = [
@@ -357,7 +363,7 @@ export function registerNodeModal() {
       const EnemyKamiCard = (kami: Kami, myKami: Kami) => {
         const health = calcHealth(kami, 0);
         const harvestRate = roundTo(calcProductionRate(kami) * 3600, 1);
-        const healthPercent = Math.round(health / kami.stats.health * 100);
+        const healthPercent = Math.round((health / kami.stats.health) * 100);
         console.log(health);
 
         const description = [
@@ -383,21 +389,21 @@ export function registerNodeModal() {
       // the rendering of all the enemy kamis on this node
       // may be easier/better to pass in the list of Productions instead
       const EnemyProductions = (kamis: Kami[], myKami: Kami) => {
-        return kamis.map((kami: Kami) =>
-          EnemyKamiCard(kami, myKami)
-        );
+        return kamis.map((kami: Kami) => EnemyKamiCard(kami, myKami));
       };
 
       if (data.node.id) {
         return (
           <ModalWrapperFull id="node" divName="node" fill={true}>
             {<NodeInfo node={data.node} />}
-            {data.account.kamis.map((kami: Kami) => MyKamiCard(kami))}
+            <WrappedKamis>
+              {data.account.kamis.map((kami: Kami) => MyKamiCard(kami))}
+            </WrappedKamis>
             <Underline />
             <Scrollable>
-              <WrappedEnemyProductions>
+              <WrappedKamis>
                 {EnemyProductions(data.node.kamis, data.account.kamis[0])}
-              </WrappedEnemyProductions>
+              </WrappedKamis>
             </Scrollable>
           </ModalWrapperFull>
         );
@@ -407,7 +413,7 @@ export function registerNodeModal() {
             <Underline />
             there are no kami here
           </ModalWrapperFull>
-        )
+        );
       }
     }
   );
@@ -419,14 +425,14 @@ const Scrollable = styled.div`
 `;
 
 const Underline = styled.div`
-  width: 80%;
-  margin-top: 5%;
-  margin: 0 auto;
+  width: 90%;
+  margin: 3% auto;
   border-bottom: 2px solid silver;
   font-weight: bold;
 `;
 
-const WrappedEnemyProductions = styled.div`
+const WrappedKamis = styled.div`
   display: 'flex';
   flex-direction: column;
+  margin: 10px;
 `;
