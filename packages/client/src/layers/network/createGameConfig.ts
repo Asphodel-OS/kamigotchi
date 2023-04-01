@@ -36,10 +36,11 @@ export function createGameConfigLocal(params: URLSearchParams): GameConfig {
     wallet = (detectedPrivateKey)
       ? new Wallet(detectedPrivateKey)
       : Wallet.createRandom();
+
+    localStorage.setItem('burnerPrivateKey', wallet.privateKey);
+    localStorage.setItem('burnerAddress', wallet.publicKey);
   }
 
-  localStorage.setItem('burnerPrivateKey', wallet.privateKey);
-  localStorage.setItem('burnerAddress', wallet.publicKey);
   config.privateKey = wallet.privateKey;
 
   // RPCs

@@ -154,6 +154,16 @@ export function registerNodeModal() {
                 getKami(layers, kamiIndex!, { account: true, production: true })
               );
             }
+
+            // filter out accountKamis and inactive productions 
+            if (nodeKamis) {
+              const activeEnemies = nodeKamis.filter((kami) => {
+                if (kami.production && kami.production.state === 'ACTIVE') {
+                  return kami.account!.id !== account.id
+                }
+              });
+              nodeKamis = activeEnemies;
+            }
           }
 
           return {
