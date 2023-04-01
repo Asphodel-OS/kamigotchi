@@ -181,7 +181,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data }) => {
-      // console.log(data);
+      console.log('PartyM: data', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       /////////////////
       // TICKING
@@ -246,7 +246,7 @@ export function registerPartyModal() {
       };
 
       // feed pet, no inventory check
-      const feed = (petID: EntityID, food: number) => {
+      const feed = (petID: EntityID, foodIndex: number) => {
         const actionID = `Feeding Kami` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
@@ -255,7 +255,7 @@ export function registerPartyModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.food.feed(petID, food);
+            return api.food.feed(petID, foodIndex);
           },
         });
       };
@@ -370,15 +370,17 @@ export function registerPartyModal() {
         });
       };
 
-      const CollectButton = (kami: any) => (
+      // we're able to force the production attribute as we will only show this 
+      // button if the kami is harvesting
+      const CollectButton = (kami: Kami) => (
         <ActionButton
           id={`harvest-collect`}
-          onClick={() => reapProduction(kami.production.id)}
+          onClick={() => reapProduction(kami.production!.id)}
           text="Collect"
         />
       );
 
-      const FeedButton = (kami: any, foodIndex: number) => (
+      const FeedButton = (kami: Kami, foodIndex: number) => (
         <ActionButton
           id={`feed-${foodIndex}`}
           onClick={() => feed(kami.id, foodIndex)}
@@ -386,7 +388,7 @@ export function registerPartyModal() {
         />
       );
 
-      const StartButton = (kami: any) => (
+      const StartButton = (kami: Kami) => (
         <ActionButton
           id={`harvest-start`}
           onClick={() => startProduction(kami.id)}
@@ -394,20 +396,22 @@ export function registerPartyModal() {
         />
       );
 
-      const StopButton = (kami: any) => (
+      // we're able to force the production attribute as we will only show this 
+      // button if the kami is harvesting
+      const StopButton = (kami: Kami) => (
         <ActionButton
           id={`harvest-stop`}
-          onClick={() => stopProduction(kami.production.id)}
+          onClick={() => stopProduction(kami.production!.id)}
           text="Stop"
         />
       );
 
-      const KamiCards = (kamis: any[]) => {
+      const KamiCards = (kamis: Kami[]) => {
         return kamis.map((kami) => {
           const title = getTitle(kami);
           const description = getDescription(kami);
           const action = isHarvesting(kami)
-            ? StopButton(kami)
+            ? CollectButton(kami)
             : StartButton(kami);
 
           return (
@@ -415,9 +419,9 @@ export function registerPartyModal() {
               key={kami.id}
               title={title}
               image={kami.uri}
-              subtext={`+${calcOutput(kami)} $KAMI`}
+              subtext={`${calcOutput(kami)} $KAMI`}
               action={action}
-              cornerContent={FeedButton(kami, 1)}
+              cornerContent={FeedButton(kami, 2)}
               description={description}
             />
           );
@@ -428,7 +432,7 @@ export function registerPartyModal() {
         <ModalWrapperFull id="party_modal" divName="party" fill={true}>
           <TopGrid>
             <TopDescription>
-              Bytes: {data.account.bytes ? data.account.bytes * 1 : '0'}
+              $KAMI: {data.account.coin ? data.account.coin * 1 : '0'}
             </TopDescription>
           </TopGrid>
           <ConsumableGrid>
