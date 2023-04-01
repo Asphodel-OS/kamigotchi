@@ -5,10 +5,12 @@ import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.s
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
+import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 import { Gaussian } from "solstat/Gaussian.sol";
 
-import { IdAccountComponent, ID as IdOpCompID } from "components/IdAccountComponent.sol";
+import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IdOwnerComponent, ID as IdOwnerCompID } from "components/IdOwnerComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
@@ -115,6 +117,18 @@ library LibPet {
       setCurrHealth(components, id, health);
     }
     setLastTs(components, id, block.timestamp);
+  }
+
+  // transfer ERC721 pet
+  // NOTE: it doesnt seem we actually need IdOwner directly on the pet as it can be
+  // directly accessed through the account entity.
+  function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
+    // does not need to check for previous owner, ERC721 handles it
+    uint256 id = indexToID(components, index);
+    uint256 ownerID = getOwner(components, accountID);
+
+    setOwner(components, id, ownerID);
+    setAccount(components, id, accountID);
   }
 
   /////////////////
@@ -276,7 +290,7 @@ library LibPet {
   }
 
   function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
-    IdAccountComponent(getAddressById(components, IdOpCompID)).set(id, accountID);
+    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
   }
 
   function setOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
@@ -308,7 +322,7 @@ library LibPet {
 
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddressById(components, IdOpCompID)).getValue(id);
+    return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
   }
 
   // get the entity ID of the pet owner
@@ -338,19 +352,20 @@ library LibPet {
     return IndexPetComponent(getAddressById(components, IndexPetComponentID)).getValue(entityID);
   }
 
-  /////////////////
-  // ERC721
+  // gets all the pets owned by an account
+  function getAllForAccount(
+    IUintComp components,
+    uint256 accountID
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdAccCompID),
+      abi.encode(accountID)
+    );
 
-  // transfer ERC721 pet
-  // NOTE: it doesnt seem we actually need IdOwner directly on the pet as it can be
-  // directly accessed through the account entity.
-  function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
-    // does not need to check for previous owner, ERC721 handles it
-    uint256 id = indexToID(components, index);
-    uint256 ownerID = getOwner(components, accountID);
-
-    setOwner(components, id, ownerID);
-    setAccount(components, id, accountID);
+    return LibQuery.query(fragments);
   }
 
   /////////////////
