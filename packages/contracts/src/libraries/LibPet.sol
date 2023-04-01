@@ -12,26 +12,29 @@ import { IdAccountComponent, ID as IdOpCompID } from "components/IdAccountCompon
 import { IdOwnerComponent, ID as IdOwnerCompID } from "components/IdOwnerComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
-import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
+import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-uint256 constant BASE_HARMONY = 0;
+uint256 constant BASE_HARMONY = 10;
 uint256 constant BASE_HEALTH = 150;
 uint256 constant BASE_POWER = 150;
 uint256 constant BASE_SLOTS = 0;
-uint256 constant BASE_VIOLENCE = 0;
+uint256 constant BASE_VIOLENCE = 10;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
 uint256 constant DEMO_POWER_MULTIPLIER = 20;
+uint256 constant DEMO_VIOLENCE_MULTIPLIER = 5;
 
 library LibPet {
   using LibFPMath for int256;
@@ -61,13 +64,6 @@ library LibPet {
     setMediaURI(components, id, uri);
     setLastTs(components, id, block.timestamp);
     revive(components, id);
-
-    // set initial stats at 0 to prevent null values
-    LibStat.setHarmony(components, id, BASE_HARMONY);
-    LibStat.setHealth(components, id, BASE_HEALTH);
-    LibStat.setPower(components, id, BASE_POWER);
-    LibStat.setSlots(components, id, BASE_SLOTS);
-    LibStat.setViolence(components, id, BASE_VIOLENCE);
     return id;
   }
 
@@ -246,12 +242,20 @@ library LibPet {
   // set a pet's stats from its traits
   // TODO: actually set stats from traits. hardcoded currently
   function setStats(IUintComp components, uint256 id) internal {
-    uint256 power = BASE_POWER * DEMO_POWER_MULTIPLIER;
-    PowerComponent(getAddressById(components, PowerCompID)).set(id, power);
+    uint256 power = _smolRandom(BASE_POWER * DEMO_POWER_MULTIPLIER, id);
+    LibStat.setPower(components, id, power);
+
+    uint256 violence = _smolRandom(BASE_VIOLENCE * DEMO_VIOLENCE_MULTIPLIER, id);
+    LibStat.setViolence(components, id, violence);
+
+    uint256 harmony = _smolRandom(BASE_HARMONY, id);
+    LibStat.setHarmony(components, id, harmony);
 
     uint256 totalHealth = _smolRandom(BASE_HEALTH, id);
-    HealthComponent(getAddressById(components, HealthCompID)).set(id, totalHealth);
-    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, totalHealth);
+    LibStat.setHealth(components, id, totalHealth);
+    setCurrHealth(components, id, totalHealth);
+
+    LibStat.setSlots(components, id, BASE_SLOTS);
   }
 
   function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
