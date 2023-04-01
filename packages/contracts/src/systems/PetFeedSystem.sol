@@ -8,6 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Feed"));
 
@@ -18,17 +19,23 @@ contract PetFeedSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (uint256 petID, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
-    uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
 
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(inventoryID != 0, "Inventory: no food");
+
+    uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
+    require(registryID != 0, "RegistryItem: no such food");
+
     require(LibPet.syncHealth(components, petID) != 0, "Pet: is dead (pls revive)");
 
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
+    require(inventoryID != 0, "Inventory: no bitches, no food");
+
     LibInventory.dec(components, inventoryID, 1); // inherent check for insufficient balance
-    LibPet.feed(components, petID, foodIndex);
-    // LibAccount.updateLastBlock(components, accountID); // gas limit :|
+
+    uint256 healAmt = LibStat.getHealth(components, registryID);
+    LibPet.heal(components, petID, healAmt);
+    LibAccount.updateLastBlock(components, accountID); // gas limit :|
     return "";
   }
 

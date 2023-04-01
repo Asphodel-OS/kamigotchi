@@ -215,6 +215,7 @@
       "name": "PetFeedSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BlockLastComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent"
       ]
