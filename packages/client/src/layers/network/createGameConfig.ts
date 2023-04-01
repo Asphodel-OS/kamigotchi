@@ -26,9 +26,17 @@ export function createGameConfigLocal(params: URLSearchParams): GameConfig {
   config.devMode = true;
 
   // EOAs
-  const wallet = new Wallet(
-    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-  ); // owner wallet
+  let wallet;
+  if (params.get('admin') !== 'false') {
+    wallet = new Wallet(
+      '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+    );
+  } else {
+    const detectedPrivateKey = localStorage.getItem('burnerPrivateKey');
+    wallet = (detectedPrivateKey)
+      ? new Wallet(detectedPrivateKey)
+      : Wallet.createRandom();
+  }
 
   localStorage.setItem('burnerPrivateKey', wallet.privateKey);
   localStorage.setItem('burnerAddress', wallet.publicKey);
