@@ -22,7 +22,9 @@ contract _RegistryCreateFoodSystem is System {
 
     require(registryID == 0, "Item Registry: Food index already exists");
 
-    LibRegistryItem.createFood(world, components, index, name, health);
+    LibRegistryItem.createFood(world, components, index);
+    LibRegistryItem.setFood(components, index, name, health);
+
     return "";
   }
 

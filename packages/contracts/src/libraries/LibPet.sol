@@ -91,9 +91,9 @@ library LibPet {
   function heal(IUintComp components, uint256 id, uint256 amt) internal {
     uint256 totalHealth = calcTotalHealth(components, id);
     uint256 health = getCurrHealth(components, id);
-    uint256 newHealth = health + amt;
-    if (newHealth > totalHealth) newHealth = totalHealth;
-    setCurrHealth(components, id, newHealth);
+    health += amt;
+    if (health > totalHealth) health = totalHealth;
+    setCurrHealth(components, id, health);
   }
 
   // Update a pet's health to 0 and its state to DEAD

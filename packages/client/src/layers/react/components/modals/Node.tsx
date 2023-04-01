@@ -170,7 +170,7 @@ export function registerNodeModal() {
 
     // Render
     ({ actions, api, data }) => {
-      console.log('data', data);
+      // console.log('data', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       /////////////////
       // TICKING
@@ -337,7 +337,6 @@ export function registerNodeModal() {
         const health = calcHealth(kami, 0);
         const harvestRate = roundTo(calcProductionRate(kami) * 3600, 1);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
-        console.log(health);
 
         const description = [
           '',
@@ -364,7 +363,6 @@ export function registerNodeModal() {
         const health = calcHealth(kami, 0);
         const harvestRate = roundTo(calcProductionRate(kami) * 3600, 1);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
-        console.log(health);
 
         const description = [
           '',

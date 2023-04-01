@@ -40,9 +40,7 @@ library LibRegistryItem {
   function createFood(
     IWorld world,
     IUintComp components,
-    uint256 foodIndex,
-    string memory name,
-    uint256 health
+    uint256 foodIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 itemIndex = getItemCount(components) + 1;
@@ -50,9 +48,6 @@ library LibRegistryItem {
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
     setItemIndex(components, id, itemIndex);
     setFoodIndex(components, id, foodIndex);
-
-    uint256 gotID = setFood(components, foodIndex, name, health);
-    require(gotID == id, "LibRegistryItem.createFood(): entity ID mismatch"); // prevents duplicates
     return id;
   }
 
@@ -301,6 +296,8 @@ library LibRegistryItem {
   }
 
   // get the associated item registry entry of a given instance entity
+  // NOTE: the item instance will not have a [food, mod, gear]index, so unlikely anything
+  // below the first conditional path is useful.
   function getByInstance(
     IUintComp components,
     uint instanceID

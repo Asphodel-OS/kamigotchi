@@ -421,7 +421,7 @@ export function registerPartyModal() {
               image={kami.uri}
               subtext={`${calcOutput(kami)} $KAMI`}
               action={action}
-              cornerContent={FeedButton(kami, 2)}
+              cornerContent={FeedButton(kami, 1)}
               description={description}
             />
           );
