@@ -9,6 +9,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { gridRooms } from '../../../../constants';
+import { Map } from '../library/Map';
 
 const objectKeys = Object.keys(gridRooms);
 
@@ -147,11 +148,8 @@ export function registerMapModal() {
 
       return (
         <ModalWrapperFull id="world_map" divName="map">
-          <GridWrapper>
-            <LoadBearingDiv>X</LoadBearingDiv>
-            {RoomGrid}
-          </GridWrapper>
-          <ButtonWrapper style={{ marginRight: '8.5%' }}>
+          <Map highlightedRoom={`room${data.currentRoom}`} />
+          <ButtonWrapper style={{ marginRight: '8.3%' }}>
             {UpButton}
           </ButtonWrapper>
           <ButtonWrapper>
@@ -171,17 +169,6 @@ const ButtonWrapper = styled.div`
   padding-right: 5%;
 `;
 
-const GridWrapper = styled.div`
-  display: grid;
-  background-color: white;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  grid-gap: 4px;
-  padding: 8px;
-  width: 70%;
-  height: 80%;
-`;
-
 const Room = styled.div`
   width: 100%;
   height: 100%;
@@ -189,11 +176,4 @@ const Room = styled.div`
   border-radius: 4px;
   border: 2px solid black;
   transition: background-color 0.2s ease-in-out;
-`;
-
-const LoadBearingDiv = styled.button`
-  visibility: hidden;
-  padding: 10px;
-  font-size: 14px;
-  width: 10px;
 `;

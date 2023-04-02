@@ -1,13 +1,13 @@
 import { PhaserScene } from '../types';
 import { resizePicture } from '../utils/resizePicture';
-import room011image from 'assets/images/rooms/11_temple.png';
+import { room11 } from 'assets/images/rooms';
 
 const { scale } = resizePicture();
 
 export function room011() {
   return {
     preload: (scene: PhaserScene) => {
-      scene.load.image('room011', room011image);
+      scene.load.image('room011', room11);
     },
     create: (scene: PhaserScene) => {
       scene.add

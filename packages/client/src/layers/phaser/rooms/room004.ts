@@ -2,14 +2,14 @@ import { PhaserScene } from '../types';
 import { resizePicture } from '../utils/resizePicture';
 import { getVendMachineCoordinates } from '../utils/coordinates';
 import { triggerPetMintModal } from '../utils/triggerPetMintModal';
-import room004image from 'assets/images/rooms/4_vendnight.png';
+import { room4 } from 'assets/images/rooms';
 
 const { scale, diff } = resizePicture();
 
 export function room004() {
   return {
     preload: (scene: PhaserScene) => {
-      scene.load.image('room004', room004image);
+      scene.load.image('room004', room4);
     },
     create: (scene: PhaserScene) => {
       scene.add

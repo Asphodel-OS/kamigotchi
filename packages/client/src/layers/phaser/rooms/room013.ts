@@ -2,14 +2,14 @@ import { PhaserScene } from '../types';
 import { getGirlCoordinates } from '../utils/coordinates';
 import { resizePicture } from '../utils/resizePicture';
 import { triggerDialogueModal } from '../utils/triggerDialogueModal';
-import room013image from 'assets/images/rooms/13_giftshop.png';
+import { room13 } from 'assets/images/rooms';
 
 const { scale, diff } = resizePicture();
 
 export function room013() {
   return {
     preload: (scene: PhaserScene) => {
-      scene.load.image('room013', room013image);
+      scene.load.image('room013', room13);
     },
     create: (scene: PhaserScene) => {
       scene.add
