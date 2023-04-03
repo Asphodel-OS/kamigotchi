@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import {
   room1,
@@ -30,7 +30,6 @@ interface LocationImageProps {
 }
 
 const LocationImage = styled.img<LocationImageProps>`
-  position: relative;
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -40,7 +39,7 @@ const LocationImage = styled.img<LocationImageProps>`
 
 interface RoomLocation {
   key: string;
-  room: ReturnType<typeof room1>;
+  room: string;
   position?: {
     top?: string;
     left?: string;
@@ -48,38 +47,145 @@ interface RoomLocation {
     bottom?: string;
   };
 }
+function createLine(
+  from: string,
+  to: string,
+  roomRefsObj: Record<string, HTMLDivElement> | any
+) {
+  const [fromRef, toRef] = [roomRefsObj.current[from], roomRefsObj.current[to]];
+
+  const line = document.createElement('div'); // Create a new div element to draw the line
+  line.style.position = 'absolute';
+  line.style.width = '3px';
+  line.style.height = '55px';
+  line.style.backgroundColor = 'black';
+  line.style.left = fromRef.offsetLeft + 17 + 'px'; // Position the line relative to the rooms
+  line.style.top = fromRef.offsetTop + 17 + 'px';
+  line.style.transformOrigin = 'top';
+  line.style.zIndex = '1';
+
+  const angle =
+    (Math.atan2(
+      toRef.offsetTop - fromRef.offsetTop,
+      toRef.offsetLeft - fromRef.offsetLeft
+    ) *
+      180) /
+      Math.PI -
+    90;
+  line.style.transform = `rotate(${angle}deg)`; // Rotate the line to point towards the destination room
+  roomRefsObj.current[from].parentNode?.appendChild(line); // Append the line to the parent node of the from room
+}
+
+// from -> to
+const roomConnections: string[][] = [
+  ['room2', 'room1'],
+  ['room3', 'room2'],
+  ['room13', 'room2'],
+  ['room4', 'room3'],
+  ['room12', 'room4'],
+  ['room4', 'room5'],
+  ['room5', 'room4'],
+  ['room6', 'room5'],
+  ['room9', 'room5'],
+  ['room9', 'room10'],
+  ['room11', 'room9'],
+  ['room7', 'room6'],
+  ['room8', 'room7'],
+  ['room14', 'room7'],
+];
 
 interface MapProps {
   highlightedRoom?: string;
 }
 
 const roomLocations: RoomLocation[] = [
-  { key: 'room8', room: room8, position: { right: '50px', top: '30px' } },
-  { key: 'room14', room: room14, position: { left: '50px', bottom: '5px' } },
-  { key: 'room7', room: room7, position: { top: '10px' } },
-  { key: 'room6', room: room6, position: { top: '30px' } },
-  { key: 'room11', room: room11, position: { bottom: '5px', right: '70px' } },
-  { key: 'room5', room: room5, position: { top: '15px' } },
-  { key: 'room9', room: room9, position: { bottom: '20px', right: '70px' } },
-  { key: 'room10', room: room10, position: { right: '70px' } },
-  { key: 'room4', room: room4, position: { top: '20px' } },
-  { key: 'room12', room: room12, position: { bottom: '15px', right: '70px' } },
+  {
+    key: 'room8',
+    room: room8,
+    position: { right: '50px', top: '30px' },
+  },
+  {
+    key: 'room14',
+    room: room14,
+    position: { left: '50px', bottom: '5px' },
+  },
+  {
+    key: 'room7',
+    room: room7,
+    position: { top: '10px' },
+  },
+  {
+    key: 'room6',
+    room: room6,
+    position: { top: '30px' },
+  },
+  {
+    key: 'room11',
+    room: room11,
+    position: { bottom: '5px', right: '70px' },
+  },
+  {
+    key: 'room5',
+    room: room5,
+    position: { top: '15px' },
+  },
+  {
+    key: 'room9',
+    room: room9,
+    position: { bottom: '20px', right: '70px' },
+  },
+  {
+    key: 'room10',
+    room: room10,
+    position: { right: '70px' },
+  },
+  {
+    key: 'room4',
+    room: room4,
+    position: { top: '20px' },
+  },
+  {
+    key: 'room12',
+    room: room12,
+    position: { bottom: '15px', right: '70px' },
+  },
   { key: 'room3', room: room3 },
-  { key: 'room2', room: room2, position: { top: '20px' } },
-  { key: 'room13', room: room13, position: { bottom: '15px', right: '70px' } },
+  {
+    key: 'room2',
+    room: room2,
+    position: { top: '20px' },
+  },
+  {
+    key: 'room13',
+    room: room13,
+    position: { bottom: '15px', right: '70px' },
+  },
   { key: 'room1', room: room1 },
 ];
 
-export const Map: React.FC<MapProps> = ({ highlightedRoom }) => {
+export const Map = ({ highlightedRoom }: MapProps) => {
+  const roomRefs = useRef<Record<string, HTMLDivElement>>({});
+
+  setTimeout(() => {
+    roomConnections.forEach(([from, to]) => {
+      createLine(from, to, roomRefs);
+    });
+  }, 2000);
+
   return (
     <MapContainer>
       {roomLocations.map(({ key, room, position }) => (
-        <div key={key}>
+        <div
+          key={key}
+          style={{ position: 'relative', ...position, zIndex: '2' }}
+          ref={(ref) => {
+            if (ref) roomRefs.current[key] = ref;
+          }}
+        >
           <LocationImage
-            style={position}
-            highlight={highlightedRoom === key}
             src={room}
-            alt={`Room ${room}`}
+            alt={`Room ${key}`}
+            highlight={key === highlightedRoom}
           />
         </div>
       ))}
