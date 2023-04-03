@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import {
   room1,
@@ -30,9 +30,11 @@ interface LocationImageProps {
 }
 
 const LocationImage = styled.img<LocationImageProps>`
+  position: relative;
   width: 35px;
   height: 35px;
   border-radius: 50%;
+  z-index: 6;
   filter: ${(props) =>
     props.highlight ? 'drop-shadow(0px 0px 10px yellow)' : 'none'};
 `;
@@ -47,20 +49,21 @@ interface RoomLocation {
     bottom?: string;
   };
 }
+
 function createLine(
   from: string,
   to: string,
   roomRefsObj: Record<string, HTMLDivElement> | any
 ) {
-  const [fromRef, toRef] = [roomRefsObj.current[from], roomRefsObj.current[to]];
+  const [fromRef, toRef] = [roomRefsObj[from], roomRefsObj[to]];
 
   const line = document.createElement('div'); // Create a new div element to draw the line
   line.style.position = 'absolute';
   line.style.width = '3px';
   line.style.height = '55px';
   line.style.backgroundColor = 'black';
-  line.style.left = fromRef.offsetLeft + 17 + 'px'; // Position the line relative to the rooms
-  line.style.top = fromRef.offsetTop + 17 + 'px';
+  line.style.left = 17 + 'px'; // Position the line relative to the rooms
+  line.style.top = 17 + 'px';
   line.style.transformOrigin = 'top';
   line.style.zIndex = '1';
 
@@ -72,8 +75,9 @@ function createLine(
       180) /
       Math.PI -
     90;
+
   line.style.transform = `rotate(${angle}deg)`; // Rotate the line to point towards the destination room
-  roomRefsObj.current[from].parentNode?.appendChild(line); // Append the line to the parent node of the from room
+  roomRefsObj[from].appendChild(line); // Append the line to the parent node of the from room
 }
 
 // from -> to
@@ -168,7 +172,7 @@ export const Map = ({ highlightedRoom }: MapProps) => {
 
   setTimeout(() => {
     roomConnections.forEach(([from, to]) => {
-      createLine(from, to, roomRefs);
+      createLine(from, to, roomRefs.current);
     });
   }, 2000);
 
@@ -177,7 +181,7 @@ export const Map = ({ highlightedRoom }: MapProps) => {
       {roomLocations.map(({ key, room, position }) => (
         <div
           key={key}
-          style={{ position: 'relative', ...position, zIndex: '2' }}
+          style={{ position: 'relative', ...position }}
           ref={(ref) => {
             if (ref) roomRefs.current[key] = ref;
           }}
