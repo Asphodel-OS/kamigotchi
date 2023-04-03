@@ -472,7 +472,7 @@ library LibRegistryTrait {
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexBodyCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
     fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexBodyCompID),
@@ -489,11 +489,7 @@ library LibRegistryTrait {
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IndexBackgroundCompID),
-      ""
-    );
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
     fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexBackgroundCompID),
@@ -510,7 +506,7 @@ library LibRegistryTrait {
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexColorCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
     fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexColorCompID),
@@ -527,7 +523,7 @@ library LibRegistryTrait {
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexFaceCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
     fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexFaceCompID),
@@ -544,7 +540,7 @@ library LibRegistryTrait {
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexHandCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
     fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexHandCompID),
