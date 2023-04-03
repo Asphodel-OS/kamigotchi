@@ -1,18 +1,22 @@
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { ExitButton } from 'layers/react/components/library/ExitButton';
 import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+
+
+interface Props {
+  divName: keyof VisibleModals;
+  id: string;
+  fill?: boolean; // whether the content should fit to the entire modal
+  children: React.ReactNode;
+}
+
 
 // ModalWrapperFull is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapperFull = (props: Props) => {
-  const {
-    visibleModals,
-    setVisibleModals,
-    sound: { volume },
-  } = dataStore();
+  const { visibleModals } = dataStore();
 
   // Updates modal visibility if the divName is updated to visible in the store.
   useEffect(() => {
@@ -21,15 +25,7 @@ export const ModalWrapperFull = (props: Props) => {
       const isVisible = visibleModals[props.divName];
       element.style.display = isVisible ? 'block' : 'none';
     }
-  }, [visibleModals[props.divName], props.id]);
-
-  // closes the modal
-  const handleClose = () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
-    setVisibleModals({ ...visibleModals, [props.divName]: false });
-  };
+  }, [visibleModals[props.divName]]);
 
   // Some conditional styling to adapt the content to the wrapper.
   const wrapperStyle = props.fill ? { height: '75vh' } : {};
@@ -42,18 +38,11 @@ export const ModalWrapperFull = (props: Props) => {
       style={wrapperStyle}
     >
       <Content style={contentStyle}>
-        <ExitButton onClick={handleClose} />
+        <ExitButton divName={props.divName} />
         {props.children}
       </Content>
     </Wrapper>
   );
-}
-
-interface Props {
-  divName: keyof VisibleModals;
-  id: string;
-  fill?: boolean; // whether the content should fit to the entire modal
-  children: React.ReactNode;
 }
 
 interface Wrapper {
@@ -72,14 +61,17 @@ const Wrapper = styled.div<Wrapper>`
 `;
 
 const Content = styled.div`
-  display: grid;
-  background-color: white;
+  border-color: black;
+  border-width: 2px;
   border-radius: 10px;
+  border-style: solid;
+  background-color: white;
   padding: 8px;
   width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
+
+  display: flex;
+  flex-flow: column nowrap;
+  font-family: Pixel;
 `;
 
 const fadeIn = keyframes`
@@ -91,6 +83,8 @@ const fadeIn = keyframes`
   }
 `;
 
+// NOTE: this is not actually used atm as we set display:none on close. This is
+// done to avoid having active, invisible buttons lingering on the UI after close.
 const fadeOut = keyframes`
   from {
     opacity: 1;
