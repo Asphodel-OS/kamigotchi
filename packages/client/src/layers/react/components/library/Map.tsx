@@ -199,7 +199,7 @@ export const Map = ({ highlightedRoom }: MapProps) => {
         roomConnections.forEach(([from, to]) => {
           createLine(from, to, roomRefs.current);
         });
-      }, 1000);
+      }, 2000);
   }, [locationDivs]);
 
   return <MapContainer>{locationDivs}</MapContainer>;
