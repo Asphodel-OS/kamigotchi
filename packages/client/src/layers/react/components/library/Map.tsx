@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
   room1,
@@ -168,17 +168,12 @@ const roomLocations: RoomLocation[] = [
 ];
 
 export const Map = ({ highlightedRoom }: MapProps) => {
+  const [locationDivs, setLocationDivs] = useState<JSX.Element[]>([]);
   const roomRefs = useRef<Record<string, HTMLDivElement>>({});
 
-  setTimeout(() => {
-    roomConnections.forEach(([from, to]) => {
-      createLine(from, to, roomRefs.current);
-    });
-  }, 2000);
-
-  return (
-    <MapContainer>
-      {roomLocations.map(({ key, room, position }) => (
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      const divs = roomLocations.map(({ key, room, position }) => (
         <div
           key={key}
           style={{ position: 'relative', ...position }}
@@ -192,7 +187,20 @@ export const Map = ({ highlightedRoom }: MapProps) => {
             highlight={key === highlightedRoom}
           />
         </div>
-      ))}
-    </MapContainer>
-  );
+      ));
+
+      setLocationDivs(divs);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (locationDivs.length)
+      setTimeout(() => {
+        roomConnections.forEach(([from, to]) => {
+          createLine(from, to, roomRefs.current);
+        });
+      }, 1000);
+  }, [locationDivs]);
+
+  return <MapContainer>{locationDivs}</MapContainer>;
 };
