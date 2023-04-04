@@ -16,24 +16,8 @@ import { dataStore } from 'layers/react/store/createStore';
 import { BigNumber, BigNumberish } from 'ethers';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 
-type TraitDetails = {
-  Name: string;
-  // Type: string;
-  // Value: string;
-};
-
-type Details = {
-  nftID: string;
-  petName: string;
-  uri: string;
-  harmony: string;
-  health: string;
-  power: string;
-  slots: string;
-  violence: string;
-  affinity: string;
-  traits: TraitDetails[];
-};
+import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Trait, getTrait } from 'layers/react/components/shapes/Trait';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -41,8 +25,8 @@ export function registerKamiModal() {
     {
       colStart: 23,
       colEnd: 80,
-      rowStart: 20,
-      rowEnd: 80,
+      rowStart: 5,
+      rowEnd: 85,
     },
     (layers) => {
       const {
@@ -69,24 +53,9 @@ export function registerKamiModal() {
       const {
         network: {
           components: {
-            Health,
             IsPet,
-            MediaURI,
-            Affinity,
-            Name,
-            Harmony,
             PetIndex,
-            Power,
-            Slots,
-            Violence,
-            BodyIndex,
-            BackgroundIndex,
-            ColorIndex,
-            FaceIndex,
-            HandIndex,
-            TraitIndex,
           },
-          world,
         },
       } = layers;
 
@@ -107,132 +76,115 @@ export function registerKamiModal() {
         )[0];
       };
 
-      const getDetails = (index: EntityIndex) => {
-        const traitsHopper = getBaseTraits(index);
-        return {
-          nftID: getComponentValue(PetIndex, index)?.value as string,
-          petName: getComponentValue(Name, index)?.value as string,
-          uri: getComponentValue(MediaURI, index)?.value as string,
-          traits: traitsHopper?.value as TraitDetails[],
-          affinity: '??',
-          health: hexToString(
-            getComponentValue(Health, index)?.value as number
-          ),
-          power: hexToString(getComponentValue(Power, index)?.value as number),
-          violence: hexToString(
-            getComponentValue(Violence, index)?.value as number
-          ),
-          harmony: hexToString(
-            getComponentValue(Harmony, index)?.value as number
-          ),
-          slots: hexToString(getComponentValue(Slots, index)?.value as number),
-        };
-      };
-
-      const getBaseTraits = (petIndex: EntityIndex) => {
-        const typeArr = [
-          ColorIndex,
-          BodyIndex,
-          HandIndex,
-          FaceIndex,
-          BackgroundIndex,
-        ];
-        let result: Array<TraitDetails> = [];
-        let petTypes: Array<string> = [];
-
-        for (let i = 0; i < typeArr.length; i++) {
-          let details = getTrait(petIndex, typeArr[i]);
-          result.push(details.Individual);
-        }
-
-        return {
-          value: result,
-        };
-      };
-
-      const getTrait = (petIndex: EntityIndex, type: Component) => {
-        const index = getComponentValue(type, petIndex)?.value as number;
-        const entity = Array.from(
-          runQuery([
-            Has(TraitIndex),
-            HasValue(type, {
-              value: index,
-            }),
-          ])
-        )[0];
-
-        return {
-          Individual: {
-            Name: getComponentValue(Name, entity)?.value as string,
-            // Type: getComponentValue(Type, entity)?.value as string,
-            // Value: getComponentValue(Value, entity)?.value as string,
-          },
-        };
-      };
-
-      const hexToString = (num: BigNumberish) => {
-        return BigNumber.from(num).toString();
+      const hexToString = (num?: BigNumberish) => {
+        return num ? BigNumber.from(num).toString() : "0";
       };
 
       /////////////////
       // Display values
 
-      const [dets, setDets] = useState<Details>();
+      const [dets, setDets] = useState<Kami>();
 
       useEffect(() => {
         if (description && description != '0') {
-          setDets(getDetails(getPetIndex(description)));
+          setDets(getKami(layers, getPetIndex(description), { traits: true }));
         }
       }, [description]);
 
-      const petTypes = (val: string[] | undefined) => {
-        if (!val) return;
-        let result = val[0];
+      // const petTypes = (val: string[] | undefined) => {
+      //   if (!val) return;
+      //   let result = val[0];
 
-        for (let i = 1; i < val.length; i++) {
-          result = result + ' | ' + val[i];
-        }
-        return result;
-      };
+      //   for (let i = 1; i < val.length; i++) {
+      //     result = result + ' | ' + val[i];
+      //   }
+      //   return result;
+      // };
 
-      const traitLines = dets?.traits.map((trait) => {
+      const traitBox = () => {
         return (
-          <KamiList key={trait.Name}>{`${trait.Name.toUpperCase()}`}</KamiList>
-        );
-      });
+          <KamiBox style={{
+            maxWidth: '50%',
+          }}>
+            <KamiText>BACKGROUND</KamiText>
+            <KamiFacts>{dets?.background?.name}</KamiFacts>
+            <KamiText>BODY</KamiText>
+            <KamiFacts>{dets?.body?.name}</KamiFacts>
+            <KamiText>COLOR</KamiText>
+            <KamiFacts>{dets?.color?.name}</KamiFacts>
+            <KamiText>FACE</KamiText>
+            <KamiFacts>{dets?.face?.name}</KamiFacts>
+            <KamiText>HAND</KamiText>
+            <KamiFacts>{dets?.hand?.name}</KamiFacts>
+          </KamiBox>
+        )
+      }
+
+      const statsBox = () => {
+        return (
+          <KamiBox style={{
+            maxWidth: '50%'
+          }}>
+            <KamiText>HEALTH</KamiText>
+            <KamiFacts>{hexToString(dets?.stats.health)} </KamiFacts>
+            <KamiText>POWER</KamiText>
+            <KamiFacts>{hexToString(dets?.stats.power)} </KamiFacts>
+            <KamiText>VIOLENCEL</KamiText>
+            <KamiFacts>{hexToString(dets?.stats.violence)} </KamiFacts>
+            <KamiText>HARMONY</KamiText>
+            <KamiFacts>{hexToString(dets?.stats.harmony)}</KamiFacts>
+            <KamiText>SLOTS</KamiText>
+            <KamiFacts>{hexToString(dets?.stats.slots)} </KamiFacts>
+          </KamiBox>
+        )
+      }
+
+      const affinitiesBox = () => {
+        const str = dets?.affinities?.reduce((ac, x) => ac = ac + ' | ' + x);
+        return (
+          <KamiText>
+            {str}
+          </KamiText>
+        )
+      }
 
       return (
         <ModalWrapperFull divName="kami" id="kamiModal">
-          <KamiBox>
-            <KamiBox>
-              <KamiBox>
-                <KamiImage src={dets?.uri} />
-                <KamiBox
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {traitLines}
-                </KamiBox>
-              </KamiBox>
-              <KamiBox
-                style={{ gridColumn: 3, gridRowStart: 1, gridRowEnd: 3 }}
-              >
-                <KamiFacts>
-                  <KamiName>{dets?.petName.toUpperCase()} </KamiName>
-                </KamiFacts>
-                <KamiFacts>AFFINITY: {dets?.affinity} </KamiFacts>
-                <KamiFacts>HEALTH: {dets?.health} </KamiFacts>
-                <KamiFacts>POWER: {dets?.power} </KamiFacts>
-                <KamiFacts>VIOLENCE: {dets?.violence} </KamiFacts>
-                <KamiFacts>HARMONY: {dets?.harmony}</KamiFacts>
-                <KamiFacts>SLOTS: {dets?.slots} </KamiFacts>
-              </KamiBox>
-            </KamiBox>
-          </KamiBox>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '15px',
+            }}
+          >
+            <KamiImage src={dets?.uri} />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <KamiName>{dets?.name} </KamiName>
+              <KamiText>{affinitiesBox()}</KamiText>
+            </div>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              padding: '10px',
+            }}
+          >
+            {statsBox()}
+            <Line> </Line>
+            {traitBox()}
+          </div>
         </ModalWrapperFull>
       );
     }
@@ -242,7 +194,7 @@ export function registerKamiModal() {
 const KamiBox = styled.div`
   background-color: #ffffff;
   border-style: solid;
-  border-width: 0px 0px 0px 0px;
+  border-width: 0px;
   border-color: black;
   color: black;
   text-decoration: none;
@@ -267,17 +219,7 @@ const KamiFacts = styled.div`
   font-weight: 600;
   font-family: Pixel;
   margin: 0px;
-  padding: 10px;
-`;
-
-const KamiList = styled.li`
-  background-color: #ffffff;
-  color: black;
-  font-size: 16px;
-  font-family: Pixel;
-  margin: 0px;
-  list-style-type: none;
-  justify-self: start;
+  padding: 5px;
 `;
 
 const KamiText = styled.p`
@@ -286,7 +228,7 @@ const KamiText = styled.p`
   font-size: 12px;
   font-family: Pixel;
   margin: 0px;
-  padding: 5px 10px;
+  padding: 0px;
 `;
 
 const KamiName = styled.div`
@@ -299,23 +241,20 @@ const KamiName = styled.div`
   font-family: Pixel;
 `;
 
-const KamiType = styled.div`
-  grid-row: 3;
-  font-size: 12px;
-  color: #333;
-  text-align: center;
-  padding: 0px 0px 20px 0px;
-  font-family: Pixel;
-`;
-
-const KamiDetails = styled.div`
-  grid-row: 3 / 6;
-`;
-
 const KamiImage = styled.img`
   height: 300px;
   width: 300px;
   margin: 0px;
-  padding-bottom: 10px;
+  padding: 10px;
   grid-row: 1 / span 1;
+  border-width: 1px;
+  border-color: black;
 `;
+
+const Line = styled.div`
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  color: black;
+  height: 200px;
+`
