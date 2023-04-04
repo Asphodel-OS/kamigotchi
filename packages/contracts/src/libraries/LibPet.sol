@@ -27,6 +27,7 @@ import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { LibTrait } from "libraries/LibTrait.sol";
 
 uint256 constant BASE_HARMONY = 10;
 uint256 constant BASE_HEALTH = 150;
@@ -333,6 +334,17 @@ library LibPet {
   // Get the production of a pet. Return 0 if there are none.
   function getProduction(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibProduction.getForPet(components, id);
+  }
+
+  // get pet's affinity. hardcoded to check for face, body, and arms.
+  // in the future, can upgrade here
+  function getAffinity(IUintComp components, uint256 id) internal view returns (string[] memory) {
+    string[] memory affinities = new string[](3);
+    affinities[0] = LibStat.getAffinity(components, LibTrait.getBodyPointer(components, id));
+    affinities[1] = LibStat.getAffinity(components, LibTrait.getHandPointer(components, id));
+    affinities[2] = LibStat.getAffinity(components, LibTrait.getFacePointer(components, id));
+
+    return affinities;
   }
 
   /////////////////

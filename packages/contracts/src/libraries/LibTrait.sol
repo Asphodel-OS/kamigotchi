@@ -87,50 +87,83 @@ library LibTrait {
   }
 
   /////////////////
+  // QUERYING REGISTRY ENTITY
+
+  function getBodyPointer(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (uint256) {
+    uint256 index = getBody(components, entityID);
+    return LibRegistryTrait.getByBodyIndex(components, index);
+  }
+
+  function getBackgroundPointer(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (uint256) {
+    uint256 index = getBackground(components, entityID);
+    return LibRegistryTrait.getByBackgroundIndex(components, index);
+  }
+
+  function getColorPointer(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (uint256) {
+    uint256 index = getColor(components, entityID);
+    return LibRegistryTrait.getByColorIndex(components, index);
+  }
+
+  function getFacePointer(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (uint256) {
+    uint256 index = getFace(components, entityID);
+    return LibRegistryTrait.getByFaceIndex(components, index);
+  }
+
+  function getHandPointer(
+    IUint256Component components,
+    uint256 entityID
+  ) internal view returns (uint256) {
+    uint256 index = getHand(components, entityID);
+    return LibRegistryTrait.getByHandIndex(components, index);
+  }
+
+  /////////////////
   // QUERYING
 
   function getBodyName(
     IUint256Component components,
     uint256 entityID
   ) internal view returns (string memory) {
-    uint256 index = getBody(components, entityID);
-    return LibRegistryTrait.getName(components, LibRegistryTrait.getByBodyIndex(components, index));
+    return LibRegistryTrait.getName(components, getBodyPointer(components, entityID));
   }
 
   function getBackgroundName(
     IUint256Component components,
     uint256 entityID
   ) internal view returns (string memory) {
-    uint256 index = getBackground(components, entityID);
-    return
-      LibRegistryTrait.getName(
-        components,
-        LibRegistryTrait.getByBackgroundIndex(components, index)
-      );
+    return LibRegistryTrait.getName(components, getBackgroundPointer(components, entityID));
   }
 
   function getColorName(
     IUint256Component components,
     uint256 entityID
   ) internal view returns (string memory) {
-    uint256 index = getColor(components, entityID);
-    return
-      LibRegistryTrait.getName(components, LibRegistryTrait.getByColorIndex(components, index));
+    return LibRegistryTrait.getName(components, getColorPointer(components, entityID));
   }
 
   function getFaceName(
     IUint256Component components,
     uint256 entityID
   ) internal view returns (string memory) {
-    uint256 index = getFace(components, entityID);
-    return LibRegistryTrait.getName(components, LibRegistryTrait.getByFaceIndex(components, index));
+    return LibRegistryTrait.getName(components, getFacePointer(components, entityID));
   }
 
   function getHandName(
     IUint256Component components,
     uint256 entityID
   ) internal view returns (string memory) {
-    uint256 index = getHand(components, entityID);
-    return LibRegistryTrait.getName(components, LibRegistryTrait.getByHandIndex(components, index));
+    return LibRegistryTrait.getName(components, getHandPointer(components, entityID));
   }
 }
