@@ -35,8 +35,8 @@ const LocationImage = styled.img<LocationImageProps>`
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  z-index: 3;
-  opacity: ${(props) => (props.highlight ? '1' : '0.85')};
+  z-index: 4;
+  opacity: ${(props) => (props.highlight ? '1' : '0.7')};
   scale: ${(props) => (props.highlight ? '1.2' : '1')};
 `;
 
@@ -63,8 +63,9 @@ function createConnection(
   line.style.width = '2px';
   line.style.height = '55px';
   line.style.backgroundColor = 'black';
-  line.style.left = 17 + 'px'; // Position the line relative to the rooms
-  line.style.top = 17 + 'px';
+  line.style.left = 17.5 + 'px'; // Position the line relative to the rooms
+  line.style.top = 17.5 + 'px';
+  line.style.opacity = '0.5';
   line.style.transformOrigin = 'top';
   line.style.zIndex = '2';
 
@@ -132,17 +133,17 @@ const roomLocations: RoomLocation[] = [
   {
     key: 'room5',
     room: room5,
-    position: { top: '15px' },
+    position: { top: '26px' },
   },
   {
     key: 'room9',
     room: room9,
-    position: { bottom: '20px', right: '70px' },
+    position: { bottom: '10px', right: '70px' },
   },
   {
     key: 'room10',
     room: room10,
-    position: { right: '70px' },
+    position: { right: '70px', top: '10px' },
   },
   {
     key: 'room4',
@@ -191,7 +192,7 @@ export const Map = ({ highlightedRoom }: MapProps) => {
       {roomLocations.map(({ key, room, position }) => (
         <div
           key={key}
-          style={{ position: 'relative', ...position }}
+          style={{ position: 'relative', ...position, margin: '1px' }}
           ref={(ref) => {
             if (ref) roomElements.current[key] = ref;
           }}
