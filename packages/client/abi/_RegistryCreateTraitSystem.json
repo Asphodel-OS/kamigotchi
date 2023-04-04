@@ -98,6 +98,11 @@
         },
         {
           "internalType": "string",
+          "name": "affinity",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
           "name": "name",
           "type": "string"
         },
@@ -147,7 +152,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,string,string)": "1355bc56",
+    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": "52005069",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

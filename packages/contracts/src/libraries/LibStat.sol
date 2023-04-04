@@ -9,6 +9,7 @@ import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyCompone
 import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol";
 import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 
 // LibStat manages the retrieval and update of stats. This library differs from
 // others in the sense that it does not manage a single entity type, but rather
@@ -126,6 +127,7 @@ library LibStat {
     if (hasHarmony(components, id)) statCount++;
     if (hasViolence(components, id)) statCount++;
     if (hasSlots(components, id)) statCount++;
+    if (hasAffinity(components, id)) statCount++;
 
     uint256 i;
     uint256[] memory statComponents = new uint256[](statCount);
@@ -134,6 +136,7 @@ library LibStat {
     if (hasHarmony(components, id)) statComponents[i++] = HarmonyCompID;
     if (hasViolence(components, id)) statComponents[i++] = ViolenceCompID;
     if (hasSlots(components, id)) statComponents[i++] = SlotsCompID;
+    if (hasAffinity(components, id)) statComponents[i++] = AffinityCompID;
     return statComponents;
   }
 
@@ -160,6 +163,10 @@ library LibStat {
     return ViolenceComponent(getAddressById(components, ViolenceCompID)).has(id);
   }
 
+  function hasAffinity(IUintComp components, uint256 id) internal view returns (bool) {
+    return AffinityComponent(getAddressById(components, AffinityCompID)).has(id);
+  }
+
   /////////////////
   // SETTERS
 
@@ -181,6 +188,10 @@ library LibStat {
 
   function setViolence(IUintComp components, uint256 id, uint256 value) internal {
     ViolenceComponent(getAddressById(components, ViolenceCompID)).set(id, value);
+  }
+
+  function setAffinity(IUintComp components, uint256 id, string memory value) internal {
+    AffinityComponent(getAddressById(components, AffinityCompID)).set(id, value);
   }
 
   /////////////////
@@ -211,6 +222,12 @@ library LibStat {
     return ViolenceComponent(getAddressById(components, ViolenceCompID)).getValue(id);
   }
 
+  // null string might not be very useful, may be better for a has check
+  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
+    if (!hasAffinity(components, id)) return "";
+    return AffinityComponent(getAddressById(components, AffinityCompID)).getValue(id);
+  }
+
   /////////////////
   // REMOVERS
 
@@ -232,5 +249,9 @@ library LibStat {
 
   function removeViolence(IUintComp components, uint256 id) internal {
     if (hasViolence(components, id)) getComponentById(components, ViolenceCompID).remove(id);
+  }
+
+  function removeAffinity(IUintComp components, uint256 id) internal {
+    if (hasAffinity(components, id)) getComponentById(components, AffinityCompID).remove(id);
   }
 }

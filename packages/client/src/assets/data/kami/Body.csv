@@ -1,4 +1,4 @@
-﻿Index,Image,Name,Type,Rarity,BPs,Harmony,Health,Power,Violence,Slots
+﻿Index,Image,Name,Affinity,Rarity,BPs,Harmony,Health,Power,Violence,Slots
 0,"Body%2037ffb22974744a248c6d42ba98c90963/body_battery_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/battery.png",Battery,Scrap,Rare,500,0,75,0,0,0
 1,"Body%2037ffb22974744a248c6d42ba98c90963/body_bee_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/bee.png",Bee,Insect,Rare,500,0,0,0,6,0
 2,"Body%2037ffb22974744a248c6d42ba98c90963/body_butterfly_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/butterfly.png",Butterfly,Insect,Epic,100,0,0,0,8,0

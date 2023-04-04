@@ -23,11 +23,12 @@ contract _RegistryCreateTraitSystem is System {
       uint256 violence,
       uint256 harmony,
       uint256 slots,
+      string memory affinity,
       string memory name,
       string memory traitType
     ) = abi.decode(
         arguments,
-        (uint256, uint256, uint256, uint256, uint256, uint256, string, string)
+        (uint256, uint256, uint256, uint256, uint256, uint256, string, string, string)
       );
 
     if (LibString.eq(traitType, "BODY")) {
@@ -40,7 +41,8 @@ contract _RegistryCreateTraitSystem is System {
         power,
         violence,
         harmony,
-        slots
+        slots,
+        affinity
       );
     } else if (LibString.eq(traitType, "BACKGROUND")) {
       LibRegistryTrait.createBackground(
@@ -76,7 +78,8 @@ contract _RegistryCreateTraitSystem is System {
         power,
         violence,
         harmony,
-        slots
+        slots,
+        affinity
       );
     } else if (LibString.eq(traitType, "HAND")) {
       LibRegistryTrait.createHand(
@@ -88,7 +91,8 @@ contract _RegistryCreateTraitSystem is System {
         power,
         violence,
         harmony,
-        slots
+        slots,
+        affinity
       );
     } else {
       revert("invalid traitType");
@@ -104,9 +108,13 @@ contract _RegistryCreateTraitSystem is System {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    string memory affinity,
     string memory name,
     string memory traitType
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, health, power, violence, harmony, slots, name, traitType));
+    return
+      execute(
+        abi.encode(index, health, power, violence, harmony, slots, affinity, name, traitType)
+      );
   }
 }
