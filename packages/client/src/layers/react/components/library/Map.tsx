@@ -16,6 +16,7 @@ import {
   room13,
   room14,
 } from 'assets/images/rooms';
+import { dataStore } from 'layers/react/store/createStore';
 
 const MapContainer = styled.div`
   display: flex;
@@ -34,9 +35,9 @@ const LocationImage = styled.img<LocationImageProps>`
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  z-index: 6;
-  filter: ${(props) =>
-    props.highlight ? 'drop-shadow(0px 0px 10px yellow)' : 'none'};
+  z-index: 3;
+  opacity: ${(props) => (props.highlight ? '1' : '0.85')};
+  scale: ${(props) => (props.highlight ? '1.2' : '1')};
 `;
 
 interface RoomLocation {
@@ -50,7 +51,7 @@ interface RoomLocation {
   };
 }
 
-function createLine(
+function createConnection(
   from: string,
   to: string,
   roomRefsObj: Record<string, HTMLDivElement> | any
@@ -59,13 +60,13 @@ function createLine(
 
   const line = document.createElement('div'); // Create a new div element to draw the line
   line.style.position = 'absolute';
-  line.style.width = '3px';
+  line.style.width = '2px';
   line.style.height = '55px';
   line.style.backgroundColor = 'black';
   line.style.left = 17 + 'px'; // Position the line relative to the rooms
   line.style.top = 17 + 'px';
   line.style.transformOrigin = 'top';
-  line.style.zIndex = '1';
+  line.style.zIndex = '2';
 
   const angle =
     (Math.atan2(
@@ -168,17 +169,31 @@ const roomLocations: RoomLocation[] = [
 ];
 
 export const Map = ({ highlightedRoom }: MapProps) => {
-  const [locationDivs, setLocationDivs] = useState<JSX.Element[]>([]);
-  const roomRefs = useRef<Record<string, HTMLDivElement>>({});
+  const roomElements = useRef<Record<string, HTMLDivElement>>({});
+  const [hasRoomConnections, setHasRoomConnections] = useState(false); // mutex
+  const {
+    visibleModals: { map },
+  } = dataStore();
 
   useEffect(() => {
-    Promise.resolve().then(() => {
-      const divs = roomLocations.map(({ key, room, position }) => (
+    if (map && !hasRoomConnections) {
+      setTimeout(() => {
+        roomConnections.forEach(([from, to]) => {
+          createConnection(from, to, roomElements.current);
+          setHasRoomConnections(true);
+        });
+      });
+    }
+  }, [map, hasRoomConnections]);
+
+  return (
+    <MapContainer>
+      {roomLocations.map(({ key, room, position }) => (
         <div
           key={key}
           style={{ position: 'relative', ...position }}
           ref={(ref) => {
-            if (ref) roomRefs.current[key] = ref;
+            if (ref) roomElements.current[key] = ref;
           }}
         >
           <LocationImage
@@ -187,20 +202,7 @@ export const Map = ({ highlightedRoom }: MapProps) => {
             highlight={key === highlightedRoom}
           />
         </div>
-      ));
-
-      setLocationDivs(divs);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (locationDivs.length)
-      setTimeout(() => {
-        roomConnections.forEach(([from, to]) => {
-          createLine(from, to, roomRefs.current);
-        });
-      }, 2000);
-  }, [locationDivs]);
-
-  return <MapContainer>{locationDivs}</MapContainer>;
+      ))}
+    </MapContainer>
+  );
 };
