@@ -23,15 +23,26 @@ contract _RegistryUpdateTraitSystem is System {
       uint256 violence,
       uint256 harmony,
       uint256 slots,
+      string memory affinity,
       string memory name,
       string memory traitType
     ) = abi.decode(
         arguments,
-        (uint256, uint256, uint256, uint256, uint256, uint256, string, string)
+        (uint256, uint256, uint256, uint256, uint256, uint256, string, string, string)
       );
 
     if (LibString.eq(traitType, "BODY")) {
-      LibRegistryTrait.setBody(components, index, name, health, power, violence, harmony, slots);
+      LibRegistryTrait.setBody(
+        components,
+        index,
+        name,
+        health,
+        power,
+        violence,
+        harmony,
+        slots,
+        affinity
+      );
     } else if (LibString.eq(traitType, "BACKGROUND")) {
       LibRegistryTrait.setBackground(
         components,
@@ -46,9 +57,29 @@ contract _RegistryUpdateTraitSystem is System {
     } else if (LibString.eq(traitType, "COLOR")) {
       LibRegistryTrait.setColor(components, index, name, health, power, violence, harmony, slots);
     } else if (LibString.eq(traitType, "FACE")) {
-      LibRegistryTrait.setFace(components, index, name, health, power, violence, harmony, slots);
+      LibRegistryTrait.setFace(
+        components,
+        index,
+        name,
+        health,
+        power,
+        violence,
+        harmony,
+        slots,
+        affinity
+      );
     } else if (LibString.eq(traitType, "HAND")) {
-      LibRegistryTrait.setHand(components, index, name, health, power, violence, harmony, slots);
+      LibRegistryTrait.setHand(
+        components,
+        index,
+        name,
+        health,
+        power,
+        violence,
+        harmony,
+        slots,
+        affinity
+      );
     } else {
       revert("invalid traitType");
     }
@@ -63,9 +94,13 @@ contract _RegistryUpdateTraitSystem is System {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    string memory affinity,
     string memory name,
     string memory traitType
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, health, power, violence, harmony, slots, name, traitType));
+    return
+      execute(
+        abi.encode(index, health, power, violence, harmony, slots, affinity, name, traitType)
+      );
   }
 }

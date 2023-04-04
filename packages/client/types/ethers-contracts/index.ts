@@ -6,6 +6,7 @@ export type { AccountNameSystem } from "./AccountNameSystem";
 export type { AccountSetSystem } from "./AccountSetSystem";
 export type { AddressComponent } from "./AddressComponent";
 export type { AddressOperatorComponent } from "./AddressOperatorComponent";
+export type { AffinityComponent } from "./AffinityComponent";
 export type { BalanceComponent } from "./BalanceComponent";
 export type { BlockLastComponent } from "./BlockLastComponent";
 export type { BoolComponent } from "./BoolComponent";
@@ -102,6 +103,7 @@ export { AccountNameSystem__factory } from "./factories/AccountNameSystem__facto
 export { AccountSetSystem__factory } from "./factories/AccountSetSystem__factory";
 export { AddressComponent__factory } from "./factories/AddressComponent__factory";
 export { AddressOperatorComponent__factory } from "./factories/AddressOperatorComponent__factory";
+export { AffinityComponent__factory } from "./factories/AffinityComponent__factory";
 export { BalanceComponent__factory } from "./factories/BalanceComponent__factory";
 export { BlockLastComponent__factory } from "./factories/BlockLastComponent__factory";
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";

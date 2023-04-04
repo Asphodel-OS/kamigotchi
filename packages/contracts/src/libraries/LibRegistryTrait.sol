@@ -38,7 +38,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory affinity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 TraitIndex = getTraitCount(components) + 1;
@@ -46,7 +47,17 @@ library LibRegistryTrait {
     setTraitIndex(components, id, TraitIndex);
     setBodyIndex(components, id, bodyIndex);
 
-    uint256 gotID = setBody(components, bodyIndex, name, health, power, violence, harmony, slots);
+    uint256 gotID = setBody(
+      components,
+      bodyIndex,
+      name,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+      affinity
+    );
     require(gotID == id, "LibRegistryTrait.createBody(): entity ID mismatch");
     return id;
   }
@@ -116,7 +127,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory affinity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 TraitIndex = getTraitCount(components) + 1;
@@ -124,7 +136,17 @@ library LibRegistryTrait {
     setTraitIndex(components, id, TraitIndex);
     setFaceIndex(components, id, faceIndex);
 
-    uint256 gotID = setFace(components, faceIndex, name, health, power, violence, harmony, slots);
+    uint256 gotID = setFace(
+      components,
+      faceIndex,
+      name,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+      affinity
+    );
     require(gotID == id, "LibRegistryTrait.createFace(): entity ID mismatch");
     return id;
   }
@@ -139,7 +161,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory affinity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 TraitIndex = getTraitCount(components) + 1;
@@ -147,7 +170,17 @@ library LibRegistryTrait {
     setTraitIndex(components, id, TraitIndex);
     setHandIndex(components, id, handIndex);
 
-    uint256 gotID = setHand(components, handIndex, name, health, power, violence, harmony, slots);
+    uint256 gotID = setHand(
+      components,
+      handIndex,
+      name,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+      affinity
+    );
     require(gotID == id, "LibRegistryTrait.createHand(): entity ID mismatch");
     return id;
   }
@@ -162,7 +195,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory affinity
   ) internal returns (uint256) {
     uint256 id = getByBodyIndex(components, bodyIndex);
     require(id != 0, "LibRegistryTrait.setBody(): BodyIndex not found");
@@ -184,6 +218,9 @@ library LibRegistryTrait {
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
+
+    if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
+    else LibStat.removeAffinity(components, id);
 
     return id;
   }
@@ -270,7 +307,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory affinity
   ) internal returns (uint256) {
     uint256 id = getByFaceIndex(components, faceIndex);
     require(id != 0, "LibRegistryTrait.setFace(): faceIndex not found");
@@ -293,6 +331,9 @@ library LibRegistryTrait {
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
 
+    if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
+    else LibStat.removeAffinity(components, id);
+
     return id;
   }
 
@@ -306,7 +347,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory affinity
   ) internal returns (uint256) {
     uint256 id = getByHandIndex(components, handIndex);
     require(id != 0, "LibRegistryTrait.setHand(): handIndex not found");
@@ -328,6 +370,9 @@ library LibRegistryTrait {
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
+
+    if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
+    else LibStat.removeAffinity(components, id);
 
     return id;
   }

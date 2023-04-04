@@ -176,6 +176,7 @@ export function createAdminAPI(systems: any) {
     violence: number,
     harmony: number,
     slots: number,
+    affinity: string,
     name: string,
     type: string
   ) {
@@ -186,6 +187,7 @@ export function createAdminAPI(systems: any) {
       violence,
       harmony,
       slots,
+      affinity,
       name,
       type
     );
