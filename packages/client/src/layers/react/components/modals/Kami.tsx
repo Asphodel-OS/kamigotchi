@@ -159,7 +159,8 @@ export function registerKamiModal() {
               padding: '15px',
             }}
           >
-            <KamiImage src={dets?.uri} />
+            {/* <KamiImage src={dets?.uri} /> */}
+            <KamiImage src='https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/tempKami.gif' />
             <div
               style={{
                 display: 'flex',
