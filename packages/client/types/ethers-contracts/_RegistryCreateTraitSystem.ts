@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateTraitSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,6 +50,7 @@ export interface _RegistryCreateTraitSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -136,6 +137,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
       slots: PromiseOrValue<BigNumberish>,
+      rarity: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
@@ -162,6 +164,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
     violence: PromiseOrValue<BigNumberish>,
     harmony: PromiseOrValue<BigNumberish>,
     slots: PromiseOrValue<BigNumberish>,
+    rarity: PromiseOrValue<BigNumberish>,
     affinity: PromiseOrValue<string>,
     name: PromiseOrValue<string>,
     traitType: PromiseOrValue<string>,
@@ -188,6 +191,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
       slots: PromiseOrValue<BigNumberish>,
+      rarity: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
@@ -226,6 +230,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
       slots: PromiseOrValue<BigNumberish>,
+      rarity: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,
@@ -253,6 +258,7 @@ export interface _RegistryCreateTraitSystem extends BaseContract {
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
       slots: PromiseOrValue<BigNumberish>,
+      rarity: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       traitType: PromiseOrValue<string>,

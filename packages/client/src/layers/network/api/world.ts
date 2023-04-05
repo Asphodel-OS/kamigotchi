@@ -37,10 +37,24 @@ export function setUpWorldAPI(systems: any) {
           data[i].get("Violence") ? data[i].get("Violence") : "0",
           data[i].get("Harmony") ? data[i].get("Harmony") : "0",
           data[i].get("Slots") ? data[i].get("Slots") : "0",
+          data[i].get("Rarity") ? rarityParser(data[i].get("Rarity")) : 0,
           data[i].get("Affinity") ? data[i].get("Affinity") : "",
           data[i].get("Name"), // name of trait
           type, // type: body, color, etc
         );
+      }
+    }
+
+    function rarityParser(rarity: string) {
+      switch (rarity) {
+        case "Common":
+          return 3;
+        case "Rare":
+          return 2;
+        case "Epic":
+          return 1;
+        default:
+          return 0;
       }
     }
 
@@ -49,7 +63,6 @@ export function setUpWorldAPI(systems: any) {
     initSingle(color, "COLOR");
     initSingle(face, "FACE");
     initSingle(hand, "HAND");
-
   }
 
   return {

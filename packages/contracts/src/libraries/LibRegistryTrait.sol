@@ -17,7 +17,9 @@ import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearC
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { LibRandom } from "libraries/LibRandom.sol";
 
 // LibRegistryTrait is based heavily off LibRegistryItem, but is used for traits.
 // All traits are considered fungible and are not compeitiable with the inventory layer but default, but can be added.
@@ -39,6 +41,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -56,6 +59,7 @@ library LibRegistryTrait {
       violence,
       harmony,
       slots,
+      rarity,
       affinity
     );
     require(gotID == id, "LibRegistryTrait.createBody(): entity ID mismatch");
@@ -72,7 +76,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    uint256 rarity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 TraitIndex = getTraitCount(components) + 1;
@@ -88,7 +93,8 @@ library LibRegistryTrait {
       power,
       violence,
       harmony,
-      slots
+      slots,
+      rarity
     );
     require(gotID == id, "LibRegistryTrait.createbackground(): entity ID mismatch");
     return id;
@@ -104,7 +110,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    uint256 rarity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 TraitIndex = getTraitCount(components) + 1;
@@ -112,7 +119,17 @@ library LibRegistryTrait {
     setTraitIndex(components, id, TraitIndex);
     setColorIndex(components, id, colorIndex);
 
-    uint256 gotID = setColor(components, colorIndex, name, health, power, violence, harmony, slots);
+    uint256 gotID = setColor(
+      components,
+      colorIndex,
+      name,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+      rarity
+    );
     require(gotID == id, "LibRegistryTrait.createbackground(): entity ID mismatch");
     return id;
   }
@@ -128,6 +145,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -145,6 +163,7 @@ library LibRegistryTrait {
       violence,
       harmony,
       slots,
+      rarity,
       affinity
     );
     require(gotID == id, "LibRegistryTrait.createFace(): entity ID mismatch");
@@ -162,6 +181,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -179,6 +199,7 @@ library LibRegistryTrait {
       violence,
       harmony,
       slots,
+      rarity,
       affinity
     );
     require(gotID == id, "LibRegistryTrait.createHand(): entity ID mismatch");
@@ -196,6 +217,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
     uint256 id = getByBodyIndex(components, bodyIndex);
@@ -219,6 +241,9 @@ library LibRegistryTrait {
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
 
+    if (rarity > 0) LibStat.setRarity(components, id, rarity);
+    else LibStat.removeRarity(components, id);
+
     if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
     else LibStat.removeAffinity(components, id);
 
@@ -235,7 +260,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    uint256 rarity
   ) internal returns (uint256) {
     uint256 id = getByBackgroundIndex(components, backgroundIndex);
     require(id != 0, "LibRegistryTrait.setBackground(): BackgroundIndex not found");
@@ -258,6 +284,9 @@ library LibRegistryTrait {
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
 
+    if (rarity > 0) LibStat.setRarity(components, id, rarity);
+    else LibStat.removeRarity(components, id);
+
     return id;
   }
 
@@ -271,7 +300,8 @@ library LibRegistryTrait {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    uint256 rarity
   ) internal returns (uint256) {
     uint256 id = getByColorIndex(components, colorIndex);
     require(id != 0, "LibRegistryTrait.setColor(): ColorIndex not found");
@@ -294,6 +324,9 @@ library LibRegistryTrait {
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
 
+    if (rarity > 0) LibStat.setRarity(components, id, rarity);
+    else LibStat.removeRarity(components, id);
+
     return id;
   }
 
@@ -308,6 +341,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
     uint256 id = getByFaceIndex(components, faceIndex);
@@ -331,6 +365,9 @@ library LibRegistryTrait {
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
 
+    if (rarity > 0) LibStat.setRarity(components, id, rarity);
+    else LibStat.removeRarity(components, id);
+
     if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
     else LibStat.removeAffinity(components, id);
 
@@ -348,6 +385,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
     uint256 id = getByHandIndex(components, handIndex);
@@ -370,6 +408,9 @@ library LibRegistryTrait {
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
     else LibStat.removeSlots(components, id);
+
+    if (rarity > 0) LibStat.setRarity(components, id, rarity);
+    else LibStat.removeRarity(components, id);
 
     if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
     else LibStat.removeAffinity(components, id);
@@ -593,5 +634,79 @@ library LibRegistryTrait {
     );
     uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) result = results[0];
+  }
+
+  // gets all registry entities of type. requires the indexComponent
+  // mostly used internally
+  function getAllOfType(
+    IUintComp components,
+    uint256 inComp
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, inComp), "");
+    uint256[] memory results = LibQuery.query(fragments);
+    return results;
+  }
+
+  function getAllBody(IUintComp components) internal view returns (uint256[] memory) {
+    return getAllOfType(components, IndexBodyCompID);
+  }
+
+  function getAllBackground(IUintComp components) internal view returns (uint256[] memory) {
+    return getAllOfType(components, IndexBackgroundCompID);
+  }
+
+  function getAllColor(IUintComp components) internal view returns (uint256[] memory) {
+    return getAllOfType(components, IndexColorCompID);
+  }
+
+  function getAllFace(IUintComp components) internal view returns (uint256[] memory) {
+    return getAllOfType(components, IndexFaceCompID);
+  }
+
+  function getAllHand(IUintComp components) internal view returns (uint256[] memory) {
+    return getAllOfType(components, IndexHandCompID);
+  }
+
+  // get body rarities in a key value pair array
+  function getBodyRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllBody(components);
+    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexBodyCompID);
+  }
+
+  // get background rarities in a key value pair array
+  function getBackgroundRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllBackground(components);
+    return
+      LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexBackgroundCompID);
+  }
+
+  // get color rarities in a key value pair array
+  function getColorRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllColor(components);
+    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexColorCompID);
+  }
+
+  // get face rarities in a key value pair array
+  function getFaceRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllFace(components);
+    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexFaceCompID);
+  }
+
+  // get hand rarities in a key value pair array
+  function getHandRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllHand(components);
+    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexHandCompID);
   }
 }

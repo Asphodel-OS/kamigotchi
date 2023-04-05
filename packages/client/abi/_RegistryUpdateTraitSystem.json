@@ -97,6 +97,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "rarity",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
           "name": "affinity",
           "type": "string"
@@ -152,7 +157,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": "52005069",
+    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": "68450b7d",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

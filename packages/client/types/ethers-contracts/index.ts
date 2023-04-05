@@ -71,6 +71,7 @@ export type { ProductionCollectSystem } from "./ProductionCollectSystem";
 export type { ProductionLiquidateSystem } from "./ProductionLiquidateSystem";
 export type { ProductionStartSystem } from "./ProductionStartSystem";
 export type { ProductionStopSystem } from "./ProductionStopSystem";
+export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
 export type { SlotsComponent } from "./SlotsComponent";
 export type { StateComponent } from "./StateComponent";
@@ -172,6 +173,7 @@ export { ProductionCollectSystem__factory } from "./factories/ProductionCollectS
 export { ProductionLiquidateSystem__factory } from "./factories/ProductionLiquidateSystem__factory";
 export { ProductionStartSystem__factory } from "./factories/ProductionStartSystem__factory";
 export { ProductionStopSystem__factory } from "./factories/ProductionStopSystem__factory";
+export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";
 export { SlotsComponent__factory } from "./factories/SlotsComponent__factory";
 export { StateComponent__factory } from "./factories/StateComponent__factory";

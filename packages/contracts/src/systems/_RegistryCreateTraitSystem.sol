@@ -23,12 +23,13 @@ contract _RegistryCreateTraitSystem is System {
       uint256 violence,
       uint256 harmony,
       uint256 slots,
+      uint256 rarity,
       string memory affinity,
       string memory name,
       string memory traitType
     ) = abi.decode(
         arguments,
-        (uint256, uint256, uint256, uint256, uint256, uint256, string, string, string)
+        (uint256, uint256, uint256, uint256, uint256, uint256, uint256, string, string, string)
       );
 
     if (LibString.eq(traitType, "BODY")) {
@@ -42,6 +43,7 @@ contract _RegistryCreateTraitSystem is System {
         violence,
         harmony,
         slots,
+        rarity,
         affinity
       );
     } else if (LibString.eq(traitType, "BACKGROUND")) {
@@ -54,7 +56,8 @@ contract _RegistryCreateTraitSystem is System {
         power,
         violence,
         harmony,
-        slots
+        slots,
+        rarity
       );
     } else if (LibString.eq(traitType, "COLOR")) {
       LibRegistryTrait.createColor(
@@ -66,7 +69,8 @@ contract _RegistryCreateTraitSystem is System {
         power,
         violence,
         harmony,
-        slots
+        slots,
+        rarity
       );
     } else if (LibString.eq(traitType, "FACE")) {
       LibRegistryTrait.createFace(
@@ -79,6 +83,7 @@ contract _RegistryCreateTraitSystem is System {
         violence,
         harmony,
         slots,
+        rarity,
         affinity
       );
     } else if (LibString.eq(traitType, "HAND")) {
@@ -92,6 +97,7 @@ contract _RegistryCreateTraitSystem is System {
         violence,
         harmony,
         slots,
+        rarity,
         affinity
       );
     } else {
@@ -108,13 +114,25 @@ contract _RegistryCreateTraitSystem is System {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
+    uint256 rarity,
     string memory affinity,
     string memory name,
     string memory traitType
   ) public onlyOwner returns (bytes memory) {
     return
       execute(
-        abi.encode(index, health, power, violence, harmony, slots, affinity, name, traitType)
+        abi.encode(
+          index,
+          health,
+          power,
+          violence,
+          harmony,
+          slots,
+          rarity,
+          affinity,
+          name,
+          traitType
+        )
       );
   }
 }

@@ -10,6 +10,7 @@ import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol
 import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
+import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 
 // LibStat manages the retrieval and update of stats. This library differs from
 // others in the sense that it does not manage a single entity type, but rather
@@ -117,6 +118,7 @@ library LibStat {
 
   // Get all the component IDs of an entity's set stats. Slots Component is included
   // with upgradable equipment in mind.
+  // NOTE: rarity is included for the sake of completeness but is not strictly needed
   function getComponentsSet(
     IUintComp components,
     uint256 id
@@ -128,6 +130,7 @@ library LibStat {
     if (hasViolence(components, id)) statCount++;
     if (hasSlots(components, id)) statCount++;
     if (hasAffinity(components, id)) statCount++;
+    if (hasRarity(components, id)) statCount++;
 
     uint256 i;
     uint256[] memory statComponents = new uint256[](statCount);
@@ -137,6 +140,7 @@ library LibStat {
     if (hasViolence(components, id)) statComponents[i++] = ViolenceCompID;
     if (hasSlots(components, id)) statComponents[i++] = SlotsCompID;
     if (hasAffinity(components, id)) statComponents[i++] = AffinityCompID;
+    if (hasRarity(components, id)) statComponents[i++] = RarityCompID;
     return statComponents;
   }
 
@@ -167,6 +171,10 @@ library LibStat {
     return AffinityComponent(getAddressById(components, AffinityCompID)).has(id);
   }
 
+  function hasRarity(IUintComp components, uint256 id) internal view returns (bool) {
+    return RarityComponent(getAddressById(components, RarityCompID)).has(id);
+  }
+
   /////////////////
   // SETTERS
 
@@ -192,6 +200,10 @@ library LibStat {
 
   function setAffinity(IUintComp components, uint256 id, string memory value) internal {
     AffinityComponent(getAddressById(components, AffinityCompID)).set(id, value);
+  }
+
+  function setRarity(IUintComp components, uint256 id, uint256 value) internal {
+    RarityComponent(getAddressById(components, RarityCompID)).set(id, value);
   }
 
   /////////////////
@@ -228,6 +240,11 @@ library LibStat {
     return AffinityComponent(getAddressById(components, AffinityCompID)).getValue(id);
   }
 
+  function getRarity(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (!hasRarity(components, id)) return 0;
+    return RarityComponent(getAddressById(components, RarityCompID)).getValue(id);
+  }
+
   /////////////////
   // REMOVERS
 
@@ -253,5 +270,9 @@ library LibStat {
 
   function removeAffinity(IUintComp components, uint256 id) internal {
     if (hasAffinity(components, id)) getComponentById(components, AffinityCompID).remove(id);
+  }
+
+  function removeRarity(IUintComp components, uint256 id) internal {
+    if (hasRarity(components, id)) getComponentById(components, RarityCompID).remove(id);
   }
 }
