@@ -18,7 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0",
-    "parcel-reporter-static-files-copy": "^1.5.0",
+    "parcel-reporter-static-files-copy": "^1.4.0",
     "prettier": "^2.5.1",
     "tspath": "^2.6.8",
     "typescript": "^4.6.4"
@@ -50,7 +50,7 @@
     "styled-components": "^5.3.6",
     "threads": "^1.7.0",
     "wagmi": "^0.12.1",
-    "zustand": "^4.3.3"
+    "zustand": "^4.3.1"
   },
   "staticFiles": {
     "staticPath": "src/public"
