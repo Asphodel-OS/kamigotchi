@@ -48,18 +48,18 @@ export function createAdminAPI(systems: any) {
 
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
-    systems['system.ERC721.metadata']._setRevealed(
-      '123',
-      'http://159.223.244.145:8080/image/'
-    );
+    // systems['system.ERC721.metadata']._setRevealed(
+    //   '123',
+    //   'http://159.223.244.145:8080/image/'
+    // );
     // systems["system.ERC721.metadata"]._setRevealed("123", "http://localhost:8080/image/");
-    systems['system.ERC721.metadata']._setMaxElements([
-      '13',
-      '26',
-      '14',
-      '15',
-      '30',
-    ]);
+    // systems['system.ERC721.metadata']._setMaxElements([
+    //   '13',
+    //   '26',
+    //   '14',
+    //   '15',
+    //   '30',
+    // ]);
 
     createPlayerAPI(systems).ERC721.mint(
       '0x7681A73aed06bfb648a5818B978fb018019F6900'
