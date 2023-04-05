@@ -8,10 +8,9 @@ import {
   setComponent,
 } from '@latticexyz/recs';
 import { Time } from './utils/time';
-import { Wallet } from 'ethers';
 
 import { GameConfig } from './layers/network/config';
-import { createGameConfigLocal } from './layers/network/createGameConfig';
+import { createGameConfig } from './layers/network/createGameConfig';
 import { mountReact, setLayers, boot as bootReact } from './layers/react/boot';
 
 let createNetworkLayer = createNetworkLayerImport;
@@ -53,8 +52,8 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
 
 
   // Set the game config
-  const params = new URLSearchParams(window.location.search);
-  const gameConfig: GameConfig = createGameConfigLocal(params);
+  // const params = new URLSearchParams(window.location.search);
+  const gameConfig: GameConfig | undefined = createGameConfig();
   if (!gameConfig) throw new Error('Invalid config');
   console.log("gameConfig", gameConfig);
 

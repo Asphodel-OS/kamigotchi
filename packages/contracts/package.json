@@ -25,6 +25,7 @@
     "abi:types:gen": "yarn typechain --target=ethers-v5 --out-dir ../client/types/ethers-contracts ../client/abi/*.json ",
     "abi:types:mappings": "mud system-types --outputDir ../client/types/ && cp ../client/types/SystemAbis.mts ../client/types/SystemAbis.mjs",
     "build:systems": "forge build --contracts src/systems --skip test --skip script",
+    "deploy:lattice": "yarn mud deploy --chainSpec https://spec.testnet-chain.linfra.xyz/chainSpec.json --deployerPrivateKey 0x0",
     "deploy:local": "mud deploy --deployerPrivateKey 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
     "dev:local": "yarn build && yarn start",
     "node:local": "anvil -b 1 --block-base-fee-per-gas 0",

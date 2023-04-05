@@ -7,7 +7,7 @@ export function createGameConfig(): GameConfig | undefined {
 
   const params = new URLSearchParams(window.location.search);
   const devMode = params.get('dev') === 'true';
-  config = (devMode) ? createGameConfigLocal(params) : createGameConfigLattice();
+  config = (devMode) ? createGameConfigLocal() : createGameConfigLattice();
   console.log('config', config);
 
   if (
@@ -21,26 +21,27 @@ export function createGameConfig(): GameConfig | undefined {
 }
 
 // Get the network config of a local deployment based on url params
-export function createGameConfigLocal(params: URLSearchParams): GameConfig {
+export function createGameConfigLocal(): GameConfig {
+  const params = new URLSearchParams(window.location.search);
+
   let config: GameConfig = <GameConfig>{};
   config.devMode = true;
 
-  // EOAs
+  // EOAs and privatekey
   let wallet;
   if (params.get('admin') !== 'false') {
     wallet = new Wallet(
       '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
     );
   } else {
-    const detectedPrivateKey = localStorage.getItem('burnerPrivateKey');
+    const detectedPrivateKey = localStorage.getItem('operatorPrivateKey');
     wallet = (detectedPrivateKey)
       ? new Wallet(detectedPrivateKey)
       : Wallet.createRandom();
 
-    localStorage.setItem('burnerPrivateKey', wallet.privateKey);
-    localStorage.setItem('burnerAddress', wallet.publicKey);
+    localStorage.setItem('operatorPrivateKey', wallet.privateKey);
+    localStorage.setItem('operatorPublicKey', wallet.publicKey);
   }
-
   config.privateKey = wallet.privateKey;
 
   // RPCs
@@ -72,10 +73,11 @@ export function createGameConfigLocal(params: URLSearchParams): GameConfig {
 // Get the network config of a deployment to Lattice's mudChain testnet
 function createGameConfigLattice(): GameConfig {
   // setting up local burner
-  let privateKey = localStorage.getItem("burnerAddress");
+  let privateKey = localStorage.getItem("operatorPrivateKey");
   const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
-  localStorage.setItem("burnerPrivateKey", wallet.privateKey);
-  localStorage.setItem("burnerAddress", wallet.publicKey);
+  localStorage.setItem("operatorPrivateKey", wallet.privateKey);
+  localStorage.setItem("operatorPublicKey", wallet.publicKey);
+
 
   let config: GameConfig = <GameConfig>{
     privateKey: wallet.privateKey,
@@ -86,8 +88,8 @@ function createGameConfigLattice(): GameConfig {
     snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
     // checkpointUrl: undefined,
     chainId: 4242,
-    worldAddress: "0xfEF57aF100788255165c470621d19d4673e9ED91", // this is the asphodel playtest
-    initialBlockNumber: 0,
+    worldAddress: "0xd0F4505f3bC8BC607687D1A0Edc1fA305E7AC11F",
+    initialBlockNumber: 10987107,
   };
   return config;
 }
