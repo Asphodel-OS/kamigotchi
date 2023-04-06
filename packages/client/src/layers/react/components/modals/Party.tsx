@@ -322,7 +322,7 @@ export function registerPartyModal() {
       // get the title of the kami as 'name (health / totHealth)'
       const getTitle = (kami: Kami) => {
         const health = calcHealth(kami);
-        return kami.name + ` (${health.toFixed()}/${kami.health * 1})`;
+        return kami.name + ` (${health.toFixed()}/${kami.stats.health * 1})`;
       };
 
       // get the description of the kami as a list of lines

@@ -3,19 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
-import {
-  EntityIndex,
-  EntityID,
-  HasValue,
-  Has,
-  runQuery,
-  getComponentValue,
-  Component,
-} from '@latticexyz/recs';
+import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
 import { BigNumber, BigNumberish } from 'ethers';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 
 export function registerKamiModal() {

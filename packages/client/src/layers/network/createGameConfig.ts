@@ -88,8 +88,8 @@ function createGameConfigLattice(): GameConfig {
     snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
     // checkpointUrl: undefined,
     chainId: 4242,
-    worldAddress: "0xd0F4505f3bC8BC607687D1A0Edc1fA305E7AC11F",
-    initialBlockNumber: 10987107,
+    worldAddress: "0xb5cd01117b091a5b6fF2e025a71AC3DEA47361a9",
+    initialBlockNumber: 11085521,
   };
   return config;
 }

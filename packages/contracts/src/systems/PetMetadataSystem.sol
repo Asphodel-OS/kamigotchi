@@ -162,6 +162,7 @@ contract PetMetadataSystem is System {
   }
 
   // sets a seed. maybe VRF in future
+  // TODO: update this to a more appropriate name
   function _setRevealed(uint256 seed, string memory baseURI) public onlyOwner {
     require(!_revealed, "already revealed");
     _seed = seed;
