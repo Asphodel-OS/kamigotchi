@@ -354,6 +354,7 @@
     "LibRegister",
     "LibRegistryItem",
     "LibRoom",
+    "LibRarity",
     "LibStat",
     "LibTrade"
   ]

@@ -20,6 +20,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRarity } from "libraries/LibRarity.sol";
 
 // LibRegistryTrait is based heavily off LibRegistryItem, but is used for traits.
 // All traits are considered fungible and are not compeitiable with the inventory layer but default, but can be added.
@@ -674,7 +675,7 @@ library LibRegistryTrait {
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
     uint256[] memory entities = getAllBody(components);
-    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexBodyCompID);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexBodyCompID);
   }
 
   // get background rarities in a key value pair array
@@ -682,8 +683,7 @@ library LibRegistryTrait {
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
     uint256[] memory entities = getAllBackground(components);
-    return
-      LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexBackgroundCompID);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexBackgroundCompID);
   }
 
   // get color rarities in a key value pair array
@@ -691,7 +691,7 @@ library LibRegistryTrait {
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
     uint256[] memory entities = getAllColor(components);
-    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexColorCompID);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexColorCompID);
   }
 
   // get face rarities in a key value pair array
@@ -699,7 +699,7 @@ library LibRegistryTrait {
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
     uint256[] memory entities = getAllFace(components);
-    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexFaceCompID);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexFaceCompID);
   }
 
   // get hand rarities in a key value pair array
@@ -707,6 +707,6 @@ library LibRegistryTrait {
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
     uint256[] memory entities = getAllHand(components);
-    return LibRandom.getRarityKeyValueArr(components, entities, RarityCompID, IndexHandCompID);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexHandCompID);
   }
 }

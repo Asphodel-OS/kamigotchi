@@ -78,30 +78,6 @@ library LibRandom {
   }
 
   //////////////////
-  // HELPERS
-
-  // generates a key pair array from an array of componentIDs
-  // assumes both rarity and key components are uint256
-  function getRarityKeyValueArr(
-    IUint256Component components,
-    uint256[] memory compIDs,
-    uint256 rareComp,
-    uint256 keyComp
-  ) internal view returns (uint256[] memory keys, uint256[] memory rarities) {
-    keys = new uint256[](compIDs.length);
-    rarities = new uint256[](compIDs.length);
-    for (uint256 i; i < compIDs.length; i++) {
-      IUint256Component rComp = IUint256Component(getAddressById(components, rareComp));
-      if (rComp.has(compIDs[i])) {
-        rarities[i] = rComp.getValue(compIDs[i]);
-      } else {
-        rarities[i] = 0;
-      }
-      keys[i] = IUint256Component(getAddressById(components, keyComp)).getValue(compIDs[i]);
-    }
-  }
-
-  //////////////////
   // BITPACK HELPERS
 
   // @dev: updates a bitpacked value at a specific position. returns the new packed array

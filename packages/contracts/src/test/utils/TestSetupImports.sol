@@ -17,6 +17,7 @@ import { LibPrototype } from "libraries/LibPrototype.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
+import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
