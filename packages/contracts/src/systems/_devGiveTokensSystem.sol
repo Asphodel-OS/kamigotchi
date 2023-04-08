@@ -16,12 +16,12 @@ contract _devGiveTokensSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    uint256 amount = abi.decode(arguments, (uint256));
-    LibCoin.inc(components, LibAccount.getByAddress(components, msg.sender), amount);
-    return abi.encode("");
+    (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
+    LibCoin.inc(components, LibAccount.getByAddress(components, to), amount);
+    return "";
   }
 
-  function executeTyped(uint256 amount) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(amount));
+  function executeTyped(address to, uint256 amount) public onlyOwner returns (bytes memory) {
+    return execute(abi.encode(to, amount));
   }
 }

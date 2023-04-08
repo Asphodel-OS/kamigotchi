@@ -196,6 +196,23 @@
       ]
     },
     {
+      "name": "ERC20MintSystem",
+      "writeAccess": [
+        "CoinComponent"
+      ]
+    },
+    {
+      "name": "ERC20BurnSystem",
+      "writeAccess": [
+        "IsAccountComponent",
+        "AddressOperatorComponent",
+        "IdOwnerComponent",
+        "LocationComponent",
+        "NameComponent",
+        "CoinComponent"
+      ]
+    },
+    {
       "name": "ListingBuySystem",
       "writeAccess": [
         "BalanceComponent",
