@@ -3,6 +3,7 @@ libraries/=./src/libraries
 systems/=./src/systems
 test/=./src/test
 utils/=./src/utils
+tokens/=./src/tokens
 ds-test/=../../node_modules/ds-test/src/
 forge-std/=../../node_modules/forge-std/src/
 memmove/=../../node_modules/memmove/src/

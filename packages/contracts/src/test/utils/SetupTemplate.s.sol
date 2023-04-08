@@ -19,25 +19,25 @@ abstract contract SetupTemplate is TestSetupImports {
     // temp: remove later
     // _ERC721PetSystem.init();
 
-    vm.startPrank(deployer);
-    __InitSystem.executeTyped();
-    _PetMetadataSystem._setRevealed(
-      123,
-      "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/images%2F"
-    );
-    uint256[] memory maxElements = new uint256[](5);
-    // maxElements[0] = 9;
-    // maxElements[1] = 1;
-    // maxElements[2] = 7;
-    // maxElements[3] = 8;
-    // maxElements[4] = 1;
-    maxElements[0] = 2; // BODY
-    maxElements[1] = 1; // COLOR
-    maxElements[2] = 2; // FACE
-    maxElements[3] = 2; // HAND
-    maxElements[4] = 1; // BACKGROUND
-    _PetMetadataSystem._setMaxElements(maxElements);
-    vm.stopPrank();
+    // vm.startPrank(deployer);
+    // __InitSystem.executeTyped();
+    // _PetMetadataSystem._setRevealed(
+    //   123,
+    //   "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/images%2F"
+    // );
+    // uint256[] memory maxElements = new uint256[](5);
+    // // maxElements[0] = 9;
+    // // maxElements[1] = 1;
+    // // maxElements[2] = 7;
+    // // maxElements[3] = 8;
+    // // maxElements[4] = 1;
+    // maxElements[0] = 2; // BODY
+    // maxElements[1] = 1; // COLOR
+    // maxElements[2] = 2; // FACE
+    // maxElements[3] = 2; // HAND
+    // maxElements[4] = 1; // BACKGROUND
+    // _PetMetadataSystem._setMaxElements(maxElements);
+    // vm.stopPrank();
   }
 
   /***********************
@@ -58,11 +58,7 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  function _transferPetNFT(
-    address from,
-    address to,
-    uint256 nftID
-  ) internal {
+  function _transferPetNFT(address from, address to, uint256 nftID) internal {
     vm.prank(from);
     _ERC721PetSystem.transferFrom(from, to, nftID);
   }
@@ -70,12 +66,16 @@ abstract contract SetupTemplate is TestSetupImports {
   /***********************
    *   room create
    ************************/
-  function _roomCreate(
-    string memory name,
-    uint256 location,
-    uint256[] memory exits
-  ) internal {
+  function _roomCreate(string memory name, uint256 location, uint256[] memory exits) internal {
     vm.prank(deployer);
     __RoomCreateSystem.executeTyped(name, location, exits);
+  }
+
+  /***********************
+   *   accounts
+   ************************/
+  function _createAccount(address addy, string memory name) internal {
+    vm.prank(addy);
+    _AccountSetSystem.executeTyped(addy, name);
   }
 }

@@ -16,6 +16,8 @@ import { _RoomCreateSystem } from "./ethers-contracts/_RoomCreateSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountNameSystem } from "./ethers-contracts/AccountNameSystem";
 import { AccountSetSystem } from "./ethers-contracts/AccountSetSystem";
+import { ERC20BurnSystem } from "./ethers-contracts/ERC20BurnSystem";
+import { ERC20MintSystem } from "./ethers-contracts/ERC20MintSystem";
 import { ERC721PetSystem } from "./ethers-contracts/ERC721PetSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
@@ -51,6 +53,8 @@ export type SystemTypes = {
   "system.Account.Move": AccountMoveSystem;
   "system.Account.Name": AccountNameSystem;
   "system.Account.Set": AccountSetSystem;
+  "system.ERC20.Burn": ERC20BurnSystem;
+  "system.ERC20.Mint": ERC20MintSystem;
   "system.ERC721.pet": ERC721PetSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
