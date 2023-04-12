@@ -54,7 +54,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
         components
       );
-      traits[0] = LibRandom.wGenerateFromSeed(
+      traits[0] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Color")))
@@ -65,7 +65,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
         components
       );
-      traits[1] = LibRandom.wGenerateFromSeed(
+      traits[1] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Background")))
@@ -76,7 +76,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
         components
       );
-      traits[2] = LibRandom.wGenerateFromSeed(
+      traits[2] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Body")))
@@ -87,7 +87,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
         components
       );
-      traits[3] = LibRandom.wGenerateFromSeed(
+      traits[3] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Hand")))
@@ -98,7 +98,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
         components
       );
-      traits[4] = LibRandom.wGenerateFromSeed(
+      traits[4] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Face")))

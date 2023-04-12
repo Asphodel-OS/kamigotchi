@@ -9,30 +9,32 @@ import { getAddressById } from "solecs/utils.sol";
 library LibRandom {
   //////////////////
   // WEIGHTED
-  // unpacked arrays with weighted random values. with replacement
-  // functions are prefixed with w
 
-  // @dev: generates a weighted random array from a seed. returns itemID
-  // @param weights: the weights for each item
+  // select an item from a weighted list of options
+
+  // @dev: picks from a weighted random array based on a random input
   // @param keys: keys, position correspnds to weights
-  function wGenerateFromSeed(
+  // @param weights: the weights for each item
+  // @param randN: the input random number
+  // @return (uint) the key of the selected item
+  function selectFromWeighted(
     uint256[] memory keys,
     uint256[] memory weights,
-    uint256 seed
+    uint256 randN
   ) internal pure returns (uint256) {
     uint256 totalWeight;
     for (uint256 i; i < weights.length; i++) {
       totalWeight += weights[i];
     }
 
-    // get random number
-    uint256 rand = seed % totalWeight;
+    // roll for the constrained random number
+    uint256 roll = randN % totalWeight;
 
     // iterate to find item
     uint256 currentWeight;
     for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
-      if (rand < currentWeight) {
+      if (roll < currentWeight) {
         return keys[i];
       }
     }
