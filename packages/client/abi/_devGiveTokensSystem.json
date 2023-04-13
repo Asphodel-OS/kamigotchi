@@ -67,6 +67,11 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
@@ -112,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(address,uint256)": "6ad0ccab",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }
