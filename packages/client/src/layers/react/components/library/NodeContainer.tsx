@@ -62,7 +62,7 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({ node }) => {
         <div className="text1">{node.text1 ?? '(Eerie) Remote Hillside'}</div>
         <div className="text2">
           {node.text2 ??
-            'Past the forest and down the past less traveled a Lonley gravestone rests on a hillside. The flower is resilent, seemingly invincible. You dare not touch it, in fear of distrubing her rest'}
+            'This is a node. You can harvest from it by using your Kamigotchi! This is the only way to get $KAMI, the only hope you have to find self worth.'}
         </div>
       </div>
     </NodeInfoContainer>

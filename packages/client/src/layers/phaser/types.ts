@@ -19,16 +19,3 @@ export type TPhaserConfig = {
 };
 
 export type PhaserLayer = Awaited<ReturnType<typeof createPhaserLayer>>;
-
-export interface Room {
-  preload?: (scene: Phaser.Scene) => void;
-  create: (scene: Phaser.Scene) => void;
-  update?: (scene: Phaser.Scene) => void;
-}
-
-export interface PhaserScene extends Phaser.Scene {
-  rooms?: Room[];
-  gmusic?: any;
-  interactiveObjects?: any;
-  inputKeys?: any;
-}

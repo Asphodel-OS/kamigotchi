@@ -13,6 +13,10 @@
         "./src/assets/*",
         "./src/assets"
       ],
+      "constants/*": [
+        "./src/constants/*",
+        "./src/constants"
+      ],
       "layers/*": [
         "./src/layers/*",
         "./src/layers"
@@ -20,6 +24,10 @@
       "utils/*": [
         "./src/utils/*",
         "./src/utils"
+      ],
+      "types/*": [
+        "./types/*",
+        "./types"
       ],
     },
     "resolveJsonModule": true /* Enable importing .json files */,

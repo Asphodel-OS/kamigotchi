@@ -33,7 +33,7 @@ export function registerNodeModal() {
       colStart: 33,
       colEnd: 65,
       rowStart: 2,
-      rowEnd: 60,
+      rowEnd: 99,
     },
 
     // Requirement (Data Manangement)
@@ -155,7 +155,7 @@ export function registerNodeModal() {
               );
             }
 
-            // filter out accountKamis and inactive productions 
+            // filter out accountKamis and inactive productions
             if (nodeKamis) {
               const activeEnemies = nodeKamis.filter((kami) => {
                 if (kami.production && kami.production.state === 'ACTIVE') {

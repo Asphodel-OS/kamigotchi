@@ -1,20 +1,17 @@
 /* eslint-disable prefer-const */
-import { createNetworkLayer as createNetworkLayerImport } from './layers/network/createNetworkLayer';
-import { createPhaserLayer as createPhaserLayerImport } from './layers/phaser/createPhaserLayer';
-import { Layers } from './types';
 import {
   getComponentValue,
   removeComponent,
   setComponent,
 } from '@latticexyz/recs';
+import { SetupContractConfig } from '@latticexyz/std-client';
+
+import { createNetworkConfig } from 'layers/network/config';
+import { createNetworkLayer } from 'layers/network/createNetworkLayer';
+import { createPhaserLayer } from 'layers/phaser/createPhaserLayer';
+import { mountReact, setLayers, boot as bootReact } from 'layers/react/boot';
+import { Layers } from './types';
 import { Time } from './utils/time';
-
-import { GameConfig } from './layers/network/config';
-import { createGameConfig } from './layers/network/createGameConfig';
-import { mountReact, setLayers, boot as bootReact } from './layers/react/boot';
-
-let createNetworkLayer = createNetworkLayerImport;
-let createPhaserLayer = createPhaserLayerImport;
 
 // boot the whole thing
 export async function boot() {
@@ -50,23 +47,23 @@ async function bootGame() {
 async function rebootGame(initialBoot: boolean): Promise<Layers> {
   const layers: Partial<Layers> = {};
 
-
   // Set the game config
-  // const params = new URLSearchParams(window.location.search);
-  const gameConfig: GameConfig | undefined = createGameConfig();
-  if (!gameConfig) throw new Error('Invalid config');
-  console.log("gameConfig", gameConfig);
+  const networkConfig: SetupContractConfig | undefined = createNetworkConfig();
+  if (!networkConfig) throw new Error('Invalid config');
+  // console.log("networkConfig", networkConfig);
 
   // Populate the layers
-  if (!layers.network) layers.network = await createNetworkLayer(gameConfig);
+  if (!layers.network) layers.network = await createNetworkLayer(networkConfig);
   if (!layers.phaser) layers.phaser = await createPhaserLayer(layers.network);
 
-  // what is this for?
-  Time.time.setPacemaker((setTimestamp) => {
-    layers.phaser?.game.events.on('poststep', (time: number) => {
-      setTimestamp(time);
+  // Set phaser game tick
+  if (layers.phaser) {
+    Time.time.setPacemaker((setTimestamp) => {
+      layers.phaser!.game.events.on('poststep', (time: number) => {
+        setTimestamp(time);
+      });
     });
-  });
+  }
 
   // Refresh if we detect two canvas elements. Something went wrong.
   if (document.querySelectorAll('#phaser-game canvas').length > 1) {

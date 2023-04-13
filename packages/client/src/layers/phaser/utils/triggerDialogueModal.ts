@@ -1,24 +1,20 @@
 import { dataStore } from 'layers/react/store/createStore';
-import dialogueSound from 'assets/sound/fx/speech3.mp3';
+import dialogueSound from 'assets/sound/fx/mouseclick.wav';
 
-export const triggerDialogueModal = (
-  object: Phaser.GameObjects.GameObject,
-  description: string
-) => {
-  return object.setInteractive().on('pointerdown', () => {
-    const clickFX = new Audio(dialogueSound);
+export const triggerDialogueModal = (description) => {
 
-    const {
-      visibleModals,
-      sound: { volume },
-    } = dataStore.getState();
+  const {
+    visibleModals,
+    sound: { volume },
+  } = dataStore.getState();
 
-    clickFX.volume = volume;
-    clickFX.play();
+  const clickFX = new Audio(dialogueSound);
 
-    dataStore.setState({ dialogue: { description } });
-    dataStore.setState({
-      visibleModals: { ...visibleModals, dialogue: !visibleModals.dialogue },
-    });
+  clickFX.volume = volume;
+  clickFX.play();
+
+  dataStore.setState({ dialogue: { description } });
+  dataStore.setState({
+    visibleModals: { ...visibleModals, dialogue: true },
   });
-};
+}

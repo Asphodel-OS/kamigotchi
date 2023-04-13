@@ -8,16 +8,16 @@ export function registerPartyButton() {
   registerUIComponent(
     'PartyButton',
     {
-      colStart: 88,
-      colEnd: 100,
-      rowStart: 74,
-      rowEnd: 78,
+      colStart: 2,
+      colEnd: 13,
+      rowStart: 2,
+      rowEnd: 10,
     },
     (layers) => of(layers),
     () => {
       return (
         <MenuButton id="party_button" targetDiv="party">
-          My Kami
+          Kami
         </MenuButton>
       );
     }

@@ -1,3 +1,4 @@
+import { World } from "@latticexyz/recs";
 import {
   defineBoolComponent,
   defineNumberComponent,
@@ -7,110 +8,110 @@ import {
 import {
   defineLoadingStateComponent,
   defineNumberArrayComponent,
-  defineStringArrayComponent,
 } from "./definitions";
 
-// shortcut function for boolean component registration
-function defineBoolEZ(world: any, id: string, contractId: string) {
-  return defineBoolComponent(world, { id, metadata: { contractId } });
-}
-
-// shortcut function for number component registration
-function defineNumberEZ(world: any, id: string, contractId: string) {
-  return defineNumberComponent(world, { id, metadata: { contractId } });
-}
-
-// shortcut function for string component registration
-function defineStringEZ(world: any, id: string, contractId: string) {
-  return defineStringComponent(world, { id, metadata: { contractId } });
-}
 
 
 // define functions for registration
-export function createComponents(world: any) {
+export function createComponents(world: World) {
+  // shortcut function for boolean component registration
+  function defineBoolEZ(id: string, contractId: string) {
+    return defineBoolComponent(world, { id, metadata: { contractId } });
+  }
+
+  // shortcut function for number component registration
+  function defineNumberEZ(id: string, contractId: string) {
+    return defineNumberComponent(world, { id, metadata: { contractId } });
+  }
+
+  // shortcut function for string component registration
+  function defineStringEZ(id: string, contractId: string) {
+    return defineStringComponent(world, { id, metadata: { contractId } });
+  }
+
   return {
     // Archetypes
-    IsAccount: defineBoolEZ(world, "IsAccount", "component.Is.Account"),
-    IsEquipped: defineBoolEZ(world, "IsEquipped", "component.Is.Equipped"),
-    IsFood: defineBoolEZ(world, "IsFood", "component.Is.Food"),
-    IsFungible: defineBoolEZ(world, "IsFungible", "component.Is.Fungible"),
-    IsInventory: defineBoolEZ(world, "IsInventory", "component.Is.Inventory"),
-    IsKill: defineBoolEZ(world, "IsKill", "component.Is.Kill"),
-    IsListing: defineBoolEZ(world, "IsListing", "component.Is.Listing"),
-    IsMerchant: defineBoolEZ(world, "IsMerchant", "component.Is.Merchant"),
-    IsNode: defineBoolEZ(world, "IsNode", "component.Is.Node"),
-    IsNonFungible: defineBoolEZ(world, "IsNonFungible", "component.Is.NonFungible"),
-    IsPet: defineBoolEZ(world, "IsPet", "component.Is.Pet"),
-    IsProduction: defineBoolEZ(world, "IsProduction", "component.Is.Production"),
-    IsRegister: defineBoolEZ(world, "IsRegister", "component.Is.Register"),
-    IsRegistry: defineBoolEZ(world, "IsRegistry", "component.Is.Registry"),
-    IsRegistryEntry: defineBoolEZ(world, "IsRegistryEntry", "component.Is.RegistryEntry"),
-    IsRequest: defineBoolEZ(world, "IsRequest", "component.Is.Request"),
-    IsRoom: defineBoolEZ(world, "IsRoom", "component.Is.Room"),
-    IsTrade: defineBoolEZ(world, "IsTrade", "component.Is.Trade"),
-    IsTrait: defineBoolEZ(world, "IsTrait", "component.Is.Trait"),
+    IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
+    IsEquipped: defineBoolEZ("IsEquipped", "component.Is.Equipped"),
+    IsFood: defineBoolEZ("IsFood", "component.Is.Food"),
+    IsFungible: defineBoolEZ("IsFungible", "component.Is.Fungible"),
+    IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
+    IsKill: defineBoolEZ("IsKill", "component.Is.Kill"),
+    IsListing: defineBoolEZ("IsListing", "component.Is.Listing"),
+    IsMerchant: defineBoolEZ("IsMerchant", "component.Is.Merchant"),
+    IsNode: defineBoolEZ("IsNode", "component.Is.Node"),
+    IsNonFungible: defineBoolEZ("IsNonFungible", "component.Is.NonFungible"),
+    IsPet: defineBoolEZ("IsPet", "component.Is.Pet"),
+    IsProduction: defineBoolEZ("IsProduction", "component.Is.Production"),
+    IsRegister: defineBoolEZ("IsRegister", "component.Is.Register"),
+    IsRegistry: defineBoolEZ("IsRegistry", "component.Is.Registry"),
+    IsRegistryEntry: defineBoolEZ("IsRegistryEntry", "component.Is.RegistryEntry"),
+    IsRequest: defineBoolEZ("IsRequest", "component.Is.Request"),
+    IsRoom: defineBoolEZ("IsRoom", "component.Is.Room"),
+    IsTrade: defineBoolEZ("IsTrade", "component.Is.Trade"),
+    IsTrait: defineBoolEZ("IsTrait", "component.Is.Trait"),
 
     // IDs
-    AccountID: defineStringEZ(world, "AccountID", "component.Id.Account"),
-    DelegateeID: defineStringEZ(world, "DelegateeID", "component.Id.Delegatee"),
-    DelegatorID: defineStringEZ(world, "DelegatorID", "component.Id.Delegator"),
-    HolderID: defineStringEZ(world, "HolderID", "component.Id.Holder"),
-    MerchantID: defineStringEZ(world, "MerchantID", "component.Id.Merchant"),
-    NodeID: defineStringEZ(world, "NodeID", "component.Id.Node"),
-    OwnerID: defineStringEZ(world, "OwnerID", "component.Id.Owner"),
-    PetID: defineStringEZ(world, "PetID", "component.Id.Pet"),
-    RequesteeID: defineStringEZ(world, "RequesteeID", "component.Id.Requestee"),
-    RequesterID: defineStringEZ(world, "RequesterID", "component.Id.Requester"),
-    SourceID: defineStringEZ(world, "SourceID", "component.Id.Source"),
-    TargetID: defineStringEZ(world, "TargetID", "component.Id.Target"),
+    AccountID: defineStringEZ("AccountID", "component.Id.Account"),
+    DelegateeID: defineStringEZ("DelegateeID", "component.Id.Delegatee"),
+    DelegatorID: defineStringEZ("DelegatorID", "component.Id.Delegator"),
+    HolderID: defineStringEZ("HolderID", "component.Id.Holder"),
+    MerchantID: defineStringEZ("MerchantID", "component.Id.Merchant"),
+    NodeID: defineStringEZ("NodeID", "component.Id.Node"),
+    OwnerID: defineStringEZ("OwnerID", "component.Id.Owner"),
+    PetID: defineStringEZ("PetID", "component.Id.Pet"),
+    RequesteeID: defineStringEZ("RequesteeID", "component.Id.Requestee"),
+    RequesterID: defineStringEZ("RequesterID", "component.Id.Requester"),
+    SourceID: defineStringEZ("SourceID", "component.Id.Source"),
+    TargetID: defineStringEZ("TargetID", "component.Id.Target"),
 
     // Indices
-    BodyIndex: defineNumberEZ(world, "BodyIndex", "component.Index.Body"),
-    BackgroundIndex: defineNumberEZ(world, "BackgroundIndex", "component.Index.Background"),
-    ColorIndex: defineNumberEZ(world, "ColorIndex", "component.Index.Color"),
-    FaceIndex: defineNumberEZ(world, "FaceIndex", "component.Index.Face"),
-    HandIndex: defineNumberEZ(world, "HandIndex", "component.Index.Hand"),
-    FoodIndex: defineNumberEZ(world, "FoodIndex", "component.Index.Food"),
-    GearIndex: defineNumberEZ(world, "GearIndex", "component.Index.Gear"),
-    ItemIndex: defineNumberEZ(world, "ItemIndex", "component.Index.Item"),
-    ModIndex: defineNumberEZ(world, "ModIndex", "component.Index.Mod"),
-    PetIndex: defineStringEZ(world, "PetIndex", "component.Index.Pet"), // this should be updated to be a number component
-    TraitIndex: defineStringEZ(world, "PetIndex", "component.Index.Trait"), // this should be updated to be a number component
+    BackgroundIndex: defineNumberEZ("BackgroundIndex", "component.Index.Background"),
+    BodyIndex: defineNumberEZ("BodyIndex", "component.Index.Body"),
+    ColorIndex: defineNumberEZ("ColorIndex", "component.Index.Color"),
+    FaceIndex: defineNumberEZ("FaceIndex", "component.Index.Face"),
+    FoodIndex: defineNumberEZ("FoodIndex", "component.Index.Food"),
+    GearIndex: defineNumberEZ("GearIndex", "component.Index.Gear"),
+    HandIndex: defineNumberEZ("HandIndex", "component.Index.Hand"),
+    ItemIndex: defineNumberEZ("ItemIndex", "component.Index.Item"),
+    ModIndex: defineNumberEZ("ModIndex", "component.Index.Mod"),
+    PetIndex: defineStringEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
+    TraitIndex: defineStringEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
 
     // Values
-    Affinity: defineStringEZ(world, "Affinity", "component.Affinity"),
-    Balance: defineNumberEZ(world, "Balance", "component.Balance"),
-    Coin: defineNumberEZ(world, "Coin", "component.Coin"),
+    Affinity: defineStringEZ("Affinity", "component.Affinity"),
+    Balance: defineNumberEZ("Balance", "component.Balance"),
+    Coin: defineNumberEZ("Coin", "component.Coin"),
     Exits: defineNumberArrayComponent(world, "Exits", "component.Exits"),
-    Genus: defineStringEZ(world, "Genus", "component.Genus"),
-    Harmony: defineNumberEZ(world, "Harmony", "component.Harmony"),
-    Health: defineNumberEZ(world, "Health", "component.Health"),
-    HealthCurrent: defineNumberEZ(world, "HealthCurrent", "component.HealthCurrent"),
-    Location: defineNumberEZ(world, "Location", "component.Location"),
-    Name: defineStringEZ(world, "Name", "component.Name"),
-    Power: defineNumberEZ(world, "Power", "component.Power"),
-    PriceBuy: defineNumberEZ(world, "PriceBuy", "component.PriceBuy"),
-    PriceSell: defineNumberEZ(world, "PriceSell", "component.PriceSell"),
-    Prototype: defineNumberEZ(world, "Prototype", "component.Prototype"),
-    Rarity: defineNumberEZ(world, "Rarity", "component.Rarity"),
-    Rate: defineNumberEZ(world, "Rate", "component.Rate"),
-    Slots: defineNumberEZ(world, "Slots", "component.Slots"),
-    State: defineStringEZ(world, "State", "component.State"),
-    Status: defineStringEZ(world, "Status", "component.Status"),
-    Type: defineStringEZ(world, "Type", "component.Type"),
-    Upgrades: defineNumberEZ(world, "Upgrades", "component.Upgrades"),
-    Value: defineStringEZ(world, "Value", "component.Value"),
-    Violence: defineNumberEZ(world, "Violence", "component.Violence"),
+    Genus: defineStringEZ("Genus", "component.Genus"),
+    Harmony: defineNumberEZ("Harmony", "component.Harmony"),
+    Health: defineNumberEZ("Health", "component.Health"),
+    HealthCurrent: defineNumberEZ("HealthCurrent", "component.HealthCurrent"),
+    Location: defineNumberEZ("Location", "component.Location"),
+    Name: defineStringEZ("Name", "component.Name"),
+    Power: defineNumberEZ("Power", "component.Power"),
+    PriceBuy: defineNumberEZ("PriceBuy", "component.PriceBuy"),
+    PriceSell: defineNumberEZ("PriceSell", "component.PriceSell"),
+    Prototype: defineNumberEZ("Prototype", "component.Prototype"),
+    Rarity: defineNumberEZ("Rarity", "component.Rarity"),
+    Rate: defineNumberEZ("Rate", "component.Rate"),
+    Slots: defineNumberEZ("Slots", "component.Slots"),
+    State: defineStringEZ("State", "component.State"),
+    Status: defineStringEZ("Status", "component.Status"),
+    Type: defineStringEZ("Type", "component.Type"),
+    Upgrades: defineNumberEZ("Upgrades", "component.Upgrades"),
+    Value: defineStringEZ("Value", "component.Value"),
+    Violence: defineNumberEZ("Violence", "component.Violence"),
 
     // Time/Block Tracking
-    BlockLast: defineNumberEZ(world, "BlockLast", "component.BlockLast"),
-    LastActionTime: defineNumberEZ(world, "LastActionTime", "component.Time.LastAction"),
-    StartTime: defineNumberEZ(world, "StartTime", "component.Time.Start"),
-    Time: defineNumberEZ(world, "Time", "component.Time"),
+    BlockLast: defineNumberEZ("BlockLast", "component.BlockLast"),
+    LastActionTime: defineNumberEZ("LastActionTime", "component.Time.LastAction"),
+    StartTime: defineNumberEZ("StartTime", "component.Time.Start"),
+    Time: defineNumberEZ("Time", "component.Time"),
 
     // speeeecial
     LoadingState: defineLoadingStateComponent(world),
-    MediaURI: defineStringEZ(world, "MediaURI", "component.MediaURI"),
-    OperatorAddress: defineStringEZ(world, "OperatorAddress", "component.Address.Operator"),
+    MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
+    OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),
   }
 }

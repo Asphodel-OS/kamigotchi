@@ -8,16 +8,16 @@ export function registerMapButton() {
   registerUIComponent(
     'MapButton',
     {
-      colStart: 88,
-      colEnd: 100,
-      rowStart: 58,
-      rowEnd: 62,
+      colStart: 87,
+      colEnd: 99,
+      rowStart: 89,
+      rowEnd: 99,
     },
     (layers) => of(layers),
     () => {
       return (
         <MenuButton id="map_button" targetDiv="map">
-          World Map
+          Map
         </MenuButton>
       );
     }

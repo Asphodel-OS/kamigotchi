@@ -10,7 +10,7 @@ export function registerInventoryButton() {
     {
       colStart: 87,
       colEnd: 99,
-      rowStart: 87,
+      rowStart: 83,
       rowEnd: 99,
     },
     (layers) => of(layers),

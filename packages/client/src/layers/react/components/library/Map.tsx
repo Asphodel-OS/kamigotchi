@@ -23,7 +23,9 @@ const MapContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  height: 200px;
+  overflow-y: scroll;
+  box-sizing: border-box;
 `;
 
 interface LocationImageProps {
@@ -36,8 +38,8 @@ const LocationImage = styled.img<LocationImageProps>`
   height: 35px;
   border-radius: 50%;
   z-index: 4;
-  opacity: ${(props) => (props.highlight ? '1' : '0.7')};
-  scale: ${(props) => (props.highlight ? '1.2' : '1')};
+  opacity: ${props => (props.highlight ? '1' : '0.7')};
+  scale: ${props => (props.highlight ? '1.2' : '1')};
 `;
 
 interface RoomLocation {
@@ -187,23 +189,32 @@ export const Map = ({ highlightedRoom }: MapProps) => {
     }
   }, [map, hasRoomConnections]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      const ref = roomElements.current[highlightedRoom ?? ''];
+      ref?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [map, highlightedRoom]);
+
   return (
     <MapContainer>
-      {roomLocations.map(({ key, room, position }) => (
-        <div
-          key={key}
-          style={{ position: 'relative', ...position, margin: '1px' }}
-          ref={(ref) => {
-            if (ref) roomElements.current[key] = ref;
-          }}
-        >
-          <LocationImage
-            src={room}
-            alt={`Room ${key}`}
-            highlight={key === highlightedRoom}
-          />
-        </div>
-      ))}
+      <div style={{ height: '100%' }}>
+        {roomLocations.map(({ key, room, position }) => (
+          <div
+            key={key}
+            style={{ position: 'relative', ...position, margin: '1px' }}
+            ref={ref => {
+              if (ref) roomElements.current[key] = ref;
+            }}
+          >
+            <LocationImage
+              src={room}
+              alt={`Room ${key}`}
+              highlight={key === highlightedRoom}
+            />
+          </div>
+        ))}
+      </div>
     </MapContainer>
   );
 };

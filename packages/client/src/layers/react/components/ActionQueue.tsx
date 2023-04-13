@@ -20,7 +20,7 @@ export function registerActionQueue() {
   registerUIComponent(
     'ActionQueue',
     {
-      rowStart: 5,
+      rowStart: 13,
       rowEnd: 50,
       colStart: 80,
       colEnd: 99,

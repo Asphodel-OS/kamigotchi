@@ -58,6 +58,8 @@
   "alias": {
     "src": "./src",
     "assets": "./src/assets",
-    "layers": "./src/layers"
+    "constants": "./src/constants",
+    "layers": "./src/layers",
+    "types": "./types"
   }
 }

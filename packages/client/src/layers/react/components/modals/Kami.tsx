@@ -3,21 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
-import {
-  EntityIndex,
-  EntityID,
-  HasValue,
-  Has,
-  runQuery,
-  getComponentValue,
-  Component,
-} from '@latticexyz/recs';
+import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
 import { BigNumber, BigNumberish } from 'ethers';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Trait, getTrait } from 'layers/react/components/shapes/Trait';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -130,7 +121,7 @@ export function registerKamiModal() {
             <KamiFacts>{hexToString(dets?.stats.health)} </KamiFacts>
             <KamiText>POWER</KamiText>
             <KamiFacts>{hexToString(dets?.stats.power)} </KamiFacts>
-            <KamiText>VIOLENCEL</KamiText>
+            <KamiText>VIOLENCE</KamiText>
             <KamiFacts>{hexToString(dets?.stats.violence)} </KamiFacts>
             <KamiText>HARMONY</KamiText>
             <KamiFacts>{hexToString(dets?.stats.harmony)}</KamiFacts>
@@ -157,7 +148,7 @@ export function registerKamiModal() {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '15px',
+              padding: '0px',
             }}
           >
             <KamiImage src={dets?.uri} />
@@ -216,7 +207,7 @@ const KamiBox = styled.div`
 const KamiFacts = styled.div`
   background-color: #ffffff;
   color: black;
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 600;
   font-family: Pixel;
   margin: 0px;
@@ -226,7 +217,7 @@ const KamiFacts = styled.div`
 const KamiText = styled.p`
   background-color: #ffffff;
   color: black;
-  font-size: 12px;
+  font-size: 14px;
   font-family: Pixel;
   margin: 0px;
   padding: 0px;
@@ -243,8 +234,8 @@ const KamiName = styled.div`
 `;
 
 const KamiImage = styled.img`
-  height: 300px;
-  width: 300px;
+  height: 250px;
+  width: 250px;
   margin: 0px;
   padding: 10px;
   grid-row: 1 / span 1;

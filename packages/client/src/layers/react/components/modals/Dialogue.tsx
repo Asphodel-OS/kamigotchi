@@ -11,10 +11,10 @@ export function registerDialogueModal() {
   registerUIComponent(
     'DialogueModal',
     {
-      colStart: 3,
-      colEnd: 82,
-      rowStart: 76,
-      rowEnd: 99,
+      colStart: 2,
+      colEnd: 60,
+      rowStart: 77,
+      rowEnd: 100,
     },
     (layers) => of(layers),
     () => {
@@ -52,11 +52,6 @@ export function registerDialogueModal() {
               </TopButton>
             </AlignRight>
             <Description>{description}</Description>
-            <div style={{ textAlign: 'right' }}>
-              <Button style={{ pointerEvents: 'auto' }} onClick={showShop}>
-                Shop
-              </Button>
-            </div>
           </ModalContent>
         </ModalWrapperLite>
       );
@@ -66,6 +61,7 @@ export function registerDialogueModal() {
 
 const AlignRight = styled.div`
   text-align: right;
+  margin: 0px;
 `;
 
 const ModalContent = styled.div`
@@ -74,11 +70,12 @@ const ModalContent = styled.div`
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 20px;
+  padding: 5px;
   width: 99%;
   border-style: solid;
   border-width: 2px;
   border-color: black;
+  height: 100%;
 `;
 
 const Button = styled.button`
@@ -100,7 +97,7 @@ const Button = styled.button`
 `;
 
 const Description = styled.p`
-  font-size: 22px;
+  font-size: 20px;
   color: #333;
   text-align: center;
   padding: 20px;
@@ -122,5 +119,6 @@ const TopButton = styled.button`
   width: 30px;
   &:active {
     background-color: #c2c2c2;
-  }
+  };
+  margin: 0px;
 `;

@@ -1,18 +1,16 @@
 /* eslint-disable prefer-const */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { registerUIComponents as registerUIComponentsImport } from './components';
-import { Engine as EngineImport } from './engine/Engine';
-import { Layers } from '../../types';
 
-let registerUIComponents = registerUIComponentsImport;
-let Engine = EngineImport;
-
+import { Layers } from 'src/types';
+import { registerUIComponents } from './components';
+import { Engine } from './engine/Engine';
 
 export const mountReact: { current: (mount: boolean) => void } = {
   current: () => void 0,
 };
 
+// Q: what does this even do?
 export const setLayers: { current: (layers: Layers) => void } = {
   current: () => void 0,
 };

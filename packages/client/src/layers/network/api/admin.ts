@@ -26,7 +26,7 @@ export function createAdminAPI(systems: any) {
     createNode('Eerie Willow', 3);
     createNode('Trash Compactor', 7);
     createNode('Pristine Couch', 10);
-    createNode('Cash Register', 11);
+    createNode('Sacred Shrine', 11);
     createNode('Danger zone', 12);
 
     // create food registry items
@@ -48,10 +48,10 @@ export function createAdminAPI(systems: any) {
 
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
-    // systems['system.ERC721.metadata']._setRevealed(
-    //   '123',
-    //   'http://159.223.244.145:8080/image/'
-    // );
+    systems['system.ERC721.metadata']._setRevealed(
+      '123',
+      'https://kami-image.asphodel.io/image/'
+    );
     // systems["system.ERC721.metadata"]._setRevealed("123", "http://localhost:8080/image/");
     // systems['system.ERC721.metadata']._setMaxElements([
     //   '13',

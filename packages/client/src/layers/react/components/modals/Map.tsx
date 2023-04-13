@@ -17,12 +17,12 @@ export function registerMapModal() {
   registerUIComponent(
     'WorldMap',
     {
-      colStart: 70,
+      colStart: 65,
       colEnd: 100,
-      rowStart: 30,
-      rowEnd: 60,
+      rowStart: 49,
+      rowEnd: 100,
     },
-    (layers) => {
+    layers => {
       const {
         network: {
           api: { player },
@@ -105,49 +105,49 @@ export function registerMapModal() {
       // Travel button for moving up
       const UpButton = (
         <ActionButton
-          id="button-up"
+          id='button-up'
           disabled={up === undefined}
           onClick={() => move(up !== undefined ? up : 0)}
-          size="medium"
-          text="↑"
+          size='medium'
+          text='↑'
         />
       );
 
       // Travel button for moving down
       const DownButton = (
         <ActionButton
-          id="button-down"
+          id='button-down'
           disabled={down === undefined}
           onClick={() => move(down !== undefined ? down : 0)}
-          size="medium"
-          text="↓"
+          size='medium'
+          text='↓'
         />
       );
 
       // Travel button for moving left
       const LeftButton = (
         <ActionButton
-          id="button-left"
+          id='button-left'
           disabled={left === undefined}
           onClick={() => move(left !== undefined ? left : 0)}
-          size="medium"
-          text="←"
+          size='medium'
+          text='←'
         />
       );
 
       // Travel button for moving right
       const RightButton = (
         <ActionButton
-          id="button-right"
+          id='button-right'
           disabled={right === undefined}
           onClick={() => move(right !== undefined ? right : 0)}
-          size="medium"
-          text="→"
+          size='medium'
+          text='→'
         />
       );
 
       return (
-        <ModalWrapperFull id="world_map" divName="map">
+        <ModalWrapperFull id='world_map' divName='map'>
           <Map highlightedRoom={`room${data.currentRoom}`} />
           <ButtonWrapper style={{ marginRight: '8.3%' }}>
             {UpButton}
