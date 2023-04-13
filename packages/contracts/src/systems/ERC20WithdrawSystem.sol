@@ -29,7 +29,7 @@ contract ERC20WithdrawSystem is System {
     (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
-    require(accountID != 0, "ERC20WithdrawSystem: to address has no account");
+    require(accountID != 0, "ERC20WithdrawSystem: address has no account");
 
     LibCoin.dec(components, accountID, amount);
     KamiERC20(token).withdraw(to, amount);

@@ -28,9 +28,7 @@ contract ERC20DepositSystem is System {
     uint256 amount = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
-    if (accountID == 0) {
-      accountID = LibAccount.create(world, components, msg.sender, msg.sender);
-    }
+    require(accountID != 0, "ERC20DepositSystem: address has no account");
 
     KamiERC20(token).deposit(msg.sender, amount);
     LibCoin.inc(components, accountID, amount);
