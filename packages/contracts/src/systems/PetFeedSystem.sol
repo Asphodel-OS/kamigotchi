@@ -16,7 +16,7 @@ uint256 constant ID = uint256(keccak256("system.Pet.Feed"));
 contract PetFeedSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
@@ -39,7 +39,7 @@ contract PetFeedSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 petID, uint256 foodIndex) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint256 petID, uint256 foodIndex) public returns (bytes memory) {
     return execute(abi.encode(petID, foodIndex));
   }
 }
