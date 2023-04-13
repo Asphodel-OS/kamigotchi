@@ -20,6 +20,8 @@ import { registerNodeModal } from './modals/Node';
 import { registerFoodShopButton } from './buttons/FoodShop';
 
 export function registerUIComponents() {
+  registerFoodShopButton();
+
   registerActionQueue();
   registerLoadingState();
   registerDialogueModal();
@@ -39,5 +41,4 @@ export function registerUIComponents() {
   // registerRequestQueue();
   // registerTradeModal();
 
-  registerFoodShopButton();
 }
