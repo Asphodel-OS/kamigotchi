@@ -17,6 +17,8 @@ import { registerRequestQueue } from './modals/RequestQueue';
 import { registerTradeModal } from './modals/Trade';
 import { registerNodeModal } from './modals/Node';
 
+import { registerFoodShopButton } from './buttons/FoodShop';
+
 export function registerUIComponents() {
   registerActionQueue();
   registerLoadingState();
@@ -36,4 +38,6 @@ export function registerUIComponents() {
   registerPartyModal();
   // registerRequestQueue();
   // registerTradeModal();
+
+  registerFoodShopButton();
 }
