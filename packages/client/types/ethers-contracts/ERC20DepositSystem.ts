@@ -27,10 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ERC20BurnSystemInterface extends utils.Interface {
+export interface ERC20DepositSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(address,uint256)": FunctionFragment;
+    "executeTyped(uint256)": FunctionFragment;
     "init(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -51,7 +51,7 @@ export interface ERC20BurnSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "init",
@@ -94,12 +94,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ERC20BurnSystem extends BaseContract {
+export interface ERC20DepositSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC20BurnSystemInterface;
+  interface: ERC20DepositSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -127,7 +127,6 @@ export interface ERC20BurnSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      from: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -151,7 +150,6 @@ export interface ERC20BurnSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    from: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -175,7 +173,6 @@ export interface ERC20BurnSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      from: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -211,7 +208,6 @@ export interface ERC20BurnSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      from: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -236,7 +232,6 @@ export interface ERC20BurnSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      from: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

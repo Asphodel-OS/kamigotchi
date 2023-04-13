@@ -15,8 +15,8 @@ contract ERC20Test is SetupTemplate {
     token = new KamiERC20(world, "KAMI", "KAMI");
 
     vm.startPrank(deployer);
-    _ERC20MintSystem.init(address(token));
-    _ERC20BurnSystem.init(address(token));
+    _ERC20WithdrawSystem.init(address(token));
+    _ERC20DepositSystem.init(address(token));
     vm.stopPrank();
 
     _createAccount(alice, "alice");
@@ -27,7 +27,7 @@ contract ERC20Test is SetupTemplate {
     __devGiveTokensSystem.executeTyped(alice, 101);
 
     vm.prank(alice);
-    _ERC20MintSystem.executeTyped(alice, 100);
+    _ERC20WithdrawSystem.executeTyped(alice, 100);
 
     assertEq(token.balanceOf(alice), 100);
 
@@ -38,7 +38,7 @@ contract ERC20Test is SetupTemplate {
     testMint();
 
     vm.prank(alice);
-    _ERC20BurnSystem.executeTyped(50);
+    _ERC20DepositSystem.executeTyped(50);
 
     assertEq(token.balanceOf(alice), 50);
 

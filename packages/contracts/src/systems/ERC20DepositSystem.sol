@@ -9,11 +9,10 @@ import { LibCoin } from "libraries/LibCoin.sol";
 
 import { KamiERC20 } from "tokens/KamiERC20.sol";
 
-uint256 constant ID = uint256(keccak256("system.ERC20.Mint"));
+uint256 constant ID = uint256(keccak256("system.ERC20.Deposit"));
 
-// brings in game coins into the real world by minting ERC20 tokens in the ERC20 contract
-// sends it only to the Account owner's address
-contract ERC20MintSystem is System {
+// brings ERC20 tokens back into the game, sends it to the sender's account entity
+contract ERC20DepositSystem is System {
   address token;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -24,20 +23,22 @@ contract ERC20MintSystem is System {
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    require(token != address(0), "ERC20MintSystem: not inited");
+    require(token != address(0), "ERC20DepositSystem: not inited");
 
-    (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
+    uint256 amount = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
-    require(accountID != 0, "ERC20MintSystem: to address has no account");
+    if (accountID == 0) {
+      accountID = LibAccount.create(world, components, msg.sender, msg.sender);
+    }
 
-    LibCoin.dec(components, accountID, amount);
-    KamiERC20(token).mint(to, amount);
+    KamiERC20(token).deposit(msg.sender, amount);
+    LibCoin.inc(components, accountID, amount);
 
     return "";
   }
 
-  function executeTyped(address to, uint256 amount) public returns (bytes memory) {
-    return execute(abi.encode(to, amount));
+  function executeTyped(uint256 amount) public returns (bytes memory) {
+    return execute(abi.encode(amount));
   }
 }
