@@ -34,7 +34,7 @@ library LibRandom {
     uint256 currentWeight;
     for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
-      if (roll < currentWeight) {
+      if (roll <= currentWeight) {
         return keys[i];
       }
     }

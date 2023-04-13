@@ -72,14 +72,21 @@ export function setUpWorldAPI(systems: any) {
     // ORDER: color, background, body, hand, face
     systems['system.ERC721.metadata']._setRevealed(
       '123', // salt! should be random
-      'http://159.223.244.145:8080/image/'
+      'https://kami-image.asphodel.io/image/'
     );
+    // systems['system.ERC721.metadata']._setMaxElements([
+    //   numColor,
+    //   numBg,
+    //   numBody,
+    //   numHand,
+    //   numFace,
+    // ]);
     systems['system.ERC721.metadata']._setMaxElements([
-      numColor,
-      numBg,
-      numBody,
-      numHand,
       numFace,
+      numHand,
+      numBody,
+      numBg,
+      numColor,
     ]);
   }
 

@@ -54,7 +54,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
         components
       );
-      traits[0] = LibRandom.selectFromWeighted(
+      traits[4] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Color")))
@@ -65,7 +65,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
         components
       );
-      traits[1] = LibRandom.selectFromWeighted(
+      traits[3] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Background")))
@@ -87,7 +87,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
         components
       );
-      traits[3] = LibRandom.selectFromWeighted(
+      traits[1] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Hand")))
@@ -98,7 +98,7 @@ contract PetMetadataSystem is System {
       (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
         components
       );
-      traits[4] = LibRandom.selectFromWeighted(
+      traits[0] = LibRandom.selectFromWeighted(
         keys,
         weights,
         uint256(keccak256(abi.encode(_seed, entityID, "Face")))
@@ -106,11 +106,11 @@ contract PetMetadataSystem is System {
     }
 
     // assigning initial traits from generated stats
-    LibTrait.assignColor(components, entityID, traits[0]);
-    LibTrait.assignBackground(components, entityID, traits[1]);
+    LibTrait.assignColor(components, entityID, traits[4]);
+    LibTrait.assignBackground(components, entityID, traits[3]);
     LibTrait.assignBody(components, entityID, traits[2]);
-    LibTrait.assignHand(components, entityID, traits[3]);
-    LibTrait.assignFace(components, entityID, traits[4]);
+    LibTrait.assignHand(components, entityID, traits[1]);
+    LibTrait.assignFace(components, entityID, traits[0]);
 
     // generate packed result
     uint256 packed = LibRandom.packArray(traits, 8);
