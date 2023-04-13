@@ -197,19 +197,17 @@
       ]
     },
     {
-      "name": "ERC20MintSystem",
+      "name": "ERC20WithdrawSystem",
       "writeAccess": [
         "CoinComponent"
       ]
     },
     {
-      "name": "ERC20BurnSystem",
+      "name": "ERC20DepositSystem",
       "writeAccess": [
         "IsAccountComponent",
         "AddressOperatorComponent",
         "IdOwnerComponent",
-        "LocationComponent",
-        "NameComponent",
         "CoinComponent"
       ]
     },
