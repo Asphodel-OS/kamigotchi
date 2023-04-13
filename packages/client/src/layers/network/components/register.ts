@@ -92,6 +92,7 @@ export function createComponents(world: any) {
     PriceBuy: defineNumberEZ(world, "PriceBuy", "component.PriceBuy"),
     PriceSell: defineNumberEZ(world, "PriceSell", "component.PriceSell"),
     Prototype: defineNumberEZ(world, "Prototype", "component.Prototype"),
+    Rarity: defineNumberEZ(world, "Rarity", "component.Rarity"),
     Rate: defineNumberEZ(world, "Rate", "component.Rate"),
     Slots: defineNumberEZ(world, "Slots", "component.Slots"),
     State: defineStringEZ(world, "State", "component.State"),
