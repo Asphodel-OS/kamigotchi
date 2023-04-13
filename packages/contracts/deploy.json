@@ -204,9 +204,6 @@
     {
       "name": "ERC20DepositSystem",
       "writeAccess": [
-        "IsAccountComponent",
-        "AddressOperatorComponent",
-        "IdOwnerComponent",
         "CoinComponent"
       ]
     },
