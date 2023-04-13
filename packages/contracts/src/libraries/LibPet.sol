@@ -168,7 +168,7 @@ library LibPet {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
-  ) internal view returns (uint256) {
+  ) internal pure returns (uint256) {
     uint256 baseThreshold = calcThresholdBase(components, sourceID, targetID);
     uint256 affinityMultiplier = calcAffinityMultiplier(components, sourceID, targetID);
     return (affinityMultiplier * baseThreshold) / 1e2;
@@ -180,12 +180,13 @@ library LibPet {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
-  ) internal view returns (uint256) {
-    uint256 sourceViolence = calcTotalViolence(components, sourceID);
-    uint256 targetHarmony = calcTotalHarmony(components, targetID);
-    int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
-    int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
-    return (uint256(weight) * 20) / 100;
+  ) internal pure returns (uint256) {
+    return (1e18 * 20) / 100;
+    // uint256 sourceViolence = calcTotalViolence(components, sourceID);
+    // uint256 targetHarmony = calcTotalHarmony(components, targetID);
+    // int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
+    // int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
+    // return (uint256(weight) * 20) / 100;
   }
 
   // Calculate and return the total health of a pet (including mods and equips)

@@ -41,6 +41,7 @@ contract ProductionLiquidateSystem is System {
     require(nodeID == targetNodeID, "Production: not on same node");
 
     // check that the pet is capable of to liquidating the target production
+    LibPet.syncHealth(components, targetPetID);
     require(
       LibProduction.isLiquidatableBy(components, targetProductionID, petID),
       "Production: YOU HAVE NO POWER HERE (need moar violence)"

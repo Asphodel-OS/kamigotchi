@@ -18,11 +18,6 @@
     },
     {
       "inputs": [],
-      "name": "Min",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "Ownable__NotOwner",
       "type": "error"
     },

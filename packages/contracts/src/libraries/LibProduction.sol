@@ -111,8 +111,8 @@ library LibProduction {
   }
 
   // Check whether the source pet can liquidate the target production, based on pet stats.
-  // NOTE: this asssumes that the source pet's health has been synced in this block and
-  // that the source can attack the target.
+  // NOTE: this asssumes that both the source and target pet's health has been synced in
+  // this block and that the source can attack the target.
   function isLiquidatableBy(
     IUintComp components,
     uint256 id,
