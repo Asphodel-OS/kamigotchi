@@ -142,11 +142,26 @@ library LibPet {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
-  ) internal pure returns (uint256) {
-    // string sourceAff = getAffinity(components, sourceID);
-    components;
-    sourceID;
-    targetID;
+  ) internal view returns (uint256) {
+    string memory targetAff = getAffinity(components, targetID)[0];
+    string memory sourceAff = getAffinity(components, sourceID)[1];
+    if (
+      LibString.eq(targetAff, sourceAff) ||
+      LibString.eq(targetAff, "Normal") ||
+      LibString.eq(targetAff, "Normal")
+    ) {
+      return 100;
+    } else if (LibString.eq(sourceAff, "Eerie")) {
+      if (LibString.eq(targetAff, "Scrap")) return 200;
+      if (LibString.eq(targetAff, "Insect")) return 50;
+    } else if (LibString.eq(sourceAff, "Scrap")) {
+      if (LibString.eq(targetAff, "Insect")) return 200;
+      if (LibString.eq(targetAff, "Eerie")) return 50;
+    } else if (LibString.eq(sourceAff, "Insect")) {
+      if (LibString.eq(targetAff, "Eerie")) return 200;
+      if (LibString.eq(targetAff, "Scrap")) return 50;
+    }
+
     return 100;
   }
 
@@ -168,7 +183,7 @@ library LibPet {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
-  ) internal pure returns (uint256) {
+  ) internal view returns (uint256) {
     uint256 baseThreshold = calcThresholdBase(components, sourceID, targetID);
     uint256 affinityMultiplier = calcAffinityMultiplier(components, sourceID, targetID);
     return (affinityMultiplier * baseThreshold) / 1e2;
@@ -180,13 +195,12 @@ library LibPet {
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
-  ) internal pure returns (uint256) {
-    return (1e18 * 20) / 100;
-    // uint256 sourceViolence = calcTotalViolence(components, sourceID);
-    // uint256 targetHarmony = calcTotalHarmony(components, targetID);
-    // int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
-    // int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
-    // return (uint256(weight) * 20) / 100;
+  ) internal view returns (uint256) {
+    uint256 sourceViolence = calcTotalViolence(components, sourceID);
+    uint256 targetHarmony = calcTotalHarmony(components, targetID) + 1;
+    int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
+    int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
+    return (uint256(weight) * 20) / 100;
   }
 
   // Calculate and return the total health of a pet (including mods and equips)
