@@ -37,7 +37,7 @@ uint256 constant BASE_SLOTS = 0;
 uint256 constant BASE_VIOLENCE = 10;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
-uint256 constant DEMO_POWER_MULTIPLIER = 20;
+uint256 constant DEMO_POWER_MULTIPLIER = 1000;
 uint256 constant DEMO_VIOLENCE_MULTIPLIER = 3;
 
 library LibPet {
@@ -278,6 +278,7 @@ library LibPet {
 
     // set the stats
     LibStat.setHealth(components, id, BASE_HEALTH + health);
+    setCurrHealth(components, id, BASE_HEALTH + health);
     LibStat.setPower(components, id, DEMO_POWER_MULTIPLIER * power);
     LibStat.setViolence(components, id, DEMO_VIOLENCE_MULTIPLIER * violence);
     LibStat.setHarmony(components, id, harmony);
