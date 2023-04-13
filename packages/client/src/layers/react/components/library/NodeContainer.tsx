@@ -17,6 +17,7 @@ const NodeInfoContainer = styled.div`
   color: black;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-family: Pixel;
 
   img {
     width: 150px;
@@ -29,19 +30,26 @@ const NodeInfoContainer = styled.div`
     display: flex;
     flex-direction: column;
 
+
     p {
       margin: 0;
-      font-size: 28px;
+      font-family: Pixel;
+      padding: 5px 0px 0px 0px;
+      font-size: 18px;
       font-weight: bold;
     }
 
     .text1 {
-      font-size: 18px;
+      font-family: Pixel;
+      padding: 0px 0px 0px 5px;
+      font-size: 12px;
       margin-top: 10px;
     }
 
     .text2 {
-      font-size: 16px;
+      font-family: Pixel;
+      padding: 10px 10px 3px 5px;
+      font-size: 10px;
       margin-top: 5px;
     }
   }
