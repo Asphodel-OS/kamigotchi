@@ -36,15 +36,15 @@ contract PetMetadataSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     // checks
     require(_revealed, "collection not yet revealed");
-    uint256 tokenID = abi.decode(arguments, (uint256));
-    uint256 entityID = LibPet.indexToID(components, tokenID);
+    uint256 petIndex = abi.decode(arguments, (uint256));
+    uint256 petID = LibPet.indexToID(components, petIndex);
 
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
-    require(LibPet.getAccount(components, entityID) == accountID, "Pet: not urs");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
 
-    require(LibString.eq(mediaComp.getValue(entityID), UNREVEALED_URI), "alr revealed!");
+    require(LibString.eq(mediaComp.getValue(petID), UNREVEALED_URI), "already revealed!");
 
     // generates array of traits with weighted random
     uint256[] memory traits = new uint256[](_numElements);
@@ -57,7 +57,7 @@ contract PetMetadataSystem is System {
       traits[4] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, entityID, "Color")))
+        uint256(keccak256(abi.encode(_seed, petID, "Color")))
       );
     }
     {
@@ -68,7 +68,7 @@ contract PetMetadataSystem is System {
       traits[3] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, entityID, "Background")))
+        uint256(keccak256(abi.encode(_seed, petID, "Background")))
       );
     }
     {
@@ -79,7 +79,7 @@ contract PetMetadataSystem is System {
       traits[2] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, entityID, "Body")))
+        uint256(keccak256(abi.encode(_seed, petID, "Body")))
       );
     }
     {
@@ -90,7 +90,7 @@ contract PetMetadataSystem is System {
       traits[1] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, entityID, "Hand")))
+        uint256(keccak256(abi.encode(_seed, petID, "Hand")))
       );
     }
     {
@@ -101,41 +101,40 @@ contract PetMetadataSystem is System {
       traits[0] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, entityID, "Face")))
+        uint256(keccak256(abi.encode(_seed, petID, "Face")))
       );
     }
 
     // assigning initial traits from generated stats
-    LibTrait.assignColor(components, entityID, traits[4]);
-    LibTrait.assignBackground(components, entityID, traits[3]);
-    LibTrait.assignBody(components, entityID, traits[2]);
-    LibTrait.assignHand(components, entityID, traits[1]);
-    LibTrait.assignFace(components, entityID, traits[0]);
+    LibTrait.assignColor(components, petID, traits[4]);
+    LibTrait.assignBackground(components, petID, traits[3]);
+    LibTrait.assignBody(components, petID, traits[2]);
+    LibTrait.assignHand(components, petID, traits[1]);
+    LibTrait.assignFace(components, petID, traits[0]);
 
-    // generate packed result
+    // set media uri with the packed attributes key
     uint256 packed = LibRandom.packArray(traits, 8);
-
-    // set media uri with packed
     mediaComp.set(
-      entityID,
+      petID,
       // LibString.concat(_baseURI, LibString.concat(LibString.toString(packed), ".gif"))
       LibString.concat(_baseURI, LibString.toString(packed))
     );
 
+    LibPet.setStats(components, petID);
     return "";
   }
 
-  // accepts erc721 tokenID as input
-  function executeTyped(uint256 tokenID) public returns (bytes memory) {
-    return execute(abi.encode(tokenID));
+  // accepts erc721 petIndex as input
+  function executeTyped(uint256 petIndex) public returns (bytes memory) {
+    return execute(abi.encode(petIndex));
   }
 
   /*********************
    *  METADATA ASSEMBLER
    **********************/
 
-  function tokenURI(uint256 tokenID) public view returns (string memory) {
-    uint256 petID = LibPet.indexToID(components, tokenID);
+  function tokenURI(uint256 petIndex) public view returns (string memory) {
+    uint256 petID = LibPet.indexToID(components, petIndex);
     // return LibPet.getMediaURI(components, petID);
     // return _getBaseTraits(petID);
 
@@ -161,20 +160,20 @@ contract PetMetadataSystem is System {
       );
   }
 
-  function _getHealth(uint256 entityID) public view returns (string memory) {
+  function _getHealth(uint256 petID) public view returns (string memory) {
     return
       string(
         abi.encodePacked(
           '{"trait_type": "',
           "Battery Health",
           '", "value": "',
-          LibString.toString(LibStat.getHealth(components, entityID)),
+          LibString.toString(LibStat.getHealth(components, petID)),
           '"},\n'
         )
       );
   }
 
-  function _getBaseTraits(uint256 entityID) public view returns (string memory) {
+  function _getBaseTraits(uint256 petID) public view returns (string memory) {
     string memory result = "";
 
     // getting values of base traits. values are hardcoded to array position
@@ -186,11 +185,11 @@ contract PetMetadataSystem is System {
     comps[4] = "Background";
 
     string[] memory names = new string[](5);
-    names[0] = LibTrait.getBodyName(components, entityID);
-    names[1] = LibTrait.getColorName(components, entityID);
-    names[2] = LibTrait.getFaceName(components, entityID);
-    names[3] = LibTrait.getHandName(components, entityID);
-    names[4] = LibTrait.getBackgroundName(components, entityID);
+    names[0] = LibTrait.getBodyName(components, petID);
+    names[1] = LibTrait.getColorName(components, petID);
+    names[2] = LibTrait.getFaceName(components, petID);
+    names[3] = LibTrait.getHandName(components, petID);
+    names[4] = LibTrait.getBackgroundName(components, petID);
 
     for (uint256 i; i < names.length; i++) {
       string memory entry = string(

@@ -26,6 +26,7 @@ import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLa
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 
@@ -37,7 +38,7 @@ uint256 constant BASE_VIOLENCE = 10;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
 uint256 constant DEMO_POWER_MULTIPLIER = 20;
-uint256 constant DEMO_VIOLENCE_MULTIPLIER = 5;
+uint256 constant DEMO_VIOLENCE_MULTIPLIER = 3;
 
 library LibPet {
   using LibFPMath for int256;
@@ -257,20 +258,30 @@ library LibPet {
   // set a pet's stats from its traits
   // TODO: actually set stats from traits. hardcoded currently
   function setStats(IUintComp components, uint256 id) internal {
-    uint256 power = _smolRandom(BASE_POWER * DEMO_POWER_MULTIPLIER, id);
-    LibStat.setPower(components, id, power);
+    uint256 health;
+    uint256 power;
+    uint256 violence;
+    uint256 harmony;
+    uint256 slots;
 
-    uint256 violence = _smolRandom(BASE_VIOLENCE * DEMO_VIOLENCE_MULTIPLIER, id);
-    LibStat.setViolence(components, id, violence);
+    // sum the stats from all traits
+    uint256 traitRegistryID;
+    uint256[] memory traits = getTraits(components, id);
+    for (uint256 i = 0; i < traits.length; i++) {
+      traitRegistryID = traits[i];
+      health += LibStat.getHealth(components, traitRegistryID);
+      power += LibStat.getPower(components, traitRegistryID);
+      violence += LibStat.getViolence(components, traitRegistryID);
+      harmony += LibStat.getHarmony(components, traitRegistryID);
+      slots += LibStat.getSlots(components, traitRegistryID);
+    }
 
-    uint256 harmony = _smolRandom(BASE_HARMONY, id);
+    // set the stats
+    LibStat.setHealth(components, id, BASE_HEALTH + health);
+    LibStat.setPower(components, id, DEMO_POWER_MULTIPLIER * power);
+    LibStat.setViolence(components, id, DEMO_VIOLENCE_MULTIPLIER * violence);
     LibStat.setHarmony(components, id, harmony);
-
-    uint256 totalHealth = _smolRandom(BASE_HEALTH, id);
-    LibStat.setHealth(components, id, totalHealth);
-    setCurrHealth(components, id, totalHealth);
-
-    LibStat.setSlots(components, id, BASE_SLOTS);
+    LibStat.setSlots(components, id, slots);
   }
 
   function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
@@ -334,6 +345,17 @@ library LibPet {
   // Get the production of a pet. Return 0 if there are none.
   function getProduction(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibProduction.getForPet(components, id);
+  }
+
+  // Get the traits of a pet, specifically the list of trait registry IDs
+  function getTraits(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
+    uint256[] memory traits = new uint256[](5);
+    traits[0] = LibTrait.getBackgroundPointer(components, id);
+    traits[1] = LibTrait.getBodyPointer(components, id);
+    traits[2] = LibTrait.getColorPointer(components, id);
+    traits[3] = LibTrait.getFacePointer(components, id);
+    traits[4] = LibTrait.getHandPointer(components, id);
+    return traits;
   }
 
   // get pet's affinity. hardcoded to check for face, body, and arms.

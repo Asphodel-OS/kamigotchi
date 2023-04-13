@@ -159,12 +159,12 @@ export interface PetMetadataSystem extends BaseContract {
 
   functions: {
     _getBaseTraits(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     _getHealth(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -185,14 +185,14 @@ export interface PetMetadataSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     tokenURI(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -203,12 +203,12 @@ export interface PetMetadataSystem extends BaseContract {
   };
 
   _getBaseTraits(
-    entityID: PromiseOrValue<BigNumberish>,
+    petID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   _getHealth(
-    entityID: PromiseOrValue<BigNumberish>,
+    petID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -229,14 +229,14 @@ export interface PetMetadataSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    tokenID: PromiseOrValue<BigNumberish>,
+    petIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   tokenURI(
-    tokenID: PromiseOrValue<BigNumberish>,
+    petIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -247,12 +247,12 @@ export interface PetMetadataSystem extends BaseContract {
 
   callStatic: {
     _getBaseTraits(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     _getHealth(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -273,14 +273,14 @@ export interface PetMetadataSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     tokenURI(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -303,12 +303,12 @@ export interface PetMetadataSystem extends BaseContract {
 
   estimateGas: {
     _getBaseTraits(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getHealth(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -329,14 +329,14 @@ export interface PetMetadataSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenURI(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -348,12 +348,12 @@ export interface PetMetadataSystem extends BaseContract {
 
   populateTransaction: {
     _getBaseTraits(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getHealth(
-      entityID: PromiseOrValue<BigNumberish>,
+      petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -374,14 +374,14 @@ export interface PetMetadataSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenURI(
-      tokenID: PromiseOrValue<BigNumberish>,
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

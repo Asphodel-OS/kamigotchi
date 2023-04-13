@@ -106,13 +106,12 @@ export const rooms: Room[] = [
       key: 'm_room001',
       path: room1Music,
     },
-    objects: [  {
-        key: 'mooringpost',
-        path: mooringpost,
-        offset: { x: -19, y: 38 },
-        onClick: (text) => triggerDialogueModal("This looks like a post for mooring boats. But there's no boats here.")
-      }
-    ],
+    objects: [{
+      key: 'mooringpost',
+      path: mooringpost,
+      offset: { x: -19, y: 38 },
+      onClick: () => triggerDialogueModal("This looks like a post for mooring boats. But there's no boats here.")
+    }],
   },
   {
     location: 2,
@@ -125,25 +124,24 @@ export const rooms: Room[] = [
       key: 'm_room002',
       path: room2Music,
     },
-    objects: [  {
-        key: 'hollowstump',
-        path: hollowstump,
-        offset: { x: -48.5, y: 29.5 },
-        onClick: (text) => triggerDialogueModal("It's a hollow tree stump. There doesn't appear to be anything inside.")
-      },
-      {
-          key: 'gate',
-          path: gate,
-          offset: { x: -39.5, y: -33.5 },
-          onClick: (text) => triggerDialogueModal("There's some sort of gate in the distance.")
-      },
-      {
-          key: 'shopdoor',
-          path: shopdoor,
-          offset: { x: 5, y: -7 },
-          onClick: (text) => triggerDialogueModal("Wow. A shop. Maybe you can buy food here. Go west to enter.")
-      }
-    ],
+    objects: [{
+      key: 'hollowstump',
+      path: hollowstump,
+      offset: { x: -48.5, y: 29.5 },
+      onClick: () => triggerDialogueModal("It's a hollow tree stump. There doesn't appear to be anything inside.")
+    },
+    {
+      key: 'gate',
+      path: gate,
+      offset: { x: -39.5, y: -33.5 },
+      onClick: () => triggerDialogueModal("There's some sort of gate in the distance.")
+    },
+    {
+      key: 'shopdoor',
+      path: shopdoor,
+      offset: { x: 5, y: -7 },
+      onClick: () => triggerDialogueModal("Wow. A shop. Maybe you can buy food here. Go west to enter.")
+    }],
   },
   {
     location: 3,
@@ -156,12 +154,12 @@ export const rooms: Room[] = [
       key: 'm_room003',
       path: room3Music,
     },
-    objects: [  {
-        key: 'toriigate',
-        path: toriigate,
-        offset: { x: 21, y: -8 },
-        onClick: triggerNodeModal
-      }],
+    objects: [{
+      key: 'toriigate',
+      path: toriigate,
+      offset: { x: 21, y: -8 },
+      onClick: triggerNodeModal
+    }],
   },
   {
     location: 4,
@@ -174,14 +172,12 @@ export const rooms: Room[] = [
       key: 'm_room004',
       path: room4Music,
     },
-    objects: [
-      {
-        key: 'vendingmachine',
-        path: vendingmachine,
-        offset: { x: -33.5, y: 9.5 },
-        onClick: triggerPetMintModal
-      }
-    ],
+    objects: [{
+      key: 'vendingmachine',
+      path: vendingmachine,
+      offset: { x: -33.5, y: 9.5 },
+      onClick: triggerPetMintModal
+    }],
   },
   {
     location: 5,
@@ -298,14 +294,12 @@ export const rooms: Room[] = [
       key: 'm_room013',
       path: room13Music,
     },
-    objects: [
-      {
-          key: 'cashregister',
-          path: cashregister,
-          offset: { x: -50.5, y: -8.02 },
-          onClick: triggerShopModal
-      }
-    ],
+    objects: [{
+      key: 'cashregister',
+      path: cashregister,
+      offset: { x: -50.5, y: -8.02 },
+      onClick: triggerShopModal
+    }],
   },
   {
     location: 14,

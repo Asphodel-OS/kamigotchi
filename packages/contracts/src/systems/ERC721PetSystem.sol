@@ -46,9 +46,6 @@ contract ERC721PetSystem is System, ERC721 {
 
     // TODO: set stats based on the generated traits of the pet.
     uint256 petID = LibPet.create(world, components, to, accountID, nextMint, UNREVEALED_URI);
-
-    LibPet.setStats(components, petID);
-
     _mint(to, nextMint);
     return petID;
   }

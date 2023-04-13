@@ -552,23 +552,6 @@ library LibRegistryTrait {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by body index
-  function getByBodyIndex(
-    IUintComp components,
-    uint256 bodyIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexBodyCompID),
-      abi.encode(bodyIndex)
-    );
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
-  }
-
   // get the registry entry by background index
   function getByBackgroundIndex(
     IUintComp components,
@@ -581,6 +564,23 @@ library LibRegistryTrait {
       QueryType.HasValue,
       getComponentById(components, IndexBackgroundCompID),
       abi.encode(backgroundIndex)
+    );
+    uint256[] memory results = LibQuery.query(fragments);
+    if (results.length != 0) result = results[0];
+  }
+
+  // get the registry entry by body index
+  function getByBodyIndex(
+    IUintComp components,
+    uint256 bodyIndex
+  ) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexBodyCompID),
+      abi.encode(bodyIndex)
     );
     uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) result = results[0];

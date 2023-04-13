@@ -79,7 +79,7 @@ export function registerKamiModal() {
       useEffect(() => {
         if (description && description != '0') {
           setDets(getKami(layers, getPetIndex(description), { traits: true }));
-          console.log(dets?.uri);
+          console.log('KamiDetails: kami', dets);
         }
       }, [description]);
 
