@@ -8,10 +8,10 @@ export function registerFoodShopButton() {
   registerUIComponent(
     'FoodShopButton',
     {
-      colStart: 87,
-      colEnd: 99,
-      rowStart: 79,
-      rowEnd: 89,
+      colStart: 1,
+      colEnd: 13,
+      rowStart: 89,
+      rowEnd: 99,
     },
     (layers) => of(layers),
     () => {

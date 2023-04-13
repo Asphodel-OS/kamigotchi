@@ -5,6 +5,7 @@ import { registerDialogueModal } from './modals/Dialogue';
 import { registerChatButton } from './buttons/Chat';
 import { registerMapButton } from './buttons/Map';
 import { registerPartyButton } from './buttons/Party';
+import { registerFoodShopButton } from './buttons/FoodShop';
 
 import { registerChatModal } from './modals/Chat';
 import { regiesterDetectAccountModal } from './modals/DetectAccount';
@@ -25,6 +26,7 @@ export function registerUIComponents() {
   registerChatButton();
   registerMapButton();
   registerPartyButton();
+  registerFoodShopButton();
 
   registerChatModal();
   regiesterDetectAccountModal();
