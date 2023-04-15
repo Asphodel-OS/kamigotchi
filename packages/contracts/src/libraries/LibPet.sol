@@ -122,11 +122,9 @@ library LibPet {
   // in catching all the edge cases.
   function syncHealth(IUintComp components, uint256 id) internal returns (uint256 health) {
     health = getCurrHealth(components, id);
-    if (isProducing(components, id)) {
-      uint256 drain = calcDrain(components, id);
-      health = (health > drain) ? health - drain : 0;
-      setCurrHealth(components, id, health);
-    }
+    uint256 drain = calcDrain(components, id); // implicitly checks ifProducing
+    health = (health > drain) ? health - drain : 0;
+    setCurrHealth(components, id, health);
     setLastTs(components, id, block.timestamp);
   }
 

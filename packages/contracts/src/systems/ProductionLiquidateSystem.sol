@@ -37,14 +37,16 @@ contract ProductionLiquidateSystem is System {
 
     // check that the two kamis share the same node
     uint256 nodeID = LibProduction.getNode(components, productionID);
-    uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
-    require(nodeID == targetNodeID, "Production: not on same node");
+    require(
+      nodeID == LibProduction.getNode(components, targetProductionID),
+      "Production: not on same node"
+    );
 
     // check that the pet is capable of to liquidating the target production
     LibPet.syncHealth(components, targetPetID);
     require(
       LibProduction.isLiquidatableBy(components, targetProductionID, petID),
-      "Production: YOU HAVE NO POWER HERE (need moar violence)"
+      "Production: (need moar violence)"
     );
 
     // collect the money
