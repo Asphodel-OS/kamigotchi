@@ -429,12 +429,4 @@ library LibPet {
 
     return LibQuery.query(fragments);
   }
-
-  /////////////////
-  // MISC
-
-  // temporary function to stimulate a little randomness
-  function _smolRandom(uint256 base, uint256 seed) internal pure returns (uint256) {
-    return (base / 2) + (uint256(keccak256(abi.encode(seed, base))) % base);
-  }
 }
