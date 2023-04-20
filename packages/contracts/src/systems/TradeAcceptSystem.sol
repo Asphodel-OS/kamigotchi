@@ -20,9 +20,9 @@ contract TradeAcceptSystem is System {
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
     // TODO: ? add restriction against multiple ongoing trades
-    if (!LibTrade.isTrade(components, tradeID)) revert LibTrade.notTrade();
-    if (!LibTrade.isRequest(components, tradeID)) revert LibTrade.notRequest();
-    if (LibTrade.getRequestee(components, tradeID) != accountID) revert LibTrade.notRequestee();
+    require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
+    require(LibTrade.isRequest(components, tradeID), "Trade: not a request");
+    require(LibTrade.getRequestee(components, tradeID) == accountID, "Trade: must be requestee");
 
     LibTrade.accept(world, components, tradeID);
     LibAccount.updateLastBlock(components, accountID);

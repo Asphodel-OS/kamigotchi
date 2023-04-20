@@ -19,10 +19,10 @@ contract TradeCancelSystem is System {
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
-    if (!LibTrade.isTrade(components, tradeID)) revert LibTrade.notTrade();
-    if (!LibTrade.hasParticipant(components, tradeID, accountID)) revert LibTrade.notParticipant();
-    if (LibTrade.hasState(components, tradeID, "CANCELED")) revert LibTrade.isCanceled();
-    if (LibTrade.hasState(components, tradeID, "CONFIRMED")) revert LibTrade.isConfirmed();
+    require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
+    require(LibTrade.hasParticipant(components, tradeID, accountID), "Trade: must be participant");
+    require(!LibTrade.hasState(components, tradeID, "CANCELED"), "Trade: already canceled");
+    require(!LibTrade.hasState(components, tradeID, "COMPLETE"), "Trade: already complete");
 
     LibTrade.cancel(world, components, tradeID);
     LibAccount.updateLastBlock(components, accountID);

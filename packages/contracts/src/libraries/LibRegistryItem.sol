@@ -33,13 +33,6 @@ import { LibStat } from "libraries/LibStat.sol";
 // exhaustively, but we should be consistent on depth within a given context.
 library LibRegistryItem {
   /////////////////
-  // ERRORS
-
-  error invalidFood();
-  error invalidGear();
-  error invalidMod();
-
-  /////////////////
   // INTERACTIONS
   // TODO: implement revives and scrolls
 

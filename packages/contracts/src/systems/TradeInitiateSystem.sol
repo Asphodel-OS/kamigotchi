@@ -18,9 +18,9 @@ contract TradeInitiateSystem is System {
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
     // requirements
-    if (accountID == toID) revert LibTrade.selfTrade();
-    if (!LibTrade.canTrade(components, accountID, toID)) revert LibTrade.cannotTrade();
-    if (LibTrade.getRequest(components, accountID, toID) != 0) revert LibTrade.requestExists();
+    require(accountID != toID, "Trade: no self-trade !!");
+    require(LibTrade.canTrade(components, accountID, toID), "Trade: must be in same room");
+    require(LibTrade.getRequest(components, accountID, toID) == 0, "Trade: request exists");
 
     uint256 tradeID = LibTrade.create(world, components, accountID, toID);
     LibAccount.updateLastBlock(components, accountID);

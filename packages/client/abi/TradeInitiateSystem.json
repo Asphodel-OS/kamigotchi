@@ -27,21 +27,6 @@
       "type": "error"
     },
     {
-      "inputs": [],
-      "name": "cannotTrade",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "requestExists",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "selfTrade",
-      "type": "error"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {

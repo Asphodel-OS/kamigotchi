@@ -26,13 +26,6 @@ uint256 constant RATE_PRECISION = 1e6; // precsion on production rate calculatio
  */
 library LibProduction {
   /////////////////////
-  // ERRORS
-
-  error nodeMismatch();
-
-  error notLiquidatable();
-
-  /////////////////////
   // INTERACTIONS
 
   // Creates a production for a pet at a deposit. Assumes one doesn't already exist.

@@ -20,30 +20,6 @@ import { Strings } from "utils/Strings.sol";
 // @dev State = [ INITIATED | ACCEPTED | CONFIRMED | CANCELED ]
 library LibTrade {
   /////////////////
-  // ERRORS
-
-  error selfTrade();
-
-  error cannotTrade();
-
-  error notTrade();
-  error notRequest();
-  error notRequestee();
-  error notParticipant();
-
-  error requestExists();
-
-  // state errors
-  error notAccepted();
-  error notConfirmed();
-  error notCanceled();
-  error notInitiated();
-  error isAccepted();
-  error isConfirmed();
-  error isCanceled();
-  error isInitiated();
-
-  /////////////////
   // INTERACTIONS
 
   // Create a trade and set initial values.

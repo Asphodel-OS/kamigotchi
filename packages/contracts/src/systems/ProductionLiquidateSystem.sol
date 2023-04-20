@@ -25,19 +25,21 @@ contract ProductionLiquidateSystem is System {
 
     // standard checks
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    if (!LibPet.isHarvesting(components, petID)) revert LibPet.notHarvesting();
+    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
 
     // check that the two kamis share the same node
     uint256 productionID = LibPet.getProduction(components, petID);
     uint256 nodeID = LibProduction.getNode(components, productionID);
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
-    if (nodeID != targetNodeID) revert LibProduction.nodeMismatch();
+    require(nodeID == targetNodeID, "Production: not on same node");
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
     LibPet.syncHealth(components, targetPetID);
-    if (!LibProduction.isLiquidatableBy(components, targetProductionID, petID))
-      revert LibProduction.notLiquidatable();
+    require(
+      LibProduction.isLiquidatableBy(components, targetProductionID, petID),
+      "Production: YOU HAVE NO POWER HERE (need moar violence)"
+    );
 
     // collect the money
     // NOTE: this could be sent to the kami in future mechanics

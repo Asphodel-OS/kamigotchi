@@ -17,12 +17,6 @@ import { LibStat } from "libraries/LibStat.sol";
 // handles nonfungible inventory instances
 library LibInventory {
   /////////////////
-  // ERRORS
-
-  // not a fungible inventory instance
-  error notFungibleInstance();
-
-  /////////////////
   // INTERACTIONS
 
   // Create a new item inventory instance for a specified holder. The shape depends on
@@ -136,7 +130,10 @@ library LibInventory {
 
   // Set the balance of an existing fungible inventory entity
   function setBalance(IUintComp components, uint256 id, uint256 amt) internal {
-    if (!isInstanceFungible(components, id)) revert notFungibleInstance();
+    require(
+      isInstanceFungible(components, id),
+      "LibInventory.setBalance(): not a fungible inventory instance"
+    );
     BalanceComponent(getAddressById(components, BalanceCompID)).set(id, amt);
   }
 

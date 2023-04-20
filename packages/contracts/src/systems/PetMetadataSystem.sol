@@ -44,7 +44,7 @@ contract PetMetadataSystem is System {
 
     MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
 
-    if (!LibPet.isUnrevealed(components, petID)) revert LibPet.petIsRevealed();
+    require(LibString.eq(mediaComp.getValue(petID), UNREVEALED_URI), "already revealed!");
 
     // generates array of traits with weighted random
     uint256[] memory traits = new uint256[](_numElements);

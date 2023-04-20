@@ -27,11 +27,6 @@
       "type": "error"
     },
     {
-      "inputs": [],
-      "name": "notResting",
-      "type": "error"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {

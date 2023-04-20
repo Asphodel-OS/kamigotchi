@@ -27,21 +27,6 @@
       "type": "error"
     },
     {
-      "inputs": [],
-      "name": "notRequest",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "notRequestee",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "notTrade",
-      "type": "error"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {
