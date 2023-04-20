@@ -47,9 +47,9 @@ contract ProductionLiquidateSystem is System {
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);
     LibProduction.stop(components, targetProductionID);
-    // LibKill.create(world, components, petID, targetPetID, nodeID);
+    LibKill.create(world, components, petID, targetPetID, nodeID);
 
-    // LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

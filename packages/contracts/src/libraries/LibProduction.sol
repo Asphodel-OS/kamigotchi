@@ -126,7 +126,7 @@ library LibProduction {
     IUintComp components,
     uint256 id,
     uint256 sourcePetID
-  ) internal view returns (bool) {
+  ) external view returns (bool) {
     uint256 targetPetID = getPet(components, id);
     uint256 targetHealth = LibPet.getCurrHealth(components, targetPetID);
     uint256 targetTotalHealth = LibPet.calcTotalHealth(components, targetPetID);

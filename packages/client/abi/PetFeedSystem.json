@@ -28,6 +28,11 @@
     },
     {
       "inputs": [],
+      "name": "invalidFood",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "notFungibleInstance",
       "type": "error"
     },

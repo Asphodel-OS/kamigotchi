@@ -58,11 +58,7 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  function _transferPetNFT(
-    address from,
-    address to,
-    uint256 nftID
-  ) internal {
+  function _transferPetNFT(address from, address to, uint256 nftID) internal {
     vm.prank(from);
     _ERC721PetSystem.transferFrom(from, to, nftID);
   }
@@ -70,11 +66,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /***********************
    *   room create
    ************************/
-  function _roomCreate(
-    string memory name,
-    uint256 location,
-    uint256[] memory exits
-  ) internal {
+  function _roomCreate(string memory name, uint256 location, uint256[] memory exits) internal {
     vm.prank(deployer);
     __RoomCreateSystem.executeTyped(name, location, exits);
   }

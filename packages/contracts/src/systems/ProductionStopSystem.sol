@@ -9,7 +9,6 @@ import { LibCoin } from "libraries/LibCoin.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
-import { Strings } from "utils/Strings.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Stop"));
 
