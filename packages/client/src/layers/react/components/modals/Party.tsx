@@ -288,12 +288,22 @@ export function registerPartyModal() {
       /////////////////
       // DATA INTERPRETATION
       const RATE_PRECISION = 1e6;
+      const DEMO_RECOVERY_MULTIPLIER = 1e2;
 
       // get the health drain rate, based on the kami's production
       // this is based on a hardcoded value for the time being
       const calcDrainRate = (kami: Kami) => {
         return calcProductionRate(kami) / 2.0;
       };
+
+      // calculate the recovery rate based on the harmony stat of the kami (KAMI/s)
+      const calcRecoveryRate = (kami: Kami) => {
+        let rate = 0;
+        if (isResting(kami)) {
+          rate = DEMO_RECOVERY_MULTIPLIER * kami.stats.harmony / 3600;
+        }
+        return rate;
+      }
 
       // get emission rate of the Kami's production. measured in (KAMI/s)
       const calcProductionRate = (kami: Kami) => {
@@ -305,17 +315,23 @@ export function registerPartyModal() {
       };
 
       // calculate health based on the drain against last confirmed health
-      const calcHealth = (kami: Kami) => {
-        let health = kami.health;
+      const calcHealth = (kami: Kami): number => {
+        let health = 1 * kami.health;
+        let duration = lastRefresh / 1000 - kami.lastUpdated;
 
         // calculate the health drain on the kami since the last health update
         if (isHarvesting(kami)) {
-          let duration = lastRefresh / 1000 - kami.lastUpdated;
           let drainRate = calcDrainRate(kami);
           let healthDrain = drainRate * duration;
           health -= healthDrain;
+          health = Math.max(health, 0);
+        } else if (isResting(kami)) {
+          let recoveryRate = calcRecoveryRate(kami);
+          let healthRecovery = recoveryRate * duration;
+          health += healthRecovery;
+          health = Math.min(health, kami.stats.health);
         }
-        return Math.max(health, 0);
+        return health;
       };
 
       // calculate the expected output from a pet production based on starttime
@@ -330,19 +346,19 @@ export function registerPartyModal() {
       };
 
       // naive check right now, needs to be updated with murder check as well
-      const isDead = (kami: Kami) => {
-        return calcHealth(kami) == 0;
+      const isDead = (kami: Kami): boolean => {
+        return kami.state === 'DEAD' ||
+          calcHealth(kami) == 0;  // shoudl we include this check as well?
       };
 
       // check whether the kami is currently harvesting
-      // TODO: replace this with a general state check
       const isHarvesting = (kami: Kami): boolean => {
-        let result = false;
-        if (kami.production) {
-          result = kami.production.state === 'ACTIVE';
-        }
-        return result;
+        return kami.state === 'HARVESTING' && kami.production != undefined;
       };
+
+      const isResting = (kami: Kami): boolean => {
+        return kami.state === 'RESTING';
+      }
 
       const isRevealed = (kami: Kami): boolean => {
         return !(kami.state == 'UNREVEALED');
@@ -350,36 +366,42 @@ export function registerPartyModal() {
 
       // get the title of the kami as 'name (health / totHealth)'
       const getTitle = (kami: Kami) => {
-        const health = calcHealth(kami);
-        return kami.name + ` (${health.toFixed()}/${kami.stats.health * 1})`;
+        let title = kami.name;
+        if (isRevealed(kami)) {
+          const health = calcHealth(kami);
+          title += ` (${health.toFixed()}/${kami.stats.health * 1})`;
+        }
+        return title;
       };
 
       // get the description of the kami as a list of lines
       // TODO: clean this up
       const getDescription = (kami: Kami): string[] => {
-        let description: string[];
+        let description: string[] = [];
 
-        if (!isRevealed(kami)) return ['unrevealed!'];
-
-        if (isHarvesting(kami)) {
-          if (!isDead(kami)) {
-            const harvestRate = calcProductionRate(kami) * 3600; //hourly
-            const drainRate = calcDrainRate(kami) * 3600; //hourly
-            description = [
-              `Harvesting on ${kami.production!.node!.name}`,
-              `+${harvestRate.toFixed(1)} $KAMI/hr`,
-              `-${drainRate.toFixed(1)} HP/hr`,
-            ];
-          } else {
-            description = ['died (of neglect)'];
-          }
-        } else {
-          if (isDead(kami)) {
+        switch (kami.state) {
+          case 'UNREVEALED':
+            description = ['unrevealed!'];
+            break;
+          case 'RESTING':
+            description = ['resting'];
+            break;
+          case 'HARVESTING':
+            if (kami.production) {
+              const harvestRate = calcProductionRate(kami) * 3600; //hourly
+              const drainRate = calcDrainRate(kami) * 3600; //hourly
+              description = [
+                `Harvesting on ${kami.production!.node!.name}`,
+                `+${harvestRate.toFixed(1)} $KAMI/hr`,
+                `-${drainRate.toFixed(1)} HP/hr`,
+              ];
+              break;
+            }
+          case 'DEAD':
             description = [`Murdered by ???`];
-          } else {
-            description = ['chillin'];
-          }
+            break;
         }
+
         return description;
       };
 
@@ -449,11 +471,9 @@ export function registerPartyModal() {
       };
 
       // corner content, usually Food
-      const selectCorner = (kami: Kami) => {
+      const selectCornerContent = (kami: Kami) => {
         if (isRevealed(kami)) return FeedButton(kami, 1);
-
-        return <div></div>;
-      };
+      }
 
       const selectInfo = (kami: Kami) => {
         if (isRevealed(kami)) return InfoButton(kami);
@@ -472,7 +492,7 @@ export function registerPartyModal() {
               image={kami.uri}
               subtext={`${calcOutput(kami)} $KAMI`}
               action={action}
-              cornerContent={selectCorner(kami)}
+              cornerContent={selectCornerContent(kami)}
               info={selectInfo(kami)}
               description={description}
             />
