@@ -24,6 +24,7 @@ import PetMetadataSystem from "../abi/PetMetadataSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
+import ProductionLiquidate2System from "../abi/ProductionLiquidate2System.json";
 import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
@@ -59,6 +60,7 @@ export const SystemAbis = {
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.SetAccount": PetSetAccountSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
+  "system.Production.Liquidate": ProductionLiquidate2System.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,
   "system.Production.Stop": ProductionStopSystem.abi,

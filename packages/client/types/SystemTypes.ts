@@ -24,6 +24,7 @@ import { PetMetadataSystem } from "./ethers-contracts/PetMetadataSystem";
 import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetSetAccountSystem } from "./ethers-contracts/PetSetAccountSystem";
 import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSystem";
+import { ProductionLiquidate2System } from "./ethers-contracts/ProductionLiquidate2System";
 import { ProductionLiquidateSystem } from "./ethers-contracts/ProductionLiquidateSystem";
 import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem";
 import { ProductionStopSystem } from "./ethers-contracts/ProductionStopSystem";
@@ -59,6 +60,7 @@ export type SystemTypes = {
   "system.Pet.Name": PetNameSystem;
   "system.Pet.SetAccount": PetSetAccountSystem;
   "system.Production.Collect": ProductionCollectSystem;
+  "system.Production.Liquidate": ProductionLiquidate2System;
   "system.Production.Liquidate": ProductionLiquidateSystem;
   "system.Production.Start": ProductionStartSystem;
   "system.Production.Stop": ProductionStopSystem;

@@ -11,6 +11,8 @@ import { LibKill } from "libraries/LibKill.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 
+import { ID as ExtensionSystemID } from "systems/ProductionLiquidate2System.sol";
+
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
 // liquidates a target production using a player's pet.
@@ -49,18 +51,7 @@ contract ProductionLiquidateSystem is System {
       "Production: (need moar violence)"
     );
 
-    // collect the money
-    // NOTE: this could be sent to the kami in future mechanics
-    uint256 amt = LibProduction.calcBounty(components, targetProductionID);
-    LibCoin.inc(components, accountID, amt);
-
-    // kill the target and shut off the production
-    LibPet.kill(components, targetPetID);
-    LibProduction.stop(components, targetProductionID);
-    // LibKill.create(world, components, petID, targetPetID, nodeID);
-
-    // LibAccount.updateLastBlock(components, accountID);
-    return abi.encode(amt);
+    return System(getAddressById(world.systems(), ExtensionSystemID)).execute(arguments);
   }
 
   function executeTyped(uint256 targetProductionID, uint256 petID) public returns (bytes memory) {

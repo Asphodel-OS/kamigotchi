@@ -270,6 +270,22 @@
       ]
     },
     {
+      "name": "ProductionLiquidate2System",
+      "writeAccess": [
+        "BlockLastComponent",
+        "CoinComponent",
+        "HealthCurrentComponent",
+        "IdNodeComponent",
+        "IdSourceComponent",
+        "IdTargetComponent",
+        "IsKillComponent",
+        "RateComponent",
+        "StateComponent",
+        "TimeComponent",
+        "TimeLastActionComponent"
+      ]
+    },
+    {
       "name": "ProductionStartSystem",
       "writeAccess": [
         "IsProductionComponent",
