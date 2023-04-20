@@ -3,34 +3,28 @@ pragma solidity ^0.8.0;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 
 import { KamiERC20 } from "tokens/KamiERC20.sol";
+import { ERC20HopperSystem, ID as HopperID } from "systems/ERC20HopperSystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC20.Deposit"));
 
 // brings ERC20 tokens back into the game, sends it to the sender's account entity
 contract ERC20DepositSystem is System {
-  address token;
-
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  // separating an init function to preserve deployment compatibility
-  function init(address _token) external onlyOwner {
-    token = _token;
-  }
-
   function execute(bytes memory arguments) public returns (bytes memory) {
-    require(token != address(0), "ERC20Deposit: not inited");
-
     uint256 amount = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
     require(accountID != 0, "ERC20Deposit: addy has no acc");
 
-    KamiERC20(token).deposit(msg.sender, amount);
+    KamiERC20 token = ERC20HopperSystem(getAddressById(world.systems(), HopperID)).getToken();
+    token.deposit(msg.sender, amount);
     LibCoin.inc(components, accountID, amount);
 
     return "";

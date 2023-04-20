@@ -12,6 +12,7 @@ export type { BlockLastComponent } from "./BlockLastComponent";
 export type { BoolComponent } from "./BoolComponent";
 export type { CoinComponent } from "./CoinComponent";
 export type { ERC20DepositSystem } from "./ERC20DepositSystem";
+export type { ERC20HopperSystem } from "./ERC20HopperSystem";
 export type { ERC20WithdrawSystem } from "./ERC20WithdrawSystem";
 export type { ERC721PetSystem } from "./ERC721PetSystem";
 export type { ExitsComponent } from "./ExitsComponent";
@@ -116,6 +117,7 @@ export { BlockLastComponent__factory } from "./factories/BlockLastComponent__fac
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";
 export { CoinComponent__factory } from "./factories/CoinComponent__factory";
 export { ERC20DepositSystem__factory } from "./factories/ERC20DepositSystem__factory";
+export { ERC20HopperSystem__factory } from "./factories/ERC20HopperSystem__factory";
 export { ERC20WithdrawSystem__factory } from "./factories/ERC20WithdrawSystem__factory";
 export { ERC721PetSystem__factory } from "./factories/ERC721PetSystem__factory";
 export { ExitsComponent__factory } from "./factories/ExitsComponent__factory";

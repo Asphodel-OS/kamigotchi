@@ -17,6 +17,7 @@ import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountNameSystem } from "./ethers-contracts/AccountNameSystem";
 import { AccountSetSystem } from "./ethers-contracts/AccountSetSystem";
 import { ERC20DepositSystem } from "./ethers-contracts/ERC20DepositSystem";
+import { ERC20HopperSystem } from "./ethers-contracts/ERC20HopperSystem";
 import { ERC20WithdrawSystem } from "./ethers-contracts/ERC20WithdrawSystem";
 import { ERC721PetSystem } from "./ethers-contracts/ERC721PetSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
@@ -54,6 +55,7 @@ export type SystemTypes = {
   "system.Account.Name": AccountNameSystem;
   "system.Account.Set": AccountSetSystem;
   "system.ERC20.Deposit": ERC20DepositSystem;
+  "system.ERC20.Hopper": ERC20HopperSystem;
   "system.ERC20.Withdraw": ERC20WithdrawSystem;
   "system.ERC721.pet": ERC721PetSystem;
   "system.Listing.Buy": ListingBuySystem;

@@ -17,6 +17,7 @@ import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountNameSystem from "../abi/AccountNameSystem.json";
 import AccountSetSystem from "../abi/AccountSetSystem.json";
 import ERC20DepositSystem from "../abi/ERC20DepositSystem.json";
+import ERC20HopperSystem from "../abi/ERC20HopperSystem.json";
 import ERC20WithdrawSystem from "../abi/ERC20WithdrawSystem.json";
 import ERC721PetSystem from "../abi/ERC721PetSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
@@ -54,6 +55,7 @@ export const SystemAbis = {
   "system.Account.Name": AccountNameSystem.abi,
   "system.Account.Set": AccountSetSystem.abi,
   "system.ERC20.Deposit": ERC20DepositSystem.abi,
+  "system.ERC20.Hopper": ERC20HopperSystem.abi,
   "system.ERC20.Withdraw": ERC20WithdrawSystem.abi,
   "system.ERC721.pet": ERC721PetSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,

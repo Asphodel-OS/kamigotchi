@@ -84,19 +84,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        }
-      ],
-      "name": "init",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "owner",
       "outputs": [
@@ -126,7 +113,6 @@
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
-    "init(address)": "19ab453c",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

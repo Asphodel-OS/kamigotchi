@@ -12,7 +12,7 @@ import "test/utils/SetupTemplate.s.sol";
  *
  * See for yourself. Remove this file and 'yarn dev' from the packages/contracts.
  * Witness the cognito-hazard for yourself. Just know that I bear no responsibility
- * for any resulting aneurysms. 
+ * for any resulting aneurysms.
  */
 contract LoadBearingTest is SetupTemplate {
   __waddafakSystem.executeTyped();

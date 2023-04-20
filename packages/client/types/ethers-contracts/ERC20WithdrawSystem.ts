@@ -31,7 +31,6 @@ export interface ERC20WithdrawSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
-    "init(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -40,7 +39,6 @@ export interface ERC20WithdrawSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "execute"
       | "executeTyped"
-      | "init"
       | "owner"
       | "transferOwnership"
   ): FunctionFragment;
@@ -53,10 +51,6 @@ export interface ERC20WithdrawSystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "init",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -68,7 +62,6 @@ export interface ERC20WithdrawSystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -131,11 +124,6 @@ export interface ERC20WithdrawSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    init(
-      _token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
@@ -151,11 +139,6 @@ export interface ERC20WithdrawSystem extends BaseContract {
 
   executeTyped(
     amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  init(
-    _token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -176,11 +159,6 @@ export interface ERC20WithdrawSystem extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    init(
-      _token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -212,11 +190,6 @@ export interface ERC20WithdrawSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    init(
-      _token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -233,11 +206,6 @@ export interface ERC20WithdrawSystem extends BaseContract {
 
     executeTyped(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    init(
-      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

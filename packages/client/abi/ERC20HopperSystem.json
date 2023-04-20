@@ -61,7 +61,7 @@
           "type": "bytes"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -80,7 +80,33 @@
           "type": "bytes"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getToken",
+      "outputs": [
+        {
+          "internalType": "contract KamiERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTokenAddy",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -113,6 +139,8 @@
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
+    "getToken()": "21df0da7",
+    "getTokenAddy()": "96b443fe",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

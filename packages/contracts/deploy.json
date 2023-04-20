@@ -197,6 +197,10 @@
       ]
     },
     {
+      "name": "ERC20HopperSystem",
+      "writeAccess": []
+    },
+    {
       "name": "ERC20WithdrawSystem",
       "writeAccess": [
         "CoinComponent"
