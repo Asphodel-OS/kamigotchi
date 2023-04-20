@@ -27,6 +27,26 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "notAccepted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notFungibleInstance",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notParticipant",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notTrade",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {

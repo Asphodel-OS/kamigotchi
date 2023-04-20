@@ -24,9 +24,9 @@ contract TradeAddToSystem is System {
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
     // TODO: add restriction from adding to register when already confirmed
-    require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
-    require(LibTrade.hasParticipant(components, tradeID, accountID), "Trade: must be participant");
-    require(LibTrade.hasState(components, tradeID, "ACCEPTED"), "Trade: must be accepted");
+    if (!LibTrade.isTrade(components, tradeID)) revert LibTrade.notTrade();
+    if (!LibTrade.hasParticipant(components, tradeID, accountID)) revert LibTrade.notParticipant();
+    if (!LibTrade.hasState(components, tradeID, "ACCEPTED")) revert LibTrade.notAccepted();
 
     uint256 registerID = LibRegister.get(components, accountID, tradeID);
     LibRegister.addTo(world, components, registerID, itemIndex, amt);

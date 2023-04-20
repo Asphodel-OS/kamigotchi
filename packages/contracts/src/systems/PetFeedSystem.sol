@@ -23,7 +23,7 @@ contract PetFeedSystem is System {
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    require(registryID != 0, "RegistryItem: no such food");
+    if (registryID == 0) revert LibRegistryItem.invalidFood();
 
     uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
     uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);

@@ -122,6 +122,11 @@ import { ProductionCollectSystem, ID as ProductionCollectSystemID } from "system
 import { ProductionLiquidateSystem, ID as ProductionLiquidateSystemID } from "systems/ProductionLiquidateSystem.sol";
 import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/ProductionStartSystem.sol";
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
+import { TradeAcceptSystem, ID as TradeAcceptSystemID } from "systems/TradeAcceptSystem.sol";
+import { TradeAddToSystem, ID as TradeAddToSystemID } from "systems/TradeAddToSystem.sol";
+import { TradeCancelSystem, ID as TradeCancelSystemID } from "systems/TradeCancelSystem.sol";
+import { TradeConfirmSystem, ID as TradeConfirmSystemID } from "systems/TradeConfirmSystem.sol";
+import { TradeInitiateSystem, ID as TradeInitiateSystemID } from "systems/TradeInitiateSystem.sol";
 
 abstract contract TestSetupImports is MudTest {
 // Components vars
@@ -225,6 +230,11 @@ ProductionCollectSystem _ProductionCollectSystem;
 ProductionLiquidateSystem _ProductionLiquidateSystem;
 ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
+TradeAcceptSystem _TradeAcceptSystem;
+TradeAddToSystem _TradeAddToSystem;
+TradeCancelSystem _TradeCancelSystem;
+TradeConfirmSystem _TradeConfirmSystem;
+TradeInitiateSystem _TradeInitiateSystem;
 
 function setUp() public virtual override {
 super.setUp();
@@ -328,5 +338,10 @@ _ProductionCollectSystem = ProductionCollectSystem(system(ProductionCollectSyste
 _ProductionLiquidateSystem = ProductionLiquidateSystem(system(ProductionLiquidateSystemID));
 _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
+_TradeAcceptSystem = TradeAcceptSystem(system(TradeAcceptSystemID));
+_TradeAddToSystem = TradeAddToSystem(system(TradeAddToSystemID));
+_TradeCancelSystem = TradeCancelSystem(system(TradeCancelSystemID));
+_TradeConfirmSystem = TradeConfirmSystem(system(TradeConfirmSystemID));
+_TradeInitiateSystem = TradeInitiateSystem(system(TradeInitiateSystemID));
 }
 }
