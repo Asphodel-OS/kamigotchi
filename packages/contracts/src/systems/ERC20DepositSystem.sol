@@ -23,12 +23,12 @@ contract ERC20DepositSystem is System {
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    require(token != address(0), "ERC20DepositSystem: not inited");
+    require(token != address(0), "ERC20Deposit: not inited");
 
     uint256 amount = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
-    require(accountID != 0, "ERC20DepositSystem: address has no account");
+    require(accountID != 0, "ERC20Deposit: addy has no acc");
 
     KamiERC20(token).deposit(msg.sender, amount);
     LibCoin.inc(components, accountID, amount);
