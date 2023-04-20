@@ -27,6 +27,31 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "isCanceled",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "isConfirmed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notFungibleInstance",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notParticipant",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notTrade",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {

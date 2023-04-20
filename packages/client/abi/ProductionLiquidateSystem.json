@@ -32,6 +32,21 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "nodeMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notHarvesting",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "notLiquidatable",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {

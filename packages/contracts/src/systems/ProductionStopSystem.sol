@@ -27,7 +27,7 @@ contract ProductionStopSystem is System {
     LibPet.syncHealth(components, petID);
 
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    if (!LibPet.isHarvesting(components, petID)) revert LibPet.notHarvesting();
 
     uint256 amt = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, amt);

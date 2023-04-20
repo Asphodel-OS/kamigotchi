@@ -45,6 +45,19 @@ uint256 constant DEMO_VIOLENCE_MULTIPLIER = 3;
 library LibPet {
   using LibFPMath for int256;
 
+  //////////////////
+  // ERRORS
+
+  // state errors
+  error notDead();
+  error notHarvesting();
+  error notRevealed();
+  error notResting();
+  error petIsDead();
+  error petIsHarvesting();
+  error petIsRevealed();
+  error petIsResting();
+
   /////////////////
   // INTERACTIONS
 
@@ -293,6 +306,11 @@ library LibPet {
   // Check whether a pet is resting.
   function isResting(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getState(components, id), "RESTING");
+  }
+
+  // Check whether a pet is revealed
+  function isUnrevealed(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibString.eq(getState(components, id), "UNREVEALED");
   }
 
   /////////////////

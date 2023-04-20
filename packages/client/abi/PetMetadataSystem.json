@@ -27,6 +27,11 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "petIsRevealed",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {

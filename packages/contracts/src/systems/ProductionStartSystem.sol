@@ -23,7 +23,7 @@ contract ProductionStartSystem is System {
     LibPet.syncHealth(components, petID);
 
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.isResting(components, petID), "Pet: must be resting");
+    if (!LibPet.isResting(components, petID)) revert LibPet.notResting();
 
     uint256 id = LibProduction.getForPet(components, petID);
     if (id == 0) id = LibProduction.create(world, components, nodeID, petID);
