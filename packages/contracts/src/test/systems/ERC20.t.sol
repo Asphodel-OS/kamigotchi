@@ -27,7 +27,7 @@ contract ERC20Test is SetupTemplate {
     __devGiveTokensSystem.executeTyped(alice, 101);
 
     vm.prank(alice);
-    _ERC20WithdrawSystem.executeTyped(alice, 100);
+    _ERC20WithdrawSystem.executeTyped(100);
 
     assertEq(token.balanceOf(alice), 100);
 
