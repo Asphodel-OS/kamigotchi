@@ -38,7 +38,7 @@ uint256 constant BASE_SLOTS = 2;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
 uint256 constant RECOVERY_RATE_PRECISION = 1e18;
-uint256 constant DEMO_RECOVERY_RATE_MULTIPLIER = 1000;
+uint256 constant DEMO_RECOVERY_RATE_MULTIPLIER = 100;
 uint256 constant DEMO_POWER_MULTIPLIER = 250;
 uint256 constant DEMO_VIOLENCE_MULTIPLIER = 3;
 
@@ -281,6 +281,11 @@ library LibPet {
   // Check whether a pet is dead.
   function isDead(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getState(components, id), "DEAD");
+  }
+
+  // Check whether the kami is fully healed.
+  function isFull(IUintComp components, uint256 id) internal view returns (bool) {
+    return calcTotalHealth(components, id) == getCurrHealth(components, id);
   }
 
   // Check whether a pet is harvesting.

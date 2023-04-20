@@ -29,10 +29,12 @@ contract PetFeedSystem is System {
     uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
     require(inventoryID != 0, "Inventory: no bitches, no food");
 
+    LibPet.syncHealth(components, petID);
+    require(!LibPet.isFull(components, petID), "Pet: already full");
+
     LibInventory.dec(components, inventoryID, 1); // inherent check for insufficient balance
 
     uint256 healAmt = LibStat.getHealth(components, registryID);
-    LibPet.syncHealth(components, petID);
     LibPet.heal(components, petID, healAmt);
     LibAccount.updateLastBlock(components, accountID); // gas limit :|
     return "";
