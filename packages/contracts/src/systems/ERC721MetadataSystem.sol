@@ -16,10 +16,9 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
+uint256 constant _numElements = 5;
 
 contract ERC721MetadataSystem is System {
-  uint256 _maxElements;
-  uint256 _numElements;
   uint256 _seed;
   bool _revealed;
   string _baseURI;
@@ -204,12 +203,6 @@ contract ERC721MetadataSystem is System {
   /*********************
    *  CONFIG FUNCTIONS
    **********************/
-
-  // set max variables for metadata lib
-  function _setMaxElements(uint256[] memory max) public onlyOwner {
-    _numElements = max.length;
-    _maxElements = LibRandom.packArray(max, 8);
-  }
 
   // sets a seed. maybe VRF in future
   // TODO: update this to a more appropriate name

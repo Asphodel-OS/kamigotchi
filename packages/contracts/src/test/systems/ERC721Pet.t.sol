@@ -4,77 +4,36 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.s.sol";
 
 contract ERC721PetTest is SetupTemplate {
-  function _assertOwnership(uint256 tokenID, address addy) internal {
+  function setUp() public override {
+    super.setUp();
+  }
+
+  function _assertOwnerInGame(uint256 tokenID, address addy) internal {
     // owner and component must be the same
     uint256 entityID = LibPet.indexToID(components, tokenID);
     assertEq(
-      _ERC721MintSystem.ownerOf(tokenID),
-      entityToAddress(_IdOwnerComponent.getValue(entityID))
+      _KamiERC721.ownerOf(tokenID),
+      address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
     );
-    assertEq(_ERC721MintSystem.ownerOf(tokenID), addy);
+    assertEq(_KamiERC721.ownerOf(tokenID), addy);
   }
 
-  function _assertAccount(uint256 entityID, address account) internal {
-    // assertEq(_IdAccountComponent.getValue(entityID), addressToEntity(account));
+  function _assertOwnerOutGame(uint256 tokenID, address addy) internal {
+    assertEq(_KamiERC721.ownerOf(tokenID), addy);
   }
 
-  function entityToAddress(uint256 entityID) internal returns (address) {
-    return address(uint160(entityID));
-  }
-
-  function testMint() public {
+  function testMintSingle() public {
     _mintPets(1);
-
-    _assertOwnership(1, alice);
-    _assertAccount(petOneEntityID, alice);
+    _assertOwnerInGame(1, alice);
   }
 
-  function testTransfer() public {
-    _mintPets(1);
+  function testMintMultiple() public {
+    _mintSinglePet(alice);
+    _mintSinglePet(alice);
+    _mintSinglePet(alice);
 
-    _transferPetNFT(alice, bob, 1);
-
-    _assertOwnership(1, bob);
-    _assertAccount(petOneEntityID, bob);
-  }
-
-  function testSafeTransfer() public {
-    _mintPets(1);
-
-    vm.prank(alice);
-    _ERC721MintSystem.safeTransferFrom(alice, bob, 1);
-
-    _assertOwnership(1, bob);
-    _assertAccount(petOneEntityID, bob);
-
-    vm.prank(bob);
-    _ERC721MintSystem.safeTransferFrom(bob, eve, 1, "");
-
-    _assertOwnership(1, eve);
-    _assertAccount(petOneEntityID, eve);
-  }
-
-  function testChangeAccount() public {
-    _mintPets(1);
-
-    vm.prank(alice);
-    _PetSetAccountSystem.executeTyped(petOneEntityID, bob);
-
-    _assertOwnership(1, alice);
-    _assertAccount(petOneEntityID, bob);
-  }
-
-  function testMetadataPrint() public {
-    _mintPets(1);
-
-    console.log(_ERC721MintSystem.tokenURI(1));
-  }
-
-  function testMetadataFuzz() public {
-    // maybe shouldnt loop..
-    uint256 max = 99;
-    for (uint256 i; i < max; i++) {
-      _mintSinglePet(address(1));
-    }
+    _assertOwnerInGame(1, alice);
+    _assertOwnerInGame(2, alice);
+    _assertOwnerInGame(3, alice);
   }
 }

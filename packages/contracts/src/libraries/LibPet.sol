@@ -307,6 +307,11 @@ library LibPet {
     return getCurrHealth(components, id) > 0;
   }
 
+  // Check whether a pet is revealed
+  function isUnrevealed(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibString.eq(getState(components, id), "UNREVEALED");
+  }
+
   // Check whether a pet's ERC721 token is in the game world
   function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
     return !LibString.eq(getState(components, id), "721_EXTERNAL");

@@ -133,6 +133,10 @@ import { TradeCancelSystem, ID as TradeCancelSystemID } from "systems/TradeCance
 import { TradeConfirmSystem, ID as TradeConfirmSystemID } from "systems/TradeConfirmSystem.sol";
 import { TradeInitiateSystem, ID as TradeInitiateSystemID } from "systems/TradeInitiateSystem.sol";
 
+// Tokens
+import { KamiERC20 } from "tokens/KamiERC20.sol";
+import { KamiERC721 } from "tokens/KamiERC721.sol";
+
 abstract contract TestSetupImports is MudTest {
 // Components vars
 AddressOperatorComponent _AddressOperatorComponent;
@@ -246,6 +250,10 @@ TradeCancelSystem _TradeCancelSystem;
 TradeConfirmSystem _TradeConfirmSystem;
 TradeInitiateSystem _TradeInitiateSystem;
 
+// Token vars
+KamiERC20 _KamiERC20;
+KamiERC721 _KamiERC721;
+
 function setUp() public virtual override {
 super.setUp();
 
@@ -358,5 +366,8 @@ _TradeAddToSystem = TradeAddToSystem(system(TradeAddToSystemID));
 _TradeCancelSystem = TradeCancelSystem(system(TradeCancelSystemID));
 _TradeConfirmSystem = TradeConfirmSystem(system(TradeConfirmSystemID));
 _TradeInitiateSystem = TradeInitiateSystem(system(TradeInitiateSystemID));
+
+_KamiERC20 = _ERC20ProxySystem.getToken();
+_KamiERC721 = _ERC721ProxySystem.getToken();
 }
 }
