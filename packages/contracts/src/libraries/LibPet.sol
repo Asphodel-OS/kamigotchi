@@ -23,7 +23,9 @@ import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
@@ -300,6 +302,11 @@ library LibPet {
     return LibString.eq(getState(components, id), "RESTING");
   }
 
+  // Check whether the current health of a pet is greater than 0. Assume health synced this block.
+  function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
+    return getCurrHealth(components, id) > 0;
+  }
+
   /////////////////
   // SETTERS
 
@@ -370,6 +377,20 @@ library LibPet {
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
     return TimeLastActionComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+  }
+
+  // Get the implied location of a pet based on its state.
+  function getLocation(IUintComp components, uint256 id) internal view returns (uint256 location) {
+    string memory state = getState(components, id);
+
+    if (LibString.eq(state, "HARVESTING")) {
+      uint256 productionID = getProduction(components, id);
+      uint256 nodeID = LibProduction.getNode(components, productionID);
+      location = LibNode.getLocation(components, nodeID);
+    } else if (LibString.eq(state, "RESTING")) {
+      uint256 accountID = getAccount(components, id);
+      location = LibAccount.getLocation(components, accountID);
+    }
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {

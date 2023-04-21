@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
-import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
@@ -17,7 +17,7 @@ library LibNode {
   // create creates a resource node as specified and returns the id
   function create(
     IWorld world,
-    IUint256Component components,
+    IUintComp components,
     string memory name,
     uint256 location
   ) internal returns (uint256) {
@@ -29,14 +29,20 @@ library LibNode {
   }
 
   /////////////////
+  // GETTERS
+
+  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
+  }
+
+  /////////////////
   // QUERIES
 
   // return an array of all nodes at a room location
-  function getAllAtLocation(IUint256Component components, uint256 location)
-    internal
-    view
-    returns (uint256[] memory)
-  {
+  function getAllAtLocation(
+    IUintComp components,
+    uint256 location
+  ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
     fragments[1] = QueryFragment(

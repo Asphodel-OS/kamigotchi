@@ -21,11 +21,16 @@ contract ProductionLiquidateSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
-    LibPet.syncHealth(components, petID);
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     // standard checks
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+    LibPet.syncHealth(components, petID);
+    require(LibPet.isHealthy(components, petID), "Pet: starving..");
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    require(
+      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
+      "Pet: too far"
+    );
 
     // check that the two kamis share the same node
     uint256 productionID = LibPet.getProduction(components, petID);

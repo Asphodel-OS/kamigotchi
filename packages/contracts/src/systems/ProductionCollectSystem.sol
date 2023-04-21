@@ -13,7 +13,6 @@ import { LibProduction } from "libraries/LibProduction.sol";
 uint256 constant ID = uint256(keccak256("system.Production.Collect"));
 
 // ProductionCollectSystem collects on an active pet production.
-// TODO: update this to kill the pet off if health is at 0
 contract ProductionCollectSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -21,10 +20,15 @@ contract ProductionCollectSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     uint256 petID = LibProduction.getPet(components, id);
-    LibPet.syncHealth(components, petID);
-
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+
+    LibPet.syncHealth(components, petID);
+    require(LibPet.isHealthy(components, petID), "Pet: starving..");
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    require(
+      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
+      "Pet: too far"
+    );
 
     uint256 amt = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, amt);

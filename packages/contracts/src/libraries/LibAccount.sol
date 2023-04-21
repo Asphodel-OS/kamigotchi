@@ -64,12 +64,21 @@ library LibAccount {
   /////////////////
   // CHECKS
 
-  // Check whether a character can move to a location from where they currently are.
-  // This function assumes that the entity id provided belongs to a character.
+  // Check whether an Account can move to a Location from where they currently are.
+  // This function assumes that the id provided belongs to an Account.
   // NOTE(ja): This function can include any other checks we want moving forward.
   function canMoveTo(IUintComp components, uint256 id, uint256 to) internal view returns (bool) {
     uint256 from = getLocation(components, id);
     return LibRoom.isValidPath(components, from, to);
+  }
+
+  // Check whether an Account shares Location with another entity.
+  function sharesLocation(
+    IUintComp components,
+    uint256 id,
+    uint256 entityID
+  ) internal view returns (bool) {
+    return getLocation(components, id) == getLocation(components, entityID);
   }
 
   /////////////////
