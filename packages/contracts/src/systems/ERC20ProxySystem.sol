@@ -16,7 +16,7 @@ string constant symbol = "KAMI";
 // How it works:
 // 1) deploys the ERC20 contract in constructor
 // 2) returns the token address when called
-contract ERC20HopperSystem is System {
+contract ERC20ProxySystem is System {
   address token;
 
   constructor(IWorld _world, address _components) System(_world, _components) {

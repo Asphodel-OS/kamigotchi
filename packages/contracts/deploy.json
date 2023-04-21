@@ -197,7 +197,7 @@
       ]
     },
     {
-      "name": "ERC20HopperSystem",
+      "name": "ERC20ProxySystem",
       "writeAccess": []
     },
     {

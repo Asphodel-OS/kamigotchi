@@ -12,7 +12,7 @@ contract ERC20Test is SetupTemplate {
 
   function setUp() public override {
     super.setUp();
-    token = _ERC20HopperSystem.getToken();
+    token = _ERC20ProxySystem.getToken();
     // token = new KamiERC20(world, "KAMI", "KAMI");
 
     // vm.startPrank(deployer);
