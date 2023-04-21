@@ -14,11 +14,10 @@ import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { ERC721PetSystem, UNREVEALED_URI, ID as PetSystemID } from "systems/ERC721PetSystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
 
-contract PetMetadataSystem is System {
+contract ERC721MetadataSystem is System {
   uint256 _maxElements;
   uint256 _numElements;
   uint256 _seed;
@@ -44,7 +43,7 @@ contract PetMetadataSystem is System {
 
     MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
 
-    require(LibString.eq(mediaComp.getValue(petID), UNREVEALED_URI), "already revealed!");
+    // require(LibString.eq(mediaComp.getValue(petID), UNREVEALED_URI), "already revealed!");
 
     // generates array of traits with weighted random
     uint256[] memory traits = new uint256[](_numElements);

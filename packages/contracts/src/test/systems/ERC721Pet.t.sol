@@ -8,10 +8,10 @@ contract ERC721PetTest is SetupTemplate {
     // owner and component must be the same
     uint256 entityID = LibPet.indexToID(components, tokenID);
     assertEq(
-      _ERC721PetSystem.ownerOf(tokenID),
+      _ERC721MintSystem.ownerOf(tokenID),
       entityToAddress(_IdOwnerComponent.getValue(entityID))
     );
-    assertEq(_ERC721PetSystem.ownerOf(tokenID), addy);
+    assertEq(_ERC721MintSystem.ownerOf(tokenID), addy);
   }
 
   function _assertAccount(uint256 entityID, address account) internal {
@@ -42,13 +42,13 @@ contract ERC721PetTest is SetupTemplate {
     _mintPets(1);
 
     vm.prank(alice);
-    _ERC721PetSystem.safeTransferFrom(alice, bob, 1);
+    _ERC721MintSystem.safeTransferFrom(alice, bob, 1);
 
     _assertOwnership(1, bob);
     _assertAccount(petOneEntityID, bob);
 
     vm.prank(bob);
-    _ERC721PetSystem.safeTransferFrom(bob, eve, 1, "");
+    _ERC721MintSystem.safeTransferFrom(bob, eve, 1, "");
 
     _assertOwnership(1, eve);
     _assertAccount(petOneEntityID, eve);
@@ -67,7 +67,7 @@ contract ERC721PetTest is SetupTemplate {
   function testMetadataPrint() public {
     _mintPets(1);
 
-    console.log(_ERC721PetSystem.tokenURI(1));
+    console.log(_ERC721MintSystem.tokenURI(1));
   }
 
   function testMetadataFuzz() public {

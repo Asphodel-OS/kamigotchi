@@ -9,7 +9,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 
 import { KamiERC20 } from "tokens/KamiERC20.sol";
-import { ERC20ProxySystem, ID as HopperID } from "systems/ERC20ProxySystem.sol";
+import { ERC20ProxySystem, ID as ProxyID } from "systems/ERC20ProxySystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC20.Deposit"));
 
@@ -23,7 +23,7 @@ contract ERC20DepositSystem is System {
 
     require(accountID != 0, "ERC20Deposit: addy has no acc");
 
-    KamiERC20 token = ERC20ProxySystem(getAddressById(world.systems(), HopperID)).getToken();
+    KamiERC20 token = ERC20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(msg.sender, amount);
     LibCoin.inc(components, accountID, amount);
 

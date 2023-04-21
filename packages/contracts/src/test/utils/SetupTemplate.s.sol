@@ -17,11 +17,11 @@ abstract contract SetupTemplate is TestSetupImports {
     super.setUp();
 
     // temp: remove later
-    // _ERC721PetSystem.init();
+    // _ERC721MintSystem.init();
 
     // vm.startPrank(deployer);
     // __InitSystem.executeTyped();
-    // _PetMetadataSystem._setRevealed(
+    // _ERC721MetadataSystem._setRevealed(
     //   123,
     //   "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/images%2F"
     // );
@@ -36,7 +36,7 @@ abstract contract SetupTemplate is TestSetupImports {
     // maxElements[2] = 2; // FACE
     // maxElements[3] = 2; // HAND
     // maxElements[4] = 1; // BACKGROUND
-    // _PetMetadataSystem._setMaxElements(maxElements);
+    // _ERC721MetadataSystem._setMaxElements(maxElements);
     // vm.stopPrank();
   }
 
@@ -53,14 +53,14 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _mintSinglePet(address addy) internal virtual returns (uint256 entityID) {
     vm.startPrank(addy, addy);
-    entityID = _ERC721PetSystem.mint(addy);
-    _PetMetadataSystem.executeTyped(LibPet.idToIndex(components, entityID));
+    entityID = _ERC721MintSystem.mint(addy);
+    _ERC721MetadataSystem.executeTyped(LibPet.idToIndex(components, entityID));
     vm.stopPrank();
   }
 
   function _transferPetNFT(address from, address to, uint256 nftID) internal {
     vm.prank(from);
-    _ERC721PetSystem.transferFrom(from, to, nftID);
+    _ERC721MintSystem.transferFrom(from, to, nftID);
   }
 
   /***********************
