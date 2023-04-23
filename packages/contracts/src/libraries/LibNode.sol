@@ -10,6 +10,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -28,11 +29,13 @@ library LibNode {
     IUintComp components,
     string memory name,
     uint256 location,
-    string memory nodeType
+    string memory nodeType,
+    string memory description
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
     LocationComponent(getAddressById(components, LocCompID)).set(id, location);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
     return id;
@@ -43,6 +46,10 @@ library LibNode {
 
   function setAffinity(IUintComp components, uint256 id, string memory affinity) internal {
     AffinityComponent(getAddressById(components, AffCompID)).set(id, affinity);
+  }
+
+  function setDescription(IUintComp components, uint256 id, string memory description) internal {
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
   function setLocation(IUintComp components, uint256 id, uint256 location) internal {

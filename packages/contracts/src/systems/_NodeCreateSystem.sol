@@ -15,23 +15,22 @@ contract _NodeCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 location, string memory nodeType) = abi.decode(
-      arguments,
-      (string, uint256, string)
-    );
+    (string memory name, uint256 location, string memory nodeType, string memory description) = abi
+      .decode(arguments, (string, uint256, string, string));
     uint256 id = LibNode.getByName(components, name);
 
     require(id == 0, "Node: already exists");
 
-    LibNode.create(world, components, name, location, nodeType);
+    LibNode.create(world, components, name, location, nodeType, description);
     return "";
   }
 
   function executeTyped(
     string memory name,
     uint256 location,
-    string memory nodeType
+    string memory nodeType,
+    string memory description
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, location, nodeType));
+    return execute(abi.encode(name, location, nodeType, description));
   }
 }
