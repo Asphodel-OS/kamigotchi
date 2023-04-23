@@ -18,21 +18,22 @@ contract ERC721DepositSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 entityID = abi.decode(arguments, (uint256));
+    uint256 tokenID = abi.decode(arguments, (uint256));
+    uint256 petID = LibPet.indexToID(components, tokenID);
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     // checks
-    require(!LibPet.isInWorld(components, id), "Pet: unrevealed");
+    require(!LibPet.isInWorld(components, petID), "Pet: alr in world");
 
-    // actions to be taken upon bridging out
+    // actions to be taken upon bridging in
     LibPet.setState(components, petID, "RESTING");
 
     return "";
   }
 
-  function executeTyped(uint256 entityID) public returns (bytes memory) {
-    return execute(abi.encode(entityID));
+  function executeTyped(uint256 tokenID) public returns (bytes memory) {
+    return execute(abi.encode(tokenID));
   }
 }

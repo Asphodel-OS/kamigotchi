@@ -47,7 +47,7 @@ contract KamiERC721 is ERC721 {
   // requires an ERC721 token to be out of game world
   modifier isOutOfWorld(uint256 tokenID) {
     uint256 entityID = LibPet.indexToID(World.components(), tokenID);
-    require(LibPet.isInWorld(World.components(), entityID), "721: not out of game world");
+    require(!LibPet.isInWorld(World.components(), entityID), "721: not out of game world");
     _;
   }
 

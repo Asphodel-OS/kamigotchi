@@ -24,7 +24,7 @@ contract ERC20DepositSystem is System {
     require(accountID != 0, "ERC20Deposit: addy has no acc");
 
     KamiERC20 token = ERC20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
-    token.deposit(LibAccount.getOwner(accountID), amount);
+    token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
     LibCoin.inc(components, accountID, amount);
 
     return "";

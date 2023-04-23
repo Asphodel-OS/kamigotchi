@@ -27,42 +27,22 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ERC721MetadataSystemInterface extends utils.Interface {
+export interface ERC721WithdrawSystemInterface extends utils.Interface {
   functions: {
-    "_getBaseTraits(uint256)": FunctionFragment;
-    "_getHealth(uint256)": FunctionFragment;
-    "_setRevealed(uint256,string)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "tokenURI(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getBaseTraits"
-      | "_getHealth"
-      | "_setRevealed"
       | "execute"
       | "executeTyped"
       | "owner"
-      | "tokenURI"
       | "transferOwnership"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_getBaseTraits",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getHealth",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setRevealed",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -73,30 +53,16 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "tokenURI",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getBaseTraits",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getHealth", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_setRevealed",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -121,12 +87,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ERC721MetadataSystem extends BaseContract {
+export interface ERC721WithdrawSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC721MetadataSystemInterface;
+  interface: ERC721WithdrawSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -148,38 +114,17 @@ export interface ERC721MetadataSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _setRevealed(
-      seed: PromiseOrValue<BigNumberish>,
-      baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
+      tokenID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    tokenURI(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -187,38 +132,17 @@ export interface ERC721MetadataSystem extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  _getBaseTraits(
-    petID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getHealth(
-    petID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _setRevealed(
-    seed: PromiseOrValue<BigNumberish>,
-    baseURI: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   execute(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    petIndex: PromiseOrValue<BigNumberish>,
+    tokenID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  tokenURI(
-    petIndex: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   transferOwnership(
     account: PromiseOrValue<string>,
@@ -226,38 +150,17 @@ export interface ERC721MetadataSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _setRevealed(
-      seed: PromiseOrValue<BigNumberish>,
-      baseURI: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
+      tokenID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    tokenURI(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -277,38 +180,17 @@ export interface ERC721MetadataSystem extends BaseContract {
   };
 
   estimateGas: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _setRevealed(
-      seed: PromiseOrValue<BigNumberish>,
-      baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
+      tokenID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenURI(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -317,38 +199,17 @@ export interface ERC721MetadataSystem extends BaseContract {
   };
 
   populateTransaction: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _setRevealed(
-      seed: PromiseOrValue<BigNumberish>,
-      baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
+      tokenID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenURI(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

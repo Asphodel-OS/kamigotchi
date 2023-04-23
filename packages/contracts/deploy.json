@@ -227,6 +227,18 @@
       "writeAccess": []
     },
     {
+      "name": "ERC721WithdrawSystem",
+      "writeAccess": [
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "ERC721DepositSystem",
+      "writeAccess": [
+        "StateComponent"
+      ]
+    },
+    {
       "name": "ListingBuySystem",
       "writeAccess": [
         "BalanceComponent",
