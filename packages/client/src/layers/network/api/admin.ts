@@ -23,11 +23,47 @@ export function createAdminAPI(systems: any) {
     createRoom("Manager's Office", 14, [7]);
 
     // create nodes
-    createNode('Eerie Willow', 3);
-    createNode('Trash Compactor', 7);
-    createNode('Pristine Couch', 10);
-    createNode('Sacred Shrine', 11);
-    createNode('Danger zone', 12);
+    // TODO: save these details in a separate json to be loaded in 
+    createNode(
+      'Eerie Willow',
+      3,
+      'HARVEST',
+      `The willow seems to sway with the wind. Upon closer inspection, however, the trunk stands resolute against the forces of nature.`
+    );
+    setNodeAffinity('Eerie Willow', 'INSECT');
+
+    createNode(
+      'Trash Compactor',
+      7,
+      'HARVEST',
+      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.'
+    );
+    setNodeAffinity('Eerie Willow', 'SCRAP');
+
+    createNode(
+      'Pristine Couch',
+      10,
+      'HARVEST',
+      'Pristine couch is very pristine. It gives off a peculiar aura.'
+    );
+    setNodeAffinity('Eerie Willow', 'SCRAP');
+
+    createNode(
+      'Sacred Shrine',
+      11,
+      'HARVEST',
+      'The sacred shrine exudes a revitalizing energy. It reflects the intent of restless spirits.'
+    );
+    setNodeAffinity('Eerie Willow', 'EERIE');
+
+    createNode(
+      'Danger zone',
+      12,
+      'HARVEST',
+      'Danger zone'
+    );
+    setNodeAffinity('Eerie Willow', 'NORMAL');
+
 
     // create food registry items
     registerFood(1, 'Maple-Flavor Ghost Gum', 25);
@@ -64,11 +100,12 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev creates an emission node at the specified location
-  // @param name      name of the deposit (exposed in mining modal)
+  // @param name      name of the node
   // @param location  index of the room location
-  // @return uint     entity ID of the deposit
-  function createNode(name: string, location: number) {
-    return systems['system._Node.Create'].executeTyped(name, location);
+  // @param type      type of the node (e.g. HARVEST, HEAL, ARENA)
+  // @param desc      description of the node, exposed on the UI
+  function createNode(name: string, location: number, type: string, desc: string) {
+    return systems['system._Node.Create'].executeTyped(name, location, type, desc);
   }
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
@@ -100,6 +137,22 @@ export function createAdminAPI(systems: any) {
       buyPrice,
       sellPrice
     );
+  }
+
+  function setNodeAffinity(name: string, affinity: string) {
+    return systems['system._Node.Set.Affinity'].executeTyped(name, affinity);
+  }
+
+  function setNodeDescription(name: string, desc: string) {
+    return systems['system._Node.Set.Description'].executeTyped(name, desc);
+  }
+
+  function setNodeLocation(name: string, location: number) {
+    return systems['system._Node.Set.Location'].executeTyped(name, location);
+  }
+
+  function setNodeName(name: string, newName: string) {
+    return systems['system._Node.Set.Name'].executeTyped(name, newName);
   }
 
   /////////////////
@@ -239,10 +292,19 @@ export function createAdminAPI(systems: any) {
     giveCoins,
     listing: { set: setListing },
     merchant: { create: createMerchant },
-    node: { create: createNode },
+    node: {
+      create: createNode,
+      set: {
+        affinity: setNodeAffinity,
+        description: setNodeDescription,
+        location: setNodeLocation,
+        name: setNodeName,
+      },
+    },
     registry: {
       food: {
         create: registerFood,
+        update: updateRegistryFood,
       },
       gear: {
         create: registerGear,
