@@ -27,10 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _NodeCreateSystemInterface extends utils.Interface {
+export interface _NodeSetLocationSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(string,uint256,string,string)": FunctionFragment;
+    "executeTyped(string,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -49,12 +49,7 @@ export interface _NodeCreateSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -92,12 +87,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _NodeCreateSystem extends BaseContract {
+export interface _NodeSetLocationSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _NodeCreateSystemInterface;
+  interface: _NodeSetLocationSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -127,8 +122,6 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       name: PromiseOrValue<string>,
       location: PromiseOrValue<BigNumberish>,
-      nodeType: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -148,8 +141,6 @@ export interface _NodeCreateSystem extends BaseContract {
   executeTyped(
     name: PromiseOrValue<string>,
     location: PromiseOrValue<BigNumberish>,
-    nodeType: PromiseOrValue<string>,
-    description: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -169,8 +160,6 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       name: PromiseOrValue<string>,
       location: PromiseOrValue<BigNumberish>,
-      nodeType: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -202,8 +191,6 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       name: PromiseOrValue<string>,
       location: PromiseOrValue<BigNumberish>,
-      nodeType: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -224,8 +211,6 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       name: PromiseOrValue<string>,
       location: PromiseOrValue<BigNumberish>,
-      nodeType: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -4,6 +4,10 @@ import _InitSystem from "../abi/_InitSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _MerchantCreateSystem from "../abi/_MerchantCreateSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
+import _NodeSetAffinitySystem from "../abi/_NodeSetAffinitySystem.json";
+import _NodeSetDescriptionSystem from "../abi/_NodeSetDescriptionSystem.json";
+import _NodeSetLocationSystem from "../abi/_NodeSetLocationSystem.json";
+import _NodeSetNameSystem from "../abi/_NodeSetNameSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
@@ -42,6 +46,10 @@ export const SystemAbis = {
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Merchant.Create": _MerchantCreateSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
+  "system._Node.Set.Affinity": _NodeSetAffinitySystem.abi,
+  "system._Node.Set.Description": _NodeSetDescriptionSystem.abi,
+  "system._Node.Set.Location": _NodeSetLocationSystem.abi,
+  "system._Node.Set.Name": _NodeSetNameSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,

@@ -7,10 +7,10 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibNode } from "libraries/LibNode.sol";
 
-uint256 constant ID = uint256(keccak256("system._Node.Set.Affinity"));
+uint256 constant ID = uint256(keccak256("system._Node.Set.Name"));
 
-// _NodeSetAffinitySystem sets the affinity of a Node, identified by its name
-contract _NodeSetAffinitySystem is System {
+// _NodeSetNameSystem sets the affinity of a Node, identified by its name
+contract _NodeSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
