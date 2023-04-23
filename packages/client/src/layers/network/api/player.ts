@@ -31,6 +31,18 @@ export function createPlayerAPI(systems: any) {
     return systems["system.ERC721.metadata"].executeTyped(tokenID);
   }
 
+  // @dev brings pet from game world -> outside
+  // @param tokenID  ERC721 petID, not MUD
+  function withdrawPet(tokenID: BigNumberish) {
+    return systems["system.ERC721.Withdraw"].executeTyped(tokenID);
+  }
+
+  // @dev deposits pet from outside -> game world
+  // @param tokenID  ERC721 petID, not MUD
+  function depositPet(tokenID: BigNumberish) {
+    return systems["system.ERC721.Deposit"].executeTyped(tokenID);
+  }
+
   /*********************
    *     Account
    *********************/
@@ -145,6 +157,8 @@ export function createPlayerAPI(systems: any) {
       mint: mintPet,
       reveal: revealPet,
       name: namePet,
+      deposit: depositPet,
+      withdraw: withdrawPet,
     },
     listing: {
       buy: buyFromListing,
