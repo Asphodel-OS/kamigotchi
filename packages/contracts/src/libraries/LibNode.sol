@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
+
+import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
@@ -16,7 +18,11 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
  * LibNode handles all retrieval and manipulation of mining nodes/productions
  */
 library LibNode {
-  // create creates a resource node as specified and returns the id
+  //////////////
+  // INTERACTIONS
+
+  // Create a Node as specified and return its id.
+  // Type: [ HARVEST | HEALING | SACRIFICIAL | TRAINING ]
   function create(
     IWorld world,
     IUintComp components,
@@ -33,13 +39,6 @@ library LibNode {
   }
 
   //////////////
-  // CHECKERS
-
-  function hasAffinity(IUintComp components, uint256 id) internal view returns (bool) {
-    return AffinityComponent(getAddressById(components, AffCompID)).has(id);
-  }
-
-  //////////////
   // SETTERS
 
   function setAffinity(IUintComp components, uint256 id, string memory affinity) internal {
@@ -52,6 +51,17 @@ library LibNode {
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  //////////////
+  // CHECKERS
+
+  function hasAffinity(IUintComp components, uint256 id) internal view returns (bool) {
+    return AffinityComponent(getAddressById(components, AffCompID)).has(id);
+  }
+
+  function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibString.eq(getType(components, id), "HARVEST");
   }
 
   /////////////////

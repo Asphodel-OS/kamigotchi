@@ -15,7 +15,7 @@ uint256 constant ID = uint256(keccak256("system.Production.Stop"));
 // ProductionStopSystem collects and stops an active pet production. This is the case
 // when a pet is stopped by the owner. When it is stopped by liquidation or death, the
 // output is not collected.
-// TODO: update this to kill the pet off if health is at 0
+// TODO: update productions to support all kinds of nodes, not just harvesting
 contract ProductionStopSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

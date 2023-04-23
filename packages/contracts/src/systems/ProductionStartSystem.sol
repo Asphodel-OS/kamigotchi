@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 
@@ -13,7 +14,8 @@ uint256 constant ID = uint256(keccak256("system.Production.Start"));
 
 // ProductionStartSystem activates a pet production on a node. If it doesn't exist, we create one.
 // We limit to one production per pet, and one production on a node per character.
-// NOTE: no isHealthy() check here as the pet must be healthy if resting.
+// NOTE: pet is guaranteed to be healthy if resting.
+// TODO: update productions to support all kinds of nodes, not just harvesting
 contract ProductionStartSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -25,9 +27,10 @@ contract ProductionStartSystem is System {
     // sync the pet's health with the current state
     LibPet.syncHealth(components, petID);
 
-    // ensure the pet is resting and the node is close enough
+    // ensure the Pet is able to harvest on this Node
     require(LibPet.isResting(components, petID), "Pet: must be resting");
     require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");
+    require(LibNode.isHarvestingType(components, nodeID), "Node: not a Harvesting Node");
 
     // start the production, create if none exists
     uint256 id = LibProduction.getForPet(components, petID);
