@@ -7,31 +7,26 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibNode } from "libraries/LibNode.sol";
 
-uint256 constant ID = uint256(keccak256("system._Node.Create"));
+uint256 constant ID = uint256(keccak256("system._Node.Set.Affinity"));
 
-// _NodeCreateSystem creates a node as specified and returns the entity id
-// This does not assign any extraneous components (e.g. affinity)
-contract _NodeCreateSystem is System {
+// _NodeSetAffinitySystem sets the affinity of a Node, identified by its name
+contract _NodeSetAffinitySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 location, string memory nodeType) = abi.decode(
-      arguments,
-      (string, uint256, string)
-    );
+    (string memory name, string memory affinity) = abi.decode(arguments, (string, string));
     uint256 id = LibNode.getByName(components, name);
 
-    require(id == 0, "Node: already exists");
+    require(id != 0, "Node: does not exist");
 
-    LibNode.create(world, components, name, location, nodeType);
+    LibNode.setAffinity(components, id, affinity);
     return "";
   }
 
   function executeTyped(
     string memory name,
-    uint256 location,
-    string memory nodeType
+    string memory affinity
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, location, nodeType));
+    return execute(abi.encode(name, affinity));
   }
 }

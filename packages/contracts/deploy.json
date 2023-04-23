@@ -107,6 +107,25 @@
       "writeAccess": [
         "IsNodeComponent",
         "LocationComponent",
+        "NameComponent",
+        "TypeComponent"
+      ]
+    },
+    {
+      "name": "_NodeSetAffinitySystem",
+      "writeAccess": [
+        "AffinityComponent"
+      ]
+    },
+    {
+      "name": "_NodeSetLocationSystem",
+      "writeAccess": [
+        "LocationComponent"
+      ]
+    },
+    {
+      "name": "_NodeSetNameSystem",
+      "writeAccess": [
         "NameComponent"
       ]
     },
@@ -308,55 +327,6 @@
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent"
-      ]
-    },
-    {
-      "name": "TradeAcceptSystem",
-      "writeAccess": [
-        "IsRegisterComponent",
-        "IsRequestComponent",
-        "BlockLastComponent",
-        "IdDelegatorComponent",
-        "IdDelegateeComponent",
-        "StateComponent"
-      ]
-    },
-    {
-      "name": "TradeAddToSystem",
-      "writeAccess": [
-        "IsFungibleComponent",
-        "IsInventoryComponent",
-        "BalanceComponent",
-        "BlockLastComponent",
-        "IdHolderComponent",
-        "IndexItemComponent"
-      ]
-    },
-    {
-      "name": "TradeCancelSystem",
-      "writeAccess": [
-        "BlockLastComponent",
-        "CoinComponent",
-        "StateComponent"
-      ]
-    },
-    {
-      "name": "TradeConfirmSystem",
-      "writeAccess": [
-        "BlockLastComponent",
-        "CoinComponent",
-        "StateComponent"
-      ]
-    },
-    {
-      "name": "TradeInitiateSystem",
-      "writeAccess": [
-        "IsTradeComponent",
-        "IsRequestComponent",
-        "BlockLastComponent",
-        "IdRequesteeComponent",
-        "IdRequesterComponent",
-        "StateComponent"
       ]
     }
   ],
