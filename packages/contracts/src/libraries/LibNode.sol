@@ -36,8 +36,8 @@ library LibNode {
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
-    LocationComponent(getAddressById(components, LocCompID)).set(id, location);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
+    LocationComponent(getAddressById(components, LocCompID)).set(id, location);
     return id;
   }
 

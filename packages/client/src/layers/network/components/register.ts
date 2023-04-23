@@ -83,7 +83,7 @@ export function createComponents(world: World) {
     Balance: defineNumberEZ("Balance", "component.Balance"),
     Coin: defineNumberEZ("Coin", "component.Coin"),
     Exits: defineNumberArrayComponent(world, "Exits", "component.Exits"),
-    Description: defineNumberArrayComponent(world, "Description", "component.Description"),
+    Description: defineStringEZ("Description", "component.Description"),
     Genus: defineStringEZ("Genus", "component.Genus"),
     Harmony: defineNumberEZ("Harmony", "component.Harmony"),
     Health: defineNumberEZ("Health", "component.Health"),

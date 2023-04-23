@@ -14,7 +14,10 @@ import { Production, getProduction } from './Production';
 export interface Node {
   id: EntityID;
   name: string;
+  description: string;
+  type: string;
   location: number;
+  affinity?: string;
   productions?: Production[];
 }
 
@@ -33,11 +36,14 @@ export const getNode = (
     network: {
       world,
       components: {
+        Affinity,
+        Description,
         IsProduction,
         Location,
         Name,
         NodeID,
         State,
+        Type,
       },
     },
   } = layers;
@@ -45,7 +51,10 @@ export const getNode = (
   let node: Node = {
     id: world.entities[index],
     name: getComponentValue(Name, index)?.value as string,
+    description: getComponentValue(Description, index)?.value as string,
     location: getComponentValue(Location, index)?.value as number,
+    type: getComponentValue(Type, index)?.value as string,
+    affinity: getComponentValue(Affinity, index)?.value as string, // does this break if there's no affinity?
   }
 
   /////////////////
