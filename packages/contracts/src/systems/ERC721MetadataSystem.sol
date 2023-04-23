@@ -43,6 +43,7 @@ contract ERC721MetadataSystem is System {
     MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
 
     // require(LibString.eq(mediaComp.getValue(petID), UNREVEALED_URI), "already revealed!");
+    require(LibPet.isUnrevealed(components, petID), "already revealed!");
 
     // generates array of traits with weighted random
     uint256[] memory traits = new uint256[](_numElements);
