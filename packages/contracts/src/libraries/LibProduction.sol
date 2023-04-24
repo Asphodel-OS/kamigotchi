@@ -14,12 +14,14 @@ import { IsProductionComponent, ID as IsProdCompID } from "components/IsProducti
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { Strings } from "utils/Strings.sol";
+import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 
 uint256 constant BOUNTY_RATIO = 50; // reward per 100 KAMI liquidated
 uint256 constant BOUNTY_RATIO_PRECISION = 1e3; // i.e. denominator of the bounty ratio
 uint256 constant RATE_PRECISION = 1e6; // precsion on production rate calculations
+uint256 constant MULTIPLIER_PRECISION = 1e6; // harvesting multiplier precision
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -49,8 +51,6 @@ library LibProduction {
 
   // Starts an _existing_ production if not already started.
   function start(IUintComp components, uint256 id) internal {
-    uint256 petID = getPet(components, id);
-    LibPet.setState(components, petID, "HARVESTING");
     setState(components, id, "ACTIVE");
     reset(components, id);
     setRate(components, id, calcRate(components, id)); // always last
@@ -58,8 +58,6 @@ library LibProduction {
 
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
-    uint256 petID = getPet(components, id);
-    LibPet.setState(components, petID, "RESTING");
     setState(components, id, "INACTIVE");
     setRate(components, id, 0);
   }
@@ -67,11 +65,31 @@ library LibProduction {
   /////////////////////
   // CALCULATIONS
 
-  // Calculate the affinity multiplier for a production, measured in percent (out of 100)
-  function calcMultiplier(IUintComp components, uint256 id) internal pure returns (uint256) {
-    components;
-    id;
-    return 100;
+  // Calculate the multiplier for a harvest, measured in (precision set by MULTIPLIER_PRECISION)
+  function calcHarvestMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
+    return calcHarvestingAffinityMultiplier(components, id);
+  }
+
+  // Calculate the harvesting multiplier resulting from affinity matching
+  // (precision set by MULTIPLIER_PRECISION)
+  function calcHarvestingAffinityMultiplier(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (uint256) {
+    uint nodeID = getNode(components, id);
+    string memory nodeAff = LibNode.getAffinity(components, nodeID);
+
+    uint petID = getPet(components, id);
+    string[] memory petAffs = LibPet.getAffinities(components, petID);
+
+    // layer the multipliers due to each trait on top of each other
+    uint totMultiplier = MULTIPLIER_PRECISION;
+    for (uint i = 0; i < petAffs.length; i++) {
+      totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(petAffs[i], nodeAff);
+      totMultiplier /= 100;
+    }
+
+    return totMultiplier;
   }
 
   // Calculate the reward for liquidating this production, measured in KAMI
@@ -103,8 +121,8 @@ library LibProduction {
 
     uint256 petID = getPet(components, id);
     uint256 power = LibPet.calcTotalPower(components, petID);
-    // uint256 multiplier = calcMultiplier(components, id); // defined as out of 100
-    return (RATE_PRECISION * power) / 3600;
+    uint256 multiplier = calcHarvestMultiplier(components, id); // defined as out of 100
+    return (RATE_PRECISION * multiplier * power) / 3600 / MULTIPLIER_PRECISION;
   }
 
   /////////////////
@@ -192,7 +210,7 @@ library LibProduction {
     uint256 numFilters;
     if (nodeID != 0) numFilters++;
     if (petID != 0) numFilters++;
-    if (!Strings.equal(state, "")) numFilters++;
+    if (!LibString.eq(state, "")) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsProdCompID), "");
@@ -212,7 +230,7 @@ library LibProduction {
         abi.encode(petID)
       );
     }
-    if (!Strings.equal(state, "")) {
+    if (!LibString.eq(state, "")) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, StateCompID),

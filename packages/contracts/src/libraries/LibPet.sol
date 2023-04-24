@@ -27,6 +27,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
+import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -157,33 +158,16 @@ library LibPet {
   /////////////////
   // CALCULATIONS
 
-  // Calculate the affinity multiplier (1e2 precision)
+  // Calculate the affinity multiplier (1e2 precision) for attacks between two kamis
   // TODO: implement
-  function calcAffinityMultiplier(
+  function calcAttackAffinityMultiplier(
     IUintComp components,
     uint256 sourceID,
     uint256 targetID
   ) internal view returns (uint256) {
-    string memory targetAff = getAffinity(components, targetID)[0];
-    string memory sourceAff = getAffinity(components, sourceID)[1];
-    if (
-      LibString.eq(targetAff, sourceAff) ||
-      LibString.eq(targetAff, "Normal") ||
-      LibString.eq(targetAff, "Normal")
-    ) {
-      return 100;
-    } else if (LibString.eq(sourceAff, "Eerie")) {
-      if (LibString.eq(targetAff, "Scrap")) return 200;
-      if (LibString.eq(targetAff, "Insect")) return 50;
-    } else if (LibString.eq(sourceAff, "Scrap")) {
-      if (LibString.eq(targetAff, "Insect")) return 200;
-      if (LibString.eq(targetAff, "Eerie")) return 50;
-    } else if (LibString.eq(sourceAff, "Insect")) {
-      if (LibString.eq(targetAff, "Eerie")) return 200;
-      if (LibString.eq(targetAff, "Scrap")) return 50;
-    }
-
-    return 100;
+    string memory targetAff = getAffinities(components, targetID)[0];
+    string memory sourceAff = getAffinities(components, sourceID)[1];
+    return LibRegistryAffinity.getAttackMultiplier(sourceAff, targetAff);
   }
 
   // Calculate the total health drain from harvesting (rounded up) since the last check. This is
@@ -219,7 +203,7 @@ library LibPet {
     uint256 targetID
   ) internal view returns (uint256) {
     uint256 baseThreshold = calcThresholdBase(components, sourceID, targetID);
-    uint256 affinityMultiplier = calcAffinityMultiplier(components, sourceID, targetID);
+    uint256 affinityMultiplier = calcAttackAffinityMultiplier(components, sourceID, targetID);
     return (affinityMultiplier * baseThreshold) / 1e2;
   }
 
@@ -441,9 +425,9 @@ library LibPet {
     return traits;
   }
 
-  // get pet's affinity. hardcoded to check for face, body, and arms.
+  // get the pet's affinities. hardcoded to check for face, body, and arms.
   // in the future, can upgrade here
-  function getAffinity(IUintComp components, uint256 id) internal view returns (string[] memory) {
+  function getAffinities(IUintComp components, uint256 id) internal view returns (string[] memory) {
     string[] memory affinities = new string[](3);
     affinities[0] = LibStat.getAffinity(components, LibTrait.getBodyPointer(components, id));
     affinities[1] = LibStat.getAffinity(components, LibTrait.getHandPointer(components, id));

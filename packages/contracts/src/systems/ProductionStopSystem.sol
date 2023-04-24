@@ -37,6 +37,7 @@ contract ProductionStopSystem is System {
     LibCoin.inc(components, accountID, amt);
     LibProduction.stop(components, id);
 
+    LibPet.setState(components, petID, "RESTING");
     LibAccount.updateLastBlock(components, accountID);
     return abi.encode(amt);
   }
