@@ -372,11 +372,6 @@ _ProductionCollectSystem = ProductionCollectSystem(system(ProductionCollectSyste
 _ProductionLiquidateSystem = ProductionLiquidateSystem(system(ProductionLiquidateSystemID));
 _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
-_TradeAcceptSystem = TradeAcceptSystem(system(TradeAcceptSystemID));
-_TradeAddToSystem = TradeAddToSystem(system(TradeAddToSystemID));
-_TradeCancelSystem = TradeCancelSystem(system(TradeCancelSystemID));
-_TradeConfirmSystem = TradeConfirmSystem(system(TradeConfirmSystemID));
-_TradeInitiateSystem = TradeInitiateSystem(system(TradeInitiateSystemID));
 
 _KamiERC20 = _ERC20ProxySystem.getToken();
 _KamiERC721 = _ERC721ProxySystem.getToken();
