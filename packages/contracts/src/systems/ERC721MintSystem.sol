@@ -43,15 +43,15 @@ contract ERC721MintSystem is System {
   }
 
   // uses BalanceComponent to track minted tokens. Uses systemID as entityID
-  function nextMintID() internal returns (uint256 cur) {
+  function nextMintID() internal returns (uint256 curr) {
     BalanceComponent bComp = BalanceComponent(getAddressById(components, BalanceCompID));
 
     if (!bComp.has(ID) || bComp.getValue(ID) == 0) {
       bComp.set(ID, 1);
-      cur = 1;
+      curr = 1;
     } else {
-      cur = bComp.getValue(ID) + 1;
-      bComp.set(ID, cur);
+      curr = bComp.getValue(ID) + 1;
+      bComp.set(ID, curr);
     }
   }
 }
