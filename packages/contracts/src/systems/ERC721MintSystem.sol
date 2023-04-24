@@ -57,7 +57,7 @@ contract ERC721MintSystem is System {
   }
 
   // uses MediaURIComponent to track unrevealed URI
-  function unrevealedURI() public view returns (string memory) {
+  function unrevealedURI() internal returns (string memory) {
     MediaURIComponent mComp = MediaURIComponent(getAddressById(components, MediaURICompID));
 
     if (mComp.has(ID)) {
