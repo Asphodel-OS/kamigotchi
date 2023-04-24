@@ -6,6 +6,7 @@ import { System } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
@@ -52,6 +53,18 @@ contract ERC721MintSystem is System {
     } else {
       curr = bComp.getValue(ID) + 1;
       bComp.set(ID, curr);
+    }
+  }
+
+  // uses MediaURIComponent to track unrevealed URI
+  function unrevealedURI() public view returns (string memory) {
+    MediaURIComponent mComp = MediaURIComponent(getAddressById(components, MediaURICompID));
+
+    if (mComp.has(ID)) {
+      return mComp.getValue(ID);
+    } else {
+      mComp.set(ID, UNREVEALED_URI);
+      return UNREVEALED_URI;
     }
   }
 }
