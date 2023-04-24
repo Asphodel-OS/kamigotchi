@@ -218,13 +218,7 @@
       ]
     },
     {
-      "name": "ERC721PetSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "ERC20HopperSystem",
+      "name": "ERC20ProxySystem",
       "writeAccess": []
     },
     {
@@ -237,6 +231,38 @@
       "name": "ERC20DepositSystem",
       "writeAccess": [
         "CoinComponent"
+      ]
+    },
+    {
+      "name": "ERC721MintSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "ERC721MetadataSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "ERC721TransferSystem",
+      "writeAccess": []
+    },
+    {
+      "name": "ERC721ProxySystem",
+      "writeAccess": []
+    },
+    {
+      "name": "ERC721WithdrawSystem",
+      "writeAccess": [
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "ERC721DepositSystem",
+      "writeAccess": [
+        "StateComponent"
       ]
     },
     {
@@ -266,12 +292,6 @@
         "BlockLastComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent"
-      ]
-    },
-    {
-      "name": "PetMetadataSystem",
-      "writeAccess": [
-        "*"
       ]
     },
     {

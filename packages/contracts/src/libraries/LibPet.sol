@@ -112,7 +112,7 @@ library LibPet {
   }
 
   // called when a pet is revealed
-  // NOTE: most of the reveal logic (generation) is in the PetMetadataSystem itself
+  // NOTE: most of the reveal logic (generation) is in the ERC721MetadataSystem itself
   //       this function is for components saved directely on the Pet Entity
   function reveal(IUintComp components, uint256 id) internal {
     revive(components, id);
@@ -307,6 +307,16 @@ library LibPet {
     return getCurrHealth(components, id) > 0;
   }
 
+  // Check whether a pet is revealed
+  function isUnrevealed(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibString.eq(getState(components, id), "UNREVEALED");
+  }
+
+  // Check whether a pet's ERC721 token is in the game world
+  function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
+    return !LibString.eq(getState(components, id), "721_EXTERNAL");
+  }
+
   /////////////////
   // SETTERS
 
@@ -449,6 +459,7 @@ library LibPet {
   function indexToID(IUintComp components, uint256 index) internal view returns (uint256 result) {
     uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetComponentID))
       .getEntitiesWithValue(index);
+    // assumes only 1 pet per index
     if (results.length > 0) {
       result = results[0];
     }

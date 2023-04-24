@@ -361,8 +361,12 @@ export function registerPartyModal() {
       }
 
       const isRevealed = (kami: Kami): boolean => {
-        return !(kami.state == 'UNREVEALED');
+        return !(kami.state === 'UNREVEALED');
       };
+
+      const isOffWorld = (kami: Kami): boolean => {
+        return kami.state === '721_EXTERNAL';
+      }
 
       // get the title of the kami as 'name (health / totHealth)'
       const getTitle = (kami: Kami) => {
@@ -380,6 +384,9 @@ export function registerPartyModal() {
         let description: string[] = [];
 
         switch (kami.state) {
+          case '721_EXTERNAL':
+            description = ['kidnapped by slave traders'];
+            break;
           case 'UNREVEALED':
             description = ['unrevealed!'];
             break;

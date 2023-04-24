@@ -116,20 +116,28 @@ import { _RoomCreateSystem, ID as _RoomCreateSystemID } from "systems/_RoomCreat
 import { AccountMoveSystem, ID as AccountMoveSystemID } from "systems/AccountMoveSystem.sol";
 import { AccountNameSystem, ID as AccountNameSystemID } from "systems/AccountNameSystem.sol";
 import { AccountSetSystem, ID as AccountSetSystemID } from "systems/AccountSetSystem.sol";
-import { ERC721PetSystem, ID as ERC721PetSystemID } from "systems/ERC721PetSystem.sol";
-import { ERC20HopperSystem, ID as ERC20HopperSystemID } from "systems/ERC20HopperSystem.sol";
+import { ERC20ProxySystem, ID as ERC20ProxySystemID } from "systems/ERC20ProxySystem.sol";
 import { ERC20WithdrawSystem, ID as ERC20WithdrawSystemID } from "systems/ERC20WithdrawSystem.sol";
 import { ERC20DepositSystem, ID as ERC20DepositSystemID } from "systems/ERC20DepositSystem.sol";
+import { ERC721MintSystem, ID as ERC721MintSystemID } from "systems/ERC721MintSystem.sol";
+import { ERC721MetadataSystem, ID as ERC721MetadataSystemID } from "systems/ERC721MetadataSystem.sol";
+import { ERC721TransferSystem, ID as ERC721TransferSystemID } from "systems/ERC721TransferSystem.sol";
+import { ERC721ProxySystem, ID as ERC721ProxySystemID } from "systems/ERC721ProxySystem.sol";
+import { ERC721WithdrawSystem, ID as ERC721WithdrawSystemID } from "systems/ERC721WithdrawSystem.sol";
+import { ERC721DepositSystem, ID as ERC721DepositSystemID } from "systems/ERC721DepositSystem.sol";
 import { ListingBuySystem, ID as ListingBuySystemID } from "systems/ListingBuySystem.sol";
 import { ListingSellSystem, ID as ListingSellSystemID } from "systems/ListingSellSystem.sol";
 import { PetFeedSystem, ID as PetFeedSystemID } from "systems/PetFeedSystem.sol";
-import { PetMetadataSystem, ID as PetMetadataSystemID } from "systems/PetMetadataSystem.sol";
 import { PetNameSystem, ID as PetNameSystemID } from "systems/PetNameSystem.sol";
 import { PetSetAccountSystem, ID as PetSetAccountSystemID } from "systems/PetSetAccountSystem.sol";
 import { ProductionCollectSystem, ID as ProductionCollectSystemID } from "systems/ProductionCollectSystem.sol";
 import { ProductionLiquidateSystem, ID as ProductionLiquidateSystemID } from "systems/ProductionLiquidateSystem.sol";
 import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/ProductionStartSystem.sol";
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
+
+// Tokens
+import { KamiERC20 } from "tokens/KamiERC20.sol";
+import { KamiERC721 } from "tokens/KamiERC721.sol";
 
 abstract contract TestSetupImports is MudTest {
 // Components vars
@@ -227,20 +235,28 @@ _RoomCreateSystem __RoomCreateSystem;
 AccountMoveSystem _AccountMoveSystem;
 AccountNameSystem _AccountNameSystem;
 AccountSetSystem _AccountSetSystem;
-ERC721PetSystem _ERC721PetSystem;
-ERC20HopperSystem _ERC20HopperSystem;
+ERC20ProxySystem _ERC20ProxySystem;
 ERC20WithdrawSystem _ERC20WithdrawSystem;
 ERC20DepositSystem _ERC20DepositSystem;
+ERC721MintSystem _ERC721MintSystem;
+ERC721MetadataSystem _ERC721MetadataSystem;
+ERC721TransferSystem _ERC721TransferSystem;
+ERC721ProxySystem _ERC721ProxySystem;
+ERC721WithdrawSystem _ERC721WithdrawSystem;
+ERC721DepositSystem _ERC721DepositSystem;
 ListingBuySystem _ListingBuySystem;
 ListingSellSystem _ListingSellSystem;
 PetFeedSystem _PetFeedSystem;
-PetMetadataSystem _PetMetadataSystem;
 PetNameSystem _PetNameSystem;
 PetSetAccountSystem _PetSetAccountSystem;
 ProductionCollectSystem _ProductionCollectSystem;
 ProductionLiquidateSystem _ProductionLiquidateSystem;
 ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
+
+// Token vars
+KamiERC20 _KamiERC20;
+KamiERC721 _KamiERC721;
 
 function setUp() public virtual override {
 super.setUp();
@@ -338,19 +354,31 @@ __RoomCreateSystem = _RoomCreateSystem(system(_RoomCreateSystemID));
 _AccountMoveSystem = AccountMoveSystem(system(AccountMoveSystemID));
 _AccountNameSystem = AccountNameSystem(system(AccountNameSystemID));
 _AccountSetSystem = AccountSetSystem(system(AccountSetSystemID));
-_ERC721PetSystem = ERC721PetSystem(system(ERC721PetSystemID));
-_ERC20HopperSystem = ERC20HopperSystem(system(ERC20HopperSystemID));
+_ERC20ProxySystem = ERC20ProxySystem(system(ERC20ProxySystemID));
 _ERC20WithdrawSystem = ERC20WithdrawSystem(system(ERC20WithdrawSystemID));
 _ERC20DepositSystem = ERC20DepositSystem(system(ERC20DepositSystemID));
+_ERC721MintSystem = ERC721MintSystem(system(ERC721MintSystemID));
+_ERC721MetadataSystem = ERC721MetadataSystem(system(ERC721MetadataSystemID));
+_ERC721TransferSystem = ERC721TransferSystem(system(ERC721TransferSystemID));
+_ERC721ProxySystem = ERC721ProxySystem(system(ERC721ProxySystemID));
+_ERC721WithdrawSystem = ERC721WithdrawSystem(system(ERC721WithdrawSystemID));
+_ERC721DepositSystem = ERC721DepositSystem(system(ERC721DepositSystemID));
 _ListingBuySystem = ListingBuySystem(system(ListingBuySystemID));
 _ListingSellSystem = ListingSellSystem(system(ListingSellSystemID));
 _PetFeedSystem = PetFeedSystem(system(PetFeedSystemID));
-_PetMetadataSystem = PetMetadataSystem(system(PetMetadataSystemID));
 _PetNameSystem = PetNameSystem(system(PetNameSystemID));
 _PetSetAccountSystem = PetSetAccountSystem(system(PetSetAccountSystemID));
 _ProductionCollectSystem = ProductionCollectSystem(system(ProductionCollectSystemID));
 _ProductionLiquidateSystem = ProductionLiquidateSystem(system(ProductionLiquidateSystemID));
 _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
+_TradeAcceptSystem = TradeAcceptSystem(system(TradeAcceptSystemID));
+_TradeAddToSystem = TradeAddToSystem(system(TradeAddToSystemID));
+_TradeCancelSystem = TradeCancelSystem(system(TradeCancelSystemID));
+_TradeConfirmSystem = TradeConfirmSystem(system(TradeConfirmSystemID));
+_TradeInitiateSystem = TradeInitiateSystem(system(TradeInitiateSystemID));
+
+_KamiERC20 = _ERC20ProxySystem.getToken();
+_KamiERC721 = _ERC721ProxySystem.getToken();
 }
 }

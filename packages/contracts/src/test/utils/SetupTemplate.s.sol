@@ -16,34 +16,15 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUp() public virtual override {
     super.setUp();
 
-    // temp: remove later
-    // _ERC721PetSystem.init();
-
-    // vm.startPrank(deployer);
-    // __InitSystem.executeTyped();
-    // _PetMetadataSystem._setRevealed(
-    //   123,
-    //   "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/images%2F"
-    // );
-    // uint256[] memory maxElements = new uint256[](5);
-    // // maxElements[0] = 9;
-    // // maxElements[1] = 1;
-    // // maxElements[2] = 7;
-    // // maxElements[3] = 8;
-    // // maxElements[4] = 1;
-    // maxElements[0] = 2; // BODY
-    // maxElements[1] = 1; // COLOR
-    // maxElements[2] = 2; // FACE
-    // maxElements[3] = 2; // HAND
-    // maxElements[4] = 1; // BACKGROUND
-    // _PetMetadataSystem._setMaxElements(maxElements);
-    // vm.stopPrank();
+    _initMetadata();
+    _initTraits();
   }
 
   /***********************
    *   minting pets
    ************************/
 
+  // mints and reveals
   function _mintPets(uint256 n) internal virtual {
     require(n <= 3, "MUDTest: max three non-admin test accounts");
     if (n > 0) petOneEntityID = _mintSinglePet(alice);
@@ -53,14 +34,9 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _mintSinglePet(address addy) internal virtual returns (uint256 entityID) {
     vm.startPrank(addy, addy);
-    entityID = _ERC721PetSystem.mint(addy);
-    _PetMetadataSystem.executeTyped(LibPet.idToIndex(components, entityID));
+    entityID = abi.decode(_ERC721MintSystem.executeTyped(addy), (uint256));
+    _ERC721MetadataSystem.executeTyped(LibPet.idToIndex(components, entityID));
     vm.stopPrank();
-  }
-
-  function _transferPetNFT(address from, address to, uint256 nftID) internal {
-    vm.prank(from);
-    _ERC721PetSystem.transferFrom(from, to, nftID);
   }
 
   /***********************
@@ -77,5 +53,86 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createAccount(address addy, string memory name) internal {
     vm.prank(addy);
     _AccountSetSystem.executeTyped(addy, name);
+  }
+
+  /***********************
+   *   inits
+   ************************/
+  function _initMetadata() internal {
+    vm.startPrank(deployer);
+    _ERC721MetadataSystem._setRevealed(123, "baseURI.com/");
+    vm.stopPrank();
+  }
+
+  // creates bare minimum traits (1 of each)
+  // PLACEHOLDER
+  function _initTraits() internal {
+    vm.startPrank(deployer);
+    __RegistryCreateTraitSystem.executeTyped(
+      1, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "INSECT", // affinity
+      "NAME", // name
+      "BODY" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
+      1, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "INSECT", // affinity
+      "NAME", // name
+      "BACKGROUND" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
+      1, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "INSECT", // affinity
+      "NAME", // name
+      "COLOR" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
+      1, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "INSECT", // affinity
+      "NAME", // name
+      "FACE" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
+      1, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "INSECT", // affinity
+      "NAME", // name
+      "HAND" // trait type
+    );
+
+    vm.stopPrank();
   }
 }

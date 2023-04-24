@@ -18,6 +18,10 @@ import { <%= component %>, ID as <%= component %>ID } from "components/<%- compo
 import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- system.name %>.sol";
 <% }); -%>
 
+// Tokens
+import { KamiERC20 } from "tokens/KamiERC20.sol";
+import { KamiERC721 } from "tokens/KamiERC721.sol";
+
 abstract contract TestSetupImports is MudTest {
 // Components vars
 <% components.forEach(component => { -%>
@@ -29,6 +33,10 @@ abstract contract TestSetupImports is MudTest {
 <%= system.name %> _<%= system.name %>;
 <% }); -%>
 
+// Token vars
+KamiERC20 _KamiERC20;
+KamiERC721 _KamiERC721;
+
 function setUp() public virtual override {
 super.setUp();
 
@@ -39,5 +47,8 @@ _<%= component %> = <%= component %>(component(<%= component %>ID));
 <% systems.forEach(system => { -%>
 _<%= system.name %> = <%= system.name %>(system(<%= system.name %>ID));
 <% }); -%>
+
+_KamiERC20 = _ERC20ProxySystem.getToken();
+_KamiERC721 = _ERC721ProxySystem.getToken();
 }
 }

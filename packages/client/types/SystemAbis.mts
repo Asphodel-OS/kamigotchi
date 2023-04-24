@@ -21,13 +21,17 @@ import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountNameSystem from "../abi/AccountNameSystem.json";
 import AccountSetSystem from "../abi/AccountSetSystem.json";
 import ERC20DepositSystem from "../abi/ERC20DepositSystem.json";
-import ERC20HopperSystem from "../abi/ERC20HopperSystem.json";
+import ERC20ProxySystem from "../abi/ERC20ProxySystem.json";
 import ERC20WithdrawSystem from "../abi/ERC20WithdrawSystem.json";
-import ERC721PetSystem from "../abi/ERC721PetSystem.json";
+import ERC721DepositSystem from "../abi/ERC721DepositSystem.json";
+import ERC721MetadataSystem from "../abi/ERC721MetadataSystem.json";
+import ERC721MintSystem from "../abi/ERC721MintSystem.json";
+import ERC721ProxySystem from "../abi/ERC721ProxySystem.json";
+import ERC721TransferSystem from "../abi/ERC721TransferSystem.json";
+import ERC721WithdrawSystem from "../abi/ERC721WithdrawSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
-import PetMetadataSystem from "../abi/PetMetadataSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
@@ -63,13 +67,17 @@ export const SystemAbis = {
   "system.Account.Name": AccountNameSystem.abi,
   "system.Account.Set": AccountSetSystem.abi,
   "system.ERC20.Deposit": ERC20DepositSystem.abi,
-  "system.ERC20.Hopper": ERC20HopperSystem.abi,
+  "system.ERC20.Proxy": ERC20ProxySystem.abi,
   "system.ERC20.Withdraw": ERC20WithdrawSystem.abi,
-  "system.ERC721.pet": ERC721PetSystem.abi,
+  "system.ERC721.Deposit": ERC721DepositSystem.abi,
+  "system.ERC721.metadata": ERC721MetadataSystem.abi,
+  "system.ERC721.Mint": ERC721MintSystem.abi,
+  "system.ERC721.Proxy": ERC721ProxySystem.abi,
+  "system.ERC721.Transfer": ERC721TransferSystem.abi,
+  "system.ERC721.Withdraw": ERC721WithdrawSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
-  "system.ERC721.metadata": PetMetadataSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.SetAccount": PetSetAccountSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,

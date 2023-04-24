@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
-import { ID as PetSysID } from "systems/ERC721PetSystem.sol";
+import { ID as PetSysID } from "systems/ERC721MintSystem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Init"));
 

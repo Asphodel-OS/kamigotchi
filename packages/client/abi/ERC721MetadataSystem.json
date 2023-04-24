@@ -86,19 +86,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256[]",
-          "name": "max",
-          "type": "uint256[]"
-        }
-      ],
-      "name": "_setMaxElements",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
           "name": "seed",
           "type": "uint256"
@@ -201,7 +188,6 @@
   "methodIdentifiers": {
     "_getBaseTraits(uint256)": "37d92217",
     "_getHealth(uint256)": "df5271db",
-    "_setMaxElements(uint256[])": "331343c1",
     "_setRevealed(uint256,string)": "2f2b1708",
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",

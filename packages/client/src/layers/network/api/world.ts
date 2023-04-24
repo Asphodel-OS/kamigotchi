@@ -74,20 +74,6 @@ export function setUpWorldAPI(systems: any) {
       '123', // salt! should be random
       'https://kami-image.asphodel.io/image/'
     );
-    // systems['system.ERC721.metadata']._setMaxElements([
-    //   numColor,
-    //   numBg,
-    //   numBody,
-    //   numHand,
-    //   numFace,
-    // ]);
-    systems['system.ERC721.metadata']._setMaxElements([
-      numFace,
-      numHand,
-      numBody,
-      numBg,
-      numColor,
-    ]);
   }
 
   return {
