@@ -30,7 +30,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       `The willow seems to sway with the wind. Upon closer inspection, however, the trunk stands resolute against the forces of nature.`
     );
-    setNodeAffinity('Eerie Willow', 'Insect');
+    setNodeAffinity('Eerie Willow', 'INSECT');
 
     createNode(
       'Trash Compactor',
@@ -38,7 +38,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.'
     );
-    setNodeAffinity('Trash Compactor', 'Scrap');
+    setNodeAffinity('Trash Compactor', 'SCRAP');
 
     createNode(
       'Pristine Couch',
@@ -46,7 +46,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'Pristine couch is very pristine. It gives off a peculiar aura.'
     );
-    setNodeAffinity('Pristine Couch', 'Scrap');
+    setNodeAffinity('Pristine Couch', 'SCRAP');
 
     createNode(
       'Sacred Shrine',
@@ -54,7 +54,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'The sacred shrine exudes a revitalizing energy. It reflects the intent of restless spirits.'
     );
-    setNodeAffinity('Sacred Shrine', 'Eerie');
+    setNodeAffinity('Sacred Shrine', 'EERIE');
 
     createNode(
       'Danger Zone',
@@ -62,7 +62,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'Danger Zone'
     );
-    setNodeAffinity('Danger Zone', 'Normal');
+    setNodeAffinity('Danger Zone', 'NORMAL');
 
 
     // create food registry items
