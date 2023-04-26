@@ -18,6 +18,8 @@ export interface Account {
   name: string;
   coin: number;
   location: number;
+  stamina: number;
+  staminaCurrent: number;
   kamis?: Kami[];
 }
 
@@ -35,13 +37,13 @@ export const getAccount = (
     network: {
       world,
       components: {
-        AccountID,
-        IsPet,
         Coin,
         Location,
         Name,
         OperatorAddress,
         OwnerID,
+        Stamina,
+        StaminaCurrent
       },
     },
   } = layers;
@@ -53,6 +55,8 @@ export const getAccount = (
     name: getComponentValue(Name, index)?.value as string,
     coin: getComponentValue(Coin, index)?.value as number,
     location: getComponentValue(Location, index)?.value as number,
+    stamina: getComponentValue(Stamina, index)?.value as number,
+    staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
   };
 
   /////////////////

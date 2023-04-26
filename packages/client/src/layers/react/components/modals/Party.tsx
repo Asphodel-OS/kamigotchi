@@ -175,11 +175,15 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data, world }) => {
-      const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
-        dataStore();
-
       // console.log('PartyM: data', data);
+      const {
+        visibleModals,
+        setVisibleModals,
+        selectedEntities,
+        setSelectedEntities
+      } = dataStore();
       const [lastRefresh, setLastRefresh] = useState(Date.now());
+
       /////////////////
       // TICKING
 
