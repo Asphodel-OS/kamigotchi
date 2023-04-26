@@ -93,6 +93,7 @@ export function regiesterDetectAccountModal() {
             steps={steps}
             handleMinting={handleMinting}
             submit={true}
+            handleSubmit={handleMinting}
           />
         </ModalWrapper>
       );
