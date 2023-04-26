@@ -285,6 +285,10 @@
       ]
     },
     {
+      "name": "RandomDKGProxySystem",
+      "writeAccess": []
+    },
+    {
       "name": "ListingSellSystem",
       "writeAccess": [
         "BalanceComponent",

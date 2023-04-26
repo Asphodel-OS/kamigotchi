@@ -38,6 +38,7 @@ import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
+import RandomDKGProxySystem from "../abi/RandomDKGProxySystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
 import TradeCancelSystem from "../abi/TradeCancelSystem.json";
@@ -84,6 +85,7 @@ export const SystemAbis = {
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,
   "system.Production.Stop": ProductionStopSystem.abi,
+  "system.RandomDKG.Proxy": RandomDKGProxySystem.abi,
   "system.Trade.Accept": TradeAcceptSystem.abi,
   "system.Trade.AddTo": TradeAddToSystem.abi,
   "system.Trade.Cancel": TradeCancelSystem.abi,

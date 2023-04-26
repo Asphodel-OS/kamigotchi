@@ -38,6 +38,7 @@ import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSys
 import { ProductionLiquidateSystem } from "./ethers-contracts/ProductionLiquidateSystem";
 import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem";
 import { ProductionStopSystem } from "./ethers-contracts/ProductionStopSystem";
+import { RandomDKGProxySystem } from "./ethers-contracts/RandomDKGProxySystem";
 import { TradeAcceptSystem } from "./ethers-contracts/TradeAcceptSystem";
 import { TradeAddToSystem } from "./ethers-contracts/TradeAddToSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
@@ -84,6 +85,7 @@ export type SystemTypes = {
   "system.Production.Liquidate": ProductionLiquidateSystem;
   "system.Production.Start": ProductionStartSystem;
   "system.Production.Stop": ProductionStopSystem;
+  "system.RandomDKG.Proxy": RandomDKGProxySystem;
   "system.Trade.Accept": TradeAcceptSystem;
   "system.Trade.AddTo": TradeAddToSystem;
   "system.Trade.Cancel": TradeCancelSystem;

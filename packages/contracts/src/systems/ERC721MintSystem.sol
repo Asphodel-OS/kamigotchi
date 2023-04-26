@@ -9,6 +9,7 @@ import { BalanceComponent, ID as BalanceCompID } from "components/BalanceCompone
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibRandom } from "libraries/LibRandom.sol";
 
 import { KamiERC721 } from "tokens/KamiERC721.sol";
 import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol";
@@ -36,6 +37,7 @@ contract ERC721MintSystem is System {
 
     KamiERC721 token = ERC721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.mint(to, nextMint);
+    LibRandom.seedEntropy(world);
     return abi.encode(petID);
   }
 

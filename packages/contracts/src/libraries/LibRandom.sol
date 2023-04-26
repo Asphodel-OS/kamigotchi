@@ -1,12 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { RandomDKGProxySystem, ID as ProxyID } from "systems/RandomDKGProxySystem.sol";
+import { RandomDKG } from "utils/RandomDKG.sol";
+
 library LibRandom {
+  //////////////////
+  // DKG
+
+  // seeds DKG entropy with blockhash
+  // note: does not matter what the seed is, as long as it is unfeasible for user to manipulate
+  function seedEntropy(IWorld world) internal {
+    RandomDKG dkg = RandomDKGProxySystem(getAddressById(world.systems(), ProxyID)).getContract();
+    dkg.contributePublic(blockhash(block.number - 1));
+  }
+
   //////////////////
   // WEIGHTED
 
