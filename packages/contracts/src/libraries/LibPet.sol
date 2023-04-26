@@ -26,7 +26,7 @@ import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLa
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibProduction, RATE_PRECISION as PRODUCTION_PRECISION } from "libraries/LibProduction.sol";
+import { LibProduction, HARVEST_RATE_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
@@ -37,13 +37,11 @@ uint256 constant BASE_HARMONY = 20;
 uint256 constant BASE_HEALTH = 50;
 uint256 constant BASE_POWER = 20;
 uint256 constant BASE_VIOLENCE = 20;
-uint256 constant BASE_SLOTS = 2;
+uint256 constant BASE_SLOTS = 0;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
 uint256 constant RECOVERY_RATE_PRECISION = 1e18;
-uint256 constant DEMO_RECOVERY_RATE_MULTIPLIER = 100;
-uint256 constant DEMO_POWER_MULTIPLIER = 250;
-uint256 constant DEMO_VIOLENCE_MULTIPLIER = 3;
+uint256 constant RECOVERY_RATE_FLAT_MULTIPLIER = 1;
 
 library LibPet {
   using LibFPMath for int256;
@@ -177,7 +175,7 @@ library LibPet {
     uint256 productionID = getProduction(components, id);
     uint256 prodRate = LibProduction.getRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 totalPrecision = BURN_RATIO_PRECISION * PRODUCTION_PRECISION; // BURN_RATIO(1e2) * prodRate(1e18)
+    uint256 totalPrecision = BURN_RATIO_PRECISION * HARVEST_RATE_PRECISION; // BURN_RATIO(1e2) * prodRate(1e18)
     return (duration * prodRate * BURN_RATIO + (totalPrecision / 2)) / totalPrecision;
   }
 
@@ -188,10 +186,10 @@ library LibPet {
     return (duration * recoveryRate) / RECOVERY_RATE_PRECISION;
   }
 
-  // calculates the health recovery rate of the Kami per second (1e18 precision). Assumed resting.
+  // calculates the health recovery rate of the Kami per second. Assumed resting.
   function calcRecoveryRate(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 totalHarmony = calcTotalHarmony(components, id);
-    return (totalHarmony * DEMO_RECOVERY_RATE_MULTIPLIER * RECOVERY_RATE_PRECISION) / 3600;
+    return (totalHarmony * RECOVERY_RATE_FLAT_MULTIPLIER * RECOVERY_RATE_PRECISION) / 3600;
   }
 
   // Calculate the liquidation threshold for target pet, attacked by the source pet.
@@ -324,8 +322,8 @@ library LibPet {
     // set the stats
     LibStat.setHealth(components, id, BASE_HEALTH + health);
     setCurrHealth(components, id, BASE_HEALTH + health);
-    LibStat.setPower(components, id, DEMO_POWER_MULTIPLIER * power);
-    LibStat.setViolence(components, id, DEMO_VIOLENCE_MULTIPLIER * violence);
+    LibStat.setPower(components, id, BASE_POWER + power);
+    LibStat.setViolence(components, id, BASE_VIOLENCE * violence);
     LibStat.setHarmony(components, id, harmony);
     LibStat.setSlots(components, id, slots);
   }

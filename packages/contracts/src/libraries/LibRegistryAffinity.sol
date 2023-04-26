@@ -42,8 +42,8 @@ library LibRegistryAffinity {
     string memory targetAff
   ) internal pure returns (uint256) {
     uint256 multiplier = 50; // default case is misalignment
-    if (LibString.eq(sourceAff, "Normal")) multiplier = 100;
-    else if (LibString.eq(targetAff, "Normal")) multiplier = 100;
+    if (LibString.eq(sourceAff, "NORMAL")) multiplier = 100;
+    else if (LibString.eq(targetAff, "NORMAL")) multiplier = 100;
     else if (LibString.eq(sourceAff, targetAff)) multiplier = 150;
     return multiplier;
   }

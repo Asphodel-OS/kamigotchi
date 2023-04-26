@@ -131,7 +131,7 @@ function createNetworkConfigLattice(): NetworkConfig {
     snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
     // checkpointUrl: undefined,
     chainId: 4242,
-    worldAddress: "0x5Fc5e0A7e76ff00e8e7b08dc8ac9Ff75291441e9",
+    worldAddress: "0x4cFb52b57397ADD94e53E7ADd5A6f6356E664Fb5",
     initialBlockNumber: 12625773,
   };
   return config;
