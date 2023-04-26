@@ -92,6 +92,7 @@ export function regiesterDetectAccountModal() {
             name={name}
             steps={steps}
             handleMinting={handleMinting}
+            submit={true}
           />
         </ModalWrapper>
       );
@@ -233,21 +234,7 @@ const steps = (props: any) => [
   {
     title: 'Three',
     content: (
-      <>
-        <StepThree
-          catchKeys={props.catchKeys}
-          handleChange={props.handleChange}
-          name={props.name}
-        />
-        <Button
-          style={{ pointerEvents: 'auto' }}
-          onClick={() => {
-            props.handleMinting(props.name);
-          }}
-        >
-          Submit
-        </Button>
-      </>
+      <StepThree catchKeys={props.catchKeys} handleChange={props.handleChange} name={props.name} />
     ),
     modalContent: true,
   },

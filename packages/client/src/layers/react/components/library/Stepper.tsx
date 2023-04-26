@@ -55,6 +55,11 @@ export const Stepper = (props: any) => {
           Next
         </StepButton>
       )}
+      {props.submit && currentStep === steps.length && (
+        <StepButton style={{ pointerEvents: 'auto' }} onClick={handleNext}>
+          Submit
+        </StepButton>
+      )}
     </>
   );
 };
