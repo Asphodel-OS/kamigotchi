@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 
 import { getCurrentRoom } from 'layers/phaser/utils';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -10,6 +10,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { gridRooms } from '../../../../constants';
 import { Map } from '../library/Map';
+import { BatteryComponent } from '../library/Battery';
 
 const objectKeys = Object.keys(gridRooms);
 
@@ -22,17 +23,17 @@ export function registerMapModal() {
       rowStart: 49,
       rowEnd: 100,
     },
-    layers => {
+    (layers) => {
       const {
         network: {
           api: { player },
           network: { connectedAddress },
-          components: { IsAccount, Location, OperatorAddress },
+          components: { IsAccount, Location, OperatorAddress, Stamina },
           actions,
         },
       } = layers;
 
-      return merge(Location.update$, OperatorAddress.update$).pipe(
+      return merge(Location.update$, OperatorAddress.update$, Stamina.update$).pipe(
         map(() => {
           // get the account entity of the controlling wallet
           const accountEntityIndex = Array.from(
@@ -43,12 +44,13 @@ export function registerMapModal() {
               }),
             ])
           )[0];
+          const health = getComponentValue(Stamina, accountEntityIndex)?.value ?? 0;
 
           const currentRoom = getCurrentRoom(Location, accountEntityIndex);
           return {
             actions,
             api: player,
-            data: { currentRoom },
+            data: { currentRoom, health },
           };
         })
       );
@@ -146,12 +148,14 @@ export function registerMapModal() {
         />
       );
 
+      const MAX_OPERATOR_HEALTH = 20;
+      const operatorStaminaPercentage = ((data.health * 1) / MAX_OPERATOR_HEALTH) * 100;
+
       return (
         <ModalWrapperFull id='world_map' divName='map'>
           <Map highlightedRoom={`room${data.currentRoom}`} />
-          <ButtonWrapper style={{ marginRight: '8.3%' }}>
-            {UpButton}
-          </ButtonWrapper>
+          {data.health && <BatteryComponent level={operatorStaminaPercentage} />}
+          <ButtonWrapper style={{ marginRight: '8.3%' }}>{UpButton}</ButtonWrapper>
           <ButtonWrapper>
             {LeftButton}
             {DownButton}
