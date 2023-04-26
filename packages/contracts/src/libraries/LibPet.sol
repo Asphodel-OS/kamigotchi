@@ -97,7 +97,6 @@ library LibPet {
   }
 
   // heal the pet by a given amount
-  // NOTE: assumes the pet health is synced prior to this call
   function heal(IUintComp components, uint256 id, uint256 amt) internal {
     uint256 totalHealth = calcTotalHealth(components, id);
     uint256 health = getCurrHealth(components, id) + amt;
@@ -293,8 +292,6 @@ library LibPet {
   // Check whether a pet is harvesting.
   function isHarvesting(IUintComp components, uint256 id) internal view returns (bool result) {
     return LibString.eq(getState(components, id), "HARVESTING");
-    // uint256 productionID = LibProduction.getForPet(components, id);
-    // if (productionID != 0 && LibProduction.isActive(components, productionID)) result = true;
   }
 
   // Check whether a pet is resting.

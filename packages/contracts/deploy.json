@@ -63,6 +63,8 @@
     "RarityComponent",
     "RateComponent",
     "SlotsComponent",
+    "StaminaComponent",
+    "StaminaCurrentComponent",
     "StateComponent",
     "TimeComponent",
     "TimeLastActionComponent",
@@ -198,7 +200,9 @@
       "name": "AccountMoveSystem",
       "writeAccess": [
         "BlockLastComponent",
-        "LocationComponent"
+        "LocationComponent",
+        "StaminaComponent",
+        "StaminaCurrentComponent"
       ]
     },
     {
@@ -212,9 +216,12 @@
       "writeAccess": [
         "IsAccountComponent",
         "AddressOperatorComponent",
+        "BlockLastComponent",
         "IdOwnerComponent",
         "LocationComponent",
-        "NameComponent"
+        "NameComponent",
+        "StaminaComponent",
+        "StaminaCurrentComponent"
       ]
     },
     {

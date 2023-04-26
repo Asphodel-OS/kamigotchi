@@ -13,7 +13,12 @@ import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/A
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
+import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
+
+uint256 constant STAMINA_RECOVERY_PERIOD = 10; // measured in blocks
+uint256 constant BASE_STAMINA = 20;
 
 library LibAccount {
   /////////////////
@@ -31,34 +36,56 @@ library LibAccount {
     IdOwnerComponent(getAddressById(components, IdOwnerCompID)).set(id, addressToEntity(ownerAddr));
     LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
+    StaminaComponent(getAddressById(components, StaminaCompID)).set(id, BASE_STAMINA);
+    StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, BASE_STAMINA);
+    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, block.number);
     return id;
   }
 
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint256 to) internal {
+    setCurrStamina(components, id, getCurrStamina(components, id) - 1);
     LocationComponent(getAddressById(components, LocCompID)).set(id, to);
+  }
+
+  // Recover's stamina to an account
+  function recover(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
+    uint256 totalStamina = getStamina(components, id);
+    uint256 stamina = getCurrStamina(components, id) + amt;
+    if (stamina > totalStamina) stamina = totalStamina;
+    setCurrStamina(components, id, stamina);
+    return stamina;
+  }
+
+  // syncs the stamina of an account. rounds down, ruthlessly
+  function syncStamina(IUintComp components, uint256 id) internal returns (uint256) {
+    uint256 blockDiff = block.number - getLastBlock(components, id); // block duration since last action
+    uint256 recoveredAmt = blockDiff / STAMINA_RECOVERY_PERIOD;
+    return recover(components, id, recoveredAmt);
   }
 
   // Update the BlockLast of an entity. Used to track the block in which an Account last interacted.
   function updateLastBlock(IUintComp components, uint256 id) internal {
-    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, block.number);
+    setLastBlock(components, id, block.number);
   }
 
   /////////////////
   // SETTERS
 
-  function setAddress(IUintComp components, uint256 id, address addr) internal returns (uint256) {
+  function setAddress(IUintComp components, uint256 id, address addr) internal {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
-    return id;
   }
 
-  function setName(
-    IUintComp components,
-    uint256 id,
-    string memory name
-  ) internal returns (uint256) {
+  function setLastBlock(IUintComp components, uint256 id, uint256 blockNum) internal {
+    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, blockNum);
+  }
+
+  function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    return id;
+  }
+
+  function setCurrStamina(IUintComp components, uint256 id, uint256 amt) internal {
+    StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, amt);
   }
 
   /////////////////
@@ -82,11 +109,15 @@ library LibAccount {
   }
 
   /////////////////
-  // COMPONENT RETRIEVAL
+  // GETTERS
 
   // get the address of an account
   function getAddress(IUintComp components, uint256 id) internal view returns (address) {
     return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).getValue(id);
+  }
+
+  function getLastBlock(IUintComp components, uint256 id) internal view returns (uint256) {
+    return BlockLastComponent(getAddressById(components, BlockLastCompID)).getValue(id);
   }
 
   // gets the location of a specified account account
@@ -97,6 +128,14 @@ library LibAccount {
   // gets the OwnerID (address) of a specified account account as a uint
   function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdOwnerComponent(getAddressById(components, IdOwnerCompID)).getValue(id);
+  }
+
+  function getStamina(IUintComp components, uint256 id) internal view returns (uint256) {
+    return StaminaComponent(getAddressById(components, StaminaCompID)).getValue(id);
+  }
+
+  function getCurrStamina(IUintComp components, uint256 id) internal view returns (uint256) {
+    return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
   }
 
   /////////////////
