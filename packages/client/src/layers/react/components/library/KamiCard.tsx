@@ -16,13 +16,11 @@ interface Props {
 export const KamiCard = (props: Props) => {
   // generate the styled text divs for the description
   const Description = () => {
-    const header = [<TextBig key="header">{props.description[0]}</TextBig>];
+    const header = [<TextBig key='header'>{props.description[0]}</TextBig>];
 
     const details = props.description
       .slice(1)
-      .map((line, index) => (
-        <TextMedium key={`description-${index}`}>{line}</TextMedium>
-      ));
+      .map((line, index) => <TextMedium key={`description-${index}`}>{line}</TextMedium>);
     return [...header, ...details];
   };
 

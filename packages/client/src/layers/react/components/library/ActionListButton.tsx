@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -5,7 +6,8 @@ interface Props {
   text: string;
   options: Option[];
   disabled?: boolean;
-  // size?: 'sm' | 'md' | 'lg';
+  hidden?: boolean;
+  scrollPosition?: number;
 }
 
 export interface Option {
@@ -14,35 +16,45 @@ export interface Option {
 }
 
 export function ActionListButton(props: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen && toggleRef.current) {
+      const togglePosition = toggleRef.current.getBoundingClientRect();
+      setMenuPosition({ top: togglePosition.bottom, left: togglePosition.left });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [props.scrollPosition]);
 
   const toggleMenu = () => {
-    var menu = document.getElementById(`feed-menu-${props.id}`);
-    if (!menu) return;
-
-    menu.style.display = (menu.style.display === "none") ? "block" : "none";
-  }
+    setIsOpen(!isOpen);
+  };
 
   return (
     <Container>
-      <Toggle
-        id={props.id}
-        onClick={!props.disabled ? toggleMenu : () => { }}
-      >
+      <Toggle ref={toggleRef} id={props.id} onClick={!props.disabled ? toggleMenu : () => {}}>
         {props.text + ' ▾'}
       </Toggle>
 
-      <Menu id={`feed-menu-${props.id}`}>
-        {props.options.map((option, i) => (
-          <Item id={i.toString()} onClick={() => option.onClick()}>
-            {option.text}
-          </Item>
-        ))}
-      </Menu>
+      {isOpen && (
+        <MenuWrapper style={{ top: menuPosition.top, left: menuPosition.left }}>
+          <Menu>
+            {props.options.map((option, i) => (
+              <Item key={i} onClick={() => option.onClick()}>
+                {option.text}
+              </Item>
+            ))}
+          </Menu>
+        </MenuWrapper>
+      )}
     </Container>
   );
 }
-
-export default ActionListButton;
 
 const Container = styled.div``;
 
@@ -73,9 +85,12 @@ const Toggle = styled.button`
   }
 `;
 
-const Menu = styled.div`
-  display: none;
+const MenuWrapper = styled.div`
+  position: absolute;
+  z-index: 1;
+`;
 
+const Menu = styled.div`
   background-color: #ffffff;
   border-color: black;
   border-radius: 5px;
@@ -83,7 +98,7 @@ const Menu = styled.div`
   border-width: 2px;
   color: black;
   margin: 0px 3px;
-  position: absolute;
+  min-width: 100px;
 `;
 
 const Item = styled.div`
@@ -91,7 +106,7 @@ const Item = styled.div`
   justify-content: left;
   font-family: Pixel;
   font-size: 14px;
-  
+
   cursor: pointer;
   pointer-events: auto;
   &:hover {
@@ -100,6 +115,4 @@ const Item = styled.div`
   &:active {
     background-color: #c2c2c2;
   }
-}
-
 `;

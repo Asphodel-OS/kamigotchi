@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
@@ -14,7 +14,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import {
   ActionListButton,
-  Option as ActionListOption
+  Option as ActionListOption,
 } from 'layers/react/components/library/ActionListButton';
 import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
@@ -180,12 +180,8 @@ export function registerPartyModal() {
     // Render
     ({ actions, api, data, world }) => {
       // console.log('PartyM: data', data);
-      const {
-        visibleModals,
-        setVisibleModals,
-        selectedEntities,
-        setSelectedEntities
-      } = dataStore();
+      const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
+        dataStore();
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       /////////////////
@@ -194,6 +190,25 @@ export function registerPartyModal() {
       function refreshClock() {
         setLastRefresh(Date.now());
       }
+
+      const scrollableRef = useRef<HTMLDivElement>(null);
+      const [scrollPosition, setScrollPosition] = useState<number>(0);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          if (scrollableRef.current) {
+            setScrollPosition(scrollableRef.current.scrollTop);
+          }
+        };
+        if (scrollableRef.current) {
+          scrollableRef.current.addEventListener('scroll', handleScroll);
+        }
+        return () => {
+          if (scrollableRef.current) {
+            scrollableRef.current.removeEventListener('scroll', handleScroll);
+          }
+        };
+      }, []);
 
       useEffect(() => {
         const timerId = setInterval(refreshClock, 1000);
@@ -308,10 +323,10 @@ export function registerPartyModal() {
       const calcRecoveryRate = (kami: Kami) => {
         let rate = 0;
         if (isResting(kami)) {
-          rate = DEMO_RECOVERY_MULTIPLIER * kami.stats.harmony / 3600;
+          rate = (DEMO_RECOVERY_MULTIPLIER * kami.stats.harmony) / 3600;
         }
         return rate;
-      }
+      };
 
       // get emission rate of the Kami's production. measured in (KAMI/s)
       const calcProductionRate = (kami: Kami) => {
@@ -355,8 +370,7 @@ export function registerPartyModal() {
 
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami): boolean => {
-        return kami.state === 'DEAD' ||
-          calcHealth(kami) == 0;  // shoudl we include this check as well?
+        return kami.state === 'DEAD' || calcHealth(kami) == 0; // shoudl we include this check as well?
       };
 
       // check whether the kami is currently harvesting
@@ -366,7 +380,7 @@ export function registerPartyModal() {
 
       const isResting = (kami: Kami): boolean => {
         return kami.state === 'RESTING';
-      }
+      };
 
       const isRevealed = (kami: Kami): boolean => {
         return !(kami.state === 'UNREVEALED');
@@ -374,7 +388,7 @@ export function registerPartyModal() {
 
       const isOffWorld = (kami: Kami): boolean => {
         return kami.state === '721_EXTERNAL';
-      }
+      };
 
       // get the title of the kami as 'name (health / totHealth)'
       const getTitle = (kami: Kami) => {
@@ -410,8 +424,8 @@ export function registerPartyModal() {
                 `+${harvestRate.toFixed(1)} $KAMI/hr`,
                 `-${drainRate.toFixed(1)} HP/hr`,
               ];
-              break;
             }
+            break;
           case 'DEAD':
             description = [`Murdered by ???`];
             break;
@@ -428,7 +442,7 @@ export function registerPartyModal() {
       const ConsumableCells = (inventories: any[]) => {
         return inventories.map((inv) => {
           return (
-            <CellBordered key={inv.id} style={{ gridColumn: `${inv.id}` }}>
+            <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
               <CellGrid>
                 <Icon src={inv.image} />
                 <ItemNumber>{inv.balance ?? 0}</ItemNumber>
@@ -459,17 +473,15 @@ export function registerPartyModal() {
           <ActionListButton
             id={`feed-button-${kami.index}`}
             text='Feed'
+            hidden={true}
+            scrollPosition={scrollPosition}
             options={feedOptions}
           />
         );
-      }
+      };
 
       const StartButton = (kami: Kami) => (
-        <ActionButton
-          id={`harvest-start`}
-          onClick={() => startProduction(kami.id)}
-          text='Start'
-        />
+        <ActionButton id={`harvest-start`} onClick={() => startProduction(kami.id)} text='Start' />
       );
 
       // we're able to force the production attribute as we will only show this
@@ -500,14 +512,16 @@ export function registerPartyModal() {
       // corner content, usually Food
       const selectCornerContent = (kami: Kami) => {
         if (isRevealed(kami)) return FeedButton(kami);
-        else return (
-          <ActionListButton
-            id={`feed-button-${kami.index}`}
-            text='Feed'
-            options={[]}
-          />
-        );
-      }
+        else
+          return (
+            <ActionListButton
+              id={`feed-button-${kami.index}`}
+              text='Feed'
+              // scrollPosition={scrollPosition}
+              options={[]}
+            />
+          );
+      };
 
       const selectInfo = (kami: Kami) => {
         if (isRevealed(kami)) return InfoButton(kami);
@@ -542,7 +556,7 @@ export function registerPartyModal() {
             </TopDescription>
           </TopGrid>
           <ConsumableGrid>{ConsumableCells(data.account.inventories)}</ConsumableGrid>
-          <Scrollable>{KamiCards(data.account.kamis)}</Scrollable>
+          <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
       );
     }
@@ -550,7 +564,8 @@ export function registerPartyModal() {
 }
 
 const Scrollable = styled.div`
-  overflow: auto;
+  overflow-y: scroll;
+  height: 100%;
   max-height: 100%;
 `;
 
