@@ -12,6 +12,10 @@ import {
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import {
+  ActionListButton,
+  Option as ActionListOption
+} from 'layers/react/components/library/ActionListButton';
 import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -444,16 +448,28 @@ export function registerPartyModal() {
         />
       );
 
-      const FeedButton = (kami: Kami, foodIndex: number) => (
-        <ActionButton
-          id={`feed-${foodIndex}`}
-          onClick={() => feed(kami.id, foodIndex)}
-          text={`Feed ${foodIndex}`}
-        />
-      );
+      const FeedButton = (kami: Kami) => {
+        const feedOptions: ActionListOption[] = [
+          { text: 'Maple-Flavor Ghost Gum', onClick: () => feed(kami.id, 1) },
+          { text: 'Pom-Pom Fruit Candy', onClick: () => feed(kami.id, 2) },
+          { text: 'Gakki Cookie Sticks', onClick: () => feed(kami.id, 3) },
+        ];
+
+        return (
+          <ActionListButton
+            id={`feed-button-${kami.index}`}
+            text='Feed'
+            options={feedOptions}
+          />
+        );
+      }
 
       const StartButton = (kami: Kami) => (
-        <ActionButton id={`harvest-start`} onClick={() => startProduction(kami.id)} text='Start' />
+        <ActionButton
+          id={`harvest-start`}
+          onClick={() => startProduction(kami.id)}
+          text='Start'
+        />
       );
 
       // we're able to force the production attribute as we will only show this
@@ -477,13 +493,20 @@ export function registerPartyModal() {
       const selectAction = (kami: Kami) => {
         if (!isRevealed(kami)) return RevealButton(kami);
 
-        if (isHarvesting(kami)) return StopButton(kami);
+        if (isHarvesting(kami)) return CollectButton(kami);
         else return StartButton(kami);
       };
 
       // corner content, usually Food
       const selectCornerContent = (kami: Kami) => {
-        if (isRevealed(kami)) return FeedButton(kami, 1);
+        if (isRevealed(kami)) return FeedButton(kami);
+        else return (
+          <ActionListButton
+            id={`feed-button-${kami.index}`}
+            text='Feed'
+            options={[]}
+          />
+        );
       }
 
       const selectInfo = (kami: Kami) => {
