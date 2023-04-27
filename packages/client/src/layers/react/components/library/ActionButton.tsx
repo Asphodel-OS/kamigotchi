@@ -24,21 +24,26 @@ export const ActionButton = (props: Props) => {
     await props.onClick();
   }
 
-  // override styles if disabled
-  const overrideStyles = () => {
+  // override styles for sizes and disabling
+  const setStyles = () => {
     var styles: any = {};
-    if (props.disabled) styles.backgroundColor = '#a0a0a0';
-    if (props.size === 'small') styles.fontSize = '10px';
-    if (props.size === 'medium') {
+
+    const size = props.size || 'medium';
+    if (size === 'small') {
+      styles.fontSize = '10px';
+      styles.margin = '2px';
+      styles.padding = '3px 6px';
+    } else if (size === 'medium') {
       styles.fontSize = '14px';
       styles.margin = '3px';
       styles.padding = '5px 10px';
-    }
-    if (props.size === 'large') {
+    } else if (size === 'large') {
       styles.fontSize = '18px';
-      styles.margin = '4px 2px';
-      styles.padding = '15px 32px';
+      styles.margin = '4px';
+      styles.padding = '16px 32px';
     }
+
+    if (props.disabled) styles.backgroundColor = '#a0a0a0';
     return styles;
   };
 
@@ -46,7 +51,7 @@ export const ActionButton = (props: Props) => {
     <Button
       id={props.id}
       onClick={!props.disabled ? handleClick : () => { }}
-      style={overrideStyles()}
+      style={setStyles()}
     >
       {props.text}
     </Button>
@@ -61,8 +66,6 @@ const Button = styled.button`
   border-width: 2px;
   color: black;
   display: inline-block;
-  margin: 3px;
-  padding: 5px 10px;
 
   justify-content: center;
   font-family: Pixel;
@@ -72,7 +75,9 @@ const Button = styled.button`
 
   cursor: pointer;
   pointer-events: auto;
-
+  &:hover {
+    background-color: #e8e8e8;
+  }
   &:active {
     background-color: #c2c2c2;
   }
