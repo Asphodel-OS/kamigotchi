@@ -60,6 +60,7 @@
     "PriceBuyComponent",
     "PriceSellComponent",
     "PrototypeComponent",
+    "ProxyDKGPermissionsComponent",
     "RarityComponent",
     "RateComponent",
     "SlotsComponent",

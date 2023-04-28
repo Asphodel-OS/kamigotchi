@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
-import { ID as MintSystemID } from "systems/ERC721MintSystem.sol";
+
+import { ProxyDKGPermissionsComponent as PermissionsComp, ID as PermissionsCompID } from "components/ProxyDKGPermissionsComponent.sol";
 /* 
 A simplified implementation of a randomness orcale, inspired by RandDAO and DKGs.
 
@@ -16,8 +17,8 @@ Overview:
 
 Randomness is seeded by two groups: 1) game participants, 2) pledgers 
 game participants: 
-  - randomness is seeded as part of certian actions in the game, e.g. minting a kami
-  - this does not require a pledge, and is gated to only allow certian systems
+  - randomness is seeded as part of certain actions in the game, e.g. minting a kami
+  - this does not require a pledge, and is gated to only allow certain systems
 pledgers:
   - similar to RandDAO, pledgers stake a fixed sum which can only be withdrawn they reveal their pledge
   - uses two phases, similar to commit reveal:
@@ -28,7 +29,7 @@ pledgers:
 How is it random?
   - important to note: not perfect, but creates a high cost for random manipulation
   - in the hopeful case items in the Kami ecosystem become so valuable it becomes worth manipulating, the KamiDAO will have to increase costs and pledge more actively
-  - This relies heavily on adversial randomness:
+  - This relies heavily on adversarial randomness:
     1) Players as a randomness pool: 
       - players have high activity, transactions can be used to increase entropy
       - quality of seed is lower than pledgers (seed is known in advance), but sheer volume increases security
@@ -39,7 +40,7 @@ How is it random?
       - KamiDAO will run a pledger for additional security; other actors can run their own pledgers to ensure KamiDAO cannot manipulate the result
 
 Why not a VRF?
-  - Canto doesnt have any! 
+  - Canto doesnt have any! (and lattice testnets etc)
 
 Epoches:
   - Epoches are 1 day long. This is designed for minting Kami NFTs, which function on a slightly longer cycle
@@ -49,13 +50,21 @@ Epoches:
 Upgradability: 
   - Contract itself is not ownable or upgradable
   - Uses the ProxyDeploy pattern via MUD, abla to upgrade through that
+
+NOTE: 
+  - we've decided to shorten epoches to 60 seconds and sacrifice pledging.
+  - this reduces random security, but it is a trade-off gameplay UX wise
+  - sufficiently adversarially random, very little payoff
+  - it would be possible to re-include the pledges for VRGDA mints (or when needed), depeending on KamiDAO
+  - pledges is still kept in the contract, but not used. grace period is shortened to 1 block. 
+    if someone insane enough wants to pledge, they can. will have no FE interface
 */
-uint256 constant REVEAL_GRACE_PERIOD = 144 seconds; // 2.4 minutes, 12 blocks on canto, 6 blocks on eth
-uint256 constant EPOCH_LENGTH = 1 days;
+uint256 constant REVEAL_GRACE_PERIOD = 6 seconds; // 1 block on canto. shortened because not in use
+uint256 constant EPOCH_LENGTH = 1 minutes;
 uint256 constant PLEDGE_VALUE = 100 ether; // 100 CANTO
 
 contract RandomDKG {
-  IWorld immutable World;
+  IUintComp immutable components;
 
   uint256 immutable DEPLOY_TIME;
 
@@ -65,18 +74,20 @@ contract RandomDKG {
   // pledge commits
   mapping(uint256 => mapping(address => bytes32)) public pledgeCommits;
 
-  modifier onlySystem(uint256 systemID) {
-    IUintComp Systems = World.systems();
-    require(getAddressById(Systems, systemID) == msg.sender, "not verified system");
+  modifier onlySystem() {
+    require(
+      PermissionsComp(getAddressById(components, PermissionsCompID)).writeAccess(msg.sender),
+      "SystemDKG: no write access"
+    );
     _;
   }
 
-  constructor(IWorld world) {
+  constructor(IUintComp _components) {
     DEPLOY_TIME = block.timestamp;
-    World = world;
+    components = _components;
   }
 
-  function contributePublic(bytes32 entropy) external onlySystem(MintSystemID) {
+  function contributePublic(bytes32 entropy) external onlySystem {
     seedPerEpoch[getCurrEpoch()] = combineHash(seedPerEpoch[getCurrEpoch()], entropy);
   }
 

@@ -40,7 +40,7 @@ contract ERC20Test is SetupTemplate {
     assertEq(pledger.balance, 1);
 
     // change time, reveal pledge, assert refund
-    vm.warp(START_TIME + EPOCH_LENGTH + REVEAL_GRACE_PERIOD - 10);
+    vm.warp(START_TIME + EPOCH_LENGTH + REVEAL_GRACE_PERIOD - 1);
     assertEq(_dkg.getCurrEpoch(), 1);
     assertEq(_dkg.getCurrPledgeEpoch(), 0);
     _dkg.revealPledge(bytes32(expPledge));

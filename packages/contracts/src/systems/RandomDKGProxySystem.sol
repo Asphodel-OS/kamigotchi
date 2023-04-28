@@ -13,7 +13,7 @@ contract RandomDKGProxySystem is System {
   address addy;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
-    RandomDKG dkg = new RandomDKG(_world);
+    RandomDKG dkg = new RandomDKG(components);
     addy = address(dkg);
   }
 
