@@ -66,11 +66,22 @@ library LibPet {
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
-    setOwner(components, id, addressToEntity(owner));
     setAccount(components, id, accountID);
     setMediaURI(components, id, uri);
     setState(components, id, "UNREVEALED");
     return id;
+  }
+
+  // bridging a pet Outside => MUD. Does not handle account details
+  function deposit(IUintComp components, uint256 id, uint256 accountID) internal returns (uint256) {
+    setState(components, id, "RESTING");
+    setAccount(components, id, accountID);
+  }
+
+  // bridging a pet MUD => Outside. Does not handle account details
+  function withdraw(IUintComp components, uint256 id) internal returns (uint256) {
+    setState(components, id, "721_EXTERNAL");
+    setAccount(components, id, 0);
   }
 
   // Drains HP from a pet. The opposite of heal().
@@ -143,12 +154,12 @@ library LibPet {
   // transfer ERC721 pet
   // NOTE: it doesnt seem we actually need IdOwner directly on the pet as it can be
   // directly accessed through the account entity.
+  // NOTE 2: transfers are disabled in game
   function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = indexToID(components, index);
     uint256 ownerID = getOwner(components, accountID);
 
-    setOwner(components, id, ownerID);
     setAccount(components, id, accountID);
   }
 
@@ -347,10 +358,6 @@ library LibPet {
 
   function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
     IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
-  }
-
-  function setOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
-    IdOwnerComponent(getAddressById(components, IdOwnerCompID)).set(id, ownerID);
   }
 
   function setState(IUintComp components, uint256 id, string memory state) internal {

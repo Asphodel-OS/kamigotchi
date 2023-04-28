@@ -14,6 +14,16 @@ import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol"
 uint256 constant ID = uint256(keccak256("system.ERC721.Withdraw"));
 
 // sets a pet game world => outside world
+/*
+  Invarients:
+    Before withdrawal:
+      1) Pet is linked to an Account, owned by msg.sender
+      2) Pet state is not "721_EXTERNAL"
+      3) Pet is revealed
+    After withdrawal:
+      1) Pet is not linked to an Account
+      2) Pet state is "721_EXTERNAL"
+*/
 contract ERC721WithdrawSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -22,13 +32,13 @@ contract ERC721WithdrawSystem is System {
     uint256 petID = LibPet.indexToID(components, tokenID);
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-
-    // checks
+    // checks before action
     require(!LibPet.isUnrevealed(components, petID), "Pet: unrevealed");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+    require(LibPet.isInWorld(components, petID), "Pet: alr in world");
 
     // actions to be taken upon bridging out
-    LibPet.setState(components, petID, "721_EXTERNAL");
+    LibPet.withdraw(components, petID);
 
     return "";
   }

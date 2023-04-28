@@ -263,12 +263,22 @@
     {
       "name": "ERC721WithdrawSystem",
       "writeAccess": [
+        "IdAccountComponent",
         "StateComponent"
       ]
     },
     {
       "name": "ERC721DepositSystem",
       "writeAccess": [
+        "IsAccountComponent",
+        "AddressOperatorComponent",
+        "BlockLastComponent",
+        "IdOwnerComponent",
+        "IdAccountComponent",
+        "LocationComponent",
+        "NameComponent",
+        "StaminaComponent",
+        "StaminaCurrentComponent",
         "StateComponent"
       ]
     },
