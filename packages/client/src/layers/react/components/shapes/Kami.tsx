@@ -18,6 +18,7 @@ import { Trait, getTrait } from './Trait';
 export interface Kami {
   id: EntityID;
   index: string;
+  entityIndex: EntityIndex;
   name: string;
   uri: string;
   health: number;
@@ -74,6 +75,7 @@ export const getKami = (
   let kami: Kami = {
     id: world.entities[index],
     index: getComponentValue(PetIndex, index)?.value as string,
+    entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     uri: getComponentValue(MediaURI, index)?.value as string,
     health: getComponentValue(HealthCurrent, index)?.value as number,

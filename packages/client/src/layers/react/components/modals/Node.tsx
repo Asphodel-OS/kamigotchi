@@ -63,6 +63,7 @@ export function registerNodeModal() {
         State.update$
       ).pipe(
         map(() => {
+
           /////////////////
           // ROOT DATA
 
@@ -85,6 +86,9 @@ export function registerNodeModal() {
           )[0];
 
           const node = nodeIndex !== undefined ? getNode(layers, nodeIndex) : ({} as Node);
+
+          // get the selected Node
+
 
           /////////////////
           // DEPENDENT DATA
@@ -120,7 +124,11 @@ export function registerNodeModal() {
           if (node) {
             // populate the account Kamis
             const nodeProductionIndices = Array.from(
-              runQuery([Has(IsProduction), HasValue(NodeID, { value: node.id })])
+              runQuery([
+                Has(IsProduction),
+                HasValue(NodeID, { value: node.id }),
+                HasValue(State, { value: "ACTIVE" }),
+              ])
             );
 
             for (let i = 0; i < nodeProductionIndices.length; i++) {

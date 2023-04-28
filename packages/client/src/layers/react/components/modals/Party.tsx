@@ -296,14 +296,13 @@ export function registerPartyModal() {
           actions.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
-        openKamiModal(pet);
+        openKamiModal(pet.entityIndex);
       };
 
-      const openKamiModal = (kami: Kami) => {
-        const description = kami.index;
+      const openKamiModal = (entityIndex: EntityIndex) => {
         setSelectedEntities({
           ...selectedEntities,
-          kami: { ...selectedEntities.kami, description },
+          kami: entityIndex,
         });
         setVisibleModals({ ...visibleModals, kami: true });
       };
@@ -499,7 +498,7 @@ export function registerPartyModal() {
       );
 
       const InfoButton = (kami: Kami) => (
-        <ActionButton id={`info-button`} onClick={() => openKamiModal(kami)} text='i' />
+        <ActionButton id={`info-button`} onClick={() => openKamiModal(kami.entityIndex)} text='i' />
       );
 
       const selectAction = (kami: Kami) => {

@@ -34,7 +34,7 @@ export interface SoundState {
 }
 
 export interface SelectedEntities {
-  kami: { id: EntityIndex; description: string };
+  kami: EntityIndex;
   node: EntityIndex;
   merchant: EntityIndex;
 }
@@ -55,7 +55,7 @@ interface StoreActions {
   setSelectedEntities: (data: SelectedEntities) => void;
 }
 
-const nonExistingEntityIndex: EntityIndex = 0;
+const nonExistingEntityIndex: EntityIndex = 0 as EntityIndex;
 
 export const dataStore = create<StoreState & StoreActions>((set) => {
   const initialState: StoreState = {
@@ -77,7 +77,7 @@ export const dataStore = create<StoreState & StoreActions>((set) => {
       volume: 0.7,
     },
     selectedEntities: {
-      kami: { id: nonExistingEntityIndex, description: '' },
+      kami: nonExistingEntityIndex,
       node: nonExistingEntityIndex,
       merchant: nonExistingEntityIndex,
     },

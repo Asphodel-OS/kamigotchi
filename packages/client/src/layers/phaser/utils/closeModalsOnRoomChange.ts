@@ -4,6 +4,12 @@ export const closeModalsOnRoomChange = () => {
   const { visibleModals } = dataStore.getState();
 
   dataStore.setState({
-    visibleModals: { ...visibleModals, dialogue: false, merchant: false, kamiMint: false },
+    visibleModals: {
+      ...visibleModals,
+      dialogue: false,
+      merchant: false,
+      kamiMint: false,
+      kami: false
+    },
   });
 };

@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { BigNumber, BigNumberish } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
-import { dataStore } from 'layers/react/store/createStore';
-import { BigNumber, BigNumberish } from 'ethers';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -42,24 +41,10 @@ export function registerKamiModal() {
         },
       } = layers;
 
-      const {
-        selectedEntities: {
-          kami: { description },
-        },
-      } = dataStore();
+      const { selectedEntities: { kami } } = dataStore();
 
       /////////////////
       // Get values
-      const getPetIndex = (tokenID: string) => {
-        return Array.from(
-          runQuery([
-            Has(IsPet),
-            HasValue(PetIndex, {
-              value: BigNumber.from(tokenID).toHexString(),
-            }),
-          ])
-        )[0];
-      };
 
       const hexToString = (num?: BigNumberish) => {
         return num ? BigNumber.from(num).toString() : '0';
@@ -71,35 +56,35 @@ export function registerKamiModal() {
       const [dets, setDets] = useState<Kami>();
 
       useEffect(() => {
-        if (description && description != '0') {
-          setDets(getKami(layers, getPetIndex(description), { traits: true }));
+        if (kami) {
+          setDets(getKami(layers, kami, { traits: true }));
           console.log('KamiDetails: kami', dets);
         }
-      }, [description]);
+      }, [kami]);
 
       const traitBox = () => {
         return (
           <TraitBox>
-            <KamiHeader style={{gridRow: 1, gridColumn: 1}}> Traits </KamiHeader>
-            <StatBox style= {{gridRow: 2, gridColumn: 1}}>
+            <KamiHeader style={{ gridRow: 1, gridColumn: 1 }}> Traits </KamiHeader>
+            <StatBox style={{ gridRow: 2, gridColumn: 1 }}>
               <KamiText>BACKGROUND</KamiText>
               <KamiFacts>{dets?.background?.name}</KamiFacts>
             </StatBox>
-            <StatBox style= {{gridRow: 2, gridColumn: 2}}>
-            <KamiText>BODY</KamiText>
-            <KamiFacts>{dets?.body?.name}</KamiFacts>
+            <StatBox style={{ gridRow: 2, gridColumn: 2 }}>
+              <KamiText>BODY</KamiText>
+              <KamiFacts>{dets?.body?.name}</KamiFacts>
             </StatBox>
-            <StatBox style= {{gridRow: 2, gridColumn: 3}}>
-            <KamiText>COLOR</KamiText>
-            <KamiFacts>{dets?.color?.name}</KamiFacts>
+            <StatBox style={{ gridRow: 2, gridColumn: 3 }}>
+              <KamiText>COLOR</KamiText>
+              <KamiFacts>{dets?.color?.name}</KamiFacts>
             </StatBox>
-            <StatBox style= {{gridRow: 2, gridColumn: 4}}>
-            <KamiText>FACE</KamiText>
-            <KamiFacts>{dets?.face?.name}</KamiFacts>
+            <StatBox style={{ gridRow: 2, gridColumn: 4 }}>
+              <KamiText>FACE</KamiText>
+              <KamiFacts>{dets?.face?.name}</KamiFacts>
             </StatBox>
-            <StatBox style= {{gridRow: 2, gridColumn: 5}}>
-            <KamiText>HAND</KamiText>
-            <KamiFacts>{dets?.hand?.name}</KamiFacts>
+            <StatBox style={{ gridRow: 2, gridColumn: 5 }}>
+              <KamiText>HAND</KamiText>
+              <KamiFacts>{dets?.hand?.name}</KamiFacts>
             </StatBox>
           </TraitBox>
         );
@@ -114,33 +99,33 @@ export function registerKamiModal() {
         <ModalWrapperFull divName='kami' id='kamiModal'>
           <TopDiv>
             <KamiImage src={dets?.uri} />
-            <div style ={{
+            <div style={{
               display: 'grid',
               gridRowGap: '5px',
               gridColumnGap: '5px'
             }}>
               <KamiName>{dets?.name} </KamiName>
               <KamiText
-              style={{gridRow: 2, gridColumnStart: 1, gridColumnEnd: 5, margin: '10px'}}>
+                style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 5, margin: '10px' }}>
                 {affinitiesBox()}
               </KamiText>
-              <StatBox style= {{gridRow: 3, gridColumn: 1}}>
+              <StatBox style={{ gridRow: 3, gridColumn: 1 }}>
                 <KamiText> Health </KamiText>
                 <KamiFacts> {hexToString(dets?.stats.health)} </KamiFacts>
               </StatBox>
-              <StatBox style= {{gridRow: 3, gridColumn: 2}}>
+              <StatBox style={{ gridRow: 3, gridColumn: 2 }}>
                 <KamiText> Power </KamiText>
                 <KamiFacts> {hexToString(dets?.stats.power)} </KamiFacts>
               </StatBox>
-              <StatBox style= {{gridRow: 3, gridColumn: 3}}>
+              <StatBox style={{ gridRow: 3, gridColumn: 3 }}>
                 <KamiText> Violence </KamiText>
                 <KamiFacts> {hexToString(dets?.stats.violence)} </KamiFacts>
               </StatBox>
-              <StatBox style= {{gridRow: 3, gridColumn: 4}}>
+              <StatBox style={{ gridRow: 3, gridColumn: 4 }}>
                 <KamiText> Harmony </KamiText>
                 <KamiFacts> {hexToString(dets?.stats.harmony)} </KamiFacts>
               </StatBox>
-              <StatBox style= {{gridRow: 3, gridColumn: 5}}>
+              <StatBox style={{ gridRow: 3, gridColumn: 5 }}>
                 <KamiText> Slots </KamiText>
                 <KamiFacts> {hexToString(dets?.stats.slots)} </KamiFacts>
               </StatBox>
