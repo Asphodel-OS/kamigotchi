@@ -9,17 +9,30 @@ contract ERC721PetTest is SetupTemplate {
   }
 
   function _assertOwnerInGame(uint256 tokenID, address addy) internal {
-    // owner and component must be the same
+    /*
+      1) Owner and Account owner are the same
+      2) State is not 721_EXTERNAL (LibPet.isInWorld)
+      3) Has an owner (checked implicitly in 1)
+    */
     uint256 entityID = LibPet.indexToID(components, tokenID);
     assertEq(
       _KamiERC721.ownerOf(tokenID),
       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
     );
     assertEq(_KamiERC721.ownerOf(tokenID), addy);
+    assertTrue(LibPet.isInWorld(components, entityID));
   }
 
   function _assertOwnerOutGame(uint256 tokenID, address addy) internal {
+    /*
+      1) Owned by addy
+      2) State is  721_EXTERNAL (LibPet.isInWorld)
+      3) Has no Account
+    */
+    uint256 entityID = LibPet.indexToID(components, tokenID);
     assertEq(_KamiERC721.ownerOf(tokenID), addy);
+    assertEq(LibPet.getAccount(components, entityID), 0);
+    assertTrue(!LibPet.isInWorld(components, entityID));
   }
 
   function _assertPetState(uint256 entityID, string memory state) internal {
