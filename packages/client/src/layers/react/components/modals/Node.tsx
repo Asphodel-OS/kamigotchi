@@ -185,21 +185,9 @@ export function registerNodeModal() {
       // STATE TRACKING
 
       const scrollableRef = useRef<HTMLDivElement>(null);
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [scrollPosition, setScrollPosition] = useState<number>(0);
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [tab, setTab] = useState<'mine' | 'others'>('mine');
-
-      // ticking
-      useEffect(() => {
-        const refreshClock = () => {
-          setLastRefresh(Date.now());
-        }
-
-        const timerId = setInterval(refreshClock, 3000);
-        return function cleanup() {
-          clearInterval(timerId);
-        };
-      }, []);
 
       // scrolling
       useEffect(() => {
@@ -218,8 +206,34 @@ export function registerNodeModal() {
         };
       }, []);
 
+      // ticking
+      useEffect(() => {
+        const refreshClock = () => {
+          setLastRefresh(Date.now());
+        }
+        const timerId = setInterval(refreshClock, 3000);
+        return function cleanup() {
+          clearInterval(timerId);
+        };
+      }, []);
+
       ///////////////////
       // ACTIONS
+
+      // starts a production for the given pet and node
+      const start = (kami: Kami, node: Node) => {
+        const actionID = `Starting Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
+        actions.add({
+          id: actionID,
+          components: {},
+          // on: data.????,
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.production.start(kami.id, node.id);
+          },
+        });
+      };
 
       // collects on an existing production
       const collect = (production: Production) => {
@@ -340,6 +354,7 @@ export function registerNodeModal() {
       ///////////////////
       // DISPLAY
 
+      // button for tabbing over to my Kamis
       const MyTabButton = () => (
         <ActionButton
           id={`my-tab`}
@@ -348,6 +363,7 @@ export function registerNodeModal() {
         />
       );
 
+      // button for tabbing over to enemy Kamis
       const EnemyTabButton = () => (
         <ActionButton
           id={`enemy-tab`}
@@ -356,7 +372,33 @@ export function registerNodeModal() {
         />
       );
 
-      // stop production action button
+      // button for adding Kami to node
+      const AddButton = (node: Node, restingKamis: Kami[]) => {
+        const options: ActionListOption[] = restingKamis.map((kami) => {
+          return { text: `${kami.name}`, onClick: () => start(kami, node) }
+        });
+        return (
+          <ActionListButton
+            id={`harvest-add`}
+            text='Add Kami'
+            hidden={true}
+            scrollPosition={scrollPosition}
+            options={options}
+            disabled={restingKamis.length == 0}
+          />
+        );
+      };
+
+      // button for collecting on production
+      const CollectButton = (myKami: Kami) => (
+        <ActionButton
+          id={`harvest-collect`}
+          onClick={() => collect(myKami.production!)}
+          text='Collect'
+        />
+      );
+
+      // button for stopping production
       const StopButton = (myKami: Kami) => (
         <ActionButton
           id={`harvest-stop`}
@@ -365,8 +407,8 @@ export function registerNodeModal() {
         />
       );
 
-      // liquidate production action button
-      const LiquidateButton = (soldiers: Kami[], target: Kami) => {
+      // button for liquidating production
+      const LiquidateButton = (target: Kami, soldiers: Kami[]) => {
         const options: ActionListOption[] = soldiers.map((myKami) => {
           return { text: `${myKami.name}`, onClick: () => liquidate(myKami, target) }
         });
@@ -402,7 +444,7 @@ export function registerNodeModal() {
             title={kami.name}
             image={kami.uri}
             subtext={`yours (\$${output})`}
-            action={StopButton(kami)}
+            action={[CollectButton(kami), StopButton(kami)]}
             cornerContent={<BatteryComponent level={healthPercent} />}
             description={description}
           />
@@ -428,7 +470,7 @@ export function registerNodeModal() {
             title={kami.name}
             image={kami.uri}
             subtext={`${kami.account!.name} (\$${output})`}
-            action={LiquidateButton(myKamis, kami)}
+            action={LiquidateButton(kami, myKamis)}
             cornerContent={<BatteryComponent level={healthPercent} />}
             description={description}
           />
@@ -437,7 +479,10 @@ export function registerNodeModal() {
 
       // the rendering of all my kamis on this node
       const MyKards = (myKamis: Kami[]) => {
-        return myKamis.map((kami: Kami) => MyKard(kami));
+        let kardList = myKamis.map((kami: Kami) => MyKard(kami));
+        kardList.push(<Underline />);
+        kardList.push(AddButton(data.node, data.account.kamis));
+        return kardList;
       };
 
       // the rendering of all enemy kamis on this node
@@ -451,13 +496,11 @@ export function registerNodeModal() {
             <NodeInfo node={data.node} />
             {MyTabButton()}
             {EnemyTabButton()}
-            <Scrollable>
-              <WrappedKamis>
-                {(tab === 'mine')
-                  ? MyKards(data.node.kamis.mine)
-                  : EnemyKards(data.node.kamis.others, data.node.kamis.mine)
-                }
-              </WrappedKamis>
+            <Scrollable ref={scrollableRef}>
+              {(tab === 'mine')
+                ? MyKards(data.node.kamis.mine)
+                : EnemyKards(data.node.kamis.others, data.node.kamis.mine)
+              }
             </Scrollable>
           </ModalWrapperFull>
         );
@@ -474,8 +517,8 @@ export function registerNodeModal() {
 }
 
 const Scrollable = styled.div`
-  overflow: auto;
-  max-height: 50%;
+  overflow-y: scroll;
+  max-height: 100%;
 `;
 
 const Underline = styled.div`
@@ -483,10 +526,4 @@ const Underline = styled.div`
   margin: 3% auto;
   border-bottom: 2px solid silver;
   font-weight: bold;
-`;
-
-const WrappedKamis = styled.div`
-  display: 'flex';
-  flex-direction: column;
-  margin: 10px;
 `;

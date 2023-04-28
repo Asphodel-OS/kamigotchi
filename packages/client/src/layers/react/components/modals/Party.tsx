@@ -182,17 +182,13 @@ export function registerPartyModal() {
       // console.log('PartyM: data', data);
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       /////////////////
-      // TICKING
-
-      function refreshClock() {
-        setLastRefresh(Date.now());
-      }
+      // STATE TRACKING
 
       const scrollableRef = useRef<HTMLDivElement>(null);
       const [scrollPosition, setScrollPosition] = useState<number>(0);
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       useEffect(() => {
         const handleScroll = () => {
@@ -210,8 +206,12 @@ export function registerPartyModal() {
         };
       }, []);
 
+      // ticking
       useEffect(() => {
-        const timerId = setInterval(refreshClock, 1000);
+        const refreshClock = () => {
+          setLastRefresh(Date.now());
+        }
+        const timerId = setInterval(refreshClock, 3000);
         return function cleanup() {
           clearInterval(timerId);
         };
