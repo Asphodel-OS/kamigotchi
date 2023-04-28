@@ -6,11 +6,27 @@ import {
 import { Layers } from 'src/types';
 import { Stats, getStats } from './Stats';
 
-// standardized shape of Stats on an Entity
+// standardized shape of Traits on an Entity
 export interface Trait {
   stats: Stats;
   name: string;
   affinity: string;
+}
+
+export interface Traits {
+  background: Trait;
+  body: Trait;
+  color: Trait;
+  face: Trait;
+  hand: Trait;
+}
+
+export interface TraitIndices {
+  backgroundIndex: EntityIndex;
+  bodyIndex: EntityIndex;
+  colorIndex: EntityIndex;
+  faceIndex: EntityIndex;
+  handIndex: EntityIndex;
 }
 
 // get the Stats from the EnityIndex of a Kami
@@ -19,15 +35,25 @@ export const getTrait = (layers: Layers, index: EntityIndex): Trait => {
   const {
     network: {
       components: {
-        Name,
         Affinity,
+        Name,
       },
     },
   } = layers;
 
   return {
-    stats: getStats(layers, index),
     name: getComponentValue(Name, index)?.value || '' as string,
     affinity: getComponentValue(Affinity, index)?.value || '' as string,
+    stats: getStats(layers, index),
+  };
+}
+
+export const getTraits = (layers: Layers, indices: TraitIndices): Traits => {
+  return {
+    background: getTrait(layers, indices.backgroundIndex),
+    body: getTrait(layers, indices.bodyIndex),
+    color: getTrait(layers, indices.colorIndex),
+    face: getTrait(layers, indices.faceIndex),
+    hand: getTrait(layers, indices.handIndex),
   };
 }

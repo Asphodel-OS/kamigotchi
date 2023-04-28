@@ -35,12 +35,6 @@ export function registerKamiModal() {
     },
 
     ({ layers }) => {
-      const {
-        network: {
-          components: { IsPet, PetIndex },
-        },
-      } = layers;
-
       const { selectedEntities: { kami } } = dataStore();
 
       /////////////////
@@ -58,7 +52,7 @@ export function registerKamiModal() {
       useEffect(() => {
         if (kami) {
           setDets(getKami(layers, kami, { traits: true }));
-          console.log('KamiDetails: kami', dets);
+          console.log(`KamiDetails: kami`, dets);
         }
       }, [kami]);
 
@@ -68,23 +62,23 @@ export function registerKamiModal() {
             <KamiHeader style={{ gridRow: 1, gridColumn: 1 }}> Traits </KamiHeader>
             <StatBox style={{ gridRow: 2, gridColumn: 1 }}>
               <KamiText>BACKGROUND</KamiText>
-              <KamiFacts>{dets?.background?.name}</KamiFacts>
+              <KamiFacts>{dets?.traits?.background?.name}</KamiFacts>
             </StatBox>
             <StatBox style={{ gridRow: 2, gridColumn: 2 }}>
               <KamiText>BODY</KamiText>
-              <KamiFacts>{dets?.body?.name}</KamiFacts>
+              <KamiFacts>{dets?.traits?.body?.name}</KamiFacts>
             </StatBox>
             <StatBox style={{ gridRow: 2, gridColumn: 3 }}>
               <KamiText>COLOR</KamiText>
-              <KamiFacts>{dets?.color?.name}</KamiFacts>
+              <KamiFacts>{dets?.traits?.color?.name}</KamiFacts>
             </StatBox>
             <StatBox style={{ gridRow: 2, gridColumn: 4 }}>
               <KamiText>FACE</KamiText>
-              <KamiFacts>{dets?.face?.name}</KamiFacts>
+              <KamiFacts>{dets?.traits?.face?.name}</KamiFacts>
             </StatBox>
             <StatBox style={{ gridRow: 2, gridColumn: 5 }}>
               <KamiText>HAND</KamiText>
-              <KamiFacts>{dets?.hand?.name}</KamiFacts>
+              <KamiFacts>{dets?.traits?.hand?.name}</KamiFacts>
             </StatBox>
           </TraitBox>
         );
