@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
+import {
+  EntityID,
+  EntityIndex,
+  Has,
+  HasValue,
+  getComponentValue,
+  runQuery,
+} from '@latticexyz/recs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -93,34 +100,26 @@ export function registerNodeModal() {
           /////////////////
           // DEPENDENT DATA
 
-          // get the kamis on this account
-          let accountKamis: Kami[] = [];
-          if (account && node) {
+          // get the resting kamis on this account
+          let restingKamis: Kami[] = [];
+          if (account) {
             const accountKamiIndices = Array.from(
-              runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
+              runQuery([
+                Has(IsPet),
+                HasValue(AccountID, { value: account.id }),
+                HasValue(State, { value: "RESTING" }),
+              ])
             );
 
-            // get all kamis on the node
-            for (let i = 0; i < accountKamiIndices.length; i++) {
-              accountKamis.push(getKami(layers, accountKamiIndices[i], { production: true }));
-            }
-
-            // filter by the kamis with active productions on the current node
-            // we can assume there is at most one
-            if (accountKamis) {
-              const kamisOnNode = accountKamis.filter((kami) => {
-                if (!node) return false;
-
-                if (kami.production && kami.production.state === 'ACTIVE') {
-                  return kami.production.node!.id === node.id;
-                }
-              });
-              accountKamis = kamisOnNode;
-            }
+            restingKamis = accountKamiIndices.map((kamiIndex) => {
+              return getKami(layers, kamiIndex);
+            });
           }
 
           // get the productions on this node
           let nodeKamis: Kami[] = [];
+          let nodeKamisMine: Kami[] = [];
+          let nodeKamisOthers: Kami[] = [];
           if (node) {
             // populate the account Kamis
             const nodeProductionIndices = Array.from(
@@ -140,14 +139,16 @@ export function registerNodeModal() {
               nodeKamis.push(getKami(layers, kamiIndex!, { account: true, production: true }));
             }
 
-            // filter out accountKamis and inactive productions
+            // split node kamis between mine and others
             if (nodeKamis) {
-              const activeEnemies = nodeKamis.filter((kami) => {
-                if (kami.production && kami.production.state === 'ACTIVE') {
-                  return kami.account!.id !== account.id;
-                }
+              const activeMine = nodeKamis.filter((kami) => {
+                return kami.account!.id === account.id;
               });
-              nodeKamis = activeEnemies;
+              const activeOthers = nodeKamis.filter((kami) => {
+                return kami.account!.id !== account.id;
+              });
+              nodeKamisMine = activeMine;
+              nodeKamisOthers = activeOthers;
             }
           }
 
@@ -155,8 +156,14 @@ export function registerNodeModal() {
             actions,
             api: player,
             data: {
-              account: { ...account, kamis: accountKamis }, // account => kami[] => production
-              node: { ...node, kamis: nodeKamis }, // node => production[] => kami
+              account: { ...account, kamis: restingKamis },
+              node: {
+                ...node,
+                kamis: {
+                  mine: nodeKamisMine,
+                  others: nodeKamisOthers,
+                },
+              },
             } as any,
           };
         })
@@ -384,13 +391,13 @@ export function registerNodeModal() {
             {<NodeInfo node={data.node} />}
             <Scrollable>
               <WrappedKamis>
-                {data.account.kamis.map((kami: Kami) => MyKamiCard(kami))}
+                {data.node.kamis.mine.map((kami: Kami) => MyKamiCard(kami))}
               </WrappedKamis>
             </Scrollable>
             <Underline />
             <Scrollable>
               <WrappedKamis>
-                {EnemyProductions(data.node.kamis, data.account.kamis[0])}
+                {EnemyProductions(data.node.kamis.others, data.account.kamis[0])}
               </WrappedKamis>
             </Scrollable>
           </ModalWrapperFull>

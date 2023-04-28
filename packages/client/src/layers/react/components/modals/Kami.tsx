@@ -52,7 +52,6 @@ export function registerKamiModal() {
       useEffect(() => {
         if (kami) {
           setDets(getKami(layers, kami, { traits: true }));
-          console.log(`KamiDetails: kami`, dets);
         }
       }, [kami]);
 
