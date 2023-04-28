@@ -1,5 +1,6 @@
 import { dataStore } from 'layers/react/store/createStore';
 import { Room } from 'src/constants';
+import { disableClickableObjects } from '../utils/disableClickableObjects';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -58,7 +59,9 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
           if (onClick) {
             image.setInteractive();
-            image.on('pointerdown', onClick);
+            image.on('pointerdown', (e: Phaser.Input.Pointer) => {
+              if (!disableClickableObjects(e)) onClick();
+            });
           }
         });
       }
