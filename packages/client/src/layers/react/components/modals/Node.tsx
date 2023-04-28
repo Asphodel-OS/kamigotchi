@@ -180,21 +180,41 @@ export function registerNodeModal() {
     // Render
     ({ actions, api, data }) => {
       // console.log('data', data);
+
+      /////////////////
+      // STATE TRACKING
+
       const scrollableRef = useRef<HTMLDivElement>(null);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [scrollPosition, setScrollPosition] = useState<number>(0);
+      const [tab, setTab] = useState<'mine' | 'others'>('mine');
 
-      /////////////////
-      // TICKING
-
-      function refreshClock() {
-        setLastRefresh(Date.now());
-      }
-
+      // ticking
       useEffect(() => {
-        const timerId = setInterval(refreshClock, 2000);
+        const refreshClock = () => {
+          setLastRefresh(Date.now());
+        }
+
+        const timerId = setInterval(refreshClock, 3000);
         return function cleanup() {
           clearInterval(timerId);
+        };
+      }, []);
+
+      // scrolling
+      useEffect(() => {
+        const handleScroll = () => {
+          if (scrollableRef.current) {
+            setScrollPosition(scrollableRef.current.scrollTop);
+          }
+        };
+        if (scrollableRef.current) {
+          scrollableRef.current.addEventListener('scroll', handleScroll);
+        }
+        return () => {
+          if (scrollableRef.current) {
+            scrollableRef.current.removeEventListener('scroll', handleScroll);
+          }
         };
       }, []);
 
@@ -320,9 +340,29 @@ export function registerNodeModal() {
       ///////////////////
       // DISPLAY
 
+      const MyTabButton = () => (
+        <ActionButton
+          id={`my-tab`}
+          onClick={() => setTab('mine')}
+          text='Allies'
+        />
+      );
+
+      const EnemyTabButton = () => (
+        <ActionButton
+          id={`enemy-tab`}
+          onClick={() => setTab('others')}
+          text='Enemies'
+        />
+      );
+
       // stop production action button
       const StopButton = (myKami: Kami) => (
-        <ActionButton id={`harvest-stop`} onClick={() => stop(myKami.production!)} text='Stop' />
+        <ActionButton
+          id={`harvest-stop`}
+          onClick={() => stop(myKami.production!)}
+          text='Stop'
+        />
       );
 
       // liquidate production action button
@@ -346,14 +386,14 @@ export function registerNodeModal() {
       // rendering of my kami on this node
       const MyKard = (kami: Kami) => {
         const health = calcHealth(kami, 0);
-        const harvestRate = roundTo(calcProductionRate(kami) * 3600, 1);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
+        const output = calcOutput(kami);
 
         const description = [
           '',
           `Health: ${health}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
+          `Harmony: ${kami.stats.harmony * 1}`,
           `Violence: ${kami.stats.violence * 1}`,
-          `$KAMI: ${calcOutput(kami)} (+${harvestRate.toFixed(1)}/hr)`,
         ];
 
         return (
@@ -361,7 +401,7 @@ export function registerNodeModal() {
             key={kami.id}
             title={kami.name}
             image={kami.uri}
-            subtext={'yours'}
+            subtext={`yours (\$${output})`}
             action={StopButton(kami)}
             cornerContent={<BatteryComponent level={healthPercent} />}
             description={description}
@@ -370,25 +410,25 @@ export function registerNodeModal() {
       };
 
       // rendering of enemy kami on this node
-      const EnemyKard = (enemyKami: Kami, myKamis: Kami[]) => {
-        const health = calcHealth(enemyKami, 0);
-        const harvestRate = roundTo(calcProductionRate(enemyKami) * 3600, 1);
-        const healthPercent = Math.round((health / enemyKami.stats.health) * 100);
+      const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
+        const health = calcHealth(kami, 0);
+        const healthPercent = Math.round((health / kami.stats.health) * 100);
+        const output = calcOutput(kami);
 
         const description = [
           '',
-          `Health: ${health}/${enemyKami.stats.health * 1}`, // multiply by 1 to interpret hex
-          `Harmony: ${enemyKami.stats.harmony * 1}`,
-          `$KAMI: ${calcOutput(enemyKami)} (+${harvestRate.toFixed(1)}/hr)`,
+          `Health: ${health}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
+          `Harmony: ${kami.stats.harmony * 1}`,
+          `Violence: ${kami.stats.violence * 1}`,
         ];
 
         return (
           <KamiCard
-            key={enemyKami.id}
-            title={enemyKami.name}
-            image={enemyKami.uri}
-            subtext={enemyKami.account!.name}
-            action={LiquidateButton(myKamis, enemyKami)}
+            key={kami.id}
+            title={kami.name}
+            image={kami.uri}
+            subtext={`${kami.account!.name} (\$${output})`}
+            action={LiquidateButton(myKamis, kami)}
             cornerContent={<BatteryComponent level={healthPercent} />}
             description={description}
           />
@@ -408,16 +448,15 @@ export function registerNodeModal() {
       if (data.node.id) {
         return (
           <ModalWrapperFull id='node' divName='node' fill={true}>
-            {<NodeInfo node={data.node} />}
+            <NodeInfo node={data.node} />
+            {MyTabButton()}
+            {EnemyTabButton()}
             <Scrollable>
               <WrappedKamis>
-                {MyKards(data.node.kamis.mine)}
-              </WrappedKamis>
-            </Scrollable>
-            <Underline />
-            <Scrollable>
-              <WrappedKamis>
-                {EnemyKards(data.node.kamis.others, data.node.kamis.mine)}
+                {(tab === 'mine')
+                  ? MyKards(data.node.kamis.mine)
+                  : EnemyKards(data.node.kamis.others, data.node.kamis.mine)
+                }
               </WrappedKamis>
             </Scrollable>
           </ModalWrapperFull>
