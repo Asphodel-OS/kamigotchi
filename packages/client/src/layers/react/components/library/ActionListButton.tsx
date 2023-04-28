@@ -35,9 +35,20 @@ export function ActionListButton(props: Props) {
     setIsOpen(!isOpen);
   };
 
+  const setStyles = () => {
+    var styles: any = {};
+    if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    return styles;
+  };
+
   return (
     <Container>
-      <Toggle ref={toggleRef} id={props.id} onClick={!props.disabled ? toggleMenu : () => {}}>
+      <Toggle
+        ref={toggleRef}
+        id={props.id}
+        onClick={!props.disabled ? toggleMenu : () => { }}
+        style={setStyles()}
+      >
         {props.text + ' ▾'}
       </Toggle>
 
@@ -81,7 +92,7 @@ const Toggle = styled.button`
     background-color: #e8e8e8;
   }
   &:active {
-    background-color: #c2c2c2;
+    background-color: #c4c4c4;
   }
 `;
 
@@ -113,6 +124,6 @@ const Item = styled.div`
     background-color: #e8e8e8;
   }
   &:active {
-    background-color: #c2c2c2;
+    background-color: #c4c4c4;
   }
 `;

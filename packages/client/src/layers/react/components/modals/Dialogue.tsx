@@ -112,7 +112,7 @@ const TopButton = styled.button`
   font-family: Pixel;
   width: 30px;
   &:active {
-    background-color: #c2c2c2;
+    background-color: #c4c4c4;
   }
   margin: 0px;
 `;

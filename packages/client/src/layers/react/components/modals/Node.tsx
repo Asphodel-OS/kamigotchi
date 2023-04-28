@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
@@ -12,6 +12,10 @@ import {
 
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import {
+  ActionListButton,
+  Option as ActionListOption,
+} from 'layers/react/components/library/ActionListButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
@@ -83,16 +87,19 @@ export function registerNodeModal() {
               }),
             ])
           )[0];
-
           const account =
             accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
 
           // get the node through the location of the linked account
-          const nodeIndex = Array.from(
-            runQuery([Has(IsNode), HasValue(Location, { value: account.location })])
+          const nodeEntityIndex = Array.from(
+            runQuery([
+              Has(IsNode),
+              HasValue(Location, {
+                value: account.location
+              }),
+            ])
           )[0];
-
-          const node = nodeIndex !== undefined ? getNode(layers, nodeIndex) : ({} as Node);
+          const node = nodeEntityIndex !== undefined ? getNode(layers, nodeEntityIndex) : ({} as Node);
 
           // get the selected Node
 
@@ -173,7 +180,10 @@ export function registerNodeModal() {
     // Render
     ({ actions, api, data }) => {
       // console.log('data', data);
+      const scrollableRef = useRef<HTMLDivElement>(null);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
+      const [scrollPosition, setScrollPosition] = useState<number>(0);
+
       /////////////////
       // TICKING
 
@@ -316,19 +326,25 @@ export function registerNodeModal() {
       );
 
       // liquidate production action button
-      // TODO: update this to check if myKami is not empty. disable button if so
-      const LiquidateButton = (myKami: Kami, enemyKami: Kami) => (
-        <ActionButton
-          id={`harvest-liquidate`}
-          onClick={() => liquidate(myKami, enemyKami)}
-          text='liquidate (1)'
-        />
-      );
+      const LiquidateButton = (soldiers: Kami[], target: Kami) => {
+        const options: ActionListOption[] = soldiers.map((myKami) => {
+          return { text: `${myKami.name}`, onClick: () => liquidate(myKami, target) }
+        });
+
+        return (
+          <ActionListButton
+            id={`liquidate-button-${target.index}`}
+            text='Liquidate'
+            hidden={true}
+            scrollPosition={scrollPosition}
+            options={options}
+            disabled={soldiers.length == 0}
+          />
+        );
+      };
 
       // rendering of my kami on this node
-      // NOTE: the smart contract does not currently gate multiple kamis being
-      // on the same node. The above data population just grabs the first one.
-      const MyKamiCard = (kami: Kami) => {
+      const MyKard = (kami: Kami) => {
         const health = calcHealth(kami, 0);
         const harvestRate = roundTo(calcProductionRate(kami) * 3600, 1);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
@@ -353,8 +369,8 @@ export function registerNodeModal() {
         );
       };
 
-      // rendering of enemy kami (production) on this node
-      const EnemyKamiCard = (enemyKami: Kami, myKami: Kami) => {
+      // rendering of enemy kami on this node
+      const EnemyKard = (enemyKami: Kami, myKamis: Kami[]) => {
         const health = calcHealth(enemyKami, 0);
         const harvestRate = roundTo(calcProductionRate(enemyKami) * 3600, 1);
         const healthPercent = Math.round((health / enemyKami.stats.health) * 100);
@@ -372,17 +388,21 @@ export function registerNodeModal() {
             title={enemyKami.name}
             image={enemyKami.uri}
             subtext={enemyKami.account!.name}
-            action={LiquidateButton(myKami, enemyKami)}
+            action={LiquidateButton(myKamis, enemyKami)}
             cornerContent={<BatteryComponent level={healthPercent} />}
             description={description}
           />
         );
       };
 
-      // the rendering of all the enemy kamis on this node
-      // may be easier/better to pass in the list of Productions instead
-      const EnemyProductions = (kamis: Kami[], myKami: Kami) => {
-        return kamis.map((kami: Kami) => EnemyKamiCard(kami, myKami));
+      // the rendering of all my kamis on this node
+      const MyKards = (myKamis: Kami[]) => {
+        return myKamis.map((kami: Kami) => MyKard(kami));
+      };
+
+      // the rendering of all enemy kamis on this node
+      const EnemyKards = (enemies: Kami[], myKamis: Kami[]) => {
+        return enemies.map((enemyKami: Kami) => EnemyKard(enemyKami, myKamis));
       };
 
       if (data.node.id) {
@@ -391,13 +411,13 @@ export function registerNodeModal() {
             {<NodeInfo node={data.node} />}
             <Scrollable>
               <WrappedKamis>
-                {data.node.kamis.mine.map((kami: Kami) => MyKamiCard(kami))}
+                {MyKards(data.node.kamis.mine)}
               </WrappedKamis>
             </Scrollable>
             <Underline />
             <Scrollable>
               <WrappedKamis>
-                {EnemyProductions(data.node.kamis.others, data.account.kamis[0])}
+                {EnemyKards(data.node.kamis.others, data.node.kamis.mine)}
               </WrappedKamis>
             </Scrollable>
           </ModalWrapperFull>

@@ -49,6 +49,6 @@ const Button = styled.button`
   pointer-events: auto;
 
   &:active {
-    background-color: #c2c2c2;
+    background-color: #c4c4c4;
   }
 `;

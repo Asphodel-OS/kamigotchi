@@ -43,7 +43,7 @@ export const ActionButton = (props: Props) => {
       styles.padding = '16px 32px';
     }
 
-    if (props.disabled) styles.backgroundColor = '#a0a0a0';
+    if (props.disabled) styles.backgroundColor = '#b2b2b2';
     return styles;
   };
 
@@ -79,6 +79,6 @@ const Button = styled.button`
     background-color: #e8e8e8;
   }
   &:active {
-    background-color: #c2c2c2;
+    background-color: #c4c4c4;
   }
 `;

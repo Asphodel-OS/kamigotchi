@@ -71,6 +71,6 @@ const Button = styled.button`
   font-family: Pixel;
 
   &:active {
-    background-color: #c2c2c2;
+    background-color: #c4c4c4;
   }
 `;
