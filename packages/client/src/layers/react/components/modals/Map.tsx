@@ -11,6 +11,7 @@ import { dataStore } from 'layers/react/store/createStore';
 import { gridRooms } from '../../../../constants';
 import { Map } from '../library/Map';
 import { BatteryComponent } from '../library/Battery';
+import MapGrid from '../library/MapGrid';
 
 const objectKeys = Object.keys(gridRooms);
 
@@ -153,7 +154,8 @@ export function registerMapModal() {
 
       return (
         <ModalWrapperFull id='world_map' divName='map'>
-          <Map highlightedRoom={`room${data.currentRoom}`} />
+          {/* <Map highlightedRoom={`room${data.currentRoom}`} /> */}
+          <MapGrid />
           {data.stamina && <BatteryComponent level={operatorStaminaPercentage} />}
           <ButtonWrapper style={{ marginRight: '8.3%' }}>{UpButton}</ButtonWrapper>
           <ButtonWrapper>
