@@ -9,7 +9,6 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { gridRooms } from '../../../../constants';
-import { Map } from '../library/Map';
 import { BatteryComponent } from '../library/Battery';
 import MapGrid from '../library/MapGrid';
 
@@ -154,8 +153,7 @@ export function registerMapModal() {
 
       return (
         <ModalWrapperFull id='world_map' divName='map'>
-          {/* <Map highlightedRoom={`room${data.currentRoom}`} /> */}
-          <MapGrid />
+          <MapGrid highlightedRoom={data.currentRoom} />
           {data.stamina && <BatteryComponent level={operatorStaminaPercentage} />}
           <ButtonWrapper style={{ marginRight: '8.3%' }}>{UpButton}</ButtonWrapper>
           <ButtonWrapper>

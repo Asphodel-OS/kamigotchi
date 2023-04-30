@@ -18,19 +18,19 @@ import tmound from './tmound.png';
 import tmount from './tmount.png';
 import twaterfall from './twaterfall.png';
 
-import troom1 from './room markers/troom1.png';
-import troom2 from './room markers/troom2.png';
-import troom3 from './room markers/troom3.png';
-import troom4 from './room markers/troom4.png';
-import troom5 from './room markers/troom5.png';
-import troom6 from './room markers/troom6.png';
-import troom7 from './room markers/troom7.png';
-import troom8 from './room markers/troom8.png';
-import troom9 from './room markers/troom9.png';
-import troom10 from './room markers/troom10.png';
-import troom11 from './room markers/troom11.png';
-import troom12 from './room markers/troom12.png';
-import troom14 from './room markers/troom14.png';
+import troom1 from './room markers/troom_01.png';
+import troom2 from './room markers/troom_02.png';
+import troom3 from './room markers/troom_03.png';
+import troom4 from './room markers/troom_04.png';
+import troom5 from './room markers/troom_05.png';
+import troom6 from './room markers/troom_06.png';
+import troom7 from './room markers/troom_07.png';
+import troom8 from './room markers/troom_08.png';
+import troom9 from './room markers/troom_09.png';
+import troom10 from './room markers/troom_10.png';
+import troom11 from './room markers/troom_11.png';
+import troom12 from './room markers/troom_12.png';
+import troom14 from './room markers/troom_14.png';
 import tshop from './room markers/tshop.png';
 
 export {

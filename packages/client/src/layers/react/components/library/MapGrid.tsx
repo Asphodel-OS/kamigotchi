@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {
-  path_3way1,
   path_corner1,
   path_corner2,
   path_corner3,
@@ -36,6 +35,10 @@ import {
   troom14,
   tshop,
 } from '../../../../assets/map';
+
+interface MapProps {
+  highlightedRoom?: number;
+}
 
 // 17 x 9
 const GRID_MAP = [
@@ -221,10 +224,28 @@ const GRID_MAP = [
   ],
 ];
 
-const Tile = ({ img }) => {
-  if (img === null)
-    return <div style={{ width: '100%', height: '100%', backgroundColor: 'green' }} />;
-  return <img src={img} alt='' style={{ width: '100%', height: '100%' }} />;
+const room = [
+  'troom_01',
+  'troom_02',
+  'troom_03',
+  'troom_04',
+  'troom_05',
+  'troom_06',
+  'troom_07',
+  'troom_08',
+  'troom_09',
+  'troom_10',
+  'troom_11',
+  'troom_12',
+  'tshop',
+  'troom_14',
+];
+
+const Tile = ({ img, highlightedRoom }) => {
+  const highlight =
+    img && img.includes(room[highlightedRoom - 1]) ? { border: '1px solid red' } : {};
+  if (!img) return <div style={{ width: '100%', height: '100%', backgroundColor: 'green' }} />;
+  return <img src={img} alt='' style={{ width: '100%', height: '100%', ...highlight }} />;
 };
 
 const GridContainer = styled.div`
@@ -238,17 +259,14 @@ const GridTile = styled.div`
   position: relative;
 `;
 
-const MapGrid = () => {
+const MapGrid = ({ highlightedRoom }: MapProps) => {
   return (
     <GridContainer>
       {GRID_MAP.map((row, rowIndex) => (
         <React.Fragment key={rowIndex}>
           {row.map((tile, colIndex) => (
             <GridTile key={colIndex}>
-              <Tile img={tile} />
-              {/* {Array.isArray(tile) && (
-                <Tile img={tile[1]} style={{ position: 'absolute', top: 0, left: 0 }} />
-              )} */}
+              <Tile img={tile} highlightedRoom={highlightedRoom} />
             </GridTile>
           ))}
         </React.Fragment>
