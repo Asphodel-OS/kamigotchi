@@ -48,7 +48,7 @@ export function registerChatModal() {
         return getComponentValue(Name, index)?.value as string;
       };
 
-      return merge(IsAccount.update$, Name.update$).pipe(
+      return merge(IsAccount.update$).pipe(
         map(() => {
           const accountIndex = Array.from(
             runQuery([
@@ -72,7 +72,12 @@ export function registerChatModal() {
       const [messages, setMessages] = useState<ChatMessage[]>([]);
       const [chatInput, setChatInput] = useState('');
 
-      const relay: mqtt.MqttClient = mqtt.connect(mqttServerUrl);
+      const options = {
+        connectTimeout: 300000,
+        reconnectPeriod: 10000,
+      }
+
+      const relay: mqtt.MqttClient = mqtt.connect(mqttServerUrl, options);
 
       useEffect(() => {
         const botElement = document.getElementById('botElement');
