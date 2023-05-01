@@ -81,6 +81,7 @@ export type { ProductionStartSystem } from "./ProductionStartSystem";
 export type { ProductionStopSystem } from "./ProductionStopSystem";
 export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
+export type { RevealBlockComponent } from "./RevealBlockComponent";
 export type { SlotsComponent } from "./SlotsComponent";
 export type { StaminaComponent } from "./StaminaComponent";
 export type { StaminaCurrentComponent } from "./StaminaCurrentComponent";
@@ -197,6 +198,7 @@ export { ProductionStartSystem__factory } from "./factories/ProductionStartSyste
 export { ProductionStopSystem__factory } from "./factories/ProductionStopSystem__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";
+export { RevealBlockComponent__factory } from "./factories/RevealBlockComponent__factory";
 export { SlotsComponent__factory } from "./factories/SlotsComponent__factory";
 export { StaminaComponent__factory } from "./factories/StaminaComponent__factory";
 export { StaminaCurrentComponent__factory } from "./factories/StaminaCurrentComponent__factory";

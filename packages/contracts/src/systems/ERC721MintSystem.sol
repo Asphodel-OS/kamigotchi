@@ -9,13 +9,14 @@ import { BalanceComponent, ID as BalanceCompID } from "components/BalanceCompone
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibRandom } from "libraries/LibRandom.sol";
 
 import { KamiERC721 } from "tokens/KamiERC721.sol";
 import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.Mint"));
 
-// unrevealed URI is set as the placeholder. actual random implementation unimplemented for demo, no proper vrf on localhost
+// unrevealed URI is set as the placeholder
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
 
 contract ERC721MintSystem is System {
@@ -31,8 +32,9 @@ contract ERC721MintSystem is System {
       accountID = LibAccount.create(world, components, to, to);
     }
 
-    // TODO: set stats based on the generated traits of the pet.
+    // Create the pet, commit random
     uint256 petID = LibPet.create(world, components, to, accountID, nextMint, UNREVEALED_URI);
+    LibRandom.setRevealBlock(components, petID, block.number);
 
     KamiERC721 token = ERC721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.mint(to, nextMint);

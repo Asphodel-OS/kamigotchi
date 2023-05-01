@@ -70,8 +70,7 @@ export function setUpWorldAPI(systems: any) {
 
     // init max elements and set revealed
     // ORDER: color, background, body, hand, face
-    systems['system.ERC721.metadata']._setRevealed(
-      '123', // salt! should be random
+    systems['system.ERC721.metadata']._setBaseURI(
       'https://kami-image.asphodel.io/image/'
     );
   }

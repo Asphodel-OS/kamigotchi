@@ -58,6 +58,7 @@ contract ERC721PetTest is SetupTemplate {
     // minting
     vm.startPrank(alice);
     uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(alice), (uint256));
+    vm.roll(block.number + 1);
     _assertPetState(petID, "UNREVEALED");
 
     // revealing

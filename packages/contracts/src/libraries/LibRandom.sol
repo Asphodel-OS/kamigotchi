@@ -1,12 +1,42 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { RevealBlockComponent as RevealBlockComp, ID as RevealBlockCompID } from "components/RevealBlockComponent.sol";
+
 library LibRandom {
+  //////////////////
+  // SEED GEN
+
+  // gets seed from future blockhash. blockhash needs to be revealed within 256 blocks
+  function getSeedBlockhash(uint256 blocknumber) internal view returns (uint256 result) {
+    // require(block.number - blocknumber <= 256, "LibRandom: blockhash too old");
+    result = uint256(blockhash(blocknumber));
+    require(result != 0, "LibRandom: blockhash not available");
+  }
+
+  //////////////////
+  // SETTERS
+
+  function setRevealBlock(IUintComp components, uint256 id, uint256 revealBlock) internal {
+    RevealBlockComp(getAddressById(components, RevealBlockCompID)).set(id, revealBlock);
+  }
+
+  function removeRevealBlock(IUintComp components, uint256 id) internal {
+    RevealBlockComp(getAddressById(components, RevealBlockCompID)).remove(id);
+  }
+
+  /////////////////
+  // GETTERS
+
+  function getRevealBlock(IUintComp components, uint256 id) internal view returns (uint256) {
+    return RevealBlockComp(getAddressById(components, RevealBlockCompID)).getValue(id);
+  }
+
   //////////////////
   // WEIGHTED
 

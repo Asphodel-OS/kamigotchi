@@ -35,6 +35,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _mintSinglePet(address addy) internal virtual returns (uint256 entityID) {
     vm.startPrank(addy, addy);
     entityID = abi.decode(_ERC721MintSystem.executeTyped(addy), (uint256));
+    vm.roll(block.number + 1);
     _ERC721MetadataSystem.executeTyped(LibPet.idToIndex(components, entityID));
     vm.stopPrank();
   }
@@ -60,7 +61,7 @@ abstract contract SetupTemplate is TestSetupImports {
    ************************/
   function _initMetadata() internal {
     vm.startPrank(deployer);
-    _ERC721MetadataSystem._setRevealed(123, "baseURI.com/");
+    _ERC721MetadataSystem._setBaseURI("baseURI.com/");
     vm.stopPrank();
   }
 

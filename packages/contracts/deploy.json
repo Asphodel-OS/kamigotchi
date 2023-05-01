@@ -62,6 +62,7 @@
     "PrototypeComponent",
     "RarityComponent",
     "RateComponent",
+    "RevealBlockComponent",
     "SlotsComponent",
     "StaminaComponent",
     "StaminaCurrentComponent",
