@@ -119,6 +119,12 @@ export function createAdminAPI(systems: any) {
     return systems['system._devGiveTokens'].executeTyped(amount);
   }
 
+  // @dev admin reveal for pet if blockhash has lapsed. only called by admin
+  // @param tokenId     ERC721 tokenId of the pet
+  function petForceReveal(tokenId: number) {
+    return systems['system.ERC721.metadata'].forceReveal(tokenId);
+  }
+
   // @dev sets the prices for the merchant at the specified location
   // @param name        name of the merchant
   // @param itemIndex   index of item to list
@@ -290,6 +296,7 @@ export function createAdminAPI(systems: any) {
   return {
     init,
     giveCoins,
+    ERC721: { forceReveal: petForceReveal },
     listing: { set: setListing },
     merchant: { create: createMerchant },
     node: {
