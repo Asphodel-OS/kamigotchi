@@ -32,18 +32,17 @@ contract ERC721MetadataSystem is System {
   // sets metadata with a random seed
   // second phase of commit/reveal scheme. pet owners call directly
   function execute(bytes memory arguments) public returns (bytes memory) {
-    // checks
-    require(_revealed, "collection not yet revealed");
+    // require(_revealed, "collection not yet revealed");
     uint256 petIndex = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.indexToID(components, petIndex);
 
+    // checks
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-
-    MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
-
-    // require(LibString.eq(mediaComp.getValue(petID), UNREVEALED_URI), "already revealed!");
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
+
+    // get commit reveal seed
+    // TODO
 
     // generates array of traits with weighted random
     uint256[] memory traits = new uint256[](_numElements);
@@ -56,7 +55,7 @@ contract ERC721MetadataSystem is System {
       traits[4] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, petID, "Color")))
+        uint256(keccak256(abi.encode(seed, petID, "Color")))
       );
     }
     {
@@ -67,7 +66,7 @@ contract ERC721MetadataSystem is System {
       traits[3] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, petID, "Background")))
+        uint256(keccak256(abi.encode(seed, petID, "Background")))
       );
     }
     {
@@ -78,7 +77,7 @@ contract ERC721MetadataSystem is System {
       traits[2] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, petID, "Body")))
+        uint256(keccak256(abi.encode(seed, petID, "Body")))
       );
     }
     {
@@ -89,7 +88,7 @@ contract ERC721MetadataSystem is System {
       traits[1] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, petID, "Hand")))
+        uint256(keccak256(abi.encode(seed, petID, "Hand")))
       );
     }
     {
@@ -100,7 +99,7 @@ contract ERC721MetadataSystem is System {
       traits[0] = LibRandom.selectFromWeighted(
         keys,
         weights,
-        uint256(keccak256(abi.encode(_seed, petID, "Face")))
+        uint256(keccak256(abi.encode(seed, petID, "Face")))
       );
     }
 

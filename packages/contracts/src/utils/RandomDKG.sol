@@ -50,17 +50,9 @@ Epoches:
 Upgradability: 
   - Contract itself is not ownable or upgradable
   - Uses the ProxyDeploy pattern via MUD, abla to upgrade through that
-
-NOTE: 
-  - we've decided to shorten epoches to 60 seconds and sacrifice pledging.
-  - this reduces random security, but it is a trade-off gameplay UX wise
-  - sufficiently adversarially random, very little payoff
-  - it would be possible to re-include the pledges for VRGDA mints (or when needed), depeending on KamiDAO
-  - pledges is still kept in the contract, but not used. grace period is shortened to 1 block. 
-    if someone insane enough wants to pledge, they can. will have no FE interface
 */
-uint256 constant REVEAL_GRACE_PERIOD = 6 seconds; // 1 block on canto. shortened because not in use
-uint256 constant EPOCH_LENGTH = 1 minutes;
+uint256 constant REVEAL_GRACE_PERIOD = 30 seconds; // 5 blocks on canto
+uint256 constant EPOCH_LENGTH = 30 seconds; // total epoch cycle: 1 min
 uint256 constant PLEDGE_VALUE = 100 ether; // 100 CANTO
 
 contract RandomDKG {
@@ -73,6 +65,8 @@ contract RandomDKG {
 
   // pledge commits
   mapping(uint256 => mapping(address => bytes32)) public pledgeCommits;
+  // unclaimed pledge commits. used for accounting when calling admin withdraw
+  mapping(uint256 => uint256) public unclaimedPledges;
 
   modifier onlySystem() {
     require(
@@ -95,6 +89,7 @@ contract RandomDKG {
   function contributePledgeHash(bytes32 entropyHash) external payable {
     require(msg.value == PLEDGE_VALUE, "wrong pledge amount");
     pledgeCommits[getCurrEpoch()][msg.sender] = entropyHash;
+    unclaimedPledges[getCurrEpoch()]++;
   }
 
   function revealPledge(bytes32 entropy) external {
@@ -109,11 +104,25 @@ contract RandomDKG {
     );
 
     pledgeCommits[getCurrPledgeEpoch()][msg.sender] = bytes32(0);
+    unclaimedPledges[getCurrPledgeEpoch()]--;
     payable(msg.sender).transfer(PLEDGE_VALUE);
+  }
+
+  // withdraws to contract owner (owner of the proxy component)
+  function adminWithdraw() external {
+    require(
+      PermissionsComp(getAddressById(components, PermissionsCompID)).owner() == msg.sender,
+      "DKG: not owner"
+    );
+    payable(msg.sender).transfer(address(this).balance);
   }
 
   ////////////////////
   // GETTERS
+
+  function isEpochReady(uint256 epoch) public view returns (bool) {
+    return epoch < getCurrPledgeEpoch();
+  }
 
   function getEpochSeed(uint256 epoch) public view returns (bytes32) {
     bytes32 result = seedPerEpoch[epoch];
@@ -122,12 +131,14 @@ contract RandomDKG {
     return result;
   }
 
+  // epoches start at 1; they are never 0
   function getCurrEpoch() public view returns (uint256) {
-    return (block.timestamp - DEPLOY_TIME) / EPOCH_LENGTH;
+    return 1 + (block.timestamp - DEPLOY_TIME) / EPOCH_LENGTH;
   }
 
+  // epoches start at 1; they are never 0
   function getCurrPledgeEpoch() public view returns (uint256) {
-    return (block.timestamp - REVEAL_GRACE_PERIOD - DEPLOY_TIME) / EPOCH_LENGTH;
+    return 1 + (block.timestamp - REVEAL_GRACE_PERIOD - DEPLOY_TIME) / EPOCH_LENGTH;
   }
 
   ///////////////////

@@ -83,6 +83,7 @@ export type { ProxyDKGPermissionsComponent } from "./ProxyDKGPermissionsComponen
 export type { RandomDKGProxySystem } from "./RandomDKGProxySystem";
 export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
+export type { RevealEpochComponent } from "./RevealEpochComponent";
 export type { SlotsComponent } from "./SlotsComponent";
 export type { StaminaComponent } from "./StaminaComponent";
 export type { StaminaCurrentComponent } from "./StaminaCurrentComponent";
@@ -201,6 +202,7 @@ export { ProxyDKGPermissionsComponent__factory } from "./factories/ProxyDKGPermi
 export { RandomDKGProxySystem__factory } from "./factories/RandomDKGProxySystem__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";
+export { RevealEpochComponent__factory } from "./factories/RevealEpochComponent__factory";
 export { SlotsComponent__factory } from "./factories/SlotsComponent__factory";
 export { StaminaComponent__factory } from "./factories/StaminaComponent__factory";
 export { StaminaCurrentComponent__factory } from "./factories/StaminaCurrentComponent__factory";

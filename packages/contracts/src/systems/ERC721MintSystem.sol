@@ -32,12 +32,17 @@ contract ERC721MintSystem is System {
       accountID = LibAccount.create(world, components, to, to);
     }
 
-    // TODO: set stats based on the generated traits of the pet.
+    // Create pet in MUD
     uint256 petID = LibPet.create(world, components, to, accountID, nextMint, UNREVEALED_URI);
 
+    // Mint ERC721
     KamiERC721 token = ERC721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.mint(to, nextMint);
+
+    // Commit and seed randomness
     LibRandom.seedEntropy(world);
+    LibRandom.setEntityRevealEpoch(world, components, petID);
+
     return abi.encode(petID);
   }
 

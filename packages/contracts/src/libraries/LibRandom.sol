@@ -6,6 +6,7 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { RevealEpochComponent as RevealEpochComp, ID as RevealEpochCompID } from "components/RevealEpochComponent.sol";
 import { RandomDKGProxySystem, ID as ProxyID } from "systems/RandomDKGProxySystem.sol";
 import { RandomDKG } from "utils/RandomDKG.sol";
 
@@ -18,6 +19,50 @@ library LibRandom {
   function seedEntropy(IWorld world) internal {
     RandomDKG dkg = RandomDKGProxySystem(getAddressById(world.systems(), ProxyID)).getContract();
     dkg.contributePublic(blockhash(block.number - 1));
+  }
+
+  //////////////////
+  // GETTERS
+  function getCurrEpoch(IWorld world) internal view returns (uint256) {
+    RandomDKG dkg = RandomDKGProxySystem(getAddressById(world.systems(), ProxyID)).getContract();
+    return dkg.getCurrEpoch();
+  }
+
+  function getNextEpoch(IWorld world) internal view returns (uint256) {
+    RandomDKG dkg = RandomDKGProxySystem(getAddressById(world.systems(), ProxyID)).getContract();
+    return dkg.getCurrEpoch() + 1;
+  }
+
+  function getEpochSeed(IWorld world, uint256 epoch) internal view returns (uint256) {
+    RandomDKG dkg = RandomDKGProxySystem(getAddressById(world.systems(), ProxyID)).getContract();
+    return uint256(dkg.getEpochSeed(epoch));
+  }
+
+  function getRevealedSeed(
+    IWorld world,
+    IUintComp components,
+    uint256 entityID
+  ) internal view returns (uint256) {
+    return getEpochSeed(world, getRevealEpoch(components, entityID));
+  }
+
+  function getRevealEpoch(IUintComp components, uint256 entityID) internal view returns (uint256) {
+    return RevealEpochComp(getAddressById(components, RevealEpochCompID)).getValue(entityID);
+  }
+
+  //////////////////
+  // SETTERS
+
+  function setEntityRevealEpoch(IWorld world, IUintComp components, uint256 entityID) internal {
+    setRevealEpoch(components, entityID, getCurrEpoch(world));
+  }
+
+  function setRevealEpoch(IUintComp components, uint256 entityID, uint256 value) internal {
+    RevealEpochComp(getAddressById(components, RevealEpochCompID)).set(entityID, value);
+  }
+
+  function removeRevealEpoch(IUintComp components, uint256 entityID) internal {
+    RevealEpochComp(getAddressById(components, RevealEpochCompID)).remove(entityID);
   }
 
   //////////////////

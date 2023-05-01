@@ -23,8 +23,8 @@ contract ERC20Test is SetupTemplate {
 
     // expect EPOCH = 0
     vm.warp(START_TIME + REVEAL_GRACE_PERIOD + 1);
-    assertEq(_dkg.getCurrEpoch(), 0);
-    assertEq(_dkg.getCurrPledgeEpoch(), 0);
+    assertEq(_dkg.getCurrEpoch(), 1);
+    assertEq(_dkg.getCurrPledgeEpoch(), 1);
 
     // pledge at epoch 0
     address pledger = address(123);
@@ -41,8 +41,8 @@ contract ERC20Test is SetupTemplate {
 
     // change time, reveal pledge, assert refund
     vm.warp(START_TIME + EPOCH_LENGTH + REVEAL_GRACE_PERIOD - 1);
-    assertEq(_dkg.getCurrEpoch(), 1);
-    assertEq(_dkg.getCurrPledgeEpoch(), 0);
+    assertEq(_dkg.getCurrEpoch(), 2);
+    assertEq(_dkg.getCurrPledgeEpoch(), 1);
     _dkg.revealPledge(bytes32(expPledge));
     assertEq(pledger.balance, PLEDGE_VALUE + 1);
   }
