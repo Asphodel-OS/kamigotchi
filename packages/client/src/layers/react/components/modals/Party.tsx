@@ -451,15 +451,6 @@ export function registerPartyModal() {
         });
       };
 
-      // we're able to force the production attribute as we will only show this
-      // button if the kami is harvesting
-      const CollectButton = (kami: Kami) => (
-        <ActionButton
-          id={`harvest-collect`}
-          onClick={() => reapProduction(kami.production!.id)}
-          text='Collect'
-        />
-      );
 
       const FeedButton = (kami: Kami) => {
         const feedOptions: ActionListOption[] = [
@@ -479,47 +470,24 @@ export function registerPartyModal() {
         );
       };
 
-      const StartButton = (kami: Kami) => (
-        <ActionButton id={`harvest-start`} onClick={() => startProduction(kami.id)} text='Start' />
-      );
 
-      // we're able to force the production attribute as we will only show this
-      // button if the kami is harvesting
-      const StopButton = (kami: Kami) => (
-        <ActionButton
-          id={`harvest-stop`}
-          onClick={() => stopProduction(kami.production!.id)}
-          text='Stop'
-        />
+      const InfoButton = (kami: Kami) => (
+        <ActionButton id={`info-button`} onClick={() => openKamiModal(kami.entityIndex)} text='i' />
       );
 
       const RevealButton = (kami: Kami) => (
         <ActionButton id={`reveal-kami`} onClick={() => revealPet(kami)} text='Reveal' />
       );
 
-      const InfoButton = (kami: Kami) => (
-        <ActionButton id={`info-button`} onClick={() => openKamiModal(kami.entityIndex)} text='i' />
+      const ReviveButton = (kami: Kami) => (
+        <ActionButton id={`revive-kami`} onClick={() => null} text='Revive' disabled={true} />
       );
+
 
       const selectAction = (kami: Kami) => {
         if (!isRevealed(kami)) return RevealButton(kami);
-
-        if (isHarvesting(kami)) return CollectButton(kami);
-        else return StartButton(kami);
-      };
-
-      // corner content, usually Food
-      const selectCornerContent = (kami: Kami) => {
-        if (isRevealed(kami)) return FeedButton(kami);
-        else
-          return (
-            <ActionListButton
-              id={`feed-button-${kami.index}`}
-              text='Feed'
-              // scrollPosition={scrollPosition}
-              options={[]}
-            />
-          );
+        if (isResting(kami) || isHarvesting(kami)) return FeedButton(kami);
+        if (isDead(kami)) return ReviveButton(kami);
       };
 
       const selectInfo = (kami: Kami) => {
@@ -539,7 +507,6 @@ export function registerPartyModal() {
               image={kami.uri}
               subtext={`${calcOutput(kami)} $KAMI`}
               action={action}
-              cornerContent={selectCornerContent(kami)}
               info={selectInfo(kami)}
               description={description}
             />
