@@ -210,7 +210,7 @@ export function registerPartyModal() {
       useEffect(() => {
         const refreshClock = () => {
           setLastRefresh(Date.now());
-        }
+        };
         const timerId = setInterval(refreshClock, 3000);
         return function cleanup() {
           clearInterval(timerId);
@@ -324,13 +324,12 @@ export function registerPartyModal() {
 
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami): boolean => {
-        return kami.state === 'DEAD'
+        return kami.state === 'DEAD';
       };
 
       // check whether the kami is harvesting
-      const isHarvesting = (kami: Kami): boolean => (
-        kami.state === 'HARVESTING' && kami.production != undefined
-      );
+      const isHarvesting = (kami: Kami): boolean =>
+        kami.state === 'HARVESTING' && kami.production != undefined;
 
       // check whether the kami is resting
       const isResting = (kami: Kami): boolean => {
@@ -394,7 +393,7 @@ export function registerPartyModal() {
         });
       };
 
-      const FeedButton = (kami: Kami) => {
+      const FeedButton = (kami: Kami, disabled: boolean) => {
         const feedOptions: ActionListOption[] = [
           { text: 'Maple-Flavor Ghost Gum', onClick: () => feedKami(kami.id, 1) },
           { text: 'Pom-Pom Fruit Candy', onClick: () => feedKami(kami.id, 2) },
@@ -406,6 +405,7 @@ export function registerPartyModal() {
             id={`feedKami-button-${kami.index}`}
             text='Feed'
             hidden={true}
+            disabled={disabled}
             scrollPosition={scrollPosition}
             options={feedOptions}
           />
@@ -421,10 +421,10 @@ export function registerPartyModal() {
       );
 
       // Choose and return the action button to display
-      const DisplayedAction = (kami: Kami) => {
+      const DisplayedAction = (kami: Kami, isDisabled: boolean) => {
         if (isUnrevealed(kami)) return RevealButton(kami);
-        if (isResting(kami)) return FeedButton(kami);
-        if (isHarvesting(kami) && calcHealth(kami) > 0) return FeedButton(kami);
+        if (isResting(kami)) return FeedButton(kami, isDisabled);
+        if (isHarvesting(kami) && calcHealth(kami) > 0) return FeedButton(kami, isDisabled);
         if (isHarvesting(kami) && calcHealth(kami) == 0) return ReviveButton(kami);
         if (isDead(kami)) return ReviveButton(kami);
       };
@@ -432,9 +432,10 @@ export function registerPartyModal() {
       // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
         return kamis.map((kami) => {
-          const action = DisplayedAction(kami);
+          const isDisabled = +calcHealth(kami).toFixed() == kami.stats.health * 1;
+          const action = DisplayedAction(kami, isDisabled);
           const description = getDescription(kami);
-          const healthString = (!isUnrevealed(kami))
+          const healthString = !isUnrevealed(kami)
             ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1})`
             : '';
 
@@ -457,9 +458,7 @@ export function registerPartyModal() {
       return (
         <ModalWrapperFull id='party_modal' divName='party' fill={true}>
           <TopGrid>
-            <TopDescription>
-              $KAMI: {data.account.coin ? data.account.coin * 1 : 0}
-            </TopDescription>
+            <TopDescription>$KAMI: {data.account.coin ? data.account.coin * 1 : 0}</TopDescription>
           </TopGrid>
           <ConsumableGrid>{ConsumableCells(data.account.inventories)}</ConsumableGrid>
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
