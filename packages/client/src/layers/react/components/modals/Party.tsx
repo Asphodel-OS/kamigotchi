@@ -324,22 +324,25 @@ export function registerPartyModal() {
 
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami): boolean => {
-        return kami.state === 'DEAD' || calcHealth(kami) == 0; // shoudl we include this check as well?
+        return kami.state === 'DEAD'
       };
 
-      // check whether the kami is currently harvesting
-      const isHarvesting = (kami: Kami): boolean => {
-        return kami.state === 'HARVESTING' && kami.production != undefined;
-      };
+      // check whether the kami is harvesting
+      const isHarvesting = (kami: Kami): boolean => (
+        kami.state === 'HARVESTING' && kami.production != undefined
+      );
 
+      // check whether the kami is resting
       const isResting = (kami: Kami): boolean => {
         return kami.state === 'RESTING';
       };
 
-      const isRevealed = (kami: Kami): boolean => {
-        return !(kami.state === 'UNREVEALED');
+      // check whether the kami is revealed
+      const isUnrevealed = (kami: Kami): boolean => {
+        return kami.state === 'UNREVEALED';
       };
 
+      // check whether the kami is captured by slave traders
       const isOffWorld = (kami: Kami): boolean => {
         return kami.state === '721_EXTERNAL';
       };
@@ -349,32 +352,27 @@ export function registerPartyModal() {
       const getDescription = (kami: Kami): string[] => {
         let description: string[] = [];
 
-        switch (kami.state) {
-          case '721_EXTERNAL':
-            description = ['kidnapped by slave traders'];
-            break;
-          case 'UNREVEALED':
-            description = ['unrevealed!'];
-            break;
-          case 'RESTING':
-            description = ['resting'];
-            break;
-          case 'HARVESTING':
-            if (kami.production) {
-              const harvestRate = calcProductionRate(kami) * 3600; //hourly
-              const drainRate = calcDrainRate(kami) * 3600; //hourly
-              description = [
-                `Harvesting on ${kami.production!.node!.name}`,
-                `+${harvestRate.toFixed(1)} $KAMI/hr`,
-                `-${drainRate.toFixed(1)} HP/hr`,
-              ];
-            }
-            break;
-          case 'DEAD':
-            description = [`Murdered by ???`];
-            break;
+        if (isOffWorld(kami)) {
+          description = ['kidnapped by slave traders'];
+        } else if (isUnrevealed(kami)) {
+          description = ['unrevealed!'];
+        } else if (isResting(kami)) {
+          description = ['resting'];
+        } else if (isDead(kami)) {
+          description = [`murdered by ???`];
+        } else if (isHarvesting(kami)) {
+          if (calcHealth(kami) == 0) {
+            description = [`died of dysentery`];
+          } else {
+            const harvestRate = calcProductionRate(kami) * 3600; //hourly
+            const drainRate = calcDrainRate(kami) * 3600; //hourly
+            description = [
+              `Harvesting on ${kami.production!.node!.name}`,
+              `+${harvestRate.toFixed(1)} $KAMI/hr`,
+              `-${drainRate.toFixed(1)} HP/hr`,
+            ];
+          }
         }
-
         return description;
       };
 
@@ -422,9 +420,12 @@ export function registerPartyModal() {
         <ActionButton id={`revive-kami`} onClick={() => null} text='Revive' disabled={true} />
       );
 
+      // Choose and return the action button to display
       const DisplayedAction = (kami: Kami) => {
-        if (!isRevealed(kami)) return RevealButton(kami);
-        if (isResting(kami) || isHarvesting(kami)) return FeedButton(kami);
+        if (isUnrevealed(kami)) return RevealButton(kami);
+        if (isResting(kami)) return FeedButton(kami);
+        if (isHarvesting(kami) && calcHealth(kami) > 0) return FeedButton(kami);
+        if (isHarvesting(kami) && calcHealth(kami) == 0) return ReviveButton(kami);
         if (isDead(kami)) return ReviveButton(kami);
       };
 
@@ -433,7 +434,7 @@ export function registerPartyModal() {
         return kamis.map((kami) => {
           const action = DisplayedAction(kami);
           const description = getDescription(kami);
-          const healthString = (isRevealed(kami))
+          const healthString = (!isUnrevealed(kami))
             ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1})`
             : '';
 
