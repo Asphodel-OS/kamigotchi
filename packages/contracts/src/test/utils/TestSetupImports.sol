@@ -11,6 +11,7 @@ import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 import { LibNode } from "libraries/LibNode.sol";
+import { LibMetadata } from "libraries/LibMetadata.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibPrototype } from "libraries/LibPrototype.sol";

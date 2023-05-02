@@ -384,6 +384,7 @@
     "LibMerchant",
     "LibTrait",
     "LibNode",
+    "LibMetadata",
     "LibPet",
     "LibProduction",
     "LibPrototype",

@@ -13,6 +13,7 @@ import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { LibMetadata } from "libraries/LibMetadata.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
 uint256 constant _numElements = 5;
@@ -65,80 +66,12 @@ contract ERC721MetadataSystem is System {
   // second phase of commit/reveal scheme. pet owners call directly
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
     // generates array of traits with weighted random
-    uint256[] memory traits = new uint256[](_numElements);
-    // scoping is used to save memory while execution
-    {
-      // color
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
-        components
-      );
-      traits[4] = LibRandom.selectFromWeighted(
-        keys,
-        weights,
-        uint256(keccak256(abi.encode(seed, petID, "Color")))
-      );
-    }
-    {
-      // background
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
-        components
-      );
-      traits[3] = LibRandom.selectFromWeighted(
-        keys,
-        weights,
-        uint256(keccak256(abi.encode(seed, petID, "Background")))
-      );
-    }
-    {
-      // body
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
-        components
-      );
-      traits[2] = LibRandom.selectFromWeighted(
-        keys,
-        weights,
-        uint256(keccak256(abi.encode(seed, petID, "Body")))
-      );
-    }
-    {
-      // hand
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
-        components
-      );
-      traits[1] = LibRandom.selectFromWeighted(
-        keys,
-        weights,
-        uint256(keccak256(abi.encode(seed, petID, "Hand")))
-      );
-    }
-    {
-      // face
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
-        components
-      );
-      traits[0] = LibRandom.selectFromWeighted(
-        keys,
-        weights,
-        uint256(keccak256(abi.encode(seed, petID, "Face")))
-      );
-    }
+    uint256[] memory traits = LibMetadata.genRandTraits(components, petID, seed);
 
-    // assigning initial traits from generated stats
-    LibTrait.assignColor(components, petID, traits[4]);
-    LibTrait.assignBackground(components, petID, traits[3]);
-    LibTrait.assignBody(components, petID, traits[2]);
-    LibTrait.assignHand(components, petID, traits[1]);
-    LibTrait.assignFace(components, petID, traits[0]);
-
-    // set media uri with the packed attributes key
-    uint256 packed = LibRandom.packArray(traits, 8);
-    MediaURIComponent mediaComp = MediaURIComponent(getAddressById(components, MediaURICompID));
-    mediaComp.set(
-      petID,
-      // LibString.concat(_baseURI, LibString.concat(LibString.toString(packed), ".gif"))
-      LibString.concat(_baseURI, LibString.toString(packed))
-    );
-
+    // setting metadata
+    LibMetadata.assignTraits(components, petID, traits);
+    uint256 packed = LibRandom.packArray(traits, 8); // uses packed array to generate image off-chain
+    LibPet.setMediaURI(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     LibPet.reveal(components, petID);
     return "";
   }
@@ -148,72 +81,7 @@ contract ERC721MetadataSystem is System {
    **********************/
 
   function tokenURI(uint256 petIndex) public view returns (string memory) {
-    uint256 petID = LibPet.indexToID(components, petIndex);
-    // return LibPet.getMediaURI(components, petID);
-    // return _getBaseTraits(petID);
-
-    return
-      string(
-        abi.encodePacked(
-          "{ \n",
-          '"external_url": "https://kamigotchi.io",\n',
-          '"name": "',
-          LibPet.getName(components, petID),
-          '",\n',
-          '"description": ',
-          '"a lil network spirit :3",\n',
-          '"attributes": [\n',
-          _getBaseTraits(petID),
-          _getHealth(petID),
-          "],\n",
-          '"image": "',
-          LibPet.getMediaURI(components, petID),
-          '"\n',
-          "}"
-        )
-      );
-  }
-
-  function _getHealth(uint256 petID) public view returns (string memory) {
-    return
-      string(
-        abi.encodePacked(
-          '{"trait_type": "',
-          "Battery Health",
-          '", "value": "',
-          LibString.toString(LibStat.getHealth(components, petID)),
-          '"},\n'
-        )
-      );
-  }
-
-  function _getBaseTraits(uint256 petID) public view returns (string memory) {
-    string memory result = "";
-
-    // getting values of base traits. values are hardcoded to array position
-    string[] memory comps = new string[](5);
-    comps[0] = "Body";
-    comps[1] = "Color";
-    comps[2] = "Face";
-    comps[3] = "Hand";
-    comps[4] = "Background";
-
-    string[] memory names = new string[](5);
-    names[0] = LibTrait.getBodyName(components, petID);
-    names[1] = LibTrait.getColorName(components, petID);
-    names[2] = LibTrait.getFaceName(components, petID);
-    names[3] = LibTrait.getHandName(components, petID);
-    names[4] = LibTrait.getBackgroundName(components, petID);
-
-    for (uint256 i; i < names.length; i++) {
-      string memory entry = string(
-        abi.encodePacked('{"trait_type": "', comps[i], '", "value": "', names[i], '"},\n')
-      );
-
-      result = string(abi.encodePacked(result, entry));
-    }
-
-    return result;
+    return LibMetadata.getJson(components, petIndex);
   }
 
   /*********************

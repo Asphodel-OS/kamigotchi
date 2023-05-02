@@ -29,8 +29,6 @@ import type {
 
 export interface ERC721MetadataSystemInterface extends utils.Interface {
   functions: {
-    "_getBaseTraits(uint256)": FunctionFragment;
-    "_getHealth(uint256)": FunctionFragment;
     "_setBaseURI(string)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
@@ -42,8 +40,6 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getBaseTraits"
-      | "_getHealth"
       | "_setBaseURI"
       | "execute"
       | "executeTyped"
@@ -53,14 +49,6 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_getBaseTraits",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getHealth",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "_setBaseURI",
     values: [PromiseOrValue<string>]
@@ -87,11 +75,6 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getBaseTraits",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getHealth", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_setBaseURI",
     data: BytesLike
@@ -158,16 +141,6 @@ export interface ERC721MetadataSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     _setBaseURI(
       baseURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -200,16 +173,6 @@ export interface ERC721MetadataSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  _getBaseTraits(
-    petID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getHealth(
-    petID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   _setBaseURI(
     baseURI: PromiseOrValue<string>,
@@ -244,16 +207,6 @@ export interface ERC721MetadataSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     _setBaseURI(
       baseURI: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -299,16 +252,6 @@ export interface ERC721MetadataSystem extends BaseContract {
   };
 
   estimateGas: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _setBaseURI(
       baseURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -343,16 +286,6 @@ export interface ERC721MetadataSystem extends BaseContract {
   };
 
   populateTransaction: {
-    _getBaseTraits(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getHealth(
-      petID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _setBaseURI(
       baseURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

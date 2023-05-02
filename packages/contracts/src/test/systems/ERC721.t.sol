@@ -112,4 +112,11 @@ contract ERC721PetTest is SetupTemplate {
 
     _assertPetState(petID, "RESTING");
   }
+
+  // does not actually check if metadata is accurate, only if syntax is valid
+  function testMetadata() public {
+    _mintPets(1);
+
+    console.log(_KamiERC721.tokenURI(1));
+  }
 }

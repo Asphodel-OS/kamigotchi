@@ -48,44 +48,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "petID",
-          "type": "uint256"
-        }
-      ],
-      "name": "_getBaseTraits",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "petID",
-          "type": "uint256"
-        }
-      ],
-      "name": "_getHealth",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "string",
           "name": "baseURI",
           "type": "string"
@@ -200,8 +162,6 @@
     }
   ],
   "methodIdentifiers": {
-    "_getBaseTraits(uint256)": "37d92217",
-    "_getHealth(uint256)": "df5271db",
     "_setBaseURI(string)": "31b5b907",
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",

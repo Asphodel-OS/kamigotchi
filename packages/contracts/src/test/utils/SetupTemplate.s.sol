@@ -122,6 +122,45 @@ abstract contract SetupTemplate is TestSetupImports {
     );
 
     __RegistryCreateTraitSystem.executeTyped(
+      2, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "NORMAL", // affinity
+      "NAME", // name
+      "FACE" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
+      3, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "EERIE", // affinity
+      "NAME", // name
+      "FACE" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
+      4, // index
+      100, // health
+      100, // power
+      100, // violence
+      100, // harmony
+      0, // slots
+      1, // rarity
+      "SCRAP", // affinity
+      "NAME", // name
+      "FACE" // trait type
+    );
+
+    __RegistryCreateTraitSystem.executeTyped(
       1, // index
       100, // health
       100, // power
