@@ -97,12 +97,17 @@ const TitleText = styled.p`
   font-family: Pixel;
   font-size: 14px;
   text-align: left;
+  justify-content: flex-start;
 `;
 
 const TitleCorner = styled.div`
   flex-grow: 1;
+  margin: 0px 5px;
 
   display: flex;
+  font-family: Pixel;
+  font-size: 14px;
+  text-align: right;
   justify-content: flex-end;
 `;
 

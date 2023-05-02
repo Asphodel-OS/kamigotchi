@@ -76,7 +76,7 @@ const Toggle = styled.button`
   border-style: solid;
   border-width: 2px;
   color: black;
-  display: inline-block;
+  display: flex;
   margin: 3px;
 
   font-family: Pixel;

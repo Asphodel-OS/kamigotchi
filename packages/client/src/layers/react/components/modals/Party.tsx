@@ -220,51 +220,6 @@ export function registerPartyModal() {
       /////////////////
       // INTERACTIONS
 
-      // starts a production for the given pet on the node in the room
-      const startProduction = (petID: EntityID) => {
-        const actionID = `Starting Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
-          id: actionID,
-          components: {},
-          // on: data.????,
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.production.start(petID, data.node.id);
-          },
-        });
-      };
-
-      // stops a production
-      const stopProduction = (productionID: EntityID) => {
-        const actionID = `Stopping Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
-          id: actionID,
-          components: {},
-          // on: data.????,
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.production.stop(productionID);
-          },
-        });
-      };
-
-      // collects on an existing production
-      const reapProduction = (productionID: EntityID) => {
-        const actionID = `Collecting Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
-          id: actionID,
-          components: {},
-          // on: data.????,
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.production.collect(productionID);
-          },
-        });
-      };
-
       // feed pet, no inventory check
       const feed = (petID: EntityID, foodIndex: number) => {
         const actionID = `Feeding Kami` as EntityID; // Date.now to have the actions ordered in the component browser
@@ -389,16 +344,6 @@ export function registerPartyModal() {
         return kami.state === '721_EXTERNAL';
       };
 
-      // get the title of the kami as 'name (health / totHealth)'
-      const getTitle = (kami: Kami) => {
-        let title = kami.name;
-        if (isRevealed(kami)) {
-          const health = calcHealth(kami);
-          title += ` (${health.toFixed()}/${kami.stats.health * 1})`;
-        }
-        return title;
-      };
-
       // get the description of the kami as a list of lines
       // TODO: clean this up
       const getDescription = (kami: Kami): string[] => {
@@ -496,19 +441,22 @@ export function registerPartyModal() {
 
       const KamiCards = (kamis: Kami[]) => {
         return kamis.map((kami) => {
-          const title = getTitle(kami);
+          const healthString = (isRevealed(kami))
+            ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1})`
+            : '';
           const description = getDescription(kami);
           const action = selectAction(kami);
 
           return (
             <KamiCard
               key={kami.id}
-              title={title}
               image={kami.uri}
+              title={kami.name}
+              description={description}
               subtext={`${calcOutput(kami)} $KAMI`}
+              cornerContent={healthString}
               action={action}
               info={selectInfo(kami)}
-              description={description}
             />
           );
         });
