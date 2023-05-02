@@ -38,6 +38,7 @@ import {
 
 interface MapProps {
   highlightedRoom?: number;
+  move: Function;
 }
 
 // 17 x 9
@@ -224,28 +225,42 @@ const GRID_MAP = [
   ],
 ];
 
-const room = [
-  'troom_01',
-  'troom_02',
-  'troom_03',
-  'troom_04',
-  'troom_05',
-  'troom_06',
-  'troom_07',
-  'troom_08',
-  'troom_09',
-  'troom_10',
-  'troom_11',
-  'troom_12',
-  'tshop',
-  'troom_14',
-];
+const ROOMS_MAP = new Map([
+  ['1,3', 6],
+  ['3,1', 14],
+  ['3,3', 7],
+  ['3,9', 12],
+  ['5,3', 8],
+  ['5,5', 5],
+  ['5,9', 4],
+  ['3,15', 1],
+  ['7,3', 11],
+  ['7,5', 9],
+  ['7,7', 10],
+  ['7,11', 3],
+  ['7,13', 2],
+  ['5,13', 13],
+]);
 
-const Tile = ({ img, highlightedRoom }) => {
-  const highlight =
-    img && img.includes(room[highlightedRoom - 1]) ? { border: '1px solid red' } : {};
+const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }) => {
+  const room = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
+  const highlight = room === highlightedRoom ? { border: '1px solid red' } : {};
+
   if (!img) return <div style={{ width: '100%', height: '100%', backgroundColor: 'green' }} />;
-  return <img src={img} alt='' style={{ width: '100%', height: '100%', ...highlight }} />;
+  return (
+    <img
+      src={img}
+      alt=''
+      onClick={
+        room
+          ? () => {
+              move(room);
+            }
+          : undefined
+      }
+      style={{ width: '100%', height: '100%', ...highlight }}
+    />
+  );
 };
 
 const GridContainer = styled.div`
@@ -259,14 +274,20 @@ const GridTile = styled.div`
   position: relative;
 `;
 
-const MapGrid = ({ highlightedRoom }: MapProps) => {
+const MapGrid = ({ highlightedRoom, move }: MapProps) => {
   return (
     <GridContainer>
       {GRID_MAP.map((row, rowIndex) => (
         <React.Fragment key={rowIndex}>
           {row.map((tile, colIndex) => (
             <GridTile key={colIndex}>
-              <Tile img={tile} highlightedRoom={highlightedRoom} />
+              <Tile
+                img={tile}
+                highlightedRoom={highlightedRoom}
+                move={move}
+                rowIndex={rowIndex}
+                colIndex={colIndex}
+              />
             </GridTile>
           ))}
         </React.Fragment>

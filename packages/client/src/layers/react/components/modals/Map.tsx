@@ -153,9 +153,10 @@ export function registerMapModal() {
 
       return (
         <ModalWrapperFull id='world_map' divName='map'>
-          <MapGrid highlightedRoom={data.currentRoom} />
+          <MapGrid highlightedRoom={data.currentRoom} move={move} />
           {data.stamina && <BatteryComponent level={operatorStaminaPercentage} />}
-          <ButtonWrapper style={{ marginRight: '8.3%' }}>{UpButton}
+          <ButtonWrapper style={{ marginRight: '8.3%' }}>
+            {UpButton}
             {LeftButton}
             {DownButton}
             {RightButton}
