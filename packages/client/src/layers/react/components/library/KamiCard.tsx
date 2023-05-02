@@ -1,19 +1,28 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 interface Props {
   title: string;
   image: string;
   subtext: string;
   description: string[];
-  cornerContent?: React.ReactNode;
-  info?: React.ReactNode;
   action: React.ReactNode;
+  cornerContent?: React.ReactNode;
+  imageOnClick?: Function;
+  titleOnClick?: Function;
 }
 
 // KamiC  rd is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
+  const imageOnClick = () => {
+    if (props.imageOnClick) props.imageOnClick();
+  };
+
+  const titleOnClick = () => {
+    if (props.titleOnClick) props.titleOnClick();
+  };
+
   // generate the styled text divs for the description
   const Description = () => {
     const header = [<TextBig key='header'>{props.description[0]}</TextBig>];
@@ -26,11 +35,10 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card>
-      <Image src={props.image} />
+      <Image onClick={() => imageOnClick()} src={props.image} />
       <Container>
         <TitleBar>
-          <TitleCorner>{props.info}</TitleCorner>
-          <TitleText>{props.title}</TitleText>
+          <TitleText onClick={() => titleOnClick()}>{props.title}</TitleText>
           <TitleCorner>{props.cornerContent}</TitleCorner>
         </TitleBar>
         <Content>
@@ -65,6 +73,10 @@ const Image = styled.img`
   height: 110px;
   margin: 0px;
   padding: 0px;
+
+  &:hover {
+    opacity:0.75; 
+  }
 `;
 
 const Container = styled.div`
@@ -88,11 +100,14 @@ const TitleBar = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+
+  &:hover {
+    opacity:0.6; 
+  }
 `;
 
 const TitleText = styled.p`
-  color: #111;
-  padding: 6px;
+  padding: 6px 9px;
 
   font-family: Pixel;
   font-size: 14px;
@@ -102,7 +117,7 @@ const TitleText = styled.p`
 
 const TitleCorner = styled.div`
   flex-grow: 1;
-  margin: 0px 5px;
+  margin: 0px 7px;
 
   display: flex;
   font-family: Pixel;
@@ -144,7 +159,7 @@ const ContentActions = styled.div`
 `;
 
 const TextBig = styled.p`
-  font-size: 14px;
+  font-size: 13px;
   font-family: Pixel;
   text-align: left;
 `;
@@ -154,4 +169,30 @@ const TextMedium = styled.p`
   font-family: Pixel;
   text-align: left;
   padding: 6px 0px 0px 3px;
+`;
+
+
+// lol
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const ImageBackflip = styled.img`
+  border-style: solid;
+  border-width: 0px 2px 0px 0px;
+  border-color: black;
+  height: 110px;
+  margin: 0px;
+  padding: 0px;
+
+  &:click {
+    animation: ${rotate} .3s linear infinite;
+    animation-iteration-count: 1
+  }
 `;

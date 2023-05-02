@@ -220,8 +220,8 @@ export function registerPartyModal() {
       /////////////////
       // INTERACTIONS
 
-      // feed pet, no inventory check
-      const feed = (petID: EntityID, foodIndex: number) => {
+      // feedKami pet, no inventory check
+      const feedKami = (petID: EntityID, foodIndex: number) => {
         const actionID = `Feeding Kami` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
@@ -236,7 +236,7 @@ export function registerPartyModal() {
       };
 
       // reveal pet
-      const revealPet = async (pet: Kami) => {
+      const revealKami = async (pet: Kami) => {
         const actionID = (`Revealing Kami ` + pet.index) as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
@@ -264,8 +264,8 @@ export function registerPartyModal() {
 
       /////////////////
       // DATA INTERPRETATION
+
       const RATE_PRECISION = 1e6;
-      const DEMO_RECOVERY_MULTIPLIER = 1e2;
 
       // get the health drain rate, based on the kami's production
       // this is based on a hardcoded value for the time being
@@ -277,7 +277,7 @@ export function registerPartyModal() {
       const calcRecoveryRate = (kami: Kami) => {
         let rate = 0;
         if (isResting(kami)) {
-          rate = (DEMO_RECOVERY_MULTIPLIER * kami.stats.harmony) / 3600;
+          rate = kami.stats.harmony / 3600;
         }
         return rate;
       };
@@ -396,17 +396,16 @@ export function registerPartyModal() {
         });
       };
 
-
       const FeedButton = (kami: Kami) => {
         const feedOptions: ActionListOption[] = [
-          { text: 'Maple-Flavor Ghost Gum', onClick: () => feed(kami.id, 1) },
-          { text: 'Pom-Pom Fruit Candy', onClick: () => feed(kami.id, 2) },
-          { text: 'Gakki Cookie Sticks', onClick: () => feed(kami.id, 3) },
+          { text: 'Maple-Flavor Ghost Gum', onClick: () => feedKami(kami.id, 1) },
+          { text: 'Pom-Pom Fruit Candy', onClick: () => feedKami(kami.id, 2) },
+          { text: 'Gakki Cookie Sticks', onClick: () => feedKami(kami.id, 3) },
         ];
 
         return (
           <ActionListButton
-            id={`feed-button-${kami.index}`}
+            id={`feedKami-button-${kami.index}`}
             text='Feed'
             hidden={true}
             scrollPosition={scrollPosition}
@@ -415,37 +414,28 @@ export function registerPartyModal() {
         );
       };
 
-
-      const InfoButton = (kami: Kami) => (
-        <ActionButton id={`info-button`} onClick={() => openKamiModal(kami.entityIndex)} text='i' />
-      );
-
       const RevealButton = (kami: Kami) => (
-        <ActionButton id={`reveal-kami`} onClick={() => revealPet(kami)} text='Reveal' />
+        <ActionButton id={`reveal-kami`} onClick={() => revealKami(kami)} text='Reveal' />
       );
 
       const ReviveButton = (kami: Kami) => (
         <ActionButton id={`revive-kami`} onClick={() => null} text='Revive' disabled={true} />
       );
 
-
-      const selectAction = (kami: Kami) => {
+      const DisplayedAction = (kami: Kami) => {
         if (!isRevealed(kami)) return RevealButton(kami);
         if (isResting(kami) || isHarvesting(kami)) return FeedButton(kami);
         if (isDead(kami)) return ReviveButton(kami);
       };
 
-      const selectInfo = (kami: Kami) => {
-        if (isRevealed(kami)) return InfoButton(kami);
-      };
-
+      // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
         return kamis.map((kami) => {
+          const action = DisplayedAction(kami);
+          const description = getDescription(kami);
           const healthString = (isRevealed(kami))
             ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1})`
             : '';
-          const description = getDescription(kami);
-          const action = selectAction(kami);
 
           return (
             <KamiCard
@@ -454,9 +444,10 @@ export function registerPartyModal() {
               title={kami.name}
               description={description}
               subtext={`${calcOutput(kami)} $KAMI`}
-              cornerContent={healthString}
               action={action}
-              info={selectInfo(kami)}
+              cornerContent={healthString}
+              imageOnClick={() => openKamiModal(kami.entityIndex)}
+              titleOnClick={() => openKamiModal(kami.entityIndex)}
             />
           );
         });
@@ -466,7 +457,7 @@ export function registerPartyModal() {
         <ModalWrapperFull id='party_modal' divName='party' fill={true}>
           <TopGrid>
             <TopDescription>
-              $KAMI: {data.account.coin ? data.account.coin * 1 : '0'}
+              $KAMI: {data.account.coin ? data.account.coin * 1 : 0}
             </TopDescription>
           </TopGrid>
           <ConsumableGrid>{ConsumableCells(data.account.inventories)}</ConsumableGrid>
