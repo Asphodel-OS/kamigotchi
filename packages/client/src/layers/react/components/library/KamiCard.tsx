@@ -1,6 +1,9 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
+import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
+import { dataStore } from 'layers/react/store/createStore';
+
 interface Props {
   title: string;
   image: string;
@@ -15,12 +18,27 @@ interface Props {
 // KamiC  rd is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
+  const { sound: { volume } } = dataStore();
+
+  // layer on a sound effect
+  const playClickAudio = async () => {
+    const clickSound = new Audio(clickSoundUrl);
+    clickSound.volume = volume * 0.6;
+    clickSound.play();
+  }
+
   const imageOnClick = () => {
-    if (props.imageOnClick) props.imageOnClick();
+    if (props.imageOnClick) {
+      playClickAudio();
+      props.imageOnClick();
+    }
   };
 
   const titleOnClick = () => {
-    if (props.titleOnClick) props.titleOnClick();
+    if (props.titleOnClick) {
+      playClickAudio();
+      props.titleOnClick();
+    }
   };
 
   // generate the styled text divs for the description
@@ -100,10 +118,6 @@ const TitleBar = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-
-  &:hover {
-    opacity:0.6; 
-  }
 `;
 
 const TitleText = styled.p`
@@ -113,6 +127,10 @@ const TitleText = styled.p`
   font-size: 14px;
   text-align: left;
   justify-content: flex-start;
+
+  &:hover {
+    opacity:0.6; 
+  }
 `;
 
 const TitleCorner = styled.div`
