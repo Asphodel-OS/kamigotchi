@@ -19,12 +19,14 @@ import { registerRequestQueue } from './modals/RequestQueue';
 import { registerTradeModal } from './modals/Trade';
 import { registerNodeModal } from './modals/Node';
 import { registerSettingsModal } from './modals/Settings';
+import { registerOperatorHealthButton } from './buttons/OperatorHealth';
 
 export function registerUIComponents() {
   registerActionQueue();
   registerLoadingState();
   registerDialogueModal();
 
+  registerOperatorHealthButton();
   registerChatButton();
   registerMapButton();
   registerPartyButton();

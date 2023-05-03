@@ -88,7 +88,6 @@ const BatteryContainer = styled.div`
 export const BatteryComponent: React.FC<BatteryLevelProps> = ({ level }) => {
   return (
     <BatteryContainer>
-      <span>{level} %</span>
       <Battery>
         <BatteryLevel level={level} />
       </Battery>
