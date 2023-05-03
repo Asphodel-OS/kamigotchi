@@ -1,5 +1,3 @@
-import { BigNumberish } from 'ethers';
-import { regiesterDetectAccountModal } from 'layers/react/components/modals/DetectAccount';
 import { createPlayerAPI } from './player';
 import { setUpWorldAPI } from './world';
 

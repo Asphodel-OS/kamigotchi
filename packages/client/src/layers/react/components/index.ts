@@ -8,7 +8,7 @@ import { registerPartyButton } from './buttons/Party';
 import { registerSettingsButton } from './buttons/Settings';
 
 import { registerChatModal } from './modals/Chat';
-import { regiesterDetectAccountModal } from './modals/DetectAccount';
+import { registerDetectAccountModal } from './modals/DetectAccount';
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerMintAfterModal } from './modals/MintAfter';
 import { registerKamiModal } from './modals/Kami';
@@ -31,7 +31,7 @@ export function registerUIComponents() {
   registerSettingsButton();
 
   registerChatModal();
-  regiesterDetectAccountModal();
+  registerDetectAccountModal();
   registerKamiMintModal();
   registerMintAfterModal();
   registerMapModal();

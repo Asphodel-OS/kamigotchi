@@ -10,7 +10,7 @@ import { dataStore } from 'layers/react/store/createStore';
 import { Modal } from 'antd';
 import { Stepper } from '../library/Stepper';
 
-export function regiesterDetectAccountModal() {
+export function registerDetectAccountModal() {
   registerUIComponent(
     'DetectMint',
     {
@@ -202,8 +202,8 @@ const StepTwo = () => (
       <Header style={{ color: 'black' }}>Tips</Header>
       <br />
       You can move using the map.
-      <br/>
-      <br/>
+      <br />
+      <br />
       Look for a vending machine and for Nodes scattered throughout the world.
     </Description>
   </ModalContent>
