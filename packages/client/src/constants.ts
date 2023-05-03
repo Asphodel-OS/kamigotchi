@@ -358,7 +358,7 @@ export const gridRooms: GridRooms = {
   '40': { room: 1 },
 };
 
-export const describeCharacther = {
+export const describeCharacter = {
   bodyType: [
     'Bee',
     'Butterfly',
