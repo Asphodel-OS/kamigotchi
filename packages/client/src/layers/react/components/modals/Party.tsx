@@ -35,7 +35,7 @@ export function registerPartyModal() {
     {
       colStart: 2,
       colEnd: 33,
-      rowStart: 2,
+      rowStart: 8,
       rowEnd: 76,
     },
 
@@ -457,9 +457,6 @@ export function registerPartyModal() {
 
       return (
         <ModalWrapperFull id='party_modal' divName='party' fill={true}>
-          <TopGrid>
-            <TopDescription>$KAMI: {data.account.coin ? data.account.coin * 1 : 0}</TopDescription>
-          </TopGrid>
           <ConsumableGrid>{ConsumableCells(data.account.inventories)}</ConsumableGrid>
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
@@ -472,20 +469,6 @@ const Scrollable = styled.div`
   overflow-y: scroll;
   height: 100%;
   max-height: 100%;
-`;
-
-const TopDescription = styled.p`
-  font-size: 14px;
-  color: #333;
-  text-align: left;
-  font-family: Pixel;
-  grid-column: 1;
-  align-self: center;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  border-radius: 5px;
-  padding: 5px;
 `;
 
 const ConsumableGrid = styled.div`

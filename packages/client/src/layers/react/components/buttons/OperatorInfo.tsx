@@ -1,15 +1,17 @@
-import { Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
+import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { map, merge } from 'rxjs';
 import { BatteryComponent } from '../library/Battery';
 import styled from 'styled-components';
+import { getAccount } from '../shapes/Account';
+import { Account } from '../shapes/Account';
 
 export function registerOperatorHealthButton() {
   registerUIComponent(
     'OperatorHealth',
     {
-      colStart: 85,
-      colEnd: 95,
+      colStart: 2,
+      colEnd: 93,
       rowStart: 2,
       rowEnd: 10,
     },
@@ -17,13 +19,12 @@ export function registerOperatorHealthButton() {
       const {
         network: {
           network: { connectedAddress },
-          components: { IsAccount, OperatorAddress, Stamina, StaminaCurrent },
+          components: { IsAccount, OperatorAddress, StaminaCurrent },
         },
       } = layers;
       return merge(StaminaCurrent.update$).pipe(
         map(() => {
           // get the account entity of the controlling wallet
-
           const accountEntityIndex = Array.from(
             runQuery([
               Has(IsAccount),
@@ -32,26 +33,34 @@ export function registerOperatorHealthButton() {
               }),
             ])
           )[0];
-          const maxStamina = getComponentValue(Stamina, accountEntityIndex)?.value ?? 0;
-          const stamina = getComponentValue(StaminaCurrent, accountEntityIndex)?.value ?? 0;
 
+          const account =
+            accountEntityIndex !== undefined
+              ? getAccount(layers, accountEntityIndex)
+              : ({} as Account);
+
+          const { stamina: maxStamina, staminaCurrent, coin } = account;
           return {
-            stamina,
+            staminaCurrent,
             maxStamina,
+            coin,
           };
         })
       );
     },
-    ({ stamina, maxStamina }) => {
+    ({ staminaCurrent, maxStamina, coin }) => {
       const operatorStaminaPercentage =
-        stamina * 1 == 0 ? 0 : ((stamina * 1) / (maxStamina * 1)) * 100;
+        staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
 
       return (
         <Button id='battery_button'>
-          {stamina && (
-            <Centered>
-              <BatteryComponent level={operatorStaminaPercentage} />
-            </Centered>
+          {staminaCurrent && (
+            <>
+              <TopDescription>$KAMI: {coin ? coin * 1 : 0}</TopDescription>
+              <Centered>
+                <BatteryComponent level={operatorStaminaPercentage} />
+              </Centered>
+            </>
           )}
         </Button>
       );
@@ -72,4 +81,18 @@ const Centered = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+`;
+
+const TopDescription = styled.p`
+  font-size: 8px;
+  color: #333;
+  text-align: left;
+  font-family: Pixel;
+  grid-column: 1;
+  align-self: center;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  border-radius: 5px;
+  padding: 5px;
 `;
