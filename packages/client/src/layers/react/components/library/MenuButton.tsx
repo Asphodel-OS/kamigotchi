@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
@@ -22,25 +22,64 @@ export const MenuButton = (props: Props) => {
     setVisibleModals({ ...visibleModals, [props.targetDiv]: !visibleModals[props.targetDiv] });
   };
 
+  const handleMouseEnter = () => {
+    setShowTooltip(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
+  };
+
+  const { id, children, text } = props;
+  const [showTooltip, setShowTooltip] = useState(false);
+
   return (
-    <div id={props.id}>
-        <Button style={{ pointerEvents: 'auto' }} onClick={handleToggle}>
-          {props.children}
-        </Button>
+    <div id={id}>
+      <Button
+        style={{ pointerEvents: 'auto' }}
+        onClick={handleToggle}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {children}
+        {text && <Tooltip show={showTooltip}>{text}</Tooltip>}
+      </Button>
     </div>
   );
-}
+};
 
 interface Props {
   id: string;
   targetDiv: keyof VisibleModals;
   children: React.ReactNode;
+  text?: string;
 }
+
+interface TooltipProps {
+  show: boolean;
+}
+
+const Tooltip = styled.div<TooltipProps>`
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  font-size: 12px;
+  opacity: ${(props) => (props.show ? 1 : 0)};
+  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+  transition: all 0.3s ease-in-out;
+`;
 
 const Button = styled.button`
   cursor: pointer;
 
   &:active {
     background-color: #c4c4c4;
+  }
+  &:hover {
+    ${Tooltip} {
+      display: block;
+    }
   }
 `;

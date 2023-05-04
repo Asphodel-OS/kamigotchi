@@ -17,11 +17,12 @@ export function registerPartyButton() {
     (layers) => of(layers),
     () => {
       return (
-        <MenuButton id="party_button" targetDiv="party">
-          <img style={{height: '100%', width: 'auto' }}
-            src={kamiImage}
-            alt='kami_icon'
-          />
+        <MenuButton
+          id='party_button'
+          targetDiv='party'
+          text="it's friday again it's saturday sunday what"
+        >
+          <img style={{ height: '100%', width: 'auto' }} src={kamiImage} alt='kami_icon' />
         </MenuButton>
       );
     }
