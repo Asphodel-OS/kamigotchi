@@ -12,6 +12,7 @@ import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemC
 import { IndexFoodComponent, ID as IndexFoodCompID } from "components/IndexFoodComponent.sol";
 import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
 import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComponent.sol";
+import { IndexReviveComponent, ID as IndexReviveCompID } from "components/IndexReviveComponent.sol";
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsNonFungibleComponent, ID as IsNonFungCompID } from "components/IsNonFungibleComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -34,7 +35,21 @@ import { LibStat } from "libraries/LibStat.sol";
 library LibRegistryItem {
   /////////////////
   // INTERACTIONS
-  // TODO: implement revives and scrolls
+
+  // Create a Registry entry for a Revive item. (e.g. cpu, gem, etc.)
+  function createRevive(
+    IWorld world,
+    IUintComp components,
+    uint256 foodIndex
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    uint256 itemIndex = getItemCount(components) + 1;
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
+    setItemIndex(components, id, itemIndex);
+    setReviveIndex(components, id, foodIndex);
+    return id;
+  }
 
   // Create a Registry entry for a Food item. (e.g. cpu, gem, etc.)
   function createFood(
@@ -187,8 +202,33 @@ library LibRegistryItem {
     return id;
   }
 
+  // Set the field values of a food item registry entry
+  function setRevive(
+    IUintComp components,
+    uint256 reviveIndex,
+    string memory name,
+    uint256 health
+  ) internal returns (uint256) {
+    uint256 id = getByReviveIndex(components, reviveIndex);
+    require(id != 0, "LibRegistryItem.setRevive(): reviveIndex not found");
+    require(!LibString.eq(name, ""), "LibRegistryItem.setRevive(): name cannot be empty");
+    require(health > 0, "LibRegistryItem.setRevive(): health must be greater than 0");
+
+    setName(components, id, name);
+    LibStat.setHealth(components, id, health);
+    return id;
+  }
+
   /////////////////
   // CHECKERS
+
+  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
+    return NameComponent(getAddressById(components, NameCompID)).has(id);
+  }
+
+  function hasType(IUintComp components, uint256 id) internal view returns (bool) {
+    return TypeComponent(getAddressById(components, TypeCompID)).has(id);
+  }
 
   function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
     return isRegistry(components, id) && isItem(components, id);
@@ -222,12 +262,8 @@ library LibRegistryItem {
     return IndexModComponent(getAddressById(components, IndexModCompID)).has(id);
   }
 
-  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
-    return NameComponent(getAddressById(components, NameCompID)).has(id);
-  }
-
-  function hasType(IUintComp components, uint256 id) internal view returns (bool) {
-    return TypeComponent(getAddressById(components, TypeCompID)).has(id);
+  function isRevive(IUintComp components, uint256 id) internal view returns (bool) {
+    return IndexReviveComponent(getAddressById(components, IndexReviveCompID)).has(id);
   }
 
   /////////////////
@@ -247,6 +283,10 @@ library LibRegistryItem {
 
   function setModIndex(IUintComp components, uint256 id, uint256 modIndex) internal {
     IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
+  }
+
+  function setReviveIndex(IUintComp components, uint256 id, uint256 reviveIndex) internal {
+    IndexReviveComponent(getAddressById(components, IndexReviveCompID)).set(id, reviveIndex);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -274,6 +314,10 @@ library LibRegistryItem {
 
   function getModIndex(IUintComp components, uint256 id) internal view returns (uint256) {
     return IndexModComponent(getAddressById(components, IndexModCompID)).getValue(id);
+  }
+
+  function getReviveIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexReviveComponent(getAddressById(components, IndexReviveCompID)).getValue(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -315,6 +359,9 @@ library LibRegistryItem {
     } else if (isMod(components, instanceID)) {
       index = getModIndex(components, instanceID);
       result = getByModIndex(components, index);
+    } else if (isRevive(components, instanceID)) {
+      index = getReviveIndex(components, instanceID);
+      result = getByReviveIndex(components, index);
     } else {
       revert("LibRegistryItem.getByInstance(): Entity does not have any associated indices");
     }
@@ -386,6 +433,24 @@ library LibRegistryItem {
       QueryType.HasValue,
       getComponentById(components, IndexModCompID),
       abi.encode(modIndex)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
+    if (results.length != 0) result = results[0];
+  }
+
+  // get the registry entry by food index
+  function getByReviveIndex(
+    IUintComp components,
+    uint256 reviveIndex
+  ) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexReviveCompID),
+      abi.encode(reviveIndex)
     );
 
     uint256[] memory results = LibQuery.query(fragments);
