@@ -324,6 +324,16 @@
       ]
     },
     {
+      "name": "PetReviveSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "HealthCurrentComponent",
+        "StateComponent",
+        "TimeLastActionComponent"
+      ]
+    },
+    {
       "name": "PetSetAccountSystem",
       "writeAccess": [
         "IdAccountComponent"

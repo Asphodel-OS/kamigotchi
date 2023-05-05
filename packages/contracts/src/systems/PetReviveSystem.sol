@@ -10,37 +10,37 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-uint256 constant ID = uint256(keccak256("system.Pet.Feed"));
+uint256 constant ID = uint256(keccak256("system.Pet.Revive"));
 
 // eat one snack
-contract PetFeedSystem is System {
+contract PetReviveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 petID, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint256 petID, uint256 reviveIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
-    LibPet.syncHealth(components, petID);
-    require(!LibPet.isFull(components, petID), "Pet: already full");
+    require(LibPet.isDead(components, petID), "Pet: must be dead");
 
-    // get food registry entry
-    uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    require(registryID != 0, "RegistryItem: no such food");
+    // find the registry entry
+    uint256 registryID = LibRegistryItem.getByReviveIndex(components, reviveIndex);
+    require(registryID != 0, "RegistryItem: no such revive");
 
     // decrement item from inventory
     uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
     uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
     LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
 
-    // heal according to item stats
+    // revive and heal according to item stats
     uint256 healAmt = LibStat.getHealth(components, registryID);
+    LibPet.revive(components, petID);
     LibPet.heal(components, petID, healAmt);
     LibAccount.updateLastBlock(components, accountID); // gas limit :|
     return "";
   }
 
-  function executeTyped(uint256 petID, uint256 foodIndex) public returns (bytes memory) {
-    return execute(abi.encode(petID, foodIndex));
+  function executeTyped(uint256 petID, uint256 reviveIndex) public returns (bytes memory) {
+    return execute(abi.encode(petID, reviveIndex));
   }
 }
