@@ -19,8 +19,6 @@
     "IdNodeComponent",
     "IdOwnerComponent",
     "IdPetComponent",
-    "IdRequesteeComponent",
-    "IdRequesterComponent",
     "IdSourceComponent",
     "IdTargetComponent",
     "IndexFoodComponent",
@@ -36,7 +34,6 @@
     "IndexTraitComponent",
     "IsAccountComponent",
     "IsEquippedComponent",
-    "IsFoodComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
     "IsKillComponent",
@@ -47,12 +44,8 @@
     "IsNonFungibleComponent",
     "IsPetComponent",
     "IsProductionComponent",
-    "IsRegisterComponent",
     "IsRegistryComponent",
-    "IsRegistryEntryComponent",
-    "IsRequestComponent",
     "IsRoomComponent",
-    "IsTradeComponent",
     "LocationComponent",
     "MediaURIComponent",
     "NameComponent",
@@ -392,7 +385,6 @@
     "LibRegistryItem",
     "LibRoom",
     "LibRarity",
-    "LibStat",
-    "LibTrade"
+    "LibStat"
   ]
 }
