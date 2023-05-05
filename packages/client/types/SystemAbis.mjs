@@ -11,10 +11,12 @@ import _NodeSetNameSystem from "../abi/_NodeSetNameSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
+import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
 import _RegistryUpdateFoodSystem from "../abi/_RegistryUpdateFoodSystem.json";
 import _RegistryUpdateGearSystem from "../abi/_RegistryUpdateGearSystem.json";
 import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
+import _RegistryUpdateReviveSystem from "../abi/_RegistryUpdateReviveSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
@@ -33,6 +35,7 @@ import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
+import PetReviveSystem from "../abi/PetReviveSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
@@ -57,10 +60,12 @@ export const SystemAbis = {
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
+  "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem.abi,
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem.abi,
   "system._Registry.Mod.Update": _RegistryUpdateModSystem.abi,
+  "system._Registry.Revive.Update": _RegistryUpdateReviveSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
@@ -79,6 +84,7 @@ export const SystemAbis = {
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
+  "system.Pet.Revive": PetReviveSystem.abi,
   "system.Pet.SetAccount": PetSetAccountSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,

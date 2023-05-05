@@ -5,42 +5,42 @@ export function createPlayerAPI(systems: any) {
    *    Pet ERC721
    *********************/
 
-  // @dev feeds pet
-  // @param petID
-  // @param food index (of registry entry)
-  function feedPet(petID: BigNumberish, food: number) {
-    return systems["system.Pet.Feed"].executeTyped(petID, food);
+  // feed a pet using a Pet Item
+  function feedPet(petID: BigNumberish, foodIndex: number) {
+    return systems["system.Pet.Feed"].executeTyped(petID, foodIndex);
   }
 
-  // @dev 
-  // @param address   address to mint to
-  function mintPet(address: BigNumberish) {
-    return systems["system.ERC721.Mint"].executeTyped(address);
-  }
-
-  // @dev
-  // @param entityID   pet entity
-  // @param name       name
+  // name / rename a pet
   function namePet(petID: BigNumberish, name: string) {
     return systems["system.Pet.Name"].executeTyped(petID, name);
   }
 
-  // @dev commit reveal 
-  // @param tokenID   ERC721 petID, not MUD
+  // revive a pet using a Revive Item
+  function revivePet(petID: BigNumberish, reviveIndex: number) {
+    return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
+  }
+
+  // mint a pet
+  function mintPet(address: BigNumberish) {
+    return systems["system.ERC721.Mint"].executeTyped(address);
+  }
+
+  // reveal a minted pet
+  // @param tokenID  ERC721 petID, not MUD entity ID
   function revealPet(tokenID: BigNumberish) {
     return systems["system.ERC721.metadata"].executeTyped(tokenID);
   }
 
-  // @dev brings pet from game world -> outside
-  // @param tokenID  ERC721 petID, not MUD
-  function withdrawPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.Withdraw"].executeTyped(tokenID);
-  }
-
   // @dev deposits pet from outside -> game world
-  // @param tokenID  ERC721 petID, not MUD
+  // @param tokenID  ERC721 petID, not MUD entity ID
   function depositPet(tokenID: BigNumberish) {
     return systems["system.ERC721.Deposit"].executeTyped(tokenID);
+  }
+
+  // @dev brings pet from game world -> outside
+  // @param tokenID  ERC721 petID, not MUD entity ID
+  function withdrawPet(tokenID: BigNumberish) {
+    return systems["system.ERC721.Withdraw"].executeTyped(tokenID);
   }
 
   /*********************
@@ -154,20 +154,22 @@ export function createPlayerAPI(systems: any) {
 
   return {
     ERC721: {
-      mint: mintPet,
-      reveal: revealPet,
-      name: namePet,
       deposit: depositPet,
+      feed: feedPet,
+      mint: mintPet,
+      name: namePet,
+      reveal: revealPet,
+      revive: revivePet,
       withdraw: withdrawPet,
-    },
-    listing: {
-      buy: buyFromListing,
-      sell: sellToListing,
     },
     account: {
       move: moveAccount,
       name: nameAccount,
       set: setAccount,
+    },
+    listing: {
+      buy: buyFromListing,
+      sell: sellToListing,
     },
     production: {
       collect: collectProduction,
@@ -182,8 +184,5 @@ export function createPlayerAPI(systems: any) {
       confirm: confirmTrade,
       initiate: initiateTrade,
     },
-    food: {
-      feed: feedPet,
-    }
   };
 }
