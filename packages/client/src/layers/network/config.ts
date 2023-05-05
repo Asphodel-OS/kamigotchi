@@ -121,7 +121,6 @@ function createNetworkConfigLattice(): NetworkConfig {
   localStorage.setItem("operatorPrivateKey", wallet.privateKey);
   localStorage.setItem("operatorPublicKey", wallet.publicKey);
 
-
   let config: NetworkConfig = <NetworkConfig>{
     privateKey: wallet.privateKey,
     jsonRpc: "https://follower.testnet-chain.linfra.xyz",
@@ -131,8 +130,8 @@ function createNetworkConfigLattice(): NetworkConfig {
     snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
     // checkpointUrl: undefined,
     chainId: 4242,
-    worldAddress: "0x4cFb52b57397ADD94e53E7ADd5A6f6356E664Fb5",
-    initialBlockNumber: 12625773,
+    worldAddress: "0xCD568512429681dB3AF66008477C93b486598EC0",
+    initialBlockNumber: 13602164,
   };
   return config;
 }

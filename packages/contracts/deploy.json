@@ -31,6 +31,7 @@
     "IndexFaceComponent",
     "IndexHandComponent",
     "IndexPetComponent",
+    "IndexReviveComponent",
     "IndexTraitComponent",
     "IsAccountComponent",
     "IsEquippedComponent",
