@@ -22,17 +22,15 @@ contract PetFeedSystem is System {
 
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
+    LibPet.syncHealth(components, petID);
+    require(!LibPet.isFull(components, petID), "Pet: already full");
+
     uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
     require(registryID != 0, "RegistryItem: no such food");
 
     uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
     uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    require(inventoryID != 0, "Inventory: no bitches, no food");
-
-    LibPet.syncHealth(components, petID);
-    require(!LibPet.isFull(components, petID), "Pet: already full");
-
-    LibInventory.dec(components, inventoryID, 1); // inherent check for insufficient balance
+    LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
 
     uint256 healAmt = LibStat.getHealth(components, registryID);
     LibPet.heal(components, petID, healAmt);
