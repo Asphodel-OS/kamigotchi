@@ -152,6 +152,12 @@
       ]
     },
     {
+      "name": "_RegistryCreateReviveSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_RegistryCreateTraitSystem",
       "writeAccess": [
         "*"
@@ -171,6 +177,12 @@
     },
     {
       "name": "_RegistryUpdateModSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateReviveSystem",
       "writeAccess": [
         "*"
       ]
