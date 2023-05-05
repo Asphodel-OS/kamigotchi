@@ -79,10 +79,11 @@ export function createAdminAPI(systems: any) {
     setListing('hawker', 4, 500, 0);
 
     // // create our hottie merchant ugajin. names are unique
-    // createMerchant('ugajin', 13);
-    // setListing('ugajin', 1, 25, 0); // merchant, item index, buy price, sell price
-    // setListing('ugajin', 2, 90, 0);
-    // setListing('ugajin', 3, 150, 0);
+    createMerchant('ugajin', 13);
+    setListing('ugajin', 1, 25, 0); // merchant, item index, buy price, sell price
+    setListing('ugajin', 2, 90, 0);
+    setListing('ugajin', 3, 150, 0);
+    setListing('ugajin', 4, 500, 0);
 
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract

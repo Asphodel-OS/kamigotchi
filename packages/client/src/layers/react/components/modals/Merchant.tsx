@@ -17,17 +17,20 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
+import ribbon from 'assets/images/food/ribbon.png';
 
 const ItemImages = new Map([
   [1, gum],
   [2, pompom],
   [3, gakki],
+  [4, ribbon],
 ]);
 
 const ItemNames = new Map([
   [1, 'Maple-Flavor Ghost Gum'],
   [2, 'Pom-Pom Fruit Candy'],
   [3, 'Gakki Cookie Sticks'],
+  [4, 'Red Gakki Ribbon'],
 ]);
 
 // merchant window with listings. assumes at most 1 merchant per room
