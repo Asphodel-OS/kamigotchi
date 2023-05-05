@@ -11,17 +11,12 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 import { Gaussian } from "solstat/Gaussian.sol";
 
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
-import { IdOwnerComponent, ID as IdOwnerCompID } from "components/IdOwnerComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
-import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
-import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
@@ -29,7 +24,6 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction, HARVEST_RATE_PRECISION } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 
@@ -55,7 +49,6 @@ library LibPet {
   function create(
     IWorld world,
     IUintComp components,
-    address owner,
     uint256 accountID,
     uint256 index,
     string memory uri
@@ -73,20 +66,20 @@ library LibPet {
   }
 
   // bridging a pet Outside => MUD. Does not handle account details
-  function deposit(IUintComp components, uint256 id, uint256 accountID) internal returns (uint256) {
+  function deposit(IUintComp components, uint256 id, uint256 accountID) internal {
     setState(components, id, "RESTING");
     setAccount(components, id, accountID);
   }
 
   // bridging a pet MUD => Outside. Does not handle account details
-  function withdraw(IUintComp components, uint256 id) internal returns (uint256) {
+  function withdraw(IUintComp components, uint256 id) internal {
     setState(components, id, "721_EXTERNAL");
     setAccount(components, id, 0);
   }
 
   // Drains HP from a pet. The opposite of heal().
   function drain(IUintComp components, uint256 id, uint256 amt) internal {
-    uint256 health = getCurrHealth(components, id);
+    uint256 health = getLastHealth(components, id);
     health = (health > amt) ? health - amt : 0;
     setCurrHealth(components, id, health);
   }
@@ -109,7 +102,7 @@ library LibPet {
   // heal the pet by a given amount
   function heal(IUintComp components, uint256 id, uint256 amt) internal {
     uint256 totalHealth = calcTotalHealth(components, id);
-    uint256 health = getCurrHealth(components, id) + amt;
+    uint256 health = getLastHealth(components, id) + amt;
     if (health > totalHealth) health = totalHealth;
     setCurrHealth(components, id, health);
   }
@@ -141,11 +134,11 @@ library LibPet {
   function syncHealth(IUintComp components, uint256 id) internal {
     if (isHarvesting(components, id)) {
       // drain health if harvesting
-      uint256 drainAmt = calcDrain(components, id);
+      uint256 drainAmt = calcProductionDrain(components, id);
       drain(components, id, drainAmt);
     } else if (isResting(components, id)) {
       // recover health if resting
-      uint256 healAmt = calcRecovery(components, id);
+      uint256 healAmt = calcRestingRecovery(components, id);
       heal(components, id, healAmt);
     }
     setLastTs(components, id, block.timestamp);
@@ -158,8 +151,6 @@ library LibPet {
   function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = indexToID(components, index);
-    uint256 ownerID = getOwner(components, accountID);
-
     setAccount(components, id, accountID);
   }
 
@@ -182,7 +173,7 @@ library LibPet {
   // based on the Kami's production and assumes that information is up to date.
   // NOTE: we can't just use LibProd.calcOutput() here because that rounds down, while here
   // we want to properly round. We need a game design discussion on how we want to do this.
-  function calcDrain(IUintComp components, uint256 id) internal view returns (uint256) {
+  function calcProductionDrain(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 productionID = getProduction(components, id);
     uint256 prodRate = LibProduction.getRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
@@ -191,14 +182,17 @@ library LibPet {
   }
 
   // Calculate the recovery of the kami from resting. This assumes the Kami is actually resting.
-  function calcRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
+  function calcRestingRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 recoveryRate = calcRecoveryRate(components, id); // 1e18 precision
+    uint256 recoveryRate = calcRestingRecoveryRate(components, id); // 1e18 precision
     return (duration * recoveryRate) / RECOVERY_RATE_PRECISION;
   }
 
   // calculates the health recovery rate of the Kami per second. Assumed resting.
-  function calcRecoveryRate(IUintComp components, uint256 id) internal view returns (uint256) {
+  function calcRestingRecoveryRate(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (uint256) {
     uint256 totalHarmony = calcTotalHarmony(components, id);
     return (totalHarmony * RECOVERY_RATE_FLAT_MULTIPLIER * RECOVERY_RATE_PRECISION) / 3600;
   }
@@ -279,7 +273,7 @@ library LibPet {
 
   // Check whether the kami is fully healed.
   function isFull(IUintComp components, uint256 id) internal view returns (bool) {
-    return calcTotalHealth(components, id) == getCurrHealth(components, id);
+    return calcTotalHealth(components, id) == getLastHealth(components, id);
   }
 
   // Check whether a pet is harvesting.
@@ -294,7 +288,7 @@ library LibPet {
 
   // Check whether the current health of a pet is greater than 0. Assume health synced this block.
   function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
-    return getCurrHealth(components, id) > 0;
+    return getLastHealth(components, id) > 0;
   }
 
   // Check whether a pet is revealed
@@ -331,10 +325,10 @@ library LibPet {
     }
 
     // set the stats
-    LibStat.setHealth(components, id, BASE_HEALTH + health);
-    setCurrHealth(components, id, BASE_HEALTH + health);
-    LibStat.setPower(components, id, BASE_POWER + power);
-    LibStat.setViolence(components, id, BASE_VIOLENCE * violence);
+    setCurrHealth(components, id, health);
+    LibStat.setHealth(components, id, health);
+    LibStat.setPower(components, id, power);
+    LibStat.setViolence(components, id, violence);
     LibStat.setHarmony(components, id, harmony);
     LibStat.setSlots(components, id, slots);
   }
@@ -367,7 +361,13 @@ library LibPet {
   /////////////////
   // GETTERS
 
-  function getCurrHealth(IUintComp components, uint256 id) internal view returns (uint256) {
+  // get the entity ID of the pet account
+  function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
+  }
+
+  // gets the last explicitly set health of a pet. naming discrepancy for clarity
+  function getLastHealth(IUintComp components, uint256 id) internal view returns (uint256) {
     return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
   }
 
@@ -389,22 +389,18 @@ library LibPet {
     }
   }
 
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
-  }
-
   function getMediaURI(IUintComp components, uint256 id) internal view returns (string memory) {
     return MediaURIComponent(getAddressById(components, MediaURICompID)).getValue(id);
   }
 
-  // get the entity ID of the pet account
-  function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
+  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
+    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
   }
 
   // get the entity ID of the pet owner
   function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdOwnerComponent(getAddressById(components, IdOwnerCompID)).getValue(id);
+    uint256 accountID = getAccount(components, id);
+    return LibAccount.getOwner(components, accountID);
   }
 
   // Get the production of a pet. Return 0 if there are none.

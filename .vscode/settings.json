@@ -9,6 +9,7 @@
     "libraries/=./packages/contracts/src/libraries",
     "systems/=./packages/contracts/src/systems",
     "test/=./packages/contracts/src/test",
+    "tokens/=./packages/contracts/src/tokens",
     "utils/=./packages/contracts/src/utils",
     "ds-test/=./node_modules/ds-test/src/",
     "forge-std/=./node_modules/forge-std/src/",

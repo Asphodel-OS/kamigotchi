@@ -37,7 +37,7 @@ contract ERC721ProxySystem is System {
     return arguments;
   }
 
-  function executeTyped(uint256 amount) public pure returns (bytes memory) {
-    return execute(abi.encode(amount));
+  function executeTyped(uint256 args) public pure returns (bytes memory) {
+    return execute(abi.encode(args));
   }
 }

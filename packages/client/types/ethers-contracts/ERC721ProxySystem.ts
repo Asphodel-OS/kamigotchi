@@ -134,7 +134,7 @@ export interface ERC721ProxySystem extends BaseContract {
     ): Promise<[string]>;
 
     executeTyped(
-      amount: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -156,7 +156,7 @@ export interface ERC721ProxySystem extends BaseContract {
   ): Promise<string>;
 
   executeTyped(
-    amount: PromiseOrValue<BigNumberish>,
+    args: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -178,7 +178,7 @@ export interface ERC721ProxySystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      amount: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -212,7 +212,7 @@ export interface ERC721ProxySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      amount: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -235,7 +235,7 @@ export interface ERC721ProxySystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      amount: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

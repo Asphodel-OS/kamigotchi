@@ -143,7 +143,7 @@ library LibProduction {
     uint256 sourcePetID
   ) external view returns (bool) {
     uint256 targetPetID = getPet(components, id);
-    uint256 targetHealth = LibPet.getCurrHealth(components, targetPetID);
+    uint256 targetHealth = LibPet.getLastHealth(components, targetPetID);
     uint256 targetTotalHealth = LibPet.calcTotalHealth(components, targetPetID);
     uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
     return threshold * targetTotalHealth > targetHealth * 1e18;
