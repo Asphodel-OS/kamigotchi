@@ -290,12 +290,12 @@ library LibMetadata {
   function _traitToString(
     string memory name,
     string memory value
-  ) internal view returns (string memory) {
+  ) internal pure returns (string memory) {
     return string(abi.encodePacked('{"trait_type": "', name, '", "value": "', value, '"},\n'));
   }
 
   // appends trait and trait type to metadata format, but with a uint256 value
-  function _traitToString(string memory name, uint256 value) internal view returns (string memory) {
+  function _traitToString(string memory name, uint256 value) internal pure returns (string memory) {
     return
       string(
         abi.encodePacked(
