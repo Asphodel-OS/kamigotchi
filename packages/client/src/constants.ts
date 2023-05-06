@@ -72,6 +72,7 @@ import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
+import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
 
 // NOTE: This is the most horrendous, hardcoded known to mankind. We should
 // move most things here to the store and populate the information from onchain.
@@ -245,7 +246,7 @@ export const rooms: Room[] = [
         key: 'warningsign',
         path: warningsign,
         offset: { x: 10.5, y: 39.6 },
-        onClick: () => triggerDialogueModal(["Stay out."]),
+        onClick: () => triggerDialogueModal(['Stay out.']),
       },
     ],
   },
@@ -415,7 +416,14 @@ export const rooms: Room[] = [
       key: 'forest',
       path: forest,
     },
-    objects: [],
+    objects: [
+      {
+        key: 'toriigate',
+        path: toriigate,
+        offset: { x: -5, y: -5 },
+        onClick: triggerPetNamingModal,
+      },
+    ],
   },
   {
     location: 12,

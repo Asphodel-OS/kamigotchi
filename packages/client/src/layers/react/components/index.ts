@@ -20,6 +20,8 @@ import { registerPartyModal } from './modals/Party';
 import { registerNodeModal } from './modals/Node';
 import { registerSettingsModal } from './modals/Settings';
 import { registerHelpModal } from './modals/Help';
+import { registerKamisNamingModal } from './modals/KamisNaming';
+import { registerNameKamiModal } from './modals/NameKami';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -43,5 +45,7 @@ export function registerUIComponents() {
   registerPartyModal();
   registerKamiModal();
   registerSettingsModal();
+  registerKamisNamingModal();
+  registerNameKamiModal();
   registerHelpModal();
 }

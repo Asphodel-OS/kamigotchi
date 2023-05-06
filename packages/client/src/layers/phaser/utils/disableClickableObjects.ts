@@ -2,7 +2,7 @@ import { dataStore } from 'layers/react/store/createStore';
 
 export function disableClickableObjects(e: Phaser.Input.Pointer): boolean {
   const {
-    visibleModals: { chat, dialogue, kami, map, merchant, node, party },
+    visibleModals: { chat, dialogue, kami, map, merchant, node, party, nameKami },
   } = dataStore.getState();
 
   const modals = [
@@ -13,6 +13,8 @@ export function disableClickableObjects(e: Phaser.Input.Pointer): boolean {
     { id: 'merchant', isVisible: merchant },
     { id: 'node', isVisible: node },
     { id: 'party_modal', isVisible: party },
+    { id: 'party_modal', isVisible: party },
+    { id: 'name_kami_modal', isVisible: nameKami },
   ];
 
   // Check if the bounding rectangle of the image overlaps with any of the modals
