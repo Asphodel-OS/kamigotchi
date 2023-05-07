@@ -6,6 +6,8 @@ import { Kami, getKami } from '../shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { ModalWrapperFull } from '../library/ModalWrapper';
 import styled from 'styled-components';
+import React, { useCallback } from 'react';
+
 
 export function registerKamisNamingModal() {
   registerUIComponent(
@@ -137,8 +139,15 @@ export function registerKamisNamingModal() {
         });
       };
 
+      const hideModal = useCallback(() => {
+        setVisibleModals({ ...visibleModals, kamisNaming: false });
+      }, [setVisibleModals, visibleModals]);
+
       return (
         <ModalWrapperFull id='kamis_naming_modal' divName='kamisNaming' fill={true}>
+        <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+          X
+        </TopButton>
           <Scrollable>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
       );
@@ -227,4 +236,23 @@ const Content = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: stretch;
+`;
+
+const TopButton = styled.button`
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  color: black;
+  padding: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 5px;
+  font-family: Pixel;
+  width: 30px;
+  &:active {
+    background-color: #c4c4c4;
+  }
+  margin: 0px;
 `;

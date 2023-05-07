@@ -418,9 +418,9 @@ export const rooms: Room[] = [
     },
     objects: [
       {
-        key: 'toriigate',
-        path: toriigate,
-        offset: { x: -5, y: -5 },
+        key: 'emaboard',
+        path: emaboard,
+        offset: { x: 45.5, y: 31 },
         onClick: triggerPetNamingModal,
       },
     ],
