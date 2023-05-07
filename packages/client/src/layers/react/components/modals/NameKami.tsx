@@ -162,30 +162,14 @@ const Button = styled.button`
 const StepOne = () => (
   <ModalContent>
     <Description>
-      <Header style={{ color: 'black' }}>Welcome!</Header>
       <br />
-      Kamigotchi World exists entirely on-chain.
+      Once you set a name for your Kami, that name is permanent.
       <br />
-      <br />
-      It currently uses a burner wallet in your LocalStorage for testing.
     </Description>
   </ModalContent>
 );
 
-const StepTwo = () => (
-  <ModalContent>
-    <Description>
-      <Header style={{ color: 'black' }}>Tips</Header>
-      <br />
-      You can move using the map.
-      <br />
-      <br />
-      Look for a vending machine and for Nodes scattered throughout the world.
-    </Description>
-  </ModalContent>
-);
-
-const StepThree = (props: any) => {
+const StepTwo = (props: any) => {
   const { catchKeys, handleChange, name } = props;
 
   return (
@@ -210,12 +194,8 @@ const steps = (props: any) => [
   },
   {
     title: 'Two',
-    content: <StepTwo />,
-  },
-  {
-    title: 'Three',
     content: (
-      <StepThree catchKeys={props.catchKeys} handleChange={props.handleChange} name={props.name} />
+      <StepTwo catchKeys={props.catchKeys} handleChange={props.handleChange} name={props.name} />
     ),
     modalContent: true,
   },

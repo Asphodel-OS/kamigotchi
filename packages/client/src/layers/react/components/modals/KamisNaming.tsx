@@ -160,6 +160,17 @@ const Button = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
+  font-family: Pixel;
+  font-size: 14px;
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  width: 70px;
+  padding: 5px;
+  pointer-events: auto;
+  margin: 5px;
+
 `;
 
 const Scrollable = styled.div`
