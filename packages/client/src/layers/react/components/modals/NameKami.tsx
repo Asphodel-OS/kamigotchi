@@ -24,6 +24,7 @@ export function registerNameKamiModal() {
       const {
         network: {
           components: { OperatorAddress },
+          world: { entities },
         },
       } = layers;
 
@@ -31,12 +32,13 @@ export function registerNameKamiModal() {
         map(() => {
           return {
             layers,
+            entities,
           };
         })
       );
     },
 
-    ({ layers }) => {
+    ({ layers, entities }) => {
       const {
         network: {
           api: { player },
@@ -51,7 +53,7 @@ export function registerNameKamiModal() {
 
       const NameKami = useCallback(async (selectedKami, name) => {
         try {
-          await player.ERC721.name(selectedKami, name);
+          await player.ERC721.name(entities[selectedKami], name);
 
           document.getElementById('name_kami_modal')!.style.display = 'none';
         } catch (e) {
