@@ -4,6 +4,7 @@ const lightningSize = '14px';
 
 type BatteryLevelProps = {
   level: number;
+  showPercentage?: boolean;
 };
 
 const Battery = styled.div`
@@ -85,9 +86,10 @@ const BatteryContainer = styled.div`
   font-size: 14px;
 `;
 
-export const BatteryComponent: React.FC<BatteryLevelProps> = ({ level }) => {
+export const BatteryComponent: React.FC<BatteryLevelProps> = ({ level, showPercentage }) => {
   return (
     <BatteryContainer>
+      {showPercentage ? `${level} %` : ''}
       <Battery>
         <BatteryLevel level={level} />
       </Battery>

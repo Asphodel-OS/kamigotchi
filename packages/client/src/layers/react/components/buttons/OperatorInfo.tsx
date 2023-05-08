@@ -58,17 +58,13 @@ export function registerOperatorHealthButton() {
             <>
               <Centered>
                 <NameCell>
-                  <Text>
-                    OperatorName
-                  </Text>
+                  <Text>OperatorName</Text>
                 </NameCell>
                 <KamiCell>
-                  <Text>
-                    $KAMI: {coin ? coin * 1 : 0}
-                  </Text>
+                  <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
                 </KamiCell>
                 <BatteryCell>
-                  <BatteryComponent level={operatorStaminaPercentage} />
+                  <BatteryComponent showPercentage={true} level={operatorStaminaPercentage} />
                 </BatteryCell>
               </Centered>
             </>
