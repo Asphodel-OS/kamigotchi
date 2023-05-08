@@ -281,24 +281,29 @@ library LibPet {
     return LibString.eq(getState(components, id), "HARVESTING");
   }
 
-  // Check whether a pet is resting.
-  function isResting(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibString.eq(getState(components, id), "RESTING");
-  }
-
   // Check whether the current health of a pet is greater than 0. Assume health synced this block.
   function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
     return getLastHealth(components, id) > 0;
   }
 
-  // Check whether a pet is revealed
-  function isUnrevealed(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibString.eq(getState(components, id), "UNREVEALED");
-  }
-
   // Check whether a pet's ERC721 token is in the game world
   function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
     return !LibString.eq(getState(components, id), "721_EXTERNAL");
+  }
+
+  // checks whether an entity is a pet
+  function isPet(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsPetComponent(getAddressById(components, id)).has(id);
+  }
+
+  // Check whether a pet is resting.
+  function isResting(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibString.eq(getState(components, id), "RESTING");
+  }
+
+  // Check whether a pet is revealed
+  function isUnrevealed(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibString.eq(getState(components, id), "UNREVEALED");
   }
 
   /////////////////
@@ -450,6 +455,23 @@ library LibPet {
   // get the index of a pet (aka its 721 tokenID) from its entity ID
   function idToIndex(IUintComp components, uint256 entityID) internal view returns (uint256) {
     return IndexPetComponent(getAddressById(components, IndexPetComponentID)).getValue(entityID);
+  }
+
+  // retrieves the pet with the specified name
+  function getByName(
+    IUintComp components,
+    string memory name
+  ) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, NameCompID),
+      abi.encode(name)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
+    if (results.length > 0) result = results[0];
   }
 
   // gets all the pets owned by an account

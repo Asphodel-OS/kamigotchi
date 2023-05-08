@@ -15,16 +15,17 @@ contract PetSetAccountSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 entityID, address to) = abi.decode(arguments, (uint256, address));
+    (uint256 id, address to) = abi.decode(arguments, (uint256, address));
 
-    require(LibPet.getOwner(components, entityID) == addressToEntity(msg.sender), "Pet: not urs");
+    require(LibPet.isPet(components, id), "Pet: not a pet");
+    require(LibPet.getOwner(components, id) == addressToEntity(msg.sender), "Pet: not urs");
 
-    LibPet.setAccount(components, entityID, addressToEntity(to));
+    LibPet.setAccount(components, id, addressToEntity(to));
 
     return abi.encode(to);
   }
 
-  function executeTyped(uint256 entityID, address to) public returns (bytes memory) {
-    return execute(abi.encode(entityID, to));
+  function executeTyped(uint256 id, address to) public returns (bytes memory) {
+    return execute(abi.encode(id, to));
   }
 }
