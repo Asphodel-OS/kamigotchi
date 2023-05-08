@@ -18,12 +18,22 @@ contract PetFeedSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 petID, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint256 id, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
-    LibPet.syncHealth(components, petID);
-    require(!LibPet.isFull(components, petID), "Pet: already full");
+    // check that this is a pet owned by the account
+    require(LibPet.isPet(components, id), "Pet: not a pet");
+    require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
+
+    // check pet is in same room as account
+    require(
+      LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
+      "Pet: must be in same room"
+    );
+
+    // check pet is not full
+    LibPet.syncHealth(components, id);
+    require(!LibPet.isFull(components, id), "Pet: already full");
 
     // get food registry entry
     uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
@@ -36,7 +46,7 @@ contract PetFeedSystem is System {
 
     // heal according to item stats
     uint256 healAmt = LibStat.getHealth(components, registryID);
-    LibPet.heal(components, petID, healAmt);
+    LibPet.heal(components, id, healAmt);
 
     // update score
     if (
@@ -53,11 +63,11 @@ contract PetFeedSystem is System {
     LibScore.incBy(world, components, accountID, "FEED", 1);
 
     // update block activity
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastBlock(components, accountID); // gas limit :|
     return "";
   }
 
-  function executeTyped(uint256 petID, uint256 foodIndex) public returns (bytes memory) {
-    return execute(abi.encode(petID, foodIndex));
+  function executeTyped(uint256 id, uint256 foodIndex) public returns (bytes memory) {
+    return execute(abi.encode(id, foodIndex));
   }
 }
