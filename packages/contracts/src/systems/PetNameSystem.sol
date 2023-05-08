@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
@@ -20,8 +21,12 @@ contract PetNameSystem is System {
     (uint256 id, string memory name) = abi.decode(arguments, (uint256, string));
     uint256 accountID = LibAccount.getByAddress(components, msg.sender);
 
+    require(LibPet.isPet(components, id), "Pet: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
-    require(LibAccount.getLocation(components, accountID) == ROOM, "Not in correct room");
+    require(LibPet.getLocation(components, id) == ROOM, "Not in correct room");
+    require(bytes(name).length > 0, "PET: name cannot be empty");
+    require(bytes(name).length <= 16, "PET: name can be at most 16 characters");
+    require(LibPet.getByName(components, name) == 0, "Pet: name taken");
 
     LibPet.setName(components, id, name);
     LibAccount.updateLastBlock(components, accountID);
