@@ -120,7 +120,7 @@ export interface PetSetAccountSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      entityID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -139,7 +139,7 @@ export interface PetSetAccountSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    entityID: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     to: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -158,7 +158,7 @@ export interface PetSetAccountSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      entityID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -189,7 +189,7 @@ export interface PetSetAccountSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      entityID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -209,7 +209,7 @@ export interface PetSetAccountSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      entityID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

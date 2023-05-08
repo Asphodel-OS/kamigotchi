@@ -120,7 +120,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -139,7 +139,7 @@ export interface PetFeedSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    petID: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     foodIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -158,7 +158,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -189,7 +189,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -209,7 +209,7 @@ export interface PetFeedSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      petID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

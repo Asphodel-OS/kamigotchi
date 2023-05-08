@@ -68,7 +68,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "entityID",
+          "name": "id",
           "type": "uint256"
         },
         {
