@@ -8,7 +8,6 @@ import { ModalWrapperFull } from '../library/ModalWrapper';
 import styled from 'styled-components';
 import React, { useCallback } from 'react';
 
-
 export function registerKamisNamingModal() {
   registerUIComponent(
     'KamisNaming',
@@ -145,9 +144,9 @@ export function registerKamisNamingModal() {
 
       return (
         <ModalWrapperFull id='kamis_naming_modal' divName='kamisNaming' fill={true}>
-        <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-          X
-        </TopButton>
+          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+            X
+          </TopButton>
           <Scrollable>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
       );
@@ -170,7 +169,6 @@ const Button = styled.button`
   padding: 5px;
   pointer-events: auto;
   margin: 5px;
-
 `;
 
 const Scrollable = styled.div`

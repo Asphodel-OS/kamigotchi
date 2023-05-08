@@ -45,11 +45,13 @@ export function registerNameKamiModal() {
 
       // const [isDivVisible, setIsDivVisible] = useState(false);
       const [name, setName] = useState('');
-      const { selectedEntities } = dataStore();
+      const {
+        selectedEntities: { kami },
+      } = dataStore();
 
-      const NameKami = useCallback(async (name) => {
+      const NameKami = useCallback(async (selectedKami, name) => {
         try {
-          await player.ERC721.name(selectedEntities.kami, name);
+          await player.ERC721.name(selectedKami, name);
 
           document.getElementById('name_kami_modal')!.style.display = 'none';
         } catch (e) {
@@ -59,7 +61,7 @@ export function registerNameKamiModal() {
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          NameKami(name);
+          NameKami(kami, name);
         }
       };
 
@@ -77,6 +79,8 @@ export function registerNameKamiModal() {
             handleMinting={NameKami}
             submit={true}
             handleSubmit={NameKami}
+            kami={true}
+            selectedKami={kami}
           />
         </ModalWrapperFull>
       );
