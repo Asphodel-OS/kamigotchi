@@ -1,4 +1,10 @@
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
+import {
+  Has,
+  HasValue,
+  getComponentValue,
+  getComponentValueStrict,
+  runQuery,
+} from '@latticexyz/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { map, merge } from 'rxjs';
 import { BatteryComponent } from '../library/Battery';
@@ -19,10 +25,10 @@ export function registerOperatorHealthButton() {
       const {
         network: {
           network: { connectedAddress },
-          components: { IsAccount, OperatorAddress, StaminaCurrent },
+          components: { IsAccount, OperatorAddress, StaminaCurrent, Name },
         },
       } = layers;
-      return merge(StaminaCurrent.update$).pipe(
+      return merge(StaminaCurrent.update$, Name.update$).pipe(
         map(() => {
           // get the account entity of the controlling wallet
           const accountEntityIndex = Array.from(
@@ -33,6 +39,8 @@ export function registerOperatorHealthButton() {
               }),
             ])
           )[0];
+          const operatorName =
+            getComponentValue(Name, accountEntityIndex)?.value ?? 'Operator Name';
 
           const account =
             accountEntityIndex !== undefined
@@ -44,11 +52,12 @@ export function registerOperatorHealthButton() {
             staminaCurrent,
             maxStamina,
             coin,
+            operatorName,
           };
         })
       );
     },
-    ({ staminaCurrent, maxStamina, coin }) => {
+    ({ staminaCurrent, maxStamina, coin, operatorName }) => {
       const operatorStaminaPercentage =
         staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
 
@@ -58,14 +67,10 @@ export function registerOperatorHealthButton() {
             <>
               <Centered>
                 <NameCell>
-                  <Text>
-                    OperatorName
-                  </Text>
+                  <Text>{operatorName}</Text>
                 </NameCell>
                 <KamiCell>
-                  <Text>
-                    $KAMI: {coin ? coin * 1 : 0}
-                  </Text>
+                  <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
                 </KamiCell>
                 <BatteryCell>
                   <BatteryComponent level={operatorStaminaPercentage} />
