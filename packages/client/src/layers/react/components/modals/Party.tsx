@@ -80,24 +80,28 @@ export function registerPartyModal() {
             itemIndex: 1,
             image: gum,
             balance: 0,
+            text: 'Marina - Bubblegum Bitch',
           },
           {
             id: 2,
             itemIndex: 2,
             image: pompom,
             balance: 0,
+            text: 'pom pom cheerleader',
           },
           {
             id: 3,
             itemIndex: 3,
             image: gakki,
             balance: 0,
+            text: 'Django unchained',
           },
           {
             id: 4,
             itemIndex: 4,
             image: ribbon,
             balance: 0,
+            text: 'Cry me a river',
           },
         ];
       };
@@ -387,14 +391,48 @@ export function registerPartyModal() {
 
       // get the row of consumable items to display in the player inventory
       // NOTE: does not render until player inventories are populated
-      const ConsumableCells = (inventories: any[]) => {
-        return inventories.map((inv) => {
+
+      interface TooltipProps {
+        show: boolean;
+      }
+
+      const Tooltip = styled.div<TooltipProps>`
+        position: absolute;
+        transform: translatey(10px) translateX(-40%);
+        top: 20px;
+        left: 60px;
+        padding: 5px;
+        background-color: #ffffff;
+        font-size: 12px;
+        font-family: Pixel;
+        opacity: ${(props) => (props.show ? 1 : 0)};
+        visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+        transition: all 0.3s ease-in-out;
+        border-style: solid;
+        border-width: 2px;
+        border-color: black;
+        color: black;
+      `;
+
+      const ConsumableCells = (inventories: any[], showIndex: number, setToolTip: any) => {
+        return inventories.map((inv, i) => {
+          console.log(showIndex, i);
           return (
             <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
-              <CellGrid>
-                <Icon src={inv.image} />
-                <ItemNumber>{inv.balance ?? 0}</ItemNumber>
-              </CellGrid>
+              <div style={{ position: 'relative' }}>
+                <CellGrid
+                  onMouseOver={() => {
+                    setToolTip(i);
+                  }}
+                  onMouseLeave={() => {
+                    setToolTip(-1);
+                  }}
+                >
+                  <Tooltip show={i === showIndex ? true : false}>{inv.text}</Tooltip>
+                  <Icon src={inv.image} />
+                  <ItemNumber>{inv.balance ?? 0}</ItemNumber>
+                </CellGrid>
+              </div>
             </CellBordered>
           );
         });
@@ -463,9 +501,13 @@ export function registerPartyModal() {
         });
       };
 
+      const [showTooltip, setShowTooltip] = useState(-1);
+
       return (
         <ModalWrapperFull id='party_modal' divName='party' fill={true}>
-          <ConsumableGrid>{ConsumableCells(data.account.inventories)}</ConsumableGrid>
+          <ConsumableGrid>
+            {ConsumableCells(data.account.inventories, showTooltip, setShowTooltip)}
+          </ConsumableGrid>
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
       );
