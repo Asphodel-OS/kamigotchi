@@ -550,7 +550,6 @@ const CellBordered = styled.div`
 `;
 
 const Icon = styled.img`
-  z-index: 0;
   grid-column: 1;
   height: 40px;
   padding: 3px;
