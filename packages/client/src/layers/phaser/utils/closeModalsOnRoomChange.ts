@@ -9,7 +9,8 @@ export const closeModalsOnRoomChange = () => {
       dialogue: false,
       merchant: false,
       kamiMint: false,
-      kami: false
+      kami: false,
+      node: false,
     },
   });
 };
