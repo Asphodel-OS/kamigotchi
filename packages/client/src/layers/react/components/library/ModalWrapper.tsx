@@ -4,14 +4,13 @@ import styled, { keyframes } from 'styled-components';
 import { ExitButton } from 'layers/react/components/library/ExitButton';
 import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 
-
 interface Props {
   divName: keyof VisibleModals;
   id: string;
   fill?: boolean; // whether the content should fit to the entire modal
   children: React.ReactNode;
+  zindex?: boolean;
 }
-
 
 // ModalWrapperFull is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
@@ -30,19 +29,18 @@ export const ModalWrapperFull = (props: Props) => {
   // Some conditional styling to adapt the content to the wrapper.
   const wrapperStyle = props.fill ? { height: '75vh' } : {};
   const contentStyle = props.fill ? { height: '100%' } : {};
+  const zindex = props.zindex ? { position: 'relative', zIndex: 1 } : {};
 
   return (
     <Wrapper
       id={props.id}
       isOpen={visibleModals[props.divName]}
-      style={wrapperStyle}
+      style={{ ...wrapperStyle, ...zindex }}
     >
-      <Content style={contentStyle}>
-        {props.children}
-      </Content>
+      <Content style={contentStyle}>{props.children}</Content>
     </Wrapper>
   );
-}
+};
 
 interface Wrapper {
   isOpen: boolean;

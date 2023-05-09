@@ -34,7 +34,11 @@ export function registerKamiModal() {
     },
 
     ({ layers }) => {
-      const { selectedEntities: { kami }, visibleModals, setVisibleModals } = dataStore();
+      const {
+        selectedEntities: { kami },
+        visibleModals,
+        setVisibleModals,
+      } = dataStore();
 
       /////////////////
       // Get values
@@ -92,20 +96,23 @@ export function registerKamiModal() {
       }, [setVisibleModals, visibleModals]);
 
       return (
-        <ModalWrapperFull divName='kami' id='kamiModal'>
-        <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-          X
-        </TopButton>
+        <ModalWrapperFull zindex={true} divName='kami' id='kamiModal'>
+          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+            X
+          </TopButton>
           <TopDiv>
             <KamiImage src={dets?.uri} />
-            <div style={{
-              display: 'grid',
-              gridRowGap: '5px',
-              gridColumnGap: '5px'
-            }}>
+            <div
+              style={{
+                display: 'grid',
+                gridRowGap: '5px',
+                gridColumnGap: '5px',
+              }}
+            >
               <KamiName>{dets?.name} </KamiName>
               <KamiText
-                style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 5, margin: '10px' }}>
+                style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 5, margin: '10px' }}
+              >
                 {affinitiesBox()}
               </KamiText>
               <StatBox style={{ gridRow: 3, gridColumn: 1 }}>
@@ -130,10 +137,7 @@ export function registerKamiModal() {
               </StatBox>
             </div>
           </TopDiv>
-          <div
-          >
-            {traitBox()}
-          </div>
+          <div>{traitBox()}</div>
         </ModalWrapperFull>
       );
     }
@@ -155,7 +159,7 @@ const KamiText = styled.p`
   color: black;
   font-size: 14px;
   font-family: Pixel;
-  grid-row: 1
+  grid-row: 1;
 `;
 
 const KamiFacts = styled.div`
@@ -165,7 +169,7 @@ const KamiFacts = styled.div`
   font-weight: 600;
   font-family: Pixel;
   margin: auto;
-  grid-row: 2
+  grid-row: 2;
 `;
 
 const KamiHeader = styled.div`

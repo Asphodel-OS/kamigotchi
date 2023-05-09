@@ -416,7 +416,6 @@ export function registerPartyModal() {
 
       const ConsumableCells = (inventories: any[], showIndex: number, setToolTip: any) => {
         return inventories.map((inv, i) => {
-          console.log(showIndex, i);
           return (
             <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
               <div style={{ position: 'relative' }}>
@@ -428,7 +427,9 @@ export function registerPartyModal() {
                     setToolTip(-1);
                   }}
                 >
-                  <Tooltip show={i === showIndex ? true : false}>{inv.text}</Tooltip>
+                  {!visibleModals.party && (
+                    <Tooltip show={i === showIndex ? true : false}>{inv.text}</Tooltip>
+                  )}
                   <Icon src={inv.image} />
                   <ItemNumber>{inv.balance ?? 0}</ItemNumber>
                 </CellGrid>
@@ -549,6 +550,7 @@ const CellBordered = styled.div`
 `;
 
 const Icon = styled.img`
+  z-index: 0;
   grid-column: 1;
   height: 40px;
   padding: 3px;
