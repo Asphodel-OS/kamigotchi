@@ -14,7 +14,7 @@ import {
   abuildinglogo,
   foxstatues,
   chair,
-  cabinet
+  cabinet,
 } from 'assets/images/objects';
 
 import {
@@ -61,7 +61,6 @@ import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
 // represents a room in all its glory
 export interface Room {
   location: number;
-  exits: RoomExits;
   background?: RoomAsset;
   music?: RoomMusic;
   objects?: RoomAsset[];
@@ -75,25 +74,23 @@ interface RoomAsset {
   onClick?: Function;
 }
 
-// represents the directional exist from a room
-interface RoomExits {
-  up?: number;
-  down?: number;
-  left?: number;
-  right?: number;
-}
-
 // represents the music in a room
 interface RoomMusic {
   key: string;
   path: string;
 }
 
+export const duplicateRoomMusic = [
+  [2, 3],
+  [5, 6],
+  [9, 10],
+  [7, 8, 14],
+];
+
 // all our lovely, hardcoded room details
 export const rooms: Room[] = [
   {
     location: 0,
-    exits: {},
     background: {
       key: 'bg_room001',
       path: room1,
@@ -106,7 +103,6 @@ export const rooms: Room[] = [
   },
   {
     location: 1,
-    exits: { up: 2 },
     background: {
       key: 'bg_room001',
       path: room1,
@@ -129,7 +125,6 @@ export const rooms: Room[] = [
   },
   {
     location: 2,
-    exits: { up: 3, down: 1, left: 13 },
     background: {
       key: 'bg_room002',
       path: room2,
@@ -168,7 +163,6 @@ export const rooms: Room[] = [
   },
   {
     location: 3,
-    exits: { up: 4, down: 2 },
     background: {
       key: 'bg_room003',
       path: room3,
@@ -188,7 +182,6 @@ export const rooms: Room[] = [
   },
   {
     location: 4,
-    exits: { up: 5, down: 3, left: 12 },
     background: {
       key: 'bg_room004',
       path: room4,
@@ -208,7 +201,6 @@ export const rooms: Room[] = [
   },
   {
     location: 5,
-    exits: { up: 6, down: 4, left: 9 },
     background: {
       key: 'bg_room005',
       path: room5,
@@ -222,19 +214,19 @@ export const rooms: Room[] = [
         key: 'trashbag',
         path: trashbag,
         offset: { x: -55.5, y: 50 },
-        onClick: () => triggerDialogueModal(["A bag of trash. Looks worthless."]),
+        onClick: () => triggerDialogueModal(['A bag of trash. Looks worthless.']),
       },
       {
         key: 'acompanybuilding',
         path: acompanybuilding,
         offset: { x: -30.1, y: -35 },
-        onClick: () => triggerDialogueModal(["There's a huge office building here for some reason."]),
+        onClick: () =>
+          triggerDialogueModal(["There's a huge office building here for some reason."]),
       },
     ],
   },
   {
     location: 6,
-    exits: { up: 7, down: 5 },
     background: {
       key: 'bg_room006',
       path: room6,
@@ -248,19 +240,19 @@ export const rooms: Room[] = [
         key: 'abuildinglogo',
         path: abuildinglogo,
         offset: { x: 0, y: -45 },
-        onClick: () => triggerDialogueModal(["Looks like their logo."]),
+        onClick: () => triggerDialogueModal(['Looks like their logo.']),
       },
       {
         key: 'foxstatues',
         path: foxstatues,
         offset: { x: 0, y: 28 },
-        onClick: () => triggerDialogueModal(["There's a pair of fox statues flanking the entrance."]),
+        onClick: () =>
+          triggerDialogueModal(["There's a pair of fox statues flanking the entrance."]),
       },
     ],
   },
   {
     location: 7,
-    exits: { down: 6, left: 8, right: 14 },
     background: {
       key: 'bg_room007',
       path: room7,
@@ -274,19 +266,18 @@ export const rooms: Room[] = [
         key: 'chair',
         path: chair,
         offset: { x: -40, y: 31.9 },
-        onClick: () => triggerDialogueModal(["Looks comfortable."]),
+        onClick: () => triggerDialogueModal(['Looks comfortable.']),
       },
       {
         key: 'cabinet',
         path: cabinet,
         offset: { x: 26, y: 17.4 },
-        onClick: () => triggerDialogueModal(["A cabinet."]),
+        onClick: () => triggerDialogueModal(['A cabinet.']),
       },
     ],
   },
   {
     location: 8,
-    exits: { right: 7 },
     background: {
       key: 'bg_room008',
       path: room8,
@@ -299,7 +290,6 @@ export const rooms: Room[] = [
   },
   {
     location: 9,
-    exits: { up: 11, down: 10, right: 5 },
     background: {
       key: 'bg_room009',
       path: room9,
@@ -312,7 +302,6 @@ export const rooms: Room[] = [
   },
   {
     location: 10,
-    exits: { up: 9 },
     background: {
       key: 'bg_room010',
       path: room10,
@@ -325,7 +314,6 @@ export const rooms: Room[] = [
   },
   {
     location: 11,
-    exits: { down: 9 },
     background: {
       key: 'bg_room011',
       path: room11,
@@ -338,7 +326,6 @@ export const rooms: Room[] = [
   },
   {
     location: 12,
-    exits: { right: 4 },
     background: {
       key: 'bg_room012',
       path: room12,
@@ -354,7 +341,7 @@ export const rooms: Room[] = [
         offset: { x: -48.65, y: 13 },
         onClick: () =>
           triggerDialogueModal([
-            "This set of prayer wheels will allow $KAMI to be removed from the game world.",
+            'This set of prayer wheels will allow $KAMI to be removed from the game world.',
           ]),
       },
       {
@@ -362,24 +349,19 @@ export const rooms: Room[] = [
         path: bellshapeddevice,
         offset: { x: 39.04, y: -13.92 },
         onClick: () =>
-          triggerDialogueModal([
-            "This device will allow Kamigotchi to leave the world as tokens.",
-          ]),
+          triggerDialogueModal(['This device will allow Kamigotchi to leave the world as tokens.']),
       },
       {
         key: 'glassbox',
         path: glassbox,
         offset: { x: -9, y: -3.92 },
         onClick: () =>
-          triggerDialogueModal([
-            "This device will allow you to view information about balances.",
-          ]),
+          triggerDialogueModal(['This device will allow you to view information about balances.']),
       },
     ],
   },
   {
     location: 13,
-    exits: { right: 2 },
     background: {
       key: 'bg_room013',
       path: room13,
@@ -399,7 +381,6 @@ export const rooms: Room[] = [
   },
   {
     location: 14,
-    exits: { left: 7 },
     background: {
       key: 'bg_room014',
       path: room14,
@@ -411,28 +392,6 @@ export const rooms: Room[] = [
     objects: [],
   },
 ];
-
-interface RoomInfo {
-  room: number;
-}
-type GridRooms = { [key: string]: RoomInfo };
-
-export const gridRooms: GridRooms = {
-  '1': { room: 14 },
-  '2': { room: 13 },
-  '7': { room: 12 },
-  '6': { room: 11 },
-  '3': { room: 10 },
-  '13': { room: 9 },
-  '14': { room: 8 },
-  '15': { room: 7 },
-  '26': { room: 6 },
-  '27': { room: 5 },
-  '37': { room: 4 },
-  '38': { room: 3 },
-  '39': { room: 2 },
-  '40': { room: 1 },
-};
 
 export const describeCharacter = {
   bodyType: [

@@ -1,6 +1,7 @@
 import { dataStore } from 'layers/react/store/createStore';
 import { Room } from 'src/constants';
 import { disableClickableObjects } from '../utils/disableClickableObjects';
+import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -13,10 +14,14 @@ export interface GameScene {
 export class GameScene extends Phaser.Scene implements GameScene {
   private gameSound: Phaser.Sound.BaseSound | undefined;
   private currentVolume: number;
+  public prevRoom: number;
+  public currentRoom: number;
 
   constructor() {
     super('Game');
     this.currentVolume = 0.5;
+    this.prevRoom = 0;
+    this.currentRoom = 0;
   }
 
   preload() {
@@ -71,10 +76,13 @@ export class GameScene extends Phaser.Scene implements GameScene {
           sound: { volume },
         } = dataStore.getState();
         this.currentVolume = volume;
-        this.gameSound = this.sound.add(this.room.music.key, { volume: volume, loop: true });
-        this.gameSound.play();
+        if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
+          this.gameSound = this.sound.add(this.room.music.key, { volume: volume, loop: true });
+          this.gameSound.play();
+        }
       }
     }
+    this.prevRoom = this.currentRoom;
 
     // subscribe to changes in sound.volume
     dataStore.subscribe(() => {
