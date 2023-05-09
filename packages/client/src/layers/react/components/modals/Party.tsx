@@ -427,7 +427,7 @@ export function registerPartyModal() {
                     setToolTip(-1);
                   }}
                 >
-                  {!visibleModals.party && (
+                  {!visibleModals.kami && (
                     <Tooltip show={i === showIndex ? true : false}>{inv.text}</Tooltip>
                   )}
                   <Icon src={inv.image} />
