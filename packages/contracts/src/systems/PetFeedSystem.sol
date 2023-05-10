@@ -9,6 +9,7 @@ import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Feed"));
 
@@ -36,7 +37,23 @@ contract PetFeedSystem is System {
     // heal according to item stats
     uint256 healAmt = LibStat.getHealth(components, registryID);
     LibPet.heal(components, petID, healAmt);
-    LibAccount.updateLastBlock(components, accountID); // gas limit :|
+
+    // update score
+    if (
+      LibScore.get(components, accountID, LibScore.getLeaderboardEpoch(components), "FEED") == 0
+    ) {
+      LibScore.create(
+        world,
+        components,
+        accountID,
+        LibScore.getLeaderboardEpoch(components),
+        "FEED"
+      );
+    }
+    LibScore.incBy(world, components, accountID, "FEED", 1);
+
+    // update block activity
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

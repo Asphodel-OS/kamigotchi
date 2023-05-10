@@ -10,6 +10,7 @@ import { LibCoin } from "libraries/LibCoin.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
@@ -55,6 +56,21 @@ contract ProductionLiquidateSystem is System {
     LibPet.kill(components, targetPetID);
     LibProduction.stop(components, targetProductionID);
     LibKill.create(world, components, petID, targetPetID, nodeID);
+
+    // update score
+    if (
+      LibScore.get(components, accountID, LibScore.getLeaderboardEpoch(components), "LIQUIDATE") ==
+      0
+    ) {
+      LibScore.create(
+        world,
+        components,
+        accountID,
+        LibScore.getLeaderboardEpoch(components),
+        "LIQUIDATE"
+      );
+    }
+    LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
 
     LibAccount.updateLastBlock(components, accountID);
     return "";

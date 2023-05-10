@@ -19,6 +19,7 @@ import { _RegistryUpdateModSystem } from "./ethers-contracts/_RegistryUpdateModS
 import { _RegistryUpdateReviveSystem } from "./ethers-contracts/_RegistryUpdateReviveSystem";
 import { _RegistryUpdateTraitSystem } from "./ethers-contracts/_RegistryUpdateTraitSystem";
 import { _RoomCreateSystem } from "./ethers-contracts/_RoomCreateSystem";
+import { _SetLeaderboardEpochSystem } from "./ethers-contracts/_SetLeaderboardEpochSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountNameSystem } from "./ethers-contracts/AccountNameSystem";
 import { AccountSetSystem } from "./ethers-contracts/AccountSetSystem";
@@ -68,6 +69,7 @@ export type SystemTypes = {
   "system._Registry.Revive.Update": _RegistryUpdateReviveSystem;
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem;
   "system._Room.Create": _RoomCreateSystem;
+  "system.Leaderboard.Epoch": _SetLeaderboardEpochSystem;
   "system.Account.Move": AccountMoveSystem;
   "system.Account.Name": AccountNameSystem;
   "system.Account.Set": AccountSetSystem;

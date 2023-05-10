@@ -7,6 +7,7 @@
     "DescriptionComponent",
     "CoinComponent",
     "ExitsComponent",
+    "EpochComponent",
     "GenusComponent",
     "HarmonyComponent",
     "HealthComponent",
@@ -34,6 +35,7 @@
     "IndexReviveComponent",
     "IndexTraitComponent",
     "IsAccountComponent",
+    "IsConfigComponent",
     "IsEquippedComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
@@ -41,6 +43,7 @@
     "IsListingComponent",
     "IsMerchantComponent",
     "IsTraitComponent",
+    "IsScoreComponent",
     "IsNodeComponent",
     "IsNonFungibleComponent",
     "IsPetComponent",
@@ -314,8 +317,12 @@
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
+        "EpochComponent",
+        "IsScoreComponent",
+        "IdHolderComponent",
         "HealthCurrentComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -344,26 +351,36 @@
       "name": "ProductionCollectSystem",
       "writeAccess": [
         "BlockLastComponent",
+        "BalanceComponent",
         "CoinComponent",
+        "EpochComponent",
+        "IsScoreComponent",
+        "IdHolderComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent",
-        "TimeStartComponent"
+        "TimeStartComponent",
+        "TypeComponent"
       ]
     },
     {
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
+        "BalanceComponent",
         "BlockLastComponent",
         "CoinComponent",
+        "EpochComponent",
         "HealthCurrentComponent",
+        "IdHolderComponent",
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
         "IsKillComponent",
+        "IsScoreComponent",
         "RateComponent",
         "StateComponent",
         "TimeComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TypeComponent"
       ]
     },
     {

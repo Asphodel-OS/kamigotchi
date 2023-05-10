@@ -8,6 +8,8 @@ import { getAddressById } from "solecs/utils.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { ID as PetSysID } from "systems/ERC721MintSystem.sol";
 
+import { LibScore } from "libraries/LibScore.sol";
+
 uint256 constant ID = uint256(keccak256("system._Init"));
 
 // admin only system to _init everything
@@ -20,6 +22,7 @@ contract _InitSystem is System {
     // for erc721 pet
     // TODO: move this to registration API or rename this file
     BalanceComponent(getAddressById(components, BalanceCompID)).set(PetSysID, 0);
+    LibScore.setLeaderboardEpoch(components, 1);
 
     return "";
   }

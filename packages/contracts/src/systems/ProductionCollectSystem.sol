@@ -9,6 +9,7 @@ import { LibCoin } from "libraries/LibCoin.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Collect"));
 
@@ -33,6 +34,20 @@ contract ProductionCollectSystem is System {
     uint256 amt = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, amt);
     LibProduction.reset(components, id);
+
+    // update score, possible finetuning to accomodate node types and affinities
+    if (
+      LibScore.get(components, accountID, LibScore.getLeaderboardEpoch(components), "FEED") == 0
+    ) {
+      LibScore.create(
+        world,
+        components,
+        accountID,
+        LibScore.getLeaderboardEpoch(components),
+        "COLLECT"
+      );
+    }
+    LibScore.incBy(world, components, accountID, "COLLECT", 1);
 
     LibAccount.updateLastBlock(components, accountID);
     return abi.encode(amt);

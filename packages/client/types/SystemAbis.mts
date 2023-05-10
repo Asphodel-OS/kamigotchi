@@ -19,6 +19,7 @@ import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
 import _RegistryUpdateReviveSystem from "../abi/_RegistryUpdateReviveSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
+import _SetLeaderboardEpochSystem from "../abi/_SetLeaderboardEpochSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountNameSystem from "../abi/AccountNameSystem.json";
 import AccountSetSystem from "../abi/AccountSetSystem.json";
@@ -68,6 +69,7 @@ export const SystemAbis = {
   "system._Registry.Revive.Update": _RegistryUpdateReviveSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
+  "system.Leaderboard.Epoch": _SetLeaderboardEpochSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Name": AccountNameSystem.abi,
   "system.Account.Set": AccountSetSystem.abi,
