@@ -25,10 +25,10 @@ export function registerOperatorHealthButton() {
       const {
         network: {
           network: { connectedAddress },
-          components: { IsAccount, OperatorAddress, StaminaCurrent, Name },
+          components: { IsAccount, OperatorAddress, StaminaCurrent, Name, Coin },
         },
       } = layers;
-      return merge(StaminaCurrent.update$, Name.update$).pipe(
+      return merge(StaminaCurrent.update$, Name.update$, Coin.update$).pipe(
         map(() => {
           // get the account entity of the controlling wallet
           const accountEntityIndex = Array.from(
@@ -70,7 +70,7 @@ export function registerOperatorHealthButton() {
                   <Text>{operatorName}</Text>
                 </NameCell>
                 <KamiCell>
-                    <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
+                  <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
                 </KamiCell>
                 <BatteryCell>
                   <BatteryComponent showPercentage={true} level={operatorStaminaPercentage} />
