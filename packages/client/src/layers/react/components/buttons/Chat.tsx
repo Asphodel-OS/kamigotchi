@@ -4,6 +4,7 @@ import chatImage from '../../../../assets/images/chat_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerChatButton() {
   registerUIComponent(
@@ -16,12 +17,12 @@ export function registerChatButton() {
     },
     (layers) => of(layers),
     () => {
+      const {
+        visibleModals: { chatButton },
+      } = dataStore();
       return (
-        <MenuButton id="chat_button" targetDiv="chat" text="Chat">
-          <img style={{height: '100%', width: 'auto' }}
-            src={chatImage}
-            alt='chat_icon'
-          />
+        <MenuButton id='chat_button' targetDiv='chat' text='Chat' visible={chatButton}>
+          <img style={{ height: '100%', width: 'auto' }} src={chatImage} alt='chat_icon' />
         </MenuButton>
       );
     }

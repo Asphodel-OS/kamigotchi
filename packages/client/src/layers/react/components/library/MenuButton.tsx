@@ -36,7 +36,7 @@ export const MenuButton = (props: Props) => {
   return (
     <div id={id}>
       <Button
-        style={{ pointerEvents: 'auto' }}
+        style={{ pointerEvents: 'auto', display: props.visible ? 'block' : 'none' }}
         onClick={handleToggle}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -53,6 +53,7 @@ interface Props {
   targetDiv: keyof VisibleModals;
   children: React.ReactNode;
   text?: string;
+  visible: boolean;
 }
 
 interface TooltipProps {

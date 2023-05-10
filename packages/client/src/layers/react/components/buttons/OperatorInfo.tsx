@@ -11,6 +11,7 @@ import { BatteryComponent } from '../library/Battery';
 import styled from 'styled-components';
 import { getAccount } from '../shapes/Account';
 import { Account } from '../shapes/Account';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerOperatorHealthButton() {
   registerUIComponent(
@@ -60,9 +61,11 @@ export function registerOperatorHealthButton() {
     ({ staminaCurrent, maxStamina, coin, operatorName }) => {
       const operatorStaminaPercentage =
         staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
-
+      const {
+        visibleModals: { operatorInfo },
+      } = dataStore();
       return (
-        <Button id='battery_button'>
+        <Button id='operator_info' style={{ display: operatorInfo ? 'block' : 'none' }}>
           {staminaCurrent && (
             <>
               <Centered>
@@ -70,7 +73,7 @@ export function registerOperatorHealthButton() {
                   <Text>{operatorName}</Text>
                 </NameCell>
                 <KamiCell>
-                    <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
+                  <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
                 </KamiCell>
                 <BatteryCell>
                   <BatteryComponent showPercentage={true} level={operatorStaminaPercentage} />

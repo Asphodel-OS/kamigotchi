@@ -47,6 +47,7 @@ export function registerDetectAccountModal() {
       const [isDivVisible, setIsDivVisible] = useState(false);
       const [name, setName] = useState('');
       const { volume } = dataStore((state) => state.sound);
+      const { visibleModals, setVisibleModals } = dataStore();
 
       const hasAccount = Array.from(
         runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
@@ -80,7 +81,19 @@ export function registerDetectAccountModal() {
       };
 
       useEffect(() => {
-        if (hasAccount != undefined) return setIsDivVisible(false);
+        if (hasAccount != undefined) {
+          setIsDivVisible(false);
+          return setVisibleModals({
+            ...visibleModals,
+            operatorInfo: true,
+            partButton: true,
+            settingsButton: true,
+            chatButton: true,
+            helpButton: true,
+            nodeButton: true,
+            mapButton: true,
+          });
+        }
         return setIsDivVisible(true);
       }, [setIsDivVisible, hasAccount]);
 
@@ -207,9 +220,7 @@ const StepThree = (props: any) => {
 
   return (
     <ModalContent>
-      <Description style={{ gridRow: 1 }}>
-        Now, give yourself a name.
-      </Description>
+      <Description style={{ gridRow: 1 }}>Now, give yourself a name.</Description>
       <Input
         style={{ gridRow: 2, pointerEvents: 'auto' }}
         type='text'

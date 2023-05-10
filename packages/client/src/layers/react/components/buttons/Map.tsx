@@ -4,6 +4,7 @@ import mapImage from '../../../../assets/images/map_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerMapButton() {
   registerUIComponent(
@@ -16,8 +17,11 @@ export function registerMapButton() {
     },
     (layers) => of(layers),
     () => {
+      const {
+        visibleModals: { mapButton },
+      } = dataStore();
       return (
-        <MenuButton id='map_button' targetDiv='map' text='Map'>
+        <MenuButton id='map_button' targetDiv='map' text='Map' visible={mapButton}>
           <img style={{ height: '100%', width: 'auto' }} src={mapImage} alt='map_icon' />
         </MenuButton>
       );
