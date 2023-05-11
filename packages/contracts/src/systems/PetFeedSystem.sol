@@ -48,26 +48,23 @@ contract PetFeedSystem is System {
     uint256 healAmt = LibStat.getHealth(components, registryID);
     LibPet.heal(components, id, healAmt);
 
-    // update score
-    if (
-      LibScore.get(components, accountID, LibScore.getLeaderboardEpoch(components), "FEED") == 0
-    ) {
-      LibScore.create(
-        world,
-        components,
-        accountID,
-        LibScore.getLeaderboardEpoch(components),
-        "FEED"
-      );
-    }
-    LibScore.incBy(world, components, accountID, "FEED", 1);
-
-    // update block activity
+    // logging and tracking
+    updateScore(accountID);
     LibAccount.updateLastBlock(components, accountID); // gas limit :|
     return "";
   }
 
   function executeTyped(uint256 id, uint256 foodIndex) public returns (bytes memory) {
     return execute(abi.encode(id, foodIndex));
+  }
+
+  // increments the account's FEED score for the current epoch
+  function updateScore(uint256 accountID) internal {
+    uint256 epoch = LibScore.getLeaderboardEpoch(components);
+    uint256 scoreID = LibScore.get(components, accountID, epoch, "FEED");
+    if (scoreID == 0) {
+      scoreID = LibScore.create(world, components, accountID, epoch, "FEED");
+    }
+    LibScore.inc(components, scoreID, 1);
   }
 }
