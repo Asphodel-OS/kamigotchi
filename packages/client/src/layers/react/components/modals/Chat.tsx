@@ -48,7 +48,7 @@ export function registerChatModal() {
         return getComponentValue(Name, index)?.value as string;
       };
 
-      return merge(IsAccount.update$).pipe(
+      return merge(IsAccount.update$, Name.update$).pipe(
         map(() => {
           const accountIndex = Array.from(
             runQuery([
