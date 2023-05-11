@@ -350,8 +350,8 @@
     {
       "name": "ProductionCollectSystem",
       "writeAccess": [
-        "BlockLastComponent",
         "BalanceComponent",
+        "BlockLastComponent",
         "CoinComponent",
         "EpochComponent",
         "IsScoreComponent",
@@ -400,12 +400,17 @@
     {
       "name": "ProductionStopSystem",
       "writeAccess": [
+        "BalanceComponent",
         "BlockLastComponent",
         "CoinComponent",
+        "EpochComponent",
         "HealthCurrentComponent",
+        "IdHolderComponent",
+        "IsScoreComponent",
         "RateComponent",
         "StateComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TypeComponent"
       ]
     }
   ],
