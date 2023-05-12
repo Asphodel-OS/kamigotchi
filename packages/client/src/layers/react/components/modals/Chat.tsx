@@ -91,10 +91,12 @@ export function registerChatModal() {
         const update_mqtt = () => {
           relay.on('message', function (topic: any, rawMessage: any) {
             const message = rawMessage.toString();
-            setMessages((messages) => [
-              ...messages,
-              { seenAt: Date.now(), message },
-            ]);
+            if (isNotUrl(message)) {
+              setMessages((messages) => [
+                ...messages,
+                { seenAt: Date.now(), message },
+              ]);
+            }
           });
           botElement?.scrollIntoView({
             behavior: 'smooth',
@@ -143,6 +145,23 @@ export function registerChatModal() {
           {`${message.message}`}
         </li>
       ));
+
+      //////////////////////////
+      // Chat gating
+
+      // array of blocked domains
+      const isNotUrl = (string: string) => {
+        const blockedDomains = [".com", ".co", ".xyz", ".net", ".io", ".org"];
+        // checks if string is a url
+        let isUrl = true;
+        for (let i = 0; i < blockedDomains.length; i++) {
+          if (string.includes(blockedDomains[i])) {
+            isUrl = false;
+          }
+        }
+        return isUrl;
+      }
+
 
       return (
         <ModalWrapperFull divName="chat" id="chat_modal">
