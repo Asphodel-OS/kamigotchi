@@ -43,22 +43,12 @@ contract ProductionStopSystem is System {
     LibPet.setState(components, petID, "RESTING");
 
     // logging and tracking
-    updateScore(accountID);
+    LibScore.incBy(world, components, accountID, "COLLECT", amt);
     LibAccount.updateLastBlock(components, accountID);
     return abi.encode(amt);
   }
 
   function executeTyped(uint256 id) public returns (bytes memory) {
     return execute(abi.encode(id));
-  }
-
-  // increments the account's COLLECT score for the current epoch
-  function updateScore(uint256 accountID) internal {
-    uint256 epoch = LibScore.getLeaderboardEpoch(components);
-    uint256 scoreID = LibScore.get(components, accountID, epoch, "COLLECT");
-    if (scoreID == 0) {
-      scoreID = LibScore.create(world, components, accountID, epoch, "COLLECT");
-    }
-    LibScore.inc(components, scoreID, 1);
   }
 }

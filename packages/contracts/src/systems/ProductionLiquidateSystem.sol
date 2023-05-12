@@ -58,22 +58,12 @@ contract ProductionLiquidateSystem is System {
     LibKill.create(world, components, petID, targetPetID, nodeID);
 
     // logging and tracking
-    updateScore(accountID);
+    LibScore.incBy(world, components, accountID, "LIQUIDATE", amt);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 
   function executeTyped(uint256 targetProductionID, uint256 petID) public returns (bytes memory) {
     return execute(abi.encode(targetProductionID, petID));
-  }
-
-  // increments the account's LIQUIDATE score for the current epoch
-  function updateScore(uint256 accountID) internal {
-    uint256 epoch = LibScore.getLeaderboardEpoch(components);
-    uint256 scoreID = LibScore.get(components, accountID, epoch, "LIQUIDATE");
-    if (scoreID == 0) {
-      scoreID = LibScore.create(world, components, accountID, epoch, "LIQUIDATE");
-    }
-    LibScore.inc(components, scoreID, 1);
   }
 }

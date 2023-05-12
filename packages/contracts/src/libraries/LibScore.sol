@@ -57,9 +57,10 @@ library LibScore {
     string memory _type,
     uint256 amt
   ) internal {
-    uint256 id = get(components, holderID, getLeaderboardEpoch(components), _type);
+    uint256 epoch = getLeaderboardEpoch(components);
+    uint256 id = get(components, holderID, epoch, _type);
     if (id == 0) {
-      id = create(world, components, holderID, getLeaderboardEpoch(components), _type);
+      id = create(world, components, holderID, epoch, _type);
     }
 
     inc(components, id, amt);
