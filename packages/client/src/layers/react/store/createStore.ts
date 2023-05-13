@@ -33,7 +33,10 @@ export interface VisibleModals {
   partButton: boolean;
   helpButton: boolean;
   mapButton: boolean;
+  volumeButton: boolean;
   nodeButton: boolean;
+  help: boolean;
+  settings: boolean;
 }
 
 export interface SoundState {
@@ -85,7 +88,10 @@ export const dataStore = create<StoreState & StoreActions>((set) => {
       mapButton: false,
       partButton: false,
       chatButton: false,
+      volumeButton: false,
       nodeButton: false,
+      help: false,
+      settings: false,
     },
     sound: {
       volume: 0.7,

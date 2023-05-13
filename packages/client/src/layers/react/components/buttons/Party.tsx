@@ -20,8 +20,16 @@ export function registerPartyButton() {
       const {
         visibleModals: { partButton },
       } = dataStore();
+
+      const hideSettingsModal = { settings: false };
       return (
-        <MenuButton id='party_button' targetDiv='party' text='Party' visible={partButton}>
+        <MenuButton
+          id='party_button'
+          targetDiv='party'
+          text='Party'
+          visible={partButton}
+          hideModal={hideSettingsModal}
+        >
           <img style={{ height: '100%', width: 'auto' }} src={kamiImage} alt='kami_icon' />
         </MenuButton>
       );

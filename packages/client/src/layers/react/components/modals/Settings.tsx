@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import {
-  EntityIndex,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 import * as mqtt from 'mqtt';
 
 import mutedSoundImage from '../../../../assets/images/sound_muted_native.png';
@@ -32,20 +26,19 @@ export function registerSettingsModal() {
       const {
         network: {
           components: { IsAccount, Name },
-        }
+        },
       } = layers;
 
       return merge(IsAccount.update$, Name.update$).pipe(
         map(() => {
           return {
-            chatName: "hi",
+            chatName: 'hi',
           };
         })
       );
     },
 
     () => {
-
       const [volumeSliderVisibility, setvolumeSliderVisibility] = useState(false);
 
       const {
@@ -69,46 +62,39 @@ export function registerSettingsModal() {
       };
 
       return (
-        <ModalWrapperFull divName="settings" id="settings_modal">
-        <div
-          style={{ pointerEvents: 'auto'}}
-          onPointerOut={() => {
-            handleVolumeSliderVisibility(false);
-          }}
-          onPointerOver={() => {
-            handleVolumeSliderVisibility(true);
-          }}
-        >
-          <div style={{ display: 'grid', height: '100%', pointerEvents: 'auto' }}>
-            <Header style={{gridRow: 1, gridColumn: 1}}>
-              Settings
-            </Header>
-            <SubHeader style={{gridRow: 2, gridColumn: 1}}>
-              Sound
-            </SubHeader>
-            <div style={{gridColumn: 1, gridRow: 4}}>
-              <input
-                type='range'
-                min='0'
-                max='1'
-                step='0.1'
-                value={volume}
-                onChange={setVolumeRate}
-                style={{ ...rangeInputStyle, display: volumeSliderVisibility ? 'block' : 'none' }}
-              />
-            </div>
-            <div
-              className='window'
-              onClick={toggleSound}
-              style={{ pointerEvents: 'auto', gridColumn: 1, gridRow: 3 }}
-            >
-              <img
-                src={!muted ? soundImage : mutedSoundImage}
-                alt='sound_icon'
-              />
+        <ModalWrapperFull divName='settings' id='settings_modal'>
+          <div
+            style={{ pointerEvents: 'auto' }}
+            onPointerOut={() => {
+              handleVolumeSliderVisibility(false);
+            }}
+            onPointerOver={() => {
+              handleVolumeSliderVisibility(true);
+            }}
+          >
+            <div style={{ display: 'grid', height: '100%', pointerEvents: 'auto' }}>
+              <Header style={{ gridRow: 1, gridColumn: 1 }}>Settings</Header>
+              <SubHeader style={{ gridRow: 2, gridColumn: 1 }}>Sound</SubHeader>
+              <div style={{ gridColumn: 1, gridRow: 4 }}>
+                <input
+                  type='range'
+                  min='0'
+                  max='1'
+                  step='0.1'
+                  value={volume}
+                  onChange={setVolumeRate}
+                  style={{ ...rangeInputStyle, display: volumeSliderVisibility ? 'block' : 'none' }}
+                />
+              </div>
+              <div
+                className='window'
+                onClick={toggleSound}
+                style={{ pointerEvents: 'auto', gridColumn: 1, gridRow: 3 }}
+              >
+                <img src={!muted ? soundImage : mutedSoundImage} alt='sound_icon' />
+              </div>
             </div>
           </div>
-        </div>
         </ModalWrapperFull>
       );
     }

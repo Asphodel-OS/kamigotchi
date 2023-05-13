@@ -13,13 +13,20 @@ export const MenuButton = (props: Props) => {
     setVisibleModals,
     sound: { volume },
   } = dataStore();
+  const { id, children, text, hideModal } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
     const clickSound = new Audio(clickSoundUrl);
     clickSound.volume = volume * 0.6;
     clickSound.play();
-    setVisibleModals({ ...visibleModals, [props.targetDiv]: !visibleModals[props.targetDiv] });
+    const toggleModal = hideModal ? hideModal : {};
+
+    setVisibleModals({
+      ...visibleModals,
+      ...toggleModal,
+      [props.targetDiv]: !visibleModals[props.targetDiv],
+    });
   };
 
   const handleMouseEnter = () => {
@@ -30,7 +37,6 @@ export const MenuButton = (props: Props) => {
     setShowTooltip(false);
   };
 
-  const { id, children, text } = props;
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -52,8 +58,9 @@ interface Props {
   id: string;
   targetDiv: keyof VisibleModals;
   children: React.ReactNode;
-  text?: string;
   visible: boolean;
+  text?: string;
+  hideModal?: { key: keyof VisibleModals; value: boolean };
 }
 
 interface TooltipProps {

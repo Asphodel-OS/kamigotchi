@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import {
-  EntityIndex,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 import * as mqtt from 'mqtt';
 
 import mutedSoundImage from '../../../../assets/images/sound_muted_native.png';
@@ -32,20 +26,19 @@ export function registerHelpModal() {
       const {
         network: {
           components: { IsAccount, Name },
-        }
+        },
       } = layers;
 
       return merge(IsAccount.update$, Name.update$).pipe(
         map(() => {
           return {
-            chatName: "hi",
+            chatName: 'hi',
           };
         })
       );
     },
 
     () => {
-
       const [volumeSliderVisibility, setvolumeSliderVisibility] = useState(false);
 
       const {
@@ -69,13 +62,13 @@ export function registerHelpModal() {
       };
 
       return (
-        <ModalWrapperFull divName="help" id="help_modal">
+        <ModalWrapperFull divName='help' id='help_modal'>
           <Description>
             Kamigotchi World exists entirely on-chain.
             <br />
             <br />
             It currently uses a burner wallet in your LocalStorage for testing.
-            </Description>
+          </Description>
         </ModalWrapperFull>
       );
     }

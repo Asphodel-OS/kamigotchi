@@ -20,12 +20,15 @@ export function registerSettingsButton() {
       const {
         visibleModals: { settingsButton },
       } = dataStore();
+
+      const hidePartyModal = { party: false };
       return (
         <MenuButton
           id='settings_button'
           targetDiv='settings'
           text='Settings'
           visible={settingsButton}
+          hideModal={hidePartyModal}
         >
           <img style={{ height: '100%', width: 'auto' }} src={settingsImage} alt='settings_icon' />
         </MenuButton>

@@ -20,8 +20,16 @@ export function registerHelpButton() {
       const {
         visibleModals: { settingsButton },
       } = dataStore();
+
+      const hideChatModal = { chat: false };
       return (
-        <MenuButton id='settings_button' targetDiv='help' text='Help' visible={settingsButton}>
+        <MenuButton
+          id='settings_button'
+          targetDiv='help'
+          text='Help'
+          visible={settingsButton}
+          hideModal={hideChatModal}
+        >
           <img style={{ height: '100%', width: 'auto' }} src={helpImage} alt='help_icon' />
         </MenuButton>
       );
