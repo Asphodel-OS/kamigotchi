@@ -18,14 +18,16 @@ interface Props {
 // KamiC  rd is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { sound: { volume } } = dataStore();
+  const {
+    sound: { volume },
+  } = dataStore();
 
   // layer on a sound effect
   const playClickAudio = async () => {
     const clickSound = new Audio(clickSoundUrl);
     clickSound.volume = volume * 0.6;
     clickSound.play();
-  }
+  };
 
   const imageOnClick = () => {
     if (props.imageOnClick) {
@@ -88,12 +90,12 @@ const Image = styled.img`
   border-style: solid;
   border-width: 0px 2px 0px 0px;
   border-color: black;
-  height: 110px;
+  height: 120px;
   margin: 0px;
   padding: 0px;
 
   &:hover {
-    opacity:0.75; 
+    opacity: 0.75;
   }
 `;
 
@@ -129,7 +131,7 @@ const TitleText = styled.p`
   justify-content: flex-start;
 
   &:hover {
-    opacity:0.6; 
+    opacity: 0.6;
   }
 `;
 
@@ -189,7 +191,6 @@ const TextMedium = styled.p`
   padding: 6px 0px 0px 3px;
 `;
 
-
 // lol
 const rotate = keyframes`
   from {
@@ -210,7 +211,7 @@ const ImageBackflip = styled.img`
   padding: 0px;
 
   &:click {
-    animation: ${rotate} .3s linear infinite;
-    animation-iteration-count: 1
+    animation: ${rotate} 0.3s linear infinite;
+    animation-iteration-count: 1;
   }
 `;
