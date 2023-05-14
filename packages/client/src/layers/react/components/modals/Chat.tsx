@@ -91,7 +91,7 @@ export function registerChatModal() {
         const update_mqtt = () => {
           relay.on('message', function (topic: any, rawMessage: any) {
             const message = rawMessage.toString();
-            if (isNotUrl(message)) {
+            if (!isURL(message)) {
               setMessages((messages) => [
                 ...messages,
                 { seenAt: Date.now(), message },
@@ -150,13 +150,13 @@ export function registerChatModal() {
       // Chat gating
 
       // array of blocked domains
-      const isNotUrl = (string: string) => {
+      const isURL = (string: string) => {
         const blockedDomains = [".com", ".co", ".xyz", ".net", ".io", ".org"];
         // checks if string is a url
-        let isUrl = true;
+        let isUrl = false;
         for (let i = 0; i < blockedDomains.length; i++) {
           if (string.includes(blockedDomains[i])) {
-            isUrl = false;
+            isUrl = true;
           }
         }
         return isUrl;
