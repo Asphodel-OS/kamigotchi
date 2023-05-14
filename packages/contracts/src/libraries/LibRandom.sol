@@ -6,7 +6,7 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { RevealBlockComponent as RevealBlockComp, ID as RevealBlockCompID } from "components/RevealBlockComponent.sol";
+import { BlockRevealComponent as RevealBlockComp, ID as RevealBlockCompID } from "components/BlockRevealComponent.sol";
 
 library LibRandom {
   //////////////////

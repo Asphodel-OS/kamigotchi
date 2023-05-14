@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "std-contracts/components/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Random.RevealBlock"));
+uint256 constant ID = uint256(keccak256("component.Block.Reveal"));
 
 // blockhash that item is to be revealed at
-contract RevealBlockComponent is Uint256Component {
+contract BlockRevealComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

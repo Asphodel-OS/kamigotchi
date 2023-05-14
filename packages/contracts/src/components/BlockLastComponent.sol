@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "std-contracts/components/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.BlockLast"));
+uint256 constant ID = uint256(keccak256("component.Block.Last"));
 
 // Last block of.. whatever. typically used to track last action
 contract BlockLastComponent is Uint256BareComponent {

@@ -32,8 +32,8 @@ export function createComponents(world: World) {
   return {
     // Archetypes
     IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
+    IsConfig: defineBoolEZ("IsConfig", "component.Is.Config"),
     IsEquipped: defineBoolEZ("IsEquipped", "component.Is.Equipped"),
-    IsFood: defineBoolEZ("IsFood", "component.Is.Food"),
     IsFungible: defineBoolEZ("IsFungible", "component.Is.Fungible"),
     IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
     IsKill: defineBoolEZ("IsKill", "component.Is.Kill"),
@@ -48,6 +48,7 @@ export function createComponents(world: World) {
     IsRegistryEntry: defineBoolEZ("IsRegistryEntry", "component.Is.RegistryEntry"),
     IsRequest: defineBoolEZ("IsRequest", "component.Is.Request"),
     IsRoom: defineBoolEZ("IsRoom", "component.Is.Room"),
+    IsScore: defineBoolEZ("IsScore", "component.Is.Score"),
     IsTrade: defineBoolEZ("IsTrade", "component.Is.Trade"),
     IsTrait: defineBoolEZ("IsTrait", "component.Is.Trait"),
 
@@ -83,6 +84,7 @@ export function createComponents(world: World) {
     Affinity: defineStringEZ("Affinity", "component.Affinity"),
     Balance: defineNumberEZ("Balance", "component.Balance"),
     Coin: defineNumberEZ("Coin", "component.Coin"),
+    Epoch: defineNumberEZ("Epoch", "component.Epoch"),
     Exits: defineNumberArrayComponent(world, "Exits", "component.Exits"),
     Description: defineStringEZ("Description", "component.Description"),
     Genus: defineStringEZ("Genus", "component.Genus"),
@@ -108,8 +110,9 @@ export function createComponents(world: World) {
     Violence: defineNumberEZ("Violence", "component.Violence"),
 
     // Time/Block Tracking
-    BlockLast: defineNumberEZ("BlockLast", "component.BlockLast"),
+    LastBlock: defineNumberEZ("LastBlock", "component.Block.Last"),
     LastActionTime: defineNumberEZ("LastActionTime", "component.Time.LastAction"),
+    RevealBlock: defineNumberEZ("RevealBlock", "component.Block.Reveal"),
     StartTime: defineNumberEZ("StartTime", "component.Time.Start"),
     Time: defineNumberEZ("Time", "component.Time"),
 
