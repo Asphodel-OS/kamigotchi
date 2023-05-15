@@ -8,6 +8,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
+import { Traits } from '../shapes/Trait';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -51,7 +52,7 @@ export function registerKamiModal() {
       // Display values
 
       const [dets, setDets] = useState<Kami>();
-
+      console.log(dets);
       useEffect(() => {
         if (kami) {
           setDets(getKami(layers, kami, { traits: true }));
@@ -84,6 +85,34 @@ export function registerKamiModal() {
             </StatBox>
           </TraitBox>
         );
+      };
+
+      const traitStats = (key: keyof Traits) => {
+        return dets?.traits ? (
+          <TraitBox style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+            <TraitsHeader style={{ gridRow: 1, gridColumn: 1 }}> {key.toUpperCase()} </TraitsHeader>
+            <StatBox style={{ gridRow: 2, gridColumn: 1 }}>
+              <KamiText>Health</KamiText>
+              <KamiFacts>{dets.traits[key]?.stats.health * 1}</KamiFacts>
+            </StatBox>
+            <StatBox style={{ gridRow: 2, gridColumn: 2 }}>
+              <KamiText>Harmony</KamiText>
+              <KamiFacts>{dets.traits[key]?.stats.harmony * 1}</KamiFacts>
+            </StatBox>
+            <StatBox style={{ gridRow: 2, gridColumn: 3 }}>
+              <KamiText>Power</KamiText>
+              <KamiFacts>{dets.traits[key]?.stats.power * 1}</KamiFacts>
+            </StatBox>
+            <StatBox style={{ gridRow: 2, gridColumn: 4 }}>
+              <KamiText>Slots</KamiText>
+              <KamiFacts>{dets.traits[key]?.stats.slots * 1}</KamiFacts>
+            </StatBox>
+            <StatBox style={{ gridRow: 2, gridColumn: 5 }}>
+              <KamiText>violence</KamiText>
+              <KamiFacts>{dets.traits[key]?.stats.violence * 1}</KamiFacts>
+            </StatBox>
+          </TraitBox>
+        ) : null;
       };
 
       const affinitiesBox = () => {
@@ -138,6 +167,11 @@ export function registerKamiModal() {
             </div>
           </TopDiv>
           <div>{traitBox()}</div>
+          <div>
+            {Object.keys(dets?.traits ?? {}).map((key: any) => (
+              <div key={key}>{traitStats(key)}</div>
+            ))}
+          </div>
         </ModalWrapperFull>
       );
     }
@@ -170,6 +204,16 @@ const KamiFacts = styled.div`
   font-family: Pixel;
   margin: auto;
   grid-row: 2;
+`;
+
+const TraitsHeader = styled.div`
+  background-color: #ffffff;
+  color: black;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: Pixel;
+  margin: auto;
+  margin: 5px;
 `;
 
 const KamiHeader = styled.div`
