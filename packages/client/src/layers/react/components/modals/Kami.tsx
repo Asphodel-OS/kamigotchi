@@ -52,7 +52,6 @@ export function registerKamiModal() {
       // Display values
 
       const [dets, setDets] = useState<Kami>();
-      console.log(dets);
       useEffect(() => {
         if (kami) {
           setDets(getKami(layers, kami, { traits: true }));
