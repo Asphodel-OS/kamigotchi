@@ -88,31 +88,72 @@ export function registerKamiModal() {
       };
 
       const traitStats = (key: keyof Traits) => {
-        return dets?.traits ? (
-          <TraitBox style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
-            <TraitsHeader style={{ gridRow: 1, gridColumn: 1 }}> {key.toUpperCase()} </TraitsHeader>
-            <StatBox style={{ gridRow: 2, gridColumn: 1 }}>
-              <KamiText>Health</KamiText>
-              <KamiFacts>{dets.traits[key]?.stats.health * 1}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 2 }}>
-              <KamiText>Harmony</KamiText>
-              <KamiFacts>{dets.traits[key]?.stats.harmony * 1}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 3 }}>
-              <KamiText>Power</KamiText>
-              <KamiFacts>{dets.traits[key]?.stats.power * 1}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 4 }}>
-              <KamiText>Slots</KamiText>
-              <KamiFacts>{dets.traits[key]?.stats.slots * 1}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 5 }}>
-              <KamiText>violence</KamiText>
-              <KamiFacts>{dets.traits[key]?.stats.violence * 1}</KamiFacts>
-            </StatBox>
-          </TraitBox>
-        ) : null;
+        if (dets?.traits) {
+          const stats = dets.traits[key]?.stats;
+          const statBoxes = [];
+          let gridColumn = 1;
+
+          if (stats && stats.health !== 0) {
+            statBoxes.push(
+              <StatBox style={{ gridRow: 2, gridColumn }}>
+                <KamiText>Health</KamiText>
+                <KamiFacts>{stats.health * 1}</KamiFacts>
+              </StatBox>
+            );
+            gridColumn++;
+          }
+
+          if (stats && stats.harmony !== 0) {
+            statBoxes.push(
+              <StatBox style={{ gridRow: 2, gridColumn }}>
+                <KamiText>Harmony</KamiText>
+                <KamiFacts>{stats.harmony * 1}</KamiFacts>
+              </StatBox>
+            );
+            gridColumn++;
+          }
+
+          if (stats && stats.power !== 0) {
+            statBoxes.push(
+              <StatBox style={{ gridRow: 2, gridColumn }}>
+                <KamiText>Power</KamiText>
+                <KamiFacts>{stats.power * 1}</KamiFacts>
+              </StatBox>
+            );
+            gridColumn++;
+          }
+
+          if (stats && stats.slots !== 0) {
+            statBoxes.push(
+              <StatBox style={{ gridRow: 2, gridColumn }}>
+                <KamiText>Slots</KamiText>
+                <KamiFacts>{stats.slots * 1}</KamiFacts>
+              </StatBox>
+            );
+            gridColumn++;
+          }
+
+          if (stats && stats.violence !== 0) {
+            statBoxes.push(
+              <StatBox style={{ gridRow: 2, gridColumn }}>
+                <KamiText>Violence</KamiText>
+                <KamiFacts>{stats.violence * 1}</KamiFacts>
+              </StatBox>
+            );
+            gridColumn++;
+          }
+
+          return (
+            <TraitBox style={{ gridTemplateColumns: `repeat(${gridColumn}, 1fr)` }}>
+              <KamiHeader style={{ gridRow: 1, gridColumn: 1 }}>
+                {dets.traits[key].affinity}
+              </KamiHeader>
+              {statBoxes}
+            </TraitBox>
+          );
+        }
+
+        return null;
       };
 
       const affinitiesBox = () => {
