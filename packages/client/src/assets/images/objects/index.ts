@@ -32,8 +32,10 @@ import appleimac from './appleimac.png'
 import businesspaperwork from './businesspaperwork.png'
 import smallwaterfall from './waterfall_14ceo.png'
 import mina from './mina.png'
+import emaboard from './emaboard.png';
 
 export {
+  emaboard,
   vendingmachine,
   mooringpost,
   toriigate,

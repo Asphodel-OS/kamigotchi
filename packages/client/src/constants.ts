@@ -32,7 +32,8 @@ import {
   appleimac,
   businesspaperwork,
   smallwaterfall,
-  mina
+  mina,
+  emaboard,
 } from 'assets/images/objects';
 
 import {
