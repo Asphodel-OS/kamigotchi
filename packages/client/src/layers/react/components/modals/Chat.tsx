@@ -33,7 +33,7 @@ export function registerChatModal() {
         network: {
           world,
           network,
-          components: { IsAccount, AccountID, OperatorAddress, Name },
+          components: { IsAccount, OperatorAddress, Name },
         },
         phaser: {
           game: {
@@ -83,7 +83,7 @@ export function registerChatModal() {
         const botElement = document.getElementById('botElement');
 
         const sub = relay.subscribe(mqttTopic, function (err: any) {
-          if (!err) {
+          if (!err && chatName) {
             postMessage('<['.concat(chatName, '] came online>'));
           }
         });
@@ -105,7 +105,7 @@ export function registerChatModal() {
         update_mqtt();
 
         return () => {
-          postMessage('<['.concat(chatName, '] went offline>'));
+          if (chatName) postMessage('<['.concat(chatName, '] went offline>'));
           sub.unsubscribe(mqttTopic, function (err: any) { });
         };
       }, [chatName]);
