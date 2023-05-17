@@ -13,7 +13,7 @@ uint256 constant ID = uint256(keccak256("system.Pet.Name"));
 
 uint256 constant ROOM = 11;
 
-// name pet. assumes account already created
+// name pet
 contract PetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
