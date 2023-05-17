@@ -4,12 +4,11 @@ import 'layers/react/styles/font.css';
 import { map } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled, { keyframes } from 'styled-components';
-import { HasValue, runQuery } from '@latticexyz/recs';
-import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3';
+import { EntityID } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
-import { Modal } from 'antd';
 import { Stepper } from '../library/Stepper';
 import { ModalWrapperFull } from '../library/ModalWrapper';
+import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 
 export function registerNameKamiModal() {
   registerUIComponent(
@@ -23,8 +22,10 @@ export function registerNameKamiModal() {
     (layers) => {
       const {
         network: {
+          api: { player },
           components: { OperatorAddress },
           world: { entities },
+          actions,
         },
       } = layers;
 
@@ -32,38 +33,47 @@ export function registerNameKamiModal() {
         map(() => {
           return {
             layers,
+            actions,
+            api: player,
             entities,
           };
         })
       );
     },
 
-    ({ layers, entities }) => {
-      const {
-        network: {
-          api: { player },
-        },
-      } = layers;
-
-      // const [isDivVisible, setIsDivVisible] = useState(false);
+    ({ layers, actions, api, entities }) => {
       const [name, setName] = useState('');
-      const {
-        selectedEntities: { kami },
-      } = dataStore();
+      const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
+      const kami = getKami(layers, selectedEntities.kami);
 
-      const NameKami = useCallback(async (selectedKami, name) => {
+      // queue the naming action up
+      const nameTx = (kami: Kami, name: string) => {
+        const actionID = `Renaming ${kami.name}` as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.ERC721.name(kami.id, name);
+          },
+        });
+        return actionID;
+      };
+
+      // handle naming action response (need to modify for error handling)
+      const NameKami = async (name: string) => {
         try {
-          await player.ERC721.name(entities[selectedKami], name);
-
-          document.getElementById('name_kami_modal')!.style.display = 'none';
+          nameTx(kami, name);
+          setVisibleModals({ ...visibleModals, nameKami: false });
         } catch (e) {
           //
         }
-      }, []);
+      };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          NameKami(kami, name);
+          NameKami(name);
         }
       };
 

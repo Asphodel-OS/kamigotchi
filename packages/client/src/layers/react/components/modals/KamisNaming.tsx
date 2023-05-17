@@ -1,7 +1,7 @@
 import { EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { map, merge } from 'rxjs';
-import { getAccount } from '../shapes/Account';
+import { Account, getAccount } from '../shapes/Account';
 import { Kami, getKami } from '../shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { ModalWrapperFull } from '../library/ModalWrapper';
@@ -26,18 +26,12 @@ export function registerKamisNamingModal() {
           network,
           components: {
             AccountID,
-            Balance,
-            HealthCurrent,
-            Coin,
             IsAccount,
             IsPet,
             Location,
             MediaURI,
             OperatorAddress,
-            OwnerID,
-            Rate,
             State,
-            StartTime,
           },
           world,
           actions,
@@ -46,13 +40,7 @@ export function registerKamisNamingModal() {
 
       return merge(
         AccountID.update$,
-        Balance.update$,
-        Coin.update$,
-        HealthCurrent.update$,
         Location.update$,
-        OwnerID.update$,
-        Rate.update$,
-        StartTime.update$,
         State.update$,
         MediaURI.update$
       ).pipe(
