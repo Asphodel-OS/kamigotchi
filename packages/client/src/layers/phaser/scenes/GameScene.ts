@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
     });
   }
 
-  update() {}
+  update() { }
 
   onClick() {
     console.log('clicked');

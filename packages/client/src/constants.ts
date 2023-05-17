@@ -54,20 +54,7 @@ import {
 } from 'assets/images/rooms';
 
 import {
-  room1Music,
   forest,
-  room3Music,
-  room4Music,
-  room5Music,
-  room6Music,
-  room7Music,
-  room8Music,
-  room9Music,
-  room10Music,
-  room11Music,
-  room12Music,
-  room13Music,
-  room14Music,
 } from 'assets/sound/ost';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
@@ -110,17 +97,7 @@ export const duplicateRoomMusic = [
 
 // all our lovely, hardcoded room details
 export const rooms: Room[] = [
-  {
-    location: 0,
-    background: {
-      key: 'bg_room001',
-      path: room1,
-    },
-    music: {
-
-    },
-    objects: [],
-  },
+  { location: 0 },
   {
     location: 1,
     background: {
