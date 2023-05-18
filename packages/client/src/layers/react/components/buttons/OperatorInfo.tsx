@@ -59,7 +59,7 @@ export function registerOperatorHealthButton() {
       );
     },
     ({ staminaCurrent, maxStamina, coin, operatorName }) => {
-      const operatorStaminaPercentage =
+      const staminaPercentage =
         staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
       const {
         visibleModals: { operatorInfo },
@@ -76,7 +76,7 @@ export function registerOperatorHealthButton() {
                   <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
                 </KamiCell>
                 <BatteryCell>
-                  <BatteryComponent showPercentage={true} level={operatorStaminaPercentage} />
+                  <BatteryComponent showPercentage={true} level={Math.round(staminaPercentage)} />
                 </BatteryCell>
               </Centered>
             </>
