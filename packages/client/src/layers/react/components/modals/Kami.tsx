@@ -145,7 +145,7 @@ export function registerKamiModal() {
           return (
             <TraitBox style={{ gridTemplateColumns: `repeat(${gridColumn}, 1fr)` }}>
               <KamiHeader style={{ gridRow: 1, gridColumn: 1 }}>
-                {dets.traits[key].affinity}
+                {key.charAt(0).toUpperCase() + key.slice(1)}
               </KamiHeader>
               {statBoxes}
             </TraitBox>
@@ -207,7 +207,11 @@ export function registerKamiModal() {
             </div>
           </TopDiv>
           <div>{traitBox()}</div>
-          <div>
+          <div
+            style={{
+              overflowY: 'scroll',
+            }}
+          >
             {Object.keys(dets?.traits ?? {}).map((key: any) => (
               <div key={key}>{traitStats(key)}</div>
             ))}

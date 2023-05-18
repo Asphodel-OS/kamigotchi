@@ -21,17 +21,21 @@ export function ActionListButton(props: Props) {
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (isOpen && toggleRef.current) {
-      const togglePosition = toggleRef.current.getBoundingClientRect();
-      setMenuPosition({ top: togglePosition.bottom, left: togglePosition.left });
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     setIsOpen(false);
   }, [props.scrollPosition]);
 
-  const toggleMenu = () => {
+  const toggleMenu = (e) => {
+    const togglePosition = toggleRef.current?.getBoundingClientRect();
+    const screenHeight = window.innerHeight;
+    const targetHeight = (e.target as HTMLElement).clientHeight;
+
+    if (togglePosition && togglePosition.bottom + targetHeight > screenHeight * 0.7) {
+      console.log('dadaaa');
+      // Menu should pop up above the toggle
+      setMenuPosition({ top: togglePosition.bottom * 0.85, left: togglePosition.left });
+    } else {
+      setMenuPosition({ top: togglePosition.bottom, left: togglePosition.left });
+    }
     setIsOpen(!isOpen);
   };
 
@@ -46,7 +50,7 @@ export function ActionListButton(props: Props) {
       <Toggle
         ref={toggleRef}
         id={props.id}
-        onClick={!props.disabled ? toggleMenu : () => { }}
+        onClick={!props.disabled ? toggleMenu : () => {}}
         style={setStyles()}
       >
         {props.text + ' ▾'}
