@@ -22,7 +22,6 @@ export function registerKamisNamingModal() {
     (layers) => {
       const {
         network: {
-          api: { player },
           network,
           components: {
             AccountID,
@@ -30,17 +29,17 @@ export function registerKamisNamingModal() {
             IsPet,
             Location,
             MediaURI,
+            Name,
             OperatorAddress,
             State,
           },
-          world,
-          actions,
         },
       } = layers;
 
       return merge(
         AccountID.update$,
         Location.update$,
+        Name.update$,
         State.update$,
         MediaURI.update$
       ).pipe(
@@ -72,12 +71,9 @@ export function registerKamisNamingModal() {
           }
 
           return {
-            actions,
-            api: player,
             data: {
               account: { ...account, kamis },
             } as any,
-            world,
           };
         })
       );
