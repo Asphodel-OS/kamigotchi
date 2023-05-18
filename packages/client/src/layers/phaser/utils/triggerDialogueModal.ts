@@ -14,6 +14,6 @@ export const triggerDialogueModal = (description: string[]) => {
 
   dataStore.setState({ dialogue: { description } });
   dataStore.setState({
-    visibleModals: { ...visibleModals, dialogue: true },
+    visibleModals: { ...visibleModals, dialogue: true, party: false, node: false, map: false },
   });
 };

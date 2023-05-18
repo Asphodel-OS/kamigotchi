@@ -90,6 +90,7 @@ export function registerKamiModal() {
         if (dets?.traits) {
           const stats = dets.traits[key]?.stats;
           const statBoxes = [];
+          console.log(dets);
           let gridColumn = 1;
 
           if (stats && stats.health !== 0) {
@@ -145,7 +146,7 @@ export function registerKamiModal() {
           return (
             <TraitBox style={{ gridTemplateColumns: `repeat(${gridColumn}, 1fr)` }}>
               <KamiHeader style={{ gridRow: 1, gridColumn: 1 }}>
-                {key.charAt(0).toUpperCase() + key.slice(1)}
+                {key.charAt(0).toUpperCase() + key.slice(1) + ' - ' + dets.traits[key].name}
               </KamiHeader>
               {statBoxes}
             </TraitBox>
@@ -268,6 +269,7 @@ const KamiHeader = styled.div`
   font-family: Pixel;
   margin: auto;
   margin: 5px;
+  white-space: nowrap;
 `;
 
 const KamiName = styled.div`

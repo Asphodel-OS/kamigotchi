@@ -21,7 +21,7 @@ export function registerPartyButton() {
         visibleModals: { partButton },
       } = dataStore();
 
-      const hideSettingsModal = { settings: false };
+      const hideSettingsModal = { settings: false, dialogue: false };
       return (
         <MenuButton
           id='party_button'

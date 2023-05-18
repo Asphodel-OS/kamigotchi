@@ -20,8 +20,16 @@ export function registerMapButton() {
       const {
         visibleModals: { mapButton },
       } = dataStore();
+
+      const hideSettingsModal = { dialogue: false };
       return (
-        <MenuButton id='map_button' targetDiv='map' text='Map' visible={mapButton}>
+        <MenuButton
+          id='map_button'
+          targetDiv='map'
+          text='Map'
+          visible={mapButton}
+          hideModal={hideSettingsModal}
+        >
           <img style={{ height: '100%', width: 'auto' }} src={mapImage} alt='map_icon' />
         </MenuButton>
       );
