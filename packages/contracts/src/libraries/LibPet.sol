@@ -293,7 +293,7 @@ library LibPet {
 
   // checks whether an entity is a pet
   function isPet(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsPetComponent(getAddressById(components, id)).has(id);
+    return IsPetComponent(getAddressById(components, IsPetCompID)).has(id);
   }
 
   // Check whether a pet is resting.
