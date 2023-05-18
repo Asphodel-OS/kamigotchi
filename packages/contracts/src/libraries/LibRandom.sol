@@ -6,7 +6,7 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { BlockRevealComponent as RevealBlockComp, ID as RevealBlockCompID } from "components/BlockRevealComponent.sol";
+import { BlockRevealComponent as BlockRevealComp, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 
 library LibRandom {
   //////////////////
@@ -23,18 +23,18 @@ library LibRandom {
   // SETTERS
 
   function setRevealBlock(IUintComp components, uint256 id, uint256 revealBlock) internal {
-    RevealBlockComp(getAddressById(components, RevealBlockCompID)).set(id, revealBlock);
+    BlockRevealComp(getAddressById(components, BlockRevealCompID)).set(id, revealBlock);
   }
 
   function removeRevealBlock(IUintComp components, uint256 id) internal {
-    RevealBlockComp(getAddressById(components, RevealBlockCompID)).remove(id);
+    BlockRevealComp(getAddressById(components, BlockRevealCompID)).remove(id);
   }
 
   /////////////////
   // GETTERS
 
   function getRevealBlock(IUintComp components, uint256 id) internal view returns (uint256) {
-    return RevealBlockComp(getAddressById(components, RevealBlockCompID)).getValue(id);
+    return BlockRevealComp(getAddressById(components, BlockRevealCompID)).getValue(id);
   }
 
   //////////////////

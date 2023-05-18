@@ -84,9 +84,9 @@ export function createComponents(world: World) {
     Affinity: defineStringEZ("Affinity", "component.Affinity"),
     Balance: defineNumberEZ("Balance", "component.Balance"),
     Coin: defineNumberEZ("Coin", "component.Coin"),
+    Description: defineStringEZ("Description", "component.Description"),
     Epoch: defineNumberEZ("Epoch", "component.Epoch"),
     Exits: defineNumberArrayComponent(world, "Exits", "component.Exits"),
-    Description: defineStringEZ("Description", "component.Description"),
     Genus: defineStringEZ("Genus", "component.Genus"),
     Harmony: defineNumberEZ("Harmony", "component.Harmony"),
     Health: defineNumberEZ("Health", "component.Health"),
@@ -110,9 +110,9 @@ export function createComponents(world: World) {
     Violence: defineNumberEZ("Violence", "component.Violence"),
 
     // Time/Block Tracking
-    LastBlock: defineNumberEZ("LastBlock", "component.Block.Last"),
+    LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),
+    RevealBlock: defineNumberEZ("BlockReveal", "component.Block.Reveal"),
     LastActionTime: defineNumberEZ("LastActionTime", "component.Time.LastAction"),
-    RevealBlock: defineNumberEZ("RevealBlock", "component.Block.Reveal"),
     StartTime: defineNumberEZ("StartTime", "component.Time.Start"),
     Time: defineNumberEZ("Time", "component.Time"),
 

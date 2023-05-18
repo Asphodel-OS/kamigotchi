@@ -91,10 +91,12 @@ export function registerChatModal() {
         const update_mqtt = () => {
           relay.on('message', function (topic: any, rawMessage: any) {
             const message = rawMessage.toString();
-            setMessages((messages) => [
-              ...messages,
-              { seenAt: Date.now(), message },
-            ]);
+            if (!hasURL(message)) {
+              setMessages((messages) => [
+                ...messages,
+                { seenAt: Date.now(), message },
+              ]);
+            }
           });
           botElement?.scrollIntoView({
             behavior: 'smooth',
@@ -137,20 +139,36 @@ export function registerChatModal() {
 
       const messageLines = messages.map((message) => (
         <li
-          style={{ fontFamily: 'Pixel', fontSize: '12px' }}
+          style={{ fontFamily: 'Pixel', fontSize: '12px', listStyleType: 'none' }}
           key={message.seenAt}
         >
           {`${message.message}`}
         </li>
       ));
 
+      //////////////////////////
+      // Chat gating
+
+      // array of blocked domains
+      const hasURL = (string: string) => {
+        const blockedDomains = [".com", ".co", ".xyz", ".net", ".io", ".org"];
+        // checks if string is a url
+        let has = false;
+        for (let i = 0; i < blockedDomains.length; i++) {
+          if (string.includes(blockedDomains[i])) {
+            has = true;
+          }
+        }
+        return has;
+      }
+
       return (
         <ModalWrapperFull divName="chat" id="chat_modal">
           <ChatWrapper>
-            <ChatBox style={{ pointerEvents: 'auto' }}>
+            <ChatFeed style={{ pointerEvents: 'auto' }}>
               {messageLines}
               <div id="botElement"> </div>
-            </ChatBox>
+            </ChatFeed>
             <ChatInput
               style={{ pointerEvents: 'auto' }}
               type="text"
@@ -166,6 +184,7 @@ export function registerChatModal() {
 }
 
 const ChatWrapper = styled.div`
+  height: 100%;
   background-color: #ffffff;
   color: black;
   text-align: left;
@@ -173,34 +192,39 @@ const ChatWrapper = styled.div`
   cursor: pointer;
   border-radius: 5px;
   font-family: Pixel;
+  margin: 0px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: stretch;
 `;
 
-const ChatBox = styled.div`
-  height: 295px;
-  width: 100%;
+const ChatFeed = styled.div`
   overflow: scroll;
-  white-space: normal;
-  word-wrap: break-word;
   padding: 10px 12px 25px 12px;
+  
+  flex-grow: 1;
+  color: black;
+  font-family: Pixel;
+  word-wrap: break-word;
+  white-space: normal;
   cursor: pointer;
 `;
 
 const ChatInput = styled.input`
-  width: 100%;
-  background-color: #ffffff;
+  border-color: black;
+  border-radius: 5px;
   border-style: solid;
   border-width: 2px;
-  border-color: black;
-  color: black;
   padding: 15px 12px;
+  margin: 15px 0px;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
 
+  color: black;
+  font-family: Pixel;
+  font-size: 12px;
   text-align: left;
   text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
   cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
