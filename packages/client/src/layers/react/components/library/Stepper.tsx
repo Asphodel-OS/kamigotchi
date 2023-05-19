@@ -1,12 +1,16 @@
 import { Modal } from 'antd';
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const StepsWrapper = styled.div`
+const StepsWrapper = styled.div<any>`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 0px;
+  ${(props) =>
+    props.dialogue &&
+    css`
+      justify-content: flex-start;
+    `}
 `;
 
 const StepButton = styled.button`
@@ -43,19 +47,39 @@ export const Stepper = (props: any) => {
 
   return (
     <>
-      <StepsWrapper></StepsWrapper>
+      {props.dialogue && (
+        <StepsWrapper dialogue={props.dialogue}>
+          {currentStep > 1 && (
+            <StepButton style={{ pointerEvents: 'auto' }} onClick={handlePrevious}>
+              Previous
+            </StepButton>
+          )}
+          {currentStep < steps.length && (
+            <StepButton style={{ pointerEvents: 'auto' }} onClick={handleNext}>
+              Next
+            </StepButton>
+          )}
+        </StepsWrapper>
+      )}
+
       {steps[currentStep - 1].content}
       {steps[currentStep - 1].modalContent && <Modal>{steps[currentStep - 1].content}</Modal>}
-      {currentStep > 1 && (
-        <StepButton style={{ pointerEvents: 'auto' }} onClick={handlePrevious}>
-          Back
-        </StepButton>
-      )}{' '}
-      {currentStep < steps.length && (
-        <StepButton style={{ pointerEvents: 'auto' }} onClick={handleNext}>
-          Next
-        </StepButton>
+
+      {!props.dialogue && (
+        <>
+          {currentStep > 1 && (
+            <StepButton style={{ pointerEvents: 'auto' }} onClick={handlePrevious}>
+              Previous
+            </StepButton>
+          )}
+          {currentStep < steps.length && (
+            <StepButton style={{ pointerEvents: 'auto' }} onClick={handleNext}>
+              Next
+            </StepButton>
+          )}
+        </>
       )}
+
       {submit && currentStep === steps.length && (
         <StepButton
           style={{ pointerEvents: 'auto' }}

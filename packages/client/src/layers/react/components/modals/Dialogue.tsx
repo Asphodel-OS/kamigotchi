@@ -15,7 +15,7 @@ export function registerDialogueModal() {
       colStart: 20,
       colEnd: 83,
       rowStart: 72,
-      rowEnd: 99,
+      rowEnd: 96,
     },
     (layers) => of(layers),
     () => {
@@ -46,7 +46,7 @@ export function registerDialogueModal() {
 
       return (
         <ModalWrapperLite id='object_modal' isOpen={visibleModals.dialogue}>
-          {dialogueSteps.length > 0 && <Stepper steps={steps} hideModal={hideModal} />}
+          {dialogueSteps.length && <Stepper steps={steps} hideModal={hideModal} dialogue={true} />}
         </ModalWrapperLite>
       );
     }

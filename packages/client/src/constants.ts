@@ -53,9 +53,7 @@ import {
   room14,
 } from 'assets/images/rooms';
 
-import {
-  forest,
-} from 'assets/sound/ost';
+import { forest } from 'assets/sound/ost';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
@@ -154,6 +152,8 @@ export const rooms: Room[] = [
           triggerDialogueModal([
             'Wow. A shop. Maybe you can buy food here. Go west to enter.',
             'read more',
+            'more',
+            'more',
           ]),
       },
     ],
@@ -467,7 +467,9 @@ export const rooms: Room[] = [
         path: mina,
         offset: { x: -15, y: -24.6 },
         onClick: () =>
-          triggerDialogueModal(["Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon."]),
+          triggerDialogueModal([
+            "Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon.",
+          ]),
       },
     ],
   },
@@ -492,22 +494,19 @@ export const rooms: Room[] = [
         key: 'appleimac',
         path: appleimac,
         offset: { x: -12.4, y: 9.5 },
-        onClick: () =>
-          triggerDialogueModal(['An apple Imac.']),
+        onClick: () => triggerDialogueModal(['An apple Imac.']),
       },
       {
         key: 'businesspaperwork',
         path: businesspaperwork,
         offset: { x: 7, y: 3.6 },
-        onClick: () =>
-          triggerDialogueModal(['A pile of documents.']),
+        onClick: () => triggerDialogueModal(['A pile of documents.']),
       },
       {
         key: 'smallwaterfall',
         path: smallwaterfall,
         offset: { x: -53.9, y: 5.6 },
-        onClick: () =>
-          triggerDialogueModal(['A waterfall in the distance.']),
+        onClick: () => triggerDialogueModal(['A waterfall in the distance.']),
       },
     ],
   },
