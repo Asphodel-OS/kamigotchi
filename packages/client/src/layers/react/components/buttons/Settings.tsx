@@ -17,18 +17,16 @@ export function registerSettingsButton() {
     },
     (layers) => of(layers),
     () => {
-      const {
-        visibleModals: { settingsButton },
-      } = dataStore();
+      const { visibleButtons } = dataStore();
+      const modalsToHide = { party: false };
 
-      const hidePartyModal = { party: false };
       return (
         <MenuButton
           id='settings_button'
           targetDiv='settings'
           text='Settings'
-          visible={settingsButton}
-          hideModal={hidePartyModal}
+          visible={visibleButtons.settings}
+          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={settingsImage} alt='settings_icon' />
         </MenuButton>

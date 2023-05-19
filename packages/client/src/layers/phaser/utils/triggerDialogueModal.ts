@@ -1,5 +1,5 @@
 import { dataStore } from 'layers/react/store/createStore';
-import dialogueSound from 'assets/sound/fx/mouseclick.wav';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 
 export const triggerDialogueModal = (description: string[]) => {
   const {
@@ -7,7 +7,7 @@ export const triggerDialogueModal = (description: string[]) => {
     sound: { volume },
   } = dataStore.getState();
 
-  const clickFX = new Audio(dialogueSound);
+  const clickFX = new Audio(clickSound);
 
   clickFX.volume = volume;
   clickFX.play();

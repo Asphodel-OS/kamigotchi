@@ -17,18 +17,16 @@ export function registerMapButton() {
     },
     (layers) => of(layers),
     () => {
-      const {
-        visibleModals: { mapButton },
-      } = dataStore();
+      const { visibleButtons } = dataStore();
+      const modalsToHide = { dialogue: false };
 
-      const hideSettingsModal = { dialogue: false };
       return (
         <MenuButton
           id='map_button'
           targetDiv='map'
           text='Map'
-          visible={mapButton}
-          hideModal={hideSettingsModal}
+          visible={visibleButtons.map}
+          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={mapImage} alt='map_icon' />
         </MenuButton>

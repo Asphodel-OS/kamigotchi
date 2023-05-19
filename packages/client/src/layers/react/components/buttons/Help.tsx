@@ -17,18 +17,16 @@ export function registerHelpButton() {
     },
     (layers) => of(layers),
     () => {
-      const {
-        visibleModals: { settingsButton },
-      } = dataStore();
+      const { visibleButtons } = dataStore();
+      const modalsToHide = { chat: false };
 
-      const hideChatModal = { chat: false };
       return (
         <MenuButton
-          id='settings_button'
+          id='help_button'
           targetDiv='help'
           text='Help'
-          visible={settingsButton}
-          hideModal={hideChatModal}
+          visible={visibleButtons.help}
+          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={helpImage} alt='help_icon' />
         </MenuButton>

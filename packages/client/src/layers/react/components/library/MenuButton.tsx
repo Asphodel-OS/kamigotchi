@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+import {
+  dataStore,
+  VisibleModals
+} from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
 
 // MenuButton renders a button that toggles a target modal. It supports a generic
@@ -60,7 +63,7 @@ interface Props {
   children: React.ReactNode;
   visible: boolean;
   text?: string;
-  hideModal?: { key: keyof VisibleModals; value: boolean };
+  hideModal?: Partial<VisibleModals>;
 }
 
 interface TooltipProps {

@@ -17,19 +17,16 @@ export function registerChatButton() {
     },
     (layers) => of(layers),
     () => {
-      const {
-        visibleModals: { chatButton },
-      } = dataStore();
-
-      const hideSettingsModal = { help: false };
+      const { visibleButtons } = dataStore();
+      const modalsToHide = { help: false };
 
       return (
         <MenuButton
           id='chat_button'
           targetDiv='chat'
           text='Chat'
-          hideModal={hideSettingsModal}
-          visible={chatButton}
+          hideModal={modalsToHide}
+          visible={visibleButtons.chat}
         >
           <img style={{ height: '100%', width: 'auto' }} src={chatImage} alt='chat_icon' />
         </MenuButton>

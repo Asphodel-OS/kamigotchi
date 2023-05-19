@@ -5,116 +5,109 @@ export interface Dialogue {
   description: string[];
 }
 
-export interface Kami {
-  description: string;
-}
-
-export interface RoomExits {
-  up?: number;
-  down?: number;
-  left?: number;
-  right?: number;
-}
-
-export interface VisibleModals {
-  chat: boolean;
-  dialogue: boolean;
-  inventory: boolean;
-  kamiMint: boolean;
-  kamiMintPost: boolean;
-  kami: boolean;
-  map: boolean;
-  merchant: boolean;
-  node: boolean;
-  party: boolean;
-  kamisNaming: boolean;
-  nameKami: boolean;
-  operatorInfo: boolean;
-  settingsButton: boolean;
-  chatButton: boolean;
-  partButton: boolean;
-  helpButton: boolean;
-  mapButton: boolean;
-  volumeButton: boolean;
-  nodeButton: boolean;
-  help: boolean;
-  settings: boolean;
-}
-
-export interface SoundState {
-  volume: number;
-}
-
 export interface SelectedEntities {
   kami: EntityIndex;
   node: EntityIndex;
   merchant: EntityIndex;
 }
 
-export interface StoreState {
-  dialogue: Dialogue;
-  roomExits: RoomExits;
-  visibleModals: VisibleModals;
-  sound: SoundState;
-  selectedEntities: SelectedEntities;
+export interface SoundState {
+  volume: number;
 }
 
-interface StoreActions {
-  setObjectData: (data: Dialogue) => void;
-  setRoomExits: (data: RoomExits) => void;
+export interface VisibleButtons {
+  chat: boolean;
+  help: boolean;
+  map: boolean;
+  party: boolean;
+  settings: boolean;
+}
+
+export interface VisibleModals {
+  chat: boolean;
+  dialogue: boolean;
+  help: boolean;
+  inventory: boolean;
+  kami: boolean;
+  kamiMint: boolean;
+  kamiMintPost: boolean;
+  kamisNaming: boolean;
+  nameKami: boolean;
+  map: boolean;
+  merchant: boolean;
+  node: boolean;
+  operatorInfo: boolean;
+  party: boolean;
+  settings: boolean;
+}
+
+export interface DataStore {
+  dialogue: Dialogue;
+  selectedEntities: SelectedEntities;
+  sound: SoundState;
+  visibleModals: VisibleModals;
+  visibleButtons: VisibleButtons;
+}
+
+interface DataStoreActions {
+  setDialogue: (data: Dialogue) => void;
   setVisibleModals: (data: VisibleModals) => void;
+  setVisibleButtons: (data: VisibleButtons) => void;
   setSoundState: (data: SoundState) => void;
   setSelectedEntities: (data: SelectedEntities) => void;
 }
 
-const nonExistingEntityIndex: EntityIndex = 0 as EntityIndex;
-
-export const dataStore = create<StoreState & StoreActions>((set) => {
-  const initialState: StoreState = {
+export const dataStore = create<DataStore & DataStoreActions>((set) => {
+  const initialState: DataStore = {
     dialogue: { description: [] },
-    roomExits: { up: 0, down: 0, left: 0, right: 0 },
+    selectedEntities: {
+      kami: 0 as EntityIndex,
+      node: 0 as EntityIndex,
+      merchant: 0 as EntityIndex,
+    },
+    sound: { volume: 0.7 },
     visibleModals: {
       chat: false,
       dialogue: false,
+      help: false,
       inventory: false,
       kami: false,
       kamiMint: false,
       kamiMintPost: false,
+      kamisNaming: false,
+      nameKami: false,
       map: false,
       merchant: false,
       node: false,
-      party: false,
-      kamisNaming: false,
-      nameKami: false,
       operatorInfo: false,
-      settingsButton: false,
-      helpButton: false,
-      mapButton: false,
-      partButton: false,
-      chatButton: false,
-      volumeButton: false,
-      nodeButton: false,
-      help: false,
+      party: false,
       settings: false,
     },
-    sound: {
-      volume: 0.7,
-    },
-    selectedEntities: {
-      kami: nonExistingEntityIndex,
-      node: nonExistingEntityIndex,
-      merchant: nonExistingEntityIndex,
+    visibleButtons: {
+      chat: false,
+      help: false,
+      map: false,
+      party: false,
+      settings: false,
     },
   };
 
   return {
     ...initialState,
-    setObjectData: (data: Dialogue) => set((state: StoreState) => ({ ...state, dialogue: data })),
-    setRoomExits: (data: RoomExits) => set((state: StoreState) => ({ ...state, roomExits: data })),
-    setVisibleModals: (data: VisibleModals) =>
-      set((state: StoreState) => ({ ...state, visibleModals: data })),
-    setSoundState: (data: SoundState) => set((state: StoreState) => ({ ...state, sound: data })),
-    setSelectedEntities: (data: SelectedEntities) =>
-      set((state: StoreState) => ({ ...state, selectedEntities: data })),
+    setDialogue: (data: Dialogue) => set(
+      (state: DataStore) => ({ ...state, dialogue: data })
+    ),
+    setSelectedEntities: (data: SelectedEntities) => set(
+      (state: DataStore) => ({ ...state, selectedEntities: data })
+    ),
+    setSoundState: (data: SoundState) => set(
+      (state: DataStore) => ({ ...state, sound: data })
+    ),
+    setVisibleButtons: (data: VisibleButtons) => set(
+      (state: DataStore) => ({ ...state, visibleButtons: data })
+    ),
+    setVisibleModals: (data: VisibleModals) => set(
+      (state: DataStore) => ({ ...state, visibleModals: data })
+    ),
   };
 });

@@ -47,7 +47,12 @@ export function registerDetectAccountModal() {
       const [isDivVisible, setIsDivVisible] = useState(false);
       const [name, setName] = useState('');
       const { volume } = dataStore((state) => state.sound);
-      const { visibleModals, setVisibleModals } = dataStore();
+      const {
+        visibleModals,
+        setVisibleModals,
+        visibleButtons,
+        setVisibleButtons,
+      } = dataStore();
 
       const hasAccount = Array.from(
         runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
@@ -79,22 +84,24 @@ export function registerDetectAccountModal() {
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
       };
-
       useEffect(() => {
         if (hasAccount != undefined) {
           setIsDivVisible(false);
-          return setVisibleModals({
+          setVisibleModals({
             ...visibleModals,
             operatorInfo: true,
-            partButton: true,
-            settingsButton: true,
-            chatButton: true,
-            helpButton: true,
-            nodeButton: true,
-            mapButton: true,
           });
+          setVisibleButtons({
+            ...visibleButtons,
+            chat: true,
+            help: true,
+            map: true,
+            party: true,
+            settings: true,
+          });
+        } else {
+          setIsDivVisible(true);
         }
-        return setIsDivVisible(true);
       }, [setIsDivVisible, hasAccount]);
 
       return (
