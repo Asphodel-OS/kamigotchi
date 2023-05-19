@@ -42,9 +42,14 @@ export function registerNameKamiModal() {
     },
 
     ({ layers, actions, api, entities }) => {
-      const [name, setName] = useState('');
       const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
       const kami = getKami(layers, selectedEntities.kami);
+      const [name, setName] = useState('');
+
+      // Set the previous name on input.
+      // useEffect(() => {
+      //   setName(kami?.name);
+      // }, [kami]);
 
       // queue the naming action up
       const nameTx = (kami: Kami, name: string) => {
@@ -66,6 +71,7 @@ export function registerNameKamiModal() {
         try {
           nameTx(kami, name);
           setVisibleModals({ ...visibleModals, nameKami: false });
+          setName('');
         } catch (e) {
           //
         }
@@ -75,6 +81,10 @@ export function registerNameKamiModal() {
         if (event.key === 'Enter') {
           NameKami(name);
         }
+        // This is for input ---
+        // if (event.key === 'Escape') {
+        //   setVisibleModals({ ...visibleModals, nameKami: false });
+        // }
       };
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,8 +101,6 @@ export function registerNameKamiModal() {
             handleMinting={NameKami}
             submit={true}
             handleSubmit={NameKami}
-            kami={true}
-            selectedKami={kami}
           />
         </ModalWrapperFull>
       );
