@@ -10,6 +10,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 import { Gaussian } from "solstat/Gaussian.sol";
 
+import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
@@ -59,6 +60,7 @@ library LibPet {
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
+    setCannotName(components, id);
     setAccount(components, id, accountID);
     setMediaURI(components, id, uri);
     setState(components, id, "UNREVEALED");
@@ -117,6 +119,7 @@ library LibPet {
   // NOTE: most of the reveal logic (generation) is in the ERC721MetadataSystem itself
   //       this function is for components saved directely on the Pet Entity
   function reveal(IUintComp components, uint256 id) internal {
+    setCanName(components, id);
     revive(components, id);
     setStats(components, id);
     setLastTs(components, id, block.timestamp);
@@ -266,6 +269,11 @@ library LibPet {
   /////////////////
   // CHECKERS
 
+  // Check wether a pet can be named
+  function canName(IUintComp components, uint256 id) internal view returns (bool) {
+    return CanNameComponent(getAddressById(components, CanNameCompID)).has(id);
+  }
+
   // Check whether a pet is dead.
   function isDead(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getState(components, id), "DEAD");
@@ -336,6 +344,16 @@ library LibPet {
     LibStat.setViolence(components, id, violence);
     LibStat.setHarmony(components, id, harmony);
     LibStat.setSlots(components, id, slots);
+  }
+
+  function setCanName(IUintComp components, uint256 id) internal {
+    CanNameComponent(getAddressById(components, CanNameCompID)).set(id);
+  }
+
+  function setCannotName(IUintComp components, uint256 id) internal {
+    if (CanNameComponent(getAddressById(components, CanNameCompID)).has(id)) {
+      CanNameComponent(getAddressById(components, CanNameCompID)).remove(id);
+    }
   }
 
   function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {

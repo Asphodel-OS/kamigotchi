@@ -11,6 +11,7 @@ export type { BalanceComponent } from "./BalanceComponent";
 export type { BlockLastComponent } from "./BlockLastComponent";
 export type { BlockRevealComponent } from "./BlockRevealComponent";
 export type { BoolComponent } from "./BoolComponent";
+export type { CanNameComponent } from "./CanNameComponent";
 export type { CoinComponent } from "./CoinComponent";
 export type { DescriptionComponent } from "./DescriptionComponent";
 export type { ERC20DepositSystem } from "./ERC20DepositSystem";
@@ -135,6 +136,7 @@ export { BalanceComponent__factory } from "./factories/BalanceComponent__factory
 export { BlockLastComponent__factory } from "./factories/BlockLastComponent__factory";
 export { BlockRevealComponent__factory } from "./factories/BlockRevealComponent__factory";
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";
+export { CanNameComponent__factory } from "./factories/CanNameComponent__factory";
 export { CoinComponent__factory } from "./factories/CoinComponent__factory";
 export { DescriptionComponent__factory } from "./factories/DescriptionComponent__factory";
 export { ERC20DepositSystem__factory } from "./factories/ERC20DepositSystem__factory";

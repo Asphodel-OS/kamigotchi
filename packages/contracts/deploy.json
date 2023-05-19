@@ -5,6 +5,7 @@
     "BalanceComponent",
     "BlockLastComponent",
     "BlockRevealComponent",
+    "CanNameComponent",
     "CoinComponent",
     "DescriptionComponent",
     "EpochComponent",
@@ -329,6 +330,7 @@
       "name": "PetNameSystem",
       "writeAccess": [
         "BlockLastComponent",
+        "CanNameComponent",
         "NameComponent"
       ]
     },
