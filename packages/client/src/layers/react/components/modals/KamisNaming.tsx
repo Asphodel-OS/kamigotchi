@@ -66,7 +66,7 @@ export function registerKamisNamingModal() {
 
             // get all kamis on the node
             for (let i = 0; i < kamiIndices.length; i++) {
-              kamis.push(getKami(layers, kamiIndices[i], { production: true }));
+              kamis.push(getKami(layers, kamiIndices[i], { production: true, namable: true }));
             }
           }
 
@@ -84,6 +84,16 @@ export function registerKamisNamingModal() {
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
 
+      const buttonSelect = (kami: Kami, props: any) => {
+        if (isHarvesting(kami)) {
+          return (<NotButton>Harvesting...</NotButton>);
+        } else if (!canName(kami)) {
+          return (<NotButton>Already named!</NotButton>);
+        } else {
+          return (<Button onClick={props.nameKami}>Give name</Button>);
+        }
+      }
+
       const KamiCard = (props: any) => {
         return (
           <Card>
@@ -92,11 +102,21 @@ export function registerKamisNamingModal() {
               <TitleBar>
                 <TitleText>{props.title}</TitleText>
               </TitleBar>
-              <Button onClick={props.nameKami}>Give name</Button>
+              {buttonSelect(props.kami, props)}
             </Container>
           </Card>
         );
       };
+
+      ///////////////////////
+      // INTERACTIONS
+      // check whether the kami is harvesting
+      const isHarvesting = (kami: Kami): boolean =>
+        kami.state === 'HARVESTING' && kami.production != undefined;
+
+      const canName = (kami: Kami): boolean => {
+        return kami.canName ? kami.canName : false;
+      }
 
       const openKamiNameModal = (entityIndex: EntityIndex) => {
         setSelectedEntities({
@@ -111,6 +131,7 @@ export function registerKamisNamingModal() {
         return kamis.map((kami) => {
           return (
             <KamiCard
+              kami={kami}
               key={kami.id}
               image={kami.uri}
               title={kami.name}
@@ -149,7 +170,20 @@ const Button = styled.button`
   border-style: solid;
   border-width: 2px;
   border-color: black;
-  width: 70px;
+
+  padding: 5px;
+  pointer-events: auto;
+  margin: 5px;
+`;
+
+const NotButton = styled.div`
+  text-align: center;
+  font-family: Pixel;
+  font-size: 14px;
+  background-color: #c4c4c4;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
   padding: 5px;
   pointer-events: auto;
   margin: 5px;

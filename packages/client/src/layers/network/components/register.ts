@@ -117,6 +117,7 @@ export function createComponents(world: World) {
     Time: defineNumberEZ("Time", "component.Time"),
 
     // speeeecial
+    CanName: defineBoolEZ("CanName", "component.Can.Name"),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
     OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),

@@ -29,6 +29,7 @@ export interface Kami {
   stats: Stats;
   traits?: Traits;
   affinities?: string[];
+  canName?: boolean;
 }
 
 // optional data to populate for a Kami Entity
@@ -36,6 +37,7 @@ export interface KamiOptions {
   account?: boolean;
   production?: boolean;
   traits?: boolean;
+  namable?: boolean;
 }
 
 // get a Kami from its EnityIndex. includes options for which data to include
@@ -51,6 +53,7 @@ export const getKami = (
         AccountID,
         BackgroundIndex,
         BodyIndex,
+        CanName,
         ColorIndex,
         FaceIndex,
         HealthCurrent,
@@ -136,6 +139,15 @@ export const getKami = (
       kami.traits.hand.affinity,
       kami.traits.face.affinity,
     ]
+  }
+
+  // check if canName
+  if (options.namable) {
+    if (getComponentValue(CanName, index)) {
+      kami.canName = true;
+    } else {
+      kami.canName = false;
+    }
   }
 
   return kami;

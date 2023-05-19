@@ -22,10 +22,10 @@ export function registerKamiModal() {
     (layers) => {
       const {
         network: {
-          components: { Balance, IsPet, MediaURI, PetID },
+          components: { Balance, IsPet, MediaURI, Name, PetID },
         },
       } = layers;
-      return merge(IsPet.update$, Balance.update$, PetID.update$, MediaURI.update$).pipe(
+      return merge(IsPet.update$, Balance.update$, PetID.update$, MediaURI.update$, Name.update$).pipe(
         map(() => {
           return {
             layers,
