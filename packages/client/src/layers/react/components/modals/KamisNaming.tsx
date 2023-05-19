@@ -25,6 +25,7 @@ export function registerKamisNamingModal() {
           network,
           components: {
             AccountID,
+            CanName,
             IsAccount,
             IsPet,
             Location,
@@ -38,6 +39,7 @@ export function registerKamisNamingModal() {
 
       return merge(
         AccountID.update$,
+        CanName.update$,
         Location.update$,
         Name.update$,
         State.update$,
