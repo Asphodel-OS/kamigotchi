@@ -67,7 +67,7 @@ export function registerNameKamiModal() {
       };
 
       // handle naming action response (need to modify for error handling)
-      const NameKami = async (name: string) => {
+      const NameKami = async () => {
         try {
           nameTx(kami, name);
           setVisibleModals({ ...visibleModals, nameKami: false });
@@ -79,7 +79,7 @@ export function registerNameKamiModal() {
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          NameKami(name);
+          NameKami();
         }
         // This is for input ---
         // if (event.key === 'Escape') {
