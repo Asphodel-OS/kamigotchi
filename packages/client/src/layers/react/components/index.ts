@@ -3,11 +3,12 @@ import { registerLoadingState } from './LoadingState';
 import { registerDialogueModal } from './modals/Dialogue';
 
 import { registerChatButton } from './buttons/Chat';
+import { registerHelpButton } from './buttons/Help';
 import { registerMapButton } from './buttons/Map';
+import { registerOperatorHealthButton } from './buttons/OperatorInfo';
 import { registerPartyButton } from './buttons/Party';
 import { registerSettingsButton } from './buttons/Settings';
-import { registerHelpButton } from './buttons/Help';
-import { registerOperatorHealthButton } from './buttons/OperatorInfo';
+import { registerWalletButton } from './buttons/Wallet';
 
 import { registerChatModal } from './modals/Chat';
 import { registerDetectAccountModal } from './modals/DetectAccount';
@@ -28,12 +29,13 @@ export function registerUIComponents() {
   registerLoadingState();
   registerDialogueModal();
 
-  registerOperatorHealthButton();
   registerChatButton();
+  registerHelpButton();
   registerMapButton();
+  registerOperatorHealthButton();
   registerPartyButton();
   registerSettingsButton();
-  registerHelpButton();
+  registerWalletButton();
 
   registerChatModal();
   registerDetectAccountModal();

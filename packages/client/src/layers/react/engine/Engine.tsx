@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { canto } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -13,7 +13,7 @@ import { EngineStore } from "./store";
 import { lattice, local } from 'constants/chains';
 
 // TODO: add canto testnet
-const { chains, provider, webSocketProvider } = configureChains(
+const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     canto,
     lattice,
@@ -29,11 +29,11 @@ const { connectors } = getDefaultWallets({
   chains,
 });
 
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
-  webSocketProvider,
+  publicClient,
+  webSocketPublicClient,
 });
 
 
@@ -55,7 +55,7 @@ export const Engine: React.FC<{
   if (!mounted || !layers) return customBootScreen || <BootScreen />;
 
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
         <LayerContext.Provider value={layers}>
           <EngineContext.Provider value={EngineStore}>
