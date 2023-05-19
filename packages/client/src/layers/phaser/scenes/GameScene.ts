@@ -1,5 +1,5 @@
 import { dataStore } from 'layers/react/store/createStore';
-import { Room } from 'src/constants';
+import { Room } from 'constants/rooms';
 import { disableClickableObjects } from '../utils/disableClickableObjects';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 

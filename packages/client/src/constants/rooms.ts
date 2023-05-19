@@ -528,23 +528,3 @@ export const rooms: Room[] = [
     ],
   },
 ];
-
-export const describeCharacter = {
-  bodyType: [
-    'Bee',
-    'Butterfly',
-    'Cube',
-    'Default',
-    'Drip',
-    'Bulb',
-    'Octahedron',
-    'Eldritch',
-    'Orb',
-    'Tube',
-    'Ghost',
-    'Orb',
-  ],
-  colors: ['Canto Green'],
-  handType: ['Orbs', 'Eyeballs', 'Mantis', 'Paws', 'Plugs', 'Scorpion', 'Tentacles', 'Claws'],
-  face: ['^-^', 'c_c', ':3', '._.', 'ಠ_ಠ', 'Dotted', 'Squiggle', 'v_v', 'x_x'],
-};

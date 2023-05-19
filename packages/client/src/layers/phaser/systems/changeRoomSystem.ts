@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { defineSystem, Has, HasValue, runQuery } from '@latticexyz/recs';
 
-import { rooms } from 'src/constants';
+import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'layers/network/types';
 import { PhaserLayer } from 'layers/phaser/types';
 import { closeModalsOnRoomChange, getCurrentRoom } from 'layers/phaser/utils';

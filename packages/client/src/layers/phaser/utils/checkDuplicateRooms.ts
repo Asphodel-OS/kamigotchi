@@ -1,4 +1,4 @@
-import { duplicateRoomMusic } from '../../../constants';
+import { duplicateRoomMusic } from '../../../constants/rooms';
 
 export function checkDuplicateRooms(currentRoom: number, prevRoom: number) {
   for (let i = 0; i < duplicateRoomMusic.length; i++) {
