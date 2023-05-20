@@ -23,6 +23,7 @@ import { LibStat } from "libraries/LibStat.sol";
 
 // Components
 import { AddressOperatorComponent, ID as AddressOperatorComponentID } from "components/AddressOperatorComponent.sol";
+import { AddressOwnerComponent, ID as AddressOwnerComponentID } from "components/AddressOwnerComponent.sol";
 import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceComponentID } from "components/BalanceComponent.sol";
 import { BlockLastComponent, ID as BlockLastComponentID } from "components/BlockLastComponent.sol";
@@ -42,7 +43,6 @@ import { IdDelegatorComponent, ID as IdDelegatorComponentID } from "components/I
 import { IdHolderComponent, ID as IdHolderComponentID } from "components/IdHolderComponent.sol";
 import { IdMerchantComponent, ID as IdMerchantComponentID } from "components/IdMerchantComponent.sol";
 import { IdNodeComponent, ID as IdNodeComponentID } from "components/IdNodeComponent.sol";
-import { IdOwnerComponent, ID as IdOwnerComponentID } from "components/IdOwnerComponent.sol";
 import { IdPetComponent, ID as IdPetComponentID } from "components/IdPetComponent.sol";
 import { IdSourceComponent, ID as IdSourceComponentID } from "components/IdSourceComponent.sol";
 import { IdTargetComponent, ID as IdTargetComponentID } from "components/IdTargetComponent.sol";
@@ -146,6 +146,7 @@ import { KamiERC721 } from "tokens/KamiERC721.sol";
 abstract contract TestSetupImports is MudTest {
 // Components vars
 AddressOperatorComponent _AddressOperatorComponent;
+AddressOwnerComponent _AddressOwnerComponent;
 AffinityComponent _AffinityComponent;
 BalanceComponent _BalanceComponent;
 BlockLastComponent _BlockLastComponent;
@@ -165,7 +166,6 @@ IdDelegatorComponent _IdDelegatorComponent;
 IdHolderComponent _IdHolderComponent;
 IdMerchantComponent _IdMerchantComponent;
 IdNodeComponent _IdNodeComponent;
-IdOwnerComponent _IdOwnerComponent;
 IdPetComponent _IdPetComponent;
 IdSourceComponent _IdSourceComponent;
 IdTargetComponent _IdTargetComponent;
@@ -270,6 +270,7 @@ function setUp() public virtual override {
 super.setUp();
 
 _AddressOperatorComponent = AddressOperatorComponent(component(AddressOperatorComponentID));
+_AddressOwnerComponent = AddressOwnerComponent(component(AddressOwnerComponentID));
 _AffinityComponent = AffinityComponent(component(AffinityComponentID));
 _BalanceComponent = BalanceComponent(component(BalanceComponentID));
 _BlockLastComponent = BlockLastComponent(component(BlockLastComponentID));
@@ -289,7 +290,6 @@ _IdDelegatorComponent = IdDelegatorComponent(component(IdDelegatorComponentID));
 _IdHolderComponent = IdHolderComponent(component(IdHolderComponentID));
 _IdMerchantComponent = IdMerchantComponent(component(IdMerchantComponentID));
 _IdNodeComponent = IdNodeComponent(component(IdNodeComponentID));
-_IdOwnerComponent = IdOwnerComponent(component(IdOwnerComponentID));
 _IdPetComponent = IdPetComponent(component(IdPetComponentID));
 _IdSourceComponent = IdSourceComponent(component(IdSourceComponentID));
 _IdTargetComponent = IdTargetComponent(component(IdTargetComponentID));

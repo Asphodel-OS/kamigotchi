@@ -14,7 +14,7 @@ contract AccountNameSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     string memory name = abi.decode(arguments, (string));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     require(accountID != 0, "Account: does not exist");
 

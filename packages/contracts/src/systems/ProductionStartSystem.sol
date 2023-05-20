@@ -21,7 +21,7 @@ contract ProductionStartSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint256 nodeID) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     // sync the pet's health with the current state

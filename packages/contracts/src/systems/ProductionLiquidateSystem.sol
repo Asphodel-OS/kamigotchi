@@ -21,7 +21,7 @@ contract ProductionLiquidateSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     // standard checks

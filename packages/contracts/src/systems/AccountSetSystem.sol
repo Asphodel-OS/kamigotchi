@@ -21,7 +21,7 @@ contract AccountSetSystem is System {
     }
 
     LibAccount.setName(components, accountID, name);
-    LibAccount.setAddress(components, accountID, msg.sender);
+    LibAccount.setOperator(components, accountID, msg.sender);
     return abi.encode(accountID);
   }
 

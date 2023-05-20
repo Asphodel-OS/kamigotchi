@@ -19,7 +19,7 @@ contract PetFeedSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // check that this is a pet owned by the account
     require(LibPet.isPet(components, id), "Pet: not a pet");

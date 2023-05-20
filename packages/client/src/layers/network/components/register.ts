@@ -59,7 +59,6 @@ export function createComponents(world: World) {
     HolderID: defineStringEZ("HolderID", "component.Id.Holder"),
     MerchantID: defineStringEZ("MerchantID", "component.Id.Merchant"),
     NodeID: defineStringEZ("NodeID", "component.Id.Node"),
-    OwnerID: defineStringEZ("OwnerID", "component.Id.Owner"),
     PetID: defineStringEZ("PetID", "component.Id.Pet"),
     RequesteeID: defineStringEZ("RequesteeID", "component.Id.Requestee"),
     RequesterID: defineStringEZ("RequesterID", "component.Id.Requester"),
@@ -121,5 +120,6 @@ export function createComponents(world: World) {
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
     OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),
+    OwnerAddress: defineStringEZ("OwnerAddress", "component.Address.Owner"),
   }
 }

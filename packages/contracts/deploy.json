@@ -1,6 +1,7 @@
 {
   "components": [
     "AddressOperatorComponent",
+    "AddressOwnerComponent",
     "AffinityComponent",
     "BalanceComponent",
     "BlockLastComponent",
@@ -20,7 +21,6 @@
     "IdHolderComponent",
     "IdMerchantComponent",
     "IdNodeComponent",
-    "IdOwnerComponent",
     "IdPetComponent",
     "IdSourceComponent",
     "IdTargetComponent",
@@ -228,7 +228,7 @@
         "IsAccountComponent",
         "AddressOperatorComponent",
         "BlockLastComponent",
-        "IdOwnerComponent",
+        "AddressOwnerComponent",
         "LocationComponent",
         "NameComponent",
         "StaminaComponent",
@@ -284,7 +284,7 @@
         "IsAccountComponent",
         "AddressOperatorComponent",
         "BlockLastComponent",
-        "IdOwnerComponent",
+        "AddressOwnerComponent",
         "IdAccountComponent",
         "LocationComponent",
         "NameComponent",

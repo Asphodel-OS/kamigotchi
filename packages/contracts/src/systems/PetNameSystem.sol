@@ -19,7 +19,7 @@ contract PetNameSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, string memory name) = abi.decode(arguments, (uint256, string));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibPet.isPet(components, id), "Pet: not a pet");
     require(LibPet.canName(components, id), "Pet: cannot named");

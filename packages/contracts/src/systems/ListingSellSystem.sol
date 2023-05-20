@@ -17,7 +17,7 @@ contract ListingSellSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 listingID, uint256 amt) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 merchantID = LibListing.getMerchant(components, listingID);
 
     require(

@@ -14,7 +14,7 @@ contract AccountMoveSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 to = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibAccount.syncStamina(components, accountID) != 0, "Account: out of stamina");
     require(LibAccount.canMoveTo(components, accountID, to), "Account: unreachable location");

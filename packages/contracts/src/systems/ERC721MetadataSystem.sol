@@ -28,7 +28,7 @@ contract ERC721MetadataSystem is System {
     uint256 petID = LibPet.indexToID(components, petIndex);
 
     // checks
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
 

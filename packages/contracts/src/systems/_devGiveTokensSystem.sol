@@ -17,7 +17,7 @@ contract _devGiveTokensSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
-    LibCoin.inc(components, LibAccount.getByAddress(components, to), amount);
+    LibCoin.inc(components, LibAccount.getByOperator(components, to), amount);
     return "";
   }
 

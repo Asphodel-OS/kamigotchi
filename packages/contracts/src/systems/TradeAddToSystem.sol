@@ -19,7 +19,7 @@ contract TradeAddToSystem is System {
       arguments,
       (uint256, uint256, uint256)
     );
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE

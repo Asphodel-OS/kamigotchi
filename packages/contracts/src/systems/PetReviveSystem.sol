@@ -18,7 +18,7 @@ contract PetReviveSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint256 reviveIndex) = abi.decode(arguments, (uint256, uint256));
-    uint256 accountID = LibAccount.getByAddress(components, msg.sender);
+    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     require(LibPet.isDead(components, petID), "Pet: must be dead");

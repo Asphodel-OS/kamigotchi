@@ -57,13 +57,13 @@ library LibPet {
     uint256 id = world.getUniqueEntityId();
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
     IndexPetComponent(getAddressById(components, IndexPetComponentID)).set(id, index);
+    setAccount(components, id, accountID);
+    setMediaURI(components, id, uri);
+    setState(components, id, "UNREVEALED");
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
     removeCanName(components, id);
-    setAccount(components, id, accountID);
-    setMediaURI(components, id, uri);
-    setState(components, id, "UNREVEALED");
     return id;
   }
 
@@ -421,7 +421,7 @@ library LibPet {
   }
 
   // get the entity ID of the pet owner
-  function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getOwner(IUintComp components, uint256 id) internal view returns (address) {
     uint256 accountID = getAccount(components, id);
     return LibAccount.getOwner(components, accountID);
   }

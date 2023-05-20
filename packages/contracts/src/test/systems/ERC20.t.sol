@@ -32,7 +32,7 @@ contract ERC20Test is SetupTemplate {
 
     assertEq(token.balanceOf(alice), 100);
 
-    assertEq(_CoinComponent.getValue(LibAccount.getByAddress(components, alice)), 1);
+    assertEq(_CoinComponent.getValue(LibAccount.getByOperator(components, alice)), 1);
   }
 
   function testBurn() public {
@@ -43,6 +43,6 @@ contract ERC20Test is SetupTemplate {
 
     assertEq(token.balanceOf(alice), 50);
 
-    assertEq(_CoinComponent.getValue(LibAccount.getByAddress(components, alice)), 51);
+    assertEq(_CoinComponent.getValue(LibAccount.getByOperator(components, alice)), 51);
   }
 }

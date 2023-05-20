@@ -41,7 +41,7 @@ export const getAccount = (
         Location,
         Name,
         OperatorAddress,
-        OwnerID,
+        OwnerAddress,
         Stamina,
         StaminaCurrent
       },
@@ -50,7 +50,7 @@ export const getAccount = (
 
   let account: Account = {
     id: world.entities[index],
-    ownerEOA: getComponentValue(OwnerID, index)?.value as string,
+    ownerEOA: getComponentValue(OwnerAddress, index)?.value as string,
     operatorEOA: getComponentValue(OperatorAddress, index)?.value as string,
     name: getComponentValue(Name, index)?.value as string,
     coin: getComponentValue(Coin, index)?.value as number,

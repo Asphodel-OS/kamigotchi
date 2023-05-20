@@ -7,8 +7,8 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
-import { IdOwnerComponent, ID as IdOwnerCompID } from "components/IdOwnerComponent.sol";
 import { IsAccountComponent, ID as IsAccountCompID } from "components/IsAccountComponent.sol";
+import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
@@ -28,14 +28,14 @@ library LibAccount {
   function create(
     IWorld world,
     IUintComp components,
-    address operatorAddr,
-    address ownerAddr
+    address ownerAddr,
+    address operatorAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsAccountComponent(getAddressById(components, IsAccountCompID)).set(id);
-    IdOwnerComponent(getAddressById(components, IdOwnerCompID)).set(id, addressToEntity(ownerAddr));
-    LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
+    AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
+    LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
     StaminaComponent(getAddressById(components, StaminaCompID)).set(id, BASE_STAMINA);
     StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, BASE_STAMINA);
     BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, block.number);
@@ -72,7 +72,7 @@ library LibAccount {
   /////////////////
   // SETTERS
 
-  function setAddress(IUintComp components, uint256 id, address addr) internal {
+  function setOperator(IUintComp components, uint256 id, address addr) internal {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
   }
 
@@ -111,11 +111,6 @@ library LibAccount {
   /////////////////
   // GETTERS
 
-  // get the address of an account
-  function getAddress(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).getValue(id);
-  }
-
   function getLastBlock(IUintComp components, uint256 id) internal view returns (uint256) {
     return BlockLastComponent(getAddressById(components, BlockLastCompID)).getValue(id);
   }
@@ -125,9 +120,14 @@ library LibAccount {
     return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
   }
 
-  // gets the OwnerID (address) of a specified account account as a uint
-  function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdOwnerComponent(getAddressById(components, IdOwnerCompID)).getValue(id);
+  // get the address of an Account Operator
+  function getOperator(IUintComp components, uint256 id) internal view returns (address) {
+    return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).getValue(id);
+  }
+
+  // get the address of an Account Owner
+  function getOwner(IUintComp components, uint256 id) internal view returns (address) {
+    return AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).getValue(id);
   }
 
   function getStamina(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -142,11 +142,11 @@ library LibAccount {
   // QUERIES
 
   // Get an account entity by Wallet address. Assume only 1.
-  function getByAddress(
+  function getByOperator(
     IUintComp components,
-    address wallet
+    address operatorAddr
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, wallet, 0, 0);
+    uint256[] memory results = _getAllX(components, operatorAddr, address(0), 0);
     if (results.length > 0) {
       result = results[0];
     }
@@ -155,47 +155,42 @@ library LibAccount {
   // Get the account of an owner. Assume only 1.
   function getByOwner(
     IUintComp components,
-    uint256 ownerID
+    address ownerAddr
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, address(0), ownerID, 0);
+    uint256[] memory results = _getAllX(components, address(0), ownerAddr, 0);
     if (results.length > 0) {
       result = results[0];
     }
   }
 
-  // Get the account of an owner by the owner's address. Assume only 1.
-  function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    return getByOwner(components, addressToEntity(owner));
-  }
-
   // Get all account entities matching the specified filters.
   function _getAllX(
     IUintComp components,
-    address wallet,
-    uint256 ownerID,
+    address operatorAddr,
+    address ownerAddr,
     uint256 location
   ) internal view returns (uint256[] memory) {
     uint256 numFilters;
-    if (wallet != address(0)) numFilters++;
-    if (ownerID != 0) numFilters++;
+    if (operatorAddr != address(0)) numFilters++;
+    if (ownerAddr != address(0)) numFilters++;
     if (location != 0) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
 
     uint256 filterCount;
-    if (wallet != address(0)) {
+    if (operatorAddr != address(0)) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, AddrOperatorCompID),
-        abi.encode(wallet)
+        abi.encode(operatorAddr)
       );
     }
-    if (ownerID != 0) {
+    if (ownerAddr != address(0)) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdOwnerCompID),
-        abi.encode(ownerID)
+        getComponentById(components, AddrOwnerCompID),
+        abi.encode(ownerAddr)
       );
     }
     if (location != 0) {
