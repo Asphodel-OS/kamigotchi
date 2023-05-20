@@ -15,7 +15,7 @@ export function registerDialogueModal() {
       colStart: 20,
       colEnd: 83,
       rowStart: 72,
-      rowEnd: 96,
+      rowEnd: 100,
     },
     (layers) => of(layers),
     () => {
@@ -72,13 +72,14 @@ const Header = styled.p`
 `;
 
 const AlignRight = styled.div`
-  text-align: right;
+  text-align: left;
   margin: 0px;
 `;
 
 const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -87,7 +88,6 @@ const ModalContent = styled.div`
   border-style: solid;
   border-width: 2px;
   border-color: black;
-  height: 100%;
 `;
 
 const Description = styled.p`

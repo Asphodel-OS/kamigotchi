@@ -8,7 +8,10 @@ const StepsWrapper = styled.div<any>`
   ${(props) =>
     props.dialogue &&
     css`
+      position: relative;
+      top: 23;
       margin-right: 1%;
+      justify-content: flex-end;
     `}
 `;
 
@@ -20,7 +23,7 @@ const StepButton = styled.button`
   color: black;
   padding: 15px;
   display: inline-block;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   border-radius: 5px;
   font-family: Pixel;
@@ -49,21 +52,25 @@ export const Stepper = (props: any) => {
       {props.dialogue && (
         <StepsWrapper dialogue={props.dialogue}>
           {currentStep > 1 && (
-            <StepButton style={{ pointerEvents: 'auto' }} onClick={handlePrevious}>
-              Previous
+            <StepButton
+              style={{ pointerEvents: 'auto', marginRight: '6%', position: 'absolute' }}
+              onClick={handlePrevious}
+            >
+              {'<-'}
             </StepButton>
           )}
           {currentStep < steps.length && (
-            <StepButton style={{ pointerEvents: 'auto', marginLeft: 'auto' }} onClick={handleNext}>
-              Next
+            <StepButton
+              style={{ pointerEvents: 'auto', position: 'absolute' }}
+              onClick={handleNext}
+            >
+              {'->'}
             </StepButton>
           )}
         </StepsWrapper>
       )}
-
       {steps[currentStep - 1].content}
       {steps[currentStep - 1].modalContent && <Modal>{steps[currentStep - 1].content}</Modal>}
-
       {!props.dialogue && (
         <>
           {currentStep > 1 && (
