@@ -4,12 +4,11 @@ import styled, { css } from 'styled-components';
 
 const StepsWrapper = styled.div<any>`
   display: flex;
-  justify-content: center;
   align-items: center;
   ${(props) =>
     props.dialogue &&
     css`
-      justify-content: flex-start;
+      margin-right: 1%;
     `}
 `;
 
@@ -55,7 +54,7 @@ export const Stepper = (props: any) => {
             </StepButton>
           )}
           {currentStep < steps.length && (
-            <StepButton style={{ pointerEvents: 'auto' }} onClick={handleNext}>
+            <StepButton style={{ pointerEvents: 'auto', marginLeft: 'auto' }} onClick={handleNext}>
               Next
             </StepButton>
           )}
