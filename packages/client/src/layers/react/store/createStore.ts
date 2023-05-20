@@ -41,12 +41,19 @@ export interface VisibleModals {
   settings: boolean;
 }
 
+// list of networks
+export interface NetworkSettings {
+  connectedAddress: string;
+  networks: Map<string, any>;
+}
+
 export interface DataStore {
   dialogue: Dialogue;
   selectedEntities: SelectedEntities;
   sound: SoundState;
   visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
+  networkSettings: NetworkSettings;
 }
 
 interface DataStoreActions {
@@ -55,6 +62,7 @@ interface DataStoreActions {
   setVisibleButtons: (data: VisibleButtons) => void;
   setSoundState: (data: SoundState) => void;
   setSelectedEntities: (data: SelectedEntities) => void;
+  setNetworkSettings: (data: NetworkSettings) => void;
 }
 
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
@@ -90,6 +98,10 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       party: false,
       settings: false,
     },
+    networkSettings: {
+      connectedAddress: '',
+      networks: new Map<string, any>(),
+    },
   };
 
   return {
@@ -108,6 +120,9 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     ),
     setVisibleModals: (data: VisibleModals) => set(
       (state: DataStore) => ({ ...state, visibleModals: data })
+    ),
+    setNetworkSettings: (data: NetworkSettings) => set(
+      (state: DataStore) => ({ ...state, networkSettings: data })
     ),
   };
 });

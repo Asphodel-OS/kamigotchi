@@ -4,7 +4,6 @@ import {
   removeComponent,
   setComponent,
 } from '@latticexyz/recs';
-import { SetupContractConfig } from '@latticexyz/std-client';
 
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
@@ -48,9 +47,9 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
   const layers: Partial<Layers> = {};
 
   // Set the game config
-  const networkConfig: SetupContractConfig | undefined = createNetworkConfig();
+  const networkConfig = createNetworkConfig();
   if (!networkConfig) throw new Error('Invalid config');
-  // console.log("networkConfig", networkConfig);
+  console.log("networkConfig", networkConfig);
 
   // Populate the layers
   if (!layers.network) layers.network = await createNetworkLayer(networkConfig);

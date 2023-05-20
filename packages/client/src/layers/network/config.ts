@@ -1,17 +1,19 @@
 import { Wallet } from 'ethers';
 import { SetupContractConfig } from "@latticexyz/std-client";
+import { ExternalProvider } from "@ethersproject/providers";
 
 // flat network configuration struct
 // TODO: replace this with Lattice's version in "@latticexyz/network/dist/types"
 export type NetworkConfig = {
+  devMode: boolean;
   worldAddress: string;
-  privateKey: string;
   chainId: number;
   jsonRpc: string;
   wsRpc?: string;
-  checkpointUrl?: string;
-  devMode: boolean;
+  privateKey?: string;
+  externalProvider?: ExternalProvider;
   initialBlockNumber: number;
+  checkpointUrl?: string;
   faucetServiceUrl?: string;
   relayServiceUrl?: string;
   snapshotUrl?: string;
@@ -31,6 +33,7 @@ export const shapeNetworkConfig: (networkConfig: NetworkConfig) => SetupContract
     options: {
       batch: false,
     },
+    externalProvider: config.externalProvider,
   },
   privateKey: config.privateKey,
   chainId: config.chainId,
@@ -45,47 +48,51 @@ export const shapeNetworkConfig: (networkConfig: NetworkConfig) => SetupContract
 
 
 // Populate the network config based on url params
-export function createNetworkConfig(): SetupContractConfig | undefined {
+export function createNetworkConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
   const params = new URLSearchParams(window.location.search);
   const devMode = params.get('dev') === 'true';
-  config = (devMode) ? createNetworkConfigLocal() : createNetworkConfigLattice();
+  config = (devMode) ? createNetworkConfigLocal(externalProvider) : createNetworkConfigLattice();
   console.log('config', config);
 
   if (
-    config.privateKey
-    && config.worldAddress
+    config.worldAddress
     && config.jsonRpc
     && config.chainId
+    && (config.privateKey || config.externalProvider)
   ) {
     return shapeNetworkConfig(config);
   }
 }
 
 // Get the network config of a local deployment based on url params
-export function createNetworkConfigLocal(): NetworkConfig {
+export function createNetworkConfigLocal(externalProvider?: ExternalProvider): NetworkConfig {
   const params = new URLSearchParams(window.location.search);
 
   let config: NetworkConfig = <NetworkConfig>{};
   config.devMode = true;
 
   // EOAs and privatekey
-  let wallet;
-  if (params.get('admin') !== 'false') {
-    wallet = new Wallet(
-      '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-    );
+  if (externalProvider) {
+    config.externalProvider = externalProvider;
   } else {
-    const detectedPrivateKey = localStorage.getItem('operatorPrivateKey');
-    wallet = (detectedPrivateKey)
-      ? new Wallet(detectedPrivateKey)
-      : Wallet.createRandom();
+    let wallet;
+    if (params.get('admin') !== 'false') {
+      wallet = new Wallet(
+        '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+      );
+    } else {
+      const detectedPrivateKey = localStorage.getItem('operatorPrivateKey');
+      wallet = (detectedPrivateKey)
+        ? new Wallet(detectedPrivateKey)
+        : Wallet.createRandom();
 
-    localStorage.setItem('operatorPrivateKey', wallet.privateKey);
-    localStorage.setItem('operatorPublicKey', wallet.publicKey);
+      localStorage.setItem('operatorPrivateKey', wallet.privateKey);
+      localStorage.setItem('operatorPublicKey', wallet.publicKey);
+    }
+    config.privateKey = wallet.privateKey;
   }
-  config.privateKey = wallet.privateKey;
 
   // RPCs
   const jsonRpc = params.get('rpc') || "http://localhost:8545";
@@ -110,6 +117,7 @@ export function createNetworkConfigLocal(): NetworkConfig {
   let initialBlockNumberString = params.get('initialBlockNumber') || '0';
   config.initialBlockNumber = parseInt(initialBlockNumberString);
 
+
   return config;
 }
 
@@ -128,6 +136,7 @@ function createNetworkConfigLattice(): NetworkConfig {
     faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
     relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
     snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
+
     // checkpointUrl: undefined,
     chainId: 4242,
     worldAddress: "0xc151A77E925A6c12f76C870f1d654ddF2E4006cD",
