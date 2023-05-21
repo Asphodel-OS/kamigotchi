@@ -52,7 +52,6 @@ export function registerPartyModal() {
             HealthCurrent,
             Coin,
             HolderID,
-            Name,
             IsAccount,
             IsInventory,
             IsNode,
