@@ -60,7 +60,7 @@ library LibPet {
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
-    setCannotName(components, id);
+    removeCanName(components, id);
     setAccount(components, id, accountID);
     setMediaURI(components, id, uri);
     setState(components, id, "UNREVEALED");
@@ -350,7 +350,7 @@ library LibPet {
     CanNameComponent(getAddressById(components, CanNameCompID)).set(id);
   }
 
-  function setCannotName(IUintComp components, uint256 id) internal {
+  function removeCanName(IUintComp components, uint256 id) internal {
     if (CanNameComponent(getAddressById(components, CanNameCompID)).has(id)) {
       CanNameComponent(getAddressById(components, CanNameCompID)).remove(id);
     }
