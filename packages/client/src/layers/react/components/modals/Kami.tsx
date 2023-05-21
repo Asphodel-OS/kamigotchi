@@ -233,7 +233,7 @@ const TraitBox = styled.div`
   grid-row-gap: 5px;
 `;
 
-const KamiText = styled.p`
+const KamiText = styled.div`
   background-color: #ffffff;
   color: black;
   font-size: 14px;

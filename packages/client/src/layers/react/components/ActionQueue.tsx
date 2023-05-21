@@ -50,20 +50,24 @@ export function registerActionQueue() {
         );
       }
 
+      const TxQueue = () => (
+        [...getComponentEntities(Action)].map((entities) => {
+          const actionData = getComponentValueStrict(Action, entities);
+          let state = ActionStateString[actionData.state as ActionState];
+          if (state == "WaitingForTxEvents") state = "Pending";
+          return (
+            <Description key={`action${entities}`}>
+              {Action.world.entities[entities]}: {StyledStatus(state)}
+            </Description>
+          );
+        })
+      );
+
       return (
         <ModalWrapper>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Description>TX Queue:</Description>
-            {[...getComponentEntities(Action)].map((e) => {
-              const actionData = getComponentValueStrict(Action, e);
-              let state = ActionStateString[actionData.state as ActionState];
-              if (state == "WaitingForTxEvents") state = "Pending";
-              return (
-                <Description key={`action${e}`}>
-                  {Action.world.entities[e]}: {StyledStatus(state)}
-                </Description>
-              );
-            })}
+            {TxQueue()}
           </ModalContent>
         </ModalWrapper>
       );
@@ -92,7 +96,7 @@ const ModalContent = styled.div`
   max-height: 300px;
 `;
 
-const Description = styled.p`
+const Description = styled.div`
   font-size: 14px;
   color: #333;
   text-align: left;

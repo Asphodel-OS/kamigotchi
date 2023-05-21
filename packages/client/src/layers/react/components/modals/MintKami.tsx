@@ -102,9 +102,9 @@ export function registerKamiMintModal() {
 
       return (
         <ModalWrapperFull divName='kamiMint' id='kamiMintModal'>
-        <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-          X
-        </TopButton>
+          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+            X
+          </TopButton>
           <Stepper steps={steps} MintButton={MintButton} />
         </ModalWrapperFull>
       );
@@ -162,7 +162,7 @@ const CenterBox = styled.div`
   padding: 10px;
 `;
 
-const Description = styled.p`
+const Description = styled.div`
   font-size: 20px;
   color: #333;
   text-align: center;

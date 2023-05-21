@@ -101,7 +101,7 @@ export function registerNodeModal() {
             ])
           )[0];
           const node =
-            nodeEntityIndex !== undefined ? getNode(layers, nodeEntityIndex) : ({} as Node);
+            (nodeEntityIndex !== undefined) ? getNode(layers, nodeEntityIndex) : ({} as Node);
 
           // get the selected Node
 
@@ -335,12 +335,6 @@ export function registerNodeModal() {
         return precision == undefined ? output : roundTo(output, precision);
       };
 
-      const calcHealthPercent = (kami: Kami, precision?: number) => {
-        let healthPercent = 0;
-        healthPercent = calcHealth(kami) / kami.stats.health;
-        return precision == undefined ? healthPercent : roundTo(healthPercent, precision);
-      };
-
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami) => {
         return calcHealth(kami) == 0;
@@ -377,6 +371,7 @@ export function registerNodeModal() {
         return (
           <ActionListButton
             id={`harvest-add`}
+            key={`harvest-add`}
             text='Add Kami'
             hidden={true}
             scrollPosition={scrollPosition}
@@ -390,6 +385,7 @@ export function registerNodeModal() {
       const CollectButton = (myKami: Kami) => (
         <ActionButton
           id={`harvest-collect`}
+          key={`harvest-collect`}
           onClick={() => collect(myKami.production!)}
           text='Collect'
         />
@@ -409,6 +405,7 @@ export function registerNodeModal() {
         return (
           <ActionListButton
             id={`liquidate-button-${target.index}`}
+            key={`harvest-liquidate`}
             text='Liquidate'
             hidden={true}
             scrollPosition={scrollPosition}
@@ -473,7 +470,7 @@ export function registerNodeModal() {
       // the rendering of all my kamis on this node
       const MyKards = (myKamis: Kami[]) => {
         let kardList = myKamis.map((kami: Kami) => MyKard(kami));
-        kardList.push(<Underline />);
+        kardList.push(<Underline key='separator' />);
         kardList.push(AddButton(data.node, data.account.kamis));
         return kardList;
       };
@@ -482,7 +479,7 @@ export function registerNodeModal() {
       const EnemyKards = (enemies: Kami[], myKamis: Kami[]) => {
         return enemies.map((enemyKami: Kami) => EnemyKard(enemyKami, myKamis));
       };
-      console.log(data.node.kamis.mine.length);
+
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, node: false });
       }, [setVisibleModals, visibleModals]);
@@ -490,11 +487,11 @@ export function registerNodeModal() {
       if (data.node.kamis.mine.length < 1) {
         return (
           <ModalWrapperFull id='node' divName='node'>
-          <AlignRight>
-          <TopButton  style={{ pointerEvents: 'auto'}} onClick={hideModal}>
-            X
-          </TopButton>
-          </AlignRight>
+            <AlignRight>
+              <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+                X
+              </TopButton>
+            </AlignRight>
             <Header >Nodes reject those who do not travel with Kamigotchi.</Header>
           </ModalWrapperFull>
         );
@@ -502,7 +499,7 @@ export function registerNodeModal() {
       if (data.node.id) {
         return (
           <ModalWrapperFull id='node' divName='node'>
-            <NodeInfo node={data.node} />
+            <NodeInfo key={'node-info'} node={data.node} />
             {MyTabButton()}
             {EnemyTabButton()}
             <Scrollable ref={scrollableRef}>
