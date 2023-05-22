@@ -72,10 +72,10 @@ export function registerNodeModal() {
         Location.update$,
         Rate.update$,
         StartTime.update$,
-        State.update$
+        State.update$,
+        OperatorAddress.update$
       ).pipe(
         map(() => {
-
           /////////////////
           // ROOT DATA
 
@@ -96,14 +96,14 @@ export function registerNodeModal() {
             runQuery([
               Has(IsNode),
               HasValue(Location, {
-                value: account.location
+                value: account.location,
               }),
             ])
           )[0];
-          const node = nodeEntityIndex !== undefined ? getNode(layers, nodeEntityIndex) : ({} as Node);
+          const node =
+            nodeEntityIndex !== undefined ? getNode(layers, nodeEntityIndex) : ({} as Node);
 
           // get the selected Node
-
 
           /////////////////
           // DEPENDENT DATA
@@ -115,7 +115,7 @@ export function registerNodeModal() {
               runQuery([
                 Has(IsPet),
                 HasValue(AccountID, { value: account.id }),
-                HasValue(State, { value: "RESTING" }),
+                HasValue(State, { value: 'RESTING' }),
               ])
             );
 
@@ -134,7 +134,7 @@ export function registerNodeModal() {
               runQuery([
                 Has(IsProduction),
                 HasValue(NodeID, { value: node.id }),
-                HasValue(State, { value: "ACTIVE" }),
+                HasValue(State, { value: 'ACTIVE' }),
               ])
             );
 
@@ -189,7 +189,11 @@ export function registerNodeModal() {
       const [scrollPosition, setScrollPosition] = useState<number>(0);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [tab, setTab] = useState<'mine' | 'others'>('mine');
-      const { selectedEntities: { kami }, visibleModals, setVisibleModals } = dataStore();
+      const {
+        selectedEntities: { kami },
+        visibleModals,
+        setVisibleModals,
+      } = dataStore();
       // scrolling
       useEffect(() => {
         const handleScroll = () => {
@@ -211,7 +215,7 @@ export function registerNodeModal() {
       useEffect(() => {
         const refreshClock = () => {
           setLastRefresh(Date.now());
-        }
+        };
         const timerId = setInterval(refreshClock, 3000);
         return function cleanup() {
           clearInterval(timerId);
@@ -357,26 +361,18 @@ export function registerNodeModal() {
 
       // button for tabbing over to my Kamis
       const MyTabButton = () => (
-        <ActionButton
-          id={`my-tab`}
-          onClick={() => setTab('mine')}
-          text='Allies'
-        />
+        <ActionButton id={`my-tab`} onClick={() => setTab('mine')} text='Allies' />
       );
 
       // button for tabbing over to enemy Kamis
       const EnemyTabButton = () => (
-        <ActionButton
-          id={`enemy-tab`}
-          onClick={() => setTab('others')}
-          text='Enemies'
-        />
+        <ActionButton id={`enemy-tab`} onClick={() => setTab('others')} text='Enemies' />
       );
 
       // button for adding Kami to node
       const AddButton = (node: Node, restingKamis: Kami[]) => {
         const options: ActionListOption[] = restingKamis.map((kami) => {
-          return { text: `${kami.name}`, onClick: () => start(kami, node) }
+          return { text: `${kami.name}`, onClick: () => start(kami, node) };
         });
         return (
           <ActionListButton
@@ -401,17 +397,13 @@ export function registerNodeModal() {
 
       // button for stopping production
       const StopButton = (myKami: Kami) => (
-        <ActionButton
-          id={`harvest-stop`}
-          onClick={() => stop(myKami.production!)}
-          text='Stop'
-        />
+        <ActionButton id={`harvest-stop`} onClick={() => stop(myKami.production!)} text='Stop' />
       );
 
       // button for liquidating production
       const LiquidateButton = (target: Kami, soldiers: Kami[]) => {
         const options: ActionListOption[] = soldiers.map((myKami) => {
-          return { text: `${myKami.name}`, onClick: () => liquidate(myKami, target) }
+          return { text: `${myKami.name}`, onClick: () => liquidate(myKami, target) };
         });
 
         return (
@@ -490,11 +482,18 @@ export function registerNodeModal() {
       const EnemyKards = (enemies: Kami[], myKamis: Kami[]) => {
         return enemies.map((enemyKami: Kami) => EnemyKard(enemyKami, myKamis));
       };
-
+      console.log(data.node.kamis.mine.length);
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, node: false });
       }, [setVisibleModals, visibleModals]);
 
+      if (data.node.kamis.mine.length < 1) {
+        return (
+          <ModalWrapperFull id='node' divName='node'>
+            <h1 style={{ color: 'black' }}>You don't have any Kamigotchi.</h1>
+          </ModalWrapperFull>
+        );
+      }
       if (data.node.id) {
         return (
           <ModalWrapperFull id='node' divName='node'>
@@ -502,18 +501,10 @@ export function registerNodeModal() {
             {MyTabButton()}
             {EnemyTabButton()}
             <Scrollable ref={scrollableRef}>
-              {(tab === 'mine')
+              {tab === 'mine'
                 ? MyKards(data.node.kamis.mine)
-                : EnemyKards(data.node.kamis.others, data.node.kamis.mine)
-              }
+                : EnemyKards(data.node.kamis.others, data.node.kamis.mine)}
             </Scrollable>
-          </ModalWrapperFull>
-        );
-      } else {
-        return (
-          <ModalWrapperFull id='node' divName='node'>
-            <Underline />
-            there are no kami here
           </ModalWrapperFull>
         );
       }
