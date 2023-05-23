@@ -33,7 +33,7 @@ const { connectors } = getDefaultWallets({
 });
 
 const wagmiConfig = createConfig({
-  autoConnect: false,
+  autoConnect: true,
   connectors,
   publicClient,
   webSocketPublicClient,
@@ -45,7 +45,7 @@ export const Engine: React.FC<{
   customBootScreen?: React.ReactElement;
 }> = observer(({ mountReact, setLayers, customBootScreen }) => {
   const { connector, address: connectorAddress } = useAccount();
-  const { networks } = dataStore();
+  const { networks, setSelectedAddress } = dataStore();
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
 
@@ -73,6 +73,7 @@ export const Engine: React.FC<{
 
       // spawn network client for address if one does not exist
       const hotAddress = connectorAddress.toLowerCase();
+      setSelectedAddress(hotAddress);
       if (!networks.has(hotAddress)) {
         console.log(`NEW ADDRESS DETECTED. CREATING NETWORK..`, hotAddress);
 
@@ -85,8 +86,9 @@ export const Engine: React.FC<{
 
         // update the network settings
         networks.set(hotAddress, networkLayer);
-        console.log("connectedNetworks", networks);
       }
+      // console.log("selectedAddress", hotAddress);
+      // console.log("connectedNetworks", networks);
     }
   };
 

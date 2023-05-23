@@ -48,6 +48,7 @@ export interface DataStore {
   visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
   networks: Map<string, any>;
+  selectedAddress: string;
 }
 
 interface DataStoreActions {
@@ -56,6 +57,7 @@ interface DataStoreActions {
   setVisibleButtons: (data: VisibleButtons) => void;
   setSoundState: (data: SoundState) => void;
   setSelectedEntities: (data: SelectedEntities) => void;
+  setSelectedAddress: (data: string) => void;
 }
 
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
@@ -92,6 +94,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       settings: false,
     },
     networks: new Map<string, any>(),
+    selectedAddress: '',
   };
 
   return {
@@ -110,6 +113,9 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     ),
     setVisibleModals: (data: VisibleModals) => set(
       (state: DataStore) => ({ ...state, visibleModals: data })
+    ),
+    setSelectedAddress: (data: string) => set(
+      (state: DataStore) => ({ ...state, selectedAddress: data })
     ),
   };
 });

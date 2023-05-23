@@ -11,6 +11,7 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
+import { dataStore } from 'layers/react/store/createStore';
 import { registerUIComponent } from 'layers/react/engine/store';
 import {
   AccountDetails,
@@ -19,12 +20,32 @@ import {
 } from 'layers/react/store/kamiAccount';
 import 'layers/react/styles/font.css';
 
+
+/** 
+ * The sole purpose of this here monstrosity is to keep track of the connected Kami Account
+ * based on the connected wallet address. Unfortunately, this means listening to both changes
+ * in the Connector's address through State hooks, as well as to subscribed world components
+ * on the Requirement step that may result in the creation of an account in-world.
+ * 
+ * The requirement step determines the Account's EntityIndex using a mirrored address saved on the
+ * zustand store as wagmi's useAccount() is unavailable outside of React components. It is also
+ * necessary to properly update the modal whenever the page is refreshed, causing a repopulation of
+ * the world client-side.
+ * 
+ * The modal component then takes this index as a prop and simply listens to it. Nothing more. It
+ * instead relies on a hook to the Same zustand store item for the Same connected account because
+ * it's possible either side may be stale.
+ * 
+ * Let's not fool ourselves into thinking this is an elegant solution by any measure. It is an
+ * abomination birthed out of necessity and should be treated as such.
+ */
+
 export function registerConnectModal() {
   registerUIComponent(
     'Connect',
     {
-      colStart: 34,
-      colEnd: 68,
+      colStart: 20,
+      colEnd: 80,
       rowStart: 20,
       rowEnd: 60,
     },
@@ -37,56 +58,11 @@ export function registerConnectModal() {
             OperatorAddress,
             OwnerAddress,
           },
-        },
-      } = layers;
-
-      return merge(
-        IsAccount.update$,
-        Name.update$,
-        OperatorAddress.update$,
-        OwnerAddress.update$,
-      ).pipe(
-        map(() => (layers))
-      );
-    },
-
-    (layers) => {
-      const {
-        network: {
-          components: {
-            IsAccount,
-            Name,
-            OperatorAddress,
-            OwnerAddress,
-          },
           network: { connectedAddress },
-          world
+          world,
         },
       } = layers;
-      const burnerAddress = connectedAddress.get();
 
-      const { address: connectorAddress, isConnected } = useAccount();
-      const { details, setDetails } = useKamiAccount();
-      console.log("Connect: AccountDetails", details);
-
-      // track the account details in store for easy access
-      useEffect(() => {
-        const accIndex = Array.from(
-          runQuery([
-            Has(IsAccount),
-            HasValue(OwnerAddress, { value: connectorAddress?.toLowerCase() })
-          ])
-        )[0];
-
-        let accountDetails = emptyAccountDetails();
-        if (accIndex && isConnected) {
-          accountDetails = getAccountDetails(accIndex);
-        }
-        setDetails(accountDetails);
-      }, [connectorAddress, isConnected])
-
-
-      // gets the account details 
       const getAccountDetails = (index: EntityIndex): AccountDetails => {
         if (!index) return emptyAccountDetails();
         return {
@@ -98,6 +74,56 @@ export function registerConnectModal() {
         };
       }
 
+      const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
+        const accountIndex = Array.from(
+          runQuery([
+            Has(IsAccount),
+            HasValue(OwnerAddress, {
+              value: ownerAddress,
+            }),
+          ])
+        )[0];
+        return accountIndex;
+      };
+
+      return merge(
+        IsAccount.update$,
+        Name.update$,
+        OperatorAddress.update$,
+        OwnerAddress.update$,
+      ).pipe(
+        map(() => {
+          const burnerAddress = connectedAddress.get();
+          const { selectedAddress } = dataStore.getState();
+          const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
+
+          return {
+            burnerAddress,
+            accountIndexUpdatedByWorld,
+            getAccountIndexFromOwner,
+            getAccountDetails,
+          };
+        })
+      );
+    },
+
+    ({
+      burnerAddress,
+      accountIndexUpdatedByWorld,
+      getAccountIndexFromOwner,
+      getAccountDetails,
+    }) => {
+      const { isConnected } = useAccount();
+      const { details, setDetails } = useKamiAccount();
+      const { selectedAddress } = dataStore();
+
+      // track the account details in store for easy access
+      useEffect(() => {
+        const accountIndex = getAccountIndexFromOwner(selectedAddress);
+        const accountDetails = getAccountDetails(accountIndex);
+        setDetails(accountDetails);
+      }, [selectedAddress, isConnected, accountIndexUpdatedByWorld]);
+
       return (
         <ModalWrapper id='connect'>
           <ModalContent style={{ pointerEvents: 'auto' }}>
@@ -106,7 +132,7 @@ export function registerConnectModal() {
             <br />
             <Description>Account ID: {details.id}</Description>
             <br />
-            <Description>Connector Address: {connectorAddress}</Description>
+            <Description>Connector Address: {selectedAddress}</Description>
             <br />
             <Description>Burner Address: {burnerAddress}</Description>
           </ModalContent>
