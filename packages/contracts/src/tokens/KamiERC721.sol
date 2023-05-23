@@ -88,26 +88,3 @@ contract KamiERC721 is ERC721 {
     return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(id);
   }
 }
-
-// archived notes:
-// a non upgradable implementation of ERC721 with an in/out of game world ownership structure
-// in game and outside ownership have two distinct shapes
-/* ownership structure:
-  in game [Source of truth: MUD Account Entity] (NOTE: unimplemented! these are future goals): 
-    1) Kami is owned by Account. ownerOf() points to owner of Account
-    2) transferring between accounts in game is supported by emitting the event in this contract
-    3) ERC721 ownership mapping still exists, but is not the source of truth when kamis are in game
-  out of game [Source of truth: ERC721 ownership mapping]:
-    1) Kami is owned by EOA. ownerOf() points to EOA
-    2) Functions like a regular ERC721
-  the bridge between these states are withdraw/deposit systems
-  states are handled by the StateComponent on each kami 
-   - '721_EXTERNAL' represents the out of game state, any other state is internal.
-   only revealed contracts can be bridged out of game
-*/
-/* BRIDGING:
-  no need to support bridging systems in this contract;
-  state is ref externally via StateComponent
-*/
-// NOTE: in game ownership structures are currently implemented. not needed unless
-//      we're supporting in-game transfers, which is a stretch goal as of now

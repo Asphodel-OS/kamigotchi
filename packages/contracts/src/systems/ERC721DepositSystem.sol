@@ -31,6 +31,8 @@ contract ERC721DepositSystem is System {
     uint256 petID = LibPet.indexToID(components, tokenID);
 
     // checks before action
+    KamiERC721 token = ERC721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
+    require(token.ownerOf(tokenID) == msg.sender, "721Deposit: not urs");
     require(LibPet.getAccount(components, petID) == 0, "Pet: alr has account");
     require(!LibPet.isInWorld(components, petID), "Pet: alr in world");
 
