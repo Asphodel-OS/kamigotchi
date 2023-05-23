@@ -124,8 +124,13 @@ export function registerConnectModal() {
         setDetails(accountDetails);
       }, [selectedAddress, isConnected, accountIndexUpdatedByWorld]);
 
+      // how to render the modal
+      const modalDisplay = () => (
+        (isConnected) ? 'none' : 'block'
+      );
+
       return (
-        <ModalWrapper id='connect'>
+        <ModalWrapper id='connect' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Connect a Wallet</Title>
             <Description>{(isConnected) ? '(Connected)' : '(Disconnected)'} </Description>

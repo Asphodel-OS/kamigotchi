@@ -22,7 +22,7 @@ export function registerAccountRegistrationModal() {
     {
       colStart: 20,
       colEnd: 80,
-      rowStart: 40,
+      rowStart: 30,
       rowEnd: 60,
     },
     (layers) => {
@@ -42,46 +42,17 @@ export function registerAccountRegistrationModal() {
     },
 
     ({ network }) => {
-      const { connectedAddress } = network;
-      const burnerAddress = connectedAddress.get();
-
+      const burnerAddress = network.connectedAddress.get();
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
-      const { networks, selectedAddress } = dataStore();
-      const { volume } = dataStore((state) => state.sound);
+      const { sound: { volume }, networks, selectedAddress, toggleVisibleButtons } = dataStore();
       const [name, setName] = useState('');
-      // const { visibleButtons, setVisibleButtons } = dataStore();
 
+      // toggle buttons based on whether account is detected
       useEffect(() => {
+        if (accountDetails.id) toggleVisibleButtons(true);
+        else toggleVisibleButtons(false);
       }, [accountDetails]);
-
-      const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-      };
-
-
-      // let detectedAccount = 0 as EntityIndex;
-      // if( connected ) {
-      // const detectedAccount = Array.from(
-      //   runQuery([HasValue(OwnerAddress, { value: selectedAddress })])
-      // )[0];
-      // console.log(detectedAccount);
-      // }
-
-      // useEffect(() => {
-      //   if (accountDetails.id) {
-      //     setVisibleButtons({
-      //       ...visibleButtons,
-      //       chat: true,
-      //       help: true,
-      //       map: true,
-      //       operatorInfo: true,
-      //       party: true,
-      //       settings: true,
-      //     });
-      //   }
-      // }, [accountDetails]);
-
 
       const playSound = (sound: any) => {
         const soundFx = new Audio(sound);
@@ -108,7 +79,7 @@ export function registerAccountRegistrationModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return player.account.set(ownerAddress, name);
+            return player.account.register(operatorAddress, name);
           },
         });
 
@@ -129,8 +100,13 @@ export function registerAccountRegistrationModal() {
         playSound(successSound);
       }
 
+      const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+      };
+
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
+          console.log(burnerAddress);
           createAccountWithFx(selectedAddress, burnerAddress!, name);
         }
       };
@@ -147,7 +123,7 @@ export function registerAccountRegistrationModal() {
       return (
         <ModalWrapper id='accountRegistration' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Register an Account</Title>
+            <Title>Register Your Account</Title>
             <br />
             <Description>Owner Address: {selectedAddress}</Description>
             <br />
