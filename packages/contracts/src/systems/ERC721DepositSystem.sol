@@ -36,7 +36,7 @@ contract ERC721DepositSystem is System {
 
     // actions to be taken upon bridging in
     // get account, create if non existent
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     if (accountID == 0) {
       accountID = LibAccount.create(world, components, msg.sender, msg.sender);
     }
