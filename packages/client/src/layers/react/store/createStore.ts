@@ -24,6 +24,15 @@ export interface VisibleButtons {
   settings: boolean;
 }
 
+export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
+  chat: isOn,
+  help: isOn,
+  map: isOn,
+  operatorInfo: isOn,
+  party: isOn,
+  settings: isOn,
+});
+
 export interface VisibleModals {
   chat: boolean;
   dialogue: boolean;
@@ -58,6 +67,7 @@ interface DataStoreActions {
   setSoundState: (data: SoundState) => void;
   setSelectedEntities: (data: SelectedEntities) => void;
   setSelectedAddress: (data: string) => void;
+  toggleVisibleButtons: (isOn: boolean) => void;
 }
 
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
@@ -110,6 +120,9 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     ),
     setVisibleButtons: (data: VisibleButtons) => set(
       (state: DataStore) => ({ ...state, visibleButtons: data })
+    ),
+    toggleVisibleButtons: (isOn: boolean) => set(
+      (state: DataStore) => ({ ...state, visibleButtons: visibleButtonsToggled(isOn) })
     ),
     setVisibleModals: (data: VisibleModals) => set(
       (state: DataStore) => ({ ...state, visibleModals: data })

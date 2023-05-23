@@ -46,12 +46,7 @@ export function registerDetectAccountModal() {
       const [isDivVisible, setIsDivVisible] = useState(false);
       const [name, setName] = useState('');
       const { volume } = dataStore((state) => state.sound);
-      const {
-        visibleModals,
-        setVisibleModals,
-        visibleButtons,
-        setVisibleButtons,
-      } = dataStore();
+      const { visibleButtons, toggleVisibleButtons } = dataStore();
 
       const hasAccount = Array.from(
         runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
@@ -87,15 +82,7 @@ export function registerDetectAccountModal() {
       useEffect(() => {
         if (hasAccount != undefined) {
           setIsDivVisible(false);
-          setVisibleButtons({
-            ...visibleButtons,
-            chat: true,
-            help: true,
-            map: true,
-            operatorInfo: true,
-            party: true,
-            settings: true,
-          });
+          toggleVisibleButtons(true);
         } else {
           setIsDivVisible(true);
         }

@@ -52,15 +52,8 @@ export function registerAccountRegistrationModal() {
       const [name, setName] = useState('');
       // const { visibleButtons, setVisibleButtons } = dataStore();
 
-
       useEffect(() => {
       }, [accountDetails]);
-
-      // TODO: move this to the appropriate Store file
-      // TODO: check for loading state
-      const getConnectedNetwork = (address: string) => {
-        return
-      }
 
       const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -136,11 +129,11 @@ export function registerAccountRegistrationModal() {
         playSound(successSound);
       }
 
-      // const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      //   if (event.key === 'Enter') {
-      //     createAccountWithFx(OwnerAddr);
-      //   }
-      // };
+      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+          createAccountWithFx(selectedAddress, burnerAddress!, name);
+        }
+      };
 
 
       /////////////////
@@ -165,7 +158,7 @@ export function registerAccountRegistrationModal() {
               type='text'
               placeholder='username'
               value={name}
-              // onKeyDown={(e) => catchKeys(e)}
+              onKeyDown={(e) => catchKeys(e)}
               onChange={(e) => handleNameChange(e)}
             />
             <ActionButton

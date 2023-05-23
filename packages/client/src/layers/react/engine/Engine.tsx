@@ -75,7 +75,7 @@ export const Engine: React.FC<{
       const hotAddress = connectorAddress.toLowerCase();
       setSelectedAddress(hotAddress);
       if (!networks.has(hotAddress)) {
-        console.log(`NEW ADDRESS DETECTED. CREATING NETWORK..`, hotAddress);
+        console.log(`CREATING NETWORK FOR NEW ADDRESS..`, hotAddress);
 
         // create network config and the new network layer
         const provider = await connector.getProvider()
