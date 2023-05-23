@@ -49,7 +49,7 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
   // Set the game config
   const networkConfig = createNetworkConfig();
   if (!networkConfig) throw new Error('Invalid config');
-  console.log("networkConfig", networkConfig);
+  console.log("Booted burner network config", networkConfig);
 
   // Populate the layers
   if (!layers.network) layers.network = await createNetworkLayer(networkConfig);

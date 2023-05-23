@@ -6,7 +6,6 @@ import { configureChains, createConfig, useAccount, Connector, WagmiConfig } fro
 import { canto } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
-
 import { Layers } from 'src/types';
 import { BootScreen, MainWindow } from "./components";
 import { EngineContext, LayerContext } from "./context";
@@ -34,7 +33,7 @@ const { connectors } = getDefaultWallets({
 });
 
 const wagmiConfig = createConfig({
-  autoConnect: true,
+  autoConnect: false,
   connectors,
   publicClient,
   webSocketPublicClient,
@@ -45,10 +44,10 @@ export const Engine: React.FC<{
   mountReact: { current: (mount: boolean) => void };
   customBootScreen?: React.ReactElement;
 }> = observer(({ mountReact, setLayers, customBootScreen }) => {
+  const { connector, address: connectorAddress } = useAccount();
+  const { networks } = dataStore();
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
-  const { networkSettings, setNetworkSettings } = dataStore();
-  const { connector, address: connectorAddress } = useAccount();
 
   // mount root and layers used for app context
   useEffect(() => {
@@ -58,34 +57,35 @@ export const Engine: React.FC<{
 
   // update the network settings whenever the connector/address changes
   useEffect(() => {
+    console.log("NETWORK CHANGE DETECTED");
     updateNetworkSettings(connector);
   }, [connector, connectorAddress]);
 
   // add a network layer if one for the connection doesnt exist
   const updateNetworkSettings = async (connector: Connector | undefined) => {
-    console.log("CHECKING TO SWAP CONNECTOR");
+    if (connectorAddress && connector) {
+      const chainID = await connector.getChainId();
+      if (chainID !== 31337) return; // this should be the canto chain id
 
-    if (connector && connectorAddress) {
-      // check if address already saved
+      // console.log("CONNECTOR", connector);
+      // console.log("CONNECTOR ADDRESS", connectorAddress);
+      // console.log("CHAIN ID", chainID);
+
+      // spawn network client for address if one does not exist
       const hotAddress = connectorAddress.toLowerCase();
-      if (!networkSettings.networks.has(hotAddress)) {
+      if (!networks.has(hotAddress)) {
+        console.log(`NEW ADDRESS DETECTED. CREATING NETWORK..`, hotAddress);
 
-        // create newtork config
+        // create network config and the new network layer
         const provider = await connector.getProvider()
         const networkConfig = createNetworkConfig(provider);
         if (!networkConfig) throw new Error('Invalid config');
-
-        // create network layer
         const networkLayer = await createNetworkLayer(networkConfig);
         networkLayer.startSync();
 
         // update the network settings
-        let updatedNetworks = networkSettings.networks.set(hotAddress, networkLayer);
-        setNetworkSettings({
-          connectedAddress: hotAddress,
-          networks: updatedNetworks,
-        });
-        console.log(networkSettings);
+        networks.set(hotAddress, networkLayer);
+        console.log("connectedNetworks", networks);
       }
     }
   };

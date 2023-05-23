@@ -22,11 +22,11 @@ export function registerDetectAccountModal() {
     (layers) => {
       const {
         network: {
-          components: { OperatorAddress },
+          components: { IsAccount },
         },
       } = layers;
 
-      return OperatorAddress.update$.pipe(
+      return IsAccount.update$.pipe(
         map(() => {
           return {
             layers,
@@ -36,28 +36,13 @@ export function registerDetectAccountModal() {
     },
 
     ({ layers }) => {
-      // const {
-      //   network: {
-      //     components: { OperatorAddress },
-      //     api: { player },
-      //     network: { connectedAddress },
-      //   },
-      // } = layers;
-
-      const { networkSettings, setNetworkSettings } = dataStore();
-      const hotAddress = networkSettings.connectedAddress;
-      console.log("hotAddress", hotAddress);
-
-      // we should introduce a flow here to prompt the user to connect their hotwallet
-      if (!hotAddress) {
-        return <></>;
-      }
-
       const {
-        components: { OwnerAddress },
-        api: { player },
-        network: { connectedAddress },
-      } = networkSettings.networks.get(hotAddress);
+        network: {
+          components: { OperatorAddress },
+          api: { player },
+          network: { connectedAddress },
+        },
+      } = layers;
 
       const [isDivVisible, setIsDivVisible] = useState(false);
       const [name, setName] = useState('');
@@ -70,7 +55,7 @@ export function registerDetectAccountModal() {
       } = dataStore();
 
       const hasAccount = Array.from(
-        runQuery([HasValue(OwnerAddress, { value: hotAddress })])
+        runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() })])
       )[0];
 
       const handleMinting = useCallback(async (name) => {

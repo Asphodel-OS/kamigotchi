@@ -24,6 +24,9 @@ import { registerHelpModal } from './modals/Help';
 import { registerKamisNamingModal } from './modals/KamisNaming';
 import { registerNameKamiModal } from './modals/NameKami';
 
+import { registerConnectModal } from './modals/Connect';
+import { registerAccountRegistrationModal } from './modals/AccountRegistration';
+
 export function registerUIComponents() {
   registerActionQueue();
   registerLoadingState();
@@ -38,7 +41,7 @@ export function registerUIComponents() {
   registerWalletButton();
 
   registerChatModal();
-  registerDetectAccountModal();
+  // registerDetectAccountModal();
   registerKamiMintModal();
   registerMintAfterModal();
   registerMapModal();
@@ -50,4 +53,7 @@ export function registerUIComponents() {
   registerKamisNamingModal();
   registerNameKamiModal();
   registerHelpModal();
+
+  registerConnectModal();
+  registerAccountRegistrationModal();
 }

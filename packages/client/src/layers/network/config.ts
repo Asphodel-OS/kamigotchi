@@ -54,7 +54,7 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
   const params = new URLSearchParams(window.location.search);
   const devMode = params.get('dev') === 'true';
   config = (devMode) ? createNetworkConfigLocal(externalProvider) : createNetworkConfigLattice();
-  console.log('config', config);
+  // console.log('config', config);
 
   if (
     config.worldAddress
