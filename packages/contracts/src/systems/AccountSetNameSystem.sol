@@ -6,17 +6,20 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 
-uint256 constant ID = uint256(keccak256("system.Account.Name"));
+uint256 constant ID = uint256(keccak256("system.Account.Set.Name"));
 
-// names an existing account, identified by the calling account
-contract AccountNameSystem is System {
+// names an existing account. must be called by Owner EOA
+contract AccountSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     string memory name = abi.decode(arguments, (string));
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
     require(accountID != 0, "Account: does not exist");
+    require(bytes(name).length > 0, "Account: name cannot be empty");
+    require(bytes(name).length <= 16, "Account: name must be < 16chars");
+    require(LibAccount.getByName(components, name) == 0, "Account: name taken");
 
     LibAccount.setName(components, accountID, name);
     LibAccount.updateLastBlock(components, accountID);

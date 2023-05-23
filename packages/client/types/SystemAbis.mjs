@@ -21,8 +21,9 @@ import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import _SetLeaderboardEpochSystem from "../abi/_SetLeaderboardEpochSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
-import AccountNameSystem from "../abi/AccountNameSystem.json";
-import AccountSetSystem from "../abi/AccountSetSystem.json";
+import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
+import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
+import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
 import ERC20DepositSystem from "../abi/ERC20DepositSystem.json";
 import ERC20ProxySystem from "../abi/ERC20ProxySystem.json";
 import ERC20WithdrawSystem from "../abi/ERC20WithdrawSystem.json";
@@ -71,8 +72,9 @@ export const SystemAbis = {
   "system._Room.Create": _RoomCreateSystem.abi,
   "system.Leaderboard.Epoch": _SetLeaderboardEpochSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
-  "system.Account.Name": AccountNameSystem.abi,
-  "system.Account.Set": AccountSetSystem.abi,
+  "system.Account.Register": AccountRegisterSystem.abi,
+  "system.Account.Set.Name": AccountSetNameSystem.abi,
+  "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
   "system.ERC20.Deposit": ERC20DepositSystem.abi,
   "system.ERC20.Proxy": ERC20ProxySystem.abi,
   "system.ERC20.Withdraw": ERC20WithdrawSystem.abi,

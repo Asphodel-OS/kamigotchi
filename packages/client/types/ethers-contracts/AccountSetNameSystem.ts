@@ -26,10 +26,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface AccountSetSystemInterface extends utils.Interface {
+export interface AccountSetNameSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(address,string)": FunctionFragment;
+    "executeTyped(string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -48,7 +48,7 @@ export interface AccountSetSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -86,12 +86,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface AccountSetSystem extends BaseContract {
+export interface AccountSetNameSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: AccountSetSystemInterface;
+  interface: AccountSetNameSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -119,7 +119,6 @@ export interface AccountSetSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      account: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -138,7 +137,6 @@ export interface AccountSetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    account: PromiseOrValue<string>,
     name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -157,7 +155,6 @@ export interface AccountSetSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      account: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -188,7 +185,6 @@ export interface AccountSetSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      account: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -208,7 +204,6 @@ export interface AccountSetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      account: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

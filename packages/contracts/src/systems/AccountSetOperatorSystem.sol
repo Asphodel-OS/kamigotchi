@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+
+import { System } from "solecs/System.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+
+import { LibAccount } from "libraries/LibAccount.sol";
+
+uint256 constant ID = uint256(keccak256("system.Account.Set.Operator"));
+
+// sets the operating address of an account. must be called by Owner EOA
+contract AccountSetOperatorSystem is System {
+  constructor(IWorld _world, address _components) System(_world, _components) {}
+
+  function execute(bytes memory arguments) public returns (bytes memory) {
+    address operator = abi.decode(arguments, (address));
+    uint256 accountID = LibAccount.getByOperator(components, operator);
+    require(accountID == 0, "Account: Operator already in use");
+
+    accountID = LibAccount.getByOwner(components, msg.sender);
+    require(accountID != 0, "Account: does not exist");
+
+    LibAccount.setOperator(components, accountID, operator);
+    return abi.encode(accountID);
+  }
+
+  function executeTyped(address operator) public returns (bytes memory) {
+    return execute(abi.encode(operator));
+  }
+}

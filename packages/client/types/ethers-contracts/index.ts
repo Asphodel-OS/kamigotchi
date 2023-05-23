@@ -2,8 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { AccountMoveSystem } from "./AccountMoveSystem";
-export type { AccountNameSystem } from "./AccountNameSystem";
-export type { AccountSetSystem } from "./AccountSetSystem";
+export type { AccountRegisterSystem } from "./AccountRegisterSystem";
+export type { AccountSetNameSystem } from "./AccountSetNameSystem";
+export type { AccountSetOperatorSystem } from "./AccountSetOperatorSystem";
 export type { AddressComponent } from "./AddressComponent";
 export type { AddressOperatorComponent } from "./AddressOperatorComponent";
 export type { AddressOwnerComponent } from "./AddressOwnerComponent";
@@ -127,8 +128,9 @@ export type { _SetLeaderboardEpochSystem } from "./_SetLeaderboardEpochSystem";
 export type { _devGiveTokensSystem } from "./_devGiveTokensSystem";
 export * as factories from "./factories";
 export { AccountMoveSystem__factory } from "./factories/AccountMoveSystem__factory";
-export { AccountNameSystem__factory } from "./factories/AccountNameSystem__factory";
-export { AccountSetSystem__factory } from "./factories/AccountSetSystem__factory";
+export { AccountRegisterSystem__factory } from "./factories/AccountRegisterSystem__factory";
+export { AccountSetNameSystem__factory } from "./factories/AccountSetNameSystem__factory";
+export { AccountSetOperatorSystem__factory } from "./factories/AccountSetOperatorSystem__factory";
 export { AddressComponent__factory } from "./factories/AddressComponent__factory";
 export { AddressOperatorComponent__factory } from "./factories/AddressOperatorComponent__factory";
 export { AddressOwnerComponent__factory } from "./factories/AddressOwnerComponent__factory";

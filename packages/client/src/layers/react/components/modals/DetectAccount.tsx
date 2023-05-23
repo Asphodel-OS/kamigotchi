@@ -59,7 +59,7 @@ export function registerDetectAccountModal() {
           mintFX.volume = volume;
           mintFX.play();
 
-          await player.account.set(connectedAddress.get()!, name);
+          await player.account.register(connectedAddress.get()!, name);
 
           document.getElementById('detectAccount')!.style.display = 'none';
           document.getElementById('mint_process')!.style.display = 'block';

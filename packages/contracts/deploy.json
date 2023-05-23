@@ -217,13 +217,19 @@
       ]
     },
     {
-      "name": "AccountNameSystem",
+      "name": "AccountSetNameSystem",
       "writeAccess": [
         "NameComponent"
       ]
     },
     {
-      "name": "AccountSetSystem",
+      "name": "AccountSetOperatorSystem",
+      "writeAccess": [
+        "AddressOperatorComponent"
+      ]
+    },
+    {
+      "name": "AccountRegisterSystem",
       "writeAccess": [
         "IsAccountComponent",
         "AddressOperatorComponent",

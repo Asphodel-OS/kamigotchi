@@ -52,18 +52,23 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Account.Move"].executeTyped(location);
   }
 
-  // @dev   renames account, ignoring previous name
-  // @param entityID   pet entity
-  // @param name       name
-  function nameAccount(account: BigNumberish, name: string) {
-    return systems["system.Account.Name"].executeTyped(account, name);
+  // @dev registers an account. should be called by Owner wallet
+  // @param operatorAddress   address of the Operator wallet
+  // @param name              name of the account
+  function registerAccount(operatorAddress: BigNumberish, name: string) {
+    return systems["system.Account.Register"].executeTyped(operatorAddress, name);
   }
 
-  // @dev sets the account of an Owner wallet. should be set by Owner wallet
-  // @param account  address of the account wallet
-  // @param name      name of the account
-  function setAccount(account: BigNumberish, name: string) {
-    return systems["system.Account.Set"].executeTyped(account, name);
+  // @dev renames account. should be called by Owner EOA
+  // @param name       name
+  function setAccountName(name: string) {
+    return systems["system.Account.Set.Name"].executeTyped(name);
+  }
+
+  // @dev sets the Operator address on an account. should be called by Owner EOA
+  // @param operatorAddress   address of the Operator wallet
+  function setAccountOperator(operatorAddress: BigNumberish) {
+    return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
   }
 
   /*********************
@@ -164,8 +169,11 @@ export function createPlayerAPI(systems: any) {
     },
     account: {
       move: moveAccount,
-      name: nameAccount,
-      set: setAccount,
+      register: registerAccount,
+      set: {
+        name: setAccountName,
+        operator: setAccountOperator,
+      },
     },
     listing: {
       buy: buyFromListing,

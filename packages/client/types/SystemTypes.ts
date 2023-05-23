@@ -21,8 +21,9 @@ import { _RegistryUpdateTraitSystem } from "./ethers-contracts/_RegistryUpdateTr
 import { _RoomCreateSystem } from "./ethers-contracts/_RoomCreateSystem";
 import { _SetLeaderboardEpochSystem } from "./ethers-contracts/_SetLeaderboardEpochSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
-import { AccountNameSystem } from "./ethers-contracts/AccountNameSystem";
-import { AccountSetSystem } from "./ethers-contracts/AccountSetSystem";
+import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
+import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
+import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
 import { ERC20DepositSystem } from "./ethers-contracts/ERC20DepositSystem";
 import { ERC20ProxySystem } from "./ethers-contracts/ERC20ProxySystem";
 import { ERC20WithdrawSystem } from "./ethers-contracts/ERC20WithdrawSystem";
@@ -71,8 +72,9 @@ export type SystemTypes = {
   "system._Room.Create": _RoomCreateSystem;
   "system.Leaderboard.Epoch": _SetLeaderboardEpochSystem;
   "system.Account.Move": AccountMoveSystem;
-  "system.Account.Name": AccountNameSystem;
-  "system.Account.Set": AccountSetSystem;
+  "system.Account.Register": AccountRegisterSystem;
+  "system.Account.Set.Name": AccountSetNameSystem;
+  "system.Account.Set.Operator": AccountSetOperatorSystem;
   "system.ERC20.Deposit": ERC20DepositSystem;
   "system.ERC20.Proxy": ERC20ProxySystem;
   "system.ERC20.Withdraw": ERC20WithdrawSystem;

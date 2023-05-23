@@ -141,6 +141,23 @@ library LibAccount {
   /////////////////
   // QUERIES
 
+  // retrieves the pet with the specified name
+  function getByName(
+    IUintComp components,
+    string memory name
+  ) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, NameCompID),
+      abi.encode(name)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
+    if (results.length > 0) result = results[0];
+  }
+
   // Get an account entity by Wallet address. Assume only 1.
   function getByOperator(
     IUintComp components,
