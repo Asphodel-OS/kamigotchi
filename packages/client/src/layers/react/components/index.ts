@@ -5,7 +5,7 @@ import { registerDialogueModal } from './modals/Dialogue';
 import { registerChatButton } from './buttons/Chat';
 import { registerHelpButton } from './buttons/Help';
 import { registerMapButton } from './buttons/Map';
-import { registerOperatorHealthButton } from './buttons/OperatorInfo';
+import { registerOperatorInfoButton } from './buttons/OperatorInfo';
 import { registerPartyButton } from './buttons/Party';
 import { registerSettingsButton } from './buttons/Settings';
 import { registerWalletButton } from './buttons/Wallet';
@@ -35,7 +35,7 @@ export function registerUIComponents() {
   registerChatButton();
   registerHelpButton();
   registerMapButton();
-  registerOperatorHealthButton();
+  registerOperatorInfoButton();
   registerPartyButton();
   registerSettingsButton();
   registerWalletButton();

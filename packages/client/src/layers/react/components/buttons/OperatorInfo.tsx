@@ -13,9 +13,9 @@ import { getAccount } from '../shapes/Account';
 import { Account } from '../shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerOperatorHealthButton() {
+export function registerOperatorInfoButton() {
   registerUIComponent(
-    'OperatorHealth',
+    'OperatorInfo',
     {
       colStart: 34,
       colEnd: 68,
@@ -62,7 +62,7 @@ export function registerOperatorHealthButton() {
       const staminaPercentage =
         staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
       const {
-        visibleModals: { operatorInfo },
+        visibleButtons: { operatorInfo },
       } = dataStore();
       return (
         <Button id='operator_info' style={{ display: operatorInfo ? 'block' : 'none' }}>

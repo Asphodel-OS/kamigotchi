@@ -19,6 +19,7 @@ export interface VisibleButtons {
   chat: boolean;
   help: boolean;
   map: boolean;
+  operatorInfo: boolean;
   party: boolean;
   settings: boolean;
 }
@@ -36,7 +37,6 @@ export interface VisibleModals {
   map: boolean;
   merchant: boolean;
   node: boolean;
-  operatorInfo: boolean;
   party: boolean;
   settings: boolean;
 }
@@ -82,7 +82,6 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       map: false,
       merchant: false,
       node: false,
-      operatorInfo: false,
       party: false,
       settings: false,
     },
@@ -90,6 +89,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       chat: false,
       help: false,
       map: false,
+      operatorInfo: false,
       party: false,
       settings: false,
     },

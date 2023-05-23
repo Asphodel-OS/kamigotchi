@@ -45,16 +45,13 @@ export function registerAccountRegistrationModal() {
       const { connectedAddress } = network;
       const burnerAddress = connectedAddress.get();
 
-      const { address, isConnected } = useAccount();
-      const connectorAddress = address?.toLowerCase();
-
+      const { isConnected } = useAccount();
+      const { details: accountDetails } = useKamiAccount();
+      const { networks, selectedAddress } = dataStore();
       const { volume } = dataStore((state) => state.sound);
-      const { networks } = dataStore();
       const [name, setName] = useState('');
       // const { visibleButtons, setVisibleButtons } = dataStore();
-      // const { visibleModals, setVisibleModals } = dataStore();
 
-      const { details: accountDetails } = useKamiAccount();
 
       useEffect(() => {
       }, [accountDetails]);
@@ -62,7 +59,7 @@ export function registerAccountRegistrationModal() {
       // TODO: move this to the appropriate Store file
       // TODO: check for loading state
       const getConnectedNetwork = (address: string) => {
-        return networks.get(address);
+        return
       }
 
       const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,27 +70,24 @@ export function registerAccountRegistrationModal() {
       // let detectedAccount = 0 as EntityIndex;
       // if( connected ) {
       // const detectedAccount = Array.from(
-      //   runQuery([HasValue(OwnerAddress, { value: connectorAddress })])
+      //   runQuery([HasValue(OwnerAddress, { value: selectedAddress })])
       // )[0];
       // console.log(detectedAccount);
       // }
 
       // useEffect(() => {
-      //   if (hasAccount) {
-      //     setVisibleModals({
-      //       ...visibleModals,
-      //       operatorInfo: true,
-      //     });
+      //   if (accountDetails.id) {
       //     setVisibleButtons({
       //       ...visibleButtons,
       //       chat: true,
       //       help: true,
       //       map: true,
+      //       operatorInfo: true,
       //       party: true,
       //       settings: true,
       //     });
       //   }
-      // }, [hasAccount]);
+      // }, [accountDetails]);
 
 
       const playSound = (sound: any) => {
@@ -112,7 +106,7 @@ export function registerAccountRegistrationModal() {
           actions,
           api: { player },
           world,
-        } = getConnectedNetwork(ownerAddress);
+        } = networks.get(ownerAddress);
 
         const actionID = `Creating Account` as EntityID;
         actions.add({
@@ -161,9 +155,8 @@ export function registerAccountRegistrationModal() {
         <ModalWrapper id='accountRegistration' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Register an Account</Title>
-            <Description>(No Account Found)</Description>
             <br />
-            <Description>Owner Address: {connectorAddress}</Description>
+            <Description>Owner Address: {selectedAddress}</Description>
             <br />
             <Description>Operator Address: {burnerAddress}</Description>
             <Description>Operator PrivKey: (should make this copyable)</Description>
@@ -177,8 +170,8 @@ export function registerAccountRegistrationModal() {
             />
             <ActionButton
               id={`create-account`}
-              onClick={() => createAccountWithFx(connectorAddress!, burnerAddress!, name)}
-              text='Reveal'
+              onClick={() => createAccountWithFx(selectedAddress!, burnerAddress!, name)}
+              text='Submit'
             />
           </ModalContent>
         </ModalWrapper>

@@ -18,9 +18,9 @@ import { dataStore } from 'layers/react/store/createStore';
 // TODO: add canto testnet
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    canto,
-    lattice,
     local,
+    lattice,
+    canto,
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
   ],
   [publicProvider()]

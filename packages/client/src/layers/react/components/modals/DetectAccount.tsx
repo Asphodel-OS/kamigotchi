@@ -87,15 +87,12 @@ export function registerDetectAccountModal() {
       useEffect(() => {
         if (hasAccount != undefined) {
           setIsDivVisible(false);
-          setVisibleModals({
-            ...visibleModals,
-            operatorInfo: true,
-          });
           setVisibleButtons({
             ...visibleButtons,
             chat: true,
             help: true,
             map: true,
+            operatorInfo: true,
             party: true,
             settings: true,
           });
