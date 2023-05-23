@@ -243,7 +243,7 @@ export function registerPartyModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.ERC721.feed(petID, foodIndex);
+            return api.pet.feed(petID, foodIndex);
           },
         });
       };

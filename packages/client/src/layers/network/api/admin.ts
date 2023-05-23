@@ -119,10 +119,11 @@ export function createAdminAPI(systems: any) {
     return systems['system._Room.Create'].executeTyped(name, location, exits);
   }
 
-  // @dev give coins for testing. to be removed for live
+  /// TODO: remove system for production
+  // @dev give coins for testing
   // @param amount      amount
-  function giveCoins(amount: number) {
-    return systems['system._devGiveTokens'].executeTyped(amount);
+  function giveCoins(addy: string, amount: number) {
+    return systems['system._devGiveTokens'].executeTyped(addy, amount);
   }
 
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin

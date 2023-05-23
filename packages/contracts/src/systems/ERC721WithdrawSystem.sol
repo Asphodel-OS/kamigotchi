@@ -18,7 +18,7 @@ uint256 constant ID = uint256(keccak256("system.ERC721.Withdraw"));
   Invarients:
     Before withdrawal:
       1) Pet is linked to an Account, owned by msg.sender
-      2) Pet state is not "721_EXTERNAL"
+      2) Pet state is not "721_EXTERNAL" + Pet stats is "RESTING"
       3) Pet is revealed
     After withdrawal:
       1) Pet is not linked to an Account
@@ -33,8 +33,10 @@ contract ERC721WithdrawSystem is System {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
     // checks before action
-    require(!LibPet.isUnrevealed(components, petID), "Pet: unrevealed");
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+    require(LibPet.isResting(components, petID), "Pet: not resting");
+    // below checks made redundant by isResting
+    require(!LibPet.isUnrevealed(components, petID), "Pet: unrevealed");
     require(LibPet.isInWorld(components, petID), "Pet: alr in world");
 
     // actions to be taken upon bridging out

@@ -57,11 +57,13 @@ import {
 } from 'assets/images/rooms';
 
 import { forest, opening } from 'assets/sound/ost';
-import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
-import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
+import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
+import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggerERC721BridgeModal';
 import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
+import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
+import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 
 // NOTE: This is the most horrendous, hardcoded known to mankind. We should
 // move most things here to the store and populate the information from onchain.
@@ -436,16 +438,18 @@ export const rooms: Room[] = [
         path: prayerwheels,
         offset: { x: -48.65, y: 13 },
         onClick: () =>
-          triggerDialogueModal([
-            'This set of prayer wheels will allow $KAMI to be removed from the game world.',
-          ]),
+          // triggerDialogueModal([
+          // 'This set of prayer wheels will allow $KAMI to be removed from the game world.',
+          // ]),
+          triggerERC20BridgeModal(),
       },
       {
         key: 'bellshapeddevice',
         path: bellshapeddevice,
         offset: { x: 39.04, y: -13.92 },
         onClick: () =>
-          triggerDialogueModal(['This device will allow Kamigotchi to leave the world as tokens.']),
+          // triggerDialogueModal(['This device will allow Kamigotchi to leave the world as tokens.']),
+          triggerERC721BridgeModal(),
       },
       {
         key: 'glassbox',

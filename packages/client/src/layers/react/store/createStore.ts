@@ -37,6 +37,8 @@ export interface VisibleModals {
   chat: boolean;
   dialogue: boolean;
   help: boolean;
+  ERC721Bridge: boolean;
+  ERC20Bridge: boolean;
   inventory: boolean;
   kami: boolean;
   kamiMint: boolean;

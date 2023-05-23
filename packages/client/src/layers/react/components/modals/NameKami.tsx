@@ -43,13 +43,12 @@ export function registerNameKamiModal() {
             layers,
             actions,
             api: player,
-            entities,
           };
         })
       );
     },
 
-    ({ layers, actions, api, entities }) => {
+    ({ layers, actions, api }) => {
       const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
       const kami = getKami(layers, selectedEntities.kami);
       const [name, setName] = useState('');
@@ -68,7 +67,7 @@ export function registerNameKamiModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.ERC721.name(kami.id, name);
+            return api.pet.name(kami.id, name);
           },
         });
         return actionID;
@@ -115,6 +114,57 @@ export function registerNameKamiModal() {
     }
   );
 }
+
+
+
+const StepOne = () => (
+  <ModalContent>
+    <Description>
+      <br />
+      Once you set a name for your Kami, that name is permanent.
+      <br />
+    </Description>
+  </ModalContent>
+);
+
+const StepTwo = (props: any) => {
+  const { catchKeys, handleChange, name } = props;
+
+  const { selectedEntities: { kami }, visibleModals, setVisibleModals } = dataStore();
+
+  const hideModal = useCallback(() => {
+    setVisibleModals({ ...visibleModals, nameKami: false });
+  }, [setVisibleModals, visibleModals]);
+
+  return (
+    <ModalContent>
+      <AlignRight style={{ gridRow: 1, marginBottom: '10px' }}>
+        <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+          X
+        </TopButton>
+      </AlignRight>
+      <Description style={{ gridRow: 2 }}>A Kami can only be named once. Choose carefully.</Description>
+      <Input
+        style={{ gridRow: 3, pointerEvents: 'auto' }}
+        type='text'
+        onKeyDown={(e) => catchKeys(e)}
+        placeholder='username'
+        value={name}
+        onChange={(e) => handleChange(e)}
+      ></Input>
+    </ModalContent>
+  );
+};
+
+const steps = (props: any) => [
+  {
+    title: 'One',
+    content: (
+      <StepTwo catchKeys={props.catchKeys} handleChange={props.handleChange} name={props.name} />
+    ),
+    modalContent: true,
+  },
+];
 
 const fadeIn = keyframes`
   from {
@@ -183,55 +233,6 @@ const Button = styled.button`
     background-color: #c4c4c4;
   }
 `;
-
-const StepOne = () => (
-  <ModalContent>
-    <Description>
-      <br />
-      Once you set a name for your Kami, that name is permanent.
-      <br />
-    </Description>
-  </ModalContent>
-);
-
-const StepTwo = (props: any) => {
-  const { catchKeys, handleChange, name } = props;
-
-  const { selectedEntities: { kami }, visibleModals, setVisibleModals } = dataStore();
-
-  const hideModal = useCallback(() => {
-    setVisibleModals({ ...visibleModals, nameKami: false });
-  }, [setVisibleModals, visibleModals]);
-
-  return (
-    <ModalContent>
-      <AlignRight style={{ gridRow: 1, marginBottom: '10px'}}>
-        <TopButton  style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-          X
-        </TopButton>
-      </AlignRight>
-      <Description style={{ gridRow: 2 }}>A Kami can only be named once. Choose carefully.</Description>
-      <Input
-        style={{ gridRow: 3, pointerEvents: 'auto' }}
-        type='text'
-        onKeyDown={(e) => catchKeys(e)}
-        placeholder='username'
-        value={name}
-        onChange={(e) => handleChange(e)}
-      ></Input>
-    </ModalContent>
-  );
-};
-
-const steps = (props: any) => [
-  {
-    title: 'One',
-    content: (
-      <StepTwo catchKeys={props.catchKeys} handleChange={props.handleChange} name={props.name} />
-    ),
-    modalContent: true,
-  },
-];
 
 const TopButton = styled.button`
   background-color: #ffffff;

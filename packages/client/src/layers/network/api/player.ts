@@ -2,7 +2,7 @@ import { BigNumberish } from "ethers";
 
 export function createPlayerAPI(systems: any) {
   /*********************
-   *    Pet ERC721
+   *       Pet 
    *********************/
 
   // feed a pet using a Pet Item
@@ -20,28 +20,7 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
-  // mint a pet
-  function mintPet(address: BigNumberish) {
-    return systems["system.ERC721.Mint"].executeTyped(address);
-  }
 
-  // reveal a minted pet
-  // @param tokenID  ERC721 petID, not MUD entity ID
-  function revealPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.metadata"].executeTyped(tokenID);
-  }
-
-  // @dev deposits pet from outside -> game world
-  // @param tokenID  ERC721 petID, not MUD entity ID
-  function depositPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.Deposit"].executeTyped(tokenID);
-  }
-
-  // @dev brings pet from game world -> outside
-  // @param tokenID  ERC721 petID, not MUD entity ID
-  function withdrawPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.Withdraw"].executeTyped(tokenID);
-  }
 
   /*********************
    *     Account
@@ -156,16 +135,54 @@ export function createPlayerAPI(systems: any) {
   *********************/
 
 
+  /*********************
+  *       ERC721
+  *********************/
+
+  // mint a pet
+  function mintPet(address: BigNumberish) {
+    return systems["system.ERC721.Mint"].executeTyped(address);
+  }
+
+  // reveal a minted pet
+  // @param tokenID  ERC721 petID, not MUD entity ID
+  function revealPet(tokenID: BigNumberish) {
+    return systems["system.ERC721.metadata"].executeTyped(tokenID);
+  }
+
+  // @dev deposits pet from outside -> game world
+  // @param tokenID  ERC721 petID, not MUD entity ID
+  function depositERC721(tokenID: BigNumberish) {
+    return systems["system.ERC721.Deposit"].executeTyped(tokenID);
+  }
+
+  // @dev brings pet from game world -> outside
+  // @param tokenID  ERC721 petID, not MUD entity ID
+  function withdrawERC721(tokenID: BigNumberish) {
+    return systems["system.ERC721.Withdraw"].executeTyped(tokenID);
+  }
+
+  /*********************
+  *       ERC20
+  *********************/
+
+  // @dev bridges ERC20 tokens from outside -> game world
+  // @param amount  amount of ERC20 tokens to bridge
+  function depositERC20(amount: BigNumberish) {
+    return systems["system.ERC20.Deposit"].executeTyped(amount);
+  }
+
+  // @dev bridges ERC20 tokens from game world -> outside
+  // @param amount  amount of ERC20 tokens to bridge
+  function withdrawERC20(amount: BigNumberish) {
+    return systems["system.ERC20.Withdraw"].executeTyped(amount);
+  }
 
   return {
-    ERC721: {
-      deposit: depositPet,
+    pet: {
       feed: feedPet,
-      mint: mintPet,
       name: namePet,
-      reveal: revealPet,
       revive: revivePet,
-      withdraw: withdrawPet,
     },
     account: {
       move: moveAccount,
@@ -191,6 +208,16 @@ export function createPlayerAPI(systems: any) {
       cancel: cancelTrade,
       confirm: confirmTrade,
       initiate: initiateTrade,
+    },
+    ERC721: {
+      deposit: depositERC721,
+      mint: mintPet,
+      reveal: revealPet,
+      withdraw: withdrawERC721,
+    },
+    ERC20: {
+      deposit: depositERC20,
+      withdraw: withdrawERC20,
     },
   };
 }

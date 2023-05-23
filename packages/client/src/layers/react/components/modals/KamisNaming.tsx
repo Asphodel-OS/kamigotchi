@@ -86,10 +86,10 @@ export function registerKamisNamingModal() {
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
 
-      const buttonSelect = (kami: Kami, props: any) => {
-        if (isHarvesting(kami)) {
+      const buttonSelect = (props: any) => {
+        if (isHarvesting(props.kami)) {
           return (<NotButton>Harvesting...</NotButton>);
-        } else if (!canName(kami)) {
+        } else if (!canName(props.kami)) {
           return (<NotButton>Already named!</NotButton>);
         } else {
           return (<Button onClick={props.nameKami}>Give name</Button>);
@@ -104,7 +104,7 @@ export function registerKamisNamingModal() {
               <TitleBar>
                 <TitleText>{props.title}</TitleText>
               </TitleBar>
-              {buttonSelect(props.kami, props)}
+              {buttonSelect(props)}
             </Container>
           </Card>
         );
