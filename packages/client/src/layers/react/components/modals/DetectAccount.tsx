@@ -5,9 +5,8 @@ import { map } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled, { keyframes } from 'styled-components';
 import { HasValue, runQuery } from '@latticexyz/recs';
-import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3';
+import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
-import { Modal } from 'antd';
 import { Stepper } from '../library/Stepper';
 
 export function registerDetectAccountModal() {

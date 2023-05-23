@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { EntityIndex, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, EntityIndex, HasValue, runQuery } from '@latticexyz/recs';
+import { waitForActionCompletion } from '@latticexyz/std-client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 
 import { registerUIComponent } from 'layers/react/engine/store';
-import mintSound from 'assets/sound/fx/tami_mint_vending_sound.mp3';
+
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { Stepper } from '../library/Stepper';
 import 'layers/react/styles/font.css';
+import mintSound from 'assets/sound/fx/vending_machine.mp3';
+import scribbleSound from 'assets/sound/fx/scribbling.mp3';
+import successSound from 'assets/sound/fx/bubble_success.mp3';
 
 export function registerAccountRegistrationModal() {
   registerUIComponent(
@@ -31,42 +35,39 @@ export function registerAccountRegistrationModal() {
       return merge(IsAccount.update$, OwnerAddress.update$).pipe(
         map(() => {
           return {
-            layers,
+            network: layers.network.network,
           };
         })
       );
     },
 
-    ({ layers }) => {
-      const {
-        network: {
-          components: { OwnerAddress },
-          network: { connectedAddress },
-        },
-      } = layers;
+    ({ network }) => {
+      const { connectedAddress } = network;
       const burnerAddress = connectedAddress.get();
 
-      const { address: connectorAddress } = useAccount();
+      const { address, isConnected } = useAccount();
+      const connectorAddress = address?.toLowerCase();
+
       const { volume } = dataStore((state) => state.sound);
       const { networks } = dataStore();
-      const { visibleButtons, setVisibleButtons } = dataStore();
-      const { visibleModals, setVisibleModals } = dataStore();
-
-      const [connected, setConnected] = useState(false);
-      const [hasAccount, setHasAccount] = useState(false);
-      const { details, setDetails } = useKamiAccount();
       const [name, setName] = useState('');
+      // const { visibleButtons, setVisibleButtons } = dataStore();
+      // const { visibleModals, setVisibleModals } = dataStore();
+
+      const { details: accountDetails } = useKamiAccount();
 
       useEffect(() => {
-        setConnected(!!connectorAddress);
-        const detectedAccount = Array.from(
-          runQuery([HasValue(OwnerAddress, { value: connectorAddress?.toLowerCase() })])
-        )[0];
-        console.log('Detected Account', detectedAccount);
-        setHasAccount(!!detectedAccount);
-      }, [connectorAddress]);
-      console.log("connected?", connected);
-      console.log("has Account?", hasAccount);
+      }, [accountDetails]);
+
+      // TODO: move this to the appropriate Store file
+      // TODO: check for loading state
+      const getConnectedNetwork = (address: string) => {
+        return networks.get(address);
+      }
+
+      const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+      };
 
 
       // let detectedAccount = 0 as EntityIndex;
@@ -79,7 +80,6 @@ export function registerAccountRegistrationModal() {
 
       // useEffect(() => {
       //   if (hasAccount) {
-      //     setIsDivVisible(false);
       //     setVisibleModals({
       //       ...visibleModals,
       //       operatorInfo: true,
@@ -92,45 +92,94 @@ export function registerAccountRegistrationModal() {
       //       party: true,
       //       settings: true,
       //     });
-      //   } else {
-      //     setIsDivVisible(true);
       //   }
       // }, [hasAccount]);
 
-      // const handleMinting = useCallback(async (name) => {
-      //   try {
-      //     const soundFx = new Audio(mintSound);
-      //     soundFx.volume = volume;
-      //     soundFx.play();
 
-      //     await player.account.set(connectedAddress.get()!, name);
+      const playSound = (sound: any) => {
+        const soundFx = new Audio(sound);
+        soundFx.volume = volume;
+        soundFx.play();
+      }
 
-      //     document.getElementById('accountRegistration')!.style.display = 'none';
-      //   } catch (e) {
+      const createAccount = async (
+        ownerAddress: string,
+        operatorAddress: string,
+        name: string
+      ) => {
+        console.log(networks);
+        const {
+          actions,
+          api: { player },
+          world,
+        } = getConnectedNetwork(ownerAddress);
 
-      //   }
-      // }, []);
+        const actionID = `Creating Account` as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return player.account.set(ownerAddress, name);
+          },
+        });
+
+        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+        const actionCompletion = await waitForActionCompletion(actions.Action, actionIndex);
+        console.log('action return value', actionCompletion);
+
+        // openKamiModal(pet.entityIndex);
+      }
+
+      const createAccountWithFx = async (
+        ownerAddr: string,
+        operatorAddr: string,
+        name: string
+      ) => {
+        playSound(scribbleSound);
+        await createAccount(ownerAddr, operatorAddr, name);
+        playSound(successSound);
+      }
 
       // const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
       //   if (event.key === 'Enter') {
-      //     handleMinting(name);
+      //     createAccountWithFx(OwnerAddr);
       //   }
-      //   // if (event.keyCode === 27) {}
-      // };
-
-      // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      //   setName(event.target.value);
       // };
 
 
+      /////////////////
+      // DISPLAY
+
+      // how to render the modal
+      const modalDisplay = () => (
+        (isConnected && !accountDetails.index) ? 'block' : 'none'
+      );
 
       return (
-        <ModalWrapper id='accountRegistration' style={{ display: 'block' }}>
+        <ModalWrapper id='accountRegistration' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>{(connected) ? 'Connected' : 'Disconnected'} </Title>
-            <Description>Account ID: {connectorAddress}</Description>
-            <Description>Connector Address: {connectorAddress}</Description>
-            <Description>Burner Address: {burnerAddress}</Description>
+            <Title>Register an Account</Title>
+            <Description>(No Account Found)</Description>
+            <br />
+            <Description>Owner Address: {connectorAddress}</Description>
+            <br />
+            <Description>Operator Address: {burnerAddress}</Description>
+            <Description>Operator PrivKey: (should make this copyable)</Description>
+            <Description>Note: we also want tooltips here on hover</Description>
+            <NameInput
+              type='text'
+              placeholder='username'
+              value={name}
+              // onKeyDown={(e) => catchKeys(e)}
+              onChange={(e) => handleNameChange(e)}
+            />
+            <ActionButton
+              id={`create-account`}
+              onClick={() => createAccountWithFx(connectorAddress!, burnerAddress!, name)}
+              text='Reveal'
+            />
           </ModalContent>
         </ModalWrapper>
       );
@@ -147,7 +196,7 @@ const fadeIn = keyframes`
   }
 `;
 
-const Input = styled.input`
+const NameInput = styled.input`
   width: 100%;
 
   background-color: #ffffff;

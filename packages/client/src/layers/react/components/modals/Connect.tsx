@@ -37,7 +37,6 @@ export function registerConnectModal() {
             OperatorAddress,
             OwnerAddress,
           },
-          world,
         },
       } = layers;
 
