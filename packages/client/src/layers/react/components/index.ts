@@ -26,6 +26,7 @@ import { registerNameKamiModal } from './modals/NameKami';
 
 import { registerConnectModal } from './modals/Connect';
 import { registerAccountRegistrationModal } from './modals/AccountRegistration';
+import { registerBurnerDetectorModal } from './modals/BurnerDetector';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -56,4 +57,5 @@ export function registerUIComponents() {
 
   registerConnectModal();
   registerAccountRegistrationModal();
+  registerBurnerDetectorModal();
 }

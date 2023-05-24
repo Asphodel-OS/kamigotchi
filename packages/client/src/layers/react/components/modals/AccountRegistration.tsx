@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EntityID, EntityIndex, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import { Wallet } from 'ethers';
 import React, { useEffect, useState, useCallback } from 'react';
 import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 
-import { registerUIComponent } from 'layers/react/engine/store';
-
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import 'layers/react/styles/font.css';
+
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
+import 'layers/react/styles/font.css';
 
 export function registerAccountRegistrationModal() {
   registerUIComponent(
@@ -48,10 +49,13 @@ export function registerAccountRegistrationModal() {
       const { sound: { volume }, networks, selectedAddress, toggleVisibleButtons } = dataStore();
       const [name, setName] = useState('');
 
+      const burnerPrivateKey = localStorage.getItem("operatorPrivateKey");
+
+      // const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
+
       // toggle buttons based on whether account is detected
       useEffect(() => {
-        if (accountDetails.id) toggleVisibleButtons(true);
-        else toggleVisibleButtons(false);
+        toggleVisibleButtons(!!accountDetails.id);
       }, [accountDetails]);
 
       const playSound = (sound: any) => {
@@ -84,10 +88,7 @@ export function registerAccountRegistrationModal() {
         });
 
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        const actionCompletion = await waitForActionCompletion(actions.Action, actionIndex);
-        console.log('action return value', actionCompletion);
-
-        // openKamiModal(pet.entityIndex);
+        await waitForActionCompletion(actions.Action, actionIndex);
       }
 
       const createAccountWithFx = async (
@@ -106,11 +107,9 @@ export function registerAccountRegistrationModal() {
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          console.log(burnerAddress);
           createAccountWithFx(selectedAddress, burnerAddress!, name);
         }
       };
-
 
       /////////////////
       // DISPLAY
@@ -124,10 +123,12 @@ export function registerAccountRegistrationModal() {
         <ModalWrapper id='accountRegistration' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
+            <Description>(no registered account for connected address)</Description>
             <br />
-            <Description>Owner Address: {selectedAddress}</Description>
+            <Header>Detected Addresses</Header>
             <br />
-            <Description>Operator Address: {burnerAddress}</Description>
+            <Description>Connector: {selectedAddress}</Description>
+            <br />
             <Description>Operator PrivKey: (should make this copyable)</Description>
             <Description>Note: we also want tooltips here on hover</Description>
             <NameInput
@@ -205,6 +206,15 @@ const Title = styled.p`
   text-align: center;
   font-family: Pixel;
 `;
+
+
+const Header = styled.p`
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  font-family: Pixel;
+`;
+
 
 const Description = styled.p`
   font-size: 12px;

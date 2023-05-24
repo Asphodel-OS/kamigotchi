@@ -87,8 +87,6 @@ export const Engine: React.FC<{
         // update the network settings
         networks.set(hotAddress, networkLayer);
       }
-      // console.log("selectedAddress", hotAddress);
-      // console.log("connectedNetworks", networks);
     }
   };
 

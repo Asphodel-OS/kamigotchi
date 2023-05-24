@@ -46,7 +46,7 @@ export function registerConnectModal() {
     {
       colStart: 20,
       colEnd: 80,
-      rowStart: 20,
+      rowStart: 40,
       rowEnd: 60,
     },
     (layers) => {
@@ -134,8 +134,6 @@ export function registerConnectModal() {
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Connect a Wallet</Title>
             <Description>{(isConnected) ? '(Connected)' : '(Disconnected)'} </Description>
-            <br />
-            <Description>Account ID: {details.id}</Description>
             <br />
             <Description>Connector Address: {selectedAddress}</Description>
             <br />

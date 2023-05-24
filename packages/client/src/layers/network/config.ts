@@ -89,7 +89,6 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
         : Wallet.createRandom();
 
       localStorage.setItem('operatorPrivateKey', wallet.privateKey);
-      localStorage.setItem('operatorPublicKey', wallet.publicKey);
     }
     config.privateKey = wallet.privateKey;
   }
@@ -127,7 +126,6 @@ function createNetworkConfigLattice(): NetworkConfig {
   let privateKey = localStorage.getItem("operatorPrivateKey");
   const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
   localStorage.setItem("operatorPrivateKey", wallet.privateKey);
-  localStorage.setItem("operatorPublicKey", wallet.publicKey);
 
   let config: NetworkConfig = <NetworkConfig>{
     privateKey: wallet.privateKey,
