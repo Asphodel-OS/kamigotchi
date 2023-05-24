@@ -88,4 +88,16 @@ contract KamiERC721 is ERC721Enumerable {
   function tokenURI(uint256 id) public view override returns (string memory) {
     return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(id);
   }
+
+  ////////////////////
+  // ENUMERABLE
+
+  // returns ERC721Enum result in an array
+  function getAllTokens(address owner) external view returns (uint256[] memory) {
+    uint256[] memory tokens = new uint256[](balanceOf(owner));
+    for (uint256 i = 0; i < tokens.length; i++) {
+      tokens[i] = tokenOfOwnerByIndex(owner, i);
+    }
+    return tokens;
+  }
 }

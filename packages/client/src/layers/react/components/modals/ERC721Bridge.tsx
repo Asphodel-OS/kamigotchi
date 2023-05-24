@@ -14,6 +14,9 @@ import { BigNumberish } from 'ethers';
 
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { dataStore } from 'layers/react/store/createStore';
+import { useAccount, useBalance, useContractRead } from 'wagmi';
+
+import { abi } from "../../../../../abi/ERC721ProxySystem.json"
 
 export function registerERC721BridgeModal() {
   registerUIComponent(
@@ -35,6 +38,7 @@ export function registerERC721BridgeModal() {
             OperatorAddress,
             State,
           },
+          systems,
         },
       } = layers;
 
@@ -55,7 +59,6 @@ export function registerERC721BridgeModal() {
           const account =
             accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
 
-          // if we have inventories for the account, generate a list of inventory objects
           const kamis: Kami[] = [];
           if (account) {
             // get the kamis on this account
@@ -63,9 +66,9 @@ export function registerERC721BridgeModal() {
               runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
             );
 
-            // get all kamis on the node
+            // get all kamis
             for (let i = 0; i < kamiIndices.length; i++) {
-              kamis.push(getKami(layers, kamiIndices[i], { production: true, namable: true }));
+              kamis.push(getKami(layers, kamiIndices[i]));
             }
           }
 
@@ -73,12 +76,13 @@ export function registerERC721BridgeModal() {
             data: {
               account: { ...account, kamis },
             } as any,
+            proxyAddy: systems["system.ERC721.Proxy"].address,
           };
         })
       );
     },
 
-    ({ data }) => {
+    ({ data, proxyAddy }) => {
 
       const { details } = useKamiAccount();
       const { selectedEntities, visibleModals, setVisibleModals, networks } = dataStore();
@@ -129,7 +133,7 @@ export function registerERC721BridgeModal() {
       //////////////////
       // MODAL LOGIC //
 
-      // the weird kamis dissapearing after withdrawing is because of the EOA is not yet integrated
+      // for use in mud
       const buttonSelect = (props: any) => {
         if (isExportable(props.kami)) {
           return (<Button onClick={() => withdrawTx(props.kami.index)}>Withdraw Kami</Button>);
@@ -145,6 +149,40 @@ export function registerERC721BridgeModal() {
           return (<NotButton>cannot be bridged</NotButton>);
         }
       }
+
+      // for use in EOA
+      const { data: erc721 } = useContractRead({
+        address: proxyAddy as `0x${string}`,
+        abi: abi,
+        functionName: 'getTokenAddy'
+      });
+      const { data: erc721List } = useContractRead({
+        address: erc721 as `0x${string}`,
+        abi:
+          [{
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+              }
+            ],
+            "name": "getAllTokens",
+            "outputs": [
+              {
+                "internalType": "uint256[]",
+                "name": "",
+                "type": "uint256[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }],
+        functionName: 'getAllTokens',
+        args: [details.ownerAddress as `0x${string}`]
+      });
+
+      console.log(erc721List);
 
       const KamiCard = (props: any) => {
         return (
@@ -206,12 +244,12 @@ export function registerERC721BridgeModal() {
         kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapperFull id='ERC721Bridge' divName='ERC721Bridge' fill={false}>
+        <ModalWrapperFull id='ERC721Bridge' divName='ERC721Bridge' fill={false} >
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
           <Scrollable>{KamiCards(data.account.kamis)}</Scrollable>
-        </ModalWrapperFull>
+        </ModalWrapperFull >
       );
     }
   );
