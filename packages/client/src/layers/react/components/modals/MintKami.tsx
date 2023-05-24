@@ -9,6 +9,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Stepper } from '../library/Stepper';
@@ -49,16 +50,14 @@ export function registerKamiMintModal() {
         },
       } = layers;
 
-      const {
-        visibleModals,
-        setVisibleModals,
-        sound: { volume },
-      } = dataStore();
+      const { details } = useKamiAccount();
+      const { visibleModals, setVisibleModals, sound: { volume }, networks } = dataStore();
 
       /////////////////
       // ACTIONS
 
       const mintTx = (address: string) => {
+
         const actionID = `Minting Kami` as EntityID;
         actions.add({
           id: actionID,
@@ -74,7 +73,7 @@ export function registerKamiMintModal() {
 
       const handleMinting = async () => {
         try {
-          const mintActionID = mintTx(connectedAddress.get()!);
+          const mintActionID = mintTx(details.ownerAddress);
           await waitForActionCompletion(
             actions.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex

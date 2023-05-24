@@ -10,7 +10,8 @@ import { ID as TransferSystemID } from "systems/ERC721TransferSystem.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
 
-import { ERC721 } from "solmate/tokens/ERC721.sol";
+import { ERC721 } from "openzeppelin/token/ERC721/ERC721.sol";
+import { ERC721Enumerable } from "openzeppelin/token/ERC721/extensions/ERC721Enumerable.sol";
 
 string constant NAME = "Kamigotchi";
 string constant SYMBOL = "KAMI";
@@ -35,8 +36,8 @@ string constant SYMBOL = "KAMI";
   Metadata is linked to a system for easier MUD compatibility. However, any view function on a contract can be used. 
 */
 
-contract KamiERC721 is ERC721 {
-  IWorld immutable World;
+contract KamiERC721 is ERC721Enumerable {
+  IWorld internal immutable World;
 
   modifier onlySystem(uint256 systemID) {
     IUintComp Systems = World.systems();
@@ -79,8 +80,8 @@ contract KamiERC721 is ERC721 {
 
   // disables transfer if token is in game world
   // transfers work as per usual, save for the in-game check
-  function transferFrom(address from, address to, uint256 id) public override isOutOfWorld(id) {
-    super.transferFrom(from, to, id);
+  function _transfer(address from, address to, uint256 id) internal override isOutOfWorld(id) {
+    super._transfer(from, to, id);
   }
 
   // retrives token metadata from ERC721MetadataSystem.

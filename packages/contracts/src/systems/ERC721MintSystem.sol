@@ -26,7 +26,7 @@ contract ERC721MintSystem is System {
     uint256 nextMint = nextMintID();
 
     // Get the account for this owner(to). Create one if it doesn't exist.
-    uint256 accountID = LibAccount.getByOperator(components, to);
+    uint256 accountID = LibAccount.getByOwner(components, to);
     if (accountID == 0) {
       accountID = LibAccount.create(world, components, to, to);
     }

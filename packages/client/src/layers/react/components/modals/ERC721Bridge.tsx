@@ -6,12 +6,14 @@ import { map, merge } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled, { keyframes } from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
-import { dataStore } from 'layers/react/store/createStore';
 import { Stepper } from '../library/Stepper';
 import { ModalWrapperFull } from '../library/ModalWrapper';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 import { Account, getAccount } from '../shapes/Account';
 import { BigNumberish } from 'ethers';
+
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerERC721BridgeModal() {
   registerUIComponent(
@@ -37,7 +39,7 @@ export function registerERC721BridgeModal() {
       } = layers;
 
       return merge(
-        OperatorAddress.update$,
+        AccountID.update$,
         State.update$
       ).pipe(
         map(() => {
@@ -68,7 +70,6 @@ export function registerERC721BridgeModal() {
           }
 
           return {
-            layers,
             data: {
               account: { ...account, kamis },
             } as any,
@@ -77,15 +78,10 @@ export function registerERC721BridgeModal() {
       );
     },
 
-    ({ layers, data }) => {
-      const {
-        network: {
-          api: { player: { ERC721 } },
-          actions,
-        },
-      } = layers;
+    ({ data }) => {
 
-      const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
+      const { details } = useKamiAccount();
+      const { selectedEntities, visibleModals, setVisibleModals, networks } = dataStore();
       const [placeholderInput, setPlaceholderInput] = useState('');
 
       //////////////////
@@ -93,7 +89,12 @@ export function registerERC721BridgeModal() {
 
       // TODO: pets without accounts are linked to EOA, no account. link EOA
       const depositTx = (tokenID: BigNumberish) => {
-        const actionID = `Depositing $KAMI` as EntityID;
+        const {
+          actions,
+          api: { player: { ERC721 } }
+        } = networks.get(details.ownerAddress);
+
+        const actionID = `Importing $KAMI` as EntityID;
         actions.add({
           id: actionID,
           components: {},
@@ -107,7 +108,12 @@ export function registerERC721BridgeModal() {
       };
 
       const withdrawTx = (tokenID: BigNumberish) => {
-        const actionID = `Withdrawing $KAMI` as EntityID;
+        const {
+          actions,
+          api: { player: { ERC721 } }
+        } = networks.get(details.ownerAddress);
+
+        const actionID = `Exporting $KAMI` as EntityID;
         actions.add({
           id: actionID,
           components: {},

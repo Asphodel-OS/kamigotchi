@@ -130,10 +130,6 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Trade.Initiate"].executeTyped(toID);
   }
 
-  /*********************
-  *       TRADE
-  *********************/
-
 
   /*********************
   *       ERC721

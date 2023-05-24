@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { BigNumber, BigNumberish, utils } from 'ethers';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import { Account, getAccount } from '../shapes/Account';
+import { useAccount, useBalance, useContractRead } from 'wagmi';
 
+import { Account, getAccount } from '../shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { Stepper } from '../library/Stepper';
+
+import { abi } from "../../../../../abi/ERC20ProxySystem.json"
 
 export function registerERC20BridgeModal() {
   registerUIComponent(
@@ -25,6 +27,7 @@ export function registerERC20BridgeModal() {
     (layers) => {
       const {
         network: {
+          systems,
           network: { connectedAddress },
           components: {
             Coin,
@@ -52,27 +55,30 @@ export function registerERC20BridgeModal() {
               : ({} as Account);
 
           const { coin } = account;
-          return {
 
-            layers: layers,
-            CoinBal: coin
+          return {
+            CoinBal: coin,
+            proxyAddy: systems["system.ERC20.Proxy"].address
           };
         })
       );
     },
 
-    ({ layers, CoinBal }) => {
-      const {
-        network: {
-          api: { player: { ERC20 } },
-          actions,
-        },
-      } = layers;
-
-      const {
-        visibleModals,
-        setVisibleModals,
-      } = dataStore();
+    ({ CoinBal, proxyAddy }) => {
+      const { details } = useKamiAccount();
+      const { visibleModals, setVisibleModals, networks } = dataStore();
+      // get token balance of controlling account 
+      const { data: erc20Addy } = useContractRead({
+        address: proxyAddy as `0x${string}`,
+        abi: abi,
+        functionName: 'getTokenAddy'
+      });
+      const { data: EOABalance } = useBalance({
+        address: details.ownerAddress as `0x${string}`,
+        token: erc20Addy as `0x${string}`,
+        formatUnits: "wei",
+        watch: true
+      });
 
       /////////////////
       // ACTIONS
@@ -82,6 +88,11 @@ export function registerERC20BridgeModal() {
 
       // TODO: get ERC20 balance - blocked by wallet code
       const depositTx = () => {
+        const {
+          actions,
+          api: { player: { ERC20 } }
+        } = networks.get(details.ownerAddress);
+
         const actionID = `Depositing $KAMI` as EntityID;
         actions.add({
           id: actionID,
@@ -96,6 +107,12 @@ export function registerERC20BridgeModal() {
       };
 
       const withdrawTx = () => {
+        const {
+          actions,
+          api: { player: { ERC20 } }
+        } = networks.get(details.ownerAddress);
+
+
         const actionID = `Withdrawing $KAMI` as EntityID;
         actions.add({
           id: actionID,
@@ -124,8 +141,6 @@ export function registerERC20BridgeModal() {
         <ActionButton id='button-deposit' onClick={withdrawTx} size='large' text='Withdraw' />
       );
 
-
-
       return (
         <ModalWrapperFull divName='ERC20Bridge' id='ERC20Bridge'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
@@ -134,7 +149,7 @@ export function registerERC20BridgeModal() {
           <Description>
             <Header style={{ color: 'black' }}>$KAMI Bridge</Header>
             <br />
-            Bridge $KAMI tokens to and from ERC20. You have {CoinBal} $KAMI in game, and PLACEHOLDER $KAMI tokens
+            Bridge $KAMI tokens to and from ERC20. You have {CoinBal} $KAMI in game, and {EOABalance?.formatted} $KAMI tokens
           </Description>
           {WithdrawButton}
           {DepositButton}
