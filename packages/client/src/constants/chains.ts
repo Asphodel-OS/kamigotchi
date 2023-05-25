@@ -17,7 +17,7 @@ export const local: Chain = {
   testnet: true,
 };
 
-export const lattice: Chain = {
+export const mudChain: Chain = {
   id: 4242,
   name: "mudChain",
   network: "ethereum",

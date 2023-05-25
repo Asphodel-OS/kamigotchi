@@ -3,14 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, useAccount, Connector, WagmiConfig } from 'wagmi';
-import { canto } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 import { Layers } from 'src/types';
 import { BootScreen, MainWindow } from "./components";
 import { EngineContext, LayerContext } from "./context";
 import { EngineStore } from "./store";
-import { lattice, local } from 'constants/chains';
+import { mudChain, local } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { dataStore } from 'layers/react/store/createStore';
@@ -19,8 +18,7 @@ import { dataStore } from 'layers/react/store/createStore';
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     local,
-    lattice,
-    canto,
+    mudChain,
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
   ],
   [publicProvider()]
@@ -61,11 +59,20 @@ export const Engine: React.FC<{
     updateNetworkSettings(connector);
   }, [connector, connectorAddress]);
 
+  // gets the expected chainID based on the environment
+  const getChainID = () => {
+    const params = new URLSearchParams(window.location.search);
+    const devMode = params.get('dev') === 'true';
+    const chainID = devMode ? local.id : mudChain.id;
+    return chainID;
+  };
+
   // add a network layer if one for the connection doesnt exist
   const updateNetworkSettings = async (connector: Connector | undefined) => {
     if (connectorAddress && connector) {
-      const chainID = await connector.getChainId();
-      if (chainID !== 31337) return; // this should be the canto chain id
+      const connectedChainID = await connector.getChainId();
+      const expectedChainID = getChainID();
+      if (connectedChainID !== expectedChainID) return;
 
       // console.log("CONNECTOR", connector);
       // console.log("CONNECTOR ADDRESS", connectorAddress);
