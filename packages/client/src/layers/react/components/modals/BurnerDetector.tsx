@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Wallet } from 'ethers';
 import React, { useState } from 'react';
 import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
@@ -8,6 +6,7 @@ import { useAccount } from 'wagmi';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address';
 
 import 'layers/react/styles/font.css';
 
@@ -37,30 +36,10 @@ export function registerBurnerDetectorModal() {
     },
 
     ({ network }) => {
-      const { isConnected } = useAccount();
       const connectedBurnerAddress = network.connectedAddress.get();
+      const { isConnected } = useAccount();
       const [burnerPrivateKey, setBurnerPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const [input, setInput] = useState('');
-
-      /////////////////
-      // UTILS
-
-      const generatePrivateKey = (): string => {
-        const wallet = Wallet.createRandom();
-        return wallet.privateKey;
-      }
-
-      const getAddressFromPrivateKey = (privateKey: string) => {
-        let wallet, address;
-        try {
-          wallet = new Wallet(privateKey);
-          address = wallet.address.toLowerCase();
-        }
-        catch (e) {
-          address = 'n/a';
-        }
-        return address;
-      }
 
       /////////////////
       // DATA
@@ -71,7 +50,7 @@ export function registerBurnerDetectorModal() {
         const computedAddress = getAddressFromPrivateKey(burnerPrivateKey);
         if (!burnerPrivateKey) {
           warningMessage = 'No burner detected. Please enter a private key.';
-        } else if (computedAddress === 'n/a') {
+        } else if (!computedAddress) {
           warningMessage = 'Invalid burner detected. Please enter a private key.';
         } else if (computedAddress !== connectedBurnerAddress) {
           warningMessage = 'Mismatch detected. Please refresh or enter the correct private key.';
@@ -89,7 +68,6 @@ export function registerBurnerDetectorModal() {
           setBurnerPrivateKey(input);
         }
       };
-
 
       /////////////////
       // DISPLAY

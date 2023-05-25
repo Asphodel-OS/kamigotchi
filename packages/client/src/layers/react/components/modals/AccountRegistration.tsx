@@ -7,9 +7,7 @@ import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
@@ -19,6 +17,7 @@ import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
 import 'layers/react/styles/font.css';
 
+// TODO: check for whether an account with the burner address already exists
 export function registerAccountRegistrationModal() {
   registerUIComponent(
     'AccountRegistration',
@@ -48,17 +47,31 @@ export function registerAccountRegistrationModal() {
       const burnerAddress = network.connectedAddress.get();
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
-      const { sound: { volume }, networks, selectedAddress, toggleVisibleButtons } = dataStore();
+      const { networks, selectedAddress, sound: { volume } } = dataStore();
+      const [isVisible, setIsVisible] = useState(false);
 
-      // toggle buttons based on whether account is detected
+      // toggle buttons and modals based on whether account is detected
       useEffect(() => {
-        toggleVisibleButtons(!!accountDetails.id);
-      }, [accountDetails]);
+        setIsVisible(isConnected && !accountDetails.id);
+      }, [accountDetails, isConnected]);
+
+      /////////////////
+      // ACTIONS
 
       const playSound = (sound: any) => {
         const soundFx = new Audio(sound);
         soundFx.volume = volume;
         soundFx.play();
+      }
+
+      const createAccountWithFx = async (
+        ownerAddr: string,
+        operatorAddr: string,
+        username: string
+      ) => {
+        playSound(scribbleSound);
+        await createAccount(ownerAddr, operatorAddr, username);
+        playSound(successSound);
       }
 
       const createAccount = async (
@@ -86,32 +99,17 @@ export function registerAccountRegistrationModal() {
         await waitForActionCompletion(actions.Action, actionIndex);
       }
 
-      const createAccountWithFx = async (
-        ownerAddr: string,
-        operatorAddr: string,
-        username: string
-      ) => {
-        playSound(scribbleSound);
-        await createAccount(ownerAddr, operatorAddr, username);
-        playSound(successSound);
-      }
-
       /////////////////
       // DISPLAY
 
-      // how to render the modal
-      const modalDisplay = () => (
-        (isConnected && !accountDetails.index) ? 'block' : 'none'
-      );
-
       return (
-        <ModalWrapper id='accountRegistration' style={{ display: modalDisplay() }}>
+        <ModalWrapper id='accountRegistration' style={{ display: isVisible ? 'block' : 'none' }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
             <Description>(no registered account for connected address)</Description>
             <Header>Detected Addresses</Header>
-            <Description>Connector: {selectedAddress}</Description>
-            <Description>Burner: {burnerAddress}</Description>
+            <Description>Owner: {selectedAddress}</Description>
+            <Description>Operator: {burnerAddress}</Description>
             <SingleInputTextForm
               id={`username`}
               label='username'

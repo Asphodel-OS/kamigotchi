@@ -4,7 +4,6 @@ import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 import {
   EntityIndex,
-  EntityID,
   Has,
   HasValue,
   getComponentValue,
@@ -118,7 +117,7 @@ export function registerConnectModal() {
       const {
         selectedAddress,
         toggleVisibleButtons,
-        toggleVisibleModals
+        toggleVisibleModals,
       } = dataStore();
 
       // track the account details in store for easy access
@@ -127,8 +126,7 @@ export function registerConnectModal() {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
-
-        if (accountIndex) {
+        if (accountDetails.id) {
           toggleVisibleButtons(true);
         } else {
           toggleVisibleButtons(false);
