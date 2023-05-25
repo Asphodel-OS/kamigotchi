@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { location, road, coreSprites, water } from 'assets/newmap';
+import { location, road, coreSprites, water } from 'assets/map';
 
 interface MapProps {
   highlightedRoom?: number;
@@ -220,8 +220,8 @@ const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
       onClick={
         room
           ? () => {
-              move(room);
-            }
+            move(room);
+          }
           : undefined
       }
       style={{ width: '100%', height: '100%', ...highlight }}

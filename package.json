@@ -25,7 +25,5 @@
     "run-pty": "^4.0.3",
     "url": "^0.11.0"
   },
-  "dependencies": {
-    "parcel-transformer-csv": "^0.0.3"
-  }
+  "dependencies": {}
 }

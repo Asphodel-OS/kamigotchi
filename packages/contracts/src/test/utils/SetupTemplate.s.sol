@@ -51,9 +51,11 @@ abstract contract SetupTemplate is TestSetupImports {
   /***********************
    *   accounts
    ************************/
-  function _createAccount(address addy, string memory name) internal {
-    vm.prank(addy);
-    _AccountSetSystem.executeTyped(addy, name);
+
+  // TODO: update this to use the Owner rather than the operator wallet
+  function _createAccount(address operator, string memory name) internal {
+    vm.prank(operator);
+    _AccountRegisterSystem.executeTyped(operator, name);
   }
 
   /***********************

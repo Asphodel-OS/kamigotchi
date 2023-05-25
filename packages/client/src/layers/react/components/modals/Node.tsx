@@ -190,7 +190,6 @@ export function registerNodeModal() {
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [tab, setTab] = useState<'mine' | 'others'>('mine');
       const {
-        selectedEntities: { kami },
         visibleModals,
         setVisibleModals,
       } = dataStore();

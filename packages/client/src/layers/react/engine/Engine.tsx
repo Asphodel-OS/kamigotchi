@@ -64,6 +64,7 @@ export const Engine: React.FC<{
     const params = new URLSearchParams(window.location.search);
     const devMode = params.get('dev') === 'true';
     const chainID = devMode ? local.id : mudChain.id;
+    console.log(`LOADED IN ${devMode ? "DEV" : "TESTNET"} MODE - Expected Chain ID: ${chainID}`);
     return chainID;
   };
 
