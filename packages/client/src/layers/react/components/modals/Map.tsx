@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
-import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
+import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { getCurrentRoom } from 'layers/phaser/utils';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
