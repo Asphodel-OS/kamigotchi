@@ -9,8 +9,10 @@ import { useAccount } from 'wagmi';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import scribbleSound from 'assets/sound/fx/scribbling.mp3';
@@ -47,11 +49,6 @@ export function registerAccountRegistrationModal() {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { sound: { volume }, networks, selectedAddress, toggleVisibleButtons } = dataStore();
-      const [name, setName] = useState('');
-
-      const burnerPrivateKey = localStorage.getItem("operatorPrivateKey");
-
-      // const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
 
       // toggle buttons based on whether account is detected
       useEffect(() => {
@@ -67,9 +64,8 @@ export function registerAccountRegistrationModal() {
       const createAccount = async (
         ownerAddress: string,
         operatorAddress: string,
-        name: string
+        username: string
       ) => {
-        console.log(networks);
         const {
           actions,
           api: { player },
@@ -83,10 +79,9 @@ export function registerAccountRegistrationModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return player.account.register(operatorAddress, name);
+            return player.account.register(operatorAddress, username);
           },
         });
-
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
         await waitForActionCompletion(actions.Action, actionIndex);
       }
@@ -94,22 +89,12 @@ export function registerAccountRegistrationModal() {
       const createAccountWithFx = async (
         ownerAddr: string,
         operatorAddr: string,
-        name: string
+        username: string
       ) => {
         playSound(scribbleSound);
-        await createAccount(ownerAddr, operatorAddr, name);
+        await createAccount(ownerAddr, operatorAddr, username);
         playSound(successSound);
       }
-
-      const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-      };
-
-      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-          createAccountWithFx(selectedAddress, burnerAddress!, name);
-        }
-      };
 
       /////////////////
       // DISPLAY
@@ -124,24 +109,15 @@ export function registerAccountRegistrationModal() {
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
             <Description>(no registered account for connected address)</Description>
-            <br />
             <Header>Detected Addresses</Header>
-            <br />
             <Description>Connector: {selectedAddress}</Description>
-            <br />
-            <Description>Operator PrivKey: (should make this copyable)</Description>
-            <Description>Note: we also want tooltips here on hover</Description>
-            <NameInput
-              type='text'
+            <Description>Burner: {burnerAddress}</Description>
+            <SingleInputTextForm
+              id={`username`}
+              label='username'
               placeholder='username'
-              value={name}
-              onKeyDown={(e) => catchKeys(e)}
-              onChange={(e) => handleNameChange(e)}
-            />
-            <ActionButton
-              id={`create-account`}
-              onClick={() => createAccountWithFx(selectedAddress!, burnerAddress!, name)}
-              text='Submit'
+              hasButton={true}
+              onSubmit={(v: string) => createAccountWithFx(selectedAddress!, burnerAddress!, v)}
             />
           </ModalContent>
         </ModalWrapper>
@@ -205,20 +181,21 @@ const Title = styled.p`
   color: #333;
   text-align: center;
   font-family: Pixel;
+  padding: 5px 0px;
 `;
-
 
 const Header = styled.p`
   font-size: 14px;
   color: #333;
   text-align: center;
   font-family: Pixel;
+  padding: 15px 0px 5px 0px;
 `;
-
 
 const Description = styled.p`
   font-size: 12px;
   color: #333;
   text-align: center;
   font-family: Pixel;
+  padding: 5px 0px;
 `;
