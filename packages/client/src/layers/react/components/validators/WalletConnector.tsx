@@ -39,9 +39,9 @@ import 'layers/react/styles/font.css';
  * abomination birthed out of necessity and should be treated as such.
  */
 
-export function registerConnectModal() {
+export function registerWalletConnecter() {
   registerUIComponent(
-    'Connect',
+    'Connecter',
     {
       colStart: 20,
       colEnd: 80,

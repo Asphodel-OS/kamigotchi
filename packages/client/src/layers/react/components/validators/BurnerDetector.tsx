@@ -10,7 +10,7 @@ import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address'
 
 import 'layers/react/styles/font.css';
 
-export function registerBurnerDetectorModal() {
+export function registerBurnerDetector() {
   registerUIComponent(
     'BurnerDetector',
     {

@@ -18,7 +18,7 @@ import successSound from 'assets/sound/fx/bubble_success.mp3';
 import 'layers/react/styles/font.css';
 
 // TODO: check for whether an account with the burner address already exists
-export function registerAccountRegistrationModal() {
+export function registerAccountRegistrar() {
   registerUIComponent(
     'AccountRegistration',
     {

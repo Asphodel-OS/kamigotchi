@@ -1,17 +1,16 @@
 import { registerActionQueue } from './ActionQueue';
 import { registerLoadingState } from './LoadingState';
-import { registerDialogueModal } from './modals/Dialogue';
 
-import { registerChatButton } from './buttons/Chat';
-import { registerHelpButton } from './buttons/Help';
-import { registerMapButton } from './buttons/Map';
-import { registerOperatorInfoButton } from './buttons/OperatorInfo';
-import { registerPartyButton } from './buttons/Party';
-import { registerSettingsButton } from './buttons/Settings';
-import { registerWalletButton } from './buttons/Wallet';
+import { registerChatButton } from './menuButtons/Chat';
+import { registerHelpButton } from './menuButtons/Help';
+import { registerMapButton } from './menuButtons/Map';
+import { registerOperatorInfoButton } from './menuButtons/OperatorInfo';
+import { registerPartyButton } from './menuButtons/Party';
+import { registerSettingsButton } from './menuButtons/Settings';
+import { registerWalletButton } from './menuButtons/Wallet';
 
 import { registerChatModal } from './modals/Chat';
-import { registerDetectAccountModal } from './modals/DetectAccount';
+import { registerDialogueModal } from './modals/Dialogue';
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerMintAfterModal } from './modals/MintAfter';
 import { registerKamiModal } from './modals/Kami';
@@ -24,9 +23,10 @@ import { registerHelpModal } from './modals/Help';
 import { registerKamisNamingModal } from './modals/KamisNaming';
 import { registerNameKamiModal } from './modals/NameKami';
 
-import { registerConnectModal } from './modals/Connect';
-import { registerAccountRegistrationModal } from './modals/AccountRegistration';
-import { registerBurnerDetectorModal } from './modals/BurnerDetector';
+import { registerAccountRegistrar } from './validators/AccountRegistrar';
+import { registerBurnerDetector } from './validators/BurnerDetector';
+import { registerDetectAccountModal } from './validators/DetectAccount';
+import { registerWalletConnecter } from './validators/WalletConnector';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -42,7 +42,6 @@ export function registerUIComponents() {
   registerWalletButton();
 
   registerChatModal();
-  // registerDetectAccountModal();
   registerKamiMintModal();
   registerMintAfterModal();
   registerMapModal();
@@ -55,7 +54,7 @@ export function registerUIComponents() {
   registerNameKamiModal();
   registerHelpModal();
 
-  registerConnectModal();
-  registerAccountRegistrationModal();
-  registerBurnerDetectorModal();
+  registerAccountRegistrar();
+  registerBurnerDetector();
+  registerWalletConnecter();
 }
