@@ -50,6 +50,23 @@ export interface VisibleModals {
   settings: boolean;
 }
 
+export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
+  chat: isOn,
+  dialogue: isOn,
+  help: isOn,
+  inventory: isOn,
+  kami: isOn,
+  kamiMint: isOn,
+  kamiMintPost: isOn,
+  kamisNaming: isOn,
+  nameKami: isOn,
+  map: isOn,
+  merchant: isOn,
+  node: isOn,
+  party: isOn,
+  settings: isOn,
+});
+
 export interface DataStore {
   dialogue: Dialogue;
   selectedEntities: SelectedEntities;
@@ -68,6 +85,7 @@ interface DataStoreActions {
   setSelectedEntities: (data: SelectedEntities) => void;
   setSelectedAddress: (data: string) => void;
   toggleVisibleButtons: (isOn: boolean) => void;
+  toggleVisibleModals: (isOn: boolean) => void;
 }
 
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
@@ -112,6 +130,9 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     setDialogue: (data: Dialogue) => set(
       (state: DataStore) => ({ ...state, dialogue: data })
     ),
+    setSelectedAddress: (data: string) => set(
+      (state: DataStore) => ({ ...state, selectedAddress: data })
+    ),
     setSelectedEntities: (data: SelectedEntities) => set(
       (state: DataStore) => ({ ...state, selectedEntities: data })
     ),
@@ -121,14 +142,14 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     setVisibleButtons: (data: VisibleButtons) => set(
       (state: DataStore) => ({ ...state, visibleButtons: data })
     ),
-    toggleVisibleButtons: (isOn: boolean) => set(
-      (state: DataStore) => ({ ...state, visibleButtons: visibleButtonsToggled(isOn) })
-    ),
     setVisibleModals: (data: VisibleModals) => set(
       (state: DataStore) => ({ ...state, visibleModals: data })
     ),
-    setSelectedAddress: (data: string) => set(
-      (state: DataStore) => ({ ...state, selectedAddress: data })
+    toggleVisibleButtons: (isOn: boolean) => set(
+      (state: DataStore) => ({ ...state, visibleButtons: visibleButtonsToggled(isOn) })
+    ),
+    toggleVisibleModals: (isOn: boolean) => set(
+      (state: DataStore) => ({ ...state, visibleModals: visibleModalsToggled(isOn) })
     ),
   };
 });

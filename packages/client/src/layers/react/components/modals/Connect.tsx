@@ -114,14 +114,26 @@ export function registerConnectModal() {
       getAccountDetails,
     }) => {
       const { isConnected } = useAccount();
-      const { details, setDetails } = useKamiAccount();
-      const { selectedAddress } = dataStore();
+      const { setDetails } = useKamiAccount();
+      const {
+        selectedAddress,
+        toggleVisibleButtons,
+        toggleVisibleModals
+      } = dataStore();
 
       // track the account details in store for easy access
+      // also expose/hide components accordingly
       useEffect(() => {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
+
+        if (accountIndex) {
+          toggleVisibleButtons(true);
+        } else {
+          toggleVisibleButtons(false);
+          toggleVisibleModals(false);
+        }
       }, [selectedAddress, isConnected, accountIndexUpdatedByWorld]);
 
       // how to render the modal
