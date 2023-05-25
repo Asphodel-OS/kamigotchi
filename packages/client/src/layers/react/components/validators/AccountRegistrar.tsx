@@ -44,7 +44,7 @@ export function registerAccountRegistrar() {
     },
 
     ({ network }) => {
-      const burnerAddress = network.connectedAddress.get();
+      const connectedBurnerAddress = network.connectedAddress.get();
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { networks, selectedAddress, sound: { volume } } = dataStore();
@@ -64,26 +64,18 @@ export function registerAccountRegistrar() {
         soundFx.play();
       }
 
-      const createAccountWithFx = async (
-        ownerAddr: string,
-        operatorAddr: string,
-        username: string
-      ) => {
+      const createAccountWithFx = async (username: string) => {
         playSound(scribbleSound);
-        await createAccount(ownerAddr, operatorAddr, username);
+        await createAccount(username);
         playSound(successSound);
       }
 
-      const createAccount = async (
-        ownerAddress: string,
-        operatorAddress: string,
-        username: string
-      ) => {
+      const createAccount = async (username: string) => {
         const {
           actions,
           api: { player },
           world,
-        } = networks.get(ownerAddress);
+        } = networks.get(selectedAddress);
 
         const actionID = `Creating Account` as EntityID;
         actions.add({
@@ -92,7 +84,7 @@ export function registerAccountRegistrar() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return player.account.register(operatorAddress, username);
+            return player.account.register(connectedBurnerAddress, username);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
@@ -109,13 +101,13 @@ export function registerAccountRegistrar() {
             <Description>(no registered account for connected address)</Description>
             <Header>Detected Addresses</Header>
             <Description>Owner: {selectedAddress}</Description>
-            <Description>Operator: {burnerAddress}</Description>
+            <Description>Operator: {connectedBurnerAddress}</Description>
             <SingleInputTextForm
               id={`username`}
               label='username'
               placeholder='username'
               hasButton={true}
-              onSubmit={(v: string) => createAccountWithFx(selectedAddress!, burnerAddress!, v)}
+              onSubmit={(v: string) => createAccountWithFx(v)}
             />
           </ModalContent>
         </ModalWrapper>
