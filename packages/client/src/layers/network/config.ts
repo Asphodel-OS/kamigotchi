@@ -51,12 +51,9 @@ export const shapeNetworkConfig: (networkConfig: NetworkConfig) => SetupContract
 export function createNetworkConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
-  const params = new URLSearchParams(window.location.search);
-  const devMode = params.get('dev') === 'true';
-  config = (devMode)
-    ? createNetworkConfigLocal(externalProvider)
-    : createNetworkConfigLattice(externalProvider);
-  // console.log('config', config);
+  config = (process.env.MODE === 'TEST')
+    ? createNetworkConfigLattice(externalProvider)
+    : createNetworkConfigLocal(externalProvider);
 
   if (
     config.worldAddress
@@ -124,11 +121,6 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
 
 // Get the network config of a deployment to Lattice's mudChain testnet
 function createNetworkConfigLattice(externalProvider?: ExternalProvider): NetworkConfig {
-  // setting up local burner
-  let privateKey = localStorage.getItem("operatorPrivateKey");
-  const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
-  localStorage.setItem("operatorPrivateKey", wallet.privateKey);
-
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: "https://follower.testnet-chain.linfra.xyz",
     wsRpc: "wss://follower.testnet-chain.linfra.xyz",
