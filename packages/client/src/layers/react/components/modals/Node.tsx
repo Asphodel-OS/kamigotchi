@@ -33,10 +33,10 @@ export function registerNodeModal() {
 
     // Grid Config
     {
-      colStart: 34,
-      colEnd: 68,
-      rowStart: 9,
-      rowEnd: 99,
+      colStart: 69,
+      colEnd: 100,
+      rowStart: 10,
+      rowEnd: 62,
     },
 
     // Requirement (Data Manangement)
@@ -101,7 +101,7 @@ export function registerNodeModal() {
             ])
           )[0];
           const node =
-            (nodeEntityIndex !== undefined) ? getNode(layers, nodeEntityIndex) : ({} as Node);
+            nodeEntityIndex !== undefined ? getNode(layers, nodeEntityIndex) : ({} as Node);
 
           // get the selected Node
 
@@ -189,10 +189,7 @@ export function registerNodeModal() {
       const [scrollPosition, setScrollPosition] = useState<number>(0);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [tab, setTab] = useState<'mine' | 'others'>('mine');
-      const {
-        visibleModals,
-        setVisibleModals,
-      } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
       // scrolling
       useEffect(() => {
         const handleScroll = () => {
@@ -483,7 +480,7 @@ export function registerNodeModal() {
         setVisibleModals({ ...visibleModals, node: false });
       }, [setVisibleModals, visibleModals]);
 
-      if (data.node.kamis.mine.length < 1) {
+      if (data.account.kamis.length < 1) {
         return (
           <ModalWrapperFull id='node' divName='node'>
             <AlignRight>
@@ -491,7 +488,7 @@ export function registerNodeModal() {
                 X
               </TopButton>
             </AlignRight>
-            <Header >Nodes reject those who do not travel with Kamigotchi.</Header>
+            <Header>Nodes reject those who do not travel with Kamigotchi.</Header>
           </ModalWrapperFull>
         );
       }
@@ -551,7 +548,6 @@ const Header = styled.p`
   font-family: Pixel;
   margin: 5px;
 `;
-
 
 const AlignRight = styled.div`
   text-align: left;

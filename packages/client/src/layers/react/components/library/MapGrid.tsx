@@ -200,7 +200,7 @@ const ROOMS_MAP = new Map([
   ['5,5', 5],
   ['5,9', 4],
   ['3,15', 1],
-  ['7,3', 11],
+  ['7,1', 11],
   ['7,5', 9],
   ['7,7', 10],
   ['7,11', 3],
@@ -220,8 +220,8 @@ const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
       onClick={
         room
           ? () => {
-            move(room);
-          }
+              move(room);
+            }
           : undefined
       }
       style={{ width: '100%', height: '100%', ...highlight }}

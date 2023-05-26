@@ -16,9 +16,9 @@ export function registerSettingsModal() {
   registerUIComponent(
     'Settings',
     {
-      colStart: 2,
-      colEnd: 33,
-      rowStart: 3,
+      colStart: 69,
+      colEnd: 100,
+      rowStart: 10,
       rowEnd: 62,
     },
 
@@ -74,7 +74,7 @@ export function registerSettingsModal() {
           >
             <div style={{ display: 'grid', height: '100%', pointerEvents: 'auto' }}>
               <Header style={{ gridRow: 1, gridColumn: 1 }}>Settings</Header>
-              <Divider style={{ gridRow: 2, gridColumn: 1 }}/>
+              <Divider style={{ gridRow: 2, gridColumn: 1 }} />
               <SubHeader style={{ gridRow: 3, gridColumn: 1 }}>Sound</SubHeader>
               <div style={{ gridColumn: 1, gridRow: 5 }}>
                 <input
@@ -94,8 +94,11 @@ export function registerSettingsModal() {
               >
                 <img src={!muted ? soundImage : mutedSoundImage} alt='sound_icon' />
               </div>
-              <Divider style={{ gridRow: 7, gridColumn: 1 }}/>
-              <Text style={{ gridRow: 8, gridColumn: 1 }}> Currently there are no other settings. Suggestions appreciated. </Text>
+              <Divider style={{ gridRow: 7, gridColumn: 1 }} />
+              <Text style={{ gridRow: 8, gridColumn: 1 }}>
+                {' '}
+                Currently there are no other settings. Suggestions appreciated.{' '}
+              </Text>
             </div>
           </div>
         </ModalWrapperFull>

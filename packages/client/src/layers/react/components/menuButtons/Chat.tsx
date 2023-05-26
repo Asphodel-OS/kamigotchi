@@ -18,7 +18,7 @@ export function registerChatButton() {
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide = { help: false };
+      const modalsToHide = { help: false, settings: false };
 
       return (
         <MenuButton
