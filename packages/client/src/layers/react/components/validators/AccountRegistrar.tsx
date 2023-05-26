@@ -76,9 +76,8 @@ export function registerAccountRegistrar() {
           api: { player },
           world,
         } = networks.get(selectedAddress);
+        console.log('CREATING ACCOUNT FOR:', selectedAddress);
 
-        console.log(`ATTEMPTING TO CREATE ACCOUNT WITH ${selectedAddress}`);
-        console.log('attached network', networks.get(selectedAddress));
         const actionID = `Creating Account` as EntityID;
         actions.add({
           id: actionID,

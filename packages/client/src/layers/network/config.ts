@@ -53,7 +53,9 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
 
   const params = new URLSearchParams(window.location.search);
   const devMode = params.get('dev') === 'true';
-  config = (devMode) ? createNetworkConfigLocal(externalProvider) : createNetworkConfigLattice();
+  config = (devMode)
+    ? createNetworkConfigLocal(externalProvider)
+    : createNetworkConfigLattice(externalProvider);
   // console.log('config', config);
 
   if (
@@ -121,14 +123,13 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
 }
 
 // Get the network config of a deployment to Lattice's mudChain testnet
-function createNetworkConfigLattice(): NetworkConfig {
+function createNetworkConfigLattice(externalProvider?: ExternalProvider): NetworkConfig {
   // setting up local burner
   let privateKey = localStorage.getItem("operatorPrivateKey");
   const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
   localStorage.setItem("operatorPrivateKey", wallet.privateKey);
 
   let config: NetworkConfig = <NetworkConfig>{
-    privateKey: wallet.privateKey,
     jsonRpc: "https://follower.testnet-chain.linfra.xyz",
     wsRpc: "wss://follower.testnet-chain.linfra.xyz",
     faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
@@ -137,8 +138,19 @@ function createNetworkConfigLattice(): NetworkConfig {
 
     // checkpointUrl: undefined,
     chainId: 4242,
-    worldAddress: "0xc151A77E925A6c12f76C870f1d654ddF2E4006cD",
-    initialBlockNumber: 14838354,
+    worldAddress: "0xD7B3C1B411471ff208E00a8f095937dB13d66B25",
+    initialBlockNumber: 15388287,
   };
+
+  // EOAs and privatekey
+  if (externalProvider) {
+    config.externalProvider = externalProvider;
+  } else {
+    // either pull or set up local burner
+    let privateKey = localStorage.getItem("operatorPrivateKey");
+    const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
+    localStorage.setItem("operatorPrivateKey", wallet.privateKey);
+    config.privateKey = wallet.privateKey;
+  }
   return config;
 }
