@@ -45,7 +45,7 @@
     "async-mutex": "^0.3.2",
     "ethers": "^5",
     "google-protobuf": "^3.14.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",
     "mqtt": "^4.3.7",
