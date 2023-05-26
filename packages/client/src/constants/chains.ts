@@ -1,7 +1,8 @@
 // src/constants/chains.ts
 import { Chain } from "wagmi";
+import { optimism } from 'wagmi/chains'
 
-export const local: Chain = {
+const localhost: Chain = {
   id: 31337,
   name: "local",
   network: "ethereum",
@@ -17,7 +18,7 @@ export const local: Chain = {
   testnet: true,
 };
 
-export const mudChain: Chain = {
+const mudChain: Chain = {
   id: 4242,
   name: "mudChain",
   network: "ethereum",
@@ -38,3 +39,13 @@ export const mudChain: Chain = {
   },
   testnet: true,
 };
+
+// object mapping between environment MODEs and chain configs
+const chainConfigs: Map<string, Chain> = new Map([
+  ['', localhost],  // default to localhost when no environment mode provided
+  ['DEV', localhost],
+  ['TEST', mudChain],
+  ['PROD', optimism],
+]);
+
+export const defaultChainConfig = chainConfigs.get(process.env.MODE ?? '')!;

@@ -1,26 +1,21 @@
 // src/layers/react/engine/Engine.tsx:
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, useAccount, Connector, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 
-import { Layers } from 'src/types';
 import { BootScreen, MainWindow } from "./components";
 import { EngineContext, LayerContext } from "./context";
 import { EngineStore } from "./store";
-import { mudChain, local } from 'constants/chains';
+import { defaultChainConfig } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { dataStore } from 'layers/react/store/createStore';
+import { Layers } from 'src/types';
 
-// TODO: add canto testnet
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [
-    local,
-    mudChain,
-    // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
-  ],
+  [defaultChainConfig],
   [publicProvider()]
 );
 
@@ -51,6 +46,8 @@ export const Engine: React.FC<{
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
+    console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE`);
+    console.log(`Expected Chain ID: ${defaultChainConfig.id}`);
   }, []);
 
   // update the network settings whenever the connector/address changes
@@ -59,20 +56,11 @@ export const Engine: React.FC<{
     updateNetworkSettings(connector);
   }, [connector, connectorAddress]);
 
-  // gets the expected chainID based on the environment
-  const getChainID = () => {
-    const params = new URLSearchParams(window.location.search);
-    const devMode = params.get('dev') === 'true';
-    const chainID = devMode ? local.id : mudChain.id;
-    console.log(`LOADED IN ${devMode ? "DEV" : "TESTNET"} MODE - Expected Chain ID: ${chainID}`);
-    return chainID;
-  };
-
   // add a network layer if one for the connection doesnt exist
   const updateNetworkSettings = async (connector: Connector | undefined) => {
     if (connectorAddress && connector) {
       const connectedChainID = await connector.getChainId();
-      const expectedChainID = getChainID();
+      const expectedChainID = defaultChainConfig.id;
       if (connectedChainID !== expectedChainID) return;
 
       // console.log("CONNECTOR", connector);
