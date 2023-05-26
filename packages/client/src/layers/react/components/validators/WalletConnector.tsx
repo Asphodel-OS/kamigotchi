@@ -41,7 +41,7 @@ import 'layers/react/styles/font.css';
 
 export function registerWalletConnecter() {
   registerUIComponent(
-    'Connecter',
+    'WalletConnecter',
     {
       colStart: 20,
       colEnd: 80,
@@ -112,7 +112,7 @@ export function registerWalletConnecter() {
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
-      const { isConnected } = useAccount();
+      const { isConnected, status } = useAccount();
       const { setDetails } = useKamiAccount();
       const {
         selectedAddress,
@@ -123,6 +123,7 @@ export function registerWalletConnecter() {
       // track the account details in store for easy access
       // also expose/hide components accordingly
       useEffect(() => {
+        console.log("Wallet is", status);
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
@@ -143,7 +144,7 @@ export function registerWalletConnecter() {
         <ModalWrapper id='connect' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Connect a Wallet</Title>
-            <Description>{(isConnected) ? '(Connected)' : '(Disconnected)'} </Description>
+            <Description>({status})</Description>
             <br />
             <Description>Connector Address: {selectedAddress}</Description>
             <br />
