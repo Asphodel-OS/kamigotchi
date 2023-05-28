@@ -35,9 +35,6 @@ contract ERC721WithdrawSystem is System {
     // checks before action
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(LibPet.isResting(components, petID), "Pet: not resting");
-    // below checks made redundant by isResting
-    require(!LibPet.isUnrevealed(components, petID), "Pet: unrevealed");
-    require(LibPet.isInWorld(components, petID), "Pet: alr in world");
 
     // actions to be taken upon bridging out
     LibPet.withdraw(components, petID);
