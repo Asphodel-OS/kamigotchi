@@ -34,11 +34,11 @@ export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
 });
 
 export interface VisibleModals {
+  bridgeERC20: boolean;
+  bridgeERC721: boolean;
   chat: boolean;
   dialogue: boolean;
   help: boolean;
-  ERC721Bridge: boolean;
-  ERC20Bridge: boolean;
   inventory: boolean;
   kami: boolean;
   kamiMint: boolean;
@@ -100,6 +100,8 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     },
     sound: { volume: 0.7 },
     visibleModals: {
+      bridgeERC20: false,
+      bridgeERC721: false,
       chat: false,
       dialogue: false,
       help: false,

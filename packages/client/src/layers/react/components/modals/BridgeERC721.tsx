@@ -84,7 +84,7 @@ export function registerERC721BridgeModal() {
 
     ({ data, proxyAddy }) => {
 
-      const { details } = useKamiAccount();
+      const { details: accountDetails } = useKamiAccount();
       const { selectedEntities, visibleModals, setVisibleModals, networks } = dataStore();
       const [placeholderInput, setPlaceholderInput] = useState('');
 
@@ -96,7 +96,7 @@ export function registerERC721BridgeModal() {
         const {
           actions,
           api: { player: { ERC721 } }
-        } = networks.get(details.ownerAddress);
+        } = networks.get(accountDetails.ownerAddress);
 
         const actionID = `Importing $KAMI` as EntityID;
         actions.add({
@@ -115,7 +115,7 @@ export function registerERC721BridgeModal() {
         const {
           actions,
           api: { player: { ERC721 } }
-        } = networks.get(details.ownerAddress);
+        } = networks.get(accountDetails.ownerAddress);
 
         const actionID = `Exporting $KAMI` as EntityID;
         actions.add({
@@ -179,7 +179,7 @@ export function registerERC721BridgeModal() {
             "type": "function"
           }],
         functionName: 'getAllTokens',
-        args: [details.ownerAddress as `0x${string}`]
+        args: [accountDetails.ownerAddress as `0x${string}`]
       });
 
       console.log(erc721List);
@@ -216,7 +216,7 @@ export function registerERC721BridgeModal() {
       };
 
       const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, ERC721Bridge: false });
+        setVisibleModals({ ...visibleModals, bridgeERC721: false });
       }, [setVisibleModals, visibleModals]);
 
       //////////////////

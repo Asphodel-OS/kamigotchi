@@ -11,8 +11,8 @@ import { registerWalletButton } from './menuButtons/Wallet';
 
 import { registerChatModal } from './modals/Chat';
 import { registerDialogueModal } from './modals/Dialogue';
-import { registerERC20BridgeModal } from './modals/ERC20Bridge';
-import { registerERC721BridgeModal } from './modals/ERC721Bridge';
+import { registerERC20BridgeModal } from './modals/BridgeERC20';
+import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerMintAfterModal } from './modals/MintAfter';
 import { registerKamiModal } from './modals/Kami';

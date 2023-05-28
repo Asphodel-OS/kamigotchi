@@ -65,7 +65,7 @@ export function registerERC20BridgeModal() {
     },
 
     ({ CoinBal, proxyAddy }) => {
-      const { details } = useKamiAccount();
+      const { details: accountDetails } = useKamiAccount();
       const { visibleModals, setVisibleModals, networks } = dataStore();
       // get token balance of controlling account 
       const { data: erc20Addy } = useContractRead({
@@ -74,7 +74,7 @@ export function registerERC20BridgeModal() {
         functionName: 'getTokenAddy'
       });
       const { data: EOABalance } = useBalance({
-        address: details.ownerAddress as `0x${string}`,
+        address: accountDetails.ownerAddress as `0x${string}`,
         token: erc20Addy as `0x${string}`,
         formatUnits: "wei",
         watch: true
@@ -91,7 +91,7 @@ export function registerERC20BridgeModal() {
         const {
           actions,
           api: { player: { ERC20 } }
-        } = networks.get(details.ownerAddress);
+        } = networks.get(accountDetails.ownerAddress);
 
         const actionID = `Depositing $KAMI` as EntityID;
         actions.add({
@@ -110,7 +110,7 @@ export function registerERC20BridgeModal() {
         const {
           actions,
           api: { player: { ERC20 } }
-        } = networks.get(details.ownerAddress);
+        } = networks.get(accountDetails.ownerAddress);
 
 
         const actionID = `Withdrawing $KAMI` as EntityID;
@@ -127,7 +127,7 @@ export function registerERC20BridgeModal() {
       };
 
       const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, ERC20Bridge: false });
+        setVisibleModals({ ...visibleModals, bridgeERC20: false });
       }, [setVisibleModals, visibleModals]);
 
       ///////////////
