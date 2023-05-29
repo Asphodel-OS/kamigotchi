@@ -4,11 +4,11 @@
 2,"Body%2037ffb22974744a248c6d42ba98c90963/body_butterfly_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/butterfly.png",Butterfly,Insect,Epic,100,0,0,0,8,0
 3,Body%2037ffb22974744a248c6d42ba98c90963/body_caterpillar_default_green_0000.png,Caterpillar,Insect,Common,1500,0,0,0,4,0
 4,"Body%2037ffb22974744a248c6d42ba98c90963/body_cube_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/cube.png",Cube,Normal,Rare,550,0,0,0,0,1
-5,"Body%2037ffb22974744a248c6d42ba98c90963/body_default_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/ghost.png",Default,Normal,Common,2100,0,40,0,0,0
+5,"Body%2037ffb22974744a248c6d42ba98c90963/body_default_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/ghost.png",Ghost,Normal,Common,2100,0,40,0,0,0
 6,"Body%2037ffb22974744a248c6d42ba98c90963/body_drip_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/melting.png",Drip,Eerie,Rare,500,0,0,6,0,0
 7,"Body%2037ffb22974744a248c6d42ba98c90963/body_lightbulb_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/lightbulb.png",Lightbulb,Scrap,Common,1500,4,0,0,0,0
 8,"Body%2037ffb22974744a248c6d42ba98c90963/body_monitor_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/crt_inactive.png",CRT Monitor (Inactive),Scrap,NYI,0,,,,,
-9,"Body%2037ffb22974744a248c6d42ba98c90963/body_monitor_broken_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/crt_broken.png",CRT Monitor (Broken),Scrap,Epic,100,7,20,0,0,0
+9,"Body%2037ffb22974744a248c6d42ba98c90963/body_monitor_broken_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/crt_broken.png",CRT Monitor,Scrap,Epic,100,7,20,0,0,0
 10,"Body%2037ffb22974744a248c6d42ba98c90963/body_octahedron_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/octahedron.png",Octahedron,Normal,Epic,50,0,0,0,0,2
 11,"Body%2037ffb22974744a248c6d42ba98c90963/body_octopus_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/octopus.png",Octopus,Eerie,Common,1500,0,0,4,0,0
 12,"Body%2037ffb22974744a248c6d42ba98c90963/body_orb_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/orb.png",Orb,Normal,Common,500,6,0,0,0,0

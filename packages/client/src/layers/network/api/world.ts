@@ -52,11 +52,11 @@ export function setUpWorldAPI(systems: any) {
     function rarityParser(rarity: string) {
       switch (rarity) {
         case "Common":
-          return 3;
+          return 3 ** 5;
         case "Rare":
-          return 2;
+          return 3 ** 4;
         case "Epic":
-          return 1;
+          return 3 ** 3;
         default:
           return 0;
       }

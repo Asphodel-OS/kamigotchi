@@ -1,32 +1,32 @@
-﻿Index,Image,Name,Rarity,BPs,Affinity,Power,Violence,Health,Harmony,Slots
-0,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_1_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Default.png",._.,Common,400,Normal,2,0,0,0,0
-1,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_2_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/w_face.png",.w.,Common,400,Normal,0,2,0,0,0
-2,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_3_purple_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Happy_face.png",n_n,Rare,300,Normal,0,0,30,0,0
-3,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_4_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/annoyed_face.png",>_>,Common,400,Normal,0,0,2,0,0
-4,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_5_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/joyful.png",^-^,Common,400,Normal,0,0,0,2,0
-5,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_6_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/dissaproval.png",v_v,Common,400,Normal,1,1,0,0,0
-6,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_7_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/oO_face2.png",o_O,Common,400,Normal,1,0,0,1,0
-7,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_8_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Oo_face.png",O_o,Common,400,Normal,1,0,10,0,0
-8,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_9_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/-_-_face.png",-_-,Common,300,Normal,0,1,10,0,0
-9,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_10_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/x_x.png","x_x ",Common,300,Normal,0,1,0,1,0
-10,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_11_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/o_o.png",o_o,Common,300,Normal,0,0,10,1,0
-11,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_12_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/O_O2.png",O_0,Common,300,Normal,1,1,0,0,0
-12,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_14_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/cat_face_happy.png",Teddybear happy,Rare,300,Normal,3,0,0,0,0
-13,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_15_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/lenny_face_concerned.png",Disapproval lenny face ಠ_ಠ,Rare,300,Normal,0,3,0,0,0
-14,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_16_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/heart_eyes_and_smile.png",Heart eyes,Common,300,Normal,0,1,10,0,0
-15,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_17_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Impacted_OO.png",Impacted O_0,Rare,300,Normal,0,0,0,3,0
-16,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_18_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/sideeye_oo.png",Sideeye O_O,Common,300,Normal,1,,10,0,0
-17,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_19_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/lenny_face1.png",Lenny face 1,Rare,300,Normal,1,1,0,1,0
-18,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_20_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/twodots3.png",:3,Common,300,Normal,1,0,0,1,0
-19,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_21_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/sideeye.png",Unamused,Rare,300,Normal,1,1,10,0,0
-20,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_22_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/OO_with_smile.png",Ou0,Rare,300,Normal,0,1,10,1,0
-21,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_23_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/concerned_with_eyebrows.png",Concerned ._.,Common,300,Normal,0,1,0,1,0
-22,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_24_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/lenny_face2.png",Lenny face 2,Epic,300,Normal,0,0,0,0,1
-23,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_25_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/cat_face..png",Teddybear Face,Rare,300,Normal,2,1,0,0,0
-24,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_drip_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/melting.png",Drip,Rare,300,Eerie,3,0,0,0,0
-25,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_insect_1_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/insect_eyes_normal.png",Insect eyes normal,Rare,300,Insect,0,3,0,0,0
-26,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_insect_2_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/insect_eyes_angry.png",Insect eyes angry,Epic,300,Insect,0,5,0,0,0
-27,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_nuts_and_bolts_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/ionknow.png",Nuts and Bolts,Rare,300,Scrap,0,2,10,0,0
-28,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_sensor_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/futuristic_eye_goggles.png",Sensor,Epic,300,Scrap,0,0,0,5,0
-29,Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_tongue_default_green_0000.png,Tongue,Epic,300,Eerie,6,0,0,0,0
-30,Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_tongue_v2_default_green_0000.png,Tongue v2,Epic,300,Eerie,6,0,0,0,0
+﻿Index,Image,Name,Rarity,BPs,Gated,Affinity,Power,Violence,Health,Harmony,Slots
+0,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_1_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Default.png",._.,Common,400,No,Normal,2,0,0,0,0
+1,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_2_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/w_face.png",.w.,Common,400,No,Normal,0,2,0,0,0
+2,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_3_purple_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Happy_face.png",n_n,Rare,300,No,Normal,0,0,30,0,0
+3,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_4_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/annoyed_face.png",>_>,Common,400,Yes,Scrap,0,0,2,0,0
+4,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_5_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/joyful.png",^-^,Common,400,No,Normal,0,0,0,2,0
+5,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_6_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/dissaproval.png",v_v,Common,400,Yes,Scrap,1,1,0,0,0
+6,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_7_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/oO_face2.png",o_O,Common,400,Yes,Normal,1,0,0,1,0
+7,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_8_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Oo_face.png",O_o,Common,400,Yes,Normal,1,0,10,0,0
+8,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_9_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/-_-_face.png",-_-,Common,300,No,Normal,0,1,10,0,0
+9,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_10_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/x_x.png","x_x ",Common,300,Yes,Insect,0,1,0,1,0
+10,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_11_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/o_o.png",o_o,Common,300,No,Normal,0,0,10,1,0
+11,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_12_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/O_O2.png",O_0,Common,300,Yes,Eerie,1,1,0,0,0
+12,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_14_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/cat_face_happy.png",Teddy,Rare,300,Yes,Normal,3,0,0,0,0
+13,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_15_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/lenny_face_concerned.png",Disapproval Lenny,Rare,300,Yes,Insect,0,3,0,0,0
+14,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_16_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/heart_eyes_and_smile.png",HeartS,Common,300,No,Normal,0,1,10,0,0
+15,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_17_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/Impacted_OO.png",Impacted,Rare,300,No,Normal,0,0,0,3,0
+16,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_18_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/sideeye_oo.png",Sideeye,Common,300,Yes,Eerie,1,,10,0,0
+17,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_19_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/lenny_face1.png",Lenny Two,Rare,300,Yes,Normal,1,1,0,1,0
+18,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_20_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/twodots3.png",:3,Common,300,Yes,Insect,1,0,0,1,0
+19,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_21_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/sideeye.png",Unamused,Rare,300,No,Normal,1,1,10,0,0
+20,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_22_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/OO_with_smile.png",Ou0,Rare,300,Yes,Eerie,0,1,10,1,0
+21,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_23_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/concerned_with_eyebrows.png",Concerned,Common,300,No,Normal,0,1,0,1,0
+22,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_24_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/lenny_face2.png",Lenny One,Epic,300,Yes,Normal,1,1,10,1,1
+23,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_ascii_25_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/cat_face..png",Serious Teddy,Rare,300,Yes,Normal,2,1,0,0,0
+24,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_drip_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/melting.png",Drip,Rare,300,Yes,Eerie,3,0,0,0,0
+25,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_insect_1_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/insect_eyes_normal.png",Insectoid,Rare,300,Yes,Insect,0,3,0,0,0
+26,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_insect_2_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/insect_eyes_angry.png",Insectoid (Partisan),Epic,300,Yes,Insect,0,6,0,0,0
+27,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_nuts_and_bolts_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/ionknow.png",N+B,Rare,300,Yes,Scrap,0,2,20,0,0
+28,"Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_sensor_default_green_0000.png, Face%2056d32cbb9f9748d7a241fb622148a4e5/futuristic_eye_goggles.png",Sensor,Epic,300,Yes,Scrap,0,0,20,4,0
+29,Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_tongue_default_green_0000.png,Tongue,Rare,300,Yes,Eerie,2,1,0,0,0
+30,Face%2056d32cbb9f9748d7a241fb622148a4e5/head_face_tongue_v2_default_green_0000.png,Tongue v2,Epic,300,Yes,Eerie,3,3,0,0,0

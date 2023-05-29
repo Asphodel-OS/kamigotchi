@@ -28,7 +28,6 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $KAMI....`
     );
-    setNodeAffinity('Torii Gate', 'NORMAL');
 
     createNode(
       'Trash Compactor',
@@ -36,7 +35,6 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.'
     );
-    setNodeAffinity('Trash Compactor', 'SCRAP');
 
     createNode(
       'Termite Mound',
@@ -44,7 +42,6 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'A huge termite mound. Apparently, this is sacred to the local insects.'
     );
-    setNodeAffinity('Termite Mound', 'INSECT');
 
     createNode(
       'Occult Circle',
@@ -52,7 +49,6 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'The energy invested here calls out to EERIE Kamigotchi.'
     );
-    setNodeAffinity('Occult Circle', 'EERIE');
 
     createNode(
       'Monolith',
@@ -60,7 +56,6 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       'This huge black monolith seems to draw in energy from the rest of the junkyard.'
     );
-    setNodeAffinity('Monolith', 'SCRAP');
 
 
     // create food registry items
@@ -73,22 +68,30 @@ export function createAdminAPI(systems: any) {
 
     // set listings on global merchant
     createMerchant('hawker', 0);
-    setListing('hawker', 1, 25, 0); // merchant, item index, buy price, sell price
-    setListing('hawker', 2, 90, 0);
-    setListing('hawker', 3, 160, 0);
-    setListing('hawker', 4, 500, 0);
 
     // // create our hottie merchant ugajin. names are unique
     createMerchant('ugajin', 13);
-    setListing('ugajin', 1, 25, 0); // merchant, item index, buy price, sell price
-    setListing('ugajin', 2, 90, 0);
-    setListing('ugajin', 3, 150, 0);
-    setListing('ugajin', 4, 500, 0);
 
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
 
     setUpWorldAPI(systems).initWorld();
+
+    setNodeAffinity('Torii Gate', 'NORMAL');
+    setNodeAffinity('Trash Compactor', 'SCRAP');
+    setNodeAffinity('Termite Mound', 'INSECT');
+    setNodeAffinity('Occult Circle', 'EERIE');
+    setNodeAffinity('Monolith', 'SCRAP');
+
+    setListing('hawker', 1, 25, 0); // merchant, item index, buy price, sell price
+    setListing('hawker', 2, 90, 0);
+    setListing('hawker', 3, 160, 0);
+    setListing('hawker', 4, 500, 0);
+    setListing('ugajin', 1, 25, 0); // merchant, item index, buy price, sell price
+    setListing('ugajin', 2, 90, 0);
+    setListing('ugajin', 3, 150, 0);
+    setListing('ugajin', 4, 500, 0);
+
     createPlayerAPI(systems).ERC721.mint(
       '0x7681A73aed06bfb648a5818B978fb018019F6900'
     );
