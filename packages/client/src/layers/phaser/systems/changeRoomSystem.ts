@@ -3,31 +3,31 @@ import { defineSystem, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'layers/network/types';
+import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
 import { closeModalsOnRoomChange, getCurrentRoom } from 'layers/phaser/utils';
-import { GameScene } from 'layers/phaser/scenes/GameScene';
-import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
+import { checkDuplicateRooms } from 'layers/phaser/utils/checkDuplicateRooms';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
-    network: { connectedAddress },
     world,
-    components: { IsAccount, Location, OperatorAddress },
+    components: { IsAccount, Location, OwnerAddress },
   } = network;
 
   const {
-    game: {
-      scene: {
-        keys: { Game },
-      },
-    },
+    game: { scene: { keys: { Game } } },
   } = phaser;
 
   const GameSceneInstance = Game as GameScene;
 
-  defineSystem(world, [Has(OperatorAddress), Has(Location)], async (update) => {
+  defineSystem(world, [Has(OwnerAddress), Has(Location)], async (update) => {
+    const { selectedAddress } = useNetworkSettings.getState();
     const accountIndex = Array.from(
-      runQuery([HasValue(OperatorAddress, { value: connectedAddress.get() }), Has(IsAccount)])
+      runQuery([
+        Has(IsAccount),
+        HasValue(OwnerAddress, { value: selectedAddress }),
+      ])
     )[0];
 
     if (accountIndex == update.entity) {

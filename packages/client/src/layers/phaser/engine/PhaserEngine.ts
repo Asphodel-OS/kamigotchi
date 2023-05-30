@@ -13,10 +13,10 @@ import {
   pairwise,
   distinctUntilChanged,
 } from "rxjs";
-import { TPhaserConfig } from "../types";
+import { PhaserConfig } from "../config";
 
 
-export default async function CreatePhaserEngine(options: TPhaserConfig) {
+export default async function CreatePhaserEngine(options: PhaserConfig) {
   const game = new Phaser.Game(options);
 
   // Wait for phaser to boot

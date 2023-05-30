@@ -11,6 +11,7 @@ import {
 } from '@latticexyz/recs';
 
 import { dataStore } from 'layers/react/store/createStore';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { registerUIComponent } from 'layers/react/engine/store';
 import {
   AccountDetails,
@@ -18,7 +19,6 @@ import {
   useKamiAccount,
 } from 'layers/react/store/kamiAccount';
 import 'layers/react/styles/font.css';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 
 /** 
