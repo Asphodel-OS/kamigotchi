@@ -19,8 +19,8 @@ import {
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Node, getNode } from 'layers/react/components/shapes/Node';
-import { Production, getProduction } from 'layers/react/components/shapes/Production';
+import { Node, NodeKamis, getNode } from 'layers/react/components/shapes/Node';
+import { Production } from 'layers/react/components/shapes/Production';
 import { KamiCard } from '../library/KamiCard';
 import { BatteryComponent } from '../library/Battery';
 import { NodeInfo } from '../library/NodeContainer';
@@ -168,8 +168,8 @@ export function registerNodeModal() {
               node: {
                 ...node,
                 kamis: {
-                  mine: nodeKamisMine,
-                  others: nodeKamisOthers,
+                  allies: nodeKamisMine,
+                  enemies: nodeKamisOthers,
                 },
               },
             } as any,
@@ -188,7 +188,7 @@ export function registerNodeModal() {
       const scrollableRef = useRef<HTMLDivElement>(null);
       const [scrollPosition, setScrollPosition] = useState<number>(0);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const [tab, setTab] = useState<'mine' | 'others'>('mine');
+      const [tab, setTab] = useState<'allies' | 'enemies'>('allies');
       const { visibleModals, setVisibleModals } = dataStore();
       // scrolling
       useEffect(() => {
@@ -285,21 +285,22 @@ export function registerNodeModal() {
       /////////////////
       // DATA INTERPRETATION
       const RATE_PRECISION = 1e6;
+      const LIQUIDATION_IDLE_REQUIREMENT = 300; // time needed to spend idle for liquidating
 
       // rounds a value to a certain number of decimal places (precision)
-      const roundTo = (value: number, precision: number) => {
+      const roundTo = (value: number, precision: number): number => {
         return Math.round(value * 10 ** precision) / 10 ** precision;
       };
 
       // get the health drain rate, based on the kami's production
       // this is based on a hardcoded value for the time being
-      const calcDrainRate = (kami: Kami, precision?: number) => {
+      const calcDrainRate = (kami: Kami, precision?: number): number => {
         const drainRate = calcProductionRate(kami) / 2.0;
         return precision == undefined ? drainRate : roundTo(drainRate, precision);
       };
 
       // get emission rate of the Kami's production. measured in (KAMI/s)
-      const calcProductionRate = (kami: Kami, precision?: number) => {
+      const calcProductionRate = (kami: Kami, precision?: number): number => {
         let rate = 0;
         if (isHarvesting(kami)) {
           rate = kami.production!.rate / RATE_PRECISION;
@@ -308,7 +309,7 @@ export function registerNodeModal() {
       };
 
       // calculate health based on the drain against last confirmed health
-      const calcHealth = (kami: Kami, precision?: number) => {
+      const calcHealth = (kami: Kami, precision?: number): number => {
         let health = kami.health;
         if (isHarvesting(kami)) {
           let duration = lastRefresh / 1000 - kami.lastUpdated;
@@ -321,8 +322,7 @@ export function registerNodeModal() {
       };
 
       // calculate the expected output from a pet production based on starttime
-      // set to N/A if dead
-      const calcOutput = (kami: Kami, precision?: number) => {
+      const calcOutput = (kami: Kami, precision?: number): number => {
         let output = 0;
         if (isHarvesting(kami) && !isDead(kami)) {
           let duration = lastRefresh / 1000 - kami.production!.startTime;
@@ -359,16 +359,6 @@ export function registerNodeModal() {
 
       ///////////////////
       // DISPLAY
-
-      // button for tabbing over to my Kamis
-      const MyTabButton = () => (
-        <ActionButton id={`my-tab`} onClick={() => setTab('mine')} text='Allies' />
-      );
-
-      // button for tabbing over to enemy Kamis
-      const EnemyTabButton = () => (
-        <ActionButton id={`enemy-tab`} onClick={() => setTab('others')} text='Enemies' />
-      );
 
       // button for adding Kami to node
       const AddButton = (node: Node, restingKamis: Kami[]) => {
@@ -422,7 +412,7 @@ export function registerNodeModal() {
         );
       };
 
-      // rendering of my kami on this node
+      // rendering of an ally kami on this node
       const MyKard = (kami: Kami) => {
         const health = calcHealth(kami, 0);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
@@ -448,7 +438,7 @@ export function registerNodeModal() {
         );
       };
 
-      // rendering of enemy kami on this node
+      // rendering of an enemy kami on this node
       const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
         const health = calcHealth(kami, 0);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
@@ -478,49 +468,66 @@ export function registerNodeModal() {
         );
       };
 
-      // the rendering of all my kamis on this node
-      const MyKards = (myKamis: Kami[]) => {
-        let kardList = myKamis.map((kami: Kami) => MyKard(kami));
-        kardList.push(<Underline key='separator' />);
-        kardList.push(AddButton(data.node, data.account.kamis));
-        return kardList;
+      // list of kamis to display
+      // chooses between allies and enemies depending on selected tab
+      const KamiList = (nodeKamis: NodeKamis) => {
+        const allies = nodeKamis.allies ?? [];
+        const enemies = nodeKamis.enemies ?? [];
+
+        return (
+          <Scrollable ref={scrollableRef} style={{ flexGrow: 1 }}>
+            {(tab === 'allies')
+              ? allies.map((ally: Kami) => MyKard(ally))
+              : enemies.map((enemy: Kami) => EnemyKard(enemy, allies))
+            }
+          </Scrollable>
+        );
       };
 
-      // the rendering of all enemy kamis on this node
-      const EnemyKards = (enemies: Kami[], myKamis: Kami[]) => {
-        return enemies.map((enemyKami: Kami) => EnemyKard(enemyKami, myKamis));
-      };
+      const KamiTabs = () => (
+        <Tabs>
+          <ActionButton
+            id={`my-tab`}
+            text='Allies'
+            onClick={() => setTab('allies')}
+            disabled={tab === 'allies'}
+            fill={true}
+          />
+          <ActionButton
+            id={`enemy-tab`}
+            text='Enemies'
+            onClick={() => setTab('enemies')}
+            disabled={tab === 'enemies'}
+            fill={true}
+          />
+        </Tabs>
+      );
 
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, node: false });
       }, [setVisibleModals, visibleModals]);
 
-      if (data.account.kamis.length < 1) {
-        return (
-          <ModalWrapperFull id='node' divName='node'>
-            <AlignRight>
-              <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-                X
-              </TopButton>
-            </AlignRight>
-            <Header>Nodes reject those who do not travel with Kamigotchi.</Header>
-          </ModalWrapperFull>
-        );
-      }
-      if (data.node.id) {
-        return (
-          <ModalWrapperFull id='node' divName='node'>
-            <NodeInfo key={'node-info'} node={data.node} />
-            {MyTabButton()}
-            {EnemyTabButton()}
-            <Scrollable ref={scrollableRef}>
-              {tab === 'mine'
-                ? MyKards(data.node.kamis.mine)
-                : EnemyKards(data.node.kamis.others, data.node.kamis.mine)}
-            </Scrollable>
-          </ModalWrapperFull>
-        );
-      }
+      // if (data.account.kamis.length < 1) {
+      //   return (
+      //     <ModalWrapperFull id='node' divName='node'>
+      //       <AlignRight>
+      //         <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+      //           X
+      //         </TopButton>
+      //       </AlignRight>
+      //       <Header>Nodes reject those who do not travel with Kamigotchi.</Header>
+      //     </ModalWrapperFull>
+      //   );
+      // }
+      return (
+        <ModalWrapperFull id='node' divName='node'>
+          <NodeInfo key={'node-info'} node={data.node} />
+          {KamiTabs()}
+          {KamiList(data.node.kamis)}
+          <Underline key='separator' />
+          {AddButton(data.node, data.account.kamis)}
+        </ModalWrapperFull>
+      );
     }
   );
 }
@@ -535,6 +542,12 @@ const Underline = styled.div`
   margin: 3% auto;
   border-bottom: 2px solid silver;
   font-weight: bold;
+`;
+
+const Tabs = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
 `;
 
 const TopButton = styled.button`

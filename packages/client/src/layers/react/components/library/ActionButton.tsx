@@ -10,6 +10,7 @@ interface Props {
   text: string;
   disabled?: boolean;
   size?: 'small' | 'medium' | 'large';
+  fill?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -44,6 +45,7 @@ export const ActionButton = (props: Props) => {
     }
 
     if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    if (props.fill) styles.flexGrow = '1';
     return styles;
   };
 
@@ -65,7 +67,6 @@ const Button = styled.button`
   border-style: solid;
   border-width: 2px;
   color: black;
-  display: inline-block;
 
   justify-content: center;
   font-family: Pixel;
