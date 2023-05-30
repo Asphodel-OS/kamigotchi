@@ -121,7 +121,6 @@ export function registerWalletConnecter() {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
-        console.log('Account details:', accountDetails);
 
         if (accountDetails.id) {
           toggleVisibleButtons(true);
