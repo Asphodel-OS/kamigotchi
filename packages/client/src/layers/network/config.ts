@@ -130,8 +130,8 @@ function createNetworkConfigLattice(externalProvider?: ExternalProvider): Networ
 
     // checkpointUrl: undefined,
     chainId: 4242,
-    worldAddress: "0x751fcc7F1EA09803D4ef994e09544D2b73d6FA38",
-    initialBlockNumber: 15771956,
+    worldAddress: "0x7135132e9af25e745f6B4cfcb504884F2095bD94",
+    initialBlockNumber: 15773071,
   };
 
   // EOAs and privatekey
