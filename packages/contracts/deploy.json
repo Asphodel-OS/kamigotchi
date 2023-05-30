@@ -60,6 +60,7 @@
     "PriceBuyComponent",
     "PriceSellComponent",
     "PrototypeComponent",
+    "ProxyPermissionsERC721Component",
     "RarityComponent",
     "RateComponent",
     "SlotsComponent",

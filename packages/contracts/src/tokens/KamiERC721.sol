@@ -5,6 +5,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { ERC721MetadataSystem as MetadataSystem, ID as MetadataSystemID } from "systems/ERC721MetadataSystem.sol";
+import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC721Component.sol";
+// TODO: should be made redundant by permission component
 import { ID as MintSystemID } from "systems/ERC721MintSystem.sol";
 import { ID as TransferSystemID } from "systems/ERC721TransferSystem.sol";
 
@@ -39,9 +41,13 @@ string constant SYMBOL = "KAMI";
 contract KamiERC721 is ERC721Enumerable {
   IWorld internal immutable World;
 
-  modifier onlySystem(uint256 systemID) {
-    IUintComp Systems = World.systems();
-    require(getAddressById(Systems, systemID) == msg.sender, "721: not verified system");
+  modifier onlyWriter() {
+    require(
+      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
+        msg.sender
+      ),
+      "721: not a writer"
+    );
     _;
   }
 
@@ -61,17 +67,13 @@ contract KamiERC721 is ERC721Enumerable {
   // these functions are called by systems and are gated
 
   // allow minting for approved systems (only MintSystem rn)
-  function mint(address to, uint256 id) external onlySystem(MintSystemID) {
+  function mint(address to, uint256 id) external onlyWriter {
     _mint(to, id);
   }
 
   // completes a transfer between two in-game accounts. updates ERC721 to mirror MUD state
   // NOTE: actual system is unimplemented. May be better have a generic permissioning system
-  function inWorldTransfer(
-    address from,
-    address to,
-    uint256 id
-  ) external onlySystem(TransferSystemID) {
+  function inWorldTransfer(address from, address to, uint256 id) external onlyWriter {
     super.transferFrom(from, to, id);
   }
 
