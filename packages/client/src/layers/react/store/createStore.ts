@@ -53,6 +53,8 @@ export interface VisibleModals {
 }
 
 export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
+  bridgeERC20: isOn,
+  bridgeERC721: isOn,
   chat: isOn,
   dialogue: isOn,
   help: isOn,
