@@ -137,36 +137,30 @@ export function registerPartyModal() {
           const account =
             accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
 
-          // get the node through the location of the linked account
-          const nodeIndex = Array.from(
-            runQuery([Has(IsNode), HasValue(Location, { value: account.location })])
-          )[0];
-
-          const node = nodeIndex !== undefined ? getNode(layers, nodeIndex) : ({} as Node);
-
-          // get the list of inventory indices for this account
-          const inventoryResults = Array.from(
-            runQuery([Has(IsInventory), HasValue(HolderID, { value: account.id })])
-          );
-
-          // if we have inventories for the account, generate a list of inventory objects
+          // populate the account with kamis and inventories 
           let kamis: Kami[] = [];
           let inventories: any = hardCodeInventory();
           if (account) {
             // get the kamis on this account
             const kamiIndices = Array.from(
-              runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
+              runQuery([
+                Has(IsPet),
+                HasValue(AccountID, { value: account.id })
+              ])
             );
 
-            // get all kamis on the node
             for (let i = 0; i < kamiIndices.length; i++) {
               kamis.push(getKami(layers, kamiIndices[i], { production: true }));
             }
 
             // (hardcoded structures) populate inventory balances
+            // get the list of inventory indices for this account
+            const inventoryResults = Array.from(
+              runQuery([Has(IsInventory), HasValue(HolderID, { value: account.id })])
+            );
+
             let itemIndex;
             for (let i = 0; i < inventoryResults.length; i++) {
-              // match indices to the existing consumables
               itemIndex = getComponentValue(ItemIndex, inventoryResults[i])?.value as number;
               for (let j = 0; j < inventories.length; j++) {
                 if (inventories[j].itemIndex == itemIndex) {
@@ -182,7 +176,6 @@ export function registerPartyModal() {
             api: player,
             data: {
               account: { ...account, inventories, kamis },
-              node,
             } as any,
             world,
           };
