@@ -226,8 +226,8 @@ export function registerPartyModal() {
       /////////////////
       // INTERACTIONS
 
-      // feedKami pet, no inventory check
-      const feedKami = (petID: EntityID, foodIndex: number) => {
+      // feed a kami
+      const feedKami = (kami: Kami, foodIndex: number) => {
         const actionID = `Feeding Kami` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
@@ -236,28 +236,43 @@ export function registerPartyModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.pet.feed(petID, foodIndex);
+            return api.pet.feed(kami.id, foodIndex);
           },
         });
       };
 
-      // reveal pet
-      const revealKami = async (pet: Kami) => {
-        const actionID = (`Revealing Kami ` + pet.index) as EntityID; // Date.now to have the actions ordered in the component browser
+      // revive a kami using a revive item
+      const reviveKami = (kami: Kami, reviveIndex: number) => {
+        const actionID = `Reviving Kami ${kami.id}` as EntityID; // Date.now to have the actions ordered in the component browser
+        actions.add({
+          id: actionID,
+          components: {},
+          // on: data.????,
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.pet.revive(kami.id, reviveIndex);
+          },
+        });
+      };
+
+      // reveal kami
+      const revealKami = async (kami: Kami) => {
+        const actionID = (`Revealing Kami ` + kami.index) as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.ERC721.reveal(pet.index);
+            return api.ERC721.reveal(kami.index);
           },
         });
         await waitForActionCompletion(
           actions.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
-        openKamiModal(pet.entityIndex);
+        openKamiModal(kami.entityIndex);
       };
 
       const openKamiModal = (entityIndex: EntityIndex) => {
@@ -338,7 +353,7 @@ export function registerPartyModal() {
       };
 
       const isFull = (kami: Kami): boolean => {
-        return calcHealth(kami) >= kami.stats.health;
+        return Math.round(calcHealth(kami)) >= kami.stats.health;
       };
 
       const hasFood = (): boolean => {
@@ -477,10 +492,9 @@ export function registerPartyModal() {
 
       const FeedButton = (kami: Kami) => {
         const feedOptions: ActionListOption[] = [
-          { text: 'Ghost Gum', onClick: () => feedKami(kami.id, 1) },
-          { text: 'Fruit Candy', onClick: () => feedKami(kami.id, 2) },
-          { text: 'Cookie Sticks', onClick: () => feedKami(kami.id, 3) },
-          { text: 'Ribbon', onClick: () => feedKami(kami.id, 4) },
+          { text: 'Ghost Gum', onClick: () => feedKami(kami, 1) },
+          { text: 'Fruit Candy', onClick: () => feedKami(kami, 2) },
+          { text: 'Cookie Sticks', onClick: () => feedKami(kami, 3) },
         ];
 
         return (
@@ -500,7 +514,7 @@ export function registerPartyModal() {
       );
 
       const ReviveButton = (kami: Kami) => (
-        <ActionButton id={`revive-kami`} onClick={() => null} text='Revive' disabled={true} />
+        <ActionButton id={`revive-kami`} onClick={() => reviveKami(kami, 1)} text='Revive' />
       );
 
       // Choose and return the action button to display
