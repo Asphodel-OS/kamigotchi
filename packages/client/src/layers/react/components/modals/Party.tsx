@@ -493,6 +493,7 @@ export function registerPartyModal() {
               key={kami.id}
               image={kami.uri}
               title={kami.name}
+              kami={kami}
               description={description}
               subtext={`${calcOutput(kami)} $KAMI`}
               action={action}

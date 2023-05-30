@@ -428,6 +428,7 @@ export function registerNodeModal() {
         return (
           <KamiCard
             key={kami.id}
+            kami={kami}
             title={kami.name}
             image={kami.uri}
             subtext={`yours (\$${output})`}
@@ -458,6 +459,7 @@ export function registerNodeModal() {
         return (
           <KamiCard
             key={kami.id}
+            kami={kami}
             title={kami.name}
             image={kami.uri}
             subtext={`${kami.account!.name} (\$${output})`}
