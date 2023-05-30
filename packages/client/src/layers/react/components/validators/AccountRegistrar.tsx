@@ -9,6 +9,7 @@ import { useAccount } from 'wagmi';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
+import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 
@@ -44,16 +45,17 @@ export function registerAccountRegistrar() {
     },
 
     ({ network }) => {
-      const connectedBurnerAddress = network.connectedAddress.get();
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
-      const { networks, selectedAddress, sound: { volume } } = dataStore();
+      const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
+      const { sound: { volume } } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
 
       // toggle buttons and modals based on whether account is detected
       useEffect(() => {
-        setIsVisible(isConnected && !accountDetails.id);
-      }, [accountDetails, isConnected]);
+        const burnersMatch = burnerInfo.connected === burnerInfo.detected;
+        setIsVisible(isConnected && burnersMatch && !accountDetails.id);
+      }, [accountDetails, burnerInfo, isConnected]);
 
       /////////////////
       // ACTIONS
@@ -71,13 +73,12 @@ export function registerAccountRegistrar() {
       }
 
       const createAccount = async (username: string) => {
-        const {
-          actions,
-          api: { player },
-          world,
-        } = networks.get(selectedAddress);
-        console.log('CREATING ACCOUNT FOR:', selectedAddress);
+        const network = networks.get(selectedAddress);
+        const actions = network!.actions;
+        const world = network!.world;
+        const api = network!.api.player;
 
+        console.log('CREATING ACCOUNT FOR:', selectedAddress);
         const actionID = `Creating Account` as EntityID;
         actions.add({
           id: actionID,
@@ -85,7 +86,7 @@ export function registerAccountRegistrar() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return player.account.register(connectedBurnerAddress, username);
+            return api.account.register(burnerInfo.connected, username);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
@@ -102,7 +103,7 @@ export function registerAccountRegistrar() {
             <Description>(no registered account for connected address)</Description>
             <Header>Detected Addresses</Header>
             <Description>Owner: {selectedAddress}</Description>
-            <Description>Operator: {connectedBurnerAddress}</Description>
+            <Description>Operator: {burnerInfo.connected}</Description>
             <SingleInputTextForm
               id={`username`}
               label='username'

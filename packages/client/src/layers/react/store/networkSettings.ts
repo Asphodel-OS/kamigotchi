@@ -14,6 +14,7 @@ export interface NetworkSettings {
 }
 
 interface Actions {
+  addNetwork: (address: string, network: NetworkLayer) => void;
   setSelectedAddress: (address: string) => void;
   setBurnerInfo: (burnerInfo: BurnerSettings) => void;
 }
@@ -35,6 +36,12 @@ export const useNetworkSettings = create<NetworkSettings & Actions>((set) => {
     ),
     setSelectedAddress: (selectedAddress: string) => set(
       (state: NetworkSettings) => ({ ...state, selectedAddress })
+    ),
+    addNetwork: (address: string, network: NetworkLayer) => set(
+      (state: NetworkSettings) => ({
+        ...state,
+        networks: new Map(state.networks).set(address, network),
+      })
     ),
   };
 });

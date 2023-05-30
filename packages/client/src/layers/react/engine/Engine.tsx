@@ -11,7 +11,7 @@ import { EngineStore } from "./store";
 import { defaultChainConfig } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
-import { dataStore } from 'layers/react/store/createStore';
+import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { Layers } from 'src/types';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -38,7 +38,7 @@ export const Engine: React.FC<{
   customBootScreen?: React.ReactElement;
 }> = observer(({ mountReact, setLayers, customBootScreen }) => {
   const { connector, address: connectorAddress } = useAccount();
-  const { networks, setSelectedAddress } = dataStore();
+  const { networks, setSelectedAddress, addNetwork } = useNetworkSettings();
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
 
@@ -51,6 +51,7 @@ export const Engine: React.FC<{
   }, []);
 
   // update the network settings whenever the connector/address changes
+  // TODO?: move this logic to the WalletConnector based on updates to the selectedAddress
   useEffect(() => {
     console.log("NETWORK CHANGE DETECTED");
     updateNetworkSettings(connector);
@@ -63,13 +64,11 @@ export const Engine: React.FC<{
       const expectedChainID = defaultChainConfig.id;
       if (connectedChainID !== expectedChainID) return;
 
-      // console.log("CONNECTOR", connector);
-      // console.log("CONNECTOR ADDRESS", connectorAddress);
-      // console.log("CHAIN ID", chainID);
-
-      // spawn network client for address if one does not exist
+      // set the selected network
       const hotAddress = connectorAddress.toLowerCase();
       setSelectedAddress(hotAddress);
+
+      // spawn network client for address if one does not exist
       if (!networks.has(hotAddress)) {
         console.log(`CREATING NETWORK FOR NEW ADDRESS..`, hotAddress);
 
@@ -79,9 +78,7 @@ export const Engine: React.FC<{
         if (!networkConfig) throw new Error('Invalid config');
         const networkLayer = await createNetworkLayer(networkConfig);
         networkLayer.startSync();
-
-        // update the network settings
-        networks.set(hotAddress, networkLayer);
+        addNetwork(hotAddress, networkLayer);
       }
     }
   };

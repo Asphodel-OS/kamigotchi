@@ -18,6 +18,7 @@ import {
   useKamiAccount,
 } from 'layers/react/store/kamiAccount';
 import 'layers/react/styles/font.css';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 
 /** 
@@ -93,7 +94,7 @@ export function registerWalletConnecter() {
       ).pipe(
         map(() => {
           const burnerAddress = connectedAddress.get();
-          const { selectedAddress } = dataStore.getState();
+          const { selectedAddress } = useNetworkSettings.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
 
           return {
@@ -113,12 +114,9 @@ export function registerWalletConnecter() {
       getAccountDetails,
     }) => {
       const { isConnected, status } = useAccount();
+      const { selectedAddress } = useNetworkSettings();
       const { setDetails } = useKamiAccount();
-      const {
-        selectedAddress,
-        toggleVisibleButtons,
-        toggleVisibleModals,
-      } = dataStore();
+      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
 
       // track the account details in store for easy access
       // also expose/hide components accordingly
@@ -127,6 +125,7 @@ export function registerWalletConnecter() {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
+
         if (accountDetails.id) {
           toggleVisibleButtons(true);
         } else {
