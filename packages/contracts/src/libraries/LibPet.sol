@@ -28,10 +28,10 @@ import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 
-uint256 constant BASE_HARMONY = 20;
+uint256 constant BASE_HARMONY = 10;
 uint256 constant BASE_HEALTH = 50;
-uint256 constant BASE_POWER = 20;
-uint256 constant BASE_VIOLENCE = 20;
+uint256 constant BASE_POWER = 10;
+uint256 constant BASE_VIOLENCE = 10;
 uint256 constant BASE_SLOTS = 0;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
