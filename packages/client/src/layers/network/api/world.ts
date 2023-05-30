@@ -38,7 +38,7 @@ export function setUpWorldAPI(systems: any) {
           data[i].get("Violence") ? data[i].get("Violence") : "0",
           data[i].get("Harmony") ? data[i].get("Harmony") : "0",
           data[i].get("Slots") ? data[i].get("Slots") : "0",
-          data[i].get("Rarity") ? rarityParser(data[i].get("Rarity")) : 0,
+          data[i].get("BPs") ? data[i].get("BPs") : 0,
           data[i].get("Affinity") ? data[i].get("Affinity").toUpperCase() : "",
           data[i].get("Name"), // name of trait
           type, // type: body, color, etc
@@ -47,19 +47,6 @@ export function setUpWorldAPI(systems: any) {
 
       // -1 because max includes 0, should remove this
       return data.length - 1;
-    }
-
-    function rarityParser(rarity: string) {
-      switch (rarity) {
-        case "Common":
-          return 3 ** 5;
-        case "Rare":
-          return 3 ** 4;
-        case "Epic":
-          return 3 ** 3;
-        default:
-          return 0;
-      }
     }
 
     const numBg = initSingle(background, "BACKGROUND");

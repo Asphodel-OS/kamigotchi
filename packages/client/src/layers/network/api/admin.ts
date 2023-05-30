@@ -57,6 +57,10 @@ export function createAdminAPI(systems: any) {
       'This huge black monolith seems to draw in energy from the rest of the junkyard.'
     );
 
+    // init general, TODO: move to worldSetUp
+    systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
+
+    setUpWorldAPI(systems).initWorld();
 
     // create food registry items
     registerFood(1, 'Maple-Flavor Ghost Gum', 25);
@@ -71,11 +75,6 @@ export function createAdminAPI(systems: any) {
 
     // // create our hottie merchant ugajin. names are unique
     createMerchant('ugajin', 13);
-
-    // init general, TODO: move to worldSetUp
-    systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
-
-    setUpWorldAPI(systems).initWorld();
 
     setNodeAffinity('Torii Gate', 'NORMAL');
     setNodeAffinity('Trash Compactor', 'SCRAP');
@@ -95,6 +94,37 @@ export function createAdminAPI(systems: any) {
     createPlayerAPI(systems).ERC721.mint(
       '0x7681A73aed06bfb648a5818B978fb018019F6900'
     );
+  }
+
+  function initDependents() {
+    // create food registry items
+    registerFood(1, 'Maple-Flavor Ghost Gum', 25);
+    registerFood(2, 'Pom-Pom Fruit Candy', 100);
+    registerFood(3, 'Gakki Cookie Sticks', 200);
+
+    // create revive registry items
+    registerRevive(1, 'Red Gakki Ribbon', 10);
+
+    // set listings on global merchant
+    createMerchant('hawker', 0);
+
+    // // create our hottie merchant ugajin. names are unique
+    createMerchant('ugajin', 13);
+
+    setNodeAffinity('Torii Gate', 'NORMAL');
+    setNodeAffinity('Trash Compactor', 'SCRAP');
+    setNodeAffinity('Termite Mound', 'INSECT');
+    setNodeAffinity('Occult Circle', 'EERIE');
+    setNodeAffinity('Monolith', 'SCRAP');
+
+    setListing('hawker', 1, 25, 0); // merchant, item index, buy price, sell price
+    setListing('hawker', 2, 90, 0);
+    setListing('hawker', 3, 160, 0);
+    setListing('hawker', 4, 500, 0);
+    setListing('ugajin', 1, 25, 0); // merchant, item index, buy price, sell price
+    setListing('ugajin', 2, 90, 0);
+    setListing('ugajin', 3, 150, 0);
+    setListing('ugajin', 4, 500, 0);
   }
 
   // @dev creates a merchant with the name at the specified location
@@ -320,6 +350,7 @@ export function createAdminAPI(systems: any) {
 
   return {
     init,
+    initDependents,
     giveCoins,
     ERC721: { forceReveal: petForceReveal },
     listing: { set: setListing },
