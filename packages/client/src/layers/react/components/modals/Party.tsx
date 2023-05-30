@@ -491,15 +491,11 @@ export function registerPartyModal() {
           return (
             <KamiCard
               key={kami.id}
-              image={kami.uri}
-              title={kami.name}
               kami={kami}
               description={description}
               subtext={`${calcOutput(kami)} $KAMI`}
               action={action}
               cornerContent={healthString}
-              imageOnClick={() => openKamiModal(kami.entityIndex)}
-              titleOnClick={() => openKamiModal(kami.entityIndex)}
             />
           );
         });

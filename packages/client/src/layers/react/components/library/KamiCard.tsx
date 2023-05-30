@@ -8,14 +8,10 @@ import { dataStore } from 'layers/react/store/createStore';
 
 interface Props {
   kami: Kami;
-  title: string;
-  image: string;
-  subtext: string;
   description: string[];
-  action: React.ReactNode;
+  subtext?: string;
+  action?: React.ReactNode;
   cornerContent?: React.ReactNode;
-  imageOnClick?: Function;
-  titleOnClick?: Function;
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
@@ -29,9 +25,15 @@ export const KamiCard = (props: Props) => {
     sound: { volume },
   } = dataStore();
 
+  // layer on a sound effect
+  const playClickAudio = async () => {
+    const clickSound = new Audio(clickSoundUrl);
+    clickSound.volume = volume * 0.6;
+    clickSound.play();
+  };
+
   // toggle the kami modal settings depending on current its current state
   const kamiOnClick = () => {
-    playClickAudio();
     const modalIsOpen = visibleModals.kami;
     const sameKami = selectedEntities.kami === props.kami.entityIndex;
     if (modalIsOpen) {
@@ -44,14 +46,8 @@ export const KamiCard = (props: Props) => {
       setSelectedEntities({ ...selectedEntities, kami: props.kami.entityIndex });
       setVisibleModals({ ...visibleModals, kami: true });
     }
+    playClickAudio();
   }
-
-  // layer on a sound effect
-  const playClickAudio = async () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
-  };
 
   // generate the styled text divs for the description
   const Description = () => {
@@ -65,10 +61,10 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card key={props.kami.id}>
-      <Image onClick={() => kamiOnClick()} src={props.image} />
+      <Image onClick={() => kamiOnClick()} src={props.kami.uri} />
       <Container>
         <TitleBar>
-          <TitleText onClick={() => kamiOnClick()}>{props.title}</TitleText>
+          <TitleText onClick={() => kamiOnClick()}>{props.kami.name}</TitleText>
           <TitleCorner>{props.cornerContent}</TitleCorner>
         </TitleBar>
         <Content>

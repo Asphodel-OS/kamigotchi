@@ -361,8 +361,8 @@ export function registerNodeModal() {
       // DISPLAY
 
       // button for adding Kami to node
-      const AddButton = (node: Node, restingKamis: Kami[]) => {
-        const options: ActionListOption[] = restingKamis.map((kami) => {
+      const AddButton = (node: Node, kamis: Kami[]) => {
+        const options: ActionListOption[] = kamis.map((kami) => {
           return { text: `${kami.name}`, onClick: () => start(kami, node) };
         });
         return (
@@ -373,29 +373,34 @@ export function registerNodeModal() {
             hidden={true}
             scrollPosition={scrollPosition}
             options={options}
-            disabled={restingKamis.length == 0}
+            disabled={kamis.length == 0}
           />
         );
       };
 
       // button for collecting on production
-      const CollectButton = (myKami: Kami) => (
+      const CollectButton = (kami: Kami) => (
         <ActionButton
-          id={`harvest-collect`}
-          key={`harvest-collect`}
-          onClick={() => collect(myKami.production!)}
+          id={`harvest-collect-${kami.id}`}
+          key={`harvest-collect-${kami.id}`}
+          onClick={() => collect(kami.production!)}
           text='Collect'
         />
       );
 
       // button for stopping production
-      const StopButton = (myKami: Kami) => (
-        <ActionButton id={`harvest-stop`} onClick={() => stop(myKami.production!)} text='Stop' />
+      const StopButton = (kami: Kami) => (
+        <ActionButton
+          id={`harvest-stop-${kami.id}`}
+          key={`harvest-stop-${kami.id}`}
+          text='Stop'
+          onClick={() => stop(kami.production!)}
+        />
       );
 
       // button for liquidating production
-      const LiquidateButton = (target: Kami, soldiers: Kami[]) => {
-        const options: ActionListOption[] = soldiers.map((myKami) => {
+      const LiquidateButton = (target: Kami, allies: Kami[]) => {
+        const options: ActionListOption[] = allies.map((myKami) => {
           return { text: `${myKami.name}`, onClick: () => liquidate(myKami, target) };
         });
 
@@ -407,7 +412,7 @@ export function registerNodeModal() {
             hidden={true}
             scrollPosition={scrollPosition}
             options={options}
-            disabled={soldiers.length == 0}
+            disabled={allies.length == 0}
           />
         );
       };
@@ -429,8 +434,6 @@ export function registerNodeModal() {
           <KamiCard
             key={kami.id}
             kami={kami}
-            title={kami.name}
-            image={kami.uri}
             subtext={`yours (\$${output})`}
             action={[CollectButton(kami), StopButton(kami)]}
             cornerContent={<BatteryComponent level={healthPercent} />}
@@ -460,8 +463,6 @@ export function registerNodeModal() {
           <KamiCard
             key={kami.id}
             kami={kami}
-            title={kami.name}
-            image={kami.uri}
             subtext={`${kami.account!.name} (\$${output})`}
             action={LiquidateButton(kami, validLiquidators)}
             cornerContent={<BatteryComponent level={healthPercent} />}
