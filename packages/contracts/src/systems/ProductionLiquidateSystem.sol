@@ -13,6 +13,7 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
+uint256 constant IDLE_REQUIREMENT = 300;
 
 // liquidates a target production using a player's pet.
 // TODO: support kill logs
@@ -23,6 +24,10 @@ contract ProductionLiquidateSystem is System {
     (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+
+    // require 5min since previous action to attempt a liquidation
+    uint256 idleTime = block.timestamp - LibPet.getLastTs(components, petID);
+    require(idleTime > IDLE_REQUIREMENT, "Pet: too soon");
 
     // standard checks
     LibPet.syncHealth(components, petID);
@@ -37,14 +42,14 @@ contract ProductionLiquidateSystem is System {
     uint256 productionID = LibPet.getProduction(components, petID);
     uint256 nodeID = LibProduction.getNode(components, productionID);
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
-    require(nodeID == targetNodeID, "Production: not on same node");
+    require(nodeID == targetNodeID, "Production: must be on same node as target");
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
     LibPet.syncHealth(components, targetPetID);
     require(
       LibProduction.isLiquidatableBy(components, targetProductionID, petID),
-      "Production: YOU HAVE NO POWER HERE (need moar violence)"
+      "Pet: need moar violence"
     );
 
     // collect the money

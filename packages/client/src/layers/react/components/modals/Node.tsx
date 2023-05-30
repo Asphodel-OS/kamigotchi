@@ -331,8 +331,19 @@ export function registerNodeModal() {
         return precision == undefined ? output : roundTo(output, precision);
       };
 
+      // calculate the time a kami has spent idle (in seconds)
+      const calcIdleTime = (kami: Kami): number => {
+        return lastRefresh / 1000 - kami.lastUpdated;
+      }
+
+      // determine whether a kami can liquidate another kami
+      // TODO: introduce checks around stats
+      const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
+        return calcIdleTime(attacker) > LIQUIDATION_IDLE_REQUIREMENT;
+      }
+
       // naive check right now, needs to be updated with murder check as well
-      const isDead = (kami: Kami) => {
+      const isDead = (kami: Kami): boolean => {
         return calcHealth(kami) == 0;
       };
 
@@ -450,13 +461,17 @@ export function registerNodeModal() {
           `Violence: ${kami.stats.violence * 1}`,
         ];
 
+        const validLiquidators = myKamis.filter((myKami) => {
+          return canLiquidate(myKami, kami);
+        });
+
         return (
           <KamiCard
             key={kami.id}
             title={kami.name}
             image={kami.uri}
             subtext={`${kami.account!.name} (\$${output})`}
-            action={LiquidateButton(kami, myKamis)}
+            action={LiquidateButton(kami, validLiquidators)}
             cornerContent={<BatteryComponent level={healthPercent} />}
             description={description}
           />
