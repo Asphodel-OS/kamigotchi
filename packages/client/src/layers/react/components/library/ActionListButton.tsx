@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
+import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
+import { dataStore } from 'layers/react/store/createStore';
+
 interface Props {
   id: string;
   text: string;
@@ -16,6 +19,7 @@ export interface Option {
 }
 
 export function ActionListButton(props: Props) {
+  const { sound: { volume } } = dataStore();
   const [isOpen, setIsOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -29,15 +33,24 @@ export function ActionListButton(props: Props) {
     const screenHeight = window.innerHeight;
     const targetHeight = (e.target as HTMLElement).clientHeight;
 
-    if (togglePosition && togglePosition.bottom + targetHeight > screenHeight * 0.7) {
-      console.log('dadaaa');
-      // Menu should pop up above the toggle
-      setMenuPosition({ top: togglePosition.bottom * 0.85, left: togglePosition.left });
-    } else {
-      setMenuPosition({ top: togglePosition.bottom, left: togglePosition.left });
+    if (togglePosition) {
+      if (togglePosition.bottom + targetHeight > screenHeight * 0.7) {
+        setMenuPosition({ top: togglePosition.bottom * 0.85, left: togglePosition.left });
+      } else {
+        setMenuPosition({ top: togglePosition.bottom, left: togglePosition.left });
+      }
     }
     setIsOpen(!isOpen);
   };
+
+  // close the menu and layer in a sound effect
+  const onSelect = (option: Option) => {
+    const clickSound = new Audio(clickSoundUrl);
+    clickSound.volume = volume * 0.6;
+    clickSound.play();
+    option.onClick();
+    setIsOpen(false);
+  }
 
   const setStyles = () => {
     var styles: any = {};
@@ -50,7 +63,7 @@ export function ActionListButton(props: Props) {
       <Toggle
         ref={toggleRef}
         id={props.id}
-        onClick={!props.disabled ? toggleMenu : () => {}}
+        onClick={!props.disabled ? (e) => toggleMenu(e) : () => { }}
         style={setStyles()}
       >
         {props.text + ' ▾'}
@@ -60,7 +73,7 @@ export function ActionListButton(props: Props) {
         <MenuWrapper style={{ top: menuPosition.top, left: menuPosition.left }}>
           <Menu>
             {props.options.map((option, i) => (
-              <Item key={i} onClick={() => option.onClick()}>
+              <Item key={i} onClick={() => onSelect(option)}>
                 {option.text}
               </Item>
             ))}
@@ -112,7 +125,7 @@ const Menu = styled.div`
   border-style: solid;
   border-width: 2px;
   color: black;
-  margin: 0px 3px;
+  padding: 0px 3px;
   min-width: 100px;
 `;
 
