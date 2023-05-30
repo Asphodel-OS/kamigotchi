@@ -63,7 +63,7 @@ library LibPet {
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
-    removeCanName(components, id);
+    setCanName(components, id, true);
     return id;
   }
 
@@ -346,12 +346,11 @@ library LibPet {
     LibStat.setSlots(components, id, slots);
   }
 
-  function setCanName(IUintComp components, uint256 id) internal {
-    CanNameComponent(getAddressById(components, CanNameCompID)).set(id);
-  }
-
-  function removeCanName(IUintComp components, uint256 id) internal {
-    if (CanNameComponent(getAddressById(components, CanNameCompID)).has(id)) {
+  // add or remove the CanName component
+  function setCanName(IUintComp components, uint256 id, bool can) internal {
+    if (can) {
+      CanNameComponent(getAddressById(components, CanNameCompID)).set(id);
+    } else if (CanNameComponent(getAddressById(components, CanNameCompID)).has(id)) {
       CanNameComponent(getAddressById(components, CanNameCompID)).remove(id);
     }
   }

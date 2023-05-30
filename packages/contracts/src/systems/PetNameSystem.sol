@@ -30,7 +30,7 @@ contract PetNameSystem is System {
     require(LibPet.getByName(components, name) == 0, "Pet: name taken");
 
     LibPet.setName(components, id, name);
-    LibPet.removeCanName(components, id);
+    LibPet.setCanName(components, id, false);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }
