@@ -275,12 +275,12 @@ export function registerPartyModal() {
 
       // get the health drain rate, based on the kami's production
       // this is based on a hardcoded value for the time being
-      const calcDrainRate = (kami: Kami) => {
+      const calcDrainRate = (kami: Kami): number => {
         return calcProductionRate(kami) / 2.0;
       };
 
       // calculate the recovery rate based on the harmony stat of the kami (KAMI/s)
-      const calcRecoveryRate = (kami: Kami) => {
+      const calcRecoveryRate = (kami: Kami): number => {
         let rate = 0;
         if (isResting(kami)) {
           rate = kami.stats.harmony / 3600;
@@ -289,7 +289,7 @@ export function registerPartyModal() {
       };
 
       // get emission rate of the Kami's production. measured in (KAMI/s)
-      const calcProductionRate = (kami: Kami) => {
+      const calcProductionRate = (kami: Kami): number => {
         let rate = 0;
         if (isHarvesting(kami)) {
           rate = kami.production!.rate / RATE_PRECISION;
@@ -318,14 +318,55 @@ export function registerPartyModal() {
       };
 
       // calculate the expected output from a pet production based on starttime
-      // set to N/A if dead
-      const calcOutput = (kami: Kami) => {
+      const calcOutput = (kami: Kami): number => {
         let output = 0;
         if (isHarvesting(kami) && !isDead(kami)) {
           let duration = lastRefresh / 1000 - kami.production!.startTime;
           output = Math.round(duration * calcProductionRate(kami));
         }
         return Math.max(output, 0);
+      };
+
+      // interpret the location of the kami based on the kami's state
+      const getLocation = (kami: Kami): number => {
+        let location = 0;
+        if (!isHarvesting(kami)) location = data.account.location;
+        else if (kami.production && kami.production.node) {
+          location = kami.production.node.location;
+        }
+        return location;
+      };
+
+      const isFull = (kami: Kami): boolean => {
+        return calcHealth(kami) >= kami.stats.health;
+      };
+
+      const hasFood = (): boolean => {
+        const inventories = data.account.inventories;
+        const foodInventories = inventories.slice(0, 3);
+
+        let totalBalance = 0;
+        for (let i = 0; i < foodInventories.length; i++) {
+          totalBalance += foodInventories[i].balance;
+        }
+        return totalBalance > 0;
+      }
+
+      // get the reason why a kami can't feed. assume the kami is either resting or harvesting
+      const whyCantFeed = (kami: Kami): string => {
+        let reason = '';
+        if (getLocation(kami) != data.account.location) {
+          reason = `${kami.name} is not at your location`;
+        } else if (isFull(kami)) {
+          reason = `${kami.name} is already full`;
+        } else if (!hasFood()) {
+          reason = `go buy food, poore`;
+        }
+        return reason;
+      }
+
+      const canFeed = (kami: Kami): boolean => {
+        return !whyCantFeed(kami);
       };
 
       // naive check right now, needs to be updated with murder check as well
@@ -434,7 +475,7 @@ export function registerPartyModal() {
         });
       };
 
-      const FeedButton = (kami: Kami, disabled: boolean) => {
+      const FeedButton = (kami: Kami) => {
         const feedOptions: ActionListOption[] = [
           { text: 'Ghost Gum', onClick: () => feedKami(kami.id, 1) },
           { text: 'Fruit Candy', onClick: () => feedKami(kami.id, 2) },
@@ -447,7 +488,7 @@ export function registerPartyModal() {
             id={`feedKami-button-${kami.index}`}
             text='Feed'
             hidden={true}
-            disabled={disabled}
+            disabled={!canFeed(kami)}
             scrollPosition={scrollPosition}
             options={feedOptions}
           />
