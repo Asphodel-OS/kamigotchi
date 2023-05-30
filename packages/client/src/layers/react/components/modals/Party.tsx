@@ -504,19 +504,17 @@ export function registerPartyModal() {
       );
 
       // Choose and return the action button to display
-      const DisplayedAction = (kami: Kami, isDisabled: boolean) => {
+      const DisplayedAction = (kami: Kami) => {
         if (isUnrevealed(kami)) return RevealButton(kami);
-        if (isResting(kami)) return FeedButton(kami, isDisabled);
-        if (isHarvesting(kami) && calcHealth(kami) > 0) return FeedButton(kami, isDisabled);
-        if (isHarvesting(kami) && calcHealth(kami) == 0) return ReviveButton(kami);
+        if (isResting(kami)) return FeedButton(kami);
+        if (isHarvesting(kami)) return FeedButton(kami);
         if (isDead(kami)) return ReviveButton(kami);
       };
 
       // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
         return kamis.map((kami) => {
-          const isDisabled = +calcHealth(kami).toFixed() == kami.stats.health * 1;
-          const action = DisplayedAction(kami, isDisabled);
+          const action = DisplayedAction(kami);
           const description = getDescription(kami);
           const healthString = !isUnrevealed(kami)
             ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1})`
