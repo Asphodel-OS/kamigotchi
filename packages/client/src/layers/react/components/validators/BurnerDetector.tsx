@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
+import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address';
@@ -16,8 +17,8 @@ export function registerBurnerDetector() {
     {
       colStart: 20,
       colEnd: 80,
-      rowStart: 70,
-      rowEnd: 90,
+      rowStart: 30,
+      rowEnd: 70,
     },
     (layers) => {
       const {
@@ -36,28 +37,30 @@ export function registerBurnerDetector() {
     },
 
     ({ network }) => {
-      const connectedBurnerAddress = network.connectedAddress.get();
-      const { isConnected } = useAccount();
-      const [burnerPrivateKey, setBurnerPrivateKey] = useLocalStorage('operatorPrivateKey', '');
+      const { isConnected } = useAccount(); // refers to Connector
+      const connectedAddress = network.connectedAddress.get();
+      const { setBurnerInfo } = useNetworkSettings();
+      const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
+      const [detectedAddress, setDetectedAddress] = useState('');
+      const [isMismatched, setIsMismatched] = useState(false);
       const [input, setInput] = useState('');
 
-      /////////////////
-      // DATA
+      // set the detectedAddress upon detectedPrivateKey change
+      // check whether mismatched in the process
+      useEffect(() => {
+        const detectedAddress = getAddressFromPrivateKey(detectedPrivateKey);
+        setDetectedAddress(detectedAddress);
+        setBurnerInfo({ connected: connectedAddress ?? '', detected: detectedAddress });
+        setIsMismatched(connectedAddress !== detectedAddress);
+      }, [detectedPrivateKey]);
 
-      // generate the warning message for the detected issue
-      const getWarning = () => {
-        let warningMessage = '';
-        const computedAddress = getAddressFromPrivateKey(burnerPrivateKey);
-        if (!burnerPrivateKey) {
-          warningMessage = 'No burner detected. Please enter a private key.';
-        } else if (!computedAddress) {
-          warningMessage = 'Invalid burner detected. Please enter a private key.';
-        } else if (computedAddress !== connectedBurnerAddress) {
-          warningMessage = 'Mismatch detected. Please refresh or enter the correct private key.';
-        }
-        // should we include mismatch with account ?
-        return warningMessage;
-      }
+      /////////////////
+      // STATE
+
+      // how to render the modal
+      const modalDisplay = () => (
+        (isConnected && isMismatched) ? 'block' : 'none'
+      );
 
       const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value);
@@ -65,17 +68,12 @@ export function registerBurnerDetector() {
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          setBurnerPrivateKey(input);
+          setDetectedPrivateKey(input);
         }
       };
 
       /////////////////
       // DISPLAY
-
-      // how to render the modal
-      const modalDisplay = () => (
-        (isConnected && getWarning()) ? 'block' : 'none'
-      );
 
       const GenerateButton = () => (
         <ActionButton
@@ -88,7 +86,7 @@ export function registerBurnerDetector() {
       const SubmitButton = () => (
         <ActionButton
           id={`set-burner`}
-          onClick={() => setBurnerPrivateKey(input)}
+          onClick={() => setDetectedPrivateKey(input)}
           text='Submit'
         />
       )
@@ -103,20 +101,40 @@ export function registerBurnerDetector() {
         />
       );
 
+      const ErrorMessage = () => {
+        let title = '', message = '';
+
+        if (!detectedPrivateKey) {
+          title = 'No Burner Detected';
+          message = 'Please enter a private key.';
+        } else if (!detectedAddress) {
+          title = 'Invalid Burner Detected';
+          message = 'Please enter a private key.';
+        } else if (isMismatched) {
+          title = 'Mismatch Detected';
+          message = 'Please refresh or enter the correct private key.';
+        }
+
+        return (
+          <>
+            <ErrorTitle>{title}</ErrorTitle>
+            <ErrorText>{message}</ErrorText>
+          </>
+        )
+      };
+
 
       return (
         <ModalWrapper id='burner-detector' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Burner Address Detector</Title>
             <br />
-            <Header>Addresses</Header>
+            <Description>Connected: {connectedAddress}</Description>
             <br />
-            <Description>Connected: {connectedBurnerAddress}</Description>
-            <br />
-            <Description>Detected: {getAddressFromPrivateKey(burnerPrivateKey)}</Description>
+            <Description>Detected: {detectedAddress}</Description>
             <br />
             <br />
-            <ErrorMessage>{getWarning()}</ErrorMessage>
+            {ErrorMessage()}
             {PrivateKeyInput()}
             <ActionWrapper>
               {GenerateButton()}
@@ -193,14 +211,7 @@ const ActionWrapper = styled.div`
 const Title = styled.p`
   font-size: 18px;
   color: #333;
-  text-align: center;
-  font-family: Pixel;
-`;
-
-
-const Header = styled.p`
-  font-size: 14px;
-  color: #333;
+  padding: 15px;
   text-align: center;
   font-family: Pixel;
 `;
@@ -212,7 +223,15 @@ const Description = styled.p`
   font-family: Pixel;
 `;
 
-const ErrorMessage = styled.p`
+const ErrorTitle = styled.div`
+  font-size: 14px;
+  color: #922;
+  padding: 10px;
+  text-align: center;
+  font-family: Pixel;
+`
+
+const ErrorText = styled.p`
   font-size: 12px;
   color: #922;
   text-align: center;
