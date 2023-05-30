@@ -34,6 +34,7 @@ contract ProductionCollectSystem is System {
     // collect production output and reset time
     uint256 amt = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, amt);
+    LibPet.addExperience(components, petID, amt);
     LibProduction.reset(components, id);
 
     // logging and tracking

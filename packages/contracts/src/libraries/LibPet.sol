@@ -14,6 +14,7 @@ import { CanNameComponent, ID as CanNameCompID } from "components/CanNameCompone
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
+import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -60,10 +61,10 @@ library LibPet {
     setAccount(components, id, accountID);
     setMediaURI(components, id, uri);
     setState(components, id, "UNREVEALED");
+    setExperience(components, id, 0);
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
-    setCanName(components, id, true);
     return id;
   }
 
@@ -77,6 +78,11 @@ library LibPet {
   function withdraw(IUintComp components, uint256 id) internal {
     setState(components, id, "721_EXTERNAL");
     setAccount(components, id, 0);
+  }
+
+  function addExperience(IUintComp components, uint256 id, uint256 amt) internal {
+    uint256 exp = getExperience(components, id);
+    setExperience(components, id, exp + amt);
   }
 
   // Drains HP from a pet. The opposite of heal().
@@ -119,7 +125,7 @@ library LibPet {
   // NOTE: most of the reveal logic (generation) is in the ERC721MetadataSystem itself
   //       this function is for components saved directely on the Pet Entity
   function reveal(IUintComp components, uint256 id) internal {
-    setCanName(components, id);
+    setCanName(components, id, true);
     revive(components, id);
     setStats(components, id);
     setLastTs(components, id, block.timestamp);
@@ -359,6 +365,10 @@ library LibPet {
     HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
   }
 
+  function setExperience(IUintComp components, uint256 id, uint256 experience) internal {
+    ExperienceComponent(getAddressById(components, ExperienceCompID)).set(id, experience);
+  }
+
   // Update the TimeLastAction of a pet. used to expected battery drain on next action
   function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
     TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
@@ -386,6 +396,10 @@ library LibPet {
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
+  }
+
+  function getExperience(IUintComp components, uint256 id) internal view returns (uint256) {
+    return ExperienceComponent(getAddressById(components, ExperienceCompID)).getValue(id);
   }
 
   // gets the last explicitly set health of a pet. naming discrepancy for clarity

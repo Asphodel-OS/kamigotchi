@@ -37,6 +37,7 @@ contract ProductionStopSystem is System {
     // collect production output
     uint256 amt = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, amt);
+    LibPet.addExperience(components, petID, amt);
 
     // stop production and set pet to resting
     LibProduction.stop(components, id);

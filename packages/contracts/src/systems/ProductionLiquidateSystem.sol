@@ -56,6 +56,7 @@ contract ProductionLiquidateSystem is System {
     // NOTE: this could be sent to the kami in future mechanics
     uint256 amt = LibProduction.calcBounty(components, targetProductionID);
     LibCoin.inc(components, accountID, amt);
+    LibPet.addExperience(components, petID, amt);
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);

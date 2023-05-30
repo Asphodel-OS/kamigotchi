@@ -27,6 +27,7 @@ export type { ERC721TransferSystem } from "./ERC721TransferSystem";
 export type { ERC721WithdrawSystem } from "./ERC721WithdrawSystem";
 export type { EpochComponent } from "./EpochComponent";
 export type { ExitsComponent } from "./ExitsComponent";
+export type { ExperienceComponent } from "./ExperienceComponent";
 export type { HarmonyComponent } from "./HarmonyComponent";
 export type { HealthComponent } from "./HealthComponent";
 export type { HealthCurrentComponent } from "./HealthCurrentComponent";
@@ -153,6 +154,7 @@ export { ERC721TransferSystem__factory } from "./factories/ERC721TransferSystem_
 export { ERC721WithdrawSystem__factory } from "./factories/ERC721WithdrawSystem__factory";
 export { EpochComponent__factory } from "./factories/EpochComponent__factory";
 export { ExitsComponent__factory } from "./factories/ExitsComponent__factory";
+export { ExperienceComponent__factory } from "./factories/ExperienceComponent__factory";
 export { HarmonyComponent__factory } from "./factories/HarmonyComponent__factory";
 export { HealthComponent__factory } from "./factories/HealthComponent__factory";
 export { HealthCurrentComponent__factory } from "./factories/HealthCurrentComponent__factory";
