@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
@@ -16,43 +16,30 @@ import successSound from 'assets/sound/fx/bubble_success.mp3';
 import 'layers/react/styles/font.css';
 
 // TODO: check for whether an account with the burner address already exists
-export function registerAccountRegistrar() {
+export function registerOperatorUpdater() {
   registerUIComponent(
-    'AccountRegistrar',
+    'OperatorUpdater',
     {
       colStart: 20,
       colEnd: 80,
       rowStart: 30,
       rowEnd: 60,
     },
-    (layers) => {
-      const {
-        network: {
-          components: { IsAccount, OwnerAddress },
-        },
-      } = layers;
-
-      return merge(IsAccount.update$, OwnerAddress.update$).pipe(
-        map(() => {
-          return {
-            network: layers.network.network,
-          };
-        })
-      );
-    },
-
-    ({ network }) => {
+    (layers) => of(layers),
+    () => {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { sound: { volume } } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
 
-      // toggle buttons and modals based on whether account is detected
+      // toggle visibility based on many things
       useEffect(() => {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
-        setIsVisible(isConnected && burnersMatch && !accountDetails.id);
-      }, [accountDetails, burnerInfo, isConnected]);
+        const hasAccount = !!accountDetails.id;
+        const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
+        setIsVisible(isConnected && burnersMatch && hasAccount && !operatorMatch);
+      }, [isConnected, burnerInfo, accountDetails]);
 
       /////////////////
       // ACTIONS
@@ -63,27 +50,27 @@ export function registerAccountRegistrar() {
         soundFx.play();
       }
 
-      const createAccountWithFx = async (username: string) => {
+      const setOperatorWithFx = async (address: string) => {
         playSound(scribbleSound);
-        await createAccount(username);
+        await setOperator(address);
         playSound(successSound);
       }
 
-      const createAccount = async (username: string) => {
+      const setOperator = async (address: string) => {
         const network = networks.get(selectedAddress);
         const actions = network!.actions;
         const world = network!.world;
         const api = network!.api.player;
 
-        console.log('CREATING ACCOUNT FOR:', selectedAddress);
-        const actionID = `Creating Account` as EntityID;
+        console.log('SETTING OPERATOR:', address);
+        const actionID = `Setting Operator` as EntityID;
         actions.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.account.register(burnerInfo.connected, username);
+            return api.account.set.operator(burnerInfo.connected);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
@@ -94,19 +81,20 @@ export function registerAccountRegistrar() {
       // DISPLAY
 
       return (
-        <ModalWrapper id='accountRegistration' style={{ display: isVisible ? 'block' : 'none' }}>
+        <ModalWrapper id='operator-updater' style={{ display: isVisible ? 'block' : 'none' }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Register Your Account</Title>
-            <Description>(no registered account for connected address)</Description>
-            <Header>Detected Addresses</Header>
-            <Description>Owner: {selectedAddress}</Description>
-            <Description>Operator: {burnerInfo.connected}</Description>
+            <Title>Update Your Operator</Title>
+            <Description>(Connected Burner does not match Account Operator for {accountDetails.name})</Description>
+            <br />
+            <Description>Account Operator: {accountDetails.operatorAddress}</Description>
+            <Description>Connected Burner: {burnerInfo.connected}</Description>
             <SingleInputTextForm
-              id={`username`}
-              label='username'
-              placeholder='username'
+              id={`new-operator`}
+              label='new address'
+              placeholder='new operator address'
               hasButton={true}
-              onSubmit={(v: string) => createAccountWithFx(v)}
+              onSubmit={(v: string) => setOperatorWithFx(v)}
+              initialValue={burnerInfo.connected}
             />
           </ModalContent>
         </ModalWrapper>

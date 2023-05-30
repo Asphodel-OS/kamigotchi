@@ -93,23 +93,19 @@ export function registerWalletConnecter() {
         OwnerAddress.update$,
       ).pipe(
         map(() => {
-          const burnerAddress = connectedAddress.get();
           const { selectedAddress } = useNetworkSettings.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
-
+          const accountDetailsFromWorld = getAccountDetails(accountIndexUpdatedByWorld);
           return {
-            burnerAddress,
-            accountIndexUpdatedByWorld,
+            accountDetailsFromWorld,
             getAccountIndexFromOwner,
             getAccountDetails,
           };
         })
       );
     },
-
     ({
-      burnerAddress,
-      accountIndexUpdatedByWorld,
+      accountDetailsFromWorld,
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
@@ -125,6 +121,7 @@ export function registerWalletConnecter() {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
+        console.log('Account details:', accountDetails);
 
         if (accountDetails.id) {
           toggleVisibleButtons(true);
@@ -132,7 +129,7 @@ export function registerWalletConnecter() {
           toggleVisibleButtons(false);
           toggleVisibleModals(false);
         }
-      }, [selectedAddress, isConnected, accountIndexUpdatedByWorld]);
+      }, [selectedAddress, isConnected, accountDetailsFromWorld]);
 
       // how to render the modal
       const modalDisplay = () => (
@@ -146,8 +143,6 @@ export function registerWalletConnecter() {
             <Description>({status})</Description>
             <br />
             <Description>Connector Address: {selectedAddress}</Description>
-            <br />
-            <Description>Burner Address: {burnerAddress}</Description>
           </ModalContent>
         </ModalWrapper>
       );

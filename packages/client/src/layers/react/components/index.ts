@@ -29,6 +29,7 @@ import { registerAccountRegistrar } from './validators/AccountRegistrar';
 import { registerBurnerDetector } from './validators/BurnerDetector';
 import { registerDetectAccountModal } from './validators/DetectAccount';
 import { registerWalletConnecter } from './validators/WalletConnector';
+import { registerOperatorUpdater } from './validators/OperatorUpdater';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -61,5 +62,6 @@ export function registerUIComponents() {
 
   registerAccountRegistrar();
   registerBurnerDetector();
+  registerOperatorUpdater();
   registerWalletConnecter();
 }

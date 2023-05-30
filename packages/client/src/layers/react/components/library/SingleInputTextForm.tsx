@@ -11,12 +11,13 @@ interface Props {
   placeholder?: string;
   onSubmit?: Function;
   hasButton?: boolean;
+  initialValue?: string;
 }
 
 // SingleInputTextForm is a styled input field with some additional frills
 export const SingleInputTextForm = (props: Props) => {
   const { sound: { volume } } = dataStore();
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(props.initialValue || '');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
