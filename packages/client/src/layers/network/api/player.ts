@@ -149,13 +149,13 @@ export function createPlayerAPI(systems: any) {
   // @dev deposits pet from outside -> game world
   // @param tokenID  ERC721 petID, not MUD entity ID
   function depositERC721(tokenID: BigNumberish) {
-    return systems["system.ERC721.Deposit"].executeTyped(tokenID);
+    return systems["system.ERC721.Stake"].executeTyped(tokenID);
   }
 
   // @dev brings pet from game world -> outside
   // @param tokenID  ERC721 petID, not MUD entity ID
   function withdrawERC721(tokenID: BigNumberish) {
-    return systems["system.ERC721.Withdraw"].executeTyped(tokenID);
+    return systems["system.ERC721.Unstake"].executeTyped(tokenID);
   }
 
   /*********************
