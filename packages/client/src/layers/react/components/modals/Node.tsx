@@ -606,8 +606,12 @@ export function registerNodeModal() {
           {KamiTabs()}
           {KamiList(data.node.kamis)}
           <Underline key='separator' />
-          {AddButton(data.node, data.account.kamis)}
-          {CollectAllButton(data.node)}
+          {(tab === 'allies') &&
+            <NodeActions>
+              {CollectAllButton(data.node)}
+              {AddButton(data.node, data.account.kamis)}
+            </NodeActions>
+          }
         </ModalWrapperFull>
       );
     }
@@ -630,6 +634,13 @@ const Tabs = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
+`;
+
+const NodeActions = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
 `;
 
 const TopButton = styled.button`
