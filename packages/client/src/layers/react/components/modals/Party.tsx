@@ -337,7 +337,7 @@ export function registerPartyModal() {
         let output = 0;
         if (isHarvesting(kami) && !isDead(kami)) {
           let duration = lastRefresh / 1000 - kami.production!.startTime;
-          output = Math.round(duration * calcProductionRate(kami));
+          output = Math.floor(duration * calcProductionRate(kami));
         }
         return Math.max(output, 0);
       };
