@@ -457,12 +457,13 @@ export function registerNodeModal() {
         />
       );
 
-      const CollectAllButton = (node: Node) => (
+      const CollectAllButton = (node: Node, allies: Kami[]) => (
         <ActionButton
           id={`harvest-collect-all`}
           key={`harvest-collect-all`}
           onClick={() => collectAll(node)}
           text='Collect All'
+          disabled={allies.length == 0}
         />
       );
 
@@ -608,7 +609,7 @@ export function registerNodeModal() {
           <Underline key='separator' />
           {(tab === 'allies') &&
             <NodeActions>
-              {CollectAllButton(data.node)}
+              {CollectAllButton(data.node, data.node.kamis.allies)}
               {AddButton(data.node, data.account.kamis)}
             </NodeActions>
           }
