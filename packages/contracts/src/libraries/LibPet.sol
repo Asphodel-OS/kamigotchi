@@ -207,7 +207,7 @@ library LibPet {
   }
 
   // Calculate the liquidation threshold for target pet, attacked by the source pet.
-  // This is measured as a proportion of total health with 1e18 precision.
+  // This is measured as a proportion of total health with 1e18 precision. (i.e. 1e18 = 100%)
   function calcThreshold(
     IUintComp components,
     uint256 sourceID,
@@ -215,7 +215,7 @@ library LibPet {
   ) internal view returns (uint256) {
     uint256 baseThreshold = calcThresholdBase(components, sourceID, targetID);
     uint256 affinityMultiplier = calcAttackAffinityMultiplier(components, sourceID, targetID);
-    return (affinityMultiplier * baseThreshold) / 1e2;
+    return (affinityMultiplier * baseThreshold) / 100; // adjust for affinity multiplier precision
   }
 
   // Calculate the base liquidation threshold for target pet, attacked by the source pet.
@@ -226,7 +226,7 @@ library LibPet {
     uint256 targetID
   ) internal view returns (uint256) {
     uint256 sourceViolence = calcTotalViolence(components, sourceID);
-    uint256 targetHarmony = calcTotalHarmony(components, targetID) + 1;
+    uint256 targetHarmony = calcTotalHarmony(components, targetID);
     int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
     int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
     return (uint256(weight) * 20) / 100;

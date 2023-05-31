@@ -22,15 +22,15 @@ library LibRegistryAffinity {
   ) internal pure returns (uint256) {
     uint256 multiplier = 100;
 
-    if (LibString.eq(sourceAff, "Eerie")) {
-      if (LibString.eq(targetAff, "Scrap")) multiplier = 200;
-      if (LibString.eq(targetAff, "Insect")) multiplier = 50;
-    } else if (LibString.eq(sourceAff, "Scrap")) {
-      if (LibString.eq(targetAff, "Insect")) multiplier = 200;
-      if (LibString.eq(targetAff, "Eerie")) multiplier = 50;
-    } else if (LibString.eq(sourceAff, "Insect")) {
-      if (LibString.eq(targetAff, "Eerie")) multiplier = 200;
-      if (LibString.eq(targetAff, "Scrap")) multiplier = 50;
+    if (LibString.eq(sourceAff, "EERIE")) {
+      if (LibString.eq(targetAff, "SCRAP")) multiplier = 200;
+      if (LibString.eq(targetAff, "INSECT")) multiplier = 50;
+    } else if (LibString.eq(sourceAff, "SCRAP")) {
+      if (LibString.eq(targetAff, "INSECT")) multiplier = 200;
+      if (LibString.eq(targetAff, "EERIE")) multiplier = 50;
+    } else if (LibString.eq(sourceAff, "INSECT")) {
+      if (LibString.eq(targetAff, "EERIE")) multiplier = 200;
+      if (LibString.eq(targetAff, "SCRAP")) multiplier = 50;
     }
     return multiplier; // Normal or no Affinity means 1x multiplier
   }
