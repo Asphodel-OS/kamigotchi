@@ -9,6 +9,7 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
+import cdf from '@stdlib/stats-base-dists-normal-cdf';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -25,6 +26,7 @@ import { KamiCard } from '../library/KamiCard';
 import { BatteryComponent } from '../library/Battery';
 import { NodeInfo } from '../library/NodeContainer';
 import { dataStore } from 'layers/react/store/createStore';
+
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerNodeModal() {
@@ -144,7 +146,11 @@ export function registerNodeModal() {
               // kami:production is 1:1, so we're guaranteed to find one here
               const kamiID = getComponentValue(PetID, productionIndex)?.value as EntityID;
               const kamiIndex = world.entityToIndex.get(kamiID);
-              nodeKamis.push(getKami(layers, kamiIndex!, { account: true, production: true }));
+              nodeKamis.push(getKami(
+                layers,
+                kamiIndex!,
+                { account: true, production: true, traits: true }
+              ));
             }
 
             // split node kamis between mine and others
@@ -286,6 +292,7 @@ export function registerNodeModal() {
       // DATA INTERPRETATION
       const RATE_PRECISION = 1e6;
       const LIQUIDATION_IDLE_REQUIREMENT = 300; // time needed to spend idle for liquidating
+      const LIQUIDATION_BASE_THRESHOLD_PEAK = 0.2;
 
       // rounds a value to a certain number of decimal places (precision)
       const roundTo = (value: number, precision: number): number => {
@@ -308,7 +315,7 @@ export function registerNodeModal() {
         return precision == undefined ? rate : roundTo(rate, precision);
       };
 
-      // calculate health based on the drain against last confirmed health
+      // calculate current health based on the drain against last confirmed health
       const calcHealth = (kami: Kami, precision?: number): number => {
         let health = kami.health;
         if (isHarvesting(kami)) {
@@ -331,15 +338,62 @@ export function registerNodeModal() {
         return precision == undefined ? output : roundTo(output, precision);
       };
 
+      const calcLiquidationAffinityMultiplier = (attacker: Kami, victim: Kami): number => {
+        let multiplier = 1;
+        if (attacker.traits && victim.traits) {
+          const attackerAffinity = attacker.traits.hand.affinity;
+          const victimAffinity = victim.traits.body.affinity;
+          if (attackerAffinity === 'EERIE') {
+            if (victimAffinity === 'SCRAP') {
+              multiplier = 2;
+            } else if (victimAffinity === 'INSECT') {
+              multiplier = 0.5;
+            }
+          } else if (attackerAffinity === 'SCRAP') {
+            if (victimAffinity === 'INSECT') {
+              multiplier = 2;
+            } else if (victimAffinity === 'EERIE') {
+              multiplier = 0.5;
+            }
+          } else if (attackerAffinity === 'INSECT') {
+            if (victimAffinity === 'EERIE') {
+              multiplier = 2;
+            } else if (victimAffinity === 'SCRAP') {
+              multiplier = 0.5;
+            }
+          }
+        }
+        return multiplier;
+      };
+
+      // calculate the base liquidation threshold b/w two kamis as a %
+      const calcLiquidationThresholdBase = (attacker: Kami, victim: Kami): number => {
+        const ratio = attacker.stats.violence / victim.stats.harmony;
+        const weight = cdf(Math.log(ratio), 0, 1);
+        return weight * LIQUIDATION_BASE_THRESHOLD_PEAK;
+      };
+
+      // calculate the liquidation threshold b/w two kamis as a %
+      const calcLiquidationThreshold = (attacker: Kami, victim: Kami): number => {
+        const base = calcLiquidationThresholdBase(attacker, victim);
+        const multiplier = calcLiquidationAffinityMultiplier(attacker, victim);
+        console.log(`Threshold ${attacker.index} => ${victim.index}`, base * multiplier)
+        return base * multiplier;
+      };
+
       // calculate the time a kami has spent idle (in seconds)
       const calcIdleTime = (kami: Kami): number => {
         return lastRefresh / 1000 - kami.lastUpdated;
-      }
+      };
 
       // determine whether a kami can liquidate another kami
       // TODO: introduce checks around stats
       const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
-        return calcIdleTime(attacker) > LIQUIDATION_IDLE_REQUIREMENT;
+        const thresholdPercent = calcLiquidationThreshold(attacker, victim);
+        const absoluteThreshold = thresholdPercent * victim.stats.health;
+        const canMog = calcHealth(victim) < absoluteThreshold;
+        const isRested = calcIdleTime(attacker) > LIQUIDATION_IDLE_REQUIREMENT;
+        return isRested && canMog;
       }
 
       // naive check right now, needs to be updated with murder check as well
