@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { location, road, coreSprites, water } from 'assets/map';
 
@@ -210,21 +210,42 @@ const ROOMS_MAP = new Map([
 
 const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
   const room = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
-  const highlight = room === highlightedRoom ? { border: '1px solid red' } : {};
+  const isHighlighted = room === highlightedRoom;
+  const highlightStyle = isHighlighted ? { border: '1.5px solid red' } : {};
+  const isClickable = !!room;
+  const hoverStyle = isClickable ? { cursor: 'pointer' } : {};
+  const [isHovered, setHovered] = useState(false);
 
-  if (!img) return <div style={{ width: '100%', height: '100%', backgroundColor: 'green' }} />;
+  const handleMouseEnter = () => {
+    if (isClickable) {
+      setHovered(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isClickable) {
+      setHovered(false);
+    }
+  };
+
+  if (!img) {
+    return <div style={{ width: '100%', height: '100%', backgroundColor: 'green' }} />;
+  }
+
   return (
     <img
       src={img}
       alt=''
-      onClick={
-        room
-          ? () => {
-              move(room);
-            }
-          : undefined
-      }
-      style={{ width: '100%', height: '100%', ...highlight }}
+      onClick={isClickable ? () => move(room) : undefined}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        width: '100%',
+        height: '100%',
+        ...hoverStyle,
+        ...(isHovered ? { border: '1px solid red' } : {}),
+        ...highlightStyle,
+      }}
     />
   );
 };
