@@ -257,6 +257,21 @@ export function registerNodeModal() {
         });
       };
 
+      // collects on all eligible productions on a node
+      const collectAll = (node: Node) => {
+        const actionID = `Collecting All Harvests` as EntityID; // Date.now to have the actions ordered in the component browser
+        actions.add({
+          id: actionID,
+          components: {},
+          // on: data.????,
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.node.collect(node.id);
+          },
+        });
+      };
+
       // liquidate a production
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
@@ -329,13 +344,13 @@ export function registerNodeModal() {
       };
 
       // calculate the expected output from a pet production based on starttime
-      const calcOutput = (kami: Kami, precision?: number): number => {
+      const calcOutput = (kami: Kami): number => {
         let output = 0;
         if (isHarvesting(kami) && !isDead(kami)) {
           let duration = lastRefresh / 1000 - kami.production!.startTime;
-          output = Math.round(duration * calcProductionRate(kami));
+          output = Math.floor(duration * calcProductionRate(kami));
         }
-        return precision == undefined ? output : roundTo(output, precision);
+        return Math.max(output, 0);
       };
 
       const calcLiquidationAffinityMultiplier = (attacker: Kami, victim: Kami): number => {
@@ -439,6 +454,15 @@ export function registerNodeModal() {
           key={`harvest-collect-${kami.id}`}
           onClick={() => collect(kami.production!)}
           text='Collect'
+        />
+      );
+
+      const CollectAllButton = (node: Node) => (
+        <ActionButton
+          id={`harvest-collect-all`}
+          key={`harvest-collect-all`}
+          onClick={() => collectAll(node)}
+          text='Collect All'
         />
       );
 
@@ -583,6 +607,7 @@ export function registerNodeModal() {
           {KamiList(data.node.kamis)}
           <Underline key='separator' />
           {AddButton(data.node, data.account.kamis)}
+          {CollectAllButton(data.node)}
         </ModalWrapperFull>
       );
     }

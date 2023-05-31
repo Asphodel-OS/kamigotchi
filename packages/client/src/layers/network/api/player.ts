@@ -69,6 +69,16 @@ export function createPlayerAPI(systems: any) {
   }
 
   /*********************
+   *      NODES
+   *********************/
+
+  // @dev collects from all eligible productions on a node
+  // @param nodeID   entityID of the node
+  function collectAllFromNode(nodeID: BigNumberish) {
+    return systems["system.Node.Collect"].executeTyped(nodeID);
+  }
+
+  /*********************
    *    PRODUCTIONS 
    *********************/
 
@@ -191,6 +201,9 @@ export function createPlayerAPI(systems: any) {
     listing: {
       buy: buyFromListing,
       sell: sellToListing,
+    },
+    node: {
+      collect: collectAllFromNode,
     },
     production: {
       collect: collectProduction,
