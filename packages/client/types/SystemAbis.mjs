@@ -35,6 +35,7 @@ import ERC721TransferSystem from "../abi/ERC721TransferSystem.json";
 import ERC721WithdrawSystem from "../abi/ERC721WithdrawSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
+import NodeCollectSystem from "../abi/NodeCollectSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetReviveSystem from "../abi/PetReviveSystem.json";
@@ -86,6 +87,7 @@ export const SystemAbis = {
   "system.ERC721.Withdraw": ERC721WithdrawSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
+  "system.Node.Collect": NodeCollectSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,

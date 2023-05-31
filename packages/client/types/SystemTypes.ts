@@ -35,6 +35,7 @@ import { ERC721TransferSystem } from "./ethers-contracts/ERC721TransferSystem";
 import { ERC721WithdrawSystem } from "./ethers-contracts/ERC721WithdrawSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
+import { NodeCollectSystem } from "./ethers-contracts/NodeCollectSystem";
 import { PetFeedSystem } from "./ethers-contracts/PetFeedSystem";
 import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetReviveSystem } from "./ethers-contracts/PetReviveSystem";
@@ -86,6 +87,7 @@ export type SystemTypes = {
   "system.ERC721.Withdraw": ERC721WithdrawSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
+  "system.Node.Collect": NodeCollectSystem;
   "system.Pet.Feed": PetFeedSystem;
   "system.Pet.Name": PetNameSystem;
   "system.Pet.Revive": PetReviveSystem;
