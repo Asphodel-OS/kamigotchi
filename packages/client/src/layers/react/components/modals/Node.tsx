@@ -377,7 +377,7 @@ export function registerNodeModal() {
       const calcLiquidationThreshold = (attacker: Kami, victim: Kami): number => {
         const base = calcLiquidationThresholdBase(attacker, victim);
         const multiplier = calcLiquidationAffinityMultiplier(attacker, victim);
-        console.log(`Threshold ${attacker.index} => ${victim.index}`, base * multiplier)
+        // console.log(`Threshold ${attacker.index} => ${victim.index}`, base * multiplier)
         return base * multiplier;
       };
 
