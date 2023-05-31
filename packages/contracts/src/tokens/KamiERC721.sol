@@ -6,9 +6,6 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { getAddressById } from "solecs/utils.sol";
 import { ERC721MetadataSystem as MetadataSystem, ID as MetadataSystemID } from "systems/ERC721MetadataSystem.sol";
 import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC721Component.sol";
-// TODO: should be made redundant by permission component
-import { ID as MintSystemID } from "systems/ERC721MintSystem.sol";
-import { ID as TransferSystemID } from "systems/ERC721TransferSystem.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
 
@@ -46,7 +43,7 @@ contract KamiERC721 is ERC721Enumerable {
       PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
         msg.sender
       ),
-      "721: not a writer"
+      "ERC721: not a writer"
     );
     _;
   }

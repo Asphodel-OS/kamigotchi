@@ -60,6 +60,7 @@
     "PriceBuyComponent",
     "PriceSellComponent",
     "PrototypeComponent",
+    "ProxyPermissionsERC20Component",
     "ProxyPermissionsERC721Component",
     "RarityComponent",
     "RateComponent",
@@ -250,13 +251,15 @@
     {
       "name": "ERC20WithdrawSystem",
       "writeAccess": [
-        "CoinComponent"
+        "CoinComponent",
+        "ProxyPermissionsERC20Component"
       ]
     },
     {
       "name": "ERC20DepositSystem",
       "writeAccess": [
-        "CoinComponent"
+        "CoinComponent",
+        "ProxyPermissionsERC20Component"
       ]
     },
     {

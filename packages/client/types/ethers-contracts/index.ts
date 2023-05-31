@@ -87,6 +87,7 @@ export type { ProductionCollectSystem } from "./ProductionCollectSystem";
 export type { ProductionLiquidateSystem } from "./ProductionLiquidateSystem";
 export type { ProductionStartSystem } from "./ProductionStartSystem";
 export type { ProductionStopSystem } from "./ProductionStopSystem";
+export type { ProxyPermissionsERC20Component } from "./ProxyPermissionsERC20Component";
 export type { ProxyPermissionsERC721Component } from "./ProxyPermissionsERC721Component";
 export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
@@ -215,6 +216,7 @@ export { ProductionCollectSystem__factory } from "./factories/ProductionCollectS
 export { ProductionLiquidateSystem__factory } from "./factories/ProductionLiquidateSystem__factory";
 export { ProductionStartSystem__factory } from "./factories/ProductionStartSystem__factory";
 export { ProductionStopSystem__factory } from "./factories/ProductionStopSystem__factory";
+export { ProxyPermissionsERC20Component__factory } from "./factories/ProxyPermissionsERC20Component__factory";
 export { ProxyPermissionsERC721Component__factory } from "./factories/ProxyPermissionsERC721Component__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";

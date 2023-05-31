@@ -4,14 +4,13 @@ pragma solidity ^0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
-import { ID as WithdrawSystemID } from "systems/ERC20WithdrawSystem.sol";
-import { ID as DepositSystemID } from "systems/ERC20DepositSystem.sol";
+import { ProxyPermissionsERC20Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC20Component.sol";
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 // a non-upgradable implementation of a basic ERC20 with mint/burn functionality
-// although it isn't a system, it uses systemIDs for permissions
-// 2 systems are used:
+// uses a Component for Permissions; systems that can write to the ProxyComponent can write to this contract
+// 2 systems are used (may be upgraded in the future):
 // 1) ERC20WithdrawSystem: mints ERC20 and sends to an EOA
 // 2) ERC20DepositSystem: burns ERC20 and sends to an in game Entity
 // otherwise, the ERC20 is completely normal.
@@ -20,9 +19,13 @@ import { ERC20 } from "solmate/tokens/ERC20.sol";
 contract KamiERC20 is ERC20 {
   IWorld immutable World;
 
-  modifier onlySystem(uint256 systemID) {
-    IUintComp Systems = World.systems();
-    require(getAddressById(Systems, systemID) == msg.sender, "not verified system");
+  modifier onlyWriter() {
+    require(
+      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
+        msg.sender
+      ),
+      "ERC20: not a writer"
+    );
     _;
   }
 
@@ -31,12 +34,12 @@ contract KamiERC20 is ERC20 {
   }
 
   // mints ERC20 tokens from game world. only can be called by MintSystem
-  function withdraw(address to, uint256 amount) external onlySystem(WithdrawSystemID) {
+  function withdraw(address to, uint256 amount) external onlyWriter {
     super._mint(to, amount);
   }
 
   // burns ERC20 tokens to bring back into game world. only can be called by BurnSystem
-  function deposit(address from, uint256 amount) external onlySystem(DepositSystemID) {
+  function deposit(address from, uint256 amount) external onlyWriter {
     super._burn(from, amount);
   }
 }
