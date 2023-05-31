@@ -10,16 +10,16 @@ contract ERC721PetTest is SetupTemplate {
 
   function _assertOwnerInGame(uint256 tokenID, address addy) internal {
     /*
-      1) Owner and Account owner are the same
+      1) Account owner is EOA, Token owner is KamiERC721
       2) State is not 721_EXTERNAL (LibPet.isInWorld)
       3) Has an owner (checked implicitly in 1)
     */
     uint256 entityID = LibPet.indexToID(components, tokenID);
     assertEq(
-      _KamiERC721.ownerOf(tokenID),
+      addy,
       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
     );
-    assertEq(_KamiERC721.ownerOf(tokenID), addy);
+    assertEq(_KamiERC721.ownerOf(tokenID), address(_KamiERC721));
     assertTrue(LibPet.isInWorld(components, entityID));
   }
 
@@ -68,12 +68,12 @@ contract ERC721PetTest is SetupTemplate {
 
     // bridging out
     // vm.prank(alice);
-    _ERC721WithdrawSystem.executeTyped(LibPet.idToIndex(components, petID));
+    _ERC721UnstakeSystem.executeTyped(LibPet.idToIndex(components, petID));
     _assertPetState(petID, "721_EXTERNAL");
 
     // bridiging in
     // vm.prank(alice);
-    _ERC721DepositSystem.executeTyped(LibPet.idToIndex(components, petID));
+    _ERC721StakeSystem.executeTyped(LibPet.idToIndex(components, petID));
     _assertPetState(petID, "RESTING");
   }
 
@@ -88,7 +88,7 @@ contract ERC721PetTest is SetupTemplate {
     _mintPets(1);
 
     vm.prank(alice);
-    _ERC721WithdrawSystem.executeTyped(1);
+    _ERC721UnstakeSystem.executeTyped(1);
 
     vm.prank(alice);
     _KamiERC721.transferFrom(alice, bob, 1);

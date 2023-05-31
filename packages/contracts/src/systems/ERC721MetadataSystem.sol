@@ -13,7 +13,7 @@ import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { LibMetadata } from "libraries/LibMetadata.sol";
+import { LibERC721 } from "libraries/LibERC721.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
 uint256 constant _numElements = 5;
@@ -66,10 +66,10 @@ contract ERC721MetadataSystem is System {
   // second phase of commit/reveal scheme. pet owners call directly
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
     // generates array of traits with weighted random
-    uint256[] memory traits = LibMetadata.genRandTraits(components, petID, seed);
+    uint256[] memory traits = LibERC721.genRandTraits(components, petID, seed);
 
     // setting metadata
-    LibMetadata.assignTraits(components, petID, traits);
+    LibERC721.assignTraits(components, petID, traits);
     uint256 packed = LibRandom.packArray(traits, 8); // uses packed array to generate image off-chain
     LibPet.setMediaURI(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     LibPet.reveal(components, petID);
@@ -81,7 +81,7 @@ contract ERC721MetadataSystem is System {
    **********************/
 
   function tokenURI(uint256 petIndex) public view returns (string memory) {
-    return LibMetadata.getJson(components, petIndex);
+    return LibERC721.getJson(components, petIndex);
   }
 
   /*********************

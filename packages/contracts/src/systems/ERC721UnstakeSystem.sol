@@ -6,25 +6,23 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibERC721 } from "libraries/LibERC721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
-import { KamiERC721 } from "tokens/KamiERC721.sol";
-import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol";
-
-uint256 constant ID = uint256(keccak256("system.ERC721.Withdraw"));
+uint256 constant ID = uint256(keccak256("system.ERC721.Unstake"));
 
 // sets a pet game world => outside world
 /*
   Invarients:
     Before withdrawal:
-      1) Pet is linked to an Account, owned by msg.sender
+      1) Pet is linked to an Account owned by address, token owned by KamiERC721
       2) Pet state is not "721_EXTERNAL" + Pet stats is "RESTING"
       3) Pet is revealed
     After withdrawal:
-      1) Pet is not linked to an Account
+      1) Pet is not linked to an Account, owned by EOA
       2) Pet state is "721_EXTERNAL"
 */
-contract ERC721WithdrawSystem is System {
+contract ERC721UnstakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -37,7 +35,8 @@ contract ERC721WithdrawSystem is System {
     require(LibPet.isResting(components, petID), "Pet: not resting");
 
     // actions to be taken upon bridging out
-    LibPet.withdraw(components, petID);
+    LibPet.unstake(components, petID);
+    LibERC721.unstake(world, msg.sender, tokenID);
 
     return "";
   }

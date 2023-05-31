@@ -18,19 +18,23 @@ string constant SYMBOL = "KAMI";
 /* 
   a minimal, non-invasive implementation of MUD compatible ERC721.
 
+  ERC721s are 'bridged' with a stake/unstake system. 
+  Note in game 721s are held by the KamiERC contract, out of game by the EOA.
+  
   Uses a '2 state' ownership (in game world, out of game world). 
   States are recorded with the StateComponent on each kami.
   '721_EXTERNAL' represents the out of game state, any other state is internal.
   - In game world: 
+    - Held by KamiERC contract [address(this)]
     - Source of truth is Component values
     - Cannot be modified by non-MUD systems
     - In game transfers update ERC721 contract
   - Out of game world:
+    - Held by EOA
     - Source of truth is ERC721 ownership mapping
     - Functions like a regular ERC721
-  
-  ERC721s are 'bridged' between states with a deposit/withdraw system. Note that 721s do not change wallets.
-  Bridge systems do not need to be referenced in this contract
+
+  In game transfers are not implemented. However, it will be held by the KamiERC contract and have no owner change.
 
   Metadata is linked to a system for easier MUD compatibility. However, any view function on a contract can be used. 
 */
@@ -63,15 +67,21 @@ contract KamiERC721 is ERC721Enumerable {
   // INTERACTIONS
   // these functions are called by systems and are gated
 
-  // allow minting for approved systems (only MintSystem rn)
+  // allow minting for approved systems
   function mint(address to, uint256 id) external onlyWriter {
     _mint(to, id);
   }
 
-  // completes a transfer between two in-game accounts. updates ERC721 to mirror MUD state
-  // NOTE: actual system is unimplemented. May be better have a generic permissioning system
-  function inWorldTransfer(address from, address to, uint256 id) external onlyWriter {
-    super.transferFrom(from, to, id);
+  // bridges NFTs out of game -> in game [stake]
+  // only to be called by system
+  function stakeToken(address from, uint256 id) external onlyWriter {
+    super._transfer(from, address(this), id);
+  }
+
+  // bridges NFTs in game -> out of game [unstake]
+  // only to be called by system
+  function unstakeToken(address to, uint256 id) external onlyWriter {
+    super._transfer(address(this), to, id);
   }
 
   ////////////////////

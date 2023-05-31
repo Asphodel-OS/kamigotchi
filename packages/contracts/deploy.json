@@ -276,21 +276,24 @@
     },
     {
       "name": "ERC721TransferSystem",
-      "writeAccess": []
+      "writeAccess": [
+        "ProxyPermissionsERC721Component"
+      ]
     },
     {
       "name": "ERC721ProxySystem",
       "writeAccess": []
     },
     {
-      "name": "ERC721WithdrawSystem",
+      "name": "ERC721UnstakeSystem",
       "writeAccess": [
         "IdAccountComponent",
+        "ProxyPermissionsERC721Component",
         "StateComponent"
       ]
     },
     {
-      "name": "ERC721DepositSystem",
+      "name": "ERC721StakeSystem",
       "writeAccess": [
         "IsAccountComponent",
         "AddressOperatorComponent",
@@ -299,6 +302,7 @@
         "IdAccountComponent",
         "LocationComponent",
         "NameComponent",
+        "ProxyPermissionsERC721Component",
         "StaminaComponent",
         "StaminaCurrentComponent",
         "StateComponent"
@@ -439,7 +443,7 @@
     "LibMerchant",
     "LibTrait",
     "LibNode",
-    "LibMetadata",
+    "LibERC721",
     "LibPet",
     "LibProduction",
     "LibPrototype",

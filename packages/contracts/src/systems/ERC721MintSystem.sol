@@ -8,10 +8,9 @@ import { getAddressById } from "solecs/utils.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibERC721 } from "libraries/LibERC721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
-import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol";
-import { KamiERC721 } from "tokens/KamiERC721.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.Mint"));
 
@@ -35,8 +34,9 @@ contract ERC721MintSystem is System {
     uint256 petID = LibPet.create(world, components, accountID, nextMint, UNREVEALED_URI);
     LibRandom.setRevealBlock(components, petID, block.number);
 
-    KamiERC721 token = ERC721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
-    token.mint(to, nextMint);
+    // Mint the token
+    LibERC721.mintInGame(world, nextMint);
+
     return abi.encode(petID);
   }
 

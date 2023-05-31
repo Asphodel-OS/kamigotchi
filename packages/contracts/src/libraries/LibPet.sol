@@ -69,13 +69,13 @@ library LibPet {
   }
 
   // bridging a pet Outside => MUD. Does not handle account details
-  function deposit(IUintComp components, uint256 id, uint256 accountID) internal {
+  function stake(IUintComp components, uint256 id, uint256 accountID) internal {
     setState(components, id, "RESTING");
     setAccount(components, id, accountID);
   }
 
   // bridging a pet MUD => Outside. Does not handle account details
-  function withdraw(IUintComp components, uint256 id) internal {
+  function unstake(IUintComp components, uint256 id) internal {
     setState(components, id, "721_EXTERNAL");
     setAccount(components, id, 0);
   }
