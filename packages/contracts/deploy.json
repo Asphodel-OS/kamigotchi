@@ -321,6 +321,22 @@
       ]
     },
     {
+      "name": "NodeCollectSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CoinComponent",
+        "EpochComponent",
+        "ExperienceComponent",
+        "IsScoreComponent",
+        "IdHolderComponent",
+        "HealthCurrentComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent",
+        "TypeComponent"
+      ]
+    },
+    {
       "name": "PetFeedSystem",
       "writeAccess": [
         "BalanceComponent",
