@@ -87,36 +87,6 @@ export const getAccount = (
 
   /////////////////
   // OPTIONAL DATA
-  if (options?.inventory) {
-    const inventoryResults = Array.from(
-      runQuery([
-        Has(IsInventory),
-        HasValue(HolderID, { value: account.id })
-      ])
-    );
-
-    // food inventories
-    let inventory: Inventory;
-    let inventories: AccountInventories = {
-      food: [],
-      revives: [],
-      gear: [],
-      mods: [],
-    };
-    for (let i = 0; i < inventoryResults.length; i++) {
-      inventory = getInventory(layers, inventoryResults[i]);
-      if (inventory.item.type === 'FOOD') inventories.food.push(inventory);
-      if (inventory.item.type === 'REVIVE') inventories.revives.push(inventory);
-      if (inventory.item.type === 'GEAR') inventories.gear.push(inventory);
-      if (inventory.item.type === 'MOD') inventories.mods.push(inventory);
-    }
-
-    sortInventories(inventories.food);
-    sortInventories(inventories.revives);
-    sortInventories(inventories.gear);
-    sortInventories(inventories.mods);
-    account.inventories = inventories;
-  }
 
   // populate inventories
   if (options?.inventory) {

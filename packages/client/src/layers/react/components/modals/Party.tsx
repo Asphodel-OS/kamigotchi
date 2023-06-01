@@ -6,22 +6,18 @@ import {
   EntityIndex,
   Has,
   HasValue,
-  getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import {
-  ActionListButton,
-  Option as ActionListOption,
-} from 'layers/react/components/library/ActionListButton';
+import { ActionListButton } from 'layers/react/components/library/ActionListButton';
 import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { Account, getAccount } from 'layers/react/components/shapes/Account';
-import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Node, getNode } from 'layers/react/components/shapes/Node';
+import { AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
+import { Kami } from 'layers/react/components/shapes/Kami';
+import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
@@ -52,12 +48,8 @@ export function registerPartyModal() {
             Balance,
             HealthCurrent,
             Coin,
-            HolderID,
             IsAccount,
-            IsInventory,
-            IsNode,
             IsPet,
-            ItemIndex,
             Location,
             MediaURI,
             Name,
@@ -71,42 +63,6 @@ export function registerPartyModal() {
           actions,
         },
       } = layers;
-
-      // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      const hardCodeInventory = () => {
-        return [
-          {
-            id: 1,
-            itemIndex: 1,
-            image: gum,
-            balance: 0,
-            text: 'Gum - Restores 25 health.',
-          },
-          {
-            id: 2,
-            itemIndex: 2,
-            image: pompom,
-            balance: 0,
-            text: 'PomPom - Restores 100 health.',
-          },
-          {
-            id: 3,
-            itemIndex: 3,
-            image: gakki,
-            balance: 0,
-            text: 'Gakki - Restores 200 health.',
-          },
-          {
-            id: 4,
-            itemIndex: 4,
-            image: ribbon,
-            balance: 0,
-            text: 'Ribbon - Revives a fallen Kami.',
-          },
-        ];
-      };
 
       return merge(
         AccountID.update$,
@@ -122,9 +78,6 @@ export function registerPartyModal() {
         Name.update$
       ).pipe(
         map(() => {
-          /////////////////
-          // ROOT DATA
-
           // get the account through the account entity of the controlling wallet
           const accountIndex = Array.from(
             runQuery([
@@ -135,48 +88,17 @@ export function registerPartyModal() {
             ])
           )[0];
 
-          const account =
-            accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
-
-          // populate the account with kamis and inventories
-          let kamis: Kami[] = [];
-          let inventories: any = hardCodeInventory();
-          if (account) {
-            // get the kamis on this account
-            const kamiIndices = Array.from(
-              runQuery([
-                Has(IsPet),
-                HasValue(AccountID, { value: account.id })
-              ])
-            );
-
-            for (let i = 0; i < kamiIndices.length; i++) {
-              kamis.push(getKami(layers, kamiIndices[i], { production: true }));
-            }
-
-            // (hardcoded structures) populate inventory balances
-            // get the list of inventory indices for this account
-            const inventoryResults = Array.from(
-              runQuery([Has(IsInventory), HasValue(HolderID, { value: account.id })])
-            );
-
-            let itemIndex;
-            for (let i = 0; i < inventoryResults.length; i++) {
-              itemIndex = getComponentValue(ItemIndex, inventoryResults[i])?.value as number;
-              for (let j = 0; j < inventories.length; j++) {
-                if (inventories[j].itemIndex == itemIndex) {
-                  let balance = getComponentValue(Balance, inventoryResults[j])?.value as number;
-                  inventories[j].balance = balance ? balance * 1 : 0;
-                }
-              }
-            }
-          }
+          const account = getAccount(
+            layers,
+            accountIndex,
+            { inventory: true, kamis: true }
+          );
 
           return {
             actions,
             api: player,
             data: {
-              account: { ...account, inventories, kamis },
+              account,
             } as any,
             world,
           };
@@ -307,8 +229,8 @@ export function registerPartyModal() {
       // get emission rate of the Kami's production. measured in (KAMI/s)
       const calcProductionRate = (kami: Kami): number => {
         let rate = 0;
-        if (isHarvesting(kami)) {
-          rate = kami.production!.rate / RATE_PRECISION;
+        if (isHarvesting(kami) && kami.production) {
+          rate = kami.production.rate / RATE_PRECISION;
         }
         return rate;
       };
@@ -336,8 +258,8 @@ export function registerPartyModal() {
       // calculate the expected output from a pet production based on starttime
       const calcOutput = (kami: Kami): number => {
         let output = 0;
-        if (isHarvesting(kami) && !isDead(kami)) {
-          let duration = lastRefresh / 1000 - kami.production!.startTime;
+        if (isHarvesting(kami) && kami.production) {
+          let duration = lastRefresh / 1000 - kami.production.startTime;
           output = Math.floor(duration * calcProductionRate(kami));
         }
         return Math.max(output, 0);
@@ -358,15 +280,12 @@ export function registerPartyModal() {
       };
 
       const hasFood = (): boolean => {
-        const inventories = data.account.inventories;
-        const foodInventories = inventories.slice(0, 3);
+        return data.account.inventories.food.length > 0;
+      };
 
-        let totalBalance = 0;
-        for (let i = 0; i < foodInventories.length; i++) {
-          totalBalance += foodInventories[i].balance;
-        }
-        return totalBalance > 0;
-      }
+      const hasRevive = (): boolean => {
+        return data.account.inventories.revives.length > 0;
+      };
 
       // get the reason why a kami can't feed. assume the kami is either resting or harvesting
       const whyCantFeed = (kami: Kami): string => {
@@ -379,7 +298,7 @@ export function registerPartyModal() {
           reason = `go buy food, poore`;
         }
         return reason;
-      }
+      };
 
       const canFeed = (kami: Kami): boolean => {
         return !whyCantFeed(kami);
@@ -417,21 +336,25 @@ export function registerPartyModal() {
         if (isOffWorld(kami)) {
           description = ['kidnapped by slave traders'];
         } else if (isUnrevealed(kami)) {
-          description = ['unrevealed!'];
+          description = ['Unrevealed!'];
         } else if (isResting(kami)) {
-          description = ['resting'];
+          description = ['Resting'];
         } else if (isDead(kami)) {
-          description = [`murdered by ???`];
+          description = [`Murdered in cold blood`];
         } else if (isHarvesting(kami)) {
           if (calcHealth(kami) == 0) {
-            description = [`died of dysentery`];
+            description = [
+              `Starving.. `,
+              `on ${kami.production!.node!.name}`,
+            ];
           } else {
             const harvestRate = calcProductionRate(kami) * 3600; //hourly
             const drainRate = calcDrainRate(kami) * 3600; //hourly
             description = [
-              `Harvesting on ${kami.production!.node!.name}`,
-              `+${harvestRate.toFixed(2)} $KAMI/hr`,
-              `-${drainRate.toFixed(2)} HP/hr`,
+              `Harvesting`,
+              `on ${kami.production!.node!.name}`,
+              `+${harvestRate.toFixed(1)} $KAMI/hr`,
+              `-${drainRate.toFixed(1)} HP/hr`,
             ];
           }
         }
@@ -444,24 +367,50 @@ export function registerPartyModal() {
       // get the row of consumable items to display in the player inventory
       // NOTE: does not render until player inventories are populated
 
-      const ConsumableCells = (inventories: any[], showIndex: number, setToolTip: any) => {
-        return inventories.map((inv, i) => {
+      const ConsumableCells = (inventories: AccountInventories, showIndex: number, setToolTip: any) => {
+        const inventorySlots = [
+          {
+            id: 1,
+            image: gum,
+            text: 'Gum - Restores 25 health.',
+            inventory: getInventoryByFamilyIndex(inventories?.food, 1),
+          },
+          {
+            id: 2,
+            image: pompom,
+            text: 'PomPom - Restores 100 health.',
+            inventory: getInventoryByFamilyIndex(inventories?.food, 2),
+          },
+          {
+            id: 3,
+            image: gakki,
+            text: 'Gakki - Restores 200 health.',
+            inventory: getInventoryByFamilyIndex(inventories?.food, 3),
+          },
+          {
+            id: 4,
+            image: ribbon,
+            text: 'Ribbon - Revives a fallen Kami.',
+            inventory: getInventoryByFamilyIndex(inventories?.revives, 1),
+          },
+        ]
+
+        return inventorySlots.map((slot, i) => {
           return (
-            <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
+            <CellBordered
+              key={slot.id}
+              style={{ gridColumn: `${slot.id}` }}
+            >
               <div style={{ position: 'relative' }}>
                 <CellGrid
-                  onMouseOver={() => {
-                    setToolTip(i);
-                  }}
-                  onMouseLeave={() => {
-                    setToolTip(-1);
-                  }}
+                  onMouseOver={() => setToolTip(i)}
+                  onMouseLeave={() => setToolTip(-1)}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={inv.text} />
+                    <Tooltip show={i === showIndex ? true : false} text={slot.text} />
                   )}
-                  <Icon src={inv.image} />
-                  <ItemNumber>{inv.balance ?? 0}</ItemNumber>
+                  <Icon src={slot.image} />
+                  <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
                 </CellGrid>
               </div>
             </CellBordered>
@@ -470,11 +419,16 @@ export function registerPartyModal() {
       };
 
       const FeedButton = (kami: Kami) => {
-        const feedOptions: ActionListOption[] = [
-          { text: 'Ghost Gum', onClick: () => feedKami(kami, 1) },
-          { text: 'Fruit Candy', onClick: () => feedKami(kami, 2) },
-          { text: 'Cookie Sticks', onClick: () => feedKami(kami, 3) },
-        ];
+        const nonEmptyOptions = data.account.inventories.food.filter(
+          (inv: Inventory) => inv.balance && inv.balance > 0
+        );
+
+        const feedOptions = nonEmptyOptions.map((inv: Inventory) => {
+          return {
+            text: inv.item.name,
+            onClick: () => feedKami(kami, inv.item.familyIndex)
+          };
+        });
 
         return (
           <ActionListButton
@@ -493,7 +447,12 @@ export function registerPartyModal() {
       );
 
       const ReviveButton = (kami: Kami) => (
-        <ActionButton id={`revive-kami`} onClick={() => reviveKami(kami, 1)} text='Revive' />
+        <ActionButton
+          id={`revive-kami`}
+          onClick={() => reviveKami(kami, 1)}
+          text='Revive'
+          disabled={!hasRevive()}
+        />
       );
 
       // Choose and return the action button to display
@@ -506,6 +465,7 @@ export function registerPartyModal() {
 
       // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
+        if (!kamis) return;
         return kamis.map((kami) => {
           const action = DisplayedAction(kami);
           const description = getDescription(kami);
