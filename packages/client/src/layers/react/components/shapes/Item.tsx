@@ -11,7 +11,7 @@ import { Stats, getStats } from './Stats';
 // standardized shape of a FE Item Entity
 export interface Item {
   id: EntityID;
-  itemIndex: number;
+  index: number;
   specialIndex: number;
   type: string;
   name: string;
@@ -49,7 +49,7 @@ export const getItem = (
   let Item: Item = {
     id: world.entities[index],
     type,
-    itemIndex: getComponentValue(ItemIndex, index)?.value as number,
+    index: getComponentValue(ItemIndex, index)?.value as number,
     specialIndex: getComponentValue(FoodIndex, index)?.value as number || getComponentValue(ReviveIndex, index)?.value as number,
     name: getComponentValue(Name, index)?.value as string,
     description: getComponentValue(Description, index)?.value as string,

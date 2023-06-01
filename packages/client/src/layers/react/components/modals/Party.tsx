@@ -359,16 +359,35 @@ export function registerPartyModal() {
         return Math.round(calcHealth(kami)) >= kami.stats.health;
       };
 
-      const hasFood = (): boolean => {
-        const inventories = data.account.inventories;
-        const foodInventories = inventories.slice(0, 3);
+      const getFoods = (): Inventory[] => {
+        const foods = data.account.inventories2.filter((inv: Inventory) => {
+          const isFood = inv.item.type === 'FOOD';
+          return isFood && inv.balance > 0;
+        });
 
-        let totalBalance = 0;
-        for (let i = 0; i < foodInventories.length; i++) {
-          totalBalance += foodInventories[i].balance;
-        }
-        return totalBalance > 0;
-      }
+        return foods.sort((a: Inventory, b: Inventory) =>
+          (a.item.specialIndex > b.item.specialIndex) ? 1 : -1
+        );
+      };
+
+      const hasFood = (): boolean => {
+        return getFoods().length > 0;
+      };
+
+      const getRevives = (): Inventory[] => {
+        const revives = data.account.inventories2.filter((inv: Inventory) => {
+          const isRevive = inv.item.type === 'REVIVE';
+          return isRevive && inv.balance > 0;
+        });
+
+        return revives.sort((a: Inventory, b: Inventory) =>
+          (a.item.specialIndex > b.item.specialIndex) ? 1 : -1
+        );
+      };
+
+      const hasRevive = (): boolean => {
+        return getRevives().length > 0;
+      };
 
       // get the reason why a kami can't feed. assume the kami is either resting or harvesting
       const whyCantFeed = (kami: Kami): string => {
@@ -381,7 +400,7 @@ export function registerPartyModal() {
           reason = `go buy food, poore`;
         }
         return reason;
-      }
+      };
 
       const canFeed = (kami: Kami): boolean => {
         return !whyCantFeed(kami);
@@ -447,17 +466,14 @@ export function registerPartyModal() {
       // NOTE: does not render until player inventories are populated
 
       const ConsumableCells = (inventories: any[], showIndex: number, setToolTip: any) => {
+
         return inventories.map((inv, i) => {
           return (
             <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
               <div style={{ position: 'relative' }}>
                 <CellGrid
-                  onMouseOver={() => {
-                    setToolTip(i);
-                  }}
-                  onMouseLeave={() => {
-                    setToolTip(-1);
-                  }}
+                  onMouseOver={() => setToolTip(i)}
+                  onMouseLeave={() => setToolTip(-1)}
                 >
                   {!visibleModals.kami && (
                     <Tooltip show={i === showIndex ? true : false} text={inv.text}/>
@@ -472,11 +488,12 @@ export function registerPartyModal() {
       };
 
       const FeedButton = (kami: Kami) => {
-        const feedOptions: ActionListOption[] = [
-          { text: 'Ghost Gum', onClick: () => feedKami(kami, 1) },
-          { text: 'Fruit Candy', onClick: () => feedKami(kami, 2) },
-          { text: 'Cookie Sticks', onClick: () => feedKami(kami, 3) },
-        ];
+        const feedOptions = getFoods().map((inv) => {
+          return {
+            text: inv.item.name,
+            onClick: () => feedKami(kami, inv.item.specialIndex)
+          };
+        });
 
         return (
           <ActionListButton
