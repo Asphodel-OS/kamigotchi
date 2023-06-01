@@ -76,7 +76,7 @@ export function createComponents(world: World) {
     ItemIndex: defineNumberEZ("ItemIndex", "component.Index.Item"),
     ModIndex: defineNumberEZ("ModIndex", "component.Index.Mod"),
     PetIndex: defineStringEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
-    ReviveIndex: defineStringEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
+    ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
     TraitIndex: defineStringEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
 
     // Values

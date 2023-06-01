@@ -36,22 +36,7 @@ library LibRegistryItem {
   /////////////////
   // INTERACTIONS
 
-  // Create a Registry entry for a Revive item. (e.g. cpu, gem, etc.)
-  function createRevive(
-    IWorld world,
-    IUintComp components,
-    uint256 foodIndex
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    uint256 itemIndex = getItemCount(components) + 1;
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
-    setItemIndex(components, id, itemIndex);
-    setReviveIndex(components, id, foodIndex);
-    return id;
-  }
-
-  // Create a Registry entry for a Food item. (e.g. cpu, gem, etc.)
+  // Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
   function createFood(
     IWorld world,
     IUintComp components,
@@ -111,6 +96,21 @@ library LibRegistryItem {
 
     uint256 gotID = setMod(components, modIndex, name, health, power, violence, harmony);
     require(gotID == id, "LibRegistryItem.createMod(): entity ID mismatch");
+    return id;
+  }
+
+  // Create a Registry entry for a Revive item. (e.g. ribbon)
+  function createRevive(
+    IWorld world,
+    IUintComp components,
+    uint256 foodIndex
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    uint256 itemIndex = getItemCount(components) + 1;
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
+    setItemIndex(components, id, itemIndex);
+    setReviveIndex(components, id, foodIndex);
     return id;
   }
 

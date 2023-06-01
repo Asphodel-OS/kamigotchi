@@ -1,15 +1,11 @@
 import {
   EntityIndex,
   EntityID,
-  Has,
-  HasValue,
   getComponentValue,
-  runQuery,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { Production, getProduction } from './Production';
-import { Kami, getKami } from './Kami';
+import { Kami } from './Kami';
 
 export interface NodeKamis {
   allies: Kami[];

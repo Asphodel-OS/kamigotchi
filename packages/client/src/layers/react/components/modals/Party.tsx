@@ -21,7 +21,7 @@ import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Node, getNode } from 'layers/react/components/shapes/Node';
+import { Inventory, getInventory } from 'layers/react/components/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
@@ -141,6 +141,7 @@ export function registerPartyModal() {
           // populate the account with kamis and inventories 
           let kamis: Kami[] = [];
           let inventories: any = hardCodeInventory();
+          let inventories2: Inventory[] = [];
           if (account) {
             // get the kamis on this account
             const kamiIndices = Array.from(
@@ -162,6 +163,7 @@ export function registerPartyModal() {
 
             let itemIndex;
             for (let i = 0; i < inventoryResults.length; i++) {
+              inventories2[i] = getInventory(layers, inventoryResults[i]);
               itemIndex = getComponentValue(ItemIndex, inventoryResults[i])?.value as number;
               for (let j = 0; j < inventories.length; j++) {
                 if (inventories[j].itemIndex == itemIndex) {
@@ -176,7 +178,7 @@ export function registerPartyModal() {
             actions,
             api: player,
             data: {
-              account: { ...account, inventories, kamis },
+              account: { ...account, inventories, inventories2, kamis },
             } as any,
             world,
           };
@@ -186,7 +188,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data, world }) => {
-      // console.log('PartyM: data', data);
+      console.log('PartyM: data', data);
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
 
