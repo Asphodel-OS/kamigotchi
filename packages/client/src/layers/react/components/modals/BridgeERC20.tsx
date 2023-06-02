@@ -10,6 +10,7 @@ import { useAccount, useBalance, useContractRead } from 'wagmi';
 import { Account, getAccount } from '../shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 
@@ -66,7 +67,8 @@ export function registerERC20BridgeModal() {
 
     ({ CoinBal, proxyAddy }) => {
       const { details: accountDetails } = useKamiAccount();
-      const { visibleModals, setVisibleModals, networks } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
+      const { selectedAddress, networks } = useNetworkSettings();
       // get token balance of controlling account 
       const { data: erc20Addy } = useContractRead({
         address: proxyAddy as `0x${string}`,
@@ -88,10 +90,9 @@ export function registerERC20BridgeModal() {
 
       // TODO: get ERC20 balance - blocked by wallet code
       const depositTx = () => {
-        const {
-          actions,
-          api: { player: { ERC20 } }
-        } = networks.get(accountDetails.ownerAddress);
+        const network = networks.get(selectedAddress);
+        const actions = network!.actions;
+        const api = network!.api.player;
 
         const actionID = `Depositing $KAMI` as EntityID;
         actions.add({
@@ -100,18 +101,16 @@ export function registerERC20BridgeModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return ERC20.deposit(amount);
+            return api.ERC20.deposit(amount);
           },
         });
         return actionID;
       };
 
       const withdrawTx = () => {
-        const {
-          actions,
-          api: { player: { ERC20 } }
-        } = networks.get(accountDetails.ownerAddress);
-
+        const network = networks.get(selectedAddress);
+        const actions = network!.actions;
+        const api = network!.api.player;
 
         const actionID = `Withdrawing $KAMI` as EntityID;
         actions.add({
@@ -120,7 +119,7 @@ export function registerERC20BridgeModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return ERC20.withdraw(amount);
+            return api.ERC20.withdraw(amount);
           },
         });
         return actionID;
@@ -142,7 +141,7 @@ export function registerERC20BridgeModal() {
       );
 
       return (
-        <ModalWrapperFull divName='ERC20Bridge' id='ERC20Bridge'>
+        <ModalWrapperFull divName='bridgeERC20' id='bridgeERC20'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>

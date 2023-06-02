@@ -34,7 +34,6 @@ import { registerOperatorUpdater } from './validators/OperatorUpdater';
 export function registerUIComponents() {
   registerActionQueue();
   registerLoadingState();
-  registerDialogueModal();
 
   registerChatButton();
   registerHelpButton();
@@ -64,4 +63,6 @@ export function registerUIComponents() {
   registerBurnerDetector();
   registerOperatorUpdater();
   registerWalletConnecter();
+
+  registerDialogueModal();
 }
