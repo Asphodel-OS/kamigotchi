@@ -32,7 +32,7 @@
     "dev:local": "yarn build && yarn start",
     "patch:gen": "yarn ejs src/test/Load.t.ejs -o src/test/Load.t.sol",
     "patch:rm": "rm src/test/Load.t.sol",
-    "node:local": "anvil -b 1 --block-base-fee-per-gas 0",
+    "node:local": "anvil -b 1 --base-fee 0 --gas-price 0",
     "start:local": "run-p -l node:local deploy:local",
     "prettier": "prettier --write 'src/**/*.sol'",
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix"

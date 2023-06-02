@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BigNumber, utils } from 'ethers';
 import React, { useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
