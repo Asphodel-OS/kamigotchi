@@ -233,20 +233,28 @@ const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
   }
 
   return (
-    <img
-      src={img}
-      alt=''
+    <div
       onClick={isClickable ? () => move(room) : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
         width: '100%',
         height: '100%',
+        display: 'flex',
         ...hoverStyle,
         ...(isHovered ? { border: '1px solid red' } : {}),
         ...highlightStyle,
       }}
-    />
+    >
+      <img
+        src={img}
+        alt=''
+        style={{
+          width: '200%',
+          height: 'auto',
+        }}
+      />
+    </div>
   );
 };
 
@@ -255,10 +263,14 @@ const GridContainer = styled.div`
   grid-template-columns: repeat(17, 1fr);
   grid-template-rows: repeat(9, 1fr);
   background-color: green;
+  width: 100%;
+  height: 100%;
 `;
 
 const GridTile = styled.div`
   position: relative;
+  width: 100%;
+  height: 100%;
 `;
 
 const MapGrid = ({ highlightedRoom, move }: MapProps) => {
