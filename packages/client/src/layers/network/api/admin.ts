@@ -14,7 +14,7 @@ export function createAdminAPI(systems: any) {
     createRoom('Lobby', 7, [6, 8, 14]);
     createRoom('Junk Shop', 8, [7]);
     createRoom('Forest: Old Growth', 9, [5, 10, 11]);
-    createRoom('Fores: Insect Node', 10, [9]);
+    createRoom('Forest: Insect Node', 10, [9]);
     createRoom('Waterfall Shrine', 11, [9]);
     createRoom('Machine Node', 12, [4]);
     createRoom('Convenience Store', 13, [2]);
