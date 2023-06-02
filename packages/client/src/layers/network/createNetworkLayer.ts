@@ -29,7 +29,6 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     components,
     SystemAbis,
     {
-      initialGasPrice: 2_000_000_000,
       fetchSystemCalls: true,
     },
   );
