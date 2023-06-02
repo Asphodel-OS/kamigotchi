@@ -438,9 +438,6 @@ export const rooms: Room[] = [
         path: prayerwheels,
         offset: { x: -48.65, y: 13 },
         onClick: () =>
-          // triggerDialogueModal([
-          // 'This set of prayer wheels will allow $KAMI to be removed from the game world.',
-          // ]),
           triggerERC20BridgeModal(),
       },
       {
@@ -448,7 +445,6 @@ export const rooms: Room[] = [
         path: bellshapeddevice,
         offset: { x: 39.04, y: -13.92 },
         onClick: () =>
-          // triggerDialogueModal(['This device will allow Kamigotchi to leave the world as tokens.']),
           triggerERC721BridgeModal(),
       },
       {
