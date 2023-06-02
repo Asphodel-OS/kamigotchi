@@ -28,6 +28,7 @@
     "deploy:lattice": "yarn patch:gen && yarn mud deploy --chainSpec https://spec.testnet-chain.linfra.xyz/chainSpec.json --deployerPrivateKey 0x26e86e45f6fc45ec6e2ecd128cec80fa1d1505e5507dcd2ae58c3130a7a97b48 && yarn patch:rm",
     "deploy:lattice:systems": "yarn mud deploy-contracts --rpc 'https://follower.testnet-chain.linfra.xyz' --worldAddress 0xd0F4505f3bC8BC607687D1A0Edc1fA305E7AC11F --deployerPrivateKey 0x26e86e45f6fc45ec6e2ecd128cec80fa1d1505e5507dcd2ae58c3130a7a97b48 --systems",
     "deploy:local": "yarn patch:gen && mud deploy --deployerPrivateKey 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 && yarn patch:rm",
+    "deploy:opGoerli": "yarn patch:gen && yarn mud deploy --chain-id 420 --rpc https://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg --deployerPrivateKey <privKey> && yarn patch:rm",
     "dev:local": "yarn build && yarn start",
     "patch:gen": "yarn ejs src/test/Load.t.ejs -o src/test/Load.t.sol",
     "patch:rm": "rm src/test/Load.t.sol",
@@ -55,14 +56,15 @@
     "wait-on": "^6.0.1"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "^5.0",
     "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/bignumber": "^5.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
     "@latticexyz/solecs": "^1.34.0",
     "@latticexyz/std-contracts": "^1.34.0",
     "@openzeppelin/contracts": "^4.9.0",
     "@solidstate/contracts": "^0.0.52",
+    "dotenv-cli": "^7.2.1",
     "solady": "Vectorized/solady",
     "solstat": "https://github.com/primitivefinance/solstat.git#22923658c83d45fa6fe1b53272af84f3cb7664c6"
   }
