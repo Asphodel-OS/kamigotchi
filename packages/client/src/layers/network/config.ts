@@ -154,7 +154,7 @@ function createNetworkConfigLattice(externalProvider?: ExternalProvider): Networ
   return config;
 }
 
-// Get the network config of a deployment to Lattice's mudChain testnet
+// Get the network config of a deployment to Optimism testnet
 function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: "https://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg",
@@ -165,36 +165,8 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
 
     // checkpointUrl: undefined,
     chainId: 420,
-    worldAddress: "0x2C6db2cF2e5c5e9e8e348CB1cEF0c3fF624C951e",
-    initialBlockNumber: 15725467,
-  };
-
-  // EOAs and privatekey
-  if (externalProvider) {
-    config.externalProvider = externalProvider;
-  } else {
-    // either pull or set up local burner
-    let privateKey = localStorage.getItem("operatorPrivateKey");
-    const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
-    localStorage.setItem("operatorPrivateKey", wallet.privateKey);
-    config.privateKey = wallet.privateKey;
-  }
-  return config;
-}
-
-// Get the network config of a deployment to Lattice's mudChain testnet
-function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): NetworkConfig {
-  let config: NetworkConfig = <NetworkConfig>{
-    jsonRpc: "https://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg",
-    wsRpc: "wss://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg",
-    // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
-    // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
-    snapshotUrl: "https://test-snapshot.asphodel.io",
-
-    // checkpointUrl: undefined,
-    chainId: 420,
-    worldAddress: "0x2C6db2cF2e5c5e9e8e348CB1cEF0c3fF624C951e",
-    initialBlockNumber: 15725467,
+    worldAddress: "0xcbde39129BD681C7A3A73B1B3489f2128c79700c",
+    initialBlockNumber: 10144639,
   };
 
   // EOAs and privatekey
