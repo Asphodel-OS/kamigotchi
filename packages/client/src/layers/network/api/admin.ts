@@ -77,6 +77,15 @@ export function createAdminAPI(systems: any) {
 
     setUpWorldAPI(systems).initWorld();
 
+    initDependents();
+
+    createPlayerAPI(systems).ERC721.mint(
+      '0x7681A73aed06bfb648a5818B978fb018019F6900'
+    );
+  }
+
+  // @dev inits txes that depned on the world being set up
+  function initDependents() {
     setNodeAffinity('Torii Gate', 'NORMAL');
     setNodeAffinity('Trash Compactor', 'SCRAP');
     setNodeAffinity('Termite Mound', 'INSECT');
@@ -91,10 +100,6 @@ export function createAdminAPI(systems: any) {
     setListing('ugajin', 2, 90, 0);
     setListing('ugajin', 3, 150, 0);
     setListing('ugajin', 4, 500, 0);
-
-    createPlayerAPI(systems).ERC721.mint(
-      '0x7681A73aed06bfb648a5818B978fb018019F6900'
-    );
   }
 
   // @dev creates a merchant with the name at the specified location
@@ -320,6 +325,7 @@ export function createAdminAPI(systems: any) {
 
   return {
     init,
+    initDependents,
     giveCoins,
     ERC721: { forceReveal: petForceReveal },
     listing: { set: setListing },
