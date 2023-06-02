@@ -28,14 +28,27 @@ export function registerMintAfterModal() {
         setVisibleModals({ ...visibleModals, kamiMintPost: false, party: true });
       }
 
-      const PartyButton = (
-        <ActionButton
-          id='button-mint'
-          onClick={OpenPartyModal}
-          size='large'
-          text='View my party'
-        />
-      );
+      const AfterButton = () => {
+        if (visibleModals.party === true) {
+          return (
+            <ActionButton
+              id='button-mint'
+              onClick={hideModal}
+              size='large'
+              text='Close'
+            />
+          );
+        } else {
+          return (
+            <ActionButton
+              id='button-mint'
+              onClick={OpenPartyModal}
+              size='large'
+              text='Reveal in party'
+            />
+          );
+        }
+      }
 
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, kamiMintPost: false });
@@ -43,13 +56,10 @@ export function registerMintAfterModal() {
 
       return (
         <ModalWrapperFull divName="kamiMintPost" id="postMintModal">
-        <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-          X
-        </TopButton>
           <CenterBox>
             <Description>Minted!</Description>
           </CenterBox>
-          {PartyButton}
+          {AfterButton()}
         </ModalWrapperFull>
       );
     }
@@ -60,7 +70,7 @@ const CenterBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0px 10px 10px 10px;
+  padding: 20px 10px 10px 10px;
 `;
 
 const Description = styled.p`
