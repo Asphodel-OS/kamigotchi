@@ -29,6 +29,7 @@ import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
 import ribbon from 'assets/images/food/ribbon.png';
+import { Tooltip } from '../library/Tooltip';
 
 export function registerPartyModal() {
   registerUIComponent(
@@ -443,28 +444,6 @@ export function registerPartyModal() {
       // get the row of consumable items to display in the player inventory
       // NOTE: does not render until player inventories are populated
 
-      interface TooltipProps {
-        show: boolean;
-      }
-
-      const Tooltip = styled.div<TooltipProps>`
-        position: absolute;
-        transform: translatey(10px) translateX(-40%);
-        top: 20px;
-        left: 60px;
-        padding: 5px;
-        background-color: #ffffff;
-        font-size: 12px;
-        font-family: Pixel;
-        opacity: ${(props) => (props.show ? 1 : 0)};
-        visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-        transition: all 0.3s ease-in-out;
-        border-style: solid;
-        border-width: 2px;
-        border-color: black;
-        color: black;
-      `;
-
       const ConsumableCells = (inventories: any[], showIndex: number, setToolTip: any) => {
         return inventories.map((inv, i) => {
           return (
@@ -479,7 +458,7 @@ export function registerPartyModal() {
                   }}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false}>{inv.text}</Tooltip>
+                    <Tooltip show={i === showIndex ? true : false} text={inv.text}/>
                   )}
                   <Icon src={inv.image} />
                   <ItemNumber>{inv.balance ?? 0}</ItemNumber>

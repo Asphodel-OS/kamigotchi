@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Tooltip, TooltipContainer } from './Tooltip';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import {
-  dataStore,
-  VisibleModals
-} from 'layers/react/store/createStore';
+import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
 
 // MenuButton renders a button that toggles a target modal. It supports a generic
@@ -51,7 +49,7 @@ export const MenuButton = (props: Props) => {
         onMouseLeave={handleMouseLeave}
       >
         {children}
-        {text && <Tooltip show={showTooltip}>{text}</Tooltip>}
+        {text && <Tooltip show={showTooltip} text={text} positionTop='-5px' />}
       </Button>
     </div>
   );
@@ -66,25 +64,6 @@ interface Props {
   hideModal?: Partial<VisibleModals>;
 }
 
-interface TooltipProps {
-  show: boolean;
-}
-
-const Tooltip = styled.div<TooltipProps>`
-  position: absolute;
-  transform: translatey(10px) translateX(-40%);
-  padding: 5px;
-  background-color: #ffffff;
-  font-size: 12px;
-  font-family: Pixel;
-  opacity: ${(props) => (props.show ? 1 : 0)};
-  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-  transition: all 0.3s ease-in-out;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-`;
-
 const Button = styled.button`
   cursor: pointer;
 
@@ -92,7 +71,7 @@ const Button = styled.button`
     background-color: #c4c4c4;
   }
   &:hover {
-    ${Tooltip} {
+    ${TooltipContainer} {
       display: block;
     }
   }
