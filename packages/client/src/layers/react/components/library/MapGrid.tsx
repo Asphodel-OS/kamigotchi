@@ -208,11 +208,38 @@ const ROOMS_MAP = new Map([
   ['5,13', 13],
 ]);
 
+const BORDER_COLORS = {
+  default: '1.5px solid green',
+  allowed: '1.5px solid yellow',
+};
+
+const NEIGHBOR_ROOMS = [
+  [2],
+  [1, 3, 13],
+  [2, 4],
+  [3, 5, 12],
+  [4, 6, 9],
+  [5, 7],
+  [6, 8, 14],
+  [7],
+  [5, 10, 11],
+  [9],
+  [9],
+  [4],
+  [2],
+  [7],
+];
+
 const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
-  const room = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
-  const isHighlighted = room === highlightedRoom;
-  const highlightStyle = isHighlighted ? { border: '1.5px solid red' } : {};
-  const isClickable = !!room;
+  const currentRoom = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
+  const isHighlighted = currentRoom === highlightedRoom;
+  const isNeighbor = highlightedRoom && currentRoom && NEIGHBOR_ROOMS[highlightedRoom - 1].includes(currentRoom);
+  const highlightStyle = isHighlighted
+    ? { border: BORDER_COLORS.default }
+    : isNeighbor
+    ? { border: BORDER_COLORS.allowed }
+    : {};
+  const isClickable = !!currentRoom;
   const hoverStyle = isClickable ? { cursor: 'pointer' } : {};
   const [isHovered, setHovered] = useState(false);
 
@@ -234,7 +261,7 @@ const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
 
   return (
     <div
-      onClick={isClickable ? () => move(room) : undefined}
+      onClick={isClickable ? () => move(currentRoom) : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
