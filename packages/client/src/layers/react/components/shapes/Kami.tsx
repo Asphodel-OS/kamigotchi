@@ -59,7 +59,7 @@ export const getKami = (
         HealthCurrent,
         HandIndex,
         IsProduction,
-        LastActionTime,
+        LastTime,
         MediaURI,
         Name,
         PetID,
@@ -79,7 +79,7 @@ export const getKami = (
     uri: getComponentValue(MediaURI, index)?.value as string,
     health: getComponentValue(HealthCurrent, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
-    lastUpdated: getComponentValue(LastActionTime, index)?.value as number,
+    lastUpdated: getComponentValue(LastTime, index)?.value as number,
     stats: getStats(layers, index),
   };
 
