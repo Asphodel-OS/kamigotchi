@@ -66,7 +66,7 @@ export const getItem = (
     id: world.entities[index],
     entityIndex: index,
     index: getComponentValue(ItemIndex, index)?.value as number,
-    familyIndex,
+    familyIndex: familyIndex * 1,
     type,
     isFungible,
     name: getComponentValue(Name, index)?.value as string,

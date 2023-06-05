@@ -55,6 +55,7 @@ export const getInventory = (
   // if non-fungible: copy stats of the inventory entity over to the nested item
   if (item.isFungible) {
     inventory.balance = getComponentValue(Balance, index)?.value as number;
+    inventory.balance = inventory.balance * 1;
   } else {
     inventory.item.stats = getStats(layers, index);
   }
@@ -66,4 +67,13 @@ export const sortInventories = (list: Inventory[]) => {
   return list.sort((a: Inventory, b: Inventory) =>
     (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
   );
+}
+
+export const getInventoryByFamilyIndex = (list: Inventory[], familyIndex: number) => {
+  if (!list) return;
+  for (let i = 0, len = list.length; i < len; i++) {
+    if (list[i].item.familyIndex === familyIndex) {
+      return list[i];
+    }
+  }
 }

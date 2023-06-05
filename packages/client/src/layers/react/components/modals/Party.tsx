@@ -21,7 +21,7 @@ import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Inventory, getInventory } from 'layers/react/components/shapes/Inventory';
+import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
@@ -72,42 +72,6 @@ export function registerPartyModal() {
         },
       } = layers;
 
-      // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      const hardCodeInventory = () => {
-        return [
-          {
-            id: 1,
-            itemIndex: 1,
-            image: gum,
-            balance: 0,
-            text: 'Gum - Restores 25 health.',
-          },
-          {
-            id: 2,
-            itemIndex: 2,
-            image: pompom,
-            balance: 0,
-            text: 'PomPom - Restores 100 health.',
-          },
-          {
-            id: 3,
-            itemIndex: 3,
-            image: gakki,
-            balance: 0,
-            text: 'Gakki - Restores 200 health.',
-          },
-          {
-            id: 4,
-            itemIndex: 4,
-            image: ribbon,
-            balance: 0,
-            text: 'Ribbon - Revives a fallen Kami.',
-          },
-        ];
-      };
-
       return merge(
         AccountID.update$,
         Balance.update$,
@@ -140,7 +104,6 @@ export function registerPartyModal() {
 
           // populate the account with kamis and inventories 
           let kamis: Kami[] = [];
-          let inventoriesOld: any = hardCodeInventory();
           if (account) {
             // get the kamis on this account
             const kamiIndices = Array.from(
@@ -153,30 +116,13 @@ export function registerPartyModal() {
             for (let i = 0; i < kamiIndices.length; i++) {
               kamis.push(getKami(layers, kamiIndices[i], { production: true }));
             }
-
-            // (hardcoded structures) populate inventory balances
-            // get the list of inventory indices for this account
-            const inventoryResults = Array.from(
-              runQuery([Has(IsInventory), HasValue(HolderID, { value: account.id })])
-            );
-
-            let itemIndex;
-            for (let i = 0; i < inventoryResults.length; i++) {
-              itemIndex = getComponentValue(ItemIndex, inventoryResults[i])?.value as number;
-              for (let j = 0; j < inventoriesOld.length; j++) {
-                if (inventoriesOld[j].itemIndex == itemIndex) {
-                  let balance = getComponentValue(Balance, inventoryResults[j])?.value as number;
-                  inventoriesOld[j].balance = balance ? balance * 1 : 0;
-                }
-              }
-            }
           }
 
           return {
             actions,
             api: player,
             data: {
-              account: { ...account, inventoriesOld, kamis },
+              account: { ...account, kamis },
             } as any,
             world,
           };
@@ -186,7 +132,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data, world }) => {
-      console.log('PartyM: data', data);
+      // console.log('PartyM: data', data);
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
 
@@ -414,19 +360,23 @@ export function registerPartyModal() {
         if (isOffWorld(kami)) {
           description = ['kidnapped by slave traders'];
         } else if (isUnrevealed(kami)) {
-          description = ['unrevealed!'];
+          description = ['Unrevealed!'];
         } else if (isResting(kami)) {
-          description = ['resting'];
+          description = ['Resting'];
         } else if (isDead(kami)) {
-          description = [`murdered by ???`];
+          description = [`Murdered in cold blood`];
         } else if (isHarvesting(kami)) {
           if (calcHealth(kami) == 0) {
-            description = [`died of dysentery`];
+            description = [
+              `Starving.. `,
+              `on ${kami.production!.node!.name}`,
+            ];
           } else {
             const harvestRate = calcProductionRate(kami) * 3600; //hourly
             const drainRate = calcDrainRate(kami) * 3600; //hourly
             description = [
-              `Harvesting on ${kami.production!.node!.name}`,
+              `Harvesting`,
+              `on ${kami.production!.node!.name}`,
               `+${harvestRate.toFixed(1)} $KAMI/hr`,
               `-${drainRate.toFixed(1)} HP/hr`,
             ];
@@ -442,20 +392,50 @@ export function registerPartyModal() {
       // NOTE: does not render until player inventories are populated
 
       const ConsumableCells = (inventoriesOld: any[], showIndex: number, setToolTip: any) => {
+        const inventories = data.account.inventories;
+        const inventorySlots = [
+          {
+            id: 1,
+            image: gum,
+            text: 'Gum - Restores 25 health.',
+            inventory: getInventoryByFamilyIndex(inventories?.food, 1),
+          },
+          {
+            id: 2,
+            image: pompom,
+            text: 'PomPom - Restores 100 health.',
+            inventory: getInventoryByFamilyIndex(inventories?.food, 2),
+          },
+          {
+            id: 3,
+            image: gakki,
+            text: 'Gakki - Restores 200 health.',
+            inventory: getInventoryByFamilyIndex(inventories?.food, 3),
+          },
+          {
+            id: 4,
+            image: ribbon,
+            text: 'Ribbon - Revives a fallen Kami.',
+            inventory: getInventoryByFamilyIndex(inventories?.revives, 1),
+          },
+        ]
 
-        return inventoriesOld.map((inv, i) => {
+        return inventorySlots.map((slot, i) => {
           return (
-            <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
+            <CellBordered
+              key={slot.id}
+              style={{ gridColumn: `${slot.id}` }}
+            >
               <div style={{ position: 'relative' }}>
                 <CellGrid
                   onMouseOver={() => setToolTip(i)}
                   onMouseLeave={() => setToolTip(-1)}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={inv.text} />
+                    <Tooltip show={i === showIndex ? true : false} text={slot.text} />
                   )}
-                  <Icon src={inv.image} />
-                  <ItemNumber>{inv.balance ?? 0}</ItemNumber>
+                  <Icon src={slot.image} />
+                  <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
                 </CellGrid>
               </div>
             </CellBordered>
