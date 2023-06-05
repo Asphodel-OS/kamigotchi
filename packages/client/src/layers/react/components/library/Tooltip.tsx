@@ -25,10 +25,9 @@ export const TooltipContainer = styled.div<TooltipProps>`
   color: black;
 `;
 
-export const Tooltip: React.FC<TooltipProps> = ({ show, text, positionTop, children }) => {
+export const Tooltip: React.FC<TooltipProps> = ({ show, text, positionTop }) => {
   return (
     <div style={{ position: 'relative' }}>
-      {children}
       <TooltipContainer show={show} text={text} positionTop={positionTop}>
         {text}
       </TooltipContainer>

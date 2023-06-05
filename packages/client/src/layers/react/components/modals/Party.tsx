@@ -362,11 +362,11 @@ export function registerPartyModal() {
       const getFoods = (): Inventory[] => {
         const foods = data.account.inventories2.filter((inv: Inventory) => {
           const isFood = inv.item.type === 'FOOD';
-          return isFood && inv.balance > 0;
+          return isFood && inv.balance! > 0;
         });
 
         return foods.sort((a: Inventory, b: Inventory) =>
-          (a.item.specialIndex > b.item.specialIndex) ? 1 : -1
+          (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
         );
       };
 
@@ -377,11 +377,11 @@ export function registerPartyModal() {
       const getRevives = (): Inventory[] => {
         const revives = data.account.inventories2.filter((inv: Inventory) => {
           const isRevive = inv.item.type === 'REVIVE';
-          return isRevive && inv.balance > 0;
+          return isRevive && inv.balance! > 0;
         });
 
         return revives.sort((a: Inventory, b: Inventory) =>
-          (a.item.specialIndex > b.item.specialIndex) ? 1 : -1
+          (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
         );
       };
 
@@ -476,7 +476,7 @@ export function registerPartyModal() {
                   onMouseLeave={() => setToolTip(-1)}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={inv.text}/>
+                    <Tooltip show={i === showIndex ? true : false} text={inv.text} />
                   )}
                   <Icon src={inv.image} />
                   <ItemNumber>{inv.balance ?? 0}</ItemNumber>
@@ -491,7 +491,7 @@ export function registerPartyModal() {
         const feedOptions = getFoods().map((inv) => {
           return {
             text: inv.item.name,
-            onClick: () => feedKami(kami, inv.item.specialIndex)
+            onClick: () => feedKami(kami, inv.item.familyIndex)
           };
         });
 
@@ -512,7 +512,12 @@ export function registerPartyModal() {
       );
 
       const ReviveButton = (kami: Kami) => (
-        <ActionButton id={`revive-kami`} onClick={() => reviveKami(kami, 1)} text='Revive' />
+        <ActionButton
+          id={`revive-kami`}
+          onClick={() => reviveKami(kami, 1)}
+          text='Revive'
+          disabled={!hasRevive()}
+        />
       );
 
       // Choose and return the action button to display

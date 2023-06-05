@@ -9,12 +9,13 @@ import {
 
 import { Layers } from 'src/types';
 import { Item, getItem } from './Item';
+import { getStats } from './Stats';
 
 // standardized shape of a FE Inventory Entity
 export interface Inventory {
   id: EntityID;
   entityIndex: EntityIndex;
-  balance: number;
+  balance?: number;
   item: Item;
 }
 
@@ -34,9 +35,7 @@ export const getInventory = (
     },
   } = layers;
 
-  // atm this only supports the shape of fungible items
-  // in the case of non-fungible items, we'll need to update this to 
-  // copy stats from the actual inventory entity, rather than the registry
+  // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
   const registryEntityIndex = Array.from(
     runQuery([
@@ -44,13 +43,20 @@ export const getInventory = (
       HasValue(ItemIndex, { value: itemIndex }),
     ])
   )[0];
-
   const item = getItem(layers, registryEntityIndex);
+
   let inventory: Inventory = {
     id: world.entities[index],
     entityIndex: index,
-    balance: getComponentValue(Balance, index)?.value as number,
     item: item,
+  }
+
+  // if fungible: populate the balance
+  // if non-fungible: copy stats of the inventory entity over to the nested item
+  if (item.isFungible) {
+    inventory.balance = getComponentValue(Balance, index)?.value as number;
+  } else {
+    inventory.item.stats = getStats(layers, index);
   }
 
   return inventory;
