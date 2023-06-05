@@ -136,12 +136,11 @@ export function registerPartyModal() {
           )[0];
 
           const account =
-            accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
+            accountIndex !== undefined ? getAccount(layers, accountIndex, { inventory: true }) : ({} as Account);
 
           // populate the account with kamis and inventories 
           let kamis: Kami[] = [];
-          let inventories: any = hardCodeInventory();
-          let inventories2: Inventory[] = [];
+          let inventoriesOld: any = hardCodeInventory();
           if (account) {
             // get the kamis on this account
             const kamiIndices = Array.from(
@@ -163,12 +162,11 @@ export function registerPartyModal() {
 
             let itemIndex;
             for (let i = 0; i < inventoryResults.length; i++) {
-              inventories2[i] = getInventory(layers, inventoryResults[i]);
               itemIndex = getComponentValue(ItemIndex, inventoryResults[i])?.value as number;
-              for (let j = 0; j < inventories.length; j++) {
-                if (inventories[j].itemIndex == itemIndex) {
+              for (let j = 0; j < inventoriesOld.length; j++) {
+                if (inventoriesOld[j].itemIndex == itemIndex) {
                   let balance = getComponentValue(Balance, inventoryResults[j])?.value as number;
-                  inventories[j].balance = balance ? balance * 1 : 0;
+                  inventoriesOld[j].balance = balance ? balance * 1 : 0;
                 }
               }
             }
@@ -178,7 +176,7 @@ export function registerPartyModal() {
             actions,
             api: player,
             data: {
-              account: { ...account, inventories, inventories2, kamis },
+              account: { ...account, inventoriesOld, kamis },
             } as any,
             world,
           };
@@ -359,34 +357,12 @@ export function registerPartyModal() {
         return Math.round(calcHealth(kami)) >= kami.stats.health;
       };
 
-      const getFoods = (): Inventory[] => {
-        const foods = data.account.inventories2.filter((inv: Inventory) => {
-          const isFood = inv.item.type === 'FOOD';
-          return isFood && inv.balance! > 0;
-        });
-
-        return foods.sort((a: Inventory, b: Inventory) =>
-          (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
-        );
-      };
-
       const hasFood = (): boolean => {
-        return getFoods().length > 0;
-      };
-
-      const getRevives = (): Inventory[] => {
-        const revives = data.account.inventories2.filter((inv: Inventory) => {
-          const isRevive = inv.item.type === 'REVIVE';
-          return isRevive && inv.balance! > 0;
-        });
-
-        return revives.sort((a: Inventory, b: Inventory) =>
-          (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
-        );
+        return data.account.inventories.food.length > 0;
       };
 
       const hasRevive = (): boolean => {
-        return getRevives().length > 0;
+        return data.account.inventories.revives.length > 0;
       };
 
       // get the reason why a kami can't feed. assume the kami is either resting or harvesting
@@ -465,9 +441,9 @@ export function registerPartyModal() {
       // get the row of consumable items to display in the player inventory
       // NOTE: does not render until player inventories are populated
 
-      const ConsumableCells = (inventories: any[], showIndex: number, setToolTip: any) => {
+      const ConsumableCells = (inventoriesOld: any[], showIndex: number, setToolTip: any) => {
 
-        return inventories.map((inv, i) => {
+        return inventoriesOld.map((inv, i) => {
           return (
             <CellBordered key={inv.id} id={inv.id} style={{ gridColumn: `${inv.id}` }}>
               <div style={{ position: 'relative' }}>
@@ -488,7 +464,11 @@ export function registerPartyModal() {
       };
 
       const FeedButton = (kami: Kami) => {
-        const feedOptions = getFoods().map((inv) => {
+        const nonEmptyOptions = data.account.inventories.food.filter(
+          (inv: Inventory) => inv.balance && inv.balance > 0
+        );
+
+        const feedOptions = nonEmptyOptions.map((inv: Inventory) => {
           return {
             text: inv.item.name,
             onClick: () => feedKami(kami, inv.item.familyIndex)
@@ -555,7 +535,7 @@ export function registerPartyModal() {
       return (
         <ModalWrapperFull id='party_modal' divName='party'>
           <ConsumableGrid>
-            {ConsumableCells(data.account.inventories, showTooltip, setShowTooltip)}
+            {ConsumableCells(data.account.inventoriesOld, showTooltip, setShowTooltip)}
           </ConsumableGrid>
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>

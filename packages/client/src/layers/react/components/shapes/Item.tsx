@@ -2,7 +2,6 @@ import {
   EntityIndex,
   EntityID,
   getComponentValue,
-  getComponentValueStrict,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';

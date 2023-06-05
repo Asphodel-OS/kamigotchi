@@ -9,6 +9,11 @@ import {
 
 import { Layers } from 'src/types';
 import { Kami, getKami } from './Kami';
+import {
+  Inventory,
+  getInventory,
+  sortInventories
+} from './Inventory';
 
 // standardized shape of an Account Entity
 export interface Account {
@@ -20,11 +25,21 @@ export interface Account {
   location: number;
   stamina: number;
   staminaCurrent: number;
+  inventories?: AccountInventories;
   kamis?: Kami[];
 }
 
 export interface AccountOptions {
   kamis?: boolean;
+  inventory?: boolean;
+}
+
+// bucketed inventory slots
+interface AccountInventories {
+  food: Inventory[];
+  revives: Inventory[];
+  gear: Inventory[];
+  mods: Inventory[];
 }
 
 // get an Account from its EnityIndex
@@ -38,6 +53,8 @@ export const getAccount = (
       world,
       components: {
         Coin,
+        HolderID,
+        IsInventory,
         Location,
         Name,
         OperatorAddress,
@@ -59,8 +76,39 @@ export const getAccount = (
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
   };
 
+
   /////////////////
   // OPTIONAL DATA
+  if (options?.inventory) {
+    const inventoryResults = Array.from(
+      runQuery([
+        Has(IsInventory),
+        HasValue(HolderID, { value: account.id })
+      ])
+    );
+
+    // food inventories
+    let inventory: Inventory;
+    let inventories: AccountInventories = {
+      food: [],
+      revives: [],
+      gear: [],
+      mods: [],
+    };
+    for (let i = 0; i < inventoryResults.length; i++) {
+      inventory = getInventory(layers, inventoryResults[i]);
+      if (inventory.item.type === 'FOOD') inventories.food.push(inventory);
+      if (inventory.item.type === 'REVIVE') inventories.revives.push(inventory);
+      if (inventory.item.type === 'GEAR') inventories.gear.push(inventory);
+      if (inventory.item.type === 'MOD') inventories.mods.push(inventory);
+    }
+
+    sortInventories(inventories.food);
+    sortInventories(inventories.revives);
+    sortInventories(inventories.gear);
+    sortInventories(inventories.mods);
+    account.inventories = inventories;
+  }
 
 
   // populate Kamis

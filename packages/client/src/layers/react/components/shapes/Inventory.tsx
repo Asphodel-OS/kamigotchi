@@ -61,3 +61,9 @@ export const getInventory = (
 
   return inventory;
 }
+
+export const sortInventories = (list: Inventory[]) => {
+  return list.sort((a: Inventory, b: Inventory) =>
+    (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
+  );
+}
