@@ -430,8 +430,8 @@ export function registerPartyModal() {
             const drainRate = calcDrainRate(kami) * 3600; //hourly
             description = [
               `Harvesting on ${kami.production!.node!.name}`,
-              `+${harvestRate.toFixed(1)} $KAMI/hr`,
-              `-${drainRate.toFixed(1)} HP/hr`,
+              `+${harvestRate.toFixed(2)} $KAMI/hr`,
+              `-${drainRate.toFixed(2)} HP/hr`,
             ];
           }
         }
@@ -458,7 +458,7 @@ export function registerPartyModal() {
                   }}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={inv.text}/>
+                    <Tooltip show={i === showIndex ? true : false} text={inv.text} />
                   )}
                   <Icon src={inv.image} />
                   <ItemNumber>{inv.balance ?? 0}</ItemNumber>
