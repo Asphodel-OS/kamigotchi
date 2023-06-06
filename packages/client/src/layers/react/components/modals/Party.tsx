@@ -15,8 +15,8 @@ import { ActionListButton } from 'layers/react/components/library/ActionListButt
 import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
-import { Kami } from 'layers/react/components/shapes/Kami';
+import { Account, AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
+import { Kami, getKami } from 'layers/react/components/shapes/Kami';
 import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
@@ -94,11 +94,12 @@ export function registerPartyModal() {
             { inventory: true, kamis: true }
           );
 
+
           return {
             actions,
             api: player,
             data: {
-              account,
+              account: { ...account, kamis },
             } as any,
             world,
           };
@@ -367,6 +368,8 @@ export function registerPartyModal() {
       // NOTE: does not render until player inventories are populated
 
       const ConsumableCells = (inventories: AccountInventories, showIndex: number, setToolTip: any) => {
+              const inventories = data.account.inventories;
+
         const inventorySlots = [
           {
             id: 1,
@@ -406,7 +409,7 @@ export function registerPartyModal() {
                   onMouseLeave={() => setToolTip(-1)}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={inv.text} />
+                    <Tooltip show={i === showIndex ? true : false} text={i.text} />
                   )}
                   <Icon src={slot.image} />
                   <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
@@ -490,7 +493,7 @@ export function registerPartyModal() {
       return (
         <ModalWrapperFull id='party_modal' divName='party'>
           <ConsumableGrid>
-            {ConsumableCells(data.account.inventories, showTooltip, setShowTooltip)}
+            {ConsumableCells(data.account.inventoriesOld, showTooltip, setShowTooltip)}
           </ConsumableGrid>
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
         </ModalWrapperFull>
