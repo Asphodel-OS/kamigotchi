@@ -47,7 +47,7 @@ export const getListing = (
   let listing: Listing = {
     id: world.entities[index],
     entityIndex: index,
-    buyPrice: getComponentValue(PriceBuy, index)?.value as number,
+    buyPrice: getComponentValue(PriceBuy, index)?.value as number * 1,
     item: item,
   }
 

@@ -13,6 +13,9 @@ import {
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { getAccount } from 'layers/react/components/shapes/Account';
+import { Listing } from 'layers/react/components/shapes/Listing';
+import { Merchant, getMerchant } from 'layers/react/components/shapes/Merchant';
 
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
@@ -72,30 +75,9 @@ export function registerMerchantModal() {
         },
       } = layers;
 
-      // get a Merchant object by index
-      const getMerchant = (index: EntityIndex) => {
-        return {
-          id: world.entities[index],
-          index,
-          name: getComponentValue(Name, index)?.value as string,
-          location: getComponentValue(Location, index)?.value as number,
-        };
-      };
-
-      // get a Listing object by index
-      const getListing = (index: EntityIndex) => {
-        return {
-          id: world.entities[index],
-          index,
-          itemIndex: getComponentValue(ItemIndex, index)?.value as number,
-          buyPrice: getComponentValue(PriceBuy, index)?.value as number,
-          sellPrice: getComponentValue(PriceSell, index)?.value as number,
-        };
-      };
-
       return merge(AccountID.update$, Location.update$).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
+          // get the account through the account entity of the controlling wallet
           const accountIndex = Array.from(
             runQuery([
               Has(IsAccount),
@@ -104,46 +86,28 @@ export function registerMerchantModal() {
               }),
             ])
           )[0];
-          const accountID = world.entities[accountIndex];
+          const account = getAccount(layers, accountIndex);
 
-          // get player location and list of merchants in this room
-          // const location = getComponentValue(Location, accountIndex)?.value as number;
+          // get the merchant in this room
           const merchantResults = runQuery([
             Has(IsMerchant),
-            HasValue(Location, { value: "0x00" as any }), // this is set to the global merchant for now
+            HasValue(Location, { value: account.location }),
           ]);
 
           // if we have a merchant retrieve its listings
-          let listings: any = [];
+          // only support one merchant per room for now
           let merchant, merchantIndex;
           if (merchantResults.size != 0) {
             merchantIndex = Array.from(merchantResults)[0];
-            merchant = getMerchant(merchantIndex);
-            const listingIndices = Array.from(
-              runQuery([
-                Has(IsListing),
-                HasValue(MerchantID, { value: merchant.id }),
-              ])
-            );
-
-            let listing;
-            for (let i = 0; i < listingIndices.length; i++) {
-              listing = getListing(listingIndices[i]);
-              listings.push(listing);
-            }
+            merchant = getMerchant(layers, merchantIndex);
           }
 
           return {
             actions,
             api: player,
             data: {
-              account: {
-                id: accountID,
-                // inventory, // we probably want this, filtered by the sellable items
-                coin: getComponentValue(Coin, accountIndex)?.value as number,
-              },
+              account,
               merchant,
-              listings,
             } as any,
           };
         })
@@ -152,14 +116,12 @@ export function registerMerchantModal() {
 
     // Render
     ({ actions, api, data }) => {
-      // hide this component if merchant.index == 0
-
       ///////////////////
       // ACTIONS
 
       // buy from a listing
-      const buy = (listing: any, amt: number) => {
-        const actionID = `Buying ${amt} of ${listing.itemIndex
+      const buy = (listing: Listing, amt: number) => {
+        const actionID = `Buying ${amt} of ${listing.item.index
           } at ${Date.now()}` as EntityID; // itemIndex should be replaced with the item's name
         actions.add({
           id: actionID,
@@ -176,32 +138,34 @@ export function registerMerchantModal() {
       ///////////////////
       // DISPLAY
 
-      const BuyButton = (listing: any) => (
+      const BuyButton = (listing: Listing) => (
         <ActionButton
-          id={`button-buy-${listing.itemIndex}`}
-          disabled={data.coin < parseInt(listing.buyPrice, 16)}
+          id={`button-buy-${listing.item.index}`}
+          disabled={data.coin < listing.buyPrice}
           onClick={() => buy(listing, 1)}
           text="Buy" />
       );
 
       // [listing: {id, index, itemIndex, buyPrice, sellPrice}]
-      const listings = (slots: any) =>
-        slots.map((listing: any) => (
-          <ShopEntry key={listing.itemIndex}>
-            <ItemImage src={ItemImages.get(parseInt(listing.itemIndex, 16))} />
-            <ItemName>
-              {ItemNames.get(parseInt(listing.itemIndex, 16))}{' '}
-            </ItemName>
-            <ItemPrice>{parseInt(listing.buyPrice, 16)}</ItemPrice>
+      const listings = (listings: Listing[]) => {
+        if (!listings) return;
+        return listings.map((listing) => (
+          <ShopEntry key={listing.item.index}>
+            <ItemImage src={ItemImages.get(listing.item.index)} />
+            <ItemName>{listing.item.name}</ItemName>
+            <ItemPrice>{listing.buyPrice}</ItemPrice>
             <ButtonWrapper>
               {BuyButton(listing)}
             </ButtonWrapper>
           </ShopEntry>
         ));
+      };
 
       return (
         <ModalWrapperFull divName="merchant" id="merchant">
-          <ShopList>{listings(data.listings)}</ShopList>
+          {data.merchant &&
+            <ShopList>{listings(data.merchant.listings)}</ShopList>
+          }
         </ModalWrapperFull>
       );
     }

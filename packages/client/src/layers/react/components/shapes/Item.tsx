@@ -65,7 +65,7 @@ export const getItem = (
   let Item: Item = {
     id: world.entities[index],
     entityIndex: index,
-    index: getComponentValue(ItemIndex, index)?.value as number,
+    index: getComponentValue(ItemIndex, index)?.value as number * 1,
     familyIndex: familyIndex * 1,
     type,
     isFungible,
