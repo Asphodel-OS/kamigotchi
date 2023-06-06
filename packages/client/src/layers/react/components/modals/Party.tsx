@@ -375,10 +375,9 @@ export function registerPartyModal() {
             const harvestRate = calcProductionRate(kami) * 3600; //hourly
             const drainRate = calcDrainRate(kami) * 3600; //hourly
             description = [
-              `Harvesting`,
-              `on ${kami.production!.node!.name}`,
-              `+${harvestRate.toFixed(1)} $KAMI/hr`,
-              `-${drainRate.toFixed(1)} HP/hr`,
+              `Harvesting on ${kami.production!.node!.name}`,
+              `+${harvestRate.toFixed(2)} $KAMI/hr`,
+              `-${drainRate.toFixed(2)} HP/hr`,
             ];
           }
         }
@@ -432,7 +431,7 @@ export function registerPartyModal() {
                   onMouseLeave={() => setToolTip(-1)}
                 >
                   {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={slot.text} />
+                    <Tooltip show={i === showIndex ? true : false} text={inv.text} />
                   )}
                   <Icon src={slot.image} />
                   <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>

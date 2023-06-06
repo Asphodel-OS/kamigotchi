@@ -26,6 +26,8 @@ export interface Account {
   stamina: number;
   staminaCurrent: number;
   inventories?: AccountInventories;
+  lastBlock: number;
+  lastMoveTs: number;
   kamis?: Kami[];
 }
 
@@ -55,6 +57,8 @@ export const getAccount = (
         Coin,
         HolderID,
         IsInventory,
+        LastBlock,
+        LastTime,
         Location,
         Name,
         OperatorAddress,
@@ -74,6 +78,8 @@ export const getAccount = (
     location: getComponentValue(Location, index)?.value as number,
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
+    lastBlock: getComponentValue(LastBlock, index)?.value as number,
+    lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
 
 
@@ -127,6 +133,7 @@ export const getAccount = (
   //   );
 
   //   // // like wtf man.. leaving this here so everyone can witness the absurdity
+  //   // // thanks, enjoyed witnessing this absurdity
   //   // let kami: Kami;
   //   // let kamis: Kami[] = [];
   //   // for (let i = 0; i < account.kamis.length; i++) {
