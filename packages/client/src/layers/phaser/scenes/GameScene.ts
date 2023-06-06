@@ -36,6 +36,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
   create() {
     const { width: gameWidth, height: gameHeight } = this.sys.game.canvas;
+    this.game.scene.scenes[0].sound.pauseOnBlur = false;
     if (this.room) {
       const room = this.room;
       let scale = 1; // scale of image assets
@@ -82,6 +83,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
         }
       }
     }
+
     this.prevRoom = this.currentRoom;
 
     // subscribe to changes in sound.volume
@@ -97,7 +99,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
     });
   }
 
-  update() { }
+  update() {}
 
   onClick() {
     console.log('clicked');
