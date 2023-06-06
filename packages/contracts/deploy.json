@@ -216,7 +216,8 @@
         "BlockLastComponent",
         "LocationComponent",
         "StaminaComponent",
-        "StaminaCurrentComponent"
+        "StaminaCurrentComponent",
+        "TimeLastActionComponent"
       ]
     },
     {
@@ -241,7 +242,8 @@
         "LocationComponent",
         "NameComponent",
         "StaminaComponent",
-        "StaminaCurrentComponent"
+        "StaminaCurrentComponent",
+        "TimeLastActionComponent"
       ]
     },
     {

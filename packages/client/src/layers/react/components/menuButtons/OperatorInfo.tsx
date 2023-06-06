@@ -26,10 +26,22 @@ export function registerOperatorInfoButton() {
       const {
         network: {
           network: { connectedAddress },
-          components: { IsAccount, OperatorAddress, StaminaCurrent, Name, Coin },
+          components: {
+            Coin,
+            Name,
+            IsAccount,
+            OperatorAddress,
+            StaminaCurrent,
+            Stamina,
+          },
         },
       } = layers;
-      return merge(StaminaCurrent.update$, Name.update$, Coin.update$).pipe(
+      return merge(
+        Name.update$,
+        Coin.update$,
+        Stamina.update$,
+        StaminaCurrent.update$,
+      ).pipe(
         map(() => {
           // get the account entity of the controlling wallet
           const accountEntityIndex = Array.from(
@@ -40,25 +52,31 @@ export function registerOperatorInfoButton() {
               }),
             ])
           )[0];
-          const operatorName =
-            getComponentValue(Name, accountEntityIndex)?.value ?? 'Operator Name';
 
           const account =
             accountEntityIndex !== undefined
               ? getAccount(layers, accountEntityIndex)
               : ({} as Account);
 
-          const { stamina: maxStamina, staminaCurrent, coin } = account;
-          return {
-            staminaCurrent,
-            maxStamina,
+          const {
+            name,
             coin,
-            operatorName,
+            stamina: maxStamina,
+            staminaCurrent,
+            lastMoveTs,
+          } = account;
+
+          return {
+            name,
+            coin,
+            maxStamina,
+            staminaCurrent,
+            lastMoveTs,
           };
         })
       );
     },
-    ({ staminaCurrent, maxStamina, coin, operatorName }) => {
+    ({ name, coin, staminaCurrent, maxStamina, lastMoveTs }) => {
       const staminaPercentage =
         staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
       const {
@@ -70,7 +88,7 @@ export function registerOperatorInfoButton() {
             <>
               <Centered>
                 <NameCell>
-                  <Text>{operatorName}</Text>
+                  <Text>{name}</Text>
                 </NameCell>
                 <KamiCell>
                   <Text>$KAMI: {coin ? coin * 1 : 0}</Text>

@@ -26,6 +26,8 @@ export interface Account {
   stamina: number;
   staminaCurrent: number;
   inventories?: AccountInventories;
+  lastBlock: number;
+  lastMoveTs: number;
   kamis?: Kami[];
 }
 
@@ -57,6 +59,8 @@ export const getAccount = (
         HolderID,
         IsInventory,
         IsPet,
+        LastBlock,
+        LastTime,
         Location,
         Name,
         OperatorAddress,
@@ -76,6 +80,8 @@ export const getAccount = (
     location: getComponentValue(Location, index)?.value as number,
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
+    lastBlock: getComponentValue(LastBlock, index)?.value as number,
+    lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
 
   /////////////////

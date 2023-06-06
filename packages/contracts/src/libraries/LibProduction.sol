@@ -22,7 +22,7 @@ uint256 constant BOUNTY_RATIO = 50; // reward per 100 KAMI liquidated
 uint256 constant BOUNTY_RATIO_PRECISION = 1e2; // i.e. denominator of the bounty ratio
 uint256 constant HARVEST_RATE_PRECISION = 1e6; // precsion on production rate calculations
 uint256 constant HARVEST_RATE_MULTIPLIER_PRECISION = 1e6; // harvesting multiplier precision
-uint256 constant HARVEST_RATE_FLAT_MULTIPLIER = 10; // flat multiplier on harvest rates
+uint256 constant HARVEST_RATE_FLAT_REDUCER = 10; // flat divisor on power -> production rate conversion
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -68,7 +68,7 @@ library LibProduction {
 
   // Calculate the multiplier for a harvest, measured in (precision set by MULTIPLIER_PRECISION)
   function calcHarvestMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
-    return HARVEST_RATE_FLAT_MULTIPLIER * calcHarvestingAffinityMultiplier(components, id);
+    return calcHarvestingAffinityMultiplier(components, id) / HARVEST_RATE_FLAT_REDUCER;
   }
 
   // Calculate the harvesting multiplier resulting from affinity matching
@@ -77,15 +77,15 @@ library LibProduction {
     IUintComp components,
     uint256 id
   ) internal view returns (uint256) {
-    uint nodeID = getNode(components, id);
+    uint256 nodeID = getNode(components, id);
     string memory nodeAff = LibNode.getAffinity(components, nodeID);
 
-    uint petID = getPet(components, id);
+    uint256 petID = getPet(components, id);
     string[] memory petAffs = LibPet.getAffinities(components, petID);
 
     // layer the multipliers due to each trait on top of each other
-    uint totMultiplier = HARVEST_RATE_MULTIPLIER_PRECISION;
-    for (uint i = 0; i < petAffs.length; i++) {
+    uint256 totMultiplier = HARVEST_RATE_MULTIPLIER_PRECISION;
+    for (uint256 i = 0; i < petAffs.length; i++) {
       totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(petAffs[i], nodeAff);
       totMultiplier /= 100;
     }

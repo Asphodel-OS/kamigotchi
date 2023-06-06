@@ -112,7 +112,7 @@ export function createComponents(world: World) {
     // Time/Block Tracking
     LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),
     RevealBlock: defineNumberEZ("BlockReveal", "component.Block.Reveal"),
-    LastActionTime: defineNumberEZ("LastActionTime", "component.Time.LastAction"),
+    LastTime: defineNumberEZ("LastTime", "component.Time.LastAction"),
     StartTime: defineNumberEZ("StartTime", "component.Time.Start"),
     Time: defineNumberEZ("Time", "component.Time"),
 

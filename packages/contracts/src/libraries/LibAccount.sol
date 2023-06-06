@@ -15,9 +15,10 @@ import { LocationComponent, ID as LocCompID } from "components/LocationComponent
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
+import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 
-uint256 constant STAMINA_RECOVERY_PERIOD = 10; // measured in blocks
+uint256 constant STAMINA_RECOVERY_PERIOD = 300; // measured in blocks
 uint256 constant BASE_STAMINA = 20;
 
 library LibAccount {
@@ -37,8 +38,9 @@ library LibAccount {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
     StaminaComponent(getAddressById(components, StaminaCompID)).set(id, BASE_STAMINA);
-    StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, BASE_STAMINA);
-    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, block.number);
+    setCurrStamina(components, id, BASE_STAMINA);
+    setLastBlock(components, id, block.number);
+    setLastTs(components, id, block.timestamp);
     return id;
   }
 
@@ -59,14 +61,19 @@ library LibAccount {
 
   // syncs the stamina of an account. rounds down, ruthlessly
   function syncStamina(IUintComp components, uint256 id) internal returns (uint256) {
-    uint256 blockDiff = block.number - getLastBlock(components, id); // block duration since last action
-    uint256 recoveredAmt = blockDiff / STAMINA_RECOVERY_PERIOD;
+    uint256 timePassed = block.timestamp - getLastTs(components, id);
+    uint256 recoveredAmt = timePassed / STAMINA_RECOVERY_PERIOD;
     return recover(components, id, recoveredAmt);
   }
 
-  // Update the BlockLast of an entity. Used to track the block in which an Account last interacted.
+  // Update the BlockLast of the account. References the most recent block this Account transacted.
   function updateLastBlock(IUintComp components, uint256 id) internal {
     setLastBlock(components, id, block.number);
+  }
+
+  // Update the TimeLastAction of the account. Used to throttle world movement.
+  function updateLastTs(IUintComp components, uint256 id) internal {
+    setLastTs(components, id, block.timestamp);
   }
 
   /////////////////
@@ -78,6 +85,10 @@ library LibAccount {
 
   function setLastBlock(IUintComp components, uint256 id, uint256 blockNum) internal {
     BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, blockNum);
+  }
+
+  function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -113,6 +124,10 @@ library LibAccount {
 
   function getLastBlock(IUintComp components, uint256 id) internal view returns (uint256) {
     return BlockLastComponent(getAddressById(components, BlockLastCompID)).getValue(id);
+  }
+
+  function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeLastActionComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   // gets the location of a specified account account
