@@ -14,7 +14,6 @@ import { registerDialogueModal } from './modals/Dialogue';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerKamiMintModal } from './modals/MintKami';
-import { registerMintAfterModal } from './modals/MintAfter';
 import { registerKamiModal } from './modals/Kami';
 import { registerMapModal } from './modals/Map';
 import { registerMerchantModal } from './modals/Merchant';
@@ -49,7 +48,6 @@ export function registerUIComponents() {
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerKamiMintModal();
-  registerMintAfterModal();
   registerMapModal();
   registerNodeModal();
   registerMerchantModal();

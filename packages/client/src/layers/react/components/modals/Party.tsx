@@ -466,8 +466,9 @@ export function registerPartyModal() {
 
       // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
-        if (!kamis) return;
-        return kamis.map((kami) => {
+        const reversed = [...kamis];
+        reversed.reverse();
+        return reversed.map((kami) => {
           const action = DisplayedAction(kami);
           const description = getDescription(kami);
           const healthString = !isUnrevealed(kami)
