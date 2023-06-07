@@ -56,7 +56,7 @@ import {
   room14,
 } from 'assets/images/rooms';
 
-import { forest, opening } from 'assets/sound/ost';
+import { forest, opening, ost1, ost2 } from 'assets/sound/ost';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
 import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
 import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggerERC721BridgeModal';
@@ -93,9 +93,9 @@ interface RoomMusic {
 export const duplicateRoomMusic = [
   [1, 2, 3],
   [5, 6],
-  [9, 10],
+  [9, 10, 11],
   [7, 8, 14],
-  [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+  [4, 5, 6, 7, 8, 9, 10, 12, 13, 14],
 ];
 
 // all our lovely, hardcoded room details
@@ -204,8 +204,8 @@ export const rooms: Room[] = [
       path: room5,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost1',
+      path: ost1,
     },
     objects: [
       {
@@ -236,8 +236,8 @@ export const rooms: Room[] = [
       path: room6,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost1',
+      path: ost1,
     },
     objects: [
       {
@@ -318,8 +318,8 @@ export const rooms: Room[] = [
       path: room9,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost2',
+      path: ost2,
     },
     objects: [
       {
@@ -355,8 +355,8 @@ export const rooms: Room[] = [
       path: room10,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost2',
+      path: ost2,
     },
     objects: [
       {
@@ -392,8 +392,8 @@ export const rooms: Room[] = [
       path: room11,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost2',
+      path: ost2,
     },
     objects: [
       {
