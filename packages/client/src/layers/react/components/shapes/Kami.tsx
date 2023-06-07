@@ -10,6 +10,7 @@ import {
 
 import { Layers } from 'src/types';
 import { Account, getAccount } from './Account';
+import { Kill, getKill } from './Kill';
 import { Production, getProduction } from './Production';
 import { Stats, getStats } from './Stats';
 import { Traits, TraitIndices, getTraits } from './Trait';
@@ -24,17 +25,21 @@ export interface Kami {
   health: number;
   state: string;
   lastUpdated: number;
-  account?: Account;
-  production?: Production;
   stats: Stats;
+  account?: Account;
+  deaths?: Kill[];
+  kills?: Kill[];
+  production?: Production;
   traits?: Traits;
   affinities?: string[];
   canName?: boolean;
 }
 
 // optional data to populate for a Kami Entity
-export interface KamiOptions {
+export interface Options {
   account?: boolean;
+  deaths?: boolean;
+  kills?: boolean;
   production?: boolean;
   traits?: boolean;
   namable?: boolean;
@@ -44,7 +49,7 @@ export interface KamiOptions {
 export const getKami = (
   layers: Layers,
   index: EntityIndex,
-  options?: KamiOptions
+  options?: Options
 ): Kami => {
   const {
     network: {
@@ -58,13 +63,16 @@ export const getKami = (
         FaceIndex,
         HealthCurrent,
         HandIndex,
+        IsKill,
         IsProduction,
         LastTime,
         MediaURI,
         Name,
         PetID,
         PetIndex,
+        SourceID,
         State,
+        TargetID,
         TraitIndex,
       },
     },
@@ -86,17 +94,51 @@ export const getKami = (
   /////////////////
   // OPTIONAL DATA
 
-  if (!options) return kami;
-
   // populate Account
-  if (options.account) {
+  if (options?.account) {
     const accountID = getComponentValue(AccountID, index)?.value as EntityID;
     const accountIndex = world.entityToIndex.get(accountID);
     if (accountIndex) kami.account = getAccount(layers, accountIndex);
   }
 
+  // populate Kills where our kami is the victim
+  if (options?.deaths) {
+    const deaths: Kill[] = [];
+    const killEntityIndices = Array.from(
+      runQuery([
+        Has(IsKill),
+        HasValue(TargetID, { value: kami.id }),
+      ])
+    );
+
+    for (let i = 0; i < killEntityIndices.length; i++) {
+      deaths.push(getKill(layers, killEntityIndices[i], { source: true }));
+    }
+    deaths.sort((a, b) => b.time - a.time);
+
+    kami.deaths = deaths;
+  }
+
+  // populate Kills where our kami is the aggressor
+  if (options?.kills) {
+    const kills: Kill[] = [];
+    const killEntityIndices = Array.from(
+      runQuery([
+        Has(IsKill),
+        HasValue(SourceID, { value: kami.id }),
+      ])
+    );
+
+    for (let i = 0; i < killEntityIndices.length; i++) {
+      kills.push(getKill(layers, killEntityIndices[i], { target: true }));
+    }
+    kills.sort((a, b) => b.time - a.time);
+
+    kami.kills = kills;
+  }
+
   // populate Production
-  if (options.production) {
+  if (options?.production) {
     const productionIndex = Array.from(
       runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
     )[0];
@@ -105,7 +147,7 @@ export const getKami = (
   }
 
   // populate Traits
-  if (options.traits) {
+  if (options?.traits) {
     // gets registry entity for a trait
     const traitPointer = (type: Component) => {
       const traitIndex = getComponentValue(type, index)?.value as number;
@@ -142,7 +184,7 @@ export const getKami = (
   }
 
   // check if canName
-  if (options.namable) {
+  if (options?.namable) {
     if (getComponentValue(CanName, index)) {
       kami.canName = true;
     } else {

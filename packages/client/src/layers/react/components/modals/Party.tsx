@@ -15,6 +15,7 @@ import { ActionListButton } from 'layers/react/components/library/ActionListButt
 import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami } from 'layers/react/components/shapes/Kami';
 import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
@@ -25,7 +26,6 @@ import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
 import ribbon from 'assets/images/food/ribbon.png';
-import { Tooltip } from '../library/Tooltip';
 
 export function registerPartyModal() {
   registerUIComponent(
