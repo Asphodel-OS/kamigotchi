@@ -1,6 +1,6 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   getComponentValue,
 } from '@latticexyz/recs';
 

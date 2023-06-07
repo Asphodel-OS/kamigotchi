@@ -25,10 +25,10 @@ export interface Account {
   location: number;
   stamina: number;
   staminaCurrent: number;
-  inventories?: AccountInventories;
   lastBlock: number;
   lastMoveTs: number;
   kamis?: Kami[];
+  inventories?: AccountInventories;
 }
 
 export interface AccountOptions {
