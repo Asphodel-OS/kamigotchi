@@ -49,7 +49,6 @@ export function registerPartyModal() {
             HealthCurrent,
             Coin,
             IsAccount,
-            IsPet,
             Location,
             MediaURI,
             Name,
@@ -353,8 +352,8 @@ export function registerPartyModal() {
             description = [
               `Harvesting`,
               `on ${kami.production!.node!.name}`,
-              `+${harvestRate.toFixed(1)} $KAMI/hr`,
-              `-${drainRate.toFixed(1)} HP/hr`,
+              `+${harvestRate.toFixed(2)} $KAMI/hr`,
+              `-${drainRate.toFixed(2)} HP/hr`,
             ];
           }
         }
@@ -365,8 +364,6 @@ export function registerPartyModal() {
       // DISPLAY
 
       // get the row of consumable items to display in the player inventory
-      // NOTE: does not render until player inventories are populated
-
       const ConsumableCells = (inventories: AccountInventories, showIndex: number, setToolTip: any) => {
         const inventorySlots = [
           {
