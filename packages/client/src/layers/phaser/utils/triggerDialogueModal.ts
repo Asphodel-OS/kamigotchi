@@ -6,7 +6,9 @@ export const triggerDialogueModal = (description: string[]) => {
     visibleModals,
     sound: { volume },
   } = dataStore.getState();
-
+  if (visibleModals.kamisNaming || visibleModals.nameKami) {
+    return;
+  }
   const clickFX = new Audio(clickSound);
 
   clickFX.volume = volume;
