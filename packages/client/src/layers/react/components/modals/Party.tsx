@@ -339,7 +339,11 @@ export function registerPartyModal() {
         } else if (isResting(kami)) {
           description = ['Resting'];
         } else if (isDead(kami)) {
-          description = [`Murdered in cold blood`];
+          description = [`Murdered`];
+          if (kami.deaths && kami.deaths.length > 0) {
+            description.push(`by ${kami.deaths[0]!.source!.name}`);
+            description.push(`on ${kami.deaths[0]!.node.name} `);
+          }
         } else if (isHarvesting(kami)) {
           if (calcHealth(kami) == 0) {
             description = [

@@ -131,7 +131,11 @@ export const getAccount = (
     );
 
     kamis = kamiResults.map(
-      (index): Kami => getKami(layers, index, { production: true, traits: true })
+      (index): Kami => getKami(
+        layers,
+        index,
+        { deaths: true, production: true, traits: true }
+      )
     );
     account.kamis = kamis;
   }
