@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
@@ -16,7 +16,7 @@ library LibRoom {
   // Create a room at a given location.
   function create(
     IWorld world,
-    IUint256Component components,
+    IUintComp components,
     string memory name,
     uint256 location,
     uint256[] memory exits
@@ -34,7 +34,7 @@ library LibRoom {
 
   // Checks whether a path 'from' a location 'to' a location is a valid one
   function isValidPath(
-    IUint256Component components,
+    IUintComp components,
     uint256 from,
     uint256 to
   ) internal view returns (bool can) {
@@ -52,14 +52,11 @@ library LibRoom {
   // GETTERS
 
   // Get all the possible exits of a given room.
-  function getExits(
-    IUint256Component components,
-    uint256 id
-  ) internal view returns (uint256[] memory) {
+  function getExits(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     return ExitsComponent(getAddressById(components, ExitsCompID)).getValue(id);
   }
 
-  function getLocation(IUint256Component components, uint256 id) internal view returns (uint256) {
+  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
     return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
   }
 
@@ -67,10 +64,7 @@ library LibRoom {
   // QUERIES
 
   // Retrieve the ID of a room with the given location.
-  function get(
-    IUint256Component components,
-    uint256 location
-  ) internal view returns (uint256 result) {
+  function get(IUintComp components, uint256 location) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRoomCompID), "");
     fragments[1] = QueryFragment(
