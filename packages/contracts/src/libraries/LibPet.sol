@@ -136,7 +136,7 @@ library LibPet {
   // NOTE: should be called at the top of a System and folllowed up with a require(!isDead).
   // it's a bit gas-inefficient to be doing it this way but saves us plenty of mental energy
   // in catching all the edge cases.
-  function syncHealth(IUintComp components, uint256 id) internal {
+  function syncHealth(IUintComp components, uint256 id) public {
     if (isHarvesting(components, id)) {
       // drain health if harvesting
       uint256 drainAmt = calcProductionDrain(components, id);
@@ -180,18 +180,21 @@ library LibPet {
   // we want to properly round. We need a game design discussion on how we want to do this.
   function calcProductionDrain(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 productionID = getProduction(components, id);
-    uint256 prodRate = LibProduction.getRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
+    uint256 harvestRate = LibProduction.getRate(components, productionID);
     uint256 harvestRatePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
-    uint256 totalPrecision = BURN_RATIO_PRECISION * harvestRatePrecision;
-    return (duration * prodRate * BURN_RATIO + (totalPrecision / 2)) / totalPrecision;
+    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    uint256 totalPrecision = basePrecision * harvestRatePrecision;
+    return (duration * harvestRate * base + (totalPrecision / 2)) / totalPrecision;
   }
 
   // Calculate the recovery of the kami from resting. This assumes the Kami is actually resting.
   function calcRestingRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 recoveryRate = calcRestingRecoveryRate(components, id); // 1e18 precision
-    return (duration * recoveryRate) / RECOVERY_RATE_PRECISION;
+    uint256 rate = calcRestingRecoveryRate(components, id);
+    uint256 precision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_PREC");
+    return (duration * rate) / precision;
   }
 
   // calculates the health recovery rate of the Kami per second. Assumed resting.
@@ -200,7 +203,10 @@ library LibPet {
     uint256 id
   ) internal view returns (uint256) {
     uint256 totalHarmony = calcTotalHarmony(components, id);
-    return (totalHarmony * RECOVERY_RATE_FLAT_MULTIPLIER * RECOVERY_RATE_PRECISION) / 3600;
+    uint256 precision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_PREC");
+    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_BASE");
+    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_BASE_PREC");
+    return (totalHarmony * base * precision) / (3600 * basePrecision);
   }
 
   // Calculate the liquidation threshold for target pet, attacked by the source pet.

@@ -44,7 +44,7 @@ library LibRegistryAffinity {
     string memory sourceAff,
     string memory targetAff
   ) internal view returns (uint256) {
-    uint256 multBase = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_PREC");
+    uint256 multBase = LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_BASE");
     uint256 multUp = LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_UP");
     uint256 multDown = LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_DOWN");
 

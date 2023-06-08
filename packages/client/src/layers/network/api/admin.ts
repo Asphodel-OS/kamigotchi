@@ -13,19 +13,30 @@ export function createAdminAPI(systems: any) {
     setConfig('KAMI_BASE_HARMONY', 10);
     setConfig('KAMI_BASE_SLOTS', 0);
 
-    // set global config fields for Harvest Rates
+    // Harvest Rates (just ignore root precision)
+    // dHarvest/dt = base * power * multiplier
     // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
-    // so BASE of 100 and PREC of 3 means 100/1e3 = 0.1
-    const numHarvestTraits = 3; // ping jirach before updating this one (you have been warned)
+    // so BASE of 100 and BASE_PREC of 3 means 100/1e3 = 0.1
+    const numHarvestTraits = 3; // don't change this, some uncoded fuckery atm
     const affinityPrecision = 2;
     const multiplierPrecision = numHarvestTraits * affinityPrecision;
-    setConfig('HARVEST_RATE_PREC', 6);
-    setConfig('HARVEST_RATE_BASE', 100); // in respect to power
+    setConfig('HARVEST_RATE_PREC', 6);   // never need to change this one
+    setConfig('HARVEST_RATE_BASE', 100);
     setConfig('HARVEST_RATE_BASE_PREC', 3);
     setConfig('HARVEST_RATE_MULT_PREC', multiplierPrecision);
+    setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
     setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
     setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
-    setConfig('HARVEST_RATE_MULT_AFF_PREC', affinityPrecision); // this is not actually used in the codebase rn
+    setConfig('HARVEST_RATE_MULT_AFF_PREC', affinityPrecision); // 2, not actually used
+
+    // health drain and heal rates (just ignore root precisions)
+    // DrainRate = HarvestRate * HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
+    // HealRate = Harmony * HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
+    setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
+    setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3);
+    setConfig('HEALTH_RATE_HEAL_PREC', 6);
+    setConfig('HEALTH_RATE_HEAL_BASE', 100);   // in respect to harmony
+    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);
 
     // create our rooms
     createRoom('deadzone', 0, [1]); // in case we need this
@@ -375,9 +386,24 @@ export function createAdminAPI(systems: any) {
                 precision: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_PREC', v),
               },
             },
-          }
+          },
+          health: {
+            drain: {
+              base: {
+                value: (v: number) => setConfig('HEALTH_RATE_DRAIN_BASE', v),
+                precision: (v: number) => setConfig('HEALTH_RATE_DRAIN_BASE_PREC', v),
+              },
+            },
+            heal: {
+              precision: (v: number) => setConfig('HEALTH_RATE_HEAL_PREC', v),
+              base: {
+                value: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE', v),
+                precision: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE_PREC', v),
+              },
+            },
+          },
         },
-      }
+      },
     },
     listing: { set: setListing },
     merchant: { create: createMerchant },
