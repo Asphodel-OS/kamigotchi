@@ -8,15 +8,15 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
-import * as mqtt from 'mqtt';
+import Urbit from '@urbit/http-api';
+
+import { Message, Update, SendMessagePayload } from "../../utils/uqChat/types"
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
-
-const mqttServerUrl = 'wss://chatserver.asphodel.io:8083/mqtt';
-const mqttTopic = 'kamigotchi';
+const chatId = "0x8155.2625.a7c4.bda2.9baf.2ec7.0cbf.297d";
 
 export function registerChatModal() {
   registerUIComponent(
@@ -67,69 +67,74 @@ export function registerChatModal() {
     },
 
     ({ chatName }) => {
-      type ChatMessage = { seenAt: number; message: string };
+      const [api] = useState<Urbit>(new Urbit(""));
 
-      const [messages, setMessages] = useState<ChatMessage[]>([]);
+      const [messages, setMessages] = useState<Message[]>([]);
       const [chatInput, setChatInput] = useState('');
 
-      const options = {
-        connectTimeout: 300000,
-        reconnectPeriod: 10000,
+      useEffect(() => {
+        Urbit.authenticate({
+          ship: 'ritsyd-foprel',
+          url: 'https://ritsyd-foprel.urbox.one',
+          code: 'divtyp-namreb-magtyv-ronfed',
+        });
+      }, []);
+
+      // UQ
+      useEffect(() => {
+        if (api) {
+          const subPromise = api.subscribe({
+            app: 'pongo',
+            path: '/updates',
+            event: handleMessage,
+            err: () => console.warn('SUBSCRIPTION ERROR'),
+            quit: () => {
+              console.log("chat: subscription clogged");
+              throw new Error('subscription clogged');
+            }
+          })
+
+          return () => {
+            subPromise.then(sub => api.unsubscribe(sub))
+          }
+        }
+      }, [api]);
+
+      const handleMessage = (update: Update) => {
+        if ('message' in update && update.message.conversation_id === chatId) {
+          setMessages([...messages, update.message.message]);
+          scrollToBottom();
+        } else if ('sending' in update && update.sending.conversation_id === chatId) {
+          const existing = messages.find(m => String(m.id) === update.sending.identifier)
+          if (existing) {
+            existing.status = 'sent'
+            existing.identifier = String(existing.id)
+          }
+        } else if ('delivered' in update && update.delivered.conversation_id === chatId) {
+          const existing = messages.find(m => m.identifier === update.delivered.identifier)
+          if (existing) {
+            if (update.delivered.message_id) {
+              existing.id = update.delivered.message_id
+            }
+            existing.status = 'delivered'
+          }
+        } else if ('invite' in update && update.invite.id === chatId) {
+          // this gives the chat of a new invite, not sure how you'd handle it
+        }
       }
 
-      const relay: mqtt.MqttClient = mqtt.connect(mqttServerUrl, options);
-
-      useEffect(() => {
-        const botElement = document.getElementById('botElement');
-
-        const sub = relay.subscribe(mqttTopic, function (err: any) {
-          if (!err && chatName) {
-            postMessage('<['.concat(chatName, '] came online>'));
-          }
-        });
-
-        const update_mqtt = () => {
-          relay.on('message', function (topic: any, rawMessage: any) {
-            const message = rawMessage.toString();
-            if (!hasURL(message)) {
-              setMessages((messages) => [
-                ...messages,
-                { seenAt: Date.now(), message },
-              ]);
-            }
-          });
-          botElement?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'start',
-          });
-        };
-        update_mqtt();
-
-        return () => {
-          if (chatName) postMessage('<['.concat(chatName, '] went offline>'));
-          sub.unsubscribe(mqttTopic, function (err: any) { });
-        };
-      }, [chatName]);
-
-      const postMessage = useCallback(
-        async (input: string) => {
-          const botElement = document.getElementById('botElement');
-          const message = `[${chatName}]: ${input}`;
-          relay.publish(mqttTopic, message);
-          setChatInput('');
-          botElement?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'start',
-          });
-        },
-        [chatName]
-      );
+      const sendMessage = useCallback(async ({ convo, kind, content, identifier = `-${Date.now()}`, reference, mentions }: SendMessagePayload) => {
+        // Where convo is the conversation (chat) ID, kind is usually 'text', content is the message content
+        // identifier is a unique identifier for the message prior to it being confirmed (allows for 'sent' receipts)
+        // reference is the ID of the message being replied to (if any)
+        // mentions is optional and is an array of all the @-mentions in the message by ship name like ['~fabnev-hinmur', '~hocwyn-tipwex']
+        console.log("sending message");
+        await api.poke({ app: 'pongo', mark: 'pongo-action', json: { 'send-message': { convo, kind, content, identifier, reference, mentions } } })
+      }, [api])
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          postMessage(chatInput);
+          sendMessage({ convo: chatId, kind: 'text', content: chatInput, mentions: [] });
         }
       };
 
@@ -140,11 +145,20 @@ export function registerChatModal() {
       const messageLines = messages.map((message) => (
         <li
           style={{ fontFamily: 'Pixel', fontSize: '12px', listStyleType: 'none' }}
-          key={message.seenAt}
+          key={message.timestamp}
         >
-          {`${message.message}`}
+          {`${message.content}`}
         </li>
       ));
+
+      const scrollToBottom = () => {
+        const botElement = document.getElementById('botElement');
+        botElement?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+          inline: 'start',
+        });
+      };
 
       //////////////////////////
       // Chat gating
