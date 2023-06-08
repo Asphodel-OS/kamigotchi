@@ -29,6 +29,7 @@ import type {
 
 export interface ERC721MetadataSystemInterface extends utils.Interface {
   functions: {
+    "_setBaseURI(string)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -38,6 +39,7 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "_setBaseURI"
       | "execute"
       | "executeTyped"
       | "owner"
@@ -45,6 +47,10 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "_setBaseURI",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
@@ -63,6 +69,10 @@ export interface ERC721MetadataSystemInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_setBaseURI",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
@@ -121,6 +131,11 @@ export interface ERC721MetadataSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _setBaseURI(
+      baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -143,6 +158,11 @@ export interface ERC721MetadataSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  _setBaseURI(
+    baseURI: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   execute(
     arguments: PromiseOrValue<BytesLike>,
@@ -167,6 +187,11 @@ export interface ERC721MetadataSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _setBaseURI(
+      baseURI: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -202,6 +227,11 @@ export interface ERC721MetadataSystem extends BaseContract {
   };
 
   estimateGas: {
+    _setBaseURI(
+      baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -226,6 +256,11 @@ export interface ERC721MetadataSystem extends BaseContract {
   };
 
   populateTransaction: {
+    _setBaseURI(
+      baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

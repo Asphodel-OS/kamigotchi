@@ -10,6 +10,7 @@ export const triggerNodeModal = () => {
       bridgeERC721: false,
       dialogue: false,
       kami: false,
+      kamiMint: false,
       kamisNaming: false,
       map: false,
       nameKami: false,

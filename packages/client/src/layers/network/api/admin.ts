@@ -3,13 +3,32 @@ import { setUpWorldAPI } from './world';
 
 export function createAdminAPI(systems: any) {
   function init() {
-    // set global config fields
+    // this doesnt work without the https:// so it's unused atm
+    setConfigString('baseURI', 'kami-image.asphodel.io/image/');
+
+    // set global config fields for Kami Stats
     setConfig('KAMI_BASE_HEALTH', 50);
     setConfig('KAMI_BASE_POWER', 10);
     setConfig('KAMI_BASE_VIOLENCE', 10);
     setConfig('KAMI_BASE_HARMONY', 10);
     setConfig('KAMI_BASE_SLOTS', 0);
-    setConfigString('baseURI', 'kami-image.asphodel.io/image/'); // this doesnt work without the https:// so it's unused atm
+
+
+    // set global config fields for Harvest Rates
+    // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
+    // so BASE of 100 and PREC of 3 means 100/1e3 = 0.1
+    const numHarvestTraits = 3; // ping jirach before updating this one (you have been warned)
+    const affinityPrecision = 2;
+    const multiplierPrecision = numHarvestTraits * affinityPrecision;
+    setConfig('HARVEST_RATE_PREC', 6);
+    setConfig('HARVEST_RATE_BASE', 100);
+    setConfig('HARVEST_RATE_BASE_PREC', 3);
+    setConfig('HARVEST_RATE_MULT_PREC', multiplierPrecision);
+    setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
+    setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
+    setConfig('HARVEST_RATE_MULT_AFF_PREC', affinityPrecision); // this is not actually used in the codebase rn
+
+
 
     // create our rooms
     createRoom('deadzone', 0, [1]); // in case we need this

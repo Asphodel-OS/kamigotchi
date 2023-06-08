@@ -48,6 +48,19 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "baseURI",
+          "type": "string"
+        }
+      ],
+      "name": "_setBaseURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bytes",
           "name": "arguments",
           "type": "bytes"
@@ -130,6 +143,7 @@
     }
   ],
   "methodIdentifiers": {
+    "_setBaseURI(string)": "31b5b907",
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",

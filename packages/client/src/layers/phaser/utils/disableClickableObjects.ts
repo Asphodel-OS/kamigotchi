@@ -13,7 +13,6 @@ export function disableClickableObjects(e: Phaser.Input.Pointer): boolean {
     { id: 'merchant', isVisible: merchant },
     { id: 'node', isVisible: node },
     { id: 'party_modal', isVisible: party },
-    { id: 'party_modal', isVisible: party },
     { id: 'name_kami_modal', isVisible: nameKami },
   ];
 

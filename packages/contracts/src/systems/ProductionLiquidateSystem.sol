@@ -8,6 +8,7 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibKill } from "libraries/LibKill.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -33,16 +34,16 @@ contract ProductionLiquidateSystem is System {
     LibPet.syncHealth(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
-    require(
-      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "Pet: too far"
-    );
 
     // check that the two kamis share the same node
     uint256 productionID = LibPet.getProduction(components, petID);
     uint256 nodeID = LibProduction.getNode(components, productionID);
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "Production: must be on same node as target");
+    require(
+      LibAccount.getLocation(components, accountID) == LibNode.getLocation(components, nodeID),
+      "Node: too far"
+    );
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
@@ -65,7 +66,7 @@ contract ProductionLiquidateSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", amt);
-    LibAccount.updateLastBlock(components, accountID);
+    // LibAccount.updateLastBlock(components, accountID); // contract size limits..
     return "";
   }
 

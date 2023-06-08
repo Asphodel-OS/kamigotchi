@@ -24,17 +24,12 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibProduction, HARVEST_RATE_PRECISION } from "libraries/LibProduction.sol";
+import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 
-uint256 constant BASE_HARMONY = 10;
-uint256 constant BASE_HEALTH = 50;
-uint256 constant BASE_POWER = 10;
-uint256 constant BASE_VIOLENCE = 10;
-uint256 constant BASE_SLOTS = 0;
 uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
 uint256 constant BURN_RATIO_PRECISION = 1e2;
 uint256 constant RECOVERY_RATE_PRECISION = 1e18;
@@ -187,7 +182,8 @@ library LibPet {
     uint256 productionID = getProduction(components, id);
     uint256 prodRate = LibProduction.getRate(components, productionID); // KAMI/s (1e18 precision)
     uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 totalPrecision = BURN_RATIO_PRECISION * HARVEST_RATE_PRECISION; // BURN_RATIO(1e2) * prodRate(1e18)
+    uint256 harvestRatePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+    uint256 totalPrecision = BURN_RATIO_PRECISION * harvestRatePrecision;
     return (duration * prodRate * BURN_RATIO + (totalPrecision / 2)) / totalPrecision;
   }
 
@@ -331,12 +327,6 @@ library LibPet {
     uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
     uint256 harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
     uint256 slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
-
-    // uint256 health = BASE_HEALTH;
-    // uint256 power = BASE_POWER;
-    // uint256 violence = BASE_VIOLENCE;
-    // uint256 harmony = BASE_HARMONY;
-    // uint256 slots = BASE_SLOTS;
 
     // sum the stats from all traits
     uint256 traitRegistryID;
