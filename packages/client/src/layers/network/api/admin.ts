@@ -13,7 +13,6 @@ export function createAdminAPI(systems: any) {
     setConfig('KAMI_BASE_HARMONY', 10);
     setConfig('KAMI_BASE_SLOTS', 0);
 
-
     // set global config fields for Harvest Rates
     // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE of 100 and PREC of 3 means 100/1e3 = 0.1
@@ -21,14 +20,12 @@ export function createAdminAPI(systems: any) {
     const affinityPrecision = 2;
     const multiplierPrecision = numHarvestTraits * affinityPrecision;
     setConfig('HARVEST_RATE_PREC', 6);
-    setConfig('HARVEST_RATE_BASE', 100);
+    setConfig('HARVEST_RATE_BASE', 100); // in respect to power
     setConfig('HARVEST_RATE_BASE_PREC', 3);
     setConfig('HARVEST_RATE_MULT_PREC', multiplierPrecision);
     setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
     setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
     setConfig('HARVEST_RATE_MULT_AFF_PREC', affinityPrecision); // this is not actually used in the codebase rn
-
-
 
     // create our rooms
     createRoom('deadzone', 0, [1]); // in case we need this
@@ -364,6 +361,21 @@ export function createAdminAPI(systems: any) {
             violence: (v: number) => setConfig('KAMI_BASE_VIOLENCE', v),
             slots: (v: number) => setConfig('KAMI_BASE_SLOTS', v),
           },
+          harvestRate: {
+            precision: (v: number) => setConfig('HARVEST_RATE_PREC', v),
+            base: {
+              value: (v: number) => setConfig('HARVEST_RATE_BASE', v),
+              precision: (v: number) => setConfig('HARVEST_RATE_BASE_PREC', v),
+            },
+            multiplier: {
+              precision: (v: number) => setConfig('HARVEST_RATE_MULT_PREC', v),
+              affinity: {
+                up: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_UP', v),
+                down: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_DOWN', v),
+                precision: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_PREC', v),
+              },
+            },
+          }
         },
       }
     },
