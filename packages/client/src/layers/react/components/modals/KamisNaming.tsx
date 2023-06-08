@@ -3,7 +3,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { map, merge } from 'rxjs';
 import { Account, getAccount } from '../shapes/Account';
 import { Kami, getKami } from '../shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
+import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 import { ModalWrapperFull } from '../library/ModalWrapper';
 import styled from 'styled-components';
 import React, { useCallback } from 'react';

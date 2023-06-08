@@ -4,6 +4,16 @@ export const triggerERC721BridgeModal = () => {
   const { visibleModals } = dataStore.getState();
   if (!visibleModals.bridgeERC721)
     dataStore.setState({
-      visibleModals: { ...visibleModals, bridgeERC721: true },
+      visibleModals: {
+        ...visibleModals,
+        bridgeERC721: true,
+        bridgeERC20: false,
+        dialogue: false,
+        kami: false,
+        kamisNaming: false,
+        map: false,
+        nameKami: false,
+        node: false
+      },
     });
 };
