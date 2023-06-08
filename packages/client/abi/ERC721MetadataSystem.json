@@ -97,6 +97,25 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "petIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "forceReveal",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "owner",
       "outputs": [
@@ -146,6 +165,7 @@
     "_setBaseURI(string)": "31b5b907",
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
+    "forceReveal(uint256)": "265ab676",
     "owner()": "8da5cb5b",
     "tokenURI(uint256)": "c87b56dd",
     "transferOwnership(address)": "f2fde38b"

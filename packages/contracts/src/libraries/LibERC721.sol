@@ -142,7 +142,7 @@ library LibERC721 {
     return traits;
   }
 
-  function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) internal {
+  function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) public {
     // assigning initial traits from generated stats
     LibTrait.assignColor(components, petID, traits[4]);
     LibTrait.assignBackground(components, petID, traits[3]);

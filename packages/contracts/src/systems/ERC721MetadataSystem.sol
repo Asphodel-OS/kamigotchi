@@ -34,21 +34,21 @@ contract ERC721MetadataSystem is System {
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
 
     uint256 seed = LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, petID));
-    // LibRandom.removeRevealBlock(components, petID);
+    LibRandom.removeRevealBlock(components, petID);
 
     return reveal(petID, seed);
   }
 
-  // // needed as a backup in case user misses the 256 block window to reveal (25 minutes)
-  // // pet will be forever locked as unrevealed otherwise
-  // // takes previous blockhash for random seed; fairly obvious if admin bots randomness
-  // function forceReveal(uint256 petIndex) public onlyOwner returns (bytes memory) {
-  //   uint256 petID = LibPet.indexToID(components, petIndex);
-  //   require(LibPet.isUnrevealed(components, petID), "already revealed!");
-  //   uint256 seed = uint256(blockhash(block.number - 1));
-  //   // LibRandom.removeRevealBlock(components, petID);
-  //   return reveal(petID, seed);
-  // }
+  // needed as a backup in case user misses the 256 block window to reveal (25 minutes)
+  // pet will be forever locked as unrevealed otherwise
+  // takes previous blockhash for random seed; fairly obvious if admin bots randomness
+  function forceReveal(uint256 petIndex) public onlyOwner returns (bytes memory) {
+    uint256 petID = LibPet.indexToID(components, petIndex);
+    require(LibPet.isUnrevealed(components, petID), "already revealed!");
+    uint256 seed = uint256(blockhash(block.number - 1));
+    LibRandom.removeRevealBlock(components, petID);
+    return reveal(petID, seed);
+  }
 
   // accepts erc721 petIndex as input
   function executeTyped(uint256 petIndex) public returns (bytes memory) {
