@@ -90,6 +90,14 @@
       ]
     },
     {
+      "name": "_ConfigSetSystem",
+      "writeAccess": [
+        "IsConfigComponent",
+        "NameComponent",
+        "ValueComponent"
+      ]
+    },
+    {
       "name": "_ListingSetSystem",
       "writeAccess": [
         "IsListingComponent",
