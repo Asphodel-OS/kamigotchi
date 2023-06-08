@@ -3,6 +3,14 @@ import { setUpWorldAPI } from './world';
 
 export function createAdminAPI(systems: any) {
   function init() {
+    // set global config fields
+    setConfig('KAMI_BASE_HEALTH', 50);
+    setConfig('KAMI_BASE_POWER', 10);
+    setConfig('KAMI_BASE_VIOLENCE', 10);
+    setConfig('KAMI_BASE_HARMONY', 10);
+    setConfig('KAMI_BASE_SLOTS', 0);
+    setConfigString('baseURI', 'kami-image.asphodel.io/image/'); // this doesnt work without the https:// so it's unused atm
+
     // create our rooms
     createRoom('deadzone', 0, [1]); // in case we need this
     createRoom('Misty Riverside', 1, [2]);
@@ -92,28 +100,6 @@ export function createAdminAPI(systems: any) {
     setListing('Mina', 4, 500, 0);
   }
 
-  // @dev creates a merchant with the name at the specified location
-  // @param location  room ID
-  // @param name      name of the merchant (must be unique)
-  // @return uint     (promise) entity ID of the merchant
-  function createMerchant(name: string, location: number) {
-    return systems['system._Merchant.Create'].executeTyped(name, location);
-  }
-
-  // @dev creates an emission node at the specified location
-  // @param name      name of the node
-  // @param location  index of the room location
-  // @param type      type of the node (e.g. HARVEST, HEAL, ARENA)
-  // @param desc      description of the node, exposed on the UI
-  function createNode(name: string, location: number, type: string, desc: string) {
-    return systems['system._Node.Create'].executeTyped(name, location, type, desc);
-  }
-
-  // @dev creates a room with name, location and exits. cannot overwrite room at location
-  function createRoom(name: string, location: number, exits: number[]) {
-    return systems['system._Room.Create'].executeTyped(name, location, exits);
-  }
-
   /// TODO: remove system for production
   // @dev give coins for testing
   // @param amount      amount
@@ -127,12 +113,32 @@ export function createAdminAPI(systems: any) {
     return systems['system.ERC721.metadata'].forceReveal(tokenId);
   }
 
-  // @dev sets the prices for the merchant at the specified location
-  // @param name        name of the merchant
-  // @param itemIndex   index of item to list
-  // @param buyPrice    sell price of item listing (pass in 0 to leave blank)
-  // @param sellPrice   buy price of item listing (pass in 0 to leave blank)
-  // @return uint       (promise) entity ID of the listing
+  // @dev creates a room with name, location and exits. cannot overwrite room at location
+  function createRoom(name: string, location: number, exits: number[]) {
+    return systems['system._Room.Create'].executeTyped(name, location, exits);
+  }
+
+  /////////////////
+  //  CONFIG
+
+  function setConfig(field: string, value: number) {
+    return systems['system._Config.Set'].executeTyped(field, value);
+  }
+
+  // values must be ≤ 32char
+  function setConfigString(field: string, value: string) {
+    return systems['system._Config.Set.String'].executeTyped(field, value);
+  }
+
+  /////////////////
+  //  MERCHANTS
+
+  // creates a merchant with the name at the specified location
+  function createMerchant(name: string, location: number) {
+    return systems['system._Merchant.Create'].executeTyped(name, location);
+  }
+
+  // sets the prices for the merchant at the specified location
   function setListing(
     name: string,
     itemIndex: number,
@@ -145,6 +151,18 @@ export function createAdminAPI(systems: any) {
       buyPrice,
       sellPrice
     );
+  }
+
+  /////////////////
+  //  NODES
+
+  // @dev creates an emission node at the specified location
+  // @param name      name of the node
+  // @param location  index of the room location
+  // @param type      type of the node (e.g. HARVEST, HEAL, ARENA)
+  // @param desc      description of the node, exposed on the UI
+  function createNode(name: string, location: number, type: string, desc: string) {
+    return systems['system._Node.Create'].executeTyped(name, location, type, desc);
   }
 
   function setNodeAffinity(name: string, affinity: string) {
@@ -317,7 +335,19 @@ export function createAdminAPI(systems: any) {
     init,
     initDependents,
     giveCoins,
-    ERC721: { forceReveal: petForceReveal },
+    config: {
+      set: {
+        kami: {
+          baseStats: {
+            harmony: (v: number) => setConfig('KAMI_BASE_HARMONY', v),
+            health: (v: number) => setConfig('KAMI_BASE_HEALTH', v),
+            power: (v: number) => setConfig('KAMI_BASE_POWER', v),
+            violence: (v: number) => setConfig('KAMI_BASE_VIOLENCE', v),
+            slots: (v: number) => setConfig('KAMI_BASE_SLOTS', v),
+          },
+        },
+      }
+    },
     listing: { set: setListing },
     merchant: { create: createMerchant },
     node: {
@@ -329,6 +359,7 @@ export function createAdminAPI(systems: any) {
         name: setNodeName,
       },
     },
+    pet: { forceReveal: petForceReveal },
     registry: {
       food: {
         create: registerFood,

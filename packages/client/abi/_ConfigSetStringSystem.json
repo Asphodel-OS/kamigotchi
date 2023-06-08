@@ -67,9 +67,14 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "petIndex",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "value",
+          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -99,25 +104,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "petIndex",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenURI",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "account",
           "type": "address"
@@ -131,9 +117,8 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(string,string)": "7200632a",
     "owner()": "8da5cb5b",
-    "tokenURI(uint256)": "c87b56dd",
     "transferOwnership(address)": "f2fde38b"
   }
 }

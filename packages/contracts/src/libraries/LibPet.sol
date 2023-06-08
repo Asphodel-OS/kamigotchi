@@ -21,6 +21,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction, HARVEST_RATE_PRECISION } from "libraries/LibProduction.sol";
@@ -123,7 +124,7 @@ library LibPet {
 
   // called when a pet is revealed
   // NOTE: most of the reveal logic (generation) is in the ERC721MetadataSystem itself
-  //       this function is for components saved directely on the Pet Entity
+  //       this function is for components saved directly on the Pet Entity
   function reveal(IUintComp components, uint256 id) internal {
     setCanName(components, id, true);
     revive(components, id);
@@ -325,11 +326,17 @@ library LibPet {
 
   // set a pet's stats from its traits
   function setStats(IUintComp components, uint256 id) internal {
-    uint256 health = BASE_HEALTH;
-    uint256 power = BASE_POWER;
-    uint256 violence = BASE_VIOLENCE;
-    uint256 harmony = BASE_HARMONY;
-    uint256 slots = BASE_SLOTS;
+    uint256 health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
+    uint256 power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
+    uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
+    uint256 harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
+    uint256 slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
+
+    // uint256 health = BASE_HEALTH;
+    // uint256 power = BASE_POWER;
+    // uint256 violence = BASE_VIOLENCE;
+    // uint256 harmony = BASE_HARMONY;
+    // uint256 slots = BASE_SLOTS;
 
     // sum the stats from all traits
     uint256 traitRegistryID;

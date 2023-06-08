@@ -11,6 +11,7 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibERC721 } from "libraries/LibERC721.sol";
@@ -19,7 +20,7 @@ uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
 uint256 constant _numElements = 5;
 
 contract ERC721MetadataSystem is System {
-  string _baseURI;
+  string internal _baseURI;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -33,29 +34,21 @@ contract ERC721MetadataSystem is System {
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
 
     uint256 seed = LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, petID));
-    LibRandom.removeRevealBlock(components, petID);
+    // LibRandom.removeRevealBlock(components, petID);
 
     return reveal(petID, seed);
   }
 
-  // needed as a backup in case user misses the 256 block window to reveal (25 minutes)
-  // pet will be forever locked as unrevealed otherwise
-  // takes previous blockhash for random seed; fairly obvious if admin bots randomness
-  function forceReveal(uint256 petIndex) public onlyOwner returns (bytes memory) {
-    uint256 petID = LibPet.indexToID(components, petIndex);
-
-    // checks
-    require(
-      uint256(blockhash(LibRandom.getRevealBlock(components, petID))) == 0,
-      "adminReveal: blockhash is valid"
-    );
-    require(LibPet.isUnrevealed(components, petID), "already revealed!");
-
-    uint256 seed = uint256(blockhash(block.number - 1));
-    LibRandom.removeRevealBlock(components, petID);
-
-    return reveal(petID, seed);
-  }
+  // // needed as a backup in case user misses the 256 block window to reveal (25 minutes)
+  // // pet will be forever locked as unrevealed otherwise
+  // // takes previous blockhash for random seed; fairly obvious if admin bots randomness
+  // function forceReveal(uint256 petIndex) public onlyOwner returns (bytes memory) {
+  //   uint256 petID = LibPet.indexToID(components, petIndex);
+  //   require(LibPet.isUnrevealed(components, petID), "already revealed!");
+  //   uint256 seed = uint256(blockhash(block.number - 1));
+  //   // LibRandom.removeRevealBlock(components, petID);
+  //   return reveal(petID, seed);
+  // }
 
   // accepts erc721 petIndex as input
   function executeTyped(uint256 petIndex) public returns (bytes memory) {
@@ -71,6 +64,7 @@ contract ERC721MetadataSystem is System {
     // setting metadata
     LibERC721.assignTraits(components, petID, traits);
     uint256 packed = LibRandom.packArray(traits, 8); // uses packed array to generate image off-chain
+    // string memory _baseURI = LibConfig.getValueStringOf(components, "baseURI");
     LibPet.setMediaURI(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     LibPet.reveal(components, petID);
     return "";
