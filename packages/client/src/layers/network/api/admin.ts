@@ -20,7 +20,7 @@ export function createAdminAPI(systems: any) {
     const numHarvestTraits = 3; // don't change this, some uncoded fuckery atm
     const affinityPrecision = 2;
     const multiplierPrecision = numHarvestTraits * affinityPrecision;
-    setConfig('HARVEST_RATE_PREC', 6);   // never need to change this one
+    setConfig('HARVEST_RATE_PREC', 9);   // never need to change this one
     setConfig('HARVEST_RATE_BASE', 100);
     setConfig('HARVEST_RATE_BASE_PREC', 3);
     setConfig('HARVEST_RATE_MULT_PREC', multiplierPrecision);
@@ -34,7 +34,7 @@ export function createAdminAPI(systems: any) {
     // HealRate = Harmony * HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
     setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
     setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3);
-    setConfig('HEALTH_RATE_HEAL_PREC', 6);
+    setConfig('HEALTH_RATE_HEAL_PREC', 9);
     setConfig('HEALTH_RATE_HEAL_BASE', 100);   // in respect to harmony
     setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);
 
@@ -374,7 +374,7 @@ export function createAdminAPI(systems: any) {
             slots: (v: number) => setConfig('KAMI_BASE_SLOTS', v),
           },
           harvestRate: {
-            precision: (v: number) => setConfig('HARVEST_RATE_PREC', v),
+            // precision: (v: number) => setConfig('HARVEST_RATE_PREC', v),  // leaving this one disabled as it could cause problems tweaking mid game
             base: {
               value: (v: number) => setConfig('HARVEST_RATE_BASE', v),
               precision: (v: number) => setConfig('HARVEST_RATE_BASE_PREC', v),
@@ -396,7 +396,7 @@ export function createAdminAPI(systems: any) {
               },
             },
             heal: {
-              precision: (v: number) => setConfig('HEALTH_RATE_HEAL_PREC', v),
+              // precision: (v: number) => setConfig('HEALTH_RATE_HEAL_PREC', v), // better not to touch this one
               base: {
                 value: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE', v),
                 precision: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE_PREC', v),
