@@ -39,9 +39,7 @@ library LibPet {
   /////////////////
   // INTERACTIONS
 
-  // create a pet entity, set its owner and account for an entity
-  // NOTE: we may need to create an Account/Owner entities here if they dont exist
-  // TODO: include attributes in this generation
+  // create a pet entity and set its base fields
   function create(
     IWorld world,
     IUintComp components,

@@ -399,20 +399,36 @@ export function createAdminAPI(systems: any) {
             violence: (v: number) => setConfig('KAMI_BASE_VIOLENCE', v),
             slots: (v: number) => setConfig('KAMI_BASE_SLOTS', v),
           },
-          harvestRate: {
-            // precision: (v: number) => setConfig('HARVEST_RATE_PREC', v),  // leaving this one disabled as it could cause problems tweaking mid game
-            base: {
-              value: (v: number) => setConfig('HARVEST_RATE_BASE', v),
-              precision: (v: number) => setConfig('HARVEST_RATE_BASE_PREC', v),
-            },
-            multiplier: {
-              precision: (v: number) => setConfig('HARVEST_RATE_MULT_PREC', v),
-              affinity: {
-                up: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_UP', v),
-                down: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_DOWN', v),
-                precision: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_PREC', v),
+          harvest: {
+            // precision: (v: number) => setConfig('HARVEST_RATE_PREC', v),  // disabled, no reason to touch (could cause problems)
+            rate: {
+              base: {
+                value: (v: number) => setConfig('HARVEST_RATE_BASE', v),
+                precision: (v: number) => setConfig('HARVEST_RATE_BASE_PREC', v),
+              },
+              multiplier: {
+                // precision: (v: number) => setConfig('HARVEST_RATE_MULT_PREC', v),  // disabled, no reason to touch
+                affinity: {
+                  up: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_UP', v),
+                  down: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_DOWN', v),
+                  precision: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_PREC', v),
+                },
               },
             },
+            liquidation: {
+              base: {
+                value: (v: number) => setConfig('LIQ_THRESH_BASE', v),
+                precision: (v: number) => setConfig('LIQ_THRESH_BASE_PREC', v),
+              },
+              multiplier: {
+                affinity: {
+                  base: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_BASE', v),
+                  up: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_UP', v),
+                  down: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_DOWN', v),
+                  precision: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_PREC', v),
+                }
+              },
+            }
           },
           health: {
             drainRate: {
@@ -422,7 +438,7 @@ export function createAdminAPI(systems: any) {
               },
             },
             healRate: {
-              // precision: (v: number) => setConfig('HEALTH_RATE_HEAL_PREC', v), // better not to touch this one
+              // precision: (v: number) => setConfig('HEALTH_RATE_HEAL_PREC', v),  // disabled, no reason to touch
               base: {
                 value: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE', v),
                 precision: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE_PREC', v),
