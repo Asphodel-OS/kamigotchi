@@ -136,7 +136,9 @@ library LibERC721 {
     }
     {
       // face
-      (uint256[] memory keys, uint256[] memory weights) = getGatedFaceRarities(components, traits);
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
+        components
+      );
       traits[0] = LibRandom.selectFromWeighted(
         keys,
         weights,
@@ -147,116 +149,13 @@ library LibERC721 {
     return traits;
   }
 
-  function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) public {
+  function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) internal {
     // assigning initial traits from generated stats
     LibTrait.assignColor(components, petID, traits[4]);
     LibTrait.assignBackground(components, petID, traits[3]);
     LibTrait.assignBody(components, petID, traits[2]);
     LibTrait.assignHand(components, petID, traits[1]);
     LibTrait.assignFace(components, petID, traits[0]);
-  }
-
-  //////////////////
-  // FACE SELECTION
-
-  // selects and returns gated faces according to affinity
-  // hardcoded indexes for Body (2) and Hand (1)
-  function getGatedFaceRarities(
-    IUintComp components,
-    uint256[] memory traits
-  ) internal view returns (uint256[] memory, uint256[] memory) {
-    string memory bodyAffinity = LibStat.getAffinity(components, traits[2]);
-    string memory handAffinity = LibStat.getAffinity(components, traits[1]);
-
-    // both must agree, ie a 'pure' type
-    if (LibString.eq(bodyAffinity, handAffinity) && LibString.eq(bodyAffinity, "INSECT")) {
-      return getInsectFaceRarities(components);
-    } else if (LibString.eq(bodyAffinity, handAffinity) && LibString.eq(bodyAffinity, "EERIE")) {
-      return getEerieFaceRarities(components);
-    } else if (LibString.eq(bodyAffinity, handAffinity) && LibString.eq(bodyAffinity, "SCRAP")) {
-      return getScrapFaceRarities(components);
-    } else {
-      return getNormalFaceRarities(components);
-    }
-  }
-
-  function getNormalFaceRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory, uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexFaceCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("NORMAL")
-    );
-    uint256[] memory results = LibQuery.query(fragments);
-
-    return LibRarity.getRarityKeyValueArr(components, results, IndexFaceCompID);
-  }
-
-  function getInsectFaceRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory, uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](4);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexFaceCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.NotValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("EERIE")
-    );
-    fragments[3] = QueryFragment(
-      QueryType.NotValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("SCRAP")
-    );
-    uint256[] memory results = LibQuery.query(fragments);
-
-    return LibRarity.getRarityKeyValueArr(components, results, IndexFaceCompID);
-  }
-
-  function getEerieFaceRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory, uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](4);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexFaceCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.NotValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("INSECT")
-    );
-    fragments[3] = QueryFragment(
-      QueryType.NotValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("SCRAP")
-    );
-    uint256[] memory results = LibQuery.query(fragments);
-
-    return LibRarity.getRarityKeyValueArr(components, results, IndexFaceCompID);
-  }
-
-  function getScrapFaceRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory, uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](4);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexFaceCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.NotValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("INSECT")
-    );
-    fragments[3] = QueryFragment(
-      QueryType.NotValue,
-      getComponentById(components, AffinityCompID),
-      abi.encode("EERIE")
-    );
-    uint256[] memory results = LibQuery.query(fragments);
-
-    return LibRarity.getRarityKeyValueArr(components, results, IndexFaceCompID);
   }
 
   //////////////////
