@@ -3,6 +3,9 @@ import { setUpWorldAPI } from './world';
 
 export function createAdminAPI(systems: any) {
   function init() {
+    /////////////////
+    // CONFIG
+
     // this doesnt work without the https:// so it's unused atm
     setConfigString('baseURI', 'kami-image.asphodel.io/image/');
 
@@ -13,30 +16,39 @@ export function createAdminAPI(systems: any) {
     setConfig('KAMI_BASE_HARMONY', 10);
     setConfig('KAMI_BASE_SLOTS', 0);
 
-    // Harvest Rates (just ignore root precision)
+    // Harvest Rates
     // dHarvest/dt = base * power * multiplier
     // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE of 100 and BASE_PREC of 3 means 100/1e3 = 0.1
     const numHarvestTraits = 3; // don't change this, some uncoded fuckery atm
     const affinityPrecision = 2;
     const multiplierPrecision = numHarvestTraits * affinityPrecision;
-    setConfig('HARVEST_RATE_PREC', 9);   // never need to change this one
-    setConfig('HARVEST_RATE_BASE', 100);
-    setConfig('HARVEST_RATE_BASE_PREC', 3);
+    setConfig('HARVEST_RATE_PREC', 9);        // ignore this
+    setConfig('HARVEST_RATE_BASE', 100);      // in respect to power
+    setConfig('HARVEST_RATE_BASE_PREC', 3);   // i.e. x/1000
     setConfig('HARVEST_RATE_MULT_PREC', multiplierPrecision);
     setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
     setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
     setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
     setConfig('HARVEST_RATE_MULT_AFF_PREC', affinityPrecision); // 2, not actually used
 
-    // health drain and heal rates (just ignore root precisions)
-    // DrainRate = HarvestRate * HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
-    // HealRate = Harmony * HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
-    setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3);
-    setConfig('HEALTH_RATE_HEAL_PREC', 9);
-    setConfig('HEALTH_RATE_HEAL_BASE', 100);   // in respect to harmony
-    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);
+    // Kami Health Drain/Heal Rates
+    // DrainRate = HarvestRate * DrainBaseRate
+    // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
+    // HealRate = Harmony * HealBaseRate
+    // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
+    setConfig('HEALTH_RATE_DRAIN_BASE', 5000);   // in respect to harvest rate
+    setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3); // i.e. x/1000
+    setConfig('HEALTH_RATE_HEAL_PREC', 9);       // ignore this, for consistent math on SC
+    setConfig('HEALTH_RATE_HEAL_BASE', 100);     // in respect to harmony
+    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);  // i.e. x/1000
+
+    // Account Stamina
+    setConfig('ACCOUNT_STAMINA_BASE', 20);
+    setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
+
+    /////////////////
+    // WORLD
 
     // create our rooms
     createRoom('deadzone', 0, [1]); // in case we need this

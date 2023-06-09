@@ -8,6 +8,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
+import { getConfigFieldValue } from './Config';
 import { Kami, getKami } from './Kami';
 import {
   Inventory,
@@ -25,6 +26,7 @@ export interface Account {
   location: number;
   stamina: number;
   staminaCurrent: number;
+  staminaRecoveryPeriod: number;
   lastBlock: number;
   lastMoveTs: number;
   kamis?: Kami[];
@@ -80,6 +82,7 @@ export const getAccount = (
     location: getComponentValue(Location, index)?.value as number,
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
+    staminaRecoveryPeriod: 1,
     lastBlock: getComponentValue(LastBlock, index)?.value as number,
     lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
@@ -139,6 +142,12 @@ export const getAccount = (
     );
     account.kamis = kamis;
   }
+
+  /////////////////
+  // ADJUSTMENTS
+  const staminaRecoveryPeriod = getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD');
+  account.staminaRecoveryPeriod = staminaRecoveryPeriod;
+
 
   return account;
 };

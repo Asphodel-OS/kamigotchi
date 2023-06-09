@@ -1,16 +1,11 @@
-import {
-  Has,
-  HasValue,
-  getComponentValue,
-  getComponentValueStrict,
-  runQuery,
-} from '@latticexyz/recs';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { Has, HasValue, runQuery } from '@latticexyz/recs';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { BatteryComponent } from '../library/Battery';
 import styled from 'styled-components';
-import { getAccount } from '../shapes/Account';
-import { Account } from '../shapes/Account';
+
+import { BatteryComponent } from 'layers/react/components/library/Battery';
+import { Account, getAccount } from 'layers/react/components/shapes/Account';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 
 export function registerOperatorInfoButton() {
@@ -58,43 +53,57 @@ export function registerOperatorInfoButton() {
               ? getAccount(layers, accountEntityIndex)
               : ({} as Account);
 
-          const {
-            name,
-            coin,
-            stamina: maxStamina,
-            staminaCurrent,
-            lastMoveTs,
-          } = account;
-
           return {
-            name,
-            coin,
-            maxStamina,
-            staminaCurrent,
-            lastMoveTs,
+            data: { account },
           };
         })
       );
     },
-    ({ name, coin, staminaCurrent, maxStamina, lastMoveTs }) => {
-      const staminaPercentage =
-        staminaCurrent * 1 == 0 ? 0 : ((staminaCurrent * 1) / (maxStamina * 1)) * 100;
+    ({ data }) => {
       const {
-        visibleButtons: { operatorInfo },
+        visibleButtons: { operatorInfo: isVisible },
       } = dataStore();
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
+
+      // ticking
+      useEffect(() => {
+        const refreshClock = () => {
+          setLastRefresh(Date.now());
+        };
+        const timerId = setInterval(refreshClock, 3000);
+        return function cleanup() {
+          clearInterval(timerId);
+        };
+      }, []);
+
+      /////////////////
+      // CALCULATIONS
+
+      const calcCurrentStamina = (account: Account) => {
+        const timePassed = lastRefresh / 1000 - account.lastMoveTs;
+        const recovered = Math.floor(timePassed / account.staminaRecoveryPeriod);
+        const total = 1.0 * account.staminaCurrent + recovered;
+        return Math.min(account.stamina, total);
+      }
+
+      const calcStaminaPercent = (account: Account) => {
+        const currentStamina = calcCurrentStamina(account);
+        return Math.floor(100.0 * currentStamina / account.stamina);
+      }
+
       return (
-        <Button id='operator_info' style={{ display: operatorInfo ? 'block' : 'none' }}>
-          {staminaCurrent && (
+        <Button id='operator_info' style={{ display: isVisible ? 'block' : 'none' }}>
+          {data.account && (
             <>
               <Centered>
                 <NameCell>
-                  <Text>{name}</Text>
+                  <Text>{data.account.name}</Text>
                 </NameCell>
                 <KamiCell>
-                  <Text>$KAMI: {coin ? coin * 1 : 0}</Text>
+                  <Text>$KAMI: {data.account.coin * 1}</Text>
                 </KamiCell>
                 <BatteryCell>
-                  <BatteryComponent showPercentage={true} level={Math.round(staminaPercentage)} />
+                  <BatteryComponent showPercentage={true} level={calcStaminaPercent(data.account)} />
                 </BatteryCell>
               </Centered>
             </>

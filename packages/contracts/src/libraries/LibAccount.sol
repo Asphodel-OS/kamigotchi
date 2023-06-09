@@ -16,10 +16,8 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
-
-uint256 constant STAMINA_RECOVERY_PERIOD = 300; // measured in blocks
-uint256 constant BASE_STAMINA = 20;
 
 library LibAccount {
   /////////////////
@@ -37,8 +35,10 @@ library LibAccount {
     AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
-    StaminaComponent(getAddressById(components, StaminaCompID)).set(id, BASE_STAMINA);
-    setCurrStamina(components, id, BASE_STAMINA);
+
+    uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
+    setStamina(components, id, baseStamina);
+    setCurrStamina(components, id, baseStamina);
     setLastBlock(components, id, block.number);
     setLastTs(components, id, block.timestamp);
     return id;
@@ -62,7 +62,8 @@ library LibAccount {
   // syncs the stamina of an account. rounds down, ruthlessly
   function syncStamina(IUintComp components, uint256 id) internal returns (uint256) {
     uint256 timePassed = block.timestamp - getLastTs(components, id);
-    uint256 recoveredAmt = timePassed / STAMINA_RECOVERY_PERIOD;
+    uint256 recoveryPeriod = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
+    uint256 recoveredAmt = timePassed / recoveryPeriod;
     return recover(components, id, recoveredAmt);
   }
 
@@ -93,6 +94,10 @@ library LibAccount {
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  function setStamina(IUintComp components, uint256 id, uint256 amt) internal {
+    StaminaComponent(getAddressById(components, StaminaCompID)).set(id, amt);
   }
 
   function setCurrStamina(IUintComp components, uint256 id, uint256 amt) internal {
