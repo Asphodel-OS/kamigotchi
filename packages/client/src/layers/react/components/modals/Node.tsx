@@ -305,50 +305,24 @@ export function registerNodeModal() {
 
       /////////////////
       // DATA INTERPRETATION
-      const RATE_PRECISION = 1e6;
       const LIQUIDATION_IDLE_REQUIREMENT = 300; // time needed to spend idle for liquidating
       const LIQUIDATION_BASE_THRESHOLD_PEAK = 0.2;
 
-      // rounds a value to a certain number of decimal places (precision)
-      const roundTo = (value: number, precision: number): number => {
-        return Math.round(value * 10 ** precision) / 10 ** precision;
-      };
-
-      // get the health drain rate, based on the kami's production
-      // this is based on a hardcoded value for the time being
-      const calcDrainRate = (kami: Kami, precision?: number): number => {
-        const drainRate = calcProductionRate(kami) / 2.0;
-        return precision == undefined ? drainRate : roundTo(drainRate, precision);
-      };
-
-      // get emission rate of the Kami's production. measured in (KAMI/s)
-      const calcProductionRate = (kami: Kami, precision?: number): number => {
-        let rate = 0;
-        if (isHarvesting(kami)) {
-          rate = kami.production!.rate / RATE_PRECISION;
-        }
-        return precision == undefined ? rate : roundTo(rate, precision);
-      };
-
-      // calculate current health based on the drain against last confirmed health
-      const calcHealth = (kami: Kami, precision?: number): number => {
-        let health = kami.health;
-        if (isHarvesting(kami)) {
-          let duration = lastRefresh / 1000 - kami.lastUpdated;
-          let drainRate = calcDrainRate(kami);
-          let healthDrain = drainRate * duration;
-          health -= healthDrain;
-        }
-        health = Math.max(health, 0);
-        return precision == undefined ? health : roundTo(health, precision);
+      // calculate health based on the drain against last confirmed health
+      const calcHealth = (kami: Kami): number => {
+        let health = 1 * kami.health;
+        let duration = lastRefresh / 1000 - kami.lastUpdated;
+        health += kami.healthRate * duration;
+        health = Math.min(Math.max(health, 0), kami.stats.health);
+        return health;
       };
 
       // calculate the expected output from a pet production based on starttime
       const calcOutput = (kami: Kami): number => {
         let output = 0;
-        if (isHarvesting(kami) && !isDead(kami)) {
-          let duration = lastRefresh / 1000 - kami.production!.startTime;
-          output = Math.floor(duration * calcProductionRate(kami));
+        if (isHarvesting(kami) && kami.production) {
+          let duration = lastRefresh / 1000 - kami.production.startTime;
+          output = Math.floor(duration * kami.production?.rate);
         }
         return Math.max(output, 0);
       };
@@ -410,11 +384,6 @@ export function registerNodeModal() {
         const isRested = calcIdleTime(attacker) > LIQUIDATION_IDLE_REQUIREMENT;
         return isRested && canMog;
       }
-
-      // naive check right now, needs to be updated with murder check as well
-      const isDead = (kami: Kami): boolean => {
-        return calcHealth(kami) == 0;
-      };
 
       // check whether the kami is currently harvesting
       // TODO: replace this with a general state check
@@ -498,13 +467,13 @@ export function registerNodeModal() {
 
       // rendering of an ally kami on this node
       const MyKard = (kami: Kami) => {
-        const health = calcHealth(kami, 0);
+        const health = calcHealth(kami);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
         const output = calcOutput(kami);
 
         const description = [
           '',
-          `Health: ${health}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
+          `Health: ${calcHealth(kami).toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
           `Harmony: ${kami.stats.harmony * 1}`,
           `Violence: ${kami.stats.violence * 1}`,
         ];
@@ -523,13 +492,13 @@ export function registerNodeModal() {
 
       // rendering of an enemy kami on this node
       const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
-        const health = calcHealth(kami, 0);
+        const health = calcHealth(kami);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
         const output = calcOutput(kami);
 
         const description = [
           '',
-          `Health: ${health}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
+          `Health: ${calcHealth(kami).toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
           `Harmony: ${kami.stats.harmony * 1}`,
           `Violence: ${kami.stats.violence * 1}`,
         ];

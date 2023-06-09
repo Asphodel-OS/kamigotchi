@@ -94,29 +94,10 @@ export function registerPartyModal() {
             { inventory: true, kamis: true }
           );
 
-          // get the relevant config fields
-          let drainMultiple = getConfigFieldValue(layers.network, 'HEARTH_DRAIN_RATE_BASE');
-          drainMultiple /= 10 ** getConfigFieldValue(layers.network, 'HEALTH_DRAIN_RATE_BASE_PREC');
-          const config = {
-            harvest: {
-              precision: getConfigFieldValue(layers.network, 'HARVEST_RATE_PREC'),
-            },
-            drainRate: {
-              base: getConfigFieldValue(layers.network, 'HEARTH_DRAIN_RATE_BASE'),
-              precision: getConfigFieldValue(layers.network, 'HEALTH_DRAIN_RATE_BASE_PREC'),
-            },
-            health: {
-              precision: getConfigFieldValue(layers.network, 'HEALTH_PREC'),
-            }
-          }
-
           return {
             actions,
             api: player,
-            data: {
-              account,
-              config,
-            },
+            data: { account },
             world,
           };
         })
