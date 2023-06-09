@@ -108,8 +108,9 @@ export function createAdminAPI(systems: any) {
 
     initDependents();
 
-    createPlayerAPI(systems).ERC721.mint(
-      '0x7681A73aed06bfb648a5818B978fb018019F6900'
+    createPlayerAPI(systems).account.register(
+      '0x000000000000000000000000000000000000dead',
+      'load_bearer'
     );
   }
 
