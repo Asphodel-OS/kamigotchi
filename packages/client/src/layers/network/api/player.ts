@@ -20,8 +20,6 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
-
-
   /*********************
    *     Account
    *********************/
@@ -146,8 +144,8 @@ export function createPlayerAPI(systems: any) {
   *********************/
 
   // mint a pet
-  function mintPet(address: BigNumberish) {
-    return systems["system.ERC721.Mint"].executeTyped(address);
+  function mintPet(address: BigNumberish, amount: BigNumberish) {
+    return systems["system.ERC721.Mint"].executeTyped(address, amount);
   }
 
   // reveal a minted pet

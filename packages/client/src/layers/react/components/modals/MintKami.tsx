@@ -64,7 +64,7 @@ export function registerKamiMintModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return player.ERC721.mint(address);
+            return player.ERC721.mint(address, 1); // hardcoded to mint 1 for now
           },
         });
         return actionID;

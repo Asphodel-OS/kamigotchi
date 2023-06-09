@@ -75,6 +75,11 @@ library LibERC721 {
     return getContract(world).ownerOf(index);
   }
 
+  // gets current supply of kamiERC721
+  function getCurrentSupply(IWorld world) internal view returns (uint256) {
+    return getContract(world).totalSupply();
+  }
+
   ////////////////////////
   // METADATA GENERATION
 
