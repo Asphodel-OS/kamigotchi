@@ -16,6 +16,7 @@ import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { getConfigFieldValue } from 'layers/react/components/shapes/Config';
 import { AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami } from 'layers/react/components/shapes/Kami';
 import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
@@ -93,12 +94,29 @@ export function registerPartyModal() {
             { inventory: true, kamis: true }
           );
 
+          // get the relevant config fields
+          let drainMultiple = getConfigFieldValue(layers.network, 'HEARTH_DRAIN_RATE_BASE');
+          drainMultiple /= 10 ** getConfigFieldValue(layers.network, 'HEALTH_DRAIN_RATE_BASE_PREC');
+          const config = {
+            harvest: {
+              precision: getConfigFieldValue(layers.network, 'HARVEST_RATE_PREC'),
+            },
+            drainRate: {
+              base: getConfigFieldValue(layers.network, 'HEARTH_DRAIN_RATE_BASE'),
+              precision: getConfigFieldValue(layers.network, 'HEALTH_DRAIN_RATE_BASE_PREC'),
+            },
+            health: {
+              precision: getConfigFieldValue(layers.network, 'HEALTH_PREC'),
+            }
+          }
+
           return {
             actions,
             api: player,
             data: {
               account,
-            } as any,
+              config,
+            },
             world,
           };
         })
@@ -107,7 +125,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data, world }) => {
-      // console.log('PartyM: data', data);
+      console.log('PartyM: data', data);
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
 
@@ -208,58 +226,36 @@ export function registerPartyModal() {
       /////////////////
       // DATA INTERPRETATION
 
-      const RATE_PRECISION = 1e6;
-
-      // get the health drain rate, based on the kami's production
-      // this is based on a hardcoded value for the time being
-      const calcDrainRate = (kami: Kami): number => {
-        return calcProductionRate(kami) / 2.0;
-      };
-
-      // calculate the recovery rate based on the harmony stat of the kami (KAMI/s)
-      const calcRecoveryRate = (kami: Kami): number => {
-        let rate = 0;
-        if (isResting(kami)) {
-          rate = kami.stats.harmony / 3600;
-        }
-        return rate;
-      };
-
-      // get emission rate of the Kami's production. measured in (KAMI/s)
-      const calcProductionRate = (kami: Kami): number => {
-        let rate = 0;
-        if (isHarvesting(kami) && kami.production) {
-          rate = kami.production.rate / RATE_PRECISION;
-        }
-        return rate;
-      };
-
       // calculate health based on the drain against last confirmed health
       const calcHealth = (kami: Kami): number => {
         let health = 1 * kami.health;
         let duration = lastRefresh / 1000 - kami.lastUpdated;
-
-        // calculate the health drain on the kami since the last health update
-        if (isHarvesting(kami)) {
-          let drainRate = calcDrainRate(kami);
-          let healthDrain = drainRate * duration;
-          health -= healthDrain;
-          health = Math.max(health, 0);
-        } else if (isResting(kami)) {
-          let recoveryRate = calcRecoveryRate(kami);
-          let healthRecovery = recoveryRate * duration;
-          health += healthRecovery;
-          health = Math.min(health, kami.stats.health);
-        }
+        health += kami.healthRate * duration;
+        health = Math.min(Math.max(health, 0), kami.stats.health);
         return health;
       };
+
+      // converts a per-second rate to a per-hour rate string with a given precision
+      const getRateDisplay = (rate: number | undefined, roundTo: number): string => {
+        if (rate === undefined) rate = 0;
+        let hourlyRate = rate * 3600;
+        let display = hourlyRate.toString();
+        if (roundTo) {
+          hourlyRate *= 10 ** roundTo;
+          hourlyRate = Math.round(hourlyRate);
+          hourlyRate /= 10 ** roundTo;
+          display = hourlyRate.toFixed(roundTo);
+        }
+        if (hourlyRate > 0) display = '+' + display;
+        return display;
+      }
 
       // calculate the expected output from a pet production based on starttime
       const calcOutput = (kami: Kami): number => {
         let output = 0;
         if (isHarvesting(kami) && kami.production) {
           let duration = lastRefresh / 1000 - kami.production.startTime;
-          output = Math.floor(duration * calcProductionRate(kami));
+          output = Math.floor(duration * kami.production?.rate);
         }
         return Math.max(output, 0);
       };
@@ -279,11 +275,11 @@ export function registerPartyModal() {
       };
 
       const hasFood = (): boolean => {
-        return data.account.inventories.food.length > 0;
+        return data.account.inventories!.food.length > 0;
       };
 
       const hasRevive = (): boolean => {
-        return data.account.inventories.revives.length > 0;
+        return data.account.inventories!.revives.length > 0;
       };
 
       // get the reason why a kami can't feed. assume the kami is either resting or harvesting
@@ -330,14 +326,18 @@ export function registerPartyModal() {
       // get the description of the kami as a list of lines
       // TODO: clean this up
       const getDescription = (kami: Kami): string[] => {
-        let description: string[] = [];
+        const healthRate = getRateDisplay(kami.healthRate, 2);
 
+        let description: string[] = [];
         if (isOffWorld(kami)) {
           description = ['kidnapped by slave traders'];
         } else if (isUnrevealed(kami)) {
           description = ['Unrevealed!'];
         } else if (isResting(kami)) {
-          description = ['Resting'];
+          description = [
+            'Resting',
+            `${healthRate} HP/hr`,
+          ];
         } else if (isDead(kami)) {
           description = [`Murdered`];
           if (kami.deaths && kami.deaths.length > 0) {
@@ -351,13 +351,12 @@ export function registerPartyModal() {
               `on ${kami.production!.node!.name}`,
             ];
           } else {
-            const harvestRate = calcProductionRate(kami) * 3600; //hourly
-            const drainRate = calcDrainRate(kami) * 3600; //hourly
+            const harvestRate = getRateDisplay(kami.production?.rate, 2)
             description = [
               `Harvesting`,
               `on ${kami.production!.node!.name}`,
-              `+${harvestRate.toFixed(2)} $KAMI/hr`,
-              `-${drainRate.toFixed(2)} HP/hr`,
+              `${harvestRate} $KAMI/hr`,
+              `${healthRate} HP/hr`,
             ];
           }
         }
@@ -420,7 +419,7 @@ export function registerPartyModal() {
       };
 
       const FeedButton = (kami: Kami) => {
-        const nonEmptyOptions = data.account.inventories.food.filter(
+        const nonEmptyOptions = data.account.inventories!.food.filter(
           (inv: Inventory) => inv.balance && inv.balance > 0
         );
 
@@ -493,9 +492,9 @@ export function registerPartyModal() {
       return (
         <ModalWrapperFull id='party_modal' divName='party'>
           <ConsumableGrid>
-            {ConsumableCells(data.account.inventories, showTooltip, setShowTooltip)}
+            {ConsumableCells(data.account.inventories!, showTooltip, setShowTooltip)}
           </ConsumableGrid>
-          <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis)}</Scrollable>
+          <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis!)}</Scrollable>
         </ModalWrapperFull>
       );
     }
