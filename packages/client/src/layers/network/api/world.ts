@@ -38,7 +38,7 @@ export function setUpWorldAPI(systems: any) {
           data[i].get("Violence") ? data[i].get("Violence") : "0",
           data[i].get("Harmony") ? data[i].get("Harmony") : "0",
           data[i].get("Slots") ? data[i].get("Slots") : "0",
-          data[i].get("Rarity") ? rarityParser(data[i].get("Rarity")) : 0,
+          data[i].get("Tier") ? tierRarityParser(data[i].get("Tier")) : 0,
           data[i].get("Affinity") ? data[i].get("Affinity").toUpperCase() : "",
           data[i].get("Name"), // name of trait
           type, // type: body, color, etc
@@ -49,17 +49,8 @@ export function setUpWorldAPI(systems: any) {
       return data.length - 1;
     }
 
-    function rarityParser(rarity: string) {
-      switch (rarity) {
-        case "Common":
-          return 3 ** 5;
-        case "Rare":
-          return 3 ** 4;
-        case "Epic":
-          return 3 ** 3;
-        default:
-          return 0;
-      }
+    function tierRarityParser(tier: string) {
+      return 3 ** parseInt(tier);
     }
 
     const numBg = initSingle(background, "BACKGROUND");
