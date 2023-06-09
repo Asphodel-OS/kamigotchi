@@ -95,7 +95,9 @@ library LibProduction {
   // TODO: introduce stat to replace BOUNTY_RATIO calculation
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 output = calcOutput(components, id);
-    return (output * BOUNTY_RATIO) / BOUNTY_RATIO_PRECISION;
+    uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
+    uint256 precision = 10 ** LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE_PREC");
+    return (output * base) / precision;
   }
 
   // Calculate the duration since a production last started, measured in seconds.

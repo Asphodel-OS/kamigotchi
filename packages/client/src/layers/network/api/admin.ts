@@ -55,6 +55,10 @@ export function createAdminAPI(systems: any) {
     setConfig('LIQ_THRESH_MULT_AFF_DOWN', 50);
     setConfig('LIQ_THRESH_MULT_AFF_PREC', 2);
 
+    // Liquidation Bounty
+    setConfig('LIQ_BOUNTY_BASE', 50);
+    setConfig('LIQ_BOUNTY_BASE_PREC', 2);
+
     /////////////////
     // WORLD
 
@@ -416,19 +420,27 @@ export function createAdminAPI(systems: any) {
               },
             },
             liquidation: {
-              base: {
-                value: (v: number) => setConfig('LIQ_THRESH_BASE', v),
-                precision: (v: number) => setConfig('LIQ_THRESH_BASE_PREC', v),
+              threshold: {
+                base: {
+                  value: (v: number) => setConfig('LIQ_THRESH_BASE', v),
+                  precision: (v: number) => setConfig('LIQ_THRESH_BASE_PREC', v),
+                },
+                multiplier: {
+                  affinity: {
+                    base: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_BASE', v),
+                    up: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_UP', v),
+                    down: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_DOWN', v),
+                    precision: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_PREC', v),
+                  },
+                },
               },
-              multiplier: {
-                affinity: {
-                  base: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_BASE', v),
-                  up: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_UP', v),
-                  down: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_DOWN', v),
-                  precision: (v: number) => setConfig('LIQ_THRESH_MULT_AFF_PREC', v),
-                }
+              bounty: {
+                base: {
+                  value: (v: number) => setConfig('LIQ_BOUNTY_BASE', v),
+                  precision: (v: number) => setConfig('LIQ_BOUNTY_BASE_PREC', v),
+                },
               },
-            }
+            },
           },
           health: {
             drainRate: {
