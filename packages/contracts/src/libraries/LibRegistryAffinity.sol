@@ -19,20 +19,24 @@ library LibRegistryAffinity {
   // return the multiplier between a single source affinity and single target affinity.
   // NOTE: values returned are denominated in percent (1e2 precision).
   function getAttackMultiplier(
+    IUintComp components,
     string memory sourceAff,
     string memory targetAff
-  ) internal pure returns (uint256) {
-    uint256 multiplier = 100;
+  ) internal view returns (uint256) {
+    uint256 multBase = LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_BASE");
+    uint256 multUp = LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_UP");
+    uint256 multDown = LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_DOWN");
 
+    uint256 multiplier = multBase;
     if (LibString.eq(sourceAff, "EERIE")) {
-      if (LibString.eq(targetAff, "SCRAP")) multiplier = 200;
-      if (LibString.eq(targetAff, "INSECT")) multiplier = 50;
+      if (LibString.eq(targetAff, "SCRAP")) multiplier = multUp;
+      if (LibString.eq(targetAff, "INSECT")) multiplier = multDown;
     } else if (LibString.eq(sourceAff, "SCRAP")) {
-      if (LibString.eq(targetAff, "INSECT")) multiplier = 200;
-      if (LibString.eq(targetAff, "EERIE")) multiplier = 50;
+      if (LibString.eq(targetAff, "INSECT")) multiplier = multUp;
+      if (LibString.eq(targetAff, "EERIE")) multiplier = multDown;
     } else if (LibString.eq(sourceAff, "INSECT")) {
-      if (LibString.eq(targetAff, "EERIE")) multiplier = 200;
-      if (LibString.eq(targetAff, "SCRAP")) multiplier = 50;
+      if (LibString.eq(targetAff, "EERIE")) multiplier = multUp;
+      if (LibString.eq(targetAff, "SCRAP")) multiplier = multDown;
     }
     return multiplier; // Normal or no Affinity means 1x multiplier
   }
