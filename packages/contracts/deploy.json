@@ -472,6 +472,7 @@
   "libraries": [
     "LibAccount",
     "LibCoin",
+    "LibConfig",
     "LibInventory",
     "LibListing",
     "LibMerchant",

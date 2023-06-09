@@ -15,7 +15,6 @@ import { LibRandom } from "libraries/LibRandom.sol";
 uint256 constant ID = uint256(keccak256("system.ERC721.Mint"));
 
 // unrevealed URI is set as the placeholder
-string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
 
 contract ERC721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -24,14 +23,12 @@ contract ERC721MintSystem is System {
     address to = abi.decode(arguments, (address));
     uint256 nextMint = nextMintID();
 
-    // Get the account for this owner(to). Create one if it doesn't exist.
+    // Get the account for this owner(to). fails if doesnt exist
     uint256 accountID = LibAccount.getByOwner(components, to);
-    if (accountID == 0) {
-      accountID = LibAccount.create(world, components, to, to);
-    }
+    require(accountID != 0, "ERC721MintSystem: no account");
 
     // Create the pet, commit random
-    uint256 petID = LibPet.create(world, components, accountID, nextMint, UNREVEALED_URI);
+    uint256 petID = LibPet.create(world, components, accountID, nextMint);
     LibRandom.setRevealBlock(components, petID, block.number);
 
     // Mint the token
@@ -54,18 +51,6 @@ contract ERC721MintSystem is System {
     } else {
       curr = bComp.getValue(ID) + 1;
       bComp.set(ID, curr);
-    }
-  }
-
-  // uses MediaURIComponent to track unrevealed URI
-  function unrevealedURI() internal returns (string memory) {
-    MediaURIComponent mComp = MediaURIComponent(getAddressById(components, MediaURICompID));
-
-    if (mComp.has(ID)) {
-      return mComp.getValue(ID);
-    } else {
-      mComp.set(ID, UNREVEALED_URI);
-      return UNREVEALED_URI;
     }
   }
 }

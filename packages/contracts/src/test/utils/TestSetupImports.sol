@@ -6,6 +6,7 @@ import "std-contracts/test/MudTest.t.sol";
 // Libraries
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";

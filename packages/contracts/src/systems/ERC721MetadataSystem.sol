@@ -65,8 +65,7 @@ contract ERC721MetadataSystem is System {
     LibERC721.assignTraits(components, petID, traits);
     uint256 packed = LibRandom.packArray(traits, 8); // uses packed array to generate image off-chain
     // string memory _baseURI = LibConfig.getValueStringOf(components, "baseURI");
-    LibPet.setMediaURI(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
-    LibPet.reveal(components, petID);
+    LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     return "";
   }
 

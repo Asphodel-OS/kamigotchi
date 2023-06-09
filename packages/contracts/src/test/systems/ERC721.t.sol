@@ -6,6 +6,7 @@ import "test/utils/SetupTemplate.s.sol";
 contract ERC721PetTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
+    _registerAccounts(3);
   }
 
   function _assertOwnerInGame(uint256 tokenID, address addy) internal {

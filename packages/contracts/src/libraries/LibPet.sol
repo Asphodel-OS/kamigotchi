@@ -35,6 +35,9 @@ uint256 constant BURN_RATIO_PRECISION = 1e2;
 uint256 constant RECOVERY_RATE_PRECISION = 1e18;
 uint256 constant RECOVERY_RATE_FLAT_MULTIPLIER = 1;
 
+// placeholders for config values
+string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
+
 library LibPet {
   using LibFPMath for int256;
 
@@ -48,14 +51,13 @@ library LibPet {
     IWorld world,
     IUintComp components,
     uint256 accountID,
-    uint256 index,
-    string memory uri
+    uint256 index
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
     IndexPetComponent(getAddressById(components, IndexPetComponentID)).set(id, index);
     setAccount(components, id, accountID);
-    setMediaURI(components, id, uri);
+    setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
     setExperience(components, id, 0);
 
@@ -120,10 +122,11 @@ library LibPet {
   // called when a pet is revealed
   // NOTE: most of the reveal logic (generation) is in the ERC721MetadataSystem itself
   //       this function is for components saved directly on the Pet Entity
-  function reveal(IUintComp components, uint256 id) internal {
+  function reveal(IUintComp components, uint256 id, string memory uri) internal {
     setCanName(components, id, true);
     revive(components, id);
     setStats(components, id);
+    setMediaURI(components, id, uri);
     setLastTs(components, id, block.timestamp);
   }
 

@@ -20,7 +20,7 @@ contract ERC20Test is SetupTemplate {
     // _ERC20DepositSystem.init(address(token));
     // vm.stopPrank();
 
-    _createAccount(alice, "alice");
+    _registerAccount(alice, alice);
   }
 
   function testMint() public {
