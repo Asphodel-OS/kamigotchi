@@ -22,10 +22,6 @@ import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 uint256 constant BOUNTY_RATIO = 50; // reward per 100 KAMI liquidated
 uint256 constant BOUNTY_RATIO_PRECISION = 1e2; // i.e. denominator of the bounty ratio
 
-// uint256 constant HARVEST_RATE_PRECISION = 1e6; // precsion on production rate calculations
-// uint256 constant HARVEST_RATE_MULTIPLIER_PRECISION = 1e6; // harvesting multiplier precision
-// uint256 constant HARVEST_RATE_BASE_MULTIPLIER = 1e2; // power -> production rate conversion (x/1e3)
-
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
  */

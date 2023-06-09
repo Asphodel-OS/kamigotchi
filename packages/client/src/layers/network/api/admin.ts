@@ -9,7 +9,11 @@ export function createAdminAPI(systems: any) {
     // this doesnt work without the https:// so it's unused atm
     setConfigString('baseURI', 'kami-image.asphodel.io/image/');
 
-    // set global config fields for Kami Stats
+    // Account Stamina
+    setConfig('ACCOUNT_STAMINA_BASE', 20);
+    setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
+
+    // Kami Base Stats
     setConfig('KAMI_BASE_HEALTH', 50);
     setConfig('KAMI_BASE_POWER', 10);
     setConfig('KAMI_BASE_VIOLENCE', 10);
@@ -43,9 +47,6 @@ export function createAdminAPI(systems: any) {
     setConfig('HEALTH_RATE_HEAL_BASE', 100);     // in respect to harmony
     setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);  // i.e. x/1000
 
-    // Account Stamina
-    setConfig('ACCOUNT_STAMINA_BASE', 20);
-    setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
     /////////////////
     // WORLD
@@ -377,8 +378,14 @@ export function createAdminAPI(systems: any) {
     giveCoins,
     config: {
       set: {
+        account: {
+          stamina: {
+            base: (v: number) => setConfig('ACCOUNT_STAMINA_BASE', v),
+            recoveryPeriod: (v: number) => setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', v),
+          }
+        },
         kami: {
-          baseStats: {
+          stats: {
             harmony: (v: number) => setConfig('KAMI_BASE_HARMONY', v),
             health: (v: number) => setConfig('KAMI_BASE_HEALTH', v),
             power: (v: number) => setConfig('KAMI_BASE_POWER', v),
@@ -401,13 +408,13 @@ export function createAdminAPI(systems: any) {
             },
           },
           health: {
-            drain: {
+            drainRate: {
               base: {
                 value: (v: number) => setConfig('HEALTH_RATE_DRAIN_BASE', v),
                 precision: (v: number) => setConfig('HEALTH_RATE_DRAIN_BASE_PREC', v),
               },
             },
-            heal: {
+            healRate: {
               // precision: (v: number) => setConfig('HEALTH_RATE_HEAL_PREC', v), // better not to touch this one
               base: {
                 value: (v: number) => setConfig('HEALTH_RATE_HEAL_BASE', v),
