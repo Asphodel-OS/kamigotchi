@@ -30,11 +30,6 @@ import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 
-uint256 constant BURN_RATIO = 50; // energy burned per 100 KAMI produced
-uint256 constant BURN_RATIO_PRECISION = 1e2;
-uint256 constant RECOVERY_RATE_PRECISION = 1e18;
-uint256 constant RECOVERY_RATE_FLAT_MULTIPLIER = 1;
-
 // placeholders for config values
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
 
