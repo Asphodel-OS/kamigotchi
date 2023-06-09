@@ -10,6 +10,7 @@ import {
 
 import { Layers } from 'src/types';
 import { Account, getAccount } from './Account';
+import { getConfigFieldValue } from './Config';
 import { Kill, getKill } from './Kill';
 import { Production, getProduction } from './Production';
 import { Stats, getStats } from './Stats';

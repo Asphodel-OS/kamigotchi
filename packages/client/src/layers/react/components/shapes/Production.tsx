@@ -5,6 +5,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
+import { getConfigFieldValue } from './Config';
 import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
 
@@ -68,6 +69,12 @@ export const getProduction = (
     const nodeIndex = world.entityToIndex.get(nodeID);
     if (nodeIndex) production.node = getNode(layers, nodeIndex);
   }
+
+  /////////////////
+  // ADJUSTMENTS
+
+  const ratePrecision = 10 ** getConfigFieldValue(layers.network, 'HARVEST_RATE_PREC');
+  production.rate /= ratePrecision;
 
   return production;
 }

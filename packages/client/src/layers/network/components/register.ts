@@ -106,7 +106,7 @@ export function createComponents(world: World) {
     Status: defineStringEZ("Status", "component.Status"),
     Type: defineStringEZ("Type", "component.Type"),
     Upgrades: defineNumberEZ("Upgrades", "component.Upgrades"),
-    Value: defineStringEZ("Value", "component.Value"),
+    Value: defineNumberEZ("Value", "component.Value"),
     Violence: defineNumberEZ("Violence", "component.Violence"),
 
     // Time/Block Tracking
