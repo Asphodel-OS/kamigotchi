@@ -9,8 +9,9 @@ interface Props {
   onClick: Function;
   text: string;
   disabled?: boolean;
-  size?: 'small' | 'medium' | 'large';
   fill?: boolean;
+  inverted?: boolean;
+  size?: 'small' | 'medium' | 'large' | 'vending';
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -42,9 +43,21 @@ export const ActionButton = (props: Props) => {
       styles.fontSize = '18px';
       styles.margin = '4px';
       styles.padding = '16px 32px';
+    } else if (size === 'vending') {
+      styles.fontSize = '12px';
+      styles.margin = '3px';
+      styles.padding = '8px 24px';
     }
 
-    if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    if (props.inverted) {
+      styles.backgroundColor = '#111';
+      styles.borderColor = 'white';
+      styles.color = 'white';
+      if (props.disabled) styles.backgroundColor = '#4d4d4d';
+    } else {
+      if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    }
+
     if (props.fill) styles.flexGrow = '1';
     return styles;
   };
