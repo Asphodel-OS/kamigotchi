@@ -250,6 +250,7 @@ const Description = styled.p`
   font-size: 16px;
   color: #333;
   text-align: left;
+  line-height: 110%;
   font-family: Pixel;
   margin: 5px;
 `;
