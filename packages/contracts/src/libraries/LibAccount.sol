@@ -18,6 +18,7 @@ import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/Sta
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
 uint256 constant STAMINA_RECOVERY_PERIOD = 300; // measured in blocks
 uint256 constant BASE_STAMINA = 20;
