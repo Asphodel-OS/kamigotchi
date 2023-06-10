@@ -146,8 +146,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
-    uint256 rarity,
-    string memory affinity
+    uint256 rarity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     uint256 TraitIndex = getTraitCount(components) + 1;
@@ -164,8 +163,7 @@ library LibRegistryTrait {
       violence,
       harmony,
       slots,
-      rarity,
-      affinity
+      rarity
     );
     require(gotID == id, "LibRegistryTrait.createFace(): entity ID mismatch");
     return id;
@@ -342,8 +340,7 @@ library LibRegistryTrait {
     uint256 violence,
     uint256 harmony,
     uint256 slots,
-    uint256 rarity,
-    string memory affinity
+    uint256 rarity
   ) internal returns (uint256) {
     uint256 id = getByFaceIndex(components, faceIndex);
     require(id != 0, "LibRegistryTrait.setFace(): faceIndex not found");
@@ -368,9 +365,6 @@ library LibRegistryTrait {
 
     if (rarity > 0) LibStat.setRarity(components, id, rarity);
     else LibStat.removeRarity(components, id);
-
-    if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
-    else LibStat.removeAffinity(components, id);
 
     return id;
   }

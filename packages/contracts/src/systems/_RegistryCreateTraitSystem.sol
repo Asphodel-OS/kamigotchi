@@ -83,8 +83,7 @@ contract _RegistryCreateTraitSystem is System {
         violence,
         harmony,
         slots,
-        rarity,
-        affinity
+        rarity
       );
     } else if (LibString.eq(traitType, "HAND")) {
       LibRegistryTrait.createHand(
