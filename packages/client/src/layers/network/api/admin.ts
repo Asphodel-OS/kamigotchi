@@ -14,6 +14,10 @@ export function createAdminAPI(systems: any) {
     setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
     // Kami Base Stats
+    // to be 5, set at 500 for testing
+    setConfig('MAX_MINT', 500);
+
+    // set global config fields for Kami Stats
     setConfig('KAMI_BASE_HEALTH', 50);
     setConfig('KAMI_BASE_POWER', 10);
     setConfig('KAMI_BASE_VIOLENCE', 10);

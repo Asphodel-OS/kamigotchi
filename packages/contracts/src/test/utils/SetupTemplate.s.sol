@@ -268,5 +268,7 @@ abstract contract SetupTemplate is TestSetupImports {
     // Liquidation Bounty
     _setConfig("LIQ_BOUNTY_BASE", 50);
     _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
+
+    _setConfig("MAX_MINT", 500);
   }
 }

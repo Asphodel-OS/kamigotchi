@@ -32,7 +32,7 @@ uint256 constant NUM_TRAITS = 5;
 // Library for ERC721 interactions and metadata generation functions
 library LibERC721 {
   ////////////////////////
-  // Interactions
+  // INTERACTIONS
 
   // minting a new kami in game. the default
   // mints to KamiERC721 contract as owner

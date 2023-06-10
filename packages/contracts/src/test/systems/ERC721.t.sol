@@ -114,6 +114,16 @@ contract ERC721PetTest is SetupTemplate {
     _assertPetState(petID, "RESTING");
   }
 
+  function testFailMaxMintSeparateTx() public {
+    for (uint256 i = 0; i < 501; i++) {
+      _mintSinglePet(alice);
+    }
+  }
+
+  function testFailMaxMintSingleTx() public {
+    _ERC721MintSystem.executeTyped(alice, 501);
+  }
+
   // does not actually check if metadata is accurate, only if syntax is valid
   function testMetadata() public {
     _mintPets(1);
