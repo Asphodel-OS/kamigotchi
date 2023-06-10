@@ -178,7 +178,7 @@ export function registerNodeModal() {
                   enemies: nodeKamisOthers,
                 },
               },
-            } as any,
+            },
           };
         })
       );

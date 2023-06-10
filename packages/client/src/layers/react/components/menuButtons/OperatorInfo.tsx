@@ -100,7 +100,7 @@ export function registerOperatorInfoButton() {
                   <Text>{data.account.name}</Text>
                 </NameCell>
                 <KamiCell>
-                  <Text>$KAMI: {data.account.coin * 1}</Text>
+                  <Text>$KAMI: {1 * (data.account.coin ?? 0)}</Text>
                 </KamiCell>
                 <BatteryCell>
                   <BatteryComponent showPercentage={true} level={calcStaminaPercent(data.account)} />

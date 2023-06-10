@@ -1,16 +1,11 @@
 import styled from 'styled-components';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+
+import { Node } from 'layers/react/components/shapes/Node';
 import { dataStore } from 'layers/react/store/createStore';
 
 type NodeInfoProps = {
   node: Node;
-};
-
-type Node = {
-  name: string;
-  uri: string;
-  text1: string;
-  text2: string;
 };
 
 const NodeInfoContainer = styled.div`
@@ -51,7 +46,7 @@ const NodeInfoContainer = styled.div`
 
 export const NodeInfo: React.FC<NodeInfoProps> = ({ node }) => {
 
-  const { selectedEntities: { kami }, visibleModals, setVisibleModals } = dataStore();
+  const { visibleModals, setVisibleModals } = dataStore();
 
   const hideModal = useCallback(() => {
     setVisibleModals({ ...visibleModals, node: false });
@@ -60,13 +55,13 @@ export const NodeInfo: React.FC<NodeInfoProps> = ({ node }) => {
   return (
     <NodeInfoContainer>
       <div className="text-container">
-      <div>
-      <AlignRight>
-      <TopButton  style={{ pointerEvents: 'auto'}} onClick={hideModal}>
-        X
-      </TopButton>
-      </AlignRight>
-        <Header>{node.name}</Header>
+        <div>
+          <AlignRight>
+            <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+              X
+            </TopButton>
+          </AlignRight>
+          <Header>{node.name}</Header>
         </div>
         <BoldKamiText className="text1">{node.affinity}</BoldKamiText>
         <KamiText className="text2">
