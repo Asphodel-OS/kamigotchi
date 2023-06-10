@@ -25,7 +25,8 @@ export function registerMapButton() {
         kami: false,
         kamisNaming: false,
         nameKami: false,
-        node: false
+        node: false,
+        merchant: false
       };
 
       return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
@@ -21,6 +21,7 @@ import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';
 import gum from 'assets/images/food/gum.png';
 import ribbon from 'assets/images/food/ribbon.png';
+import { dataStore } from 'layers/react/store/createStore';
 
 const ItemImages = new Map([
   [1, gum],
@@ -116,13 +117,14 @@ export function registerMerchantModal() {
 
     // Render
     ({ actions, api, data }) => {
+      const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
+        dataStore();
       ///////////////////
       // ACTIONS
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} of ${listing.item.index
-          } at ${Date.now()}` as EntityID; // itemIndex should be replaced with the item's name
+        const actionID = `Buying ${amt} of ${listing.item.index} at ${Date.now()}` as EntityID; // itemIndex should be replaced with the item's name
         actions.add({
           id: actionID,
           components: {},
@@ -143,7 +145,8 @@ export function registerMerchantModal() {
           id={`button-buy-${listing.item.index}`}
           disabled={data.coin < listing.buyPrice}
           onClick={() => buy(listing, 1)}
-          text="Buy" />
+          text='Buy'
+        />
       );
 
       // [listing: {id, index, itemIndex, buyPrice, sellPrice}]
@@ -154,18 +157,21 @@ export function registerMerchantModal() {
             <ItemImage src={ItemImages.get(listing.item.index)} />
             <ItemName>{listing.item.name}</ItemName>
             <ItemPrice>{listing.buyPrice}</ItemPrice>
-            <ButtonWrapper>
-              {BuyButton(listing)}
-            </ButtonWrapper>
+            <ButtonWrapper>{BuyButton(listing)}</ButtonWrapper>
           </ShopEntry>
         ));
       };
 
+      const hideModal = useCallback(() => {
+        setVisibleModals({ ...visibleModals, merchant: false });
+      }, [setVisibleModals, visibleModals]);
+
       return (
-        <ModalWrapperFull divName="merchant" id="merchant">
-          {data.merchant &&
-            <ShopList>{listings(data.merchant.listings)}</ShopList>
-          }
+        <ModalWrapperFull divName='merchant' id='merchant'>
+          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+            X
+          </TopButton>
+          {data.merchant && <ShopList>{listings(data.merchant.listings)}</ShopList>}
         </ModalWrapperFull>
       );
     }
@@ -175,7 +181,7 @@ export function registerMerchantModal() {
 const ButtonWrapper = styled.div`
   grid-column: 4;
   align-self: center;
-`
+`;
 
 const ItemImage = styled.img`
   font-family: Pixel;
@@ -223,4 +229,24 @@ const ShopList = styled.ul`
   grid-column: 1;
   margin: 2px 0px 0px 0px;
   border-radius: 5px;
+`;
+
+const TopButton = styled.button`
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  color: black;
+  padding: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 5px;
+  font-family: Pixel;
+  width: 30px;
+  &:active {
+    background-color: #c4c4c4;
+  }
+  margin: 0px;
+  margin-bottom: 5px;
 `;
