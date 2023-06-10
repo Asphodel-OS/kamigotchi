@@ -47,6 +47,9 @@ export function createAdminAPI(systems: any) {
     setConfig('HEALTH_RATE_HEAL_BASE', 100);     // in respect to harmony
     setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);  // i.e. x/1000
 
+    // Liquidation Idle Requirements
+    setConfig('LIQ_IDLE_REQ', 300);
+
     // Liquidation Calcs
     setConfig('LIQ_THRESH_BASE', 20);
     setConfig('LIQ_THRESH_BASE_PREC', 2);
@@ -440,6 +443,9 @@ export function createAdminAPI(systems: any) {
                   precision: (v: number) => setConfig('LIQ_BOUNTY_BASE_PREC', v),
                 },
               },
+              idleRequirement: {
+                value: (v: number) => setConfig('LIQ_IDLE_REQ', v),
+              }
             },
           },
           health: {

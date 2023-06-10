@@ -277,6 +277,11 @@ library LibPet {
 
   /////////////////
   // CHECKERS
+  function canLiquidate(IUintComp components, uint256 id) internal view returns (bool) {
+    uint256 idleTime = block.timestamp - getLastTs(components, id);
+    uint256 idleRequirement = LibConfig.getValueOf(components, "LIQ_IDLE_REQ");
+    return idleTime > idleRequirement;
+  }
 
   // Check wether a pet can be named
   function canName(IUintComp components, uint256 id) internal view returns (bool) {

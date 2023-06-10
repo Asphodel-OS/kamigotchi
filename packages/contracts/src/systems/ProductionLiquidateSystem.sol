@@ -27,8 +27,7 @@ contract ProductionLiquidateSystem is System {
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
     // require 5min since previous action to attempt a liquidation
-    uint256 idleTime = block.timestamp - LibPet.getLastTs(components, petID);
-    require(idleTime > IDLE_REQUIREMENT, "Pet: too soon");
+    require(LibPet.canLiquidate(components, petID), "Pet: unable to liquidate");
 
     // standard checks
     LibPet.syncHealth(components, petID);
