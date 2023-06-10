@@ -16,9 +16,18 @@ uint256 constant ID = uint256(keccak256("system.ERC721.Mint"));
 contract ERC721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 amount = abi.decode(arguments, (uint256));
+  function publicMint(uint256 amount) public payable returns (bytes memory) {
+    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
+    require(msg.value >= price * amount, "ERC721MintSystem: not enough ETH");
+    return _mintProcess(amount);
+  }
 
+  function whitelistMint() public returns (bytes memory) {
+    // TODO: implement whitelist checks -> if on whitelist and if minted before
+    return _mintProcess(1);
+  }
+
+  function _mintProcess(uint256 amount) internal returns (bytes memory) {
     // get next index to mint via total supply of ERC721
     uint256 index = LibERC721.getCurrentSupply(world) + 1;
 
@@ -29,7 +38,7 @@ contract ERC721MintSystem is System {
     // check for max mint, update num minted
     uint256 numMinted = LibAccount.getPetsMinted(components, accountID);
     require(
-      numMinted + amount <= LibConfig.getValueOf(components, "MAX_MINT"),
+      numMinted + amount <= LibConfig.getValueOf(components, "MINT_MAX"),
       "ERC721MintSystem: max minted"
     );
     LibAccount.setPetsMinted(world, components, accountID, numMinted + amount);
@@ -51,6 +60,15 @@ contract ERC721MintSystem is System {
     }
 
     return abi.encode(petIDs);
+  }
+
+  function withdraw() external onlyOwner {
+    payable(owner()).transfer(address(this).balance);
+  }
+
+  // execute function disabled to allow for payable functions
+  function execute(bytes memory arguments) public returns (bytes memory) {
+    require(false, "ERC721MintSystem: deprecated");
   }
 
   function executeTyped(uint256 amount) public returns (bytes memory) {

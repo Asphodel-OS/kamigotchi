@@ -53,7 +53,7 @@ export function registerKamiMintModal() {
       /////////////////
       // ACTIONS
 
-      const mintTx = (amount: number) => {
+      const mintTx = (amount: number, value: number) => {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
@@ -64,15 +64,16 @@ export function registerKamiMintModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.ERC721.mint(amount);
+            // try whitelist mint if no ether is sent
+            return (value == 0) ? api.ERC721.whitelistMint() : api.ERC721.mint(amount, value);
           },
         });
         return actionID;
       };
 
-      const handleMinting = (amount: number) => async () => {
+      const handleMinting = (amount: number, value: number) => async () => {
         try {
-          const mintActionID = mintTx(amount);
+          const mintActionID = mintTx(amount, value);
           await waitForActionCompletion(
             actions.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex
@@ -90,9 +91,9 @@ export function registerKamiMintModal() {
       ///////////////
       // DISPLAY
 
-      const MintButton = (text: string, amount: number) => {
+      const MintButton = (text: string, amount: number, cost: number) => {
         return (
-          <ActionButton id='button-mint' onClick={handleMinting(amount)} size='vending' text={text} inverted />
+          <ActionButton id='button-mint' onClick={handleMinting(amount, cost)} size='vending' text={text} inverted />
         );
       }
 
@@ -132,22 +133,22 @@ const StepTwo = (props: any) => {
         <ProductBox style={{ gridRow: 2, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
           <VendingText>WL Kami</VendingText>
-          {MintButton("0.000Ξ", 1)}
+          {MintButton("0.000Ξ", 1, 0)}
         </ProductBox>
         <ProductBox style={{ gridRow: 2, gridColumn: 2 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
           <VendingText>1 Kami</VendingText>
-          {MintButton("0.015Ξ", 1)}
+          {MintButton("0.015Ξ", 1, 0.015)}
         </ProductBox>
         <ProductBox style={{ gridRow: 3, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
           <VendingText>3 Kamis</VendingText>
-          {MintButton("0.045Ξ", 3)}
+          {MintButton("0.045Ξ", 3, 0.045)}
         </ProductBox>
         <ProductBox style={{ gridRow: 3, gridColumn: 2 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
           <VendingText>5 Kamis</VendingText>
-          {MintButton("0.075Ξ", 5)}
+          {MintButton("0.075Ξ", 5, 0.075)}
         </ProductBox>
       </Grid>
     </>

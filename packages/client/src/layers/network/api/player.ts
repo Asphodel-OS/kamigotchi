@@ -1,4 +1,4 @@
-import { BigNumberish } from "ethers";
+import { utils, BigNumberish } from "ethers";
 
 export function createPlayerAPI(systems: any) {
   /*********************
@@ -144,8 +144,15 @@ export function createPlayerAPI(systems: any) {
   *********************/
 
   // mint a pet
-  function mintPet(amount: BigNumberish) {
-    return systems["system.ERC721.Mint"].executeTyped(amount);
+  // @param amount  number of pets to mint
+  // @param cost    cost in ETH
+  function mintPet(amount: BigNumberish, cost: BigNumberish) {
+    return systems["system.ERC721.Mint"].publicMint(amount, { value: utils.parseEther(cost.toString()) });
+  }
+
+  // mint a pet via whitelist
+  function whitelistMintPet() {
+    return systems["system.ERC721.Mint"].whitelistMint();
   }
 
   // reveal a minted pet
@@ -221,6 +228,7 @@ export function createPlayerAPI(systems: any) {
       mint: mintPet,
       reveal: revealPet,
       withdraw: withdrawERC721,
+      whitelistMint: whitelistMintPet,
     },
     ERC20: {
       deposit: depositERC20,
