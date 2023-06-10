@@ -55,7 +55,7 @@ abstract contract SetupTemplate is TestSetupImports {
       _registerAccount(addy, addy);
     }
     vm.startPrank(addy, addy);
-    entityID = abi.decode(_ERC721MintSystem.executeTyped(addy, 1), (uint256[]))[0];
+    entityID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
     vm.roll(block.number + 1);
     _ERC721MetadataSystem.executeTyped(LibPet.idToIndex(components, entityID));
     vm.stopPrank();

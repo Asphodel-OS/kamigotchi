@@ -58,7 +58,7 @@ contract ERC721PetTest is SetupTemplate {
   function testStates() public {
     // minting
     vm.startPrank(alice);
-    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(alice, 1), (uint256[]))[0];
+    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
     vm.roll(block.number + 1);
     _assertPetState(petID, "UNREVEALED");
 
@@ -98,13 +98,14 @@ contract ERC721PetTest is SetupTemplate {
 
   function testForceReveal() public {
     vm.prank(alice);
-    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(alice, 1), (uint256[]))[0];
+    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
 
     vm.roll(block.number + 256);
     _assertPetState(petID, "UNREVEALED");
 
     // do something to mine the block
-    _ERC721MintSystem.executeTyped(alice, 1);
+    vm.prank(alice);
+    _ERC721MintSystem.executeTyped(1);
 
     vm.roll(block.number + 1);
     vm.startPrank(deployer);
@@ -121,7 +122,8 @@ contract ERC721PetTest is SetupTemplate {
   }
 
   function testFailMaxMintSingleTx() public {
-    _ERC721MintSystem.executeTyped(alice, 501);
+    vm.prank(alice);
+    _ERC721MintSystem.executeTyped(501);
   }
 
   // does not actually check if metadata is accurate, only if syntax is valid

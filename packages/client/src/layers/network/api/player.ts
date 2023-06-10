@@ -144,8 +144,8 @@ export function createPlayerAPI(systems: any) {
   *********************/
 
   // mint a pet
-  function mintPet(address: BigNumberish, amount: BigNumberish) {
-    return systems["system.ERC721.Mint"].executeTyped(address, amount);
+  function mintPet(amount: BigNumberish) {
+    return systems["system.ERC721.Mint"].executeTyped(amount);
   }
 
   // reveal a minted pet

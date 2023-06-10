@@ -9,6 +9,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Stepper } from '../library/Stepper';
@@ -42,20 +43,20 @@ export function registerKamiMintModal() {
     ({ layers }) => {
       const {
         network: {
-          api: { player },
-          network: { connectedAddress },
           actions,
           world,
         },
       } = layers;
 
-      const { details } = useKamiAccount();
       const { visibleModals, setVisibleModals, sound: { volume } } = dataStore();
+      const { selectedAddress, networks } = useNetworkSettings();
 
       /////////////////
       // ACTIONS
 
-      const mintTx = (address: string) => {
+      const mintTx = (amount: number) => {
+        const network = networks.get(selectedAddress);
+        const api = network!.api.player;
 
         const actionID = `Minting Kami` as EntityID;
         actions.add({
@@ -64,7 +65,7 @@ export function registerKamiMintModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return player.ERC721.mint(address, 1); // hardcoded to mint 1 for now
+            return api.ERC721.mint(amount);
           },
         });
         return actionID;
@@ -72,7 +73,7 @@ export function registerKamiMintModal() {
 
       const handleMinting = async () => {
         try {
-          const mintActionID = mintTx(details.ownerAddress);
+          const mintActionID = mintTx(1);
           await waitForActionCompletion(
             actions.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex

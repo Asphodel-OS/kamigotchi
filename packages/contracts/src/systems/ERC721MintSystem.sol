@@ -17,13 +17,13 @@ contract ERC721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
+    uint256 amount = abi.decode(arguments, (uint256));
 
     // get next index to mint via total supply of ERC721
     uint256 index = LibERC721.getCurrentSupply(world) + 1;
 
     // get the account for this owner(to). fails if doesnt exist
-    uint256 accountID = LibAccount.getByOwner(components, to);
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "ERC721MintSystem: no account");
 
     // check for max mint, update num minted
@@ -53,7 +53,7 @@ contract ERC721MintSystem is System {
     return abi.encode(petIDs);
   }
 
-  function executeTyped(address to, uint256 amount) public returns (bytes memory) {
-    return execute(abi.encode(to, amount));
+  function executeTyped(uint256 amount) public returns (bytes memory) {
+    return execute(abi.encode(amount));
   }
 }
