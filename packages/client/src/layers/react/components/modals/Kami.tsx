@@ -157,10 +157,8 @@ export function registerKamiModal() {
       };
 
       const affinitiesBox = () => {
-        // for any amount of affinities
-        // const str = dets?.affinities?.reduce((ac, x) => (ac = ac + ' | ' + x)); 
-        // for 2 affinities (hardcoded)
-        const str = dets?.affinities ? dets?.affinities[0] + ' | ' + dets?.affinities[1] : '';
+        const strRaw = dets?.affinities?.reduce((ac, x) => (ac = ac + ' | ' + x));
+        const str = strRaw?.slice(0, -2);
         return <KamiText>{str}</KamiText>;
       };
 
