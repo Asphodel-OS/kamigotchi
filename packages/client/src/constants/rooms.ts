@@ -36,7 +36,7 @@ import {
   emaboard,
   stonelantern,
   waterfall,
-  smallshrine
+  smallshrine,
 } from 'assets/images/objects';
 
 import {
@@ -56,7 +56,7 @@ import {
   room14,
 } from 'assets/images/rooms';
 
-import { forest, opening, ost1, ost2 } from 'assets/sound/ost';
+import { forest, opening, ost1, ost2, ost3 } from 'assets/sound/ost';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
 import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
 import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggerERC721BridgeModal';
@@ -95,7 +95,7 @@ export const duplicateRoomMusic = [
   [5, 6],
   [9, 10, 11],
   [7, 8, 14],
-  [4, 5, 6, 7, 8, 9, 10, 12, 13, 14],
+  [4, 9, 10, 12, 13],
 ];
 
 // all our lovely, hardcoded room details
@@ -154,8 +154,7 @@ export const rooms: Room[] = [
         path: shopdoor,
         offset: { x: 5, y: -7 },
         onClick: () =>
-          triggerDialogueModal([
-            "There's what appears to be a door hanging in mid-air!"]),
+          triggerDialogueModal(["There's what appears to be a door hanging in mid-air!"]),
       },
     ],
   },
@@ -218,14 +217,16 @@ export const rooms: Room[] = [
         key: 'acompanybuilding',
         path: acompanybuilding,
         offset: { x: -30.1, y: -35 },
-        onClick: () =>
-          triggerDialogueModal(["An office building?"]),
+        onClick: () => triggerDialogueModal(['An office building?']),
       },
       {
         key: 'warningsign',
         path: warningsign,
         offset: { x: 10.5, y: 39.6 },
-        onClick: () => triggerDialogueModal(['The "writing" on this sign is illegible nonsense. It looks like a warning, however.']),
+        onClick: () =>
+          triggerDialogueModal([
+            'The "writing" on this sign is illegible nonsense. It looks like a warning, however.',
+          ]),
       },
     ],
   },
@@ -244,14 +245,19 @@ export const rooms: Room[] = [
         key: 'abuildinglogo',
         path: abuildinglogo,
         offset: { x: 0, y: -45 },
-        onClick: () => triggerDialogueModal(["There's a logo plaque here. It's perfectly maintained, despite the decrepit state of the rest of of the entrance."]),
+        onClick: () =>
+          triggerDialogueModal([
+            "There's a logo plaque here. It's perfectly maintained, despite the decrepit state of the rest of of the entrance.",
+          ]),
       },
       {
         key: 'foxstatues',
         path: foxstatues,
         offset: { x: 0, y: 28 },
         onClick: () =>
-          triggerDialogueModal(["The fox statues are flanking the entrance perfectly. As you step past them, the texture of the air changes slightly."]),
+          triggerDialogueModal([
+            'The fox statues are flanking the entrance perfectly. As you step past them, the texture of the air changes slightly.',
+          ]),
       },
     ],
   },
@@ -262,15 +268,18 @@ export const rooms: Room[] = [
       path: room7,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost3',
+      path: ost3,
     },
     objects: [
       {
         key: 'chair',
         path: chair,
         offset: { x: -40, y: 31.9 },
-        onClick: () => triggerDialogueModal(["While obviously aged, the couch is still in respectable condition."]),
+        onClick: () =>
+          triggerDialogueModal([
+            'While obviously aged, the couch is still in respectable condition.',
+          ]),
       },
       {
         key: 'cabinet',
@@ -287,27 +296,34 @@ export const rooms: Room[] = [
       path: room8,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost3',
+      path: ost3,
     },
     objects: [
       {
         key: 'junkmonitors',
         path: junkmonitors,
         offset: { x: 54, y: 17 },
-        onClick: () => triggerDialogueModal(['These appear to be junked computer monitors. It looks like someone was working on them.']),
+        onClick: () =>
+          triggerDialogueModal([
+            'These appear to be junked computer monitors. It looks like someone was working on them.',
+          ]),
       },
       {
         key: 'junkvendingwall',
         path: junkvendingwall,
         offset: { x: -47.5, y: -4.5 },
-        onClick: () => triggerDialogueModal(["A wall that vends junk. This is probably where you'll be able to get mods."]),
+        onClick: () =>
+          triggerDialogueModal([
+            "A wall that vends junk. This is probably where you'll be able to get mods.",
+          ]),
       },
       {
         key: 'poster',
         path: poster,
         offset: { x: 35.5, y: -1.4 },
-        onClick: () => triggerDialogueModal(['A poster of no particular importance. Possibly too much.']),
+        onClick: () =>
+          triggerDialogueModal(['A poster of no particular importance. Possibly too much.']),
       },
     ],
   },
@@ -326,13 +342,19 @@ export const rooms: Room[] = [
         key: 'beetle1',
         path: beetle1,
         offset: { x: 53.5, y: -53.35 },
-        onClick: () => triggerDialogueModal(['The first of a number of local beetles. Quiet and contemplative.']),
+        onClick: () =>
+          triggerDialogueModal([
+            'The first of a number of local beetles. Quiet and contemplative.',
+          ]),
       },
       {
         key: 'beetle2',
         path: beetle2,
         offset: { x: 11.5, y: -7 },
-        onClick: () => triggerDialogueModal(['The second of a number of local beetles. While they might be insignificant to you, their numbers are very important to them.']),
+        onClick: () =>
+          triggerDialogueModal([
+            'The second of a number of local beetles. While they might be insignificant to you, their numbers are very important to them.',
+          ]),
       },
       {
         key: 'beetle3',
@@ -344,7 +366,10 @@ export const rooms: Room[] = [
         key: 'smallmushrooms',
         path: smallmushrooms,
         offset: { x: -52, y: 58 },
-        onClick: () => triggerDialogueModal(["You haven't seen Mushrooms like this anywhere else in this forest."]),
+        onClick: () =>
+          triggerDialogueModal([
+            "You haven't seen Mushrooms like this anywhere else in this forest.",
+          ]),
       },
     ],
   },
@@ -369,13 +394,19 @@ export const rooms: Room[] = [
         key: 'centipedeandgrub',
         path: centipedeandgrub,
         offset: { x: 41.6, y: 52.5 },
-        onClick: () => triggerDialogueModal(['A centipede and a grub. The relationship between them is ambiguous and of great interest to the beetles nearby.']),
+        onClick: () =>
+          triggerDialogueModal([
+            'A centipede and a grub. The relationship between them is ambiguous and of great interest to the beetles nearby.',
+          ]),
       },
       {
         key: 'foresttrunk',
         path: foresttrunk,
         offset: { x: -53, y: -7 },
-        onClick: () => triggerDialogueModal(["A hollow tree-trunk. This should obviously have a secret item or something in it, right? To be honest, we haven't implemented those yet."]),
+        onClick: () =>
+          triggerDialogueModal([
+            "A hollow tree-trunk. This should obviously have a secret item or something in it, right? To be honest, we haven't implemented those yet.",
+          ]),
       },
       {
         key: 'termitemound',
@@ -412,13 +443,17 @@ export const rooms: Room[] = [
         key: 'waterfall',
         path: waterfall,
         offset: { x: 22.6, y: -33.5 },
-        onClick: () => triggerDialogueModal(['The base of the waterfall. It feels very peaceful here.']),
+        onClick: () =>
+          triggerDialogueModal(['The base of the waterfall. It feels very peaceful here.']),
       },
       {
         key: 'smallshrine',
         path: smallshrine,
         offset: { x: -5.48, y: 16.1 },
-        onClick: () => triggerDialogueModal(['A small shrine. This almost has the energy of a Node, but something is off...']),
+        onClick: () =>
+          triggerDialogueModal([
+            'A small shrine. This almost has the energy of a Node, but something is off...',
+          ]),
       },
     ],
   },
@@ -437,15 +472,13 @@ export const rooms: Room[] = [
         key: 'prayerwheels',
         path: prayerwheels,
         offset: { x: -48.65, y: 13 },
-        onClick: () =>
-          triggerERC20BridgeModal(),
+        onClick: () => triggerERC20BridgeModal(),
       },
       {
         key: 'bellshapeddevice',
         path: bellshapeddevice,
         offset: { x: 39.04, y: -13.92 },
-        onClick: () =>
-          triggerERC721BridgeModal(),
+        onClick: () => triggerERC721BridgeModal(),
       },
       {
         key: 'glassbox',
@@ -497,8 +530,8 @@ export const rooms: Room[] = [
       path: room14,
     },
     music: {
-      key: 'forest',
-      path: forest,
+      key: 'ost3',
+      path: ost3,
     },
     objects: [
       {
@@ -511,13 +544,17 @@ export const rooms: Room[] = [
         key: 'appleimac',
         path: appleimac,
         offset: { x: -12.4, y: 9.5 },
-        onClick: () => triggerDialogueModal(["An apple Imac. Looks like the G3, actually. There's no power cable, so it's dead."]),
+        onClick: () =>
+          triggerDialogueModal([
+            "An apple Imac. Looks like the G3, actually. There's no power cable, so it's dead.",
+          ]),
       },
       {
         key: 'businesspaperwork',
         path: businesspaperwork,
         offset: { x: 7, y: 3.6 },
-        onClick: () => triggerDialogueModal(['A pile of documents. The writing is unreadable scrawl.']),
+        onClick: () =>
+          triggerDialogueModal(['A pile of documents. The writing is unreadable scrawl.']),
       },
       {
         key: 'smallwaterfall',
