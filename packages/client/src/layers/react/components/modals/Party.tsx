@@ -1,13 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -88,11 +82,7 @@ export function registerPartyModal() {
             ])
           )[0];
 
-          const account = getAccount(
-            layers,
-            accountIndex,
-            { inventory: true, kamis: true }
-          );
+          const account = getAccount(layers, accountIndex, { inventory: true, kamis: true });
 
           return {
             actions,
@@ -229,7 +219,7 @@ export function registerPartyModal() {
         }
         if (hourlyRate > 0) display = '+' + display;
         return display;
-      }
+      };
 
       // calculate the expected output from a pet production based on starttime
       const calcOutput = (kami: Kami): number => {
@@ -315,10 +305,7 @@ export function registerPartyModal() {
         } else if (isUnrevealed(kami)) {
           description = ['Unrevealed!'];
         } else if (isResting(kami)) {
-          description = [
-            'Resting',
-            `${healthRate} HP/hr`,
-          ];
+          description = ['Resting', `${healthRate} HP/hr`];
         } else if (isDead(kami)) {
           description = [`Murdered`];
           if (kami.deaths && kami.deaths.length > 0) {
@@ -327,12 +314,9 @@ export function registerPartyModal() {
           }
         } else if (isHarvesting(kami)) {
           if (calcHealth(kami) == 0) {
-            description = [
-              `Starving.. `,
-              `on ${kami.production!.node!.name}`,
-            ];
+            description = [`Starving.. `, `on ${kami.production!.node!.name}`];
           } else {
-            const harvestRate = getRateDisplay(kami.production?.rate, 2)
+            const harvestRate = getRateDisplay(kami.production?.rate, 2);
             description = [
               `Harvesting`,
               `on ${kami.production!.node!.name}`,
@@ -348,7 +332,11 @@ export function registerPartyModal() {
       // DISPLAY
 
       // get the row of consumable items to display in the player inventory
-      const ConsumableCells = (inventories: AccountInventories, showIndex: number, setToolTip: any) => {
+      const ConsumableCells = (
+        inventories: AccountInventories,
+        showIndex: number,
+        setToolTip: any
+      ) => {
         const inventorySlots = [
           {
             id: 1,
@@ -374,19 +362,13 @@ export function registerPartyModal() {
             text: 'Ribbon - Revives a fallen Kami.',
             inventory: getInventoryByFamilyIndex(inventories?.revives, 1),
           },
-        ]
+        ];
 
         return inventorySlots.map((slot, i) => {
           return (
-            <CellBordered
-              key={slot.id}
-              style={{ gridColumn: `${slot.id}` }}
-            >
+            <CellBordered key={slot.id} style={{ gridColumn: `${slot.id}` }}>
               <div style={{ position: 'relative' }}>
-                <CellGrid
-                  onMouseOver={() => setToolTip(i)}
-                  onMouseLeave={() => setToolTip(-1)}
-                >
+                <CellGrid onMouseOver={() => setToolTip(i)} onMouseLeave={() => setToolTip(-1)}>
                   {!visibleModals.kami && (
                     <Tooltip show={i === showIndex ? true : false} text={slot.text} />
                   )}
@@ -407,20 +389,50 @@ export function registerPartyModal() {
         const feedOptions = nonEmptyOptions.map((inv: Inventory) => {
           return {
             text: inv.item.name,
-            onClick: () => feedKami(kami, inv.item.familyIndex)
+            onClick: () => feedKami(kami, inv.item.familyIndex),
           };
         });
 
-        return (
-          <ActionListButton
-            id={`feedKami-button-${kami.index}`}
-            text='Feed'
-            hidden={true}
-            disabled={!canFeed(kami)}
-            scrollPosition={scrollPosition}
-            options={feedOptions}
-          />
-        );
+        const canFeedKami = canFeed(kami);
+        const tooltipText = whyCantFeed(kami);
+
+        const TooltipButton = () => {
+          const [showTooltip, setShowTooltip] = useState(false);
+          const [positionTop, setPositionTop] = useState('');
+
+          const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
+            setShowTooltip(true);
+            const topPosition = window.innerHeight - event.clientY > 200 ? '-10px' : '-100px';
+            setPositionTop(topPosition);
+          };
+
+          const handleMouseLeave = () => {
+            setShowTooltip(false);
+            setPositionTop('');
+          };
+
+          return (
+            <div
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              style={{ position: 'relative' }}
+            >
+              <ActionListButton
+                id={`feedKami-button-${kami.index}`}
+                text='Feed'
+                hidden={true}
+                disabled={!canFeedKami}
+                scrollPosition={scrollPosition}
+                options={feedOptions}
+              />
+              {!canFeedKami && showTooltip && (
+                <Tooltip show={true} text={tooltipText} positionTop={positionTop} />
+              )}
+            </div>
+          );
+        };
+
+        return <TooltipButton />;
       };
 
       const RevealButton = (kami: Kami) => (

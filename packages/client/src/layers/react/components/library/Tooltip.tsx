@@ -12,6 +12,7 @@ export const TooltipContainer = styled.div<TooltipProps>`
   transform: translatey(10px) translateX(-40%);
   top: ${(props) => props.positionTop || '30px'};
   left: 50%;
+  z-index: 2;
   padding: 5px;
   background-color: #ffffff;
   font-size: 12px;
