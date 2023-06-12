@@ -188,7 +188,7 @@ export function registerNodeModal() {
 
     // Render
     ({ actions, api, data }) => {
-      console.log('NodeM: data', data);
+      // console.log('NodeM: data', data);
 
       /////////////////
       // STATE TRACKING
@@ -307,13 +307,11 @@ export function registerNodeModal() {
 
       /////////////////
       // DATA INTERPRETATION
-      const LIQUIDATION_IDLE_REQUIREMENT = 300; // time needed to spend idle for liquidating
-      const LIQUIDATION_BASE_THRESHOLD_PEAK = 0.2;
 
       // calculate health based on the drain against last confirmed health
       const calcHealth = (kami: Kami): number => {
         let health = 1 * kami.health;
-        let duration = lastRefresh / 1000 - kami.lastUpdated;
+        let duration = calcIdleTime(kami);
         health += kami.healthRate * duration;
         health = Math.min(Math.max(health, 0), kami.stats.health);
         return health;
@@ -330,28 +328,23 @@ export function registerNodeModal() {
       };
 
       const calcLiquidationAffinityMultiplier = (attacker: Kami, victim: Kami): number => {
-        let multiplier = 1;
+        const multiplierBase = data.liquidationConfig.multipliers.affinity.base;
+        const multiplierUp = data.liquidationConfig.multipliers.affinity.up;
+        const multiplierDown = data.liquidationConfig.multipliers.affinity.down;
+
+        let multiplier = multiplierBase;
         if (attacker.traits && victim.traits) {
           const attackerAffinity = attacker.traits.hand.affinity;
           const victimAffinity = victim.traits.body.affinity;
           if (attackerAffinity === 'EERIE') {
-            if (victimAffinity === 'SCRAP') {
-              multiplier = 2;
-            } else if (victimAffinity === 'INSECT') {
-              multiplier = 0.5;
-            }
+            if (victimAffinity === 'SCRAP') multiplier = multiplierUp;
+            else if (victimAffinity === 'INSECT') multiplier = multiplierDown;
           } else if (attackerAffinity === 'SCRAP') {
-            if (victimAffinity === 'INSECT') {
-              multiplier = 2;
-            } else if (victimAffinity === 'EERIE') {
-              multiplier = 0.5;
-            }
+            if (victimAffinity === 'INSECT') multiplier = multiplierUp;
+            else if (victimAffinity === 'EERIE') multiplier = multiplierDown;
           } else if (attackerAffinity === 'INSECT') {
-            if (victimAffinity === 'EERIE') {
-              multiplier = 2;
-            } else if (victimAffinity === 'SCRAP') {
-              multiplier = 0.5;
-            }
+            if (victimAffinity === 'EERIE') multiplier = multiplierUp;
+            else if (victimAffinity === 'SCRAP') multiplier = multiplierDown;
           }
         }
         return multiplier;
@@ -361,14 +354,14 @@ export function registerNodeModal() {
       const calcLiquidationThresholdBase = (attacker: Kami, victim: Kami): number => {
         const ratio = attacker.stats.violence / victim.stats.harmony;
         const weight = cdf(Math.log(ratio), 0, 1);
-        return weight * LIQUIDATION_BASE_THRESHOLD_PEAK;
+        const peakBaseThreshold = data.liquidationConfig.threshold;
+        return weight * peakBaseThreshold;
       };
 
       // calculate the liquidation threshold b/w two kamis as a %
       const calcLiquidationThreshold = (attacker: Kami, victim: Kami): number => {
         const base = calcLiquidationThresholdBase(attacker, victim);
         const multiplier = calcLiquidationAffinityMultiplier(attacker, victim);
-        // console.log(`Threshold ${attacker.index} => ${victim.index}`, base * multiplier)
         return base * multiplier;
       };
 
@@ -378,12 +371,12 @@ export function registerNodeModal() {
       };
 
       // determine whether a kami can liquidate another kami
-      // TODO: introduce checks around stats
       const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
         const thresholdPercent = calcLiquidationThreshold(attacker, victim);
+        // console.log(attacker.name, victim.name, thresholdPercent);
         const absoluteThreshold = thresholdPercent * victim.stats.health;
         const canMog = calcHealth(victim) < absoluteThreshold;
-        const isRested = calcIdleTime(attacker) > LIQUIDATION_IDLE_REQUIREMENT;
+        const isRested = calcIdleTime(attacker) > data.liquidationConfig.idleRequirement;
         return isRested && canMog;
       }
 
