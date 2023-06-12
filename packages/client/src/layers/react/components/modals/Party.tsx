@@ -96,7 +96,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data, world }) => {
-      console.log('PartyM: data', data);
+      // console.log('PartyM: data', data);
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
 

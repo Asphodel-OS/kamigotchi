@@ -20,6 +20,7 @@ import {
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { getLiquidationConfig } from '../shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/components/shapes/Node';
 import { Production } from 'layers/react/components/shapes/Production';
 import { KamiCard } from '../library/KamiCard';
@@ -171,6 +172,7 @@ export function registerNodeModal() {
             api: player,
             data: {
               account: { ...account, kamis: restingKamis },
+              liquidationConfig: getLiquidationConfig(layers.network),
               node: {
                 ...node,
                 kamis: {
@@ -186,7 +188,7 @@ export function registerNodeModal() {
 
     // Render
     ({ actions, api, data }) => {
-      // console.log('data', data);
+      console.log('NodeM: data', data);
 
       /////////////////
       // STATE TRACKING

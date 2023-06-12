@@ -198,7 +198,7 @@ export const getKami = (
   /////////////////
   // ADJUSTMENTS
 
-  // harvesting/resting health decrease rate
+  // health change rate for harvesting/resting kami
   let healthRate = 0;
   if (kami.state === 'HARVESTING') {
     let productionRate = 0;
