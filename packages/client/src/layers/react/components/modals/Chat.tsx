@@ -67,18 +67,18 @@ export function registerChatModal() {
     },
 
     ({ chatName }) => {
-      const [api] = useState<Urbit>(new Urbit(""));
+      const [api] = useState<Urbit>(new Urbit("https://ritsyd-foprel.urbox.on", "divtyp-namreb-magtyv-ronfed"));
 
       const [messages, setMessages] = useState<Message[]>([]);
       const [chatInput, setChatInput] = useState('');
 
-      useEffect(() => {
-        Urbit.authenticate({
-          ship: 'ritsyd-foprel',
-          url: 'https://ritsyd-foprel.urbox.one',
-          code: 'divtyp-namreb-magtyv-ronfed',
-        });
-      }, []);
+      // useEffect(() => {
+      //   Urbit.authenticate({
+      //     ship: 'ritsyd-foprel',
+      //     url: 'https://ritsyd-foprel.urbox.one',
+      //     code: 'divtyp-namreb-magtyv-ronfed',
+      //   });
+      // }, []);
 
       // UQ
       useEffect(() => {
@@ -134,7 +134,7 @@ export function registerChatModal() {
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          sendMessage({ convo: chatId, kind: 'text', content: chatInput, mentions: [] });
+          sendMessage({ convo: chatId, kind: 'text', content: chatInput, identifier: Date.now().toString(), mentions: [] });
         }
       };
 
