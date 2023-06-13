@@ -17,7 +17,6 @@ import { LibStat } from "libraries/LibStat.sol";
 import { LibERC721 } from "libraries/LibERC721.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
-uint256 constant _numElements = 5;
 
 contract ERC721MetadataSystem is System {
   string internal _baseURI;

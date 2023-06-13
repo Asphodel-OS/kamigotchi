@@ -518,6 +518,109 @@ library LibRegistryTrait {
   }
 
   /////////////////
+  // RARITY WEIGHTS
+
+  // // get background rarities in a key value pair array
+  // function getBackgroundRarities(
+  //   IUintComp components
+  // ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+  //   uint256[] memory entities = getAllBackground(components);
+  //   keys = new uint256[](entities.length);
+  //   for (uint256 i = 0; i < entities.length; i++) {
+  //     keys[i] = getBackgroundIndex(components, entities[i]);
+  //   }
+  //   weights = LibRarity.getWeights(components, entities);
+  // }
+
+  // // get body rarities in a key value pair array
+  // function getBodyRarities(
+  //   IUintComp components
+  // ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+  //   uint256[] memory entities = getAllBody(components);
+  //   keys = new uint256[](entities.length);
+  //   for (uint256 i = 0; i < entities.length; i++) {
+  //     keys[i] = getBodyIndex(components, entities[i]);
+  //   }
+  //   weights = LibRarity.getWeights(components, entities);
+  // }
+
+  // // get color rarities in a key value pair array
+  // function getColorRarities(
+  //   IUintComp components
+  // ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+  //   uint256[] memory entities = getAllColor(components);
+  //   keys = new uint256[](entities.length);
+  //   for (uint256 i = 0; i < entities.length; i++) {
+  //     keys[i] = getColorIndex(components, entities[i]);
+  //   }
+  //   weights = LibRarity.getWeights(components, entities);
+  // }
+
+  // // get face rarities in a key value pair array
+  // function getFaceRarities(
+  //   IUintComp components
+  // ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+  //   uint256[] memory entities = getAllFace(components);
+  //   keys = new uint256[](entities.length);
+  //   for (uint256 i = 0; i < entities.length; i++) {
+  //     keys[i] = getFaceIndex(components, entities[i]);
+  //   }
+  //   weights = LibRarity.getWeights(components, entities);
+  // }
+
+  // // get hand rarities in a key value pair array
+  // function getHandRarities(
+  //   IUintComp components
+  // ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+  //   uint256[] memory entities = getAllHand(components);
+  //   keys = new uint256[](entities.length);
+  //   for (uint256 i = 0; i < entities.length; i++) {
+  //     keys[i] = getHandIndex(components, entities[i]);
+  //   }
+  //   weights = LibRarity.getWeights(components, entities);
+  // }
+
+  // get background rarities in a key value pair array
+  function getBackgroundRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllBackground(components);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexBackgroundCompID);
+  }
+
+  // get body rarities in a key value pair array
+  function getBodyRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllBody(components);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexBodyCompID);
+  }
+
+  // get color rarities in a key value pair array
+  function getColorRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllColor(components);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexColorCompID);
+  }
+
+  // get face rarities in a key value pair array
+  function getFaceRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllFace(components);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexFaceCompID);
+  }
+
+  // get hand rarities in a key value pair array
+  function getHandRarities(
+    IUintComp components
+  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
+    uint256[] memory entities = getAllHand(components);
+    return LibRarity.getRarityKeyValueArr(components, entities, IndexHandCompID);
+  }
+
+  /////////////////
   // QUERIES
 
   // get the number of Trait registry entries
@@ -635,21 +738,21 @@ library LibRegistryTrait {
   // mostly used internally
   function getAllOfType(
     IUintComp components,
-    uint256 inComp
+    uint256 indexComponentID
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, inComp), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, indexComponentID), "");
     uint256[] memory results = LibQuery.query(fragments);
     return results;
   }
 
-  function getAllBody(IUintComp components) internal view returns (uint256[] memory) {
-    return getAllOfType(components, IndexBodyCompID);
-  }
-
   function getAllBackground(IUintComp components) internal view returns (uint256[] memory) {
     return getAllOfType(components, IndexBackgroundCompID);
+  }
+
+  function getAllBody(IUintComp components) internal view returns (uint256[] memory) {
+    return getAllOfType(components, IndexBodyCompID);
   }
 
   function getAllColor(IUintComp components) internal view returns (uint256[] memory) {
@@ -662,45 +765,5 @@ library LibRegistryTrait {
 
   function getAllHand(IUintComp components) internal view returns (uint256[] memory) {
     return getAllOfType(components, IndexHandCompID);
-  }
-
-  // get body rarities in a key value pair array
-  function getBodyRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
-    uint256[] memory entities = getAllBody(components);
-    return LibRarity.getRarityKeyValueArr(components, entities, IndexBodyCompID);
-  }
-
-  // get background rarities in a key value pair array
-  function getBackgroundRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
-    uint256[] memory entities = getAllBackground(components);
-    return LibRarity.getRarityKeyValueArr(components, entities, IndexBackgroundCompID);
-  }
-
-  // get color rarities in a key value pair array
-  function getColorRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
-    uint256[] memory entities = getAllColor(components);
-    return LibRarity.getRarityKeyValueArr(components, entities, IndexColorCompID);
-  }
-
-  // get face rarities in a key value pair array
-  function getFaceRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
-    uint256[] memory entities = getAllFace(components);
-    return LibRarity.getRarityKeyValueArr(components, entities, IndexFaceCompID);
-  }
-
-  // get hand rarities in a key value pair array
-  function getHandRarities(
-    IUintComp components
-  ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
-    uint256[] memory entities = getAllHand(components);
-    return LibRarity.getRarityKeyValueArr(components, entities, IndexHandCompID);
   }
 }
