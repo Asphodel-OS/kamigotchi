@@ -21,20 +21,17 @@ export function createAdminAPI(systems: any) {
     setConfig('KAMI_BASE_SLOTS', 0);
 
     // Harvest Rates
-    // dHarvest/dt = base * power * multiplier
+    // HarvestRate = power * base * multiplier
     // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
-    // so BASE of 100 and BASE_PREC of 3 means 100/1e3 = 0.1
-    const numHarvestTraits = 3; // don't change this, some uncoded fuckery atm
-    const affinityPrecision = 2;
-    const multiplierPrecision = numHarvestTraits * affinityPrecision;
+    // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
     setConfig('HARVEST_RATE_PREC', 9);        // ignore this
     setConfig('HARVEST_RATE_BASE', 100);      // in respect to power
     setConfig('HARVEST_RATE_BASE_PREC', 3);   // i.e. x/1000
-    setConfig('HARVEST_RATE_MULT_PREC', multiplierPrecision);
+    setConfig('HARVEST_RATE_MULT_PREC', 4);   // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
     setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
     setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
     setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
-    setConfig('HARVEST_RATE_MULT_AFF_PREC', affinityPrecision); // 2, not actually used
+    setConfig('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
 
     // Kami Health Drain/Heal Rates
     // DrainRate = HarvestRate * DrainBaseRate

@@ -470,10 +470,10 @@ library LibPet {
   // get the pet's affinities. hardcoded to check for face, body, and arms.
   // in the future, can upgrade here
   function getAffinities(IUintComp components, uint256 id) internal view returns (string[] memory) {
-    string[] memory affinities = new string[](3);
+    string[] memory affinities = new string[](2);
     affinities[0] = LibStat.getAffinity(components, LibTrait.getBodyPointer(components, id));
     affinities[1] = LibStat.getAffinity(components, LibTrait.getHandPointer(components, id));
-    affinities[2] = LibStat.getAffinity(components, LibTrait.getFacePointer(components, id));
+    // affinities[2] = LibStat.getAffinity(components, LibTrait.getFacePointer(components, id));
 
     return affinities;
   }
