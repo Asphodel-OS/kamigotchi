@@ -54,6 +54,9 @@ import {
   room12,
   room13,
   room14,
+  room15,
+  room16,
+  room17,
 } from 'assets/images/rooms';
 
 import { forest, opening, ost1, ost2, ost3 } from 'assets/sound/ost';
@@ -563,5 +566,38 @@ export const rooms: Room[] = [
         onClick: () => triggerDialogueModal(['A waterfall in the distance.']),
       },
     ],
+  },
+  {
+    location: 15,
+    background: {
+      key: 'bg_room15',
+      path: room15,
+    },
+    music: {
+      key: 'ost3',
+      path: ost3,
+    },
+  },
+  {
+    location: 16,
+    background: {
+      key: 'bg_room16',
+      path: room16,
+    },
+    music: {
+      key: 'ost3',
+      path: ost3,
+    },
+  },
+  {
+    location: 17,
+    background: {
+      key: 'bg_room17',
+      path: room17,
+    },
+    music: {
+      key: 'ost3',
+      path: ost3,
+    },
   },
 ];

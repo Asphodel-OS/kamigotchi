@@ -228,6 +228,8 @@ const NEIGHBOR_ROOMS = [
   [4],
   [2],
   [7],
+  [11],
+  [15],
 ];
 
 const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {

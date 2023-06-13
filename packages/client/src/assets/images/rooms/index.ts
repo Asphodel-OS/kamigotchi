@@ -12,6 +12,9 @@ import room11 from './11_temple.png';
 import room12 from './12_machine.png';
 import room13 from './minashop.png';
 import room14 from './14_ceo.png';
+import room15 from './15_templecave.png';
+import room16 from './16_technotemple.png';
+import room17 from './17_mistypark.png';
 
 export {
   room1,
@@ -28,4 +31,7 @@ export {
   room12,
   room13,
   room14,
+  room15,
+  room16,
+  room17,
 };

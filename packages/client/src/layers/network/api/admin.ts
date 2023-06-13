@@ -77,10 +77,13 @@ export function createAdminAPI(systems: any) {
     createRoom('Junk Shop', 8, [7]);
     createRoom('Forest: Old Growth', 9, [5, 10, 11]);
     createRoom('Forest: Insect Node', 10, [9]);
-    createRoom('Waterfall Shrine', 11, [9]);
+    createRoom('Waterfall Shrine', 11, [9, 15]);
     createRoom('Machine Node', 12, [4]);
     createRoom('Convenience Store', 13, [2]);
     createRoom("Manager's Office", 14, [7]);
+    createRoom("Temple Cave", 15, [11, 16]);
+    createRoom("Techno Template", 16, [15]);
+    // createRoom("Misty Park", 17, [0])
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in
