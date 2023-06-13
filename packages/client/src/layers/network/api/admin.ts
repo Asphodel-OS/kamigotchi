@@ -29,10 +29,10 @@ export function createAdminAPI(systems: any) {
     // HarvestRate = power * base * multiplier
     // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
-    setConfig('HARVEST_RATE_PREC', 9);        // ignore this
-    setConfig('HARVEST_RATE_BASE', 100);      // in respect to power
-    setConfig('HARVEST_RATE_BASE_PREC', 3);   // i.e. x/1000
-    setConfig('HARVEST_RATE_MULT_PREC', 4);   // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
+    setConfig('HARVEST_RATE_PREC', 9); // ignore this
+    setConfig('HARVEST_RATE_BASE', 100); // in respect to power
+    setConfig('HARVEST_RATE_BASE_PREC', 3); // i.e. x/1000
+    setConfig('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
     setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
     setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
     setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
@@ -43,11 +43,11 @@ export function createAdminAPI(systems: any) {
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
     // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    setConfig('HEALTH_RATE_DRAIN_BASE', 5000);   // in respect to harvest rate
+    setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
     setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3); // i.e. x/1000
-    setConfig('HEALTH_RATE_HEAL_PREC', 9);       // ignore this, for consistent math on SC
-    setConfig('HEALTH_RATE_HEAL_BASE', 100);     // in respect to harmony
-    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3);  // i.e. x/1000
+    setConfig('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
+    setConfig('HEALTH_RATE_HEAL_BASE', 100); // in respect to harmony
+    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3); // i.e. x/1000
 
     // Liquidation Idle Requirements
     setConfig('LIQ_IDLE_REQ', 300);
@@ -83,10 +83,9 @@ export function createAdminAPI(systems: any) {
     createRoom('Machine Node', 12, [4]);
     createRoom('Convenience Store', 13, [2]);
     createRoom("Manager's Office", 14, [7]);
-    createRoom("Temple Cave", 15, [11, 16, 18]);
-    createRoom("Techno Temple", 16, [15]);
-    // createRoom("Misty Park", 17, [0]);
-    createRoom("Cave Crossroads", 18, [15]);
+    createRoom('Temple Cave', 15, [11, 16]);
+    createRoom('Techno Template', 16, [15]);
+    // createRoom("Misty Park", 17, [0])
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in
@@ -195,18 +194,8 @@ export function createAdminAPI(systems: any) {
   }
 
   // sets the prices for the merchant at the specified location
-  function setListing(
-    name: string,
-    itemIndex: number,
-    buyPrice: number,
-    sellPrice: number
-  ) {
-    return systems['system._Listing.Set'].executeTyped(
-      name,
-      itemIndex,
-      buyPrice,
-      sellPrice
-    );
+  function setListing(name: string, itemIndex: number, buyPrice: number, sellPrice: number) {
+    return systems['system._Listing.Set'].executeTyped(name, itemIndex, buyPrice, sellPrice);
   }
 
   /////////////////
@@ -258,11 +247,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev add a food item registry entry
   function registerFood(foodIndex: number, name: string, health: number) {
-    return systems['system._Registry.Food.Create'].executeTyped(
-      foodIndex,
-      name,
-      health
-    );
+    return systems['system._Registry.Food.Create'].executeTyped(foodIndex, name, health);
   }
 
   // @dev add an equipment item registry entry
@@ -309,11 +294,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev add a revive item registry entry
   function registerRevive(reviveIndex: number, name: string, health: number) {
-    return systems['system._Registry.Revive.Create'].executeTyped(
-      reviveIndex,
-      name,
-      health
-    );
+    return systems['system._Registry.Revive.Create'].executeTyped(reviveIndex, name, health);
   }
 
   // @dev adds a trait in registry
@@ -345,11 +326,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev update a food item registry entry
   function updateRegistryFood(foodIndex: number, name: string, health: number) {
-    return systems['system._Registry.Food.Update'].executeTyped(
-      foodIndex,
-      name,
-      health
-    );
+    return systems['system._Registry.Food.Update'].executeTyped(foodIndex, name, health);
   }
 
   // @dev update an equipment item registry entry
@@ -396,11 +373,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev update a revive item registry entry
   function updateRegistryRevive(reviveIndex: number, name: string, health: number) {
-    return systems['system._Registry.Revive.Update'].executeTyped(
-      reviveIndex,
-      name,
-      health
-    );
+    return systems['system._Registry.Revive.Update'].executeTyped(reviveIndex, name, health);
   }
 
   return {
@@ -413,7 +386,7 @@ export function createAdminAPI(systems: any) {
           stamina: {
             base: (v: number) => setConfig('ACCOUNT_STAMINA_BASE', v),
             recoveryPeriod: (v: number) => setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', v),
-          }
+          },
         },
         kami: {
           stats: {
@@ -462,7 +435,7 @@ export function createAdminAPI(systems: any) {
               },
               idleRequirement: {
                 value: (v: number) => setConfig('LIQ_IDLE_REQ', v),
-              }
+              },
             },
           },
           health: {
@@ -514,14 +487,14 @@ export function createAdminAPI(systems: any) {
       revive: {
         create: registerRevive,
         update: updateRegistryRevive,
-      }
+      },
     },
     room: {
       create: createRoom,
       set: {
         exits: setRoomExits,
         name: setRoomName,
-      }
+      },
     },
   };
 }
