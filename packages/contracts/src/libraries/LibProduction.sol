@@ -19,9 +19,6 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 
-uint256 constant BOUNTY_RATIO = 50; // reward per 100 KAMI liquidated
-uint256 constant BOUNTY_RATIO_PRECISION = 1e2; // i.e. denominator of the bounty ratio
-
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
  */
@@ -87,12 +84,10 @@ library LibProduction {
     for (uint256 i = 0; i < petAffs.length; i++) {
       totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
     }
-
     return totMultiplier;
   }
 
   // Calculate the reward for liquidating this production, measured in KAMI
-  // TODO: introduce stat to replace BOUNTY_RATIO calculation
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 output = calcOutput(components, id);
     uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
@@ -158,9 +153,8 @@ library LibProduction {
 
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
-    IdNodeComponent NodeC = IdNodeComponent(getAddressById(components, IdNodeCompID));
-    if (NodeC.getValue(id) != nodeID) {
-      NodeC.set(id, nodeID);
+    if (getNode(components, id) != nodeID) {
+      IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
     }
   }
 
