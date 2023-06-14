@@ -28,19 +28,17 @@ library LibDataEntity {
   function createForAccount(
     IWorld world,
     IUintComp components,
-    uint256 value,
-    uint256 account,
+    uint256 accountID,
     string memory type_
   ) internal returns (uint256) {
     require(
-      getAccountDataEntity(components, account, type_) == 0,
+      getAccountDataEntity(components, accountID, type_) == 0,
       "LibDataEntity: data alr exists"
     );
     uint256 id = world.getUniqueEntityId();
     IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, account);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
     return id;
   }
 
@@ -48,46 +46,26 @@ library LibDataEntity {
   function createForPet(
     IWorld world,
     IUintComp components,
-    uint256 value,
-    uint256 pet,
+    uint256 petID,
     string memory type_
   ) internal returns (uint256) {
-    require(getPetDataEntity(components, pet, type_) == 0, "LibDataEntity: data alr exists");
+    require(getPetDataEntity(components, petID, type_) == 0, "LibDataEntity: data alr exists");
     uint256 id = world.getUniqueEntityId();
     IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-    IdPetComponent(getAddressById(components, IdPetCompID)).set(id, pet);
+    IdPetComponent(getAddressById(components, IdPetCompID)).set(id, petID);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
     return id;
   }
 
   // sets an existing data entity owned by an account
-  function setForAccount(
-    IUintComp components,
-    uint256 id,
-    uint256 value,
-    uint256 account,
-    string memory type_
-  ) internal {
+  function setForAccount(IUintComp components, uint256 id, uint256 value) internal {
     require(id != 0, "LibDataEntity: data doesnt exist");
-    IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, account);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   // sets an existing data entity owned by a pet
-  function setForPet(
-    IUintComp components,
-    uint256 id,
-    uint256 value,
-    uint256 pet,
-    string memory type_
-  ) internal {
+  function setForPet(IUintComp components, uint256 id, uint256 value) internal {
     require(id != 0, "LibDataEntity: data doesnt exist");
-    IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-    IdPetComponent(getAddressById(components, IdPetCompID)).set(id, pet);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 

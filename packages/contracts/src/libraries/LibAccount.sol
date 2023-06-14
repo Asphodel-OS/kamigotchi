@@ -122,10 +122,9 @@ library LibAccount {
   ) internal {
     uint256 dataID = LibDataEntity.getAccountDataEntity(components, account, "NUM_MINTED");
     if (dataID == 0) {
-      LibDataEntity.createForAccount(world, components, value, account, "NUM_MINTED");
-    } else {
-      LibDataEntity.setForAccount(components, dataID, value, account, "NUM_MINTED");
+      dataID = LibDataEntity.createForAccount(world, components, account, "NUM_MINTED");
     }
+    LibDataEntity.setForAccount(components, dataID, value);
   }
 
   /////////////////
