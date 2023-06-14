@@ -1,8 +1,17 @@
 import { dataStore } from 'layers/react/store/createStore';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 
 export const triggerERC721BridgeModal = () => {
-  const { visibleModals } = dataStore.getState();
-  if (!visibleModals.bridgeERC721)
+  const {
+    visibleModals,
+    sound: { volume },
+  } = dataStore.getState();
+  const clickFX = new Audio(clickSound);
+
+  clickFX.volume = volume;
+  clickFX.play();
+
+  if (!visibleModals.bridgeERC721) {
     dataStore.setState({
       visibleModals: {
         ...visibleModals,
@@ -16,4 +25,7 @@ export const triggerERC721BridgeModal = () => {
         node: false
       },
     });
+  } else {
+    dataStore.setState({ visibleModals: { ...visibleModals, bridgeERC721: false } });
+  }
 };

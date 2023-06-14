@@ -1,9 +1,32 @@
 import { dataStore } from 'layers/react/store/createStore';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 
 export const triggerPetNamingModal = () => {
-  const { visibleModals } = dataStore.getState();
-  if (!visibleModals.kamisNaming)
+  const {
+    visibleModals,
+    sound: { volume },
+  } = dataStore.getState();
+  const clickFX = new Audio(clickSound);
+
+  clickFX.volume = volume;
+  clickFX.play();
+
+  if (!visibleModals.kamisNaming) {
     dataStore.setState({
-      visibleModals: { ...visibleModals, kamisNaming: true },
+      visibleModals: {
+        ...visibleModals,
+        kamisNaming: true,
+        bridgeERC20: false,
+        bridgeERC721: false,
+        dialogue: false,
+        kami: false,
+        kamiMint: false,
+        map: false,
+        nameKami: false,
+        node: false,
+      },
     });
+  } else {
+    dataStore.setState({ visibleModals: { ...visibleModals, kamisNaming: false } });
+  }
 };
