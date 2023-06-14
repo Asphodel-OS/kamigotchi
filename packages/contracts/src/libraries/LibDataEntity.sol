@@ -82,25 +82,25 @@ library LibDataEntity {
 
   function getAccountData(
     IUintComp components,
-    uint256 account,
+    uint256 accountID,
     string memory type_
   ) internal view returns (uint256) {
-    uint256 dataID = getAccountDataEntity(components, account, type_);
+    uint256 dataID = getAccountDataEntity(components, accountID, type_);
     return getValue(components, dataID);
   }
 
   function getPetData(
     IUintComp components,
-    uint256 pet,
+    uint256 petID,
     string memory type_
   ) internal view returns (uint256) {
-    uint256 dataID = getPetDataEntity(components, pet, type_);
+    uint256 dataID = getPetDataEntity(components, petID, type_);
     return getValue(components, dataID);
   }
 
   function getAccountDataEntity(
     IUintComp components,
-    uint256 account,
+    uint256 accountID,
     string memory type_
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
@@ -108,7 +108,7 @@ library LibDataEntity {
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IdAccountCompID),
-      abi.encode(account)
+      abi.encode(accountID)
     );
     fragments[2] = QueryFragment(
       QueryType.HasValue,
@@ -122,7 +122,7 @@ library LibDataEntity {
 
   function getPetDataEntity(
     IUintComp components,
-    uint256 pet,
+    uint256 petID,
     string memory type_
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
@@ -130,7 +130,7 @@ library LibDataEntity {
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IdPetCompID),
-      abi.encode(pet)
+      abi.encode(petID)
     );
     fragments[2] = QueryFragment(
       QueryType.HasValue,
