@@ -27,8 +27,8 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { LibTrait } from "libraries/LibTrait.sol";
 
 // placeholders for config values
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
@@ -459,22 +459,21 @@ library LibPet {
   // Get the traits of a pet, specifically the list of trait registry IDs
   function getTraits(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
     uint256[] memory traits = new uint256[](5);
-    traits[0] = LibTrait.getBackgroundPointer(components, id);
-    traits[1] = LibTrait.getBodyPointer(components, id);
-    traits[2] = LibTrait.getColorPointer(components, id);
-    traits[3] = LibTrait.getFacePointer(components, id);
-    traits[4] = LibTrait.getHandPointer(components, id);
+    traits[0] = LibRegistryTrait.getBackgroundOf(components, id);
+    traits[1] = LibRegistryTrait.getBodyOf(components, id);
+    traits[2] = LibRegistryTrait.getColorOf(components, id);
+    traits[3] = LibRegistryTrait.getFaceOf(components, id);
+    traits[4] = LibRegistryTrait.getHandOf(components, id);
     return traits;
   }
 
-  // get the pet's affinities. hardcoded to check for face, body, and arms.
-  // in the future, can upgrade here
+  // Get the pet's affinities. hardcoded to check for body and hands.
   function getAffinities(IUintComp components, uint256 id) internal view returns (string[] memory) {
     string[] memory affinities = new string[](2);
-    affinities[0] = LibStat.getAffinity(components, LibTrait.getBodyPointer(components, id));
-    affinities[1] = LibStat.getAffinity(components, LibTrait.getHandPointer(components, id));
-    // affinities[2] = LibStat.getAffinity(components, LibTrait.getFacePointer(components, id));
-
+    uint256 bodyRegistryID = LibRegistryTrait.getBodyOf(components, id);
+    uint256 handRegistryID = LibRegistryTrait.getHandOf(components, id);
+    affinities[0] = LibStat.getAffinity(components, bodyRegistryID);
+    affinities[1] = LibStat.getAffinity(components, handRegistryID);
     return affinities;
   }
 

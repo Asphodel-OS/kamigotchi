@@ -25,7 +25,6 @@ import { KamiERC721 } from "tokens/KamiERC721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { LibTrait } from "libraries/LibTrait.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
 
 uint256 constant NUM_TRAITS = 5;
@@ -148,13 +147,13 @@ library LibERC721 {
     return traits;
   }
 
+  // Set the trait indices for a pet
   function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) internal {
-    // assigning initial traits from generated stats
-    LibTrait.assignColor(components, petID, traits[4]);
-    LibTrait.assignBackground(components, petID, traits[3]);
-    LibTrait.assignBody(components, petID, traits[2]);
-    LibTrait.assignHand(components, petID, traits[1]);
-    LibTrait.assignFace(components, petID, traits[0]);
+    LibRegistryTrait.setColorIndex(components, petID, traits[4]);
+    LibRegistryTrait.setBackgroundIndex(components, petID, traits[3]);
+    LibRegistryTrait.setBodyIndex(components, petID, traits[2]);
+    LibRegistryTrait.setHandIndex(components, petID, traits[1]);
+    LibRegistryTrait.setFaceIndex(components, petID, traits[0]);
   }
 
   //////////////////
@@ -200,11 +199,11 @@ library LibERC721 {
     comps[4] = "Background";
 
     string[] memory names = new string[](5);
-    names[0] = LibTrait.getBodyName(components, petID);
-    names[1] = LibTrait.getColorName(components, petID);
-    names[2] = LibTrait.getFaceName(components, petID);
-    names[3] = LibTrait.getHandName(components, petID);
-    names[4] = LibTrait.getBackgroundName(components, petID);
+    names[0] = LibRegistryTrait.getBodyNameOf(components, petID);
+    names[1] = LibRegistryTrait.getColorNameOf(components, petID);
+    names[2] = LibRegistryTrait.getFaceNameOf(components, petID);
+    names[3] = LibRegistryTrait.getHandNameOf(components, petID);
+    names[4] = LibRegistryTrait.getBackgroundNameOf(components, petID);
 
     for (uint256 i; i < names.length; i++) {
       string memory entry = _traitToString(comps[i], names[i]);

@@ -10,7 +10,6 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
-import { LibTrait } from "libraries/LibTrait.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibERC721 } from "libraries/LibERC721.sol";
 import { LibPet } from "libraries/LibPet.sol";

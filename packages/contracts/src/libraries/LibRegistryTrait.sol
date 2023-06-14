@@ -447,10 +447,6 @@ library LibRegistryTrait {
     return IndexTraitComponent(getAddressById(components, IndexTraitCompID)).has(id);
   }
 
-  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
-    return NameComponent(getAddressById(components, NameCompID)).has(id);
-  }
-
   /////////////////
   // SETTERS
 
@@ -486,7 +482,11 @@ library LibRegistryTrait {
   }
 
   /////////////////
-  // GETTERS
+  // GETTERS (COMPONENT VALUES)
+
+  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
+    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+  }
 
   function getBodyIndex(IUintComp components, uint256 id) internal view returns (uint256) {
     return IndexBodyComponent(getAddressById(components, IndexBodyCompID)).getValue(id);
@@ -512,14 +512,38 @@ library LibRegistryTrait {
     return IndexTraitComponent(getAddressById(components, IndexTraitCompID)).getValue(id);
   }
 
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+  // Get the name of an entity's set Background (identified by IndexBackground value)
+  function getBackgroundNameOf(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (string memory) {
+    return getName(components, getBackgroundOf(components, id));
+  }
+
+  // Get the name of an entity's set Body (identified by IndexBody value)
+  function getBodyNameOf(IUintComp components, uint256 id) internal view returns (string memory) {
+    return getName(components, getBodyOf(components, id));
+  }
+
+  // Get the name of an entity's set Color (identified by IndexColor value)
+  function getColorNameOf(IUintComp components, uint256 id) internal view returns (string memory) {
+    return getName(components, getColorOf(components, id));
+  }
+
+  // Get the name of an entity's set Face (identified by IndexFace value)
+  function getFaceNameOf(IUintComp components, uint256 id) internal view returns (string memory) {
+    return getName(components, getFaceOf(components, id));
+  }
+
+  // Get the name of an entity's set Hand (identified by IndexHand value)
+  function getHandNameOf(IUintComp components, uint256 id) internal view returns (string memory) {
+    return getName(components, getHandOf(components, id));
   }
 
   /////////////////
   // RARITY WEIGHTS
 
-  // get background rarities as key value pair arrays
+  // Get background rarities as key value pair arrays
   function getBackgroundRarities(
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
@@ -531,7 +555,7 @@ library LibRegistryTrait {
     weights = LibStat.getRarityWeights(components, ids);
   }
 
-  // get body rarities as key value pair arrays
+  // Get body rarities as key value pair arrays
   function getBodyRarities(
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
@@ -543,7 +567,7 @@ library LibRegistryTrait {
     weights = LibStat.getRarityWeights(components, ids);
   }
 
-  // get color rarities as key value pair arrays
+  // Get color rarities as key value pair arrays
   function getColorRarities(
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
@@ -555,7 +579,7 @@ library LibRegistryTrait {
     weights = LibStat.getRarityWeights(components, ids);
   }
 
-  // get face rarities as key value pair arrays
+  // Get face rarities as key value pair arrays
   function getFaceRarities(
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
@@ -567,7 +591,7 @@ library LibRegistryTrait {
     weights = LibStat.getRarityWeights(components, ids);
   }
 
-  // get hand rarities as key value pair arrays
+  // Get hand rarities as key value pair arrays
   function getHandRarities(
     IUintComp components
   ) internal view returns (uint256[] memory keys, uint256[] memory weights) {
@@ -582,7 +606,7 @@ library LibRegistryTrait {
   /////////////////
   // QUERIES
 
-  // get the number of Trait registry entries
+  // Get the number of Trait registry entries
   function getTraitCount(IUintComp components) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
@@ -590,7 +614,37 @@ library LibRegistryTrait {
     return LibQuery.query(fragments).length;
   }
 
-  // get the registry entry by Trait index
+  // Get the Background TraitRegistry EntityID of a given entity
+  function getBackgroundOf(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 index = getBackgroundIndex(components, id);
+    return getByBackgroundIndex(components, index);
+  }
+
+  // Get the Body TraitRegistry EntityID of a given entity
+  function getBodyOf(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 index = getBodyIndex(components, id);
+    return getByBodyIndex(components, index);
+  }
+
+  // Get the Color TraitRegistry EntityID of a given entity
+  function getColorOf(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 index = getColorIndex(components, id);
+    return getByColorIndex(components, index);
+  }
+
+  // Get the Face TraitRegistry EntityID of a given entity
+  function getFaceOf(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 index = getFaceIndex(components, id);
+    return getByFaceIndex(components, index);
+  }
+
+  // Get the Hand TraitRegistry EntityID of a given entity
+  function getHandOf(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 index = getHandIndex(components, id);
+    return getByHandIndex(components, index);
+  }
+
+  // Get the registry entry by Trait index
   function getByTraitIndex(
     IUintComp components,
     uint256 traitIndex
@@ -608,7 +662,7 @@ library LibRegistryTrait {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by background index
+  // Get the registry entry by background index
   function getByBackgroundIndex(
     IUintComp components,
     uint256 backgroundIndex
@@ -625,7 +679,7 @@ library LibRegistryTrait {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by body index
+  // Get the registry entry by body index
   function getByBodyIndex(
     IUintComp components,
     uint256 bodyIndex
@@ -642,7 +696,7 @@ library LibRegistryTrait {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by Color index
+  // Get the registry entry by Color index
   function getByColorIndex(
     IUintComp components,
     uint256 colorIndex
@@ -659,7 +713,7 @@ library LibRegistryTrait {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by Face index
+  // Get the registry entry by Face index
   function getByFaceIndex(
     IUintComp components,
     uint256 faceIndex
@@ -676,7 +730,7 @@ library LibRegistryTrait {
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by Hand index
+  // Get the registry entry by Hand index
   function getByHandIndex(
     IUintComp components,
     uint256 handIndex

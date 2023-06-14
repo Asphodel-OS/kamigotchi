@@ -476,7 +476,6 @@
     "LibInventory",
     "LibListing",
     "LibMerchant",
-    "LibTrait",
     "LibNode",
     "LibERC721",
     "LibPet",

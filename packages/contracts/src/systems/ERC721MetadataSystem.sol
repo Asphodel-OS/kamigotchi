@@ -7,14 +7,13 @@ import { System } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
-import { LibRandom } from "libraries/LibRandom.sol";
-import { LibTrait } from "libraries/LibTrait.sol";
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibPet } from "libraries/LibPet.sol";
-import { LibStat } from "libraries/LibStat.sol";
 import { LibERC721 } from "libraries/LibERC721.sol";
+import { LibPet } from "libraries/LibPet.sol";
+import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.metadata"));
 
