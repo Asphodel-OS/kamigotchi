@@ -16,10 +16,10 @@ import { LibERC721 } from "libraries/LibERC721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibPrototype } from "libraries/LibPrototype.sol";
-import { LibRegister } from "libraries/LibRegister.sol";
+import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
+import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
-import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // Components

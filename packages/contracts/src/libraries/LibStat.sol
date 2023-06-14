@@ -147,6 +147,10 @@ library LibStat {
   /////////////////
   // CHECKERS
 
+  function hasAffinity(IUintComp components, uint256 id) internal view returns (bool) {
+    return AffinityComponent(getAddressById(components, AffinityCompID)).has(id);
+  }
+
   function hasHarmony(IUintComp components, uint256 id) internal view returns (bool) {
     return HarmonyComponent(getAddressById(components, HarmonyCompID)).has(id);
   }
@@ -159,6 +163,10 @@ library LibStat {
     return PowerComponent(getAddressById(components, PowerCompID)).has(id);
   }
 
+  function hasRarity(IUintComp components, uint256 id) internal view returns (bool) {
+    return RarityComponent(getAddressById(components, RarityCompID)).has(id);
+  }
+
   function hasSlots(IUintComp components, uint256 id) internal view returns (bool) {
     return SlotsComponent(getAddressById(components, SlotsCompID)).has(id);
   }
@@ -167,16 +175,12 @@ library LibStat {
     return ViolenceComponent(getAddressById(components, ViolenceCompID)).has(id);
   }
 
-  function hasAffinity(IUintComp components, uint256 id) internal view returns (bool) {
-    return AffinityComponent(getAddressById(components, AffinityCompID)).has(id);
-  }
-
-  function hasRarity(IUintComp components, uint256 id) internal view returns (bool) {
-    return RarityComponent(getAddressById(components, RarityCompID)).has(id);
-  }
-
   /////////////////
   // SETTERS
+
+  function setAffinity(IUintComp components, uint256 id, string memory value) internal {
+    AffinityComponent(getAddressById(components, AffinityCompID)).set(id, value);
+  }
 
   function setHarmony(IUintComp components, uint256 id, uint256 value) internal {
     HarmonyComponent(getAddressById(components, HarmonyCompID)).set(id, value);
@@ -190,6 +194,10 @@ library LibStat {
     PowerComponent(getAddressById(components, PowerCompID)).set(id, value);
   }
 
+  function setRarity(IUintComp components, uint256 id, uint256 value) internal {
+    RarityComponent(getAddressById(components, RarityCompID)).set(id, value);
+  }
+
   function setSlots(IUintComp components, uint256 id, uint256 value) internal {
     SlotsComponent(getAddressById(components, SlotsCompID)).set(id, value);
   }
@@ -198,16 +206,14 @@ library LibStat {
     ViolenceComponent(getAddressById(components, ViolenceCompID)).set(id, value);
   }
 
-  function setAffinity(IUintComp components, uint256 id, string memory value) internal {
-    AffinityComponent(getAddressById(components, AffinityCompID)).set(id, value);
-  }
-
-  function setRarity(IUintComp components, uint256 id, uint256 value) internal {
-    RarityComponent(getAddressById(components, RarityCompID)).set(id, value);
-  }
-
   /////////////////
   // GETTERS
+
+  // null string might not be very useful, may be better for a has check
+  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
+    if (!hasAffinity(components, id)) return "";
+    return AffinityComponent(getAddressById(components, AffinityCompID)).getValue(id);
+  }
 
   function getHarmony(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!hasHarmony(components, id)) return 0;
@@ -224,6 +230,11 @@ library LibStat {
     return PowerComponent(getAddressById(components, PowerCompID)).getValue(id);
   }
 
+  function getRarity(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (!hasRarity(components, id)) return 0;
+    return RarityComponent(getAddressById(components, RarityCompID)).getValue(id);
+  }
+
   function getSlots(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!hasSlots(components, id)) return 0;
     return SlotsComponent(getAddressById(components, SlotsCompID)).getValue(id);
@@ -234,19 +245,27 @@ library LibStat {
     return ViolenceComponent(getAddressById(components, ViolenceCompID)).getValue(id);
   }
 
-  // null string might not be very useful, may be better for a has check
-  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    if (!hasAffinity(components, id)) return "";
-    return AffinityComponent(getAddressById(components, AffinityCompID)).getValue(id);
-  }
+  // get the selection weights of a list of registry entities based on their rarity tier
+  // weights to 0 for any registry entities without a rarity tier
+  function getRarityWeights(
+    IUintComp components,
+    uint256[] memory registryIDs
+  ) internal view returns (uint256[] memory rarities) {
+    rarities = new uint256[](registryIDs.length);
 
-  function getRarity(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (!hasRarity(components, id)) return 0;
-    return RarityComponent(getAddressById(components, RarityCompID)).getValue(id);
+    uint256 tier;
+    for (uint256 i; i < registryIDs.length; i++) {
+      tier = getRarity(components, registryIDs[i]);
+      if (tier > 0) rarities[i] = 3 ** (tier - 1);
+    }
   }
 
   /////////////////
   // REMOVERS
+
+  function removeAffinity(IUintComp components, uint256 id) internal {
+    if (hasAffinity(components, id)) getComponentById(components, AffinityCompID).remove(id);
+  }
 
   function removeHarmony(IUintComp components, uint256 id) internal {
     if (hasHarmony(components, id)) getComponentById(components, HarmonyCompID).remove(id);
@@ -260,19 +279,15 @@ library LibStat {
     if (hasPower(components, id)) getComponentById(components, PowerCompID).remove(id);
   }
 
+  function removeRarity(IUintComp components, uint256 id) internal {
+    if (hasRarity(components, id)) getComponentById(components, RarityCompID).remove(id);
+  }
+
   function removeSlots(IUintComp components, uint256 id) internal {
     if (hasSlots(components, id)) getComponentById(components, SlotsCompID).remove(id);
   }
 
   function removeViolence(IUintComp components, uint256 id) internal {
     if (hasViolence(components, id)) getComponentById(components, ViolenceCompID).remove(id);
-  }
-
-  function removeAffinity(IUintComp components, uint256 id) internal {
-    if (hasAffinity(components, id)) getComponentById(components, AffinityCompID).remove(id);
-  }
-
-  function removeRarity(IUintComp components, uint256 id) internal {
-    if (hasRarity(components, id)) getComponentById(components, RarityCompID).remove(id);
   }
 }

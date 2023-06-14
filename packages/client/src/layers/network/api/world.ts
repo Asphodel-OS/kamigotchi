@@ -33,12 +33,12 @@ export function setUpWorldAPI(systems: any) {
       for (let i = 0; i < data.length; i++) {
         createAdminAPI(systems).registry.trait.create(
           data[i].get("Index"), // individual trait index
-          data[i].get("Health") ? data[i].get("Health") : "0",
-          data[i].get("Power") ? data[i].get("Power") : "0",
-          data[i].get("Violence") ? data[i].get("Violence") : "0",
-          data[i].get("Harmony") ? data[i].get("Harmony") : "0",
-          data[i].get("Slots") ? data[i].get("Slots") : "0",
-          data[i].get("Tier") ? tierRarityParser(data[i].get("Tier")) : 0,
+          data[i].get("Health") ? data[i].get("Health") : 0,
+          data[i].get("Power") ? data[i].get("Power") : 0,
+          data[i].get("Violence") ? data[i].get("Violence") : 0,
+          data[i].get("Harmony") ? data[i].get("Harmony") : 0,
+          data[i].get("Slots") ? data[i].get("Slots") : 0,
+          data[i].get("Tier") ? data[i].get("Tier") : 0,
           data[i].get("Affinity") ? data[i].get("Affinity").toUpperCase() : "",
           data[i].get("Name"), // name of trait
           type, // type: body, color, etc
@@ -47,10 +47,6 @@ export function setUpWorldAPI(systems: any) {
 
       // -1 because max includes 0, should remove this
       return data.length - 1;
-    }
-
-    function tierRarityParser(tier: string) {
-      return 3 ** parseInt(tier);
     }
 
     const numBg = initSingle(background, "BACKGROUND");

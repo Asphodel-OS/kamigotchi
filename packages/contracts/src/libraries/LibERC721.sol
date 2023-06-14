@@ -27,7 +27,6 @@ import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibTrait } from "libraries/LibTrait.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
-import { LibRarity } from "libraries/LibRarity.sol";
 
 uint256 constant NUM_TRAITS = 5;
 
