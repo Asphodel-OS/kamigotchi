@@ -229,24 +229,9 @@ export function registerNodeModal() {
       ///////////////////
       // ACTIONS
 
-      // starts a production for the given pet and node
-      const start = (kami: Kami, node: Node) => {
-        const actionID = `Starting Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
-          id: actionID,
-          components: {},
-          // on: data.????,
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.production.start(kami.id, node.id);
-          },
-        });
-      };
-
       // collects on an existing production
-      const collect = (production: Production) => {
-        const actionID = `Collecting Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
+      const collect = (kami: Kami) => {
+        const actionID = `Collecting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
           components: {},
@@ -254,7 +239,7 @@ export function registerNodeModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.production.collect(production.id);
+            return api.production.collect(kami.production!.id);
           },
         });
       };
@@ -290,9 +275,9 @@ export function registerNodeModal() {
         });
       };
 
-      // stops a production
-      const stop = (production: Production) => {
-        const actionID = `Stopping Harvest` as EntityID; // Date.now to have the actions ordered in the component browser
+      // starts a production for the given pet and node
+      const start = (kami: Kami, node: Node) => {
+        const actionID = `Starting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
           components: {},
@@ -300,7 +285,22 @@ export function registerNodeModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.production.stop(production.id);
+            return api.production.start(kami.id, node.id);
+          },
+        });
+      };
+
+      // stops a production
+      const stop = (kami: Kami) => {
+        const actionID = `Stopping Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        actions.add({
+          id: actionID,
+          components: {},
+          // on: data.????,
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.production.stop(kami.production!.id);
           },
         });
       };
@@ -416,8 +416,9 @@ export function registerNodeModal() {
         <ActionButton
           id={`harvest-collect-${kami.id}`}
           key={`harvest-collect-${kami.id}`}
-          onClick={() => collect(kami.production!)}
+          onClick={() => collect(kami)}
           text='Collect'
+          disabled={kami.production === undefined}
         />
       );
 
@@ -437,7 +438,8 @@ export function registerNodeModal() {
           id={`harvest-stop-${kami.id}`}
           key={`harvest-stop-${kami.id}`}
           text='Stop'
-          onClick={() => stop(kami.production!)}
+          onClick={() => stop(kami)}
+          disabled={kami.production === undefined}
         />
       );
 
