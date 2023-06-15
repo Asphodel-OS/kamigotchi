@@ -14,6 +14,7 @@
     "ds-test/=./node_modules/ds-test/src/",
     "forge-std/=./node_modules/forge-std/src/",
     "memmove/=./node_modules/memmove/src/",
+    "openzeppelin/=./node_modules/@openzeppelin/contracts/",
     "solady/=./node_modules/solady/src/",
     "solecs/=./node_modules/@latticexyz/solecs/src/",
     "solmate/=./node_modules/@rari-capital/solmate/src/",
