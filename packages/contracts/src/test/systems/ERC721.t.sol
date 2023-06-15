@@ -6,7 +6,9 @@ import "test/utils/SetupTemplate.s.sol";
 contract ERC721PetTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
-    _registerAccounts(3);
+    _registerAccount(alice, alice);
+    _registerAccount(bob, bob);
+    _registerAccount(eve, eve);
   }
 
   function _assertOwnerInGame(uint256 tokenID, address addy) internal {
@@ -41,14 +43,14 @@ contract ERC721PetTest is SetupTemplate {
   }
 
   function testMintSingle() public {
-    _mintPets(1);
+    _mintPets(alice, 1);
     _assertOwnerInGame(1, alice);
   }
 
   function testMintMultiple() public {
-    _mintSinglePet(alice);
-    _mintSinglePet(alice);
-    _mintSinglePet(alice);
+    _mintPet(alice);
+    _mintPet(alice);
+    _mintPet(alice);
 
     _assertOwnerInGame(1, alice);
     _assertOwnerInGame(2, alice);
@@ -79,14 +81,14 @@ contract ERC721PetTest is SetupTemplate {
   }
 
   function testFailTransferInGame() public {
-    _mintPets(1);
+    _mintPets(alice, 1);
 
     vm.prank(alice);
     _KamiERC721.transferFrom(alice, bob, 1);
   }
 
   function testTransferOutOfGame() public {
-    _mintPets(1);
+    _mintPets(alice, 1);
 
     vm.prank(alice);
     _ERC721UnstakeSystem.executeTyped(1);
@@ -117,7 +119,7 @@ contract ERC721PetTest is SetupTemplate {
 
   function testFailMaxMintSeparateTx() public {
     for (uint256 i = 0; i < 501; i++) {
-      _mintSinglePet(alice);
+      _mintPet(alice);
     }
   }
 
@@ -128,7 +130,7 @@ contract ERC721PetTest is SetupTemplate {
 
   // does not actually check if metadata is accurate, only if syntax is valid
   function testMetadata() public {
-    _mintPets(1);
+    _mintPets(alice, 1);
 
     // console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
   }
