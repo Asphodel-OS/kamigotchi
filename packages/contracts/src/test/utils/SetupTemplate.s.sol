@@ -19,7 +19,6 @@ abstract contract SetupTemplate is TestSetupImports {
     // during setup we want to:
     // - set the world configs
     // - create owner/operator pairs
-    // - initialize media metadata
 
     // we also want to expose functions to:
     // - register accounts
@@ -30,16 +29,17 @@ abstract contract SetupTemplate is TestSetupImports {
     // - populate trait registries
     // - populate item registries
 
-    _initTraits();
+    _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
     _initConfigs();
   }
 
   /////////////////
-  // CONFIGS
+  // EOAs
 
-  function _setConfig(string memory key, uint256 value) internal {
-    vm.prank(deployer);
-    __ConfigSetSystem.executeTyped(key, value);
+  function _createOwnerOperatorPairs(uint256 count) internal {
+    for (uint256 i = 0; i < count; i++) {
+      _createOwnerOperatorPair();
+    }
   }
 
   function _setConfigString(string memory key, string memory value) internal {
@@ -99,6 +99,13 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("MINT_PRICE", 0);
   }
 
+  function _createOwnerOperatorPair() internal returns (address) {
+    address owner = utils.getNextUserAddress();
+    owners.push(owner);
+    operators[owner] = utils.getNextUserAddress();
+    return owner;
+  }
+
   /////////////////
   // OWNER OPERATIONS
 
@@ -120,9 +127,6 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // (public) mint and reveal a single pet to a specified address
   function _mintPet(address addr) internal virtual returns (uint256 entityID) {
-    if (LibAccount.getByOwner(components, addr) == 0) {
-      _registerAccount(addr, addr);
-    }
     vm.startPrank(addr, addr);
     entityID = abi.decode(_ERC721MintSystem.publicMint(1), (uint256[]))[0];
     vm.roll(block.number + 1);
@@ -250,6 +254,69 @@ abstract contract SetupTemplate is TestSetupImports {
       "HAND" // trait type
     );
 
+    vm.stopPrank();
+  }
+
+  /////////////////
+  // CONFIGS
+
+  function _setConfig(string memory key, uint256 value) internal {
+    vm.prank(deployer);
+    __ConfigSetSystem.executeTyped(key, value);
+  }
+
+  function _setConfigString(string memory key, string memory value) internal {
+    vm.prank(deployer);
+    __ConfigSetStringSystem.executeTyped(key, value);
+  }
+
+  function _initConfigs() internal {
+    // Account Stamina
+    _setConfig("ACCOUNT_STAMINA_BASE", 20);
+    _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
+
+    // Kami Stats
+    _setConfig("KAMI_BASE_HEALTH", 50);
+    _setConfig("KAMI_BASE_POWER", 10);
+    _setConfig("KAMI_BASE_VIOLENCE", 10);
+    _setConfig("KAMI_BASE_HARMONY", 10);
+    _setConfig("KAMI_BASE_SLOTS", 0);
+
+    // Harvest Rates
+    _setConfig("HARVEST_RATE_PREC", 9);
+    _setConfig("HARVEST_RATE_BASE", 100);
+    _setConfig("HARVEST_RATE_BASE_PREC", 3);
+    _setConfig("HARVEST_RATE_MULT_PREC", 4);
+    _setConfig("HARVEST_RATE_MULT_AFF_BASE", 100);
+    _setConfig("HARVEST_RATE_MULT_AFF_UP", 150);
+    _setConfig("HARVEST_RATE_MULT_AFF_DOWN", 50);
+    _setConfig("HARVEST_RATE_MULT_AFF_PREC", 2);
+
+    // Kami Health Drain/Heal Rates
+    _setConfig("HEALTH_RATE_DRAIN_BASE", 5000); // in respect to harvest rate
+    _setConfig("HEALTH_RATE_DRAIN_BASE_PREC", 3);
+    _setConfig("HEALTH_RATE_HEAL_PREC", 6);
+    _setConfig("HEALTH_RATE_HEAL_BASE", 100); // in respect to harmony
+    _setConfig("HEALTH_RATE_HEAL_BASE_PREC", 3);
+
+    // Liquidation Idle Requirements
+    _setConfig("LIQ_IDLE_REQ", 300);
+
+    // Liquidation Calcs
+    _setConfig("LIQ_THRESH_BASE", 20);
+    _setConfig("LIQ_THRESH_BASE_PREC", 2);
+    _setConfig("LIQ_THRESH_MULT_AFF_BASE", 100);
+    _setConfig("LIQ_THRESH_MULT_AFF_UP", 200);
+    _setConfig("LIQ_THRESH_MULT_AFF_DOWN", 50);
+    _setConfig("LIQ_THRESH_MULT_AFF_PREC", 2);
+
+    // Liquidation Bounty
+    _setConfig("LIQ_BOUNTY_BASE", 50);
+    _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
+
+    // default URI string (should be converted to config)
+    vm.startPrank(deployer);
+    _ERC721MetadataSystem._setBaseURI("baseURI.com/");
     vm.stopPrank();
   }
 }
