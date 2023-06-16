@@ -7,29 +7,28 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibRoom } from "libraries/LibRoom.sol";
 
-uint256 constant ID = uint256(keccak256("system._Room.Create"));
+uint256 constant ID = uint256(keccak256("system._Room.Set.Name"));
 
-// create a room within the world
-contract _RoomCreateSystem is System {
+// update the name of an existing room, identified by its location
+contract _RoomSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 location, uint256[] memory exits) = abi.decode(
-      arguments,
-      (string, uint256, uint256[])
-    );
+    (uint256 location, string memory name) = abi.decode(arguments, (uint256, string));
 
-    require(LibRoom.get(components, location) == 0, "Room: already exists at location");
+    uint256 id = LibRoom.get(components, location);
+    require(id != 0, "Room: does not exist");
     require(bytes(name).length > 0, "Room: name cannot be empty");
 
-    return abi.encode(LibRoom.create(world, components, name, location, exits));
+    LibRoom.setName(components, id, name);
+
+    return "";
   }
 
   function executeTyped(
-    string memory name,
     uint256 location,
-    uint256[] memory exits
+    string memory name
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, location, exits));
+    return execute(abi.encode(location, name));
   }
 }

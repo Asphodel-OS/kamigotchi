@@ -8,6 +8,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol";
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -58,6 +59,21 @@ library LibRoom {
 
   function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
     return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
+  }
+
+  /////////////////
+  // SETTERS
+
+  function setDescription(IUintComp components, uint256 id, string memory description) internal {
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+  }
+
+  function setExits(IUintComp components, uint256 id, uint256[] memory exits) internal {
+    ExitsComponent(getAddressById(components, ExitsCompID)).set(id, exits);
+  }
+
+  function setName(IUintComp components, uint256 id, string memory name) internal {
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
   /////////////////
