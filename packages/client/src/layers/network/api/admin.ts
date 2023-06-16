@@ -78,9 +78,10 @@ export function createAdminAPI(systems: any) {
     createRoom('Machine Node', 12, [4]);
     createRoom('Convenience Store', 13, [2]);
     createRoom("Manager's Office", 14, [7]);
-    createRoom("Temple Cave", 15, [11, 16]);
-    createRoom("Techno Template", 16, [15]);
-    // createRoom("Misty Park", 17, [0])
+    createRoom("Temple Cave", 15, [11, 16, 18]);
+    createRoom("Techno Temple", 16, [15]);
+    // createRoom("Misty Park", 17, [0]);
+    createRoom("Cave Crossroads", 18, [15]);
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in
@@ -155,7 +156,7 @@ export function createAdminAPI(systems: any) {
     setListing('Mina', 4, 500, 0);
   }
 
-  /// TODO: remove system for production
+  /// NOTE: do not use in production
   // @dev give coins for testing
   // @param amount      amount
   function giveCoins(addy: string, amount: number) {
@@ -166,11 +167,6 @@ export function createAdminAPI(systems: any) {
   // @param tokenId     ERC721 tokenId of the pet
   function petForceReveal(tokenId: number) {
     return systems['system.ERC721.metadata'].forceReveal(tokenId);
-  }
-
-  // @dev creates a room with name, location and exits. cannot overwrite room at location
-  function createRoom(name: string, location: number, exits: number[]) {
-    return systems['system._Room.Create'].executeTyped(name, location, exits);
   }
 
   /////////////////
@@ -234,6 +230,22 @@ export function createAdminAPI(systems: any) {
 
   function setNodeName(name: string, newName: string) {
     return systems['system._Node.Set.Name'].executeTyped(name, newName);
+  }
+
+  /////////////////
+  //  ROOMS
+
+  // @dev creates a room with name, location and exits. cannot overwrite room at location
+  function createRoom(name: string, location: number, exits: number[]) {
+    return systems['system._Room.Create'].executeTyped(name, location, exits);
+  }
+
+  function setRoomExits(location: string, exits: number[]) {
+    return systems['system._Room.Set.Exits'].executeTyped(location, exits);
+  }
+
+  function setRoomName(location: string, name: string) {
+    return systems['system._Room.Set.Name'].executeTyped(location, name);
   }
 
   /////////////////
@@ -499,6 +511,12 @@ export function createAdminAPI(systems: any) {
         update: updateRegistryRevive,
       }
     },
-    room: { create: createRoom },
+    room: {
+      create: createRoom,
+      set: {
+        exits: setRoomExits,
+        name: setRoomName,
+      }
+    },
   };
 }
