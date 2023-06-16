@@ -22,6 +22,7 @@ export type { ERC20WithdrawSystem } from "./ERC20WithdrawSystem";
 export type { ERC721MetadataSystem } from "./ERC721MetadataSystem";
 export type { ERC721MintSystem } from "./ERC721MintSystem";
 export type { ERC721ProxySystem } from "./ERC721ProxySystem";
+export type { ERC721RevealSystem } from "./ERC721RevealSystem";
 export type { ERC721StakeSystem } from "./ERC721StakeSystem";
 export type { ERC721TransferSystem } from "./ERC721TransferSystem";
 export type { ERC721UnstakeSystem } from "./ERC721UnstakeSystem";
@@ -158,6 +159,7 @@ export { ERC20WithdrawSystem__factory } from "./factories/ERC20WithdrawSystem__f
 export { ERC721MetadataSystem__factory } from "./factories/ERC721MetadataSystem__factory";
 export { ERC721MintSystem__factory } from "./factories/ERC721MintSystem__factory";
 export { ERC721ProxySystem__factory } from "./factories/ERC721ProxySystem__factory";
+export { ERC721RevealSystem__factory } from "./factories/ERC721RevealSystem__factory";
 export { ERC721StakeSystem__factory } from "./factories/ERC721StakeSystem__factory";
 export { ERC721TransferSystem__factory } from "./factories/ERC721TransferSystem__factory";
 export { ERC721UnstakeSystem__factory } from "./factories/ERC721UnstakeSystem__factory";

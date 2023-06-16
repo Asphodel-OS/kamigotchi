@@ -64,7 +64,7 @@ contract ERC721PetTest is SetupTemplate {
 
     // revealing
     // vm.prank(alice);
-    _ERC721MetadataSystem.executeTyped(LibPet.idToIndex(components, petID));
+    _ERC721RevealSystem.executeTyped(LibPet.idToIndex(components, petID));
     _assertPetState(petID, "RESTING");
 
     // bridging out
@@ -108,7 +108,7 @@ contract ERC721PetTest is SetupTemplate {
 
     vm.roll(block.number + 1);
     vm.startPrank(deployer);
-    _ERC721MetadataSystem.forceReveal(LibPet.idToIndex(components, petID));
+    _ERC721RevealSystem.forceReveal(LibPet.idToIndex(components, petID));
     vm.stopPrank();
 
     _assertPetState(petID, "RESTING");

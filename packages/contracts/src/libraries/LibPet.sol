@@ -113,7 +113,7 @@ library LibPet {
   }
 
   // called when a pet is revealed
-  // NOTE: most of the reveal logic (generation) is in the ERC721MetadataSystem itself
+  // NOTE: most of the reveal logic (generation) is in the ERC721RevealSystem itself
   //       this function is for components saved directly on the Pet Entity
   function reveal(IUintComp components, uint256 id, string memory uri) internal {
     setCanName(components, id, true);

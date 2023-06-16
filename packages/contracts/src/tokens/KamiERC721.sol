@@ -93,7 +93,7 @@ contract KamiERC721 is ERC721Enumerable {
     super._transfer(from, to, id);
   }
 
-  // retrives token metadata from ERC721MetadataSystem.
+  // retrives token metadata from ERC721RevealSystem.
   function tokenURI(uint256 id) public view override returns (string memory) {
     return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(id);
   }

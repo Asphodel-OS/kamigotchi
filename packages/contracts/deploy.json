@@ -293,13 +293,17 @@
       ]
     },
     {
+      "name": "ERC721MetadataSystem",
+      "writeAccess": []
+    },
+    {
       "name": "ERC721MintSystem",
       "writeAccess": [
         "*"
       ]
     },
     {
-      "name": "ERC721MetadataSystem",
+      "name": "ERC721RevealSystem",
       "writeAccess": [
         "*"
       ]

@@ -48,6 +48,19 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "baseURI",
+          "type": "string"
+        }
+      ],
+      "name": "_setBaseURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bytes",
           "name": "arguments",
           "type": "bytes"
@@ -65,8 +78,33 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "petIndex",
+          "type": "uint256"
+        }
+      ],
       "name": "executeTyped",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "petIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "forceReveal",
       "outputs": [
         {
           "internalType": "bytes",
@@ -93,25 +131,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "petIndex",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenURI",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "account",
           "type": "address"
@@ -124,10 +143,11 @@
     }
   ],
   "methodIdentifiers": {
+    "_setBaseURI(string)": "31b5b907",
     "execute(bytes)": "09c5eabe",
-    "executeTyped()": "e1df4ba6",
+    "executeTyped(uint256)": "3e991df3",
+    "forceReveal(uint256)": "265ab676",
     "owner()": "8da5cb5b",
-    "tokenURI(uint256)": "c87b56dd",
     "transferOwnership(address)": "f2fde38b"
   }
 }

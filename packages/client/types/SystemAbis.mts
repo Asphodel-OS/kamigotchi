@@ -34,6 +34,7 @@ import ERC20WithdrawSystem from "../abi/ERC20WithdrawSystem.json";
 import ERC721MetadataSystem from "../abi/ERC721MetadataSystem.json";
 import ERC721MintSystem from "../abi/ERC721MintSystem.json";
 import ERC721ProxySystem from "../abi/ERC721ProxySystem.json";
+import ERC721RevealSystem from "../abi/ERC721RevealSystem.json";
 import ERC721StakeSystem from "../abi/ERC721StakeSystem.json";
 import ERC721TransferSystem from "../abi/ERC721TransferSystem.json";
 import ERC721UnstakeSystem from "../abi/ERC721UnstakeSystem.json";
@@ -87,9 +88,10 @@ export const SystemAbis = {
   "system.ERC20.Deposit": ERC20DepositSystem.abi,
   "system.ERC20.Proxy": ERC20ProxySystem.abi,
   "system.ERC20.Withdraw": ERC20WithdrawSystem.abi,
-  "system.ERC721.metadata": ERC721MetadataSystem.abi,
+  "system.ERC721.Metadata": ERC721MetadataSystem.abi,
   "system.ERC721.Mint": ERC721MintSystem.abi,
   "system.ERC721.Proxy": ERC721ProxySystem.abi,
+  "system.ERC721.Reveal": ERC721RevealSystem.abi,
   "system.ERC721.Stake": ERC721StakeSystem.abi,
   "system.ERC721.Transfer": ERC721TransferSystem.abi,
   "system.ERC721.Unstake": ERC721UnstakeSystem.abi,

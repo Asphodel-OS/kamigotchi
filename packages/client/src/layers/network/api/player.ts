@@ -151,7 +151,7 @@ export function createPlayerAPI(systems: any) {
   // reveal a minted pet
   // @param tokenID  ERC721 petID, not MUD entity ID
   function revealPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.metadata"].executeTyped(tokenID);
+    return systems["system.ERC721.Reveal"].executeTyped(tokenID);
   }
 
   // @dev deposits pet from outside -> game world
