@@ -15,30 +15,29 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
-uint256 constant ID = uint256(keccak256("system.ERC721.Reveal"));
+uint256 constant ID = uint256(keccak256("system._ERC721.AdminReveal"));
 
-contract ERC721RevealSystem is System {
+// needed as a backup in case user misses the 256 block window to reveal (8.5 minutes)
+// pet will be forever locked as unrevealed otherwise
+// takes previous blockhash for random seed; fairly obvious if admin bots randomness
+
+// accepts erc721 petIndex as input
+contract _ERC721AdminRevealSystem is System {
   string internal _baseURI;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     uint256 petIndex = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.indexToID(components, petIndex);
 
-    // checks
-    uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
-
-    uint256 seed = LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, petID));
+    uint256 seed = uint256(blockhash(block.number - 1));
     LibRandom.removeRevealBlock(components, petID);
-
     return reveal(petID, seed);
   }
 
-  // accepts erc721 petIndex as input
-  function executeTyped(uint256 petIndex) public returns (bytes memory) {
+  function executeTyped(uint256 petIndex) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(petIndex));
   }
 

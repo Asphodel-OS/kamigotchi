@@ -2,6 +2,7 @@
 import _ConfigSetStringSystem from "../abi/_ConfigSetStringSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
 import _devGiveTokensSystem from "../abi/_devGiveTokensSystem.json";
+import _ERC721AdminRevealSystem from "../abi/_ERC721AdminRevealSystem.json";
 import _InitSystem from "../abi/_InitSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _MerchantCreateSystem from "../abi/_MerchantCreateSystem.json";
@@ -59,6 +60,7 @@ export const SystemAbis = {
   "system._Config.Set.String": _ConfigSetStringSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
   "system._devGiveTokens": _devGiveTokensSystem.abi,
+  "system._ERC721.AdminReveal": _ERC721AdminRevealSystem.abi,
   "system._Init": _InitSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Merchant.Create": _MerchantCreateSystem.abi,

@@ -106,6 +106,12 @@
       ]
     },
     {
+      "name": "_ERC721AdminRevealSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_ListingSetSystem",
       "writeAccess": [
         "IsListingComponent",

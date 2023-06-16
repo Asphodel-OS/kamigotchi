@@ -32,7 +32,6 @@ export interface ERC721RevealSystemInterface extends utils.Interface {
     "_setBaseURI(string)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
-    "forceReveal(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -42,7 +41,6 @@ export interface ERC721RevealSystemInterface extends utils.Interface {
       | "_setBaseURI"
       | "execute"
       | "executeTyped"
-      | "forceReveal"
       | "owner"
       | "transferOwnership"
   ): FunctionFragment;
@@ -59,10 +57,6 @@ export interface ERC721RevealSystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "forceReveal",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -76,10 +70,6 @@ export interface ERC721RevealSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "forceReveal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -149,11 +139,6 @@ export interface ERC721RevealSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    forceReveal(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
@@ -177,11 +162,6 @@ export interface ERC721RevealSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  forceReveal(
-    petIndex: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -201,11 +181,6 @@ export interface ERC721RevealSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    forceReveal(
       petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -245,11 +220,6 @@ export interface ERC721RevealSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    forceReveal(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -270,11 +240,6 @@ export interface ERC721RevealSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      petIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    forceReveal(
       petIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

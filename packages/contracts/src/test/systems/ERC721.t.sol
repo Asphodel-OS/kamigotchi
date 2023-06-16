@@ -108,7 +108,7 @@ contract ERC721PetTest is SetupTemplate {
 
     vm.roll(block.number + 1);
     vm.startPrank(deployer);
-    _ERC721RevealSystem.forceReveal(LibPet.idToIndex(components, petID));
+    __ERC721AdminRevealSystem.executeTyped(LibPet.idToIndex(components, petID));
     vm.stopPrank();
 
     _assertPetState(petID, "RESTING");
