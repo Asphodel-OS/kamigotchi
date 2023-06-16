@@ -227,6 +227,18 @@
       ]
     },
     {
+      "name": "_RoomSetExitsSystem",
+      "writeAccess": [
+        "ExitsComponent"
+      ]
+    },
+    {
+      "name": "_RoomSetNameSystem",
+      "writeAccess": [
+        "NameComponent"
+      ]
+    },
+    {
       "name": "AccountMoveSystem",
       "writeAccess": [
         "BlockLastComponent",

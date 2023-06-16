@@ -26,7 +26,7 @@
     "abi:types:mappings": "mud system-types --outputDir ../client/types/ && cp ../client/types/SystemAbis.mts ../client/types/SystemAbis.mjs",
     "build:systems": "forge build --contracts src/systems --skip test --skip script",
     "deploy:lattice": "yarn patch:gen && yarn mud deploy --chainSpec https://spec.testnet-chain.linfra.xyz/chainSpec.json --deployerPrivateKey 0x26e86e45f6fc45ec6e2ecd128cec80fa1d1505e5507dcd2ae58c3130a7a97b48 && yarn patch:rm",
-    "deploy:lattice:systems": "yarn mud deploy-contracts --rpc 'https://follower.testnet-chain.linfra.xyz' --worldAddress 0xd0F4505f3bC8BC607687D1A0Edc1fA305E7AC11F --deployerPrivateKey 0x26e86e45f6fc45ec6e2ecd128cec80fa1d1505e5507dcd2ae58c3130a7a97b48 --systems",
+    "deploy:lattice:systems": "yarn mud deploy-contracts --rpc 'https://follower.testnet-chain.linfra.xyz' --worldAddress 0xeaD33158912490D68Ae786569Db46b8679513f91 --deployerPrivateKey 0x26e86e45f6fc45ec6e2ecd128cec80fa1d1505e5507dcd2ae58c3130a7a97b48 --systems",
     "deploy:local": "yarn patch:gen && mud deploy --deployerPrivateKey 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 && yarn patch:rm",
     "deploy:opGoerli": "yarn patch:gen && yarn mud deploy --chain-id 420 --rpc https://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg --deployerPrivateKey <privKey> && yarn patch:rm",
     "dev:local": "yarn build && yarn start",

@@ -121,6 +121,8 @@ import { _RegistryUpdateModSystem, ID as _RegistryUpdateModSystemID } from "syst
 import { _RegistryUpdateReviveSystem, ID as _RegistryUpdateReviveSystemID } from "systems/_RegistryUpdateReviveSystem.sol";
 import { _RegistryUpdateTraitSystem, ID as _RegistryUpdateTraitSystemID } from "systems/_RegistryUpdateTraitSystem.sol";
 import { _RoomCreateSystem, ID as _RoomCreateSystemID } from "systems/_RoomCreateSystem.sol";
+import { _RoomSetExitsSystem, ID as _RoomSetExitsSystemID } from "systems/_RoomSetExitsSystem.sol";
+import { _RoomSetNameSystem, ID as _RoomSetNameSystemID } from "systems/_RoomSetNameSystem.sol";
 import { AccountMoveSystem, ID as AccountMoveSystemID } from "systems/AccountMoveSystem.sol";
 import { AccountSetNameSystem, ID as AccountSetNameSystemID } from "systems/AccountSetNameSystem.sol";
 import { AccountSetOperatorSystem, ID as AccountSetOperatorSystemID } from "systems/AccountSetOperatorSystem.sol";
@@ -251,6 +253,8 @@ _RegistryUpdateModSystem __RegistryUpdateModSystem;
 _RegistryUpdateReviveSystem __RegistryUpdateReviveSystem;
 _RegistryUpdateTraitSystem __RegistryUpdateTraitSystem;
 _RoomCreateSystem __RoomCreateSystem;
+_RoomSetExitsSystem __RoomSetExitsSystem;
+_RoomSetNameSystem __RoomSetNameSystem;
 AccountMoveSystem _AccountMoveSystem;
 AccountSetNameSystem _AccountSetNameSystem;
 AccountSetOperatorSystem _AccountSetOperatorSystem;
@@ -381,6 +385,8 @@ __RegistryUpdateModSystem = _RegistryUpdateModSystem(system(_RegistryUpdateModSy
 __RegistryUpdateReviveSystem = _RegistryUpdateReviveSystem(system(_RegistryUpdateReviveSystemID));
 __RegistryUpdateTraitSystem = _RegistryUpdateTraitSystem(system(_RegistryUpdateTraitSystemID));
 __RoomCreateSystem = _RoomCreateSystem(system(_RoomCreateSystemID));
+__RoomSetExitsSystem = _RoomSetExitsSystem(system(_RoomSetExitsSystemID));
+__RoomSetNameSystem = _RoomSetNameSystem(system(_RoomSetNameSystemID));
 _AccountMoveSystem = AccountMoveSystem(system(AccountMoveSystemID));
 _AccountSetNameSystem = AccountSetNameSystem(system(AccountSetNameSystemID));
 _AccountSetOperatorSystem = AccountSetOperatorSystem(system(AccountSetOperatorSystemID));
