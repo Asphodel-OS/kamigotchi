@@ -1,5 +1,10 @@
 import { createFaucetService } from "@latticexyz/network";
-import { createWorld } from "@latticexyz/recs";
+import {
+  Component,
+  EntityIndex,
+  createWorld,
+  getComponentValue,
+} from "@latticexyz/recs";
 import {
   SetupContractConfig,
   createActionSystem,
@@ -52,6 +57,28 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const playerAPI = createPlayerAPI(systems);
   const worldAPI = setUpWorldAPI(systems);
 
+  // helper function to get all the set components values for a given entity
+  const getEntity = (index: EntityIndex): any => {
+    const entity = {} as any;
+
+    function parseValue(c: Component, v: any) {
+      const type = c.schema.value;
+      if (type === 0) return v; // boolean
+      if (type === 3) return v; // string
+      if (type === 1) return parseInt(v, 16); // number
+      if (type === 5) return v.map((s: string) => parseInt(s, 16)); // number[] 
+      return v;
+    }
+
+    Object.values(components).forEach((component) => {
+      // @ts-ignore
+      const valueish = getComponentValue(component, index);
+      if (valueish) {
+        entity[component.id] = parseValue(component, valueish.value);
+      }
+    });
+    return entity;
+  };
 
   // --- CONTEXT --------------------------------------------------------------------
   const context = {
@@ -68,6 +95,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
       player: playerAPI,
       world: worldAPI,
     },
+    getEntity,
     faucet,
   };
 
