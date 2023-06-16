@@ -62,7 +62,6 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
       config = createNetworkConfigLocal(externalProvider);
   }
 
-
   if (
     config.worldAddress
     && config.jsonRpc
