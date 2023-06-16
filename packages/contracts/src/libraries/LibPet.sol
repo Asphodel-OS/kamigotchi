@@ -33,9 +33,6 @@ import { LibStat } from "libraries/LibStat.sol";
 // placeholders for config values
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
 
-// placeholders for config values
-string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
-
 library LibPet {
   using LibFPMath for int256;
 
