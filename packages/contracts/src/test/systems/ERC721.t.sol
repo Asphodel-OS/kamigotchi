@@ -130,6 +130,6 @@ contract ERC721PetTest is SetupTemplate {
   function testMetadata() public {
     _mintPets(1);
 
-    // console.log(_KamiERC721.tokenURI(1));
+    console.log(_KamiERC721.tokenURI(1));
   }
 }

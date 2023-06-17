@@ -19,7 +19,7 @@ contract ERC721MetadataSystem is System {
    **********************/
 
   function tokenURI(uint256 petIndex) public view returns (string memory) {
-    return LibERC721.getJson(components, petIndex);
+    return LibERC721.getJsonBase64(components, petIndex);
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

@@ -110,7 +110,7 @@ abstract contract SetupTemplate is TestSetupImports {
    ************************/
   function _initMetadata() internal {
     vm.startPrank(deployer);
-    _ERC721RevealSystem._setBaseURI("baseURI.com/");
+    _ERC721RevealSystem._setBaseURI("https://im.asphodel.io/image/");
     vm.stopPrank();
   }
 
