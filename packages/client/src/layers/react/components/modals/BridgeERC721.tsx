@@ -23,10 +23,10 @@ export function registerERC721BridgeModal() {
   registerUIComponent(
     'ERC721Bridge',
     {
-      colStart: 34,
-      colEnd: 68,
-      rowStart: 9,
-      rowEnd: 76,
+      colStart: 28,
+      colEnd: 74,
+      rowStart: 15,
+      rowEnd: 85,
     },
     (layers) => {
       const {
@@ -58,24 +58,12 @@ export function registerERC721BridgeModal() {
           )[0];
 
           const account =
-            accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
-
-          const kamis: Kami[] = [];
-          if (account) {
-            // get the kamis on this account
-            const kamiIndices = Array.from(
-              runQuery([Has(IsPet), HasValue(AccountID, { value: account.id })])
-            );
-
-            // get all kamis
-            for (let i = 0; i < kamiIndices.length; i++) {
-              kamis.push(getKami(layers, kamiIndices[i]));
-            }
-          }
+            accountIndex !== undefined ? getAccount(layers, accountIndex, { kamis: true }) : ({} as Account);
 
           return {
+            layers: layers,
             data: {
-              account: { ...account, kamis },
+              account: { ...account },
             } as any,
             proxyAddy: systems["system.ERC721.Proxy"].address,
           };
@@ -83,12 +71,22 @@ export function registerERC721BridgeModal() {
       );
     },
 
-    ({ data, proxyAddy }) => {
+    ({ layers, data, proxyAddy }) => {
+
+      const {
+        network: {
+          components: {
+            IsPet,
+            PetIndex
+          }
+        }
+      } = layers;
 
       const { details: accountDetails } = useKamiAccount();
       const { visibleModals, setVisibleModals } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
-      const [placeholderInput, setPlaceholderInput] = useState('');
+
+      const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
 
       //////////////////
       // TRANSACTIONS //
@@ -150,7 +148,7 @@ export function registerERC721BridgeModal() {
         }
       }
 
-      // for use in EOA
+      // External Kamis
       const { data: erc721 } = useContractRead({
         address: proxyAddy as `0x${string}`,
         abi: abi,
@@ -179,10 +177,42 @@ export function registerERC721BridgeModal() {
             "type": "function"
           }],
         functionName: 'getAllTokens',
-        args: [accountDetails.ownerAddress as `0x${string}`]
+        args: [accountDetails.ownerAddress as `0x${string}`],
+        watch: true,
       });
 
-      // console.log(erc721List);
+      useEffect(() => {
+        // gets all kami entities externally owned 
+        const getEOAKamis = (): Kami[] => {
+          // get indexes of external kamis
+          const getIndexes = (): bigint[] => {
+            return erc721List ? [...erc721List] : [];
+          }
+
+          // get kamis from index
+          const getKamis = (indexes: bigint[]): Kami[] => {
+            let kamis: Kami[] = [];
+
+            for (let i = 0; i < indexes.length; i++) {
+              const entityID = Array.from(
+                runQuery([
+                  Has(IsPet),
+                  HasValue(PetIndex, { value: '0x' + indexes[i].toString(16).padStart(2, '0') })
+                ])
+              )[0];
+
+              kamis.push(getKami(layers, entityID, { deaths: true, production: true, traits: true }));
+            }
+
+            return kamis;
+          }
+
+          const indexes = getIndexes();
+          return getKamis(indexes);
+        }
+
+        setEOAKamis(getEOAKamis());
+      }, [erc721List, data]);
 
       const KamiCard = (props: any) => {
         return (
@@ -209,10 +239,6 @@ export function registerERC721BridgeModal() {
             />
           );
         });
-      };
-
-      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPlaceholderInput(event.target.value);
       };
 
       const hideModal = useCallback(() => {
@@ -248,7 +274,21 @@ export function registerERC721BridgeModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Scrollable>{KamiCards(data.account.kamis)}</Scrollable>
+          <Title>Stake/Unstake Kamis</Title>
+          <Grid>
+            <Description style={{ gridRow: 1, gridColumn: 1 }}>
+              In game
+            </Description>
+            <Scrollable style={{ gridRow: 2, gridColumn: 1 }}>
+              {KamiCards(data.account.kamis)}
+            </Scrollable>
+            <Description style={{ gridRow: 1, gridColumn: 2 }}>
+              Out of game
+            </Description>
+            <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>
+              {KamiCards(EOAKamis)}
+            </Scrollable>
+          </Grid>
         </ModalWrapperFull >
       );
     }
@@ -291,6 +331,22 @@ const Container = styled.div`
   align-items: stretch;
 `;
 
+const Description = styled.div`
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  font-family: Pixel;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-column-gap: 32px;
+  max-height: 80%;
+`;
+
 const Image = styled.img`
   border-style: solid;
   border-width: 0px 2px 0px 0px;
@@ -302,27 +358,6 @@ const Image = styled.img`
   &:hover {
     opacity: 0.75;
   }
-`;
-
-const Input = styled.input`
-  width: 100%;
-
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 15px 12px;
-  margin: 10px 5px 5px 5px;
-
-  text-align: left;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
 
 const Scrollable = styled.div`
@@ -359,6 +394,14 @@ const NotButton = styled.div`
   padding: 5px;
   pointer-events: auto;
   margin: 5px;
+`;
+
+const Title = styled.div`
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  font-family: Pixel;
 `;
 
 const TitleBar = styled.div`
