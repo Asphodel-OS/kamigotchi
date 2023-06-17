@@ -161,7 +161,7 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
     // wsRpc: "wss://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg",
     // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
     // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
-    snapshotUrl: "https://test-snapshot.asphodel.io:50061/",
+    snapshotUrl: "https://test-snapshot.asphodel.io:50061",
 
     // checkpointUrl: undefined,
     chainId: 420,
