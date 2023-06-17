@@ -9,6 +9,7 @@ import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCo
 
 import { LibPet } from "libraries/LibPet.sol";
 
+import { IERC4906 } from "openzeppelin/interfaces/IERC4906.sol";
 import { ERC721 } from "openzeppelin/token/ERC721/ERC721.sol";
 import { ERC721Enumerable } from "openzeppelin/token/ERC721/extensions/ERC721Enumerable.sol";
 
@@ -39,7 +40,7 @@ string constant SYMBOL = "KAMI";
   Metadata is linked to a system for easier MUD compatibility. However, any view function on a contract can be used. 
 */
 
-contract KamiERC721 is ERC721Enumerable {
+contract KamiERC721 is ERC721Enumerable, IERC4906 {
   IWorld internal immutable World;
 
   modifier onlyWriter() {
@@ -82,6 +83,11 @@ contract KamiERC721 is ERC721Enumerable {
   // only to be called by system
   function unstakeToken(address to, uint256 id) external onlyWriter {
     super._transfer(address(this), to, id);
+  }
+
+  // signals to marketplaces that metadata has been updated
+  function emitMetadataUpdate(uint256 id) external onlyWriter {
+    emit MetadataUpdate(id);
   }
 
   ////////////////////

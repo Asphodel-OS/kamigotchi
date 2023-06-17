@@ -6,14 +6,11 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibERC721 } from "libraries/LibERC721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
-import { LibStat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.Reveal"));
 
@@ -56,12 +53,8 @@ contract ERC721RevealSystem is System {
   // sets metadata with a random seed
   // second phase of commit/reveal scheme. pet owners call directly
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
-    // generates array of traits with weighted random
-    uint256[] memory traits = LibERC721.genRandTraits(components, petID, seed);
+    uint256 packed = LibERC721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 
-    // setting metadata
-    LibERC721.assignTraits(components, petID, traits);
-    uint256 packed = LibRandom.packArray(traits, 8); // uses packed array to generate image off-chain
     // string memory _baseURI = LibConfig.getValueStringOf(components, "baseURI");
     LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     return "";

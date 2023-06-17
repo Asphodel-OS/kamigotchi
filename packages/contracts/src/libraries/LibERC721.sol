@@ -36,6 +36,27 @@ library LibERC721 {
   ////////////////////////
   // INTERACTIONS
 
+  // reveals kami
+  // returns packed traits
+  function reveal(
+    IWorld world,
+    IUintComp components,
+    uint256 petID,
+    uint256 seed
+  ) internal returns (uint256 packed) {
+    // generates array of traits with weighted random
+    uint256[] memory traits = genRandTraits(components, petID, seed);
+
+    // setting metadata
+    assignTraits(components, petID, traits);
+
+    // emit update event
+    updateEvent(world, LibPet.idToIndex(components, petID));
+
+    // returns packed traits
+    packed = LibRandom.packArray(traits, 8);
+  }
+
   // minting a new kami in game. the default
   // mints to KamiERC721 contract as owner
   // does not interact with other mud systems
@@ -62,6 +83,12 @@ library LibERC721 {
   function unstake(IWorld world, address to, uint256 index) internal {
     KamiERC721 token = getContract(world);
     token.unstakeToken(to, index);
+  }
+
+  // emits a metadata update event. to be called whenever metadata changes
+  function updateEvent(IWorld world, uint256 index) internal {
+    KamiERC721 token = getContract(world);
+    token.emitMetadataUpdate(index);
   }
 
   /////////////////////////
