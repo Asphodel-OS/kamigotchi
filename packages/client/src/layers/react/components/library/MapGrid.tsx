@@ -209,8 +209,8 @@ const ROOMS_MAP = new Map([
 ]);
 
 const BORDER_COLORS = {
-  default: '1.5px solid green',
-  allowed: '1.5px solid yellow',
+  default: '3px solid green',
+  allowed: '3px solid yellow',
 };
 
 const NEIGHBOR_ROOMS = [
