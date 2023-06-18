@@ -230,7 +230,7 @@ export function registerERC721BridgeModal() {
 
       // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
-        return kamis.map((kami) => {
+        return kamis?.map((kami) => {
           return (
             <KamiCard
               kami={kami}
