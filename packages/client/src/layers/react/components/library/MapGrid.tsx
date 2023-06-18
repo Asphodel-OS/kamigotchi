@@ -228,14 +228,17 @@ const NEIGHBOR_ROOMS = [
   [4],
   [2],
   [7],
-  [11],
+  [11, 16, 18],
+  [15],
+  [0],
   [15],
 ];
 
 const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
   const currentRoom = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
   const isHighlighted = currentRoom === highlightedRoom;
-  const isNeighbor = highlightedRoom && currentRoom && NEIGHBOR_ROOMS[highlightedRoom - 1].includes(currentRoom);
+  const isNeighbor =
+    highlightedRoom && currentRoom && NEIGHBOR_ROOMS[highlightedRoom - 1].includes(currentRoom);
   const highlightStyle = isHighlighted
     ? { border: BORDER_COLORS.default }
     : isNeighbor
