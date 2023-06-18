@@ -29,6 +29,7 @@ import { registerBurnerDetector } from './validators/BurnerDetector';
 import { registerDetectAccountModal } from './validators/DetectAccount';
 import { registerWalletConnecter } from './validators/WalletConnector';
 import { registerOperatorUpdater } from './validators/OperatorUpdater';
+import { registerOperatorMovementModal } from './modals/OperatorMovement';
 
 export function registerUIComponents() {
   registerActionQueue();
@@ -44,6 +45,7 @@ export function registerUIComponents() {
 
   registerChatModal();
   // registerDetectAccountModal();
+  registerOperatorMovementModal();
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerKamiMintModal();

@@ -57,6 +57,8 @@ import {
   room15,
   room16,
   room17,
+  room18,
+  room19,
 } from 'assets/images/rooms';
 
 import { forest, opening, ost1, ost2, ost3 } from 'assets/sound/ost';
@@ -67,6 +69,7 @@ import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
+import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovmentModal';
 
 // NOTE: This is the most horrendous, hardcoded known to mankind. We should
 // move most things here to the store and populate the information from onchain.
@@ -446,8 +449,7 @@ export const rooms: Room[] = [
         key: 'waterfall',
         path: waterfall,
         offset: { x: 22.6, y: -33.5 },
-        onClick: () =>
-          triggerDialogueModal(['The base of the waterfall. It feels very peaceful here.']),
+        onClick: () => triggerRoomMovementModal(15),
       },
       {
         key: 'smallshrine',
@@ -594,6 +596,28 @@ export const rooms: Room[] = [
     background: {
       key: 'bg_room17',
       path: room17,
+    },
+    music: {
+      key: 'ost3',
+      path: ost3,
+    },
+  },
+  {
+    location: 18,
+    background: {
+      key: 'bg_room18',
+      path: room18,
+    },
+    music: {
+      key: 'ost3',
+      path: ost3,
+    },
+  },
+  {
+    location: 19,
+    background: {
+      key: 'bg_room19',
+      path: room19,
     },
     music: {
       key: 'ost3',

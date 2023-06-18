@@ -49,6 +49,7 @@ export interface VisibleModals {
   node: boolean;
   party: boolean;
   settings: boolean;
+  roomMovement: boolean;
 }
 
 export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
@@ -67,12 +68,14 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   node: isOn,
   party: isOn,
   settings: isOn,
+  roomMovement: isOn,
 });
 
 export interface DataStore {
   dialogue: Dialogue;
   selectedEntities: SelectedEntities;
   sound: SoundState;
+  selectedRoom: number;
   visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
 }
@@ -95,6 +98,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       node: 0 as EntityIndex,
       merchant: 0 as EntityIndex,
     },
+    selectedRoom: 0,
     sound: { volume: 0.7 },
     visibleModals: {
       bridgeERC20: false,
@@ -112,6 +116,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       node: false,
       party: false,
       settings: false,
+      roomMovement: false,
     },
     visibleButtons: {
       chat: false,
@@ -125,26 +130,17 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
 
   return {
     ...initialState,
-    setDialogue: (data: Dialogue) => set(
-      (state: DataStore) => ({ ...state, dialogue: data })
-    ),
-    setSelectedEntities: (data: SelectedEntities) => set(
-      (state: DataStore) => ({ ...state, selectedEntities: data })
-    ),
-    setSoundState: (data: SoundState) => set(
-      (state: DataStore) => ({ ...state, sound: data })
-    ),
-    setVisibleButtons: (data: VisibleButtons) => set(
-      (state: DataStore) => ({ ...state, visibleButtons: data })
-    ),
-    setVisibleModals: (data: VisibleModals) => set(
-      (state: DataStore) => ({ ...state, visibleModals: data })
-    ),
-    toggleVisibleButtons: (isOn: boolean) => set(
-      (state: DataStore) => ({ ...state, visibleButtons: visibleButtonsToggled(isOn) })
-    ),
-    toggleVisibleModals: (isOn: boolean) => set(
-      (state: DataStore) => ({ ...state, visibleModals: visibleModalsToggled(isOn) })
-    ),
+    setDialogue: (data: Dialogue) => set((state: DataStore) => ({ ...state, dialogue: data })),
+    setSelectedEntities: (data: SelectedEntities) =>
+      set((state: DataStore) => ({ ...state, selectedEntities: data })),
+    setSoundState: (data: SoundState) => set((state: DataStore) => ({ ...state, sound: data })),
+    setVisibleButtons: (data: VisibleButtons) =>
+      set((state: DataStore) => ({ ...state, visibleButtons: data })),
+    setVisibleModals: (data: VisibleModals) =>
+      set((state: DataStore) => ({ ...state, visibleModals: data })),
+    toggleVisibleButtons: (isOn: boolean) =>
+      set((state: DataStore) => ({ ...state, visibleButtons: visibleButtonsToggled(isOn) })),
+    toggleVisibleModals: (isOn: boolean) =>
+      set((state: DataStore) => ({ ...state, visibleModals: visibleModalsToggled(isOn) })),
   };
 });
