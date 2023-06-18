@@ -83,9 +83,10 @@ export function createAdminAPI(systems: any) {
     createRoom('Machine Node', 12, [4]);
     createRoom('Convenience Store', 13, [2]);
     createRoom("Manager's Office", 14, [7]);
-    createRoom('Temple Cave', 15, [11, 16]);
-    createRoom('Techno Template', 16, [15]);
-    // createRoom("Misty Park", 17, [0])
+    createRoom('Temple Cave', 15, [11, 16, 18]);
+    createRoom('Techno Temple', 16, [15]);
+    // createRoom("Misty Park", 17, [0]);
+    createRoom('Cave Crossroads', 18, [15]);
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in
