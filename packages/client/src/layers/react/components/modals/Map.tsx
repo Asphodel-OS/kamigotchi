@@ -8,6 +8,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import MapGrid from '../library/MapGrid';
+import { Room, getRoom } from '../shapes/Room';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -40,11 +41,12 @@ export function registerMapModal() {
             ])
           )[0];
 
+          const roomData = getRoom(layers, accountEntityIndex);
           const currentRoom = getCurrentRoom(Location, accountEntityIndex);
           return {
             actions,
             api: player,
-            data: { currentRoom },
+            data: { currentRoom, roomData },
           };
         })
       );
@@ -74,24 +76,42 @@ export function registerMapModal() {
         });
       };
 
+      const RoomInfo = ({ roomData }: { roomData: Room }) => {
+        return (
+          <Scrollable ref={scrollableRef}>
+            <RoomName>
+              Room Name: {roomData.name} ({roomData.location})
+            </RoomName>
+            <Description>
+              This is where short descriptive text on the room goes. Brave tester, you have caught
+              me doing UX design in prod.
+            </Description>
+            <Description>Room Owner: None</Description>
+            <Description>
+              Exits:{' '}
+              {roomData.exits?.map((room) => (
+                <StyledSpan>{room * 1}</StyledSpan>
+              ))}
+            </Description>
+            <Description>
+              You see [array of all operator names in room separated by commas] here
+            </Description>
+          </Scrollable>
+        );
+      };
+
       ///////////////////
       // DISPLAY
       const scrollableRef = useRef<HTMLDivElement>(null);
 
       return (
         <ModalWrapperFull id='world_map' divName='map'>
-        <div style={{display: 'grid', height: '100%'}}>
-          <Scrollable ref={scrollableRef}>
-            <RoomName>Room Name </RoomName>
-            <Description>This is where short descriptive text on the room goes. Brave tester, you have caught me doing UX design in prod.</Description>
-            <Description>Room Owner: None</Description>
-            <Description>Exits: List of room names.</Description>
-            <Description>You see [array of all operator names in room separated by commas] here</Description>
-          </Scrollable>
-          <MapBox>
-            <MapGrid highlightedRoom={data.currentRoom} move={move} />
-          </MapBox>
-        </div>
+          <div style={{ display: 'grid', height: '100%' }}>
+            <RoomInfo roomData={data.roomData} />
+            <MapBox>
+              <MapGrid highlightedRoom={data.currentRoom} move={move} />
+            </MapBox>
+          </div>
         </ModalWrapperFull>
       );
     }
@@ -131,4 +151,11 @@ const Scrollable = styled.div`
   border-color: black;
   grid-column: 1;
   grid-row: 2;
+`;
+
+const StyledSpan = styled.span`
+  font-size: 12px;
+  color: #333;
+  font-family: Pixel;
+  margin-left: 7px;
 `;
