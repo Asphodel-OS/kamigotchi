@@ -134,9 +134,9 @@ export function registerERC721BridgeModal() {
       // for use in mud
       const buttonSelect = (props: any) => {
         if (isExportable(props.kami)) {
-          return (<Button onClick={() => withdrawTx(props.kami.index)}>Withdraw Kami</Button>);
+          return (<Button onClick={() => withdrawTx(props.kami.index)}>Unstake</Button>);
         } else if (isImportable(props.kami)) {
-          return (<Button onClick={() => depositTx(props.kami.index)}>Deposit Kami</Button>);
+          return (<Button onClick={() => depositTx(props.kami.index)}>Stake</Button>);
         }
         // specific conditions that disable bridging 
         else if (isHarvesting(props.kami)) {
@@ -283,7 +283,7 @@ export function registerERC721BridgeModal() {
               {KamiCards(data.account.kamis)}
             </Scrollable>
             <Description style={{ gridRow: 1, gridColumn: 2 }}>
-              Out of game
+              In wallet
             </Description>
             <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>
               {KamiCards(EOAKamis)}
@@ -294,16 +294,6 @@ export function registerERC721BridgeModal() {
     }
   );
 }
-
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
 
 const Card = styled.div`
   background-color: #fff;
@@ -397,8 +387,8 @@ const NotButton = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 20px;
-  color: #333;
+  font-size: 24px;
+  color: black;
   text-align: center;
   padding: 10px;
   font-family: Pixel;
@@ -443,10 +433,5 @@ const TopButton = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
-  margin: 0px;
-`;
-
-const AlignRight = styled.div`
-  text-align: left;
   margin: 0px;
 `;
