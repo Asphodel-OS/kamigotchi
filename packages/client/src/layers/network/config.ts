@@ -131,8 +131,8 @@ function createNetworkConfigLattice(externalProvider?: ExternalProvider): Networ
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: "https://follower.testnet-chain.linfra.xyz",
     wsRpc: "wss://follower.testnet-chain.linfra.xyz",
-    faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
-    relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
+    // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
+    // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
     snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
 
     // checkpointUrl: undefined,
