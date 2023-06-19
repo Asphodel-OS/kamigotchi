@@ -8,6 +8,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsMerchantComponent, ID as IsMerchantCompID } from "components/IsMerchantComponent.sol";
+import { IndexMerchantComponent, ID as IndexMerchantCompID } from "components/IndexMerchantComponent.sol";
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { Strings } from "utils/Strings.sol";
@@ -20,11 +21,13 @@ library LibMerchant {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 location,
-    string memory name
+    uint256 index,
+    string memory name,
+    uint256 location
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsMerchantComponent(getAddressById(components, IsMerchantCompID)).set(id);
+    IndexMerchantComponent(getAddressById(components, IndexMerchantCompID)).set(id, index);
     setName(components, id, name);
     setLocation(components, id, location);
     return id;
@@ -70,55 +73,38 @@ library LibMerchant {
   /////////////////
   // QUERIES
 
-  // get a specified merchant by location. return only the first result
-  function getAtLocation(
-    IUintComp components,
-    uint256 location
-  ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, location, "");
+  // Return the ID of a Merchant by its index
+  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsMerchantCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexMerchantCompID),
+      abi.encode(index)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) {
       result = results[0];
     }
   }
 
+  // Return the ID of a Merchant by its name
   function getByName(
     IUintComp components,
     string memory name
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, 0, name);
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsMerchantCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, NameCompID),
+      abi.encode(name)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) {
       result = results[0];
     }
-  }
-
-  // Retrieves all listingsbased on any defined filters
-  function _getAllX(
-    IUintComp components,
-    uint256 location,
-    string memory name
-  ) internal view returns (uint256[] memory) {
-    uint256 numFilters;
-    if (location != 0) numFilters++;
-    if (!Strings.equal(name, "")) numFilters++;
-
-    QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsMerchantCompID), "");
-
-    uint256 filterCount;
-    if (location != 0) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, LocationCompID),
-        abi.encode(location)
-      );
-    }
-    if (!Strings.equal(name, "")) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, NameCompID),
-        abi.encode(name)
-      );
-    }
-    return LibQuery.query(fragments);
   }
 }

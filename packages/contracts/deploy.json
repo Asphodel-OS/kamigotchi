@@ -33,6 +33,7 @@
     "IndexGearComponent",
     "IndexHandComponent",
     "IndexItemComponent",
+    "IndexMerchantComponent",
     "IndexModComponent",
     "IndexNodeComponent",
     "IndexPetComponent",
@@ -121,7 +122,20 @@
       "name": "_MerchantCreateSystem",
       "writeAccess": [
         "IsMerchantComponent",
+        "IndexMerchantComponent",
         "LocationComponent",
+        "NameComponent"
+      ]
+    },
+    {
+      "name": "_MerchantSetLocationSystem",
+      "writeAccess": [
+        "LocationComponent"
+      ]
+    },
+    {
+      "name": "_MerchantSetNameSystem",
+      "writeAccess": [
         "NameComponent"
       ]
     },

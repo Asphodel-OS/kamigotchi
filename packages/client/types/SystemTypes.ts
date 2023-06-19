@@ -5,6 +5,8 @@ import { _devGiveTokensSystem } from "./ethers-contracts/_devGiveTokensSystem";
 import { _InitSystem } from "./ethers-contracts/_InitSystem";
 import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
 import { _MerchantCreateSystem } from "./ethers-contracts/_MerchantCreateSystem";
+import { _MerchantSetLocationSystem } from "./ethers-contracts/_MerchantSetLocationSystem";
+import { _MerchantSetNameSystem } from "./ethers-contracts/_MerchantSetNameSystem";
 import { _NodeCreateSystem } from "./ethers-contracts/_NodeCreateSystem";
 import { _NodeSetAffinitySystem } from "./ethers-contracts/_NodeSetAffinitySystem";
 import { _NodeSetDescriptionSystem } from "./ethers-contracts/_NodeSetDescriptionSystem";
@@ -62,6 +64,8 @@ export type SystemTypes = {
   "system._Init": _InitSystem;
   "system._Listing.Set": _ListingSetSystem;
   "system._Merchant.Create": _MerchantCreateSystem;
+  "system._Merchant.Set.Location": _MerchantSetLocationSystem;
+  "system._Merchant.Set.Name": _MerchantSetNameSystem;
   "system._Node.Create": _NodeCreateSystem;
   "system._Node.Set.Affinity": _NodeSetAffinitySystem;
   "system._Node.Set.Description": _NodeSetDescriptionSystem;

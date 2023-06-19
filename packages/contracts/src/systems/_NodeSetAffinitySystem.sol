@@ -9,7 +9,7 @@ import { LibNode } from "libraries/LibNode.sol";
 
 uint256 constant ID = uint256(keccak256("system._Node.Set.Affinity"));
 
-// _NodeSetAffinitySystem sets the affinity of a Node, identified by its name
+// set the Affinity of a Node, identified by its Node Index
 contract _NodeSetAffinitySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

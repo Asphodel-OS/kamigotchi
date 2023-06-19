@@ -117,6 +117,7 @@ export function registerMerchantModal() {
 
     // Render
     ({ actions, api, data }) => {
+      // console.log('mMerchant: data', data);
       const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
         dataStore();
       ///////////////////

@@ -10,8 +10,7 @@ import { LibNode } from "libraries/LibNode.sol";
 
 uint256 constant ID = uint256(keccak256("system._Node.Create"));
 
-// _NodeCreateSystem creates a node as specified and returns the entity id
-// This does not assign any extraneous components (e.g. affinity)
+// create a Node as specified
 contract _NodeCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

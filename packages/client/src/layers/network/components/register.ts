@@ -75,6 +75,7 @@ export function createComponents(world: World) {
     GearIndex: defineNumberEZ("GearIndex", "component.Index.Gear"),
     HandIndex: defineNumberEZ("HandIndex", "component.Index.Hand"),
     ItemIndex: defineNumberEZ("ItemIndex", "component.Index.Item"),
+    MerchantIndex: defineNumberEZ("MerchantIndex", "component.Index.Merchant"),
     ModIndex: defineNumberEZ("ModIndex", "component.Index.Mod"),
     NodeIndex: defineNumberEZ("NodeIndex", "component.Index.Node"),
     PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component

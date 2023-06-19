@@ -5,22 +5,21 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibNode } from "libraries/LibNode.sol";
+import { LibMerchant } from "libraries/LibMerchant.sol";
 
-uint256 constant ID = uint256(keccak256("system._Node.Set.Name"));
+uint256 constant ID = uint256(keccak256("system._Merchant.Set.Name"));
 
-// set the Name of a Node, identified by its Node Index
-contract _NodeSetNameSystem is System {
+// set the Name of a Merchant, identified by its Merchant Index
+contract _MerchantSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (uint256 index, string memory name) = abi.decode(arguments, (uint256, string));
-    uint256 id = LibNode.getByIndex(components, index);
+    uint256 id = LibMerchant.getByIndex(components, index);
 
-    require(id != 0, "Node: does not exist");
-    require(LibNode.getByName(components, name) == 0, "Node: naming conflict");
+    require(id != 0, "Merchant: does not exist");
 
-    LibNode.setName(components, id, name);
+    LibMerchant.setName(components, id, name);
     return "";
   }
 

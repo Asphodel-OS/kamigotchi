@@ -13,18 +13,22 @@ contract _MerchantCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 location) = abi.decode(arguments, (string, uint256));
-    uint256 id = LibMerchant.getByName(components, name);
+    (uint256 index, string memory name, uint256 location) = abi.decode(
+      arguments,
+      (uint256, string, uint256)
+    );
+    uint256 id = LibMerchant.getByIndex(components, index);
 
     require(id == 0, "Merchant: already exists");
 
-    return abi.encode(LibMerchant.create(world, components, location, name));
+    return abi.encode(LibMerchant.create(world, components, index, name, location));
   }
 
   function executeTyped(
+    uint256 index,
     string memory name,
     uint256 location
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, location));
+    return execute(abi.encode(index, name, location));
   }
 }

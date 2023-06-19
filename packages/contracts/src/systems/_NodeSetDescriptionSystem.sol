@@ -9,7 +9,7 @@ import { LibNode } from "libraries/LibNode.sol";
 
 uint256 constant ID = uint256(keccak256("system._Node.Set.Description"));
 
-// _NodeSetDescriptionSystem sets the description of a Node, identified by its name
+// set the Description of a Node, identified by its Node Index
 contract _NodeSetDescriptionSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
