@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -29,7 +30,7 @@ import type {
 export interface _NodeSetAffinitySystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(string,string)": FunctionFragment;
+    "executeTyped(uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -48,7 +49,7 @@ export interface _NodeSetAffinitySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -119,7 +120,7 @@ export interface _NodeSetAffinitySystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -138,7 +139,7 @@ export interface _NodeSetAffinitySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    name: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
     affinity: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -157,7 +158,7 @@ export interface _NodeSetAffinitySystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -188,7 +189,7 @@ export interface _NodeSetAffinitySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -208,7 +209,7 @@ export interface _NodeSetAffinitySystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
       affinity: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

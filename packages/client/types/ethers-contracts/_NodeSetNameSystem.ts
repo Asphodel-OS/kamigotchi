@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -29,7 +30,7 @@ import type {
 export interface _NodeSetNameSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(string,string)": FunctionFragment;
+    "executeTyped(uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -48,7 +49,7 @@ export interface _NodeSetNameSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -119,8 +120,8 @@ export interface _NodeSetNameSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      oldName: PromiseOrValue<string>,
-      newName: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -138,8 +139,8 @@ export interface _NodeSetNameSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    oldName: PromiseOrValue<string>,
-    newName: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -157,8 +158,8 @@ export interface _NodeSetNameSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      oldName: PromiseOrValue<string>,
-      newName: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -188,8 +189,8 @@ export interface _NodeSetNameSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      oldName: PromiseOrValue<string>,
-      newName: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -208,8 +209,8 @@ export interface _NodeSetNameSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      oldName: PromiseOrValue<string>,
-      newName: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

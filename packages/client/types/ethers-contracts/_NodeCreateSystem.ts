@@ -30,7 +30,7 @@ import type {
 export interface _NodeCreateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(string,uint256,string,string)": FunctionFragment;
+    "executeTyped(uint256,string,uint256,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,8 +50,10 @@ export interface _NodeCreateSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
@@ -125,10 +127,12 @@ export interface _NodeCreateSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
+      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -146,10 +150,12 @@ export interface _NodeCreateSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    name: PromiseOrValue<string>,
-    location: PromiseOrValue<BigNumberish>,
+    index: PromiseOrValue<BigNumberish>,
     nodeType: PromiseOrValue<string>,
+    location: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
+    affinity: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -167,10 +173,12 @@ export interface _NodeCreateSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
+      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -200,10 +208,12 @@ export interface _NodeCreateSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
+      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -222,10 +232,12 @@ export interface _NodeCreateSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
+      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
+      affinity: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

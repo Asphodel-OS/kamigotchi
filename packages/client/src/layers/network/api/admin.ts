@@ -92,38 +92,48 @@ export function createAdminAPI(systems: any) {
     // create nodes
     // TODO: save these details in a separate json to be loaded in
     createNode(
+      1,
+      'HARVEST',
+      3,
       'Torii Gate',
+      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $KAMI....`,
+      `NORMAL`,
+    );
+
+    createNode(
+      2,
+      'HARVEST',
+      7,
+      'Trash Compactor',
+      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.',
+      'SCRAP',
+    );
+
+    createNode(
       3,
       'HARVEST',
-      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $KAMI....`
-    );
-
-    createNode(
-      'Trash Compactor',
-      7,
-      'HARVEST',
-      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.'
-    );
-
-    createNode(
-      'Termite Mound',
       10,
-      'HARVEST',
-      'A huge termite mound. Apparently, this is sacred to the local insects.'
+      'Termite Mound',
+      'A huge termite mound. Apparently, this is sacred to the local insects.',
+      'INSECT',
     );
 
     createNode(
-      'Occult Circle',
+      4,
+      'HARVEST',
       14,
-      'HARVEST',
-      'The energy invested here calls out to EERIE Kamigotchi.'
+      'Occult Circle',
+      'The energy invested here calls out to EERIE Kamigotchi.',
+      'EERIE',
     );
 
     createNode(
-      'Monolith',
-      12,
+      5,
       'HARVEST',
-      'This huge black monolith seems to draw in energy from the rest of the junkyard.'
+      12,
+      'Monolith',
+      'This huge black monolith seems to draw in energy from the rest of the junkyard.',
+      'SCRAP',
     );
 
     // create consumable registry items
@@ -150,12 +160,6 @@ export function createAdminAPI(systems: any) {
 
   // @dev inits txes that depned on the world being set up
   function initDependents() {
-    setNodeAffinity('Torii Gate', 'NORMAL');
-    setNodeAffinity('Trash Compactor', 'SCRAP');
-    setNodeAffinity('Termite Mound', 'INSECT');
-    setNodeAffinity('Occult Circle', 'EERIE');
-    setNodeAffinity('Monolith', 'SCRAP');
-
     setListing('Mina', 1, 25, 0); // merchant, item index, buy price, sell price
     setListing('Mina', 2, 90, 0);
     setListing('Mina', 3, 150, 0);
@@ -204,28 +208,44 @@ export function createAdminAPI(systems: any) {
   //  NODES
 
   // @dev creates an emission node at the specified location
-  // @param name      name of the node
-  // @param location  index of the room location
-  // @param type      type of the node (e.g. HARVEST, HEAL, ARENA)
-  // @param desc      description of the node, exposed on the UI
-  function createNode(name: string, location: number, type: string, desc: string) {
-    return systems['system._Node.Create'].executeTyped(name, location, type, desc);
+  // @param index       the human-readable index of the node
+  // @param type        type of the node (e.g. HARVEST, HEAL, ARENA)
+  // @param location    index of the room location
+  // @param name        name of the node
+  // @param description description of the node, exposed on the UI
+  // @param affinity    affinity of the node [ NORMAL | EERIE | INSECT | SCRAP ]
+  function createNode(
+    index: number,
+    type: string,
+    location: number,
+    name: string,
+    description: string,
+    affinity: string
+  ) {
+    return systems['system._Node.Create'].executeTyped(
+      index,
+      type,
+      location,
+      name,
+      description,
+      affinity
+    );
   }
 
-  function setNodeAffinity(name: string, affinity: string) {
-    return systems['system._Node.Set.Affinity'].executeTyped(name, affinity);
+  function setNodeAffinity(index: number, affinity: string) {
+    return systems['system._Node.Set.Affinity'].executeTyped(index, affinity);
   }
 
-  function setNodeDescription(name: string, desc: string) {
-    return systems['system._Node.Set.Description'].executeTyped(name, desc);
+  function setNodeDescription(index: number, description: string) {
+    return systems['system._Node.Set.Description'].executeTyped(index, description);
   }
 
-  function setNodeLocation(name: string, location: number) {
-    return systems['system._Node.Set.Location'].executeTyped(name, location);
+  function setNodeLocation(index: number, location: number) {
+    return systems['system._Node.Set.Location'].executeTyped(index, location);
   }
 
-  function setNodeName(name: string, newName: string) {
-    return systems['system._Node.Set.Name'].executeTyped(name, newName);
+  function setNodeName(index: number, name: string) {
+    return systems['system._Node.Set.Name'].executeTyped(index, name);
   }
 
   /////////////////

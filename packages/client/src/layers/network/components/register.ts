@@ -33,6 +33,7 @@ export function createComponents(world: World) {
     // Archetypes
     IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
     IsConfig: defineBoolEZ("IsConfig", "component.Is.Config"),
+    IsData: defineBoolEZ("IsData", "component.Is.Data"),
     IsEquipped: defineBoolEZ("IsEquipped", "component.Is.Equipped"),
     IsFungible: defineBoolEZ("IsFungible", "component.Is.Fungible"),
     IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
@@ -75,9 +76,10 @@ export function createComponents(world: World) {
     HandIndex: defineNumberEZ("HandIndex", "component.Index.Hand"),
     ItemIndex: defineNumberEZ("ItemIndex", "component.Index.Item"),
     ModIndex: defineNumberEZ("ModIndex", "component.Index.Mod"),
-    PetIndex: defineStringEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
+    NodeIndex: defineNumberEZ("NodeIndex", "component.Index.Node"),
+    PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
     ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
-    TraitIndex: defineStringEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
+    TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
 
     // Values
     Affinity: defineStringEZ("Affinity", "component.Affinity"),

@@ -9,6 +9,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
+import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
@@ -27,15 +28,13 @@ library LibNode {
   function create(
     IWorld world,
     IUintComp components,
-    string memory name,
-    uint256 location,
+    uint256 index,
     string memory nodeType,
-    string memory description
+    uint256 location
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(id, index);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
     LocationComponent(getAddressById(components, LocCompID)).set(id, location);
     return id;
@@ -107,7 +106,23 @@ library LibNode {
     return LibQuery.query(fragments);
   }
 
-  // Return the ID of a Node
+  // Return the ID of a Node by its index
+  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexNodeCompID),
+      abi.encode(index)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
+    if (results.length != 0) {
+      result = results[0];
+    }
+  }
+
+  // Return the ID of a Node by its name
   function getByName(
     IUintComp components,
     string memory name

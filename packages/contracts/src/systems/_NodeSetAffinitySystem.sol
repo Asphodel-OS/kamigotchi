@@ -14,8 +14,8 @@ contract _NodeSetAffinitySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, string memory affinity) = abi.decode(arguments, (string, string));
-    uint256 id = LibNode.getByName(components, name);
+    (uint256 index, string memory affinity) = abi.decode(arguments, (uint256, string));
+    uint256 id = LibNode.getByIndex(components, index);
 
     require(id != 0, "Node: does not exist");
 
@@ -24,9 +24,9 @@ contract _NodeSetAffinitySystem is System {
   }
 
   function executeTyped(
-    string memory name,
+    uint256 index,
     string memory affinity
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, affinity));
+    return execute(abi.encode(index, affinity));
   }
 }

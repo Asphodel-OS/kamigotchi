@@ -14,20 +14,17 @@ contract _NodeSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory oldName, string memory newName) = abi.decode(arguments, (string, string));
-    uint256 id = LibNode.getByName(components, oldName);
+    (uint256 index, string memory name) = abi.decode(arguments, (uint256, string));
+    uint256 id = LibNode.getByIndex(components, index);
 
     require(id != 0, "Node: does not exist");
-    require(LibNode.getByName(components, newName) == 0, "Node: naming conflict");
+    require(LibNode.getByName(components, name) == 0, "Node: naming conflict");
 
-    LibNode.setName(components, id, newName);
+    LibNode.setName(components, id, name);
     return "";
   }
 
-  function executeTyped(
-    string memory oldName,
-    string memory newName
-  ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(oldName, newName));
+  function executeTyped(uint256 index, string memory name) public onlyOwner returns (bytes memory) {
+    return execute(abi.encode(index, name));
   }
 }

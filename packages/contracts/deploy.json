@@ -34,6 +34,7 @@
     "IndexHandComponent",
     "IndexItemComponent",
     "IndexModComponent",
+    "IndexNodeComponent",
     "IndexPetComponent",
     "IndexReviveComponent",
     "IndexTraitComponent",
@@ -128,7 +129,9 @@
       "name": "_NodeCreateSystem",
       "writeAccess": [
         "IsNodeComponent",
+        "AffinityComponent",
         "DescriptionComponent",
+        "IndexNodeComponent",
         "LocationComponent",
         "NameComponent",
         "TypeComponent"

@@ -67,8 +67,13 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
-          "name": "name",
+          "name": "nodeType",
           "type": "string"
         },
         {
@@ -78,12 +83,17 @@
         },
         {
           "internalType": "string",
-          "name": "nodeType",
+          "name": "name",
           "type": "string"
         },
         {
           "internalType": "string",
           "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "affinity",
           "type": "string"
         }
       ],
@@ -127,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(string,uint256,string,string)": "e495ad2b",
+    "executeTyped(uint256,string,uint256,string,string,string)": "ae39fdd7",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

@@ -67,13 +67,13 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "oldName",
-          "type": "string"
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
         },
         {
           "internalType": "string",
-          "name": "newName",
+          "name": "name",
           "type": "string"
         }
       ],
@@ -117,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(string,string)": "7200632a",
+    "executeTyped(uint256,string)": "68c47df2",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

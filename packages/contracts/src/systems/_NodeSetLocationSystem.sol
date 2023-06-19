@@ -14,8 +14,8 @@ contract _NodeSetLocationSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 location) = abi.decode(arguments, (string, uint256));
-    uint256 id = LibNode.getByName(components, name);
+    (uint256 index, uint256 location) = abi.decode(arguments, (uint256, uint256));
+    uint256 id = LibNode.getByIndex(components, index);
 
     require(id != 0, "Node: does not exist");
 
@@ -23,10 +23,7 @@ contract _NodeSetLocationSystem is System {
     return "";
   }
 
-  function executeTyped(
-    string memory name,
-    uint256 location
-  ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, location));
+  function executeTyped(uint256 index, uint256 location) public onlyOwner returns (bytes memory) {
+    return execute(abi.encode(index, location));
   }
 }

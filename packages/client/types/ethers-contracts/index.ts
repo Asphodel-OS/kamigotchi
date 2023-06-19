@@ -52,6 +52,7 @@ export type { IndexGearComponent } from "./IndexGearComponent";
 export type { IndexHandComponent } from "./IndexHandComponent";
 export type { IndexItemComponent } from "./IndexItemComponent";
 export type { IndexModComponent } from "./IndexModComponent";
+export type { IndexNodeComponent } from "./IndexNodeComponent";
 export type { IndexPetComponent } from "./IndexPetComponent";
 export type { IndexReviveComponent } from "./IndexReviveComponent";
 export type { IndexTraitComponent } from "./IndexTraitComponent";
@@ -190,6 +191,7 @@ export { IndexGearComponent__factory } from "./factories/IndexGearComponent__fac
 export { IndexHandComponent__factory } from "./factories/IndexHandComponent__factory";
 export { IndexItemComponent__factory } from "./factories/IndexItemComponent__factory";
 export { IndexModComponent__factory } from "./factories/IndexModComponent__factory";
+export { IndexNodeComponent__factory } from "./factories/IndexNodeComponent__factory";
 export { IndexPetComponent__factory } from "./factories/IndexPetComponent__factory";
 export { IndexReviveComponent__factory } from "./factories/IndexReviveComponent__factory";
 export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
