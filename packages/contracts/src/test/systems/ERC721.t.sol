@@ -121,10 +121,10 @@ contract ERC721PetTest is SetupTemplate {
     }
   }
 
-  // function testFailMaxMintSingleTx() public {
-  //   vm.prank(alice);
-  //   _ERC721MintSystem.executeTyped(501);
-  // }
+  function testFailMaxMintSingleTx() public {
+    vm.prank(alice);
+    _ERC721MintSystem.executeTyped(501);
+  }
 
   // does not actually check if metadata is accurate, only if syntax is valid
   function testMetadata() public {

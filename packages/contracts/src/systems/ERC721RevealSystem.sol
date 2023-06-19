@@ -15,8 +15,6 @@ import { LibRandom } from "libraries/LibRandom.sol";
 uint256 constant ID = uint256(keccak256("system.ERC721.Reveal"));
 
 contract ERC721RevealSystem is System {
-  string internal _baseURI;
-
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -55,16 +53,8 @@ contract ERC721RevealSystem is System {
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
     uint256 packed = LibERC721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 
-    // string memory _baseURI = LibConfig.getValueStringOf(components, "baseURI");
+    string memory _baseURI = LibConfig.getValueStringOf(components, "baseURI");
     LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     return "";
-  }
-
-  /*********************
-   *  CONFIG FUNCTIONS
-   **********************/
-
-  function _setBaseURI(string memory baseURI) public onlyOwner {
-    _baseURI = baseURI;
   }
 }

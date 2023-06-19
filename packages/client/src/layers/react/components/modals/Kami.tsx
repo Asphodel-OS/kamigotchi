@@ -90,7 +90,6 @@ export function registerKamiModal() {
         if (dets?.traits) {
           const stats = dets.traits[key]?.stats;
           const statBoxes = [];
-          console.log(dets);
           let gridColumn = 1;
 
           if (stats && stats.health !== 0) {

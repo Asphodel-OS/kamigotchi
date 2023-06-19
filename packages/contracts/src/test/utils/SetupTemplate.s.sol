@@ -263,6 +263,9 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("LIQ_BOUNTY_BASE", 50);
     _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
 
-    _setConfigString("baseURI", "https://im.asphodel.io/image/");
+    // mints
+    _setConfigString("baseURI", "https://image.asphodel.io/kami/");
+    _setConfig("MINT_MAX", 500);
+    _setConfig("MINT_PRICE", 0.015 ether);
   }
 }

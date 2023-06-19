@@ -7,7 +7,7 @@ export function createAdminAPI(systems: any) {
     /////////////////
     // CONFIG
 
-    setConfigString('baseURI', 'https://im.asphodel.io/image/');
+    setConfigString('baseURI', 'https://image.asphodel.io/kami/');
 
     // Account Stamina
     setConfig('ACCOUNT_STAMINA_BASE', 20);
