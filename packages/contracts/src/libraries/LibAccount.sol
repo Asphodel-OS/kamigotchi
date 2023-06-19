@@ -185,10 +185,7 @@ library LibAccount {
   // QUERIES
 
   // retrieves the pet with the specified name
-  function getByName(
-    IUintComp components,
-    string memory name
-  ) internal view returns (uint256 result) {
+  function getByName(IUintComp components, string memory name) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
     fragments[1] = QueryFragment(
@@ -198,69 +195,34 @@ library LibAccount {
     );
 
     uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) result = results[0];
+    return (results.length > 0) ? results[0] : 0;
   }
 
   // Get an account entity by Wallet address. Assume only 1.
-  function getByOperator(
-    IUintComp components,
-    address operatorAddr
-  ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, operatorAddr, address(0), 0);
-    if (results.length > 0) {
-      result = results[0];
-    }
+  function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, AddrOperatorCompID),
+      abi.encode(operator)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
+    return (results.length > 0) ? results[0] : 0;
   }
 
   // Get the account of an owner. Assume only 1.
-  function getByOwner(
-    IUintComp components,
-    address ownerAddr
-  ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, address(0), ownerAddr, 0);
-    if (results.length > 0) {
-      result = results[0];
-    }
-  }
-
-  // Get all account entities matching the specified filters.
-  function _getAllX(
-    IUintComp components,
-    address operatorAddr,
-    address ownerAddr,
-    uint256 location
-  ) internal view returns (uint256[] memory) {
-    uint256 numFilters;
-    if (operatorAddr != address(0)) numFilters++;
-    if (ownerAddr != address(0)) numFilters++;
-    if (location != 0) numFilters++;
-
-    QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
+  function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, AddrOwnerCompID),
+      abi.encode(owner)
+    );
 
-    uint256 filterCount;
-    if (operatorAddr != address(0)) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, AddrOperatorCompID),
-        abi.encode(operatorAddr)
-      );
-    }
-    if (ownerAddr != address(0)) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, AddrOwnerCompID),
-        abi.encode(ownerAddr)
-      );
-    }
-    if (location != 0) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, LocCompID),
-        abi.encode(location)
-      );
-    }
-
-    return LibQuery.query(fragments);
+    uint256[] memory results = LibQuery.query(fragments);
+    return (results.length > 0) ? results[0] : 0;
   }
 }
