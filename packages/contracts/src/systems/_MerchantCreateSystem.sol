@@ -8,7 +8,7 @@ import { LibMerchant } from "libraries/LibMerchant.sol";
 
 uint256 constant ID = uint256(keccak256("system._Merchant.Create"));
 
-// _MerchantCreateSystem creates or updates a merchant listing from the provided parameters
+// create a Merchant as specified
 contract _MerchantCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

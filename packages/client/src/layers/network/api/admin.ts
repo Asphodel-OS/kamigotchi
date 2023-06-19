@@ -160,10 +160,11 @@ export function createAdminAPI(systems: any) {
 
   // @dev inits txes that depned on the world being set up
   function initDependents() {
-    setListing('Mina', 1, 25, 0); // merchant, item index, buy price, sell price
-    setListing('Mina', 2, 90, 0);
-    setListing('Mina', 3, 150, 0);
-    setListing('Mina', 4, 500, 0);
+    // Mina
+    setListing(1, 1, 25, 0); // merchant index, item index, buy price, sell price
+    setListing(1, 2, 90, 0);
+    setListing(1, 3, 150, 0);
+    setListing(1, 4, 500, 0);
   }
 
   /// NOTE: do not use in production
@@ -208,8 +209,18 @@ export function createAdminAPI(systems: any) {
   }
 
   // sets the prices for the merchant at the specified location
-  function setListing(name: string, itemIndex: number, buyPrice: number, sellPrice: number) {
-    return systems['system._Listing.Set'].executeTyped(name, itemIndex, buyPrice, sellPrice);
+  function setListing(
+    merchantIndex: number,
+    itemIndex: number,
+    buyPrice: number,
+    sellPrice: number
+  ) {
+    return systems['system._Listing.Set'].executeTyped(
+      merchantIndex,
+      itemIndex,
+      buyPrice,
+      sellPrice
+    );
   }
 
   /////////////////

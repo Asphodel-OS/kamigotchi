@@ -13,6 +13,7 @@ import { Listing, getListing } from './Listing';
 // standardized shape of a FE Merchant Entity
 export interface Merchant {
   id: EntityID;
+  index: number;
   entityIndex: EntityIndex;
   name: string;
   location: number;
@@ -31,6 +32,7 @@ export const getMerchant = (
         IsListing,
         Location,
         MerchantID,
+        MerchantIndex,
         Name,
       },
     },
@@ -39,6 +41,7 @@ export const getMerchant = (
 
   let merchant: Merchant = {
     id: world.entities[index],
+    index: getComponentValue(MerchantIndex, index)?.value as number,
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     location: getComponentValue(Location, index)?.value as number,

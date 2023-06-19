@@ -15,10 +15,12 @@ export interface NodeKamis {
 // standardized shape of a Node Entity
 export interface Node {
   id: EntityID;
-  name: string;
-  description: string;
+  index: number;
+  entityIndex: EntityIndex;
   type: string;
   location: number;
+  name: string;
+  description: string;
   affinity?: string;
   kamis?: NodeKamis;
 }
@@ -36,6 +38,7 @@ export const getNode = (
         Description,
         Location,
         Name,
+        NodeIndex,
         Type,
       },
     },
@@ -43,10 +46,12 @@ export const getNode = (
 
   let node: Node = {
     id: world.entities[index],
+    index: getComponentValue(NodeIndex, index)?.value as number,
+    entityIndex: index,
+    type: getComponentValue(Type, index)?.value as string,
+    location: getComponentValue(Location, index)?.value as number,
     name: getComponentValue(Name, index)?.value as string,
     description: getComponentValue(Description, index)?.value as string,
-    location: getComponentValue(Location, index)?.value as number,
-    type: getComponentValue(Type, index)?.value as string,
     affinity: getComponentValue(Affinity, index)?.value as string, // does this break if there's no affinity?
   }
 

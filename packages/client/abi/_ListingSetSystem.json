@@ -67,9 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
+          "internalType": "uint256",
+          "name": "merchantIndex",
+          "type": "uint256"
         },
         {
           "internalType": "uint256",
@@ -127,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(string,uint256,uint256,uint256)": "06745404",
+    "executeTyped(uint256,uint256,uint256,uint256)": "9edb768e",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

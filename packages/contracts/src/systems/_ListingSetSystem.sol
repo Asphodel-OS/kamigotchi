@@ -9,18 +9,16 @@ import { LibMerchant } from "libraries/LibMerchant.sol";
 
 uint256 constant ID = uint256(keccak256("system._Listing.Set"));
 
-// _ListingSetSystem creates or updates a listing on a merchant by its location
-// this assumes a merchant exists at the specified location
+// create or update a Listing on a Merchant by its Merchnat Index
 contract _ListingSetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
+    (uint256 merchantIndex, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
       arguments,
-      (string, uint256, uint256, uint256)
+      (uint256, uint256, uint256, uint256)
     );
-    uint256 merchantID = LibMerchant.getByName(components, name);
-
+    uint256 merchantID = LibMerchant.getByIndex(components, merchantIndex);
     require(merchantID != 0, "Merchant: does not exist");
 
     uint256 id = LibListing.get(components, merchantID, itemIndex);
@@ -30,11 +28,11 @@ contract _ListingSetSystem is System {
   }
 
   function executeTyped(
-    string memory name,
+    uint256 merchantIndex,
     uint256 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, itemIndex, buyPrice, sellPrice));
+    return execute(abi.encode(merchantIndex, itemIndex, buyPrice, sellPrice));
   }
 }
