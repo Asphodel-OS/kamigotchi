@@ -55,7 +55,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
 
   const adminAPI = createAdminAPI(systems);
   const playerAPI = createPlayerAPI(systems);
-  const worldAPI = setUpWorldAPI(systems);
+  const worldAPI = setUpWorldAPI(adminAPI);
 
   // helper function to get all the set components values for a given entity
   const getEntity = (index: EntityIndex): any => {
@@ -91,9 +91,8 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     network,
     actions,
     api: {
-      admin: adminAPI,
+      admin: { ...adminAPI, initWorld: worldAPI.initWorld },
       player: playerAPI,
-      world: worldAPI,
     },
     getEntity,
     faucet,

@@ -19,7 +19,7 @@ contract _ListingSetSystem is System {
       (uint256, uint256, uint256, uint256)
     );
     uint256 merchantID = LibMerchant.getByIndex(components, merchantIndex);
-    require(merchantID != 0, "Merchant: does not exist");
+    // require(merchantID != 0, "Merchant: does not exist");  // removed to make deployment easier
 
     uint256 id = LibListing.get(components, merchantID, itemIndex);
     if (id == 0) LibListing.create(world, components, merchantID, itemIndex, buyPrice, sellPrice);

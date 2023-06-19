@@ -2,155 +2,18 @@ import { utils, BigNumberish } from 'ethers';
 import { createPlayerAPI } from './player';
 import { setUpWorldAPI } from './world';
 
+export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
+
 export function createAdminAPI(systems: any) {
   function init() {
-    /////////////////
-    // CONFIG
-
-    // this doesnt work without the https:// so it's unused atm
-    setConfigString('baseURI', 'kami-image.asphodel.io/image/');
-
-    // Account Stamina
-    setConfig('ACCOUNT_STAMINA_BASE', 20);
-    setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
-
-    // Kami Base Stats
-    // to be 5, set at 500 for testing
-    setConfig('MINT_MAX', 500);
-    setConfig('MINT_PRICE', utils.parseEther('0.015'));
-
-    // set global config fields for Kami Stats
-    setConfig('KAMI_BASE_HEALTH', 50);
-    setConfig('KAMI_BASE_POWER', 10);
-    setConfig('KAMI_BASE_VIOLENCE', 10);
-    setConfig('KAMI_BASE_HARMONY', 10);
-    setConfig('KAMI_BASE_SLOTS', 0);
-
-    // Harvest Rates
-    // HarvestRate = power * base * multiplier
-    // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
-    // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
-    setConfig('HARVEST_RATE_PREC', 9); // ignore this
-    setConfig('HARVEST_RATE_BASE', 100); // in respect to power
-    setConfig('HARVEST_RATE_BASE_PREC', 3); // i.e. x/1000
-    setConfig('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
-    setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
-    setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
-    setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
-    setConfig('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
-
-    // Kami Health Drain/Heal Rates
-    // DrainRate = HarvestRate * DrainBaseRate
-    // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
-    // HealRate = Harmony * HealBaseRate
-    // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
-    setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3); // i.e. x/1000
-    setConfig('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
-    setConfig('HEALTH_RATE_HEAL_BASE', 100); // in respect to harmony
-    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3); // i.e. x/1000
-
-    // Liquidation Idle Requirements
-    setConfig('LIQ_IDLE_REQ', 300);
-
-    // Liquidation Calcs
-    setConfig('LIQ_THRESH_BASE', 20);
-    setConfig('LIQ_THRESH_BASE_PREC', 2);
-    setConfig('LIQ_THRESH_MULT_AFF_BASE', 100);
-    setConfig('LIQ_THRESH_MULT_AFF_UP', 200);
-    setConfig('LIQ_THRESH_MULT_AFF_DOWN', 50);
-    setConfig('LIQ_THRESH_MULT_AFF_PREC', 2);
-
-    // Liquidation Bounty
-    setConfig('LIQ_BOUNTY_BASE', 50);
-    setConfig('LIQ_BOUNTY_BASE_PREC', 2);
-
-    /////////////////
-    // WORLD
-
-    // create our rooms
-    createRoom('deadzone', 0, [1]); // in case we need this
-    createRoom('Misty Riverside', 1, [2]);
-    createRoom('Tunnel of Trees', 2, [1, 3, 13]);
-    createRoom('Torii Gate', 3, [2, 4]);
-    createRoom('Vending Machine', 4, [3, 5, 12]);
-    createRoom('Restricted Area', 5, [4, 6, 9]);
-    createRoom('Labs Entrance', 6, [5, 7]);
-    createRoom('Lobby', 7, [6, 8, 14]);
-    createRoom('Junk Shop', 8, [7]);
-    createRoom('Forest: Old Growth', 9, [5, 10, 11]);
-    createRoom('Forest: Insect Node', 10, [9]);
-    createRoom('Waterfall Shrine', 11, [9, 15]);
-    createRoom('Machine Node', 12, [4]);
-    createRoom('Convenience Store', 13, [2]);
-    createRoom("Manager's Office", 14, [7]);
-    createRoom('Temple Cave', 15, [11, 16, 18]);
-    createRoom('Techno Temple', 16, [15]);
-    // createRoom("Misty Park", 17, [0]);
-    createRoom('Cave Crossroads', 18, [15]);
-
-    // create nodes
-    // TODO: save these details in a separate json to be loaded in
-    createNode(
-      1,
-      'HARVEST',
-      3,
-      'Torii Gate',
-      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $KAMI....`,
-      `NORMAL`,
-    );
-
-    createNode(
-      2,
-      'HARVEST',
-      7,
-      'Trash Compactor',
-      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.',
-      'SCRAP',
-    );
-
-    createNode(
-      3,
-      'HARVEST',
-      10,
-      'Termite Mound',
-      'A huge termite mound. Apparently, this is sacred to the local insects.',
-      'INSECT',
-    );
-
-    createNode(
-      4,
-      'HARVEST',
-      14,
-      'Occult Circle',
-      'The energy invested here calls out to EERIE Kamigotchi.',
-      'EERIE',
-    );
-
-    createNode(
-      5,
-      'HARVEST',
-      12,
-      'Monolith',
-      'This huge black monolith seems to draw in energy from the rest of the junkyard.',
-      'SCRAP',
-    );
-
-    // create consumable registry items
-    registerFood(1, 'Maple-Flavor Ghost Gum', 25);
-    registerFood(2, 'Pom-Pom Fruit Candy', 100);
-    registerFood(3, 'Gakki Cookie Sticks', 200);
-    registerRevive(1, 'Red Gakki Ribbon', 10);
-
-    // create our hottie merchant ugajin. names are unique
-    createMerchant(1, 'Mina', 13);
-
-    // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
 
+    // ORDER: color, background, body, hand, face
+    systems['system.ERC721.Reveal']._setBaseURI(
+      'https://kami-image.asphodel.io/image/'
+    );
     setUpWorldAPI(systems).initWorld();
 
-    initDependents();
 
     createPlayerAPI(systems).account.register(
       '0x000000000000000000000000000000000000dead',
@@ -158,18 +21,8 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  // @dev inits txes that depned on the world being set up
-  function initDependents() {
-    // Mina
-    setListing(1, 1, 25, 0); // merchant index, item index, buy price, sell price
-    setListing(1, 2, 90, 0);
-    setListing(1, 3, 150, 0);
-    setListing(1, 4, 500, 0);
-  }
-
   /// NOTE: do not use in production
   // @dev give coins for testing
-  // @param amount      amount
   function giveCoins(addy: string, amount: number) {
     return systems['system._devGiveTokens'].executeTyped(addy, amount);
   }
@@ -419,10 +272,13 @@ export function createAdminAPI(systems: any) {
 
   return {
     init,
-    initDependents,
     giveCoins,
     config: {
       set: {
+        raw: setConfig,
+        uri: {
+          base: (v: string) => setConfigString('baseURI', v),
+        },
         account: {
           stamina: {
             base: (v: number) => setConfig('ACCOUNT_STAMINA_BASE', v),
@@ -430,6 +286,10 @@ export function createAdminAPI(systems: any) {
           },
         },
         kami: {
+          mint: {
+            limit: (v: number) => setConfig('MINT_MAX', v),
+            price: (v: number) => setConfig('MINT_PRICE', utils.parseEther(v.toString())),
+          },
           stats: {
             harmony: (v: number) => setConfig('KAMI_BASE_HARMONY', v),
             health: (v: number) => setConfig('KAMI_BASE_HEALTH', v),
@@ -447,6 +307,7 @@ export function createAdminAPI(systems: any) {
               multiplier: {
                 // precision: (v: number) => setConfig('HARVEST_RATE_MULT_PREC', v),  // disabled, no reason to touch
                 affinity: {
+                  base: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_BASE', v),
                   up: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_UP', v),
                   down: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_DOWN', v),
                   precision: (v: number) => setConfig('HARVEST_RATE_MULT_AFF_PREC', v),
