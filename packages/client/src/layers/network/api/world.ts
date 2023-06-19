@@ -54,6 +54,12 @@ export function setUpWorldAPI(systems: any) {
     const numColor = initSingle(color, "COLOR");
     const numFace = initSingle(face, "FACE");
     const numHand = initSingle(hand, "HAND");
+
+    // init max elements and set revealed
+    // ORDER: color, background, body, hand, face
+    systems['system.ERC721.Reveal']._setBaseURI(
+      'https://kami-image.asphodel.io/image/'
+    );
   }
 
   return {

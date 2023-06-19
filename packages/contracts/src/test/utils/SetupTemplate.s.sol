@@ -32,6 +32,7 @@ abstract contract SetupTemplate is TestSetupImports {
     // - registering
     // - minting pets
 
+    _initMetadata();
     _initTraits();
     _initConfigs();
   }
@@ -107,6 +108,11 @@ abstract contract SetupTemplate is TestSetupImports {
   /***********************
    *   inits
    ************************/
+  function _initMetadata() internal {
+    vm.startPrank(deployer);
+    _ERC721RevealSystem._setBaseURI("baseURI.com/");
+    vm.stopPrank();
+  }
 
   // creates bare minimum traits (1 of each)
   // PLACEHOLDER
@@ -263,6 +269,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("LIQ_BOUNTY_BASE", 50);
     _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
 
-    _setConfigString("baseURI", "https://im.asphodel.io/image/");
+    _setConfig("MINT_MAX", 500);
+    _setConfig("MINT_PRICE", 500);
   }
 }

@@ -130,13 +130,6 @@ contract ERC721PetTest is SetupTemplate {
   function testMetadata() public {
     _mintPets(1);
 
-    // console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
-  }
-
-  // only prints mediaURI, does not check if it is accurate
-  function testMediaURI() public {
-    _mintPets(1);
-
-    console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
+    // console.log(_KamiERC721.tokenURI(1));
   }
 }
