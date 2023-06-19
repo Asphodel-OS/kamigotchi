@@ -7,8 +7,7 @@ export function createAdminAPI(systems: any) {
     /////////////////
     // CONFIG
 
-    // this doesnt work without the https:// so it's unused atm
-    setConfigString('baseURI', 'kami-image.asphodel.io/image/');
+    setConfigString('baseURI', 'https://im.asphodel.io/image/');
 
     // Account Stamina
     setConfig('ACCOUNT_STAMINA_BASE', 20);

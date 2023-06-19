@@ -7,6 +7,8 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { LibString } from "solady/utils/LibString.sol";
+
 import { IsConfigComponent, ID as IsConfigCompID } from "components/IsConfigComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -36,7 +38,8 @@ library LibConfig {
   // Packs a string value as a uint256 for a config. Max 32 chars.
   function setValueString(IUintComp components, uint256 id, string memory value) internal {
     require(bytes(value).length <= 32, "LibConfig: string too long");
-    setValue(components, id, uint256(bytes32(bytes(value))));
+    require(bytes(value).length > 0, "LibConfig: string too short");
+    setValue(components, id, uint256(LibString.packOne(value)));
   }
 
   //////////////////
@@ -57,7 +60,7 @@ library LibConfig {
     IUintComp components,
     string memory name
   ) internal view returns (string memory) {
-    return string(abi.encode(getValueOf(components, name)));
+    return LibString.unpackOne((bytes32(abi.encodePacked(getValueOf(components, name)))));
   }
 
   //////////////////
