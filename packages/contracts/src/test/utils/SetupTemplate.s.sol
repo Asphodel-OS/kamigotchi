@@ -122,111 +122,63 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // creates bare minimum traits (1 of each)
   // PLACEHOLDER
+  function registerTrait(
+    uint256 specialIndex,
+    uint256 health,
+    uint256 power,
+    uint256 violence,
+    uint256 harmony,
+    uint256 slots,
+    uint256 rarityTier,
+    string memory affinity,
+    string memory name,
+    string memory traitType
+  ) internal {
+    vm.prank(deployer);
+    __RegistryCreateTraitSystem.executeTyped(
+      specialIndex,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+      rarityTier,
+      affinity,
+      name,
+      traitType
+    );
+  }
+
   function _initTraits() internal {
+    // Bodies
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "BODY");
+
+    // Backgrounds
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "BACKGROUND");
+
+    // Colors
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "COLOR");
+
+    // Faces
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "FACE");
+    registerTrait(2, 100, 100, 100, 100, 0, 1, "NORMAL", "NAME", "FACE");
+    registerTrait(3, 100, 100, 100, 100, 0, 1, "EERIE", "NAME", "FACE");
+    registerTrait(4, 100, 100, 100, 100, 0, 1, "SCRAP", "NAME", "FACE");
+
+    // Hands
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "HAND");
+  }
+
+  function _initItems() internal {
     vm.startPrank(deployer);
-    __RegistryCreateTraitSystem.executeTyped(
-      1, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "INSECT", // affinity
-      "NAME", // name
-      "BODY" // trait type
-    );
 
-    __RegistryCreateTraitSystem.executeTyped(
-      1, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "INSECT", // affinity
-      "NAME", // name
-      "BACKGROUND" // trait type
-    );
+    // food (foodIndex, name, health)
+    __RegistryCreateFoodSystem.executeTyped(1, "Gum", 25); // itemIndex 1
+    __RegistryCreateFoodSystem.executeTyped(2, "Candy", 100); // itemIndex 2
+    __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", 200); // itemIndex 3
 
-    __RegistryCreateTraitSystem.executeTyped(
-      1, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "INSECT", // affinity
-      "NAME", // name
-      "COLOR" // trait type
-    );
-
-    __RegistryCreateTraitSystem.executeTyped(
-      1, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "INSECT", // affinity
-      "NAME", // name
-      "FACE" // trait type
-    );
-
-    __RegistryCreateTraitSystem.executeTyped(
-      2, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "NORMAL", // affinity
-      "NAME", // name
-      "FACE" // trait type
-    );
-
-    __RegistryCreateTraitSystem.executeTyped(
-      3, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "EERIE", // affinity
-      "NAME", // name
-      "FACE" // trait type
-    );
-
-    __RegistryCreateTraitSystem.executeTyped(
-      4, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "SCRAP", // affinity
-      "NAME", // name
-      "FACE" // trait type
-    );
-
-    __RegistryCreateTraitSystem.executeTyped(
-      1, // index
-      100, // health
-      100, // power
-      100, // violence
-      100, // harmony
-      0, // slots
-      1, // rarity tier
-      "INSECT", // affinity
-      "NAME", // name
-      "HAND" // trait type
-    );
+    // revives (reviveIndex, name, health)
+    __RegistryCreateReviveSystem.executeTyped(3, "Ribbon", 10); // itemIndex 4
 
     vm.stopPrank();
   }
