@@ -163,6 +163,10 @@ library LibAccount {
     return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
   }
 
+  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
+    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+  }
+
   // get the address of an Account Operator
   function getOperator(IUintComp components, uint256 id) internal view returns (address) {
     return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).getValue(id);

@@ -20,29 +20,31 @@ contract ERC20Test is SetupTemplate {
     // _ERC20DepositSystem.init(address(token));
     // vm.stopPrank();
 
-    _registerAccount(alice, alice);
+    _registerAccount(0);
   }
 
+  // TODO: randomize inputs
   function testMint() public {
     vm.prank(deployer);
-    __devGiveTokensSystem.executeTyped(alice, 101);
+    __devGiveTokensSystem.executeTyped(_getOperator(0), 101);
 
-    vm.prank(alice);
+    vm.prank(_getOwner(0));
     _ERC20WithdrawSystem.executeTyped(100);
 
-    assertEq(token.balanceOf(alice), 100);
-
-    assertEq(_CoinComponent.getValue(LibAccount.getByOperator(components, alice)), 1);
+    assertEq(token.balanceOf(_getOwner(0)), 100);
+    assertEq(_CoinComponent.getValue(_getAccount(0)), 1);
   }
 
+  // TODO: randomize inputs
   function testBurn() public {
-    testMint();
+    vm.prank(deployer);
+    __devGiveTokensSystem.executeTyped(_getOperator(0), 101);
 
-    vm.prank(alice);
+    vm.startPrank(_getOwner(0));
+    _ERC20WithdrawSystem.executeTyped(100);
     _ERC20DepositSystem.executeTyped(50);
 
-    assertEq(token.balanceOf(alice), 50);
-
-    assertEq(_CoinComponent.getValue(LibAccount.getByOperator(components, alice)), 51);
+    assertEq(token.balanceOf(_getOwner(0)), 50);
+    assertEq(_CoinComponent.getValue(LibAccount.getByOperator(components, _getOperator(0))), 51);
   }
 }
