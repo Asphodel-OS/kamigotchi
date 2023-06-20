@@ -422,6 +422,10 @@ export function createAdminAPI(systems: any) {
     giveCoins,
     config: {
       set: {
+        raw: setConfig,
+        uri: {
+          base: (v: string) => setConfigString('baseURI', v),
+        },
         account: {
           stamina: {
             base: (v: number) => setConfig('ACCOUNT_STAMINA_BASE', v),
