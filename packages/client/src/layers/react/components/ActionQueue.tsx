@@ -4,7 +4,7 @@ import {
   getComponentValueStrict,
 } from '@latticexyz/recs';
 import { map } from 'rxjs';
-import { ActionStateString, ActionState } from '@latticexyz/std-client';
+import { ActionStateString, ActionState } from '../../network/ActionSystem/constants';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 
@@ -40,13 +40,19 @@ export function registerActionQueue() {
     },
     ({ Action }) => {
 
-      const StyledStatus = (status: string) => {
+      const StyledStatus = (status: string, metadata: string) => {
         const text = status.toLowerCase();
         const color = statusColors[text];
+        const reason = metadata.substring(metadata.indexOf(":") + 1);
         return (
-          <Description style={{ color: `${color}`, display: "inline" }}>
-            {text}
-          </Description>
+          <div>
+            <Description style={{ color: `${color}`, display: "inline" }}>
+              {text}
+            </Description>
+            <Description style={{ color: `FF7777` }}>
+              {reason}
+            </Description>
+          </div>
         );
       }
 
@@ -54,10 +60,11 @@ export function registerActionQueue() {
         [...getComponentEntities(Action)].map((entities) => {
           const actionData = getComponentValueStrict(Action, entities);
           let state = ActionStateString[actionData.state as ActionState];
+          let metadata = actionData.metadata ? actionData.metadata : "";
           if (state == "WaitingForTxEvents") state = "Pending";
           return (
             <Description key={`action${entities}`}>
-              {Action.world.entities[entities]}: {StyledStatus(state)}
+              {Action.world.entities[entities]}: {StyledStatus(state, metadata)}
             </Description>
           );
         })

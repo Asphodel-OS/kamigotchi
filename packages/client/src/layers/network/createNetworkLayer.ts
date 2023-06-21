@@ -7,10 +7,10 @@ import {
 } from "@latticexyz/recs";
 import {
   SetupContractConfig,
-  createActionSystem,
   setupMUDNetwork,
 } from "@latticexyz/std-client";
 
+import { createActionSystem } from "./ActionSystem/createActionSystem";
 import { SystemTypes } from "types/SystemTypes";
 import { SystemAbis } from "types/SystemAbis.mjs";
 import { createAdminAPI } from "./api/admin";
