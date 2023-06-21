@@ -64,7 +64,12 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   /////////////////
-  // OWNER OPERATIONS
+  // ACCOUNT Management
+
+  function _fundAccount(uint index, uint amount) internal {
+    vm.prank(deployer);
+    __devGiveTokensSystem.executeTyped(_getOperator(index), amount);
+  }
 
   // get an account by the Owner address' testing index
   function _getAccount(uint256 index) internal view returns (uint256) {
@@ -84,6 +89,9 @@ abstract contract SetupTemplate is TestSetupImports {
     _AccountRegisterSystem.executeTyped(operator, name);
     vm.stopPrank();
   }
+
+  /////////////////
+  // OWNER OPERATIONS
 
   // (public) mint and reveal multiple pets for a calling address
   function _mintPets(uint256 index, uint256 n) internal virtual {
@@ -178,7 +186,7 @@ abstract contract SetupTemplate is TestSetupImports {
     __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", 200); // itemIndex 3
 
     // revives (reviveIndex, name, health)
-    __RegistryCreateReviveSystem.executeTyped(3, "Ribbon", 10); // itemIndex 4
+    __RegistryCreateReviveSystem.executeTyped(1, "Ribbon", 10); // itemIndex 4
 
     vm.stopPrank();
   }

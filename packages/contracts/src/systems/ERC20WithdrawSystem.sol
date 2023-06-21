@@ -20,8 +20,9 @@ contract ERC20WithdrawSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
+    require(amount > 0, "ERC20Withdraw: amt must be > 0");
 
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "ERC20Withdraw: addy has no acc");
 
     LibCoin.dec(components, accountID, amount);
