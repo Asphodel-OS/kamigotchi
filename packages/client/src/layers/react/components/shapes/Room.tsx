@@ -1,11 +1,4 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
 
