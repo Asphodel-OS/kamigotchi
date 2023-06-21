@@ -27,18 +27,11 @@ export const getRoom = (layers: Layers, index: EntityIndex): Room => {
     },
   } = layers;
 
-  const roomEntityIndex = Array.from(
-    runQuery([
-      Has(Location),
-      HasValue(Location, { value: getComponentValue(Location, index)?.value }),
-    ])
-  )[0];
-
   return {
     id: world.entities[index],
     entityIndex: index,
-    name: getComponentValue(Name, roomEntityIndex)?.value as string,
+    name: getComponentValue(Name, index)?.value as string,
     location: (getComponentValue(Location, index)?.value as number) * 1,
-    exits: getComponentValue(Exits, roomEntityIndex)?.value as number[],
+    exits: getComponentValue(Exits, index)?.value as number[],
   };
 };

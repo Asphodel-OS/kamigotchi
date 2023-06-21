@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { map, merge } from 'rxjs';
-import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 import styled from 'styled-components';
 
 import { getCurrentRoom } from 'layers/phaser/utils';
@@ -41,7 +41,14 @@ export function registerMapModal() {
             ])
           )[0];
 
-          const roomData = getRoom(layers, accountEntityIndex);
+          const roomEntityIndex = Array.from(
+            runQuery([
+              Has(Location),
+              HasValue(Location, { value: getComponentValue(Location, accountEntityIndex)?.value }),
+            ])
+          )[0];
+
+          const roomData = getRoom(layers, roomEntityIndex);
           const currentRoom = getCurrentRoom(Location, accountEntityIndex);
           return {
             actions,
