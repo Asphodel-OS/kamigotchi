@@ -64,7 +64,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   /////////////////
-  // ACCOUNT Management
+  // ACCOUNT MANAGEMENT
 
   function _fundAccount(uint index, uint amount) internal {
     vm.prank(deployer);
@@ -119,8 +119,25 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // WORLD POPULATION
 
-  // create a room
-  function _createRoom(string memory name, uint256 location, uint256[] memory exits) internal {
+  // create a room with up to three exits
+  // 0s represent empty inputs
+  function _createRoom(
+    string memory name,
+    uint256 location,
+    uint256 exit1,
+    uint256 exit2,
+    uint256 exit3
+  ) internal {
+    uint256 numExits = 3;
+    if (exit1 == 0) numExits--;
+    if (exit2 == 0) numExits--;
+    if (exit3 == 0) numExits--;
+
+    uint256[] memory exits = new uint256[](numExits);
+    if (numExits > 0) exits[0] = exit1;
+    if (numExits > 1) exits[1] = exit2;
+    if (numExits > 2) exits[2] = exit3;
+
     vm.prank(deployer);
     __RoomCreateSystem.executeTyped(name, location, exits);
   }

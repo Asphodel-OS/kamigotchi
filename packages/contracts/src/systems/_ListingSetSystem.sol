@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
+import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Listing.Set"));
 
@@ -21,10 +22,13 @@ contract _ListingSetSystem is System {
     uint256 merchantID = LibMerchant.getByIndex(components, merchantIndex);
     require(merchantID != 0, "Merchant: does not exist");
 
+    uint256 itemRegistryID = LibRegistryItem.getByItemIndex(components, itemIndex);
+    require(itemRegistryID != 0, "Item: does not exist");
+
     uint256 id = LibListing.get(components, merchantID, itemIndex);
     if (id == 0) LibListing.create(world, components, merchantID, itemIndex, buyPrice, sellPrice);
     else LibListing.update(components, id, buyPrice, sellPrice);
-    return "";
+    return abi.encode(id);
   }
 
   function executeTyped(

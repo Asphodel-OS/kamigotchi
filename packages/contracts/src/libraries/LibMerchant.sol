@@ -61,6 +61,10 @@ library LibMerchant {
   /////////////////
   // GETTERS
 
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexMerchantComponent(getAddressById(components, IndexMerchantCompID)).getValue(id);
+  }
+
   function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
     return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
   }

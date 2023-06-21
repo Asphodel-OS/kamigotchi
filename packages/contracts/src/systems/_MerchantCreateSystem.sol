@@ -21,7 +21,8 @@ contract _MerchantCreateSystem is System {
 
     require(id == 0, "Merchant: already exists");
 
-    return abi.encode(LibMerchant.create(world, components, index, name, location));
+    id = LibMerchant.create(world, components, index, name, location);
+    return abi.encode(id);
   }
 
   function executeTyped(
