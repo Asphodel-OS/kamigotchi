@@ -26,12 +26,18 @@ export function registerOperatorUpdater() {
       rowEnd: 60,
     },
     (layers) => of(layers),
-    () => {
+    (layers) => {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { sound: { volume } } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
+
+      const {
+        network: {
+          actions,
+        },
+      } = layers;
 
       // toggle visibility based on many things
       useEffect(() => {
@@ -58,7 +64,6 @@ export function registerOperatorUpdater() {
 
       const setOperator = async (address: string) => {
         const network = networks.get(selectedAddress);
-        const actions = network!.actions;
         const world = network!.world;
         const api = network!.api.player;
 

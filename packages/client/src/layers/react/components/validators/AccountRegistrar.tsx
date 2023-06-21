@@ -29,6 +29,7 @@ export function registerAccountRegistrar() {
       const {
         network: {
           components: { IsAccount, OwnerAddress },
+          actions
         },
       } = layers;
 
@@ -36,12 +37,13 @@ export function registerAccountRegistrar() {
         map(() => {
           return {
             network: layers.network.network,
+            actions: actions,
           };
         })
       );
     },
 
-    ({ network }) => {
+    ({ network, actions }) => {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
@@ -71,7 +73,6 @@ export function registerAccountRegistrar() {
 
       const createAccount = async (username: string) => {
         const network = networks.get(selectedAddress);
-        const actions = network!.actions;
         const world = network!.world;
         const api = network!.api.player;
 
