@@ -582,16 +582,22 @@ export const rooms: Room[] = [
     },
     objects: [
       {
-        key: 'templecave',
-        path: roomObjectsWorld2.path15to18,
-        offset: { x: -18, y: -15 },
-        onClick: () => triggerRoomMovementModal(18),
+        key: 'templegrass',
+        path: roomObjectsWorld2.path15to11,
+        offset: { x: -8.5, y: 57 },
+        onClick: () => triggerRoomMovementModal(11),
       },
       {
         key: 'templedoor',
         path: roomObjectsWorld2.path15to16,
         offset: { x: 41.3, y: -8.7 },
         onClick: () => triggerRoomMovementModal(16),
+      },
+      {
+        key: 'templecave',
+        path: roomObjectsWorld2.path15to18,
+        offset: { x: -18, y: -15 },
+        onClick: () => triggerRoomMovementModal(18),
       },
     ],
   },
@@ -605,6 +611,14 @@ export const rooms: Room[] = [
       key: 'ost3',
       path: ost3,
     },
+    objects: [
+      {
+        key: 'technofloor',
+        path: roomObjectsWorld2.path16to15,
+        offset: { x: 0, y: 59.1 },
+        onClick: () => triggerRoomMovementModal(15),
+      },
+    ],
   },
   {
     location: 17,
@@ -629,6 +643,12 @@ export const rooms: Room[] = [
     },
     objects: [
       {
+        key: 'cavefloor',
+        path: roomObjectsWorld2.path18to15,
+        offset: { x: 25, y: 53.1 },
+        onClick: () => triggerRoomMovementModal(15),
+      },
+      {
         key: 'cavecrossleft',
         path: roomObjectsWorld2.path18to19,
         offset: { x: -46, y: -5.8 },
@@ -652,5 +672,13 @@ export const rooms: Room[] = [
       key: 'ost3',
       path: ost3,
     },
+    objects: [
+      {
+        key: 'cavefloor',
+        path: roomObjectsWorld2.path19to18,
+        offset: { x: -4, y: 59.1 },
+        onClick: () => triggerRoomMovementModal(18),
+      },
+    ],
   },
 ];

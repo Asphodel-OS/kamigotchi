@@ -3,7 +3,7 @@ import { dataStore } from 'layers/react/store/createStore';
 export const triggerRoomMovementModal = (selectedRoom: number) => {
   const { visibleModals } = dataStore.getState();
 
-  dataStore.setState({
+  !visibleModals.roomMovement && dataStore.setState({
     selectedRoom: selectedRoom,
     visibleModals: {
       ...visibleModals,

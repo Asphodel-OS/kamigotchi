@@ -36,10 +36,13 @@ export function registerOperatorMovementModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.player.account.move(selectedRoom);
+            const roomMovment = await api.player.account.move(selectedRoom);
+            hideModal();
+            return roomMovment;
           },
         });
       };
+
       return (
         <ModalWrapperFull divName='roomMovement' id='roomMovement'>
           <AlignRight>
