@@ -169,7 +169,7 @@ export function registerPartyModal() {
 
       // reveal kami
       const revealKami = async (kami: Kami) => {
-        const actionID = (`Revealing Kami ` + kami.index) as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
           components: {},

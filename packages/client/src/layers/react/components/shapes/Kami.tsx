@@ -1,11 +1,12 @@
 import {
+  Component,
   EntityIndex,
   EntityID,
   Has,
   HasValue,
   getComponentValue,
   runQuery,
-  Component,
+  QueryFragment,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
@@ -45,6 +46,12 @@ export interface Options {
   production?: boolean;
   traits?: boolean;
   namable?: boolean;
+}
+
+// items to query
+export interface QueryOptions {
+  account?: EntityID;
+  state?: string;
 }
 
 // get a Kami from its EnityIndex. includes options for which data to include
@@ -215,4 +222,42 @@ export const getKami = (
   kami.healthRate = healthRate;
 
   return kami;
+};
+
+export const queryKamisX = (
+  layers: Layers,
+  options: QueryOptions,
+  kamiOptions?: Options
+): Kami[] => {
+  const {
+    network: {
+      components: {
+        AccountID,
+        IsPet,
+        State,
+      },
+    },
+  } = layers;
+
+  const toQuery: QueryFragment[] = [Has(IsPet)];
+
+  if (options?.account) {
+    toQuery.push(HasValue(AccountID, { value: options.account }));
+  }
+
+  if (options?.state) {
+    toQuery.push(HasValue(State, { value: options.state }));
+  }
+
+  const kamiIDs = Array.from(
+    runQuery(toQuery)
+  );
+
+  return kamiIDs.map(
+    (index): Kami => getKami(
+      layers,
+      index,
+      kamiOptions
+    )
+  );;
 };

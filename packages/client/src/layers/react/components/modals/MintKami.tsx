@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
+import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
+import { getAccount } from 'layers/react/components/shapes/Account';
+import { Kami, queryKamisX } from 'layers/react/components/shapes/Kami';
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
@@ -25,30 +27,62 @@ export function registerKamiMintModal() {
     (layers) => {
       const {
         network: {
-          components: { IsPet, Balance },
+          network,
+          components: {
+            IsPet,
+            IsAccount,
+            OperatorAddress,
+            State,
+            Value,
+          },
           world,
         },
       } = layers;
 
-      return merge(IsPet.update$, Balance.update$).pipe(
+      return merge(IsPet.update$, Value.update$, State.update$).pipe(
         map(() => {
+          // get the account through the account entity of the controlling wallet
+          const accountIndex = Array.from(
+            runQuery([
+              Has(IsAccount),
+              HasValue(OperatorAddress, {
+                value: network.connectedAddress.get(),
+              }),
+            ])
+          )[0];
+
+          const account = getAccount(layers, accountIndex, { kamis: true });
+
+          const unrevealedKamis = queryKamisX(
+            layers,
+            { account: account.id, state: 'UNREVEALED' }
+          ).reverse();
+
           return {
             layers,
+            unrevealedKamis,
           };
         })
       );
     },
 
-    ({ layers }) => {
+    ({ layers, unrevealedKamis }) => {
       const {
         network: {
           actions,
+          api: { player },
           world,
         },
       } = layers;
 
       const { visibleModals, setVisibleModals, sound: { volume } } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
+
+      useEffect(() => {
+        unrevealedKamis.forEach((kami) => {
+          revealTx(kami);
+        });
+      }, [unrevealedKamis])
 
       /////////////////
       // ACTIONS
@@ -57,7 +91,7 @@ export function registerKamiMintModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = `Minting Kami` as EntityID;
+        const actionID = (amount == 1 ? `Minting Kami` : `Minting Kamis`) as EntityID;
         actions.add({
           id: actionID,
           components: {},
@@ -69,6 +103,23 @@ export function registerKamiMintModal() {
           },
         });
         return actionID;
+      };
+
+      const revealTx = async (kami: Kami) => {
+        const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return player.ERC721.reveal(kami.index);
+          },
+        });
+        await waitForActionCompletion(
+          actions.Action,
+          world.entityToIndex.get(actionID) as EntityIndex
+        );
       };
 
       const handleMinting = (amount: number, value: number) => async () => {

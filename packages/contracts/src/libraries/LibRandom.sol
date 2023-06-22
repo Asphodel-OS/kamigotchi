@@ -16,7 +16,7 @@ library LibRandom {
   function getSeedBlockhash(uint256 blocknumber) internal view returns (uint256 result) {
     // require(block.number - blocknumber <= 256, "LibRandom: blockhash too old");
     result = uint256(blockhash(blocknumber));
-    require(result != 0, "LibRandom: blockhash not available");
+    require(result != 0, "LibRandom: blockhash unavailable. Contact admin");
   }
 
   //////////////////

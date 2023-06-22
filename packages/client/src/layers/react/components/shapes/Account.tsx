@@ -9,7 +9,7 @@ import {
 
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
-import { Kami, getKami } from './Kami';
+import { Kami, queryKamisX } from './Kami';
 import {
   Inventory,
   getInventory,
@@ -124,23 +124,11 @@ export const getAccount = (
 
   // populate Kamis
   if (options?.kamis) {
-    let kamis: Kami[] = [];
-
-    const kamiResults = Array.from(
-      runQuery([
-        Has(IsPet),
-        HasValue(AccountID, { value: account.id })
-      ])
+    account.kamis = queryKamisX(
+      layers,
+      { account: account.id },
+      { deaths: true, production: true, traits: true }
     );
-
-    kamis = kamiResults.map(
-      (index): Kami => getKami(
-        layers,
-        index,
-        { deaths: true, production: true, traits: true }
-      )
-    );
-    account.kamis = kamis;
   }
 
   /////////////////
