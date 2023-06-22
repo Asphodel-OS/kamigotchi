@@ -182,51 +182,41 @@ library LibInventory {
   // QUERIES
 
   // Get the specified inventory instance.
-  // NOTE: only really useful for fungible inventory instances
+  // NOTE: only useful for fungible inventory instances
   function get(
     IUintComp components,
     uint256 holderID,
     uint256 itemIndex
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, holderID, itemIndex);
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdHolderCompID),
+      abi.encode(holderID)
+    );
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexItemCompID),
+      abi.encode(itemIndex)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
     if (results.length > 0) result = results[0];
   }
 
+  // get all the inventories belonging to a holder
   function getAllForHolder(
     IUintComp components,
     uint256 holderID
   ) internal view returns (uint256[] memory) {
-    return _getAllX(components, holderID, 0);
-  }
-
-  // Get all non-fungible(item) inventory entities matching filters. 0 values indicate no filter.
-  function _getAllX(
-    IUintComp components,
-    uint256 holderID,
-    uint256 itemIndex
-  ) internal view returns (uint256[] memory) {
-    uint256 setFilters; // number of optional non-zero filters
-    if (holderID != 0) setFilters++;
-    if (itemIndex != 0) setFilters++;
-
-    uint256 filterCount = 1; // number of mandatory filters
-    QueryFragment[] memory fragments = new QueryFragment[](setFilters + filterCount);
+    QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
-
-    if (holderID != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IdHolderCompID),
-        abi.encode(holderID)
-      );
-    }
-    if (itemIndex != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexItemCompID),
-        abi.encode(itemIndex)
-      );
-    }
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdHolderCompID),
+      abi.encode(holderID)
+    );
 
     return LibQuery.query(fragments);
   }

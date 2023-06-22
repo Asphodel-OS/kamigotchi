@@ -20,6 +20,7 @@ contract ListingSellSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 merchantID = LibListing.getMerchant(components, listingID);
 
+    require(accountID != 0, "Account: not found");
     require(
       LibMerchant.sharesRoomWith(components, merchantID, accountID),
       "Listing.Sell(): must be in same room as merchant"

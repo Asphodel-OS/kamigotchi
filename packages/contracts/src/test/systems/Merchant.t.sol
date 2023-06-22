@@ -1,37 +1,43 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
+
 import "test/utils/SetupTemplate.s.sol";
 
-import { KamiERC20 } from "tokens/KamiERC20.sol";
-
 contract MerchantTest is SetupTemplate {
-  KamiERC20 token;
+  // structure of Merchant data for test purposes
+  struct TestMerchantData {
+    uint256 index;
+    uint256 location;
+    string name;
+  }
+
+  // structure of Listing data for test purposes
+  struct TestListingData {
+    uint256 merchantIndex;
+    uint256 itemIndex;
+    uint256 priceBuy;
+    uint256 priceSell;
+  }
 
   function setUp() public override {
     super.setUp();
-    token = _ERC20ProxySystem.getToken();
 
     // create rooms
     _createRoom("testRoom1", 1, 2, 3, 0);
     _createRoom("testRoom2", 2, 1, 3, 0);
     _createRoom("testRoom3", 3, 1, 2, 0);
 
-    // register and fund accounts
-    _registerAccount(0);
-    _registerAccount(1);
-    _fundAccount(0, 1e5);
-    _fundAccount(1, 1e5);
-
     _initItems();
     // 1. gum    = 25  heal
     // 2. candy  = 100 heal
     // 3. sticks = 200 heal
     // 4. ribbon = 10  heal, revive
-
-    // create merchant and add items
-    // add items to merchant
   }
+
+  /////////////////
+  // HELPER FUNCTIONS
 
   function _createMerchant(
     uint256 index,
@@ -39,8 +45,7 @@ contract MerchantTest is SetupTemplate {
     string memory name
   ) public returns (uint256) {
     vm.prank(deployer);
-    bytes memory encodedMerchantID = __MerchantCreateSystem.executeTyped(index, name, location);
-    return abi.decode(encodedMerchantID, (uint256));
+    return abi.decode(__MerchantCreateSystem.executeTyped(index, name, location), (uint256));
   }
 
   function _setListing(
@@ -50,17 +55,32 @@ contract MerchantTest is SetupTemplate {
     uint256 priceSell
   ) public returns (uint256) {
     vm.prank(deployer);
-    bytes memory encodedListingID = __ListingSetSystem.executeTyped(
-      index,
-      itemId,
-      priceBuy,
-      priceSell
-    );
-    return abi.decode(encodedListingID, (uint256));
+    return
+      abi.decode(__ListingSetSystem.executeTyped(index, itemId, priceBuy, priceSell), (uint256));
+  }
+
+  function _buyFromListing(uint256 playerIndex, uint256 listingID, uint256 amount) internal {
+    vm.prank(_getOperator(playerIndex));
+    _ListingBuySystem.executeTyped(listingID, amount);
+  }
+
+  function _sellToListing(uint256 playerIndex, uint256 listingID, uint256 amount) internal {
+    vm.prank(_getOperator(playerIndex));
+    _ListingSellSystem.executeTyped(listingID, amount);
+  }
+
+  function _getItemBalance(uint256 playerIndex, uint256 itemIndex) internal view returns (uint256) {
+    uint256 accountID = _getAccount(playerIndex);
+    console.log("playerIndex: %s", playerIndex);
+    console.log("itemIndex: %s", itemIndex);
+    console.log("accountID: %s", accountID);
+    // uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
+    // return LibInventory.getBalance(components, inventoryID);
+    return 2;
   }
 
   // test the creation of a merchant and the setting of its fields
-  function testCreateMerchant() public {
+  function testMerchantCreation() public {
     // check that non-deployer cannot create a merchant
     for (uint256 i = 0; i < 5; i++) {
       vm.prank(_getOwner(0));
@@ -142,20 +162,13 @@ contract MerchantTest is SetupTemplate {
     }
   }
 
-  struct TestListingData {
-    uint256 merchantIndex;
-    uint256 itemIndex;
-    uint256 priceBuy;
-    uint256 priceSell;
-  }
-
   // test the creation of a listing and the setting of its fields
   // listings work differently than merchants in that:
   // - they don't have an index unto themselves
   // - a listing is identified by MerchantIndex and ItemIndex
   // - there is a single EP for both creating and updating a listing
   // - whether a listing is created or updated is autodetected based on its existence
-  function testSetListings() public {
+  function testListingSetting() public {
     // create two merchants
     _createMerchant(1, 1, "merchant1");
     _createMerchant(2, 2, "merchant2");
@@ -261,5 +274,121 @@ contract MerchantTest is SetupTemplate {
         invalidItemListings[i].priceSell
       );
     }
+  }
+
+  function testListingInteractionConstraints() public {
+    // create two merchants
+    _createMerchant(1, 1, "merchant1");
+    _createMerchant(2, 2, "merchant2");
+
+    // create listings for both merchants
+    uint256 numListings = 4;
+    TestListingData[] memory listings1 = new TestListingData[](numListings);
+    listings1[0] = TestListingData(1, 1, 80, 40);
+    listings1[1] = TestListingData(1, 2, 60, 30);
+    listings1[2] = TestListingData(1, 3, 40, 20);
+    listings1[3] = TestListingData(1, 4, 20, 10);
+
+    TestListingData[] memory listings2 = new TestListingData[](numListings);
+    listings2[0] = TestListingData(2, 1, 80, 40);
+    listings2[1] = TestListingData(2, 2, 60, 30);
+    listings2[2] = TestListingData(2, 3, 40, 20);
+    listings2[3] = TestListingData(2, 4, 20, 10);
+
+    uint256[] memory listingIDs1 = new uint256[](numListings);
+    uint256[] memory listingIDs2 = new uint256[](numListings);
+    for (uint256 i = 0; i < numListings; i++) {
+      listingIDs1[i] = _setListing(
+        listings1[i].merchantIndex,
+        listings1[i].itemIndex,
+        listings1[i].priceBuy,
+        listings1[i].priceSell
+      );
+      listingIDs2[i] = _setListing(
+        listings2[i].merchantIndex,
+        listings2[i].itemIndex,
+        listings2[i].priceBuy,
+        listings2[i].priceSell
+      );
+    }
+
+    // register and fund accounts. all accounts start in room 1
+    uint256 numAccounts = 5;
+    for (uint256 i = 0; i < numAccounts; i++) {
+      _registerAccount(i);
+      _fundAccount(i, 1e5);
+    }
+
+    // test that players cannot interact with their Owner wallets
+    for (uint256 i = 0; i < numAccounts; i++) {
+      for (uint256 j = 0; j < numListings; j++) {
+        vm.prank(_getOwner(i));
+        vm.expectRevert("Account: not found");
+        _ListingBuySystem.executeTyped(listingIDs1[j], 0);
+
+        vm.prank(_getOwner(i));
+        vm.expectRevert("Account: not found");
+        _ListingSellSystem.executeTyped(listingIDs1[j], 0);
+      }
+    }
+
+    // from room 1
+    // test that players CAN interact with merchant 1 listings
+    // test that players CANNOT interact with merchant 2 listings
+    for (uint256 i = 0; i < numAccounts; i++) {
+      for (uint256 j = 0; j < numListings; j++) {
+        uint256 amt = j + 1;
+        _buyFromListing(i, listingIDs1[j], amt);
+        _sellToListing(i, listingIDs1[j], amt);
+
+        vm.prank(_getOperator(i));
+        vm.expectRevert("Listing.Buy(): must be in same room as merchant");
+        _ListingBuySystem.executeTyped(listingIDs2[j], amt);
+
+        vm.prank(_getOperator(i));
+        vm.expectRevert("Listing.Sell(): must be in same room as merchant");
+        _ListingSellSystem.executeTyped(listingIDs2[j], amt);
+      }
+    }
+
+    // move all accounts to room 2
+    for (uint256 i = 0; i < numAccounts; i++) {
+      _moveAccount(i, 2);
+    }
+
+    // from room 2
+    // test that players CANNOT interact with merchant 1 listings
+    // test that players CAN interact with merchant 2 listings
+    for (uint256 i = 0; i < numAccounts; i++) {
+      for (uint256 j = 0; j < numListings; j++) {
+        uint256 amt = j + 1;
+        vm.prank(_getOperator(i));
+        vm.expectRevert("Listing.Buy(): must be in same room as merchant");
+        _ListingBuySystem.executeTyped(listingIDs1[j], amt);
+
+        vm.prank(_getOperator(i));
+        vm.expectRevert("Listing.Sell(): must be in same room as merchant");
+        _ListingSellSystem.executeTyped(listingIDs1[j], amt);
+
+        _buyFromListing(i, listingIDs2[j], amt);
+        _sellToListing(i, listingIDs2[j], amt);
+      }
+    }
+  }
+
+  // this time we're using this one to save gas..
+  struct BalanceTestData {
+    uint16 numIterations;
+    uint8 numMerchants;
+    uint8 numItems;
+    uint8 numAccounts;
+    uint8 playerIndex;
+    uint8 itemIndex;
+    uint16 buyPrice;
+    uint16 sellPrice;
+    uint16 stockInitial;
+    uint16 stockChange;
+    uint24 balanceInitial;
+    uint24 balanceChange;
   }
 }
