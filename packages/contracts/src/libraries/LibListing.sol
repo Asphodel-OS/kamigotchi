@@ -49,7 +49,7 @@ library LibListing {
   function update(IUintComp components, uint256 id, uint256 buyPrice, uint256 sellPrice) internal {
     if (buyPrice == 0) removeBuyPrice(components, id);
     else setBuyPrice(components, id, buyPrice);
-    if (sellPrice != 0) removeSellPrice(components, id);
+    if (sellPrice == 0) removeSellPrice(components, id);
     else setSellPrice(components, id, sellPrice);
   }
 
