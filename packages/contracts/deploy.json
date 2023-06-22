@@ -112,8 +112,8 @@
       "name": "_ListingSetSystem",
       "writeAccess": [
         "IsListingComponent",
-        "IdMerchantComponent",
         "IndexItemComponent",
+        "IndexMerchantComponent",
         "PriceBuyComponent",
         "PriceSellComponent"
       ]

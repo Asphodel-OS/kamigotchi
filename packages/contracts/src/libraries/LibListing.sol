@@ -9,6 +9,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdMerchantComponent, ID as IdMerchantCompID } from "components/IdMerchantComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
+import { IndexMerchantComponent, ID as IndexMerchantCompID } from "components/IndexMerchantComponent.sol";
 import { IsListingComponent, ID as IsListingCompID } from "components/IsListingComponent.sol";
 import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComponent.sol";
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
@@ -28,14 +29,14 @@ library LibListing {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 merchantID,
+    uint256 merchantIndex,
     uint256 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsListingComponent(getAddressById(components, IsListingCompID)).set(id);
-    IdMerchantComponent(getAddressById(components, IdMerchantCompID)).set(id, merchantID);
+    IndexMerchantComponent(getAddressById(components, IndexMerchantCompID)).set(id, merchantIndex);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
@@ -126,9 +127,13 @@ library LibListing {
   /////////////////
   // GETTERS
 
-  // return the merchant ID of a listing
+  // return the ID of the merchant that hosts a listing
   function getMerchant(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdMerchantComponent(getAddressById(components, IdMerchantCompID)).getValue(id);
+    return LibMerchant.getByIndex(components, getMerchantIndex(components, id));
+  }
+
+  function getMerchantIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexMerchantComponent(getAddressById(components, IndexMerchantCompID)).getValue(id);
   }
 
   // return the item index of a listing
@@ -149,45 +154,45 @@ library LibListing {
   /////////////////
   // QUERIES
 
-  // gets an item listing from a merchant by its index
+  // gets an item listing from a merchant by its indices
   function get(
     IUintComp components,
-    uint256 merchantID,
+    uint256 merchantIndex,
     uint256 itemIndex
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, merchantID, itemIndex);
+    uint256[] memory results = _getAllX(components, merchantIndex, itemIndex);
     if (results.length != 0) {
       result = results[0];
     }
   }
 
-  // gets all listings from a merchant
+  // gets all listings from a merchant by its index
   function getAllForMerchant(
     IUintComp components,
-    uint256 merchantID
+    uint256 merchantIndex
   ) internal view returns (uint256[] memory) {
-    return _getAllX(components, merchantID, 0);
+    return _getAllX(components, merchantIndex, 0);
   }
 
   // Retrieves all listingsbased on any defined filters
   function _getAllX(
     IUintComp components,
-    uint256 merchantID,
+    uint256 merchantIndex,
     uint256 itemIndex
   ) internal view returns (uint256[] memory) {
     uint256 numFilters;
-    if (merchantID != 0) numFilters++;
+    if (merchantIndex != 0) numFilters++;
     if (itemIndex != 0) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsListingCompID), "");
 
     uint256 filterCount;
-    if (merchantID != 0) {
+    if (merchantIndex != 0) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IdMerchantCompID),
-        abi.encode(merchantID)
+        getComponentById(components, IndexMerchantCompID),
+        abi.encode(merchantIndex)
       );
     }
     if (itemIndex != 0) {

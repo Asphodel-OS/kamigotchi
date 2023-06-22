@@ -19,14 +19,13 @@ contract _ListingSetSystem is System {
       arguments,
       (uint256, uint256, uint256, uint256)
     );
-    uint256 merchantID = LibMerchant.getByIndex(components, merchantIndex);
-    require(merchantID != 0, "Merchant: does not exist");
 
-    uint256 itemRegistryID = LibRegistryItem.getByItemIndex(components, itemIndex);
-    require(itemRegistryID != 0, "Item: does not exist");
+    require(LibMerchant.getByIndex(components, merchantIndex) != 0, "Merchant: does not exist");
+    require(LibRegistryItem.getByItemIndex(components, itemIndex) != 0, "Item: does not exist");
 
-    uint256 id = LibListing.get(components, merchantID, itemIndex);
-    if (id == 0) LibListing.create(world, components, merchantID, itemIndex, buyPrice, sellPrice);
+    uint256 id = LibListing.get(components, merchantIndex, itemIndex);
+    if (id == 0)
+      id = LibListing.create(world, components, merchantIndex, itemIndex, buyPrice, sellPrice);
     else LibListing.update(components, id, buyPrice, sellPrice);
     return abi.encode(id);
   }
