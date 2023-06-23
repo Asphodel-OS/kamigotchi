@@ -161,12 +161,12 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
     // wsRpc: "wss://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg",
     // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
     // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
-    snapshotUrl: "https://test-snapshot.asphodel.io:50061",
+    snapshotUrl: "https://test-snapshot-2.asphodel.io",
 
     // checkpointUrl: undefined,
     chainId: 420,
-    worldAddress: "0xcbde39129BD681C7A3A73B1B3489f2128c79700c",
-    initialBlockNumber: 10144639,
+    worldAddress: "0xfd517446f59a7005B25130affbF8eF78cb2EC210",
+    initialBlockNumber: 11042217,
   };
 
   // EOAs and privatekey
