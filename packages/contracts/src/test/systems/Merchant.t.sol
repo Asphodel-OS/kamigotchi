@@ -71,12 +71,8 @@ contract MerchantTest is SetupTemplate {
 
   function _getItemBalance(uint256 playerIndex, uint256 itemIndex) internal view returns (uint256) {
     uint256 accountID = _getAccount(playerIndex);
-    console.log("playerIndex: %s", playerIndex);
-    console.log("itemIndex: %s", itemIndex);
-    console.log("accountID: %s", accountID);
-    // uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    // return LibInventory.getBalance(components, inventoryID);
-    return 2;
+    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
+    return LibInventory.getBalance(components, inventoryID);
   }
 
   // test the creation of a merchant and the setting of its fields
@@ -376,19 +372,106 @@ contract MerchantTest is SetupTemplate {
     }
   }
 
-  // this time we're using this one to save gas..
+  // we're using this one to save on stack space
   struct BalanceTestData {
-    uint16 numIterations;
     uint8 numMerchants;
     uint8 numItems;
     uint8 numAccounts;
     uint8 playerIndex;
     uint8 itemIndex;
-    uint16 buyPrice;
-    uint16 sellPrice;
-    uint16 stockInitial;
-    uint16 stockChange;
+    uint24 buyPrice;
+    uint24 sellPrice;
+    uint24 stockInitial;
+    uint24 stockChange;
     uint24 balanceInitial;
     uint24 balanceChange;
+  }
+
+  function testListingInteractionBalances() public {
+    BalanceTestData memory testData = BalanceTestData(3, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    // create the merchant and its listings
+    uint256[] memory listingIDs = new uint256[](testData.numMerchants * testData.numItems);
+    for (uint256 i = 0; i < testData.numMerchants; i++) {
+      _createMerchant(i, 1, "merchant");
+
+      for (uint256 j = 0; j < testData.numItems; j++) {
+        testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on merchant
+        listingIDs[i * testData.numItems + j] = _setListing(
+          i,
+          j + 1,
+          testData.buyPrice,
+          testData.buyPrice / 2
+        );
+      }
+    }
+
+    // register and fund accounts to varying degrees. all accounts start in room 1
+    for (uint256 i = 0; i < testData.numAccounts; i++) {
+      _registerAccount(i);
+      _fundAccount(i, (i + 1) * 1e4);
+
+      // the below is used to circumvent a gas prediction issue that
+      // foundry seems to have when the inventories aren't populated
+      for (uint j = 0; j < listingIDs.length; j++) {
+        vm.prank(_getOperator(i));
+        _ListingBuySystem.executeTyped(listingIDs[j], 1);
+      }
+    }
+
+    // test that players can buy and sell from listings and that balances are
+    // updated accordingly. tx should revert when funds are insufficient
+    uint256 randN;
+    uint256 listingID = 1;
+    uint256 numIterations = 50;
+    for (uint256 i = 0; i < numIterations; i++) {
+      randN = uint256(keccak256(abi.encode(randN ^ (randN >> (1 << 7)))));
+      listingID = listingIDs[randN % listingIDs.length];
+      testData.playerIndex = uint8(randN % testData.numAccounts);
+      testData.itemIndex = uint8(LibListing.getItemIndex(components, listingID));
+      testData.stockInitial = uint24(_getItemBalance(testData.playerIndex, testData.itemIndex)); // item balance
+      testData.stockChange = uint24((randN % 100) + 1); // 1-100
+      testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $KAMI balance
+
+      if (i % 2 == 0) {
+        // buy case
+        testData.buyPrice = uint24(LibListing.getBuyPrice(components, listingID));
+        testData.balanceChange = testData.stockChange * testData.buyPrice;
+        if (testData.balanceChange > _getAccountBalance(testData.playerIndex)) {
+          vm.prank(_getOperator(testData.playerIndex));
+          vm.expectRevert("Coin: insufficient balance");
+          _ListingBuySystem.executeTyped(listingID, testData.stockChange);
+        } else {
+          _buyFromListing(testData.playerIndex, listingID, testData.stockChange);
+          assertEq(
+            _getAccountBalance(testData.playerIndex),
+            testData.balanceInitial - testData.balanceChange
+          );
+          assertEq(
+            _getItemBalance(testData.playerIndex, testData.itemIndex),
+            testData.stockInitial + testData.stockChange
+          );
+        }
+      } else {
+        // sell case
+        testData.sellPrice = uint24(LibListing.getSellPrice(components, listingID));
+        testData.balanceChange = testData.stockChange * testData.sellPrice;
+        if (testData.stockChange > _getItemBalance(testData.playerIndex, testData.itemIndex)) {
+          vm.prank(_getOperator(testData.playerIndex));
+          vm.expectRevert("Inventory: insufficient balance");
+          _ListingSellSystem.executeTyped(listingID, testData.stockChange);
+        } else {
+          _sellToListing(testData.playerIndex, listingID, testData.stockChange);
+          assertEq(
+            _getAccountBalance(testData.playerIndex),
+            testData.balanceInitial + testData.balanceChange
+          );
+          assertEq(
+            _getItemBalance(testData.playerIndex, testData.itemIndex),
+            testData.stockInitial - testData.stockChange
+          );
+        }
+      }
+    }
   }
 }
