@@ -9,6 +9,7 @@
     "lint": "eslint . --fix --ext .ts",
     "start": "yarn cache:clear && yarn parcel src/index.html --port 3000"
   },
+  "proxy": "https://ritsyd-foprel.urbox.one",
   "devDependencies": {
     "@latticexyz/cli": "^1.34.0",
     "@parcel/core": "^2.8.3",
