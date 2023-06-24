@@ -71,6 +71,7 @@ import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovmentModal';
 import { roomObjectsWorld1, roomObjectsWorld2 } from 'assets/images/room objects';
+import { triggerLeaderboardModal } from 'layers/phaser/utils/triggerLeaderboardModal';
 
 // NOTE: This is the most horrendous, hardcoded known to mankind. We should
 // move most things here to the store and populate the information from onchain.
@@ -678,6 +679,12 @@ export const rooms: Room[] = [
         path: roomObjectsWorld2.path19to18,
         offset: { x: -4, y: 59.1 },
         onClick: () => triggerRoomMovementModal(18),
+      },
+      {
+        key: 'dharmawheel',
+        path: roomObjectsWorld2.dharmawheel,
+        offset: { x: 0, y: 0 },
+        onClick: () => triggerLeaderboardModal(),
       },
     ],
   },

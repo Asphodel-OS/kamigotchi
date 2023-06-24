@@ -14,6 +14,8 @@ import path18to19 from './world2obj/18cavecrossroads/path18to19.png';
 import path18to20 from './world2obj/18cavecrossroads/path18to20.png';
 import path19to18 from './world2obj/19violencetemple/path19to18.png';
 
+import dharmawheel from './world2obj/19violencetemple/dharmawheel.png';
+
 export const roomObjectsWorld2 = {
   path15to11,
   path15to16,
@@ -24,4 +26,5 @@ export const roomObjectsWorld2 = {
   path18to19,
   path18to20,
   path19to18,
+  dharmawheel,
 };
