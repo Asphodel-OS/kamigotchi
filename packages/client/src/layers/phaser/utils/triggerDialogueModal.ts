@@ -12,10 +12,10 @@ export const triggerDialogueModal = (description: string[]) => {
   // modals to properly capture any clicks on their rendered interface
   // (ModalWrapper does this)
   if (
-    visibleModals.kamisNaming
-    || visibleModals.nameKami
-    || visibleModals.bridgeERC20
-    || visibleModals.bridgeERC721
+    visibleModals.kamisNaming ||
+    visibleModals.nameKami ||
+    visibleModals.bridgeERC20 ||
+    visibleModals.bridgeERC721
   ) {
     return;
   }
@@ -37,6 +37,7 @@ export const triggerDialogueModal = (description: string[]) => {
         nameKami: false,
         node: false,
         party: false,
+        leaderboard: false,
       },
     });
   } else {

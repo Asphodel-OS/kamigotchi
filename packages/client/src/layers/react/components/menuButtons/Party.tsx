@@ -18,7 +18,7 @@ export function registerPartyButton() {
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide = { dialogue: false };
+      const modalsToHide = { dialogue: false, leaderboard: false };
 
       return (
         <MenuButton

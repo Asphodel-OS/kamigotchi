@@ -22,7 +22,8 @@ export const triggerERC20BridgeModal = () => {
         kamisNaming: false,
         map: false,
         nameKami: false,
-        node: false
+        node: false,
+        leaderboard: false,
       },
     });
   } else {
