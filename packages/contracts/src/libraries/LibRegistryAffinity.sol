@@ -56,6 +56,7 @@ library LibRegistryAffinity {
     uint256 multiplier = multDown;
     if (LibString.eq(sourceAff, "NORMAL")) multiplier = multBase;
     else if (LibString.eq(targetAff, "NORMAL")) multiplier = multBase;
+    else if (LibString.eq(targetAff, "")) multiplier = multBase;
     else if (LibString.eq(sourceAff, targetAff)) multiplier = multUp;
     return multiplier;
   }

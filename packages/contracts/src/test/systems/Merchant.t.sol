@@ -6,13 +6,6 @@ import { LibString } from "solady/utils/LibString.sol";
 import "test/utils/SetupTemplate.s.sol";
 
 contract MerchantTest is SetupTemplate {
-  // structure of Merchant data for test purposes
-  struct TestMerchantData {
-    uint256 index;
-    uint256 location;
-    string name;
-  }
-
   // structure of Listing data for test purposes
   struct TestListingData {
     uint256 merchantIndex;

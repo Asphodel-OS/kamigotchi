@@ -66,6 +66,14 @@ library LibNode {
     return AffinityComponent(getAddressById(components, AffCompID)).has(id);
   }
 
+  function hasDescription(IUintComp components, uint256 id) internal view returns (bool) {
+    return DescriptionComponent(getAddressById(components, DescCompID)).has(id);
+  }
+
+  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
+    return NameComponent(getAddressById(components, NameCompID)).has(id);
+  }
+
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getType(components, id), "HARVEST");
   }
@@ -74,12 +82,36 @@ library LibNode {
   // GETTERS
 
   // optional field for specific types of nodes, namely Harvesting Types
-  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
-    return AffinityComponent(getAddressById(components, AffCompID)).getValue(id);
+  function getAffinity(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (string memory affinity) {
+    if (hasAffinity(components, id)) {
+      affinity = AffinityComponent(getAddressById(components, AffCompID)).getValue(id);
+    }
+  }
+
+  function getDescription(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (string memory description) {
+    if (hasDescription(components, id)) {
+      description = DescriptionComponent(getAddressById(components, DescCompID)).getValue(id);
+    }
+  }
+
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).getValue(id);
   }
 
   function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
     return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
+  }
+
+  function getName(IUintComp components, uint256 id) internal view returns (string memory name) {
+    if (hasName(components, id)) {
+      name = NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    }
   }
 
   // The type of node (e.g. Harvesting | Healing | etc)
