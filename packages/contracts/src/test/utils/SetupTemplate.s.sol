@@ -30,7 +30,7 @@ abstract contract SetupTemplate is TestSetupImports {
     // - populate item registries
 
     _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
-    _initConfigs();
+    _initAllConfigs();
   }
 
   /////////////////
@@ -166,7 +166,7 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     bytes memory nodeID = __NodeCreateSystem.executeTyped(
       index,
-      "HARVESTING",
+      "HARVEST",
       location,
       name,
       description,
@@ -275,21 +275,41 @@ abstract contract SetupTemplate is TestSetupImports {
     __ConfigSetStringSystem.executeTyped(key, value);
   }
 
-  function _initConfigs() internal {
-    // Base URI
-    _setConfigString("baseURI", "https://image.asphodel.io/kami/");
+  function _initAllConfigs() internal {
+    _initAccountConfigs();
+    _initBaseConfigs();
+    _initMintConfigs();
+    _initRevealConfigs();
+    _initHarvestConfigs();
+    _initLiquidationConfigs();
+  }
 
+  function _initBaseConfigs() internal {
+    _setConfigString("baseURI", "https://image.asphodel.io/kami/");
+  }
+
+  function _initAccountConfigs() internal {
     // Account Stamina
     _setConfig("ACCOUNT_STAMINA_BASE", 20);
     _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
+  }
 
+  function _initMintConfigs() internal {
+    // Mint Settings
+    _setConfig("MINT_MAX", 500);
+    _setConfig("MINT_PRICE", 0);
+  }
+
+  function _initRevealConfigs() internal {
     // Kami Stats
     _setConfig("KAMI_BASE_HEALTH", 50);
     _setConfig("KAMI_BASE_POWER", 10);
     _setConfig("KAMI_BASE_VIOLENCE", 10);
     _setConfig("KAMI_BASE_HARMONY", 10);
     _setConfig("KAMI_BASE_SLOTS", 0);
+  }
 
+  function _initHarvestConfigs() internal {
     // Harvest Rates
     _setConfig("HARVEST_RATE_PREC", 9);
     _setConfig("HARVEST_RATE_BASE", 100);
@@ -306,7 +326,9 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("HEALTH_RATE_HEAL_PREC", 6);
     _setConfig("HEALTH_RATE_HEAL_BASE", 100); // in respect to harmony
     _setConfig("HEALTH_RATE_HEAL_BASE_PREC", 3);
+  }
 
+  function _initLiquidationConfigs() internal {
     // Liquidation Idle Requirements
     _setConfig("LIQ_IDLE_REQ", 300);
 
@@ -321,9 +343,5 @@ abstract contract SetupTemplate is TestSetupImports {
     // Liquidation Bounty
     _setConfig("LIQ_BOUNTY_BASE", 50);
     _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
-
-    // Mint Settings
-    _setConfig("MINT_MAX", 500);
-    _setConfig("MINT_PRICE", 0);
   }
 }
