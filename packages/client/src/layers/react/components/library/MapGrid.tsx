@@ -238,7 +238,7 @@ const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
   const currentRoom = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
   const isHighlighted = currentRoom === highlightedRoom;
   const isNeighbor =
-    highlightedRoom && currentRoom && NEIGHBOR_ROOMS[highlightedRoom - 1].includes(currentRoom);
+    highlightedRoom && currentRoom && NEIGHBOR_ROOMS[highlightedRoom - 1]?.includes(currentRoom);
   const highlightStyle = isHighlighted
     ? { border: BORDER_COLORS.default }
     : isNeighbor
