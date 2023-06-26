@@ -33,7 +33,7 @@ contract _NodeCreateSystem is System {
     if (!LibString.eq(affinity, "")) {
       LibNode.setAffinity(components, id, affinity);
     }
-    return "";
+    return abi.encode(id);
   }
 
   function executeTyped(

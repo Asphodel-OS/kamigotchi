@@ -37,20 +37,20 @@ abstract contract SetupTemplate is TestSetupImports {
   // EOAs
 
   // get an owner by its (testing) EOA index
-  function _getOwner(uint256 playerIndex) internal view returns (address) {
+  function _getOwner(uint playerIndex) internal view returns (address) {
     require(playerIndex < _owners.length, "playerIndex out of bounds");
     return _owners[playerIndex];
   }
 
   // get an operator by its (testing) EOA playerIndex
-  function _getOperator(uint256 playerIndex) internal view returns (address) {
+  function _getOperator(uint playerIndex) internal view returns (address) {
     require(playerIndex < _owners.length, "playerIndex out of bounds");
     return _operators[_owners[playerIndex]];
   }
 
   // create multiple sets of owner/operator pair addresses
-  function _createOwnerOperatorPairs(uint256 n) internal {
-    for (uint256 i = 0; i < n; i++) {
+  function _createOwnerOperatorPairs(uint n) internal {
+    for (uint i = 0; i < n; i++) {
       _createOwnerOperatorPair();
     }
   }
@@ -73,20 +73,20 @@ abstract contract SetupTemplate is TestSetupImports {
     __devGiveTokensSystem.executeTyped(operator, amount);
   }
 
-  function _getAccountBalance(uint playerIndex) internal view returns (uint256) {
+  function _getAccountBalance(uint playerIndex) internal view returns (uint) {
     uint accountID = _getAccount(playerIndex);
     return LibCoin.get(components, accountID);
   }
 
   // get an account by the Owner address' testing playerIndex
-  function _getAccount(uint256 playerIndex) internal view returns (uint256) {
+  function _getAccount(uint playerIndex) internal view returns (uint) {
     require(playerIndex < _owners.length, "index out of bounds");
     address owner = _owners[playerIndex];
     return LibAccount.getByOwner(components, owner);
   }
 
   // create an account. autogenerate names by the address for simplicity
-  function _registerAccount(uint256 playerIndex) internal {
+  function _registerAccount(uint playerIndex) internal {
     address owner = _owners[playerIndex];
     address operator = _operators[owner];
 
@@ -100,19 +100,19 @@ abstract contract SetupTemplate is TestSetupImports {
   // OWNER ACTIONS
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint256 playerIndex, uint256 n) internal virtual {
-    for (uint256 i = 0; i < n; i++) {
+  function _mintPets(uint playerIndex, uint n) internal virtual {
+    for (uint i = 0; i < n; i++) {
       _mintPet(playerIndex);
     }
   }
 
   // (public) mint and reveal a single pet to a specified address
-  function _mintPet(uint256 playerIndex) internal virtual returns (uint256 id) {
+  function _mintPet(uint playerIndex) internal virtual returns (uint id) {
     address owner = _owners[playerIndex];
     address operator = _operators[owner];
 
     vm.startPrank(owner);
-    id = abi.decode(_ERC721MintSystem.publicMint(1), (uint256[]))[0];
+    id = abi.decode(_ERC721MintSystem.publicMint(1), (uint[]))[0];
     vm.stopPrank();
 
     vm.roll(block.number + 1);
@@ -124,7 +124,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /////////////////
   // OPERATOR ACTIONS
-  function _moveAccount(uint256 playerIndex, uint256 location) internal {
+  function _moveAccount(uint playerIndex, uint location) internal {
     address operator = _operators[_owners[playerIndex]];
     vm.prank(operator);
     _AccountMoveSystem.executeTyped(location);
@@ -137,17 +137,17 @@ abstract contract SetupTemplate is TestSetupImports {
   // 0s represent empty inputs
   function _createRoom(
     string memory name,
-    uint256 location,
-    uint256 exit1,
-    uint256 exit2,
-    uint256 exit3
+    uint location,
+    uint exit1,
+    uint exit2,
+    uint exit3
   ) internal {
-    uint256 numExits = 3;
+    uint numExits = 3;
     if (exit1 == 0) numExits--;
     if (exit2 == 0) numExits--;
     if (exit3 == 0) numExits--;
 
-    uint256[] memory exits = new uint256[](numExits);
+    uint[] memory exits = new uint[](numExits);
     if (numExits > 0) exits[0] = exit1;
     if (numExits > 1) exits[1] = exit2;
     if (numExits > 2) exits[2] = exit3;
@@ -156,19 +156,55 @@ abstract contract SetupTemplate is TestSetupImports {
     __RoomCreateSystem.executeTyped(name, location, exits);
   }
 
+  function _createHarvestingNode(
+    uint index,
+    uint location,
+    string memory name,
+    string memory description,
+    string memory affinity
+  ) internal returns (uint) {
+    vm.prank(deployer);
+    bytes memory nodeID = __NodeCreateSystem.executeTyped(
+      index,
+      "HARVESTING",
+      location,
+      name,
+      description,
+      affinity
+    );
+    return abi.decode(nodeID, (uint));
+  }
+
+  function _createMerchant(uint index, uint location, string memory name) public returns (uint) {
+    vm.prank(deployer);
+    bytes memory merchantID = __MerchantCreateSystem.executeTyped(index, name, location);
+    return abi.decode(merchantID, (uint));
+  }
+
+  function _setListing(
+    uint index,
+    uint itemId,
+    uint priceBuy,
+    uint priceSell
+  ) public returns (uint) {
+    vm.prank(deployer);
+    bytes memory listingID = __ListingSetSystem.executeTyped(index, itemId, priceBuy, priceSell);
+    return abi.decode(listingID, (uint));
+  }
+
   /////////////////
   // REGISTRIES
 
   // creates bare minimum traits (1 of each)
   // PLACEHOLDER
   function registerTrait(
-    uint256 specialIndex,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
-    uint256 rarityTier,
+    uint specialIndex,
+    uint health,
+    uint power,
+    uint violence,
+    uint harmony,
+    uint slots,
+    uint rarityTier,
     string memory affinity,
     string memory name,
     string memory traitType
@@ -193,16 +229,16 @@ abstract contract SetupTemplate is TestSetupImports {
     registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "BODY");
 
     // Backgrounds
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "BACKGROUND");
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "", "NAME", "BACKGROUND");
 
     // Colors
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "COLOR");
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "", "NAME", "COLOR");
 
     // Faces
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "FACE");
-    registerTrait(2, 100, 100, 100, 100, 0, 1, "NORMAL", "NAME", "FACE");
-    registerTrait(3, 100, 100, 100, 100, 0, 1, "EERIE", "NAME", "FACE");
-    registerTrait(4, 100, 100, 100, 100, 0, 1, "SCRAP", "NAME", "FACE");
+    registerTrait(1, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
+    registerTrait(2, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
+    registerTrait(3, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
+    registerTrait(4, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
 
     // Hands
     registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "HAND");
@@ -225,11 +261,11 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // CONFIGS
 
-  function _getConfig(string memory key) internal view returns (uint256) {
+  function _getConfig(string memory key) internal view returns (uint) {
     return LibConfig.getValueOf(components, key);
   }
 
-  function _setConfig(string memory key, uint256 value) internal {
+  function _setConfig(string memory key, uint value) internal {
     vm.prank(deployer);
     __ConfigSetSystem.executeTyped(key, value);
   }
