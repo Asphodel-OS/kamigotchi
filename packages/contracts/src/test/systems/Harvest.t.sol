@@ -94,6 +94,30 @@ contract HarvestTest is SetupTemplate {
     }
   }
 
+  function testProductionCreation() public {
+    // setup
+    uint playerIndex = 0;
+    _registerAccount(0);
+    uint kamiID = _mintPet(playerIndex);
+    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+
+    // create the production
+    uint startTime = 100;
+    vm.prank(_getOperator(playerIndex));
+    vm.warp(startTime);
+    bytes memory productionIDBytes = _ProductionStartSystem.executeTyped(kamiID, nodeID);
+    uint productionID = abi.decode(productionIDBytes, (uint));
+
+    // test that a production is created with the expected base fields
+    assertEq(LibProduction.getPet(components, productionID), kamiID);
+    assertEq(LibProduction.getNode(components, productionID), nodeID);
+    assertEq(LibProduction.getStartTime(components, productionID), startTime);
+    assertEq(LibProduction.getState(components, productionID), "ACTIVE");
+
+    // test that the kami's state is updated
+    assertEq(LibPet.getState(components, kamiID), "HARVESTING");
+  }
+
   // test that a pet's productions cannot be started/stopped/collected from by
   // anyone aside from the owner of the pet
   function testProductionAccountConstraints() public {
@@ -202,7 +226,42 @@ contract HarvestTest is SetupTemplate {
     }
   }
 
-  function testProductionStates() public {}
+  // test that production operations are properly gated by kami states
+  function testProductionStateConstraints() public {
+    // setup
+    uint playerIndex = 0;
+    _registerAccount(0);
+    uint kamiID = _mintPet(playerIndex);
+    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    uint productionID = _startProduction(kamiID, nodeID);
 
+    // attempt to start production again on current node
+    vm.prank(_getOperator(playerIndex));
+    vm.expectRevert("Pet: must be resting");
+    _ProductionStartSystem.executeTyped(kamiID, nodeID);
+
+    // stop production..
+    _stopProduction(productionID);
+
+    // attempt to stop it again
+    vm.prank(_getOperator(playerIndex));
+    vm.expectRevert("Pet: must be harvesting");
+    _ProductionStopSystem.executeTyped(productionID);
+
+    // attempt to collect on stopped production
+    vm.prank(_getOperator(playerIndex));
+    vm.expectRevert("Pet: must be harvesting");
+    _ProductionCollectSystem.executeTyped(productionID);
+
+    // loop through start|collect|stop a few times to make sure it still works
+    uint numIterations = 20;
+    for (uint i = 0; i < numIterations; i++) {
+      _startProduction(kamiID, nodeID);
+      _collectProduction(productionID);
+      _stopProduction(productionID);
+    }
+  }
+
+  // test that productions yield the correct amount of funds
   function testProductionAmounts() public {}
 }

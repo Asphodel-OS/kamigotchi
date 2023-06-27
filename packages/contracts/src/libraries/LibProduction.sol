@@ -97,9 +97,7 @@ library LibProduction {
 
   // Calculate the duration since a production last started, measured in seconds.
   function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    return
-      block.timestamp -
-      TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
+    return block.timestamp - getStartTime(components, id);
   }
 
   // Calculate the reward we would expect from a production, collected at the
@@ -187,6 +185,10 @@ library LibProduction {
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
     return StateComponent(getAddressById(components, StateCompID)).getValue(id);
+  }
+
+  function getStartTime(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
   }
 
   /////////////////
