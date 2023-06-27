@@ -94,10 +94,63 @@ contract HarvestTest is SetupTemplate {
     }
   }
 
+  // test that a pet's productions cannot be started/stopped/collected from by
+  // anyone aside from the owner of the pet
+  function testProductionAccountConstraints() public {
+    // register player accounts (all start in room 1)
+    for (uint i = 0; i < 10; i++) {
+      _registerAccount(i);
+    }
+
+    // mint some kamis for the player 0
+    uint numKamis = 5;
+    _mintPets(0, numKamis);
+    uint[] memory kamiIDs = LibPet.getAllForAccount(components, _getAccount(0));
+
+    // create node in room 1
+    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+
+    // start the productions for all kamis, using their account's operator
+    uint[] memory productionIDs = new uint[](numKamis);
+    for (uint i = 0; i < numKamis; i++) {
+      productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
+    }
+
+    // check that other players cannot collect or stop productions
+    for (uint i = 1; i < 10; i++) {
+      vm.startPrank(_getOperator(i));
+      for (uint j = 0; j < numKamis; j++) {
+        vm.expectRevert("Pet: not urs");
+        _ProductionCollectSystem.executeTyped(productionIDs[j]);
+
+        vm.expectRevert("Pet: not urs");
+        _ProductionStopSystem.executeTyped(productionIDs[j]);
+      }
+      vm.stopPrank();
+    }
+
+    // check that the owner can collect and stop productions
+    for (uint i = 0; i < numKamis; i++) {
+      _collectProduction(productionIDs[i]);
+      _stopProduction(productionIDs[i]);
+    }
+
+    // check that other players cannot start productions
+    for (uint i = 1; i < 10; i++) {
+      vm.startPrank(_getOperator(i));
+      for (uint j = 0; j < numKamis; j++) {
+        vm.expectRevert("Pet: not urs");
+        _ProductionStartSystem.executeTyped(kamiIDs[j], nodeID);
+      }
+      vm.stopPrank();
+    }
+  }
+
+  // test location constraints apply for relevant harvesting functions
   function testProductionLocationConstraints() public {
     uint playerIndex = 0;
     uint numNodes = 3;
-    uint numKamis = 2;
+    uint numKamis = 5;
 
     // create nodes
     uint[] memory nodeIDs = new uint[](3);

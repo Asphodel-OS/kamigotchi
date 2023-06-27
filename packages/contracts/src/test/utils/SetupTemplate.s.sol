@@ -15,20 +15,6 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUp() public virtual override {
     super.setUp();
-
-    // during setup we want to:
-    // - set the world configs
-    // - create owner/operator pairs
-
-    // we also want to expose functions to:
-    // - register accounts
-    // - mint pets
-    // - create rooms
-    // - create merchants/listings
-    // - create nodes
-    // - populate trait registries
-    // - populate item registries
-
     _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
     _initAllConfigs();
   }
@@ -195,8 +181,6 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // REGISTRIES
 
-  // creates bare minimum traits (1 of each)
-  // PLACEHOLDER
   function registerTrait(
     uint specialIndex,
     uint health,
