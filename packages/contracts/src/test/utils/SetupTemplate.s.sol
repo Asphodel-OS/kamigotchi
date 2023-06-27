@@ -10,6 +10,7 @@ import "./TestSetupImports.sol";
 abstract contract SetupTemplate is TestSetupImports {
   address[] internal _owners;
   mapping(address => address) internal _operators; // owner => operator
+  uint internal _currBlock;
 
   constructor() MudTest(new Deploy()) {}
 
@@ -86,10 +87,12 @@ abstract contract SetupTemplate is TestSetupImports {
   // OWNER ACTIONS
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint playerIndex, uint n) internal virtual {
+  function _mintPets(uint playerIndex, uint n) internal virtual returns (uint[] memory) {
+    uint[] memory ids = new uint[](n);
     for (uint i = 0; i < n; i++) {
-      _mintPet(playerIndex);
+      ids[i] = _mintPet(playerIndex);
     }
+    return ids;
   }
 
   // (public) mint and reveal a single pet to a specified address
@@ -97,12 +100,12 @@ abstract contract SetupTemplate is TestSetupImports {
     address owner = _owners[playerIndex];
     address operator = _operators[owner];
 
+    vm.roll(_currBlock++);
     vm.startPrank(owner);
     id = abi.decode(_ERC721MintSystem.publicMint(1), (uint[]))[0];
     vm.stopPrank();
 
-    vm.roll(block.number + 1);
-
+    vm.roll(_currBlock++);
     vm.startPrank(operator);
     _ERC721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
     vm.stopPrank();
@@ -209,23 +212,35 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initTraits() internal {
-    // Bodies
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "BODY");
-
     // Backgrounds
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "", "NAME", "BACKGROUND");
+    registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health BG Basic", "BACKGROUND");
+    registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power BG Basic", "BACKGROUND");
+    registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence BG Basic", "BACKGROUND");
+    registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony BG Basic", "BACKGROUND");
+
+    // Bodies
+    registerTrait(1, 0, 1, 1, 0, 0, 9, "INSECT", "Insect Body Basic", "BODY");
+    registerTrait(2, 10, 0, 0, 1, 0, 9, "SCRAP", "Scrap Body Basic", "BODY");
+    registerTrait(3, 0, 0, 1, 1, 0, 9, "EERIE", "Eerie Body Basic", "BODY");
+    registerTrait(4, 10, 0, 0, 0, 1, 9, "NORMAL", "Normal Body Basic", "BODY");
 
     // Colors
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "", "NAME", "COLOR");
+    registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health Color Basic", "COLOR");
+    registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power Color Basic", "COLOR");
+    registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence Color Basic", "COLOR");
+    registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony Color Basic", "COLOR");
 
     // Faces
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
-    registerTrait(2, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
-    registerTrait(3, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
-    registerTrait(4, 100, 100, 100, 100, 0, 1, "", "NAME", "FACE");
+    registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health Mask Basic", "FACE");
+    registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power Mask Basic", "FACE");
+    registerTrait(3, 0, 0, 1, 0, 0, 9, "", "Violence Mask Basic", "FACE");
+    registerTrait(4, 0, 0, 0, 1, 0, 9, "", "Harmony Mask Basic", "FACE");
 
     // Hands
-    registerTrait(1, 100, 100, 100, 100, 0, 1, "INSECT", "NAME", "HAND");
+    registerTrait(1, 0, 1, 1, 0, 0, 9, "INSECT", "Insect Hands Basic", "HAND");
+    registerTrait(2, 10, 0, 0, 1, 0, 9, "SCRAP", "Scrap Hands Basic", "HAND");
+    registerTrait(3, 0, 0, 1, 1, 0, 9, "EERIE", "Eerie Hands Basic", "HAND");
+    registerTrait(4, 10, 1, 0, 0, 0, 9, "NORMAL", "Normal Hands Basic", "HAND");
   }
 
   function _initItems() internal {
@@ -302,7 +317,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _initHarvestConfigs() internal {
     // Harvest Rates
     _setConfig("HARVEST_RATE_PREC", 9);
-    _setConfig("HARVEST_RATE_BASE", 100);
+    _setConfig("HARVEST_RATE_BASE", 1000);
     _setConfig("HARVEST_RATE_BASE_PREC", 3);
     _setConfig("HARVEST_RATE_MULT_PREC", 4);
     _setConfig("HARVEST_RATE_MULT_AFF_BASE", 100);
@@ -311,7 +326,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("HARVEST_RATE_MULT_AFF_PREC", 2);
 
     // Kami Health Drain/Heal Rates
-    _setConfig("HEALTH_RATE_DRAIN_BASE", 5000); // in respect to harvest rate
+    _setConfig("HEALTH_RATE_DRAIN_BASE", 1000); // in respect to harvest rate
     _setConfig("HEALTH_RATE_DRAIN_BASE_PREC", 3);
     _setConfig("HEALTH_RATE_HEAL_PREC", 6);
     _setConfig("HEALTH_RATE_HEAL_BASE", 100); // in respect to harmony

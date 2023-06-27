@@ -5,7 +5,9 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import "test/utils/SetupTemplate.s.sol";
 
+// TODO: test for correct production rates upon starting harvests
 contract HarvestTest is SetupTemplate {
+  mapping(uint => bool) internal _isStarved;
   // structure of Merchant data for test purposes
   struct TestNodeData {
     uint256 index;
@@ -53,6 +55,22 @@ contract HarvestTest is SetupTemplate {
 
     vm.prank(operator);
     _ProductionCollectSystem.executeTyped(productionID);
+  }
+
+  // NOTE: health drain is rounded while reward is truncated
+  function _getExpectedHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
+    uint ratePrecision = LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+    uint healthDrainBase = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint healthDrainBasePrecision = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    uint roundingFactor = 5 * 10 ** (ratePrecision + healthDrainBasePrecision - 1);
+    return
+      (rate * timeDelta * healthDrainBase + roundingFactor) /
+      10 ** (ratePrecision + healthDrainBasePrecision);
+  }
+
+  function _getExpectedOutput(uint rate, uint timeDelta) internal view returns (uint) {
+    uint ratePrecision = LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+    return (rate * timeDelta) / 10 ** ratePrecision;
   }
 
   /////////////////
@@ -128,8 +146,7 @@ contract HarvestTest is SetupTemplate {
 
     // mint some kamis for the player 0
     uint numKamis = 5;
-    _mintPets(0, numKamis);
-    uint[] memory kamiIDs = LibPet.getAllForAccount(components, _getAccount(0));
+    uint[] memory kamiIDs = _mintPets(0, numKamis);
 
     // create node in room 1
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
@@ -184,8 +201,7 @@ contract HarvestTest is SetupTemplate {
 
     // register our player account and mint it some kamis
     _registerAccount(playerIndex);
-    _mintPets(playerIndex, numKamis);
-    uint[] memory kamiIDs = LibPet.getAllForAccount(components, _getAccount(playerIndex));
+    uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
 
     // test that pets can only start a production on node in current room, save productionIDs
     uint[] memory productionIDs = new uint[](numKamis);
@@ -227,6 +243,7 @@ contract HarvestTest is SetupTemplate {
   }
 
   // test that production operations are properly gated by kami states
+  // TODO: test 'STARVING' pseudo-state
   function testProductionStateConstraints() public {
     // setup
     uint playerIndex = 0;
@@ -263,5 +280,60 @@ contract HarvestTest is SetupTemplate {
   }
 
   // test that productions yield the correct amount of funds
-  function testProductionAmounts() public {}
+  // assume that rate calculations are correct
+  function testProductionValues(uint seed) public {
+    // setup
+    _registerAccount(0);
+    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    uint numKamis = (seed % 5) + 1;
+    uint[] memory kamiIDs = _mintPets(0, numKamis);
+
+    // log the starting health of each kami and start its production
+    uint[] memory kamiHealths = new uint[](numKamis);
+    uint[] memory productionIDs = new uint[](numKamis);
+    uint currTime = 100;
+    vm.warp(currTime);
+    for (uint i = 0; i < numKamis; i++) {
+      kamiHealths[i] = LibPet.getLastHealth(components, kamiIDs[i]);
+      productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
+    }
+
+    // collect and check that collected amts and kami healths are as expected
+    // kamis can last roughly 5hrs under current configurations
+    // each increment passes time by up to 2 hours
+    uint accountBalance;
+    uint timeDelta;
+    uint rate;
+    uint numIterations = 5;
+    for (uint i = 0; i < numIterations; i++) {
+      timeDelta = uint(keccak256(abi.encodePacked(seed, i))) % 7200;
+      currTime += timeDelta;
+
+      vm.warp(currTime);
+      for (uint j = 0; j < numKamis; j++) {
+        if (_isStarved[j]) continue;
+        rate = LibProduction.getRate(components, productionIDs[j]);
+
+        if (kamiHealths[j] <= _getExpectedHealthDrain(rate, timeDelta)) {
+          vm.prank(_getOperator(0));
+          vm.expectRevert("Pet: starving..");
+          _ProductionCollectSystem.executeTyped(productionIDs[j]);
+          _isStarved[j] = true;
+        } else {
+          _collectProduction(productionIDs[j]);
+          assertEq(
+            LibPet.getLastHealth(components, kamiIDs[j]),
+            kamiHealths[j] - _getExpectedHealthDrain(rate, timeDelta)
+          );
+          assertEq(
+            LibCoin.get(components, _getAccount(0)),
+            accountBalance + _getExpectedOutput(rate, timeDelta)
+          );
+
+          kamiHealths[j] -= _getExpectedHealthDrain(rate, timeDelta);
+          accountBalance += _getExpectedOutput(rate, timeDelta);
+        }
+      }
+    }
+  }
 }
