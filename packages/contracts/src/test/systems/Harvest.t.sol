@@ -124,29 +124,29 @@ contract HarvestTest is SetupTemplate {
       productionIDs[i] = _startProduction(kamiIDs[i], nodeIDs[0]); // location 1, where account is
     }
 
-    // // test that productions can be collected from in the same room
-    // // NOTE: all productions at this point are in room 1
-    // for (uint i = 0; i < productionIDs.length; i++) {
-    //   _collectProduction(productionIDs[i]);
-    // }
+    // test that productions can be collected from in the same room
+    // NOTE: all productions at this point are in room 1
+    for (uint i = 0; i < productionIDs.length; i++) {
+      _collectProduction(productionIDs[i]);
+    }
 
-    // // move rooms and check that production cannot be collected from or stopped
-    // _moveAccount(playerIndex, 2);
-    // for (uint i = 0; i < productionIDs.length; i++) {
-    //   vm.expectRevert("Node: too far");
-    //   vm.prank(_getOperator(playerIndex));
-    //   _ProductionCollectSystem.executeTyped(productionIDs[i]);
+    // move rooms and check that production cannot be collected from or stopped
+    _moveAccount(playerIndex, 2);
+    for (uint i = 0; i < productionIDs.length; i++) {
+      vm.expectRevert("Node: too far");
+      vm.prank(_getOperator(playerIndex));
+      _ProductionCollectSystem.executeTyped(productionIDs[i]);
 
-    //   vm.expectRevert("Node: too far");
-    //   vm.prank(_getOperator(playerIndex));
-    //   _ProductionStopSystem.executeTyped(productionIDs[i]);
-    // }
+      vm.expectRevert("Node: too far");
+      vm.prank(_getOperator(playerIndex));
+      _ProductionStopSystem.executeTyped(productionIDs[i]);
+    }
 
-    // // move back to room 1 and stop all productions
-    // _moveAccount(playerIndex, 1);
-    // for (uint i = 0; i < productionIDs.length; i++) {
-    //   _stopProduction(productionIDs[i]);
-    // }
+    // move back to room 1 and stop all productions
+    _moveAccount(playerIndex, 1);
+    for (uint i = 0; i < productionIDs.length; i++) {
+      _stopProduction(productionIDs[i]);
+    }
   }
 
   function testProductionStates() public {}

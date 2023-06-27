@@ -278,6 +278,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _initAllConfigs() internal {
     _initAccountConfigs();
     _initBaseConfigs();
+    _initLeaderboardConfigs();
     _initMintConfigs();
     _initRevealConfigs();
     _initHarvestConfigs();
@@ -286,6 +287,11 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initBaseConfigs() internal {
     _setConfigString("baseURI", "https://image.asphodel.io/kami/");
+  }
+
+  function _initLeaderboardConfigs() internal {
+    // Leaderboard
+    _setConfig("LEADERBOARD_EPOCH", 1);
   }
 
   function _initAccountConfigs() internal {

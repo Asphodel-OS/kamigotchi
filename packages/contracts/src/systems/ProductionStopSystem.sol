@@ -31,7 +31,7 @@ contract ProductionStopSystem is System {
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
     require(
       LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "Pet: too far"
+      "Node: too far"
     );
 
     // collect production output

@@ -14,6 +14,7 @@ import { IsScoreComponent, ID as IsScoreCompID } from "components/IsScoreCompone
 import { EpochComponent, ID as EpochCompID } from "components/EpochComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 
 // entityID for leaderboard's current epoch. Contains just the Epoch component, declared in initSystem.
 uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
@@ -26,7 +27,7 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 // IsScore
 // IdHolder
 // Epoch: The current epoch the score is gained
-// Type: The operation that is linked to the score, e.g. *Insect* when reaping with insect pets
+// Type: The type of action being tracked (e.g. COLLECT | LIQUIDATE | FEED)
 // Balance: Score balance
 
 library LibScore {
@@ -57,7 +58,7 @@ library LibScore {
     string memory _type,
     uint256 amt
   ) internal {
-    uint256 epoch = getLeaderboardEpoch(components);
+    uint256 epoch = getCurentEpoch(components);
     uint256 id = get(components, holderID, epoch, _type);
     if (id == 0) {
       id = create(world, components, holderID, epoch, _type);
@@ -115,8 +116,8 @@ library LibScore {
   }
 
   // get current epoch for leaderboard
-  function getLeaderboardEpoch(IUintComp components) internal view returns (uint256) {
-    return EpochComponent(getAddressById(components, EpochCompID)).getValue(LEADERBOARD_EPOCH_ID);
+  function getCurentEpoch(IUintComp components) internal view returns (uint256) {
+    return LibConfig.getValueOf(components, "LEADERBOARD_EPOCH");
   }
 
   /////////////////
@@ -128,8 +129,8 @@ library LibScore {
   }
 
   // set current epoch for leaderboard. shoud only be called by owner
-  function setLeaderboardEpoch(IUintComp components, uint256 epoch) internal {
-    EpochComponent(getAddressById(components, EpochCompID)).set(LEADERBOARD_EPOCH_ID, epoch);
+  function setCurrentEpoch(IUintComp components, uint256 epoch) internal {
+    LibConfig.setValueOf(components, "LEADERBOARD_EPOCH", epoch);
   }
 
   /////////////////

@@ -28,7 +28,7 @@ contract ProductionCollectSystem is System {
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
     require(
       LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "Pet: too far"
+      "Node: too far"
     );
 
     // collect production output and reset time

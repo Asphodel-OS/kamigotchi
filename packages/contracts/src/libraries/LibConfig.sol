@@ -42,6 +42,12 @@ library LibConfig {
     setValue(components, id, uint256(LibString.packOne(value)));
   }
 
+  // set the value of a global config entity by its name
+  function setValueOf(IUintComp components, string memory name, uint256 value) internal {
+    uint256 id = get(components, name);
+    setValue(components, id, value);
+  }
+
   //////////////////
   // GETTERS
 

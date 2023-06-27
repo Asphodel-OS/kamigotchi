@@ -9,6 +9,9 @@ export function createAdminAPI(systems: any) {
 
     setConfigString('baseURI', 'https://image.asphodel.io/kami/');
 
+    // Leaderboards
+    setConfig('LEADERBOARD_EPOCH', 1);
+
     // Account Stamina
     setConfig('ACCOUNT_STAMINA_BASE', 20);
     setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
@@ -425,6 +428,9 @@ export function createAdminAPI(systems: any) {
         raw: setConfig,
         uri: {
           base: (v: string) => setConfigString('baseURI', v),
+        },
+        leaderboard: {
+          epoch: (v: number) => setConfig('LEADERBOARD_EPOCH', v),
         },
         account: {
           stamina: {
