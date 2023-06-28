@@ -59,7 +59,7 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
       config = createNetworkConfigOpGoerli(externalProvider);
       break;
     default:
-      config = createNetworkConfigLocal(externalProvider);
+      config = createNetworkConfigOpGoerli(externalProvider);
   }
 
   if (
@@ -157,11 +157,12 @@ function createNetworkConfigLattice(externalProvider?: ExternalProvider): Networ
 // Get the network config of a deployment to Optimism testnet
 function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
-    jsonRpc: "https://goerli.optimism.io",
-    // wsRpc: "wss://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg",
+    jsonRpc: "https://op.getblock.io/8701728c-f72a-4cab-a95d-56055e738f98/goerli/",
+    wsRpc: "wss://op.getblock.io/8701728c-f72a-4cab-a95d-56055e738f98/goerli/",
     // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
     // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
     snapshotUrl: "https://test-snapshot-2.asphodel.io",
+    // snapshotUrl: "http://164.92.81.154:50061",
 
     // checkpointUrl: undefined,
     chainId: 420,
