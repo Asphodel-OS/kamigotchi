@@ -456,4 +456,26 @@ library LibRegistryItem {
     uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) result = results[0];
   }
+
+  function getAllFood(IUintComp components) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IndexFoodCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
+
+    return LibQuery.query(fragments);
+  }
+
+  function getAllRevive(IUintComp components) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IndexReviveCompID),
+      ""
+    );
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
+
+    return LibQuery.query(fragments);
+  }
 }

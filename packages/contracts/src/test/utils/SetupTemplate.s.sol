@@ -119,6 +119,60 @@ abstract contract SetupTemplate is TestSetupImports {
     _AccountMoveSystem.executeTyped(location);
   }
 
+  function _buyFromListing(uint playerIndex, uint listingID, uint amount) internal {
+    vm.prank(_getOperator(playerIndex));
+    _ListingBuySystem.executeTyped(listingID, amount);
+  }
+
+  function _sellToListing(uint playerIndex, uint listingID, uint amount) internal {
+    vm.prank(_getOperator(playerIndex));
+    _ListingSellSystem.executeTyped(listingID, amount);
+  }
+
+  function _startProduction(uint petID, uint nodeID) internal returns (uint) {
+    uint accountID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accountID);
+
+    vm.prank(operator);
+    bytes memory productionID = _ProductionStartSystem.executeTyped(petID, nodeID);
+    return abi.decode(productionID, (uint));
+  }
+
+  function _stopProduction(uint productionID) internal {
+    uint petID = LibProduction.getPet(components, productionID);
+    uint accountID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accountID);
+
+    vm.prank(operator);
+    _ProductionStopSystem.executeTyped(productionID);
+  }
+
+  function _collectProduction(uint productionID) internal {
+    uint petID = LibProduction.getPet(components, productionID);
+    uint accountID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accountID);
+
+    vm.prank(operator);
+    _ProductionCollectSystem.executeTyped(productionID);
+  }
+
+  function _liquidateProduction(uint attackerID, uint productionID) internal {
+    uint accountID = LibPet.getAccount(components, attackerID);
+    address operator = LibAccount.getOperator(components, accountID);
+
+    vm.prank(operator);
+    _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
+  }
+
+  /////////////////
+  // GETTERS
+
+  function _getItemBalance(uint256 playerIndex, uint256 itemIndex) internal view returns (uint256) {
+    uint256 accountID = _getAccount(playerIndex);
+    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
+    return LibInventory.getBalance(components, inventoryID);
+  }
+
   /////////////////
   // WORLD POPULATION
 
@@ -248,8 +302,8 @@ abstract contract SetupTemplate is TestSetupImports {
 
     // food (foodIndex, name, health)
     __RegistryCreateFoodSystem.executeTyped(1, "Gum", 25); // itemIndex 1
-    __RegistryCreateFoodSystem.executeTyped(2, "Candy", 100); // itemIndex 2
-    __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", 200); // itemIndex 3
+    __RegistryCreateFoodSystem.executeTyped(2, "Candy", 50); // itemIndex 2
+    __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", 100); // itemIndex 3
 
     // revives (reviveIndex, name, health)
     __RegistryCreateReviveSystem.executeTyped(1, "Ribbon", 10); // itemIndex 4
@@ -280,6 +334,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _initLeaderboardConfigs();
     _initMintConfigs();
     _initRevealConfigs();
+    _initRestingConfigs();
     _initHarvestConfigs();
     _initLiquidationConfigs();
   }
@@ -314,6 +369,12 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("KAMI_BASE_SLOTS", 0);
   }
 
+  function _initRestingConfigs() internal {
+    _setConfig("HEALTH_RATE_HEAL_PREC", 6);
+    _setConfig("HEALTH_RATE_HEAL_BASE", 100); // in respect to harmony
+    _setConfig("HEALTH_RATE_HEAL_BASE_PREC", 3);
+  }
+
   function _initHarvestConfigs() internal {
     // Harvest Rates
     _setConfig("HARVEST_RATE_PREC", 9);
@@ -328,9 +389,6 @@ abstract contract SetupTemplate is TestSetupImports {
     // Kami Health Drain/Heal Rates
     _setConfig("HEALTH_RATE_DRAIN_BASE", 1000); // in respect to harvest rate
     _setConfig("HEALTH_RATE_DRAIN_BASE_PREC", 3);
-    _setConfig("HEALTH_RATE_HEAL_PREC", 6);
-    _setConfig("HEALTH_RATE_HEAL_BASE", 100); // in respect to harmony
-    _setConfig("HEALTH_RATE_HEAL_BASE_PREC", 3);
   }
 
   function _initLiquidationConfigs() internal {

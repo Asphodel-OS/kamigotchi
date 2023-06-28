@@ -427,7 +427,9 @@ library LibPet {
       uint256 productionID = getProduction(components, id);
       uint256 nodeID = LibProduction.getNode(components, productionID);
       location = LibNode.getLocation(components, nodeID);
-    } else if (LibString.eq(state, "RESTING")) {
+    } else if (LibString.eq(state, "721_EXTERNAL")) {
+      location = 0;
+    } else {
       uint256 accountID = getAccount(components, id);
       location = LibAccount.getLocation(components, accountID);
     }

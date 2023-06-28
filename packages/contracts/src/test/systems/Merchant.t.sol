@@ -8,10 +8,10 @@ import "test/utils/SetupTemplate.s.sol";
 contract MerchantTest is SetupTemplate {
   // structure of Listing data for test purposes
   struct TestListingData {
-    uint256 merchantIndex;
-    uint256 itemIndex;
-    uint256 priceBuy;
-    uint256 priceSell;
+    uint merchantIndex;
+    uint itemIndex;
+    uint priceBuy;
+    uint priceSell;
   }
 
   function setUp() public override {
@@ -30,28 +30,12 @@ contract MerchantTest is SetupTemplate {
   }
 
   /////////////////
-  // HELPER FUNCTIONS
-
-  function _buyFromListing(uint256 playerIndex, uint256 listingID, uint256 amount) internal {
-    vm.prank(_getOperator(playerIndex));
-    _ListingBuySystem.executeTyped(listingID, amount);
-  }
-
-  function _sellToListing(uint256 playerIndex, uint256 listingID, uint256 amount) internal {
-    vm.prank(_getOperator(playerIndex));
-    _ListingSellSystem.executeTyped(listingID, amount);
-  }
-
-  function _getItemBalance(uint256 playerIndex, uint256 itemIndex) internal view returns (uint256) {
-    uint256 accountID = _getAccount(playerIndex);
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    return LibInventory.getBalance(components, inventoryID);
-  }
+  // TESTS
 
   // test the creation of a merchant and the setting of its fields
   function testMerchantCreation() public {
     // check that non-deployer cannot create a merchant
-    for (uint256 i = 0; i < 5; i++) {
+    for (uint i = 0; i < 5; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
       __MerchantCreateSystem.executeTyped(1, "testMerchant", 2);
@@ -62,10 +46,10 @@ contract MerchantTest is SetupTemplate {
     }
 
     // create a merchant and ensure its fields are correct
-    uint256 merchantIndex1 = 1;
-    uint256 merchantLocation1 = 3;
+    uint merchantIndex1 = 1;
+    uint merchantLocation1 = 3;
     string memory merchantName1 = "testMerchant";
-    uint256 merchantID1 = _createMerchant(merchantIndex1, merchantLocation1, merchantName1);
+    uint merchantID1 = _createMerchant(merchantIndex1, merchantLocation1, merchantName1);
     assertEq(merchantIndex1, LibMerchant.getIndex(components, merchantID1));
     assertEq(merchantLocation1, LibMerchant.getLocation(components, merchantID1));
     assertEq(merchantName1, LibMerchant.getName(components, merchantID1));
@@ -76,10 +60,10 @@ contract MerchantTest is SetupTemplate {
     __MerchantCreateSystem.executeTyped(1, "testMerchant", 3); // index, name, location
 
     // but that we CAN create merchant with the same name and location
-    uint256 merchantIndex2 = 2;
-    uint256 merchantLocation2 = 3;
+    uint merchantIndex2 = 2;
+    uint merchantLocation2 = 3;
     string memory merchantName2 = "testMerchant";
-    uint256 merchantID2 = _createMerchant(merchantIndex2, merchantLocation2, merchantName2);
+    uint merchantID2 = _createMerchant(merchantIndex2, merchantLocation2, merchantName2);
     assertEq(merchantIndex2, LibMerchant.getIndex(components, merchantID2));
     assertEq(merchantLocation2, LibMerchant.getLocation(components, merchantID2));
     assertEq(merchantName2, LibMerchant.getName(components, merchantID2));
@@ -88,7 +72,7 @@ contract MerchantTest is SetupTemplate {
     // NOTE: we now have two merchants, named 'testMerchant' at location 3
 
     // update fields on merchant2 and check that both are correct
-    uint256 newMerchantLocation = 2;
+    uint newMerchantLocation = 2;
     string memory newMerchantName = "newMerchantName";
     vm.prank(deployer);
     __MerchantSetLocationSystem.executeTyped(2, newMerchantLocation);
@@ -113,7 +97,7 @@ contract MerchantTest is SetupTemplate {
     __MerchantSetNameSystem.executeTyped(4, newMerchantName);
 
     // test that we can't update a merchant's attributes as a random address
-    for (uint256 i = 0; i < 5; i++) {
+    for (uint i = 0; i < 5; i++) {
       vm.startPrank(_getOwner(i));
       vm.expectRevert();
       __MerchantSetLocationSystem.executeTyped(1, newMerchantLocation);
@@ -143,7 +127,7 @@ contract MerchantTest is SetupTemplate {
     _createMerchant(2, 2, "merchant2");
 
     // check that non deployer cannot create a listing
-    for (uint256 i = 0; i < 5; i++) {
+    for (uint i = 0; i < 5; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
       __ListingSetSystem.executeTyped(1, 1, 50, 50);
@@ -154,15 +138,15 @@ contract MerchantTest is SetupTemplate {
     }
 
     // initial creation, check that item/merchant indices and prices are correct
-    uint256 numListings = 4;
+    uint numListings = 4;
     TestListingData[] memory listings = new TestListingData[](numListings);
     listings[0] = TestListingData(1, 1, 100, 50);
     listings[1] = TestListingData(1, 2, 80, 40);
     listings[2] = TestListingData(1, 3, 60, 30);
     listings[3] = TestListingData(1, 4, 40, 20);
 
-    uint256[] memory listingIDs = new uint256[](numListings);
-    for (uint256 i = 0; i < numListings; i++) {
+    uint[] memory listingIDs = new uint[](numListings);
+    for (uint i = 0; i < numListings; i++) {
       listingIDs[i] = _setListing(
         listings[i].merchantIndex,
         listings[i].itemIndex,
@@ -181,8 +165,8 @@ contract MerchantTest is SetupTemplate {
     listings[2] = TestListingData(1, 3, 6, 3);
     listings[3] = TestListingData(1, 4, 4, 2);
 
-    uint256 newListingID;
-    for (uint256 i = 0; i < numListings; i++) {
+    uint newListingID;
+    for (uint i = 0; i < numListings; i++) {
       newListingID = _setListing(
         listings[i].merchantIndex,
         listings[i].itemIndex,
@@ -198,7 +182,7 @@ contract MerchantTest is SetupTemplate {
 
     // check that pulling by merchant/item index yields the correct listing, or 0 if none exists
     // NOTE: this is somewhat of a given assumption of the test. but we should still verify
-    for (uint256 i = 0; i < numListings; i++) {
+    for (uint i = 0; i < numListings; i++) {
       assertEq(
         listingIDs[i],
         LibListing.get(components, listings[i].merchantIndex, listings[i].itemIndex)
@@ -214,7 +198,7 @@ contract MerchantTest is SetupTemplate {
     invalidMerchantListings[2] = TestListingData(3, 3, 60, 30);
     invalidMerchantListings[3] = TestListingData(3, 4, 40, 20);
 
-    for (uint256 i = 0; i < numListings; i++) {
+    for (uint i = 0; i < numListings; i++) {
       vm.prank(deployer);
       vm.expectRevert("Merchant: does not exist");
       __ListingSetSystem.executeTyped(
@@ -233,7 +217,7 @@ contract MerchantTest is SetupTemplate {
     invalidItemListings[2] = TestListingData(1, 5, 60, 30);
     invalidItemListings[3] = TestListingData(1, 5, 40, 20);
 
-    for (uint256 i = 0; i < numListings; i++) {
+    for (uint i = 0; i < numListings; i++) {
       vm.prank(deployer);
       vm.expectRevert("Item: does not exist");
       __ListingSetSystem.executeTyped(
@@ -251,7 +235,7 @@ contract MerchantTest is SetupTemplate {
     _createMerchant(2, 2, "merchant2");
 
     // create listings for both merchants
-    uint256 numListings = 4;
+    uint numListings = 4;
     TestListingData[] memory listings1 = new TestListingData[](numListings);
     listings1[0] = TestListingData(1, 1, 80, 40);
     listings1[1] = TestListingData(1, 2, 60, 30);
@@ -264,9 +248,9 @@ contract MerchantTest is SetupTemplate {
     listings2[2] = TestListingData(2, 3, 40, 20);
     listings2[3] = TestListingData(2, 4, 20, 10);
 
-    uint256[] memory listingIDs1 = new uint256[](numListings);
-    uint256[] memory listingIDs2 = new uint256[](numListings);
-    for (uint256 i = 0; i < numListings; i++) {
+    uint[] memory listingIDs1 = new uint[](numListings);
+    uint[] memory listingIDs2 = new uint[](numListings);
+    for (uint i = 0; i < numListings; i++) {
       listingIDs1[i] = _setListing(
         listings1[i].merchantIndex,
         listings1[i].itemIndex,
@@ -282,15 +266,15 @@ contract MerchantTest is SetupTemplate {
     }
 
     // register and fund accounts. all accounts start in room 1
-    uint256 numAccounts = 5;
-    for (uint256 i = 0; i < numAccounts; i++) {
+    uint numAccounts = 5;
+    for (uint i = 0; i < numAccounts; i++) {
       _registerAccount(i);
       _fundAccount(i, 1e5);
     }
 
     // test that players cannot interact with their Owner wallets
-    for (uint256 i = 0; i < numAccounts; i++) {
-      for (uint256 j = 0; j < numListings; j++) {
+    for (uint i = 0; i < numAccounts; i++) {
+      for (uint j = 0; j < numListings; j++) {
         vm.prank(_getOwner(i));
         vm.expectRevert("Account: not found");
         _ListingBuySystem.executeTyped(listingIDs1[j], 0);
@@ -304,9 +288,9 @@ contract MerchantTest is SetupTemplate {
     // from room 1
     // test that players CAN interact with merchant 1 listings
     // test that players CANNOT interact with merchant 2 listings
-    for (uint256 i = 0; i < numAccounts; i++) {
-      for (uint256 j = 0; j < numListings; j++) {
-        uint256 amt = j + 1;
+    for (uint i = 0; i < numAccounts; i++) {
+      for (uint j = 0; j < numListings; j++) {
+        uint amt = j + 1;
         _buyFromListing(i, listingIDs1[j], amt);
         _sellToListing(i, listingIDs1[j], amt);
 
@@ -321,16 +305,16 @@ contract MerchantTest is SetupTemplate {
     }
 
     // move all accounts to room 2
-    for (uint256 i = 0; i < numAccounts; i++) {
+    for (uint i = 0; i < numAccounts; i++) {
       _moveAccount(i, 2);
     }
 
     // from room 2
     // test that players CANNOT interact with merchant 1 listings
     // test that players CAN interact with merchant 2 listings
-    for (uint256 i = 0; i < numAccounts; i++) {
-      for (uint256 j = 0; j < numListings; j++) {
-        uint256 amt = j + 1;
+    for (uint i = 0; i < numAccounts; i++) {
+      for (uint j = 0; j < numListings; j++) {
+        uint amt = j + 1;
         vm.prank(_getOperator(i));
         vm.expectRevert("Listing.Buy(): must be in same room as merchant");
         _ListingBuySystem.executeTyped(listingIDs1[j], amt);
@@ -364,11 +348,11 @@ contract MerchantTest is SetupTemplate {
     BalanceTestData memory testData = BalanceTestData(3, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // create the merchant and its listings
-    uint256[] memory listingIDs = new uint256[](testData.numMerchants * testData.numItems);
-    for (uint256 i = 0; i < testData.numMerchants; i++) {
+    uint[] memory listingIDs = new uint[](testData.numMerchants * testData.numItems);
+    for (uint i = 0; i < testData.numMerchants; i++) {
       _createMerchant(i, 1, "merchant");
 
-      for (uint256 j = 0; j < testData.numItems; j++) {
+      for (uint j = 0; j < testData.numItems; j++) {
         testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on merchant
         listingIDs[i * testData.numItems + j] = _setListing(
           i,
@@ -380,7 +364,7 @@ contract MerchantTest is SetupTemplate {
     }
 
     // register and fund accounts to varying degrees. all accounts start in room 1
-    for (uint256 i = 0; i < testData.numAccounts; i++) {
+    for (uint i = 0; i < testData.numAccounts; i++) {
       _registerAccount(i);
       _fundAccount(i, (i + 1) * 1e4);
 
@@ -394,11 +378,11 @@ contract MerchantTest is SetupTemplate {
 
     // test that players can buy and sell from listings and that balances are
     // updated accordingly. tx should revert when funds are insufficient
-    uint256 randN;
-    uint256 listingID = 1;
-    uint256 numIterations = 50;
-    for (uint256 i = 0; i < numIterations; i++) {
-      randN = uint256(keccak256(abi.encode(randN ^ (randN >> (1 << 7)))));
+    uint randN;
+    uint listingID = 1;
+    uint numIterations = 50;
+    for (uint i = 0; i < numIterations; i++) {
+      randN = uint(keccak256(abi.encode(randN ^ (randN >> (1 << 7)))));
       listingID = listingIDs[randN % listingIDs.length];
       testData.playerIndex = uint8(randN % testData.numAccounts);
       testData.itemIndex = uint8(LibListing.getItemIndex(components, listingID));

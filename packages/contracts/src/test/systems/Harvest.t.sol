@@ -30,32 +30,6 @@ contract HarvestTest is SetupTemplate {
 
   /////////////////
   // HELPER FUNCTIONS
-  function _startProduction(uint kamiID, uint nodeID) internal returns (uint) {
-    uint accountID = LibPet.getAccount(components, kamiID);
-    address operator = LibAccount.getOperator(components, accountID);
-
-    vm.prank(operator);
-    bytes memory productionID = _ProductionStartSystem.executeTyped(kamiID, nodeID);
-    return abi.decode(productionID, (uint));
-  }
-
-  function _stopProduction(uint productionID) internal {
-    uint kamiID = LibProduction.getPet(components, productionID);
-    uint accountID = LibPet.getAccount(components, kamiID);
-    address operator = LibAccount.getOperator(components, accountID);
-
-    vm.prank(operator);
-    _ProductionStopSystem.executeTyped(productionID);
-  }
-
-  function _collectProduction(uint productionID) internal {
-    uint kamiID = LibProduction.getPet(components, productionID);
-    uint accountID = LibPet.getAccount(components, kamiID);
-    address operator = LibAccount.getOperator(components, accountID);
-
-    vm.prank(operator);
-    _ProductionCollectSystem.executeTyped(productionID);
-  }
 
   // NOTE: health drain is rounded while reward is truncated
   function _getExpectedHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {

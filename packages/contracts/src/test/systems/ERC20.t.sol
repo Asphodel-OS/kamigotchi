@@ -13,6 +13,7 @@ contract ERC20Test is SetupTemplate {
   function setUp() public override {
     super.setUp();
     token = _ERC20ProxySystem.getToken();
+
     _registerAccount(0);
     _registerAccount(1);
   }

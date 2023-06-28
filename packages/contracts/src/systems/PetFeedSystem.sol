@@ -31,6 +31,12 @@ contract PetFeedSystem is System {
       "Pet: must be in same room"
     );
 
+    // check the pet is either resting or harvesting
+    require(
+      LibPet.isResting(components, id) || LibPet.isHarvesting(components, id),
+      "Pet: must be resting|harvesting"
+    );
+
     // check pet is not full
     LibPet.syncHealth(components, id);
     require(!LibPet.isFull(components, id), "Pet: already full");
