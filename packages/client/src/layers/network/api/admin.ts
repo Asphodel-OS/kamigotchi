@@ -3,94 +3,94 @@ import { createPlayerAPI } from './player';
 import { setUpWorldAPI } from './world';
 
 export function createAdminAPI(systems: any) {
-  function init() {
+  async function init() {
     /////////////////
     // CONFIG
 
-    setConfigString('baseURI', 'https://image.asphodel.io/kami/');
+    await setConfigString('baseURI', 'https://image.asphodel.io/kami/');
 
     // Account Stamina
-    setConfig('ACCOUNT_STAMINA_BASE', 20);
-    setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
+    await setConfig('ACCOUNT_STAMINA_BASE', 20);
+    await setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
     // Kami Base Stats
     // to be 5, set at 500 for testing
-    setConfig('MINT_MAX', 500);
-    setConfig('MINT_PRICE', utils.parseEther('0.015'));
+    await setConfig('MINT_MAX', 500);
+    await setConfig('MINT_PRICE', utils.parseEther('0.015'));
 
     // set global config fields for Kami Stats
-    setConfig('KAMI_BASE_HEALTH', 50);
-    setConfig('KAMI_BASE_POWER', 10);
-    setConfig('KAMI_BASE_VIOLENCE', 10);
-    setConfig('KAMI_BASE_HARMONY', 10);
-    setConfig('KAMI_BASE_SLOTS', 0);
+    await setConfig('KAMI_BASE_HEALTH', 50);
+    await setConfig('KAMI_BASE_POWER', 10);
+    await setConfig('KAMI_BASE_VIOLENCE', 10);
+    await setConfig('KAMI_BASE_HARMONY', 10);
+    await setConfig('KAMI_BASE_SLOTS', 0);
 
     // Harvest Rates
     // HarvestRate = power * base * multiplier
     // NOTE: any precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
-    setConfig('HARVEST_RATE_PREC', 9); // ignore this
-    setConfig('HARVEST_RATE_BASE', 100); // in respect to power
-    setConfig('HARVEST_RATE_BASE_PREC', 3); // i.e. x/1000
-    setConfig('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
-    setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
-    setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
-    setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
-    setConfig('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
+    await setConfig('HARVEST_RATE_PREC', 9); // ignore this
+    await setConfig('HARVEST_RATE_BASE', 100); // in respect to power
+    await setConfig('HARVEST_RATE_BASE_PREC', 3); // i.e. x/1000
+    await setConfig('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
+    await setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
+    await setConfig('HARVEST_RATE_MULT_AFF_UP', 150);
+    await setConfig('HARVEST_RATE_MULT_AFF_DOWN', 50);
+    await setConfig('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
 
     // Kami Health Drain/Heal Rates
     // DrainRate = HarvestRate * DrainBaseRate
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
     // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
-    setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3); // i.e. x/1000
-    setConfig('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
-    setConfig('HEALTH_RATE_HEAL_BASE', 100); // in respect to harmony
-    setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3); // i.e. x/1000
+    await setConfig('HEALTH_RATE_DRAIN_BASE', 5000); // in respect to harvest rate
+    await setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 3); // i.e. x/1000
+    await setConfig('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
+    await setConfig('HEALTH_RATE_HEAL_BASE', 100); // in respect to harmony
+    await setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3); // i.e. x/1000
 
     // Liquidation Idle Requirements
-    setConfig('LIQ_IDLE_REQ', 300);
+    await setConfig('LIQ_IDLE_REQ', 300);
 
     // Liquidation Calcs
-    setConfig('LIQ_THRESH_BASE', 20);
-    setConfig('LIQ_THRESH_BASE_PREC', 2);
-    setConfig('LIQ_THRESH_MULT_AFF_BASE', 100);
-    setConfig('LIQ_THRESH_MULT_AFF_UP', 200);
-    setConfig('LIQ_THRESH_MULT_AFF_DOWN', 50);
-    setConfig('LIQ_THRESH_MULT_AFF_PREC', 2);
+    await setConfig('LIQ_THRESH_BASE', 20);
+    await setConfig('LIQ_THRESH_BASE_PREC', 2);
+    await setConfig('LIQ_THRESH_MULT_AFF_BASE', 100);
+    await setConfig('LIQ_THRESH_MULT_AFF_UP', 200);
+    await setConfig('LIQ_THRESH_MULT_AFF_DOWN', 50);
+    await setConfig('LIQ_THRESH_MULT_AFF_PREC', 2);
 
     // Liquidation Bounty
-    setConfig('LIQ_BOUNTY_BASE', 50);
-    setConfig('LIQ_BOUNTY_BASE_PREC', 2);
+    await setConfig('LIQ_BOUNTY_BASE', 50);
+    await setConfig('LIQ_BOUNTY_BASE_PREC', 2);
 
     /////////////////
     // WORLD
 
     // create our rooms
-    createRoom('deadzone', 0, [1]); // in case we need this
-    createRoom('Misty Riverside', 1, [2]);
-    createRoom('Tunnel of Trees', 2, [1, 3, 13]);
-    createRoom('Torii Gate', 3, [2, 4]);
-    createRoom('Vending Machine', 4, [3, 5, 12]);
-    createRoom('Restricted Area', 5, [4, 6, 9]);
-    createRoom('Labs Entrance', 6, [5, 7]);
-    createRoom('Lobby', 7, [6, 8, 14]);
-    createRoom('Junk Shop', 8, [7]);
-    createRoom('Forest: Old Growth', 9, [5, 10, 11]);
-    createRoom('Forest: Insect Node', 10, [9]);
-    createRoom('Waterfall Shrine', 11, [9, 15]);
-    createRoom('Machine Node', 12, [4]);
-    createRoom('Convenience Store', 13, [2]);
-    createRoom("Manager's Office", 14, [7]);
-    createRoom('Temple Cave', 15, [11, 16, 18]);
-    createRoom('Techno Temple', 16, [15]);
-    // createRoom("Misty Park", 17, [0]);
-    createRoom('Cave Crossroads', 18, [15]);
+    await createRoom('deadzone', 0, [1]); // in case we need this
+    await createRoom('Misty Riverside', 1, [2]);
+    await createRoom('Tunnel of Trees', 2, [1, 3, 13]);
+    await createRoom('Torii Gate', 3, [2, 4]);
+    await createRoom('Vending Machine', 4, [3, 5, 12]);
+    await createRoom('Restricted Area', 5, [4, 6, 9]);
+    await createRoom('Labs Entrance', 6, [5, 7]);
+    await createRoom('Lobby', 7, [6, 8, 14]);
+    await createRoom('Junk Shop', 8, [7]);
+    await createRoom('Forest: Old Growth', 9, [5, 10, 11]);
+    await createRoom('Forest: Insect Node', 10, [9]);
+    await createRoom('Waterfall Shrine', 11, [9, 15]);
+    await createRoom('Machine Node', 12, [4]);
+    await createRoom('Convenience Store', 13, [2]);
+    await createRoom("Manager's Office", 14, [7]);
+    await createRoom('Temple Cave', 15, [11, 16, 18]);
+    await createRoom('Techno Temple', 16, [15]);
+    // await createRoom("Misty Park", 17, [0]);
+    await createRoom('Cave Crossroads', 18, [15]);
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in
-    createNode(
+    await createNode(
       1,
       'HARVEST',
       3,
@@ -99,7 +99,7 @@ export function createAdminAPI(systems: any) {
       `NORMAL`,
     );
 
-    createNode(
+    await createNode(
       2,
       'HARVEST',
       7,
@@ -108,7 +108,7 @@ export function createAdminAPI(systems: any) {
       'SCRAP',
     );
 
-    createNode(
+    await createNode(
       3,
       'HARVEST',
       10,
@@ -117,7 +117,7 @@ export function createAdminAPI(systems: any) {
       'INSECT',
     );
 
-    createNode(
+    await createNode(
       4,
       'HARVEST',
       14,
@@ -126,7 +126,7 @@ export function createAdminAPI(systems: any) {
       'EERIE',
     );
 
-    createNode(
+    await createNode(
       5,
       'HARVEST',
       12,
@@ -136,20 +136,20 @@ export function createAdminAPI(systems: any) {
     );
 
     // create consumable registry items
-    registerFood(1, 'Maple-Flavor Ghost Gum', 25);
-    registerFood(2, 'Pom-Pom Fruit Candy', 100);
-    registerFood(3, 'Gakki Cookie Sticks', 200);
-    registerRevive(1, 'Red Gakki Ribbon', 10);
+    await registerFood(1, 'Maple-Flavor Ghost Gum', 25);
+    await registerFood(2, 'Pom-Pom Fruit Candy', 100);
+    await registerFood(3, 'Gakki Cookie Sticks', 200);
+    await registerRevive(1, 'Red Gakki Ribbon', 10);
 
     // create our hottie merchant ugajin. names are unique
-    createMerchant(1, 'Mina', 13);
+    await createMerchant(1, 'Mina', 13);
 
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
 
     setUpWorldAPI(systems).initWorld();
 
-    initDependents();
+    await initDependents();
 
     createPlayerAPI(systems).account.register(
       '0x000000000000000000000000000000000000dead',
@@ -158,36 +158,38 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev inits txes that depned on the world being set up
-  function initDependents() {
+  async function initDependents() {
     // Mina
-    setListing(1, 1, 25, 0); // merchant index, item index, buy price, sell price
-    setListing(1, 2, 90, 0);
-    setListing(1, 3, 150, 0);
-    setListing(1, 4, 500, 0);
+    await setListing(1, 1, 25, 0); // merchant index, item index, buy price, sell price
+    await setListing(1, 2, 90, 0);
+    await setListing(1, 3, 150, 0);
+    await setListing(1, 4, 500, 0);
   }
 
   /// NOTE: do not use in production
   // @dev give coins for testing
   // @param amount      amount
-  function giveCoins(addy: string, amount: number) {
+  async function giveCoins(addy: string, amount: number) {
     return systems['system._devGiveTokens'].executeTyped(addy, amount);
   }
 
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
-  function petForceReveal(tokenId: number) {
+  async function petForceReveal(tokenId: number) {
     return systems['system.ERC721.Reveal'].forceReveal(tokenId);
   }
 
   /////////////////
   //  CONFIG
 
-  function setConfig(field: string, value: BigNumberish) {
+  async function setConfig(field: string, value: BigNumberish) {
+    await sleepIf();
     return systems['system._Config.Set'].executeTyped(field, value);
   }
 
   // values must be ≤ 32char
-  function setConfigString(field: string, value: string) {
+  async function setConfigString(field: string, value: string) {
+    await sleepIf();
     return systems['system._Config.Set.String'].executeTyped(field, value);
   }
 
@@ -195,25 +197,29 @@ export function createAdminAPI(systems: any) {
   //  MERCHANTS
 
   // creates a merchant with the name at the specified location
-  function createMerchant(index: number, name: string, location: number) {
+  async function createMerchant(index: number, name: string, location: number) {
+    await sleepIf();
     return systems['system._Merchant.Create'].executeTyped(index, name, location);
   }
 
-  function setMerchantLocation(index: number, location: number) {
+  async function setMerchantLocation(index: number, location: number) {
+    await sleepIf();
     return systems['system._Merchant.Set.Location'].executeTyped(index, location);
   }
 
-  function setMerchantName(index: number, name: string) {
+  async function setMerchantName(index: number, name: string) {
+    await sleepIf();
     return systems['system._Merchant.Set.Name'].executeTyped(index, name);
   }
 
   // sets the prices for the merchant at the specified location
-  function setListing(
+  async function setListing(
     merchantIndex: number,
     itemIndex: number,
     buyPrice: number,
     sellPrice: number
   ) {
+    await sleepIf();
     return systems['system._Listing.Set'].executeTyped(
       merchantIndex,
       itemIndex,
@@ -232,7 +238,7 @@ export function createAdminAPI(systems: any) {
   // @param name        name of the node
   // @param description description of the node, exposed on the UI
   // @param affinity    affinity of the node [ NORMAL | EERIE | INSECT | SCRAP ]
-  function createNode(
+  async function createNode(
     index: number,
     type: string,
     location: number,
@@ -240,6 +246,7 @@ export function createAdminAPI(systems: any) {
     description: string,
     affinity: string
   ) {
+    await sleepIf();
     return systems['system._Node.Create'].executeTyped(
       index,
       type,
@@ -250,19 +257,23 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  function setNodeAffinity(index: number, affinity: string) {
+  async function setNodeAffinity(index: number, affinity: string) {
+    await sleepIf();
     return systems['system._Node.Set.Affinity'].executeTyped(index, affinity);
   }
 
-  function setNodeDescription(index: number, description: string) {
+  async function setNodeDescription(index: number, description: string) {
+    await sleepIf();
     return systems['system._Node.Set.Description'].executeTyped(index, description);
   }
 
-  function setNodeLocation(index: number, location: number) {
+  async function setNodeLocation(index: number, location: number) {
+    await sleepIf();
     return systems['system._Node.Set.Location'].executeTyped(index, location);
   }
 
-  function setNodeName(index: number, name: string) {
+  async function setNodeName(index: number, name: string) {
+    await sleepIf();
     return systems['system._Node.Set.Name'].executeTyped(index, name);
   }
 
@@ -270,15 +281,18 @@ export function createAdminAPI(systems: any) {
   //  ROOMS
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
-  function createRoom(name: string, location: number, exits: number[]) {
+  async function createRoom(name: string, location: number, exits: number[]) {
+    await sleepIf();
     return systems['system._Room.Create'].executeTyped(name, location, exits);
   }
 
-  function setRoomExits(location: string, exits: number[]) {
+  async function setRoomExits(location: string, exits: number[]) {
+    await sleepIf();
     return systems['system._Room.Set.Exits'].executeTyped(location, exits);
   }
 
-  function setRoomName(location: string, name: string) {
+  async function setRoomName(location: string, name: string) {
+    await sleepIf();
     return systems['system._Room.Set.Name'].executeTyped(location, name);
   }
 
@@ -286,12 +300,13 @@ export function createAdminAPI(systems: any) {
   //  REGISTRIES
 
   // @dev add a food item registry entry
-  function registerFood(foodIndex: number, name: string, health: number) {
+  async function registerFood(foodIndex: number, name: string, health: number) {
+    await sleepIf();
     return systems['system._Registry.Food.Create'].executeTyped(foodIndex, name, health);
   }
 
   // @dev add an equipment item registry entry
-  function registerGear(
+  async function registerGear(
     gearIndex: number,
     name: string,
     type_: string,
@@ -301,6 +316,7 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     slots: number
   ) {
+    await sleepIf();
     return systems['system._Registry.Gear.Create'].executeTyped(
       gearIndex,
       name,
@@ -314,7 +330,7 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev add a modification item registry entry
-  function registerModification(
+  async function registerModification(
     modIndex: number,
     name: string,
     health: number,
@@ -322,6 +338,7 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
+    await sleepIf();
     return systems['system._Registry.Mod.Create'].executeTyped(
       modIndex,
       name,
@@ -333,12 +350,13 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev add a revive item registry entry
-  function registerRevive(reviveIndex: number, name: string, health: number) {
+  async function registerRevive(reviveIndex: number, name: string, health: number) {
+    await sleepIf();
     return systems['system._Registry.Revive.Create'].executeTyped(reviveIndex, name, health);
   }
 
   // @dev adds a trait in registry
-  function registerTrait(
+  async function registerTrait(
     index: number,
     health: number,
     power: number,
@@ -350,6 +368,7 @@ export function createAdminAPI(systems: any) {
     name: string,
     type: string
   ) {
+    await sleepIf();
     return systems['system._Registry.Trait.Create'].executeTyped(
       index,
       health,
@@ -365,12 +384,13 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev update a food item registry entry
-  function updateRegistryFood(foodIndex: number, name: string, health: number) {
+  async function updateRegistryFood(foodIndex: number, name: string, health: number) {
+    await sleepIf();
     return systems['system._Registry.Food.Update'].executeTyped(foodIndex, name, health);
   }
 
   // @dev update an equipment item registry entry
-  function updateRegistryGear(
+  async function updateRegistryGear(
     gearIndex: number,
     name: string,
     type_: string,
@@ -380,6 +400,7 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     slots: number
   ) {
+    await sleepIf();
     return systems['system._Registry.Gear.Update'].executeTyped(
       gearIndex,
       name,
@@ -393,7 +414,7 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev update a modification item registry entry
-  function updateRegistryModification(
+  async function updateRegistryModification(
     modIndex: number,
     name: string,
     health: number,
@@ -401,6 +422,7 @@ export function createAdminAPI(systems: any) {
     harmony: number,
     violence: number
   ) {
+    await sleepIf();
     return systems['system._Registry.Mod.Update'].executeTyped(
       modIndex,
       name,
@@ -412,8 +434,18 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev update a revive item registry entry
-  function updateRegistryRevive(reviveIndex: number, name: string, health: number) {
+  async function updateRegistryRevive(reviveIndex: number, name: string, health: number) {
+    await sleepIf();
     return systems['system._Registry.Revive.Update'].executeTyped(reviveIndex, name, health);
+  }
+
+  //////////////////
+  // WAITS
+
+  function sleepIf() {
+    if (process.env.MODE == 'OPGOERLI') {
+      return new Promise(resolve => setTimeout(resolve, 10000));
+    }
   }
 
   return {

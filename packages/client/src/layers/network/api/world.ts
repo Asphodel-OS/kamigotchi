@@ -31,6 +31,7 @@ export function setUpWorldAPI(systems: any) {
     function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
       for (let i = 0; i < data.length; i++) {
+        sleepIf();
         createAdminAPI(systems).registry.trait.create(
           data[i].get("Index"), // individual trait index
           data[i].get("Health") ? data[i].get("Health") : 0,
@@ -58,6 +59,12 @@ export function setUpWorldAPI(systems: any) {
 
   return {
     initWorld,
+  }
+
+  function sleepIf() {
+    if (process.env.MODE == 'OPGOERLI') {
+      return new Promise(resolve => setTimeout(resolve, 10000));
+    }
   }
 }
 

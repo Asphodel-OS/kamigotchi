@@ -59,7 +59,7 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
       config = createNetworkConfigOpGoerli(externalProvider);
       break;
     default:
-      config = createNetworkConfigOpGoerli(externalProvider);
+      config = createNetworkConfigLocal(externalProvider);
   }
 
   if (
@@ -165,8 +165,8 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
 
     // checkpointUrl: undefined,
     chainId: 420,
-    worldAddress: "0xfd517446f59a7005B25130affbF8eF78cb2EC210",
-    initialBlockNumber: 11042217,
+    worldAddress: "0xd5251Aaae776b1845b48d54c60325079DAa8E361",
+    initialBlockNumber: 11299496,
   };
 
   // EOAs and privatekey
