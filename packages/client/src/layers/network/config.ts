@@ -161,8 +161,7 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
     wsRpc: "wss://op.getblock.io/8701728c-f72a-4cab-a95d-56055e738f98/goerli/",
     // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
     // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
-    snapshotUrl: "https://test-snapshot-2.asphodel.io",
-    // snapshotUrl: "http://164.92.81.154:50061",
+    snapshotUrl: "https://ecs-snapshot.asphodel-mud-services.linfra.xyz",
 
     // checkpointUrl: undefined,
     chainId: 420,
