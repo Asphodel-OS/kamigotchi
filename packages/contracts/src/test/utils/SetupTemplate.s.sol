@@ -115,6 +115,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /////////////////
   // OPERATOR ACTIONS
+
   function _moveAccount(uint playerIndex, uint location) internal {
     address operator = _operators[_owners[playerIndex]];
     vm.prank(operator);
@@ -169,9 +170,9 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // GETTERS
 
-  function _getItemBalance(uint256 playerIndex, uint256 itemIndex) internal view returns (uint256) {
-    uint256 accountID = _getAccount(playerIndex);
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
+  function _getItemBalance(uint playerIndex, uint itemIndex) internal view returns (uint) {
+    uint accountID = _getAccount(playerIndex);
+    uint inventoryID = LibInventory.get(components, accountID, itemIndex);
     return LibInventory.getBalance(components, inventoryID);
   }
 

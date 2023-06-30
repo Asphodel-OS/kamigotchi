@@ -7,14 +7,6 @@ import "test/utils/SetupTemplate.s.sol";
 
 // this includes the feeding of both food and revives
 contract FeedingTest is SetupTemplate {
-  // structure of Listing data for test purposes
-  struct TestListingData {
-    uint merchantIndex;
-    uint itemIndex;
-    uint priceBuy;
-    uint priceSell;
-  }
-
   uint internal _merchantID;
   uint internal _nodeID;
   uint[] internal _listingIDs;
@@ -59,22 +51,18 @@ contract FeedingTest is SetupTemplate {
 
   function _createFoodListings(uint merchantIndex) internal {
     uint itemIndex;
-    uint foodIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
-      foodIndex = LibRegistryItem.getFoodIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(merchantIndex, itemIndex, 10, 10));
     }
   }
 
   function _createReviveListings(uint merchantIndex) internal {
     uint itemIndex;
-    uint reviveIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
-      reviveIndex = LibRegistryItem.getReviveIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(merchantIndex, itemIndex, 10, 10));
     }
   }
@@ -195,12 +183,11 @@ contract FeedingTest is SetupTemplate {
 
     // check we CANNOT revive pets from other accounts
     for (uint i = 1; i < numAccounts; i++) {
-      vm.startPrank(_getOperator(i));
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("Pet: not urs");
+        vm.prank(_getOperator(i));
         _PetReviveSystem.executeTyped(petIDs[j], reviveIndex);
       }
-      vm.stopPrank();
     }
 
     // test that the owner account Can revive its own pets
