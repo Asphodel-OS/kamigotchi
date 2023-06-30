@@ -79,37 +79,25 @@ contract MurderTest is SetupTemplate {
     uint numAccounts = 5;
     uint numPets = 5; // number of pets per account
     uint nodeID = _nodeIDs[0];
-    // uint[] memory victimProductionIDs = _setupDrainedProductions(10, numPets, nodeID);
+    uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
     // create and stock a bunch of accounts with revives and kamis
     for (uint i = 0; i < numAccounts; i++) {
       _registerAccount(i);
-      _stockAccount(i);
       _petIDs[i] = _mintPets(i, numPets);
     }
 
-    // start harvest for the last account's kamis on node1
-    // drain them completely (so they're ripe for murder)
-    uint[] memory victimProductionIDs = new uint[](numPets);
-    for (uint i = 0; i < numPets; i++) {
-      victimProductionIDs[i] = _startProduction(_petIDs[numAccounts - 1][i], nodeID);
-    }
-    _currTime += 100 hours;
-    vm.warp(_currTime);
-
-    // start harvest on the other accounts on the same node
-    for (uint i = 0; i < numAccounts - 1; i++) {
+    // start harvest on node with other account's kamis, fast forward by idle time requirement
+    for (uint i = 0; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
         _startProduction(_petIDs[i][j], nodeID);
       }
     }
-
-    // fast forward by idle time requirement
     _currTime += _idleRequirement;
     vm.warp(_currTime);
 
     // check that we CANNOT liquidate the starved kamis from the wrong account
-    for (uint i = 1; i < numAccounts - 1; i++) {
+    for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("Pet: not urs");
         vm.prank(_getOperator(i));
@@ -124,107 +112,90 @@ contract MurderTest is SetupTemplate {
   }
 
   function testMurderAccountLocationConstraints() public {
-    uint numPets = 5;
+    uint numPets = 5; // number of kamis per account
+    uint playerIndex = 0; // the player we're playing with
+    uint nodeID = _nodeIDs[0];
+    uint[] memory productionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
-    // create and stock two accounts with revives and kamis
-    for (uint i = 0; i < 2; i++) {
-      _registerAccount(i);
-      _stockAccount(i);
-      _petIDs[i] = _mintPets(i, numPets);
-    }
-
-    // start harvest for first account's kamis on node1 (location 1). drain them
-    uint[] memory productionIDs = new uint[](numPets);
-    for (uint i = 0; i < numPets; i++) {
-      productionIDs[i] = _startProduction(_petIDs[0][i], _nodeIDs[0]);
-    }
-    _currTime += 100 hours;
-    vm.warp(_currTime);
+    // create acting account and mint its kamis
+    _registerAccount(playerIndex);
+    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
 
     // start harvest on the right Node
     for (uint j = 0; j < numPets; j++) {
-      _startProduction(_petIDs[1][j], _nodeIDs[0]);
+      _startProduction(_petIDs[playerIndex][j], nodeID);
     }
     _currTime += _idleRequirement;
     vm.warp(_currTime);
 
     // move the Account to room 2
     // check that we CANNOT liquidate
-    _moveAccount(1, 2);
+    _moveAccount(playerIndex, 2);
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("Node: too far");
-      vm.prank(_getOperator(1));
-      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[1][i]);
+      vm.prank(_getOperator(playerIndex));
+      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[playerIndex][i]);
     }
 
     // move the Account to room 3
     // check that we CANNOT liquidate
-    _moveAccount(1, 3);
+    _moveAccount(playerIndex, 3);
     for (uint i = 0; i < numPets; i++) {
       vm.expectRevert("Node: too far");
-      vm.prank(_getOperator(1));
-      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[1][i]);
+      vm.prank(_getOperator(playerIndex));
+      _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[playerIndex][i]);
     }
 
     // move the Account to room 1
     // check that we CAN liquidate
-    _moveAccount(1, 1);
+    _moveAccount(playerIndex, 1);
     for (uint i = 0; i < numPets; i++) {
-      _liquidateProduction(_petIDs[1][i], productionIDs[i]);
+      _liquidateProduction(_petIDs[playerIndex][i], productionIDs[i]);
     }
   }
 
   function testMurderPetLocationConstraints() public {
-    uint numPets = 5;
+    uint numPets = 5; // number of kamis per account
+    uint playerIndex = 0; // the player we're playing with
+    uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, _nodeIDs[0]);
 
-    // create and stock two of accounts with revives and kamis
-    for (uint i = 0; i < 2; i++) {
-      _registerAccount(i);
-      _stockAccount(i);
-      _petIDs[i] = _mintPets(i, numPets);
-    }
-
-    // start harvest for first account's kamis on node1 (location 1). drain them
-    uint[] memory productionIDs1 = new uint[](numPets);
-    for (uint i = 0; i < numPets; i++) {
-      productionIDs1[i] = _startProduction(_petIDs[0][i], _nodeIDs[0]);
-    }
-    _currTime += 100 hours;
-    vm.warp(_currTime);
+    // create acting account and mint its kamis
+    _registerAccount(playerIndex);
+    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
 
     // start harvest on wrong Nodes for second account's kamis
     // check that we CANNOT liquidate
     uint location;
-    uint[] memory productionIDs2 = new uint[](numPets);
+    uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 1; i < _nodeIDs.length; i++) {
       location = LibNode.getLocation(components, _nodeIDs[i]);
-      if (LibAccount.getLocation(components, _getAccount(1)) != location) {
-        _moveAccount(1, location);
+      if (LibAccount.getLocation(components, _getAccount(playerIndex)) != location) {
+        _moveAccount(playerIndex, location);
       }
 
       for (uint j = 0; j < numPets; j++) {
-        productionIDs2[j] = _startProduction(_petIDs[1][j], _nodeIDs[i]);
+        playerProductionIDs[j] = _startProduction(_petIDs[playerIndex][j], _nodeIDs[i]);
       }
       _currTime += _idleRequirement;
       vm.warp(_currTime);
 
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("Production: must be on same node as target");
-        vm.prank(_getOperator(1));
-        _ProductionLiquidateSystem.executeTyped(productionIDs1[j], _petIDs[1][j]);
-        _stopProduction(productionIDs2[j]);
+        vm.prank(_getOperator(playerIndex));
+        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[playerIndex][j]);
+        _stopProduction(playerProductionIDs[j]);
       }
     }
 
     // move to the room where Node1 is
     location = LibNode.getLocation(components, _nodeIDs[0]);
-    if (LibAccount.getLocation(components, _getAccount(1)) != location) {
-      _moveAccount(1, location);
+    if (LibAccount.getLocation(components, _getAccount(playerIndex)) != location) {
+      _moveAccount(playerIndex, location);
     }
 
     // start harvest on right Node for second account's kamis
     for (uint i = 0; i < numPets; i++) {
-      _startProduction(_petIDs[1][i], _nodeIDs[0]);
+      _startProduction(_petIDs[playerIndex][i], _nodeIDs[0]);
     }
 
     _currTime += _idleRequirement;
@@ -232,7 +203,7 @@ contract MurderTest is SetupTemplate {
 
     // check that we CAN liquidate
     for (uint i = 0; i < numPets; i++) {
-      _liquidateProduction(_petIDs[1][i], productionIDs1[i]);
+      _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
     }
   }
 
