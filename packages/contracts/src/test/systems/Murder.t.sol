@@ -75,6 +75,7 @@ contract MurderTest is SetupTemplate {
   /////////////////
   // TESTS
 
+  // test that the correct account must call the liquidation
   function testMurderPermissionConstraints() public {
     uint numAccounts = 5;
     uint numPets = 5; // number of pets per account
@@ -111,6 +112,7 @@ contract MurderTest is SetupTemplate {
     }
   }
 
+  // test that the player must be in the same room to command liquidations
   function testMurderAccountLocationConstraints() public {
     uint numPets = 5; // number of kamis per account
     uint playerIndex = 0; // the player we're playing with
@@ -154,7 +156,8 @@ contract MurderTest is SetupTemplate {
     }
   }
 
-  function testMurderPetLocationConstraints() public {
+  // test that the pets must be on the same Node to liquidate one another
+  function testMurderNodeConstraints() public {
     uint numPets = 5; // number of kamis per account
     uint playerIndex = 0; // the player we're playing with
     uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, _nodeIDs[0]);
@@ -207,8 +210,137 @@ contract MurderTest is SetupTemplate {
     }
   }
 
-  function testMurderIdleConstraint() public {}
+  // test that we cannot unless we meet idle requirements
+  function testMurderIdleConstraint() public {
+    uint numPets = 5; // number of kamis per account
+    uint playerIndex = 0; // the player we're playing with
+    uint nodeID = _nodeIDs[0];
+    uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
-  // check for both pet state and
-  function testMurderStateConstraints() public {}
+    // create acting account and mint its kamis
+    _registerAccount(playerIndex);
+    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+
+    // start harvesting on the same node as our victims
+    uint[] memory playerProductionIDs = new uint[](numPets);
+    for (uint i = 0; i < numPets; i++) {
+      playerProductionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
+    }
+
+    // check that we CANNOT liquidate anytime before the idle requirement is met
+    uint numIncrements = 5;
+    for (uint i = 0; i < numIncrements; i++) {
+      _currTime += _idleRequirement / numIncrements;
+      vm.warp(_currTime);
+
+      for (uint j = 0; j < numPets; j++) {
+        vm.expectRevert("Pet: unable to liquidate");
+        vm.prank(_getOperator(playerIndex));
+        _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[playerIndex][j]);
+      }
+    }
+
+    // check that we CAN liquidate after the idle requirement is met
+    uint overflow = (_idleRequirement % numIncrements) + 1;
+    _currTime += overflow;
+    vm.warp(_currTime);
+    for (uint i = 0; i < numPets; i++) {
+      _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
+    }
+  }
+
+  // check that pets can only liquidate when both victim and attacker are HARVESTING
+  function testMurderStateConstraints() public {
+    uint numPets = 5; // number of pets per account
+    uint playerIndex = 0; // the player we're playing with
+    uint supportPlayerIndex = 1; // the player acting in the background to support test
+    uint nodeID = _nodeIDs[0];
+    uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, nodeID);
+
+    // create acting account and mint its pets
+    _registerAccount(playerIndex);
+    _stockAccount(playerIndex);
+    _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
+
+    // start and stop productions for these pets so they're populated
+    uint[] memory playerProductionIDs = new uint[](numPets);
+    for (uint i = 0; i < numPets; i++) {
+      playerProductionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
+      _stopProduction(playerProductionIDs[i]);
+    }
+    _currTime += _idleRequirement;
+    vm.warp(_currTime);
+
+    // create a supporting account
+    _registerAccount(supportPlayerIndex);
+    _stockAccount(supportPlayerIndex);
+    _petIDs[supportPlayerIndex] = _mintPets(supportPlayerIndex, numPets);
+
+    // check that pets CANNOT liquidate when RESTING
+    for (uint i = 0; i < numPets; i++) {
+      vm.expectRevert("Pet: must be harvesting");
+      vm.prank(_getOperator(playerIndex));
+      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
+    }
+
+    // start out player's productions and starve their pets
+    for (uint i = 0; i < numPets; i++) {
+      _startProduction(_petIDs[playerIndex][i], nodeID);
+    }
+    _currTime += 100 hours;
+    vm.warp(_currTime);
+
+    // check that pets CANNOT liquidate when Starving
+    for (uint i = 0; i < numPets; i++) {
+      vm.expectRevert("Pet: starving..");
+      vm.prank(_getOperator(playerIndex));
+      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
+    }
+
+    // kill off our player's pets
+    uint[] memory supportProductionIDs = new uint[](numPets);
+    for (uint i = 0; i < numPets; i++) {
+      supportProductionIDs[i] = _startProduction(_petIDs[supportPlayerIndex][i], nodeID);
+      _currTime += _idleRequirement;
+      vm.warp(_currTime);
+      _liquidateProduction(_petIDs[supportPlayerIndex][i], playerProductionIDs[i]);
+    }
+
+    // fast forward as syncHealth resets both pets' last action times during liquidation
+    _currTime += _idleRequirement;
+    vm.warp(_currTime);
+
+    // check that pets CANNOT liquidate when DEAD
+    for (uint i = 0; i < numPets; i++) {
+      vm.expectRevert("Pet: must be harvesting");
+      vm.prank(_getOperator(playerIndex));
+      _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
+    }
+
+    // starve out our support player's productions
+    _currTime += 100 hours;
+    vm.warp(_currTime);
+
+    // revive our pets and start their productions
+    for (uint i = 0; i < numPets; i++) {
+      _revivePet(_petIDs[playerIndex][i], 1);
+      _startProduction(_petIDs[playerIndex][i], nodeID);
+    }
+    _currTime += _idleRequirement;
+    vm.warp(_currTime);
+
+    // check that pets CAN liquidate when HARVESTING
+    for (uint i = 0; i < numPets; i++) {
+      _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
+    }
+    _currTime += _idleRequirement;
+    vm.warp(_currTime);
+
+    // check that pets CAN can liquidate in succession once idle requirement is met
+    for (uint i = 0; i < numPets; i++) {
+      _liquidateProduction(_petIDs[playerIndex][i], supportProductionIDs[i]);
+    }
+  }
+
+  function testMurderThresholdConstraints() public {}
 }

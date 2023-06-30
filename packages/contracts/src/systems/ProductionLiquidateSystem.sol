@@ -26,13 +26,13 @@ contract ProductionLiquidateSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
-    // require 5min since previous action to attempt a liquidation
+    // basic requirements (state and idle time)
     require(LibPet.canLiquidate(components, petID), "Pet: unable to liquidate");
+    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
 
-    // standard checks
+    // health check
     LibPet.syncHealth(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
 
     // check that the two kamis share the same node
     uint256 productionID = LibPet.getProduction(components, petID);

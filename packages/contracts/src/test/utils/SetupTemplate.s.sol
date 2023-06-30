@@ -132,6 +132,24 @@ abstract contract SetupTemplate is TestSetupImports {
     _ListingSellSystem.executeTyped(listingID, amount);
   }
 
+  // easy function for getting the proper inputs to feed a pet
+  function _feedPet(uint petID, uint foodIndex) internal {
+    uint accountID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accountID);
+
+    vm.prank(operator);
+    _PetFeedSystem.executeTyped(petID, foodIndex);
+  }
+
+  // easy function for getting the proper inputs to revive a pet
+  function _revivePet(uint petID, uint reviveIndex) internal {
+    uint accountID = LibPet.getAccount(components, petID);
+    address operator = LibAccount.getOperator(components, accountID);
+
+    vm.prank(operator);
+    _PetReviveSystem.executeTyped(petID, reviveIndex);
+  }
+
   function _startProduction(uint petID, uint nodeID) internal returns (uint) {
     uint accountID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accountID);
