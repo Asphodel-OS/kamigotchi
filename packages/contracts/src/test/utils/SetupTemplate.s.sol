@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import { Deploy } from "test/Deploy.sol";
 import "std-contracts/test/MudTest.t.sol";
 
+import "forge-std/console.sol";
+
 import { LibString } from "solady/utils/LibString.sol";
 import "./TestSetupImports.sol";
 

@@ -25,7 +25,6 @@ import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import _RoomSetExitsSystem from "../abi/_RoomSetExitsSystem.json";
 import _RoomSetNameSystem from "../abi/_RoomSetNameSystem.json";
-import _SetLeaderboardEpochSystem from "../abi/_SetLeaderboardEpochSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
 import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
@@ -84,7 +83,6 @@ export const SystemAbis = {
   "system._Room.Create": _RoomCreateSystem.abi,
   "system._Room.Set.Exits": _RoomSetExitsSystem.abi,
   "system._Room.Set.Name": _RoomSetNameSystem.abi,
-  "system.Leaderboard.Epoch": _SetLeaderboardEpochSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Register": AccountRegisterSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
