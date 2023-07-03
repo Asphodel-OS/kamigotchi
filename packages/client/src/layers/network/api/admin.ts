@@ -89,7 +89,8 @@ export function createAdminAPI(systems: any) {
     await createRoom('Temple Cave', 15, [11, 16, 18]);
     await createRoom('Techno Temple', 16, [15]);
     // await createRoom("Misty Park", 17, [0]);
-    await createRoom('Cave Crossroads', 18, [15]);
+    await createRoom('Cave Crossroads', 18, [15, 19]);
+    await createRoom('Violence Temple', 19, [18]);
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in

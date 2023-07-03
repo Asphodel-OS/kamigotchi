@@ -659,7 +659,7 @@ export const rooms: Room[] = [
         key: 'cavecrossright',
         path: roomObjectsWorld2.path18to20,
         offset: { x: 18.5, y: -19.7 },
-        onClick: () => triggerRoomMovementModal(20),
+        onClick: () => triggerRoomMovementModal(15),
       },
     ],
   },
@@ -675,7 +675,7 @@ export const rooms: Room[] = [
     },
     objects: [
       {
-        key: 'cavefloor',
+        key: 'violencefloor',
         path: roomObjectsWorld2.path19to18,
         offset: { x: -4, y: 59.1 },
         onClick: () => triggerRoomMovementModal(18),
