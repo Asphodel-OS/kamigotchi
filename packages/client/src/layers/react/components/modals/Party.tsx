@@ -169,6 +169,7 @@ export function registerPartyModal() {
 
       // reveal kami
       const revealKami = async (kami: Kami) => {
+        if (!kami.index) return;
         const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
