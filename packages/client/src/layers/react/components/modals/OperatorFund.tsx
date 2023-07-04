@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { utils } from 'ethers';
+import { BigNumber, BigNumberish, utils } from 'ethers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -16,27 +16,29 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 import { abi } from "../../../../../abi/ERC20ProxySystem.json"
 
-export function registerOperatorFund() {
+export function registerERC20BridgeModal() {
   registerUIComponent(
-    'OperatorFund',
+    'ERC20Bridge',
     {
-      colStart: 28,
-      colEnd: 70,
-      rowStart: 34,
-      rowEnd: 70,
+      colStart: 33,
+      colEnd: 65,
+      rowStart: 37,
+      rowEnd: 68,
     },
     (layers) => {
       const {
         network: {
+          systems,
           network: { connectedAddress },
           components: {
+            Coin,
             IsAccount,
-            OperatorAddress
+            OperatorAddress,
           },
         },
       } = layers;
 
-      return merge(OperatorAddress.update$, IsAccount.update$).pipe(
+      return merge(Coin.update$).pipe(
         map(() => {
           // get the account entity of the controlling wallet
           const accountEntityIndex = Array.from(
@@ -53,182 +55,163 @@ export function registerOperatorFund() {
               ? getAccount(layers, accountEntityIndex)
               : ({} as Account);
 
+          const { coin } = account;
+
           return {
-            layers
+            CoinBal: coin,
+            proxyAddy: systems["system.ERC20.Proxy"].address
           };
         })
       );
     },
 
-    ({ layers }) => {
-      const {
-        network: {
-          api: {
-            player: { account }
-          },
-          actions,
-        },
-      } = layers;
+    ({ CoinBal, proxyAddy }) => {
       const { details: accountDetails } = useKamiAccount();
       const { visibleModals, setVisibleModals } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
 
-      const [FundAmount, setFundAmount] = useState(0);
-      const [RefundAmount, setRefundAmount] = useState(0);
-
-      const [FundGasWarn, setFundGasWarn] = useState("");
-      const [RefundGasWarn, setRefundGasWarn] = useState("");
-
-
-      /////////////////
-      // BALANCES
-
-      const { data: OwnerBal } = useBalance({
+      const [depAmount, setDepAmount] = useState(0);
+      const [witAmount, setWitAmount] = useState(0);
+      // get token balance of controlling account 
+      const { data: erc20Addy } = useContractRead({
+        address: proxyAddy as `0x${string}`,
+        abi: abi,
+        functionName: 'getTokenAddy'
+      });
+      const { data: EOABalance } = useBalance({
         address: accountDetails.ownerAddress as `0x${string}`,
+        token: erc20Addy as `0x${string}`,
+        formatUnits: "wei",
         watch: true
       });
-
-      const { data: OperatorBal } = useBalance({
-        address: accountDetails.operatorAddress as `0x${string}`,
-        watch: true
-      });
-
 
       /////////////////
       // ACTIONS
 
-      const fundTx = async () => {
+      // TODO: get ERC20 balance - blocked by wallet code
+      const depositTx = () => {
         const network = networks.get(selectedAddress);
-        const account = network!.api.player.account;
+        const actions = network!.actions;
+        const api = network!.api.player;
 
-        const actionID = `Funding Operator` as EntityID;
+        const actionID = `Depositing $KAMI` as EntityID;
         actions.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return account.fund(FundAmount.toString());
+            return api.ERC20.deposit(depAmount);
           },
         });
         return actionID;
       };
 
-      const refundTx = async () => {
-        const actionID = `Refunding Owner` as EntityID;
+      const withdrawTx = () => {
+        const network = networks.get(selectedAddress);
+        const actions = network!.actions;
+        const api = network!.api.player;
+
+        const actionID = `Withdrawing $KAMI` as EntityID;
         actions.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return account.refund(RefundAmount.toString());
+            return api.ERC20.withdraw(witAmount);
           },
         });
         return actionID;
       };
 
       const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, operatorFund: false });
+        setVisibleModals({ ...visibleModals, bridgeERC20: false });
       }, [setVisibleModals, visibleModals]);
 
       ///////////////
       // DISPLAY
 
       const DepositButton = (
-        <ActionButton id='button-deposit' onClick={fundTx} size='medium' text='↵' />
+        <ActionButton id='button-deposit' onClick={depositTx} size='medium' text='↵' />
       );
 
       const WithdrawButton = (
-        <ActionButton id='button-deposit' onClick={refundTx} size='medium' text='↵' />
+        <ActionButton id='button-deposit' onClick={withdrawTx} size='medium' text='↵' />
       );
 
-      const catchKeysFund = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const catchKeysDep = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          fundTx();
+          depositTx();
         }
       };
 
-      const catchKeysRefund = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const catchKeysWit = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-          refundTx();
+          withdrawTx();
         }
       };
 
-      const setMaxFund = () => {
-        setFundAmount(Number(OwnerBal?.formatted));
+      const setMaxDep = () => {
+        setDepAmount(Number(EOABalance?.formatted));
       };
 
-      const setMaxRefund = () => {
-        setRefundAmount(Number(OperatorBal?.formatted));
+      const setMaxWit = () => {
+        setWitAmount(Number(CoinBal));
       };
 
       const handleChangeDep = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFundAmount(Number(event.target.value));
+        setDepAmount(Number(event.target.value));
       };
 
       const handleChangeWit = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRefundAmount(Number(event.target.value));
+        setWitAmount(Number(event.target.value));
       };
 
-      useEffect(() => {
-        if (FundAmount > Number(OwnerBal?.formatted)) setFundGasWarn("Insufficient balance");
-        else if (FundAmount == Number(OwnerBal?.formatted)) setFundGasWarn("Leave a little for gas!");
-        else setFundGasWarn("");
-      }, [FundAmount, OwnerBal]);
-
-      useEffect(() => {
-        if (RefundAmount > Number(OperatorBal?.formatted)) setRefundGasWarn("Insufficient balance");
-        else if (RefundAmount == Number(OperatorBal?.formatted)) setRefundGasWarn("Leave a little for gas!");
-        else setRefundGasWarn("");
-      }, [RefundAmount, OperatorBal]);
-
       return (
-        <ModalWrapperFull divName='operatorFund' id='operatorFund'>
+        <ModalWrapperFull divName='bridgeERC20' id='bridgeERC20'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Header>Fund Operator</Header>
+          <Header>Bridge $KAMI</Header>
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>
-              Fund Operator
-            </Description>
-            <div style={{ display: "grid", justifyItems: "end", gridRow: 1, gridColumn: 2 }}>
-              <MaxText style={{ gridRow: 1 }} onClick={setMaxFund}>
-                Owner: {Number(OwnerBal?.formatted).toFixed(4)} ETH
-              </MaxText>
-              <OutlineBox>
-                <Input
-                  style={{ gridRow: 2, pointerEvents: 'auto' }}
-                  type='number'
-                  onKeyDown={(e) => catchKeysFund(e)}
-                  placeholder='0'
-                  value={FundAmount}
-                  onChange={(e) => handleChangeDep(e)}
-                ></Input>
-                {DepositButton}
-              </OutlineBox>
-              <WarnText style={{ gridRow: 3 }}>{FundGasWarn}</WarnText>
-            </div>
-            <Description style={{ gridRow: 2, gridColumn: 1 }}>
               Withdraw
             </Description>
-            <div style={{ display: "grid", justifyItems: "end", gridRow: 2, gridColumn: 2 }}>
-              <MaxText style={{ gridRow: 1 }} onClick={setMaxRefund}>
-                Operator: {Number(OperatorBal?.formatted).toFixed(4)} ETH
+            <div style={{ display: "grid", justifyItems: "end", gridRow: 1, gridColumn: 2 }}>
+              <MaxText style={{ gridRow: 1 }} onClick={setMaxWit}>
+                Game: {Number(CoinBal)} $KAMI
               </MaxText>
               <OutlineBox>
                 <Input
                   style={{ gridRow: 2, pointerEvents: 'auto' }}
                   type='number'
-                  onKeyDown={(e) => catchKeysRefund(e)}
+                  onKeyDown={(e) => catchKeysWit(e)}
                   placeholder='0'
-                  value={RefundAmount}
+                  value={witAmount}
                   onChange={(e) => handleChangeWit(e)}
                 ></Input>
                 {WithdrawButton}
               </OutlineBox>
-              <WarnText style={{ gridRow: 3 }}>{RefundGasWarn}</WarnText>
+            </div>
+            <Description style={{ gridRow: 2, gridColumn: 1 }}>
+              Deposit
+            </Description>
+            <div style={{ display: "grid", justifyItems: "end", gridRow: 2, gridColumn: 2 }}>
+              <MaxText style={{ gridRow: 1 }} onClick={setMaxDep}>
+                Wallet: {Number(EOABalance?.formatted)} $KAMI
+              </MaxText>
+              <OutlineBox>
+                <Input
+                  style={{ gridRow: 2, pointerEvents: 'auto' }}
+                  type='number'
+                  onKeyDown={(e) => catchKeysDep(e)}
+                  placeholder='0'
+                  value={depAmount}
+                  onChange={(e) => handleChangeDep(e)}
+                ></Input>
+                {DepositButton}
+              </OutlineBox>
             </div>
           </Grid>
         </ModalWrapperFull>
@@ -247,9 +230,9 @@ const Header = styled.p`
 const Grid = styled.div`
   display: grid;
   justify-items: start;
-  align-items: center;
+  align-items: end;
   grid-column-gap: 12px;
-  grid-row-gap: 24px;
+  grid-row-gap: 18px;
   max-height: 80%;
   padding: 32px;
 `;
@@ -326,16 +309,4 @@ const TopButton = styled.button`
     background-color: #c4c4c4;
   }
   margin: 0px;
-`;
-
-const WarnText = styled.text`
-  font-size: 12px;
-  color: #FF785B;
-  text-align: center;
-  padding: 4px;
-  font-family: Pixel;
-  
-  cursor: pointer;
-  border-width: 0px;
-  background-color: #ffffff;
 `;
