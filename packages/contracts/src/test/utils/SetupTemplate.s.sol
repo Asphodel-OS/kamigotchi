@@ -116,10 +116,13 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // OPERATOR ACTIONS
 
+  // attempt to move an account if it's not already there
   function _moveAccount(uint playerIndex, uint location) internal {
-    address operator = _operators[_owners[playerIndex]];
-    vm.prank(operator);
-    _AccountMoveSystem.executeTyped(location);
+    if (location != LibAccount.getLocation(components, _getAccount(playerIndex))) {
+      address operator = _operators[_owners[playerIndex]];
+      vm.prank(operator);
+      _AccountMoveSystem.executeTyped(location);
+    }
   }
 
   function _buyFromListing(uint playerIndex, uint listingID, uint amount) internal {
@@ -150,7 +153,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _PetReviveSystem.executeTyped(petID, reviveIndex);
   }
 
-  function _startProduction(uint petID, uint nodeID) internal returns (uint) {
+  function _startProduction(uint petID, uint nodeID) internal virtual returns (uint) {
     uint accountID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accountID);
 
@@ -177,7 +180,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _ProductionCollectSystem.executeTyped(productionID);
   }
 
-  function _liquidateProduction(uint attackerID, uint productionID) internal {
+  function _liquidateProduction(uint attackerID, uint productionID) internal virtual {
     uint accountID = LibPet.getAccount(components, attackerID);
     address operator = LibAccount.getOperator(components, accountID);
 

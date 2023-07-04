@@ -29,6 +29,7 @@ contract ProductionLiquidateSystem is System {
     // basic requirements (state and idle time)
     require(LibPet.canLiquidate(components, petID), "Pet: unable to liquidate");
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    require(LibProduction.isActive(components, targetProductionID), "Production: not active");
 
     // health check
     LibPet.syncHealth(components, petID);
@@ -49,7 +50,7 @@ contract ProductionLiquidateSystem is System {
     LibPet.syncHealth(components, targetPetID);
     require(
       LibProduction.isLiquidatableBy(components, targetProductionID, petID),
-      "Pet: need moar violence"
+      "Pet: you lack violence"
     );
 
     // collect the money

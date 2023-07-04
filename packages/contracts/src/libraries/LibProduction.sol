@@ -202,6 +202,27 @@ library LibProduction {
     }
   }
 
+  // get all the active productions on a node
+  function getAllOnNode(
+    IUintComp components,
+    uint256 nodeID
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsProdCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdNodeCompID),
+      abi.encode(nodeID)
+    );
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, StateCompID),
+      abi.encode("ACTIVE")
+    );
+
+    return LibQuery.query(fragments);
+  }
+
   // Retrieves all productions based on any defined filters
   function _getAllX(
     IUintComp components,
