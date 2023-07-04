@@ -223,6 +223,10 @@ library LibProduction {
     return LibQuery.query(fragments);
   }
 
+  function getAll(IUintComp components) internal view returns (uint256[] memory) {
+    return _getAllX(components, 0, 0, "");
+  }
+
   // Retrieves all productions based on any defined filters
   function _getAllX(
     IUintComp components,

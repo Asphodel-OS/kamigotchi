@@ -81,12 +81,12 @@ contract MurderTest is SetupTemplate {
   }
 
   // gets the playerIndex of a pet's owner
-  function _getOwnerPlayerIndex(uint petID) internal view returns (uint playerIndex) {
+  function _getOwnerPlayerIndex(uint petID) internal view returns (uint) {
     uint accountID = LibPet.getAccount(components, petID);
     address owner = LibAccount.getOwner(components, accountID);
     for (uint i = 0; i < _owners.length; i++) {
       if (_owners[i] == owner) {
-        i = playerIndex;
+        return i;
       }
     }
   }
@@ -379,8 +379,8 @@ contract MurderTest is SetupTemplate {
     }
   }
 
-  // run a test to ensure that liquidations can on
-  function testMurderThresholdConstraints() public {
+  // run a test to ensure that liquidations are only honored at calculated thresholds
+  function testMurderThresholdConstraint() public {
     uint numPets = 6; // number of pets per account
     uint numPlayers = 5;
 
@@ -404,9 +404,8 @@ contract MurderTest is SetupTemplate {
     // have our players interact in a in a round robin, commanding a single kami to
     // liquidate a random kami that shares a node. whether this succeeds or fails depends
     // on the respective stats of attacker and victim
-    // what about inactive productions?
     uint numIterations = 100;
-    uint seed;
+    uint rand;
     uint playerIndex;
     uint petIndex;
     uint attackerID;
@@ -414,26 +413,26 @@ contract MurderTest is SetupTemplate {
     uint productionID;
     uint[] memory productionIDs;
     for (uint i = 0; i < numIterations; i++) {
-      seed = uint(keccak256(abi.encodePacked(i, numIterations)));
+      rand = uint(keccak256(abi.encodePacked(i)));
 
       // set the stage
-      playerIndex = seed % numPlayers;
-      petIndex = seed % numPets;
+      playerIndex = rand % numPlayers;
+      petIndex = rand % numPets;
       attackerID = _petIDs[playerIndex][petIndex];
       nodeID = LibProduction.getNode(components, LibPet.getProduction(components, attackerID));
       productionIDs = LibProduction.getAllOnNode(components, nodeID);
-      productionID = productionIDs[seed % productionIDs.length];
+      productionID = productionIDs[rand % productionIDs.length];
       victimID = LibProduction.getPet(components, productionID);
 
-      // fast forward up to 1 hr
-      _currTime += seed % 1 hours;
+      // fast forward 15-75min
+      _currTime += (rand % 1 hours) + 15 minutes;
       vm.warp(_currTime);
 
       // get the player and pet ready
       _moveAccount(playerIndex, LibNode.getLocation(components, nodeID));
       _feedPet(attackerID, 1);
 
-      // fast forward by the idle requirement
+      // fast forward by idle requirement
       _currTime += _idleRequirement;
       vm.warp(_currTime);
 
@@ -449,7 +448,7 @@ contract MurderTest is SetupTemplate {
         _feedPet(victimID, 1);
 
         // put them on new node
-        nodeID = _nodeIDs[seed % _nodeIDs.length];
+        nodeID = _nodeIDs[rand % _nodeIDs.length];
         _moveAccount(_getOwnerPlayerIndex(victimID), LibNode.getLocation(components, nodeID));
         _startProduction(victimID, nodeID);
       }
