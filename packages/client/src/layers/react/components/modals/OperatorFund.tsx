@@ -14,8 +14,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 
-import { abi } from "../../../../../abi/ERC20ProxySystem.json"
-
+// more complex controls to allow operator funding and refunding 
 export function registerOperatorFund() {
   registerUIComponent(
     'OperatorFund',
@@ -93,6 +92,9 @@ export function registerOperatorFund() {
         watch: true
       });
 
+      useEffect(() => {
+        console.log(OperatorBal);
+      }, [OperatorBal]);
 
       /////////////////
       // ACTIONS
