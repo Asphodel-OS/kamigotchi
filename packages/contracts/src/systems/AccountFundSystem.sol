@@ -5,7 +5,6 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Fund"));
 
@@ -21,7 +20,8 @@ contract AccountFundSystem is System {
     require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.incBy(world, components, accountID, "OPERATOR_GAS", msg.value);
+    uint256 curFunded = LibAccount.getGasFunded(components, accountID);
+    LibAccount.setGasFunded(world, components, accountID, curFunded + msg.value);
 
     address operator = LibAccount.getOperator(components, accountID);
     transfer(operator, msg.value);
@@ -36,7 +36,9 @@ contract AccountFundSystem is System {
     require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.decBy(world, components, accountID, "OPERATOR_GAS", msg.value);
+    uint256 curFunded = LibAccount.getGasFunded(components, accountID);
+    require(curFunded >= msg.value, "AccountFundSystem: overflow refund");
+    LibAccount.setGasFunded(world, components, accountID, curFunded - msg.value);
 
     address owner = LibAccount.getOwner(components, accountID);
     transfer(owner, msg.value);
