@@ -289,7 +289,7 @@ abstract contract SetupTemplate is TestSetupImports {
     );
   }
 
-  function _initTraits() internal {
+  function _initCommonTraits() internal {
     // Backgrounds
     registerTrait(1, 10, 0, 0, 0, 0, 9, "", "Health BG Basic", "BACKGROUND");
     registerTrait(2, 0, 1, 0, 0, 0, 9, "", "Power BG Basic", "BACKGROUND");

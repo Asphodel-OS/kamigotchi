@@ -6,7 +6,7 @@ import "test/utils/SetupTemplate.s.sol";
 contract ERC721PetTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
-    _initTraits();
+    _initCommonTraits();
     _registerAccount(0);
     _registerAccount(1);
   }

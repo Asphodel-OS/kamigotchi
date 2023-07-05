@@ -25,7 +25,7 @@ contract HarvestTest is SetupTemplate {
     _createRoom("testRoom2", 2, 1, 3, 0);
     _createRoom("testRoom3", 3, 1, 2, 0);
 
-    _initTraits();
+    _initCommonTraits();
   }
 
   /////////////////

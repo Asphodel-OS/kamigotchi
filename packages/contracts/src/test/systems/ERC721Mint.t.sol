@@ -33,6 +33,6 @@ contract ERC721MintTest is SetupTemplate {
     _registerAccount(1);
     _registerAccount(2);
 
-    _initTraits();
+    _initCommonTraits();
   }
 }

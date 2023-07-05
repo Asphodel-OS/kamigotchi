@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { LibString } from "solady/utils/LibString.sol";
-
 import "test/utils/SetupTemplate.s.sol";
 
 contract MurderTest is SetupTemplate {
@@ -15,7 +13,7 @@ contract MurderTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _initTraits();
+    _initCommonTraits();
     _initItems();
 
     _createRoom("testRoom1", 1, 2, 3, 0);
