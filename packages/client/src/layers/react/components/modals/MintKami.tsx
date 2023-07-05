@@ -14,6 +14,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Stepper } from '../library/Stepper';
+import { useAccount } from 'wagmi';
 
 export function registerKamiMintModal() {
   registerUIComponent(
@@ -75,13 +76,16 @@ export function registerKamiMintModal() {
         },
       } = layers;
 
+      const { isConnected } = useAccount();
       const { visibleModals, setVisibleModals, sound: { volume } } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
 
       useEffect(() => {
-        unrevealedKamis.forEach((kami) => {
-          revealTx(kami);
-        });
+        if (isConnected) {
+          unrevealedKamis.forEach((kami) => {
+            revealTx(kami);
+          });
+        }
       }, [unrevealedKamis])
 
       /////////////////
