@@ -38,6 +38,7 @@ export function registerKamiMintModal() {
           world,
         },
       } = layers;
+      //
 
       return merge(IsPet.update$, Value.update$, State.update$).pipe(
         map(() => {
