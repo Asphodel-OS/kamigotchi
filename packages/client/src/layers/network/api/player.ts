@@ -27,13 +27,13 @@ export function createPlayerAPI(systems: any) {
   // @dev funds an operator from owner address
   // @param amount   amount to fund
   function fundOperator(amount: string) {
-    return systems["system.Account.Fund"].ownerToOperator({ value: amount });
+    return systems["system.Account.Fund"].ownerToOperator({ value: utils.parseEther(amount) });
   }
 
   // @dev refunds an operators balance to owner
   // @param amount   amount to refund
   function refundOwner(amount: string) {
-    return systems["system.Account.Fund"].operatorToOwner({ value: amount });
+    return systems["system.Account.Fund"].operatorToOwner({ value: utils.parseEther(amount) });
   }
 
   // @dev moves the account to another room from their current location

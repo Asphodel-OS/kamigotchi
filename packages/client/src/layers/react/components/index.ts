@@ -29,6 +29,7 @@ import { registerAccountRegistrar } from './validators/AccountRegistrar';
 import { registerBurnerDetector } from './validators/BurnerDetector';
 import { registerDetectAccountModal } from './validators/DetectAccount';
 import { registerWalletConnecter } from './validators/WalletConnector';
+import { registerOperatorFundNotification } from './validators/OperatorFundNotification';
 import { registerOperatorUpdater } from './validators/OperatorUpdater';
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
 import { registerLeaderboardModal } from './modals/Leaderboard';
@@ -45,6 +46,7 @@ export function registerUIComponents() {
   registerSettingsButton();
   registerWalletButton();
 
+  registerOperatorFundNotification();
   registerOperatorFund();
   registerChatModal();
   // registerDetectAccountModal();
