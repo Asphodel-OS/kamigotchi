@@ -23,6 +23,7 @@ import { registerSettingsModal } from './modals/Settings';
 import { registerHelpModal } from './modals/Help';
 import { registerKamisNamingModal } from './modals/KamisNaming';
 import { registerNameKamiModal } from './modals/NameKami';
+import { registerOperatorFund } from "./modals/OperatorFund"
 
 import { registerAccountRegistrar } from './validators/AccountRegistrar';
 import { registerBurnerDetector } from './validators/BurnerDetector';
@@ -44,6 +45,7 @@ export function registerUIComponents() {
   registerSettingsButton();
   registerWalletButton();
 
+  registerOperatorFund();
   registerChatModal();
   // registerDetectAccountModal();
   registerLeaderboardModal();

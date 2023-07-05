@@ -256,6 +256,15 @@
       ]
     },
     {
+      "name": "AccountFundSystem",
+      "writeAccess": [
+        "IdAccountComponent",
+        "IsDataComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
       "name": "AccountMoveSystem",
       "writeAccess": [
         "BlockLastComponent",

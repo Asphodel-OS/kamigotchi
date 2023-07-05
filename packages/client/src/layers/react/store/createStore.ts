@@ -51,6 +51,7 @@ export interface VisibleModals {
   party: boolean;
   settings: boolean;
   roomMovement: boolean;
+  operatorFund: boolean;
   leaderboard: boolean;
 }
 
@@ -72,6 +73,7 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   party: isOn,
   settings: isOn,
   roomMovement: isOn,
+  operatorFund: isOn,
   leaderboard: isOn,
 });
 
@@ -122,6 +124,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       operatorUpdater: false,
       settings: false,
       roomMovement: false,
+      operatorFund: true,
       leaderboard: false,
     },
     visibleButtons: {

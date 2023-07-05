@@ -23,6 +23,19 @@ export function createPlayerAPI(systems: any) {
   /*********************
    *     Account
    *********************/
+
+  // @dev funds an operator from owner address
+  // @param amount   amount to fund
+  function fundOperator(amount: string) {
+    return systems["system.Account.Fund"].ownerToOperator({ value: amount });
+  }
+
+  // @dev refunds an operators balance to owner
+  // @param amount   amount to refund
+  function refundOwner(amount: string) {
+    return systems["system.Account.Fund"].operatorToOwner({ value: amount });
+  }
+
   // @dev moves the account to another room from their current location
   // @param location  destination room location
   function moveAccount(location: number) {
@@ -196,8 +209,10 @@ export function createPlayerAPI(systems: any) {
       revive: revivePet,
     },
     account: {
+      fund: fundOperator,
       move: moveAccount,
       register: registerAccount,
+      refund: refundOwner,
       set: {
         name: setAccountName,
         operator: setAccountOperator,

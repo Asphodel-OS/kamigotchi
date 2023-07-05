@@ -82,12 +82,6 @@ library LibAccount {
   }
 
   /////////////////
-  // GETTERS
-  function getPetsMinted(IUintComp components, uint256 account) internal view returns (uint256) {
-    return LibDataEntity.getAccountData(components, account, "NUM_MINTED");
-  }
-
-  /////////////////
   // SETTERS
 
   function setOperator(IUintComp components, uint256 id, address addr) internal {
@@ -123,6 +117,19 @@ library LibAccount {
     uint256 dataID = LibDataEntity.getAccountDataEntity(components, account, "NUM_MINTED");
     if (dataID == 0) {
       dataID = LibDataEntity.createForAccount(world, components, account, "NUM_MINTED");
+    }
+    LibDataEntity.setForAccount(components, dataID, value);
+  }
+
+  function setGasFunded(
+    IWorld world,
+    IUintComp components,
+    uint256 account,
+    uint256 value
+  ) internal {
+    uint256 dataID = LibDataEntity.getAccountDataEntity(components, account, "GAS_FUNDED");
+    if (dataID == 0) {
+      dataID = LibDataEntity.createForAccount(world, components, account, "GAS_FUNDED");
     }
     LibDataEntity.setForAccount(components, dataID, value);
   }
@@ -183,6 +190,14 @@ library LibAccount {
 
   function getCurrStamina(IUintComp components, uint256 id) internal view returns (uint256) {
     return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
+  }
+
+  function getPetsMinted(IUintComp components, uint256 account) internal view returns (uint256) {
+    return LibDataEntity.getAccountData(components, account, "NUM_MINTED");
+  }
+
+  function getGasFunded(IUintComp components, uint256 account) internal view returns (uint256) {
+    return LibDataEntity.getAccountData(components, account, "GAS_FUNDED");
   }
 
   /////////////////
