@@ -3,6 +3,12 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
+import { ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
+import { ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
+import { ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
+import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
+import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
+
 contract MurderTest is SetupTemplate {
   uint _currTime;
   uint _idleRequirement;
@@ -20,6 +26,8 @@ contract MurderTest is SetupTemplate {
     _initRareTraits();
     _initEpicTraits();
     _initMythicTraits();
+
+    _setConfig("MINT_MAX", 1e9);
   }
 
   /////////////////
@@ -54,6 +62,12 @@ contract MurderTest is SetupTemplate {
     return stats;
   }
 
+  function _getTraitWeight(uint traitIndex) internal view returns (uint) {
+    uint registryID = LibRegistryTrait.getByTraitIndex(components, traitIndex);
+    uint tier = LibStat.getRarity(components, registryID);
+    return (tier > 0) ? 3 ** (tier - 1) : 0;
+  }
+
   /////////////////
   // TESTS
 
@@ -74,5 +88,58 @@ contract MurderTest is SetupTemplate {
       assertEq(stats[3], LibStat.getHarmony(components, petID));
       assertEq(stats[4], LibStat.getSlots(components, petID));
     }
+  }
+
+  // test that the distributions are as expected
+  // TODO: confirm distributions fall within 99.9 percentile statistical deviation
+  function testTraitDistribution() public {
+    uint numPets = 1000;
+    uint[] memory petIDs = _mintPets(0, numPets);
+
+    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);
+    uint[] memory hands = LibRegistryTrait.getAllOfType(components, IndexHandCompID);
+    uint[] memory faces = LibRegistryTrait.getAllOfType(components, IndexFaceCompID);
+    uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
+    uint[] memory colors = LibRegistryTrait.getAllOfType(components, IndexColorCompID);
+
+    uint[] memory bodyCounts = new uint[](bodies.length + 1);
+    uint[] memory handCounts = new uint[](hands.length + 1);
+    uint[] memory faceCounts = new uint[](faces.length + 1);
+    uint[] memory bgCounts = new uint[](backgrounds.length + 1);
+    uint[] memory colorCounts = new uint[](colors.length + 1);
+
+    for (uint i = 0; i < numPets; i++) {
+      bodyCounts[LibRegistryTrait.getBodyIndex(components, petIDs[i])]++;
+      handCounts[LibRegistryTrait.getHandIndex(components, petIDs[i])]++;
+      faceCounts[LibRegistryTrait.getFaceIndex(components, petIDs[i])]++;
+      bgCounts[LibRegistryTrait.getBackgroundIndex(components, petIDs[i])]++;
+      colorCounts[LibRegistryTrait.getColorIndex(components, petIDs[i])]++;
+    }
+
+    // reporting
+    for (uint i = 1; i <= bodies.length; i++) {
+      console.log("%s: %d", LibRegistryTrait.getName(components, bodies[i - 1]), bodyCounts[i]);
+    }
+    console.log("\n");
+
+    for (uint i = 1; i <= hands.length; i++) {
+      console.log("%s: %d", LibRegistryTrait.getName(components, hands[i - 1]), handCounts[i]);
+    }
+    console.log("\n");
+
+    for (uint i = 1; i <= faces.length; i++) {
+      console.log("%s: %d", LibRegistryTrait.getName(components, faces[i - 1]), faceCounts[i]);
+    }
+    console.log("\n");
+
+    for (uint i = 1; i <= backgrounds.length; i++) {
+      console.log("%s: %d", LibRegistryTrait.getName(components, backgrounds[i - 1]), bgCounts[i]);
+    }
+    console.log("\n");
+
+    for (uint i = 1; i <= colors.length; i++) {
+      console.log("%s: %d", LibRegistryTrait.getName(components, colors[i - 1]), colorCounts[i]);
+    }
+    console.log("\n");
   }
 }
