@@ -92,10 +92,6 @@ export function registerOperatorFund() {
         watch: true
       });
 
-      useEffect(() => {
-        console.log(OperatorBal);
-      }, [OperatorBal]);
-
       /////////////////
       // ACTIONS
 
