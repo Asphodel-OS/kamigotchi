@@ -77,8 +77,8 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
   const params = new URLSearchParams(window.location.search);
 
   let config: NetworkConfig = <NetworkConfig>{};
-  config.devMode = false;
-  // config.devMode = true;
+  // config.devMode = false;
+  config.devMode = true;
 
   // EOAs and privatekey
   if (externalProvider) {
