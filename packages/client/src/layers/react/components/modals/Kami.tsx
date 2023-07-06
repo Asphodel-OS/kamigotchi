@@ -5,10 +5,11 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Trait, Traits } from 'layers/react/components/shapes/Trait';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import { Traits } from '../shapes/Trait';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -36,7 +37,7 @@ export function registerKamiModal() {
 
     ({ layers }) => {
       const {
-        selectedEntities: { kami },
+        selectedEntities: { kami: kamiEntityIndex },
         visibleModals,
         setVisibleModals,
       } = dataStore();
@@ -51,112 +52,41 @@ export function registerKamiModal() {
       /////////////////
       // Display values
 
-      const [dets, setDets] = useState<Kami>();
+      const [selectedKami, setSelectedKami] = useState<Kami>();
       useEffect(() => {
-        if (kami) {
-          setDets(getKami(layers, kami, { traits: true }));
+        if (kamiEntityIndex) {
+          const kami = getKami(layers, kamiEntityIndex, { traits: true });
+          setSelectedKami(kami);
         }
-      }, [kami]);
+      }, [kamiEntityIndex]);
 
-      const traitBox = () => {
+      // Rendering of the Kami's Traits
+      const TraitBox = (traits: Traits) => {
+        const traitsArray = Object.entries(traits);
         return (
-          <TraitBox>
-            <KamiHeader style={{ gridRow: 1, gridColumn: 1 }}> Traits </KamiHeader>
-            <StatBox style={{ gridRow: 2, gridColumn: 1 }}>
-              <KamiText>BACKGROUND</KamiText>
-              <KamiFacts>{dets?.traits?.background?.name}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 2 }}>
-              <KamiText>BODY</KamiText>
-              <KamiFacts>{dets?.traits?.body?.name}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 3 }}>
-              <KamiText>COLOR</KamiText>
-              <KamiFacts>{dets?.traits?.color?.name}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 4 }}>
-              <KamiText>FACE</KamiText>
-              <KamiFacts>{dets?.traits?.face?.name}</KamiFacts>
-            </StatBox>
-            <StatBox style={{ gridRow: 2, gridColumn: 5 }}>
-              <KamiText>HAND</KamiText>
-              <KamiFacts>{dets?.traits?.hand?.name}</KamiFacts>
-            </StatBox>
-          </TraitBox>
+          <TraitContainer>
+            <ContainerTitle>Traits</ContainerTitle>
+            <ContainerContent>
+              {traitsArray.map((trait: [string, Trait]) => {
+                const statArray = Object.entries(trait[1].stats);
+                const statsText = statArray.map((stat: [string, number]) => `${stat[0]}: ${stat[1] * 1}`);
+
+                return (
+                  <Tooltip key={trait[0]} text={['STATS'].concat(statsText)} grow>
+                    <InfoBox>
+                      <InfoTitle>{trait[0].toUpperCase()}</InfoTitle>
+                      <InfoContent>{trait[1].name}</InfoContent>
+                    </InfoBox>
+                  </Tooltip>
+                );
+              })}
+            </ContainerContent>
+          </TraitContainer>
         );
       };
 
-      const traitStats = (key: keyof Traits) => {
-        if (dets?.traits) {
-          const stats = dets.traits[key]?.stats;
-          const statBoxes = [];
-          let gridColumn = 1;
-
-          if (stats && stats.health !== 0) {
-            statBoxes.push(
-              <TraitStatBox style={{ gridRow: 2, gridColumn }}>
-                <KamiText>Health</KamiText>
-                <KamiFacts>{stats.health * 1}</KamiFacts>
-              </TraitStatBox>
-            );
-            gridColumn++;
-          }
-
-          if (stats && stats.harmony !== 0) {
-            statBoxes.push(
-              <TraitStatBox style={{ gridRow: 2, gridColumn }}>
-                <KamiText>Harmony</KamiText>
-                <KamiFacts>{stats.harmony * 1}</KamiFacts>
-              </TraitStatBox>
-            );
-            gridColumn++;
-          }
-
-          if (stats && stats.power !== 0) {
-            statBoxes.push(
-              <TraitStatBox style={{ gridRow: 2, gridColumn }}>
-                <KamiText>Power</KamiText>
-                <KamiFacts>{stats.power * 1}</KamiFacts>
-              </TraitStatBox>
-            );
-            gridColumn++;
-          }
-
-          if (stats && stats.slots !== 0) {
-            statBoxes.push(
-              <TraitStatBox style={{ gridRow: 2, gridColumn }}>
-                <KamiText>Slots</KamiText>
-                <KamiFacts>{stats.slots * 1}</KamiFacts>
-              </TraitStatBox>
-            );
-            gridColumn++;
-          }
-
-          if (stats && stats.violence !== 0) {
-            statBoxes.push(
-              <TraitStatBox style={{ gridRow: 2, gridColumn }}>
-                <KamiText>Violence</KamiText>
-                <KamiFacts>{stats.violence * 1}</KamiFacts>
-              </TraitStatBox>
-            );
-            gridColumn++;
-          }
-
-          return (
-            <TraitBox style={{ gridTemplateColumns: `repeat(${gridColumn}, 1fr)` }}>
-              <TraitsHeader style={{ gridRow: 1, gridColumn: 1 }}>
-                {key.charAt(0).toUpperCase() + key.slice(1) + ' - ' + dets.traits[key].name}
-              </TraitsHeader>
-              {statBoxes}
-            </TraitBox>
-          );
-        }
-
-        return null;
-      };
-
-      const affinitiesBox = () => {
-        const strRaw = dets?.affinities?.reduce((ac, x) => (ac = ac + ' | ' + x));
+      const Affinities = () => {
+        const strRaw = selectedKami?.affinities?.reduce((ac, x) => (ac = ac + ' | ' + x));
         const str = strRaw?.slice(0, -2);
         return <KamiText>{str}</KamiText>;
       };
@@ -171,7 +101,7 @@ export function registerKamiModal() {
             X
           </TopButton>
           <TopDiv>
-            <KamiImage src={dets?.uri} />
+            <KamiImage src={selectedKami?.uri} />
             <div
               style={{
                 display: 'grid',
@@ -179,43 +109,40 @@ export function registerKamiModal() {
                 gridColumnGap: '5px',
               }}
             >
-              <KamiName>{dets?.name} </KamiName>
+              <KamiName>{selectedKami?.name} </KamiName>
               <KamiText
                 style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 5, margin: '10px' }}
               >
-                {affinitiesBox()}
+                {Affinities()}
               </KamiText>
               <StatBox style={{ gridRow: 3, gridColumn: 1 }}>
                 <KamiText> Health </KamiText>
-                <KamiFacts> {hexToString(dets?.stats.health)} </KamiFacts>
+                <KamiFacts> {hexToString(selectedKami?.stats.health)} </KamiFacts>
               </StatBox>
               <StatBox style={{ gridRow: 3, gridColumn: 2 }}>
                 <KamiText> Power </KamiText>
-                <KamiFacts> {hexToString(dets?.stats.power)} </KamiFacts>
+                <KamiFacts> {hexToString(selectedKami?.stats.power)} </KamiFacts>
               </StatBox>
               <StatBox style={{ gridRow: 3, gridColumn: 3 }}>
                 <KamiText> Violence </KamiText>
-                <KamiFacts> {hexToString(dets?.stats.violence)} </KamiFacts>
+                <KamiFacts> {hexToString(selectedKami?.stats.violence)} </KamiFacts>
               </StatBox>
               <StatBox style={{ gridRow: 3, gridColumn: 4 }}>
                 <KamiText> Harmony </KamiText>
-                <KamiFacts> {hexToString(dets?.stats.harmony)} </KamiFacts>
+                <KamiFacts> {hexToString(selectedKami?.stats.harmony)} </KamiFacts>
               </StatBox>
               <StatBox style={{ gridRow: 3, gridColumn: 5 }}>
                 <KamiText> Slots </KamiText>
-                <KamiFacts> {hexToString(dets?.stats.slots)} </KamiFacts>
+                <KamiFacts> {hexToString(selectedKami?.stats.slots)} </KamiFacts>
               </StatBox>
             </div>
           </TopDiv>
-          <div>{traitBox()}</div>
+          {selectedKami && TraitBox(selectedKami.traits!)}
           <div
             style={{
               overflowY: 'scroll',
             }}
           >
-            {Object.keys(dets?.traits ?? {}).map((key: any) => (
-              <div key={key}>{traitStats(key)}</div>
-            ))}
           </div>
         </ModalWrapperFull>
       );
@@ -223,15 +150,69 @@ export function registerKamiModal() {
   );
 }
 
-const TraitBox = styled.div`
-  display: grid;
+const TraitContainer = styled.div`
   border-width: 2px;
   border-color: black;
   border-style: solid;
   margin: 5px 0px 0px 0px;
   padding: 5px;
-  grid-row-gap: 5px;
+
+  display: flex;
+  flex-direction: column;
 `;
+
+const ContainerTitle = styled.div`
+  background-color: #ffffff;
+  margin: 15px;
+
+  color: black;
+  font-family: Pixel;
+  font-size: 30px;
+  font-weight: 600;
+  
+`;
+
+const ContainerContent = styled.div`
+  display: flex;
+  flex-direction: row wrap;
+`;
+
+const InfoBox = styled.div`
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  margin: 2px;
+  flex-grow: 1;
+  
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+`
+
+const InfoTitle = styled.div`
+  background-color: #ffffff;
+  margin: 5px;
+  align-self: flex-start;
+  
+  color: black;
+  font-family: Pixel;
+  font-size: 14px;
+`;
+
+const InfoContent = styled.div`
+  background-color: #ffffff;
+  color: black;
+  padding: 5px;
+  align-self: center;
+
+  font-size: 20px;
+  font-weight: 600;
+  font-family: Pixel;
+  margin: auto;
+`;
+
+
+
 
 const KamiText = styled.div`
   background-color: #ffffff;
@@ -249,25 +230,6 @@ const KamiFacts = styled.div`
   font-family: Pixel;
   margin: auto;
   grid-row: 2;
-`;
-
-const TraitsHeader = styled.div`
-  background-color: #ffffff;
-  color: black;
-  font-size: 18px;
-  font-weight: 600;
-  font-family: Pixel;
-`;
-
-const KamiHeader = styled.div`
-  background-color: #ffffff;
-  color: black;
-  font-size: 30px;
-  font-weight: 600;
-  font-family: Pixel;
-  margin: auto;
-  margin: 5px;
-  white-space: nowrap;
 `;
 
 const KamiName = styled.div`
@@ -292,14 +254,6 @@ const KamiImage = styled.img`
   border-style: solid;
 `;
 
-const Line = styled.div`
-  border-style: solid;
-  border-width: 1px;
-  border-color: black;
-  color: black;
-  height: 200px;
-`;
-
 const TopDiv = styled.div`
   border-style: solid;
   border-width: 2px;
@@ -317,16 +271,6 @@ const StatBox = styled.div`
   padding: 5px;
   display: grid;
   margin: 2px;
-`;
-
-const TraitStatBox = styled.div`
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  padding: 5px;
-  display: grid;
-  margin: 2px;
-  width: 100px;
 `;
 
 const TopButton = styled.button`

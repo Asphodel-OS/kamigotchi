@@ -8,9 +8,10 @@ import { Stats, getStats } from './Stats';
 
 // standardized shape of Traits on an Entity
 export interface Trait {
-  stats: Stats;
   name: string;
   affinity: string;
+  rarity: number;
+  stats: Stats;
 }
 
 export interface Traits {
@@ -37,6 +38,7 @@ export const getTrait = (layers: Layers, index: EntityIndex): Trait => {
       components: {
         Affinity,
         Name,
+        Rarity,
       },
     },
   } = layers;
@@ -44,6 +46,7 @@ export const getTrait = (layers: Layers, index: EntityIndex): Trait => {
   return {
     name: getComponentValue(Name, index)?.value || '' as string,
     affinity: getComponentValue(Affinity, index)?.value || '' as string,
+    rarity: getComponentValue(Rarity, index)?.value || 0 as number,
     stats: getStats(layers, index),
   };
 }

@@ -20,7 +20,7 @@ import { Traits, TraitIndices, getTraits } from './Trait';
 // standardized shape of a Kami Entity
 export interface Kami {
   id: EntityID;
-  index: string;
+  index: number;
   entityIndex: EntityIndex;
   name: string;
   uri: string;
@@ -90,7 +90,7 @@ export const getKami = (
   // populate the base Kami data
   let kami: Kami = {
     id: world.entities[index],
-    index: getComponentValue(PetIndex, index)?.value as string,
+    index: getComponentValue(PetIndex, index)?.value as number,
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     uri: getComponentValue(MediaURI, index)?.value as string,
