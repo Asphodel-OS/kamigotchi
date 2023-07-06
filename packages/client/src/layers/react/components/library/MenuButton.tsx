@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Tooltip } from './Tooltip';
 
@@ -40,7 +40,7 @@ export const MenuButton = (props: Props) => {
   };
 
   return (
-    <Tooltip text={text}>
+    <Tooltip text={[text]}>
       <div id={id}>
         <Button
           style={{ pointerEvents: 'auto', display: props.visible ? 'block' : 'none' }}

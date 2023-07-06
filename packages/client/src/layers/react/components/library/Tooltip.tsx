@@ -1,8 +1,9 @@
 import React from 'react';
+import styled from 'styled-components';
 import { default as MUITooltip } from '@mui/material/Tooltip';
 
 interface Props {
-  text: string;
+  text: string[];
   children: React.ReactNode;
   grow?: boolean;
 }
@@ -10,9 +11,10 @@ interface Props {
 export const Tooltip = (props: Props) => {
   const { children, text } = props;
   const flexGrow = props.grow ? '1' : '0';
+  const conjoinedText = text.join('\n');
 
   return <MUITooltip
-    title={text}
+    title={conjoinedText}
     enterDelay={700}
     style={{
       flexGrow: flexGrow,
@@ -32,6 +34,7 @@ export const Tooltip = (props: Props) => {
           color: 'black',
           fontSize: '12px',
           fontFamily: 'Pixel',
+          whiteSpace: 'pre-line',
         },
       }
     }}
@@ -39,5 +42,19 @@ export const Tooltip = (props: Props) => {
     <span>{children}</span>
   </MUITooltip>;
 }
+
+const TextLine = styled.div`
+  zIndex: '2',
+  borderStyle: 'solid',
+  borderWidth: '2px',
+  borderColor: 'black',
+  backgroundColor: '#fff',
+  padding: '10px',
+
+  color: 'black',
+  fontSize: '12px',
+  fontFamily: 'Pixel',
+  white-space: 'pre-line';
+`;
 
 

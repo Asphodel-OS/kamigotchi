@@ -338,25 +338,25 @@ export function registerPartyModal() {
           {
             id: 1,
             image: gum,
-            text: 'Gum - Restores 25 health.',
+            text: ['Gum', 'Restores 25 health.'],
             inventory: getInventoryByFamilyIndex(inventories?.food, 1),
           },
           {
             id: 2,
             image: pompom,
-            text: 'PomPom - Restores 100 health.',
+            text: ['PomPom', 'Restores 100 health.'],
             inventory: getInventoryByFamilyIndex(inventories?.food, 2),
           },
           {
             id: 3,
             image: gakki,
-            text: 'Gakki - Restores 200 health.',
+            text: ['Gakki', 'Restores 200 health.'],
             inventory: getInventoryByFamilyIndex(inventories?.food, 3),
           },
           {
             id: 4,
             image: ribbon,
-            text: 'Ribbon - Revives a fallen Kami.',
+            text: ['Ribbon', 'Revives a fallen Kami.'],
             inventory: getInventoryByFamilyIndex(inventories?.revives, 1),
           },
         ];
@@ -400,7 +400,7 @@ export function registerPartyModal() {
             options={feedOptions}
           />
         );
-        if (!canFeedKami) returnVal = <Tooltip text={tooltipText}>{returnVal}</Tooltip>;
+        if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
 
         return returnVal;
       };
