@@ -258,10 +258,11 @@
     {
       "name": "AccountFundSystem",
       "writeAccess": [
-        "IdAccountComponent",
-        "IsDataComponent",
+        "EpochComponent",
+        "IdHolderComponent",
+        "IsScoreComponent",
         "TypeComponent",
-        "ValueComponent"
+        "BalanceComponent"
       ]
     },
     {
