@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Tooltip, TooltipContainer } from './Tooltip';
+import { Tooltip } from './Tooltip';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
+
+interface Props {
+  id: string;
+  targetDiv: keyof VisibleModals;
+  children: React.ReactNode;
+  text: string;
+  visible: boolean;
+  hideModal?: Partial<VisibleModals>;
+}
 
 // MenuButton renders a button that toggles a target modal. It supports a generic
 // input of children, though this will usually just be text.
@@ -30,50 +39,25 @@ export const MenuButton = (props: Props) => {
     });
   };
 
-  const handleMouseEnter = () => {
-    setShowTooltip(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
-
-  const [showTooltip, setShowTooltip] = useState(false);
-
   return (
-    <div id={id}>
-      <Button
-        style={{ pointerEvents: 'auto', display: props.visible ? 'block' : 'none' }}
-        onClick={handleToggle}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {children}
-        {text && <Tooltip show={showTooltip} text={text} positionTop='-5px' />}
-      </Button>
-    </div>
+    <Tooltip text={text}>
+      <div id={id}>
+        <Button
+          style={{ pointerEvents: 'auto', display: props.visible ? 'block' : 'none' }}
+          onClick={handleToggle}
+        >
+          {children}
+        </Button>
+      </div>
+    </Tooltip>
   );
 };
 
-interface Props {
-  id: string;
-  targetDiv: keyof VisibleModals;
-  children: React.ReactNode;
-  visible: boolean;
-  text?: string;
-  hideModal?: Partial<VisibleModals>;
-}
 
 const Button = styled.button`
   cursor: pointer;
-
   &:active {
     background-color: #c4c4c4;
-  }
-  &:hover {
-    ${TooltipContainer} {
-      display: block;
-    }
   }
   border-radius: 10px;
 `;

@@ -1,37 +1,43 @@
 import React from 'react';
-import styled from 'styled-components';
+import { default as MUITooltip } from '@mui/material/Tooltip';
 
-interface TooltipProps {
-  show: boolean;
+interface Props {
   text: string;
-  positionTop?: string;
+  children: React.ReactNode;
+  grow?: boolean;
 }
 
-export const TooltipContainer = styled.div<TooltipProps>`
-  position: absolute;
-  transform: translatey(10px) translateX(-40%);
-  top: ${(props) => props.positionTop || '30px'};
-  left: 50%;
-  z-index: 2;
-  padding: 5px;
-  background-color: #ffffff;
-  font-size: 12px;
-  font-family: Pixel;
-  opacity: ${(props) => (props.show ? 1 : 0)};
-  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-  transition: all 0.3s ease-in-out;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-`;
+export const Tooltip = (props: Props) => {
+  const { children, text } = props;
+  const flexGrow = props.grow ? '1' : '0';
 
-export const Tooltip: React.FC<TooltipProps> = ({ show, text, positionTop }) => {
-  return (
-    <div style={{ position: 'relative' }}>
-      <TooltipContainer show={show} text={text} positionTop={positionTop}>
-        {text}
-      </TooltipContainer>
-    </div>
-  );
-};
+  return <MUITooltip
+    title={text}
+    enterDelay={700}
+    style={{
+      flexGrow: flexGrow,
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+    componentsProps={{
+      tooltip: {
+        sx: {
+          zIndex: '2',
+          borderStyle: 'solid',
+          borderWidth: '2px',
+          borderColor: 'black',
+          backgroundColor: '#fff',
+          padding: '10px',
+
+          color: 'black',
+          fontSize: '12px',
+          fontFamily: 'Pixel',
+        },
+      }
+    }}
+  >
+    <span>{children}</span>
+  </MUITooltip>;
+}
+
+

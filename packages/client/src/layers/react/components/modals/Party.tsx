@@ -6,15 +6,14 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ActionListButton } from 'layers/react/components/library/ActionListButton';
-import { dataStore } from 'layers/react/store/createStore';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { getConfigFieldValue } from 'layers/react/components/shapes/Config';
 import { AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
 import { Kami } from 'layers/react/components/shapes/Kami';
 import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
 
 import pompom from 'assets/images/food/pompom.png';
@@ -257,11 +256,11 @@ export function registerPartyModal() {
       const whyCantFeed = (kami: Kami): string => {
         let reason = '';
         if (getLocation(kami) != data.account.location) {
-          reason = `${kami.name} is not at your location`;
+          reason = `not at your location`;
         } else if (isFull(kami)) {
-          reason = `${kami.name} is already full`;
+          reason = `already full`;
         } else if (!hasFood()) {
-          reason = `go buy food, poore`;
+          reason = `buy food, poore`;
         }
         return reason;
       };
@@ -334,8 +333,6 @@ export function registerPartyModal() {
       // get the row of consumable items to display in the player inventory
       const ConsumableCells = (
         inventories: AccountInventories,
-        showIndex: number,
-        setToolTip: any
       ) => {
         const inventorySlots = [
           {
@@ -364,75 +361,48 @@ export function registerPartyModal() {
           },
         ];
 
-        return inventorySlots.map((slot, i) => {
+        const cells = inventorySlots.map((slot, i) => {
           return (
-            <CellBordered key={slot.id} style={{ gridColumn: `${slot.id}` }}>
-              <div style={{ position: 'relative' }}>
-                <CellGrid onMouseOver={() => setToolTip(i)} onMouseLeave={() => setToolTip(-1)}>
-                  {!visibleModals.kami && (
-                    <Tooltip show={i === showIndex ? true : false} text={slot.text} />
-                  )}
-                  <Icon src={slot.image} />
-                  <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
-                </CellGrid>
-              </div>
-            </CellBordered>
+            <Tooltip key={slot.id} text={slot.text} grow>
+              <CellGrid key={slot.id}>
+                <Icon src={slot.image} />
+                <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
+              </CellGrid>
+            </Tooltip>
           );
         });
+
+        return <TopGrid>{cells}</TopGrid>;
       };
 
       const FeedButton = (kami: Kami) => {
-        const nonEmptyOptions = data.account.inventories!.food.filter(
+        const canFeedKami = canFeed(kami);
+        const tooltipText = whyCantFeed(kami);
+
+        const stockedInventory = data.account.inventories!.food.filter(
           (inv: Inventory) => inv.balance && inv.balance > 0
         );
 
-        const feedOptions = nonEmptyOptions.map((inv: Inventory) => {
+        const feedOptions = stockedInventory.map((inv: Inventory) => {
           return {
             text: inv.item.name,
             onClick: () => feedKami(kami, inv.item.familyIndex),
           };
         });
 
-        const canFeedKami = canFeed(kami);
-        const tooltipText = whyCantFeed(kami);
+        let returnVal = (
+          <ActionListButton
+            id={`feedKami-button-${kami.index}`}
+            text='Feed'
+            hidden={true}
+            disabled={!canFeedKami}
+            scrollPosition={scrollPosition}
+            options={feedOptions}
+          />
+        );
+        if (!canFeedKami) returnVal = <Tooltip text={tooltipText}>{returnVal}</Tooltip>;
 
-        const TooltipButton = () => {
-          const [showTooltip, setShowTooltip] = useState(false);
-          const [positionTop, setPositionTop] = useState('');
-
-          const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
-            setShowTooltip(true);
-            const topPosition = window.innerHeight - event.clientY > 200 ? '-10px' : '-100px';
-            setPositionTop(topPosition);
-          };
-
-          const handleMouseLeave = () => {
-            setShowTooltip(false);
-            setPositionTop('');
-          };
-
-          return (
-            <div
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              style={{ position: 'relative' }}
-            >
-              <ActionListButton
-                id={`feedKami-button-${kami.index}`}
-                text='Feed'
-                hidden={true}
-                disabled={!canFeedKami}
-                scrollPosition={scrollPosition}
-                options={feedOptions}
-              />
-              {!canFeedKami && showTooltip && (
-                <Tooltip show={true} text={tooltipText} positionTop={positionTop} />
-              )}
-            </div>
-          );
-        };
-
-        return <TooltipButton />;
+        return returnVal;
       };
 
       const RevealButton = (kami: Kami) => (
@@ -480,13 +450,11 @@ export function registerPartyModal() {
         });
       };
 
-      const [showTooltip, setShowTooltip] = useState(-1);
-
       return (
         <ModalWrapperFull id='party_modal' divName='party'>
-          <ConsumableGrid>
-            {ConsumableCells(data.account.inventories!, showTooltip, setShowTooltip)}
-          </ConsumableGrid>
+
+          {ConsumableCells(data.account.inventories!)}
+
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis!)}</Scrollable>
         </ModalWrapperFull>
       );
@@ -500,35 +468,26 @@ const Scrollable = styled.div`
   max-height: 100%;
 `;
 
-const ConsumableGrid = styled.div`
-  display: grid;
-  border-style: solid;
-  border-width: 2px 0px 2px 2px;
-  border-color: black;
-  border-radius: 5px;
-  margin: 5px 2px 5px 2px;
-`;
-
 const TopGrid = styled.div`
-  display: grid;
-  margin: 2px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px 0px 2px 2px;
+  margin: 5px 2px 5px 2px;
+  
+  display: flex;
+  flex-direction: row;
 `;
 
 const CellGrid = styled.div`
-  display: grid;
-  border-style: solid;
-  border-width: 0px;
-  border-color: black;
-`;
-
-const CellBordered = styled.div`
   border-style: solid;
   border-width: 0px 2px 0px 0px;
   border-color: black;
+  display: flex;
+  flex-direction: row;
 `;
 
 const Icon = styled.img`
-  grid-column: 1;
   height: 40px;
   padding: 3px;
   border-style: solid;
@@ -538,8 +497,10 @@ const Icon = styled.img`
 
 const ItemNumber = styled.p`
   font-size: 14px;
-  color: #333;
   font-family: Pixel;
-  grid-column: 2;
+  
+  flex-grow: 1;
+  color: #333;
   align-self: center;
+  text-align: center;
 `;
