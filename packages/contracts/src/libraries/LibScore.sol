@@ -67,6 +67,23 @@ library LibScore {
     inc(components, id, amt);
   }
 
+  // adds score based on current epoch. to be called with any action that should be scored
+  function decBy(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    string memory _type,
+    uint256 amt
+  ) internal {
+    uint256 epoch = getCurentEpoch(components);
+    uint256 id = get(components, holderID, epoch, _type);
+    if (id == 0) {
+      id = create(world, components, holderID, epoch, _type);
+    }
+
+    dec(components, id, amt);
+  }
+
   // Increase an score balance by the specified amount
   function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
     uint256 bal = getBalance(components, id);
