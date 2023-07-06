@@ -9,6 +9,23 @@ import { KamiERC20 } from "tokens/KamiERC20.sol";
 
 contract ERC20Test is SetupTemplate {
   KamiERC20 token;
+  uint256 constant MAX_INT = 2 ** 256 - 1;
+
+  // converts ERC20 decimals (18) to game decimals (0)
+  function _tokenToGameDP(uint256 amount) internal view returns (uint256) {
+    return amount / 10 ** 18;
+  }
+
+  // converts game decimals (0) to ERC20 decimals (18)
+  function _gameToTokenDP(uint256 amount) internal view returns (uint256) {
+    return amount * 10 ** 18;
+  }
+
+  function uncheckedAdd(uint256 a, uint256 b) internal returns (uint256) {
+    unchecked {
+      return a + b;
+    }
+  }
 
   function setUp() public override {
     super.setUp();
@@ -21,6 +38,8 @@ contract ERC20Test is SetupTemplate {
   // tests that correct amounts are withdrawn
   // TODO: check that the tested account is the only one with a coin value
   function testWithdraw(uint256 startingBalance, uint256 amt) public {
+    vm.assume(startingBalance < _tokenToGameDP(MAX_INT));
+    vm.assume(amt < _tokenToGameDP(MAX_INT));
     _fundAccount(0, startingBalance);
     vm.startPrank(_getOwner(0));
 
@@ -39,10 +58,10 @@ contract ERC20Test is SetupTemplate {
       assertEq(internalBalance, startingBalance - amt);
 
       uint256 externalBalance = token.balanceOf(_getOwner(0));
-      assertEq(externalBalance, amt);
+      assertEq(_tokenToGameDP(externalBalance), amt);
 
       // check that the total supply is the balance out of the world
-      assertEq(token.totalSupply(), amt);
+      assertEq(_tokenToGameDP(token.totalSupply()), amt);
     }
 
     vm.stopPrank();
@@ -51,6 +70,8 @@ contract ERC20Test is SetupTemplate {
   // tests that correct amounts are deposited
   function testDeposit(uint256 startingBalance, uint256 amt) public {
     vm.assume(startingBalance > 0);
+    vm.assume(startingBalance < _tokenToGameDP(MAX_INT));
+    vm.assume(amt < _tokenToGameDP(MAX_INT));
     _fundAccount(0, startingBalance);
     vm.startPrank(_getOwner(0));
 
@@ -73,10 +94,10 @@ contract ERC20Test is SetupTemplate {
       assertEq(internalBalance, amt);
 
       uint256 externalBalance = token.balanceOf(_getOwner(0));
-      assertEq(externalBalance, startingBalance - amt);
+      assertEq(_tokenToGameDP(externalBalance), startingBalance - amt);
 
       // check that the total supply is the balance expected out of the world
-      assertEq(token.totalSupply(), startingBalance - amt);
+      assertEq(_tokenToGameDP(token.totalSupply()), startingBalance - amt);
     }
 
     vm.stopPrank();
@@ -87,6 +108,7 @@ contract ERC20Test is SetupTemplate {
   // TODO: implement this
   function testInvalidDeposit(uint256 amt) public {
     vm.assume(amt > 0);
+    vm.assume(amt < _tokenToGameDP(MAX_INT));
     _fundAccount(0, amt);
 
     // withdraw full amount
@@ -95,7 +117,7 @@ contract ERC20Test is SetupTemplate {
 
     // transfer to an address without an account
     vm.prank(_getOwner(0));
-    token.transfer(_getOwner(2), amt);
+    token.transfer(_getOwner(2), _gameToTokenDP(amt));
 
     // attempt to deposit funds
     vm.prank(_getOwner(2));
@@ -105,7 +127,6 @@ contract ERC20Test is SetupTemplate {
 
   // run multiple deposits and withdrawals interwoven between multiple accounts
   // test that all balances are as expected at the end
-  // TODO: implement this
   function testMultiple(
     uint256 startBal0,
     uint256 startBal1,
@@ -115,7 +136,11 @@ contract ERC20Test is SetupTemplate {
   ) public {
     vm.assume(startBal0 > 0);
     vm.assume(startBal1 > 0);
-    vm.assume(uncheckedAdd(startBal0, startBal1) > startBal1);
+    vm.assume(startBal0 < _tokenToGameDP(MAX_INT));
+    vm.assume(startBal1 < _tokenToGameDP(MAX_INT));
+    vm.assume(amt0 < _tokenToGameDP(MAX_INT));
+    vm.assume(amt1 < _tokenToGameDP(MAX_INT));
+    vm.assume(uncheckedAdd(startBal0 * 10 ** 18, startBal1 * 10 ** 18) > startBal1 * 10 ** 18);
     _fundAccount(0, startBal0);
     _fundAccount(1, startBal1);
 
@@ -139,16 +164,16 @@ contract ERC20Test is SetupTemplate {
       assertEq(internalBalance, startBal0 - amt0);
 
       uint256 externalBalance = token.balanceOf(_getOwner(0));
-      assertEq(externalBalance, amt0);
+      assertEq(_tokenToGameDP(externalBalance), amt0);
 
       uint256 internalBalance1 = _CoinComponent.getValue(_getAccount(1));
       assertEq(internalBalance1, startBal1);
 
       uint256 externalBalance1 = token.balanceOf(_getOwner(1));
-      assertEq(externalBalance1, 0);
+      assertEq(_tokenToGameDP(externalBalance1), 0);
 
       // check that the total supply is the balance out of the world
-      assertEq(token.totalSupply(), amt0);
+      assertEq(_tokenToGameDP(token.totalSupply()), amt0);
     }
 
     // deposit back to account 0 if fuzz
@@ -175,35 +200,37 @@ contract ERC20Test is SetupTemplate {
         assertEq(internalBalance, startBal0);
 
         uint256 externalBalance = token.balanceOf(_getOwner(0));
-        assertEq(externalBalance, 0);
+        assertEq(_tokenToGameDP(externalBalance), 0);
 
         // check that the total supply is the balance out of the world
-        assertEq(token.totalSupply(), amt1);
+        assertEq(_tokenToGameDP(token.totalSupply()), amt1);
       } else {
         uint256 internalBalance = _CoinComponent.getValue(_getAccount(0));
         assertEq(internalBalance, startBal0 - amt0);
 
         uint256 externalBalance = token.balanceOf(_getOwner(0));
-        assertEq(externalBalance, amt0);
+        assertEq(_tokenToGameDP(externalBalance), amt0);
 
         // check that the total supply is the balance out of the world
-        assertEq(token.totalSupply(), amt0 + amt1);
+        assertEq(_tokenToGameDP(token.totalSupply()), amt0 + amt1);
       }
 
       uint256 internalBalance1 = _CoinComponent.getValue(_getAccount(1));
       assertEq(internalBalance1, startBal1 - amt1);
 
       uint256 externalBalance1 = token.balanceOf(_getOwner(1));
-      assertEq(externalBalance1, amt1);
+      assertEq(_tokenToGameDP(externalBalance1), amt1);
     }
   }
 
   // test that proper balances are reflected after transfering from one address to another
-  // TODO: implement this
   function testTransfer(uint256 startBal0, uint256 startBal1, uint256 amt) public {
     vm.assume(startBal0 > 0);
     vm.assume(startBal1 > 0);
-    vm.assume(uncheckedAdd(startBal0, startBal1) > startBal1);
+    vm.assume(startBal0 < _tokenToGameDP(MAX_INT));
+    vm.assume(startBal1 < _tokenToGameDP(MAX_INT));
+    vm.assume(amt < _tokenToGameDP(MAX_INT));
+    vm.assume(uncheckedAdd(startBal0 * 10 ** 18, startBal1 * 10 ** 18) > startBal1 * 10 ** 18);
     _fundAccount(0, startBal0);
     _fundAccount(1, startBal1);
 
@@ -216,29 +243,23 @@ contract ERC20Test is SetupTemplate {
     if (amt > startBal0) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
-      token.transfer(_getOwner(1), amt);
+      token.transfer(_getOwner(1), _gameToTokenDP(amt));
 
-      assertEq(token.balanceOf(_getOwner(0)), startBal0);
-      assertEq(token.balanceOf(_getOwner(1)), startBal1);
+      assertEq(_tokenToGameDP(token.balanceOf(_getOwner(0))), startBal0);
+      assertEq(_tokenToGameDP(token.balanceOf(_getOwner(1))), startBal1);
     } else if (uncheckedAdd(startBal1, amt) <= amt) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
-      token.transfer(_getOwner(1), amt);
+      token.transfer(_getOwner(1), _gameToTokenDP(amt));
 
-      assertEq(token.balanceOf(_getOwner(0)), startBal0);
-      assertEq(token.balanceOf(_getOwner(1)), startBal1);
+      assertEq(_tokenToGameDP(token.balanceOf(_getOwner(0))), startBal0);
+      assertEq(_tokenToGameDP(token.balanceOf(_getOwner(1))), startBal1);
     } else {
       vm.prank(_getOwner(0));
-      token.transfer(_getOwner(1), amt);
+      token.transfer(_getOwner(1), _gameToTokenDP(amt));
 
-      assertEq(token.balanceOf(_getOwner(0)), startBal0 - amt);
-      assertEq(token.balanceOf(_getOwner(1)), startBal1 + amt);
-    }
-  }
-
-  function uncheckedAdd(uint256 a, uint256 b) internal returns (uint256) {
-    unchecked {
-      return a + b;
+      assertEq(_tokenToGameDP(token.balanceOf(_getOwner(0))), startBal0 - amt);
+      assertEq(_tokenToGameDP(token.balanceOf(_getOwner(1))), startBal1 + amt);
     }
   }
 }

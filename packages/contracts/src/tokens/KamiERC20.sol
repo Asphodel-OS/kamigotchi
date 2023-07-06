@@ -33,13 +33,25 @@ contract KamiERC20 is ERC20 {
     World = _world;
   }
 
+  //////////////////////////
+  // SYSTEM INTERACTIONS
+
   // mints ERC20 tokens from game world. only can be called by MintSystem
   function withdraw(address to, uint256 amount) external onlyWriter {
-    super._mint(to, amount);
+    super._mint(to, _convertDP(amount));
   }
 
   // burns ERC20 tokens to bring back into game world. only can be called by BurnSystem
   function deposit(address from, uint256 amount) external onlyWriter {
-    super._burn(from, amount);
+    super._burn(from, _convertDP(amount));
+  }
+
+  //////////////////////////
+  // INTERNAL
+
+  // converts decimal places between game and ERC20
+  // game has no decimals
+  function _convertDP(uint256 amount) internal view returns (uint256) {
+    return amount * 10 ** decimals;
   }
 }

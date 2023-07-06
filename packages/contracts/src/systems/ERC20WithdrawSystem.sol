@@ -13,7 +13,8 @@ import { ERC20ProxySystem, ID as ProxyID } from "systems/ERC20ProxySystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC20.Withdraw"));
 
-// brings in game coins into the real world by minting ERC20 tokens in the ERC20 contract
+// in game -> ERC20
+// bridges in game coins to ERC20 by minting ERC20 tokens in the ERC20 contract
 // sends it only to the Account owner's address
 contract ERC20WithdrawSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

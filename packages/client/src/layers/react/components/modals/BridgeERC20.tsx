@@ -84,7 +84,6 @@ export function registerERC20BridgeModal() {
       const { data: EOABal } = useBalance({
         address: accountDetails.ownerAddress as `0x${string}`,
         token: erc20Addy as `0x${string}`,
-        formatUnits: "wei",
         watch: true
       });
 
