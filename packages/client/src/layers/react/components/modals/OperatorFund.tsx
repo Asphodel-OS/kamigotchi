@@ -3,8 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { useBalance } from 'wagmi';
+import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { Account, getAccount } from '../shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
@@ -13,7 +14,9 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 
-// more complex controls to allow operator funding and refunding 
+import scribbleSound from 'assets/sound/fx/scribbling.mp3';
+import successSound from 'assets/sound/fx/bubble_success.mp3';
+
 export function registerOperatorFund() {
   registerUIComponent(
     'OperatorFund',
@@ -65,16 +68,17 @@ export function registerOperatorFund() {
             player: { account }
           },
           actions,
+          world,
         },
       } = layers;
       const { details: accountDetails } = useKamiAccount();
-      const { visibleModals, setVisibleModals } = dataStore();
+      const { sound: { volume }, visibleModals, setVisibleModals } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
 
-      const [IsFundState, setIsFundState] = useState(true);
-      const [Amount, setAmount] = useState(0.05);
-      const [StatusText, setStatusText] = useState("");
-      const [StatusColor, setStatusColor] = useState("grey");
+      const [isFundState, setIsFundState] = useState(true);
+      const [amount, setAmount] = useState(0.05);
+      const [statusText, setStatusText] = useState("");
+      const [statusColor, setStatusColor] = useState("grey");
 
 
       /////////////////
@@ -104,10 +108,11 @@ export function registerOperatorFund() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return account.fund(Amount.toString());
+            return account.fund(amount.toString());
           },
         });
-        return actionID;
+        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+        await waitForActionCompletion(actions.Action, actionIndex);
       };
 
       const refundTx = async () => {
@@ -118,10 +123,11 @@ export function registerOperatorFund() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return account.refund(Amount.toString());
+            return account.refund(amount.toString());
           },
         });
-        return actionID;
+        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+        await waitForActionCompletion(actions.Action, actionIndex);
       };
 
       const hideModal = useCallback(() => {
@@ -131,12 +137,14 @@ export function registerOperatorFund() {
       /////////////////
       // DISPLAY LOGIC
 
-      const chooseTx = () => {
-        if (IsFundState) {
-          return fundTx();
+      const chooseTx = async () => {
+        playSound(scribbleSound);
+        if (isFundState) {
+          await fundTx();
         } else {
-          return refundTx();
+          await refundTx();
         }
+        playSound(successSound);
       }
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -153,21 +161,27 @@ export function registerOperatorFund() {
         setAmount(Number(event.target.value));
       };
 
+      const playSound = (sound: any) => {
+        const soundFx = new Audio(sound);
+        soundFx.volume = volume;
+        soundFx.play();
+      }
+
       ///////////////
       // COMPONENTS
 
       const TxButton = () => {
-        const text = IsFundState! ? "Fund Operator" : "Send to Owner";
+        const text = isFundState! ? "Fund Operator" : "Send to Owner";
         return (
-          <ActionButton id='button-deposit' onClick={chooseTx} size='large' text={text} />
+          <ActionButton id='button-deposit' onClick={() => chooseTx()} size='large' text={text} />
         );
       };
 
       const StateBox = (fundState: boolean) => {
         const text = fundState ? "Owner" : "Operator";
         const balance = fundState ? Number(OwnerBal?.formatted).toFixed(4) : Number(OperatorBal?.formatted).toFixed(4);
-        const color = (fundState == IsFundState) ? "grey" : "white";
-        const textColor = (fundState == IsFundState) ? "white" : "black";
+        const color = (fundState == isFundState) ? "grey" : "white";
+        const textColor = (fundState == isFundState) ? "white" : "black";
         return (
           <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFundState(fundState)}>
             <Description style={{ color: textColor }}> {balance} ETH </Description>
@@ -177,26 +191,26 @@ export function registerOperatorFund() {
       };
 
       useEffect(() => {
-        const curBal = IsFundState ? Number(OwnerBal?.formatted) : Number(OperatorBal?.formatted);
+        const curBal = isFundState ? Number(OwnerBal?.formatted) : Number(OperatorBal?.formatted);
 
-        if (Amount > curBal) {
+        if (amount > curBal) {
           setStatusText("Insufficient balance");
           setStatusColor("#FF785B");
         }
-        else if (Amount == curBal) {
+        else if (amount == curBal) {
           setStatusText("Leave a little for gas!");
           setStatusColor("#FF785B");
         }
         else {
           setStatusColor("grey");
           // placeholder gas estimation
-          if (IsFundState) setStatusText("This should last you for approximately 1000 transactions")
+          if (isFundState) setStatusText("This should last you for approximately 1000 transactions")
           else {
-            const remainBal = curBal - Amount;
+            const remainBal = curBal - amount;
             setStatusText("You'd have " + remainBal.toFixed(4).toString() + " ETH left");
           };
         }
-      }, [Amount, OwnerBal, OperatorBal, IsFundState]);
+      }, [amount, OwnerBal, OperatorBal, isFundState]);
 
       return (
         <ModalWrapperFull divName='operatorFund' id='operatorFund'>
@@ -221,10 +235,9 @@ export function registerOperatorFund() {
                 step='0.01'
                 onKeyDown={(e) => catchKeys(e)}
                 placeholder='0.05'
-                value={Amount}
                 onChange={(e) => handleChange(e)}
               ></Input>
-              <WarnText style={{ color: StatusColor }}>{StatusText}</WarnText>
+              <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
             </div>
             <div style={{ gridRow: 5, gridColumnStart: 1, gridColumnEnd: 3 }}>
               {TxButton()}

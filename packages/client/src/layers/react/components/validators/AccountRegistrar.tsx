@@ -47,7 +47,7 @@ export function registerAccountRegistrar() {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { sound: { volume } } = dataStore();
+      const { sound: { volume }, visibleModals, setVisibleModals } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
 
       // toggle buttons and modals based on whether account is detected
@@ -69,7 +69,15 @@ export function registerAccountRegistrar() {
         playSound(scribbleSound);
         await createAccount(username);
         playSound(successSound);
+        openFundModal();
       }
+
+      const openFundModal = () => {
+        setVisibleModals({
+          ...visibleModals,
+          operatorFund: true,
+        });
+      };
 
       const createAccount = async (username: string) => {
         const network = networks.get(selectedAddress);
@@ -90,6 +98,8 @@ export function registerAccountRegistrar() {
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
         await waitForActionCompletion(actions.Action, actionIndex);
       }
+
+
 
       /////////////////
       // DISPLAY
