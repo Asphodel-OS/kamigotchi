@@ -70,10 +70,10 @@ export function registerERC20BridgeModal() {
       const { visibleModals, setVisibleModals } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
 
-      const [IsDepositState, setIsDepositState] = useState(true);
-      const [Amount, setAmount] = useState(0);
-      const [StatusText, setStatusText] = useState("");
-      const [EnableButton, setEnableButton] = useState(true);
+      const [isDepositState, setIsDepositState] = useState(true);
+      const [amount, setAmount] = useState(0);
+      const [statusText, setStatusText] = useState("");
+      const [enableButton, setEnableButton] = useState(true);
 
       // get token balance of controlling account 
       const { data: erc20Addy } = useContractRead({
@@ -90,7 +90,6 @@ export function registerERC20BridgeModal() {
       /////////////////
       // TRANSACTIONS
 
-      // TODO: get ERC20 balance - blocked by wallet code
       const depositTx = () => {
         const network = networks.get(selectedAddress);
         const actions = network!.actions;
@@ -103,7 +102,7 @@ export function registerERC20BridgeModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.ERC20.deposit(Amount);
+            return api.ERC20.deposit(amount);
           },
         });
         return actionID;
@@ -121,7 +120,7 @@ export function registerERC20BridgeModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.ERC20.withdraw(Amount);
+            return api.ERC20.withdraw(amount);
           },
         });
         return actionID;
@@ -132,7 +131,7 @@ export function registerERC20BridgeModal() {
       // DISPLAY LOGIC
 
       const chooseTx = () => {
-        if (IsDepositState) {
+        if (isDepositState) {
           return depositTx();
         } else {
           return withdrawTx();
@@ -150,23 +149,23 @@ export function registerERC20BridgeModal() {
       };
 
       useEffect(() => {
-        if (Amount == 0) {
+        if (amount == 0) {
           setEnableButton(false);
           setStatusText("");
         }
-        else if (IsDepositState ? Amount > Number(EOABal?.formatted) : Amount > Number(GameBal)) {
+        else if (isDepositState ? amount > Number(EOABal?.formatted) : amount > Number(GameBal)) {
           setEnableButton(false);
           setStatusText("Insufficient Balance");
         }
-        else if (!Number.isInteger(Amount)) {
+        else if (!Number.isInteger(amount)) {
           setEnableButton(false);
-          setStatusText("Invalid Amount (whole numbers only)");
+          setStatusText("Invalid amount (whole numbers only)");
         }
         else {
           setEnableButton(true);
           setStatusText("");
         }
-      }, [Amount, IsDepositState, EOABal, GameBal]);
+      }, [amount, isDepositState, EOABal, GameBal]);
 
 
       const hideModal = useCallback(() => {
@@ -177,17 +176,17 @@ export function registerERC20BridgeModal() {
       // COMPONENTS
 
       const TxButton = () => {
-        const text = IsDepositState ? 'Deposit' : 'Withdraw';
+        const text = isDepositState ? 'Deposit' : 'Withdraw';
         return (
-          <ActionButton id='button-deposit' onClick={chooseTx} size='large' text={text} disabled={!EnableButton} />
+          <ActionButton id='button-deposit' onClick={chooseTx} size='large' text={text} disabled={!enableButton} />
         )
       };
 
       const StateBox = (fundState: boolean) => {
         const text = fundState ? "Wallet" : "Game";
         const balance = fundState ? Math.floor(Number(EOABal?.formatted)) : Number(GameBal);
-        const color = (fundState == IsDepositState) ? "grey" : "white";
-        const textColor = (fundState == IsDepositState) ? "white" : "black";
+        const color = (fundState == isDepositState) ? "grey" : "white";
+        const textColor = (fundState == isDepositState) ? "white" : "black";
         return (
           <BoxButton style={{ backgroundColor: color }} onClick={() => setIsDepositState(fundState)}>
             <Description style={{ color: textColor }}> {balance} $KAMI </Description>
@@ -218,11 +217,10 @@ export function registerERC20BridgeModal() {
                 type='number'
                 step='1'
                 onKeyDown={(e) => catchKeys(e)}
-                placeholder=''
-                value={Amount}
+                placeholder='0'
                 onChange={(e) => handleChange(e)}
               ></Input>
-              <SubText>{StatusText}</SubText>
+              <SubText>{statusText}</SubText>
             </div>
             <div style={{ gridRow: 5, gridColumnStart: 1, gridColumnEnd: 3 }}>
               {TxButton()}
