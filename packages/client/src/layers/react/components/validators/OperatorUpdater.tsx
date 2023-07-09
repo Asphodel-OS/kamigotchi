@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { map, merge, of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
@@ -9,7 +9,9 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
+
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 
 import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
@@ -22,16 +24,15 @@ export function registerOperatorUpdater() {
     {
       colStart: 20,
       colEnd: 80,
-      rowStart: 30,
-      rowEnd: 60,
+      rowStart: 22,
+      rowEnd: 73,
     },
     (layers) => of(layers),
     (layers) => {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { sound: { volume } } = dataStore();
-      const [isVisible, setIsVisible] = useState(false);
+      const { sound: { volume }, visibleModals, setVisibleModals } = dataStore();
 
       const {
         network: {
@@ -39,12 +40,24 @@ export function registerOperatorUpdater() {
         },
       } = layers;
 
+      const [helperText, setHelperText] = useState("");
+      const [newAddress, setNewAddress] = useState("");
+      const [newPrivKey, setNewPrivKey] = useState("");
+
       // toggle visibility based on many things
       useEffect(() => {
-        const burnersMatch = burnerInfo.connected === burnerInfo.detected;
-        const hasAccount = !!accountDetails.id;
-        const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
-        setIsVisible(isConnected && burnersMatch && hasAccount && !operatorMatch);
+        if (!visibleModals.operatorUpdater) {
+          const burnersMatch = burnerInfo.connected === burnerInfo.detected;
+          const hasAccount = !!accountDetails.id;
+          const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
+          const isVisible = isConnected && burnersMatch && hasAccount && !operatorMatch;
+          setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
+          if (isVisible) {
+            setHelperText("Connected Burner does not match Account Operator");
+          } else {
+            setHelperText("");
+          }
+        }
       }, [isConnected, burnerInfo, accountDetails]);
 
       /////////////////
@@ -67,7 +80,6 @@ export function registerOperatorUpdater() {
         const world = network!.world;
         const api = network!.api.player;
 
-        console.log('SETTING OPERATOR:', address);
         const actionID = `Setting Operator` as EntityID;
         actions.add({
           id: actionID,
@@ -75,66 +87,84 @@ export function registerOperatorUpdater() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.account.set.operator(burnerInfo.connected);
+            return api.account.set.operator(address);
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
         await waitForActionCompletion(actions.Action, actionIndex);
       }
 
+      const setPrivKey = (privKey: string) => {
+        if (privKey.length > 0) {
+          localStorage.setItem('operatorPrivateKey', privKey);
+          setHelperText("Operator updated, please refresh!");
+        }
+      }
+
+      const setValues = () => {
+        setOperatorWithFx(newAddress);
+        setPrivKey(newPrivKey);
+      }
+
+      const handleChangePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewAddress(event.target.value);
+      };
+
+      const handleChangePrivate = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewPrivKey(event.target.value);
+      };
+
       /////////////////
       // DISPLAY
 
+      const hideModal = useCallback(() => {
+        setVisibleModals({ ...visibleModals, operatorUpdater: false });
+      }, [setVisibleModals, visibleModals]);
+
       return (
-        <ModalWrapper id='operator-updater' style={{ display: isVisible ? 'block' : 'none' }}>
+        <ModalWrapperFull divName='operatorUpdater' id='operatorUpdater'>
+          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+            X
+          </TopButton>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Update Your Operator</Title>
-            <Description>(Connected Burner does not match Account Operator for {accountDetails.name})</Description>
+            <Description style={{ color: '#FF785B' }}>{helperText}</Description>
             <br />
-            <Description>Account Operator: {accountDetails.operatorAddress}</Description>
+            <Description>Current Operator: {accountDetails.operatorAddress}</Description>
             <Description>Connected Burner: {burnerInfo.connected}</Description>
-            <SingleInputTextForm
-              id={`new-operator`}
-              label='new address'
-              placeholder='new operator address'
-              hasButton={true}
-              onSubmit={(v: string) => setOperatorWithFx(v)}
-              initialValue={burnerInfo.connected}
-            />
+            <Container id='new-operator'>
+              <Label>new address</Label>
+              <Input
+                type='text'
+                placeholder='new operator address'
+                value={newAddress}
+                onChange={(e) => handleChangePublic(e)}
+              />
+            </Container>
+            <Container id='new-operator-priv'>
+              <Label>new private key (optional)</Label>
+              <Input
+                type='text'
+                placeholder='new operator private key (optional)'
+                value={newPrivKey}
+                onChange={(e) => handleChangePrivate(e)}
+              />
+            </Container>
+            <ActionButton id={`submit`} text='Submit' onClick={setValues} />
           </ModalContent>
-        </ModalWrapper>
+        </ModalWrapperFull>
       );
     }
   );
 }
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const ModalWrapper = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 1.3s ease-in-out;
-`;
 
 const ModalContent = styled.div`
   display: grid;
   justify-content: center;
   background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   padding: 20px;
   width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
 `;
 
 const Title = styled.p`
@@ -145,12 +175,13 @@ const Title = styled.p`
   padding: 5px 0px;
 `;
 
-const Header = styled.p`
-  font-size: 14px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-  padding: 15px 0px 5px 0px;
+const Container = styled.div`
+  width: 100%;
+  margin: 20px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
 `;
 
 const Description = styled.p`
@@ -159,4 +190,49 @@ const Description = styled.p`
   text-align: center;
   font-family: Pixel;
   padding: 5px 0px;
+`;
+
+const Input = styled.input`
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  color: black;
+  padding: 15px 12px;
+  margin: 5px 0px;
+
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  justify-content: center;
+  font-family: Pixel;
+`;
+
+const Label = styled.label`
+  font-family: Pixel;
+  font-size: 10px;
+  color: #333;
+  margin: 0px 5px;
+`;
+
+const TopButton = styled.button`
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  color: black;
+  padding: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 5px;
+  font-family: Pixel;
+  width: 30px;
+  &:active {
+    background-color: #c4c4c4;
+  }
+  margin: 0px;
 `;

@@ -47,6 +47,7 @@ export interface VisibleModals {
   map: boolean;
   merchant: boolean;
   node: boolean;
+  operatorUpdater: boolean;
   party: boolean;
   settings: boolean;
   roomMovement: boolean;
@@ -67,6 +68,7 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   map: isOn,
   merchant: isOn,
   node: isOn,
+  operatorUpdater: isOn,
   party: isOn,
   settings: isOn,
   roomMovement: isOn,
@@ -117,6 +119,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       merchant: false,
       node: false,
       party: false,
+      operatorUpdater: false,
       settings: false,
       roomMovement: false,
       leaderboard: false,
