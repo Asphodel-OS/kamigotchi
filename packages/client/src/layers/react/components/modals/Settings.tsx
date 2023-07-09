@@ -6,7 +6,6 @@ import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@lattic
 import mutedSoundImage from '../../../../assets/images/sound_muted_native.png';
 import soundImage from '../../../../assets/images/sound_native.png';
 import { dataStore } from 'layers/react/store/createStore';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -50,7 +49,6 @@ export function registerSettingsModal() {
         sound: { volume }, setSoundState, visibleModals, setVisibleModals,
       } = dataStore();
       const { details: accountDetails } = useKamiAccount();
-      const { selectedAddress, networks } = useNetworkSettings();
       const muted = volume == 0;
 
       const [statusText, setStatusText] = useState('');
@@ -125,7 +123,7 @@ export function registerSettingsModal() {
               </div>
             </SingleRow>
             <Divider />
-            <SubHeader>Account</SubHeader>
+            <SubHeader>Account: {accountDetails.name}</SubHeader>
             {ButtonRow(
               'Owner:',
               accountDetails.ownerAddress,
