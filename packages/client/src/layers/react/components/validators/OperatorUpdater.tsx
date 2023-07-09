@@ -127,7 +127,7 @@ export function registerOperatorUpdater() {
             X
           </TopButton>
           <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Update Your Operator</Title>
+            <Title>Update Operator</Title>
             <Description style={{ color: '#FF785B' }}>{helperText}</Description>
             <br />
             <Description>Current Operator: {accountDetails.operatorAddress}</Description>

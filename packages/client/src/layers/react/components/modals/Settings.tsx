@@ -123,7 +123,7 @@ export function registerSettingsModal() {
               </div>
             </SingleRow>
             <Divider />
-            <SubHeader>Account: {accountDetails.name}</SubHeader>
+            <SubHeader>Account [{accountDetails.name}]</SubHeader>
             {ButtonRow(
               'Owner:',
               accountDetails.ownerAddress,

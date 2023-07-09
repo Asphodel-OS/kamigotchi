@@ -127,9 +127,9 @@ export function registerBurnerDetector() {
       return (
         <ModalWrapper id='burner-detector' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Burner Address Detector</Title>
+            <Title>Operator Address Detector</Title>
             <br />
-            <Description>Connected: {connectedAddress}</Description>
+            <Description>Expected: {connectedAddress}</Description>
             <br />
             <Description>Detected: {detectedAddress}</Description>
             <br />
