@@ -54,29 +54,31 @@ export function registerMerchantModal() {
     (layers) => {
       const {
         network: {
-          world,
           api: { player },
           network,
           components: {
-            Coin,
-            IsListing,
-            IsInventory,
-            IsMerchant,
+            AccountID,
+            Description,
             IsAccount,
+            IsMerchant,
+            IsListing,
             ItemIndex,
             Location,
-            MerchantID,
             Name,
-            AccountID,
             OperatorAddress,
-            PriceBuy,
-            PriceSell,
           },
           actions,
         },
       } = layers;
 
-      return merge(AccountID.update$, Location.update$).pipe(
+      return merge(
+        AccountID.update$,
+        Description.update$,
+        IsListing.update$,
+        ItemIndex.update$,
+        Location.update$,
+        Name.update$,
+      ).pipe(
         map(() => {
           // get the account through the account entity of the controlling wallet
           const accountIndex = Array.from(

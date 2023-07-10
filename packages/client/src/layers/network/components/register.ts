@@ -58,7 +58,6 @@ export function createComponents(world: World) {
     DelegateeID: defineStringEZ("DelegateeID", "component.Id.Delegatee"),
     DelegatorID: defineStringEZ("DelegatorID", "component.Id.Delegator"),
     HolderID: defineStringEZ("HolderID", "component.Id.Holder"),
-    MerchantID: defineStringEZ("MerchantID", "component.Id.Merchant"),
     NodeID: defineStringEZ("NodeID", "component.Id.Node"),
     PetID: defineStringEZ("PetID", "component.Id.Pet"),
     RequesteeID: defineStringEZ("RequesteeID", "component.Id.Requestee"),

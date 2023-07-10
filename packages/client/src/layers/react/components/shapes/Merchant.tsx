@@ -31,17 +31,17 @@ export const getMerchant = (
       components: {
         IsListing,
         Location,
-        MerchantID,
         MerchantIndex,
         Name,
       },
     },
   } = layers;
 
+  const merchantIndex = getComponentValue(MerchantIndex, index)?.value as number;
 
   let merchant: Merchant = {
     id: world.entities[index],
-    index: getComponentValue(MerchantIndex, index)?.value as number,
+    index: merchantIndex,
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     location: getComponentValue(Location, index)?.value as number,
@@ -52,9 +52,10 @@ export const getMerchant = (
   const listingResults = Array.from(
     runQuery([
       Has(IsListing),
-      HasValue(MerchantID, { value: merchant.id }),
+      HasValue(MerchantIndex, { value: merchant.index }),
     ])
   );
+
   let listings = listingResults.map((index) => getListing(layers, index));
   merchant.listings = listings.sort((a, b) => a.buyPrice - b.buyPrice);
 

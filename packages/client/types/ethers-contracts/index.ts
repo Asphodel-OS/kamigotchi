@@ -36,7 +36,6 @@ export type { IdAccountComponent } from "./IdAccountComponent";
 export type { IdDelegateeComponent } from "./IdDelegateeComponent";
 export type { IdDelegatorComponent } from "./IdDelegatorComponent";
 export type { IdHolderComponent } from "./IdHolderComponent";
-export type { IdMerchantComponent } from "./IdMerchantComponent";
 export type { IdNodeComponent } from "./IdNodeComponent";
 export type { IdPetComponent } from "./IdPetComponent";
 export type { IdRequesteeComponent } from "./IdRequesteeComponent";
@@ -177,7 +176,6 @@ export { IdAccountComponent__factory } from "./factories/IdAccountComponent__fac
 export { IdDelegateeComponent__factory } from "./factories/IdDelegateeComponent__factory";
 export { IdDelegatorComponent__factory } from "./factories/IdDelegatorComponent__factory";
 export { IdHolderComponent__factory } from "./factories/IdHolderComponent__factory";
-export { IdMerchantComponent__factory } from "./factories/IdMerchantComponent__factory";
 export { IdNodeComponent__factory } from "./factories/IdNodeComponent__factory";
 export { IdPetComponent__factory } from "./factories/IdPetComponent__factory";
 export { IdRequesteeComponent__factory } from "./factories/IdRequesteeComponent__factory";

@@ -7,7 +7,6 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdMerchantComponent, ID as IdMerchantCompID } from "components/IdMerchantComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexMerchantComponent, ID as IndexMerchantCompID } from "components/IndexMerchantComponent.sol";
 import { IsListingComponent, ID as IsListingCompID } from "components/IsListingComponent.sol";
