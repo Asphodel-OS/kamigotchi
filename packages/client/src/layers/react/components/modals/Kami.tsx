@@ -3,13 +3,23 @@ import { BigNumber, BigNumberish } from 'ethers';
 import React, { useEffect, useState, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+// import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Kill } from 'layers/react/components/shapes/Kill';
 import { Trait, Traits } from 'layers/react/components/shapes/Trait';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
+import { EntityIndex } from '@latticexyz/recs';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -23,10 +33,28 @@ export function registerKamiModal() {
     (layers) => {
       const {
         network: {
-          components: { Balance, IsPet, MediaURI, Name, PetID },
+          components: {
+            Balance,
+            IsPet,
+            IsKill,
+            MediaURI,
+            Name,
+            PetID,
+            SourceID,
+            TargetID,
+          },
         },
       } = layers;
-      return merge(IsPet.update$, Balance.update$, PetID.update$, MediaURI.update$, Name.update$).pipe(
+      return merge(
+        Balance.update$,
+        IsPet.update$,
+        IsKill.update$,
+        MediaURI.update$,
+        Name.update$,
+        PetID.update$,
+        SourceID.update$,
+        TargetID.update$,
+      ).pipe(
         map(() => {
           return {
             layers,
@@ -36,37 +64,40 @@ export function registerKamiModal() {
     },
 
     ({ layers }) => {
+      const [selectedKami, setSelectedKami] = useState<Kami>();
       const {
-        selectedEntities: { kami: kamiEntityIndex },
+        selectedEntities,
+        setSelectedEntities,
         visibleModals,
         setVisibleModals,
       } = dataStore();
 
+
       /////////////////
-      // Get values
+      // DATA FETCHING
 
       const hexToString = (num?: BigNumberish) => {
         return num ? BigNumber.from(num).toString() : '0';
       };
 
-      /////////////////
-      // Display values
-
-      const [selectedKami, setSelectedKami] = useState<Kami>();
       useEffect(() => {
-        if (kamiEntityIndex) {
-          const kami = getKami(layers, kamiEntityIndex, { traits: true });
+        if (selectedEntities.kami) {
+          const kami = getKami(layers, selectedEntities.kami, { traits: true, kills: true, deaths: true });
           setSelectedKami(kami);
         }
-      }, [kamiEntityIndex]);
+      }, [selectedEntities.kami]);
+
+
+      /////////////////
+      // VISUAL COMPONENTS
 
       // Rendering of the Kami's Traits
       const TraitBox = (traits: Traits) => {
         const traitsArray = Object.entries(traits);
         return (
-          <TraitContainer>
-            <ContainerTitle>Traits</ContainerTitle>
-            <ContainerContent>
+          <SectionContainer>
+            <SectionTitle>Traits</SectionTitle>
+            <SectionContent>
               {traitsArray.map((trait: [string, Trait]) => {
                 const statArray = Object.entries(trait[1].stats);
                 const statsText = statArray.map((stat: [string, number]) => `${stat[0]}: ${stat[1] * 1}`);
@@ -80,10 +111,56 @@ export function registerKamiModal() {
                   </Tooltip>
                 );
               })}
-            </ContainerContent>
-          </TraitContainer>
+            </SectionContent>
+          </SectionContainer>
         );
       };
+
+      const KDLogs = (kills: Kill[], deaths: Kill[]) => {
+        const kdRatio = kills.length / Math.max(deaths.length, 1); // how to best compute this?
+        const logs = kills.concat(deaths).sort((a, b) => b.time - a.time);
+        const cellStyle = { fontFamily: 'Pixel', fontWeight: 12, border: 0 };
+
+        return (
+          <SectionContainer style={{ overflowY: 'scroll' }}>
+            <SectionTitle>Kill/Death Logs</SectionTitle>
+            <TableContainer >
+              <Table>
+                <TableHead>
+                  {logs.map((log, index) => {
+                    const type = log.source?.index === undefined ? 'kill' : 'death';
+                    const subject = log.source?.index === undefined ? log.target : log.source;
+                    const date = new Date(log.time * 1000);
+                    const dateString = date.toLocaleString(
+                      'default',
+                      {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                      }
+                    );
+
+                    return (
+                      <TableRow key={index}>
+                        <TableCell sx={cellStyle}>{dateString}</TableCell>
+                        <TableCell sx={cellStyle}>{type}</TableCell>
+                        <TableCell
+                          sx={{ ...cellStyle, cursor: 'pointer' }}
+                          onClick={() => setSelectedEntities({ ...selectedEntities, kami: subject?.entityIndex! })}
+                        >
+                          {subject?.name}
+                        </TableCell>
+                        <TableCell sx={cellStyle}>{log.node.name}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableHead>
+              </Table>
+            </TableContainer>
+          </SectionContainer>
+        );
+      }
 
       const Affinities = () => {
         const strRaw = selectedKami?.affinities?.reduce((ac, x) => (ac = ac + ' | ' + x));
@@ -94,6 +171,10 @@ export function registerKamiModal() {
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, kami: false });
       }, [setVisibleModals, visibleModals]);
+
+
+      /////////////////
+      // RENDERING
 
       return (
         <ModalWrapperFull zindex={true} divName='kami' id='kamiModal'>
@@ -115,42 +196,37 @@ export function registerKamiModal() {
               >
                 {Affinities()}
               </KamiText>
-              <StatBox style={{ gridRow: 3, gridColumn: 1 }}>
+              <StatBox key={'health'} style={{ gridRow: 3, gridColumn: 1 }}>
                 <KamiText> Health </KamiText>
                 <KamiFacts> {hexToString(selectedKami?.stats.health)} </KamiFacts>
               </StatBox>
-              <StatBox style={{ gridRow: 3, gridColumn: 2 }}>
+              <StatBox key={'power'} style={{ gridRow: 3, gridColumn: 2 }}>
                 <KamiText> Power </KamiText>
                 <KamiFacts> {hexToString(selectedKami?.stats.power)} </KamiFacts>
               </StatBox>
-              <StatBox style={{ gridRow: 3, gridColumn: 3 }}>
+              <StatBox key={'violence'} style={{ gridRow: 3, gridColumn: 3 }}>
                 <KamiText> Violence </KamiText>
                 <KamiFacts> {hexToString(selectedKami?.stats.violence)} </KamiFacts>
               </StatBox>
-              <StatBox style={{ gridRow: 3, gridColumn: 4 }}>
+              <StatBox key={'harmony'} style={{ gridRow: 3, gridColumn: 4 }}>
                 <KamiText> Harmony </KamiText>
                 <KamiFacts> {hexToString(selectedKami?.stats.harmony)} </KamiFacts>
               </StatBox>
-              <StatBox style={{ gridRow: 3, gridColumn: 5 }}>
+              <StatBox key={'slots'} style={{ gridRow: 3, gridColumn: 5 }}>
                 <KamiText> Slots </KamiText>
                 <KamiFacts> {hexToString(selectedKami?.stats.slots)} </KamiFacts>
               </StatBox>
             </div>
           </TopDiv>
           {selectedKami && TraitBox(selectedKami.traits!)}
-          <div
-            style={{
-              overflowY: 'scroll',
-            }}
-          >
-          </div>
+          {selectedKami && KDLogs(selectedKami.kills!, selectedKami.deaths!)}
         </ModalWrapperFull>
       );
     }
   );
 }
 
-const TraitContainer = styled.div`
+const SectionContainer = styled.div`
   border-width: 2px;
   border-color: black;
   border-style: solid;
@@ -161,7 +237,7 @@ const TraitContainer = styled.div`
   flex-direction: column;
 `;
 
-const ContainerTitle = styled.div`
+const SectionTitle = styled.div`
   background-color: #ffffff;
   margin: 15px;
 
@@ -169,10 +245,9 @@ const ContainerTitle = styled.div`
   font-family: Pixel;
   font-size: 30px;
   font-weight: 600;
-  
 `;
 
-const ContainerContent = styled.div`
+const SectionContent = styled.div`
   display: flex;
   flex-direction: row wrap;
 `;
@@ -210,7 +285,6 @@ const InfoContent = styled.div`
   font-family: Pixel;
   margin: auto;
 `;
-
 
 
 
