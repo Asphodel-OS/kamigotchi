@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { of } from 'rxjs';
+import React, { useEffect, useState } from 'react';
+import { map, merge } from 'rxjs';
+import { Has, HasValue, runQuery } from '@latticexyz/recs';
+import styled from 'styled-components';
+
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ActionListButton } from 'layers/react/components/library/ActionListButton';
+import { getAccount } from 'layers/react/components/shapes/Account';
+import { Score, ScoresFilter, getScores } from 'layers/react/components/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import styled from 'styled-components';
 import 'layers/react/styles/font.css';
-import { ModalWrapperFull } from '../library/ModalWrapper';
 
 export function registerLeaderboardModal() {
   registerUIComponent(
@@ -15,28 +20,123 @@ export function registerLeaderboardModal() {
       rowStart: 20,
       rowEnd: 78,
     },
-    (layers) => of(layers),
-    () => {
-      const data = [
-        { rank: 1, score: 124, player: 'Mock 1' },
-        { rank: 2, score: 117, player: 'Mock 2' },
-        { rank: 3, score: 90, player: 'Mock 3' },
-        { rank: 4, score: 84, player: 'Mock 4' },
-        { rank: 5, score: 73, player: 'Mock 5' },
-        { rank: 6, score: 59, player: 'Mock 6' },
-      ];
+    // Requirement (Data Manangement)
+    (layers) => {
+      const {
+        network: {
+          network,
+          components: {
+            IsAccount,
+            IsScore,
+            Location,
+            Name,
+            OperatorAddress,
+          },
+        },
+      } = layers;
+
+      return merge(
+        IsScore.update$,
+        Location.update$,
+        Name.update$,
+        OperatorAddress.update$,
+      ).pipe(
+        map(() => {
+          // get the account through the account entity of the controlling wallet
+          const accountIndex = Array.from(
+            runQuery([
+              Has(IsAccount),
+              HasValue(OperatorAddress, {
+                value: network.connectedAddress.get(),
+              }),
+            ])
+          )[0];
+
+          const account = getAccount(layers, accountIndex);
+
+          return {
+            layers,
+            data: { account },
+          };
+        })
+      );
+    },
+
+    ({ layers, data }) => {
+      const { visibleModals, setVisibleModals } = dataStore();
+      const [filter, setFilter] = useState<ScoresFilter>({ epoch: 0, type: 'COLLECT' });
+      const [tableData, setTableData] = useState<Score[]>([]);
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
+      // console.log('leaderboardM: tableData', tableData);
+
+      // ticking
+      useEffect(() => {
+        const refreshClock = () => {
+          setLastRefresh(Date.now());
+        };
+        const timerId = setInterval(refreshClock, 3000);
+        return function cleanup() {
+          clearInterval(timerId);
+        };
+      }, []);
+
+      // table data update
+      useEffect(() => {
+        if (visibleModals.leaderboard) {
+          const tableData = getScores(layers, filter);
+          setTableData(tableData);
+        }
+      }, [filter, lastRefresh]);
 
       const renderTableRows = () => {
-        return data.map((row, index) => (
+        return tableData.map((row, index) => (
           <React.Fragment key={index}>
-            <GridCell>{row.rank}</GridCell>
-            <GridCell>{row.score}</GridCell>
-            <GridCell isLast>{row.player}</GridCell>
+            <GridCell>{index + 1}</GridCell>
+            <GridCell>{row.account.name}</GridCell>
+            <GridCell isLast>{row.score}</GridCell>
           </React.Fragment>
         ));
       };
 
-      const { visibleModals, setVisibleModals } = dataStore();
+
+      const EpochFilter = () => {
+        const text = (!!filter.epoch) ? `Epoch: ${filter.epoch * 1}` : 'Epoch';
+        const epochs = Array.from(new Set(layers.network.components.Epoch.values.value.values()));
+        const epochsSorted = epochs.sort((a, b) => b - a);
+        const options = epochsSorted.map((epoch: number) => {
+          return {
+            text: (epoch * 1).toString(),
+            onClick: () => setFilter({ ...filter, epoch }),
+          };
+        });
+
+        return (
+          <ActionListButton
+            id={'epoch-filter'}
+            text={text}
+            options={options}
+          />
+        );
+      }
+
+      const TypeFilter = () => {
+        const text = (!!filter.type) ? `Type: ${filter.type}` : 'Type';
+        const types = ['FEED', 'COLLECT', 'LIQUIDATE'];
+        const options = types.map((type) => {
+          return {
+            text: type,
+            onClick: () => setFilter({ ...filter, type }),
+          };
+        });
+
+        return (
+          <ActionListButton
+            id={'type-filter'}
+            text={text}
+            options={options}
+          />
+        );
+      }
 
       const hideModal = () => {
         setVisibleModals({ ...visibleModals, leaderboard: false });
@@ -49,19 +149,15 @@ export function registerLeaderboardModal() {
               X
             </TopButton>
           </AlignRight>
-          <StyledDiv>
-            <TextHeader>Leaderboards</TextHeader>
-          </StyledDiv>
+          <Header>Leaderboards</Header>
           <StyledDivFlex>
-            <StyledHeader>Epoch ▽</StyledHeader>
-            <StyledHeader>Type ▽</StyledHeader>
+            {EpochFilter()}
+            {TypeFilter()}
           </StyledDivFlex>
           <GridContainer>
             <GridCell isBold>rank</GridCell>
-            <GridCell isBold>score</GridCell>
-            <GridCell isLast isBold>
-              player
-            </GridCell>
+            <GridCell isBold>player</GridCell>
+            <GridCell isLast isBold>score</GridCell>
             {renderTableRows()}
           </GridContainer>
         </ModalWrapperFull>
@@ -94,24 +190,14 @@ const TopButton = styled.button`
   margin: 0px;
 `;
 
-const StyledDiv = styled.div`
-  margin: 3% 0;
+const Header = styled.h1`
+  font-family: Pixel;
+  text-align: center;
+  color: black;
+  margin: 10px;
+  padding-top: 10px; 
 `;
 
-const StyledHeader = styled.h3`
-  padding-left: 2%;
-  width: 33%;
-  font-family: Pixel;
-  cursor: pointer;
-  color: black;
-  text-align: center;
-  &:before {
-    content: '[';
-  }
-  &:after {
-    content: ']';
-  }
-`;
 
 const GridContainer = styled.div`
   display: grid;
@@ -140,8 +226,4 @@ const StyledDivFlex = styled.div`
   gap: 5px;
 `;
 
-const TextHeader = styled.h1`
-  font-family: Pixel;
-  text-align: center;
-  color: black;
-`;
+

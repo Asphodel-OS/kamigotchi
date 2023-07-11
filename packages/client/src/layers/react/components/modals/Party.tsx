@@ -96,8 +96,12 @@ export function registerPartyModal() {
     // Render
     ({ actions, api, data, world }) => {
       // console.log('PartyM: data', data);
-      const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
-        dataStore();
+      const {
+        visibleModals,
+        setVisibleModals,
+        selectedEntities,
+        setSelectedEntities,
+      } = dataStore();
 
       /////////////////
       // STATE TRACKING
@@ -394,7 +398,6 @@ export function registerPartyModal() {
           <ActionListButton
             id={`feedKami-button-${kami.index}`}
             text='Feed'
-            hidden={true}
             disabled={!canFeedKami}
             scrollPosition={scrollPosition}
             options={feedOptions}

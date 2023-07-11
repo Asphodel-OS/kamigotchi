@@ -9,7 +9,6 @@ interface Props {
   text: string;
   options: Option[];
   disabled?: boolean;
-  hidden?: boolean;
   scrollPosition?: number;
 }
 
