@@ -65,8 +65,9 @@ contract ProductionLiquidateSystem is System {
     LibKill.create(world, components, petID, targetPetID, nodeID);
 
     // logging and tracking
-    LibScore.incBy(world, components, accountID, "LIQUIDATE", amt);
-    // LibAccount.updateLastBlock(components, accountID); // contract size limits..
+    LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
+    LibScore.incBy(world, components, accountID, "COLLECT", amt);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 
