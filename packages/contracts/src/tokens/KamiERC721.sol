@@ -9,9 +9,11 @@ import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCo
 
 import { LibPet } from "libraries/LibPet.sol";
 
+import { IERC165 } from "openzeppelin/utils/introspection/IERC165.sol";
 import { IERC4906 } from "openzeppelin/interfaces/IERC4906.sol";
 import { ERC721 } from "openzeppelin/token/ERC721/ERC721.sol";
 import { ERC721Enumerable } from "openzeppelin/token/ERC721/extensions/ERC721Enumerable.sol";
+import { ERC2981 } from "openzeppelin/token/common/ERC2981.sol";
 
 string constant NAME = "Kamigotchi";
 string constant SYMBOL = "KAMI";
@@ -40,15 +42,25 @@ string constant SYMBOL = "KAMI";
   Metadata is linked to a system for easier MUD compatibility. However, any view function on a contract can be used. 
 */
 
-contract KamiERC721 is ERC721Enumerable, IERC4906 {
+contract KamiERC721 is ERC721Enumerable, ERC2981, IERC4906 {
   IWorld internal immutable World;
 
+  // mirror writable permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
     require(
       PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
         msg.sender
       ),
       "ERC721: not a writer"
+    );
+    _;
+  }
+
+  // mirror owner permissions from ProxyPermissionsComponent
+  modifier onlyOwner() {
+    require(
+      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner() == msg.sender,
+      "ERC721: not owner"
     );
     _;
   }
@@ -62,6 +74,12 @@ contract KamiERC721 is ERC721Enumerable, IERC4906 {
 
   constructor(IWorld _world, string memory _name, string memory _symbol) ERC721(_name, _symbol) {
     World = _world;
+
+    // set royalties at 5% to iniitial contract owner
+    _setDefaultRoyalty(
+      PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner(),
+      500 // 500 BPS
+    );
   }
 
   ////////////////////
@@ -88,6 +106,36 @@ contract KamiERC721 is ERC721Enumerable, IERC4906 {
   // signals to marketplaces that metadata has been updated
   function emitMetadataUpdate(uint256 id) external onlyWriter {
     emit MetadataUpdate(id);
+  }
+
+  // updates default royalty via ERC2981
+  function setDefaultRoyalty(address recipient, uint256 feeNumerator) external onlyOwner {
+    _setDefaultRoyalty(recipient, uint96(feeNumerator));
+  }
+
+  // delete default token royalty
+  function deleteDefaultRoyalty() external onlyOwner {
+    _deleteDefaultRoyalty();
+  }
+
+  // set royalty for a specific token
+  function setTokenRoyalty(
+    uint256 tokenId,
+    address receiver,
+    uint256 feeNumerator
+  ) external onlyOwner {
+    _setTokenRoyalty(tokenId, receiver, uint96(feeNumerator));
+  }
+
+  // reset royalty for a specific token
+  function resetTokenRoyalty(uint256 tokenId) external onlyOwner {
+    _resetTokenRoyalty(tokenId);
+  }
+
+  function supportsInterface(
+    bytes4 interfaceId
+  ) public view virtual override(IERC165, ERC721Enumerable, ERC2981) returns (bool) {
+    return super.supportsInterface(interfaceId);
   }
 
   ////////////////////
