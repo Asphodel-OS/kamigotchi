@@ -148,6 +148,12 @@ export function registerSettingsModal() {
               'Update operator',
               () => setVisibleModals({ ...visibleModals, operatorUpdater: true })
             )}
+            {ButtonRow(
+              '',
+              '',
+              'Fund perator',
+              () => setVisibleModals({ ...visibleModals, operatorFund: true })
+            )}
           </div>
           <StatusText>{statusText}</StatusText>
         </ModalWrapperFull>

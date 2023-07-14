@@ -97,11 +97,7 @@ library LibScore {
     uint256 bal = getBalance(components, id);
     require(bal >= amt, "Score: insufficient balance");
     bal -= amt;
-    if (bal == 0) {
-      del(components, id);
-    } else {
-      _set(components, id, bal);
-    }
+    _set(components, id, bal);
     return bal;
   }
 
