@@ -82,7 +82,7 @@ export const getAccount = (
     location: getComponentValue(Location, index)?.value as number,
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
-    staminaRecoveryPeriod: 1,
+    staminaRecoveryPeriod: 1, // dummy value
     lastBlock: getComponentValue(LastBlock, index)?.value as number,
     lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
