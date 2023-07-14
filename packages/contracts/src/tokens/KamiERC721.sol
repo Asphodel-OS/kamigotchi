@@ -75,10 +75,10 @@ contract KamiERC721 is ERC721Enumerable, ERC2981, IERC4906 {
   constructor(IWorld _world, string memory _name, string memory _symbol) ERC721(_name, _symbol) {
     World = _world;
 
-    // set royalties at 5% to iniitial contract owner
+    // set royalties at 3.33% for the quirked up angel number gorls, to owner
     _setDefaultRoyalty(
       PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner(),
-      500 // 500 BPS
+      333 // 333 BPS
     );
   }
 
