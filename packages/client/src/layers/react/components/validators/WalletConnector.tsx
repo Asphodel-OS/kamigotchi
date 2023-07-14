@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount, useNetwork, Connector } from 'wagmi';
@@ -113,12 +113,14 @@ export function registerWalletConnecter() {
       getAccountDetails,
     }) => {
       const { chain } = useNetwork();
+
       const {
         address: connectorAddress,
         connector,
         isConnected,
         status
       } = useAccount();
+
       const {
         networks,
         addNetwork,
@@ -128,11 +130,29 @@ export function registerWalletConnecter() {
 
       const { setDetails } = useKamiAccount();
       const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
+      const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
+      const [title, setTitle] = useState('Connect a Wallet');
+      const [description, setDescription] = useState('');
+
+      // check whether the correctNetwork is connected
+      useEffect(() => {
+        setIsCorrectNetwork(chain?.id === defaultChainConfig.id);
+      }, [isConnected, chain]);
+
+      // title and description as needed
+      useEffect(() => {
+        if (!isCorrectNetwork) {
+          setTitle('Wrong Network');
+          setDescription(`Please connect to ${defaultChainConfig.name}`);
+        } else {
+          setTitle('Connect a Wallet');
+          setDescription('You must connect a wallet to continue.');
+        }
+      }, [isCorrectNetwork]);
 
       // track the account details in store for easy access
-      // also expose/hide components accordingly
+      // expose/hide components accordingly
       useEffect(() => {
-        console.log("Wallet is", status);
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setDetails(accountDetails);
@@ -147,44 +167,52 @@ export function registerWalletConnecter() {
 
       // update the network settings whenever the connector/address changes
       useEffect(() => {
+        console.log("WALLET IS", status);
         console.log("NETWORK CHANGE DETECTED");
         updateNetworkSettings(connector);
-      }, [chain, connector, connectorAddress]);
+      }, [chain, connector, connectorAddress, isConnected]);
 
       // add a network layer if one for the connection doesnt exist
       const updateNetworkSettings = async (connector: Connector | undefined) => {
-        if (connectorAddress && connector) {
-          if (chain?.id !== defaultChainConfig.id) return;
-          const connectorAddressLowerCase = connectorAddress.toLowerCase();
+        // if disconnected or not connected to the default chain, wipe
+        if (!isConnected || !isCorrectNetwork) {
+          setSelectedAddress('');
+          return;
+        }
 
-          // set the selected address and spawn network client for address as needed
-          setSelectedAddress(connectorAddressLowerCase);
-          if (!networks.has(connectorAddressLowerCase)) {
-            console.log(`CREATING NETWORK FOR..`, connectorAddressLowerCase);
+        if (!connectorAddress || !connector) return;
 
-            // create network config and the new network layer
-            const provider = await connector.getProvider()
-            const networkConfig = createNetworkConfig(provider);
-            if (!networkConfig) throw new Error('Invalid config');
-            const networkLayer = await createNetworkLayer(networkConfig);
-            networkLayer.startSync();
-            addNetwork(connectorAddressLowerCase, networkLayer);
-          }
+        // set the selected address and spawn network client for address as needed
+        const connectorAddressLowerCase = connectorAddress.toLowerCase();
+        setSelectedAddress(connectorAddressLowerCase);
+        if (!networks.has(connectorAddressLowerCase)) {
+          console.log(`CREATING NETWORK FOR..`, connectorAddressLowerCase);
+
+          // create network config and the new network layer
+          const provider = await connector.getProvider()
+          const networkConfig = createNetworkConfig(provider);
+          if (!networkConfig) throw new Error('Invalid config');
+          const networkLayer = await createNetworkLayer(networkConfig);
+          networkLayer.startSync();
+          addNetwork(connectorAddressLowerCase, networkLayer);
         }
       };
 
+      /////////////////
+      // RENDER
+
       // how to render the modal
       const modalDisplay = () => (
-        (isConnected) ? 'none' : 'block'
+        (isConnected && isCorrectNetwork) ? 'none' : 'block'
       );
+
 
       return (
         <ModalWrapper id='connect' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Connect a Wallet</Title>
+            <Title>{title}</Title>
             <Description>({status})</Description>
-            <br />
-            <Description>Connector Address: {selectedAddress}</Description>
+            <Description>{description}</Description>
           </ModalContent>
         </ModalWrapper>
       );
@@ -203,6 +231,7 @@ const Description = styled.p`
   font-size: 12px;
   color: #333;
   text-align: center;
+  padding: 10px 0px 15px 0px;
   font-family: Pixel;
 `;
 
