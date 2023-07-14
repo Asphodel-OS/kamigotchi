@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { map, merge, of } from 'rxjs';
+import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork, Connector } from 'wagmi';
 import {
   EntityIndex,
   Has,
@@ -10,6 +10,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
+import { defaultChainConfig } from 'constants/chains';
+import { createNetworkConfig } from 'layers/network/config';
+import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { dataStore } from 'layers/react/store/createStore';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -109,8 +112,20 @@ export function registerWalletConnecter() {
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
-      const { isConnected, status } = useAccount();
-      const { selectedAddress } = useNetworkSettings();
+      const { chain } = useNetwork();
+      const {
+        address: connectorAddress,
+        connector,
+        isConnected,
+        status
+      } = useAccount();
+      const {
+        networks,
+        addNetwork,
+        selectedAddress,
+        setSelectedAddress,
+      } = useNetworkSettings();
+
       const { setDetails } = useKamiAccount();
       const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
 
@@ -129,6 +144,34 @@ export function registerWalletConnecter() {
           toggleVisibleModals(false);
         }
       }, [selectedAddress, isConnected, accountDetailsFromWorld]);
+
+      // update the network settings whenever the connector/address changes
+      useEffect(() => {
+        console.log("NETWORK CHANGE DETECTED");
+        updateNetworkSettings(connector);
+      }, [chain, connector, connectorAddress]);
+
+      // add a network layer if one for the connection doesnt exist
+      const updateNetworkSettings = async (connector: Connector | undefined) => {
+        if (connectorAddress && connector) {
+          if (chain?.id !== defaultChainConfig.id) return;
+          const connectorAddressLowerCase = connectorAddress.toLowerCase();
+
+          // set the selected address and spawn network client for address as needed
+          setSelectedAddress(connectorAddressLowerCase);
+          if (!networks.has(connectorAddressLowerCase)) {
+            console.log(`CREATING NETWORK FOR..`, connectorAddressLowerCase);
+
+            // create network config and the new network layer
+            const provider = await connector.getProvider()
+            const networkConfig = createNetworkConfig(provider);
+            if (!networkConfig) throw new Error('Invalid config');
+            const networkLayer = await createNetworkLayer(networkConfig);
+            networkLayer.startSync();
+            addNetwork(connectorAddressLowerCase, networkLayer);
+          }
+        }
+      };
 
       // how to render the modal
       const modalDisplay = () => (

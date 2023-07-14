@@ -198,10 +198,10 @@ const StepOne = () => (
 
 const StepTwo = () => (
   <ModalContent>
-      <Header style={{ color: 'black' }}>Wallet connection</Header>
-      <Description>
-        Any wallet connect content can go here!
-      </Description>
+    <Header style={{ color: 'black' }}>Wallet connection</Header>
+    <Description>
+      Any wallet connect content can go here!
+    </Description>
   </ModalContent>
 );
 

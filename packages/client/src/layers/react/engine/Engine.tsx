@@ -2,16 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, useAccount, Connector, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 
 import { BootScreen, MainWindow } from "./components";
 import { EngineContext, LayerContext } from "./context";
 import { EngineStore } from "./store";
 import { defaultChainConfig } from 'constants/chains';
-import { createNetworkConfig } from 'layers/network/config';
-import { createNetworkLayer } from 'layers/network/createNetworkLayer';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { Layers } from 'src/types';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -37,8 +34,6 @@ export const Engine: React.FC<{
   mountReact: { current: (mount: boolean) => void };
   customBootScreen?: React.ReactElement;
 }> = observer(({ mountReact, setLayers, customBootScreen }) => {
-  const { connector, address: connectorAddress } = useAccount();
-  const { networks, setSelectedAddress, addNetwork } = useNetworkSettings();
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
 
@@ -50,47 +45,18 @@ export const Engine: React.FC<{
     console.log(`Expected Chain ID: ${defaultChainConfig.id}`);
   }, []);
 
-  // update the network settings whenever the connector/address changes
-  // TODO?: move this logic to the WalletConnector based on updates to the selectedAddress
-  useEffect(() => {
-    console.log("NETWORK CHANGE DETECTED");
-    updateNetworkSettings(connector);
-  }, [connector, connectorAddress]);
-
-  // add a network layer if one for the connection doesnt exist
-  const updateNetworkSettings = async (connector: Connector | undefined) => {
-    if (connectorAddress && connector) {
-      const connectedChainID = await connector.getChainId();
-      const expectedChainID = defaultChainConfig.id;
-      if (connectedChainID !== expectedChainID) return;
-
-      // set the selected network
-      const hotAddress = connectorAddress.toLowerCase();
-      setSelectedAddress(hotAddress);
-
-      // spawn network client for address if one does not exist
-      if (!networks.has(hotAddress)) {
-        console.log(`CREATING NETWORK FOR NEW ADDRESS..`, hotAddress);
-
-        // create network config and the new network layer
-        const provider = await connector.getProvider()
-        const networkConfig = createNetworkConfig(provider);
-        if (!networkConfig) throw new Error('Invalid config');
-        const networkLayer = await createNetworkLayer(networkConfig);
-        networkLayer.startSync();
-        addNetwork(hotAddress, networkLayer);
-      }
-    }
-  };
-
   if (!mounted || !layers) return customBootScreen || <BootScreen />;
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider theme={lightTheme({
-        accentColor: '#ffffff',
-        accentColorForeground: '#000000',
-        fontStack: 'system'
-      })} chains={chains}>
+      <RainbowKitProvider
+        theme={lightTheme({
+          accentColor: '#ffffff',
+          accentColorForeground: '#000000',
+          fontStack: 'system'
+        })}
+        chains={chains}
+        initialChain={defaultChainConfig} // technically this is unnecessary, defaults to 1st chain
+      >
         <LayerContext.Provider value={layers}>
           <EngineContext.Provider value={EngineStore}>
             <MainWindow />
