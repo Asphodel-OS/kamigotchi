@@ -1,4 +1,12 @@
-import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
+import {
+  EntityID,
+  EntityIndex,
+  Has,
+  HasValue,
+  QueryFragment,
+  getComponentValue,
+  runQuery,
+} from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
 
@@ -28,3 +36,24 @@ export const getRoom = (layers: Layers, index: EntityIndex): Room => {
     exits: getComponentValue(Exits, index)?.value as number[],
   };
 };
+
+export const getRoomEntityIndexByLocation = (layers: Layers, location: number): EntityIndex => {
+  const {
+    network: {
+      components: {
+        IsRoom,
+        Location
+      },
+    },
+  } = layers;
+
+  let hexLocation = location.toString(16);
+  if (hexLocation.length % 2) hexLocation = '0' + hexLocation;
+  hexLocation = '0x' + hexLocation;
+
+  const roomEntityIndex = Array.from(
+    runQuery([Has(IsRoom), HasValue(Location, { value: hexLocation })])
+  )[0];
+
+  return roomEntityIndex;
+}

@@ -7,8 +7,9 @@ export interface Dialogue {
 
 export interface SelectedEntities {
   kami: EntityIndex;
-  node: EntityIndex;
   merchant: EntityIndex;
+  node: EntityIndex;
+  room: number;
 }
 
 export interface SoundState {
@@ -81,7 +82,6 @@ export interface DataStore {
   dialogue: Dialogue;
   selectedEntities: SelectedEntities;
   sound: SoundState;
-  selectedRoom: number;
   visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
 }
@@ -101,10 +101,10 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     dialogue: { description: [] },
     selectedEntities: {
       kami: 0 as EntityIndex,
-      node: 0 as EntityIndex,
       merchant: 0 as EntityIndex,
+      node: 0 as EntityIndex,
+      room: 0,
     },
-    selectedRoom: 0,
     sound: { volume: 0.7 },
     visibleModals: {
       bridgeERC20: false,

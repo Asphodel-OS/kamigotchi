@@ -196,7 +196,6 @@ export function registerAccountRegistrar() {
       }
 
 
-
       /////////////////
       // DISPLAY
 

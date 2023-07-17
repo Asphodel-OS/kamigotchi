@@ -69,7 +69,7 @@ import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
-import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovmentModal';
+import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
 import { roomObjectsWorld1, roomObjectsWorld2 } from 'assets/images/room objects';
 import { triggerLeaderboardModal } from 'layers/phaser/utils/triggerLeaderboardModal';
 

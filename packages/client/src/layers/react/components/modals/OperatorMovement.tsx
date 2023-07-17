@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { of } from 'rxjs';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
 import styled from 'styled-components';
-import 'layers/react/styles/font.css';
-import { ModalWrapperFull } from '../library/ModalWrapper';
 import { EntityID } from '@latticexyz/recs';
+
+import { registerUIComponent } from 'layers/react/engine/store';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { dataStore } from 'layers/react/store/createStore';
+import {
+  Room,
+  getRoom,
+  getRoomEntityIndexByLocation,
+} from 'layers/react/shapes/Room';
+import 'layers/react/styles/font.css';
 
 // TODO: update this file and component name to be more desctiptive
 export function registerOperatorMovementModal() {
@@ -22,13 +29,24 @@ export function registerOperatorMovementModal() {
       const {
         network: { api, actions },
       } = layers;
-      const { selectedRoom, visibleModals, setVisibleModals } = dataStore();
-      const hideModal = () => {
-        setVisibleModals({ ...visibleModals, roomMovement: false });
-      };
+
+      const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
+      const [selectedRoom, setSelectedRoom] = React.useState<Room>();
+
+      useEffect(() => {
+        if (selectedEntities.room) {
+          const room = getRoom(layers, getRoomEntityIndexByLocation(layers, selectedEntities.room));
+          setSelectedRoom(room);
+        }
+      }, [selectedEntities.room]);
+
+
+      //////////////////
+      // ACTIONS
 
       const move = () => {
-        const actionID = `Moving to room ${selectedRoom}` as EntityID;
+        if (!selectedRoom) return;
+        const actionID = `Moving to room ${selectedEntities.room}` as EntityID;
 
         actions.add({
           id: actionID,
@@ -36,25 +54,34 @@ export function registerOperatorMovementModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            const roomMovment = await api.player.account.move(selectedRoom);
+            const roomMovment = await api.player.account.move(selectedRoom?.location);
             hideModal();
             return roomMovment;
           },
         });
       };
 
+
+      //////////////////
+      // RENDERING
+
+      const hideModal = () => {
+        setVisibleModals({ ...visibleModals, roomMovement: false });
+      };
+
       return (
         <ModalWrapperFull divName='roomMovement' id='roomMovement'>
-          <AlignRight>
-            <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-              X
-            </TopButton>
-          </AlignRight>
-          <TextWrapper>Do you really wish to move to room {selectedRoom}?</TextWrapper>
+          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
+            X
+          </TopButton>
+          <TextWrapper>Do you really wish to move to {selectedRoom?.name}?</TextWrapper>
           <ButtonWrapper>
-            <MoveButton style={{ pointerEvents: 'auto' }} onClick={move}>
-              Move
-            </MoveButton>
+            <ActionButton
+              id='move'
+              onClick={() => move()}
+              text='Move'
+              size='large'
+            />
           </ButtonWrapper>
         </ModalWrapperFull>
       );
@@ -62,9 +89,20 @@ export function registerOperatorMovementModal() {
   );
 }
 
-const AlignRight = styled.div`
-  text-align: left;
-  margin: 0px;
+const TextWrapper = styled.div`
+  padding: 10px 20px 0px 20px;
+  color: #333;
+  font-family: Pixel;
+  font-size: 24px;
+  line-height: 1.5;
+  text-align: center;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
 `;
 
 const TopButton = styled.button`
@@ -84,31 +122,4 @@ const TopButton = styled.button`
     background-color: #c4c4c4;
   }
   margin: 0px;
-`;
-
-const TextWrapper = styled.div`
-  font-size: 24px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  height: 100%;
-  align-items: center;
-`;
-
-const MoveButton = styled.button`
-  background-color: #0088cc;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  &:hover {
-    background-color: #006699;
-  }
 `;
