@@ -99,8 +99,14 @@ export function registerKamiModal() {
             <SectionTitle>Traits</SectionTitle>
             <SectionContent>
               {traitsArray.map((trait: [string, Trait]) => {
-                const statArray = Object.entries(trait[1].stats);
-                const statsText = statArray.map((stat: [string, number]) => `${stat[0]}: ${stat[1] * 1}`);
+                const statArray = Object.entries(trait[1].stats).filter((stat: [string, number]) => stat[1] > 0);
+                const statsText = statArray.map(
+                  (stat: [string, number]) => {
+                    const name = stat[0].charAt(0).toUpperCase() + stat[0].slice(1);
+                    const value = stat[1] * 1;
+                    return `${name}: ${value}`;
+                  }
+                );
 
                 return (
                   <Tooltip key={trait[0]} text={['STATS'].concat(statsText)} grow>

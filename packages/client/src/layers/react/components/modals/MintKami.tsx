@@ -213,7 +213,7 @@ const StepOne = () => (
 
 const StepTwo = (props: any) => {
   const { MintButton, NumMinted } = props;
-  console.log(NumMinted)
+  // console.log(NumMinted)
 
   return (
     <>

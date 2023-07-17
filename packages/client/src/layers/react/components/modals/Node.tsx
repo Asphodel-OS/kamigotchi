@@ -403,7 +403,6 @@ export function registerNodeModal() {
             id={`harvest-add`}
             key={`harvest-add`}
             text='Add Kami'
-            hidden={true}
             scrollPosition={scrollPosition}
             options={options}
             disabled={kamis.length == 0}
@@ -454,7 +453,6 @@ export function registerNodeModal() {
             id={`liquidate-button-${target.index}`}
             key={`harvest-liquidate`}
             text='Liquidate'
-            hidden={true}
             scrollPosition={scrollPosition}
             options={options}
             disabled={allies.length == 0}
