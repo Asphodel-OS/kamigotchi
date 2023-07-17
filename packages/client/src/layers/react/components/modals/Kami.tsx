@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BigNumber, BigNumberish } from 'ethers';
 import React, { useEffect, useState, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -74,7 +73,12 @@ export function registerKamiModal() {
 
       useEffect(() => {
         if (selectedEntities.kami) {
-          const kami = getKami(layers, selectedEntities.kami, { traits: true, kills: true, deaths: true });
+          const kami = getKami(layers, selectedEntities.kami, {
+            account: true,
+            deaths: true,
+            kills: true,
+            traits: true,
+          });
           setSelectedKami(kami);
         }
       }, [selectedEntities.kami]);
@@ -82,6 +86,44 @@ export function registerKamiModal() {
 
       /////////////////
       // VISUAL COMPONENTS
+
+      // Rendering of Kami overview details (name, affinity, stats)
+      const OverviewSection = (kami: Kami) => {
+        const statsArray = Object.entries(kami.stats);
+        const affinities = kami.affinities?.join(' | ');
+        const statsDescriptions = new Map(Object.entries({
+          'health': 'defines how resilient a Kami is to accumulated damage',
+          'power': 'determines the potential rate at which $KAMI can be farmed',
+          'violence': 'dictates the threshold at which a Kami can liquidate others',
+          'harmony': 'divines resting recovery rate and defends against violence',
+          'slots': 'room for upgrades ^_^',
+        }));
+
+        return (
+          <SectionContainer style={{ display: 'flex', flexDirection: 'row', padding: '0px' }}>
+            <ContainerImage src={kami.uri} />
+            <SectionContainer style={{ borderWidth: '0px', margin: '0px' }}>
+              <SectionTitle>{kami.name}</SectionTitle>
+              <SectionSubtitle>{affinities}</SectionSubtitle>
+              <SectionContent>
+                {statsArray.map((stat: [string, number]) => {
+                  return (
+                    <Tooltip key={stat[0]} text={[statsDescriptions.get(stat[0]) as string]} grow>
+                      <InfoBox>
+                        <InfoTitle>{stat[0].toUpperCase()}</InfoTitle>
+                        <InfoContent>{stat[1] * 1}</InfoContent>
+                      </InfoBox>
+                    </Tooltip>
+                  );
+                })}
+              </SectionContent>
+            </SectionContainer>
+            <ContainerInfo>
+              <ContainerInfoText>{kami.account?.name}</ContainerInfoText>
+            </ContainerInfo>
+          </SectionContainer>
+        );
+      }
 
       // Rendering of the Kami's Traits
       const TraitSection = (traits: Traits) => {
@@ -114,39 +156,6 @@ export function registerKamiModal() {
         );
       };
 
-      const OverviewSection = (kami: Kami) => {
-        const statsArray = Object.entries(kami.stats);
-        const affinities = kami.affinities?.join(' | ');
-        const statsDescriptions = new Map(Object.entries({
-          'health': 'defines how resilient a Kami is to accumulated damage',
-          'power': 'determines the potential rate at which $KAMI can be farmed',
-          'violence': 'dictates the threshold at which a Kami can liquidate others',
-          'harmony': 'divines resting recovery rate and defends against violence',
-          'slots': 'room for upgrades ^_^',
-        }));
-
-        return (
-          <SectionContainer style={{ display: 'flex', flexDirection: 'row', padding: '0px' }}>
-            <SectionImage src={kami.uri} />
-            <SectionContainer style={{ borderWidth: '0px', margin: '0px' }}>
-              <SectionTitle>{kami.name}</SectionTitle>
-              <InfoSubtitle>{affinities}</InfoSubtitle>
-              <SectionContent>
-                {statsArray.map((stat: [string, number]) => {
-                  return (
-                    <Tooltip key={stat[0]} text={[statsDescriptions.get(stat[0]) as string]} grow>
-                      <InfoBox>
-                        <InfoTitle>{stat[0].toUpperCase()}</InfoTitle>
-                        <InfoContent>{stat[1] * 1}</InfoContent>
-                      </InfoBox>
-                    </Tooltip>
-                  );
-                })}
-              </SectionContent>
-            </SectionContainer>
-          </SectionContainer>
-        );
-      }
 
       const KDLogsSection = (kills: Kill[], deaths: Kill[]) => {
         const kdRatio = kills.length / Math.max(deaths.length, 1); // how to best compute this?
@@ -228,12 +237,29 @@ const SectionContainer = styled.div`
   flex-direction: column;
 `;
 
-const SectionImage = styled.img`
+const ContainerImage = styled.img`
   border-width: 0px 2px 0px 0px;
   border-color: black;
   border-style: solid;
   border-radius: 5px 0px 0px 5px;
   height: 100%;
+`;
+
+const ContainerInfo = styled.div`
+  flex-grow: 1;
+
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+`;
+
+const ContainerInfoText = styled.div`
+  color: #333;
+  font-size: 14px;
+  font-family: Pixel;
+  margin: 5px;
 `;
 
 const SectionTitle = styled.div`
@@ -244,6 +270,14 @@ const SectionTitle = styled.div`
   font-family: Pixel;
   font-size: 30px;
   font-weight: 600;
+`;
+
+const SectionSubtitle = styled.div`
+  margin: 0px 0px 17px 10px;
+  
+  color: #666;
+  font-size: 14px;
+  font-family: Pixel;
 `;
 
 const SectionContent = styled.div`
@@ -271,14 +305,6 @@ const InfoTitle = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 14px;
-`;
-
-const InfoSubtitle = styled.div`
-  margin: 0px 0px 17px 10px;
-  
-  color: #666;
-  font-size: 14px;
-  font-family: Pixel;
 `;
 
 const InfoContent = styled.div`
