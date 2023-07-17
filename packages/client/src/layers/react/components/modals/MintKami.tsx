@@ -14,7 +14,9 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Stepper } from '../library/Stepper';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractRead } from 'wagmi';
+
+import { abi } from "../../../../../abi/ERC721ProxySystem.json"
 
 export function registerKamiMintModal() {
   registerUIComponent(
@@ -72,6 +74,7 @@ export function registerKamiMintModal() {
         network: {
           actions,
           api: { player },
+          systems,
           world,
         },
       } = layers;
@@ -144,6 +147,36 @@ export function registerKamiMintModal() {
       };
 
       ///////////////
+      // COUNTER
+
+
+
+      const { data: erc721 } = useContractRead({
+        address: systems["system.ERC721.Proxy"].address as `0x${string}`,
+        abi: abi,
+        functionName: 'getTokenAddy'
+      });
+      const { data: totalSupply } = useContractRead({
+        address: erc721 as `0x${string}`,
+        abi:
+          [{
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }],
+        functionName: 'totalSupply',
+        watch: true,
+      });
+
+      ///////////////
       // DISPLAY
 
       const MintButton = (text: string, amount: number, cost: number) => {
@@ -161,7 +194,7 @@ export function registerKamiMintModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Stepper steps={steps} MintButton={MintButton} />
+          <Stepper steps={steps} MintButton={MintButton} NumMinted={Number(totalSupply)} />
         </ModalWrapperFull>
       );
     }
@@ -179,7 +212,8 @@ const StepOne = () => (
 );
 
 const StepTwo = (props: any) => {
-  const { MintButton } = props;
+  const { MintButton, NumMinted } = props;
+  console.log(NumMinted)
 
   return (
     <>
@@ -205,6 +239,9 @@ const StepTwo = (props: any) => {
           <VendingText>5 Kamis</VendingText>
           {MintButton("0.075Ξ", 5, 0.075)}
         </ProductBox>
+        <SubText style={{ gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
+          Minted: {NumMinted} / 1111
+        </SubText>
       </Grid>
     </>
   );
@@ -217,7 +254,7 @@ const steps = (props: any) => [
   },
   {
     title: 'Two',
-    content: <StepTwo MintButton={props.MintButton} />,
+    content: <StepTwo MintButton={props.MintButton} NumMinted={props.NumMinted} />,
     modalContent: true,
   },
 ];
@@ -285,6 +322,14 @@ const ProductBox = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 5px;
+`;
+
+const SubText = styled.div`
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  padding: 4px 0px 0px 0px;
+  font-family: Pixel;
 `;
 
 const VendingText = styled.p`
