@@ -10,9 +10,9 @@ import TableRow from '@mui/material/TableRow';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Kill } from 'layers/react/components/shapes/Kill';
-import { Trait, Traits } from 'layers/react/components/shapes/Trait';
+import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Kill } from 'layers/react/shapes/Kill';
+import { Trait, Traits } from 'layers/react/shapes/Trait';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 

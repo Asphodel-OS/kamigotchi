@@ -6,8 +6,8 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
-import { getAccount } from 'layers/react/components/shapes/Account';
-import { Kami, queryKamisX } from 'layers/react/components/shapes/Kami';
+import { getAccount } from 'layers/react/shapes/Account';
+import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';

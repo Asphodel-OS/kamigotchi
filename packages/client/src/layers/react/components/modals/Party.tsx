@@ -9,9 +9,9 @@ import { ActionListButton } from 'layers/react/components/library/ActionListButt
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { AccountInventories, getAccount } from 'layers/react/components/shapes/Account';
-import { Kami } from 'layers/react/components/shapes/Kami';
-import { Inventory, getInventoryByFamilyIndex } from 'layers/react/components/shapes/Inventory';
+import { AccountInventories, getAccount } from 'layers/react/shapes/Account';
+import { Kami } from 'layers/react/shapes/Kami';
+import { Inventory, getInventoryByFamilyIndex } from 'layers/react/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';

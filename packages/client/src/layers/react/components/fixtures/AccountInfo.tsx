@@ -4,7 +4,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { BatteryComponent } from 'layers/react/components/library/Battery';
-import { Account, getAccount } from 'layers/react/components/shapes/Account';
+import { Account, getAccount } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 

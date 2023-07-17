@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
-import { Node } from 'layers/react/components/shapes/Node';
+import { Node } from 'layers/react/shapes/Node';
 import { dataStore } from 'layers/react/store/createStore';
 
 type NodeInfoProps = {

@@ -8,7 +8,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import MapGrid from '../library/MapGrid';
-import { Room, getRoom } from '../shapes/Room';
+import { Room, getRoom } from '../../shapes/Room';
 
 export function registerMapModal() {
   registerUIComponent(

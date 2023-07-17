@@ -13,9 +13,9 @@ import {
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { getAccount } from 'layers/react/components/shapes/Account';
-import { Listing } from 'layers/react/components/shapes/Listing';
-import { Merchant, getMerchant } from 'layers/react/components/shapes/Merchant';
+import { getAccount } from 'layers/react/shapes/Account';
+import { Listing } from 'layers/react/shapes/Listing';
+import { Merchant, getMerchant } from 'layers/react/shapes/Merchant';
 
 import pompom from 'assets/images/food/pompom.png';
 import gakki from 'assets/images/food/gakki.png';

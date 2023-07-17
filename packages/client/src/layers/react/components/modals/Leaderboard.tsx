@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionListButton } from 'layers/react/components/library/ActionListButton';
-import { getAccount } from 'layers/react/components/shapes/Account';
-import { Score, ScoresFilter, getScores } from 'layers/react/components/shapes/Score';
+import { getAccount } from 'layers/react/shapes/Account';
+import { Score, ScoresFilter, getScores } from 'layers/react/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';

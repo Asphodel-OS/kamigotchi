@@ -18,11 +18,11 @@ import {
   Option as ActionListOption,
 } from 'layers/react/components/library/ActionListButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { Account, getAccount } from 'layers/react/components/shapes/Account';
-import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { getLiquidationConfig } from '../shapes/LiquidationConfig';
-import { Node, NodeKamis, getNode } from 'layers/react/components/shapes/Node';
-import { Production } from 'layers/react/components/shapes/Production';
+import { Account, getAccount } from 'layers/react/shapes/Account';
+import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { getLiquidationConfig } from '../../shapes/LiquidationConfig';
+import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
+import { Production } from 'layers/react/shapes/Production';
 import { KamiCard } from '../library/KamiCard';
 import { BatteryComponent } from '../library/Battery';
 import { NodeInfo } from '../library/NodeContainer';

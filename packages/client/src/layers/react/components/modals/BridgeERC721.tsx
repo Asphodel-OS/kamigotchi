@@ -8,8 +8,8 @@ import styled, { keyframes } from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
 import { Stepper } from '../library/Stepper';
 import { ModalWrapperFull } from '../library/ModalWrapper';
-import { Kami, getKami } from 'layers/react/components/shapes/Kami';
-import { Account, getAccount } from '../shapes/Account';
+import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Account, getAccount } from '../../shapes/Account';
 import { BigNumberish } from 'ethers';
 
 import { useKamiAccount } from 'layers/react/store/kamiAccount';

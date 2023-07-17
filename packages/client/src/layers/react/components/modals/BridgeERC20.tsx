@@ -7,7 +7,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 import { useAccount, useBalance, useContractRead } from 'wagmi';
 
-import { Account, getAccount } from '../shapes/Account';
+import { Account, getAccount } from '../../shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';

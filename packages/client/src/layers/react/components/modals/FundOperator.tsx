@@ -7,7 +7,7 @@ import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs
 import { useBalance } from 'wagmi';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
-import { Account, getAccount } from '../shapes/Account';
+import { Account, getAccount } from '../../shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';

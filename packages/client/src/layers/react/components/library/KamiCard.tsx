@@ -1,9 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { EntityIndex } from '@latticexyz/recs';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 
 interface Props {

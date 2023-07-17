@@ -8,7 +8,7 @@ import { EntityID } from '@latticexyz/recs';
 import { dataStore } from 'layers/react/store/createStore';
 import { Stepper } from '../library/Stepper';
 import { ModalWrapperFull } from '../library/ModalWrapper';
-import { Kami, getKami } from 'layers/react/components/shapes/Kami';
+import { Kami, getKami } from 'layers/react/shapes/Kami';
 
 export function registerNameKamiModal() {
   registerUIComponent(
