@@ -4,13 +4,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-// import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -19,7 +16,6 @@ import { Kill } from 'layers/react/components/shapes/Kill';
 import { Trait, Traits } from 'layers/react/components/shapes/Trait';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import { EntityIndex } from '@latticexyz/recs';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -76,10 +72,6 @@ export function registerKamiModal() {
       /////////////////
       // DATA FETCHING
 
-      const hexToString = (num?: BigNumberish) => {
-        return num ? BigNumber.from(num).toString() : '0';
-      };
-
       useEffect(() => {
         if (selectedEntities.kami) {
           const kami = getKami(layers, selectedEntities.kami, { traits: true, kills: true, deaths: true });
@@ -92,7 +84,7 @@ export function registerKamiModal() {
       // VISUAL COMPONENTS
 
       // Rendering of the Kami's Traits
-      const TraitBox = (traits: Traits) => {
+      const TraitSection = (traits: Traits) => {
         const traitsArray = Object.entries(traits);
         return (
           <SectionContainer>
@@ -122,7 +114,41 @@ export function registerKamiModal() {
         );
       };
 
-      const KDLogs = (kills: Kill[], deaths: Kill[]) => {
+      const OverviewSection = (kami: Kami) => {
+        const statsArray = Object.entries(kami.stats);
+        const affinities = kami.affinities?.join(' | ');
+        const statsDescriptions = new Map(Object.entries({
+          'health': 'defines how resilient a Kami is to accumulated damage',
+          'power': 'determines the potential rate at which $KAMI can be farmed',
+          'violence': 'dictates the threshold at which a Kami can liquidate others',
+          'harmony': 'divines resting recovery rate and defends against violence',
+          'slots': 'room for upgrades ^_^',
+        }));
+
+        return (
+          <SectionContainer style={{ display: 'flex', flexDirection: 'row', padding: '0px' }}>
+            <SectionImage src={kami.uri} />
+            <SectionContainer style={{ borderWidth: '0px', margin: '0px' }}>
+              <SectionTitle>{kami.name}</SectionTitle>
+              <InfoSubtitle>{affinities}</InfoSubtitle>
+              <SectionContent>
+                {statsArray.map((stat: [string, number]) => {
+                  return (
+                    <Tooltip key={stat[0]} text={[statsDescriptions.get(stat[0]) as string]} grow>
+                      <InfoBox>
+                        <InfoTitle>{stat[0].toUpperCase()}</InfoTitle>
+                        <InfoContent>{stat[1] * 1}</InfoContent>
+                      </InfoBox>
+                    </Tooltip>
+                  );
+                })}
+              </SectionContent>
+            </SectionContainer>
+          </SectionContainer>
+        );
+      }
+
+      const KDLogsSection = (kills: Kill[], deaths: Kill[]) => {
         const kdRatio = kills.length / Math.max(deaths.length, 1); // how to best compute this?
         const logs = kills.concat(deaths).sort((a, b) => b.time - a.time);
         const cellStyle = { fontFamily: 'Pixel', fontWeight: 12, border: 0 };
@@ -168,64 +194,22 @@ export function registerKamiModal() {
         );
       }
 
-      const Affinities = () => {
-        const strRaw = selectedKami?.affinities?.reduce((ac, x) => (ac = ac + ' | ' + x));
-        const str = strRaw?.slice(0, -2);
-        return <KamiText>{str}</KamiText>;
-      };
+
+      /////////////////
+      // RENDERING
 
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, kami: false });
       }, [setVisibleModals, visibleModals]);
-
-
-      /////////////////
-      // RENDERING
 
       return (
         <ModalWrapperFull zindex={true} divName='kami' id='kamiModal'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <TopDiv>
-            <KamiImage src={selectedKami?.uri} />
-            <div
-              style={{
-                display: 'grid',
-                gridRowGap: '5px',
-                gridColumnGap: '5px',
-              }}
-            >
-              <KamiName>{selectedKami?.name} </KamiName>
-              <KamiText
-                style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 5, margin: '10px' }}
-              >
-                {Affinities()}
-              </KamiText>
-              <StatBox key={'health'} style={{ gridRow: 3, gridColumn: 1 }}>
-                <KamiText> Health </KamiText>
-                <KamiFacts> {hexToString(selectedKami?.stats.health)} </KamiFacts>
-              </StatBox>
-              <StatBox key={'power'} style={{ gridRow: 3, gridColumn: 2 }}>
-                <KamiText> Power </KamiText>
-                <KamiFacts> {hexToString(selectedKami?.stats.power)} </KamiFacts>
-              </StatBox>
-              <StatBox key={'violence'} style={{ gridRow: 3, gridColumn: 3 }}>
-                <KamiText> Violence </KamiText>
-                <KamiFacts> {hexToString(selectedKami?.stats.violence)} </KamiFacts>
-              </StatBox>
-              <StatBox key={'harmony'} style={{ gridRow: 3, gridColumn: 4 }}>
-                <KamiText> Harmony </KamiText>
-                <KamiFacts> {hexToString(selectedKami?.stats.harmony)} </KamiFacts>
-              </StatBox>
-              <StatBox key={'slots'} style={{ gridRow: 3, gridColumn: 5 }}>
-                <KamiText> Slots </KamiText>
-                <KamiFacts> {hexToString(selectedKami?.stats.slots)} </KamiFacts>
-              </StatBox>
-            </div>
-          </TopDiv>
-          {selectedKami && TraitBox(selectedKami.traits!)}
-          {selectedKami && KDLogs(selectedKami.kills!, selectedKami.deaths!)}
+          {selectedKami && OverviewSection(selectedKami)}
+          {selectedKami && TraitSection(selectedKami.traits!)}
+          {selectedKami && KDLogsSection(selectedKami.kills!, selectedKami.deaths!)}
         </ModalWrapperFull>
       );
     }
@@ -236,16 +220,25 @@ const SectionContainer = styled.div`
   border-width: 2px;
   border-color: black;
   border-style: solid;
-  margin: 5px 0px 0px 0px;
-  padding: 5px;
+  border-radius: 7px;
+  margin: 10px;
 
+  padding: 10px;
   display: flex;
   flex-direction: column;
 `;
 
+const SectionImage = styled.img`
+  border-width: 0px 2px 0px 0px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 5px 0px 0px 5px;
+  height: 100%;
+`;
+
 const SectionTitle = styled.div`
   background-color: #ffffff;
-  margin: 15px;
+  margin: 15px 5px;
 
   color: black;
   font-family: Pixel;
@@ -262,16 +255,16 @@ const InfoBox = styled.div`
   border-style: solid;
   border-width: 2px;
   border-color: black;
-  margin: 2px;
-  flex-grow: 1;
+  border-radius: 5px;
+  margin: 5px;
   
   padding: 5px;
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
 `
 
 const InfoTitle = styled.div`
-  background-color: #ffffff;
   margin: 5px;
   align-self: flex-start;
   
@@ -280,8 +273,15 @@ const InfoTitle = styled.div`
   font-size: 14px;
 `;
 
+const InfoSubtitle = styled.div`
+  margin: 0px 0px 17px 10px;
+  
+  color: #666;
+  font-size: 14px;
+  font-family: Pixel;
+`;
+
 const InfoContent = styled.div`
-  background-color: #ffffff;
   color: black;
   padding: 5px;
   align-self: center;
@@ -290,67 +290,6 @@ const InfoContent = styled.div`
   font-weight: 600;
   font-family: Pixel;
   margin: auto;
-`;
-
-
-
-const KamiText = styled.div`
-  background-color: #ffffff;
-  color: black;
-  font-size: 14px;
-  font-family: Pixel;
-  grid-row: 1;
-`;
-
-const KamiFacts = styled.div`
-  background-color: #ffffff;
-  color: black;
-  font-size: 20px;
-  font-weight: 600;
-  font-family: Pixel;
-  margin: auto;
-  grid-row: 2;
-`;
-
-const KamiName = styled.div`
-  grid-row: 1;
-  grid-column-start: 1;
-  grid-column-end: 5;
-  font-size: 36px;
-  color: #333;
-  font-weight: bold;
-  padding: 10px;
-  font-family: Pixel;
-`;
-
-const KamiImage = styled.img`
-  height: 160px;
-  width: 160px;
-  margin: 0px;
-  padding: 0px;
-  grid-row: 1 / span 1;
-  border-width: 0px 2px 0px 0px;
-  border-color: black;
-  border-style: solid;
-`;
-
-const TopDiv = styled.div`
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  display: flex;
-  padding: 0px;
-  margin: 0px;
-  margin-top: 5px;
-`;
-
-const StatBox = styled.div`
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  padding: 5px;
-  display: grid;
-  margin: 2px;
 `;
 
 const TopButton = styled.button`

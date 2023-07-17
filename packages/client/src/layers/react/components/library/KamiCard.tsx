@@ -86,7 +86,7 @@ const Card = styled.div`
   border-style: solid;
   border-width: 2px;
   color: black;
-  margin: 0px 2px 4px 2px;
+  margin: 4px 2px 0px 2px;
 
   display: flex;
   flex-flow: row nowrap;
@@ -96,6 +96,7 @@ const Image = styled.img`
   border-style: solid;
   border-width: 0px 2px 0px 0px;
   border-color: black;
+  border-radius: 5px 0px 0px 5px;
   height: 120px;
   margin: 0px;
   padding: 0px;

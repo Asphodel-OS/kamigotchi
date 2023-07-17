@@ -30,11 +30,11 @@ export const Tooltip = (props: Props) => {
           borderColor: 'black',
           backgroundColor: '#fff',
           padding: '10px',
-          opacity: '.7',
 
           color: 'black',
           fontSize: '12px',
           fontFamily: 'Pixel',
+          lineHeight: '18px',
           whiteSpace: 'pre-line',
         },
       }

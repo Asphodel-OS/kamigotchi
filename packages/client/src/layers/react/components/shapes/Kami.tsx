@@ -189,7 +189,6 @@ export const getKami = (
     kami.affinities = [
       kami.traits.body.affinity,
       kami.traits.hand.affinity,
-      kami.traits.face.affinity,
     ]
   }
 

@@ -34,8 +34,8 @@ export const getStats = (layers: Layers, index: EntityIndex): Stats => {
   return {
     health: getComponentValue(Health, index)?.value || 0 as number * 1,
     power: getComponentValue(Power, index)?.value || 0 as number * 1,
-    harmony: getComponentValue(Harmony, index)?.value || 0 as number * 1,
     violence: getComponentValue(Violence, index)?.value || 0 as number * 1,
+    harmony: getComponentValue(Harmony, index)?.value || 0 as number * 1,
     slots: getComponentValue(Slots, index)?.value || 0 as number * 1,
   };
 }
