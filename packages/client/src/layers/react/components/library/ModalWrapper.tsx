@@ -7,9 +7,9 @@ import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 interface Props {
   divName: keyof VisibleModals;
   id: string;
-  fill?: boolean; // whether the content should fit to the entire modal
   children: React.ReactNode;
-  zindex?: boolean;
+  fill?: boolean; // whether the content should fit to the entire modal
+  overlay?: boolean;
 }
 
 // ModalWrapperFull is an animated wrapper around all modals.
@@ -29,7 +29,7 @@ export const ModalWrapperFull = (props: Props) => {
   // Some conditional styling to adapt the content to the wrapper.
   const wrapperStyle = props.fill ? { height: '75vh' } : {};
   const contentStyle = props.fill ? { height: '100%' } : {};
-  const zindex = props.zindex ? { position: 'relative', zIndex: 1 } : {};
+  const zindex = props.overlay ? { position: 'relative', zIndex: '1' } : {};
 
   return (
     <Wrapper

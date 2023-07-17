@@ -29,10 +29,6 @@ export function registerDialogueModal() {
         setVisibleModals({ ...visibleModals, dialogue: false });
       }, [setVisibleModals, visibleModals]);
 
-      const toggleMerchant = useCallback(() => {
-        setVisibleModals({ ...visibleModals, merchant: !visibleModals.merchant });
-      }, [setVisibleModals, visibleModals]);
-
       useEffect(() => {
         if (visibleModals.dialogue) {
           document.getElementById('object_modal')!.style.display = 'block';

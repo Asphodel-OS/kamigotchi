@@ -212,7 +212,7 @@ export function registerKamiModal() {
       }, [setVisibleModals, visibleModals]);
 
       return (
-        <ModalWrapperFull zindex={true} divName='kami' id='kamiModal'>
+        <ModalWrapperFull divName='kami' id='kamiModal' overlay>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
