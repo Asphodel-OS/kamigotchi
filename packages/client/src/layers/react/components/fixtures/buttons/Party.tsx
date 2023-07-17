@@ -1,34 +1,34 @@
 import React from 'react';
 import { of } from 'rxjs';
-import settingsImage from '../../../../assets/images/settings_native.png';
+import kamiImage from 'assets/images/kami_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerSettingsButton() {
+export function registerPartyButton() {
   registerUIComponent(
-    'SettingsButton',
+    'PartyButton',
     {
-      colStart: 85,
-      colEnd: 88,
+      colStart: 76,
+      colEnd: 79,
       rowStart: 3,
       rowEnd: 10,
     },
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide = { help: false, chat: false };
+      const modalsToHide = { dialogue: false, leaderboard: false };
 
       return (
         <MenuButton
-          id='settings_button'
-          targetDiv='settings'
-          text='Settings'
-          visible={visibleButtons.settings}
+          id='party_button'
+          targetDiv='party'
+          text='Party'
+          visible={visibleButtons.party}
           hideModal={modalsToHide}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={settingsImage} alt='settings_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={kamiImage} alt='kami_icon' />
         </MenuButton>
       );
     }

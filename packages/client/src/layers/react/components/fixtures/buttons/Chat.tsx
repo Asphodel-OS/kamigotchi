@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import chatImage from '../../../../assets/images/chat_native.png';
+import chatImage from 'assets/images/chat_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';

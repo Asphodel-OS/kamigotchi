@@ -1,34 +1,34 @@
 import React from 'react';
 import { of } from 'rxjs';
-import helpImage from '../../../../assets/images/help_native.png';
+import settingsImage from 'assets/images/settings_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerHelpButton() {
+export function registerSettingsButton() {
   registerUIComponent(
-    'HelpButton',
+    'SettingsButton',
     {
-      colStart: 88,
-      colEnd: 91,
+      colStart: 85,
+      colEnd: 88,
       rowStart: 3,
       rowEnd: 10,
     },
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide = { chat: false, settings: false };
+      const modalsToHide = { help: false, chat: false };
 
       return (
         <MenuButton
-          id='help_button'
-          targetDiv='help'
-          text='Help'
-          visible={visibleButtons.help}
+          id='settings_button'
+          targetDiv='settings'
+          text='Settings'
+          visible={visibleButtons.settings}
           hideModal={modalsToHide}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={helpImage} alt='help_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={settingsImage} alt='settings_icon' />
         </MenuButton>
       );
     }

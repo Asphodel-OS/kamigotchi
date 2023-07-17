@@ -6,9 +6,9 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 import { registerUIComponent } from 'layers/react/engine/store';
 
-export function registerWalletButton() {
+export function registerWalletFixture() {
   registerUIComponent(
-    'WalletButton',
+    'WalletFixture',
     {
       colStart: 91,
       colEnd: 100,

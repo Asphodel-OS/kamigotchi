@@ -8,9 +8,9 @@ import { Account, getAccount } from 'layers/react/components/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerOperatorInfoButton() {
+export function registerAccountInfoFixture() {
   registerUIComponent(
-    'OperatorInfo',
+    'AccountInfo',
     {
       colStart: 34,
       colEnd: 68,

@@ -17,9 +17,9 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
 
-export function registerOperatorFund() {
+export function registerFundOperatorModal() {
   registerUIComponent(
-    'OperatorFund',
+    'FundOperatorModal',
     {
       colStart: 28,
       colEnd: 70,

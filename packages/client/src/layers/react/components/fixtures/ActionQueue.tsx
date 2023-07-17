@@ -4,7 +4,7 @@ import {
   getComponentValueStrict,
 } from '@latticexyz/recs';
 import { map } from 'rxjs';
-import { ActionStateString, ActionState } from '../../network/ActionSystem/constants';
+import { ActionStateString, ActionState } from '../../../network/ActionSystem/constants';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 
