@@ -37,6 +37,13 @@ export const getRoom = (layers: Layers, index: EntityIndex): Room => {
   };
 };
 
+// gets a Room Object by its location
+export const getRoomByLocation = (layers: Layers, location: number): Room => {
+  const roomEntityIndex = getRoomEntityIndexByLocation(layers, location);
+  return getRoom(layers, roomEntityIndex);
+};
+
+// gets a Room EntityIndex by its location
 export const getRoomEntityIndexByLocation = (layers: Layers, location: number): EntityIndex => {
   const {
     network: {

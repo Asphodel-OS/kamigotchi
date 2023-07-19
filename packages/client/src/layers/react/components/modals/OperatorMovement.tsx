@@ -9,8 +9,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { dataStore } from 'layers/react/store/createStore';
 import {
   Room,
-  getRoom,
-  getRoomEntityIndexByLocation,
+  getRoomByLocation,
 } from 'layers/react/shapes/Room';
 import 'layers/react/styles/font.css';
 
@@ -35,7 +34,7 @@ export function registerOperatorMovementModal() {
 
       useEffect(() => {
         if (selectedEntities.room) {
-          const room = getRoom(layers, getRoomEntityIndexByLocation(layers, selectedEntities.room));
+          const room = getRoomByLocation(layers, selectedEntities.room);
           setSelectedRoom(room);
         }
       }, [selectedEntities.room]);
