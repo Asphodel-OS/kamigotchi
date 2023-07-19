@@ -5,6 +5,7 @@ import { NetworkLayer } from 'src/layers/network/types';
 interface BurnerSettings {
   connected: string;
   detected: string;
+  detectedPrivateKey: string;
 }
 
 export interface NetworkSettings {
@@ -24,6 +25,7 @@ export const useNetworkSettings = create<NetworkSettings & Actions>((set) => {
     burnerInfo: {
       connected: '',
       detected: '',
+      detectedPrivateKey: '',
     },
     selectedAddress: '',
     networks: new Map<string, NetworkLayer>(),

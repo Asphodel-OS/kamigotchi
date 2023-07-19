@@ -50,7 +50,11 @@ export function registerBurnerDetector() {
       useEffect(() => {
         const detectedAddress = getAddressFromPrivateKey(detectedPrivateKey);
         setDetectedAddress(detectedAddress);
-        setBurnerInfo({ connected: connectedAddress ?? '', detected: detectedAddress });
+        setBurnerInfo({
+          connected: connectedAddress ?? '',
+          detected: detectedAddress,
+          detectedPrivateKey,
+        });
         setIsMismatched(connectedAddress !== detectedAddress);
       }, [detectedPrivateKey]);
 
