@@ -39,26 +39,38 @@ export const SingleInputTextForm = (props: Props) => {
 
   return (
     <Container id={props.id}>
-      {props.label && <Label>{props.label}</Label>}
-      <Input
-        type='text'
-        placeholder={props.placeholder}
-        value={value}
-        onKeyDown={(e) => catchKeys(e)}
-        onChange={(e) => handleChange(e)}
-      />
+      <InputGroup>
+        {props.label && <Label>{props.label}</Label>}
+        <Input
+          type='text'
+          placeholder={props.placeholder}
+          value={value}
+          onKeyDown={(e) => catchKeys(e)}
+          onChange={(e) => handleChange(e)}
+        />
+      </InputGroup>
       {props.hasButton && <ActionButton id={`submit`} text='Submit' onClick={() => handleSubmit()} />}
     </ Container>
   );
 }
 
 const Container = styled.div`
-  width: 100%;
+  width: 50%;
   margin: 20px 5px;
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: center;
   justify-content: center;
+`;
+
+const InputGroup = styled.div`
+  max-width: 400px;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: left;
 `;
 
 const Label = styled.label`
@@ -66,23 +78,25 @@ const Label = styled.label`
   font-size: 10px;
   color: #333;
   margin: 0px 5px;
+  text-align: left;
 `;
 
 const Input = styled.input`
+  width: 100%;
   background-color: #ffffff;
+  border-color: black;
+  border-radius: 5px;
   border-style: solid;
   border-width: 2px;
-  border-color: black;
   color: black;
-  padding: 15px 12px;
   margin: 5px 0px;
-
+  
+  padding: 15px 12px;
+  cursor: pointer;
+  font-family: Pixel;
+  font-size: 12px;
   text-align: left;
   text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 5px;
   justify-content: center;
-  font-family: Pixel;
+  align-items: center;
 `;

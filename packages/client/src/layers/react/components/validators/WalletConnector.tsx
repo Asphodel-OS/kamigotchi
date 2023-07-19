@@ -16,8 +16,8 @@ export function registerWalletConnecter() {
   registerUIComponent(
     'WalletConnecter',
     {
-      colStart: 20,
-      colEnd: 80,
+      colStart: 30,
+      colEnd: 70,
       rowStart: 40,
       rowEnd: 60,
     },

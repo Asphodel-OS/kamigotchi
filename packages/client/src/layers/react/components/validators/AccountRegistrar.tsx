@@ -1,7 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
-import styled, { keyframes } from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
 import {
   EntityID,
   EntityIndex,
@@ -11,21 +7,31 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import { IconButton, TextField } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+
+import { useEffect, useState } from 'react';
+import { map, merge } from 'rxjs';
+import styled, { keyframes } from 'styled-components';
+import { useAccount, useNetwork } from 'wagmi';
 
 import { defaultChainConfig } from 'constants/chains';
+import { CopyButton } from 'layers/react/components/library/CopyButton';
+import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import {
   AccountDetails,
   emptyAccountDetails,
   useKamiAccount,
 } from 'layers/react/store/kamiAccount';
-import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
-import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
+import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import 'layers/react/styles/font.css';
+
 
 /** 
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
@@ -104,9 +110,11 @@ export function registerAccountRegistrar() {
           const { selectedAddress } = useNetworkSettings.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
           const accountDetailsFromWorld = getAccountDetails(accountIndexUpdatedByWorld);
+          const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
             actions,
             accountDetailsFromWorld,
+            operatorAddresses,
             getAccountIndexFromOwner,
             getAccountDetails,
           };
@@ -117,6 +125,7 @@ export function registerAccountRegistrar() {
     ({
       actions,
       accountDetailsFromWorld,
+      operatorAddresses,
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
@@ -161,11 +170,14 @@ export function registerAccountRegistrar() {
         soundFx.play();
       }
 
-      const createAccountWithFx = async (username: string) => {
-        playSound(scribbleSound);
-        await createAccount(username);
-        playSound(successSound);
-        openFundModal();
+      const copyBurnerAddress = () => {
+        navigator.clipboard.writeText(burnerInfo.connected);
+        console.log(burnerInfo.connected);
+      }
+
+      const copyBurnerPrivateKey = () => {
+        navigator.clipboard.writeText(burnerInfo.detectedPrivateKey);
+        console.log(burnerInfo.detectedPrivateKey);
       }
 
       const openFundModal = () => {
@@ -175,13 +187,20 @@ export function registerAccountRegistrar() {
         });
       };
 
+      const createAccountWithFx = async (username: string) => {
+        playSound(scribbleSound);
+        await createAccount(username);
+        playSound(successSound);
+        openFundModal();
+      }
+
       const createAccount = async (username: string) => {
         const network = networks.get(selectedAddress);
         const world = network!.world;
         const api = network!.api.player;
 
         console.log('CREATING ACCOUNT FOR:', selectedAddress);
-        const actionID = `Creating Account` as EntityID;
+        const actionID = `Creating Account: ${username}` as EntityID;
         actions.add({
           id: actionID,
           components: {},
@@ -197,20 +216,81 @@ export function registerAccountRegistrar() {
 
 
       /////////////////
+      // VISUAL COMPONENTS
+
+      const OperatorDisplay = () => {
+        const address = burnerInfo.connected;
+        const addrPrefix = address.slice(0, 6);
+        const addrSuffix = address.slice(-4);
+        const addressTaken = operatorAddresses.has(address);
+
+        let color;
+        let infoText;
+        if (addressTaken) {
+          color = '#b22';
+          infoText = [
+            'This burner address is taken by another account.',
+            '',
+            'But the odds of someone generating the same address are 1 in 1,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000.. fascinating',
+            '',
+            'You can take a look at localstorage.',
+          ];
+        } else {
+          color = '#666';
+          infoText = [
+            'The private key to this address is generated and stored in the browser. It behaves like a session key and is used to approve in-game actions without the need for explicit signatures.',
+            '',
+            'It cannot make account level changes or migrate your assets in and out of the game.',
+            '',
+            'Copy the private key locally and do not share it. Consider it replaceable and only store modest sums on it at a time.',
+          ];
+        }
+
+        return (
+          <AddressRow>
+            <Description>Operator: {`${addrPrefix}...${addrSuffix}`}</Description>
+            <Tooltip text={infoText}>
+              <IconButton size='small'>
+                <InfoIcon fontSize='small' style={{ color }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip text={['copy address']}>
+              <CopyButton onClick={() => copyBurnerAddress()}></CopyButton>
+            </Tooltip>
+            <Tooltip text={['copy private key']}>
+              <CopyButton onClick={() => copyBurnerPrivateKey()}></CopyButton>
+            </Tooltip>
+          </AddressRow>
+        );
+      }
+
+      const OwnerDisplay = () => {
+        const addrPrefix = selectedAddress.slice(0, 6);
+        const addrSuffix = selectedAddress.slice(-4);
+
+        return (
+          <AddressRow>
+            <Description>Owner: {`${addrPrefix}...${addrSuffix}`}</Description>
+          </ AddressRow>
+        );
+      }
+
+
+      /////////////////
       // DISPLAY
 
       return (
         <ModalWrapper id='accountRegistration' style={{ display: isVisible ? 'block' : 'none' }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
-            <Description>(no registered account for connected address)</Description>
-            <Header>Detected Addresses</Header>
-            <Description>Owner: {selectedAddress}</Description>
-            <Description>Operator: {burnerInfo.connected}</Description>
+            <Subtitle>(no registered account for connected address)</Subtitle>
+            <Header>Connected Addresses</Header>
+            {OwnerDisplay()}
+            {OperatorDisplay()}
             <SingleInputTextForm
               id={`username`}
               label='username'
-              placeholder='username'
+              placeholder='BPD_GOD'
               hasButton={true}
               onSubmit={(v: string) => createAccountWithFx(v)}
             />
@@ -238,38 +318,58 @@ const ModalWrapper = styled.div`
 `;
 
 const ModalContent = styled.div`
-  display: grid;
-  justify-content: center;
   background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  width: 99%;
   border-style: solid;
   border-width: 2px;
   border-color: black;
+  border-radius: 10px;
+  width: 99%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
+const AddressRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`
+
 const Title = styled.p`
+  margin: 10px 0px 0px 0px;
+
+  padding: 5px 0px;
+  color: #333;
+  font-family: Pixel;
+  font-size: 24px;
+  text-align: center;
+`;
+
+const Subtitle = styled.p`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  font-family: Pixel;
+  padding: 5px;
+`;
+
+const Header = styled.p`
   font-size: 18px;
   color: #333;
   text-align: center;
   font-family: Pixel;
-  padding: 5px 0px;
+  padding: 20px 0px 10px 0px;
 `;
 
-const Header = styled.p`
+const Description = styled.p`
   font-size: 14px;
   color: #333;
   text-align: center;
   font-family: Pixel;
-  padding: 15px 0px 5px 0px;
-`;
-
-const Description = styled.p`
-  font-size: 12px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-  padding: 5px 0px;
+  padding: 5px;
 `;
