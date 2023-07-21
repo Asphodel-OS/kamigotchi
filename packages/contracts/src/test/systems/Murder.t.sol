@@ -368,6 +368,8 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CAN can liquidate in succession once idle requirement is met
     for (uint i = 0; i < numPets; i++) {
+      _feedPet(_petIDs[playerIndex][i], 2);
+      _fastForward(_idleRequirement);
       _liquidateProduction(_petIDs[playerIndex][i], supportProductionIDs[i]);
     }
   }
