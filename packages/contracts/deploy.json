@@ -485,6 +485,7 @@
       "writeAccess": [
         "IsProductionComponent",
         "BlockLastComponent",
+        "CoinComponent",
         "HealthCurrentComponent",
         "IdNodeComponent",
         "IdPetComponent",

@@ -35,22 +35,18 @@ contract ProductionCollectSystem is System {
       "Node: too far"
     );
 
-    // save outputs to variables and reset time
+    // add balance and experience
     uint256 amt = LibProduction.calcOutput(components, id);
-    uint256 petBalance = LibCoin.get(components, petID);
-    if (petBalance > 0) {
-      LibCoin.dec(components, petID, petBalance);
-      amt += petBalance;
-    }
-    LibProduction.reset(components, id);
-
-    // accrue rewards accordingly
     LibCoin.inc(components, accountID, amt);
-    LibScore.incBy(world, components, accountID, "COLLECT", amt);
     LibPet.addExperience(components, petID, amt);
 
+    // reset production
+    LibProduction.reset(components, id);
+
     // logging and tracking
+    LibScore.incBy(world, components, accountID, "COLLECT", amt);
     LibAccount.updateLastBlock(components, accountID);
+
     return abi.encode(amt);
   }
 

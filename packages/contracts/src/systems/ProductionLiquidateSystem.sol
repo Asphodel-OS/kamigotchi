@@ -51,12 +51,10 @@ contract ProductionLiquidateSystem is System {
       "Pet: you lack violence"
     );
 
-    // collect the money
-    // NOTE: this could be sent to the kami in future mechanics
+    // collect the money to the production. drain accordingly
     uint256 amt = LibProduction.calcBounty(components, targetProductionID);
     uint256 recoil = LibPet.calcDrainFromBalance(components, amt);
-    LibCoin.inc(components, petID, amt);
-    LibPet.addExperience(components, petID, amt);
+    LibCoin.inc(components, productionID, amt);
     LibPet.drain(components, petID, recoil);
 
     // kill the target and shut off the production

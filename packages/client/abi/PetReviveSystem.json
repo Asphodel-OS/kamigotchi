@@ -68,7 +68,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "petID",
+          "name": "id",
           "type": "uint256"
         },
         {

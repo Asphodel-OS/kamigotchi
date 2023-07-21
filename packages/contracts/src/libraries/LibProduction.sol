@@ -14,6 +14,7 @@ import { IsProductionComponent, ID as IsProdCompID } from "components/IsProducti
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -43,6 +44,7 @@ library LibProduction {
   // Resets the starting block of a production to the current block
   function reset(IUintComp components, uint256 id) internal {
     setTimeStart(components, id, block.timestamp);
+    setBalance(components, id, 0);
   }
 
   // Starts an _existing_ production if not already started.
@@ -55,6 +57,7 @@ library LibProduction {
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
     setState(components, id, "INACTIVE");
+    setBalance(components, id, 0);
     setRate(components, id, 0);
   }
 
@@ -87,7 +90,7 @@ library LibProduction {
     return totMultiplier;
   }
 
-  // Calculate the reward for liquidating this production, measured in KAMI
+  // Calculate the reward for liquidating this production, measured in $MUSU
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 output = calcOutput(components, id);
     uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
@@ -101,15 +104,17 @@ library LibProduction {
   }
 
   // Calculate the reward we would expect from a production, collected at the
-  // current time, measured in KAMI. INACTIVE productions will return 0.
+  // current time, measured in $MUSU. INACTIVE productions should return 0.
+  // balance accrued to the production is included.
   function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 balance = getBalance(components, id);
     uint256 rate = getRate(components, id);
     uint256 duration = calcDuration(components, id);
     uint256 precision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
-    return (rate * duration) / precision;
+    return balance + (rate * duration) / precision;
   }
 
-  // Calculate the rate of a production, measured in KAMI/s (precision set by HARVEST_RATE_PREC)
+  // Calculate the rate of a production, measured in $MUSU/s (precision set by HARVEST_RATE_PREC)
   function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
 
@@ -149,6 +154,11 @@ library LibProduction {
   /////////////////
   // SETTERS
 
+  // set the accrued balance of a production
+  function setBalance(IUintComp components, uint256 id, uint256 balance) internal {
+    LibCoin._set(components, id, balance);
+  }
+
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
     if (getNode(components, id) != nodeID) {
@@ -170,6 +180,10 @@ library LibProduction {
 
   /////////////////
   // GETTERS
+
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LibCoin.get(components, id);
+  }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdNodeComponent(getAddressById(components, IdNodeCompID)).getValue(id);
