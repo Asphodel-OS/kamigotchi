@@ -457,22 +457,19 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _initBaseConfigs() internal {
-    _setConfigString("baseURI", "https://image.asphodel.io/kami/");
+    _setConfigString("BASE_URI", "https://image.asphodel.io/kami/");
   }
 
   function _initLeaderboardConfigs() internal {
-    // Leaderboard
     _setConfig("LEADERBOARD_EPOCH", 1);
   }
 
   function _initAccountConfigs() internal {
-    // Account Stamina
     _setConfig("ACCOUNT_STAMINA_BASE", 20);
     _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
   }
 
   function _initMintConfigs() internal {
-    // Mint Settings
     _setConfig("MINT_MAX", 500);
     _setConfig("MINT_PRICE", 0);
   }

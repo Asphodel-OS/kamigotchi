@@ -7,7 +7,7 @@ export function createAdminAPI(systems: any) {
     /////////////////
     // CONFIG
 
-    await setConfigString('baseURI', 'https://image.asphodel.io/kami/');
+    await setConfigString('BASE_URI', 'https://image.asphodel.io/kami/');
 
     // Leaderboards
     setConfig('LEADERBOARD_EPOCH', 1);
@@ -460,7 +460,7 @@ export function createAdminAPI(systems: any) {
       set: {
         raw: setConfig,
         uri: {
-          base: (v: string) => setConfigString('baseURI', v),
+          base: (v: string) => setConfigString('BASE_URI', v),
         },
         leaderboard: {
           epoch: (v: number) => setConfig('LEADERBOARD_EPOCH', v),

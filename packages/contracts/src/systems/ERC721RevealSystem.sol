@@ -53,7 +53,7 @@ contract ERC721RevealSystem is System {
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
     uint256 packed = LibERC721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 
-    string memory _baseURI = LibConfig.getValueStringOf(components, "baseURI");
+    string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
     LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
     return "";
   }
