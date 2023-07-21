@@ -7,6 +7,7 @@ import "test/utils/SetupTemplate.s.sol";
 
 // TODO: test for correct production rates upon starting harvests
 contract HarvestTest is SetupTemplate {
+  uint _idleRequirement;
   mapping(uint => bool) internal _isStarved;
   // structure of Merchant data for test purposes
   struct TestNodeData {
@@ -26,6 +27,8 @@ contract HarvestTest is SetupTemplate {
     _createRoom("testRoom3", 3, 1, 2, 0);
 
     _initCommonTraits();
+
+    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
   }
 
   /////////////////
@@ -94,16 +97,15 @@ contract HarvestTest is SetupTemplate {
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
     // create the production
-    uint startTime = 100;
+    _fastForward(_idleRequirement);
     vm.prank(_getOperator(playerIndex));
-    vm.warp(startTime);
     bytes memory productionIDBytes = _ProductionStartSystem.executeTyped(kamiID, nodeID);
     uint productionID = abi.decode(productionIDBytes, (uint));
 
     // test that a production is created with the expected base fields
     assertEq(LibProduction.getPet(components, productionID), kamiID);
     assertEq(LibProduction.getNode(components, productionID), nodeID);
-    assertEq(LibProduction.getStartTime(components, productionID), startTime);
+    assertEq(LibProduction.getStartTime(components, productionID), _currTime);
     assertEq(LibProduction.getState(components, productionID), "ACTIVE");
 
     // test that the kami's state is updated
@@ -113,23 +115,25 @@ contract HarvestTest is SetupTemplate {
   // test that a pet's productions cannot be started/stopped/collected from by
   // anyone aside from the owner of the pet
   function testProductionAccountConstraints() public {
+    uint numKamis = 5;
+    uint playerIndex = 0; // the player we're playing with
+    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+
     // register player accounts (all start in room 1)
     for (uint i = 0; i < 10; i++) {
       _registerAccount(i);
     }
 
-    // mint some kamis for the player 0
-    uint numKamis = 5;
-    uint[] memory kamiIDs = _mintPets(0, numKamis);
-
-    // create node in room 1
-    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    // mint some kamis for our player
+    uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
+    _fastForward(_idleRequirement);
 
     // start the productions for all kamis, using their account's operator
     uint[] memory productionIDs = new uint[](numKamis);
     for (uint i = 0; i < numKamis; i++) {
       productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
     }
+    _fastForward(_idleRequirement);
 
     // check that other players cannot collect or stop productions
     for (uint i = 1; i < 10; i++) {
@@ -147,8 +151,10 @@ contract HarvestTest is SetupTemplate {
     // check that the owner can collect and stop productions
     for (uint i = 0; i < numKamis; i++) {
       _collectProduction(productionIDs[i]);
+      _fastForward(_idleRequirement);
       _stopProduction(productionIDs[i]);
     }
+    _fastForward(_idleRequirement);
 
     // check that other players cannot start productions
     for (uint i = 1; i < 10; i++) {
@@ -176,6 +182,7 @@ contract HarvestTest is SetupTemplate {
     // register our player account and mint it some kamis
     _registerAccount(playerIndex);
     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
+    _fastForward(_idleRequirement);
 
     // test that pets can only start a production on node in current room, save productionIDs
     uint[] memory productionIDs = new uint[](numKamis);
@@ -190,12 +197,14 @@ contract HarvestTest is SetupTemplate {
 
       productionIDs[i] = _startProduction(kamiIDs[i], nodeIDs[0]); // location 1, where account is
     }
+    _fastForward(_idleRequirement);
 
     // test that productions can be collected from in the same room
     // NOTE: all productions at this point are in room 1
     for (uint i = 0; i < productionIDs.length; i++) {
       _collectProduction(productionIDs[i]);
     }
+    _fastForward(_idleRequirement);
 
     // move rooms and check that production cannot be collected from or stopped
     _moveAccount(playerIndex, 2);
@@ -221,10 +230,14 @@ contract HarvestTest is SetupTemplate {
   function testProductionStateConstraints() public {
     // setup
     uint playerIndex = 0;
-    _registerAccount(0);
-    uint kamiID = _mintPet(playerIndex);
+    _registerAccount(playerIndex);
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+
+    uint kamiID = _mintPet(playerIndex);
+    _fastForward(_idleRequirement);
+
     uint productionID = _startProduction(kamiID, nodeID);
+    _fastForward(_idleRequirement);
 
     // attempt to start production again on current node
     vm.prank(_getOperator(playerIndex));
@@ -233,6 +246,7 @@ contract HarvestTest is SetupTemplate {
 
     // stop production..
     _stopProduction(productionID);
+    _fastForward(_idleRequirement);
 
     // attempt to stop it again
     vm.prank(_getOperator(playerIndex));
@@ -248,8 +262,11 @@ contract HarvestTest is SetupTemplate {
     uint numIterations = 20;
     for (uint i = 0; i < numIterations; i++) {
       _startProduction(kamiID, nodeID);
+      _fastForward(_idleRequirement);
       _collectProduction(productionID);
+      _fastForward(_idleRequirement);
       _stopProduction(productionID);
+      _fastForward(_idleRequirement);
     }
   }
 
@@ -261,12 +278,11 @@ contract HarvestTest is SetupTemplate {
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
     uint numKamis = (seed % 5) + 1;
     uint[] memory kamiIDs = _mintPets(0, numKamis);
+    _fastForward(_idleRequirement);
 
     // log the starting health of each kami and start its production
     uint[] memory kamiHealths = new uint[](numKamis);
     uint[] memory productionIDs = new uint[](numKamis);
-    uint currTime = 100;
-    vm.warp(currTime);
     for (uint i = 0; i < numKamis; i++) {
       kamiHealths[i] = LibPet.getLastHealth(components, kamiIDs[i]);
       productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
@@ -280,10 +296,9 @@ contract HarvestTest is SetupTemplate {
     uint rate;
     uint numIterations = 5;
     for (uint i = 0; i < numIterations; i++) {
-      timeDelta = uint(keccak256(abi.encodePacked(seed, i))) % 7200;
-      currTime += timeDelta;
+      timeDelta = (uint(keccak256(abi.encodePacked(seed, i))) % 7200) + _idleRequirement;
 
-      vm.warp(currTime);
+      _fastForward(timeDelta);
       for (uint j = 0; j < numKamis; j++) {
         if (_isStarved[j]) continue;
         rate = LibProduction.getRate(components, productionIDs[j]);
