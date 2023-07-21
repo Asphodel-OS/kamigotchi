@@ -36,9 +36,12 @@ contract ProductionCollectSystem is System {
     );
 
     // save outputs to variables and reset time
+    uint256 amt = LibProduction.calcOutput(components, id);
     uint256 petBalance = LibCoin.get(components, petID);
-    uint256 amt = LibProduction.calcOutput(components, id) + petBalance;
-    LibCoin.dec(components, petID, petBalance);
+    if (petBalance > 0) {
+      LibCoin.dec(components, petID, petBalance);
+      amt += petBalance;
+    }
     LibProduction.reset(components, id);
 
     // accrue rewards accordingly
