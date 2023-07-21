@@ -22,7 +22,6 @@ import { Account, getAccount } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from '../../shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
-import { Production } from 'layers/react/shapes/Production';
 import { KamiCard } from '../library/KamiCard';
 import { BatteryComponent } from '../library/Battery';
 import { NodeInfo } from '../library/NodeContainer';
@@ -317,12 +316,18 @@ export function registerNodeModal() {
         return health;
       };
 
+      // calculate the time a kami has spent idle (in seconds)
+      const calcIdleTime = (kami: Kami): number => {
+        return lastRefresh / 1000 - kami.lastUpdated;
+      };
+
       // calculate the expected output from a pet production based on starttime
       const calcOutput = (kami: Kami): number => {
         let output = 0;
         if (isHarvesting(kami) && kami.production) {
+          output = kami.production.balance * 1;
           let duration = lastRefresh / 1000 - kami.production.startTime;
-          output = Math.floor(duration * kami.production?.rate);
+          output += Math.floor(duration * kami.production?.rate);
         }
         return Math.max(output, 0);
       };
@@ -365,19 +370,17 @@ export function registerNodeModal() {
         return base * multiplier;
       };
 
-      // calculate the time a kami has spent idle (in seconds)
-      const calcIdleTime = (kami: Kami): number => {
-        return lastRefresh / 1000 - kami.lastUpdated;
+      // determine whether the kami is still on cooldown
+      const onCooldown = (kami: Kami): boolean => {
+        return calcIdleTime(kami) < kami.cooldown;
       };
 
       // determine whether a kami can liquidate another kami
       const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
         const thresholdPercent = calcLiquidationThreshold(attacker, victim);
-        // console.log(attacker.name, victim.name, thresholdPercent);
         const absoluteThreshold = thresholdPercent * victim.stats.health;
         const canMog = calcHealth(victim) < absoluteThreshold;
-        const isRested = calcIdleTime(attacker) > data.liquidationConfig.idleRequirement;
-        return isRested && canMog;
+        return !onCooldown(attacker) && canMog;
       }
 
       // check whether the kami is currently harvesting
@@ -395,7 +398,8 @@ export function registerNodeModal() {
 
       // button for adding Kami to node
       const AddButton = (node: Node, kamis: Kami[]) => {
-        const options: ActionListOption[] = kamis.map((kami) => {
+        const availableKamis = kamis.filter((kami) => !onCooldown(kami));
+        const options: ActionListOption[] = availableKamis.map((kami) => {
           return { text: `${kami.name}`, onClick: () => start(kami, node) };
         });
         return (
@@ -417,7 +421,7 @@ export function registerNodeModal() {
           key={`harvest-collect-${kami.id}`}
           onClick={() => collect(kami)}
           text='Collect'
-          disabled={kami.production === undefined}
+          disabled={kami.production === undefined || onCooldown(kami)}
         />
       );
 
@@ -438,7 +442,7 @@ export function registerNodeModal() {
           key={`harvest-stop-${kami.id}`}
           text='Stop'
           onClick={() => stop(kami)}
-          disabled={kami.production === undefined}
+          disabled={kami.production === undefined || onCooldown(kami)}
         />
       );
 
@@ -553,18 +557,6 @@ export function registerNodeModal() {
         setVisibleModals({ ...visibleModals, node: false });
       }, [setVisibleModals, visibleModals]);
 
-      // if (data.account.kamis.length < 1) {
-      //   return (
-      //     <ModalWrapperFull id='node' divName='node'>
-      //       <AlignRight>
-      //         <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-      //           X
-      //         </TopButton>
-      //       </AlignRight>
-      //       <Header>Nodes reject those who do not travel with Kamigotchi.</Header>
-      //     </ModalWrapperFull>
-      //   );
-      // }
       return (
         <ModalWrapperFull id='node' divName='node'>
           <NodeInfo key={'node-info'} node={data.node} />

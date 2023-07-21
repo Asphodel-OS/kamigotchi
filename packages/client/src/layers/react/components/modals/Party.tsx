@@ -203,10 +203,15 @@ export function registerPartyModal() {
       // calculate health based on the drain against last confirmed health
       const calcHealth = (kami: Kami): number => {
         let health = 1 * kami.health;
-        let duration = lastRefresh / 1000 - kami.lastUpdated;
+        let duration = calcIdleTime(kami);
         health += kami.healthRate * duration;
         health = Math.min(Math.max(health, 0), kami.stats.health);
         return health;
+      };
+
+      // calculate the time a kami has spent idle (in seconds)
+      const calcIdleTime = (kami: Kami): number => {
+        return lastRefresh / 1000 - kami.lastUpdated;
       };
 
       // converts a per-second rate to a per-hour rate string with a given precision
@@ -228,8 +233,9 @@ export function registerPartyModal() {
       const calcOutput = (kami: Kami): number => {
         let output = 0;
         if (isHarvesting(kami) && kami.production) {
+          output = kami.production.balance * 1;
           let duration = lastRefresh / 1000 - kami.production.startTime;
-          output = Math.floor(duration * kami.production?.rate);
+          output += Math.floor(duration * kami.production?.rate);
         }
         return Math.max(output, 0);
       };
@@ -256,6 +262,11 @@ export function registerPartyModal() {
         return data.account.inventories!.revives.length > 0;
       };
 
+      // determine whether the kami is still on cooldown
+      const onCooldown = (kami: Kami): boolean => {
+        return kami.cooldown > calcIdleTime(kami);
+      }
+
       // get the reason why a kami can't feed. assume the kami is either resting or harvesting
       const whyCantFeed = (kami: Kami): string => {
         let reason = '';
@@ -265,6 +276,8 @@ export function registerPartyModal() {
           reason = `already full`;
         } else if (!hasFood()) {
           reason = `buy food, poore`;
+        } else if (onCooldown(kami)) {
+          reason = `can't eat, on cooldown`;
         }
         return reason;
       };
@@ -417,7 +430,7 @@ export function registerPartyModal() {
           id={`revive-kami`}
           onClick={() => reviveKami(kami, 1)}
           text='Revive'
-          disabled={!hasRevive()}
+          disabled={!hasRevive() || onCooldown(kami)}
         />
       );
 
@@ -437,8 +450,11 @@ export function registerPartyModal() {
           const action = DisplayedAction(kami);
           const description = getDescription(kami);
           const healthString = !isUnrevealed(kami)
-            ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1})`
+            ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1}) `
             : '';
+
+          const cooldown = kami.cooldown - calcIdleTime(kami);
+          const cooldownString = Math.max(cooldown, 0).toFixed(0);
 
           return (
             <KamiCard
@@ -447,7 +463,7 @@ export function registerPartyModal() {
               description={description}
               subtext={`${calcOutput(kami)} $KAMI`}
               action={action}
-              cornerContent={healthString}
+              cornerContent={healthString + cooldownString}
             />
           );
         });

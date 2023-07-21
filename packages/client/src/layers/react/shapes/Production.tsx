@@ -12,6 +12,7 @@ import { Node, getNode } from './Node';
 // standardized shape of an Production Entity
 export interface Production {
   id: EntityID;
+  balance: number;
   rate: number;
   state: string;
   startTime: number;
@@ -35,6 +36,7 @@ export const getProduction = (
     network: {
       world,
       components: {
+        Coin,
         NodeID,
         PetID,
         Rate,
@@ -46,6 +48,7 @@ export const getProduction = (
 
   let production: Production = {
     id: world.entities[index],
+    balance: getComponentValue(Coin, index)?.value as number,
     rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
     startTime: getComponentValue(StartTime, index)?.value as number,

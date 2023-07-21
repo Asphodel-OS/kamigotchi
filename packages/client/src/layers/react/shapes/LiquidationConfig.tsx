@@ -3,7 +3,6 @@ import { getConfigFieldValue } from './Config';
 
 // Liquidation Configuration Settings 
 export interface LiquidationConfig {
-  idleRequirement: number;  // in seconds
   bountyRatio: number;      // ratio of harvest received by killer
   threshold: number;        // base threshold ceiling (as proportion of max health) 
   multipliers: Multipliers;
@@ -40,14 +39,12 @@ export const getLiquidationConfig = (
     affinity: affinityMultipliers,
   }
 
-  const idleRequirement = getConfigFieldValue(network, 'KAMI_IDLE_REQ');
   const bountyBase = getConfigFieldValue(network, 'LIQ_BOUNTY_BASE');
   const bountyBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_BOUNTY_BASE_PREC');
   const thresholdBase = getConfigFieldValue(network, 'LIQ_THRESH_BASE');
   const thresholdBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_THRESH_BASE_PREC');
 
   return {
-    idleRequirement,
     bountyRatio: bountyBase / bountyBasePrecision,
     threshold: thresholdBase / thresholdBasePrecision,
     multipliers,

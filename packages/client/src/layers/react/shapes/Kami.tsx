@@ -28,6 +28,7 @@ export interface Kami {
   healthRate: number;
   state: string;
   lastUpdated: number;
+  cooldown: number;
   stats: Stats;
   account?: Account;
   deaths?: Kill[];
@@ -98,6 +99,7 @@ export const getKami = (
     healthRate: 0,
     state: getComponentValue(State, index)?.value as string,
     lastUpdated: getComponentValue(LastTime, index)?.value as number,
+    cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
     stats: getStats(layers, index),
   };
 
