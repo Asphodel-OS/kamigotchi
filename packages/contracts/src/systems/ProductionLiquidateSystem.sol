@@ -54,8 +54,10 @@ contract ProductionLiquidateSystem is System {
     // collect the money
     // NOTE: this could be sent to the kami in future mechanics
     uint256 amt = LibProduction.calcBounty(components, targetProductionID);
-    LibCoin.inc(components, accountID, amt);
+    uint256 recoil = LibPet.calcDrainFromBalance(components, amt);
+    LibCoin.inc(components, petID, amt);
     LibPet.addExperience(components, petID, amt);
+    LibPet.drain(components, petID, recoil);
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);
@@ -64,7 +66,6 @@ contract ProductionLiquidateSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
-    LibScore.incBy(world, components, accountID, "COLLECT", amt);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }

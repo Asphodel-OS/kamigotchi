@@ -170,6 +170,13 @@ library LibPet {
     return LibRegistryAffinity.getAttackMultiplier(components, sourceAff, targetAff);
   }
 
+  // NOTE: consider using this for calcProductionDrain
+  function calcDrainFromBalance(IUintComp components, uint256 amt) internal view returns (uint256) {
+    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    return (amt * base + (basePrecision / 2)) / basePrecision;
+  }
+
   // Calculate the total health drain from harvesting (rounded up) since the last check. This is
   // based on the Kami's production and assumes that information is up to date.
   // NOTE: we can't just use LibProd.calcOutput() here because that rounds down, while here
