@@ -17,11 +17,13 @@ contract PetReviveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 petID, uint256 reviveIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint256 id, uint256 reviveIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
-    require(LibPet.isDead(components, petID), "Pet: must be dead");
+    // standard checks (ownership, cooldown, state)
+    require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
+    require(LibPet.canAct(components, id), "Pet: on cooldown");
+    require(LibPet.isDead(components, id), "Pet: must be dead");
 
     // find the registry entry
     uint256 registryID = LibRegistryItem.getByReviveIndex(components, reviveIndex);
@@ -34,13 +36,13 @@ contract PetReviveSystem is System {
 
     // revive and heal according to item stats
     uint256 healAmt = LibStat.getHealth(components, registryID);
-    LibPet.revive(components, petID);
-    LibPet.heal(components, petID, healAmt);
+    LibPet.revive(components, id);
+    LibPet.heal(components, id, healAmt);
     LibAccount.updateLastBlock(components, accountID); // gas limit :|
     return "";
   }
 
-  function executeTyped(uint256 petID, uint256 reviveIndex) public returns (bytes memory) {
-    return execute(abi.encode(petID, reviveIndex));
+  function executeTyped(uint256 id, uint256 reviveIndex) public returns (bytes memory) {
+    return execute(abi.encode(id, reviveIndex));
   }
 }

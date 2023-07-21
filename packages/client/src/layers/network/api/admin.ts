@@ -53,7 +53,7 @@ export function createAdminAPI(systems: any) {
     await setConfig('HEALTH_RATE_HEAL_BASE_PREC', 3); // i.e. x/1000
 
     // Liquidation Idle Requirements
-    await setConfig('LIQ_IDLE_REQ', 300);
+    await setConfig('KAMI_IDLE_REQ', 300);
 
     // Liquidation Calcs
     await setConfig('LIQ_THRESH_BASE', 20);
@@ -517,7 +517,7 @@ export function createAdminAPI(systems: any) {
                 },
               },
               idleRequirement: {
-                value: (v: number) => setConfig('LIQ_IDLE_REQ', v),
+                value: (v: number) => setConfig('KAMI_IDLE_REQ', v),
               },
             },
           },

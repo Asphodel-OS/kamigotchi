@@ -40,7 +40,7 @@ export const getLiquidationConfig = (
     affinity: affinityMultipliers,
   }
 
-  const idleRequirement = getConfigFieldValue(network, 'LIQ_IDLE_REQ');
+  const idleRequirement = getConfigFieldValue(network, 'KAMI_IDLE_REQ');
   const bountyBase = getConfigFieldValue(network, 'LIQ_BOUNTY_BASE');
   const bountyBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_BOUNTY_BASE_PREC');
   const thresholdBase = getConfigFieldValue(network, 'LIQ_THRESH_BASE');

@@ -14,7 +14,6 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
-uint256 constant IDLE_REQUIREMENT = 300;
 
 // liquidates a target production using a player's pet.
 // TODO: support kill logs
@@ -24,11 +23,13 @@ contract ProductionLiquidateSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+
+    // standard checks (ownership, cooldown, state)
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+    require(LibPet.canAct(components, petID), "Pet: on cooldown");
+    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
 
     // basic requirements (state and idle time)
-    require(LibPet.canLiquidate(components, petID), "Pet: unable to liquidate");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
     require(LibProduction.isActive(components, targetProductionID), "Production: not active");
 
     // health check
@@ -40,10 +41,7 @@ contract ProductionLiquidateSystem is System {
     uint256 nodeID = LibProduction.getNode(components, productionID);
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "Production: must be on same node as target");
-    require(
-      LibAccount.getLocation(components, accountID) == LibNode.getLocation(components, nodeID),
-      "Node: too far"
-    );
+    require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);

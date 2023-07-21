@@ -24,11 +24,17 @@ contract ProductionStopSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 petID = LibProduction.getPet(components, id);
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
 
+    // standard checks (ownership, cooldown, state)
+    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+    require(LibPet.canAct(components, petID), "Pet: on cooldown");
+    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+
+    // health check
     LibPet.syncHealth(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+
+    // location check
     require(
       LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
       "Node: too far"

@@ -22,13 +22,17 @@ contract ProductionStartSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint256 nodeID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+
+    // standard checks (ownership, cooldown, state)
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
+    require(LibPet.canAct(components, petID), "Pet: on cooldown");
+    require(LibPet.isResting(components, petID), "Pet: must be resting");
 
     // sync the pet's health with the current state
     LibPet.syncHealth(components, petID);
+    require(LibPet.isHealthy(components, petID), "Pet: starving..");
 
     // ensure the Pet is able to harvest on this Node
-    require(LibPet.isResting(components, petID), "Pet: must be resting");
     require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");
     require(LibNode.isHarvestingType(components, nodeID), "Node: not a Harvesting Node");
 

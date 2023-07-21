@@ -33,7 +33,7 @@ contract MurderTest is SetupTemplate {
 
     // starting states
     _currTime = 5 minutes;
-    _idleRequirement = LibConfig.getValueOf(components, "LIQ_IDLE_REQ") + 1;
+    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ") + 1;
   }
 
   /////////////////
