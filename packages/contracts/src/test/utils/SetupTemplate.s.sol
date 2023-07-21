@@ -10,6 +10,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import "./TestSetupImports.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
+  uint _currTime;
   address[] internal _owners;
   mapping(address => address) internal _operators; // owner => operator
   uint internal _currBlock;
@@ -20,6 +21,12 @@ abstract contract SetupTemplate is TestSetupImports {
     super.setUp();
     _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
     _initAllConfigs();
+    _currTime = 5 minutes;
+  }
+
+  function _fastForward(uint timeDelta) internal {
+    _currTime += timeDelta;
+    vm.warp(_currTime);
   }
 
   /////////////////

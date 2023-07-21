@@ -10,8 +10,6 @@ import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 
 contract MurderTest is SetupTemplate {
-  uint _currTime;
-  uint _idleRequirement;
   uint[] internal _listingIDs;
   uint[] internal _nodeIDs;
   mapping(uint => uint[]) internal _petIDs;

@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.s.sol";
 
 contract MurderTest is SetupTemplate {
-  uint _currTime;
   uint _idleRequirement;
   uint[] internal _listingIDs;
   uint[] internal _nodeIDs;
@@ -32,8 +31,7 @@ contract MurderTest is SetupTemplate {
     _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
 
     // starting states
-    _currTime = 5 minutes;
-    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ") + 1;
+    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
   }
 
   /////////////////
@@ -129,8 +127,7 @@ contract MurderTest is SetupTemplate {
         _startProduction(_petIDs[i][j], nodeID);
       }
     }
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // check that we CANNOT liquidate the starved kamis from the wrong account
     for (uint i = 1; i < numAccounts; i++) {
@@ -162,8 +159,7 @@ contract MurderTest is SetupTemplate {
     for (uint j = 0; j < numPets; j++) {
       _startProduction(_petIDs[playerIndex][j], nodeID);
     }
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // move the Account to room 2
     // check that we CANNOT liquidate
@@ -236,8 +232,7 @@ contract MurderTest is SetupTemplate {
       _startProduction(_petIDs[playerIndex][i], _nodeIDs[0]);
     }
 
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // check that we CAN liquidate
     for (uint i = 0; i < numPets; i++) {
@@ -303,8 +298,7 @@ contract MurderTest is SetupTemplate {
       playerProductionIDs[i] = _startProduction(_petIDs[playerIndex][i], nodeID);
       _stopProduction(playerProductionIDs[i]);
     }
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // create a supporting account
     _registerAccount(supportPlayerIndex);
@@ -342,8 +336,7 @@ contract MurderTest is SetupTemplate {
     }
 
     // fast forward as syncHealth resets both pets' last action times during liquidation
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // check that pets CANNOT liquidate when DEAD
     for (uint i = 0; i < numPets; i++) {
@@ -361,15 +354,13 @@ contract MurderTest is SetupTemplate {
       _revivePet(_petIDs[playerIndex][i], 1);
       _startProduction(_petIDs[playerIndex][i], nodeID);
     }
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // check that pets CAN liquidate when HARVESTING
     for (uint i = 0; i < numPets; i++) {
       _liquidateProduction(_petIDs[playerIndex][i], victimProductionIDs[i]);
     }
-    _currTime += _idleRequirement;
-    vm.warp(_currTime);
+    _fastForward(_idleRequirement);
 
     // check that pets CAN can liquidate in succession once idle requirement is met
     for (uint i = 0; i < numPets; i++) {

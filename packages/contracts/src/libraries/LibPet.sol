@@ -281,7 +281,7 @@ library LibPet {
   function canAct(IUintComp components, uint256 id) internal view returns (bool) {
     uint256 idleTime = block.timestamp - getLastTs(components, id);
     uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
-    return idleTime > idleRequirement;
+    return idleTime >= idleRequirement;
   }
 
   // Check wether a pet can be named

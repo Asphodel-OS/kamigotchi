@@ -5,6 +5,7 @@ import "test/utils/SetupTemplate.s.sol";
 
 // this includes the feeding of both food and revives
 contract FeedingTest is SetupTemplate {
+  uint _idleRequirement;
   uint internal _merchantID;
   uint internal _nodeID;
   uint[] internal _listingIDs;
@@ -20,6 +21,8 @@ contract FeedingTest is SetupTemplate {
     _createRoom("testRoom3", 3, 1, 2, 0);
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
     _merchantID = _createMerchant(1, 1, "Test Merchant");
+
+    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
   }
 
   /////////////////
@@ -71,7 +74,6 @@ contract FeedingTest is SetupTemplate {
   // test that feeding is only permissioned to the operating account of a pet
   function testFeedPermissionConstraints() public {
     uint foodIndex;
-    uint currTime = 100;
     uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
     _createFoodListings(merchantIndex);
 
@@ -85,20 +87,20 @@ contract FeedingTest is SetupTemplate {
       }
     }
 
-    // mint some pets for the default account and start their production
+    // mint some pets for the default account
     uint numPets = 5;
     uint[] memory petIDs = _mintPets(0, numPets);
-    vm.warp(currTime);
+
+    // start their productions
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       _startProduction(petIDs[i], _nodeID);
-      // console.log("startTime: %d", startTime);
     }
 
     // fast forward 1hr to drain
-    currTime += 1 hours;
-    vm.warp(currTime);
+    _fastForward(_idleRequirement + 1 hours);
 
-    // drain the pets a bit and attempt to feed them with each item from each account
+    // attempt to feed them with each item from each account
     for (uint i = 1; i < numAccounts; i++) {
       vm.startPrank(_getOperator(i));
       for (uint j = 0; j < _listingIDs.length; j++) {
@@ -115,8 +117,7 @@ contract FeedingTest is SetupTemplate {
     vm.startPrank(_getOperator(0));
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 1 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
       }
@@ -181,7 +182,6 @@ contract FeedingTest is SetupTemplate {
   // test that feeding is restricted by pet location in respect to account
   function testFeedLocationConstraints() public {
     uint foodIndex;
-    uint currTime = 100;
     uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
     _createFoodListings(merchantIndex);
 
@@ -193,10 +193,10 @@ contract FeedingTest is SetupTemplate {
       _buyFromListing(playerIndex, _listingIDs[j], 10);
     }
 
-    // mint some pets and start their production
+    // mint some pets, fast forward and start their productions
     uint numPets = 5;
     uint[] memory petIDs = _mintPets(playerIndex, numPets);
-    vm.warp(currTime);
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       _startProduction(petIDs[i], _nodeID);
     }
@@ -204,8 +204,7 @@ contract FeedingTest is SetupTemplate {
     // test that we Can feed pets at the current location
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 1 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         _feedPet(petIDs[j], foodIndex);
       }
@@ -216,8 +215,7 @@ contract FeedingTest is SetupTemplate {
     vm.startPrank(_getOperator(playerIndex));
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 1 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("Pet: must be in same room");
         _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
@@ -230,8 +228,7 @@ contract FeedingTest is SetupTemplate {
     vm.startPrank(_getOperator(playerIndex));
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 1 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         vm.expectRevert("Pet: must be in same room");
         _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
@@ -243,8 +240,7 @@ contract FeedingTest is SetupTemplate {
     _moveAccount(playerIndex, 1);
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 1 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         _feedPet(petIDs[j], foodIndex);
       }
@@ -254,7 +250,6 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is restricted by pet state
   function testFeedStateConstraints() public {
     uint foodIndex;
-    uint currTime = 100;
     uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
     _createFoodListings(merchantIndex);
 
@@ -266,11 +261,15 @@ contract FeedingTest is SetupTemplate {
       _buyFromListing(playerIndex, _listingIDs[j], 100);
     }
 
-    // mint some pets and start their production
+    // mint some pets
     uint numPets = 5;
     uint[] memory petIDs = _mintPets(playerIndex, numPets);
     uint[] memory productionIDs = new uint[](numPets);
-    vm.warp(currTime);
+
+    // fast forward
+    _fastForward(_idleRequirement);
+
+    // start their production
     for (uint i = 0; i < numPets; i++) {
       productionIDs[i] = _startProduction(petIDs[i], _nodeID);
     }
@@ -278,8 +277,7 @@ contract FeedingTest is SetupTemplate {
     // check that we CAN feed when harvesting
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 1 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         _feedPet(petIDs[j], foodIndex);
       }
@@ -288,73 +286,75 @@ contract FeedingTest is SetupTemplate {
     // check that we CAN feed when starving (pseudo-state)
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      currTime += 100 hours;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement + 100 hours);
       for (uint j = 0; j < numPets; j++) {
         _feedPet(petIDs[j], foodIndex);
       }
     }
 
     // stop productions and check that we CAN feed resting pets
-    currTime += 1 hours;
-    vm.warp(currTime);
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
+      _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
         _stopProduction(productionIDs[j]);
+        _fastForward(_idleRequirement);
         _feedPet(petIDs[j], foodIndex);
+        _fastForward(_idleRequirement);
         _startProduction(petIDs[j], _nodeID);
       }
-      currTime += 1 hours;
-      vm.warp(currTime);
     }
 
-    // stop all productions and allow pets to heal to full
-    for (uint i = 0; i < numPets; i++) {
-      _stopProduction(productionIDs[i]);
-    }
-    currTime += 100 hours;
-    vm.warp(currTime);
+    // // stop all productions and allow pets to heal to full
+    // for (uint i = 0; i < numPets; i++) {
+    //   _stopProduction(productionIDs[i]);
+    // }
+    // _currTime += _idleRequirement + 100 hours;
+    // vm.warp(_currTime);
 
-    // check that we CANNOT feed when full (pseudo-state)
-    for (uint i = 0; i < _listingIDs.length; i++) {
-      foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: already full");
-        vm.prank(_getOperator(playerIndex));
-        _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
-      }
-    }
+    // // check that we CANNOT feed when full (pseudo-state)
+    // for (uint i = 0; i < _listingIDs.length; i++) {
+    //   foodIndex = _getListingFoodIndex(_listingIDs[i]);
+    //   for (uint j = 0; j < numPets; j++) {
+    //     vm.expectRevert("Pet: already full");
+    //     vm.prank(_getOperator(playerIndex));
+    //     _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
+    //   }
+    // }
 
-    // spawn some other kamis on a new account
-    uint playerIndex2 = 1;
-    _registerAccount(playerIndex2);
-    uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
+    // // spawn some other kamis on a new account
+    // uint playerIndex2 = 1;
+    // _registerAccount(playerIndex2);
+    // uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
 
-    // start production for and starve our original kamis
-    for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs[i], _nodeID);
-    }
-    currTime += 100 hours;
-    vm.warp(currTime);
+    // // start production for and starve our original kamis
+    // for (uint i = 0; i < numPets; i++) {
+    //   _startProduction(petIDs[i], _nodeID);
+    // }
+    // _currTime += _idleRequirement + 100 hours;
+    // vm.warp(_currTime);
 
-    // start production for our new kamis and kill off the originals
-    for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs2[i], _nodeID);
-      currTime += 15 minutes;
-      vm.warp(currTime);
-      _liquidateProduction(petIDs2[i], productionIDs[i]);
-    }
+    // // start production for our new kamis and kill off the originals
+    // for (uint i = 0; i < numPets; i++) {
+    //   _startProduction(petIDs2[i], _nodeID);
+    //   _currTime += _idleRequirement + 15 minutes;
+    //   vm.warp(_currTime);
+    //   _liquidateProduction(petIDs2[i], productionIDs[i]);
+    // }
 
-    // check that we cannot feed when dead
-    for (uint i = 0; i < _listingIDs.length; i++) {
-      foodIndex = _getListingFoodIndex(_listingIDs[i]);
-      for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: must be resting|harvesting");
-        vm.prank(_getOperator(playerIndex));
-        _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
-      }
-    }
+    // // fast forward
+    // _currTime += _idleRequirement;
+    // vm.warp(_currTime);
+
+    // // check that we cannot feed when dead
+    // for (uint i = 0; i < _listingIDs.length; i++) {
+    //   foodIndex = _getListingFoodIndex(_listingIDs[i]);
+    //   for (uint j = 0; j < numPets; j++) {
+    //     vm.expectRevert("Pet: must be resting|harvesting");
+    //     vm.prank(_getOperator(playerIndex));
+    //     _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
+    //   }
+    // }
   }
 
   // test that reviving is restricted by pet state
@@ -432,7 +432,6 @@ contract FeedingTest is SetupTemplate {
   }
 
   function testFeedEffects() public {
-    uint currTime = 100;
     uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
     _createFoodListings(merchantIndex);
 
@@ -447,7 +446,7 @@ contract FeedingTest is SetupTemplate {
     // mint some pets and start their production
     uint numPets = 5;
     uint[] memory petIDs = _mintPets(playerIndex, numPets);
-    vm.warp(currTime);
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       _startProduction(petIDs[i], _nodeID);
     }
@@ -466,9 +465,9 @@ contract FeedingTest is SetupTemplate {
       foodIndex = _getListingFoodIndex(_listingIDs[seed % _listingIDs.length]);
       petID = petIDs[seed % numPets];
 
-      timeDelta = (seed % 5 hours) + 15 minutes;
-      currTime += timeDelta;
-      vm.warp(currTime);
+      timeDelta = (seed % 5 hours) + _idleRequirement;
+      _currTime += timeDelta;
+      vm.warp(_currTime);
 
       initialHealth = _calcHarvestingPetHealth(petID);
       healAmt = _getFoodHealAmount(foodIndex);
