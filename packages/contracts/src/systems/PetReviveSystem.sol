@@ -38,7 +38,8 @@ contract PetReviveSystem is System {
     uint256 healAmt = LibStat.getHealth(components, registryID);
     LibPet.revive(components, id);
     LibPet.heal(components, id, healAmt);
-    LibAccount.updateLastBlock(components, accountID); // gas limit :|
+    LibPet.setLastTs(components, id, block.timestamp); // explicitly, as we don't sync health on this EP
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

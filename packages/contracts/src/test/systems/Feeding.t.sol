@@ -128,7 +128,6 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is only permissioned to the operating account of a pet
   // NOTE: only one revive item to check for these
   function testRevivePermissionConstraints() public {
-    uint currTime = 100;
     uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
     _createReviveListings(merchantIndex);
     uint listingID = _listingIDs[0];
@@ -146,21 +145,21 @@ contract FeedingTest is SetupTemplate {
     uint numPets = 5;
     uint[] memory petIDs = _mintPets(0, numPets);
     uint[] memory productionIDs = new uint[](numPets);
-    vm.warp(currTime);
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       productionIDs[i] = _startProduction(petIDs[i], _nodeID);
     }
-    currTime += 100 hours;
-    vm.warp(currTime);
+    _fastForward(100 hours);
 
     // start production for our new kamis and kill off the originals
     uint[] memory petIDs2 = _mintPets(1, numPets);
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       _startProduction(petIDs2[i], _nodeID);
-      currTime += 15 minutes;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement);
       _liquidateProduction(petIDs2[i], productionIDs[i]);
     }
+    _fastForward(_idleRequirement);
 
     // check we CANNOT revive pets from other accounts
     for (uint i = 1; i < numAccounts; i++) {
@@ -360,7 +359,6 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is restricted by pet state
   function testReviveStateConstraints() public {
     uint numPets = 5;
-    uint currTime = 100;
     uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
     _createReviveListings(merchantIndex);
     uint listingID = _listingIDs[0];
@@ -374,6 +372,7 @@ contract FeedingTest is SetupTemplate {
     uint[] memory petIDs = _mintPets(playerIndex, numPets);
 
     // (resting, full hp) check that we CANNOT revive
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("Pet: must be dead");
@@ -384,14 +383,14 @@ contract FeedingTest is SetupTemplate {
     uint[] memory productionIDs = new uint[](numPets);
     for (uint i = 0; i < numPets; i++) {
       productionIDs[i] = _startProduction(petIDs[i], _nodeID);
+      _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("Pet: must be dead");
       _PetReviveSystem.executeTyped(petIDs[i], reviveIndex);
     }
 
     // (harvesting, partial hp) check that we CANNOT revive
-    currTime += 1 hours;
-    vm.warp(currTime);
+    _fastForward(1 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("Pet: must be dead");
@@ -399,8 +398,7 @@ contract FeedingTest is SetupTemplate {
     }
 
     // (harvesting, no hp) check that we CANNOT revive
-    currTime += 100 hours;
-    vm.warp(currTime);
+    _fastForward(100 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("Pet: must be dead");
@@ -411,12 +409,13 @@ contract FeedingTest is SetupTemplate {
     uint playerIndex2 = 1;
     _registerAccount(playerIndex2);
     uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       _startProduction(petIDs2[i], _nodeID);
-      currTime += 15 minutes;
-      vm.warp(currTime);
+      _fastForward(_idleRequirement);
       _liquidateProduction(petIDs2[i], productionIDs[i]);
     }
+    _fastForward(_idleRequirement);
 
     // (dead) check that we CAN revive
     for (uint i = 0; i < numPets; i++) {
@@ -424,6 +423,7 @@ contract FeedingTest is SetupTemplate {
     }
 
     // (resting, partial hp) check that we CANNOT revive
+    _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
       vm.expectRevert("Pet: must be dead");
