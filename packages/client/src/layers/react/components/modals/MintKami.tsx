@@ -97,7 +97,7 @@ export function registerKamiMintModal() {
       /////////////////
       // ACTIONS
 
-      const mintTx = (amount: number, value: number) => {
+      const mintPetTx = (amount: number) => {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
@@ -108,12 +108,30 @@ export function registerKamiMintModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            // try whitelist mint if no ether is sent
-            return (value == 0) ? api.ERC721.mint(amount) : api.ERC721.mintEth(amount, value);
+            return api.mint.mintPet(amount);
           },
         });
         return actionID;
       };
+
+      const mintTokenTx = (amount: number, value: number) => {
+        const network = networks.get(selectedAddress);
+        const api = network!.api.player;
+
+        // PLACEHOLDER for mint token name
+        const actionID = (amount == 1 ? `Minting Token` : `Minting Tokens`) as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.mint.mintToken(amount, value);
+          },
+        });
+        return actionID;
+      }
+
 
       const revealTx = async (kami: Kami) => {
         const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
@@ -132,9 +150,9 @@ export function registerKamiMintModal() {
         );
       };
 
-      const handleMinting = (amount: number, value: number) => async () => {
+      const handlePetMinting = (amount: number) => async () => {
         try {
-          const mintActionID = mintTx(amount, value);
+          const mintActionID = mintPetTx(amount);
           await waitForActionCompletion(
             actions.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex
@@ -145,7 +163,19 @@ export function registerKamiMintModal() {
           mintFX.volume = volume * 0.6;
           mintFX.play();
         } catch (e) {
-          console.log('KamiMint.tsx: handleMinting() mint failed', e);
+          console.log('KamiMint.tsx: handlePetMinting() mint failed', e);
+        }
+      };
+
+      const handleTokenMinting = (amount: number, value: number) => async () => {
+        try {
+          const mintActionID = mintTokenTx(amount, value);
+
+          const mintFX = new Audio(mintSound);
+          mintFX.volume = volume * 0.6;
+          mintFX.play();
+        } catch (e) {
+          console.log('KamiMint.tsx: handleTokenMinting() mint failed', e);
         }
       };
 
@@ -193,9 +223,15 @@ export function registerKamiMintModal() {
       ///////////////
       // DISPLAY
 
-      const MintButton = (text: string, amount: number, cost: number) => {
+      const MintPetButton = (amount: number) => {
         return (
-          <ActionButton id='button-mint' onClick={handleMinting(amount, cost)} size='vending' text={text} inverted />
+          <ActionButton id='button-mint' onClick={handlePetMinting(amount)} size='vending' text="1 $KAMI" inverted />
+        );
+      }
+
+      const MintTokenButton = (text: string, amount: number, cost: number) => {
+        return (
+          <ActionButton id='button-mint' onClick={handleTokenMinting(amount, cost)} size='vending' text={text} inverted />
         );
       }
 
@@ -208,7 +244,7 @@ export function registerKamiMintModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Stepper steps={steps} MintButton={MintButton} NumMinted={Number(totalSupply)} Mint20Bal={Number(mintTokenBal?.formatted)} />
+          <Stepper steps={steps} MintPetButton={MintPetButton} MintTokenButton={MintTokenButton} NumMinted={Number(totalSupply)} Mint20Bal={Number(mintTokenBal?.formatted)} />
         </ModalWrapperFull>
       );
     }
@@ -226,8 +262,7 @@ const StepOne = () => (
 );
 
 const StepTwo = (props: any) => {
-  const { MintButton, NumMinted, Mint20Bal } = props;
-  // console.log(NumMinted)
+  const { MintTokenButton, MintPetButton, NumMinted, Mint20Bal } = props;
 
   return (
     <>
@@ -236,22 +271,22 @@ const StepTwo = (props: any) => {
         <ProductBox style={{ gridRow: 2, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
           <VendingText>Token Mint</VendingText>
-          {MintButton("0.000Ξ", 1, 0)}
+          {MintPetButton(1)}
         </ProductBox>
         <ProductBox style={{ gridRow: 2, gridColumn: 2 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>1 Kami</VendingText>
-          {MintButton("0.015Ξ", 1, 0.015)}
+          <VendingText>1 $KAMI</VendingText>
+          {MintTokenButton("0.015Ξ", 1, 0.0)}
         </ProductBox>
         <ProductBox style={{ gridRow: 3, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>3 Kamis</VendingText>
-          {MintButton("0.045Ξ", 3, 0.045)}
+          <VendingText>3 $KAMI</VendingText>
+          {MintTokenButton("0.045Ξ", 3, 0.045)}
         </ProductBox>
         <ProductBox style={{ gridRow: 3, gridColumn: 2 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>5 Kamis</VendingText>
-          {MintButton("0.075Ξ", 5, 0.075)}
+          <VendingText>5 $KAMI</VendingText>
+          {MintTokenButton("0.075Ξ", 5, 0.075)}
         </ProductBox>
         <SubText style={{ gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
           Minted: {NumMinted} / 1111
@@ -269,7 +304,7 @@ const steps = (props: any) => [
   },
   {
     title: 'Two',
-    content: <StepTwo MintButton={props.MintButton} NumMinted={props.NumMinted} Mint20Bal={props.Mint20Bal} />,
+    content: <StepTwo MintPetButton={props.MintPetButton} MintTokenButton={props.MintTokenButton} NumMinted={props.NumMinted} Mint20Bal={props.Mint20Bal} />,
     modalContent: true,
   },
 ];

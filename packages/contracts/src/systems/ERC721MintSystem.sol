@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibERC721 } from "libraries/LibERC721.sol";
+import { LibTokens } from "libraries/LibTokens.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
 
@@ -29,11 +29,12 @@ contract ERC721MintSystem is System {
     return _mintProcess(1);
   }
 
+  // TODO: remove limit checks here. Checks implemented by Mint20
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
 
     // get next index to mint via total supply of ERC721
-    uint256 index = LibERC721.getCurrentSupply(world) + 1;
+    uint256 index = LibTokens.getCurrentSupply(world) + 1;
 
     // get the account for this owner(to). fails if doesnt exist
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
@@ -41,15 +42,10 @@ contract ERC721MintSystem is System {
 
     // check for max mint, update num minted
     uint256 numMinted = LibAccount.getPetsMinted(components, accountID);
-    require(
-      numMinted + amount <= LibConfig.getValueOf(components, "MINT_MAX"),
-      "ERC721MintSystem: max minted"
-    );
     LibAccount.setPetsMinted(world, components, accountID, numMinted + amount);
 
     // burn mint tokens, implicitly checks if owner has enough balance
-    address owner = LibAccount.getOwner(components, accountID);
-    LibERC721.burnMint20s(world, owner, amount);
+    LibTokens.burnMint20(world, msg.sender, amount); // msg.sender is owner
 
     // set return array
     uint256[] memory petIDs = new uint256[](amount);
@@ -61,7 +57,7 @@ contract ERC721MintSystem is System {
       LibRandom.setRevealBlock(components, petID, block.number);
 
       // Mint the token
-      LibERC721.mintInGame(world, index + i);
+      LibTokens.mintInGame(world, index + i);
 
       // add petID to array
       petIDs[i] = petID;
@@ -78,7 +74,7 @@ contract ERC721MintSystem is System {
   // depreciated
   function _mintProcess(uint256 amount) internal returns (bytes memory) {
     // get next index to mint via total supply of ERC721
-    uint256 index = LibERC721.getCurrentSupply(world) + 1;
+    uint256 index = LibTokens.getCurrentSupply(world) + 1;
 
     // get the account for this owner(to). fails if doesnt exist
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
@@ -86,10 +82,6 @@ contract ERC721MintSystem is System {
 
     // check for max mint, update num minted
     uint256 numMinted = LibAccount.getPetsMinted(components, accountID);
-    require(
-      numMinted + amount <= LibConfig.getValueOf(components, "MINT_MAX"),
-      "ERC721MintSystem: max minted"
-    );
     LibAccount.setPetsMinted(world, components, accountID, numMinted + amount);
 
     // set return array
@@ -102,7 +94,7 @@ contract ERC721MintSystem is System {
       LibRandom.setRevealBlock(components, petID, block.number);
 
       // Mint the token
-      LibERC721.mintInGame(world, index + i);
+      LibTokens.mintInGame(world, index + i);
 
       // add petID to array
       petIDs[i] = petID;

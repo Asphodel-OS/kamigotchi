@@ -8,7 +8,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibERC721 } from "libraries/LibERC721.sol";
+import { LibTokens } from "libraries/LibTokens.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
 
@@ -51,7 +51,7 @@ contract ERC721RevealSystem is System {
   // sets metadata with a random seed
   // second phase of commit/reveal scheme. pet owners call directly
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
-    uint256 packed = LibERC721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
+    uint256 packed = LibTokens.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 
     string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
     LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));

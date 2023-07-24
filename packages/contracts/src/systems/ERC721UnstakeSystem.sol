@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibERC721 } from "libraries/LibERC721.sol";
+import { LibTokens } from "libraries/LibTokens.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.Unstake"));
@@ -36,7 +36,7 @@ contract ERC721UnstakeSystem is System {
 
     // actions to be taken upon bridging out
     LibPet.unstake(components, petID);
-    LibERC721.unstake(world, msg.sender, tokenID);
+    LibTokens.unstake(world, msg.sender, tokenID);
 
     return "";
   }

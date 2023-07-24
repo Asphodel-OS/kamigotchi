@@ -121,6 +121,19 @@ library LibAccount {
     LibDataEntity.setForAccount(components, dataID, value);
   }
 
+  function setMint20Minted(
+    IWorld world,
+    IUintComp components,
+    uint256 account,
+    uint256 value
+  ) internal {
+    uint256 dataID = LibDataEntity.getAccountDataEntity(components, account, "NUM_MINT20_MINTED");
+    if (dataID == 0) {
+      dataID = LibDataEntity.createForAccount(world, components, account, "NUM_MINT20_MINTED");
+    }
+    LibDataEntity.setForAccount(components, dataID, value);
+  }
+
   /////////////////
   // CHECKS
 
@@ -181,6 +194,10 @@ library LibAccount {
 
   function getPetsMinted(IUintComp components, uint256 account) internal view returns (uint256) {
     return LibDataEntity.getAccountData(components, account, "NUM_MINTED");
+  }
+
+  function getMint20Minted(IUintComp components, uint256 account) internal view returns (uint256) {
+    return LibDataEntity.getAccountData(components, account, "NUM_MINT20_MINTED");
   }
 
   /////////////////

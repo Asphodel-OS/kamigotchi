@@ -151,6 +151,28 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Trade.Initiate"].executeTyped(toID);
   }
 
+  /*********************
+  *       MINT
+  *********************/
+
+  // @dev mint a pet with a mint20 token
+  // @param amount  number of pets to mint
+  function mintPet(amount: BigNumberish) {
+    return systems["system.ERC721.Mint"].executeTyped(amount);
+  }
+
+  // @dev reveal a minted pet
+  // @param tokenID  ERC721 petID, not MUD entity ID
+  function revealPet(tokenID: BigNumberish) {
+    return systems["system.ERC721.Reveal"].executeTyped(tokenID);
+  }
+
+  // @dev mint mint20 tokens with eth
+  // @param amount  number of tokens to mint
+  // @param cost    cost in ETH
+  function mintToken(amount: BigNumberish, cost: BigNumberish) {
+    return systems["system.Mint20.Mint"].mint(amount, { value: utils.parseEther(cost.toString()) });
+  }
 
   /*********************
   *       ERC721
@@ -162,17 +184,6 @@ export function createPlayerAPI(systems: any) {
   // depreciated
   function mintPetEth(amount: BigNumberish, cost: BigNumberish) {
     return systems["system.ERC721.Mint"].publicMint(amount, { value: utils.parseEther(cost.toString()) });
-  }
-
-  // mint a pet via whitelist
-  function mintPet(amount: BigNumberish) {
-    return systems["system.ERC721.Mint"].executeTyped(amount);
-  }
-
-  // reveal a minted pet
-  // @param tokenID  ERC721 petID, not MUD entity ID
-  function revealPet(tokenID: BigNumberish) {
-    return systems["system.ERC721.Reveal"].executeTyped(tokenID);
   }
 
   // @dev deposits pet from outside -> game world
@@ -226,6 +237,11 @@ export function createPlayerAPI(systems: any) {
     node: {
       collect: collectAllFromNode,
     },
+    mint: {
+      mintPet: mintPet,
+      mintToken: mintToken,
+      reveal: revealPet,
+    },
     production: {
       collect: collectProduction,
       liquidate: liquidateProduction,
@@ -241,8 +257,6 @@ export function createPlayerAPI(systems: any) {
     },
     ERC721: {
       deposit: depositERC721,
-      mint: mintPet,
-      mintEth: mintPetEth,
       reveal: revealPet,
       withdraw: withdrawERC721,
     },

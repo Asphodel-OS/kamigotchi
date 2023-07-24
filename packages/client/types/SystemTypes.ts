@@ -42,6 +42,7 @@ import { Farm20ProxySystem } from "./ethers-contracts/Farm20ProxySystem";
 import { Farm20WithdrawSystem } from "./ethers-contracts/Farm20WithdrawSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
+import { Mint20MintSystem } from "./ethers-contracts/Mint20MintSystem";
 import { Mint20ProxySystem } from "./ethers-contracts/Mint20ProxySystem";
 import { NodeCollectSystem } from "./ethers-contracts/NodeCollectSystem";
 import { PetFeedSystem } from "./ethers-contracts/PetFeedSystem";
@@ -102,6 +103,7 @@ export type SystemTypes = {
   "system.Farm20.Withdraw": Farm20WithdrawSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
+  "system.Mint20.Mint": Mint20MintSystem;
   "system.Mint20.Proxy": Mint20ProxySystem;
   "system.Node.Collect": NodeCollectSystem;
   "system.Pet.Feed": PetFeedSystem;

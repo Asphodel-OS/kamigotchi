@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibERC721 } from "libraries/LibERC721.sol";
+import { LibTokens } from "libraries/LibTokens.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.Metadata"));
 
@@ -19,7 +19,7 @@ contract ERC721MetadataSystem is System {
    **********************/
 
   function tokenURI(uint256 petIndex) public view returns (string memory) {
-    return LibERC721.getJsonBase64(components, petIndex);
+    return LibTokens.getJsonBase64(components, petIndex);
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

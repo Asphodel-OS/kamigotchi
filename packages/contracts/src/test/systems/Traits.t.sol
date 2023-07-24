@@ -25,7 +25,7 @@ contract MurderTest is SetupTemplate {
     _initEpicTraits();
     _initMythicTraits();
 
-    _setConfig("MINT_MAX", 1e9);
+    _setConfig("MINT_ACCOUNT_MAX", 1e9);
   }
 
   /////////////////

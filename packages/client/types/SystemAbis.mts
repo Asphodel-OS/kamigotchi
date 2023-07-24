@@ -42,6 +42,7 @@ import Farm20ProxySystem from "../abi/Farm20ProxySystem.json";
 import Farm20WithdrawSystem from "../abi/Farm20WithdrawSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
+import Mint20MintSystem from "../abi/Mint20MintSystem.json";
 import Mint20ProxySystem from "../abi/Mint20ProxySystem.json";
 import NodeCollectSystem from "../abi/NodeCollectSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
@@ -102,6 +103,7 @@ export const SystemAbis = {
   "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
+  "system.Mint20.Mint": Mint20MintSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Node.Collect": NodeCollectSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,

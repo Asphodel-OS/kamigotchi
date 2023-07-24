@@ -20,7 +20,7 @@ contract Mint20ProxySystem is System {
   address token;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
-    Mint20 erc20 = new Mint20(_world, name, symbol, msg.sender);
+    Mint20 erc20 = new Mint20(_world, name, symbol);
     token = address(erc20);
   }
 

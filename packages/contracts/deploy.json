@@ -411,6 +411,17 @@
       "writeAccess": []
     },
     {
+      "name": "Mint20MintSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "EpochComponent",
+        "IdHolderComponent",
+        "IsScoreComponent",
+        "TypeComponent",
+        "ProxyPermissionsMint20Component"
+      ]
+    },
+    {
       "name": "PetFeedSystem",
       "writeAccess": [
         "BalanceComponent",
@@ -527,7 +538,7 @@
     "LibListing",
     "LibMerchant",
     "LibNode",
-    "LibERC721",
+    "LibTokens",
     "LibPet",
     "LibProduction",
     "LibPrototype",

@@ -34,7 +34,7 @@ import { LibRandom } from "libraries/LibRandom.sol";
 uint256 constant NUM_TRAITS = 5;
 
 // Library for ERC721 interactions and metadata generation functions
-library LibERC721 {
+library LibTokens {
   ////////////////////////
   // INTERACTIONS
 
@@ -114,11 +114,21 @@ library LibERC721 {
     return Mint20ProxySystem(getAddressById(world.systems(), Mint20ProxyID)).getToken();
   }
 
+  // get totalMinted of mint20 token
+  function getTotalMint20Minted(IWorld world) internal view returns (uint256) {
+    return getMint20Contract(world).getTotalMinted();
+  }
+
   ////////////////////////
   // MINT TOKEN INTERACTIONS
 
-  // burns mint tokens
-  function burnMint20s(IWorld world, address from, uint256 amount) internal {
+  // mints mint20 tokens
+  function mintMint20(IWorld world, address to, uint256 amount) internal {
+    getMint20Contract(world).mintMint20(to, amount);
+  }
+
+  // burns mint20 tokens
+  function burnMint20(IWorld world, address from, uint256 amount) internal {
     getMint20Contract(world).mintERC721(from, amount);
   }
 

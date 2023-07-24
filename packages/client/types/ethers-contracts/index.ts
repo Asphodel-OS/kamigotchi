@@ -80,6 +80,7 @@ export type { ListingBuySystem } from "./ListingBuySystem";
 export type { ListingSellSystem } from "./ListingSellSystem";
 export type { LocationComponent } from "./LocationComponent";
 export type { MediaURIComponent } from "./MediaURIComponent";
+export type { Mint20MintSystem } from "./Mint20MintSystem";
 export type { Mint20ProxySystem } from "./Mint20ProxySystem";
 export type { NameComponent } from "./NameComponent";
 export type { NodeCollectSystem } from "./NodeCollectSystem";
@@ -223,6 +224,7 @@ export { ListingBuySystem__factory } from "./factories/ListingBuySystem__factory
 export { ListingSellSystem__factory } from "./factories/ListingSellSystem__factory";
 export { LocationComponent__factory } from "./factories/LocationComponent__factory";
 export { MediaURIComponent__factory } from "./factories/MediaURIComponent__factory";
+export { Mint20MintSystem__factory } from "./factories/Mint20MintSystem__factory";
 export { Mint20ProxySystem__factory } from "./factories/Mint20ProxySystem__factory";
 export { NameComponent__factory } from "./factories/NameComponent__factory";
 export { NodeCollectSystem__factory } from "./factories/NodeCollectSystem__factory";

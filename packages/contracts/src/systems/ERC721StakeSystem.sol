@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibERC721 } from "libraries/LibERC721.sol";
+import { LibTokens } from "libraries/LibTokens.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.ERC721.Stake"));
@@ -29,7 +29,7 @@ contract ERC721StakeSystem is System {
     uint256 petID = LibPet.indexToID(components, tokenID);
 
     // checks before action
-    require(LibERC721.getEOAOwner(world, tokenID) == msg.sender, "721Deposit: not urs");
+    require(LibTokens.getEOAOwner(world, tokenID) == msg.sender, "721Deposit: not urs");
     require(LibPet.getAccount(components, petID) == 0, "Pet: alr has account");
     require(!LibPet.isInWorld(components, petID), "Pet: alr in world");
 
@@ -40,7 +40,7 @@ contract ERC721StakeSystem is System {
       accountID = LibAccount.create(world, components, msg.sender, msg.sender);
     }
     LibPet.stake(components, petID, accountID);
-    LibERC721.stake(world, msg.sender, tokenID);
+    LibTokens.stake(world, msg.sender, tokenID);
     return "";
   }
 
