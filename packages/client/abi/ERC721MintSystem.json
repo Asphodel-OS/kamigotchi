@@ -99,25 +99,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "publicMint",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "account",
           "type": "address"
@@ -125,19 +106,6 @@
       ],
       "name": "transferOwnership",
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "whitelistMint",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -153,9 +121,7 @@
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",
-    "publicMint(uint256)": "2db11544",
     "transferOwnership(address)": "f2fde38b",
-    "whitelistMint()": "804f43cd",
     "withdraw()": "3ccfd60b"
   }
 }

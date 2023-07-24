@@ -9,7 +9,6 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
-  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -33,9 +32,7 @@ export interface ERC721MintSystemInterface extends utils.Interface {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "publicMint(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "whitelistMint()": FunctionFragment;
     "withdraw()": FunctionFragment;
   };
 
@@ -44,9 +41,7 @@ export interface ERC721MintSystemInterface extends utils.Interface {
       | "execute"
       | "executeTyped"
       | "owner"
-      | "publicMint"
       | "transferOwnership"
-      | "whitelistMint"
       | "withdraw"
   ): FunctionFragment;
 
@@ -60,16 +55,8 @@ export interface ERC721MintSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "publicMint",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "whitelistMint",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
@@ -79,13 +66,8 @@ export interface ERC721MintSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "publicMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "whitelistMint",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
@@ -148,17 +130,8 @@ export interface ERC721MintSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    publicMint(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    whitelistMint(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -179,17 +152,8 @@ export interface ERC721MintSystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  publicMint(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  whitelistMint(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -210,17 +174,10 @@ export interface ERC721MintSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    publicMint(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    whitelistMint(overrides?: CallOverrides): Promise<string>;
 
     withdraw(overrides?: CallOverrides): Promise<void>;
   };
@@ -249,17 +206,8 @@ export interface ERC721MintSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    whitelistMint(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -281,17 +229,8 @@ export interface ERC721MintSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    publicMint(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    whitelistMint(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

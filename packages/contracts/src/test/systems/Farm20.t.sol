@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
-contract ERC20Test is SetupTemplate {
+contract Farm20Test is SetupTemplate {
   Farm20 token;
   uint256 constant MAX_INT = 2 ** 256 - 1;
 

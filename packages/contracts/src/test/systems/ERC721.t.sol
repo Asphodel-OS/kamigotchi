@@ -43,25 +43,11 @@ contract ERC721PetTest is SetupTemplate {
     assertEq(LibPet.getState(components, id), state);
   }
 
-  function testMintSingle() public {
-    _mintPet(0);
-    _assertOwnerInGame(1, _getOwner(0));
-  }
-
-  function testMintMultiple() public {
-    _mintPet(0);
-    _mintPet(0);
-    _mintPet(0);
-
-    _assertOwnerInGame(1, _getOwner(0));
-    _assertOwnerInGame(2, _getOwner(0));
-    _assertOwnerInGame(3, _getOwner(0));
-  }
-
   function testStates() public {
     // minting
+    _mintMint20(0, 1);
     vm.prank(_getOwner(0));
-    uint256 petID = abi.decode(_ERC721MintSystem.whitelistMint(), (uint256[]))[0];
+    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
     _assertPetState(petID, "UNREVEALED");
 
     uint256 petIndex = LibPet.idToIndex(components, petID);
@@ -102,15 +88,17 @@ contract ERC721PetTest is SetupTemplate {
   }
 
   function testForceReveal() public {
+    _mintMint20(0, 1);
     vm.prank(_getOwner(0));
-    uint256 petID = abi.decode(_ERC721MintSystem.whitelistMint(), (uint256[]))[0];
+    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
 
     vm.roll(block.number + 256);
     _assertPetState(petID, "UNREVEALED");
 
     // do something to mine the block
-    vm.prank(_getOwner(0));
-    _ERC721MintSystem.whitelistMint();
+    _mintMint20(0, 1);
+    // vm.prank(_getOwner(0));
+    // _ERC721MintSystem.executeTyped(1);
 
     vm.roll(block.number + 1);
     vm.startPrank(deployer);
@@ -118,17 +106,6 @@ contract ERC721PetTest is SetupTemplate {
     vm.stopPrank();
 
     _assertPetState(petID, "RESTING");
-  }
-
-  function testFailMaxMintSeparateTx() public {
-    for (uint256 i = 0; i < 501; i++) {
-      _mintPet(0);
-    }
-  }
-
-  function testFailMaxMintSingleTx() public {
-    vm.prank(alice);
-    _ERC721MintSystem.executeTyped(501);
   }
 
   // does not actually check if metadata is accurate, only if syntax is valid

@@ -110,14 +110,27 @@ abstract contract SetupTemplate is TestSetupImports {
     address operator = _operators[owner];
 
     vm.roll(_currBlock++);
+    _mintMint20(playerIndex, 1);
     vm.startPrank(owner);
-    id = abi.decode(_ERC721MintSystem.publicMint(1), (uint[]))[0];
+    id = abi.decode(_ERC721MintSystem.executeTyped(1), (uint[]))[0];
     vm.stopPrank();
 
     vm.roll(_currBlock++);
     vm.startPrank(operator);
     _ERC721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
     vm.stopPrank();
+  }
+
+  // mints an mint20 token for user
+  function _mintMint20(uint playerIndex, uint amount) internal {
+    address owner = _owners[playerIndex];
+    address operator = _operators[owner];
+
+    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
+
+    vm.deal(owner, amount * price);
+    vm.prank(owner);
+    _Mint20MintSystem.mint{ value: amount * price }(amount);
   }
 
   /////////////////
