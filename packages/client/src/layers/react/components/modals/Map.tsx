@@ -48,7 +48,7 @@ export function registerMapModal() {
       const { visibleModals } = dataStore();
       const [currentLocation, setCurrentLocation] = useState<number>(1);
       const [selectedRoom, setSelectedRoom] = useState<Room>();
-
+      const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 
       /////////////////
       // DATA FETCHING
@@ -74,6 +74,9 @@ export function registerMapModal() {
             { owner: true, players: true },
           );
           setSelectedRoom(room);
+
+          const exits = room.exits?.map((exit) => getRoomByLocation(layers, exit * 1));
+          setSelectedExits(exits);
         }
       }, [selectedEntities.room]);
 
@@ -95,20 +98,31 @@ export function registerMapModal() {
         setCurrentLocation(location);
       };
 
-      const RoomInfo = ({ room }: { room: Room | undefined }) => {
+      const RoomInfo = ({ room, exits }: { room: Room | undefined, exits: Room[] }) => {
         if (!room) return <div />;
         return (
           <Scrollable ref={scrollableRef}>
-            <RoomName>Room {room.location}: {room.name}</RoomName>
-            <Description>{room.owner ? (room.owner.name) : ''}</Description>
-            <Description>{room.description}</Description>
-            <Description>
-              Exits:{' '}
-              {room.exits?.map((room) => (
-                <StyledSpan>{room * 1}</StyledSpan>
-              ))}
-            </Description>
-            <Description>{room.players?.map((player) => (player.name)).join(', ')}</Description>
+            <SectionContainer>
+              <SectionTitle style={{ fontSize: 16 }}>Room {room.location}: {room.name}</SectionTitle>
+              <Description>{room.owner ? (room.owner.name) : ''}</Description>
+              <Description>{room.description}</Description>
+            </SectionContainer>
+
+            <SectionContainer>
+              <SectionTitle>Exits</SectionTitle>
+              {exits.map((exit) => {
+                return (
+                  <ClickableDescription onClick={() => move(exit.location)}>
+                    {exit.name}
+                  </ClickableDescription>
+                );
+              })}
+            </SectionContainer>
+
+            <SectionContainer>
+              <SectionTitle>Players</SectionTitle>
+              <Description>{room.players?.map((player) => (player.name)).join(', ')}</Description>
+            </SectionContainer>
           </Scrollable>
         );
       };
@@ -121,40 +135,22 @@ export function registerMapModal() {
 
       return (
         <ModalWrapperFull id='world_map' divName='map'>
-          <div style={{ display: 'grid', height: '100%' }}>
-            <RoomInfo room={selectedRoom} />
-            <MapBox>
-              <MapGrid currentRoom={currentLocation} move={move} />
-            </MapBox>
-          </div>
+          <MapBox>
+            <MapGrid currentRoom={currentLocation} move={move} />
+          </MapBox>
+          <RoomInfo room={selectedRoom} exits={selectedExits} />
         </ModalWrapperFull>
       );
     }
   );
 }
 
-const RoomName = styled.p`
-  font-size: 16px;
-  color: #333;
-  text-align: left;
-  font-family: Pixel;
-  margin: 5px;
-`;
-
-const Description = styled.p`
-  font-size: 12px;
-  color: #333;
-  text-align: left;
-  font-family: Pixel;
-  margin: 5px;
-`;
-
 const MapBox = styled.div`
   border-style: solid;
   border-width: 2px 2px 0px 2px;
   border-color: black;
-  grid-column: 1;
-  grid-row: 1;
+  min-height: 50%;
+  flex-grow: 1;
 `;
 
 const Scrollable = styled.div`
@@ -164,13 +160,46 @@ const Scrollable = styled.div`
   border-style: solid;
   border-width: 2px;
   border-color: black;
-  grid-column: 1;
-  grid-row: 2;
+  padding: 10px;
 `;
 
-const StyledSpan = styled.span`
-  font-size: 12px;
-  color: #333;
-  font-family: Pixel;
-  margin-left: 7px;
+const SectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  padding: 10px;
 `;
+
+const SectionTitle = styled.p`
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+  font-family: Pixel;
+  padding: 5px 0px 10px 0px;
+`;
+
+const Description = styled.p`
+  color: #333;
+  padding: 5px;
+  
+  font-size: 12px;
+  font-family: Pixel;
+  text-align: left;
+`;
+
+// TODO: merge this with Description using props
+const ClickableDescription = styled.p`
+  color: #333;
+  cursor: pointer;
+  padding: 5px;
+  
+  font-size: 12px;
+  font-family: Pixel;
+  text-align: left;
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+
+
