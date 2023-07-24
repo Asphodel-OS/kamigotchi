@@ -43,10 +43,12 @@ export function registerMapModal() {
       );
     },
     ({ layers, actions, api }) => {
+      const { details: accountDetails } = useKamiAccount();
       const { selectedEntities, setSelectedEntities } = dataStore();
       const { visibleModals } = dataStore();
+      const [currentLocation, setCurrentLocation] = useState<number>(1);
       const [selectedRoom, setSelectedRoom] = useState<Room>();
-      const { details: accountDetails } = useKamiAccount();
+
 
       /////////////////
       // DATA FETCHING
@@ -58,6 +60,7 @@ export function registerMapModal() {
             layers.network.components.Location,
             accountDetails.index
           )?.value as number * 1;
+          setCurrentLocation(location);
           setSelectedEntities({ ...selectedEntities, room: location });
         }
       }, [visibleModals.map]);
@@ -107,8 +110,10 @@ export function registerMapModal() {
         );
       };
 
+
       ///////////////////
       // DISPLAY
+
       const scrollableRef = useRef<HTMLDivElement>(null);
 
       return (
@@ -116,7 +121,7 @@ export function registerMapModal() {
           <div style={{ display: 'grid', height: '100%' }}>
             <RoomInfo room={selectedRoom} />
             <MapBox>
-              <MapGrid highlightedRoom={selectedRoom?.location} move={move} />
+              <MapGrid highlightedRoom={currentLocation} move={move} />
             </MapBox>
           </div>
         </ModalWrapperFull>
