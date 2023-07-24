@@ -68,7 +68,11 @@ export function registerMapModal() {
       // update the selected room details
       useEffect(() => {
         if (selectedEntities.room) {
-          const room = getRoomByLocation(layers, selectedEntities.room);
+          const room = getRoomByLocation(
+            layers,
+            selectedEntities.room,
+            { owner: true, players: true },
+          );
           setSelectedRoom(room);
         }
       }, [selectedEntities.room]);
@@ -104,9 +108,7 @@ export function registerMapModal() {
                 <StyledSpan>{room * 1}</StyledSpan>
               ))}
             </Description>
-            <Description>
-              You see [array of all operator names in room separated by commas] here
-            </Description>
+            <Description>{room.players?.map((player) => (player.name)).join(', ')}</Description>
           </Scrollable>
         );
       };
