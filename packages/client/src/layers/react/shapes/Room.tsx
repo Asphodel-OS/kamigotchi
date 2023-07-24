@@ -15,6 +15,7 @@ export interface Room {
   id: EntityID;
   entityIndex: EntityIndex;
   name: string;
+  description: string;
   location: number;
   exits: number[];
 }
@@ -23,7 +24,7 @@ export interface Room {
 export const getRoom = (layers: Layers, index: EntityIndex): Room => {
   const {
     network: {
-      components: { Name, Location, Exits },
+      components: { Description, Exits, Name, Location },
       world,
     },
   } = layers;
@@ -32,6 +33,7 @@ export const getRoom = (layers: Layers, index: EntityIndex): Room => {
     id: world.entities[index],
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
+    description: getComponentValue(Description, index)?.value as string,
     location: (getComponentValue(Location, index)?.value as number) * 1,
     exits: getComponentValue(Exits, index)?.value as number[],
   };
