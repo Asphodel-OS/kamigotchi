@@ -1,14 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { map, merge } from 'rxjs';
-import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
+import { EntityID, getComponentValue } from '@latticexyz/recs';
 import styled from 'styled-components';
 
-import { getCurrentRoom } from 'layers/phaser/utils';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import MapGrid from 'layers/react/components/library/MapGrid';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { dataStore } from 'layers/react/store/createStore';
-import MapGrid from '../library/MapGrid';
-import { Room, getRoom } from '../../shapes/Room';
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -23,55 +27,55 @@ export function registerMapModal() {
       const {
         network: {
           api: { player },
-          network: { connectedAddress },
-          components: { IsAccount, Location, OperatorAddress },
+          components: { Location, OperatorAddress },
           actions,
         },
       } = layers;
 
       return merge(Location.update$, OperatorAddress.update$).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
-          const accountEntityIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const roomEntityIndex = Array.from(
-            runQuery([
-              Has(Location),
-              HasValue(Location, { value: getComponentValue(Location, accountEntityIndex)?.value }),
-            ])
-          )[0];
-
-          const roomData = getRoom(layers, roomEntityIndex);
-          const currentRoom = getCurrentRoom(Location, accountEntityIndex);
           return {
+            layers,
             actions,
             api: player,
-            data: { currentRoom, roomData },
           };
         })
       );
     },
-    ({ actions, api, data }) => {
+    ({ layers, actions, api }) => {
+      const { selectedEntities, setSelectedEntities } = dataStore();
       const { visibleModals } = dataStore();
+      const [selectedRoom, setSelectedRoom] = useState<Room>();
+      const { details: accountDetails } = useKamiAccount();
 
+      /////////////////
+      // DATA FETCHING
+
+      // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
-        if (visibleModals.map === true)
-          document.getElementById('world_map')!.style.display = 'block';
+        if (visibleModals.map) {
+          const location = getComponentValue(
+            layers.network.components.Location,
+            accountDetails.index
+          )?.value as number * 1;
+          setSelectedEntities({ ...selectedEntities, room: location });
+        }
       }, [visibleModals.map]);
 
+      // update the selected room details
+      useEffect(() => {
+        if (selectedEntities.room) {
+          const room = getRoomByLocation(layers, selectedEntities.room);
+          setSelectedRoom(room);
+        }
+      }, [selectedEntities.room]);
+
+
       ///////////////////
-      // ACTTONS
+      // ACTIONS
 
       const move = (location: number) => {
         const actionID = `Moving to room ${location}` as EntityID;
-
         actions.add({
           id: actionID,
           components: {},
@@ -83,20 +87,16 @@ export function registerMapModal() {
         });
       };
 
-      const RoomInfo = ({ roomData }: { roomData: Room }) => {
+      const RoomInfo = ({ room }: { room: Room | undefined }) => {
+        if (!room) return <div />;
         return (
           <Scrollable ref={scrollableRef}>
-            <RoomName>
-              Room Name: {roomData.name} ({roomData.location})
-            </RoomName>
-            <Description>
-              This is where short descriptive text on the room goes. Brave tester, you have caught
-              me doing UX design in prod.
-            </Description>
+            <RoomName>Room {room.location}: {room.name}</RoomName>
+            <Description>{room.description}</Description>
             <Description>Room Owner: None</Description>
             <Description>
               Exits:{' '}
-              {roomData.exits?.map((room) => (
+              {room.exits?.map((room) => (
                 <StyledSpan>{room * 1}</StyledSpan>
               ))}
             </Description>
@@ -114,9 +114,9 @@ export function registerMapModal() {
       return (
         <ModalWrapperFull id='world_map' divName='map'>
           <div style={{ display: 'grid', height: '100%' }}>
-            <RoomInfo roomData={data.roomData} />
+            <RoomInfo room={selectedRoom} />
             <MapBox>
-              <MapGrid highlightedRoom={data.currentRoom} move={move} />
+              <MapGrid highlightedRoom={selectedRoom?.location} move={move} />
             </MapBox>
           </div>
         </ModalWrapperFull>
