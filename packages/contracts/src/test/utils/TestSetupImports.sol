@@ -126,6 +126,7 @@ import { _RegistryUpdateModSystem, ID as _RegistryUpdateModSystemID } from "syst
 import { _RegistryUpdateReviveSystem, ID as _RegistryUpdateReviveSystemID } from "systems/_RegistryUpdateReviveSystem.sol";
 import { _RegistryUpdateTraitSystem, ID as _RegistryUpdateTraitSystemID } from "systems/_RegistryUpdateTraitSystem.sol";
 import { _RoomCreateSystem, ID as _RoomCreateSystemID } from "systems/_RoomCreateSystem.sol";
+import { _RoomSetDescriptionSystem, ID as _RoomSetDescriptionSystemID } from "systems/_RoomSetDescriptionSystem.sol";
 import { _RoomSetExitsSystem, ID as _RoomSetExitsSystemID } from "systems/_RoomSetExitsSystem.sol";
 import { _RoomSetNameSystem, ID as _RoomSetNameSystemID } from "systems/_RoomSetNameSystem.sol";
 import { AccountFundSystem, ID as AccountFundSystemID } from "systems/AccountFundSystem.sol";
@@ -264,6 +265,7 @@ _RegistryUpdateModSystem __RegistryUpdateModSystem;
 _RegistryUpdateReviveSystem __RegistryUpdateReviveSystem;
 _RegistryUpdateTraitSystem __RegistryUpdateTraitSystem;
 _RoomCreateSystem __RoomCreateSystem;
+_RoomSetDescriptionSystem __RoomSetDescriptionSystem;
 _RoomSetExitsSystem __RoomSetExitsSystem;
 _RoomSetNameSystem __RoomSetNameSystem;
 AccountFundSystem _AccountFundSystem;
@@ -402,6 +404,7 @@ __RegistryUpdateModSystem = _RegistryUpdateModSystem(system(_RegistryUpdateModSy
 __RegistryUpdateReviveSystem = _RegistryUpdateReviveSystem(system(_RegistryUpdateReviveSystemID));
 __RegistryUpdateTraitSystem = _RegistryUpdateTraitSystem(system(_RegistryUpdateTraitSystemID));
 __RoomCreateSystem = _RoomCreateSystem(system(_RoomCreateSystemID));
+__RoomSetDescriptionSystem = _RoomSetDescriptionSystem(system(_RoomSetDescriptionSystemID));
 __RoomSetExitsSystem = _RoomSetExitsSystem(system(_RoomSetExitsSystemID));
 __RoomSetNameSystem = _RoomSetNameSystem(system(_RoomSetNameSystemID));
 _AccountFundSystem = AccountFundSystem(system(AccountFundSystemID));

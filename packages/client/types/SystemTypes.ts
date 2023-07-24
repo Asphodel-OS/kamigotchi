@@ -23,6 +23,7 @@ import { _RegistryUpdateModSystem } from "./ethers-contracts/_RegistryUpdateModS
 import { _RegistryUpdateReviveSystem } from "./ethers-contracts/_RegistryUpdateReviveSystem";
 import { _RegistryUpdateTraitSystem } from "./ethers-contracts/_RegistryUpdateTraitSystem";
 import { _RoomCreateSystem } from "./ethers-contracts/_RoomCreateSystem";
+import { _RoomSetDescriptionSystem } from "./ethers-contracts/_RoomSetDescriptionSystem";
 import { _RoomSetExitsSystem } from "./ethers-contracts/_RoomSetExitsSystem";
 import { _RoomSetNameSystem } from "./ethers-contracts/_RoomSetNameSystem";
 import { AccountFundSystem } from "./ethers-contracts/AccountFundSystem";
@@ -82,6 +83,7 @@ export type SystemTypes = {
   "system._Registry.Revive.Update": _RegistryUpdateReviveSystem;
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem;
   "system._Room.Create": _RoomCreateSystem;
+  "system._Room.Set.Description": _RoomSetDescriptionSystem;
   "system._Room.Set.Exits": _RoomSetExitsSystem;
   "system._Room.Set.Name": _RoomSetNameSystem;
   "system.Account.Fund": AccountFundSystem;

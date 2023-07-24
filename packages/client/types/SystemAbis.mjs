@@ -23,6 +23,7 @@ import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
 import _RegistryUpdateReviveSystem from "../abi/_RegistryUpdateReviveSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
+import _RoomSetDescriptionSystem from "../abi/_RoomSetDescriptionSystem.json";
 import _RoomSetExitsSystem from "../abi/_RoomSetExitsSystem.json";
 import _RoomSetNameSystem from "../abi/_RoomSetNameSystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
@@ -82,6 +83,7 @@ export const SystemAbis = {
   "system._Registry.Revive.Update": _RegistryUpdateReviveSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
+  "system._Room.Set.Description": _RoomSetDescriptionSystem.abi,
   "system._Room.Set.Exits": _RoomSetExitsSystem.abi,
   "system._Room.Set.Name": _RoomSetNameSystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,

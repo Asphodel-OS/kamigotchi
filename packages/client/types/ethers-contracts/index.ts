@@ -138,6 +138,7 @@ export type { _RegistryUpdateModSystem } from "./_RegistryUpdateModSystem";
 export type { _RegistryUpdateReviveSystem } from "./_RegistryUpdateReviveSystem";
 export type { _RegistryUpdateTraitSystem } from "./_RegistryUpdateTraitSystem";
 export type { _RoomCreateSystem } from "./_RoomCreateSystem";
+export type { _RoomSetDescriptionSystem } from "./_RoomSetDescriptionSystem";
 export type { _RoomSetExitsSystem } from "./_RoomSetExitsSystem";
 export type { _RoomSetNameSystem } from "./_RoomSetNameSystem";
 export type { _devGiveTokensSystem } from "./_devGiveTokensSystem";
@@ -279,6 +280,7 @@ export { _RegistryUpdateModSystem__factory } from "./factories/_RegistryUpdateMo
 export { _RegistryUpdateReviveSystem__factory } from "./factories/_RegistryUpdateReviveSystem__factory";
 export { _RegistryUpdateTraitSystem__factory } from "./factories/_RegistryUpdateTraitSystem__factory";
 export { _RoomCreateSystem__factory } from "./factories/_RoomCreateSystem__factory";
+export { _RoomSetDescriptionSystem__factory } from "./factories/_RoomSetDescriptionSystem__factory";
 export { _RoomSetExitsSystem__factory } from "./factories/_RoomSetExitsSystem__factory";
 export { _RoomSetNameSystem__factory } from "./factories/_RoomSetNameSystem__factory";
 export { _devGiveTokensSystem__factory } from "./factories/_devGiveTokensSystem__factory";
