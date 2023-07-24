@@ -122,13 +122,13 @@ export function createAdminAPI(systems: any) {
     );
     await createRoom(
       9,
-      'Forest: Old Growth',
+      'Old Growth',
       'You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.',
       [5, 10, 11]
     );
     await createRoom(
       10,
-      'Forest: Insect Node',
+      'Insect Node',
       'The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.',
       [9]
     );
