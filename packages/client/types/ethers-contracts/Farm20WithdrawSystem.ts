@@ -27,12 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface BytesProxySystemInterface extends utils.Interface {
+export interface Farm20WithdrawSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
-    "getToken()": FunctionFragment;
-    "getTokenAddy()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -41,8 +39,6 @@ export interface BytesProxySystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "execute"
       | "executeTyped"
-      | "getToken"
-      | "getTokenAddy"
       | "owner"
       | "transferOwnership"
   ): FunctionFragment;
@@ -55,11 +51,6 @@ export interface BytesProxySystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getTokenAddy",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -69,11 +60,6 @@ export interface BytesProxySystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenAddy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -101,12 +87,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface BytesProxySystem extends BaseContract {
+export interface Farm20WithdrawSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: BytesProxySystemInterface;
+  interface: Farm20WithdrawSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -130,17 +116,13 @@ export interface BytesProxySystem extends BaseContract {
   functions: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     executeTyped(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getToken(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenAddy(overrides?: CallOverrides): Promise<[string]>;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -152,17 +134,13 @@ export interface BytesProxySystem extends BaseContract {
 
   execute(
     arguments: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   executeTyped(
     amount: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getToken(overrides?: CallOverrides): Promise<string>;
-
-  getTokenAddy(overrides?: CallOverrides): Promise<string>;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -181,10 +159,6 @@ export interface BytesProxySystem extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    getToken(overrides?: CallOverrides): Promise<string>;
-
-    getTokenAddy(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -208,17 +182,13 @@ export interface BytesProxySystem extends BaseContract {
   estimateGas: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     executeTyped(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    getToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenAddy(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -231,17 +201,13 @@ export interface BytesProxySystem extends BaseContract {
   populateTransaction: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTokenAddy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

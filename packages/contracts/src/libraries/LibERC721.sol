@@ -22,9 +22,9 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 
 import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol";
-import { MintTokenProxySystem, ID as MintTokenProxyID } from "systems/MintTokenProxySystem.sol";
+import { Mint20ProxySystem, ID as Mint20ProxyID } from "systems/Mint20ProxySystem.sol";
 import { KamiERC721 } from "tokens/KamiERC721.sol";
-import { MintToken } from "tokens/MintToken.sol";
+import { Mint20 } from "tokens/Mint20.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
@@ -110,16 +110,16 @@ library LibERC721 {
   }
 
   // get mint token contract
-  function getMintTokenContract(IWorld world) internal view returns (MintToken) {
-    return MintTokenProxySystem(getAddressById(world.systems(), MintTokenProxyID)).getToken();
+  function getMint20Contract(IWorld world) internal view returns (Mint20) {
+    return Mint20ProxySystem(getAddressById(world.systems(), Mint20ProxyID)).getToken();
   }
 
   ////////////////////////
   // MINT TOKEN INTERACTIONS
 
   // burns mint tokens
-  function burnMintTokens(IWorld world, address from, uint256 amount) internal {
-    getMintTokenContract(world).mintERC721(from, amount);
+  function burnMint20s(IWorld world, address from, uint256 amount) internal {
+    getMint20Contract(world).mintERC721(from, amount);
   }
 
   ////////////////////////

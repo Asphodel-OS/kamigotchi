@@ -85,9 +85,9 @@ import { PowerComponent, ID as PowerComponentID } from "components/PowerComponen
 import { PriceBuyComponent, ID as PriceBuyComponentID } from "components/PriceBuyComponent.sol";
 import { PriceSellComponent, ID as PriceSellComponentID } from "components/PriceSellComponent.sol";
 import { PrototypeComponent, ID as PrototypeComponentID } from "components/PrototypeComponent.sol";
-import { ProxyPermissionsBytesComponent, ID as ProxyPermissionsBytesComponentID } from "components/ProxyPermissionsBytesComponent.sol";
+import { ProxyPermissionsFarm20Component, ID as ProxyPermissionsFarm20ComponentID } from "components/ProxyPermissionsFarm20Component.sol";
 import { ProxyPermissionsERC721Component, ID as ProxyPermissionsERC721ComponentID } from "components/ProxyPermissionsERC721Component.sol";
-import { ProxyPermissionsMintTokenComponent, ID as ProxyPermissionsMintTokenComponentID } from "components/ProxyPermissionsMintTokenComponent.sol";
+import { ProxyPermissionsMint20Component, ID as ProxyPermissionsMint20ComponentID } from "components/ProxyPermissionsMint20Component.sol";
 import { RarityComponent, ID as RarityComponentID } from "components/RarityComponent.sol";
 import { RateComponent, ID as RateComponentID } from "components/RateComponent.sol";
 import { SlotsComponent, ID as SlotsComponentID } from "components/SlotsComponent.sol";
@@ -134,9 +134,9 @@ import { AccountMoveSystem, ID as AccountMoveSystemID } from "systems/AccountMov
 import { AccountSetNameSystem, ID as AccountSetNameSystemID } from "systems/AccountSetNameSystem.sol";
 import { AccountSetOperatorSystem, ID as AccountSetOperatorSystemID } from "systems/AccountSetOperatorSystem.sol";
 import { AccountRegisterSystem, ID as AccountRegisterSystemID } from "systems/AccountRegisterSystem.sol";
-import { BytesProxySystem, ID as BytesProxySystemID } from "systems/BytesProxySystem.sol";
-import { BytesWithdrawSystem, ID as BytesWithdrawSystemID } from "systems/BytesWithdrawSystem.sol";
-import { BytesDepositSystem, ID as BytesDepositSystemID } from "systems/BytesDepositSystem.sol";
+import { Farm20ProxySystem, ID as Farm20ProxySystemID } from "systems/Farm20ProxySystem.sol";
+import { Farm20WithdrawSystem, ID as Farm20WithdrawSystemID } from "systems/Farm20WithdrawSystem.sol";
+import { Farm20DepositSystem, ID as Farm20DepositSystemID } from "systems/Farm20DepositSystem.sol";
 import { ERC721MetadataSystem, ID as ERC721MetadataSystemID } from "systems/ERC721MetadataSystem.sol";
 import { ERC721MintSystem, ID as ERC721MintSystemID } from "systems/ERC721MintSystem.sol";
 import { ERC721RevealSystem, ID as ERC721RevealSystemID } from "systems/ERC721RevealSystem.sol";
@@ -147,7 +147,7 @@ import { ERC721StakeSystem, ID as ERC721StakeSystemID } from "systems/ERC721Stak
 import { ListingBuySystem, ID as ListingBuySystemID } from "systems/ListingBuySystem.sol";
 import { ListingSellSystem, ID as ListingSellSystemID } from "systems/ListingSellSystem.sol";
 import { NodeCollectSystem, ID as NodeCollectSystemID } from "systems/NodeCollectSystem.sol";
-import { MintTokenProxySystem, ID as MintTokenProxySystemID } from "systems/MintTokenProxySystem.sol";
+import { Mint20ProxySystem, ID as Mint20ProxySystemID } from "systems/Mint20ProxySystem.sol";
 import { PetFeedSystem, ID as PetFeedSystemID } from "systems/PetFeedSystem.sol";
 import { PetNameSystem, ID as PetNameSystemID } from "systems/PetNameSystem.sol";
 import { PetReviveSystem, ID as PetReviveSystemID } from "systems/PetReviveSystem.sol";
@@ -158,7 +158,8 @@ import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/Pr
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
 
 // Tokens
-import { Bytes } from "tokens/Bytes.sol";
+import { Farm20 } from "tokens/Farm20.sol";
+import { Mint20 } from "tokens/Mint20.sol";
 import { KamiERC721 } from "tokens/KamiERC721.sol";
 
 abstract contract TestSetupImports is MudTest {
@@ -225,9 +226,9 @@ PowerComponent _PowerComponent;
 PriceBuyComponent _PriceBuyComponent;
 PriceSellComponent _PriceSellComponent;
 PrototypeComponent _PrototypeComponent;
-ProxyPermissionsBytesComponent _ProxyPermissionsBytesComponent;
+ProxyPermissionsFarm20Component _ProxyPermissionsFarm20Component;
 ProxyPermissionsERC721Component _ProxyPermissionsERC721Component;
-ProxyPermissionsMintTokenComponent _ProxyPermissionsMintTokenComponent;
+ProxyPermissionsMint20Component _ProxyPermissionsMint20Component;
 RarityComponent _RarityComponent;
 RateComponent _RateComponent;
 SlotsComponent _SlotsComponent;
@@ -274,9 +275,9 @@ AccountMoveSystem _AccountMoveSystem;
 AccountSetNameSystem _AccountSetNameSystem;
 AccountSetOperatorSystem _AccountSetOperatorSystem;
 AccountRegisterSystem _AccountRegisterSystem;
-BytesProxySystem _BytesProxySystem;
-BytesWithdrawSystem _BytesWithdrawSystem;
-BytesDepositSystem _BytesDepositSystem;
+Farm20ProxySystem _Farm20ProxySystem;
+Farm20WithdrawSystem _Farm20WithdrawSystem;
+Farm20DepositSystem _Farm20DepositSystem;
 ERC721MetadataSystem _ERC721MetadataSystem;
 ERC721MintSystem _ERC721MintSystem;
 ERC721RevealSystem _ERC721RevealSystem;
@@ -287,7 +288,7 @@ ERC721StakeSystem _ERC721StakeSystem;
 ListingBuySystem _ListingBuySystem;
 ListingSellSystem _ListingSellSystem;
 NodeCollectSystem _NodeCollectSystem;
-MintTokenProxySystem _MintTokenProxySystem;
+Mint20ProxySystem _Mint20ProxySystem;
 PetFeedSystem _PetFeedSystem;
 PetNameSystem _PetNameSystem;
 PetReviveSystem _PetReviveSystem;
@@ -298,7 +299,7 @@ ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
 
 // Token vars
-Bytes _Bytes;
+Farm20 _Farm20;
 KamiERC721 _KamiERC721;
 
 function setUp() public virtual override {
@@ -366,9 +367,9 @@ _PowerComponent = PowerComponent(component(PowerComponentID));
 _PriceBuyComponent = PriceBuyComponent(component(PriceBuyComponentID));
 _PriceSellComponent = PriceSellComponent(component(PriceSellComponentID));
 _PrototypeComponent = PrototypeComponent(component(PrototypeComponentID));
-_ProxyPermissionsBytesComponent = ProxyPermissionsBytesComponent(component(ProxyPermissionsBytesComponentID));
+_ProxyPermissionsFarm20Component = ProxyPermissionsFarm20Component(component(ProxyPermissionsFarm20ComponentID));
 _ProxyPermissionsERC721Component = ProxyPermissionsERC721Component(component(ProxyPermissionsERC721ComponentID));
-_ProxyPermissionsMintTokenComponent = ProxyPermissionsMintTokenComponent(component(ProxyPermissionsMintTokenComponentID));
+_ProxyPermissionsMint20Component = ProxyPermissionsMint20Component(component(ProxyPermissionsMint20ComponentID));
 _RarityComponent = RarityComponent(component(RarityComponentID));
 _RateComponent = RateComponent(component(RateComponentID));
 _SlotsComponent = SlotsComponent(component(SlotsComponentID));
@@ -414,9 +415,9 @@ _AccountMoveSystem = AccountMoveSystem(system(AccountMoveSystemID));
 _AccountSetNameSystem = AccountSetNameSystem(system(AccountSetNameSystemID));
 _AccountSetOperatorSystem = AccountSetOperatorSystem(system(AccountSetOperatorSystemID));
 _AccountRegisterSystem = AccountRegisterSystem(system(AccountRegisterSystemID));
-_BytesProxySystem = BytesProxySystem(system(BytesProxySystemID));
-_BytesWithdrawSystem = BytesWithdrawSystem(system(BytesWithdrawSystemID));
-_BytesDepositSystem = BytesDepositSystem(system(BytesDepositSystemID));
+_Farm20ProxySystem = Farm20ProxySystem(system(Farm20ProxySystemID));
+_Farm20WithdrawSystem = Farm20WithdrawSystem(system(Farm20WithdrawSystemID));
+_Farm20DepositSystem = Farm20DepositSystem(system(Farm20DepositSystemID));
 _ERC721MetadataSystem = ERC721MetadataSystem(system(ERC721MetadataSystemID));
 _ERC721MintSystem = ERC721MintSystem(system(ERC721MintSystemID));
 _ERC721RevealSystem = ERC721RevealSystem(system(ERC721RevealSystemID));
@@ -427,7 +428,7 @@ _ERC721StakeSystem = ERC721StakeSystem(system(ERC721StakeSystemID));
 _ListingBuySystem = ListingBuySystem(system(ListingBuySystemID));
 _ListingSellSystem = ListingSellSystem(system(ListingSellSystemID));
 _NodeCollectSystem = NodeCollectSystem(system(NodeCollectSystemID));
-_MintTokenProxySystem = MintTokenProxySystem(system(MintTokenProxySystemID));
+_Mint20ProxySystem = Mint20ProxySystem(system(Mint20ProxySystemID));
 _PetFeedSystem = PetFeedSystem(system(PetFeedSystemID));
 _PetNameSystem = PetNameSystem(system(PetNameSystemID));
 _PetReviveSystem = PetReviveSystem(system(PetReviveSystemID));
@@ -437,7 +438,7 @@ _ProductionLiquidateSystem = ProductionLiquidateSystem(system(ProductionLiquidat
 _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 
-_Bytes = _BytesProxySystem.getToken();
+_Farm20 = _Farm20ProxySystem.getToken();
 _KamiERC721 = _ERC721ProxySystem.getToken();
 }
 }

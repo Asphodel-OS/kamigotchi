@@ -8,23 +8,23 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 
-import { Bytes } from "tokens/Bytes.sol";
-import { BytesProxySystem, ID as ProxyID } from "systems/BytesProxySystem.sol";
+import { Farm20 } from "tokens/Farm20.sol";
+import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
 
-uint256 constant ID = uint256(keccak256("system.ERC20.Deposit"));
+uint256 constant ID = uint256(keccak256("system.Farm20.Deposit"));
 
 // brings ERC20 tokens back into the game, sends it to the sender's account entity
-contract BytesDepositSystem is System {
+contract Farm20DepositSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
-    require(amount > 0, "ERC20Deposit: amt must be > 0");
+    require(amount > 0, "Farm20Deposit: amt must be > 0");
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "ERC20Deposit: addy has no acc");
+    require(accountID != 0, "Farm20Deposit: addy has no acc");
 
-    Bytes token = BytesProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
+    Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
     LibCoin.inc(components, accountID, amount);
 

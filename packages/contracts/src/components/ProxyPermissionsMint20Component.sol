@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 import "std-contracts/components/BoolComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Proxy.Permissions.Bytes"));
+uint256 constant ID = uint256(keccak256("component.Proxy.Permissions.Mint20"));
 
-contract ProxyPermissionsBytesComponent is BoolComponent {
+contract ProxyPermissionsMint20Component is BoolComponent {
   constructor(address world) BoolComponent(world, ID) {}
 }

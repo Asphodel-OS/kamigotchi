@@ -65,13 +65,13 @@ export function registerKamiMintModal() {
           return {
             layers,
             unrevealedKamis,
-            proxyMintTokenAddy: systems["system.ERC20.Proxy"].address
+            proxyMint20Addy: systems["system.Farm20.Proxy"].address
           };
         })
       );
     },
 
-    ({ layers, unrevealedKamis, proxyMintTokenAddy }) => {
+    ({ layers, unrevealedKamis, proxyMint20Addy }) => {
       const {
         network: {
           actions,
@@ -154,7 +154,7 @@ export function registerKamiMintModal() {
 
       // get token balance of controlling account 
       const { data: erc20Addy } = useContractRead({
-        address: proxyMintTokenAddy as `0x${string}`,
+        address: proxyMint20Addy as `0x${string}`,
         abi: abi,
         functionName: 'getTokenAddy'
       });
@@ -208,7 +208,7 @@ export function registerKamiMintModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Stepper steps={steps} MintButton={MintButton} NumMinted={Number(totalSupply)} MintTokenBal={Number(mintTokenBal?.formatted)} />
+          <Stepper steps={steps} MintButton={MintButton} NumMinted={Number(totalSupply)} Mint20Bal={Number(mintTokenBal?.formatted)} />
         </ModalWrapperFull>
       );
     }
@@ -226,7 +226,7 @@ const StepOne = () => (
 );
 
 const StepTwo = (props: any) => {
-  const { MintButton, NumMinted, MintTokenBal } = props;
+  const { MintButton, NumMinted, Mint20Bal } = props;
   // console.log(NumMinted)
 
   return (
@@ -257,7 +257,7 @@ const StepTwo = (props: any) => {
           Minted: {NumMinted} / 1111
         </SubText>
       </Grid>
-      <Description>ERC20 Balance: {MintTokenBal}</Description>
+      <Description>ERC20 Balance: {Mint20Bal}</Description>
     </>
   );
 };
@@ -269,7 +269,7 @@ const steps = (props: any) => [
   },
   {
     title: 'Two',
-    content: <StepTwo MintButton={props.MintButton} NumMinted={props.NumMinted} MintTokenBal={props.MintTokenBal} />,
+    content: <StepTwo MintButton={props.MintButton} NumMinted={props.NumMinted} Mint20Bal={props.Mint20Bal} />,
     modalContent: true,
   },
 ];

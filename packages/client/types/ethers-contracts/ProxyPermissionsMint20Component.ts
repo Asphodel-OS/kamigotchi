@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ProxyPermissionsMintTokenComponentInterface
+export interface ProxyPermissionsMint20ComponentInterface
   extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
@@ -214,12 +214,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ProxyPermissionsMintTokenComponent extends BaseContract {
+export interface ProxyPermissionsMint20Component extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ProxyPermissionsMintTokenComponentInterface;
+  interface: ProxyPermissionsMint20ComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

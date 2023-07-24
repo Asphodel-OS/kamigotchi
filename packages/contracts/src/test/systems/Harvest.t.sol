@@ -99,8 +99,8 @@ contract HarvestTest is SetupTemplate {
     // create the production
     _fastForward(_idleRequirement);
     vm.prank(_getOperator(playerIndex));
-    bytes memory productionIDBytes = _ProductionStartSystem.executeTyped(kamiID, nodeID);
-    uint productionID = abi.decode(productionIDBytes, (uint));
+    bytes memory productionIDFarm20 = _ProductionStartSystem.executeTyped(kamiID, nodeID);
+    uint productionID = abi.decode(productionIDFarm20, (uint));
 
     // test that a production is created with the expected base fields
     assertEq(LibProduction.getPet(components, productionID), kamiID);

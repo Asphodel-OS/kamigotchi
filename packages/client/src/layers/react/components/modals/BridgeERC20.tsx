@@ -14,7 +14,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 
-import { abi } from "../../../../../abi/BytesProxySystem.json"
+import { abi } from "../../../../../abi/Farm20ProxySystem.json"
 
 export function registerERC20BridgeModal() {
   registerUIComponent(
@@ -59,7 +59,7 @@ export function registerERC20BridgeModal() {
 
           return {
             GameBal: coin,
-            proxyAddy: systems["system.ERC20.Proxy"].address
+            proxyAddy: systems["system.Farm20.Proxy"].address
           };
         })
       );

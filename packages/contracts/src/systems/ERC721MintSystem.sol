@@ -49,7 +49,7 @@ contract ERC721MintSystem is System {
 
     // burn mint tokens, implicitly checks if owner has enough balance
     address owner = LibAccount.getOwner(components, accountID);
-    LibERC721.burnMintTokens(world, owner, amount);
+    LibERC721.burnMint20s(world, owner, amount);
 
     // set return array
     uint256[] memory petIDs = new uint256[](amount);

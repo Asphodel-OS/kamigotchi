@@ -30,9 +30,6 @@ import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
 import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
-import BytesDepositSystem from "../abi/BytesDepositSystem.json";
-import BytesProxySystem from "../abi/BytesProxySystem.json";
-import BytesWithdrawSystem from "../abi/BytesWithdrawSystem.json";
 import ERC721MetadataSystem from "../abi/ERC721MetadataSystem.json";
 import ERC721MintSystem from "../abi/ERC721MintSystem.json";
 import ERC721ProxySystem from "../abi/ERC721ProxySystem.json";
@@ -40,9 +37,12 @@ import ERC721RevealSystem from "../abi/ERC721RevealSystem.json";
 import ERC721StakeSystem from "../abi/ERC721StakeSystem.json";
 import ERC721TransferSystem from "../abi/ERC721TransferSystem.json";
 import ERC721UnstakeSystem from "../abi/ERC721UnstakeSystem.json";
+import Farm20DepositSystem from "../abi/Farm20DepositSystem.json";
+import Farm20ProxySystem from "../abi/Farm20ProxySystem.json";
+import Farm20WithdrawSystem from "../abi/Farm20WithdrawSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
-import MintTokenProxySystem from "../abi/MintTokenProxySystem.json";
+import Mint20ProxySystem from "../abi/Mint20ProxySystem.json";
 import NodeCollectSystem from "../abi/NodeCollectSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
@@ -90,9 +90,6 @@ export const SystemAbis = {
   "system.Account.Register": AccountRegisterSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
-  "system.ERC20.Deposit": BytesDepositSystem.abi,
-  "system.ERC20.Proxy": BytesProxySystem.abi,
-  "system.ERC20.Withdraw": BytesWithdrawSystem.abi,
   "system.ERC721.Metadata": ERC721MetadataSystem.abi,
   "system.ERC721.Mint": ERC721MintSystem.abi,
   "system.ERC721.Proxy": ERC721ProxySystem.abi,
@@ -100,9 +97,12 @@ export const SystemAbis = {
   "system.ERC721.Stake": ERC721StakeSystem.abi,
   "system.ERC721.Transfer": ERC721TransferSystem.abi,
   "system.ERC721.Unstake": ERC721UnstakeSystem.abi,
+  "system.Farm20.Deposit": Farm20DepositSystem.abi,
+  "system.Farm20.Proxy": Farm20ProxySystem.abi,
+  "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
-  "system.ERC20.Proxy": MintTokenProxySystem.abi,
+  "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Node.Collect": NodeCollectSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,

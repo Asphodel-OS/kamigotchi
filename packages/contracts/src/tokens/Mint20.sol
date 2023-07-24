@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
-import { ProxyPermissionsMintTokenComponent as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsMintTokenComponent.sol";
+import { ProxyPermissionsMint20Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsMint20Component.sol";
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
@@ -13,7 +13,7 @@ import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 uint256 constant SUPPLY = 3333;
 
-contract MintToken is ERC20 {
+contract Mint20 is ERC20 {
   IWorld immutable World;
 
   modifier onlyWriter() {

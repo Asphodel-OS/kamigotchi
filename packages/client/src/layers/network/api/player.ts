@@ -194,13 +194,13 @@ export function createPlayerAPI(systems: any) {
   // @dev bridges ERC20 tokens from outside -> game world
   // @param amount  amount of ERC20 tokens to bridge
   function depositERC20(amount: BigNumberish) {
-    return systems["system.ERC20.Deposit"].executeTyped(amount);
+    return systems["system.Farm20.Deposit"].executeTyped(amount);
   }
 
   // @dev bridges ERC20 tokens from game world -> outside
   // @param amount  amount of ERC20 tokens to bridge
   function withdrawERC20(amount: BigNumberish) {
-    return systems["system.ERC20.Withdraw"].executeTyped(amount);
+    return systems["system.Farm20.Withdraw"].executeTyped(amount);
   }
 
   return {

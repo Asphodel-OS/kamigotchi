@@ -3,12 +3,8 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
-// manually imports and deploys erc20.
-// TODO: integrate it with deployment script
-import { Bytes } from "tokens/Bytes.sol";
-
 contract ERC20Test is SetupTemplate {
-  Bytes token;
+  Farm20 token;
   uint256 constant MAX_INT = 2 ** 256 - 1;
 
   // converts ERC20 decimals (18) to game decimals (0)
@@ -29,7 +25,7 @@ contract ERC20Test is SetupTemplate {
 
   function setUp() public override {
     super.setUp();
-    token = _BytesProxySystem.getToken();
+    token = _Farm20ProxySystem.getToken();
 
     _registerAccount(0);
     _registerAccount(1);
@@ -45,13 +41,13 @@ contract ERC20Test is SetupTemplate {
 
     // withdraw the amt from the game
     if (amt == 0) {
-      vm.expectRevert("BytesWithdraw: amt must be > 0");
-      _BytesWithdrawSystem.executeTyped(amt);
+      vm.expectRevert("Farm20Withdraw: amt must be > 0");
+      _Farm20WithdrawSystem.executeTyped(amt);
     } else if (amt > startingBalance) {
       vm.expectRevert("Coin: insufficient balance");
-      _BytesWithdrawSystem.executeTyped(amt);
+      _Farm20WithdrawSystem.executeTyped(amt);
     } else {
-      _BytesWithdrawSystem.executeTyped(amt);
+      _Farm20WithdrawSystem.executeTyped(amt);
 
       // check the user has the correct balances in and out of the game
       uint256 internalBalance = _CoinComponent.getValue(_getAccount(0));
@@ -76,18 +72,18 @@ contract ERC20Test is SetupTemplate {
     vm.startPrank(_getOwner(0));
 
     // pull out the full balance of funds
-    _BytesWithdrawSystem.executeTyped(startingBalance);
+    _Farm20WithdrawSystem.executeTyped(startingBalance);
 
     // deposit the amt back into the game
     if (amt == 0) {
-      vm.expectRevert("ERC20Deposit: amt must be > 0");
-      _BytesDepositSystem.executeTyped(amt);
+      vm.expectRevert("Farm20Deposit: amt must be > 0");
+      _Farm20DepositSystem.executeTyped(amt);
     } else if (amt > startingBalance) {
       // vm.expectRevert("Arithmetic over/underflow"); // cannot get this matching, maybe insert our own error into the flow
       vm.expectRevert();
-      _BytesDepositSystem.executeTyped(amt);
+      _Farm20DepositSystem.executeTyped(amt);
     } else {
-      _BytesDepositSystem.executeTyped(amt);
+      _Farm20DepositSystem.executeTyped(amt);
 
       // check the user has the correct balances in and out of the game
       uint256 internalBalance = _CoinComponent.getValue(_getAccount(0));
@@ -113,7 +109,7 @@ contract ERC20Test is SetupTemplate {
 
     // withdraw full amount
     vm.prank(_getOwner(0));
-    _BytesWithdrawSystem.executeTyped(amt);
+    _Farm20WithdrawSystem.executeTyped(amt);
 
     // transfer to an address without an account
     vm.prank(_getOwner(0));
@@ -121,8 +117,8 @@ contract ERC20Test is SetupTemplate {
 
     // attempt to deposit funds
     vm.prank(_getOwner(2));
-    vm.expectRevert("ERC20Deposit: addy has no acc");
-    _BytesDepositSystem.executeTyped(amt);
+    vm.expectRevert("Farm20Deposit: addy has no acc");
+    _Farm20DepositSystem.executeTyped(amt);
   }
 
   // run multiple deposits and withdrawals interwoven between multiple accounts
@@ -147,17 +143,17 @@ contract ERC20Test is SetupTemplate {
     // withdraw from account 0
     vm.startPrank(_getOwner(0));
     if (amt0 == 0) {
-      vm.expectRevert("BytesWithdraw: amt must be > 0");
-      _BytesWithdrawSystem.executeTyped(amt0);
+      vm.expectRevert("Farm20Withdraw: amt must be > 0");
+      _Farm20WithdrawSystem.executeTyped(amt0);
 
       return;
     } else if (amt0 > startBal0) {
       vm.expectRevert("Coin: insufficient balance");
-      _BytesWithdrawSystem.executeTyped(amt0);
+      _Farm20WithdrawSystem.executeTyped(amt0);
 
       return;
     } else {
-      _BytesWithdrawSystem.executeTyped(amt0);
+      _Farm20WithdrawSystem.executeTyped(amt0);
 
       // check the user has the correct balances in and out of the game
       uint256 internalBalance = _CoinComponent.getValue(_getAccount(0));
@@ -178,7 +174,7 @@ contract ERC20Test is SetupTemplate {
 
     // deposit back to account 0 if fuzz
     if (withDeposit) {
-      _BytesDepositSystem.executeTyped(amt0);
+      _Farm20DepositSystem.executeTyped(amt0);
     }
 
     vm.stopPrank();
@@ -186,13 +182,13 @@ contract ERC20Test is SetupTemplate {
     // withdraw from account 1
     vm.startPrank(_getOwner(1));
     if (amt1 == 0) {
-      vm.expectRevert("BytesWithdraw: amt must be > 0");
-      _BytesWithdrawSystem.executeTyped(amt1);
+      vm.expectRevert("Farm20Withdraw: amt must be > 0");
+      _Farm20WithdrawSystem.executeTyped(amt1);
     } else if (amt1 > startBal1) {
       vm.expectRevert("Coin: insufficient balance");
-      _BytesWithdrawSystem.executeTyped(amt1);
+      _Farm20WithdrawSystem.executeTyped(amt1);
     } else {
-      _BytesWithdrawSystem.executeTyped(amt1);
+      _Farm20WithdrawSystem.executeTyped(amt1);
 
       // check the user has the correct balances in and out of the game
       if (withDeposit) {
@@ -235,9 +231,9 @@ contract ERC20Test is SetupTemplate {
     _fundAccount(1, startBal1);
 
     vm.prank(_getOwner(0));
-    _BytesWithdrawSystem.executeTyped(startBal0);
+    _Farm20WithdrawSystem.executeTyped(startBal0);
     vm.prank(_getOwner(1));
-    _BytesWithdrawSystem.executeTyped(startBal1);
+    _Farm20WithdrawSystem.executeTyped(startBal1);
 
     // transfer amount from account 0 to 1
     if (amt > startBal0) {

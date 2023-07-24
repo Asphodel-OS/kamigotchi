@@ -19,7 +19,8 @@ import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- syst
 <% }); -%>
 
 // Tokens
-import { Bytes } from "tokens/Bytes.sol";
+import { Farm20 } from "tokens/Farm20.sol";
+import { Mint20 } from "tokens/Mint20.sol";
 import { KamiERC721 } from "tokens/KamiERC721.sol";
 
 abstract contract TestSetupImports is MudTest {
@@ -34,7 +35,7 @@ abstract contract TestSetupImports is MudTest {
 <% }); -%>
 
 // Token vars
-Bytes _Bytes;
+Farm20 _Farm20;
 KamiERC721 _KamiERC721;
 
 function setUp() public virtual override {
@@ -48,7 +49,7 @@ _<%= component %> = <%= component %>(component(<%= component %>ID));
 _<%= system.name %> = <%= system.name %>(system(<%= system.name %>ID));
 <% }); -%>
 
-_Bytes = _BytesProxySystem.getToken();
+_Farm20 = _Farm20ProxySystem.getToken();
 _KamiERC721 = _ERC721ProxySystem.getToken();
 }
 }

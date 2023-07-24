@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { MintToken } from "tokens/MintToken.sol";
+import { Farm20 } from "tokens/Farm20.sol";
 
-uint256 constant ID = uint256(keccak256("system.ERC20.Proxy"));
+uint256 constant ID = uint256(keccak256("system.Farm20.Proxy"));
 
 string constant name = "Kami";
 string constant symbol = "KAMI";
@@ -16,11 +16,11 @@ string constant symbol = "KAMI";
 // How it works:
 // 1) deploys the ERC20 contract in constructor
 // 2) returns the token address when called
-contract MintTokenProxySystem is System {
+contract Farm20ProxySystem is System {
   address token;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
-    MintToken erc20 = new MintToken(_world, name, symbol, msg.sender);
+    Farm20 erc20 = new Farm20(_world, name, symbol);
     token = address(erc20);
   }
 
@@ -28,8 +28,8 @@ contract MintTokenProxySystem is System {
     return token;
   }
 
-  function getToken() public view returns (MintToken) {
-    return MintToken(token);
+  function getToken() public view returns (Farm20) {
+    return Farm20(token);
   }
 
   function execute(bytes memory arguments) public pure returns (bytes memory) {
