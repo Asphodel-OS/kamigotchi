@@ -88,7 +88,7 @@
       "name": "getToken",
       "outputs": [
         {
-          "internalType": "contract KamiERC20",
+          "internalType": "contract MintToken",
           "name": "",
           "type": "address"
         }

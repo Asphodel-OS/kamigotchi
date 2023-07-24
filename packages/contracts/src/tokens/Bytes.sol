@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
-import { ProxyPermissionsERC20Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC20Component.sol";
+import { ProxyPermissionsBytesComponent as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsBytesComponent.sol";
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
@@ -16,7 +16,7 @@ import { ERC20 } from "solmate/tokens/ERC20.sol";
 // otherwise, the ERC20 is completely normal.
 // Coins are considered 'out of game' and cannot be touched by in game systems
 
-contract KamiERC20 is ERC20 {
+contract Bytes is ERC20 {
   IWorld immutable World;
 
   modifier onlyWriter() {

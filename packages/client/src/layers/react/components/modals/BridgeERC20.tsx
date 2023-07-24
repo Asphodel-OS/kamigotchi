@@ -14,7 +14,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 
-import { abi } from "../../../../../abi/ERC20ProxySystem.json"
+import { abi } from "../../../../../abi/BytesProxySystem.json"
 
 export function registerERC20BridgeModal() {
   registerUIComponent(

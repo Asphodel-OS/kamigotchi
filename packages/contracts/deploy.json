@@ -62,8 +62,9 @@
     "PriceBuyComponent",
     "PriceSellComponent",
     "PrototypeComponent",
-    "ProxyPermissionsERC20Component",
+    "ProxyPermissionsBytesComponent",
     "ProxyPermissionsERC721Component",
+    "ProxyPermissionsMintTokenComponent",
     "RarityComponent",
     "RateComponent",
     "SlotsComponent",
@@ -302,21 +303,21 @@
       ]
     },
     {
-      "name": "ERC20ProxySystem",
+      "name": "BytesProxySystem",
       "writeAccess": []
     },
     {
-      "name": "ERC20WithdrawSystem",
+      "name": "BytesWithdrawSystem",
       "writeAccess": [
         "CoinComponent",
-        "ProxyPermissionsERC20Component"
+        "ProxyPermissionsBytesComponent"
       ]
     },
     {
-      "name": "ERC20DepositSystem",
+      "name": "BytesDepositSystem",
       "writeAccess": [
         "CoinComponent",
-        "ProxyPermissionsERC20Component"
+        "ProxyPermissionsBytesComponent"
       ]
     },
     {
@@ -404,6 +405,10 @@
         "TimeStartComponent",
         "TypeComponent"
       ]
+    },
+    {
+      "name": "MintTokenProxySystem",
+      "writeAccess": []
     },
     {
       "name": "PetFeedSystem",

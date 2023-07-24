@@ -10,11 +10,12 @@ import { getAccount } from 'layers/react/shapes/Account';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Stepper } from '../library/Stepper';
-import { useAccount, useContractRead } from 'wagmi';
+import { useAccount, useContractRead, useBalance } from 'wagmi';
 
 import { abi } from "../../../../../abi/ERC721ProxySystem.json"
 
@@ -38,7 +39,7 @@ export function registerKamiMintModal() {
             State,
             Value,
           },
-          world,
+          systems,
         },
       } = layers;
 
@@ -64,12 +65,13 @@ export function registerKamiMintModal() {
           return {
             layers,
             unrevealedKamis,
+            proxyMintTokenAddy: systems["system.ERC20.Proxy"].address
           };
         })
       );
     },
 
-    ({ layers, unrevealedKamis }) => {
+    ({ layers, unrevealedKamis, proxyMintTokenAddy }) => {
       const {
         network: {
           actions,
@@ -81,6 +83,7 @@ export function registerKamiMintModal() {
 
       const { isConnected } = useAccount();
       const { visibleModals, setVisibleModals, sound: { volume } } = dataStore();
+      const { details: accountDetails } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       useEffect(() => {
@@ -106,7 +109,7 @@ export function registerKamiMintModal() {
           updates: () => [],
           execute: async () => {
             // try whitelist mint if no ether is sent
-            return (value == 0) ? api.ERC721.whitelistMint() : api.ERC721.mint(amount, value);
+            return (value == 0) ? api.ERC721.mint(amount) : api.ERC721.mintEth(amount, value);
           },
         });
         return actionID;
@@ -149,13 +152,24 @@ export function registerKamiMintModal() {
       ///////////////
       // COUNTER
 
-
+      // get token balance of controlling account 
+      const { data: erc20Addy } = useContractRead({
+        address: proxyMintTokenAddy as `0x${string}`,
+        abi: abi,
+        functionName: 'getTokenAddy'
+      });
+      const { data: mintTokenBal } = useBalance({
+        address: accountDetails.ownerAddress as `0x${string}`,
+        token: erc20Addy as `0x${string}`,
+        watch: true
+      });
 
       const { data: erc721 } = useContractRead({
         address: systems["system.ERC721.Proxy"].address as `0x${string}`,
         abi: abi,
         functionName: 'getTokenAddy'
       });
+
       const { data: totalSupply } = useContractRead({
         address: erc721 as `0x${string}`,
         abi:
@@ -194,7 +208,7 @@ export function registerKamiMintModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Stepper steps={steps} MintButton={MintButton} NumMinted={Number(totalSupply)} />
+          <Stepper steps={steps} MintButton={MintButton} NumMinted={Number(totalSupply)} MintTokenBal={Number(mintTokenBal?.formatted)} />
         </ModalWrapperFull>
       );
     }
@@ -212,7 +226,7 @@ const StepOne = () => (
 );
 
 const StepTwo = (props: any) => {
-  const { MintButton, NumMinted } = props;
+  const { MintButton, NumMinted, MintTokenBal } = props;
   // console.log(NumMinted)
 
   return (
@@ -221,7 +235,7 @@ const StepTwo = (props: any) => {
       <Grid>
         <ProductBox style={{ gridRow: 2, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>WL Kami</VendingText>
+          <VendingText>Token Mint</VendingText>
           {MintButton("0.000Ξ", 1, 0)}
         </ProductBox>
         <ProductBox style={{ gridRow: 2, gridColumn: 2 }}>
@@ -243,6 +257,7 @@ const StepTwo = (props: any) => {
           Minted: {NumMinted} / 1111
         </SubText>
       </Grid>
+      <Description>ERC20 Balance: {MintTokenBal}</Description>
     </>
   );
 };
@@ -254,7 +269,7 @@ const steps = (props: any) => [
   },
   {
     title: 'Two',
-    content: <StepTwo MintButton={props.MintButton} NumMinted={props.NumMinted} />,
+    content: <StepTwo MintButton={props.MintButton} NumMinted={props.NumMinted} MintTokenBal={props.MintTokenBal} />,
     modalContent: true,
   },
 ];

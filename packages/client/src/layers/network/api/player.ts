@@ -159,13 +159,14 @@ export function createPlayerAPI(systems: any) {
   // mint a pet
   // @param amount  number of pets to mint
   // @param cost    cost in ETH
-  function mintPet(amount: BigNumberish, cost: BigNumberish) {
+  // depreciated
+  function mintPetEth(amount: BigNumberish, cost: BigNumberish) {
     return systems["system.ERC721.Mint"].publicMint(amount, { value: utils.parseEther(cost.toString()) });
   }
 
   // mint a pet via whitelist
-  function whitelistMintPet() {
-    return systems["system.ERC721.Mint"].whitelistMint();
+  function mintPet(amount: BigNumberish) {
+    return systems["system.ERC721.Mint"].executeTyped(amount);
   }
 
   // reveal a minted pet
@@ -241,9 +242,9 @@ export function createPlayerAPI(systems: any) {
     ERC721: {
       deposit: depositERC721,
       mint: mintPet,
+      mintEth: mintPetEth,
       reveal: revealPet,
       withdraw: withdrawERC721,
-      whitelistMint: whitelistMintPet,
     },
     ERC20: {
       deposit: depositERC20,
