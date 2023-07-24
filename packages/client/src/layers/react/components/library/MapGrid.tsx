@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { location, road, coreSprites, water } from 'assets/map';
+import { dataStore } from 'layers/react/store/createStore';
 
 interface MapProps {
-  highlightedRoom?: number;
+  currentRoom?: number;
   move: Function;
 }
 
@@ -191,7 +192,7 @@ const GRID_MAP = [
   ],
 ];
 
-const ROOMS_MAP = new Map([
+const ROOM_POSITIONS = new Map([
   ['1,3', 6],
   ['3,1', 14],
   ['3,3', 7],
@@ -208,12 +209,8 @@ const ROOMS_MAP = new Map([
   ['5,13', 13],
 ]);
 
-const BORDER_COLORS = {
-  default: '3px solid green',
-  allowed: '3px solid yellow',
-};
-
 const NEIGHBOR_ROOMS = [
+  [1],
   [2],
   [1, 3, 13],
   [2, 4],
@@ -234,78 +231,62 @@ const NEIGHBOR_ROOMS = [
   [15],
 ];
 
-const Tile = ({ img, highlightedRoom, move, rowIndex, colIndex }: any) => {
-  const currentRoom = ROOMS_MAP.get(`${rowIndex},${colIndex}`);
-  const isHighlighted = currentRoom === highlightedRoom;
-  const isNeighbor =
-    highlightedRoom && currentRoom && NEIGHBOR_ROOMS[highlightedRoom - 1]?.includes(currentRoom);
-  const highlightStyle = isHighlighted
-    ? { border: BORDER_COLORS.default }
-    : isNeighbor
-    ? { border: BORDER_COLORS.allowed }
-    : {};
-  const isClickable = !!currentRoom;
-  const hoverStyle = isClickable ? { cursor: 'pointer' } : {};
+const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   const [isHovered, setHovered] = useState(false);
+  const { selectedEntities, setSelectedEntities } = dataStore();
+
+  const location = ROOM_POSITIONS.get(`${rowIndex},${colIndex}`);
+  const isCurrentRoom = location === currentRoom;
+  const isNeighbor = NEIGHBOR_ROOMS[currentRoom]?.includes(location || 0);
+  const isClickable = !!location;
+
+  const hoverStyle = isClickable ? { cursor: 'pointer' } : {};
+  const hoveredStyle = isNeighbor
+    ? { border: '1px solid green', opacity: '0.7' }
+    : { border: '1px solid red', opacity: '0.7' };
+  const currentRoomStyle = (isCurrentRoom)
+    ? { border: '2px solid transparent', opacity: '0.7' }
+    : {};
 
   const handleMouseEnter = () => {
     if (isClickable) {
       setHovered(true);
+      setSelectedEntities({ ...selectedEntities, room: location });
     }
   };
 
   const handleMouseLeave = () => {
     if (isClickable) {
       setHovered(false);
+      setSelectedEntities({ ...selectedEntities, room: currentRoom });
     }
   };
 
   if (!img) {
-    return <div style={{ width: '100%', height: '100%', backgroundColor: 'green' }} />;
+    return <div style={{ width: '100%', height: '100%' }} />;
   }
 
   return (
     <div
-      onClick={isClickable ? () => move(currentRoom) : undefined}
+      onClick={isClickable && isNeighbor ? () => move(location) : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
         width: '100%',
         height: '100%',
         display: 'flex',
+        ...currentRoomStyle,
         ...hoverStyle,
-        ...(isHovered ? { border: '1px solid red' } : {}),
-        ...highlightStyle,
+        ...(isHovered ? hoveredStyle : {}),
       }}
     >
-      <img
-        src={img}
-        alt=''
-        style={{
-          width: '200%',
-          height: 'auto',
-        }}
-      />
+      <img src={img} style={{ width: '200%', height: 'auto', }} />
     </div>
   );
 };
 
-const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(17, 1fr);
-  grid-template-rows: repeat(9, 1fr);
-  background-color: green;
-  width: 100%;
-  height: 100%;
-`;
 
-const GridTile = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-`;
-
-const MapGrid = ({ highlightedRoom, move }: MapProps) => {
+const MapGrid = ({ currentRoom, move }: MapProps) => {
   return (
     <GridContainer>
       {GRID_MAP.map((row, rowIndex) => (
@@ -314,7 +295,7 @@ const MapGrid = ({ highlightedRoom, move }: MapProps) => {
             <GridTile key={colIndex}>
               <Tile
                 img={tile}
-                highlightedRoom={highlightedRoom}
+                currentRoom={currentRoom}
                 move={move}
                 rowIndex={rowIndex}
                 colIndex={colIndex}
@@ -328,3 +309,19 @@ const MapGrid = ({ highlightedRoom, move }: MapProps) => {
 };
 
 export default MapGrid;
+
+
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(17, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  background-color: white;
+  width: 100%;
+  height: 100%;
+`;
+
+const GridTile = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;

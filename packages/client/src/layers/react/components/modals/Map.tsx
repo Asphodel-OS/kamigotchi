@@ -88,6 +88,7 @@ export function registerMapModal() {
             return api.account.move(location);
           },
         });
+        setCurrentLocation(location);
       };
 
       const RoomInfo = ({ room }: { room: Room | undefined }) => {
@@ -95,8 +96,8 @@ export function registerMapModal() {
         return (
           <Scrollable ref={scrollableRef}>
             <RoomName>Room {room.location}: {room.name}</RoomName>
+            <Description>{room.owner ? (room.owner.name) : ''}</Description>
             <Description>{room.description}</Description>
-            <Description>Room Owner: None</Description>
             <Description>
               Exits:{' '}
               {room.exits?.map((room) => (
@@ -121,7 +122,7 @@ export function registerMapModal() {
           <div style={{ display: 'grid', height: '100%' }}>
             <RoomInfo room={selectedRoom} />
             <MapBox>
-              <MapGrid highlightedRoom={currentLocation} move={move} />
+              <MapGrid currentRoom={currentLocation} move={move} />
             </MapBox>
           </div>
         </ModalWrapperFull>
