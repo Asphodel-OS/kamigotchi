@@ -3,12 +3,13 @@ import {
   EntityIndex,
   Has,
   HasValue,
-  QueryFragment,
   getComponentValue,
+  hasComponent,
   runQuery,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
+import { Account, getAccount } from './Account';
 
 // standardized Object shape of a Room Entity
 export interface Room {
@@ -18,18 +19,25 @@ export interface Room {
   description: string;
   location: number;
   exits: number[];
+  owner?: Account;
 }
 
 // get a Room object from its EnityIndex
 export const getRoom = (layers: Layers, index: EntityIndex): Room => {
   const {
     network: {
-      components: { Description, Exits, Name, Location },
+      components: {
+        AccountID,
+        Description,
+        Exits,
+        Location,
+        Name,
+      },
       world,
     },
   } = layers;
 
-  return {
+  let room: Room = {
     id: world.entities[index],
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
@@ -37,6 +45,15 @@ export const getRoom = (layers: Layers, index: EntityIndex): Room => {
     location: (getComponentValue(Location, index)?.value as number) * 1,
     exits: getComponentValue(Exits, index)?.value as number[],
   };
+
+  // if the room has an owner, include their name
+  if (hasComponent(AccountID, index)) {
+    const accountID = getComponentValue(AccountID, index)?.value as EntityID;
+    const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
+    room.owner = getAccount(layers, accountEntityIndex);
+  }
+
+  return room;
 };
 
 // gets a Room Object by its location
