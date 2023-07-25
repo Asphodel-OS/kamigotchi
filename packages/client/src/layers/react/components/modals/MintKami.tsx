@@ -225,7 +225,7 @@ export function registerKamiMintModal() {
 
       const MintPetButton = (amount: number) => {
         return (
-          <ActionButton id='button-mint' onClick={handlePetMinting(amount)} size='vending' text="1 $KAMI" inverted />
+          <ActionButton id='button-mint' onClick={handlePetMinting(amount)} size='vending' text="0Ξ" inverted />
         );
       }
 
@@ -270,23 +270,23 @@ const StepTwo = (props: any) => {
       <Grid>
         <ProductBox style={{ gridRow: 2, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>Token Mint</VendingText>
+          <VendingText>Mint coin</VendingText>
           {MintPetButton(1)}
         </ProductBox>
         <ProductBox style={{ gridRow: 2, gridColumn: 2 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>1 $KAMI</VendingText>
-          {MintTokenButton("0.015Ξ", 1, 0.0)}
+          <VendingText>1 Kami</VendingText>
+          {MintTokenButton("1 Coin", 1, 0.0)}
         </ProductBox>
         <ProductBox style={{ gridRow: 3, gridColumn: 1 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>3 $KAMI</VendingText>
-          {MintTokenButton("0.045Ξ", 3, 0.045)}
+          <VendingText>3 Kami</VendingText>
+          {MintTokenButton("3 Coins", 3, 0.045)}
         </ProductBox>
         <ProductBox style={{ gridRow: 3, gridColumn: 2 }}>
           <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>5 $KAMI</VendingText>
-          {MintTokenButton("0.075Ξ", 5, 0.075)}
+          <VendingText>5 Kami</VendingText>
+          {MintTokenButton("5 Coins", 5, 0.075)}
         </ProductBox>
         <SubText style={{ gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
           Minted: {NumMinted} / 1111
