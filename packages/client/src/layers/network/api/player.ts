@@ -178,14 +178,6 @@ export function createPlayerAPI(systems: any) {
   *       ERC721
   *********************/
 
-  // mint a pet
-  // @param amount  number of pets to mint
-  // @param cost    cost in ETH
-  // depreciated
-  function mintPetEth(amount: BigNumberish, cost: BigNumberish) {
-    return systems["system.ERC721.Mint"].publicMint(amount, { value: utils.parseEther(cost.toString()) });
-  }
-
   // @dev deposits pet from outside -> game world
   // @param tokenID  ERC721 petID, not MUD entity ID
   function depositERC721(tokenID: BigNumberish) {
