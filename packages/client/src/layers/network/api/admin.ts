@@ -10,7 +10,7 @@ export function createAdminAPI(systems: any) {
     await setConfigString('BASE_URI', 'https://image.asphodel.io/kami/');
 
     // Leaderboards
-    setConfig('LEADERBOARD_EPOCH', 1);
+    await setConfig('LEADERBOARD_EPOCH', 1);
 
     // Account Stamina
     await setConfig('ACCOUNT_STAMINA_BASE', 20);
@@ -73,26 +73,116 @@ export function createAdminAPI(systems: any) {
     // WORLD
 
     // create our rooms
-    await createRoom('deadzone', 0, [1]); // in case we need this
-    await createRoom('Misty Riverside', 1, [2]);
-    await createRoom('Tunnel of Trees', 2, [1, 3, 13]);
-    await createRoom('Torii Gate', 3, [2, 4]);
-    await createRoom('Vending Machine', 4, [3, 5, 12]);
-    await createRoom('Restricted Area', 5, [4, 6, 9]);
-    await createRoom('Labs Entrance', 6, [5, 7]);
-    await createRoom('Lobby', 7, [6, 8, 14]);
-    await createRoom('Junk Shop', 8, [7]);
-    await createRoom('Forest: Old Growth', 9, [5, 10, 11]);
-    await createRoom('Forest: Insect Node', 10, [9]);
-    await createRoom('Waterfall Shrine', 11, [9, 15]);
-    await createRoom('Machine Node', 12, [4]);
-    await createRoom('Convenience Store', 13, [2]);
-    await createRoom("Manager's Office", 14, [7]);
-    await createRoom('Temple Cave', 15, [11, 16, 18]);
-    await createRoom('Techno Temple', 16, [15]);
-    // await createRoom("Misty Park", 17, [0]);
-    await createRoom('Cave Crossroads', 18, [15, 19]);
-    await createRoom('Violence Temple', 19, [18]);
+    await createRoom(0, 'deadzone', '', [1]); // in case we need this
+    await createRoom(
+      1,
+      'Misty Riverside',
+      'You have no memory of arriving here. The air is quiet. The trees grow so thick overhead that it would still be dark at noon.',
+      [2]
+    );
+    await createRoom(
+      2,
+      'Tunnel of Trees',
+      'You see the light at the end of the tunnel; a way out of the forest. Also, you see a blue door made of light. It says “SHOP”.',
+      [1, 3, 13]
+    );
+    await createRoom(
+      3,
+      'Torii Gate',
+      'The end of the road. This gate seems to mark the transition between the misty forest and the massive scrapyard.',
+      [2, 4]
+    );
+    await createRoom(
+      4,
+      'Vending Machine',
+      'Deep in the scrap you find a vending machine well stocked and operating. Behind it you see the power cord is cut off.',
+      [3, 5, 12]
+    );
+    await createRoom(
+      5,
+      'Restricted Area',
+      'A restricted area. Follow the road lined with cherry trees to reach an office complex. Across from the office is another forest.',
+      [4, 6, 9]
+    );
+    await createRoom(
+      6,
+      'Labs Entrance',
+      'This exterior seems designed to resemble a shrine almost as much as it does a corporate office building.',
+      [5, 7]
+    );
+    await createRoom(
+      7,
+      'Lobby',
+      'The lobby decor is sparse, with only one uncomfortable chair. The elevator buttons are broken except for “B” and “PH”.',
+      [6, 8, 14]
+    );
+    await createRoom(
+      8,
+      'Junk Shop',
+      'The electrical room in the basement has been converted into a living space and workshop. Do people live like this?',
+      [7]
+    );
+    await createRoom(
+      9,
+      'Old Growth',
+      'You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.',
+      [5, 10, 11]
+    );
+    await createRoom(
+      10,
+      'Insect Node',
+      'The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.',
+      [9]
+    );
+    await createRoom(
+      11,
+      'Waterfall Shrine',
+      'By the edge of the waterfall basin, a humble shrine grants this place a peaceful aura.',
+      [9, 15]
+    );
+    await createRoom(
+      12,
+      'Machine Node',
+      'A collection of strange and hard to identify objects is buried deep in the scrapyard. It feels dangerous just to be near them.',
+      [4]
+    );
+    await createRoom(
+      13,
+      'Convenience Store',
+      'The glowing blue door transports you inside of a little candy store. Check the glowing “exit” sign to leave.',
+      [2]
+    );
+    await createRoom(
+      14,
+      "Manager's Office",
+      'A slick penthouse office. It seems that this room has been untouched since a magic ritual was performed inside.',
+      [7]
+    );
+    await createRoom(
+      15,
+      'Temple Cave',
+      'A cave behind the waterfall. Friendly statues line a path to the back of the cave away from ancient-looking temple ruins.',
+      [11, 16, 18]
+    );
+    await createRoom(
+      16,
+      'Techno Temple',
+      'Inside the ruined temple. This place might have been traditional once, but now it sparks and rumbles with technology.',
+      [15]
+    );
+    // await createRoom(17, "Misty Park", 'You appear to be outside in an urban park. Balls of light dance around a statue of an angel. Fog hangs thick in the air.', [0]);
+    await createRoom(
+      18,
+      'Cave Crossroads',
+      'Deep in the cave the path branches. The bioluminescent fungi make it nearly as bright as day. You can hear bells in the air.',
+      [15, 19]
+    );
+    await createRoom(
+      19,
+      'Violence Temple',
+      'Half eroded stone and mossy growth, half gleaming metal and glowing crystal. Whether temple or technology, it unsettles you.',
+      [18]
+    );
 
     // create nodes
     // TODO: save these details in a separate json to be loaded in
@@ -101,7 +191,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       3,
       'Torii Gate',
-      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $KAMI....`,
+      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $MUSU....`,
       `NORMAL`,
     );
 
@@ -128,7 +218,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       14,
       'Occult Circle',
-      'The energy invested here calls out to EERIE Kamigotchi.',
+      'The energy existing here exudes an eeriness that calls out to EERIE Kamigotchi.',
       'EERIE',
     );
 
@@ -287,17 +377,22 @@ export function createAdminAPI(systems: any) {
   //  ROOMS
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
-  async function createRoom(name: string, location: number, exits: number[]) {
+  async function createRoom(location: number, name: string, description: string, exits: number[]) {
     await sleepIf();
-    return systems['system._Room.Create'].executeTyped(name, location, exits);
+    return systems['system._Room.Create'].executeTyped(location, name, description, exits);
   }
 
-  async function setRoomExits(location: string, exits: number[]) {
+  async function setRoomDescription(location: number, description: string) {
+    await sleepIf();
+    return systems['system._Room.Set.Description'].executeTyped(location, description);
+  }
+
+  async function setRoomExits(location: number, exits: number[]) {
     await sleepIf();
     return systems['system._Room.Set.Exits'].executeTyped(location, exits);
   }
 
-  async function setRoomName(location: string, name: string) {
+  async function setRoomName(location: number, name: string) {
     await sleepIf();
     return systems['system._Room.Set.Name'].executeTyped(location, name);
   }
@@ -583,6 +678,7 @@ export function createAdminAPI(systems: any) {
     room: {
       create: createRoom,
       set: {
+        description: setRoomDescription,
         exits: setRoomExits,
         name: setRoomName,
       },

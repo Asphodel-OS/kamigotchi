@@ -103,7 +103,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       kami: 0 as EntityIndex,
       merchant: 0 as EntityIndex,
       node: 0 as EntityIndex,
-      room: 0,
+      room: 0 as number,
     },
     sound: { volume: 0.7 },
     visibleModals: {
