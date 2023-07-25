@@ -8,7 +8,6 @@ import { getAddressById } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibTokens } from "libraries/LibTokens.sol";
-import { LibScore } from "libraries/LibScore.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
@@ -43,8 +42,8 @@ contract Mint20MintSystem is System {
       "Mint20Mint: max inital minted"
     );
 
-    // update mint score
-    LibScore.incBy(world, components, accountID, "NUM_MINT20_MINTED", msg.value);
+    // update num minted
+    LibAccount.setMint20Minted(world, components, accountID, accMinted + amount);
 
     // mint token
     LibTokens.mintMint20(world, msg.sender, amount);

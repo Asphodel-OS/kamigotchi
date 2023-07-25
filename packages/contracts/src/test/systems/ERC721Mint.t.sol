@@ -68,10 +68,66 @@ contract ERC721MintTest is SetupTemplate {
     assertTrue(!LibPet.isInWorld(components, entityID));
   }
 
+  // converts ERC20 decimals (18) to game decimals (0)
+  function _tokenToGameDP(uint256 amount) internal view returns (uint256) {
+    return amount / 10 ** 18;
+  }
+
+  // converts game decimals (0) to ERC20 decimals (18)
+  function _gameToTokenDP(uint256 amount) internal view returns (uint256) {
+    return amount * 10 ** 18;
+  }
+
   //////////////////////////
   // TESTS
 
-  function testMintSingle() public {
+  function testMintProcess(uint256 num20, uint256 num721) public {
+    vm.assume(num20 < ((~uint256(0)) / 1e18));
+    vm.assume(num721 < ((~uint256(0)) / 1e18));
+
+    address owner = _getOwner(0);
+    address operator = _getOperator(0);
+    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
+    uint256 maxAccMint = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX");
+
+    if (num20 == 0) {
+      vm.deal(owner, price * num20);
+      vm.prank(owner);
+      vm.expectRevert("Mint20Mint: amt must be > 0");
+      _Mint20MintSystem.mint(num20);
+      return;
+    } else if (num20 > maxAccMint) {
+      vm.deal(owner, price * num20);
+      vm.prank(owner);
+      vm.expectRevert("Mint20Mint: max account minted");
+      _Mint20MintSystem.mint{ value: price * num20 }(num20);
+      return;
+    } else {
+      vm.deal(owner, price * num20);
+      vm.prank(owner);
+      _Mint20MintSystem.mint{ value: price * num20 }(num20);
+    }
+
+    if (num721 == 0) {
+      vm.prank(owner);
+      vm.expectRevert("ERC721MintSystem: amt not > 0");
+      _ERC721MintSystem.executeTyped(num721);
+      return;
+    } else if (num20 < num721) {
+      vm.prank(owner);
+      // evm underflows on this revert
+      vm.expectRevert();
+      _ERC721MintSystem.executeTyped(num721);
+    } else {
+      vm.prank(owner);
+      _ERC721MintSystem.executeTyped(num721);
+
+      assertEq(_tokenToGameDP(_Mint20.balanceOf(owner)), num20 - num721);
+      assertEq(_KamiERC721.balanceOf(address(_KamiERC721)), num721); // minted in game
+    }
+  }
+
+  function testMintSingleGeneric() public {
     _mintPet(0);
     _assertOwnerInGame(1, _getOwner(0));
   }
@@ -86,15 +142,30 @@ contract ERC721MintTest is SetupTemplate {
     _assertOwnerInGame(3, _getOwner(0));
   }
 
-  // depreciated - limits on mint20 instead
-  // function testFailMaxMintSeparateTx() public {
-  //   for (uint256 i = 0; i < 501; i++) {
-  //     _mintPet(0);
-  //   }
-  // }
+  function testFailMaxMintSeparateTx() public {
+    uint256 amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
+    for (uint256 i = 0; i < amount; i++) {
+      _mintMint20(0, 1);
+    }
+  }
 
-  // function testFailMaxMintSingleTx() public {
-  //   vm.prank(alice);
-  //   _ERC721MintSystem.executeTyped(501);
-  // }
+  function testFailMaxMintSingleTx() public {
+    uint256 amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
+    _mintMint20(0, amount);
+  }
+
+  function testInsufficentBalance() public {
+    vm.prank(_getOwner(0));
+    // evm underflows on this revert
+    vm.expectRevert();
+    _ERC721MintSystem.executeTyped(1);
+  }
+
+  function testInsufficentFunds() public {
+    vm.deal(_getOwner(0), mintPrice);
+    vm.prank(_getOwner(0));
+    // evm underflows on this revert
+    vm.expectRevert();
+    _Mint20MintSystem.mint{ value: mintPrice - 1 }(1);
+  }
 }

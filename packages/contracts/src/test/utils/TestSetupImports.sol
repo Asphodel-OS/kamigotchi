@@ -302,6 +302,7 @@ ProductionStopSystem _ProductionStopSystem;
 
 // Token vars
 Farm20 _Farm20;
+Mint20 _Mint20;
 KamiERC721 _KamiERC721;
 
 function setUp() public virtual override {
@@ -443,5 +444,6 @@ _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 
 _Farm20 = _Farm20ProxySystem.getToken();
 _KamiERC721 = _ERC721ProxySystem.getToken();
+_Mint20 = _Mint20ProxySystem.getToken();
 }
 }

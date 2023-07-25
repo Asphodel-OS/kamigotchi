@@ -19,6 +19,7 @@ contract ERC721MintSystem is System {
   // no limits check implemented here - Mint20 is the only one with limits
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
+    require(amount > 0, "ERC721MintSystem: amt not > 0");
 
     // get next index to mint via total supply of ERC721
     uint256 index = LibTokens.getCurrentSupply(world) + 1;

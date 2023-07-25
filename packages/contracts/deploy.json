@@ -413,11 +413,11 @@
     {
       "name": "Mint20MintSystem",
       "writeAccess": [
-        "BalanceComponent",
-        "EpochComponent",
-        "IdHolderComponent",
-        "IsScoreComponent",
+        "IdAccountComponent",
+        "IdPetComponent",
+        "IsDataComponent",
         "TypeComponent",
+        "ValueComponent",
         "ProxyPermissionsMint20Component"
       ]
     },

@@ -124,7 +124,6 @@ abstract contract SetupTemplate is TestSetupImports {
   // mints an mint20 token for user
   function _mintMint20(uint playerIndex, uint amount) internal {
     address owner = _owners[playerIndex];
-    address operator = _operators[owner];
 
     uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
 
