@@ -227,7 +227,7 @@ abstract contract SetupTemplate is TestSetupImports {
     if (numExits > 2) exits[2] = exit3;
 
     vm.prank(deployer);
-    __RoomCreateSystem.executeTyped(name, location, exits);
+    __RoomCreateSystem.executeTyped(location, name, "", exits);
   }
 
   function _createHarvestingNode(
