@@ -124,12 +124,12 @@ library LibTokens {
 
   // mints mint20 tokens
   function mintMint20(IWorld world, address to, uint256 amount) internal {
-    getMint20Contract(world).mintMint20(to, amount);
+    getMint20Contract(world).mint(to, amount);
   }
 
   // burns mint20 tokens
   function burnMint20(IWorld world, address from, uint256 amount) internal {
-    getMint20Contract(world).mintERC721(from, amount);
+    getMint20Contract(world).burn(from, amount);
   }
 
   ////////////////////////

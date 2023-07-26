@@ -43,7 +43,7 @@ contract Mint20 is ERC20 {
 
   // mints tokens to an EOA. only can be called by Mint20MintSystem or GDA
   // strictly adheres to totalMinted
-  function mintMint20(address to, uint256 amount) external onlyWriter {
+  function mint(address to, uint256 amount) external onlyWriter {
     require(
       totalMinted + amount <= LibConfig.getValueOf(World.components(), "MINT_TOTAL_MAX"),
       "Mint20: totalMinted exceeded"
@@ -52,7 +52,7 @@ contract Mint20 is ERC20 {
   }
 
   // burns ERC20 tokens to mint a kami token
-  function mintERC721(address from, uint256 amount) external onlyWriter {
+  function burn(address from, uint256 amount) external onlyWriter {
     super._burn(from, _convertDP(amount));
   }
 
