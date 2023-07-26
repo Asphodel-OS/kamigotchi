@@ -73,18 +73,8 @@
         },
         {
           "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
           "name": "description",
           "type": "string"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "exits",
-          "type": "uint256[]"
         }
       ],
       "name": "executeTyped",
@@ -127,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,string,uint256[])": "9b185777",
+    "executeTyped(uint256,string)": "68c47df2",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

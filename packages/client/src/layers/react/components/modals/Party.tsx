@@ -471,9 +471,7 @@ export function registerPartyModal() {
 
       return (
         <ModalWrapperFull id='party_modal' divName='party'>
-
           {ConsumableCells(data.account.inventories!)}
-
           <Scrollable ref={scrollableRef}>{KamiCards(data.account.kamis!)}</Scrollable>
         </ModalWrapperFull>
       );

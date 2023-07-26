@@ -14,22 +14,21 @@ contract _RoomCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (string memory name, uint256 location, uint256[] memory exits) = abi.decode(
-      arguments,
-      (string, uint256, uint256[])
-    );
+    (uint256 location, string memory name, string memory description, uint256[] memory exits) = abi
+      .decode(arguments, (uint256, string, string, uint256[]));
 
     require(LibRoom.get(components, location) == 0, "Room: already exists at location");
     require(bytes(name).length > 0, "Room: name cannot be empty");
 
-    return abi.encode(LibRoom.create(world, components, name, location, exits));
+    return abi.encode(LibRoom.create(world, components, location, name, description, exits));
   }
 
   function executeTyped(
-    string memory name,
     uint256 location,
+    string memory name,
+    string memory description,
     uint256[] memory exits
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, location, exits));
+    return execute(abi.encode(location, name, description, exits));
   }
 }

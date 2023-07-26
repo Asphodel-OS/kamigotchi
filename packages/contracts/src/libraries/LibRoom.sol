@@ -18,14 +18,16 @@ library LibRoom {
   function create(
     IWorld world,
     IUintComp components,
-    string memory name,
     uint256 location,
+    string memory name,
+    string memory description,
     uint256[] memory exits
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsRoomComponent(getAddressById(components, IsRoomCompID)).set(id);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
     LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
     ExitsComponent(getAddressById(components, ExitsCompID)).set(id, exits);
     return id;
   }
