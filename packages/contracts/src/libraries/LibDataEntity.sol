@@ -16,7 +16,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 /* Library for data entity patterns. basically a key value store entity linked to an owner
  * Basic structure:
  * - IsDataComponent
- * - Owner Entity (e.g IdAddress, IdPet)
+ * - Owner Entity (e.g IdAccount, IdPet)
  * - TypeComponent (key)
  * - Any component to attatch (default: value)
  */

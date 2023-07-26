@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -7,6 +7,7 @@ import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { getAccount } from 'layers/react/shapes/Account';
+import { getAccountData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
@@ -14,6 +15,7 @@ import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Stepper } from '../library/Stepper';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
 
@@ -23,10 +25,10 @@ export function registerKamiMintModal() {
   registerUIComponent(
     'KamiMint',
     {
-      colStart: 38,
-      colEnd: 64,
-      rowStart: 20,
-      rowEnd: 78,
+      colStart: 28,
+      colEnd: 74,
+      rowStart: 22,
+      rowEnd: 76,
     },
     (layers) => {
       const {
@@ -62,16 +64,23 @@ export function registerKamiMintModal() {
             { account: account.id, state: 'UNREVEALED' }
           ).reverse();
 
+          const numAlrMinted = getAccountData(
+            layers,
+            account,
+            "NUM_MINT20_MINTED"
+          );
+
           return {
             layers,
             unrevealedKamis,
-            proxyMint20Addy: systems["system.Farm20.Proxy"].address
+            proxyMint20Addy: systems["system.Farm20.Proxy"].address,
+            numAlrMinted: numAlrMinted,
           };
         })
       );
     },
 
-    ({ layers, unrevealedKamis, proxyMint20Addy }) => {
+    ({ layers, unrevealedKamis, proxyMint20Addy, numAlrMinted }) => {
       const {
         network: {
           actions,
@@ -85,6 +94,8 @@ export function registerKamiMintModal() {
       const { visibleModals, setVisibleModals, sound: { volume } } = dataStore();
       const { details: accountDetails } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
+
+      const [amountToMint, setAmountToMint] = useState(1);
 
       useEffect(() => {
         if (isConnected) {
@@ -182,30 +193,26 @@ export function registerKamiMintModal() {
       ///////////////
       // COUNTER
 
-      // get token balance of controlling account 
-      const { data: erc20Addy } = useContractRead({
-        address: proxyMint20Addy as `0x${string}`,
+
+
+      const { data: mint20Addy } = useContractRead({
+        address: systems["system.Mint20.Proxy"].address as `0x${string}`,
         abi: abi,
         functionName: 'getTokenAddy'
       });
+
       const { data: mintTokenBal } = useBalance({
         address: accountDetails.ownerAddress as `0x${string}`,
-        token: erc20Addy as `0x${string}`,
+        token: mint20Addy as `0x${string}`,
         watch: true
       });
 
-      const { data: erc721 } = useContractRead({
-        address: systems["system.ERC721.Proxy"].address as `0x${string}`,
-        abi: abi,
-        functionName: 'getTokenAddy'
-      });
-
       const { data: totalSupply } = useContractRead({
-        address: erc721 as `0x${string}`,
+        address: mint20Addy as `0x${string}`,
         abi:
           [{
             "inputs": [],
-            "name": "totalSupply",
+            "name": "getTotalMinted",
             "outputs": [
               {
                 "internalType": "uint256",
@@ -215,17 +222,29 @@ export function registerKamiMintModal() {
             ],
             "stateMutability": "view",
             "type": "function"
-          }],
-        functionName: 'totalSupply',
+          },],
+        functionName: 'getTotalMinted',
         watch: true,
       });
 
       ///////////////
       // DISPLAY
 
-      const MintPetButton = (amount: number) => {
+      const QuantityButton = (delta: number) => {
         return (
-          <ActionButton id='button-mint' onClick={handlePetMinting(amount)} size='vending' text="0Ξ" inverted />
+          <QunatityStepper onClick={() => setAmountToMint(amountToMint + delta)}>
+            {delta > 0 ? '+' : '-'}
+          </QunatityStepper>
+        );
+      }
+
+      const MintPetButton = () => {
+        const enabled = (amountToMint <= Number(mintTokenBal?.formatted));
+        const warnText = enabled ? '' : 'Insufficient $KAMI';
+        return (
+          <Tooltip text={[warnText]}>
+            <ActionButton id='button-mint' onClick={handlePetMinting(amountToMint)} size='vending' text="Mint" inverted disabled={!enabled} />
+          </Tooltip>
         );
       }
 
@@ -235,16 +254,95 @@ export function registerKamiMintModal() {
         );
       }
 
+      const PetQuantityBox = (
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0px 0px 0px' }}>
+          <div style={{ width: '50%' }}>
+            <SubText style={{ color: '#555', padding: '2px' }}>Qty</SubText>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              {QuantityButton(-1)}
+              <Input
+                style={{ pointerEvents: 'auto' }}
+                type='number'
+                onKeyDown={(e) => catchKeys(e)}
+                placeholder='0'
+                onChange={(e) => handleChange(e)}
+                value={amountToMint}
+              ></Input>
+              {QuantityButton(1)}
+            </div>
+          </div>
+          <div style={{ width: '50%' }}>
+            <SubText style={{ color: '#555', padding: '2px' }}>Cost</SubText>
+            <SubText>{amountToMint} $KAMI</SubText>
+          </div>
+        </div>
+      );
+
+      const CoinMachine = (
+        <Grid>
+          <SubHeader style={{ gridRow: 1 }}>
+            Get $KAMI
+          </SubHeader>
+          <ProductBox style={{ gridRow: 2 }}>
+            <VendingText>1 $KAMI</VendingText>
+            {MintTokenButton("0.00Ξ", 1, 0.0)}
+          </ProductBox>
+          <ProductBox style={{ gridRow: 3 }}>
+            <VendingText>3 $KAMI</VendingText>
+            {MintTokenButton("0.06Ξ", 3, 0.06)}
+          </ProductBox>
+          <ProductBox style={{ gridRow: 4 }}>
+            <VendingText>5 $KAMI</VendingText>
+            {MintTokenButton("0.10Ξ", 5, 0.1)}
+          </ProductBox>
+          <SubText style={{ gridRow: 5 }}>
+            Total Supply: {Number(totalSupply)} / 1111
+          </SubText>
+          <SubText style={{ gridRow: 6 }}>
+            Address Limit: {numAlrMinted} / 5
+          </SubText>
+        </Grid>
+      );
+
+      const PetMachine = (
+        <Grid>
+          <SubHeader style={{ gridRow: 1 }}>
+            Mint Kamigotchi
+          </SubHeader>
+          <div style={{ gridRow: 2 }}>
+            <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
+          </div>
+          <ProductBox style={{ gridRow: 3 }}>
+            {PetQuantityBox}
+            {MintPetButton()}
+          </ProductBox>
+          <SubText style={{ gridRow: 4 }}>
+            You have: {Number(mintTokenBal?.formatted)} $KAMI
+          </SubText>
+        </Grid>
+      );
+
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, kamiMint: false });
       }, [setVisibleModals, visibleModals]);
+
+
+      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+          handlePetMinting(amountToMint);
+        }
+      };
+
+      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAmountToMint(Number(event.target.value));
+      };
 
       return (
         <ModalWrapperFull divName='kamiMint' id='kamiMintModal'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Stepper steps={steps} MintPetButton={MintPetButton} MintTokenButton={MintTokenButton} NumMinted={Number(totalSupply)} Mint20Bal={Number(mintTokenBal?.formatted)} />
+          <Stepper steps={steps} PetMachine={PetMachine} CoinMachine={CoinMachine} />
         </ModalWrapperFull>
       );
     }
@@ -262,37 +360,15 @@ const StepOne = () => (
 );
 
 const StepTwo = (props: any) => {
-  const { MintTokenButton, MintPetButton, NumMinted, Mint20Bal } = props;
+  const { CoinMachine, PetMachine } = props;
 
   return (
     <>
       <Header style={{ color: 'black' }}>Vending Machine</Header>
-      <Grid>
-        <ProductBox style={{ gridRow: 2, gridColumn: 1 }}>
-          <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>Mint coin</VendingText>
-          {MintPetButton(1)}
-        </ProductBox>
-        <ProductBox style={{ gridRow: 2, gridColumn: 2 }}>
-          <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>1 Kami</VendingText>
-          {MintTokenButton("1 Coin", 1, 0.0)}
-        </ProductBox>
-        <ProductBox style={{ gridRow: 3, gridColumn: 1 }}>
-          <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>3 Kami</VendingText>
-          {MintTokenButton("3 Coins", 3, 0.045)}
-        </ProductBox>
-        <ProductBox style={{ gridRow: 3, gridColumn: 2 }}>
-          <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          <VendingText>5 Kami</VendingText>
-          {MintTokenButton("5 Coins", 5, 0.075)}
-        </ProductBox>
-        <SubText style={{ gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
-          Minted: {NumMinted} / 1111
-        </SubText>
-      </Grid>
-      <Description>ERC20 Balance: {Mint20Bal}</Description>
+      <div style={{ display: 'flex', justifyContent: 'space-around', padding: '24px' }}>
+        {PetMachine}
+        {CoinMachine}
+      </div>
     </>
   );
 };
@@ -304,7 +380,7 @@ const steps = (props: any) => [
   },
   {
     title: 'Two',
-    content: <StepTwo MintPetButton={props.MintPetButton} MintTokenButton={props.MintTokenButton} NumMinted={props.NumMinted} Mint20Bal={props.Mint20Bal} />,
+    content: <StepTwo PetMachine={props.PetMachine} CoinMachine={props.CoinMachine} />,
     modalContent: true,
   },
 ];
@@ -331,7 +407,41 @@ const Grid = styled.div`
   grid-column-gap: 12px;
   justify-items: center;
   justify-content: center;
+
   padding: 24px 6px;
+  margin: 0px 6px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  border-radius: 5px;
+`;
+
+const Input = styled.input`
+  width: 50%;
+
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: pointer;
+  justify-content: center;
+  font-family: Pixel;
+
+  border-width: 0px;
+  padding: 6px;
+
+  &:focus {
+    outline: none;
+  }
+
+  ::-webkit-inner-spin-button{
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
+  ::-webkit-outer-spin-button{
+    -webkit-appearance: none; 
+    margin: 0; 
+  }  
 `;
 
 const KamiImage = styled.img`
@@ -357,7 +467,7 @@ const TopButton = styled.button`
   font-family: Pixel;
   width: 30px;
   &:active {
-    background-color: #c4c4c4;
+    background - color: #c4c4c4;
   }
   margin: 0px;
 `;
@@ -372,20 +482,43 @@ const ProductBox = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 5px;
+  max-width: 75%;
+`;
+
+const SubHeader = styled.p`
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  font-family: Pixel;
 `;
 
 const SubText = styled.div`
   font-size: 12px;
   color: #000;
   text-align: center;
-  padding: 4px 0px 0px 0px;
+  padding: 4px 6px 0px 6px;
   font-family: Pixel;
+`;
+
+const QunatityStepper = styled.button`
+  font-size: 16px;
+  color: #777;
+  text-align: center;
+  font-family: Pixel;
+
+  border-style: none;
+  background-color: transparent;
+
+  &:hover {
+    color: #000;  
+  }
 `;
 
 const VendingText = styled.p`
   font-size: 12px;
   color: #333;
   text-align: center;
-
   font-family: Pixel;
+
+  padding: 6px 0px 0px 0px;
 `;
