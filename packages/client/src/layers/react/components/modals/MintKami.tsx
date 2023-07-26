@@ -19,7 +19,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Stepper } from '../library/Stepper';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
 
-import { abi } from "../../../../../abi/ERC721ProxySystem.json"
+import { abi } from "../../../../../abi/Pet721ProxySystem.json"
 
 export function registerKamiMintModal() {
   registerUIComponent(

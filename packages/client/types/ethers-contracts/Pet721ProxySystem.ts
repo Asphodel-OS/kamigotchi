@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -26,10 +27,12 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ERC721TransferSystemInterface extends utils.Interface {
+export interface Pet721ProxySystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(address)": FunctionFragment;
+    "executeTyped(uint256)": FunctionFragment;
+    "getToken()": FunctionFragment;
+    "getTokenAddy()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -38,6 +41,8 @@ export interface ERC721TransferSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "execute"
       | "executeTyped"
+      | "getToken"
+      | "getTokenAddy"
       | "owner"
       | "transferOwnership"
   ): FunctionFragment;
@@ -48,7 +53,12 @@ export interface ERC721TransferSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTokenAddy",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -59,6 +69,11 @@ export interface ERC721TransferSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenAddy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -86,12 +101,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ERC721TransferSystem extends BaseContract {
+export interface Pet721ProxySystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC721TransferSystemInterface;
+  interface: Pet721ProxySystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -119,9 +134,13 @@ export interface ERC721TransferSystem extends BaseContract {
     ): Promise<[string]>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getToken(overrides?: CallOverrides): Promise<[string]>;
+
+    getTokenAddy(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -137,9 +156,13 @@ export interface ERC721TransferSystem extends BaseContract {
   ): Promise<string>;
 
   executeTyped(
-    to: PromiseOrValue<string>,
+    args: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getToken(overrides?: CallOverrides): Promise<string>;
+
+  getTokenAddy(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -155,9 +178,13 @@ export interface ERC721TransferSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getToken(overrides?: CallOverrides): Promise<string>;
+
+    getTokenAddy(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -185,9 +212,13 @@ export interface ERC721TransferSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTokenAddy(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -204,9 +235,13 @@ export interface ERC721TransferSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      args: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTokenAddy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

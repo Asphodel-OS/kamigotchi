@@ -12,7 +12,7 @@ import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibMerchant } from "libraries/LibMerchant.sol";
 import { LibNode } from "libraries/LibNode.sol";
-import { LibTokens } from "libraries/LibTokens.sol";
+import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibPrototype } from "libraries/LibPrototype.sol";
@@ -138,13 +138,13 @@ import { AccountRegisterSystem, ID as AccountRegisterSystemID } from "systems/Ac
 import { Farm20ProxySystem, ID as Farm20ProxySystemID } from "systems/Farm20ProxySystem.sol";
 import { Farm20WithdrawSystem, ID as Farm20WithdrawSystemID } from "systems/Farm20WithdrawSystem.sol";
 import { Farm20DepositSystem, ID as Farm20DepositSystemID } from "systems/Farm20DepositSystem.sol";
-import { ERC721MetadataSystem, ID as ERC721MetadataSystemID } from "systems/ERC721MetadataSystem.sol";
-import { ERC721MintSystem, ID as ERC721MintSystemID } from "systems/ERC721MintSystem.sol";
-import { ERC721RevealSystem, ID as ERC721RevealSystemID } from "systems/ERC721RevealSystem.sol";
-import { ERC721TransferSystem, ID as ERC721TransferSystemID } from "systems/ERC721TransferSystem.sol";
-import { ERC721ProxySystem, ID as ERC721ProxySystemID } from "systems/ERC721ProxySystem.sol";
-import { ERC721UnstakeSystem, ID as ERC721UnstakeSystemID } from "systems/ERC721UnstakeSystem.sol";
-import { ERC721StakeSystem, ID as ERC721StakeSystemID } from "systems/ERC721StakeSystem.sol";
+import { Pet721MetadataSystem, ID as Pet721MetadataSystemID } from "systems/Pet721MetadataSystem.sol";
+import { Pet721MintSystem, ID as Pet721MintSystemID } from "systems/Pet721MintSystem.sol";
+import { Pet721RevealSystem, ID as Pet721RevealSystemID } from "systems/Pet721RevealSystem.sol";
+import { Pet721TransferSystem, ID as Pet721TransferSystemID } from "systems/Pet721TransferSystem.sol";
+import { Pet721ProxySystem, ID as Pet721ProxySystemID } from "systems/Pet721ProxySystem.sol";
+import { Pet721UnstakeSystem, ID as Pet721UnstakeSystemID } from "systems/Pet721UnstakeSystem.sol";
+import { Pet721StakeSystem, ID as Pet721StakeSystemID } from "systems/Pet721StakeSystem.sol";
 import { ListingBuySystem, ID as ListingBuySystemID } from "systems/ListingBuySystem.sol";
 import { ListingSellSystem, ID as ListingSellSystemID } from "systems/ListingSellSystem.sol";
 import { NodeCollectSystem, ID as NodeCollectSystemID } from "systems/NodeCollectSystem.sol";
@@ -162,7 +162,7 @@ import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/Prod
 // Tokens
 import { Farm20 } from "tokens/Farm20.sol";
 import { Mint20 } from "tokens/Mint20.sol";
-import { KamiERC721 } from "tokens/KamiERC721.sol";
+import { Pet721 } from "tokens/Pet721.sol";
 
 abstract contract TestSetupImports is MudTest {
 // Components vars
@@ -281,13 +281,13 @@ AccountRegisterSystem _AccountRegisterSystem;
 Farm20ProxySystem _Farm20ProxySystem;
 Farm20WithdrawSystem _Farm20WithdrawSystem;
 Farm20DepositSystem _Farm20DepositSystem;
-ERC721MetadataSystem _ERC721MetadataSystem;
-ERC721MintSystem _ERC721MintSystem;
-ERC721RevealSystem _ERC721RevealSystem;
-ERC721TransferSystem _ERC721TransferSystem;
-ERC721ProxySystem _ERC721ProxySystem;
-ERC721UnstakeSystem _ERC721UnstakeSystem;
-ERC721StakeSystem _ERC721StakeSystem;
+Pet721MetadataSystem _Pet721MetadataSystem;
+Pet721MintSystem _Pet721MintSystem;
+Pet721RevealSystem _Pet721RevealSystem;
+Pet721TransferSystem _Pet721TransferSystem;
+Pet721ProxySystem _Pet721ProxySystem;
+Pet721UnstakeSystem _Pet721UnstakeSystem;
+Pet721StakeSystem _Pet721StakeSystem;
 ListingBuySystem _ListingBuySystem;
 ListingSellSystem _ListingSellSystem;
 NodeCollectSystem _NodeCollectSystem;
@@ -305,7 +305,7 @@ ProductionStopSystem _ProductionStopSystem;
 // Token vars
 Farm20 _Farm20;
 Mint20 _Mint20;
-KamiERC721 _KamiERC721;
+Pet721 _Pet721;
 
 function setUp() public virtual override {
 super.setUp();
@@ -424,13 +424,13 @@ _AccountRegisterSystem = AccountRegisterSystem(system(AccountRegisterSystemID));
 _Farm20ProxySystem = Farm20ProxySystem(system(Farm20ProxySystemID));
 _Farm20WithdrawSystem = Farm20WithdrawSystem(system(Farm20WithdrawSystemID));
 _Farm20DepositSystem = Farm20DepositSystem(system(Farm20DepositSystemID));
-_ERC721MetadataSystem = ERC721MetadataSystem(system(ERC721MetadataSystemID));
-_ERC721MintSystem = ERC721MintSystem(system(ERC721MintSystemID));
-_ERC721RevealSystem = ERC721RevealSystem(system(ERC721RevealSystemID));
-_ERC721TransferSystem = ERC721TransferSystem(system(ERC721TransferSystemID));
-_ERC721ProxySystem = ERC721ProxySystem(system(ERC721ProxySystemID));
-_ERC721UnstakeSystem = ERC721UnstakeSystem(system(ERC721UnstakeSystemID));
-_ERC721StakeSystem = ERC721StakeSystem(system(ERC721StakeSystemID));
+_Pet721MetadataSystem = Pet721MetadataSystem(system(Pet721MetadataSystemID));
+_Pet721MintSystem = Pet721MintSystem(system(Pet721MintSystemID));
+_Pet721RevealSystem = Pet721RevealSystem(system(Pet721RevealSystemID));
+_Pet721TransferSystem = Pet721TransferSystem(system(Pet721TransferSystemID));
+_Pet721ProxySystem = Pet721ProxySystem(system(Pet721ProxySystemID));
+_Pet721UnstakeSystem = Pet721UnstakeSystem(system(Pet721UnstakeSystemID));
+_Pet721StakeSystem = Pet721StakeSystem(system(Pet721StakeSystemID));
 _ListingBuySystem = ListingBuySystem(system(ListingBuySystemID));
 _ListingSellSystem = ListingSellSystem(system(ListingSellSystemID));
 _NodeCollectSystem = NodeCollectSystem(system(NodeCollectSystemID));
@@ -446,7 +446,7 @@ _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 
 _Farm20 = _Farm20ProxySystem.getToken();
-_KamiERC721 = _ERC721ProxySystem.getToken();
+_Pet721 = _Pet721ProxySystem.getToken();
 _Mint20 = _Mint20ProxySystem.getToken();
 }
 }

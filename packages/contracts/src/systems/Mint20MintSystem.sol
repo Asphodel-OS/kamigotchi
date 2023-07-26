@@ -7,7 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibTokens } from "libraries/LibTokens.sol";
+import { LibPet721 } from "libraries/LibPet721.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
@@ -36,7 +36,7 @@ contract Mint20MintSystem is System {
       "Mint20Mint: max account minted"
     );
 
-    uint256 totalMinted = LibTokens.getTotalMint20Minted(world);
+    uint256 totalMinted = LibPet721.getTotalMint20Minted(world);
     require(
       totalMinted + amount <= LibConfig.getValueOf(components, "MINT_INITIAL_MAX"),
       "Mint20Mint: max inital minted"
@@ -46,7 +46,7 @@ contract Mint20MintSystem is System {
     LibAccount.setMint20Minted(world, components, accountID, accMinted + amount);
 
     // mint token
-    LibTokens.mintMint20(world, msg.sender, amount);
+    LibPet721.mintMint20(world, msg.sender, amount);
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

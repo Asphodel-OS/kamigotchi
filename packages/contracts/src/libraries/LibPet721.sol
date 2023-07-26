@@ -21,9 +21,9 @@ import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryCom
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 
-import { ERC721ProxySystem, ID as ProxyID } from "systems/ERC721ProxySystem.sol";
+import { Pet721ProxySystem, ID as ProxyID } from "systems/Pet721ProxySystem.sol";
 import { Mint20ProxySystem, ID as Mint20ProxyID } from "systems/Mint20ProxySystem.sol";
-import { KamiERC721 } from "tokens/KamiERC721.sol";
+import { Pet721 } from "tokens/Pet721.sol";
 import { Mint20 } from "tokens/Mint20.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
@@ -34,7 +34,7 @@ import { LibRandom } from "libraries/LibRandom.sol";
 uint256 constant NUM_TRAITS = 5;
 
 // Library for ERC721 interactions and metadata generation functions
-library LibTokens {
+library LibPet721 {
   ////////////////////////
   // INTERACTIONS
 
@@ -60,10 +60,10 @@ library LibTokens {
   }
 
   // minting a new kami in game. the default
-  // mints to KamiERC721 contract as owner
+  // mints to Pet721 contract as owner
   // does not interact with other mud systems
   function mintInGame(IWorld world, uint256 index) internal {
-    KamiERC721 token = getContract(world);
+    Pet721 token = getContract(world);
     token.mint(address(token), index);
   }
 
@@ -71,33 +71,33 @@ library LibTokens {
   // mints directly to EOA
   // does not interact with other mud systems
   function mintOutGame(IWorld world, address to, uint256 index) internal {
-    KamiERC721 token = getContract(world);
+    Pet721 token = getContract(world);
     token.mint(to, index);
   }
 
   // stakes a kami, out of game -> in game
   function stake(IWorld world, address from, uint256 index) internal {
-    KamiERC721 token = getContract(world);
+    Pet721 token = getContract(world);
     token.stakeToken(from, index);
   }
 
   // unstakes a kami, in game -> out of game
   function unstake(IWorld world, address to, uint256 index) internal {
-    KamiERC721 token = getContract(world);
+    Pet721 token = getContract(world);
     token.unstakeToken(to, index);
   }
 
   // emits a metadata update event. to be called whenever metadata changes
   function updateEvent(IWorld world, uint256 index) internal {
-    KamiERC721 token = getContract(world);
+    Pet721 token = getContract(world);
     token.emitMetadataUpdate(index);
   }
 
   /////////////////////////
   // GETTERS
 
-  function getContract(IWorld world) internal view returns (KamiERC721) {
-    return ERC721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
+  function getContract(IWorld world) internal view returns (Pet721) {
+    return Pet721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
   }
 
   function getEOAOwner(IWorld world, uint256 index) internal view returns (address) {

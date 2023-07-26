@@ -272,7 +272,7 @@ export function createAdminAPI(systems: any) {
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
   async function petForceReveal(tokenId: number) {
-    return systems['system.ERC721.Reveal'].forceReveal(tokenId);
+    return systems['system.Pet721.Reveal'].forceReveal(tokenId);
   }
 
   /////////////////

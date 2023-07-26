@@ -7,33 +7,33 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibTokens } from "libraries/LibTokens.sol";
+import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
 
-uint256 constant ID = uint256(keccak256("system.ERC721.Mint"));
+uint256 constant ID = uint256(keccak256("system.Pet721.Mint"));
 
-contract ERC721MintSystem is System {
+contract Pet721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   // no limits check implemented here - Mint20 is the only one with limits
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
-    require(amount > 0, "ERC721MintSystem: amt not > 0");
+    require(amount > 0, "Pet721MintSystem: amt not > 0");
 
     // get next index to mint via total supply of ERC721
-    uint256 index = LibTokens.getCurrentSupply(world) + 1;
+    uint256 index = LibPet721.getCurrentSupply(world) + 1;
 
     // get the account for this owner(to). fails if doesnt exist
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "ERC721MintSystem: no account");
+    require(accountID != 0, "Pet721MintSystem: no account");
 
     // update num minted
     uint256 numMinted = LibAccount.getPetsMinted(components, accountID);
     LibAccount.setPetsMinted(world, components, accountID, numMinted + amount);
 
     // burn mint tokens, implicitly checks if owner has enough balance
-    LibTokens.burnMint20(world, msg.sender, amount); // msg.sender is owner
+    LibPet721.burnMint20(world, msg.sender, amount); // msg.sender is owner
 
     // set return array
     uint256[] memory petIDs = new uint256[](amount);
@@ -45,7 +45,7 @@ contract ERC721MintSystem is System {
       LibRandom.setRevealBlock(components, petID, block.number);
 
       // Mint the token
-      LibTokens.mintInGame(world, index + i);
+      LibPet721.mintInGame(world, index + i);
 
       // add petID to array
       petIDs[i] = petID;

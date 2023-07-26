@@ -328,33 +328,33 @@
       ]
     },
     {
-      "name": "ERC721MetadataSystem",
+      "name": "Pet721MetadataSystem",
       "writeAccess": []
     },
     {
-      "name": "ERC721MintSystem",
+      "name": "Pet721MintSystem",
       "writeAccess": [
         "*"
       ]
     },
     {
-      "name": "ERC721RevealSystem",
+      "name": "Pet721RevealSystem",
       "writeAccess": [
         "*"
       ]
     },
     {
-      "name": "ERC721TransferSystem",
+      "name": "Pet721TransferSystem",
       "writeAccess": [
         "ProxyPermissionsERC721Component"
       ]
     },
     {
-      "name": "ERC721ProxySystem",
+      "name": "Pet721ProxySystem",
       "writeAccess": []
     },
     {
-      "name": "ERC721UnstakeSystem",
+      "name": "Pet721UnstakeSystem",
       "writeAccess": [
         "IdAccountComponent",
         "ProxyPermissionsERC721Component",
@@ -362,7 +362,7 @@
       ]
     },
     {
-      "name": "ERC721StakeSystem",
+      "name": "Pet721StakeSystem",
       "writeAccess": [
         "IsAccountComponent",
         "AddressOperatorComponent",
@@ -545,7 +545,7 @@
     "LibListing",
     "LibMerchant",
     "LibNode",
-    "LibTokens",
+    "LibPet721",
     "LibPet",
     "LibProduction",
     "LibPrototype",

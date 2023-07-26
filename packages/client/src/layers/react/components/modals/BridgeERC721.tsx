@@ -17,7 +17,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { dataStore } from 'layers/react/store/createStore';
 import { useAccount, useBalance, useContractRead } from 'wagmi';
 
-import { abi } from "../../../../../abi/ERC721ProxySystem.json"
+import { abi } from "../../../../../abi/Pet721ProxySystem.json"
 
 export function registerERC721BridgeModal() {
   registerUIComponent(
@@ -65,7 +65,7 @@ export function registerERC721BridgeModal() {
             data: {
               account: { ...account },
             } as any,
-            proxyAddy: systems["system.ERC721.Proxy"].address,
+            proxyAddy: systems["system.Pet721.Proxy"].address,
           };
         })
       );

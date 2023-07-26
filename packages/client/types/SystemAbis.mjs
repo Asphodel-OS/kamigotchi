@@ -31,13 +31,6 @@ import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
 import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
-import ERC721MetadataSystem from "../abi/ERC721MetadataSystem.json";
-import ERC721MintSystem from "../abi/ERC721MintSystem.json";
-import ERC721ProxySystem from "../abi/ERC721ProxySystem.json";
-import ERC721RevealSystem from "../abi/ERC721RevealSystem.json";
-import ERC721StakeSystem from "../abi/ERC721StakeSystem.json";
-import ERC721TransferSystem from "../abi/ERC721TransferSystem.json";
-import ERC721UnstakeSystem from "../abi/ERC721UnstakeSystem.json";
 import Farm20DepositSystem from "../abi/Farm20DepositSystem.json";
 import Farm20ProxySystem from "../abi/Farm20ProxySystem.json";
 import Farm20WithdrawSystem from "../abi/Farm20WithdrawSystem.json";
@@ -46,6 +39,13 @@ import ListingSellSystem from "../abi/ListingSellSystem.json";
 import Mint20MintSystem from "../abi/Mint20MintSystem.json";
 import Mint20ProxySystem from "../abi/Mint20ProxySystem.json";
 import NodeCollectSystem from "../abi/NodeCollectSystem.json";
+import Pet721MetadataSystem from "../abi/Pet721MetadataSystem.json";
+import Pet721MintSystem from "../abi/Pet721MintSystem.json";
+import Pet721ProxySystem from "../abi/Pet721ProxySystem.json";
+import Pet721RevealSystem from "../abi/Pet721RevealSystem.json";
+import Pet721StakeSystem from "../abi/Pet721StakeSystem.json";
+import Pet721TransferSystem from "../abi/Pet721TransferSystem.json";
+import Pet721UnstakeSystem from "../abi/Pet721UnstakeSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetReviveSystem from "../abi/PetReviveSystem.json";
@@ -93,13 +93,6 @@ export const SystemAbis = {
   "system.Account.Register": AccountRegisterSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
-  "system.ERC721.Metadata": ERC721MetadataSystem.abi,
-  "system.ERC721.Mint": ERC721MintSystem.abi,
-  "system.ERC721.Proxy": ERC721ProxySystem.abi,
-  "system.ERC721.Reveal": ERC721RevealSystem.abi,
-  "system.ERC721.Stake": ERC721StakeSystem.abi,
-  "system.ERC721.Transfer": ERC721TransferSystem.abi,
-  "system.ERC721.Unstake": ERC721UnstakeSystem.abi,
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
   "system.Farm20.Proxy": Farm20ProxySystem.abi,
   "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
@@ -108,6 +101,13 @@ export const SystemAbis = {
   "system.Mint20.Mint": Mint20MintSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Node.Collect": NodeCollectSystem.abi,
+  "system.Pet721.Metadata": Pet721MetadataSystem.abi,
+  "system.Pet721.Mint": Pet721MintSystem.abi,
+  "system.Pet721.Proxy": Pet721ProxySystem.abi,
+  "system.Pet721.Reveal": Pet721RevealSystem.abi,
+  "system.Pet721.Stake": Pet721StakeSystem.abi,
+  "system.Pet721.Transfer": Pet721TransferSystem.abi,
+  "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,

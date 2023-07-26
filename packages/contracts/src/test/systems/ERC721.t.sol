@@ -13,7 +13,7 @@ contract ERC721PetTest is SetupTemplate {
 
   function _assertOwnerInGame(uint256 tokenID, address addr) internal {
     /*
-      1) Account owner is EOA, Token owner is KamiERC721
+      1) Account owner is EOA, Token owner is Pet721
       2) State is not 721_EXTERNAL (LibPet.isInWorld)
       3) Has an owner (checked implicitly in 1)
     */
@@ -22,7 +22,7 @@ contract ERC721PetTest is SetupTemplate {
       addr,
       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
     );
-    assertEq(_KamiERC721.ownerOf(tokenID), address(_KamiERC721));
+    assertEq(_Pet721.ownerOf(tokenID), address(_Pet721));
     assertTrue(LibPet.isInWorld(components, entityID));
   }
 
@@ -33,7 +33,7 @@ contract ERC721PetTest is SetupTemplate {
       3) Has no Account
     */
     uint256 entityID = LibPet.indexToID(components, tokenID);
-    assertEq(_KamiERC721.ownerOf(tokenID), addr);
+    assertEq(_Pet721.ownerOf(tokenID), addr);
     assertEq(LibPet.getAccount(components, entityID), 0);
     assertTrue(!LibPet.isInWorld(components, entityID));
   }
@@ -47,7 +47,7 @@ contract ERC721PetTest is SetupTemplate {
     // minting
     _mintMint20(0, 1);
     vm.prank(_getOwner(0));
-    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
+    uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
     _assertPetState(petID, "UNREVEALED");
 
     uint256 petIndex = LibPet.idToIndex(components, petID);
@@ -55,17 +55,17 @@ contract ERC721PetTest is SetupTemplate {
 
     // revealing
     vm.prank(_getOperator(0));
-    _ERC721RevealSystem.executeTyped(petIndex);
+    _Pet721RevealSystem.executeTyped(petIndex);
     _assertPetState(petID, "RESTING");
 
     // bridging out
     vm.prank(_getOwner(0));
-    _ERC721UnstakeSystem.executeTyped(petIndex);
+    _Pet721UnstakeSystem.executeTyped(petIndex);
     _assertPetState(petID, "721_EXTERNAL");
 
     // bridging in
     vm.prank(_getOwner(0));
-    _ERC721StakeSystem.executeTyped(petIndex);
+    _Pet721StakeSystem.executeTyped(petIndex);
     _assertPetState(petID, "RESTING");
   }
 
@@ -73,24 +73,24 @@ contract ERC721PetTest is SetupTemplate {
     _mintPet(0);
 
     vm.prank(_getOwner(0));
-    _KamiERC721.transferFrom(_getOwner(0), _getOwner(1), 1);
+    _Pet721.transferFrom(_getOwner(0), _getOwner(1), 1);
   }
 
   function testTransferOutOfGame() public {
     _mintPet(0);
 
     vm.prank(_getOwner(0));
-    _ERC721UnstakeSystem.executeTyped(1);
+    _Pet721UnstakeSystem.executeTyped(1);
 
     vm.prank(_getOwner(0));
-    _KamiERC721.transferFrom(_getOwner(0), _getOwner(1), 1);
+    _Pet721.transferFrom(_getOwner(0), _getOwner(1), 1);
     _assertOwnerOutGame(1, _getOwner(1));
   }
 
   function testForceReveal() public {
     _mintMint20(0, 1);
     vm.prank(_getOwner(0));
-    uint256 petID = abi.decode(_ERC721MintSystem.executeTyped(1), (uint256[]))[0];
+    uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
 
     vm.roll(block.number + 256);
     _assertPetState(petID, "UNREVEALED");
@@ -98,11 +98,11 @@ contract ERC721PetTest is SetupTemplate {
     // do something to mine the block
     _mintMint20(0, 1);
     // vm.prank(_getOwner(0));
-    // _ERC721MintSystem.executeTyped(1);
+    // _Pet721MintSystem.executeTyped(1);
 
     vm.roll(block.number + 1);
     vm.startPrank(deployer);
-    _ERC721RevealSystem.forceReveal(LibPet.idToIndex(components, petID));
+    _Pet721RevealSystem.forceReveal(LibPet.idToIndex(components, petID));
     vm.stopPrank();
 
     _assertPetState(petID, "RESTING");

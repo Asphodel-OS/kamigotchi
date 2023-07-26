@@ -112,12 +112,12 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.roll(_currBlock++);
     _mintMint20(playerIndex, 1);
     vm.startPrank(owner);
-    id = abi.decode(_ERC721MintSystem.executeTyped(1), (uint[]))[0];
+    id = abi.decode(_Pet721MintSystem.executeTyped(1), (uint[]))[0];
     vm.stopPrank();
 
     vm.roll(_currBlock++);
     vm.startPrank(operator);
-    _ERC721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
+    _Pet721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
     vm.stopPrank();
   }
 

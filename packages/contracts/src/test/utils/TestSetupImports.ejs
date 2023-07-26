@@ -21,7 +21,7 @@ import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- syst
 // Tokens
 import { Farm20 } from "tokens/Farm20.sol";
 import { Mint20 } from "tokens/Mint20.sol";
-import { KamiERC721 } from "tokens/KamiERC721.sol";
+import { Pet721 } from "tokens/Pet721.sol";
 
 abstract contract TestSetupImports is MudTest {
 // Components vars
@@ -37,7 +37,7 @@ abstract contract TestSetupImports is MudTest {
 // Token vars
 Farm20 _Farm20;
 Mint20 _Mint20;
-KamiERC721 _KamiERC721;
+Pet721 _Pet721;
 
 function setUp() public virtual override {
 super.setUp();
@@ -51,7 +51,7 @@ _<%= system.name %> = <%= system.name %>(system(<%= system.name %>ID));
 <% }); -%>
 
 _Farm20 = _Farm20ProxySystem.getToken();
-_KamiERC721 = _ERC721ProxySystem.getToken();
+_Pet721 = _Pet721ProxySystem.getToken();
 _Mint20 = _Mint20ProxySystem.getToken();
 }
 }

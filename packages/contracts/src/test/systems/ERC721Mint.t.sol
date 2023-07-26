@@ -24,7 +24,7 @@ import "test/utils/SetupTemplate.s.sol";
 // Best not to rely on SetupTemplate Functions for this. There, we'll want to
 // enable free mints (through config) for ease of use in testing.
 
-contract ERC721MintTest is SetupTemplate {
+contract Pet721MintTest is SetupTemplate {
   uint256 constant mintPrice = 1e18;
 
   function setUp() public override {
@@ -43,7 +43,7 @@ contract ERC721MintTest is SetupTemplate {
 
   function _assertOwnerInGame(uint256 tokenID, address addr) internal {
     /*
-      1) Account owner is EOA, Token owner is KamiERC721
+      1) Account owner is EOA, Token owner is Pet721
       2) State is not 721_EXTERNAL (LibPet.isInWorld)
       3) Has an owner (checked implicitly in 1)
     */
@@ -52,7 +52,7 @@ contract ERC721MintTest is SetupTemplate {
       addr,
       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
     );
-    assertEq(_KamiERC721.ownerOf(tokenID), address(_KamiERC721));
+    assertEq(_Pet721.ownerOf(tokenID), address(_Pet721));
     assertTrue(LibPet.isInWorld(components, entityID));
   }
 
@@ -63,7 +63,7 @@ contract ERC721MintTest is SetupTemplate {
       3) Has no Account
     */
     uint256 entityID = LibPet.indexToID(components, tokenID);
-    assertEq(_KamiERC721.ownerOf(tokenID), addr);
+    assertEq(_Pet721.ownerOf(tokenID), addr);
     assertEq(LibPet.getAccount(components, entityID), 0);
     assertTrue(!LibPet.isInWorld(components, entityID));
   }
@@ -110,20 +110,20 @@ contract ERC721MintTest is SetupTemplate {
 
     if (num721 == 0) {
       vm.prank(owner);
-      vm.expectRevert("ERC721MintSystem: amt not > 0");
-      _ERC721MintSystem.executeTyped(num721);
+      vm.expectRevert("Pet721MintSystem: amt not > 0");
+      _Pet721MintSystem.executeTyped(num721);
       return;
     } else if (num20 < num721) {
       vm.prank(owner);
       // evm underflows on this revert
       vm.expectRevert();
-      _ERC721MintSystem.executeTyped(num721);
+      _Pet721MintSystem.executeTyped(num721);
     } else {
       vm.prank(owner);
-      _ERC721MintSystem.executeTyped(num721);
+      _Pet721MintSystem.executeTyped(num721);
 
       assertEq(_tokenToGameDP(_Mint20.balanceOf(owner)), num20 - num721);
-      assertEq(_KamiERC721.balanceOf(address(_KamiERC721)), num721); // minted in game
+      assertEq(_Pet721.balanceOf(address(_Pet721)), num721); // minted in game
     }
   }
 
@@ -158,7 +158,7 @@ contract ERC721MintTest is SetupTemplate {
     vm.prank(_getOwner(0));
     // evm underflows on this revert
     vm.expectRevert();
-    _ERC721MintSystem.executeTyped(1);
+    _Pet721MintSystem.executeTyped(1);
   }
 
   function testInsufficentFunds() public {

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
-import { ERC721MetadataSystem as MetadataSystem, ID as MetadataSystemID } from "systems/ERC721MetadataSystem.sol";
+import { Pet721MetadataSystem as MetadataSystem, ID as MetadataSystemID } from "systems/Pet721MetadataSystem.sol";
 import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC721Component.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
@@ -42,7 +42,7 @@ string constant SYMBOL = "KAMI";
   Metadata is linked to a system for easier MUD compatibility. However, any view function on a contract can be used. 
 */
 
-contract KamiERC721 is ERC721Enumerable, ERC2981, IERC4906 {
+contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   IWorld internal immutable World;
 
   // mirror writable permissions from ProxyPermissionsComponent
@@ -147,7 +147,7 @@ contract KamiERC721 is ERC721Enumerable, ERC2981, IERC4906 {
     super._transfer(from, to, id);
   }
 
-  // retrives token metadata from ERC721RevealSystem.
+  // retrives token metadata from Pet721RevealSystem.
   function tokenURI(uint256 id) public view override returns (string memory) {
     return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(id);
   }
