@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
@@ -33,7 +34,7 @@ contract Pet721MintSystem is System {
     LibAccount.setPetsMinted(world, components, accountID, numMinted + amount);
 
     // burn mint tokens, implicitly checks if owner has enough balance
-    LibPet721.burnMint20(world, msg.sender, amount); // msg.sender is owner
+    LibMint20.burn(world, msg.sender, amount); // msg.sender is owner
 
     // set return array
     uint256[] memory petIDs = new uint256[](amount);

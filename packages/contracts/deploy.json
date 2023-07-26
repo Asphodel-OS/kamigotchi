@@ -544,6 +544,7 @@
     "LibInventory",
     "LibListing",
     "LibMerchant",
+    "LibMint20",
     "LibNode",
     "LibPet721",
     "LibPet",

@@ -22,9 +22,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 
 import { Pet721ProxySystem, ID as ProxyID } from "systems/Pet721ProxySystem.sol";
-import { Mint20ProxySystem, ID as Mint20ProxyID } from "systems/Mint20ProxySystem.sol";
 import { Pet721 } from "tokens/Pet721.sol";
-import { Mint20 } from "tokens/Mint20.sol";
 
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
@@ -107,29 +105,6 @@ library LibPet721 {
   // gets current supply of kamiERC721
   function getCurrentSupply(IWorld world) internal view returns (uint256) {
     return getContract(world).totalSupply();
-  }
-
-  // get mint token contract
-  function getMint20Contract(IWorld world) internal view returns (Mint20) {
-    return Mint20ProxySystem(getAddressById(world.systems(), Mint20ProxyID)).getToken();
-  }
-
-  // get totalMinted of mint20 token
-  function getTotalMint20Minted(IWorld world) internal view returns (uint256) {
-    return getMint20Contract(world).getTotalMinted();
-  }
-
-  ////////////////////////
-  // MINT TOKEN INTERACTIONS
-
-  // mints mint20 tokens
-  function mintMint20(IWorld world, address to, uint256 amount) internal {
-    getMint20Contract(world).mint(to, amount);
-  }
-
-  // burns mint20 tokens
-  function burnMint20(IWorld world, address from, uint256 amount) internal {
-    getMint20Contract(world).burn(from, amount);
   }
 
   ////////////////////////
