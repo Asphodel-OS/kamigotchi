@@ -58,8 +58,4 @@ contract ERC721MintSystem is System {
   function executeTyped(uint256 amount) public returns (bytes memory) {
     return execute(abi.encode(amount));
   }
-
-  function withdraw() external onlyOwner {
-    payable(owner()).transfer(address(this).balance);
-  }
 }

@@ -108,20 +108,12 @@
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "withdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
     }
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",
-    "transferOwnership(address)": "f2fde38b",
-    "withdraw()": "3ccfd60b"
+    "transferOwnership(address)": "f2fde38b"
   }
 }
