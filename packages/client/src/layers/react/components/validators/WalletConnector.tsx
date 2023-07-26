@@ -41,6 +41,7 @@ export function registerWalletConnecter() {
       const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
       const [title, setTitle] = useState('Connect a Wallet');
       const [description, setDescription] = useState('');
+      const [toReload, setToReload] = useState(false);
 
       // check whether the correctNetwork is connected
       // update title and description as needed
@@ -53,8 +54,11 @@ export function registerWalletConnecter() {
         } else if (!networksMatch) {
           setTitle('Wrong Network');
           setDescription(`Please connect to ${defaultChainConfig.name}`);
+          setToReload(true);
+        } else if (toReload) {
+          location.reload();
         }
-      }, [isConnected, chain]);
+      }, [isConnected, chain, toReload]);
 
       // update the network settings whenever the connector/address changes
       useEffect(() => {
@@ -92,7 +96,6 @@ export function registerWalletConnecter() {
           addNetwork(connectorAddressLowerCase, networkLayer);
         }
       };
-
 
       /////////////////
       // RENDER
