@@ -11,7 +11,7 @@ interface Props {
   disabled?: boolean;
   fill?: boolean;
   inverted?: boolean;
-  size?: 'small' | 'medium' | 'large' | 'vending';
+  size?: 'small' | 'medium' | 'large' | 'vending' | 'menu';
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -47,6 +47,13 @@ export const ActionButton = (props: Props) => {
       styles.fontSize = '12px';
       styles.margin = '3px';
       styles.padding = '8px 24px';
+    } else if (size === 'menu') {
+      styles.fontSize = '10px';
+      styles.margin = '0px';
+      styles.padding = '3px 6px';
+      styles.borderRadius = '10px';
+      styles.borderWidth = '1px';
+      styles.height = '36px';
     }
 
     if (props.inverted) {
