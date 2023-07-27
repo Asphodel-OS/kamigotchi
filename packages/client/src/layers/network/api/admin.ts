@@ -35,7 +35,7 @@ export function createAdminAPI(systems: any) {
     // NOTE: precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
     await setConfig('HARVEST_RATE_PREC', 9); // ignore this
-    await setConfig('HARVEST_RATE_BASE', 1000); // in respect to power
+    await setConfig('HARVEST_RATE_BASE', 250); // in respect to power
     await setConfig('HARVEST_RATE_BASE_PREC', 2); // i.e. x/100
     await setConfig('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
     await setConfig('HARVEST_RATE_MULT_AFF_BASE', 100);
@@ -48,17 +48,17 @@ export function createAdminAPI(systems: any) {
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
     // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    await setConfig('HEALTH_RATE_DRAIN_BASE', 50); // in respect to harvest rate
+    await setConfig('HEALTH_RATE_DRAIN_BASE', 40); // in respect to harvest rate
     await setConfig('HEALTH_RATE_DRAIN_BASE_PREC', 2); // i.e. x/100
     await setConfig('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
-    await setConfig('HEALTH_RATE_HEAL_BASE', 50); // in respect to harmony
+    await setConfig('HEALTH_RATE_HEAL_BASE', 150); // in respect to harmony
     await setConfig('HEALTH_RATE_HEAL_BASE_PREC', 2); // i.e. x/100
 
     // Liquidation Idle Requirements
-    await setConfig('KAMI_IDLE_REQ', 15);
+    await setConfig('KAMI_IDLE_REQ', 180);
 
     // Liquidation Calcs
-    await setConfig('LIQ_THRESH_BASE', 30);
+    await setConfig('LIQ_THRESH_BASE', 40);
     await setConfig('LIQ_THRESH_BASE_PREC', 2);
     await setConfig('LIQ_THRESH_MULT_AFF_BASE', 100);
     await setConfig('LIQ_THRESH_MULT_AFF_UP', 200);
