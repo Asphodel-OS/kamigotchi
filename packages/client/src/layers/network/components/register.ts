@@ -1,4 +1,4 @@
-import { World } from "@latticexyz/recs";
+import { Type, World, defineComponent } from "@latticexyz/recs";
 import {
   defineBoolComponent,
   defineNumberComponent,
@@ -118,11 +118,12 @@ export function createComponents(world: World) {
     StartTime: defineNumberEZ("StartTime", "component.Time.Start"),
     Time: defineNumberEZ("Time", "component.Time"),
 
-    // speeeecial
+    // speeeeecial
     CanName: defineBoolEZ("CanName", "component.Can.Name"),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
     OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),
     OwnerAddress: defineStringEZ("OwnerAddress", "component.Address.Owner"),
+
   }
 }

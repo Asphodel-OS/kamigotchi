@@ -1,9 +1,12 @@
-import { createFaucetService } from "@latticexyz/network";
+import { GodID, createFaucetService } from "@latticexyz/network";
 import {
   Component,
   EntityIndex,
   createWorld,
   getComponentValue,
+  defineComponent,
+  Type,
+  setComponent,
 } from "@latticexyz/recs";
 import {
   SetupContractConfig,
@@ -57,6 +60,23 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const playerAPI = createPlayerAPI(systems);
   const worldAPI = setUpWorldAPI(systems);
 
+  // local component to trigger updates
+  // effectively a hopper to make EOA wallet updates compatible with phaser
+  // could be extended to replace clunky streams in react
+  const NetworkUpdater = defineComponent(world, { value: Type.Boolean });
+  const UpdateNetwork = () => {
+    const godEntityIndex = world.entityToIndex.get(GodID) as EntityIndex;
+    let nextVal = false;
+    if (getComponentValue(NetworkUpdater, godEntityIndex)?.value != undefined) {
+      nextVal = !getComponentValue(NetworkUpdater, godEntityIndex)?.value;
+    }
+    setComponent(
+      NetworkUpdater,
+      godEntityIndex,
+      { value: nextVal }
+    );
+  }
+
   // helper function to get all the set components values for a given entity
   const getEntity = (index: EntityIndex): any => {
     const entity = {} as any;
@@ -94,6 +114,14 @@ export async function createNetworkLayer(config: SetupContractConfig) {
       admin: adminAPI,
       player: playerAPI,
       world: worldAPI,
+    },
+    updates: {
+      components: {
+        Network: NetworkUpdater,
+      },
+      functions: {
+        UpdateNetwork,
+      }
     },
     getEntity,
     faucet,
