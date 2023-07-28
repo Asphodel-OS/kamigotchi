@@ -158,8 +158,8 @@ function createNetworkConfigLattice(externalProvider?: ExternalProvider): Networ
 // Get the network config of a deployment to Optimism testnet
 function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
-    jsonRpc: "https://op.getblock.io/8701728c-f72a-4cab-a95d-56055e738f98/goerli/",
-    wsRpc: "wss://op.getblock.io/8701728c-f72a-4cab-a95d-56055e738f98/goerli/",
+    jsonRpc: "https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli",
+    wsRpc: "wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli/",
     // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
     // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
     snapshotUrl: "https://ecs-snapshot.asphodel-mud-services.linfra.xyz",
