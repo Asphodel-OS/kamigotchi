@@ -23,6 +23,7 @@ import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from '../../shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
 import { KamiCard } from '../library/KamiCard';
+import { Tooltip } from '../library/Tooltip';
 import { BatteryComponent } from '../library/Battery';
 import { NodeInfo } from '../library/NodeContainer';
 import { dataStore } from 'layers/react/store/createStore';
@@ -370,6 +371,11 @@ export function registerNodeModal() {
         return base * multiplier;
       };
 
+      // determine if pet is healthy (currHealth > 0)
+      const isHealthy = (kami: Kami): boolean => {
+        return calcHealth(kami) > 0;
+      };
+
       // determine whether the kami is still on cooldown
       const onCooldown = (kami: Kami): boolean => {
         return calcIdleTime(kami) < kami.cooldown;
@@ -396,6 +402,18 @@ export function registerNodeModal() {
       ///////////////////
       // DISPLAY
 
+      // derive disabled text for allied kami (return '' if not disabled)
+      const getDisabledText = (kami: Kami): string => {
+        let disabledText = '';
+        if (onCooldown(kami)) {
+          const cooldown = kami.cooldown - calcIdleTime(kami)
+          disabledText = 'On cooldown (' + cooldown.toFixed(0) + 's left)';
+        } else if (!isHealthy(kami)) {
+          disabledText = 'Kami is starving!';
+        }
+        return disabledText;
+      }
+
       // button for adding Kami to node
       const AddButton = (node: Node, kamis: Kami[]) => {
         const availableKamis = kamis.filter((kami) => !onCooldown(kami));
@@ -415,15 +433,21 @@ export function registerNodeModal() {
       };
 
       // button for collecting on production
-      const CollectButton = (kami: Kami) => (
-        <ActionButton
-          id={`harvest-collect-${kami.id}`}
-          key={`harvest-collect-${kami.id}`}
-          onClick={() => collect(kami)}
-          text='Collect'
-          disabled={kami.production === undefined || onCooldown(kami)}
-        />
-      );
+      const CollectButton = (kami: Kami) => {
+        let tooltipText = getDisabledText(kami);
+
+        return (
+          <Tooltip text={[tooltipText]}>
+            <ActionButton
+              id={`harvest-collect-${kami.id}`}
+              key={`harvest-collect-${kami.id}`}
+              onClick={() => collect(kami)}
+              text='Collect'
+              disabled={kami.production === undefined || tooltipText !== ''}
+            />
+          </Tooltip>
+        );
+      }
 
       const CollectAllButton = (node: Node, allies: Kami[]) => (
         <ActionButton
@@ -436,15 +460,20 @@ export function registerNodeModal() {
       );
 
       // button for stopping production
-      const StopButton = (kami: Kami) => (
-        <ActionButton
-          id={`harvest-stop-${kami.id}`}
-          key={`harvest-stop-${kami.id}`}
-          text='Stop'
-          onClick={() => stop(kami)}
-          disabled={kami.production === undefined || onCooldown(kami)}
-        />
-      );
+      const StopButton = (kami: Kami) => {
+        let tooltipText = getDisabledText(kami);
+        return (
+          <Tooltip text={[tooltipText]}>
+            <ActionButton
+              id={`harvest-stop-${kami.id}`}
+              key={`harvest-stop-${kami.id}`}
+              text='Stop'
+              onClick={() => stop(kami)}
+              disabled={kami.production === undefined || tooltipText !== ''}
+            />
+          </Tooltip >
+        );
+      }
 
       // button for liquidating production
       const LiquidateButton = (target: Kami, allies: Kami[]) => {
