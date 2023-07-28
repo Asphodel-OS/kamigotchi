@@ -51,12 +51,12 @@ const opGoerli: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["https://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg"],
-      webSocket: ["wss://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg"],
+      http: ["https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
+      webSocket: ["wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
     },
     public: {
-      http: ["https://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg"],
-      webSocket: ["wss://opt-goerli.g.alchemy.com/v2/8eeIXfv2AQPg3M89e7D1La27gZFE3Hcg"],
+      http: ["https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
+      webSocket: ["wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
     },
   },
   testnet: true,

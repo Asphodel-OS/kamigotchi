@@ -20,6 +20,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { abi } from "abi/Pet721ProxySystem.json"
+import { use } from 'matter';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
 
 export function registerKamiMintModal() {
@@ -105,6 +106,7 @@ export function registerKamiMintModal() {
           api: { player },
           systems,
           world,
+          network: { blockNumber$ }
         },
       } = layers;
 
@@ -114,17 +116,22 @@ export function registerKamiMintModal() {
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [amountToMint, setAmountToMint] = useState(1);
-
-
-      ///////////////
-      // HOOKS
+      const [triedReveal, setTriedReveal] = useState(false);
 
       useEffect(() => {
-        if (isConnected) {
-          data.account.kamis.unrevealed.forEach((kami) => {
-            revealTx(kami);
-          });
+        const tx = async () => {
+          if (isConnected && !triedReveal) {
+            setTriedReveal(true);
+            // wait to give buffer for OP rpc
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+            data.account.kamis.unrevealed.forEach((kami) => {
+              revealTx(kami);
+            });
+          }
         }
+        tx();
+
+        // settriedReveal(false);
       }, [data.account.kamis.unrevealed]);
 
 
@@ -224,6 +231,7 @@ export function registerKamiMintModal() {
 
       const handlePetMinting = (amount: number) => async () => {
         try {
+          setTriedReveal(false);
           const mintActionID = mintPetTx(amount);
           await waitForActionCompletion(
             actions.Action,

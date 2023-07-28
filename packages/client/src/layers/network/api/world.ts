@@ -28,10 +28,10 @@ export function setUpWorldAPI(systems: any) {
 
   async function initTraits() {
     // inits a single type of trait, returns number of traits
-    function initSingle(dataRaw: any, type: string) {
+    async function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
       for (let i = 0; i < data.length; i++) {
-        sleepIf();
+        await sleepIf();
         createAdminAPI(systems).registry.trait.create(
           data[i].get("Index"), // individual trait index
           data[i].get("Health") ? data[i].get("Health") : 0,
@@ -50,15 +50,50 @@ export function setUpWorldAPI(systems: any) {
       return data.length - 1;
     }
 
-    const numBg = initSingle(background, "BACKGROUND");
-    const numBody = initSingle(body, "BODY");
-    const numColor = initSingle(color, "COLOR");
-    const numFace = initSingle(face, "FACE");
-    const numHand = initSingle(hand, "HAND");
+    const numBg = await initSingle(background, "BACKGROUND");
+    const numBody = await initSingle(body, "BODY");
+    const numColor = await initSingle(color, "COLOR");
+    const numFace = await initSingle(face, "FACE");
+    const numHand = await initSingle(hand, "HAND");
+  }
+
+  // try to update traits. meant for partial deployments to fill up the gaps
+  async function initTraitsWithFail() {
+    // inits a single type of trait, returns number of traits
+    async function initSingle(dataRaw: any, type: string) {
+      const data = csvToMap(dataRaw);
+      for (let i = 0; i < data.length; i++) {
+        await sleepIf();
+        try {
+          createAdminAPI(systems).registry.trait.create(
+            data[i].get("Index"), // individual trait index
+            data[i].get("Health") ? data[i].get("Health") : 0,
+            data[i].get("Power") ? data[i].get("Power") : 0,
+            data[i].get("Violence") ? data[i].get("Violence") : 0,
+            data[i].get("Harmony") ? data[i].get("Harmony") : 0,
+            data[i].get("Slots") ? data[i].get("Slots") : 0,
+            data[i].get("Tier") ? data[i].get("Tier") : 0,
+            data[i].get("Affinity") ? data[i].get("Affinity").toUpperCase() : "",
+            data[i].get("Name"), // name of trait
+            type, // type: body, color, etc
+          );
+        } catch { }
+      }
+
+      // -1 because max includes 0, should remove this
+      return data.length - 1;
+    }
+
+    const numBg = await initSingle(background, "BACKGROUND");
+    const numBody = await initSingle(body, "BODY");
+    const numColor = await initSingle(color, "COLOR");
+    const numFace = await initSingle(face, "FACE");
+    const numHand = await initSingle(hand, "HAND");
   }
 
   return {
-    initWorld,
+    initWorld: initWorld,
+    tryInitTraits: initTraitsWithFail,
   }
 
   function sleepIf() {
