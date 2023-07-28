@@ -10,21 +10,36 @@ interface Props {
   children: React.ReactNode;
   fill?: boolean; // whether the content should fit to the entire modal
   overlay?: boolean;
+  hideModal?: Partial<VisibleModals>;
 }
 
 // ModalWrapperFull is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapperFull = (props: Props) => {
-  const { visibleModals } = dataStore();
+  const { visibleModals, setVisibleModals } = dataStore();
 
   // Updates modal visibility if the divName is updated to visible in the store.
+  // Closes other modals (if specified)
   useEffect(() => {
     const element = document.getElementById(props.id);
     if (element) {
       const isVisible = visibleModals[props.divName];
       element.style.display = isVisible ? 'block' : 'none';
+
+      const toggleModal = props.hideModal ? props.hideModal : {};
+      setVisibleModals({
+        ...visibleModals,
+        ...toggleModal
+      });
     }
   }, [visibleModals[props.divName]]);
+
+  // catch clicks on modal, prevents duplicate Phaser3 triggers
+  const handleClicks = (event: any) => {
+    event.stopPropagation();
+  };
+  const element = document.getElementById(props.id);
+  element?.addEventListener('mousedown', handleClicks);
 
   // Some conditional styling to adapt the content to the wrapper.
   const wrapperStyle = props.fill ? { height: '75vh' } : {};

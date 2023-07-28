@@ -8,18 +8,6 @@ export const triggerDialogueModal = (description: string[]) => {
   } = dataStore.getState();
   const clickFX = new Audio(clickSound);
 
-  // NOTE: this is just a workaround, the proper solution is to fix the below
-  // modals to properly capture any clicks on their rendered interface
-  // (ModalWrapper does this)
-  if (
-    visibleModals.kamisNaming ||
-    visibleModals.nameKami ||
-    visibleModals.bridgeERC20 ||
-    visibleModals.bridgeERC721
-  ) {
-    return;
-  }
-
   clickFX.volume = volume;
   clickFX.play();
 
