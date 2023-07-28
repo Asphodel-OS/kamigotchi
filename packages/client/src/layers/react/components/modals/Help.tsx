@@ -44,6 +44,14 @@ export function registerHelpModal() {
 
       const scrollableRef = useRef<HTMLDivElement>(null);
 
+      const Header = (
+        <div style={{ display: `${helpState == HelpComponentState.HOME ? 'none' : 'flex'}` }}>
+          <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
+            <img style={{ height: '100%', width: 'auto' }} src={homeImage} alt='home_icon' />
+          </Button>
+        </div>
+      )
+
       switch (helpState) {
         case HelpComponentState.HOME:
           helpContent = (
@@ -69,9 +77,6 @@ export function registerHelpModal() {
         case HelpComponentState.START:
           helpContent = (
             <div>
-              <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
-                <img style={{ height: '100%', width: 'auto' }} src={homeImage} alt='home_icon' />
-              </Button>
               <img style={{ height: 'auto', width: '100%' }} src={gettingStarted} alt='getting started' />
               <Description>
                 Welcome to Kamigotchi World.
@@ -93,9 +98,6 @@ export function registerHelpModal() {
         case HelpComponentState.KAMI_INFO:
           helpContent = (
             <div>
-              <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
-                <img style={{ height: '100%', width: 'auto' }} src={homeImage} alt='home_icon' />
-              </Button>
               <img style={{ height: 'auto', width: '100%' }} src={whatKami} alt='what kami' />
               <Description>
                 Kamigotchi are vibrant individuals who exist to provide you with
@@ -143,9 +145,6 @@ export function registerHelpModal() {
         case HelpComponentState.NODES:
           helpContent = (
             <div>
-              <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
-                <img style={{ height: '100%', width: 'auto' }} src={homeImage} alt='home_icon' />
-              </Button>
               <img style={{ height: 'auto', width: '100%' }} src={nodes} alt='nodes' />
               <Description>
                 Nodes are sites of spiritual significance within Kamigotchi
@@ -164,9 +163,6 @@ export function registerHelpModal() {
         case HelpComponentState.WORLD:
           helpContent = (
             <div>
-              <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
-                <img style={{ height: '100%', width: 'auto' }} src={homeImage} alt='home_icon' />
-              </Button>
               <img style={{ height: 'auto', width: '100%' }} src={world} alt='world' />
               <Description>
                 Kamigotchi World is an Autonomous World that exists entirely on-chain.
@@ -186,6 +182,7 @@ export function registerHelpModal() {
 
       return (
         <ModalWrapperFull divName='help' id='help_modal'>
+          {Header}
           <Scrollable ref={scrollableRef}>
             {helpContent}
           </Scrollable>
