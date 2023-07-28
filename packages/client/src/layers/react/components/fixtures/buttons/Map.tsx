@@ -18,17 +18,6 @@ export function registerMapButton() {
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide: Partial<VisibleModals> = {
-        bridgeERC20: false,
-        bridgeERC721: false,
-        dialogue: false,
-        kami: false,
-        kamisNaming: false,
-        nameKami: false,
-        node: false,
-        merchant: false,
-        leaderboard: false,
-      };
 
       return (
         <MenuButton
@@ -36,7 +25,6 @@ export function registerMapButton() {
           targetDiv='map'
           text='Map'
           visible={visibleButtons.map}
-          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={mapImage} alt='map_icon' />
         </MenuButton>
