@@ -4,7 +4,7 @@ import React, {
   useState,
 } from 'react';
 import { map, merge } from 'rxjs';
-import { EntityID, getComponentValue } from '@latticexyz/recs';
+import { EntityID, getComponentValue, runQuery, Has, HasValue } from '@latticexyz/recs';
 import styled from 'styled-components';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -12,7 +12,6 @@ import MapGrid from 'layers/react/components/library/MapGrid';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { dataStore } from 'layers/react/store/createStore';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -27,26 +26,42 @@ export function registerMapModal() {
       const {
         network: {
           api: { player },
-          components: { Location, OperatorAddress },
+          components: { IsAccount, Location, OperatorAddress },
+          network,
           actions,
         },
       } = layers;
 
       return merge(Location.update$, OperatorAddress.update$).pipe(
         map(() => {
+          // get the account through the account entity of the controlling wallet
+          const accountIndex = Array.from(
+            runQuery([
+              Has(IsAccount),
+              HasValue(OperatorAddress, {
+                value: network.connectedAddress.get(),
+              }),
+            ])
+          )[0];
+
+          // get location
+          const location = getComponentValue(
+            layers.network.components.Location,
+            accountIndex
+          )?.value as number * 1;
+
           return {
             layers,
             actions,
             api: player,
+            curLoc: location
           };
         })
       );
     },
-    ({ layers, actions, api }) => {
-      const { details: accountDetails } = useKamiAccount();
+    ({ layers, actions, api, curLoc }) => {
       const { selectedEntities, setSelectedEntities } = dataStore();
       const { visibleModals } = dataStore();
-      const [currentLocation, setCurrentLocation] = useState<number>(1);
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 
@@ -56,12 +71,7 @@ export function registerMapModal() {
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
         if (visibleModals.map) {
-          const location = getComponentValue(
-            layers.network.components.Location,
-            accountDetails.index
-          )?.value as number * 1;
-          setCurrentLocation(location);
-          setSelectedEntities({ ...selectedEntities, room: location });
+          setSelectedEntities({ ...selectedEntities, room: curLoc });
         }
       }, [visibleModals.map]);
 
@@ -78,7 +88,7 @@ export function registerMapModal() {
           const exits = room.exits?.map((exit) => getRoomByLocation(layers, exit * 1));
           setSelectedExits(exits);
         }
-      }, [selectedEntities.room]);
+      }, [selectedEntities.room, curLoc]);
 
 
       ///////////////////
@@ -95,7 +105,6 @@ export function registerMapModal() {
             return api.account.move(location);
           },
         });
-        setCurrentLocation(location);
       };
 
       const RoomInfo = ({ room, exits }: { room: Room | undefined, exits: Room[] }) => {
@@ -136,7 +145,7 @@ export function registerMapModal() {
       return (
         <ModalWrapperFull id='world_map' divName='map'>
           <MapBox>
-            <MapGrid currentRoom={currentLocation} move={move} />
+            <MapGrid currentRoom={curLoc} move={move} />
           </MapBox>
           <RoomInfo room={selectedRoom} exits={selectedExits} />
         </ModalWrapperFull>
