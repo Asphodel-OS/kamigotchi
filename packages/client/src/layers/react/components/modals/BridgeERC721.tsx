@@ -97,7 +97,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Importing $KAMI` as EntityID;
+        const actionID = `Staking Kami` as EntityID;
         actions.add({
           id: actionID,
           components: {},
@@ -115,7 +115,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Exporting $KAMI` as EntityID;
+        const actionID = `Unstaking Kami` as EntityID;
         actions.add({
           id: actionID,
           components: {},

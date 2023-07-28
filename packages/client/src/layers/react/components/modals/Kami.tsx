@@ -93,7 +93,7 @@ export function registerKamiModal() {
         const affinities = kami.affinities?.join(' | ');
         const statsDescriptions = new Map(Object.entries({
           'health': 'defines how resilient a Kami is to accumulated damage',
-          'power': 'determines the potential rate at which $KAMI can be farmed',
+          'power': 'determines the potential rate at which $BYTE can be farmed',
           'violence': 'dictates the threshold at which a Kami can liquidate others',
           'harmony': 'divines resting recovery rate and defends against violence',
           'slots': 'room for upgrades ^_^',

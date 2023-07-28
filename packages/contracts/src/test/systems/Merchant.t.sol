@@ -386,7 +386,7 @@ contract MerchantTest is SetupTemplate {
       testData.itemIndex = uint8(LibListing.getItemIndex(components, listingID));
       testData.stockInitial = uint24(_getItemBalance(testData.playerIndex, testData.itemIndex)); // item balance
       testData.stockChange = uint24((randN % 100) + 1); // 1-100
-      testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $KAMI balance
+      testData.balanceInitial = uint24(_getAccountBalance(testData.playerIndex)); // $BYTE balance
 
       if (i % 2 == 0) {
         // buy case

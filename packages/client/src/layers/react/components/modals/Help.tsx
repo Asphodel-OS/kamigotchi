@@ -100,7 +100,7 @@ export function registerHelpModal() {
               <Description>
                 Kamigotchi are vibrant individuals who exist to provide you with
                 emotional support and value. You can convert their health and
-                well-being into $KAMI by sending them to work at Nodes.
+                well-being into $BYTE by sending them to work at Nodes.
                 <br />
                 <br />
                 Kamigotchi have several different statistics that determine
@@ -120,8 +120,8 @@ export function registerHelpModal() {
                 resurrected using a Ribbon.
                 <br />
                 Health drains slowly when harvesting on a node. As Health drains, Kamigotchi
-                produce $KAMI based on their Power stat. More Power increases both Health drain rate
-                and the level of $KAMI generated.
+                produce $BYTE based on their Power stat. More Power increases both Health drain rate
+                and the level of $BYTE generated.
                 <br />
                 <br />
                 Your Kamigotchi are fiercely
@@ -149,13 +149,13 @@ export function registerHelpModal() {
               <img style={{ height: 'auto', width: '100%' }} src={nodes} alt='nodes' />
               <Description>
                 Nodes are sites of spiritual significance within Kamigotchi
-                World. Kamigotchi, and only Kamigotchi, can generate $KAMI
+                World. Kamigotchi, and only Kamigotchi, can generate $BYTE
                 by gathering energy at Nodes. This costs Kamigotchi health,
                 and can leave them vulnerable to attack from other Kamigotchi.
                 <br />
                 <br />
                 Some nodes have a type affinity, such as Eerie or Scrap. You may
-                be able to find more $KAMI by harvesting on these nodes with
+                be able to find more $BYTE by harvesting on these nodes with
                 Kami that share the same affinity.
               </Description>
             </div>
