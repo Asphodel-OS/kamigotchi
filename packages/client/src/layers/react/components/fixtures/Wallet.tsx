@@ -1,7 +1,7 @@
 // src/layers/react/components/buttons/Wallet.tsx
 import React from 'react';
 import { of } from 'rxjs';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { AccountButton } from 'layers/react/components/library/CustomRainbowButton';
 import "@rainbow-me/rainbowkit/styles.css";
 
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -18,14 +18,7 @@ export function registerWalletFixture() {
     (layers) => of(layers),
     () => {
       return (
-        <div style={{ pointerEvents: "all" }}>
-          <ConnectButton
-            label="Connect Wallet"
-            showBalance={false}
-            chainStatus="none"
-            accountStatus="address"
-          />
-        </div>
+        <AccountButton size='menu' />
       );
     },
   );

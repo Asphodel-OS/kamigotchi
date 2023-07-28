@@ -3,6 +3,8 @@ import { of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount, useNetwork, Connector } from 'wagmi';
 
+import { ChainButton } from 'layers/react/components/library/CustomRainbowButton';
+
 import { defaultChainConfig } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
@@ -104,6 +106,17 @@ export function registerWalletConnecter() {
       };
 
       /////////////////
+      // DISPLAY
+
+      const BottomButton = () => {
+        if (!isCorrectNetwork && isConnected) {
+          return (
+            <ChainButton size="medium" />
+          );
+        }
+      };
+
+      /////////////////
       // RENDER
 
       // how to render the modal
@@ -117,6 +130,9 @@ export function registerWalletConnecter() {
             <Title>{title}</Title>
             <Description>({status})</Description>
             <Description>{description}</Description>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              {BottomButton()}
+            </div>
           </ModalContent>
         </ModalWrapper>
       );
