@@ -338,7 +338,7 @@ export function registerKamiMintModal() {
       };
 
       return (
-        <ModalWrapperFull divName='kamiMint' id='kamiMintModal'>
+        <ModalWrapperFull divName='kamiMint' id='kamiMintModal' hideModal={{ party: false }}>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>

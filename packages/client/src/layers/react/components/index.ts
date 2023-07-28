@@ -48,24 +48,26 @@ export function registerUIComponents() {
   registerActionQueue();
   registerOperatorFundNotification();
 
-  // modals
-  registerChatModal();
+  // game modals
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerFundOperatorModal();
   registerKamiMintModal();
   registerKamiModal();
   registerKamisNamingModal();
-  registerHelpModal();
   registerLeaderboardModal();
-  registerMapModal();
   registerNameKamiModal();
   registerNodeModal();
   registerMerchantModal();
-  registerPartyModal();
-  registerSettingsModal();
   registerDialogueModal();
   registerOperatorMovementModal();
+
+  // menu modals
+  registerChatModal();
+  registerHelpModal();
+  registerMapModal();
+  registerSettingsModal();
+  registerPartyModal();
 
   // validators
   registerAccountRegistrar();
