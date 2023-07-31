@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
-contract ERC721PetTest is SetupTemplate {
+contract Pet721StakeTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
     _initCommonTraits();
