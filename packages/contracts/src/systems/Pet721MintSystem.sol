@@ -13,7 +13,7 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.Mint"));
-uint256 constant VENDING_MACHINE_ROOM = 4;
+uint256 constant ROOM = 4;
 
 contract Pet721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -28,8 +28,8 @@ contract Pet721MintSystem is System {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Pet721Mint: no account");
     require(
-      LibAccount.getLocation(components, accountID) == VENDING_MACHINE_ROOM,
-      "Pet721Mint: must be in room 4"
+      LibAccount.getLocation(components, accountID) == ROOM,
+      "Pet721Mint: must be in room 4 "
     );
 
     // burn the $KAMI, implicitly checks balance
