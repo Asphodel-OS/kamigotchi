@@ -8,16 +8,16 @@ contract Farm20Test is SetupTemplate {
   uint256 constant MAX_INT = 2 ** 256 - 1;
 
   // converts ERC20 decimals (18) to game decimals (0)
-  function _tokenToGameDP(uint256 amount) internal view returns (uint256) {
+  function _tokenToGameDP(uint256 amount) internal pure returns (uint256) {
     return amount / 10 ** 18;
   }
 
   // converts game decimals (0) to ERC20 decimals (18)
-  function _gameToTokenDP(uint256 amount) internal view returns (uint256) {
+  function _gameToTokenDP(uint256 amount) internal pure returns (uint256) {
     return amount * 10 ** 18;
   }
 
-  function uncheckedAdd(uint256 a, uint256 b) internal returns (uint256) {
+  function _uncheckedAdd(uint256 a, uint256 b) internal pure returns (uint256) {
     unchecked {
       return a + b;
     }
@@ -26,6 +26,10 @@ contract Farm20Test is SetupTemplate {
   function setUp() public override {
     super.setUp();
     token = _Farm20ProxySystem.getToken();
+
+    _createRoom("testRoom1", 1, 4, 12, 0);
+    _createRoom("testRoom4", 4, 1, 12, 0);
+    _createRoom("testRoom4", 12, 1, 4, 0);
 
     _registerAccount(0);
     _registerAccount(1);
@@ -37,6 +41,8 @@ contract Farm20Test is SetupTemplate {
     vm.assume(startingBalance < _tokenToGameDP(MAX_INT));
     vm.assume(amt < _tokenToGameDP(MAX_INT));
     _fundAccount(0, startingBalance);
+    _moveAccount(0, 12); // bridging restricted to room 12
+
     vm.startPrank(_getOwner(0));
 
     // withdraw the amt from the game
@@ -69,6 +75,8 @@ contract Farm20Test is SetupTemplate {
     vm.assume(startingBalance < _tokenToGameDP(MAX_INT));
     vm.assume(amt < _tokenToGameDP(MAX_INT));
     _fundAccount(0, startingBalance);
+    _moveAccount(0, 12); // bridging restricted to room 12
+
     vm.startPrank(_getOwner(0));
 
     // pull out the full balance of funds
@@ -106,6 +114,7 @@ contract Farm20Test is SetupTemplate {
     vm.assume(amt > 0);
     vm.assume(amt < _tokenToGameDP(MAX_INT));
     _fundAccount(0, amt);
+    _moveAccount(0, 12); // bridging restricted to room 12
 
     // withdraw full amount
     vm.prank(_getOwner(0));
@@ -117,7 +126,7 @@ contract Farm20Test is SetupTemplate {
 
     // attempt to deposit funds
     vm.prank(_getOwner(2));
-    vm.expectRevert("Farm20Deposit: addy has no acc");
+    vm.expectRevert("Farm20Deposit: no account detected");
     _Farm20DepositSystem.executeTyped(amt);
   }
 
@@ -136,9 +145,13 @@ contract Farm20Test is SetupTemplate {
     vm.assume(startBal1 < _tokenToGameDP(MAX_INT));
     vm.assume(amt0 < _tokenToGameDP(MAX_INT));
     vm.assume(amt1 < _tokenToGameDP(MAX_INT));
-    vm.assume(uncheckedAdd(startBal0 * 10 ** 18, startBal1 * 10 ** 18) > startBal1 * 10 ** 18);
+    vm.assume(_uncheckedAdd(startBal0 * 10 ** 18, startBal1 * 10 ** 18) > startBal1 * 10 ** 18);
     _fundAccount(0, startBal0);
     _fundAccount(1, startBal1);
+
+    // bridging restricted to room 12
+    _moveAccount(0, 12);
+    _moveAccount(1, 12);
 
     // withdraw from account 0
     vm.startPrank(_getOwner(0));
@@ -226,9 +239,13 @@ contract Farm20Test is SetupTemplate {
     vm.assume(startBal0 < _tokenToGameDP(MAX_INT));
     vm.assume(startBal1 < _tokenToGameDP(MAX_INT));
     vm.assume(amt < _tokenToGameDP(MAX_INT));
-    vm.assume(uncheckedAdd(startBal0 * 10 ** 18, startBal1 * 10 ** 18) > startBal1 * 10 ** 18);
+    vm.assume(_uncheckedAdd(startBal0 * 10 ** 18, startBal1 * 10 ** 18) > startBal1 * 10 ** 18);
     _fundAccount(0, startBal0);
     _fundAccount(1, startBal1);
+
+    // bridging restricted to room 12
+    _moveAccount(0, 12);
+    _moveAccount(1, 12);
 
     vm.prank(_getOwner(0));
     _Farm20WithdrawSystem.executeTyped(startBal0);
@@ -243,7 +260,7 @@ contract Farm20Test is SetupTemplate {
 
       assertEq(_tokenToGameDP(token.balanceOf(_getOwner(0))), startBal0);
       assertEq(_tokenToGameDP(token.balanceOf(_getOwner(1))), startBal1);
-    } else if (uncheckedAdd(startBal1, amt) <= amt) {
+    } else if (_uncheckedAdd(startBal1, amt) <= amt) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
       token.transfer(_getOwner(1), _gameToTokenDP(amt));

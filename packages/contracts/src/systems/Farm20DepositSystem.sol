@@ -12,7 +12,9 @@ import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.Farm20.Deposit"));
+uint256 constant ROOM = 12;
 
+// in game <- ERC20
 // brings ERC20 tokens back into the game, sends it to the sender's account entity
 contract Farm20DepositSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -22,7 +24,11 @@ contract Farm20DepositSystem is System {
     require(amount > 0, "Farm20Deposit: amt must be > 0");
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Farm20Deposit: addy has no acc");
+    require(accountID != 0, "Farm20Deposit: no account detected");
+    require(
+      LibAccount.getLocation(components, accountID) == ROOM,
+      "Farm20Deposit: must be in room 12"
+    );
 
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);

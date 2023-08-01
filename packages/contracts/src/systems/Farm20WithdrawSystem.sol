@@ -12,6 +12,7 @@ import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.Farm20.Withdraw"));
+uint256 constant ROOM = 12;
 
 // in game -> ERC20
 // bridges in game coins to ERC20 by minting ERC20 tokens in the ERC20 contract
@@ -24,7 +25,11 @@ contract Farm20WithdrawSystem is System {
     require(amount > 0, "Farm20Withdraw: amt must be > 0");
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Farm20Withdraw: addy has no acc");
+    require(accountID != 0, "Farm20Withdraw: no account detected");
+    require(
+      LibAccount.getLocation(components, accountID) == ROOM,
+      "Farm20Withdraw: must be in room 12"
+    );
 
     LibCoin.dec(components, accountID, amount);
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
