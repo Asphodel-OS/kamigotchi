@@ -52,6 +52,7 @@ export function registerNodeModal() {
           network,
           components: {
             AccountID,
+            Balance,
             NodeID,
             PetID,
             IsAccount,
@@ -71,6 +72,7 @@ export function registerNodeModal() {
       // TODO: update this to support node input as props
       return merge(
         AccountID.update$,
+        Balance.update$,
         HealthCurrent.update$,
         Location.update$,
         Rate.update$,
