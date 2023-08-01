@@ -5,21 +5,22 @@ import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import { useAccount, useContractRead, useBalance } from 'wagmi';
 
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { Stepper } from 'layers/react/components/library/Stepper';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getAccountData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
-import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { Stepper } from '../library/Stepper';
-import { useAccount, useContractRead, useBalance } from 'wagmi';
 
-import { abi } from "../../../../../abi/Pet721ProxySystem.json"
+import mintSound from 'assets/sound/fx/vending_machine.mp3';
+import { abi } from "abi/Pet721ProxySystem.json"
+import { getConfigFieldValue } from 'layers/react/shapes/Config';
 
 export function registerKamiMintModal() {
   registerUIComponent(
@@ -72,15 +73,32 @@ export function registerKamiMintModal() {
 
           return {
             layers,
-            unrevealedKamis,
-            proxyMint20Addy: systems["system.Farm20.Proxy"].address,
-            numAlrMinted: numAlrMinted,
+            data: {
+              account: {
+                mint20: {
+                  balance: 0, // TODO?: seems this is supported by wagmi hook
+                  minted: getAccountData(layers, account, "NUM_MINT20_MINTED"),
+                  limit: getConfigFieldValue(layers.network, "MINT_ACCOUNT_MAX"),
+                },
+                kamis: {
+                  unrevealed: unrevealedKamis,
+                }
+              },
+              mint20: {
+                proxyAddress: systems["system.Farm20.Proxy"].address,
+                cost: getConfigFieldValue(layers.network, "MINT_PRICE"),
+                redeemed: 0, // TODO?: seems this is supported by wagmi hook
+                supply: 0, // TODO?: seems this is supported by wagmi hook
+                limit: getConfigFieldValue(layers.network, "MINT_INITIAL_MAX"),
+              },
+              numAlrMinted,
+            }
           };
         })
       );
     },
 
-    ({ layers, unrevealedKamis, proxyMint20Addy, numAlrMinted }) => {
+    ({ layers, data }) => {
       const {
         network: {
           actions,
@@ -97,17 +115,59 @@ export function registerKamiMintModal() {
 
       const [amountToMint, setAmountToMint] = useState(1);
 
+
+      ///////////////
+      // HOOKS
+
       useEffect(() => {
         if (isConnected) {
-          unrevealedKamis.forEach((kami) => {
+          data.account.kamis.unrevealed.forEach((kami) => {
             revealTx(kami);
           });
         }
-      }, [unrevealedKamis])
+      }, [data.account.kamis.unrevealed]);
+
+
+      ///////////////
+      // COUNTER
+
+      const { data: mint20Addy } = useContractRead({
+        address: systems["system.Mint20.Proxy"].address as `0x${string}`,
+        abi: abi,
+        functionName: 'getTokenAddy'
+      });
+
+      const { data: accountMint20Bal } = useBalance({
+        address: accountDetails.ownerAddress as `0x${string}`,
+        token: mint20Addy as `0x${string}`,
+        watch: true
+      });
+
+      const { data: mint20Supply } = useContractRead({
+        address: mint20Addy as `0x${string}`,
+        abi:
+          [{
+            "inputs": [],
+            "name": "getTotalMinted",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },],
+        functionName: 'getTotalMinted',
+        watch: true,
+      });
+
 
       /////////////////
       // ACTIONS
 
+      // transaction to mint the Kami NFT (with Mint ERC20)
       const mintPetTx = (amount: number) => {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
@@ -125,6 +185,7 @@ export function registerKamiMintModal() {
         return actionID;
       };
 
+      // transaction to mint the Mint ERC20 Token
       const mintTokenTx = (amount: number, value: number) => {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
@@ -143,7 +204,7 @@ export function registerKamiMintModal() {
         return actionID;
       }
 
-
+      // transaction to roll/reveal the kami's metadata 
       const revealTx = async (kami: Kami) => {
         const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
@@ -190,42 +251,6 @@ export function registerKamiMintModal() {
         }
       };
 
-      ///////////////
-      // COUNTER
-
-
-
-      const { data: mint20Addy } = useContractRead({
-        address: systems["system.Mint20.Proxy"].address as `0x${string}`,
-        abi: abi,
-        functionName: 'getTokenAddy'
-      });
-
-      const { data: mintTokenBal } = useBalance({
-        address: accountDetails.ownerAddress as `0x${string}`,
-        token: mint20Addy as `0x${string}`,
-        watch: true
-      });
-
-      const { data: totalSupply } = useContractRead({
-        address: mint20Addy as `0x${string}`,
-        abi:
-          [{
-            "inputs": [],
-            "name": "getTotalMinted",
-            "outputs": [
-              {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },],
-        functionName: 'getTotalMinted',
-        watch: true,
-      });
 
       ///////////////
       // DISPLAY
@@ -239,7 +264,7 @@ export function registerKamiMintModal() {
       }
 
       const MintPetButton = () => {
-        const enabled = (amountToMint <= Number(mintTokenBal?.formatted));
+        const enabled = (amountToMint <= Number(accountMint20Bal?.formatted));
         const warnText = enabled ? '' : 'Insufficient $KAMI';
         return (
           <Tooltip text={[warnText]}>
@@ -267,7 +292,7 @@ export function registerKamiMintModal() {
                 placeholder='0'
                 onChange={(e) => handleChange(e)}
                 value={amountToMint}
-              ></Input>
+              />
               {QuantityButton(1)}
             </div>
           </div>
@@ -296,10 +321,10 @@ export function registerKamiMintModal() {
             {MintTokenButton("0.10Ξ", 5, 0.1)}
           </ProductBox>
           <SubText style={{ gridRow: 5 }}>
-            Total Supply: {Number(totalSupply)} / 1111
+            Total Supply: {Number(mint20Supply)} / {data.mint20.limit}
           </SubText>
           <SubText style={{ gridRow: 6 }}>
-            Address Limit: {numAlrMinted} / 5
+            Address Limit: {data.account.mint20.minted} / {data.account.mint20.limit}
           </SubText>
         </Grid>
       );
@@ -317,7 +342,7 @@ export function registerKamiMintModal() {
             {MintPetButton()}
           </ProductBox>
           <SubText style={{ gridRow: 4 }}>
-            You have: {Number(mintTokenBal?.formatted)} $KAMI
+            You have: {Number(accountMint20Bal?.formatted)} $KAMI
           </SubText>
         </Grid>
       );
