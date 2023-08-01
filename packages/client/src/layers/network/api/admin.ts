@@ -18,7 +18,7 @@ export function createAdminAPI(systems: any) {
 
     // Kami Base Stats
     // to be 5, set at 500 for testing
-    await setConfig('MINT_ACCOUNT_MAX', 500);
+    await setConfig('MINT_ACCOUNT_MAX', 5);
     await setConfig('MINT_INITIAL_MAX', 1111);
     await setConfig('MINT_TOTAL_MAX', 4444);
     await setConfig('MINT_PRICE', utils.parseEther('0.0'));
