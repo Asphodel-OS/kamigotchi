@@ -27,10 +27,14 @@ contract Pet721MintSystem is System {
 
     // get the account for this owner(to). fails if doesnt exist
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Pet721MintSystem: no account");
+    require(accountID != 0, "Pet721Mint: no account");
 
     // update num minted
     uint256 numMinted = LibAccount.getPetsMinted(components, accountID);
+    require(
+      numMinted < LibConfig.get(components, "MINT_ACCOUNT_MAX"),
+      "Pet721Mint: max mint exceeded"
+    );
     LibAccount.setPetsMinted(world, components, accountID, numMinted + amount);
 
     // burn mint tokens, implicitly checks if owner has enough balance

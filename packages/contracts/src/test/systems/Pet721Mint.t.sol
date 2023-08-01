@@ -69,12 +69,12 @@ contract Pet721MintTest is SetupTemplate {
   }
 
   // converts ERC20 decimals (18) to game decimals (0)
-  function _tokenToGameDP(uint256 amount) internal view returns (uint256) {
+  function _tokenToGameDP(uint256 amount) internal pure returns (uint256) {
     return amount / 10 ** 18;
   }
 
   // converts game decimals (0) to ERC20 decimals (18)
-  function _gameToTokenDP(uint256 amount) internal view returns (uint256) {
+  function _gameToTokenDP(uint256 amount) internal pure returns (uint256) {
     return amount * 10 ** 18;
   }
 
@@ -86,7 +86,6 @@ contract Pet721MintTest is SetupTemplate {
     vm.assume(num721 < ((~uint256(0)) / 1e18));
 
     address owner = _getOwner(0);
-    address operator = _getOperator(0);
     uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
     uint256 maxAccMint = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX");
 
@@ -99,7 +98,7 @@ contract Pet721MintTest is SetupTemplate {
     } else if (num20 > maxAccMint) {
       vm.deal(owner, price * num20);
       vm.prank(owner);
-      vm.expectRevert("Mint20Mint: max account minted");
+      vm.expectRevert("Mint20Mint: exceeds account limit");
       _Mint20MintSystem.mint{ value: price * num20 }(num20);
       return;
     } else {
