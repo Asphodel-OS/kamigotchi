@@ -100,7 +100,7 @@ contract Pet721MintTest is SetupTemplate {
     if (num20 == 0) {
       vm.deal(owner, price * num20);
       vm.prank(owner);
-      vm.expectRevert("Mint20Mint: amt must be > 0");
+      vm.expectRevert("Mint20Mint: must be > 0");
       _Mint20MintSystem.mint(num20);
       return;
     } else if (num20 > supplyLimit) {
@@ -123,7 +123,7 @@ contract Pet721MintTest is SetupTemplate {
 
     if (num721 == 0) {
       vm.prank(owner);
-      vm.expectRevert("Pet721MintSystem: amt not > 0");
+      vm.expectRevert("Pet721Mint: must be > 0");
       _Pet721MintSystem.executeTyped(num721);
       return;
     } else if (num20 < num721) {
