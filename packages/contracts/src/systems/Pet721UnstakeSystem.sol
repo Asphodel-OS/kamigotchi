@@ -10,6 +10,7 @@ import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.Unstake"));
+uint256 constant ROOM = 12;
 
 // sets a pet game world => outside world
 /*
@@ -30,9 +31,16 @@ contract Pet721UnstakeSystem is System {
     uint256 petID = LibPet.indexToID(components, tokenID);
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
+    // account checks
+    require(accountID != 0, "Pet721Stake: no account detected");
+    require(
+      LibAccount.getLocation(components, accountID) == ROOM,
+      "Pet721Stake: must be in room 12"
+    );
+
     // checks before action
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.isResting(components, petID), "Pet: not resting");
+    require(LibPet.getAccount(components, petID) == accountID, "Pet721Unstake: not urs");
+    require(LibPet.isResting(components, petID), "Pet721Unstake: must be resting");
 
     // actions to be taken upon bridging out
     LibPet.unstake(components, petID);

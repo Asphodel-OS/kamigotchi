@@ -9,8 +9,9 @@ contract Pet721StakeTest is SetupTemplate {
 
     _initCommonTraits();
 
-    _createRoom("testRoom1", 1, 4, 0, 0);
-    _createRoom("testRoom4", 4, 1, 0, 0);
+    _createRoom("testRoom1", 1, 4, 12, 0);
+    _createRoom("testRoom4", 4, 1, 12, 0);
+    _createRoom("testRoom4", 12, 1, 4, 0);
 
     _registerAccount(0);
     _registerAccount(1);
@@ -65,6 +66,8 @@ contract Pet721StakeTest is SetupTemplate {
     _Pet721RevealSystem.executeTyped(petIndex);
     _assertPetState(petID, "RESTING");
 
+    _moveAccount(0, 12); // bridging restricted to room 12
+
     // bridging out
     vm.prank(_getOwner(0));
     _Pet721UnstakeSystem.executeTyped(petIndex);
@@ -85,6 +88,7 @@ contract Pet721StakeTest is SetupTemplate {
 
   function testTransferOutOfGame() public {
     _mintPet(0);
+    _moveAccount(0, 12); // bridging restricted to room 12
 
     vm.prank(_getOwner(0));
     _Pet721UnstakeSystem.executeTyped(1);
