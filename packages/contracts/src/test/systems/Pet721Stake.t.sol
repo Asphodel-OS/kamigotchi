@@ -6,7 +6,12 @@ import "test/utils/SetupTemplate.s.sol";
 contract Pet721StakeTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
+
     _initCommonTraits();
+
+    _createRoom("testRoom1", 1, 4, 0, 0);
+    _createRoom("testRoom4", 4, 1, 0, 0);
+
     _registerAccount(0);
     _registerAccount(1);
   }
@@ -44,6 +49,8 @@ contract Pet721StakeTest is SetupTemplate {
   }
 
   function testStates() public {
+    _moveAccount(0, 4); // minting restricted to room 4
+
     // minting
     _mintMint20(0, 1);
     vm.prank(_getOwner(0));
@@ -88,6 +95,8 @@ contract Pet721StakeTest is SetupTemplate {
   }
 
   function testForceReveal() public {
+    _moveAccount(0, 4); // minting restricted to room 4
+
     _mintMint20(0, 1);
     vm.prank(_getOwner(0));
     uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
@@ -117,7 +126,7 @@ contract Pet721StakeTest is SetupTemplate {
 
   // only prints mediaURI, does not check if it is accurate
   function testMediaURI() public {
-    _mintPets(0, 1);
+    _mintPet(0);
 
     console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
   }

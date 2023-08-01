@@ -16,9 +16,11 @@ contract FeedingTest is SetupTemplate {
     _initCommonTraits();
     _initItems();
 
-    _createRoom("testRoom1", 1, 2, 3, 0);
-    _createRoom("testRoom2", 2, 1, 3, 0);
-    _createRoom("testRoom3", 3, 1, 2, 0);
+    _createRoom("testRoom1", 1, 2, 3, 4);
+    _createRoom("testRoom2", 2, 1, 3, 4);
+    _createRoom("testRoom3", 3, 1, 2, 4);
+    _createRoom("testRoom4", 4, 1, 2, 3);
+
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
     _merchantID = _createMerchant(1, 1, "Test Merchant");
 

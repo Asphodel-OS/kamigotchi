@@ -22,9 +22,10 @@ contract HarvestTest is SetupTemplate {
     super.setUp();
 
     // create rooms
-    _createRoom("testRoom1", 1, 2, 3, 0);
-    _createRoom("testRoom2", 2, 1, 3, 0);
-    _createRoom("testRoom3", 3, 1, 2, 0);
+    _createRoom("testRoom1", 1, 2, 3, 4);
+    _createRoom("testRoom2", 2, 1, 3, 4);
+    _createRoom("testRoom3", 3, 1, 2, 4);
+    _createRoom("testRoom3", 4, 1, 2, 3);
 
     _initCommonTraits();
 

@@ -9,7 +9,7 @@ import { ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 
-contract MurderTest is SetupTemplate {
+contract TraitTest is SetupTemplate {
   uint[] internal _listingIDs;
   uint[] internal _nodeIDs;
   mapping(uint => uint[]) internal _petIDs;
@@ -17,7 +17,8 @@ contract MurderTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _registerAccount(0);
+    _setConfig("MINT_ACCOUNT_MAX", 1e9);
+    _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
 
     _initCommonTraits();
     _initUncommonTraits();
@@ -25,7 +26,10 @@ contract MurderTest is SetupTemplate {
     _initEpicTraits();
     _initMythicTraits();
 
-    _setConfig("MINT_ACCOUNT_MAX", 1e9);
+    _createRoom("testRoom1", 1, 4, 0, 0);
+    _createRoom("testRoom4", 4, 1, 0, 0);
+
+    _registerAccount(0);
   }
 
   /////////////////

@@ -21,31 +21,34 @@ contract Mint20MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function mint(uint256 amount) external payable {
-    // checks
+    // balance checks
     require(amount > 0, "Mint20Mint: amt must be > 0");
-
     uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
     require(msg.value >= price * amount, "Mint20Mint: not enough ETH");
 
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Mint20Mint: addy has no acc");
-
-    uint256 accMinted = LibAccount.getMint20Minted(components, accountID);
-    require(
-      accMinted + amount <= LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX"),
-      "Mint20Mint: exceeds account limit"
-    );
-
+    // check that resulting tx does not exceed the total supply limit
     uint256 totalMinted = LibMint20.getTotalMinted(world);
     require(
       totalMinted + amount <= LibConfig.getValueOf(components, "MINT_INITIAL_MAX"),
-      "Mint20Mint: max inital minted"
+      "Mint20Mint: supply limit exceeded"
     );
 
-    // update num minted
-    LibAccount.setMint20Minted(world, components, accountID, accMinted + amount);
+    // check that caller has an account
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
+    require(accountID != 0, "Mint20Mint: addy has no acc");
 
-    // mint token
+    // check that account is in the right room
+    require(LibAccount.getLocation(components, accountID) == 4, "Mint20Mint: must be in room 4");
+
+    // check that resulting account does not exceed the account limit
+    uint256 accountMinted = LibAccount.getMint20Minted(components, accountID);
+    require(
+      accountMinted + amount <= LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX"),
+      "Mint20Mint: account limit exceeded"
+    );
+
+    // update num minted and mint the tokens
+    LibAccount.setMint20Minted(world, components, accountID, accountMinted + amount);
     LibMint20.mint(world, msg.sender, amount);
   }
 
