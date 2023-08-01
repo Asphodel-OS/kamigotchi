@@ -74,6 +74,7 @@
     "staticPath": "src/public"
   },
   "alias": {
+    "abi": "./abi",
     "src": "./src",
     "assets": "./src/assets",
     "constants": "./src/constants",
