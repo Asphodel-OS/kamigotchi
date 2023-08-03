@@ -58,7 +58,7 @@ export function registerERC20BridgeModal() {
           const { coin } = account;
 
           return {
-            GameBal: coin,
+            GameBal: coin ?? 0,
             proxyAddy: systems["system.Farm20.Proxy"].address
           };
         })

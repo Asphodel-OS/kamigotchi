@@ -1,23 +1,21 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState, useCallback } from 'react';
-import { EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
-import 'layers/react/styles/font.css';
 import { map, merge } from 'rxjs';
-import { registerUIComponent } from 'layers/react/engine/store';
-import styled, { keyframes } from 'styled-components';
+import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { EntityID } from '@latticexyz/recs';
-import { Stepper } from '../library/Stepper';
-import { ModalWrapperFull } from '../library/ModalWrapper';
-import { Kami, getKami } from 'layers/react/shapes/Kami';
-import { Account, getAccount } from '../../shapes/Account';
 import { BigNumberish } from 'ethers';
+import { useContractRead } from 'wagmi';
+import styled from 'styled-components';
 
+import { abi } from 'abi/Pet721ProxySystem.json';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { Account, getAccount } from 'layers/react/shapes/Account';
+import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { dataStore } from 'layers/react/store/createStore';
-import { useAccount, useBalance, useContractRead } from 'wagmi';
 
-import { abi } from "../../../../../abi/Pet721ProxySystem.json"
+import 'layers/react/styles/font.css';
 
 export function registerERC721BridgeModal() {
   registerUIComponent(
@@ -140,9 +138,9 @@ export function registerERC721BridgeModal() {
         }
         // specific conditions that disable bridging 
         else if (isHarvesting(props.kami)) {
-          return (<NotButton>Kami Harvesting...</NotButton>);
+          return (<NotButton>Harvesting...</NotButton>);
         } else if (isDead(props.kami)) {
-          return (<NotButton>Kami dead!</NotButton>);
+          return (<NotButton>Dead!</NotButton>);
         } else {
           return (<NotButton>cannot be bridged</NotButton>);
         }
