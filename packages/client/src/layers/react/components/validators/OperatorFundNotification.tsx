@@ -107,56 +107,46 @@ const fadeIn = keyframes`
   }
 `;
 
-const Body = styled.p`
-  justify-content: center;
-  font-family: Pixel;
-  font-size: 14px;
-  text-align: center;
-  text-decoration: none;
-  color: black;
-  padding: 10px 0px;
-  text-align: left;
-`;
-
-const Content = styled.div`
-  border-color: black;
-  border-width: 2px;
-  border-radius: 10px;
-  border-style: solid;
-  background-color: white;
-  padding: 16px;
-  width: 99%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: start;
-  flex-flow: column nowrap;
-  font-family: Pixel;
-`;
-
-const Header = styled.p`
-  font-size: 20px;
-  color: black;
-  text-align: center;
-  font-family: Pixel;
-  padding: 10px 0px;
-`;
-
 const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   animation: ${fadeIn} 1.3s ease-in-out;
 `;
 
-const WarnText = styled.text`
-  font-size: 12px;
-  color: #FF785B;
-  text-align: center;
-  padding: 4px;
-  font-family: Pixel;
+const Content = styled.div`
+  border-color: black;
+  border-width: .15vw;
+  border-radius: 10px;
+  border-style: solid;
+  background-color: white;
+  padding: 1.1vw;
+  width: 99%;
+  height: 100%;
   
-  cursor: pointer;
-  border-width: 0px;
-  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column nowrap;
+  font-family: Pixel;
 `;
+
+const Header = styled.p`
+  font-size: 1.2vw;
+  color: black;
+  text-align: center;
+  font-family: Pixel;
+  padding: .3vw .2vw;
+`;
+
+const Body = styled.p`
+  color: black;
+  justify-content: center;
+  padding: .7vw .2vw;
+
+  font-family: Pixel;
+  font-size: .8vw;
+  text-align: left;
+  text-decoration: none;
+`;
+
 

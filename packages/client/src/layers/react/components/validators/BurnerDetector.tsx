@@ -182,7 +182,6 @@ const Input = styled.input`
 `;
 
 const ModalWrapper = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   animation: ${fadeIn} 1.3s ease-in-out;
@@ -196,8 +195,7 @@ const ModalContent = styled.div`
   border-color: black;
 
   background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 20px;
+  padding: 30px 20px;
 
   display: flex;
   flex-direction: column;
@@ -205,12 +203,6 @@ const ModalContent = styled.div`
   align-items: center;
 `;
 
-const ActionWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
 
 const Title = styled.p`
   font-size: 18px;
@@ -240,4 +232,11 @@ const ErrorText = styled.p`
   color: #922;
   text-align: center;
   font-family: Pixel;
+`;
+
+const ActionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;

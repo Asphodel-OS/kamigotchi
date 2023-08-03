@@ -136,7 +136,6 @@ const Input = styled.input`
 `;
 
 const ModalWrapper = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   animation: ${fadeIn} 1.3s ease-in-out;
