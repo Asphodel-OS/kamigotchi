@@ -231,7 +231,7 @@ export function registerAccountRegistrar() {
           infoText = [
             'This burner address is taken by another account.',
             '',
-            'But the odds of someone generating the same address are 1 in 1,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000.. fascinating',
+            'But the odds of someone generating the same address are 1 in 10^48.. fascinating',
             '',
             'You can take a look at localstorage.',
           ];
