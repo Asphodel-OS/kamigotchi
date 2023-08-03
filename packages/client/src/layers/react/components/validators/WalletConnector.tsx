@@ -70,8 +70,7 @@ export function registerWalletConnecter() {
 
       // update the network settings whenever the connector/address changes
       useEffect(() => {
-        console.log("WALLET IS", status);
-        console.log("NETWORK CHANGE DETECTED");
+        console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
         updateNetworkSettings(connector);
       }, [chain, connector, connectorAddress, isConnected, isCorrectNetwork]);
 
