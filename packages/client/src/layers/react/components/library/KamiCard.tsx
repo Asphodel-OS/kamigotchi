@@ -96,7 +96,7 @@ const Image = styled.img`
   border-width: 0px 2px 0px 0px;
   border-color: black;
   border-radius: 5px 0px 0px 5px;
-  height: 120px;
+  height: 8vw;
   margin: 0px;
   padding: 0px;
 
@@ -132,7 +132,7 @@ const TitleText = styled.p`
   padding: 6px 9px;
 
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 1vw;
   text-align: left;
   justify-content: flex-start;
 
@@ -147,7 +147,7 @@ const TitleCorner = styled.div`
 
   display: flex;
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 1vw;
   text-align: right;
   justify-content: flex-end;
 `;
@@ -175,7 +175,7 @@ const ContentSubtext = styled.div`
 
   font-family: Pixel;
   text-align: right;
-  font-size: 10px;
+  font-size: 0.7vw;
 `;
 
 const ContentActions = styled.div`
@@ -185,13 +185,13 @@ const ContentActions = styled.div`
 `;
 
 const TextBig = styled.p`
-  font-size: 13px;
+  font-size: 0.9vw;
   font-family: Pixel;
   text-align: left;
 `;
 
 const TextMedium = styled.p`
-  font-size: 12px;
+  font-size: 0.7vw;
   font-family: Pixel;
   text-align: left;
   padding: 6px 0px 0px 3px;
