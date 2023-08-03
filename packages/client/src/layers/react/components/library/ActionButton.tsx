@@ -32,21 +32,29 @@ export const ActionButton = (props: Props) => {
 
     const size = props.size || 'medium';
     if (size === 'small') {
-      styles.fontSize = '10px';
-      styles.margin = '2px';
-      styles.padding = '3px 6px';
+      styles.fontSize = '.7vw';
+      styles.margin = '.14vw';
+      styles.padding = '.21vw .42vw';
+      styles.borderRadius = '.3vw';
+      styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
-      styles.fontSize = '14px';
-      styles.margin = '3px';
-      styles.padding = '5px 10px';
+      styles.fontSize = '1vw';
+      styles.margin = '.21vw';
+      styles.padding = '.35vw .7vw';
+      styles.borderRadius = '.4vw';
+      styles.borderWidth = '.15vw';
     } else if (size === 'large') {
-      styles.fontSize = '18px';
-      styles.margin = '4px';
-      styles.padding = '16px 32px';
+      styles.fontSize = '1.4vw';
+      styles.margin = '.28vw';
+      styles.padding = '1.1vw 2.2vw';
+      styles.borderRadius = '.5vw';
+      styles.borderWidth = '.2vw';
     } else if (size === 'vending') {
       styles.fontSize = '12px';
       styles.margin = '3px';
       styles.padding = '8px 24px';
+      styles.borderRadius = '5px';
+      styles.borderWidth = '2px';
     } else if (size === 'menu') {
       styles.fontSize = '10px';
       styles.margin = '0px';
@@ -83,9 +91,7 @@ export const ActionButton = (props: Props) => {
 const Button = styled.button`
   background-color: #ffffff;
   border-color: black;
-  border-radius: 5px;
   border-style: solid;
-  border-width: 2px;
   color: black;
 
   justify-content: center;
