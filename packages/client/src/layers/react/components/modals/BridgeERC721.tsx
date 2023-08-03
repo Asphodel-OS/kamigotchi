@@ -234,6 +234,7 @@ export function registerERC721BridgeModal() {
           return (
             <KamiCard
               kami={kami}
+              key={kami.index}
               image={kami.uri}
               title={kami.name}
             />
