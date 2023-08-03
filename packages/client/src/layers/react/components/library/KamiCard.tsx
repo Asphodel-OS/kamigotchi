@@ -81,11 +81,11 @@ export const KamiCard = (props: Props) => {
 const Card = styled.div`
   background-color: #fff;
   border-color: black;
-  border-radius: 5px;
+  border-radius: .35vw;
   border-style: solid;
-  border-width: 2px;
+  border-width: .15vw;
   color: black;
-  margin: 4px 2px 0px 2px;
+  margin: .3vw .15vw 0vw .15vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -93,12 +93,10 @@ const Card = styled.div`
 
 const Image = styled.img`
   border-style: solid;
-  border-width: 0px 2px 0px 0px;
+  border-width: 0vw .15vw 0vw 0vw;
   border-color: black;
-  border-radius: 5px 0px 0px 5px;
-  height: 120px;
-  margin: 0px;
-  padding: 0px;
+  border-radius: .35vw 0vw 0vw .35vw;
+  height: 9vw;
 
   &:hover {
     opacity: 0.75;
@@ -107,10 +105,8 @@ const Image = styled.img`
 
 const Container = styled.div`
   border-color: black;
-  border-width: 2px;
+  border-width: .15vw;
   color: black;
-  margin: 0px;
-  padding: 0px;
   flex-grow: 1;
 
   display: flex;
@@ -120,8 +116,9 @@ const Container = styled.div`
 
 const TitleBar = styled.div`
   border-style: solid;
-  border-width: 0px 0px 2px 0px;
+  border-width: 0vw 0vw .15vw 0vw;
   border-color: black;
+  padding: .45vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -129,10 +126,8 @@ const TitleBar = styled.div`
 `;
 
 const TitleText = styled.p`
-  padding: 6px 9px;
-
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 1vw;
   text-align: left;
   justify-content: flex-start;
 
@@ -143,17 +138,18 @@ const TitleText = styled.p`
 
 const TitleCorner = styled.div`
   flex-grow: 1;
-  margin: 0px 7px;
+  margin: 0px .5vw;
 
   display: flex;
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 1vw;
   text-align: right;
   justify-content: flex-end;
 `;
 
 const Content = styled.div`
   flex-grow: 1;
+  padding: .7vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -162,8 +158,6 @@ const Content = styled.div`
 
 const ContentColumn = styled.div`
   flex-grow: 1;
-  margin: 7px 5px 3px 10px;
-
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -171,11 +165,10 @@ const ContentColumn = styled.div`
 const ContentSubtext = styled.div`
   color: #333;
   flex-grow: 1;
-  margin: 0px 5px;
 
   font-family: Pixel;
   text-align: right;
-  font-size: 10px;
+  font-size: 0.7vw;
 `;
 
 const ContentActions = styled.div`
@@ -185,16 +178,19 @@ const ContentActions = styled.div`
 `;
 
 const TextBig = styled.p`
-  font-size: 13px;
+  padding-bottom: .05vw;
+
+  font-size: 0.9vw;
   font-family: Pixel;
   text-align: left;
 `;
 
 const TextMedium = styled.p`
-  font-size: 12px;
+  font-size: 0.7vw;
   font-family: Pixel;
   text-align: left;
-  padding: 6px 0px 0px 3px;
+  padding-top: .4vw;
+  padding-left: .2vw;
 `;
 
 // lol

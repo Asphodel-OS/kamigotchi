@@ -52,6 +52,7 @@ export function registerNodeModal() {
           network,
           components: {
             AccountID,
+            Balance,
             NodeID,
             PetID,
             IsAccount,
@@ -71,6 +72,7 @@ export function registerNodeModal() {
       // TODO: update this to support node input as props
       return merge(
         AccountID.update$,
+        Balance.update$,
         HealthCurrent.update$,
         Location.update$,
         Rate.update$,
@@ -386,7 +388,7 @@ export function registerNodeModal() {
         const thresholdPercent = calcLiquidationThreshold(attacker, victim);
         const absoluteThreshold = thresholdPercent * victim.stats.health;
         const canMog = calcHealth(victim) < absoluteThreshold;
-        return !onCooldown(attacker) && canMog;
+        return !onCooldown(attacker) && isHealthy(attacker) && canMog;
       }
 
       // check whether the kami is currently harvesting

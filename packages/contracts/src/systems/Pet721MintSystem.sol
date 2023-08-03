@@ -27,7 +27,7 @@ contract Pet721MintSystem is System {
 
     // get the account for this owner(to). fails if doesnt exist
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Pet721MintSystem: no account");
+    require(accountID != 0, "Pet721Mint: no account");
 
     // update num minted
     uint256 numMinted = LibAccount.getPetsMinted(components, accountID);

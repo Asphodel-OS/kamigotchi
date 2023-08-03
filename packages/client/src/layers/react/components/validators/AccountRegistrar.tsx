@@ -311,7 +311,6 @@ const fadeIn = keyframes`
 `;
 
 const ModalWrapper = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   animation: ${fadeIn} 1.3s ease-in-out;
@@ -324,7 +323,6 @@ const ModalContent = styled.div`
   border-color: black;
   border-radius: 10px;
   width: 99%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 
   padding: 20px;
   display: flex;
@@ -341,7 +339,7 @@ const AddressRow = styled.div`
 `
 
 const Title = styled.p`
-  margin: 10px 0px 0px 0px;
+  margin: 25px 0px 0px 0px;
 
   padding: 5px 0px;
   color: #333;

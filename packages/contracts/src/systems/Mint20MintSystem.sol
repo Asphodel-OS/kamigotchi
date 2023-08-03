@@ -33,7 +33,7 @@ contract Mint20MintSystem is System {
     uint256 accMinted = LibAccount.getMint20Minted(components, accountID);
     require(
       accMinted + amount <= LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX"),
-      "Mint20Mint: max account minted"
+      "Mint20Mint: exceeds account limit"
     );
 
     uint256 totalMinted = LibMint20.getTotalMinted(world);
