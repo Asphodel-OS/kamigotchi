@@ -138,12 +138,13 @@ const TitleText = styled.p`
 
 const TitleCorner = styled.div`
   flex-grow: 1;
-  margin: 0px .5vw;
 
-  display: flex;
   font-family: Pixel;
   font-size: 1vw;
   text-align: right;
+
+  display: flex;
+  align-items: center;
   justify-content: flex-end;
 `;
 

@@ -6,6 +6,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ActionListButton } from 'layers/react/components/library/ActionListButton';
+import { Battery2 } from 'layers/react/components/library/Battery2';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -451,6 +452,7 @@ export function registerPartyModal() {
       };
 
       // Rendering of Individual Kami Cards in the Party Modal
+      // TODO: consider ideal ordering here
       const KamiCards = (kamis: Kami[]) => {
         const reversed = [...kamis];
         reversed.reverse();
@@ -464,6 +466,12 @@ export function registerPartyModal() {
           const cooldown = kami.cooldown - calcIdleTime(kami);
           const cooldownString = Math.max(cooldown, 0).toFixed(0);
 
+          const Battery = () => (
+            <Tooltip text={[healthString]}>
+              <Battery2 level={100 * calcHealth(kami) / kami.stats.health} />
+            </Tooltip>
+          );
+
           return (
             <KamiCard
               key={kami.id}
@@ -471,7 +479,8 @@ export function registerPartyModal() {
               description={description}
               subtext={`${calcOutput(kami)} $BYTE`}
               action={action}
-              cornerContent={healthString + cooldownString}
+              // cornerContent={healthString + cooldownString}
+              cornerContent={Battery()}
             />
           );
         });
