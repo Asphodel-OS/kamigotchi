@@ -93,10 +93,9 @@ const Toggle = styled.button`
   border-width: .15vw;
   color: black;
   display: flex;
-  margin: .3vw;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: .8vw;
   justify-content: center;
   padding: .35vw .7vw;
   text-align: center;
@@ -125,7 +124,7 @@ const Menu = styled.div`
   border-width: .2vw;
   color: black;
   padding: 0vw .3vw;
-  min-width: 100px;
+  min-width: 7vw;
 `;
 
 const Item = styled.div`
