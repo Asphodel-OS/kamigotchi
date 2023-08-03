@@ -32,22 +32,22 @@ export const ActionButton = (props: Props) => {
 
     const size = props.size || 'medium';
     if (size === 'small') {
-      styles.fontSize = '.7vw';
-      styles.margin = '.14vw';
-      styles.padding = '.21vw .42vw';
+      styles.fontSize = '.6vw';
+      styles.margin = '0vw .12vw';
+      styles.padding = '.3vw .6vw';
       styles.borderRadius = '.3vw';
       styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
-      styles.fontSize = '1vw';
-      styles.margin = '.21vw';
-      styles.padding = '.35vw .7vw';
+      styles.fontSize = '.8vw';
+      styles.margin = '0vw .16vw';
+      styles.padding = '.4vw .8vw';
       styles.borderRadius = '.4vw';
       styles.borderWidth = '.15vw';
     } else if (size === 'large') {
       styles.fontSize = '1.4vw';
-      styles.margin = '.28vw';
-      styles.padding = '1.1vw 2.2vw';
-      styles.borderRadius = '.5vw';
+      styles.margin = '0vw .28vw';
+      styles.padding = '.7vw 1.4vw';
+      styles.borderRadius = '.7vw';
       styles.borderWidth = '.2vw';
     } else if (size === 'vending') {
       styles.fontSize = '12px';
