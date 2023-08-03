@@ -337,7 +337,7 @@ const TopButton = styled.button`
   margin: 0px;
 `;
 
-const WarnText = styled.text`
+const WarnText = styled.div`
   font-size: 12px;
   color: #FF785B;
   text-align: center;

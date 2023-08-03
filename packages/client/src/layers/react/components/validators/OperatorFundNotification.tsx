@@ -148,7 +148,7 @@ const ModalWrapper = styled.div`
   animation: ${fadeIn} 1.3s ease-in-out;
 `;
 
-const WarnText = styled.text`
+const WarnText = styled.div`
   font-size: 12px;
   color: #FF785B;
   text-align: center;

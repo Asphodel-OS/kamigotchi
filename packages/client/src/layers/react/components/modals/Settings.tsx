@@ -207,7 +207,7 @@ const SingleRow = styled.div`
   align-items: center;
 `;
 
-const StatusText = styled.text`
+const StatusText = styled.div`
   font-size: 12px;
   color: #FF785B;
   text-align: center;
