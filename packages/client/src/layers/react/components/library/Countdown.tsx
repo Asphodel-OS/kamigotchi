@@ -45,8 +45,6 @@ export const Countdown: React.FC<Props> = ({ total, current }) => {
   else if (percent > 50) color = '#FFD022'; // yellow
   else if (percent > 0) color = '#23BD41'; // green
 
-  console.log('current', current);
-  console.log('total', total);
   return (
     <CountdownWrapper>
       <CountdownCircle percent={percent} color={color} />
