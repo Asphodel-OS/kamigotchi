@@ -7,6 +7,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ActionListButton } from 'layers/react/components/library/ActionListButton';
 import { Battery2 } from 'layers/react/components/library/Battery2';
+import { Countdown } from 'layers/react/components/library/Countdown';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -140,7 +141,7 @@ export function registerPartyModal() {
         const refreshClock = () => {
           setLastRefresh(Date.now());
         };
-        const timerId = setInterval(refreshClock, 3000);
+        const timerId = setInterval(refreshClock, 1000);
         return function cleanup() {
           clearInterval(timerId);
         };
@@ -451,6 +452,25 @@ export function registerPartyModal() {
         if (isDead(kami)) return ReviveButton(kami);
       };
 
+      const CornerContent = (kami: Kami) => {
+        const healthString = !isUnrevealed(kami)
+          ? `Health: ${calcHealth(kami).toFixed()}/${kami.stats.health * 1}`
+          : '';
+
+        const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
+        const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
+        return (
+          <>
+            <Tooltip text={[cooldownString]}>
+              <Countdown total={kami.cooldown} current={cooldown} />
+            </Tooltip>
+            <Tooltip text={[healthString]}>
+              <Battery2 level={100 * calcHealth(kami) / kami.stats.health} />
+            </Tooltip>
+          </>
+        );
+      };
+
       // Rendering of Individual Kami Cards in the Party Modal
       // TODO: consider ideal ordering here
       const KamiCards = (kamis: Kami[]) => {
@@ -459,28 +479,17 @@ export function registerPartyModal() {
         return reversed.map((kami) => {
           const action = DisplayedAction(kami);
           const description = getDescription(kami);
-          const healthString = !isUnrevealed(kami)
-            ? `(${calcHealth(kami).toFixed()}/${kami.stats.health * 1}) `
-            : '';
-
-          const cooldown = kami.cooldown - calcIdleTime(kami);
-          const cooldownString = Math.max(cooldown, 0).toFixed(0);
-
-          const Battery = () => (
-            <Tooltip text={[healthString]}>
-              <Battery2 level={100 * calcHealth(kami) / kami.stats.health} />
-            </Tooltip>
-          );
 
           return (
             <KamiCard
               key={kami.id}
               kami={kami}
               description={description}
-              subtext={`${calcOutput(kami)} $BYTE`}
+              subtext={`${calcOutput(kami)
+                } $BYTE`}
               action={action}
               // cornerContent={healthString + cooldownString}
-              cornerContent={Battery()}
+              cornerContent={CornerContent(kami)}
             />
           );
         });
@@ -498,8 +507,8 @@ export function registerPartyModal() {
 
 const Scrollable = styled.div`
   overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
+  height: 100 %;
+  max-height: 100 %;
 `;
 
 const TopGrid = styled.div`
@@ -508,7 +517,7 @@ const TopGrid = styled.div`
   border-radius: 5px;
   border-width: 2px 0px 2px 2px;
   margin: 5px 2px 5px 2px;
-  
+
   display: flex;
   flex-direction: row;
 `;
@@ -522,17 +531,17 @@ const CellGrid = styled.div`
 `;
 
 const Icon = styled.img`
-  height: 40px;
-  padding: 3px;
-  border-style: solid;
-  border-width: 0px 2px 0px 0px;
-  border-color: black;
+height: 40px;
+padding: 3px;
+border-style: solid;
+border-width: 0px 2px 0px 0px;
+border-color: black;
 `;
 
 const ItemNumber = styled.p`
   font-size: 14px;
   font-family: Pixel;
-  
+
   flex-grow: 1;
   color: #333;
   align-self: center;

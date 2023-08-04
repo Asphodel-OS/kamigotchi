@@ -95,7 +95,7 @@ const Image = styled.img`
   border-style: solid;
   border-width: 0vw .15vw 0vw 0vw;
   border-color: black;
-  border-radius: .35vw 0vw 0vw .35vw;
+  border-radius: .15vw 0vw 0vw .15vw;
   height: 9vw;
 
   &:hover {
@@ -142,6 +142,7 @@ const TitleCorner = styled.div`
   font-family: Pixel;
   font-size: 1vw;
   text-align: right;
+  gap: 0.3vw;
 
   display: flex;
   align-items: center;

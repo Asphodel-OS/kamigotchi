@@ -440,8 +440,8 @@ export function registerNodeModal() {
         return (
           <Tooltip text={[tooltipText]}>
             <ActionButton
-              id={`harvest-collect-${kami.id}`}
-              key={`harvest-collect-${kami.id}`}
+              id={`harvest-collect-${kami.index}`}
+              key={`harvest-collect-${kami.index}`}
               onClick={() => collect(kami)}
               text='Collect'
               disabled={kami.production === undefined || tooltipText !== ''}
@@ -466,8 +466,8 @@ export function registerNodeModal() {
         return (
           <Tooltip text={[tooltipText]}>
             <ActionButton
-              id={`harvest-stop-${kami.id}`}
-              key={`harvest-stop-${kami.id}`}
+              id={`harvest-stop-${kami.index}`}
+              key={`harvest-stop-${kami.index}`}
               text='Stop'
               onClick={() => stop(kami)}
               disabled={kami.production === undefined || tooltipText !== ''}
@@ -520,7 +520,7 @@ export function registerNodeModal() {
 
         return (
           <KamiCard
-            key={kami.id}
+            key={kami.index}
             kami={kami}
             subtext={`yours (\$${output})`}
             action={[CollectButton(kami), StopButton(kami)]}
@@ -548,7 +548,7 @@ export function registerNodeModal() {
 
         return (
           <KamiCard
-            key={kami.id}
+            key={kami.index}
             kami={kami}
             subtext={`${kami.account!.name} (\$${output})`}
             action={LiquidateButton(kami, validLiquidators)}
@@ -592,10 +592,6 @@ export function registerNodeModal() {
           />
         </Tabs>
       );
-
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, node: false });
-      }, [setVisibleModals, visibleModals]);
 
       return (
         <ModalWrapperFull id='node' divName='node'>
