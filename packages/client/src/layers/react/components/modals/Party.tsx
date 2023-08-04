@@ -488,7 +488,6 @@ export function registerPartyModal() {
               subtext={`${calcOutput(kami)
                 } $BYTE`}
               action={action}
-              // cornerContent={healthString + cooldownString}
               cornerContent={CornerContent(kami)}
             />
           );

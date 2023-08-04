@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -21,8 +21,8 @@ const CountdownCircle = styled.div<{ percent: number, color: string }>`
   border-radius: 50%;
   background: conic-gradient(
     #aaa ${(props) => props.percent}%,
-    #aaa ${(props) => props.percent}% ${(props) => props.percent + 0.01}%,
-    ${(props) => props.color} ${(props) => props.percent + 0.01}%
+    #aaa ${(props) => props.percent}% ${(props) => props.percent}%,
+    ${(props) => props.color} ${(props) => props.percent}%
   );
 `;
 

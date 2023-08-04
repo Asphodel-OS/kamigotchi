@@ -26,6 +26,7 @@ import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
 import { dataStore } from 'layers/react/store/createStore';
+import Countdown from '../library/Countdown';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -198,7 +199,7 @@ export function registerNodeModal() {
       const [scrollPosition, setScrollPosition] = useState<number>(0);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const [tab, setTab] = useState<'allies' | 'enemies'>('allies');
-      const { visibleModals, setVisibleModals } = dataStore();
+
       // scrolling
       useEffect(() => {
         const handleScroll = () => {
@@ -221,7 +222,7 @@ export function registerNodeModal() {
         const refreshClock = () => {
           setLastRefresh(Date.now());
         };
-        const timerId = setInterval(refreshClock, 3000);
+        const timerId = setInterval(refreshClock, 1000);
         return function cleanup() {
           clearInterval(timerId);
         };
@@ -498,12 +499,18 @@ export function registerNodeModal() {
       const CornerContent = (kami: Kami) => {
         const health = calcHealth(kami);
         const healthPercent = Math.round((health / kami.stats.health) * 100);
-        const Battery = () => (
-          <Tooltip text={[`${healthPercent}%`]}>
-            <Battery2 level={healthPercent} />
-          </Tooltip>
-        )
-        return Battery();
+        const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
+        const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
+        return (
+          <>
+            <Tooltip text={[cooldownString]}>
+              <Countdown total={kami.cooldown} current={cooldown} />
+            </Tooltip>
+            <Tooltip text={[`${healthPercent}%`]}>
+              <Battery2 level={100 * calcHealth(kami) / kami.stats.health} />
+            </Tooltip>
+          </>
+        );
       };
 
       // rendering of an ally kami on this node
