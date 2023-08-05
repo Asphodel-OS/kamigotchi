@@ -38,9 +38,9 @@ library LibRegistryQuests {
     IUintComp components,
     uint256 index,
     string memory name,
-    uint256[] memory requirements,
-    uint256[] memory objectives,
-    uint256[] memory rewards
+    uint256[] memory reqIndex,
+    uint256[] memory objIndex,
+    uint256[] memory rewIndex
   ) internal returns (uint256) {
     uint256 regID = getByQuestIndex(components, index);
     require(regID == 0, "LibRegQ.createQ: index used");
@@ -50,8 +50,29 @@ library LibRegistryQuests {
     setIsQuest(components, id);
     setQuestIndex(components, id, index);
     setName(components, id, name);
+
+    uint256[] memory requirements = new uint256[](reqIndex.length);
+    for (uint256 i; i < reqIndex.length; i++) {
+      uint256 reqID = getByConditionIndex(components, reqIndex[i]);
+      require(reqID != 0, "LibRegQ.createQ: req not found");
+      requirements[i] = reqID;
+    }
     setQuestRequirements(components, id, requirements);
+
+    uint256[] memory objectives = new uint256[](objIndex.length);
+    for (uint256 i; i < objIndex.length; i++) {
+      uint256 objID = getByConditionIndex(components, objIndex[i]);
+      require(objID != 0, "LibRegQ.createQ: obj not found");
+      objectives[i] = objID;
+    }
     setQuestObjectives(components, id, objectives);
+
+    uint256[] memory rewards = new uint256[](rewIndex.length);
+    for (uint256 i; i < rewIndex.length; i++) {
+      uint256 rewID = getByRewardIndex(components, rewIndex[i]);
+      require(rewID != 0, "LibRegQ.createQ: rew not found");
+      rewards[i] = rewID;
+    }
     setQuestRewards(components, id, rewards);
     return id;
   }
@@ -108,6 +129,7 @@ library LibRegistryQuests {
     string memory _type
   ) internal returns (uint256) {
     require(!hasType(components, entityID), "LibRegQ.addBal: type alr set");
+    setType(components, entityID, _type);
 
     if (isType(components, entityID, "COIN")) {
       LibCoin._set(components, entityID, balance);

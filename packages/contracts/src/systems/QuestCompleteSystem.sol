@@ -18,7 +18,7 @@ contract QuestCompleteSystem is System {
 
     require(accountID == LibQuests.getAccountId(components, questID), "QuestComplete: not account");
     require(LibQuests.isQuest(components, questID), "QuestComplete: not a quest");
-    require(LibQuests.checkObjectives(components, questID), "QuestComplete: not complete");
+    require(LibQuests.checkObjectives(components, questID), "QuestComplete: objs not met");
 
     LibQuests.completeQuest(world, components, questID);
     return "";

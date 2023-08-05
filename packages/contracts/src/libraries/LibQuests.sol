@@ -52,7 +52,7 @@ library LibQuests {
   }
 
   function completeQuest(IWorld world, IUintComp components, uint256 questID) internal {
-    require(!isCompleted(components, questID), "Quests: already completed");
+    require(!isCompleted(components, questID), "Quests: alr completed");
     setCompleted(components, questID);
 
     distributeRewards(world, components, questID);
