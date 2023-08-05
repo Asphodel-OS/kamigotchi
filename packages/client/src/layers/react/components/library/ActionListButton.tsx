@@ -88,17 +88,16 @@ const Container = styled.div``;
 const Toggle = styled.button`
   background-color: #ffffff;
   border-color: black;
-  border-radius: 5px;
+  border-radius: .4vw;
   border-style: solid;
-  border-width: 2px;
+  border-width: .15vw;
   color: black;
   display: flex;
-  margin: 3px;
 
   font-family: Pixel;
-  font-size: 14px;
+  font-size: .8vw;
   justify-content: center;
-  padding: 5px 10px;
+  padding: .35vw .7vw;
   text-align: center;
   text-decoration: none;
 
@@ -120,19 +119,19 @@ const MenuWrapper = styled.div`
 const Menu = styled.div`
   background-color: #ffffff;
   border-color: black;
-  border-radius: 5px;
+  border-radius: .4vw;
   border-style: solid;
-  border-width: 2px;
+  border-width: .2vw;
   color: black;
-  padding: 0px 3px;
-  min-width: 100px;
+  padding: 0vw .3vw;
+  min-width: 7vw;
 `;
 
 const Item = styled.div`
-  padding: 8px 10px;
+  padding: .6vw .7vw;
   justify-content: left;
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 1vw;
 
   cursor: pointer;
   pointer-events: auto;

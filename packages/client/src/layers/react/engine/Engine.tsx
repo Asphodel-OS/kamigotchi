@@ -41,8 +41,7 @@ export const Engine: React.FC<{
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE`);
-    console.log(`Expected Chain ID: ${defaultChainConfig.id}`);
+    console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE (chain ${defaultChainConfig.id})`);
   }, []);
 
   if (!mounted || !layers) return customBootScreen || <BootScreen />;

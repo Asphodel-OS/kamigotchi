@@ -38,7 +38,7 @@ async function bootGame() {
   (window as any).ecs = ecs;
   (window as any).time = Time.time;
 
-  console.log('booted');
+  console.log('BOOTED');
   return { layers, ecs };
 }
 

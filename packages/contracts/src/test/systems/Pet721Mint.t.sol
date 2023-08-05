@@ -25,12 +25,17 @@ import "test/utils/SetupTemplate.s.sol";
 // enable free mints (through config) for ease of use in testing.
 
 contract Pet721MintTest is SetupTemplate {
-  uint256 constant mintPrice = 1e18;
+  uint constant mintPrice = 1e18;
 
   function setUp() public override {
     super.setUp();
 
     _setConfig("MINT_PRICE", mintPrice);
+    _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
+
+    _createRoom("testRoom1", 1, 4, 0, 0);
+    _createRoom("testRoom4", 4, 1, 0, 0);
+
     _registerAccount(0);
     _registerAccount(1);
     _registerAccount(2);
@@ -41,13 +46,13 @@ contract Pet721MintTest is SetupTemplate {
   //////////////////////////
   // HELPERS
 
-  function _assertOwnerInGame(uint256 tokenID, address addr) internal {
+  function _assertOwnerInGame(uint tokenID, address addr) internal {
     /*
       1) Account owner is EOA, Token owner is Pet721
       2) State is not 721_EXTERNAL (LibPet.isInWorld)
       3) Has an owner (checked implicitly in 1)
     */
-    uint256 entityID = LibPet.indexToID(components, tokenID);
+    uint entityID = LibPet.indexToID(components, tokenID);
     assertEq(
       addr,
       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
@@ -56,49 +61,58 @@ contract Pet721MintTest is SetupTemplate {
     assertTrue(LibPet.isInWorld(components, entityID));
   }
 
-  function _assertOwnerOutGame(uint256 tokenID, address addr) internal {
+  function _assertOwnerOutGame(uint tokenID, address addr) internal {
     /*
       1) Owned by addr
       2) State is  721_EXTERNAL (LibPet.isInWorld)
       3) Has no Account
     */
-    uint256 entityID = LibPet.indexToID(components, tokenID);
+    uint entityID = LibPet.indexToID(components, tokenID);
     assertEq(_Pet721.ownerOf(tokenID), addr);
     assertEq(LibPet.getAccount(components, entityID), 0);
     assertTrue(!LibPet.isInWorld(components, entityID));
   }
 
   // converts ERC20 decimals (18) to game decimals (0)
-  function _tokenToGameDP(uint256 amount) internal pure returns (uint256) {
+  function _tokenToGameDP(uint amount) internal pure returns (uint) {
     return amount / 10 ** 18;
   }
 
   // converts game decimals (0) to ERC20 decimals (18)
-  function _gameToTokenDP(uint256 amount) internal pure returns (uint256) {
+  function _gameToTokenDP(uint amount) internal pure returns (uint) {
     return amount * 10 ** 18;
   }
 
   //////////////////////////
   // TESTS
 
-  function testMintProcess(uint256 num20, uint256 num721) public {
-    vm.assume(num20 < ((~uint256(0)) / 1e18));
-    vm.assume(num721 < ((~uint256(0)) / 1e18));
+  function testMintProcess(uint num20, uint num721) public {
+    vm.assume(num20 < ((~uint(0)) / 1e18));
+    vm.assume(num721 < ((~uint(0)) / 1e18));
 
     address owner = _getOwner(0);
-    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
-    uint256 maxAccMint = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX");
+    uint price = LibConfig.getValueOf(components, "MINT_PRICE");
+    uint accountLimit = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX");
+    uint supplyLimit = LibConfig.getValueOf(components, "MINT_INITIAL_MAX");
+
+    _moveAccount(0, 4); // minting restricted to room 4
 
     if (num20 == 0) {
       vm.deal(owner, price * num20);
       vm.prank(owner);
-      vm.expectRevert("Mint20Mint: amt must be > 0");
+      vm.expectRevert("Mint20Mint: must be > 0");
       _Mint20MintSystem.mint(num20);
       return;
-    } else if (num20 > maxAccMint) {
+    } else if (num20 > supplyLimit) {
       vm.deal(owner, price * num20);
       vm.prank(owner);
-      vm.expectRevert("Mint20Mint: exceeds account limit");
+      vm.expectRevert("Mint20Mint: supply limit exceeded");
+      _Mint20MintSystem.mint{ value: price * num20 }(num20);
+      return;
+    } else if (num20 > accountLimit) {
+      vm.deal(owner, price * num20);
+      vm.prank(owner);
+      vm.expectRevert("Mint20Mint: account limit exceeded");
       _Mint20MintSystem.mint{ value: price * num20 }(num20);
       return;
     } else {
@@ -109,7 +123,7 @@ contract Pet721MintTest is SetupTemplate {
 
     if (num721 == 0) {
       vm.prank(owner);
-      vm.expectRevert("Pet721MintSystem: amt not > 0");
+      vm.expectRevert("Pet721Mint: must be > 0");
       _Pet721MintSystem.executeTyped(num721);
       return;
     } else if (num20 < num721) {
@@ -142,14 +156,14 @@ contract Pet721MintTest is SetupTemplate {
   }
 
   function testFailMaxMintSeparateTx() public {
-    uint256 amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
-    for (uint256 i = 0; i < amount; i++) {
+    uint amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
+    for (uint i = 0; i < amount; i++) {
       _mintMint20(0, 1);
     }
   }
 
   function testFailMaxMintSingleTx() public {
-    uint256 amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
+    uint amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
     _mintMint20(0, amount);
   }
 

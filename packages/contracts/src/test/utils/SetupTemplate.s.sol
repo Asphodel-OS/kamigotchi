@@ -109,6 +109,10 @@ abstract contract SetupTemplate is TestSetupImports {
     address owner = _owners[playerIndex];
     address operator = _operators[owner];
 
+    // move the player to room 4
+    uint initialLoc = LibAccount.getLocation(components, _getAccount(playerIndex));
+    _moveAccount(playerIndex, 4);
+
     vm.roll(_currBlock++);
     _mintMint20(playerIndex, 1);
     vm.startPrank(owner);
@@ -119,6 +123,8 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(operator);
     _Pet721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
     vm.stopPrank();
+
+    _moveAccount(playerIndex, initialLoc);
   }
 
   // mints an mint20 token for user

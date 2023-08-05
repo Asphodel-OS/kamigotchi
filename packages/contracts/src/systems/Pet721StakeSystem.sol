@@ -10,6 +10,7 @@ import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.Stake"));
+uint256 constant ROOM = 12;
 
 // sets a pet outside world => game world
 /* 
@@ -27,18 +28,20 @@ contract Pet721StakeSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 tokenID = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.indexToID(components, tokenID);
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
+
+    // account checks
+    require(accountID != 0, "Pet721Stake: no account detected");
+    require(
+      LibAccount.getLocation(components, accountID) == ROOM,
+      "Pet721Stake: must be in room 12"
+    );
 
     // checks before action
-    require(LibPet721.getEOAOwner(world, tokenID) == msg.sender, "721Deposit: not urs");
-    require(LibPet.getAccount(components, petID) == 0, "Pet: alr has account");
-    require(!LibPet.isInWorld(components, petID), "Pet: alr in world");
+    require(LibPet721.getEOAOwner(world, tokenID) == msg.sender, "Pet721Stake: not urs");
+    require(LibPet.getAccount(components, petID) == 0, "Pet721Stake: already linked");
+    require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
-    // actions to be taken upon bridging in
-    // get account, create if non existent
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    if (accountID == 0) {
-      accountID = LibAccount.create(world, components, msg.sender, msg.sender);
-    }
     LibPet.stake(components, petID, accountID);
     LibPet721.stake(world, msg.sender, tokenID);
     return "";

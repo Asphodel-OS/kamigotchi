@@ -320,7 +320,7 @@ const SubDescription = styled.p`
   width: 100%;
 `;
 
-const SubText = styled.text`
+const SubText = styled.div`
   font-size: 12px;
   color: #FF785B;
   text-align: center;

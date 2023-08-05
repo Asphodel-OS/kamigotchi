@@ -121,7 +121,7 @@ export function registerMapModal() {
               <SectionTitle>Exits</SectionTitle>
               {exits.map((exit) => {
                 return (
-                  <ClickableDescription onClick={() => move(exit.location)}>
+                  <ClickableDescription key={exit.location} onClick={() => move(exit.location)}>
                     {exit.name}
                   </ClickableDescription>
                 );

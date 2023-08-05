@@ -40,9 +40,12 @@ export function registerPartyModal() {
           components: {
             AccountID,
             Balance,
-            HealthCurrent,
             Coin,
+            Health,
+            HealthCurrent,
             IsAccount,
+            IsConfig,
+            LastTime,
             Location,
             MediaURI,
             Name,
@@ -51,6 +54,7 @@ export function registerPartyModal() {
             Rate,
             State,
             StartTime,
+            Value,
           },
           world,
           actions,
@@ -62,13 +66,17 @@ export function registerPartyModal() {
         Balance.update$,
         Coin.update$,
         HealthCurrent.update$,
+        Health.update$,
+        IsConfig.update$,
+        LastTime.update$,
         Location.update$,
+        MediaURI.update$,
+        Name.update$,
         OwnerAddress.update$,
         Rate.update$,
         StartTime.update$,
         State.update$,
-        MediaURI.update$,
-        Name.update$
+        Value.update$,
       ).pipe(
         map(() => {
           // get the account through the account entity of the controlling wallet

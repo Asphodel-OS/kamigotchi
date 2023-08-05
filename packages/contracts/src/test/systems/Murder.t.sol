@@ -15,20 +15,22 @@ contract MurderTest is SetupTemplate {
     _initCommonTraits();
     _initItems();
 
-    _createRoom("testRoom1", 1, 2, 3, 0);
-    _createRoom("testRoom2", 2, 1, 3, 0);
-    _createRoom("testRoom3", 3, 1, 2, 0);
+    _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
+
+    _createRoom("testRoom1", 1, 2, 3, 4);
+    _createRoom("testRoom2", 2, 1, 3, 4);
+    _createRoom("testRoom3", 3, 1, 2, 4);
+    _createRoom("testRoom4", 4, 1, 2, 3);
+
+    _createMerchant(1, 1, "Test Merchant");
+    _createFoodListings(1);
+    _createReviveListings(1);
 
     _nodeIDs.push(_createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL"));
     _nodeIDs.push(_createHarvestingNode(2, 1, "Test Node", "this is a node", "SCRAP"));
     _nodeIDs.push(_createHarvestingNode(3, 2, "Test Node", "this is a node", "EERIE"));
     _nodeIDs.push(_createHarvestingNode(4, 2, "Test Node", "this is a node", "INSECT"));
     _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
-
-    _createMerchant(1, 1, "Test Merchant");
-    _createFoodListings(1);
-    _createReviveListings(1);
-    _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
 
     // starting states
     _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
