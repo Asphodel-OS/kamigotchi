@@ -12,10 +12,13 @@ import { _NodeSetAffinitySystem } from "./ethers-contracts/_NodeSetAffinitySyste
 import { _NodeSetDescriptionSystem } from "./ethers-contracts/_NodeSetDescriptionSystem";
 import { _NodeSetLocationSystem } from "./ethers-contracts/_NodeSetLocationSystem";
 import { _NodeSetNameSystem } from "./ethers-contracts/_NodeSetNameSystem";
+import { _RegistryCreateConditionSystem } from "./ethers-contracts/_RegistryCreateConditionSystem";
 import { _RegistryCreateFoodSystem } from "./ethers-contracts/_RegistryCreateFoodSystem";
 import { _RegistryCreateGearSystem } from "./ethers-contracts/_RegistryCreateGearSystem";
 import { _RegistryCreateModSystem } from "./ethers-contracts/_RegistryCreateModSystem";
+import { _RegistryCreateQuestSystem } from "./ethers-contracts/_RegistryCreateQuestSystem";
 import { _RegistryCreateReviveSystem } from "./ethers-contracts/_RegistryCreateReviveSystem";
+import { _RegistryCreateRewardSystem } from "./ethers-contracts/_RegistryCreateRewardSystem";
 import { _RegistryCreateTraitSystem } from "./ethers-contracts/_RegistryCreateTraitSystem";
 import { _RegistryUpdateFoodSystem } from "./ethers-contracts/_RegistryUpdateFoodSystem";
 import { _RegistryUpdateGearSystem } from "./ethers-contracts/_RegistryUpdateGearSystem";
@@ -54,6 +57,8 @@ import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSys
 import { ProductionLiquidateSystem } from "./ethers-contracts/ProductionLiquidateSystem";
 import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem";
 import { ProductionStopSystem } from "./ethers-contracts/ProductionStopSystem";
+import { QuestAcceptSystem } from "./ethers-contracts/QuestAcceptSystem";
+import { QuestCompleteSystem } from "./ethers-contracts/QuestCompleteSystem";
 import { TradeAcceptSystem } from "./ethers-contracts/TradeAcceptSystem";
 import { TradeAddToSystem } from "./ethers-contracts/TradeAddToSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
@@ -74,10 +79,13 @@ export type SystemTypes = {
   "system._Node.Set.Description": _NodeSetDescriptionSystem;
   "system._Node.Set.Location": _NodeSetLocationSystem;
   "system._Node.Set.Name": _NodeSetNameSystem;
+  "system._Registry.Condition.Create": _RegistryCreateConditionSystem;
   "system._Registry.Food.Create": _RegistryCreateFoodSystem;
   "system._Registry.Gear.Create": _RegistryCreateGearSystem;
   "system._Registry.Mod.Create": _RegistryCreateModSystem;
+  "system._Registry.Quest.Create": _RegistryCreateQuestSystem;
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem;
+  "system._Registry.Reward.Create": _RegistryCreateRewardSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem;
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem;
@@ -116,6 +124,8 @@ export type SystemTypes = {
   "system.Production.Liquidate": ProductionLiquidateSystem;
   "system.Production.Start": ProductionStartSystem;
   "system.Production.Stop": ProductionStopSystem;
+  "system.Quest.Accept": QuestAcceptSystem;
+  "system.Quest.Complete": QuestCompleteSystem;
   "system.Trade.Accept": TradeAcceptSystem;
   "system.Trade.AddTo": TradeAddToSystem;
   "system.Trade.Cancel": TradeCancelSystem;

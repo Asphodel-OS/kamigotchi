@@ -12,10 +12,13 @@ import _NodeSetAffinitySystem from "../abi/_NodeSetAffinitySystem.json";
 import _NodeSetDescriptionSystem from "../abi/_NodeSetDescriptionSystem.json";
 import _NodeSetLocationSystem from "../abi/_NodeSetLocationSystem.json";
 import _NodeSetNameSystem from "../abi/_NodeSetNameSystem.json";
+import _RegistryCreateConditionSystem from "../abi/_RegistryCreateConditionSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
+import _RegistryCreateQuestSystem from "../abi/_RegistryCreateQuestSystem.json";
 import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
+import _RegistryCreateRewardSystem from "../abi/_RegistryCreateRewardSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
 import _RegistryUpdateFoodSystem from "../abi/_RegistryUpdateFoodSystem.json";
 import _RegistryUpdateGearSystem from "../abi/_RegistryUpdateGearSystem.json";
@@ -54,6 +57,8 @@ import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
+import QuestAcceptSystem from "../abi/QuestAcceptSystem.json";
+import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
 import TradeCancelSystem from "../abi/TradeCancelSystem.json";
@@ -74,10 +79,13 @@ export const SystemAbis = {
   "system._Node.Set.Description": _NodeSetDescriptionSystem.abi,
   "system._Node.Set.Location": _NodeSetLocationSystem.abi,
   "system._Node.Set.Name": _NodeSetNameSystem.abi,
+  "system._Registry.Condition.Create": _RegistryCreateConditionSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
+  "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
+  "system._Registry.Reward.Create": _RegistryCreateRewardSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem.abi,
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem.abi,
@@ -116,6 +124,8 @@ export const SystemAbis = {
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,
   "system.Production.Stop": ProductionStopSystem.abi,
+  "system.Quest.Accept": QuestAcceptSystem.abi,
+  "system.Quest.Complete": QuestCompleteSystem.abi,
   "system.Trade.Accept": TradeAcceptSystem.abi,
   "system.Trade.AddTo": TradeAddToSystem.abi,
   "system.Trade.Cancel": TradeCancelSystem.abi,
