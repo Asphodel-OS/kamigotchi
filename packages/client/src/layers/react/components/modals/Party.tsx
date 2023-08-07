@@ -340,7 +340,7 @@ export function registerPartyModal() {
           }
         } else if (isHarvesting(kami)) {
           if (calcHealth(kami) == 0) {
-            description = [`Starving.. `, `on ${kami.production!.node!.name}`];
+            description = [`Starving.. `, `on ${kami.production!.node?.name}`];
           } else if (kami.production?.node != undefined) {
             const harvestRate = getRateDisplay(kami.production?.rate, 2);
             description = [
