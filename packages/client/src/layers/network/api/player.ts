@@ -10,6 +10,11 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Feed"].executeTyped(petID, foodIndex);
   }
 
+  // level a pet, if it has enough experience
+  function levelPet(petID: BigNumberish) {
+    return systems["system.Pet.Level"].executeTyped(petID);
+  }
+
   // name / rename a pet
   function namePet(petID: BigNumberish, name: string) {
     return systems["system.Pet.Name"].executeTyped(petID, name);
@@ -209,6 +214,7 @@ export function createPlayerAPI(systems: any) {
   return {
     pet: {
       feed: feedPet,
+      level: levelPet,
       name: namePet,
       revive: revivePet,
     },

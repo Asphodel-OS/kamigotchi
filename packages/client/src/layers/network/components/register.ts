@@ -93,6 +93,7 @@ export function createComponents(world: World) {
     Harmony: defineNumberEZ("Harmony", "component.Harmony"),
     Health: defineNumberEZ("Health", "component.Health"),
     HealthCurrent: defineNumberEZ("HealthCurrent", "component.Health.Current"),
+    Level: defineNumberEZ("Level", "component.Level"),
     Location: defineNumberEZ("Location", "component.Location"),
     Name: defineStringEZ("Name", "component.Name"),
     Power: defineNumberEZ("Power", "component.Power"),
