@@ -31,7 +31,7 @@ export interface _RegistryCreateConditionSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,uint256,string,string,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,uint256,string,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -54,6 +54,7 @@ export interface _RegistryCreateConditionSystemInterface
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>
@@ -134,6 +135,7 @@ export interface _RegistryCreateConditionSystem extends BaseContract {
       name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       _type: PromiseOrValue<string>,
+      conditionType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -157,6 +159,7 @@ export interface _RegistryCreateConditionSystem extends BaseContract {
     name: PromiseOrValue<string>,
     logicType: PromiseOrValue<string>,
     _type: PromiseOrValue<string>,
+    conditionType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -180,6 +183,7 @@ export interface _RegistryCreateConditionSystem extends BaseContract {
       name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       _type: PromiseOrValue<string>,
+      conditionType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -215,6 +219,7 @@ export interface _RegistryCreateConditionSystem extends BaseContract {
       name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       _type: PromiseOrValue<string>,
+      conditionType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -239,6 +244,7 @@ export interface _RegistryCreateConditionSystem extends BaseContract {
       name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       _type: PromiseOrValue<string>,
+      conditionType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -38,11 +38,11 @@
     "IndexConditionComponent",
     "IndexPetComponent",
     "IndexReviveComponent",
-    "IndexRewardComponent",
     "IndexQuestComponent",
     "IndexTraitComponent",
     "IsAccountComponent",
     "IsConfigComponent",
+    "IsConditionComponent",
     "IsDataComponent",
     "IsEquippedComponent",
     "IsFungibleComponent",
@@ -55,9 +55,10 @@
     "IsPetComponent",
     "IsProductionComponent",
     "IsRegistryComponent",
-    "IsConditionComponent",
+    "IsRequirementComponent",
     "IsRewardComponent",
     "IsRoomComponent",
+    "IsObjectiveComponent",
     "IsQuestComponent",
     "IsScoreComponent",
     "IsTraitComponent",
@@ -73,9 +74,6 @@
     "ProxyPermissionsERC721Component",
     "ProxyPermissionsMint20Component",
     "QuestCompletionComponent",
-    "QuestObjectivesComponent",
-    "QuestRewardsComponent",
-    "QuestRequirementsComponent",
     "RarityComponent",
     "RateComponent",
     "SlotsComponent",
@@ -212,12 +210,6 @@
     },
     {
       "name": "_RegistryCreateReviveSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "_RegistryCreateRewardSystem",
       "writeAccess": [
         "*"
       ]

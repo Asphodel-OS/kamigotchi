@@ -18,7 +18,6 @@ import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
 import _RegistryCreateQuestSystem from "../abi/_RegistryCreateQuestSystem.json";
 import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
-import _RegistryCreateRewardSystem from "../abi/_RegistryCreateRewardSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
 import _RegistryUpdateFoodSystem from "../abi/_RegistryUpdateFoodSystem.json";
 import _RegistryUpdateGearSystem from "../abi/_RegistryUpdateGearSystem.json";
@@ -85,7 +84,6 @@ export const SystemAbis = {
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
-  "system._Registry.Reward.Create": _RegistryCreateRewardSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem.abi,
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem.abi,

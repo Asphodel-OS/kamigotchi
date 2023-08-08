@@ -303,38 +303,29 @@ abstract contract SetupTemplate is TestSetupImports {
   // REGISTRIES
 
   function _createCondition(
-    uint256 index,
+    uint256 questIndex,
     uint256 balance, // can be empty
     uint256 itemIndex, // can be empty
     string memory name,
     string memory logicType,
-    string memory _type
+    string memory _type,
+    string memory condType
   ) public {
     vm.prank(deployer);
-    __RegistryCreateConditionSystem.executeTyped(index, balance, itemIndex, name, logicType, _type);
+    __RegistryCreateConditionSystem.executeTyped(
+      questIndex,
+      balance,
+      itemIndex,
+      name,
+      logicType,
+      _type,
+      condType
+    );
   }
 
-  function _createQuest(
-    uint256 index,
-    string memory name,
-    uint256[] memory requirements,
-    uint256[] memory objectives,
-    uint256[] memory rewards
-  ) public {
+  function _createQuest(uint256 index, string memory name) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name, requirements, objectives, rewards);
-  }
-
-  function _createReward(
-    uint256 index,
-    uint256 balance, // can be empty
-    uint256 itemIndex, // can be empty
-    string memory name,
-    string memory logicType,
-    string memory _type
-  ) public {
-    vm.prank(deployer);
-    __RegistryCreateRewardSystem.executeTyped(index, balance, itemIndex, name, logicType, _type);
+    __RegistryCreateQuestSystem.executeTyped(index, name);
   }
 
   function _initBasicCoinQuest() internal {
@@ -343,18 +334,11 @@ abstract contract SetupTemplate is TestSetupImports {
     // - objectives: account to have 10 COINs
     // - rewards: account to receive 1 COIN
 
-    _createCondition(1, 1, 0, "1COIN", "CURR_MIN", "COIN");
-    _createCondition(2, 10, 0, "10COIN", "CURR_MIN", "COIN");
-    _createReward(1, 1, 0, "1COIN", "INC", "COIN");
+    _createQuest(1, "BasicCoinQuest");
 
-    uint256[] memory requirements = new uint256[](1);
-    requirements[0] = 1;
-    uint256[] memory objectives = new uint256[](1);
-    objectives[0] = 2;
-    uint256[] memory rewards = new uint256[](1);
-    rewards[0] = 1;
-
-    _createQuest(1, "BasicCoinQuest", requirements, objectives, rewards);
+    _createCondition(1, 1, 0, "Have 1 COIN", "CURR_MIN", "COIN", "REQUIREMENT");
+    _createCondition(1, 10, 0, "Have 10 COINs", "CURR_MIN", "COIN", "OBJECTIVE");
+    _createCondition(1, 1, 0, "Get 1 COIN", "INC", "COIN", "REWARD");
   }
 
   function registerTrait(

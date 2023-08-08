@@ -15,34 +15,14 @@ contract _RegistryCreateQuestSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (
-      uint256 index,
-      string memory name,
-      uint256[] memory requirements,
-      uint256[] memory objectives,
-      uint256[] memory rewards
-    ) = abi.decode(arguments, (uint256, string, uint256[], uint256[], uint256[]));
+    (uint256 index, string memory name) = abi.decode(arguments, (uint256, string));
 
-    LibRegistryQuests.createQuest(
-      world,
-      components,
-      index,
-      name,
-      requirements,
-      objectives,
-      rewards
-    );
+    LibRegistryQuests.createQuest(world, components, index, name);
 
     return "";
   }
 
-  function executeTyped(
-    uint256 index,
-    string memory name,
-    uint256[] memory requirements,
-    uint256[] memory objectives,
-    uint256[] memory rewards
-  ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, requirements, objectives, rewards));
+  function executeTyped(uint256 index, string memory name) public onlyOwner returns (bytes memory) {
+    return execute(abi.encode(index, name));
   }
 }

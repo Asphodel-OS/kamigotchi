@@ -12,10 +12,8 @@ import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountC
 import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
+import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { QuestCompletionComponent, ID as CompletionCompID } from "components/QuestCompletionComponent.sol";
-import { QuestObjectivesComponent, ID as ObjectivesCompID } from "components/QuestObjectivesComponent.sol";
-import { QuestRewardsComponent, ID as RewardsCompID } from "components/QuestRewardsComponent.sol";
-import { QuestRequirementsComponent, ID as RequirementsCompID } from "components/QuestRequirementsComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -33,65 +31,97 @@ import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 library LibQuests {
   /////////////////
   // INTERACTIONS
-  // copies a registry quest and assigns it to an account
+
+  /**
+   * assigns a quest to an account, from the registry.
+   * an assigned quest has:
+   * - the quest index it's referencing
+   * - the account it's assigned to
+   * - completion status (defaults to false, therefore unassigned)
+   * - TODO: the stored balances of the account at the time of assignment
+   */
   function assignQuest(
     IWorld world,
     IUintComp components,
-    uint256 questID,
+    uint256 questIndex,
     uint256 accountID
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
 
     setAccountId(components, id, accountID);
-
-    uint256[] memory componentIDs = getQuestCompSet(components, questID);
-    for (uint256 i = 0; i < componentIDs.length; i++) {
-      bytes memory val = IComp(getAddressById(components, componentIDs[i])).getRawValue(questID);
-      IComp(getAddressById(components, componentIDs[i])).set(id, val);
-    }
+    setIsQuest(components, id);
+    setQuestIndex(components, id, questIndex);
   }
 
-  function completeQuest(IWorld world, IUintComp components, uint256 questID) internal {
+  // snapshots current state of an account for required fields, if needed
+  // stores child entities, eg inventory, on the quest entity itself
+  function snapshotState(
+    IWorld world,
+    IUintComp components,
+    uint256 questID,
+    uint256 accountID
+  ) internal returns (uint256 id) {
+    // TODO: snapshot current balance if needed
+  }
+
+  function completeQuest(
+    IWorld world,
+    IUintComp components,
+    uint256 questID,
+    uint256 accountID
+  ) internal {
     require(!isCompleted(components, questID), "Quests: alr completed");
     setCompleted(components, questID);
 
-    distributeRewards(world, components, questID);
+    uint256 questIndex = getQuestIndex(components, questID);
+    distributeRewards(world, components, questIndex, accountID);
   }
+
+  /////////////////
+  // CONDITIONS CHECK
 
   function checkRequirements(
     IUintComp components,
     uint256 questID,
     uint256 accountID
   ) internal view returns (bool result) {
-    uint256[] memory requirements = getRequirements(components, questID);
+    uint256 questIndex = getQuestIndex(components, questID);
+
+    uint256[] memory requirements = LibRegistryQuests.getRequirementsByQuestIndex(
+      components,
+      questIndex
+    );
 
     if (requirements.length == 0) {
       return true;
     }
 
-    return checkConditions(components, accountID, requirements);
+    return checkConditions(components, questID, accountID, requirements);
   }
 
   function checkObjectives(
     IUintComp components,
-    uint256 questID
+    uint256 questID,
+    uint256 accountID
   ) internal view returns (bool result) {
-    uint256[] memory objectives = getObjectives(components, questID);
-    uint256 accountID = getAccountId(components, questID);
+    uint256 questIndex = getQuestIndex(components, questID);
+
+    uint256[] memory objectives = LibRegistryQuests.getObjectivesByQuestIndex(
+      components,
+      questIndex
+    );
 
     if (objectives.length == 0) {
       return true;
     }
 
-    return checkConditions(components, accountID, objectives);
+    return checkConditions(components, questID, accountID, objectives);
   }
-
-  /////////////////
-  // CONDITIONS CHECK
 
   // checks if conditions are fufilled, AND logic
   function checkConditions(
     IUintComp components,
+    uint256 questID,
     uint256 accountID,
     uint256[] memory conditions
   ) internal view returns (bool result) {
@@ -135,9 +165,13 @@ library LibQuests {
   /////////////////
   // REWARDS DISTRIBUTION
 
-  function distributeRewards(IWorld world, IUintComp components, uint256 questID) internal {
-    uint256[] memory rewards = getRewards(components, questID);
-    uint256 accountID = getAccountId(components, questID);
+  function distributeRewards(
+    IWorld world,
+    IUintComp components,
+    uint256 questIndex,
+    uint256 accountID
+  ) internal {
+    uint256[] memory rewards = LibRegistryQuests.getRewardsByQuestIndex(components, questIndex);
 
     for (uint256 i = 0; i < rewards.length; i++) {
       string memory logicType = getType(components, rewards[i]);
@@ -213,22 +247,6 @@ library LibQuests {
     return QuestCompletionComponent(getAddressById(components, CompletionCompID)).has(id);
   }
 
-  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
-    return NameComponent(getAddressById(components, NameCompID)).has(id);
-  }
-
-  function hasQuestRequirements(IUintComp components, uint256 id) internal view returns (bool) {
-    return QuestRequirementsComponent(getAddressById(components, RequirementsCompID)).has(id);
-  }
-
-  function hasQuestObjectives(IUintComp components, uint256 id) internal view returns (bool) {
-    return QuestObjectivesComponent(getAddressById(components, ObjectivesCompID)).has(id);
-  }
-
-  function hasQuestRewards(IUintComp components, uint256 id) internal view returns (bool) {
-    return QuestRewardsComponent(getAddressById(components, RewardsCompID)).has(id);
-  }
-
   /////////////////
   // SETTERS
 
@@ -238,6 +256,14 @@ library LibQuests {
 
   function setCompleted(IUintComp components, uint256 id) internal {
     QuestCompletionComponent(getAddressById(components, CompletionCompID)).set(id);
+  }
+
+  function setIsQuest(IUintComp components, uint256 id) internal {
+    IsQuestComponent(getAddressById(components, IsQuestCompID)).set(id);
+  }
+
+  function setQuestIndex(IUintComp components, uint256 id, uint256 index) internal {
+    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
   }
 
   /////////////////
@@ -255,22 +281,8 @@ library LibQuests {
     return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
   }
 
-  function getRequirements(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint256[] memory) {
-    return QuestRequirementsComponent(getAddressById(components, RequirementsCompID)).getValue(id);
-  }
-
-  function getObjectives(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint256[] memory) {
-    return QuestObjectivesComponent(getAddressById(components, ObjectivesCompID)).getValue(id);
-  }
-
-  function getRewards(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    return QuestRewardsComponent(getAddressById(components, RewardsCompID)).getValue(id);
+  function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).getValue(id);
   }
 
   function getBalanceOf(
@@ -288,29 +300,5 @@ library LibQuests {
     } else {
       require(false, "Unknown type");
     }
-  }
-
-  /////////////////
-  // CALCULATIONS
-
-  // Get all the component IDs of a quest's components
-  function getQuestCompSet(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint256[] memory) {
-    uint256 statCount = 1;
-    if (hasName(components, id)) statCount++;
-    if (hasQuestObjectives(components, id)) statCount++;
-    if (hasQuestRequirements(components, id)) statCount++;
-    if (hasQuestRewards(components, id)) statCount++;
-
-    uint256 i;
-    uint256[] memory statComponents = new uint256[](statCount);
-    statComponents[i++] = IsQuestCompID;
-    if (hasName(components, id)) statComponents[i++] = NameCompID;
-    if (hasQuestObjectives(components, id)) statComponents[i++] = ObjectivesCompID;
-    if (hasQuestRequirements(components, id)) statComponents[i++] = RequirementsCompID;
-    if (hasQuestRewards(components, id)) statComponents[i++] = RewardsCompID;
-    return statComponents;
   }
 }

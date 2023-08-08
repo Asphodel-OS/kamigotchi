@@ -8,17 +8,16 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexConditionComponent, ID as IndexConditionCompID } from "components/IndexConditionComponent.sol";
-import { IndexRewardComponent, ID as IndexRewCompID } from "components/IndexRewardComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
-import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
-import { IsRewardComponent, ID as IsRewCompID } from "components/IsRewardComponent.sol";
+import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
+import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
+import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
+import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
-import { QuestObjectivesComponent, ID as QuestObjCompID } from "components/QuestObjectivesComponent.sol";
-import { QuestRewardsComponent, ID as QuestRewCompID } from "components/QuestRewardsComponent.sol";
-import { QuestRequirementsComponent, ID as QuestReqCompID } from "components/QuestRequirementsComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
@@ -33,14 +32,12 @@ library LibRegistryQuests {
   // INTERACTIONS
 
   // Create a registry entry for a Quest
+  // requires that all requirements, objectives and rewards are already registered
   function createQuest(
     IWorld world,
     IUintComp components,
     uint256 index,
-    string memory name,
-    uint256[] memory reqIndex,
-    uint256[] memory objIndex,
-    uint256[] memory rewIndex
+    string memory name
   ) internal returns (uint256) {
     uint256 regID = getByQuestIndex(components, index);
     require(regID == 0, "LibRegQ.createQ: index used");
@@ -51,79 +48,47 @@ library LibRegistryQuests {
     setQuestIndex(components, id, index);
     setName(components, id, name);
 
-    uint256[] memory requirements = new uint256[](reqIndex.length);
-    for (uint256 i; i < reqIndex.length; i++) {
-      uint256 reqID = getByConditionIndex(components, reqIndex[i]);
-      require(reqID != 0, "LibRegQ.createQ: req not found");
-      requirements[i] = reqID;
-    }
-    setQuestRequirements(components, id, requirements);
-
-    uint256[] memory objectives = new uint256[](objIndex.length);
-    for (uint256 i; i < objIndex.length; i++) {
-      uint256 objID = getByConditionIndex(components, objIndex[i]);
-      require(objID != 0, "LibRegQ.createQ: obj not found");
-      objectives[i] = objID;
-    }
-    setQuestObjectives(components, id, objectives);
-
-    uint256[] memory rewards = new uint256[](rewIndex.length);
-    for (uint256 i; i < rewIndex.length; i++) {
-      uint256 rewID = getByRewardIndex(components, rewIndex[i]);
-      require(rewID != 0, "LibRegQ.createQ: rew not found");
-      rewards[i] = rewID;
-    }
-    setQuestRewards(components, id, rewards);
     return id;
   }
 
-  // Create a registry entry for a Condition (objective/requirement)
+  // Create a registry entry for a Condition (objective/requirement/reward)
   function createEmptyCondition(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint256 questIndex,
     string memory name,
     string memory logicType
   ) internal returns (uint256) {
-    uint256 regID = getByConditionIndex(components, index);
-    require(regID == 0, "LibRegQ.createCond: index used");
-
     uint256 id = world.getUniqueEntityId();
+
+    uint256 index = getConditionCount(components) + 1;
+    setConditionIndex(components, id, index);
     setIsRegistry(components, id);
     setIsCondition(components, id);
-    setConditionIndex(components, id, index);
+    setQuestIndex(components, id, questIndex);
     setLogicType(components, id, logicType);
     setName(components, id, name);
 
     return id;
   }
 
-  // Create a registry entry for a Reward
-  function createEmptyReward(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    string memory name,
-    string memory logicType
-  ) internal returns (uint256) {
-    uint256 regID = getByRewardIndex(components, index);
-    require(regID == 0, "LibRegQ.createRew: index used");
+  function declareObjective(IUintComp components, uint256 id) internal {
+    setIsObjective(components, id);
+  }
 
-    uint256 id = world.getUniqueEntityId();
-    setIsRegistry(components, id);
+  function declareRequirement(IUintComp components, uint256 id) internal {
+    setIsRequirement(components, id);
+  }
+
+  function declareReward(IUintComp components, uint256 id) internal {
     setIsReward(components, id);
-    setRewardIndex(components, id, index);
-    setName(components, id, name);
-    setLogicType(components, id, logicType);
-
-    return id;
   }
 
-  // adds a balance entity/components to either a condition or reward
+  // adds a balance entity/components to a condition
   function addBalance(
     IWorld world,
     IUintComp components,
-    uint256 entityID, // either condition or reward
+    uint256 entityID, // condition id
     uint256 balance,
     uint256 itemIndex, // if any, else 0
     string memory _type
@@ -146,53 +111,12 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 index,
-    string memory name,
-    uint256[] memory requirements,
-    uint256[] memory objectives,
-    uint256[] memory rewards
+    string memory name
   ) internal returns (uint256) {
     uint256 id = getByQuestIndex(components, index);
     require(id != 0, "LibRegQ.setQ: index not found");
 
     setName(components, id, name);
-    setQuestRequirements(components, id, requirements);
-    setQuestObjectives(components, id, objectives);
-    setQuestRewards(components, id, rewards);
-    return id;
-  }
-
-  // Set a registry entry for a Requirement
-  function setBaseCondition(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    uint256 value,
-    string memory name,
-    string memory _type
-  ) internal returns (uint256) {
-    uint256 id = getByConditionIndex(components, index);
-    require(id != 0, "LibRegQ.setReq: index not found");
-
-    setName(components, id, name);
-    setType(components, id, _type);
-
-    return id;
-  }
-
-  // Set a registry entry for a Reward
-  function setBaseReward(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    string memory name,
-    string memory _type
-  ) internal returns (uint256) {
-    uint256 id = getByRewardIndex(components, index);
-    require(id != 0, "LibRegQ.setRew: index not found");
-
-    setName(components, id, name);
-    setType(components, id, _type);
-
     return id;
   }
 
@@ -242,36 +166,20 @@ library LibRegistryQuests {
     IsConditionComponent(getAddressById(components, IsConditionCompID)).set(id);
   }
 
+  function setIsObjective(IUintComp components, uint256 id) internal {
+    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).set(id);
+  }
+
+  function setIsRequirement(IUintComp components, uint256 id) internal {
+    IsRequirementComponent(getAddressById(components, IsRequirementCompID)).set(id);
+  }
+
   function setIsReward(IUintComp components, uint256 id) internal {
-    IsRewardComponent(getAddressById(components, IsRewCompID)).set(id);
+    IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
   }
 
   function setQuestIndex(IUintComp components, uint256 id, uint256 questIndex) internal {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
-  }
-
-  function setQuestRequirements(
-    IUintComp components,
-    uint256 id,
-    uint256[] memory requirements
-  ) internal {
-    QuestRequirementsComponent(getAddressById(components, QuestReqCompID)).set(id, requirements);
-  }
-
-  function setQuestObjectives(
-    IUintComp components,
-    uint256 id,
-    uint256[] memory objectives
-  ) internal {
-    QuestObjectivesComponent(getAddressById(components, QuestObjCompID)).set(id, objectives);
-  }
-
-  function setQuestRewards(IUintComp components, uint256 id, uint256[] memory rewards) internal {
-    QuestRewardsComponent(getAddressById(components, QuestRewCompID)).set(id, rewards);
-  }
-
-  function setRewardIndex(IUintComp components, uint256 id, uint256 rewardIndex) internal {
-    IndexRewardComponent(getAddressById(components, IndexRewCompID)).set(id, rewardIndex);
   }
 
   function setConditionIndex(IUintComp components, uint256 id, uint256 index) internal {
@@ -301,16 +209,22 @@ library LibRegistryQuests {
     return IndexConditionComponent(getAddressById(components, IndexConditionCompID)).getValue(id);
   }
 
-  function getRewardIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexRewardComponent(getAddressById(components, IndexRewCompID)).getValue(id);
-  }
-
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
     return NameComponent(getAddressById(components, NameCompID)).getValue(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+  }
+
+  function getConditionCount(IUintComp components) internal view returns (uint256) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[0] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsConditionCompID),
+      ""
+    );
   }
 
   /////////////////
@@ -321,9 +235,10 @@ library LibRegistryQuests {
     IUintComp components,
     uint256 index
   ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
+    QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsQuestCompID), "");
+    fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexQuestCompID),
       abi.encode(index)
@@ -333,37 +248,62 @@ library LibRegistryQuests {
     if (results.length != 0) result = results[0];
   }
 
-  // get registry entry by condition index
-  function getByConditionIndex(
+  // get Objectives by Quest index
+  function getObjectivesByQuestIndex(
     IUintComp components,
-    uint256 conditionIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
+    uint256 index
+  ) internal view returns (uint256[] memory results) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsObjectiveCompID),
+      ""
+    );
+    fragments[2] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IndexConditionCompID),
-      abi.encode(conditionIndex)
+      getComponentById(components, IndexQuestCompID),
+      abi.encode(index)
     );
 
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+    results = LibQuery.query(fragments);
   }
 
-  // get registry entry by Reward index
-  function getByRewardIndex(
+  // get requirements by Quest index
+  function getRequirementsByQuestIndex(
     IUintComp components,
-    uint256 rewardIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
+    uint256 index
+  ) internal view returns (uint256[] memory results) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsRequirementCompID),
+      ""
+    );
+    fragments[2] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IndexRewCompID),
-      abi.encode(rewardIndex)
+      getComponentById(components, IndexQuestCompID),
+      abi.encode(index)
     );
 
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+    results = LibQuery.query(fragments);
+  }
+
+  // get reward by Quest index
+  function getRewardsByQuestIndex(
+    IUintComp components,
+    uint256 index
+  ) internal view returns (uint256[] memory results) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsRewardCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexQuestCompID),
+      abi.encode(index)
+    );
+
+    results = LibQuery.query(fragments);
   }
 }
