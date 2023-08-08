@@ -106,33 +106,11 @@ library LibRegistryQuests {
     }
   }
 
-  // Set a registry entry for a Quest
-  function setQuest(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    string memory name
-  ) internal returns (uint256) {
-    uint256 id = getByQuestIndex(components, index);
-    require(id != 0, "LibRegQ.setQ: index not found");
-
-    setName(components, id, name);
-    return id;
-  }
-
   /////////////////
   // CHECKERS
 
-  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
-    return NameComponent(getAddressById(components, NameCompID)).has(id);
-  }
-
   function hasType(IUintComp components, uint256 id) internal view returns (bool) {
     return TypeComponent(getAddressById(components, TypeCompID)).has(id);
-  }
-
-  function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id);
   }
 
   function isType(
@@ -200,22 +178,6 @@ library LibRegistryQuests {
 
   /////////////////
   // GETTERS
-
-  function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).getValue(id);
-  }
-
-  function getConditionIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexConditionComponent(getAddressById(components, IndexConditionCompID)).getValue(id);
-  }
-
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
-  }
-
-  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
-  }
 
   function getConditionCount(IUintComp components) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);

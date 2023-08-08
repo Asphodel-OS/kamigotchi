@@ -70,6 +70,7 @@ library LibQuests {
     uint256 questID,
     uint256 accountID
   ) internal {
+    require(isQuest(components, questID), "Quests: not a quest");
     require(!isCompleted(components, questID), "Quests: alr completed");
     setCompleted(components, questID);
 
@@ -217,14 +218,6 @@ library LibQuests {
 
   function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
     return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(id);
-  }
-
-  function isCondition(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsConditionComponent(getAddressById(components, IsConditionCompID)).has(id);
-  }
-
-  function isReward(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsRewardComponent(getAddressById(components, IsRewardCompID)).has(id);
   }
 
   function isType(
