@@ -36,18 +36,18 @@ contract ProductionCollectSystem is System {
     );
 
     // add balance and experience
-    uint256 amt = LibProduction.calcOutput(components, id);
-    LibCoin.inc(components, accountID, amt);
-    LibPet.addExperience(components, petID, amt);
+    uint256 output = LibProduction.calcOutput(components, id);
+    LibCoin.inc(components, accountID, output);
+    LibPet.addExperience(components, petID, output);
 
     // reset production
     LibProduction.reset(components, id);
 
     // logging and tracking
-    LibScore.incBy(world, components, accountID, "COLLECT", amt);
+    LibScore.incBy(world, components, accountID, "COLLECT", output);
     LibAccount.updateLastBlock(components, accountID);
 
-    return abi.encode(amt);
+    return abi.encode(output);
   }
 
   function executeTyped(uint256 id) public returns (bytes memory) {
