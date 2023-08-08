@@ -16,19 +16,24 @@ export function createAdminAPI(systems: any) {
     await setConfig('ACCOUNT_STAMINA_BASE', 20);
     await setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
-    // Kami Base Stats
+    // Mint Price and Limits
     // to be 5, set at 500 for testing
     await setConfig('MINT_ACCOUNT_MAX', 5);
     await setConfig('MINT_INITIAL_MAX', 1111);
     await setConfig('MINT_TOTAL_MAX', 4444);
     await setConfig('MINT_PRICE', utils.parseEther('0.0'));
 
-    // set global config fields for Kami Stats
+    // Kami Base Stats
     await setConfig('KAMI_BASE_HEALTH', 50);
     await setConfig('KAMI_BASE_POWER', 10);
     await setConfig('KAMI_BASE_VIOLENCE', 10);
     await setConfig('KAMI_BASE_HARMONY', 10);
     await setConfig('KAMI_BASE_SLOTS', 0);
+
+    // Kami Leveling Curve
+    await setConfig('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
+    await setConfig('KAMI_LVL_REQ_EXP', 1259); // exponential increase per level
+    await setConfig('KAMI_LVL_REQ_EXP_PREC', 3);
 
     // Harvest Rates
     // HarvestRate = power * base * multiplier
