@@ -62,6 +62,7 @@
     "IsQuestComponent",
     "IsScoreComponent",
     "IsTraitComponent",
+    "LevelComponent",
     "LocationComponent",
     "LogicTypeComponent",
     "MediaURIComponent",
@@ -455,11 +456,19 @@
         "BalanceComponent",
         "BlockLastComponent",
         "EpochComponent",
-        "IsScoreComponent",
-        "IdHolderComponent",
         "HealthCurrentComponent",
+        "IdHolderComponent",
+        "IsScoreComponent",
         "TimeLastActionComponent",
         "TypeComponent"
+      ]
+    },
+    {
+      "name": "PetLevelSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "ExperienceComponent",
+        "LevelComponent"
       ]
     },
     {
@@ -509,7 +518,6 @@
         "BlockLastComponent",
         "CoinComponent",
         "EpochComponent",
-        "ExperienceComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
         "IdNodeComponent",
@@ -574,7 +582,9 @@
     "LibCoin",
     "LibConfig",
     "LibDataEntity",
+    "LibExperience",
     "LibInventory",
+    "LibKill",
     "LibListing",
     "LibMerchant",
     "LibMint20",
@@ -583,12 +593,14 @@
     "LibPet",
     "LibProduction",
     "LibPrototype",
+    "LibQuests",
+    "LibRandom",
     "LibRegistryAffinity",
-    "LibRegistryTrait",
     "LibRegistryItem",
     "LibRegistryQuests",
+    "LibRegistryTrait",
     "LibRoom",
-    "LibStat",
-    "LibQuests"
+    "LibScore",
+    "LibStat"
   ]
 }
