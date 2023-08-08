@@ -23,6 +23,7 @@ import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLa
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
@@ -52,7 +53,11 @@ library LibPet {
     setAccount(components, id, accountID);
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
-    setExperience(components, id, 0);
+
+    // Q(ja): should these be initialized here or elsewhere?
+    // do we want level updated in the metadata?
+    LibExperience.setLevel(components, id, 1);
+    LibExperience.set(components, id, 0);
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
@@ -69,11 +74,6 @@ library LibPet {
   function unstake(IUintComp components, uint256 id) internal {
     setState(components, id, "721_EXTERNAL");
     setAccount(components, id, 0);
-  }
-
-  function addExperience(IUintComp components, uint256 id, uint256 amt) internal {
-    uint256 exp = getExperience(components, id);
-    setExperience(components, id, exp + amt);
   }
 
   // Drains HP from a pet. The opposite of heal().
@@ -381,10 +381,6 @@ library LibPet {
     HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
   }
 
-  function setExperience(IUintComp components, uint256 id, uint256 experience) internal {
-    ExperienceComponent(getAddressById(components, ExperienceCompID)).set(id, experience);
-  }
-
   // Update the TimeLastAction of a pet. used to expected battery drain on next action
   function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
     TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
@@ -412,10 +408,6 @@ library LibPet {
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
-  }
-
-  function getExperience(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ExperienceComponent(getAddressById(components, ExperienceCompID)).getValue(id);
   }
 
   // gets the last explicitly set health of a pet. naming discrepancy for clarity

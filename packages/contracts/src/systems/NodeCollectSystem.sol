@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
@@ -44,7 +45,7 @@ contract NodeCollectSystem is System {
       if (!LibPet.isHealthy(components, petID)) continue;
 
       output = LibProduction.calcOutput(components, productionID);
-      LibPet.addExperience(components, petID, output);
+      LibExperience.inc(components, petID, output);
       LibProduction.reset(components, productionID);
       totalOutput += output;
     }

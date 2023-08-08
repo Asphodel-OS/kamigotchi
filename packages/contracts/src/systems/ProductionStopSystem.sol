@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -43,7 +44,7 @@ contract ProductionStopSystem is System {
     // add balance and experience
     uint256 output = LibProduction.calcOutput(components, id);
     LibCoin.inc(components, accountID, output);
-    LibPet.addExperience(components, petID, output);
+    LibExperience.inc(components, petID, output);
 
     // stop production
     LibProduction.stop(components, id);
