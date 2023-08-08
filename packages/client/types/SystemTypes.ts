@@ -49,6 +49,7 @@ import { Pet721StakeSystem } from "./ethers-contracts/Pet721StakeSystem";
 import { Pet721TransferSystem } from "./ethers-contracts/Pet721TransferSystem";
 import { Pet721UnstakeSystem } from "./ethers-contracts/Pet721UnstakeSystem";
 import { PetFeedSystem } from "./ethers-contracts/PetFeedSystem";
+import { PetLevelSystem } from "./ethers-contracts/PetLevelSystem";
 import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetReviveSystem } from "./ethers-contracts/PetReviveSystem";
 import { PetSetAccountSystem } from "./ethers-contracts/PetSetAccountSystem";
@@ -115,6 +116,7 @@ export type SystemTypes = {
   "system.Pet721.Transfer": Pet721TransferSystem;
   "system.Pet721.Unstake": Pet721UnstakeSystem;
   "system.Pet.Feed": PetFeedSystem;
+  "system.Pet.Level": PetLevelSystem;
   "system.Pet.Name": PetNameSystem;
   "system.Pet.Revive": PetReviveSystem;
   "system.Pet.SetAccount": PetSetAccountSystem;

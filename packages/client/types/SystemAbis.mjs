@@ -49,6 +49,7 @@ import Pet721StakeSystem from "../abi/Pet721StakeSystem.json";
 import Pet721TransferSystem from "../abi/Pet721TransferSystem.json";
 import Pet721UnstakeSystem from "../abi/Pet721UnstakeSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
+import PetLevelSystem from "../abi/PetLevelSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetReviveSystem from "../abi/PetReviveSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
@@ -115,6 +116,7 @@ export const SystemAbis = {
   "system.Pet721.Transfer": Pet721TransferSystem.abi,
   "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
+  "system.Pet.Level": PetLevelSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,
   "system.Pet.SetAccount": PetSetAccountSystem.abi,
