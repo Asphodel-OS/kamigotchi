@@ -100,7 +100,7 @@ export function registerAccountInfoFixture() {
                   <Text>{data.account.name}</Text>
                 </NameCell>
                 <KamiCell>
-                  <Text>$BYTE: {1 * (data.account.coin ?? 0)}</Text>
+                  <Text>$MUSU: {1 * (data.account.coin ?? 0)}</Text>
                 </KamiCell>
                 <BatteryCell>
                   <BatteryComponent showPercentage={true} level={calcStaminaPercent(data.account)} />

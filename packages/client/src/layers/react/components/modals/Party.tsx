@@ -346,7 +346,7 @@ export function registerPartyModal() {
             description = [
               `Harvesting`,
               `on ${kami.production!.node!.name}`,
-              `${harvestRate} $BYTE/hr`,
+              `${harvestRate} $MUSU/hr`,
               `${healthRate} HP/hr`,
             ];
           }
@@ -486,7 +486,7 @@ export function registerPartyModal() {
               kami={kami}
               description={description}
               subtext={`${calcOutput(kami)
-                } $BYTE`}
+                } $MUSU`}
               action={action}
               cornerContent={CornerContent(kami)}
             />

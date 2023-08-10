@@ -191,7 +191,7 @@ export function createAdminAPI(systems: any) {
       'HARVEST',
       3,
       'Torii Gate',
-      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $BYTE....`,
+      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $MUSU....`,
       `NORMAL`,
     );
 

@@ -90,7 +90,7 @@ library LibProduction {
     return totMultiplier;
   }
 
-  // Calculate the reward for liquidating this production, measured in $BYTE
+  // Calculate the reward for liquidating this production, measured in $MUSU
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 output = calcOutput(components, id);
     uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
@@ -104,7 +104,7 @@ library LibProduction {
   }
 
   // Calculate the reward we would expect from a production, collected at the
-  // current time, measured in $BYTE. INACTIVE productions should return 0.
+  // current time, measured in $MUSU. INACTIVE productions should return 0.
   // balance accrued to the production is included.
   function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 balance = getBalance(components, id);
@@ -114,7 +114,7 @@ library LibProduction {
     return balance + (rate * duration) / precision;
   }
 
-  // Calculate the rate of a production, measured in $BYTE/s (precision set by HARVEST_RATE_PREC)
+  // Calculate the rate of a production, measured in $MUSU/s (precision set by HARVEST_RATE_PREC)
   function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
 

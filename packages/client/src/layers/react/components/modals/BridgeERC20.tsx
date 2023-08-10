@@ -95,7 +95,7 @@ export function registerERC20BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Depositing $BYTE` as EntityID;
+        const actionID = `Depositing $MUSU` as EntityID;
         actions.add({
           id: actionID,
           components: {},
@@ -113,7 +113,7 @@ export function registerERC20BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Withdrawing $BYTE` as EntityID;
+        const actionID = `Withdrawing $MUSU` as EntityID;
         actions.add({
           id: actionID,
           components: {},
@@ -189,7 +189,7 @@ export function registerERC20BridgeModal() {
         const textColor = (fundState == isDepositState) ? "white" : "black";
         return (
           <BoxButton style={{ backgroundColor: color }} onClick={() => setIsDepositState(fundState)}>
-            <Description style={{ color: textColor }}> {balance} $BYTE </Description>
+            <Description style={{ color: textColor }}> {balance} $MUSU </Description>
             <SubDescription style={{ color: textColor }}> {text} </SubDescription>
           </BoxButton>
         );
@@ -200,7 +200,7 @@ export function registerERC20BridgeModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Header>Bridge $BYTE</Header>
+          <Header>Bridge $MUSU</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>
               {StateBox(true)}
@@ -209,7 +209,7 @@ export function registerERC20BridgeModal() {
               {StateBox(false)}
             </div>
             <Description style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}>
-              Bridge $BYTE between your wallet (ERC20) and the game world.
+              Bridge $MUSU between your wallet (ERC20) and the game world.
             </Description>
             <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
               <Input
