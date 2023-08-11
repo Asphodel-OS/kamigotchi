@@ -24,6 +24,8 @@ export interface Kami {
   entityIndex: EntityIndex;
   name: string;
   uri: string;
+  level: number;
+  experience: KamiExperience;
   health: number;
   healthRate: number;
   state: string;
@@ -37,6 +39,11 @@ export interface Kami {
   traits?: Traits;
   affinities?: string[];
   canName?: boolean;
+}
+
+export interface KamiExperience {
+  current: number;
+  threshold: number;
 }
 
 // optional data to populate for a Kami Entity
@@ -70,12 +77,14 @@ export const getKami = (
         BodyIndex,
         CanName,
         ColorIndex,
+        Experience,
         FaceIndex,
         HealthCurrent,
         HandIndex,
         IsKill,
         IsProduction,
         LastTime,
+        Level,
         MediaURI,
         Name,
         PetID,
@@ -95,6 +104,11 @@ export const getKami = (
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     uri: getComponentValue(MediaURI, index)?.value as string,
+    level: getComponentValue(Level, index)?.value as number,
+    experience: {
+      current: getComponentValue(Experience, index)?.value as number,
+      threshold: 0,
+    },
     health: getComponentValue(HealthCurrent, index)?.value as number,
     healthRate: 0,
     state: getComponentValue(State, index)?.value as string,
@@ -205,6 +219,14 @@ export const getKami = (
 
   /////////////////
   // ADJUSTMENTS
+
+  // experience threshold calculation according to level
+  if (kami.level) {
+    const experienceBase = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_BASE');
+    const experienceExponent = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_EXP');
+    const exponentPrecision = 10 ** getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_EXP_PREC');
+    kami.experience.threshold = experienceBase * ((experienceExponent / exponentPrecision) ^ (kami.level - 1));
+  }
 
   // health change rate for harvesting/resting kami
   let healthRate = 0;
