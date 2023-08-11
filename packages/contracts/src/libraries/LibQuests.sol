@@ -13,7 +13,7 @@ import { IsConditionComponent, ID as IsConditionCompID } from "components/IsCond
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
-import { QuestCompletionComponent, ID as CompletionCompID } from "components/QuestCompletionComponent.sol";
+import { IsCompleteComponent, ID as CompletionCompID } from "components/IsCompleteComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -237,7 +237,7 @@ library LibQuests {
   }
 
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
-    return QuestCompletionComponent(getAddressById(components, CompletionCompID)).has(id);
+    return IsCompleteComponent(getAddressById(components, CompletionCompID)).has(id);
   }
 
   /////////////////
@@ -248,7 +248,7 @@ library LibQuests {
   }
 
   function setCompleted(IUintComp components, uint256 id) internal {
-    QuestCompletionComponent(getAddressById(components, CompletionCompID)).set(id);
+    IsCompleteComponent(getAddressById(components, CompletionCompID)).set(id);
   }
 
   function setIsQuest(IUintComp components, uint256 id) internal {
