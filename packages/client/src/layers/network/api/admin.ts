@@ -16,7 +16,10 @@ export function createAdminAPI(systems: any) {
     await setConfig('ACCOUNT_STAMINA_BASE', 20);
     await setConfig('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
-    // Mint Price and Limits
+    // Kami Idle Requirement
+    await setConfig('KAMI_IDLE_REQ', 180);
+
+    // Kami Mint Price and Limits
     // to be 5, set at 500 for testing
     await setConfig('MINT_ACCOUNT_MAX', 5);
     await setConfig('MINT_INITIAL_MAX', 1111);
@@ -59,8 +62,6 @@ export function createAdminAPI(systems: any) {
     await setConfig('HEALTH_RATE_HEAL_BASE', 150); // in respect to harmony
     await setConfig('HEALTH_RATE_HEAL_BASE_PREC', 2); // i.e. x/100
 
-    // Liquidation Idle Requirements
-    await setConfig('KAMI_IDLE_REQ', 180);
 
     // Liquidation Calcs
     await setConfig('LIQ_THRESH_BASE', 40);
