@@ -8,6 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
+import { ExperienceBar } from 'layers/react/components/library/ExperienceBar';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
@@ -103,8 +104,15 @@ export function registerKamiModal() {
           <SectionContainer style={{ display: 'flex', flexDirection: 'row', padding: '0px' }}>
             <ContainerImage src={kami.uri} />
             <SectionContainer style={{ borderWidth: '0px', margin: '0px' }}>
-              <SectionTitle>{kami.name}</SectionTitle>
-              <SectionSubtitle>{affinities}</SectionSubtitle>
+              <SectionTopContainer>
+                <SectionTitle>{kami.name}</SectionTitle>
+                <SectionSubtitle>{affinities}</SectionSubtitle>
+              </SectionTopContainer>
+              <ExperienceBar
+                level={kami.level * 1}
+                current={kami.experience.current * 1}
+                total={kami.experience.threshold}
+              />
               <SectionContent>
                 {statsArray.map((stat: [string, number]) => {
                   return (
@@ -262,9 +270,16 @@ const ContainerInfoText = styled.div`
   margin: 5px;
 `;
 
+const SectionTopContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin: 15px 5px 10px 5px;
+`;
+
 const SectionTitle = styled.div`
   background-color: #ffffff;
-  margin: 15px 5px;
 
   color: black;
   font-family: Pixel;
@@ -273,7 +288,7 @@ const SectionTitle = styled.div`
 `;
 
 const SectionSubtitle = styled.div`
-  margin: 0px 0px 17px 10px;
+  margin: 0px 0px 3px 10px;
   
   color: #666;
   font-size: 14px;
