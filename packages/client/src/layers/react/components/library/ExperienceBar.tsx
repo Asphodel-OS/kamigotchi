@@ -1,22 +1,37 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ActionButton } from './ActionButton';
+import { Tooltip } from './Tooltip';
 
 interface ExperienceBarProps {
   level: number;
   current: number;
   total: number;
+  triggerLevelUp: Function;
 }
 
-export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, total }) => {
+export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, total, triggerLevelUp }) => {
   const percentage = Math.round((current / total) * 100);
+  const canLevelUp = percentage >= 100;
 
   return (
     <Wrapper>
       <Level>{`Lvl ${level}`}</Level>
-      <BarContainer>
-        <FilledBar percentage={percentage} />
-        <Percentage>{`${percentage}%`}</Percentage>
-      </BarContainer>
+      <Tooltip text={[`${current}/${total}`]}>
+        <BarContainer>
+          <FilledBar percentage={percentage} />
+          <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
+        </BarContainer>
+      </Tooltip>
+      <Tooltip text={['Level Up']}>
+        <ActionButton
+          id={`level-button`}
+          onClick={() => triggerLevelUp()}
+          text=' ↑ '
+          size='small'
+          disabled={!canLevelUp}
+        />
+      </Tooltip>
     </Wrapper>
   );
 };
@@ -32,10 +47,12 @@ const Wrapper = styled.div`
 
 const BarContainer = styled.div`
   border: 1px solid black;
-  background-color: #bbb;
   border-radius: 10px;
+  background-color: #bbb;
   height: 20px;
   min-width: 200px;
+  margin: 0px 10px;
+
   position: relative;
   display: flex;
   align-items: center;
@@ -60,5 +77,4 @@ const Percentage = styled.p`
 const Level = styled.p`
   color: black;
   font-family: Pixel;
-  padding-right: 10px;
 `;
