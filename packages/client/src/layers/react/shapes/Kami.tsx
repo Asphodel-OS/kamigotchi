@@ -225,7 +225,7 @@ export const getKami = (
     const experienceBase = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_BASE');
     const experienceExponent = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_EXP');
     const exponentPrecision = 10 ** getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_EXP_PREC');
-    kami.experience.threshold = experienceBase * ((experienceExponent / exponentPrecision) ^ (kami.level - 1));
+    kami.experience.threshold = Math.floor(experienceBase * ((1.0 * experienceExponent / exponentPrecision) ** (kami.level - 1)));
   }
 
   // health change rate for harvesting/resting kami
