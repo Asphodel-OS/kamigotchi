@@ -468,6 +468,7 @@
       "writeAccess": [
         "BlockLastComponent",
         "ExperienceComponent",
+        "HealthCurrentComponent",
         "LevelComponent"
       ]
     },
