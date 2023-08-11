@@ -53,6 +53,7 @@ export type { IndexQuestComponent } from "./IndexQuestComponent";
 export type { IndexReviveComponent } from "./IndexReviveComponent";
 export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
+export type { IsCompleteComponent } from "./IsCompleteComponent";
 export type { IsConditionComponent } from "./IsConditionComponent";
 export type { IsConfigComponent } from "./IsConfigComponent";
 export type { IsDataComponent } from "./IsDataComponent";
@@ -110,7 +111,6 @@ export type { ProxyPermissionsFarm20Component } from "./ProxyPermissionsFarm20Co
 export type { ProxyPermissionsMint20Component } from "./ProxyPermissionsMint20Component";
 export type { QuestAcceptSystem } from "./QuestAcceptSystem";
 export type { QuestCompleteSystem } from "./QuestCompleteSystem";
-export type { QuestCompletionComponent } from "./QuestCompletionComponent";
 export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
 export type { SlotsComponent } from "./SlotsComponent";
@@ -213,6 +213,7 @@ export { IndexQuestComponent__factory } from "./factories/IndexQuestComponent__f
 export { IndexReviveComponent__factory } from "./factories/IndexReviveComponent__factory";
 export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
+export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
 export { IsConditionComponent__factory } from "./factories/IsConditionComponent__factory";
 export { IsConfigComponent__factory } from "./factories/IsConfigComponent__factory";
 export { IsDataComponent__factory } from "./factories/IsDataComponent__factory";
@@ -270,7 +271,6 @@ export { ProxyPermissionsFarm20Component__factory } from "./factories/ProxyPermi
 export { ProxyPermissionsMint20Component__factory } from "./factories/ProxyPermissionsMint20Component__factory";
 export { QuestAcceptSystem__factory } from "./factories/QuestAcceptSystem__factory";
 export { QuestCompleteSystem__factory } from "./factories/QuestCompleteSystem__factory";
-export { QuestCompletionComponent__factory } from "./factories/QuestCompletionComponent__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";
 export { SlotsComponent__factory } from "./factories/SlotsComponent__factory";
