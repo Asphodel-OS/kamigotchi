@@ -12,10 +12,11 @@ import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountC
 import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
-import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IsCompleteComponent, ID as CompletionCompID } from "components/IsCompleteComponent.sol";
+import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
@@ -51,6 +52,7 @@ library LibQuests {
     setAccountId(components, id, accountID);
     setIsQuest(components, id);
     setQuestIndex(components, id, questIndex);
+    setTimeStart(components, id, block.timestamp);
   }
 
   // snapshots current state of an account for required fields, if needed
@@ -259,6 +261,10 @@ library LibQuests {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
   }
 
+  function setTimeStart(IUintComp components, uint256 id, uint256 time) internal {
+    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, time);
+  }
+
   /////////////////
   // GETTERS
 
@@ -270,12 +276,16 @@ library LibQuests {
     return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).getValue(id);
   }
 
+  function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).getValue(id);
+  }
+
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
   }
 
-  function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).getValue(id);
+  function getTimeStart(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
   }
 
   function getBalanceOf(
