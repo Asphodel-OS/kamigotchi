@@ -21,6 +21,7 @@ import { registerMerchantModal } from './modals/Merchant';
 import { registerPartyModal } from './modals/Party';
 import { registerNodeModal } from './modals/Node';
 import { registerSettingsModal } from './modals/Settings';
+import { registerQuestsModal } from './modals/Quests';
 import { registerHelpModal } from './modals/Help';
 import { registerKamisNamingModal } from './modals/KamisNaming';
 import { registerNameKamiModal } from './modals/NameKami';
@@ -68,6 +69,7 @@ export function registerUIComponents() {
   registerMapModal();
   registerSettingsModal();
   registerPartyModal();
+  registerQuestsModal();
 
   // validators
   registerAccountRegistrar();

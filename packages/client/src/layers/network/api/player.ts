@@ -118,6 +118,21 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Production.Stop"].executeTyped(productionID);
   }
 
+  /*********************
+  *    QUESTS
+  *********************/
+
+  // @dev accept a quest for an account
+  // @param index   index of the quest
+  function acceptQuest(index: number) {
+    return systems["system.Quest.Accept"].executeTyped(index);
+  }
+
+  // @dev complete a quest for an account
+  // @param id   id of the quest
+  function completeQuest(id: BigNumberish) {
+    return systems["system.Quest.Complete"].executeTyped(id);
+  }
 
   /*********************
    *       TRADE
@@ -245,6 +260,10 @@ export function createPlayerAPI(systems: any) {
       liquidate: liquidateProduction,
       start: startProduction,
       stop: stopProduction,
+    },
+    quests: {
+      accept: acceptQuest,
+      complete: completeQuest,
     },
     trade: {
       accept: acceptTrade,

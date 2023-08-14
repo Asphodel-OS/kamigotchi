@@ -9,8 +9,6 @@ import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create"));
 
-// real important to remove this for deployment! would allow for free minting
-// gives coins to the calling account
 contract _RegistryCreateQuestSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

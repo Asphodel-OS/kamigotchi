@@ -10,6 +10,7 @@ import {
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
 import { Kami, queryKamisX } from './Kami';
+import { Quest, queryQuestsX } from './Quest';
 import {
   Inventory,
   getInventory,
@@ -31,11 +32,13 @@ export interface Account {
   lastMoveTs: number;
   kamis?: Kami[];
   inventories?: AccountInventories;
+  quests?: Quest[];
 }
 
 export interface AccountOptions {
   kamis?: boolean;
   inventory?: boolean;
+  quests?: boolean;
 }
 
 // bucketed inventory slots
@@ -129,6 +132,14 @@ export const getAccount = (
       { account: account.id },
       { deaths: true, production: true, traits: true }
     );
+  }
+
+  // populate Quests
+  if (options?.quests) {
+    account.quests = queryQuestsX(
+      layers,
+      { account: account.id }
+    )
   }
 
   /////////////////

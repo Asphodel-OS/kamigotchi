@@ -23,7 +23,8 @@ export function registerChatButton() {
       return (
         <MenuButton
           id='chat_button'
-          targetDiv='chat'
+          // targetDiv='chat'
+          targetDiv='quests'
           text='Chat'
           hideModal={modalsToHide}
           visible={visibleButtons.chat}

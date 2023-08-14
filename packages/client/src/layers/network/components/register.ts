@@ -33,6 +33,8 @@ export function createComponents(world: World) {
     // Archetypes
     IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
     IsConfig: defineBoolEZ("IsConfig", "component.Is.Config"),
+    IsCondition: defineBoolEZ("IsCondition", "component.Is.Condition"),
+    IsComplete: defineBoolEZ("IsComplete", "component.Is.Complete"),
     IsData: defineBoolEZ("IsData", "component.Is.Data"),
     IsEquipped: defineBoolEZ("IsEquipped", "component.Is.Equipped"),
     IsFungible: defineBoolEZ("IsFungible", "component.Is.Fungible"),
@@ -44,11 +46,15 @@ export function createComponents(world: World) {
     IsNonFungible: defineBoolEZ("IsNonFungible", "component.Is.NonFungible"),
     IsPet: defineBoolEZ("IsPet", "component.Is.Pet"),
     IsProduction: defineBoolEZ("IsProduction", "component.Is.Production"),
+    IsQuest: defineBoolEZ("IsQuest", "component.Is.Quest"),
+    IsObjective: defineBoolEZ("IsObjective", "component.Is.Objective"),
     IsRegister: defineBoolEZ("IsRegister", "component.Is.Register"),
     IsRegistry: defineBoolEZ("IsRegistry", "component.Is.Registry"),
     IsRegistryEntry: defineBoolEZ("IsRegistryEntry", "component.Is.RegistryEntry"),
     IsRequest: defineBoolEZ("IsRequest", "component.Is.Request"),
     IsRoom: defineBoolEZ("IsRoom", "component.Is.Room"),
+    IsRequirement: defineBoolEZ("IsRequirement", "component.Is.Requirement"),
+    IsReward: defineBoolEZ("IsReward", "component.Is.Reward"),
     IsScore: defineBoolEZ("IsScore", "component.Is.Score"),
     IsTrade: defineBoolEZ("IsTrade", "component.Is.Trade"),
     IsTrait: defineBoolEZ("IsTrait", "component.Is.Trait"),
@@ -77,6 +83,7 @@ export function createComponents(world: World) {
     MerchantIndex: defineNumberEZ("MerchantIndex", "component.Index.Merchant"),
     ModIndex: defineNumberEZ("ModIndex", "component.Index.Mod"),
     NodeIndex: defineNumberEZ("NodeIndex", "component.Index.Node"),
+    QuestIndex: defineNumberEZ("QuestIndex", "component.Index.Quest"),
     PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
     ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
     TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
@@ -95,6 +102,7 @@ export function createComponents(world: World) {
     HealthCurrent: defineNumberEZ("HealthCurrent", "component.Health.Current"),
     Level: defineNumberEZ("Level", "component.Level"),
     Location: defineNumberEZ("Location", "component.Location"),
+    LogicType: defineStringEZ("LogicType", "component.LogicType"),
     Name: defineStringEZ("Name", "component.Name"),
     Power: defineNumberEZ("Power", "component.Power"),
     PriceBuy: defineNumberEZ("PriceBuy", "component.PriceBuy"),

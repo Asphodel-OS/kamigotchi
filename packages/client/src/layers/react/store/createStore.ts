@@ -53,6 +53,7 @@ export interface VisibleModals {
   settings: boolean;
   roomMovement: boolean;
   operatorFund: boolean;
+  quests: boolean;
   leaderboard: boolean;
 }
 
@@ -75,6 +76,7 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   settings: isOn,
   roomMovement: isOn,
   operatorFund: isOn,
+  quests: isOn,
   leaderboard: isOn,
 });
 

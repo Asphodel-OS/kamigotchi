@@ -246,6 +246,15 @@ export function createAdminAPI(systems: any) {
     // create our hottie merchant ugajin. names are unique
     await createMerchant(1, 'Mina', 13);
 
+    // create quests
+    await createQuest(1, "Have 1 $MUSU");
+    await addQuestCondition(1, 1, 0, "Have 1 $MUSU", "CURR_MIN", "COIN", "OBJECTIVE");
+    await addQuestCondition(1, 25, 0, "Earn 25 $MUSU", "INC", "COIN", "REWARD");
+
+    await createQuest(2, "Buy 1 Gum");
+    await addQuestCondition(2, 1, 1, "Buy 1 Gum", "DELTA_MIN", "FUNG_INVENTORY", "OBJECTIVE");
+    await addQuestCondition(2, 1, 4, "Get a revive", "INC", "FUNG_INVENTORY", "REWARD");
+
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
 
@@ -377,6 +386,38 @@ export function createAdminAPI(systems: any) {
   async function setNodeName(index: number, name: string) {
     await sleepIf();
     return systems['system._Node.Set.Name'].executeTyped(index, name);
+  }
+
+  /////////////////
+  // QUESTS
+
+  // @dev creates an empty quest
+  // @param index       the human-readable index of the quest
+  // @param name        name of the quest
+  async function createQuest(index: number, name: string) {
+    await sleepIf();
+    return systems['system._Registry.Quest.Create'].executeTyped(index, name);
+  }
+
+  // @dev adds a condition (objective/reward/requirement) to a quest
+  // @param questIndex  the human-readable index of the quest
+  // @param balance     numerical amount of a the condition (depending on type)
+  // @param itemIndex   item index for condition, if any (eg inventory)
+  // @param name        string name of the condition
+  // @param logicType   type of logic condition (CURR_MIN, DELTA_MAX)
+  // @param type        type of condition (eg fungible inventory, coin)
+  // @param conditionType type of condition (eg objective, reward, requirement)
+  async function addQuestCondition(
+    questIndex: number,
+    balance: number,
+    itemIndex: number,
+    name: string,
+    logicType: string,
+    type: string,
+    conditionType: string
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Condition.Create'].executeTyped(questIndex, balance, itemIndex, name, logicType, type, conditionType);
   }
 
   /////////////////
@@ -680,6 +721,10 @@ export function createAdminAPI(systems: any) {
         create: registerRevive,
         update: updateRegistryRevive,
       },
+    },
+    quest: {
+      create: createQuest,
+      addCondition: addQuestCondition,
     },
     room: {
       create: createRoom,
