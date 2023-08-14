@@ -8,6 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
+import { LibSkill } from "libraries/LibSkill.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Level"));
 
@@ -31,9 +32,10 @@ contract PetLevelSystem is System {
     uint256 levelCost = LibExperience.calcLevelCost(components, id);
     require(LibExperience.get(components, id) >= levelCost, "PetLevel: need more experience");
 
-    // level the pet up and heal it to full
+    // consumer experience, level pet up, increase its SP and heal it to full
     LibExperience.dec(components, id, levelCost);
     LibExperience.incLevel(components, id, 1);
+    LibSkill.inc(components, id, 1);
     LibPet.heal(components, id, LibPet.calcTotalHealth(components, id));
 
     // signal a metadata update

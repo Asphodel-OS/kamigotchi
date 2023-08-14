@@ -27,6 +27,7 @@ import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
+import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // Components
@@ -107,6 +108,7 @@ import { ProxyPermissionsERC721Component, ID as ProxyPermissionsERC721ComponentI
 import { ProxyPermissionsMint20Component, ID as ProxyPermissionsMint20ComponentID } from "components/ProxyPermissionsMint20Component.sol";
 import { RarityComponent, ID as RarityComponentID } from "components/RarityComponent.sol";
 import { RateComponent, ID as RateComponentID } from "components/RateComponent.sol";
+import { SkillPointComponent, ID as SkillPointComponentID } from "components/SkillPointComponent.sol";
 import { SlotsComponent, ID as SlotsComponentID } from "components/SlotsComponent.sol";
 import { StaminaComponent, ID as StaminaComponentID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrentComponentID } from "components/StaminaCurrentComponent.sol";
@@ -265,6 +267,7 @@ ProxyPermissionsERC721Component _ProxyPermissionsERC721Component;
 ProxyPermissionsMint20Component _ProxyPermissionsMint20Component;
 RarityComponent _RarityComponent;
 RateComponent _RateComponent;
+SkillPointComponent _SkillPointComponent;
 SlotsComponent _SlotsComponent;
 StaminaComponent _StaminaComponent;
 StaminaCurrentComponent _StaminaCurrentComponent;
@@ -424,6 +427,7 @@ _ProxyPermissionsERC721Component = ProxyPermissionsERC721Component(component(Pro
 _ProxyPermissionsMint20Component = ProxyPermissionsMint20Component(component(ProxyPermissionsMint20ComponentID));
 _RarityComponent = RarityComponent(component(RarityComponentID));
 _RateComponent = RateComponent(component(RateComponentID));
+_SkillPointComponent = SkillPointComponent(component(SkillPointComponentID));
 _SlotsComponent = SlotsComponent(component(SlotsComponentID));
 _StaminaComponent = StaminaComponent(component(StaminaComponentID));
 _StaminaCurrentComponent = StaminaCurrentComponent(component(StaminaCurrentComponentID));

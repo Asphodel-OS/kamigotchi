@@ -113,6 +113,7 @@ export type { QuestAcceptSystem } from "./QuestAcceptSystem";
 export type { QuestCompleteSystem } from "./QuestCompleteSystem";
 export type { RarityComponent } from "./RarityComponent";
 export type { RateComponent } from "./RateComponent";
+export type { SkillPointComponent } from "./SkillPointComponent";
 export type { SlotsComponent } from "./SlotsComponent";
 export type { StaminaComponent } from "./StaminaComponent";
 export type { StaminaCurrentComponent } from "./StaminaCurrentComponent";
@@ -273,6 +274,7 @@ export { QuestAcceptSystem__factory } from "./factories/QuestAcceptSystem__facto
 export { QuestCompleteSystem__factory } from "./factories/QuestCompleteSystem__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";
 export { RateComponent__factory } from "./factories/RateComponent__factory";
+export { SkillPointComponent__factory } from "./factories/SkillPointComponent__factory";
 export { SlotsComponent__factory } from "./factories/SlotsComponent__factory";
 export { StaminaComponent__factory } from "./factories/StaminaComponent__factory";
 export { StaminaCurrentComponent__factory } from "./factories/StaminaCurrentComponent__factory";
