@@ -24,6 +24,7 @@ import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.
 import { Pet721ProxySystem, ID as ProxyID } from "systems/Pet721ProxySystem.sol";
 import { Pet721 } from "tokens/Pet721.sol";
 
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -274,7 +275,13 @@ library LibPet721 {
     result = string(
       abi.encodePacked(
         result,
-        _traitToString("Harmony", LibStat.getHarmony(components, petID), false)
+        _traitToString("Harmony", LibStat.getHarmony(components, petID), true)
+      )
+    );
+    result = string(
+      abi.encodePacked(
+        result,
+        _traitToString("Level", LibExperience.getLevel(components, petID), false)
       )
     );
 

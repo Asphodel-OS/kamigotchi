@@ -29,6 +29,7 @@ contract Pet721RevealSystem is System {
     uint256 seed = LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, petID));
     LibRandom.removeRevealBlock(components, petID);
 
+    LibPet721.updateEvent(world, petIndex);
     return reveal(petID, seed);
   }
 
@@ -40,6 +41,7 @@ contract Pet721RevealSystem is System {
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
     uint256 seed = uint256(blockhash(block.number - 1));
     LibRandom.removeRevealBlock(components, petID);
+    LibPet721.updateEvent(world, petIndex);
     return reveal(petID, seed);
   }
 
@@ -55,6 +57,7 @@ contract Pet721RevealSystem is System {
 
     string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
     LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
+
     return "";
   }
 }

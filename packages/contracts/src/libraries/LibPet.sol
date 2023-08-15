@@ -54,8 +54,6 @@ library LibPet {
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
 
-    // Q(ja): should these be initialized here or elsewhere?
-    // do we want level updated in the metadata?
     LibExperience.setLevel(components, id, 1);
     LibExperience.set(components, id, 0);
 

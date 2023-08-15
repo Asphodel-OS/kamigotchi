@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibPet721 } from "libraries/LibPet721.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Level"));
 
@@ -34,6 +35,9 @@ contract PetLevelSystem is System {
     LibExperience.dec(components, id, levelCost);
     LibExperience.incLevel(components, id, 1);
     LibPet.heal(components, id, LibPet.calcTotalHealth(components, id));
+
+    // signal a metadata update
+    LibPet721.updateEvent(world, LibPet.idToIndex(components, id));
 
     LibAccount.updateLastBlock(components, accountID);
     return "";
