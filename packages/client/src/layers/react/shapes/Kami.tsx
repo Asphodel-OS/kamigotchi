@@ -31,6 +31,7 @@ export interface Kami {
   state: string;
   lastUpdated: number;
   cooldown: number;
+  skillpoints: number;
   stats: Stats;
   account?: Account;
   deaths?: Kill[];
@@ -89,6 +90,7 @@ export const getKami = (
         Name,
         PetID,
         PetIndex,
+        SkillPoint,
         SourceID,
         State,
         TargetID,
@@ -114,6 +116,7 @@ export const getKami = (
     state: getComponentValue(State, index)?.value as string,
     lastUpdated: getComponentValue(LastTime, index)?.value as number,
     cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
+    skillpoints: getComponentValue(SkillPoint, index)?.value as number,
     stats: getStats(layers, index),
   };
 

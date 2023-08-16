@@ -35,8 +35,8 @@ export function createAdminAPI(systems: any) {
 
     // Kami Leveling Curve
     await setConfig('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
-    await setConfig('KAMI_LVL_REQ_MULT_BASE', 1259); // exponential increase per level
-    await setConfig('KAMI_LVL_REQ_MULT_BASE_PREC', 3);
+    await setConfig('KAMI_LVL_REQ_MULT_BASE', 1259); // compounding increase per level
+    await setConfig('KAMI_LVL_REQ_MULT_BASE_PREC', 3); // precision of compounding increase
 
     // Harvest Rates
     // HarvestRate = power * base * multiplier

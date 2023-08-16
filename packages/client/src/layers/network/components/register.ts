@@ -102,6 +102,7 @@ export function createComponents(world: World) {
     Prototype: defineNumberEZ("Prototype", "component.Prototype"),
     Rarity: defineNumberEZ("Rarity", "component.Rarity"),
     Rate: defineNumberEZ("Rate", "component.Rate"),
+    SkillPoint: defineNumberEZ("SkillPoint", "component.SkillPoint"),
     Slots: defineNumberEZ("Slots", "component.Slots"),
     Stamina: defineNumberEZ("Stamina", "component.Stamina"),
     StaminaCurrent: defineNumberEZ("Stamina", "component.Stamina.Current"),
