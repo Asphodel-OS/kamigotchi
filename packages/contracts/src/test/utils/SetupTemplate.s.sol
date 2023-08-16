@@ -553,8 +553,8 @@ abstract contract SetupTemplate is TestSetupImports {
   // Kami Leveling Curve
   function _initLevelingConfigs() internal {
     _setConfig("KAMI_LVL_REQ_BASE", 40);
-    _setConfig("KAMI_LVL_REQ_EXP", 1259);
-    _setConfig("KAMI_LVL_REQ_EXP_PREC", 3);
+    _setConfig("KAMI_LVL_REQ_MULT_BASE", 1259);
+    _setConfig("KAMI_LVL_REQ_MULT_BASE_PREC", 3);
   }
 
   function _initMintConfigs() internal {

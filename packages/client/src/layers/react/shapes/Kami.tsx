@@ -223,8 +223,8 @@ export const getKami = (
   // experience threshold calculation according to level
   if (kami.level) {
     const experienceBase = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_BASE');
-    const experienceExponent = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_EXP');
-    const exponentPrecision = 10 ** getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_EXP_PREC');
+    const experienceExponent = getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_MULT_BASE');
+    const exponentPrecision = 10 ** getConfigFieldValue(layers.network, 'KAMI_LVL_REQ_MULT_BASE_PREC');
     kami.experience.threshold = Math.floor(experienceBase * ((1.0 * experienceExponent / exponentPrecision) ** (kami.level - 1)));
   }
 
