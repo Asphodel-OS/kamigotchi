@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import settingsImage from 'assets/images/settings_native.png';
+import settingsImage from 'assets/images/icons/settings_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import helpImage from 'assets/images/help_native.png';
+import helpImage from 'assets/images/icons/help_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';

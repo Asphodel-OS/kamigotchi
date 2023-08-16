@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import kamiImage from 'assets/images/kami_native.png';
+import kamiImage from 'assets/images/icons/kami_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';

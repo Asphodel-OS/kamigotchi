@@ -6,12 +6,12 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
-import homeImage from 'src/assets/images/home_native.png';
-import kamiHello from 'src/assets/images/welcome1.png';
-import nodes from 'src/assets/images/nodes.png';
-import world from 'src/assets/images/world.png';
-import gettingStarted from 'src/assets/images/gettingstarted1.png';
-import whatKami from 'src/assets/images/whatkami.png';
+import homeImage from 'src/assets/images/icons/home_native.png';
+import gettingStarted from 'src/assets/images/banners/gettingStarted.png';
+import welcome from 'src/assets/images/banners/welcome.png';
+import whatKami from 'src/assets/images/banners/whatKami.png';
+import whatNode from 'src/assets/images/banners/whatNode.png';
+import world from 'src/assets/images/banners/world.png';
 
 
 export enum HelpComponentState {
@@ -56,7 +56,7 @@ export function registerHelpModal() {
         case HelpComponentState.HOME:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={kamiHello} alt='welcome to kamigotchi' />
+              <img style={{ height: 'auto', width: '100%' }} src={welcome} alt='welcome to kamigotchi' />
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px' }}>
                 <Link onClick={() => handleLinkClick(HelpComponentState.START)}>
                   Getting Started
@@ -145,7 +145,7 @@ export function registerHelpModal() {
         case HelpComponentState.NODES:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={nodes} alt='nodes' />
+              <img style={{ height: 'auto', width: '100%' }} src={whatNode} alt='nodes' />
               <Description>
                 Nodes are sites of spiritual significance within Kamigotchi
                 World. Kamigotchi, and only Kamigotchi, can generate $MUSU

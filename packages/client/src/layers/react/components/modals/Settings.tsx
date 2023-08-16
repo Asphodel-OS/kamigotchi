@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
-
-import mutedSoundImage from '../../../../assets/images/sound_muted_native.png';
-import soundImage from '../../../../assets/images/sound_native.png';
-import { dataStore } from 'layers/react/store/createStore';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
+
+import mutedSoundImage from 'src/assets/images/icons/sound_muted_native.png';
+import soundImage from 'src/assets/images/icons/sound_native.png';
 import 'layers/react/styles/font.css';
 
 export function registerSettingsModal() {
