@@ -42,17 +42,17 @@ library LibExperience {
 
   // calculate the experience cost to level up for a given entity, rounded down
   // atm assumes the entity passed in is a kami
-  // cost = base * (level - 1)^exponent
+  // cost = k * a^(x-1); k := base, a := multiplierBase, x := level, a^(x-1) := multiplier
   function calcLevelCost(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 level = getLevel(components, id);
     uint256 base = LibConfig.getValueOf(components, "KAMI_LVL_REQ_BASE");
-    uint256 multiplier = 1;
+    uint256 multiplier = 1e18;
 
     if (level > 1) {
-      uint256 exponent = LibConfig.getValueOf(components, "KAMI_LVL_REQ_EXP");
-      uint256 exponentPrecision = 10 ** LibConfig.getValueOf(components, "KAMI_LVL_REQ_EXP_PREC");
-      int256 exponentFormatted = int256((1e18 * exponent) / exponentPrecision);
-      multiplier = uint256(LibFPMath.powWad(int256(level - 1), exponentFormatted));
+      uint multiplierBase = LibConfig.getValueOf(components, "KAMI_LVL_REQ_EXP");
+      uint256 multiplierBasePrec = 10 ** LibConfig.getValueOf(components, "KAMI_LVL_REQ_EXP_PREC");
+      int256 multiplierBaseFormatted = int256((1e18 * multiplierBase) / multiplierBasePrec);
+      multiplier = uint256(LibFPMath.powWad(multiplierBaseFormatted, int256(level - 1) * 1e18));
     }
     return (base * multiplier) / 1e18;
   }
