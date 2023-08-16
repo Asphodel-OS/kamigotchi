@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import mud from 'assets/images/mud.png'
+import original from 'assets/images/loading/original.png'
 
-export const BootScreen: React.FC<{ initialOpacity?: number }> = ({ children, initialOpacity }) => {
-  const [opacity, setOpacity] = useState(initialOpacity ?? 0);
+export const BootScreen: React.FC<{}> = ({ children }) => {
 
-  useEffect(() => setOpacity(1), []);
+  // TODO: on load, select a random banner to use
+  useEffect(() => {
+
+  }, []);
 
   return (
     <Container>
-      <Logo src={mud} />
+      <Image src={original} />
       <div>{children || <>&nbsp;</>}</div>
     </Container>
   );
@@ -35,7 +37,7 @@ const Container = styled.div`
   }
 `;
 
-const Logo = styled.img`
-transition: all 2s ease;
-width: 800px;
+const Image = styled.img`
+  transition: all 2s ease;
+  width: 800px;
 `;

@@ -34,11 +34,11 @@ export function registerLoadingState() {
 
       const loadingState = GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
       if (loadingState == null) {
-        return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
+        return <BootScreen>Connecting</BootScreen>;
       }
 
       if (loadingState.state !== SyncState.LIVE) {
-        return <BootScreen initialOpacity={1}>{loadingState.msg}</BootScreen>;
+        return <BootScreen>{loadingState.msg}</BootScreen>;
       }
 
       return null;
