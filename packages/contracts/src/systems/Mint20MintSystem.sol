@@ -13,7 +13,6 @@ import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
 
 uint256 constant ID = uint256(keccak256("system.Mint20.Mint"));
-uint256 constant ROOM = 4;
 
 // initial 1111 supply, minted before GDA for a fixed price
 // mints here are capped when supply reaches 1111, including whitelist.
@@ -38,10 +37,6 @@ contract Mint20MintSystem is System {
     // check that it exists and is in the correct room
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Mint20Mint: addy has no acc");
-    require(
-      LibAccount.getLocation(components, accountID) == ROOM,
-      "Mint20Mint: must be in room 4 "
-    );
 
     // check that resulting account does not exceed the account limit
     uint256 accountMinted = LibAccount.getMint20Minted(components, accountID);

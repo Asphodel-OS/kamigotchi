@@ -113,6 +113,7 @@ export function registerAccountRegistrar() {
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
             actions,
+            world,
             accountDetailsFromWorld,
             operatorAddresses,
             getAccountIndexFromOwner,
@@ -124,6 +125,7 @@ export function registerAccountRegistrar() {
 
     ({
       actions,
+      world,
       accountDetailsFromWorld,
       operatorAddresses,
       getAccountIndexFromOwner,
@@ -187,14 +189,39 @@ export function registerAccountRegistrar() {
         });
       };
 
-      const createAccountWithFx = async (username: string) => {
+      const createAccountWithFx = (username: string) => {
         playSound(scribbleSound);
-        await createAccount(username);
+        createAccount(username);
         playSound(successSound);
-        openFundModal();
+        // openFundModal(); // never seems to reach this with 
       }
 
-      const createAccount = async (username: string) => {
+      const handleAccountCreation = async (username: string) => {
+        playSound(scribbleSound);
+        try {
+          const createAccountActionID = createAccount(username);
+          await waitForActionCompletion(
+            actions.Action,
+            world.entityToIndex.get(createAccountActionID) as EntityIndex
+          );
+
+          try {
+            const mintTokenActionID = mintToken(5, 0);
+            await waitForActionCompletion(
+              actions.Action,
+              world.entityToIndex.get(mintTokenActionID) as EntityIndex
+            );
+            playSound(successSound);
+          } catch (e) {
+            console.log('ERROR MINTING TOKENS:', e);
+          }
+        } catch (e) {
+          console.log('ERROR CREATING ACCOUNT:', e);
+        }
+      }
+
+
+      const createAccount = (username: string) => {
         const network = networks.get(selectedAddress);
         const world = network!.world;
         const api = network!.api.player;
@@ -210,10 +237,29 @@ export function registerAccountRegistrar() {
             return api.account.register(burnerInfo.connected, username);
           },
         });
-        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions.Action, actionIndex);
+        return actionID;
+        // const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+        // return waitForActionCompletion(actions.Action, actionIndex);
       }
 
+      // transaction to mint the Mint ERC20 Token
+      const mintToken = (amount: number, value: number) => {
+        const network = networks.get(selectedAddress);
+        const api = network!.api.player;
+
+        console.log(`MINTING ${amount} TOKENS`);
+        const actionID = (amount == 1 ? `Minting Token` : `Minting Tokens`) as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.mint.mintToken(amount, value);
+          },
+        });
+        return actionID;
+      }
 
       /////////////////
       // VISUAL COMPONENTS
@@ -292,7 +338,7 @@ export function registerAccountRegistrar() {
               label='username'
               placeholder='BPD_GOD'
               hasButton={true}
-              onSubmit={(v: string) => createAccountWithFx(v)}
+              onSubmit={(v: string) => handleAccountCreation(v)}
             />
           </ModalContent>
         </ModalWrapper>

@@ -27,10 +27,10 @@ export function registerKamiMintModal() {
   registerUIComponent(
     'KamiMint',
     {
-      colStart: 28,
-      colEnd: 74,
-      rowStart: 22,
-      rowEnd: 76,
+      colStart: 20,
+      colEnd: 80,
+      rowStart: 18,
+      rowEnd: 80,
     },
     (layers) => {
       const {
@@ -60,17 +60,12 @@ export function registerKamiMintModal() {
           )[0];
 
           const account = getAccount(layers, accountIndex, { kamis: true });
-
+          const numMinted = getAccountData(layers, account, "NUM_MINT20_MINTED");
           const unrevealedKamis = queryKamisX(
             layers,
             { account: account.id, state: 'UNREVEALED' }
           ).reverse();
 
-          const numAlrMinted = getAccountData(
-            layers,
-            account,
-            "NUM_MINT20_MINTED"
-          );
 
           return {
             layers,
@@ -92,7 +87,7 @@ export function registerKamiMintModal() {
                 supply: 0, // TODO?: seems this is supported by wagmi hook
                 limit: getConfigFieldValue(layers.network, "MINT_INITIAL_MAX"),
               },
-              numAlrMinted,
+              numMinted,
             }
           };
         })
