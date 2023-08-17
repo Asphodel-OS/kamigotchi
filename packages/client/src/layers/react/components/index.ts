@@ -5,6 +5,7 @@ import { registerHelpButton } from './fixtures/buttons/Help';
 import { registerMapButton } from './fixtures/buttons/Map';
 import { registerPartyButton } from './fixtures/buttons/Party';
 import { registerSettingsButton } from './fixtures/buttons/Settings';
+import { registerQuestsButton } from './fixtures/buttons/Quests';
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerActionQueue } from './fixtures/ActionQueue';
 import { registerWalletFixture } from './fixtures/Wallet';
@@ -44,6 +45,7 @@ export function registerUIComponents() {
   registerMapButton();
   registerPartyButton();
   registerSettingsButton();
+  registerQuestsButton();
   registerAccountInfoFixture();
   registerWalletFixture();
   registerActionQueue();

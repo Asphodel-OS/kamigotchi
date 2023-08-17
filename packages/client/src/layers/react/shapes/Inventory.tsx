@@ -3,8 +3,10 @@ import {
   EntityID,
   Has,
   HasValue,
+  Not,
   getComponentValue,
   runQuery,
+  QueryFragment,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
@@ -17,6 +19,12 @@ export interface Inventory {
   entityIndex: EntityIndex;
   balance?: number;
   item: Item;
+}
+
+export interface QueryOptions {
+  owner?: EntityID;
+  registry?: boolean;
+  itemIndex?: number;
 }
 
 // get an Inventory from its EntityIndex
@@ -76,4 +84,46 @@ export const getInventoryByFamilyIndex = (list: Inventory[], familyIndex: number
       return list[i];
     }
   }
+}
+
+export const queryInventoryX = (
+  layers: Layers,
+  options: QueryOptions
+): Inventory[] => {
+  const {
+    network: {
+      components: {
+        IsInventory,
+        IsRegistry,
+        ItemIndex,
+        HolderID,
+      },
+    },
+  } = layers;
+
+  const toQuery: QueryFragment[] = [Has(IsInventory)];
+
+  if (options?.owner) {
+    toQuery.push(HasValue(HolderID, { value: options.owner }));
+  }
+
+  if (options?.registry !== undefined) {
+    if (options?.registry) {
+      toQuery.push(Has(IsRegistry));
+    } else {
+      toQuery.push(Not(IsRegistry));
+    }
+  }
+
+  if (options?.itemIndex) {
+    toQuery.push(HasValue(ItemIndex, { value: options.itemIndex }));
+  }
+
+  const raw = Array.from(
+    runQuery(toQuery)
+  );
+
+  return raw.map(
+    (index): Inventory => getInventory(layers, index)
+  );
 }

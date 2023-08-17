@@ -1,34 +1,34 @@
 import React from 'react';
 import { of } from 'rxjs';
-import chatImage from 'assets/images/icons/chat_native.png';
+import questsImage from 'assets/images/icons/quests_native.png';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerChatButton() {
+export function registerQuestsButton() {
   registerUIComponent(
-    'ChatButton',
+    'QuestsButton',
     {
-      colStart: 82,
-      colEnd: 85,
+      colStart: 73,
+      colEnd: 76,
       rowStart: 3,
       rowEnd: 10,
     },
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide = { help: false, settings: false, quests: false };
+      const modalsToHide = { help: false, settings: false, chat: false };
 
       return (
         <MenuButton
-          id='chat_button'
-          targetDiv='chat'
-          text='Chat'
+          id='quests_button'
+          targetDiv='quests'
+          text='Quests'
           hideModal={modalsToHide}
           visible={visibleButtons.chat}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={chatImage} alt='chat_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={questsImage} alt='chat_icon' />
         </MenuButton>
       );
     }

@@ -5,6 +5,7 @@ import { EntityIndex, EntityID, Has, HasValue, getComponentValue, runQuery } fro
 
 import { getAccount } from 'layers/react/shapes/Account';
 import { Quest, Condition, queryQuestsX } from 'layers/react/shapes/Quest';
+import { Inventory, queryInventoryX } from 'layers/react/shapes/Inventory';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -19,8 +20,8 @@ export function registerQuestsModal() {
     {
       colStart: 69,
       colEnd: 100,
-      rowStart: 10,
-      rowEnd: 62,
+      rowStart: 52,
+      rowEnd: 100,
     },
 
     (layers) => {
@@ -72,8 +73,8 @@ export function registerQuestsModal() {
     },
 
     ({ layers, actions, api, data }) => {
-      ///////////////////
-      // TEMP - REGISTRY ACCEPTANCE
+      const [showCompleted, setShowCompleted] = useState(false);
+      // temp: show registry for testing
       const [showRegistry, setShowRegistry] = useState(true);
 
       ///////////////////
@@ -112,42 +113,145 @@ export function registerQuestsModal() {
         return quest.complete;
       }
 
-      const canAccept = (quest: Quest): boolean => {
+      const getBalanceOf = (owner: EntityID, condition: Condition): number => {
+        const type = condition.type;
+        switch (type) {
+          case 'COIN':
+            // TODO
+            return 0;
+            break;
+          case 'FUNG_INVENTORY':
+            return queryInventoryX(
+              layers,
+              { owner: owner, itemIndex: condition.itemIndex }
+            )[0]?.balance || 0;
+            break;
+        }
+
+        return 0;
+      }
+
+      const checkCurrMin = (condition: Condition): boolean => {
+        const accBal = getBalanceOf(data.account.id, condition);
+        const conBal = condition.balance ? condition.balance : 0;
+        return accBal <= conBal;
+      }
+
+      const checkCurrMax = (condition: Condition): boolean => {
+        const accBal = getBalanceOf(data.account.id, condition);
+        const conBal = condition.balance ? condition.balance : 0;
+        return accBal >= conBal;
+      }
+
+      const checkDeltaMin = (quest: Quest, condition: Condition): boolean => {
+        const oldBal = getBalanceOf(quest.id, condition);
+        const currBal = getBalanceOf(data.account.id, condition);
+        const delta = condition.balance ? condition.balance : 0;
+        return delta <= currBal - oldBal;
+      }
+
+      const checkDeltaMax = (quest: Quest, condition: Condition): boolean => {
+        const oldBal = getBalanceOf(quest.id, condition);
+        const currBal = getBalanceOf(data.account.id, condition);
+        const delta = condition.balance ? condition.balance : 0;
+        return delta >= currBal - oldBal;
+      }
+
+      const checkCondition = (quest: Quest, condition: Condition): boolean => {
+        switch (condition.logic) {
+          case 'CURR_MIN':
+            return checkCurrMin(condition);
+            break;
+          case 'CURR_MAX':
+            return checkCurrMax(condition);
+            break;
+          case 'DELTA_MIN':
+            return checkDeltaMin(quest, condition);
+            break;
+          case 'DELTA_MAX':
+            return checkDeltaMax(quest, condition);
+            break;
+        }
+
+        return false;
+      }
+
+      const checkRequirements = (quest: Quest): boolean => {
+        for (const condition of quest.requirements) {
+          if (!checkCondition(quest, condition)) {
+            return false;
+          }
+        }
+
         return true;
+      }
+
+      const checkObjectives = (quest: Quest): boolean => {
+        for (const condition of quest.objectives) {
+          if (!checkCondition(quest, condition)) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      const canAccept = (quest: Quest): boolean => {
+        return checkRequirements(quest);
       }
 
       const canComplete = (quest: Quest): boolean => {
         if (isCompleted(quest)) {
           return false;
         }
-        return true;
+        return checkObjectives(quest);
       }
-
 
       ///////////////////
       // DISPLAY
 
-      const AcceptButton = (quest: Quest) => (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-          <ActionButton
-            id={`accept-quest`}
-            onClick={() => acceptQuest(quest)}
-            text='Accept'
-            disabled={!canAccept(quest)}
-          />
-        </div>
-      );
+      const AcceptButton = (quest: Quest) => {
+        let tooltipText = '';
+        if (!checkRequirements(quest)) {
+          tooltipText = 'Unmet requirements';
+        }
 
-      const CompleteButton = (quest: Quest) => (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-          <ActionButton
-            id={`complete-quest`}
-            onClick={() => completeQuest(quest)}
-            text='Complete'
-            disabled={!canComplete(quest)}
-          />
-        </div>
-      );
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            <Tooltip text={[tooltipText]}>
+              <ActionButton
+                id={`complete-quest`}
+                onClick={() => acceptQuest(quest)}
+                text='Accept'
+                disabled={!canAccept(quest)}
+              />
+            </Tooltip >
+          </div>
+        )
+      };
+
+      const CompleteButton = (quest: Quest) => {
+        let buttonText = 'Complete';
+        if (quest.complete) buttonText = 'Completed!';
+
+        let tooltipText = '';
+        if (!checkObjectives(quest)) {
+          tooltipText = 'Unmet objectives';
+        }
+
+        return (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            <Tooltip text={[tooltipText]}>
+              <ActionButton
+                id={`complete-quest`}
+                onClick={() => completeQuest(quest)}
+                text={buttonText}
+                disabled={!canComplete(quest)}
+              />
+            </Tooltip >
+          </div>
+        )
+      };
 
       const ConditionBox = (conditions: Condition[], conType: string) => {
         const texts = () => {
@@ -180,11 +284,20 @@ export function registerQuestsModal() {
         )
       }
 
-      const QuestBoxes = () => {
-        const uncompleted = queryQuestsX(layers, { account: data.account.id, completed: false });
-        const completed = queryQuestsX(layers, { account: data.account.id, completed: true });
-        const all = [...uncompleted.reverse(), ...completed.reverse()];
-        return all.map((q: Quest) => {
+      const CompletedQuests = () => {
+        return queryQuestsX(
+          layers,
+          { account: data.account.id, completed: true }
+        ).reverse().map((q: Quest) => {
+          return (QuestBox(q))
+        });
+      }
+
+      const UncompletedQuests = () => {
+        return queryQuestsX(
+          layers,
+          { account: data.account.id, completed: false }
+        ).reverse().map((q: Quest) => {
           return (QuestBox(q))
         });
       }
@@ -208,25 +321,37 @@ export function registerQuestsModal() {
         })
       }
 
+      const Footer = (
+        <div style={{ padding: '1vh 0.1vw' }}>
+          <ActionButton
+            id={`pending-mode`}
+            onClick={() => setShowCompleted(false)}
+            text='Pending'
+          />
+          <ActionButton
+            id={`completed-mode`}
+            onClick={() => setShowCompleted(true)}
+            text='Completed'
+          />
+          <ActionButton
+            id={`registry-mode`}
+            onClick={() => setShowRegistry(!showRegistry)}
+            text='Toggle Registry'
+          />
+        </div>
+      )
+
       return (
         <ModalWrapperFull divName='quests' id='quest_modal'>
           <Header>Quests</Header>
           <Scrollable>
-            {showRegistry ? RegistryQuestBoxes() : QuestBoxes()}
+            {showRegistry ? RegistryQuestBoxes() : <div />}
+            {showCompleted
+              ? CompletedQuests()
+              : UncompletedQuests()
+            }
           </Scrollable>
-          <div style={{ padding: '1vh 0.1vw' }}>
-            <ActionButton
-              id={`registry-mode`}
-              onClick={() => setShowRegistry(true)}
-              text='Registry'
-            />
-            <ActionButton
-              id={`account-mode`}
-              onClick={() => setShowRegistry(false)}
-              text='Account'
-            />
-          </div>
-
+          {Footer}
         </ModalWrapperFull>
       );
     }

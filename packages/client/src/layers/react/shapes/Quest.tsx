@@ -11,6 +11,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
+import { Inventory, queryInventoryX } from './Inventory';
 
 // standardized shape of Traits on an Entity
 export interface Quest {
@@ -24,10 +25,12 @@ export interface Quest {
 }
 
 export interface Condition {
+  id: EntityID;
   name: string;
   type: string;
   logic: string;
-  balance: number;
+  balance?: number;
+  itemIndex?: number;
 }
 
 export interface QueryOptions {
@@ -76,19 +79,37 @@ export const getCondition = (layers: Layers, index: EntityIndex): Condition => {
     network: {
       components: {
         Balance,
+        Coin,
         LogicType,
         Name,
         Type,
       },
+      world,
     },
   } = layers;
 
-  return {
+
+  let condition: Condition = {
+    id: world.entities[index],
     name: getComponentValue(Name, index)?.value || '' as string,
     type: getComponentValue(Type, index)?.value || '' as string,
     logic: getComponentValue(LogicType, index)?.value || '' as string,
-    balance: getComponentValue(Balance, index)?.value || 0 as number,
   }
+
+  // get balance, if any
+  switch (condition.type) {
+    case "COIN":
+      condition.balance = getComponentValue(Coin, index)?.value || 0 as number;
+      break;
+    case "FUNG_INVENTORY":
+      // getting itemIndex - conditions can only have 1 inventory
+      const inv = queryInventoryX(layers, { owner: condition.id })[0];
+      condition.balance = inv.balance;
+      condition.itemIndex = inv.item.index;
+      break;
+  }
+
+  return condition;
 }
 
 /////////////////////
