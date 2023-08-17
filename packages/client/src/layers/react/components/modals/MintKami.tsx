@@ -27,10 +27,10 @@ export function registerKamiMintModal() {
   registerUIComponent(
     'KamiMint',
     {
-      colStart: 20,
-      colEnd: 80,
-      rowStart: 18,
-      rowEnd: 80,
+      colStart: 30,
+      colEnd: 70,
+      rowStart: 30,
+      rowEnd: 70,
     },
     (layers) => {
       const {
@@ -150,25 +150,26 @@ export function registerKamiMintModal() {
         watch: true
       });
 
-      const { data: mint20Supply } = useContractRead({
-        address: mint20Addy as `0x${string}`,
-        abi:
-          [{
-            "inputs": [],
-            "name": "getTotalMinted",
-            "outputs": [
-              {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },],
-        functionName: 'getTotalMinted',
-        watch: true,
-      });
+      // // not used anymore, may be useful later
+      // const { data: mint20Supply } = useContractRead({
+      //   address: mint20Addy as `0x${string}`,
+      //   abi:
+      //     [{
+      //       "inputs": [],
+      //       "name": "getTotalMinted",
+      //       "outputs": [
+      //         {
+      //           "internalType": "uint256",
+      //           "name": "",
+      //           "type": "uint256"
+      //         }
+      //       ],
+      //       "stateMutability": "view",
+      //       "type": "function"
+      //     },],
+      //   functionName: 'getTotalMinted',
+      //   watch: true,
+      // });
 
 
       /////////////////
@@ -264,9 +265,9 @@ export function registerKamiMintModal() {
 
       const QuantityButton = (delta: number) => {
         return (
-          <QunatityStepper onClick={() => setAmountToMint(amountToMint + delta)}>
+          <QuantityStepper onClick={() => setAmountToMint(amountToMint + delta)}>
             {delta > 0 ? '+' : '-'}
-          </QunatityStepper>
+          </QuantityStepper>
         );
       }
 
@@ -282,12 +283,6 @@ export function registerKamiMintModal() {
             </Tooltip>
           );
         }
-      }
-
-      const MintTokenButton = (text: string, amount: number, cost: number) => {
-        return (
-          <ActionButton id='button-mint' onClick={handleTokenMinting(amount, cost)} size='vending' text={text} inverted />
-        );
       }
 
       const PetQuantityBox = () => {
@@ -322,32 +317,6 @@ export function registerKamiMintModal() {
           );
         }
       }
-
-      const CoinMachine = (
-        <Grid>
-          <SubHeader style={{ gridRow: 1 }}>
-            Get $KAMI
-          </SubHeader>
-          <ProductBox style={{ gridRow: 2 }}>
-            <VendingText>1 $KAMI</VendingText>
-            {MintTokenButton("0.00Ξ", 1, 0.0)}
-          </ProductBox>
-          <ProductBox style={{ gridRow: 3 }}>
-            <VendingText>3 $KAMI</VendingText>
-            {MintTokenButton("0.06Ξ", 3, 0.06)}
-          </ProductBox>
-          <ProductBox style={{ gridRow: 4 }}>
-            <VendingText>5 $KAMI</VendingText>
-            {MintTokenButton("0.10Ξ", 5, 0.1)}
-          </ProductBox>
-          <SubText style={{ gridRow: 5 }}>
-            Total Supply: {Number(mint20Supply)} / {data.mint20.limit}
-          </SubText>
-          <SubText style={{ gridRow: 6 }}>
-            Address Limit: {data.account.mint20.minted} / {data.account.mint20.limit}
-          </SubText>
-        </Grid>
-      );
 
       const PetMachine = (
         <Grid>
@@ -387,64 +356,13 @@ export function registerKamiMintModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          <Stepper steps={steps} PetMachine={PetMachine} CoinMachine={CoinMachine} />
+          {PetMachine}
+          {/* <Stepper steps={steps} PetMachine={PetMachine} /> */}
         </ModalWrapperFull>
       );
     }
   );
 }
-
-const StepOne = () => (
-  <>
-    <Description style={{ display: 'grid', height: '100%', alignContent: 'center' }}>
-      <Header style={{ color: 'black' }}>Vending Machine</Header>
-      <br />
-      There's some sort of vending machine here. A machine for NFTs. You hope it can be trusted.
-    </Description>
-  </>
-);
-
-const StepTwo = (props: any) => {
-  const { CoinMachine, PetMachine } = props;
-
-  return (
-    <>
-      <Header style={{ color: 'black' }}>Vending Machine</Header>
-      <div style={{ display: 'flex', justifyContent: 'space-around', padding: '24px' }}>
-        {PetMachine}
-        {CoinMachine}
-      </div>
-    </>
-  );
-};
-
-const steps = (props: any) => [
-  {
-    title: 'One',
-    content: <StepOne />,
-  },
-  {
-    title: 'Two',
-    content: <StepTwo PetMachine={props.PetMachine} CoinMachine={props.CoinMachine} />,
-    modalContent: true,
-  },
-];
-
-
-const Description = styled.div`
-  font-size: 20px;
-  color: #333;
-  text-align: center;
-  padding: 10px;
-  font-family: Pixel;
-`;
-
-const Header = styled.p`
-  font-size: 24px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-`;
 
 const Grid = styled.div`
   display: grid;
@@ -455,10 +373,6 @@ const Grid = styled.div`
 
   padding: 24px 6px;
   margin: 0px 6px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  border-radius: 5px;
 `;
 
 const Input = styled.input`
@@ -545,7 +459,7 @@ const SubText = styled.div`
   font-family: Pixel;
 `;
 
-const QunatityStepper = styled.button`
+const QuantityStepper = styled.button`
   font-size: 16px;
   color: #777;
   text-align: center;
@@ -557,13 +471,4 @@ const QunatityStepper = styled.button`
   &:hover {
     color: #000;  
   }
-`;
-
-const VendingText = styled.p`
-  font-size: 12px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-
-  padding: 6px 0px 0px 0px;
 `;
