@@ -10,7 +10,7 @@ import {
 import { map, merge, of } from 'rxjs';
 import { makeObservable } from 'mobx';
 
-import { rooms } from 'constants/rooms';
+import { rooms } from 'constants/phaser/rooms';
 import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';

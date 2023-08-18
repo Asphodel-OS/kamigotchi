@@ -1,5 +1,5 @@
 import { dataStore } from 'layers/react/store/createStore';
-import { Room } from 'constants/rooms';
+import { Room } from 'constants/phaser/rooms';
 import { disableClickableObjects } from '../utils/disableClickableObjects';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 
@@ -99,7 +99,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
     });
   }
 
-  update() {}
+  update() { }
 
   onClick() {
     console.log('clicked');
