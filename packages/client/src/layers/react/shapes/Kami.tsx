@@ -106,9 +106,9 @@ export const getKami = (
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     uri: getComponentValue(MediaURI, index)?.value as string,
-    level: getComponentValue(Level, index)?.value as number,
+    level: getComponentValue(Level, index)?.value as number ?? 1,
     experience: {
-      current: getComponentValue(Experience, index)?.value as number,
+      current: getComponentValue(Experience, index)?.value as number ?? 0,
       threshold: 0,
     },
     health: getComponentValue(HealthCurrent, index)?.value as number,
