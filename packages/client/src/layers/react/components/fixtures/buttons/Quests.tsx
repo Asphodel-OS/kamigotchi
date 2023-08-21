@@ -10,8 +10,8 @@ export function registerQuestsButton() {
   registerUIComponent(
     'QuestsButton',
     {
-      colStart: 73,
-      colEnd: 76,
+      colStart: 82,
+      colEnd: 85,
       rowStart: 3,
       rowEnd: 10,
     },

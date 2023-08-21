@@ -39,13 +39,15 @@ import { registerOperatorUpdater } from './validators/OperatorUpdater';
 export function registerUIComponents() {
   registerLoadingState();
 
-  // fixtures
-  registerChatButton();
+  // buttons
+  // registerChatButton();
   registerHelpButton();
   registerMapButton();
   registerPartyButton();
-  registerSettingsButton();
   registerQuestsButton();
+  registerSettingsButton();
+
+  // other fixtures
   registerAccountInfoFixture();
   registerWalletFixture();
   registerActionQueue();
