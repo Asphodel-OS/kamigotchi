@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { EntityIndex, EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
+import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { getAccount } from 'layers/react/shapes/Account';
 import { Quest, Condition, queryQuestsX } from 'layers/react/shapes/Quest';
@@ -12,7 +12,6 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
-import { set } from 'mobx';
 
 export function registerQuestsModal() {
   registerUIComponent(
