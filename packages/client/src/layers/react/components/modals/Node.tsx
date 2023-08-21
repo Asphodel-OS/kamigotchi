@@ -15,7 +15,8 @@ import {
   ActionListButton,
   Option as ActionListOption,
 } from 'layers/react/components/library/ActionListButton';
-import { Battery2 } from 'layers/react/components/library/Battery2';
+import { Battery } from 'layers/react/components/library/Battery';
+import { Countdown } from 'layers/react/components/library/Countdown';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { NodeInfo } from 'layers/react/components/library/NodeContainer';
@@ -25,8 +26,6 @@ import { Account, getAccount } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
-import { dataStore } from 'layers/react/store/createStore';
-import Countdown from '../library/Countdown';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -507,7 +506,7 @@ export function registerNodeModal() {
               <Countdown total={kami.cooldown} current={cooldown} />
             </Tooltip>
             <Tooltip text={[`${healthPercent}%`]}>
-              <Battery2 level={100 * calcHealth(kami) / kami.stats.health} />
+              <Battery level={100 * calcHealth(kami) / kami.stats.health} />
             </Tooltip>
           </>
         );

@@ -3,12 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { BatteryComponent } from 'layers/react/components/library/Battery';
 import { Account, getAccount } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
-import { Tooltip } from '../library/Tooltip';
-import { Battery2 } from '../library/Battery2';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Battery } from 'layers/react/components/library/Battery';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -87,7 +85,7 @@ export function registerAccountInfoFixture() {
 
       const calcStaminaPercent = (account: Account) => {
         const currentStamina = calcCurrentStamina(account);
-        return Math.floor(100.0 * currentStamina / account.stamina);
+        return Math.round(100.0 * currentStamina / account.stamina);
       }
 
       return (data.account &&
@@ -97,7 +95,7 @@ export function registerAccountInfoFixture() {
           <BatteryCell>
             {`${calcStaminaPercent(data.account)}%`}
             <Tooltip text={[calcStaminaPercent(data.account).toString()]}>
-              <Battery2 level={calcStaminaPercent(data.account)} />
+              <Battery level={calcStaminaPercent(data.account)} />
             </Tooltip>
           </BatteryCell>
         </Container>

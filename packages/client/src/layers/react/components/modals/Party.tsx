@@ -6,7 +6,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ActionListButton } from 'layers/react/components/library/ActionListButton';
-import { Battery2 } from 'layers/react/components/library/Battery2';
+import { Battery } from 'layers/react/components/library/Battery';
 import { Countdown } from 'layers/react/components/library/Countdown';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -465,7 +465,7 @@ export function registerPartyModal() {
               <Countdown total={kami.cooldown} current={cooldown} />
             </Tooltip>
             <Tooltip text={[healthString]}>
-              <Battery2 level={100 * calcHealth(kami) / kami.stats.health} />
+              <Battery level={100 * calcHealth(kami) / kami.stats.health} />
             </Tooltip>
           </>
         );
