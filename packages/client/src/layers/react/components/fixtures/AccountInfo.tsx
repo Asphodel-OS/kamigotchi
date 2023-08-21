@@ -7,6 +7,8 @@ import { BatteryComponent } from 'layers/react/components/library/Battery';
 import { Account, getAccount } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
+import { Tooltip } from '../library/Tooltip';
+import { Battery2 } from '../library/Battery2';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -60,9 +62,6 @@ export function registerAccountInfoFixture() {
       );
     },
     ({ data }) => {
-      const {
-        visibleButtons: { operatorInfo: isVisible },
-      } = dataStore();
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       // ticking
@@ -70,7 +69,7 @@ export function registerAccountInfoFixture() {
         const refreshClock = () => {
           setLastRefresh(Date.now());
         };
-        const timerId = setInterval(refreshClock, 3000);
+        const timerId = setInterval(refreshClock, 1000);
         return function cleanup() {
           clearInterval(timerId);
         };
@@ -91,94 +90,81 @@ export function registerAccountInfoFixture() {
         return Math.floor(100.0 * currentStamina / account.stamina);
       }
 
-      return (
-        <Button id='operator_info' style={{ display: isVisible ? 'block' : 'none' }}>
-          {data.account && (
-            <>
-              <Centered>
-                <NameCell>
-                  <Text>{data.account.name}</Text>
-                </NameCell>
-                <KamiCell>
-                  <Text>$MUSU: {1 * (data.account.coin ?? 0)}</Text>
-                </KamiCell>
-                <BatteryCell>
-                  <BatteryComponent showPercentage={true} level={calcStaminaPercent(data.account)} />
-                </BatteryCell>
-              </Centered>
-            </>
-          )}
-        </Button>
+      return (data.account &&
+        <Container id='operator_info'>
+          <NameCell>{data.account.name}</NameCell>
+          <KamiCell>$MUSU: {1 * (data.account.coin ?? 0)}</KamiCell>
+          <BatteryCell>
+            {`${calcStaminaPercent(data.account)}%`}
+            <Tooltip text={[calcStaminaPercent(data.account).toString()]}>
+              <Battery2 level={calcStaminaPercent(data.account)} />
+            </Tooltip>
+          </BatteryCell>
+        </Container>
       );
     }
   );
 }
 
-const Button = styled.button`
+const Container = styled.div`
   cursor: pointer;
-  &:active {
-    background-color: #ffffff;
-  }
   border-color: black;
   border-width: 2px;
   border-radius: 10px;
   border-style: solid;
   background-color: white;
+  &:active {
+    background-color: #ddd;
+  }
   width: 100%;
+  padding: 0.2vw;
 
   display: flex;
-  flex-flow: column nowrap;
-  font-family: Pixel;
-`;
-
-const Centered = styled.div`
-  display: grid;
-  height: 100%;
-  height: 100%;
-  width: 100%;
-`;
-
-const Text = styled.p`
-  font-size: 12px;
-  color: #333;
-  font-family: Pixel;
+  flex-flow: row nowrap;
+  justify-content: space-around;
 `;
 
 const BatteryCell = styled.div`
-  grid-column: 3;
-  grid-row: 1;
-  border-color: black;
-  border-width: 0px 0px 0px 0px;
-  border-style: solid;
-  height: 100%;
-  width: 100%;
+  color: black;
+
   display: flex;
-  align-items: center;
+  flex-grow: 1;
+  flex-flow: row nowrap;
   justify-content: center;
+  align-items: center;
+
+  font-family: Pixel;
+  font-size: 0.8vw;
 `;
 
 const KamiCell = styled.div`
-  grid-column: 2;
-  grid-row: 1;
   border-color: black;
   border-width: 0px 2px 0px 0px;
   border-style: solid;
-  height: 100%;
-  width: 100%;
+  
+  color: black;
+
   display: flex;
-  align-items: center;
+  flex-grow: 1;
   justify-content: center;
+  align-items: center;
+
+  font-family: Pixel;
+  font-size: 0.8vw;
 `;
 
 const NameCell = styled.div`
-  grid-column: 1;
-  grid-row: 1;
   border-color: black;
   border-width: 0px 2px 0px 0px;
   border-style: solid;
-  height: 100%;
-  width: 100%;
+
+  color: black;
+
   display: flex;
-  align-items: center;
+  flex-grow: 1;
   justify-content: center;
+  align-items: center;
+
+  font-family: Pixel;
+  font-size: 0.8vw;
 `;
