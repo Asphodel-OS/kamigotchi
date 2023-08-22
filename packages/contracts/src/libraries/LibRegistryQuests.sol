@@ -10,6 +10,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexConditionComponent, ID as IndexConditionCompID } from "components/IndexConditionComponent.sol";
+import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/IndexObjectiveComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
@@ -18,9 +19,11 @@ import { IsRequirementComponent, ID as IsRequirementCompID } from "components/Is
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
+import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -72,6 +75,47 @@ library LibRegistryQuests {
     setLogicType(components, id, logicType);
     setName(components, id, name);
 
+    return id;
+  }
+
+  function createEmptyObjective(
+    IWorld world,
+    IUintComp components,
+    uint256 questIndex,
+    string memory name
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsObjective(components, id);
+    setName(components, id, name);
+    setQuestIndex(components, id, questIndex);
+
+    uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
+    setObjectiveIndex(components, id, numObjectives + 1);
+    return id;
+  }
+
+  function createEmptyRequirement(
+    IWorld world,
+    IUintComp components,
+    uint256 questIndex
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsRequirement(components, id);
+    setQuestIndex(components, id, questIndex);
+    return id;
+  }
+
+  function createEmptyReward(
+    IWorld world,
+    IUintComp components,
+    uint256 questIndex
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsReward(components, id);
+    setQuestIndex(components, id, questIndex);
     return id;
   }
 
@@ -159,12 +203,20 @@ library LibRegistryQuests {
     IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
   }
 
-  function setQuestIndex(IUintComp components, uint256 id, uint256 questIndex) internal {
-    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
+  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
   }
 
   function setConditionIndex(IUintComp components, uint256 id, uint256 index) internal {
     IndexConditionComponent(getAddressById(components, IndexConditionCompID)).set(id, index);
+  }
+
+  function setObjectiveIndex(IUintComp components, uint256 id, uint256 index) internal {
+    IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).set(id, index);
+  }
+
+  function setQuestIndex(IUintComp components, uint256 id, uint256 questIndex) internal {
+    IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
   }
 
   function setDescription(IUintComp components, uint256 id, string memory description) internal {
@@ -181,6 +233,10 @@ library LibRegistryQuests {
 
   function setType(IUintComp components, uint256 id, string memory _type) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
+  }
+
+  function setValue(IUintComp components, uint256 id, uint256 value) internal {
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   /////////////////

@@ -24,6 +24,8 @@
     "IdPetComponent",
     "IdSourceComponent",
     "IdTargetComponent",
+    "IndexComponent",
+    "IndexConditionComponent",
     "IndexBackgroundComponent",
     "IndexBodyComponent",
     "IndexColorComponent",
@@ -35,7 +37,7 @@
     "IndexMerchantComponent",
     "IndexModComponent",
     "IndexNodeComponent",
-    "IndexConditionComponent",
+    "IndexObjectiveComponent",
     "IndexPetComponent",
     "IndexReviveComponent",
     "IndexQuestComponent",
@@ -211,6 +213,30 @@
       ]
     },
     {
+      "name": "_RegistryCreateQuestSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateQuestObjectiveSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateQuestRequirementSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateQuestRewardSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_RegistryCreateReviveSystem",
       "writeAccess": [
         "*"
@@ -218,12 +244,6 @@
     },
     {
       "name": "_RegistryCreateTraitSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "_RegistryCreateQuestSystem",
       "writeAccess": [
         "*"
       ]
