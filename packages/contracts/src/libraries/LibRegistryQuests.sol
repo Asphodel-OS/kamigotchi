@@ -17,6 +17,7 @@ import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObje
 import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -37,7 +38,8 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 index,
-    string memory name
+    string memory name,
+    string memory description
   ) internal returns (uint256) {
     uint256 regID = getByQuestIndex(components, index);
     require(regID == 0, "LibRegQ.createQ: index used");
@@ -47,6 +49,7 @@ library LibRegistryQuests {
     setIsQuest(components, id);
     setQuestIndex(components, id, index);
     setName(components, id, name);
+    setDescription(components, id, description);
 
     return id;
   }
@@ -162,6 +165,10 @@ library LibRegistryQuests {
 
   function setConditionIndex(IUintComp components, uint256 id, uint256 index) internal {
     IndexConditionComponent(getAddressById(components, IndexConditionCompID)).set(id, index);
+  }
+
+  function setDescription(IUintComp components, uint256 id, string memory description) internal {
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
