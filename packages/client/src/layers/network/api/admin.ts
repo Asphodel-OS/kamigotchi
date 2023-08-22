@@ -247,11 +247,11 @@ export function createAdminAPI(systems: any) {
     await createMerchant(1, 'Mina', 13);
 
     // create quests
-    await createQuest(1, "Have 1 $MUSU");
+    await createQuest(1, "Seed Capital", "Earn $MUSU to prove you're worthy of Mina's attention.");
     await addQuestCondition(1, 1, 0, "Have 1 $MUSU", "CURR_MIN", "COIN", "OBJECTIVE");
     await addQuestCondition(1, 25, 0, "Earn 25 $MUSU", "INC", "COIN", "REWARD");
 
-    await createQuest(2, "Buy 1 Gum");
+    await createQuest(2, "Welcomed Patron", "Purchase a Gum from Mina to become a recognized customer.");
     await addQuestCondition(2, 1, 1, "Buy 1 Gum", "DELTA_MIN", "FUNG_INVENTORY", "OBJECTIVE");
     await addQuestCondition(2, 1, 4, "Get a revive", "INC", "FUNG_INVENTORY", "REWARD");
 
@@ -394,9 +394,9 @@ export function createAdminAPI(systems: any) {
   // @dev creates an empty quest
   // @param index       the human-readable index of the quest
   // @param name        name of the quest
-  async function createQuest(index: number, name: string) {
+  async function createQuest(index: number, name: string, description: string) {
     await sleepIf();
-    return systems['system._Registry.Quest.Create'].executeTyped(index, name);
+    return systems['system._Registry.Quest.Create'].executeTyped(index, name, description);
   }
 
   // @dev adds a condition (objective/reward/requirement) to a quest

@@ -18,6 +18,7 @@ export interface Quest {
   id: EntityID;
   index: number;
   name: string;
+  description: string;
   complete: boolean;
   requirements: Condition[];
   objectives: Condition[];
@@ -47,6 +48,7 @@ export const getQuest = (layers: Layers, index: EntityIndex): Quest => {
         IsComplete,
         IsQuest,
         IsRegistry,
+        Description,
         Name,
         QuestIndex,
       },
@@ -67,6 +69,7 @@ export const getQuest = (layers: Layers, index: EntityIndex): Quest => {
     id: world.entities[index],
     index: questIndex,
     name: getComponentValue(Name, registryIndex)?.value || '' as string,
+    description: getComponentValue(Description, registryIndex)?.value || '' as string,
     complete: hasComponent(IsComplete, index) || false as boolean,
     requirements: getRequirements(layers, questIndex),
     objectives: getObjectives(layers, questIndex),

@@ -252,23 +252,15 @@ export function registerQuestsModal() {
         )
       };
 
-      const ConditionBox = (conditions: Condition[], conType: string) => {
-        const texts = () => {
-          return conditions.map((con) => (
-            <QuestDescription>
-              - {con.name}
-            </QuestDescription>
-          )
-          )
-        }
-
+      const ConditionDisplay = (conditions: Condition[], type: string) => {
+        if (conditions.length == 0) return <div />;
         return (
-          <div>
-            <ConditionName>
-              {conditions.length > 0 ? conType : ''}
-            </ConditionName>
-            {texts()}
-          </div>
+          <ConditionContainer>
+            <ConditionName>{type}</ConditionName>
+            {conditions.map((condition) => (
+              <ConditionDescription>- {condition.name}</ConditionDescription>
+            ))}
+          </ConditionContainer>
         )
       }
 
@@ -276,8 +268,8 @@ export function registerQuestsModal() {
         return (
           <ProductBox>
             <QuestName>{quest.name}</QuestName>
-            {ConditionBox(quest.objectives, 'Objectives')}
-            {ConditionBox(quest.rewards, 'Rewards')}
+            {ConditionDisplay(quest.objectives, 'Objectives')}
+            {ConditionDisplay(quest.rewards, 'Rewards')}
             {CompleteButton(quest)}
           </ProductBox>
         )
@@ -304,10 +296,11 @@ export function registerQuestsModal() {
       const RegistryQuestBox = (quest: Quest) => {
         return (
           <ProductBox>
-            <QuestName>[registry] {quest.name}</QuestName>
-            {ConditionBox(quest.requirements, 'Requirements')}
-            {ConditionBox(quest.objectives, 'Objectives')}
-            {ConditionBox(quest.rewards, 'Rewards')}
+            <QuestName>{quest.name}</QuestName>
+            <QuestDescription>{quest.description}</QuestDescription>
+            {ConditionDisplay(quest.requirements, 'Requirements')}
+            {ConditionDisplay(quest.objectives, 'Objectives')}
+            {ConditionDisplay(quest.rewards, 'Rewards')}
             {AcceptButton(quest)}
           </ProductBox>
         )
@@ -340,6 +333,10 @@ export function registerQuestsModal() {
         </div>
       )
 
+      // we want three categories
+      // 1. Available
+      // 2. Ongoing
+      // 3. Completed
       return (
         <ModalWrapperFull divName='quests' id='quest_modal'>
           <Header>Quests</Header>
@@ -391,7 +388,25 @@ const QuestName = styled.div`
   text-align: left;
   justify-content: flex-start;
   color: #333;
-  padding: 0.4vh 0vw;
+  padding: 0.7vh 0vw;
+`;
+
+const QuestDescription = styled.div`
+  color: #333;
+
+  font-family: Pixel;
+  text-align: left;
+  line-height: 1.2vw;
+  font-size: 0.7vw;
+  padding: 0.4vh 0.5vw;
+`;
+
+const ConditionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 0.4vw 0.5vw;
 `;
 
 const ConditionName = styled.div`
@@ -400,15 +415,14 @@ const ConditionName = styled.div`
   text-align: left;
   justify-content: flex-start;
   color: #333;
-  padding: 0.3vh 0vw;
+  padding: 0vw 0vw 0.3vw 0vw;
 `;
 
-const QuestDescription = styled.div`
+const ConditionDescription = styled.div`
   color: #333;
-  flex-grow: 1;
 
   font-family: Pixel;
   text-align: left;
   font-size: 0.7vw;
-  padding: 0.2vh 0vw;
+  padding: 0.4vh 0.5vw;
 `;
