@@ -75,6 +75,11 @@
           "internalType": "string",
           "name": "name",
           "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -117,7 +122,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string)": "68c47df2",
+    "executeTyped(uint256,string,string)": "cdc0b71c",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }
