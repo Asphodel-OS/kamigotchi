@@ -13,12 +13,15 @@ contract _RegistryCreateQuestSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name, string memory description) = abi.decode(
+    (uint256 index, string memory name, string memory description, uint256 location) = abi.decode(
       arguments,
-      (uint256, string, string)
+      (uint256, string, string, uint256)
     );
 
     LibRegistryQuests.createQuest(world, components, index, name, description);
+    if (location != 0) {
+      LibRegistryQuests.setLocation(components, index, location);
+    }
 
     return "";
   }
@@ -26,8 +29,9 @@ contract _RegistryCreateQuestSystem is System {
   function executeTyped(
     uint256 index,
     string memory name,
-    string memory description
+    string memory description,
+    uint256 location
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, description));
+    return execute(abi.encode(index, name, description, location));
   }
 }

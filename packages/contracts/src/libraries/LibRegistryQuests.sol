@@ -8,7 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexConditionComponent, ID as IndexConditionCompID } from "components/IndexConditionComponent.sol";
 import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/IndexObjectiveComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
@@ -19,7 +19,7 @@ import { IsRequirementComponent, ID as IsRequirementCompID } from "components/Is
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
+import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -221,6 +221,10 @@ library LibRegistryQuests {
 
   function setDescription(IUintComp components, uint256 id, string memory description) internal {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+  }
+
+  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+    LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
   }
 
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
