@@ -25,7 +25,6 @@
     "IdSourceComponent",
     "IdTargetComponent",
     "IndexComponent",
-    "IndexConditionComponent",
     "IndexBackgroundComponent",
     "IndexBodyComponent",
     "IndexColorComponent",
@@ -45,7 +44,6 @@
     "IsAccountComponent",
     "IsConfigComponent",
     "IsCompleteComponent",
-    "IsConditionComponent",
     "IsDataComponent",
     "IsEquippedComponent",
     "IsFungibleComponent",
@@ -186,12 +184,6 @@
       "name": "_NodeSetNameSystem",
       "writeAccess": [
         "NameComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateConditionSystem",
-      "writeAccess": [
-        "*"
       ]
     },
     {

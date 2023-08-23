@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.Quest.Requirement.Create"));
+uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create.Requirement"));
 
 // creates a Requirement for an existing Quest. assumes that all Requirements are
 // based on a current value or state of completion (e.g. level, quest)
@@ -20,16 +20,15 @@ contract _RegistryCreateQuestRequirementSystem is System {
       (uint256, string, uint256, uint256)
     );
 
-    uint256 id = LibRegistryQuests.createEmptyRequirement(world, components, questIndex);
+    // check that the quest exists
+    uint256 questID = LibRegistryQuests.getByQuestIndex(components, questIndex);
+    require(questID != 0, "Quest does not exist");
+    require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
-    LibRegistryQuests.setType(components, id, type_);
-    if (LibString.eq(type_, "QUEST")) {
-      LibRegistryQuests.setIndex(components, id, index);
-    } else if (LibString.eq(type_, "LEVEL")) {
-      LibRegistryQuests.setValue(components, id, value);
-    } else {
-      require(false, "unsupported quest requirement type");
-    }
+    // create an empty Quest Requirement and set any non-zero fields
+    uint256 id = LibRegistryQuests.createEmptyRequirement(world, components, questIndex, type_);
+    if (index != 0) LibRegistryQuests.setIndex(components, id, index);
+    if (value != 0) LibRegistryQuests.setValue(components, id, value);
 
     return "";
   }

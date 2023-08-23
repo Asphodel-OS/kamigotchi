@@ -247,13 +247,34 @@ export function createAdminAPI(systems: any) {
     await createMerchant(1, 'Mina', 13);
 
     // create quests
-    await createQuest(1, "Seed Capital", "Earn $MUSU to prove you're worthy of Mina's attention.");
-    await addQuestCondition(1, 1, 0, "Have 1 $MUSU", "CURR_MIN", "COIN", "OBJECTIVE");
-    await addQuestCondition(1, 25, 0, "Earn 25 $MUSU", "INC", "COIN", "REWARD");
+    await createQuest(
+      1,
+      "Welcome",
+      "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 2, we'll give you some free gum.",
+      1
+    );
+    await addQuestObjective(1, "Move to room 2", "ACCRUAL", "ROOM", 2, 0);
+    await addQuestReward(1, "FOOD", 1, 1);
 
-    await createQuest(2, "Welcomed Patron", "Purchase a Gum from Mina to become a recognized customer.");
-    await addQuestCondition(2, 1, 1, "Buy 1 Gum", "DELTA_MIN", "FUNG_INVENTORY", "OBJECTIVE");
-    await addQuestCondition(2, 1, 4, "Get a revive", "INC", "FUNG_INVENTORY", "REWARD");
+    await createQuest(
+      2,
+      "Mint",
+      "Well done.\n\nNow you've worked out how to move.But you won't be able to do much here unless you're able to get yourself a Kamigotchi.\n\nFind the vending machine.",
+      2
+    );
+    await addQuestRequirement(2, "QUEST", 1, 0);
+    await addQuestObjective(2, "Mint a Kami", "ACCRUAL", "KAMI", 0, 1);
+    await addQuestReward(2, "FOOD", 2, 1);
+
+    await createQuest(
+      3,
+      "Harvest",
+      "With your Kamigotchi, your existence now has meaning.\n\nSeek out a Node if you also wish for your existence to have MUSU.",
+      4
+    );
+    await addQuestRequirement(3, "QUEST", 2, 0);
+    await addQuestObjective(3, "Harvest from a Node", "ACCRUAL", "HARVEST", 0, 1);
+    await addQuestReward(3, "REVIVE", 3, 1);
 
     // init general, TODO: move to worldSetUp
     systems['system._Init'].executeTyped(); // sets the balance of the Kami contract
@@ -394,30 +415,71 @@ export function createAdminAPI(systems: any) {
   // @dev creates an empty quest
   // @param index       the human-readable index of the quest
   // @param name        name of the quest
-  async function createQuest(index: number, name: string, description: string) {
+  async function createQuest(
+    index: number,
+    name: string,
+    description: string,
+    location: number
+  ) {
     await sleepIf();
-    return systems['system._Registry.Quest.Create'].executeTyped(index, name, description);
+    return systems['system._Registry.Quest.Create'].executeTyped(
+      index,
+      name,
+      description,
+      location
+    );
   }
 
-  // @dev adds a condition (objective/reward/requirement) to a quest
-  // @param questIndex  the human-readable index of the quest
-  // @param balance     numerical amount of a the condition (depending on type)
-  // @param itemIndex   item index for condition, if any (eg inventory)
-  // @param name        string name of the condition
-  // @param logicType   type of logic condition (CURR_MIN, DELTA_MAX)
-  // @param type        type of condition (eg fungible inventory, coin)
-  // @param conditionType type of condition (eg objective, reward, requirement)
-  async function addQuestCondition(
+  // creates a Objective for an existing Quest
+  async function addQuestObjective(
     questIndex: number,
-    balance: number,
-    itemIndex: number,
     name: string,
     logicType: string,
     type: string,
-    conditionType: string
+    index: number,
+    value: number
   ) {
     await sleepIf();
-    return systems['system._Registry.Condition.Create'].executeTyped(questIndex, balance, itemIndex, name, logicType, type, conditionType);
+    return systems['system._Registry.Quest.Create.Objective'].executeTyped(
+      questIndex,
+      name,
+      logicType,
+      type,
+      index,
+      value
+    );
+  }
+
+  // creates a Requirement for an existing Quest
+  async function addQuestRequirement(
+    questIndex: number,
+    type: string,
+    index: number,
+    value: number
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Quest.Create.Requirement'].executeTyped(
+      questIndex,
+      type,
+      index,
+      value
+    );
+  }
+
+  // creates a Reward for an existing Quest
+  async function addQuestReward(
+    questIndex: number,
+    type: string,
+    index: number,
+    value: number
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Quest.Create.Reward'].executeTyped(
+      questIndex,
+      type,
+      index,
+      value
+    );
   }
 
   /////////////////
@@ -724,7 +786,11 @@ export function createAdminAPI(systems: any) {
     },
     quest: {
       create: createQuest,
-      addCondition: addQuestCondition,
+      add: {
+        objective: addQuestObjective,
+        requirement: addQuestRequirement,
+        reward: addQuestReward,
+      }
     },
     room: {
       create: createRoom,

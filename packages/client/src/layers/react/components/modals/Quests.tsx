@@ -167,16 +167,12 @@ export function registerQuestsModal() {
         switch (condition.logic) {
           case 'CURR_MIN':
             return checkCurrMin(condition);
-            break;
           case 'CURR_MAX':
             return checkCurrMax(condition);
-            break;
           case 'DELTA_MIN':
             return checkDeltaMin(quest, condition);
-            break;
           case 'DELTA_MAX':
             return checkDeltaMax(quest, condition);
-            break;
         }
 
         return false;

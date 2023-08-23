@@ -9,10 +9,8 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
-import { IndexConditionComponent, ID as IndexConditionCompID } from "components/IndexConditionComponent.sol";
 import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/IndexObjectiveComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
-import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
@@ -57,38 +55,19 @@ library LibRegistryQuests {
     return id;
   }
 
-  // Create a registry entry for a Condition (objective/requirement/reward)
-  function createEmptyCondition(
-    IWorld world,
-    IUintComp components,
-    uint256 questIndex,
-    string memory name,
-    string memory logicType
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-
-    uint256 index = getConditionCount(components) + 1;
-    setConditionIndex(components, id, index);
-    setIsRegistry(components, id);
-    setIsCondition(components, id);
-    setQuestIndex(components, id, questIndex);
-    setLogicType(components, id, logicType);
-    setName(components, id, name);
-
-    return id;
-  }
-
   function createEmptyObjective(
     IWorld world,
     IUintComp components,
     uint256 questIndex,
-    string memory name
+    string memory name, // this is a crutch to help FE, ideally we drop this
+    string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsObjective(components, id);
-    setName(components, id, name);
     setQuestIndex(components, id, questIndex);
+    setName(components, id, name);
+    setType(components, id, type_);
 
     uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
     setObjectiveIndex(components, id, numObjectives + 1);
@@ -98,59 +77,29 @@ library LibRegistryQuests {
   function createEmptyRequirement(
     IWorld world,
     IUintComp components,
-    uint256 questIndex
+    uint256 questIndex,
+    string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setQuestIndex(components, id, questIndex);
+    setType(components, id, type_);
     return id;
   }
 
   function createEmptyReward(
     IWorld world,
     IUintComp components,
-    uint256 questIndex
+    uint256 questIndex,
+    string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsReward(components, id);
     setQuestIndex(components, id, questIndex);
+    setType(components, id, type_);
     return id;
-  }
-
-  function declareObjective(IUintComp components, uint256 id) internal {
-    setIsObjective(components, id);
-  }
-
-  function declareRequirement(IUintComp components, uint256 id) internal {
-    setIsRequirement(components, id);
-  }
-
-  function declareReward(IUintComp components, uint256 id) internal {
-    setIsReward(components, id);
-  }
-
-  // adds a balance entity/components to a condition
-  function addBalance(
-    IWorld world,
-    IUintComp components,
-    uint256 entityID, // condition id
-    uint256 balance,
-    uint256 itemIndex, // if any, else 0
-    string memory _type
-  ) internal returns (uint256) {
-    require(!hasType(components, entityID), "LibRegQ.addBal: type alr set");
-    setType(components, entityID, _type);
-
-    if (isType(components, entityID, "COIN")) {
-      LibCoin._set(components, entityID, balance);
-    } else if (isType(components, entityID, "FUNG_INVENTORY")) {
-      uint256 invID = LibInventory.create(world, components, entityID, itemIndex);
-      LibInventory.inc(components, invID, balance);
-    } else {
-      revert("LibRegQ.addCondBal: invalid type");
-    }
   }
 
   /////////////////
@@ -187,10 +136,6 @@ library LibRegistryQuests {
     IsQuestComponent(getAddressById(components, IsQuestCompID)).set(id);
   }
 
-  function setIsCondition(IUintComp components, uint256 id) internal {
-    IsConditionComponent(getAddressById(components, IsConditionCompID)).set(id);
-  }
-
   function setIsObjective(IUintComp components, uint256 id) internal {
     IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).set(id);
   }
@@ -205,10 +150,6 @@ library LibRegistryQuests {
 
   function setIndex(IUintComp components, uint256 id, uint256 index) internal {
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-  }
-
-  function setConditionIndex(IUintComp components, uint256 id, uint256 index) internal {
-    IndexConditionComponent(getAddressById(components, IndexConditionCompID)).set(id, index);
   }
 
   function setObjectiveIndex(IUintComp components, uint256 id, uint256 index) internal {
@@ -241,19 +182,6 @@ library LibRegistryQuests {
 
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
-  /////////////////
-  // GETTERS
-
-  function getConditionCount(IUintComp components) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsConditionCompID),
-      ""
-    );
   }
 
   /////////////////
