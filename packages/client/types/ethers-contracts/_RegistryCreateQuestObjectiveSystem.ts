@@ -27,10 +27,11 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _RegistryCreateQuestSystemInterface extends utils.Interface {
+export interface _RegistryCreateQuestObjectiveSystemInterface
+  extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,string,string,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -53,6 +54,8 @@ export interface _RegistryCreateQuestSystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -92,12 +95,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _RegistryCreateQuestSystem extends BaseContract {
+export interface _RegistryCreateQuestObjectiveSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _RegistryCreateQuestSystemInterface;
+  interface: _RegistryCreateQuestObjectiveSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -125,10 +128,12 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      index: PromiseOrValue<BigNumberish>,
+      questIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -146,10 +151,12 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    index: PromiseOrValue<BigNumberish>,
+    questIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
-    description: PromiseOrValue<string>,
-    location: PromiseOrValue<BigNumberish>,
+    logicType: PromiseOrValue<string>,
+    type_: PromiseOrValue<string>,
+    index: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -167,10 +174,12 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      index: PromiseOrValue<BigNumberish>,
+      questIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -200,10 +209,12 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      index: PromiseOrValue<BigNumberish>,
+      questIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -222,10 +233,12 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      index: PromiseOrValue<BigNumberish>,
+      questIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      description: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      index: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

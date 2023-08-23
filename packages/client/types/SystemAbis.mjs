@@ -16,6 +16,9 @@ import _RegistryCreateConditionSystem from "../abi/_RegistryCreateConditionSyste
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
+import _RegistryCreateQuestObjectiveSystem from "../abi/_RegistryCreateQuestObjectiveSystem.json";
+import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRequirementSystem.json";
+import _RegistryCreateQuestRewardSystem from "../abi/_RegistryCreateQuestRewardSystem.json";
 import _RegistryCreateQuestSystem from "../abi/_RegistryCreateQuestSystem.json";
 import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
@@ -83,6 +86,9 @@ export const SystemAbis = {
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
+  "system._Registry.Quest.Objective.Create": _RegistryCreateQuestObjectiveSystem.abi,
+  "system._Registry.Quest.Requirement.Create": _RegistryCreateQuestRequirementSystem.abi,
+  "system._Registry.Quest.Reward.Create": _RegistryCreateQuestRewardSystem.abi,
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,

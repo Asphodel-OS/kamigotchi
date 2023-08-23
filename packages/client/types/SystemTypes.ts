@@ -16,6 +16,9 @@ import { _RegistryCreateConditionSystem } from "./ethers-contracts/_RegistryCrea
 import { _RegistryCreateFoodSystem } from "./ethers-contracts/_RegistryCreateFoodSystem";
 import { _RegistryCreateGearSystem } from "./ethers-contracts/_RegistryCreateGearSystem";
 import { _RegistryCreateModSystem } from "./ethers-contracts/_RegistryCreateModSystem";
+import { _RegistryCreateQuestObjectiveSystem } from "./ethers-contracts/_RegistryCreateQuestObjectiveSystem";
+import { _RegistryCreateQuestRequirementSystem } from "./ethers-contracts/_RegistryCreateQuestRequirementSystem";
+import { _RegistryCreateQuestRewardSystem } from "./ethers-contracts/_RegistryCreateQuestRewardSystem";
 import { _RegistryCreateQuestSystem } from "./ethers-contracts/_RegistryCreateQuestSystem";
 import { _RegistryCreateReviveSystem } from "./ethers-contracts/_RegistryCreateReviveSystem";
 import { _RegistryCreateTraitSystem } from "./ethers-contracts/_RegistryCreateTraitSystem";
@@ -83,6 +86,9 @@ export type SystemTypes = {
   "system._Registry.Food.Create": _RegistryCreateFoodSystem;
   "system._Registry.Gear.Create": _RegistryCreateGearSystem;
   "system._Registry.Mod.Create": _RegistryCreateModSystem;
+  "system._Registry.Quest.Objective.Create": _RegistryCreateQuestObjectiveSystem;
+  "system._Registry.Quest.Requirement.Create": _RegistryCreateQuestRequirementSystem;
+  "system._Registry.Quest.Reward.Create": _RegistryCreateQuestRewardSystem;
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem;
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
