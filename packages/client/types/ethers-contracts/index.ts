@@ -55,7 +55,6 @@ export type { IndexReviveComponent } from "./IndexReviveComponent";
 export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
-export type { IsConditionComponent } from "./IsConditionComponent";
 export type { IsConfigComponent } from "./IsConfigComponent";
 export type { IsDataComponent } from "./IsDataComponent";
 export type { IsEquippedComponent } from "./IsEquippedComponent";
@@ -219,7 +218,6 @@ export { IndexReviveComponent__factory } from "./factories/IndexReviveComponent_
 export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
-export { IsConditionComponent__factory } from "./factories/IsConditionComponent__factory";
 export { IsConfigComponent__factory } from "./factories/IsConfigComponent__factory";
 export { IsDataComponent__factory } from "./factories/IsDataComponent__factory";
 export { IsEquippedComponent__factory } from "./factories/IsEquippedComponent__factory";

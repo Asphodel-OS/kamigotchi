@@ -9,7 +9,6 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
-import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { IsCompleteComponent, ID as CompletionCompID } from "components/IsCompleteComponent.sol";
