@@ -122,7 +122,6 @@ import { ValueComponent, ID as ValueComponentID } from "components/ValueComponen
 import { ViolenceComponent, ID as ViolenceComponentID } from "components/ViolenceComponent.sol";
 
 // Systems
-import { _InitSystem, ID as _InitSystemID } from "systems/_InitSystem.sol";
 import { _devGiveTokensSystem, ID as _devGiveTokensSystemID } from "systems/_devGiveTokensSystem.sol";
 import { _ConfigSetSystem, ID as _ConfigSetSystemID } from "systems/_ConfigSetSystem.sol";
 import { _ConfigSetStringSystem, ID as _ConfigSetStringSystemID } from "systems/_ConfigSetStringSystem.sol";
@@ -283,7 +282,6 @@ ValueComponent _ValueComponent;
 ViolenceComponent _ViolenceComponent;
 
 // System vars
-_InitSystem __InitSystem;
 _devGiveTokensSystem __devGiveTokensSystem;
 _ConfigSetSystem __ConfigSetSystem;
 _ConfigSetStringSystem __ConfigSetStringSystem;
@@ -444,7 +442,6 @@ _UpgradesComponent = UpgradesComponent(component(UpgradesComponentID));
 _ValueComponent = ValueComponent(component(ValueComponentID));
 _ViolenceComponent = ViolenceComponent(component(ViolenceComponentID));
 
-__InitSystem = _InitSystem(system(_InitSystemID));
 __devGiveTokensSystem = _devGiveTokensSystem(system(_devGiveTokensSystemID));
 __ConfigSetSystem = _ConfigSetSystem(system(_ConfigSetSystemID));
 __ConfigSetStringSystem = _ConfigSetStringSystem(system(_ConfigSetStringSystemID));

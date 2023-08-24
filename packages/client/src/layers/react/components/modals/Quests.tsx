@@ -32,7 +32,7 @@ export function registerQuestsModal() {
             AccountID,
             IsAccount,
             IsComplete,
-            IsCondition,
+            // IsCondition,
             IsQuest,
             OperatorAddress,
             QuestIndex,
@@ -45,7 +45,7 @@ export function registerQuestsModal() {
         AccountID.update$,
         IsComplete.update$,
         IsQuest.update$,
-        IsCondition.update$,
+        // IsCondition.update$,
         QuestIndex.update$,
       ).pipe(
         map(() => {

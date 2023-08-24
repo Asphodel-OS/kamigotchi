@@ -1,4 +1,7 @@
 import { createAdminAPI } from './admin';
+import { createPlayerAPI } from './player';
+import { utils } from 'ethers';
+
 import background from 'assets/data/kami/Background.csv';
 import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
@@ -6,10 +9,320 @@ import face from 'assets/data/kami/Face.csv';
 import hand from 'assets/data/kami/Hand.csv';
 
 export function setUpWorldAPI(systems: any) {
-  function initWorld() {
-    initTraits();
+  async function initAll() {
+    const api = createAdminAPI(systems);
+
+    await initConfig(api);
+    await initRooms(api);
+    await initNodes(api);
+    await initItems(api);
+    await initNpcs(api);
+    await initQuests(api);
+    await initTraits(api);
+
+    createPlayerAPI(systems).account.register(
+      '0x000000000000000000000000000000000000dead',
+      'load_bearer'
+    );
   }
 
+  ///////////////////
+  // CONFIG
+  async function initConfig(api: any) {
+    await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami/');
+
+    // Leaderboards
+    await api.config.set.number('LEADERBOARD_EPOCH', 1);
+
+    // Account Stamina
+    await api.config.set.number('ACCOUNT_STAMINA_BASE', 20);
+    await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
+
+    // Kami Idle Requirement
+    await api.config.set.number('KAMI_IDLE_REQ', 180);
+
+    // Kami Mint Price and Limits
+    // to be 5, set at 500 for testing
+    await api.config.set.number('MINT_ACCOUNT_MAX', 5);
+    await api.config.set.number('MINT_INITIAL_MAX', 1111);
+    await api.config.set.number('MINT_TOTAL_MAX', 4444);
+    await api.config.set.number('MINT_PRICE', utils.parseEther('0.0'));
+
+    // Kami Base Stats
+    await api.config.set.number('KAMI_BASE_HEALTH', 50);
+    await api.config.set.number('KAMI_BASE_POWER', 10);
+    await api.config.set.number('KAMI_BASE_VIOLENCE', 10);
+    await api.config.set.number('KAMI_BASE_HARMONY', 10);
+    await api.config.set.number('KAMI_BASE_SLOTS', 0);
+
+    // Kami Leveling Curve
+    await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
+    await api.config.set.number('KAMI_LVL_REQ_MULT_BASE', 1259); // compounding increase per level
+    await api.config.set.number('KAMI_LVL_REQ_MULT_BASE_PREC', 3); // precision of compounding increase
+
+    // Harvest Rates
+    // HarvestRate = power * base * multiplier
+    // NOTE: precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
+    // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
+    await api.config.set.number('HARVEST_RATE_PREC', 9); // ignore this
+    await api.config.set.number('HARVEST_RATE_BASE', 250); // in respect to power
+    await api.config.set.number('HARVEST_RATE_BASE_PREC', 2); // i.e. x/100
+    await api.config.set.number('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
+    await api.config.set.number('HARVEST_RATE_MULT_AFF_BASE', 100);
+    await api.config.set.number('HARVEST_RATE_MULT_AFF_UP', 150);
+    await api.config.set.number('HARVEST_RATE_MULT_AFF_DOWN', 50);
+    await api.config.set.number('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
+
+    // Kami Health Drain/Heal Rates
+    // DrainRate = HarvestRate * DrainBaseRate
+    // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
+    // HealRate = Harmony * HealBaseRate
+    // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
+    await api.config.set.number('HEALTH_RATE_DRAIN_BASE', 40); // in respect to harvest rate
+    await api.config.set.number('HEALTH_RATE_DRAIN_BASE_PREC', 2); // i.e. x/100
+    await api.config.set.number('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
+    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 150); // in respect to harmony
+    await api.config.set.number('HEALTH_RATE_HEAL_BASE_PREC', 2); // i.e. x/100
+
+
+    // Liquidation Calcs
+    await api.config.set.number('LIQ_THRESH_BASE', 40);
+    await api.config.set.number('LIQ_THRESH_BASE_PREC', 2);
+    await api.config.set.number('LIQ_THRESH_MULT_AFF_BASE', 100);
+    await api.config.set.number('LIQ_THRESH_MULT_AFF_UP', 200);
+    await api.config.set.number('LIQ_THRESH_MULT_AFF_DOWN', 50);
+    await api.config.set.number('LIQ_THRESH_MULT_AFF_PREC', 2);
+
+    // Liquidation Bounty
+    await api.config.set.number('LIQ_BOUNTY_BASE', 50);
+    await api.config.set.number('LIQ_BOUNTY_BASE_PREC', 2);
+  }
+
+  ////////////////////
+  // ROOMS
+  async function initRooms(api: any) {
+    await api.room.create(0, 'deadzone', '', [1]); // in case we need this
+    await api.room.create(
+      1,
+      'Misty Riverside',
+      'You have no memory of arriving here. The air is quiet. The trees grow so thick overhead that it would still be dark at noon.',
+      [2]
+    );
+    await api.room.create(
+      2,
+      'Tunnel of Trees',
+      'You see the light at the end of the tunnel; a way out of the forest. Also, you see a blue door made of light. It says “SHOP”.',
+      [1, 3, 13]
+    );
+    await api.room.create(
+      3,
+      'Torii Gate',
+      'The end of the road. This gate seems to mark the transition between the misty forest and the massive scrapyard.',
+      [2, 4]
+    );
+    await api.room.create(
+      4,
+      'Vending Machine',
+      'Deep in the scrap you find a vending machine well stocked and operating. Behind it you see the power cord is cut off.',
+      [3, 5, 12]
+    );
+    await api.room.create(
+      5,
+      'Restricted Area',
+      'A restricted area. Follow the road lined with cherry trees to reach an office complex. Across from the office is another forest.',
+      [4, 6, 9]
+    );
+    await api.room.create(
+      6,
+      'Labs Entrance',
+      'This exterior seems designed to resemble a shrine almost as much as it does a corporate office building.',
+      [5, 7]
+    );
+    await api.room.create(
+      7,
+      'Lobby',
+      'The lobby decor is sparse, with only one uncomfortable chair. The elevator buttons are broken except for “B” and “PH”.',
+      [6, 8, 14]
+    );
+    await api.room.create(
+      8,
+      'Junk Shop',
+      'The electrical room in the basement has been converted into a living space and workshop. Do people live like this?',
+      [7]
+    );
+    await api.room.create(
+      9,
+      'Old Growth',
+      'You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.',
+      [5, 10, 11]
+    );
+    await api.room.create(
+      10,
+      'Insect Node',
+      'The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.',
+      [9]
+    );
+    await api.room.create(
+      11,
+      'Waterfall Shrine',
+      'By the edge of the waterfall basin, a humble shrine grants this place a peaceful aura.',
+      [9, 15]
+    );
+    await api.room.create(
+      12,
+      'Machine Node',
+      'A collection of strange and hard to identify objects is buried deep in the scrapyard. It feels dangerous just to be near them.',
+      [4]
+    );
+    await api.room.create(
+      13,
+      'Convenience Store',
+      'The glowing blue door transports you inside of a little candy store. Check the glowing “exit” sign to leave.',
+      [2]
+    );
+    await api.room.create(
+      14,
+      "Manager's Office",
+      'A slick penthouse office. It seems that this room has been untouched since a magic ritual was performed inside.',
+      [7]
+    );
+    await api.room.create(
+      15,
+      'Temple Cave',
+      'A cave behind the waterfall. Friendly statues line a path to the back of the cave away from ancient-looking temple ruins.',
+      [11, 16, 18]
+    );
+    await api.room.create(
+      16,
+      'Techno Temple',
+      'Inside the ruined temple. This place might have been traditional once, but now it sparks and rumbles with technology.',
+      [15]
+    );
+    // await api.room.create(17, "Misty Park", 'You appear to be outside in an urban park. Balls of light dance around a statue of an angel. Fog hangs thick in the air.', [0]);
+    await api.room.create(
+      18,
+      'Cave Crossroads',
+      'Deep in the cave the path branches. The bioluminescent fungi make it nearly as bright as day. You can hear bells in the air.',
+      [15, 19]
+    );
+    await api.room.create(
+      19,
+      'Violence Temple',
+      'Half eroded stone and mossy growth, half gleaming metal and glowing crystal. Whether temple or technology, it unsettles you.',
+      [18]
+    );
+  }
+
+  ////////////////////
+  // ITEMS
+  async function initItems(api: any) {
+    await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
+    await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
+    await api.registry.food.create(3, 'Gakki Cookie Sticks', 200);
+    await api.registry.revive.create(1, 'Red Gakki Ribbon', 10);
+  }
+
+  ////////////////////
+  // NPCS
+  async function initNpcs(api: any) {
+    await initMerchants(api);
+  }
+
+  async function initMerchants(api: any) {
+    // create our hottie merchant ugajin. names are unique
+    await api.merchant.create(1, 'Mina', 13);
+
+    await api.listing.set(1, 1, 25, 0); // merchant index, item index, buy price, sell price
+    await api.listing.set(1, 2, 90, 0);
+    await api.listing.set(1, 3, 150, 0);
+    await api.listing.set(1, 4, 500, 0);
+  }
+
+  ////////////////////
+  // NODES
+  async function initNodes(api: any) {
+    await api.node.create(
+      1,
+      'HARVEST',
+      3,
+      'Torii Gate',
+      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $MUSU....`,
+      `NORMAL`,
+    );
+
+    await api.node.create(
+      2,
+      'HARVEST',
+      7,
+      'Trash Compactor',
+      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.',
+      'SCRAP',
+    );
+
+    await api.node.create(
+      3,
+      'HARVEST',
+      10,
+      'Termite Mound',
+      'A huge termite mound. Apparently, this is sacred to the local insects.',
+      'INSECT',
+    );
+
+    await api.node.create(
+      4,
+      'HARVEST',
+      14,
+      'Occult Circle',
+      'The energy existing here exudes an eeriness that calls out to EERIE Kamigotchi.',
+      'EERIE',
+    );
+
+    await api.node.create(
+      5,
+      'HARVEST',
+      12,
+      'Monolith',
+      'This huge black monolith seems to draw in energy from the rest of the junkyard.',
+      'SCRAP',
+    );
+  }
+
+  ////////////////////
+  // QUESTS
+  async function initQuests(api: any) {
+    // create quests
+    await api.quest.create(
+      1,
+      "Welcome",
+      "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 2, we'll give you some free gum.",
+      1
+    );
+    await api.quest.add.objective(1, "Move to room 2", "ACCRUAL", "ROOM", 2, 0);
+    await api.quest.add.reward(1, "FOOD", 1, 1);
+
+    await api.quest.create(
+      2,
+      "Mint",
+      "Well done.\n\nNow you've worked out how to move.But you won't be able to do much here unless you're able to get yourself a Kamigotchi.\n\nFind the vending machine.",
+      2
+    );
+    await api.quest.add.requirement(2, "QUEST", 1, 0);
+    await api.quest.add.objective(2, "Mint a Kami", "ACCRUAL", "KAMI", 0, 1);
+    await api.quest.add.reward(2, "FOOD", 2, 1);
+
+    await api.quest.create(
+      3,
+      "Harvest",
+      "With your Kamigotchi, your existence now has meaning.\n\nSeek out a Node if you also wish for your existence to have MUSU.",
+      4
+    );
+    await api.quest.add.requirement(3, "QUEST", 2, 0);
+    await api.quest.add.objective(3, "Harvest from a Node", "ACCRUAL", "HARVEST", 0, 1);
+    await api.quest.add.reward(3, "REVIVE", 3, 1);
+  }
+
+  ////////////////////
+  // TRAITS
   function csvToMap(arr: any) {
     let jsonObj = [];
     let headers = arr[0];
@@ -26,13 +339,13 @@ export function setUpWorldAPI(systems: any) {
     return jsonObj;
   }
 
-  async function initTraits() {
+  async function initTraits(api: any) {
     // inits a single type of trait, returns number of traits
     async function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
       for (let i = 0; i < data.length; i++) {
         await sleepIf();
-        createAdminAPI(systems).registry.trait.create(
+        api.registry.trait.create(
           data[i].get("Index"), // individual trait index
           data[i].get("Health") ? data[i].get("Health") : 0,
           data[i].get("Power") ? data[i].get("Power") : 0,
@@ -50,22 +363,22 @@ export function setUpWorldAPI(systems: any) {
       return data.length - 1;
     }
 
-    const numBg = await initSingle(background, "BACKGROUND");
-    const numBody = await initSingle(body, "BODY");
-    const numColor = await initSingle(color, "COLOR");
-    const numFace = await initSingle(face, "FACE");
-    const numHand = await initSingle(hand, "HAND");
+    await initSingle(background, "BACKGROUND");
+    await initSingle(body, "BODY");
+    await initSingle(color, "COLOR");
+    await initSingle(face, "FACE");
+    await initSingle(hand, "HAND");
   }
 
   // try to update traits. meant for partial deployments to fill up the gaps
-  async function initTraitsWithFail() {
+  async function initTraitsWithFail(api: any) {
     // inits a single type of trait, returns number of traits
     async function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
       for (let i = 0; i < data.length; i++) {
         await sleepIf();
         try {
-          createAdminAPI(systems).registry.trait.create(
+          api.registry.trait.create(
             data[i].get("Index"), // individual trait index
             data[i].get("Health") ? data[i].get("Health") : 0,
             data[i].get("Power") ? data[i].get("Power") : 0,
@@ -84,16 +397,37 @@ export function setUpWorldAPI(systems: any) {
       return data.length - 1;
     }
 
-    const numBg = await initSingle(background, "BACKGROUND");
-    const numBody = await initSingle(body, "BODY");
-    const numColor = await initSingle(color, "COLOR");
-    const numFace = await initSingle(face, "FACE");
-    const numHand = await initSingle(hand, "HAND");
+    await initSingle(background, "BACKGROUND");
+    await initSingle(body, "BODY");
+    await initSingle(color, "COLOR");
+    await initSingle(face, "FACE");
+    await initSingle(hand, "HAND");
   }
 
   return {
-    initWorld: initWorld,
-    tryInitTraits: initTraitsWithFail,
+    init: initAll,
+    config: {
+      init: () => initConfig(createAdminAPI(systems)),
+    },
+    items: {
+      init: () => initItems(createAdminAPI(systems)),
+    },
+    npcs: {
+      init: () => initNpcs(createAdminAPI(systems)),
+    },
+    nodes: {
+      init: () => initNodes(createAdminAPI(systems)),
+    },
+    quests: {
+      init: () => initQuests(createAdminAPI(systems)),
+    },
+    rooms: {
+      init: () => initRooms(createAdminAPI(systems)),
+    },
+    traits: {
+      init: () => initTraits(createAdminAPI(systems)),
+      tryInit: initTraitsWithFail(createAdminAPI(systems)),
+    },
   }
 
   function sleepIf() {
