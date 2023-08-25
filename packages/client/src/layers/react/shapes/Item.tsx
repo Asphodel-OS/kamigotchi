@@ -1,8 +1,12 @@
 import {
   EntityIndex,
   EntityID,
+  Has,
+  HasValue,
   getComponentValue,
+  runQuery,
 } from '@latticexyz/recs';
+
 
 import { Layers } from 'src/types';
 import { Stats, getStats } from './Stats';
@@ -75,4 +79,41 @@ export const getItem = (
   }
 
   return Item;
+}
+
+
+// Query for a Food Registry entry by its FoodIndex
+export const queryFoodRegistry = (layers: Layers, index: number): EntityIndex => {
+  const {
+    network: {
+      components: { FoodIndex, IsRegistry },
+    },
+  } = layers;
+  console.log(index);
+
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      HasValue(FoodIndex, { value: index })
+    ])
+  );
+  return entityIndices[0];
+}
+
+// Query for a Revive Registry entry by its ReviveIndex
+export const queryReviveRegistry = (layers: Layers, index: number): EntityIndex => {
+  const {
+    network: {
+      components: { ReviveIndex, IsRegistry },
+    },
+  } = layers;
+
+  // console.log(index);
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      HasValue(ReviveIndex, { value: index })
+    ])
+  );
+  return entityIndices[0];
 }

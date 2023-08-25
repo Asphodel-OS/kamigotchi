@@ -4,8 +4,15 @@ import styled from 'styled-components';
 import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { getAccount } from 'layers/react/shapes/Account';
-import { Quest, Condition, queryQuestsX } from 'layers/react/shapes/Quest';
+import {
+  Quest,
+  Objective,
+  Reward,
+  Requirement,
+  queryQuestsX,
+} from 'layers/react/shapes/Quest';
 import { Inventory, queryInventoryX } from 'layers/react/shapes/Inventory';
+import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -32,10 +39,10 @@ export function registerQuestsModal() {
             AccountID,
             IsAccount,
             IsComplete,
+            IsObjective,
             IsQuest,
             IsRequirement,
             IsReward,
-            IsObjective,
             OperatorAddress,
             QuestIndex,
           },
@@ -46,6 +53,7 @@ export function registerQuestsModal() {
       return merge(
         AccountID.update$,
         IsComplete.update$,
+        IsObjective.update$,
         IsQuest.update$,
         IsRequirement.update$,
         IsReward.update$,
@@ -82,6 +90,7 @@ export function registerQuestsModal() {
     // NOTE: Completed and Ongoing should be straitforward to pull. we should
     // be using those + requirements to determine available quests
     ({ layers, actions, api, data }) => {
+      console.log('mQuest:', data);
       const [showCompleted, setShowCompleted] = useState(false);
       // temp: show registry for testing
       const [showRegistry, setShowRegistry] = useState(true);
@@ -90,7 +99,7 @@ export function registerQuestsModal() {
       // INTERACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        const actionID = `Accepting Quest ` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = `Accepting Quest ${quest.index}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
           components: {},
@@ -103,7 +112,7 @@ export function registerQuestsModal() {
       }
 
       const completeQuest = async (quest: Quest) => {
-        const actionID = `Completing Quest ` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = `Completing Quest ${quest.index}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions.add({
           id: actionID,
           components: {},
@@ -122,72 +131,72 @@ export function registerQuestsModal() {
         return quest.complete;
       }
 
-      const getBalanceOf = (owner: EntityID, condition: Condition): number => {
-        const type = condition.type;
-        switch (type) {
-          case 'COIN':
-            // TODO
-            return 0;
-            break;
-          case 'FUNG_INVENTORY':
-            return queryInventoryX(
-              layers,
-              { owner: owner, itemIndex: condition.itemIndex }
-            )[0]?.balance || 0;
-            break;
-        }
+      // const getBalanceOf = (owner: EntityID, condition: Condition): number => {
+      //   const type = condition.type;
+      //   switch (type) {
+      //     case 'COIN':
+      //       // TODO
+      //       return 0;
+      //       break;
+      //     case 'FUNG_INVENTORY':
+      //       return queryInventoryX(
+      //         layers,
+      //         { owner: owner, itemIndex: condition.itemIndex }
+      //       )[0]?.balance || 0;
+      //       break;
+      //   }
 
-        return 0;
-      }
+      //   return 0;
+      // }
 
-      // TODO: probably move these to Quest Conditions Shapes file
-      const checkCurrMin = (condition: Condition): boolean => {
-        const accBal = getBalanceOf(data.account.id, condition);
-        const conBal = condition.balance ? condition.balance : 0;
-        return accBal <= conBal;
-      }
+      // // TODO: probably move these to Quest Conditions Shapes file
+      // const checkCurrMin = (objective: Objective): boolean => {
+      //   const accBal = getBalanceOf(data.account.id, objective);
+      //   const conBal = objective.balance ? objective.balance : 0;
+      //   return accBal <= conBal;
+      // }
 
-      const checkCurrMax = (condition: Condition): boolean => {
-        const accBal = getBalanceOf(data.account.id, condition);
-        const conBal = condition.balance ? condition.balance : 0;
-        return accBal >= conBal;
-      }
+      // const checkCurrMax = (objective: Objective): boolean => {
+      //   const accBal = getBalanceOf(data.account.id, objective);
+      //   const conBal = objective.balance ? objective.balance : 0;
+      //   return accBal >= conBal;
+      // }
 
-      const checkDeltaMin = (quest: Quest, condition: Condition): boolean => {
-        const oldBal = getBalanceOf(quest.id, condition);
-        const currBal = getBalanceOf(data.account.id, condition);
-        const delta = condition.balance ? condition.balance : 0;
-        return delta <= currBal - oldBal;
-      }
+      // const checkDeltaMin = (quest: Quest, objective: Objective): boolean => {
+      //   const oldBal = getBalanceOf(quest.id, objective);
+      //   const currBal = getBalanceOf(data.account.id, objective);
+      //   const delta = objective.balance ? objective.balance : 0;
+      //   return delta <= currBal - oldBal;
+      // }
 
-      const checkDeltaMax = (quest: Quest, condition: Condition): boolean => {
-        const oldBal = getBalanceOf(quest.id, condition);
-        const currBal = getBalanceOf(data.account.id, condition);
-        const delta = condition.balance ? condition.balance : 0;
-        return delta >= currBal - oldBal;
-      }
+      // const checkDeltaMax = (quest: Quest, objective: Objective): boolean => {
+      //   const oldBal = getBalanceOf(quest.id, objective);
+      //   const currBal = getBalanceOf(data.account.id, objective);
+      //   const delta = objective.balance ? objective.balance : 0;
+      //   return delta >= currBal - oldBal;
+      // }
 
-      const checkCondition = (quest: Quest, condition: Condition): boolean => {
-        switch (condition.logic) {
-          case 'CURR_MIN':
-            return checkCurrMin(condition);
-          case 'CURR_MAX':
-            return checkCurrMax(condition);
-          case 'DELTA_MIN':
-            return checkDeltaMin(quest, condition);
-          case 'DELTA_MAX':
-            return checkDeltaMax(quest, condition);
-        }
+      // const checkCondition = (quest: Quest, objective: Objective): boolean => {
+      //   switch (objective.logic) {
+      //     case 'CURR_MIN':
+      //       return checkCurrMin(objective);
+      //     case 'CURR_MAX':
+      //       return checkCurrMax(objective);
+      //     case 'DELTA_MIN':
+      //       return checkDeltaMin(quest, objective);
+      //     case 'DELTA_MAX':
+      //       return checkDeltaMax(quest, objective);
+      //   }
 
-        return false;
-      }
+      //   return false;
+      // }
 
       // check that a quest's requirements are met by this account
       const checkRequirements = (quest: Quest): boolean => {
         for (const condition of quest.requirements) {
-          if (!checkCondition(quest, condition)) {
-            return false;
-          }
+          // if (!checkCondition(quest, condition)) {
+          //   return false;
+          // }
         }
 
         return true;
@@ -196,9 +205,9 @@ export function registerQuestsModal() {
       // check that a quest's objectives are met by this account
       const checkObjectives = (quest: Quest): boolean => {
         for (const condition of quest.objectives) {
-          if (!checkCondition(quest, condition)) {
-            return false;
-          }
+          // if (!checkCondition(quest, condition)) {
+          //   return false;
+          // }
         }
 
         return true;
@@ -214,6 +223,26 @@ export function registerQuestsModal() {
         }
         return checkObjectives(quest);
       }
+
+      const getRewardText = (reward: Reward): string => {
+        console.log(reward);
+        switch (reward.target.type) {
+          case 'COIN':
+            return `${reward.target.value! * 1} $MUSU`;
+          case 'EXPERIENCE':
+            return `${reward.target.value! * 1} Experience`;
+          case 'FOOD':
+            let foodRegistryEntityIndex = queryFoodRegistry(layers, reward.target.index!);
+            let foodObject = getItem(layers, foodRegistryEntityIndex);
+            return `${reward.target.value! * 1} ${foodObject.name}`;
+          case 'REVIVE':
+            let reviveRegistryEntityIndex = queryReviveRegistry(layers, reward.target.index!);
+            let reviveObject = getItem(layers, reviveRegistryEntityIndex);
+            return `${reward.target.value! * 1} ${reviveObject.name}`;
+        }
+        return '';
+      }
+
 
       ///////////////////
       // DISPLAY
@@ -261,13 +290,43 @@ export function registerQuestsModal() {
         )
       };
 
-      const ConditionDisplay = (conditions: Condition[], type: string) => {
-        if (conditions.length == 0) return <div />;
+      const RequirementDisplay = (requirements: Requirement[]) => {
+        if (requirements.length == 0) return <div />;
         return (
           <ConditionContainer>
-            <ConditionName>{type}</ConditionName>
-            {conditions.map((condition) => (
-              <ConditionDescription>- {condition.name}</ConditionDescription>
+            <ConditionName>Requirements</ConditionName>
+            {requirements.map((requirement) => (
+              <ConditionDescription key={requirement.id}>
+                - {requirement.target.type} {requirement.logic} {requirement.target.index} {requirement.target.value}
+              </ConditionDescription>
+            ))}
+          </ConditionContainer>
+        )
+      }
+
+      const ObjectiveDisplay = (objectives: Objective[]) => {
+        if (objectives.length == 0) return <div />;
+        return (
+          <ConditionContainer>
+            <ConditionName>Objectives</ConditionName>
+            {objectives.map((objective) => (
+              <ConditionDescription key={objective.id}>
+                - {objective.name}
+              </ConditionDescription>
+            ))}
+          </ConditionContainer>
+        )
+      }
+
+      const RewardDisplay = (rewards: Reward[]) => {
+        if (rewards.length == 0) return <div />;
+        return (
+          <ConditionContainer>
+            <ConditionName>Rewards</ConditionName>
+            {rewards.map((reward) => (
+              <ConditionDescription key={reward.id}>
+                - {`${getRewardText(reward)}`}
+              </ConditionDescription>
             ))}
           </ConditionContainer>
         )
@@ -275,11 +334,11 @@ export function registerQuestsModal() {
 
       const QuestBox = (quest: Quest) => {
         return (
-          <QuestContainer>
+          <QuestContainer key={quest.id}>
             <QuestName>{quest.name}</QuestName>
             <QuestDescription>{quest.description}</QuestDescription>
-            {ConditionDisplay(quest.objectives, 'Objectives')}
-            {ConditionDisplay(quest.rewards, 'Rewards')}
+            {ObjectiveDisplay(quest.objectives)}
+            {RewardDisplay(quest.rewards)}
             {CompleteButton(quest)}
           </QuestContainer>
         )
@@ -287,12 +346,12 @@ export function registerQuestsModal() {
 
       const RegistryQuestBox = (quest: Quest) => {
         return (
-          <QuestContainer>
+          <QuestContainer key={quest.id}>
             <QuestName>{quest.name}</QuestName>
             <QuestDescription>{quest.description}</QuestDescription>
-            {ConditionDisplay(quest.requirements, 'Requirements')}
-            {ConditionDisplay(quest.objectives, 'Objectives')}
-            {ConditionDisplay(quest.rewards, 'Rewards')}
+            {RequirementDisplay(quest.requirements)}
+            {ObjectiveDisplay(quest.objectives)}
+            {RewardDisplay(quest.rewards)}
             {AcceptButton(quest)}
           </QuestContainer>
         )
@@ -317,7 +376,8 @@ export function registerQuestsModal() {
       }
 
       const RegistryQuestBoxes = () => {
-        const quests = queryQuestsX(layers, { registry: true })
+        const quests = queryQuestsX(layers, { registry: true });
+        console.log(quests);
         return quests.map((q: Quest) => {
           return (RegistryQuestBox(q))
         })

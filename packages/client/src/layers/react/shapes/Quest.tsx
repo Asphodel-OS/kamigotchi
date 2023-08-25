@@ -100,6 +100,7 @@ export const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requir
         Index,
         LogicType,
         Type,
+        Value,
       },
       world,
     },
@@ -121,7 +122,7 @@ export const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requir
 
   const typesWithValue = ["COIN", "LEVEL", "KAMI", "ROOM"];
   if (typesWithValue.indexOf(requirement.target.type) >= 0) {
-    requirement.target.value = getComponentValue(Index, entityIndex)?.value || 0 as number;
+    requirement.target.value = getComponentValue(Value, entityIndex)?.value || 0 as number;
   }
 
   return requirement;
@@ -137,6 +138,7 @@ export const getObjective = (layers: Layers, entityIndex: EntityIndex): Objectiv
         Name,
         ObjectiveIndex,
         Type,
+        Value,
       },
       world,
     },
@@ -160,7 +162,7 @@ export const getObjective = (layers: Layers, entityIndex: EntityIndex): Objectiv
 
   const typesWithValue = ["COIN", "ITEM", "NODE"];
   if (typesWithValue.indexOf(objective.target.type) >= 0) {
-    objective.target.value = getComponentValue(Index, entityIndex)?.value || 0 as number;
+    objective.target.value = getComponentValue(Value, entityIndex)?.value || 0 as number;
   }
 
   return objective;
@@ -173,6 +175,7 @@ export const getReward = (layers: Layers, entityIndex: EntityIndex): Reward => {
       components: {
         Index,
         Type,
+        Value,
       },
       world,
     },
@@ -193,7 +196,7 @@ export const getReward = (layers: Layers, entityIndex: EntityIndex): Reward => {
 
   const typesWithValue = ["COIN", "EXPERIENCE", "FOOD", "REVIVE", "MOD", "EQUIP"];
   if (typesWithValue.indexOf(reward.target.type) >= 0) {
-    reward.target.value = getComponentValue(Index, entityIndex)?.value || 0 as number;
+    reward.target.value = getComponentValue(Value, entityIndex)?.value || 0 as number;
   }
 
   return reward;
