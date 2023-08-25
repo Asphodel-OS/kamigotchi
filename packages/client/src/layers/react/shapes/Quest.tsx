@@ -20,28 +20,43 @@ export interface Quest {
   name: string;
   description: string;
   complete: boolean;
-  requirements: Condition[];
-  objectives: Condition[];
-  rewards: Condition[];
+  requirements: Requirement[];
+  objectives: Objective[];
+  rewards: Reward[];
 }
 
-export interface Condition {
-  id: EntityID;
-  name: string;
+// the Target of a Condition (Objective, Requirement, Reward)
+export interface Target {
   type: string;
-  logic: string;
-  balance?: number;
-  itemIndex?: number;
-}
-
-export interface QueryOptions {
-  account?: EntityID;
-  completed?: boolean;
   index?: number;
-  registry?: boolean;
+  value?: number;
 }
 
-export const getQuest = (layers: Layers, index: EntityIndex): Quest => {
+export interface Objective {
+  id: EntityID;
+  index: number;
+  name: string;
+  logic: string;
+  target: Target;
+}
+
+export interface Requirement {
+  id: EntityID;
+  logic?: string;
+  target: Target;
+}
+
+export interface Reward {
+  id: EntityID;
+  target: Target;
+}
+
+
+////////////////
+// SHAPE GETTERS
+
+// Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
+export const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
   const {
     network: {
       components: {
@@ -56,7 +71,7 @@ export const getQuest = (layers: Layers, index: EntityIndex): Quest => {
     },
   } = layers;
 
-  const questIndex = getComponentValue(QuestIndex, index)?.value || 0 as number;
+  const questIndex = getComponentValue(QuestIndex, entityIndex)?.value || 0 as number;
   const registryIndex = Array.from(
     runQuery([
       Has(IsRegistry),
@@ -66,25 +81,24 @@ export const getQuest = (layers: Layers, index: EntityIndex): Quest => {
   )[0];
 
   return {
-    id: world.entities[index],
+    id: world.entities[entityIndex],
     index: questIndex,
     name: getComponentValue(Name, registryIndex)?.value || '' as string,
     description: getComponentValue(Description, registryIndex)?.value || '' as string,
-    complete: hasComponent(IsComplete, index) || false as boolean,
-    requirements: getRequirements(layers, questIndex),
-    objectives: getObjectives(layers, questIndex),
-    rewards: getRewards(layers, questIndex),
+    complete: hasComponent(IsComplete, entityIndex) || false as boolean,
+    requirements: queryQuestRequirements(layers, questIndex),
+    objectives: queryQuestObjectives(layers, questIndex),
+    rewards: queryQuestRewards(layers, questIndex),
   };
 }
 
-export const getCondition = (layers: Layers, index: EntityIndex): Condition => {
+// Get a Requirement Registry object
+export const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requirement => {
   const {
     network: {
       components: {
-        Balance,
-        Coin,
+        Index,
         LogicType,
-        Name,
         Type,
       },
       world,
@@ -92,102 +106,111 @@ export const getCondition = (layers: Layers, index: EntityIndex): Condition => {
   } = layers;
 
 
-  let condition: Condition = {
-    id: world.entities[index],
-    name: getComponentValue(Name, index)?.value || '' as string,
-    type: getComponentValue(Type, index)?.value || '' as string,
-    logic: getComponentValue(LogicType, index)?.value || '' as string,
+  let requirement: Requirement = {
+    id: world.entities[entityIndex],
+    logic: getComponentValue(LogicType, entityIndex)?.value || '' as string,
+    target: {
+      type: getComponentValue(Type, entityIndex)?.value || '' as string,
+    },
   }
 
-  // get balance, if any
-  switch (condition.type) {
-    case "COIN":
-      condition.balance = getComponentValue(Coin, index)?.value || 0 as number;
-      break;
-    case "FUNG_INVENTORY":
-      // getting itemIndex - conditions can only have 1 inventory
-      const inv = queryInventoryX(layers, { owner: condition.id })[0];
-      condition.balance = inv.balance;
-      condition.itemIndex = inv.item.index;
-      break;
+  const typesWithIndex = ["QUEST"];
+  if (typesWithIndex.indexOf(requirement.target.type) >= 0) {
+    requirement.target.index = getComponentValue(Index, entityIndex)?.value || 0 as number;
   }
 
-  return condition;
+  const typesWithValue = ["COIN", "LEVEL", "KAMI", "ROOM"];
+  if (typesWithValue.indexOf(requirement.target.type) >= 0) {
+    requirement.target.value = getComponentValue(Index, entityIndex)?.value || 0 as number;
+  }
+
+  return requirement;
 }
 
-/////////////////////
-// SPECIFIC QUERIES
-
-export const getRewards = (layers: Layers, index: number): Condition[] => {
+// Get an Objective Registry object
+export const getObjective = (layers: Layers, entityIndex: EntityIndex): Objective => {
   const {
     network: {
       components: {
-        IsReward,
-        QuestIndex,
+        Index,
+        LogicType,
+        Name,
+        ObjectiveIndex,
+        Type,
       },
-    },
-  } = layers;
-
-  const raw = Array.from(
-    runQuery([
-      Has(IsReward),
-      HasValue(QuestIndex, { value: index })
-    ])
-  );
-
-  return raw.map(
-    (index): Condition => getCondition(layers, index)
-  );
-}
-
-export const getRequirements = (layers: Layers, index: number): Condition[] => {
-  const {
-    network: {
-      components: {
-        IsRequirement,
-        QuestIndex,
-      },
+      world,
     },
   } = layers;
 
 
-  const raw = Array.from(
-    runQuery([
-      Has(IsRequirement),
-      HasValue(QuestIndex, { value: index })
-    ])
-  );
+  let objective: Objective = {
+    id: world.entities[entityIndex],
+    index: getComponentValue(ObjectiveIndex, entityIndex)?.value || 0 as number,
+    name: getComponentValue(Name, entityIndex)?.value || '' as string,
+    logic: getComponentValue(LogicType, entityIndex)?.value || '' as string,
+    target: {
+      type: getComponentValue(Type, entityIndex)?.value || '' as string,
+    },
+  }
 
-  return raw.map(
-    (index): Condition => getCondition(layers, index)
-  );
+  const typesWithIndex = ["ITEM", "NODE", "NPC", "ROOM"];
+  if (typesWithIndex.indexOf(objective.target.type) >= 0) {
+    objective.target.index = getComponentValue(Index, entityIndex)?.value || 0 as number;
+  }
+
+  const typesWithValue = ["COIN", "ITEM", "NODE"];
+  if (typesWithValue.indexOf(objective.target.type) >= 0) {
+    objective.target.value = getComponentValue(Index, entityIndex)?.value || 0 as number;
+  }
+
+  return objective;
 }
 
-export const getObjectives = (layers: Layers, index: number): Condition[] => {
+// Get a Reward Registry object
+export const getReward = (layers: Layers, entityIndex: EntityIndex): Reward => {
   const {
     network: {
       components: {
-        IsObjective,
-        QuestIndex,
+        Index,
+        Type,
       },
+      world,
     },
   } = layers;
 
-  const raw = Array.from(
-    runQuery([
-      Has(IsObjective),
-      HasValue(QuestIndex, { value: index })
-    ])
-  );
 
-  return raw.map(
-    (index): Condition => getCondition(layers, index)
-  );
+  let reward: Reward = {
+    id: world.entities[entityIndex],
+    target: {
+      type: getComponentValue(Type, entityIndex)?.value || '' as string,
+    },
+  }
+
+  const typesWithIndex = ["FOOD", "REVIVE", "MOD", "EQUIP"];
+  if (typesWithIndex.indexOf(reward.target.type) >= 0) {
+    reward.target.index = getComponentValue(Index, entityIndex)?.value || 0 as number;
+  }
+
+  const typesWithValue = ["COIN", "EXPERIENCE", "FOOD", "REVIVE", "MOD", "EQUIP"];
+  if (typesWithValue.indexOf(reward.target.type) >= 0) {
+    reward.target.value = getComponentValue(Index, entityIndex)?.value || 0 as number;
+  }
+
+  return reward;
+
 }
 
-/////////////////////
-// GENERAL QUERIES
+/////////////////
+// QUERIES
 
+export interface QueryOptions {
+  account?: EntityID;
+  completed?: boolean;
+  index?: number;
+  registry?: boolean;
+}
+
+// Query for Entity Indices of Quests, depending on the options provided
 export const queryQuestsX = (
   layers: Layers,
   options: QueryOptions,
@@ -234,3 +257,66 @@ export const queryQuestsX = (
     (index): Quest => getQuest(layers, index)
   );
 }
+
+// Get the Entity Indices of the Requirements of a Quest
+const queryQuestRequirements = (layers: Layers, questIndex: number): Requirement[] => {
+  const {
+    network: {
+      components: { IsRegistry, IsRequirement, QuestIndex },
+    },
+  } = layers;
+
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      Has(IsRequirement),
+      HasValue(QuestIndex, { value: questIndex })
+    ])
+  );
+
+  return entityIndices.map(
+    (entityIndex): Requirement => getRequirement(layers, entityIndex)
+  );
+}
+
+// Get the Entity Indices of the Objectives of a Quest
+const queryQuestObjectives = (layers: Layers, questIndex: number): Objective[] => {
+  const {
+    network: {
+      components: { IsObjective, IsRegistry, QuestIndex },
+    },
+  } = layers;
+
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      Has(IsObjective),
+      HasValue(QuestIndex, { value: questIndex })
+    ])
+  );
+
+  return entityIndices.map((index): Objective => getObjective(layers, index));
+}
+
+// Get the Entity Indices of the Rewards of a Quest
+const queryQuestRewards = (layers: Layers, questIndex: number): Reward[] => {
+  const {
+    network: {
+      components: { IsRegistry, IsReward, QuestIndex },
+    },
+  } = layers;
+
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      Has(IsReward),
+      HasValue(QuestIndex, { value: questIndex })
+    ])
+  );
+
+  return entityIndices.map(
+    (entityIndex): Reward => getReward(layers, entityIndex)
+  );
+}
+
+

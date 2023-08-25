@@ -70,6 +70,7 @@ export function createComponents(world: World) {
     TargetID: defineStringEZ("TargetID", "component.Id.Target"),
 
     // Indices
+    Index: defineNumberEZ("Index", "component.Index"), // generic index
     BackgroundIndex: defineNumberEZ("BackgroundIndex", "component.Index.Background"),
     BodyIndex: defineNumberEZ("BodyIndex", "component.Index.Body"),
     ColorIndex: defineNumberEZ("ColorIndex", "component.Index.Color"),
