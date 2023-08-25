@@ -56,7 +56,11 @@ contract Pet721RevealSystem is System {
     uint256 packed = LibPet721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 
     string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
-    LibPet.reveal(components, petID, LibString.concat(_baseURI, LibString.toString(packed)));
+    string memory uri = LibString.concat(
+      _baseURI,
+      LibString.concat(LibString.toString(packed), ".gif")
+    );
+    LibPet.reveal(components, petID, uri);
 
     return "";
   }
