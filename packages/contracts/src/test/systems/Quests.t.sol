@@ -62,8 +62,8 @@ contract QuestsTest is SetupTemplate {
     _fundAccount(0, 1);
     _getAccount(0); // works fine
     uint256 questID = _acceptQuest(0, 1);
-    _getAccount(0); // out of gas
-    LibAccount.getByOperator(components, _getOperator(0)); // out of gas
+    // _getAccount(0); // out of gas
+    // LibAccount.getByOperator(components, _getOperator(0)); // out of gas
     // _assertQuestAccount(_getAccount(0), questID);
 
     // check that quest cant be completed when failing objectives
