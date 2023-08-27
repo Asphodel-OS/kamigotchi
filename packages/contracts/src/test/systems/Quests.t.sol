@@ -60,9 +60,11 @@ contract QuestsTest is SetupTemplate {
 
     // give the account the required coin, check if quest assigned
     _fundAccount(0, 1);
+    _getAccount(0); // works fine
     uint256 questID = _acceptQuest(0, 1);
+    _getAccount(0); // out of gas
+    LibAccount.getByOperator(components, _getOperator(0)); // out of gas
     // _assertQuestAccount(_getAccount(0), questID);
-    // assertEq(LibCoin.get(components, questID), 1);
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
@@ -84,5 +86,6 @@ contract QuestsTest is SetupTemplate {
 
     // check coin reward distributed correctly
     // assertEq(LibCoin.get(components, _getAccount(0)), 12);
+    // _getAccount(0);
   }
 }

@@ -107,7 +107,7 @@ library LibQuests {
     uint256 questID,
     uint256 conditionID,
     uint256 accountID
-  ) internal returns (uint256 id) {
+  ) internal returns (uint256) {
     string memory _type = getType(components, conditionID);
     string memory logicType = getLogicType(components, conditionID);
     uint256 itemIndex = getIndex(components, conditionID);
@@ -115,7 +115,7 @@ library LibQuests {
     uint256 amount = getAccBal(components, accountID, itemIndex, _type);
 
     // copy an objective
-    id = world.getUniqueEntityId();
+    uint256 id = world.getUniqueEntityId();
     setIsObjective(components, id);
     setLogicType(components, id, logicType);
     setType(components, id, _type);
