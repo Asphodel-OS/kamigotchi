@@ -73,6 +73,11 @@
         },
         {
           "internalType": "string",
+          "name": "logicType",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
           "name": "type_",
           "type": "string"
         },
@@ -127,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,uint256,uint256)": "0f436531",
+    "executeTyped(uint256,string,string,uint256,uint256)": "c39b6f69",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

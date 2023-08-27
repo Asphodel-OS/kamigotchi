@@ -31,7 +31,7 @@ export interface _RegistryCreateQuestRequirementSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,string,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,6 +52,7 @@ export interface _RegistryCreateQuestRequirementSystemInterface
     functionFragment: "executeTyped",
     values: [
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -127,6 +128,7 @@ export interface _RegistryCreateQuestRequirementSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
@@ -148,6 +150,7 @@ export interface _RegistryCreateQuestRequirementSystem extends BaseContract {
 
   executeTyped(
     questIndex: PromiseOrValue<BigNumberish>,
+    logicType: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
     index: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BigNumberish>,
@@ -169,6 +172,7 @@ export interface _RegistryCreateQuestRequirementSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
@@ -202,6 +206,7 @@ export interface _RegistryCreateQuestRequirementSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
@@ -224,6 +229,7 @@ export interface _RegistryCreateQuestRequirementSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
+      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,

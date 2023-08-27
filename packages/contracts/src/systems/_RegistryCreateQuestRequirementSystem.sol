@@ -15,10 +15,13 @@ contract _RegistryCreateQuestRequirementSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 questIndex, string memory type_, uint256 index, uint256 value) = abi.decode(
-      arguments,
-      (uint256, string, uint256, uint256)
-    );
+    (
+      uint256 questIndex,
+      string memory logicType,
+      string memory type_,
+      uint256 index,
+      uint256 value
+    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256));
 
     // check that the quest exists
     uint256 questID = LibRegistryQuests.getByQuestIndex(components, questIndex);
@@ -26,7 +29,13 @@ contract _RegistryCreateQuestRequirementSystem is System {
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
     // create an empty Quest Requirement and set any non-zero fields
-    uint256 id = LibRegistryQuests.createEmptyRequirement(world, components, questIndex, type_);
+    uint256 id = LibRegistryQuests.createEmptyRequirement(
+      world,
+      components,
+      questIndex,
+      logicType,
+      type_
+    );
     if (index != 0) LibRegistryQuests.setIndex(components, id, index);
     if (value != 0) LibRegistryQuests.setValue(components, id, value);
 
@@ -35,6 +44,7 @@ contract _RegistryCreateQuestRequirementSystem is System {
 
   function executeTyped(
     uint256 questIndex,
+    string memory logicType,
     string memory type_,
     uint256 index,
     uint256 value

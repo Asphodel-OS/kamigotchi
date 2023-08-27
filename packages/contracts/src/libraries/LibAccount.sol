@@ -8,6 +8,8 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
 import { IsAccountComponent, ID as IsAccountCompID } from "components/IsAccountComponent.sol";
+import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
+import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
@@ -16,6 +18,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
@@ -240,5 +243,21 @@ library LibAccount {
 
     uint256[] memory results = LibQuery.query(fragments);
     return (results.length > 0) ? results[0] : 0;
+  }
+
+  // Get pets owned
+  function getPetsOwned(
+    IUintComp components,
+    uint256 accountID
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdAccountCompID),
+      abi.encode(accountID)
+    );
+
+    return LibQuery.query(fragments);
   }
 }

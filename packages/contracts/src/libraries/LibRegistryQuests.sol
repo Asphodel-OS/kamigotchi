@@ -60,6 +60,7 @@ library LibRegistryQuests {
     IUintComp components,
     uint256 questIndex,
     string memory name, // this is a crutch to help FE, ideally we drop this
+    string memory logicType,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -67,6 +68,7 @@ library LibRegistryQuests {
     setIsObjective(components, id);
     setQuestIndex(components, id, questIndex);
     setName(components, id, name);
+    setLogicType(components, id, logicType);
     setType(components, id, type_);
 
     uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
@@ -78,12 +80,14 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 questIndex,
+    string memory logicType,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setQuestIndex(components, id, questIndex);
+    setLogicType(components, id, logicType);
     setType(components, id, type_);
     return id;
   }

@@ -31,8 +31,14 @@ contract _RegistryCreateQuestObjectiveSystem is System {
     require(!LibString.eq(type_, ""), "Quest Objective type cannot be empty");
 
     // create an empty Quest Objective and set any non-zero fields
-    uint256 id = LibRegistryQuests.createEmptyObjective(world, components, questIndex, name, type_);
-    if (!LibString.eq(logicType, "")) LibRegistryQuests.setLogicType(components, id, logicType);
+    uint256 id = LibRegistryQuests.createEmptyObjective(
+      world,
+      components,
+      questIndex,
+      name,
+      logicType,
+      type_
+    );
     if (index != 0) LibRegistryQuests.setIndex(components, id, index);
     if (value != 0) LibRegistryQuests.setValue(components, id, value);
 

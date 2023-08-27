@@ -9,19 +9,36 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IdHolderComponent, ID as HolderCompID } from "components/IdHolderComponent.sol";
+import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { IsCompleteComponent, ID as CompletionCompID } from "components/IsCompleteComponent.sol";
+import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 import { LibString } from "solady/utils/LibString.sol";
+
+enum LOGIC {
+  MIN,
+  MAX,
+  EQUAL
+}
+
+enum HANDLER {
+  CURRENT,
+  INCREASE,
+  DECREASE
+}
 
 /*
  * LibQuests handles quests!
@@ -61,9 +78,9 @@ library LibQuests {
     );
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      // unsure if using string operations is the best practice here
-      if (LibString.startsWith(logicType, "DELTA")) {
-        snapshotCondition(world, components, id, objectives[i], accountID);
+      (HANDLER handler, ) = parseObjectiveLogic(logicType);
+      if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
+        snapshotObjective(world, components, id, objectives[i], accountID);
       }
     }
   }
@@ -84,7 +101,7 @@ library LibQuests {
 
   // snapshots current state of an account for required fields, if needed
   // stores child entities, eg inventory, on the quest entity itself
-  function snapshotCondition(
+  function snapshotObjective(
     IWorld world,
     IUintComp components,
     uint256 questID,
@@ -92,34 +109,37 @@ library LibQuests {
     uint256 accountID
   ) internal returns (uint256 id) {
     string memory _type = getType(components, conditionID);
-    uint256 itemIndex;
-    if (LibString.eq(_type, "FUNG_INVENTORY")) {
-      // conditions only can hold 1 inventory type
-      uint256 invID = LibInventory.getAllForHolder(components, conditionID)[0];
-      itemIndex = LibInventory.getItemIndex(components, invID);
-    }
+    string memory logicType = getLogicType(components, conditionID);
+    uint256 itemIndex = getIndex(components, conditionID);
 
-    uint256 amount = getBalanceOf(components, accountID, itemIndex, _type);
+    uint256 amount = getAccBal(components, accountID, itemIndex, _type);
 
-    // setting values. since quest is a new entity, create a new inventory for each type
-    if (LibString.eq(_type, "FUNG_INVENTORY")) {
-      uint256 invID = LibInventory.create(world, components, questID, itemIndex);
-      LibInventory.inc(components, invID, amount);
-    } else if (LibString.eq(_type, "COIN")) {
-      LibCoin._set(components, questID, amount);
-    } else {
-      require(false, "Quests: unknown type");
+    // copy an objective
+    id = world.getUniqueEntityId();
+    setIsObjective(components, id);
+    setLogicType(components, id, logicType);
+    setType(components, id, _type);
+    setHolderId(components, id, questID);
+    if (hasIndex(components, conditionID)) {
+      setIndex(components, id, getIndex(components, conditionID));
     }
+    setValue(components, id, amount);
   }
 
-  /////////////////
-  // CONDITIONS CHECK
-
+  // splits based on logicType. requirements are simpler than objectives
+  // list of logicTypes:
+  // AT: equal, current location
+  // COMPLETE: equal, if index is completed
+  // HAVE: min current balance
+  // GREATER: min current balance
+  // LESSER: max current balance
+  // EQUAL: equal current balance
+  // USE: min current balance, but consumes resource
   function checkRequirements(
     IUintComp components,
     uint256 questID,
     uint256 accountID
-  ) internal view returns (bool result) {
+  ) internal returns (bool) {
     uint256 questIndex = getQuestIndex(components, questID);
 
     uint256[] memory requirements = LibRegistryQuests.getRequirementsByQuestIndex(
@@ -127,18 +147,49 @@ library LibQuests {
       questIndex
     );
 
-    if (requirements.length == 0) {
-      return true;
+    for (uint256 i; i < requirements.length; i++) {
+      string memory logicType = getLogicType(components, requirements[i]);
+      bool result;
+
+      if (LibString.eq(logicType, "AT")) {
+        result = checkCurrent(components, requirements[i], accountID, LOGIC.EQUAL);
+      } else if (LibString.eq(logicType, "COMPLETE")) {
+        result = checkCurrent(components, requirements[i], accountID, LOGIC.EQUAL);
+      } else if (LibString.eq(logicType, "HAVE")) {
+        result = checkCurrent(components, requirements[i], accountID, LOGIC.MIN);
+      } else if (LibString.eq(logicType, "GREATER")) {
+        result = checkCurrent(components, requirements[i], accountID, LOGIC.MIN);
+      } else if (LibString.eq(logicType, "LESSER")) {
+        result = checkCurrent(components, requirements[i], accountID, LOGIC.MAX);
+      } else if (LibString.eq(logicType, "EQUAL")) {
+        result = checkCurrent(components, requirements[i], accountID, LOGIC.EQUAL);
+      } else if (LibString.eq(logicType, "USE")) {
+        result = checkUseCurrent(components, requirements[i], accountID, LOGIC.MIN);
+        // TODO: implement use logic
+      } else {
+        require(false, "Unknown condition logic type");
+      }
+
+      if (!result) {
+        return false;
+      }
     }
 
-    return checkConditions(components, questID, accountID, requirements);
+    return true;
   }
 
+  // splits based on logicType. list of logicTypes:
+  // AT: equal, current location
+  // BUY: min delta increase, shop items
+  // HAVE: min current balance
+  // GATHER: min delta increase, $MUSU
+  // MINT: min delta increase, Pets (721)
+  // USE: min delta decrease, shop items
   function checkObjectives(
     IUintComp components,
     uint256 questID,
     uint256 accountID
-  ) internal view returns (bool result) {
+  ) internal view returns (bool) {
     uint256 questIndex = getQuestIndex(components, questID);
 
     uint256[] memory objectives = LibRegistryQuests.getObjectivesByQuestIndex(
@@ -146,132 +197,29 @@ library LibQuests {
       questIndex
     );
 
-    if (objectives.length == 0) {
-      return true;
-    }
+    for (uint256 i; i < objectives.length; i++) {
+      string memory logicType = getLogicType(components, objectives[i]);
+      bool result;
 
-    return checkConditions(components, questID, accountID, objectives);
-  }
+      (HANDLER handler, LOGIC operator) = parseObjectiveLogic(logicType);
 
-  // checks if conditions are fufilled, AND logic
-  function checkConditions(
-    IUintComp components,
-    uint256 questID,
-    uint256 accountID,
-    uint256[] memory conditions
-  ) internal view returns (bool result) {
-    for (uint256 i = 0; i < conditions.length; i++) {
-      string memory logicType = getLogicType(components, conditions[i]);
-      if (LibString.eq(logicType, "CURR_MIN")) {
-        result = checkCurrMin(components, conditions[i], accountID);
-      } else if (LibString.eq(logicType, "CURR_MAX")) {
-        result = checkCurrMax(components, conditions[i], accountID);
-      } else if (LibString.eq(logicType, "DELTA_MIN")) {
-        result = checkDeltaMin(components, conditions[i], questID, accountID);
-      } else if (LibString.eq(logicType, "DELTA_MAX")) {
-        result = checkDeltaMax(components, conditions[i], questID, accountID);
+      if (handler == HANDLER.CURRENT) {
+        result = checkCurrent(components, objectives[i], accountID, operator);
+      } else if (handler == HANDLER.INCREASE) {
+        result = checkIncrease(components, objectives[i], questID, accountID, operator);
+      } else if (handler == HANDLER.DECREASE) {
+        result = checkDecrease(components, objectives[i], questID, accountID, operator);
       } else {
-        require(false, "Unknown condition logic type");
+        require(false, "Unknown condition handler");
       }
 
-      // break if false
       if (!result) {
-        break;
+        return false;
       }
     }
-    return result;
+
+    return true;
   }
-
-  function checkCurrMin(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 accountID
-  ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint256 itemIndex;
-    if (isType(components, conditionID, "FUNG_INVENTORY")) {
-      // conditions only can hold 1 inventory type
-      uint256 invID = LibInventory.getAllForHolder(components, conditionID)[0];
-      itemIndex = LibInventory.getItemIndex(components, invID);
-    }
-    uint256 minBal = getBalanceOf(components, conditionID, itemIndex, _type);
-
-    // check account
-    uint256 accountValue = getBalanceOf(components, accountID, itemIndex, _type);
-
-    return accountValue >= minBal;
-  }
-
-  function checkCurrMax(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 accountID
-  ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint256 itemIndex;
-    if (isType(components, conditionID, "FUNG_INVENTORY")) {
-      // conditions only can hold 1 inventory type
-      uint256 invID = LibInventory.getAllForHolder(components, conditionID)[0];
-      itemIndex = LibInventory.getItemIndex(components, invID);
-    }
-    uint256 maxBal = getBalanceOf(components, conditionID, itemIndex, _type);
-
-    // check account
-    uint256 accountValue = getBalanceOf(components, accountID, itemIndex, _type);
-
-    return accountValue <= maxBal;
-  }
-
-  function checkDeltaMin(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 questID,
-    uint256 accountID
-  ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint256 itemIndex;
-    if (isType(components, conditionID, "FUNG_INVENTORY")) {
-      // conditions only can hold 1 inventory type
-      uint256 invID = LibInventory.getAllForHolder(components, conditionID)[0];
-      itemIndex = LibInventory.getItemIndex(components, invID);
-    }
-    uint256 delta = getBalanceOf(components, conditionID, itemIndex, _type);
-
-    // check account
-    uint256 currValue = getBalanceOf(components, accountID, itemIndex, _type);
-    uint256 prevValue = getBalanceOf(components, questID, itemIndex, _type);
-
-    return delta <= currValue - prevValue;
-  }
-
-  function checkDeltaMax(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 questID,
-    uint256 accountID
-  ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint256 itemIndex;
-    if (isType(components, conditionID, "FUNG_INVENTORY")) {
-      // conditions only can hold 1 inventory type
-      uint256 invID = LibInventory.getAllForHolder(components, conditionID)[0];
-      itemIndex = LibInventory.getItemIndex(components, invID);
-    }
-    uint256 delta = getBalanceOf(components, conditionID, itemIndex, _type);
-
-    // check account
-    uint256 currValue = getBalanceOf(components, accountID, itemIndex, _type);
-    uint256 prevValue = getBalanceOf(components, questID, itemIndex, _type);
-
-    return delta >= currValue - prevValue;
-  }
-
-  /////////////////
-  // REWARDS DISTRIBUTION
 
   function distributeRewards(
     IWorld world,
@@ -282,46 +230,106 @@ library LibQuests {
     uint256[] memory rewards = LibRegistryQuests.getRewardsByQuestIndex(components, questIndex);
 
     for (uint256 i = 0; i < rewards.length; i++) {
-      string memory logicType = getType(components, rewards[i]);
-      if (isLogicType(components, rewards[i], "INC")) {
-        incBalOf(world, components, accountID, rewards[i]);
-      } else {
-        require(false, "Unknown reward logic type");
-      }
+      string memory _type = getType(components, rewards[i]);
+      uint256 itemIndex = getIndex(components, rewards[i]);
+      uint256 amount = getValue(components, rewards[i]);
+
+      incAccBal(world, components, accountID, amount, itemIndex, _type);
     }
   }
 
-  function incBalOf(
-    IWorld world,
+  function checkCurrent(
     IUintComp components,
+    uint256 conditionID,
     uint256 accountID,
-    uint256 rewardID
-  ) internal {
-    string memory _type = getType(components, rewardID);
-    uint256 itemIndex;
-    if (isType(components, rewardID, "FUNG_INVENTORY")) {
-      // conditions only can hold 1 inventory type
-      uint256 invID = LibInventory.getAllForHolder(components, rewardID)[0];
-      itemIndex = LibInventory.getItemIndex(components, invID);
+    LOGIC logic
+  ) internal view returns (bool) {
+    // details of condition
+    string memory _type = getType(components, conditionID);
+    uint256 itemIndex = getIndex(components, conditionID);
+    uint256 expected = getValue(components, conditionID);
+
+    // check account
+    uint256 accountValue = getAccBal(components, accountID, itemIndex, _type);
+
+    return checkLogicOperator(accountValue, expected, logic);
+  }
+
+  function checkUseCurrent(
+    IUintComp components,
+    uint256 conditionID,
+    uint256 accountID,
+    LOGIC logic
+  ) internal returns (bool) {
+    // details of condition
+    string memory _type = getType(components, conditionID);
+    uint256 itemIndex = getIndex(components, conditionID);
+    uint256 expected = getValue(components, conditionID);
+
+    // check account
+    uint256 accountValue = getAccBal(components, accountID, itemIndex, _type);
+
+    // TODO: implement use logic
+
+    return checkLogicOperator(accountValue, expected, logic);
+  }
+
+  function checkIncrease(
+    IUintComp components,
+    uint256 conditionID,
+    uint256 questID,
+    uint256 accountID,
+    LOGIC logic
+  ) internal view returns (bool) {
+    // details of condition
+    string memory _type = getType(components, conditionID);
+    uint256 itemIndex = getIndex(components, conditionID);
+
+    uint256 delta = getValue(components, conditionID);
+    uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
+    uint256 prevValue = getValue(components, snapshotID);
+
+    uint256 currValue = getAccBal(components, accountID, itemIndex, _type);
+
+    // overall value decreased - condition not be met, will overflow if checked
+    if (prevValue > currValue) {
+      return false;
     }
 
-    uint256 amount = getBalanceOf(components, rewardID, itemIndex, _type);
+    return checkLogicOperator(delta, currValue - prevValue, logic);
+  }
 
-    if (isType(components, rewardID, "COIN")) {
-      LibCoin.inc(components, accountID, amount);
-    } else if (isType(components, rewardID, "FUNG_INVENTORY")) {
-      uint256 invID = LibInventory.get(components, accountID, itemIndex);
-      if (invID == 0) {
-        invID = LibInventory.create(world, components, accountID, itemIndex);
-      }
-      LibInventory.inc(components, invID, amount);
-    } else {
-      require(false, "Unknown reward type");
+  function checkDecrease(
+    IUintComp components,
+    uint256 conditionID,
+    uint256 questID,
+    uint256 accountID,
+    LOGIC logic
+  ) internal view returns (bool) {
+    // details of condition
+    string memory _type = getType(components, conditionID);
+    uint256 itemIndex = getIndex(components, conditionID);
+
+    uint256 delta = getValue(components, conditionID);
+    uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
+    uint256 prevValue = getValue(components, snapshotID);
+
+    uint256 currValue = getAccBal(components, accountID, itemIndex, _type);
+
+    // overall value increased - condition not be met, will overflow if checked
+    if (currValue > prevValue) {
+      return false;
     }
+
+    return checkLogicOperator(delta, prevValue - currValue, logic);
   }
 
   /////////////////
   // CHECKERS
+
+  function hasIndex(IUintComp components, uint256 id) internal view returns (bool) {
+    return IndexComponent(getAddressById(components, IndexCompID)).has(id);
+  }
 
   function isQuest(IUintComp components, uint256 id) internal view returns (bool) {
     return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(id);
@@ -335,16 +343,27 @@ library LibQuests {
     return TypeComponent(getAddressById(components, TypeCompID)).hasValue(id, _type);
   }
 
-  function isLogicType(
-    IUintComp components,
-    uint256 id,
-    string memory _type
-  ) internal view returns (bool) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).hasValue(id, _type);
-  }
-
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
     return IsCompleteComponent(getAddressById(components, CompletionCompID)).has(id);
+  }
+
+  function isTypeInventory(string memory _type) internal pure returns (bool) {
+    return (LibString.eq(_type, "EQUIP") ||
+      LibString.eq(_type, "FOOD") ||
+      LibString.eq(_type, "REVIVE") ||
+      LibString.eq(_type, "MOD"));
+  }
+
+  function checkLogicOperator(uint256 a, uint256 b, LOGIC logic) internal pure returns (bool) {
+    if (logic == LOGIC.MIN) {
+      return a >= b;
+    } else if (logic == LOGIC.MAX) {
+      return a <= b;
+    } else if (logic == LOGIC.EQUAL) {
+      return a == b;
+    } else {
+      require(false, "Unknown logic operator");
+    }
   }
 
   /////////////////
@@ -358,8 +377,24 @@ library LibQuests {
     IsCompleteComponent(getAddressById(components, CompletionCompID)).set(id);
   }
 
+  function setHolderId(IUintComp components, uint256 id, uint256 holderID) internal {
+    IdHolderComponent(getAddressById(components, HolderCompID)).set(id, holderID);
+  }
+
   function setIsQuest(IUintComp components, uint256 id) internal {
     IsQuestComponent(getAddressById(components, IsQuestCompID)).set(id);
+  }
+
+  function setIsObjective(IUintComp components, uint256 id) internal {
+    IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).set(id);
+  }
+
+  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
+  }
+
+  function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
+    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
   }
 
   function setQuestIndex(IUintComp components, uint256 id, uint256 index) internal {
@@ -368,6 +403,14 @@ library LibQuests {
 
   function setTimeStart(IUintComp components, uint256 id, uint256 time) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, time);
+  }
+
+  function setType(IUintComp components, uint256 id, string memory type_) internal {
+    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
+  }
+
+  function setValue(IUintComp components, uint256 id, uint256 value) internal {
+    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
   /////////////////
@@ -393,20 +436,115 @@ library LibQuests {
     return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
   }
 
-  function getBalanceOf(
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (hasIndex(components, id)) {
+      return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
+    } else {
+      return 0;
+    }
+  }
+
+  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
+    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+  }
+
+  ////////////////
+  // UTILITIES
+
+  // determins objective logic handler and operator
+  function parseObjectiveLogic(string memory _type) internal view returns (HANDLER, LOGIC) {
+    if (LibString.eq(_type, "AT")) {
+      return (HANDLER.CURRENT, LOGIC.EQUAL);
+    } else if (LibString.eq(_type, "BUY")) {
+      return (HANDLER.INCREASE, LOGIC.MIN);
+    } else if (LibString.eq(_type, "HAVE")) {
+      return (HANDLER.CURRENT, LOGIC.MIN);
+    } else if (LibString.eq(_type, "GATHER")) {
+      return (HANDLER.INCREASE, LOGIC.MIN);
+    } else if (LibString.eq(_type, "MINT")) {
+      return (HANDLER.INCREASE, LOGIC.MIN);
+    } else if (LibString.eq(_type, "USE")) {
+      return (HANDLER.DECREASE, LOGIC.MIN);
+    } else {
+      require(false, "Unknown condition logic type");
+    }
+  }
+
+  function getAccBal(
     IUintComp components,
     uint256 id,
     uint256 itemIndex,
     string memory _type
   ) internal view returns (uint256) {
-    if (keccak256(abi.encode(_type)) == keccak256(abi.encode("COIN"))) {
-      return LibCoin.get(components, id);
-    } else if (keccak256(abi.encode(_type)) == keccak256(abi.encode("FUNG_INVENTORY"))) {
+    if (isTypeInventory(_type)) {
       uint256 invID = LibInventory.get(components, id, itemIndex);
       if (invID == 0) return 0;
       else return LibInventory.getBalance(components, invID);
+    } else if (LibString.eq(_type, "COIN")) {
+      return LibCoin.get(components, id);
     } else {
       require(false, "Unknown type");
     }
+  }
+
+  function incAccBal(
+    IWorld world,
+    IUintComp components,
+    uint256 targetID,
+    uint256 amount,
+    uint256 itemIndex,
+    string memory _type
+  ) internal {
+    if (isTypeInventory(_type)) {
+      uint256 invID = LibInventory.get(components, targetID, itemIndex);
+      if (invID == 0) {
+        invID = LibInventory.create(world, components, targetID, itemIndex);
+      }
+      LibInventory.inc(components, invID, amount);
+    } else if (LibString.eq(_type, "COIN")) {
+      LibCoin.inc(components, targetID, amount);
+    } else {
+      require(false, "Unknown type");
+    }
+  }
+
+  function getSnapshotObjective(
+    IUintComp components,
+    uint256 questID,
+    uint256 conditionID
+  ) internal view returns (uint256) {
+    bool hasIndex = hasIndex(components, conditionID);
+
+    QueryFragment[] memory fragments = new QueryFragment[](hasIndex ? 5 : 4);
+    fragments[0] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsObjectiveCompID),
+      ""
+    );
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, HolderCompID),
+      abi.encode(questID)
+    );
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, TypeCompID),
+      abi.encode(getType(components, conditionID))
+    );
+    fragments[3] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, LogicTypeCompID),
+      abi.encode(getLogicType(components, conditionID))
+    );
+    if (hasIndex) {
+      fragments[4] = QueryFragment(
+        QueryType.HasValue,
+        getComponentById(components, IndexCompID),
+        abi.encode(getIndex(components, conditionID))
+      );
+    }
+
+    uint256[] memory results = LibQuery.query(fragments);
+    return results[0];
   }
 }
