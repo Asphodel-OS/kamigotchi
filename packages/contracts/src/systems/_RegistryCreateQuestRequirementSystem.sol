@@ -49,6 +49,6 @@ contract _RegistryCreateQuestRequirementSystem is System {
     uint256 index,
     uint256 value
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(questIndex, type_, index, value));
+    return execute(abi.encode(questIndex, logicType, type_, index, value));
   }
 }

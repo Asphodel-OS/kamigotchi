@@ -167,7 +167,7 @@ library LibQuests {
         result = checkUseCurrent(components, requirements[i], accountID, LOGIC.MIN);
         // TODO: implement use logic
       } else {
-        require(false, "Unknown condition logic type");
+        require(false, "Unknown requirement logic type");
       }
 
       if (!result) {
@@ -182,7 +182,7 @@ library LibQuests {
   // AT: equal, current location
   // BUY: min delta increase, shop items
   // HAVE: min current balance
-  // GATHER: min delta increase, $MUSU
+  // GATHER: min delta increase, COIN
   // MINT: min delta increase, Pets (721)
   // USE: min delta decrease, shop items
   function checkObjectives(
@@ -296,7 +296,7 @@ library LibQuests {
       return false;
     }
 
-    return checkLogicOperator(delta, currValue - prevValue, logic);
+    return checkLogicOperator(currValue - prevValue, delta, logic);
   }
 
   function checkDecrease(
@@ -321,7 +321,7 @@ library LibQuests {
       return false;
     }
 
-    return checkLogicOperator(delta, prevValue - currValue, logic);
+    return checkLogicOperator(prevValue - currValue, delta, logic);
   }
 
   /////////////////
@@ -347,7 +347,7 @@ library LibQuests {
     return IsCompleteComponent(getAddressById(components, CompletionCompID)).has(id);
   }
 
-  function isTypeInventory(string memory _type) internal pure returns (bool) {
+  function isTypeInventory(string memory _type) internal view returns (bool) {
     return (LibString.eq(_type, "EQUIP") ||
       LibString.eq(_type, "FOOD") ||
       LibString.eq(_type, "REVIVE") ||

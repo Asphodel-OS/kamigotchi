@@ -302,43 +302,54 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // REGISTRIES
 
-  function _createCondition(
+  function _createObjective(
     uint256 questIndex,
-    uint256 balance, // can be empty
-    uint256 itemIndex, // can be empty
     string memory name,
     string memory logicType,
     string memory _type,
-    string memory condType
+    uint256 index, // can be empty
+    uint256 value // can be empty
   ) public {
     vm.prank(deployer);
-    __RegistryCreateConditionSystem.executeTyped(
+    __RegistryCreateQuestObjectiveSystem.executeTyped(
       questIndex,
-      balance,
-      itemIndex,
       name,
       logicType,
       _type,
-      condType
+      index,
+      value
     );
   }
 
-  function _createQuest(uint256 index, string memory name) public {
+  function _createRequirement(
+    uint256 questIndex,
+    string memory logicType,
+    string memory _type,
+    uint256 index, // can be empty
+    uint256 value // can be empty
+  ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name);
+    __RegistryCreateQuestRequirementSystem.executeTyped(questIndex, logicType, _type, index, value);
   }
 
-  function _initBasicCoinQuest() internal {
-    // creates a very basic quest, with details:
-    // - requirements: account has 1 COIN
-    // - objectives: account to have 10 COINs
-    // - rewards: account to receive 1 COIN
+  function _createReward(
+    uint256 questIndex,
+    string memory _type,
+    uint256 itemIndex, // can be empty
+    uint256 value // can be empty
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateQuestRewardSystem.executeTyped(questIndex, _type, itemIndex, value);
+  }
 
-    _createQuest(1, "BasicCoinQuest");
-
-    _createCondition(1, 1, 0, "Have 1 COIN", "CURR_MIN", "COIN", "REQUIREMENT");
-    _createCondition(1, 10, 0, "Have 10 COINs", "CURR_MIN", "COIN", "OBJECTIVE");
-    _createCondition(1, 1, 0, "Get 1 COIN", "INC", "COIN", "REWARD");
+  function _createQuest(
+    uint256 index,
+    string memory name,
+    string memory description,
+    uint256 location
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
   }
 
   function registerTrait(
