@@ -11,7 +11,7 @@ import { LibString } from "solady/utils/LibString.sol";
 uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create.Objective"));
 
 // creates an Objective for an existing Quest (e.g. coin, item)
-// this can be based on either accrual (from quest start) or current state
+// the LogicType (verb) will depend on the Type (type of object)
 contract _RegistryCreateQuestObjectiveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -31,8 +31,14 @@ contract _RegistryCreateQuestObjectiveSystem is System {
     require(!LibString.eq(type_, ""), "Quest Objective type cannot be empty");
 
     // create an empty Quest Objective and set any non-zero fields
-    uint256 id = LibRegistryQuests.createEmptyObjective(world, components, questIndex, name, type_);
-    if (!LibString.eq(logicType, "")) LibRegistryQuests.setLogicType(components, id, logicType);
+    uint256 id = LibRegistryQuests.createEmptyObjective(
+      world,
+      components,
+      questIndex,
+      name,
+      type_,
+      logicType
+    );
     if (index != 0) LibRegistryQuests.setIndex(components, id, index);
     if (value != 0) LibRegistryQuests.setValue(components, id, value);
 

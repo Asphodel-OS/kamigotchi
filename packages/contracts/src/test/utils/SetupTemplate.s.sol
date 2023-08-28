@@ -131,7 +131,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _mintMint20(uint playerIndex, uint amount) internal {
     address owner = _owners[playerIndex];
 
-    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
+    uint price = LibConfig.getValueOf(components, "MINT_PRICE");
 
     vm.deal(owner, amount * price);
     vm.prank(owner);
@@ -213,16 +213,13 @@ abstract contract SetupTemplate is TestSetupImports {
     _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
   }
 
-  function _acceptQuest(
-    uint256 playerIndex,
-    uint256 questIndex
-  ) internal virtual returns (uint256) {
+  function _acceptQuest(uint playerIndex, uint questIndex) internal virtual returns (uint) {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
-    return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint256));
+    return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
   }
 
-  function _completeQuest(uint256 playerIndex, uint256 questID) internal virtual {
+  function _completeQuest(uint playerIndex, uint questID) internal virtual {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
     _QuestCompleteSystem.executeTyped(questID);
@@ -302,30 +299,54 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // REGISTRIES
 
-  function _createCondition(
-    uint256 questIndex,
-    uint256 balance, // can be empty
-    uint256 itemIndex, // can be empty
+  function _registerQuest(
+    uint index,
     string memory name,
-    string memory logicType,
-    string memory _type,
-    string memory condType
+    string memory description,
+    uint location
   ) public {
     vm.prank(deployer);
-    __RegistryCreateConditionSystem.executeTyped(
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
+  }
+
+  function _registerQuestRequirement(
+    uint questIndex,
+    string memory logicType,
+    string memory type_,
+    uint index,
+    uint value
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateQuestRequirementSystem.executeTyped(questIndex, logicType, type_, index, value);
+  }
+
+  function _registerQuestObjective(
+    uint questIndex,
+    string memory name,
+    string memory logicType,
+    string memory type_,
+    uint index,
+    uint value
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateQuestObjectiveSystem.executeTyped(
       questIndex,
-      balance,
-      itemIndex,
       name,
       logicType,
-      _type,
-      condType
+      type_,
+      index,
+      value
     );
   }
 
-  function _createQuest(uint256 index, string memory name) public {
+  function _registerQuestReward(
+    uint questIndex,
+    string memory type_,
+    uint index,
+    uint value
+  ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name);
+    __RegistryCreateQuestRewardSystem.executeTyped(questIndex, type_, index, value);
   }
 
   function _initBasicCoinQuest() internal {
@@ -334,11 +355,10 @@ abstract contract SetupTemplate is TestSetupImports {
     // - objectives: account to have 10 COINs
     // - rewards: account to receive 1 COIN
 
-    _createQuest(1, "BasicCoinQuest");
-
-    _createCondition(1, 1, 0, "Have 1 COIN", "CURR_MIN", "COIN", "REQUIREMENT");
-    _createCondition(1, 10, 0, "Have 10 COINs", "CURR_MIN", "COIN", "OBJECTIVE");
-    _createCondition(1, 1, 0, "Get 1 COIN", "INC", "COIN", "REWARD");
+    _registerQuest(1, "Tutorial Quest 1", "Collect some coins for Mina.", 1);
+    _registerQuestRequirement(1, "COIN", "", 0, 1);
+    _registerQuestObjective(1, "Have 10 COINs", "COIN", "HAVE", 0, 10);
+    _registerQuestReward(1, "COIN", 0, 1);
   }
 
   function registerTrait(
