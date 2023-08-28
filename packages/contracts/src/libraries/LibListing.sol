@@ -159,7 +159,20 @@ library LibListing {
     uint256 merchantIndex,
     uint256 itemIndex
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, merchantIndex, itemIndex);
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsListingCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexMerchantCompID),
+      abi.encode(merchantIndex)
+    );
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexItemCompID),
+      abi.encode(itemIndex)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) {
       result = results[0];
     }
@@ -170,37 +183,14 @@ library LibListing {
     IUintComp components,
     uint256 merchantIndex
   ) internal view returns (uint256[] memory) {
-    return _getAllX(components, merchantIndex, 0);
-  }
-
-  // Retrieves all listingsbased on any defined filters
-  function _getAllX(
-    IUintComp components,
-    uint256 merchantIndex,
-    uint256 itemIndex
-  ) internal view returns (uint256[] memory) {
-    uint256 numFilters;
-    if (merchantIndex != 0) numFilters++;
-    if (itemIndex != 0) numFilters++;
-
-    QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
+    QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsListingCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexMerchantCompID),
+      abi.encode(merchantIndex)
+    );
 
-    uint256 filterCount;
-    if (merchantIndex != 0) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexMerchantCompID),
-        abi.encode(merchantIndex)
-      );
-    }
-    if (itemIndex != 0) {
-      fragments[++filterCount] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexItemCompID),
-        abi.encode(itemIndex)
-      );
-    }
     return LibQuery.query(fragments);
   }
 }
