@@ -156,6 +156,7 @@ export function createAdminAPI(systems: any) {
   // creates a Requirement for an existing Quest
   async function addQuestRequirement(
     questIndex: number,
+    logicType: string,
     type: string,
     index: number,
     value: number
@@ -163,6 +164,7 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Registry.Quest.Create.Requirement'].executeTyped(
       questIndex,
+      logicType,
       type,
       index,
       value
