@@ -90,7 +90,7 @@ export function registerQuestsModal() {
     // NOTE: Completed and Ongoing should be straitforward to pull. we should
     // be using those + requirements to determine available quests
     ({ layers, actions, api, data }) => {
-      console.log('mQuest:', data);
+      // console.log('mQuest:', data);
       const [showCompleted, setShowCompleted] = useState(false);
       // temp: show registry for testing
       const [showRegistry, setShowRegistry] = useState(true);
@@ -225,7 +225,6 @@ export function registerQuestsModal() {
       }
 
       const getRewardText = (reward: Reward): string => {
-        console.log(reward);
         switch (reward.target.type) {
           case 'COIN':
             return `${reward.target.value! * 1} $MUSU`;
@@ -377,7 +376,6 @@ export function registerQuestsModal() {
 
       const RegistryQuestBoxes = () => {
         const quests = queryQuestsX(layers, { registry: true });
-        console.log(quests);
         return quests.map((q: Quest) => {
           return (RegistryQuestBox(q))
         })

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useCallback, useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -7,9 +6,9 @@ import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
 
+import { abi } from "abi/Pet721ProxySystem.json"
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { Stepper } from 'layers/react/components/library/Stepper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getAccountData } from 'layers/react/shapes/Data';
@@ -19,8 +18,6 @@ import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 import mintSound from 'assets/sound/fx/vending_machine.mp3';
-import { abi } from "abi/Pet721ProxySystem.json"
-import { use } from 'matter';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
 
 export function registerKamiMintModal() {
