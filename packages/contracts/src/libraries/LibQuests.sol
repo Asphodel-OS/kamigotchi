@@ -22,6 +22,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -482,6 +483,8 @@ library LibQuests {
       else return LibInventory.getBalance(components, invID);
     } else if (LibString.eq(_type, "COIN")) {
       return LibCoin.get(components, id);
+    } else if (LibString.eq(_type, "ROOM")) {
+      return LibAccount.getLocation(components, id);
     } else {
       require(false, "Unknown type");
     }
