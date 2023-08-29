@@ -81,7 +81,7 @@ const Content = styled.div`
 
   background-color: white;
   width: 99%;
-  height: 100%;
+  height: 99%;
   
   display: flex;
   flex-flow: column nowrap;
@@ -95,7 +95,7 @@ const Header = styled.div`
 `;
 
 const Children = styled.div`
-  padding: .3vw;
+  margin: .3vw;
   overflow-y: scroll;
   max-height: 100%;
   

@@ -634,6 +634,7 @@ const Underline = styled.div`
 
 const Tabs = styled.div`
   width: 100%;
+  padding: 0.2vw 0vw;
   display: flex;
   flex-flow: row nowrap;
 `;
