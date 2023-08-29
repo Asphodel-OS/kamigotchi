@@ -16,6 +16,7 @@ import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestCompone
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
+import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/IndexObjectiveComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
@@ -121,12 +122,8 @@ library LibQuests {
     // copy an objective
     uint256 id = world.getUniqueEntityId();
     setIsObjective(components, id);
-    setLogicType(components, id, logicType);
-    setType(components, id, _type);
     setHolderId(components, id, questID);
-    if (hasIndex(components, conditionID)) {
-      setIndex(components, id, getIndex(components, conditionID));
-    }
+    setObjectiveIndex(components, id, getObjectiveIndex(components, conditionID));
     setValue(components, id, amount);
   }
 
@@ -435,6 +432,10 @@ library LibQuests {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, index);
   }
 
+  function setObjectiveIndex(IUintComp components, uint256 id, uint256 index) internal {
+    IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).set(id, index);
+  }
+
   function setTimeStart(IUintComp components, uint256 id, uint256 time) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, time);
   }
@@ -456,6 +457,10 @@ library LibQuests {
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
     return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).getValue(id);
+  }
+
+  function getObjectiveIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).getValue(id);
   }
 
   function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -553,7 +558,7 @@ library LibQuests {
   ) internal view returns (uint256) {
     bool hasIndex = hasIndex(components, conditionID);
 
-    QueryFragment[] memory fragments = new QueryFragment[](hasIndex ? 5 : 4);
+    QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(
       QueryType.Has,
       getComponentById(components, IsObjectiveCompID),
@@ -566,21 +571,9 @@ library LibQuests {
     );
     fragments[2] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, TypeCompID),
-      abi.encode(getType(components, conditionID))
+      getComponentById(components, IndexObjectiveCompID),
+      abi.encode(getObjectiveIndex(components, conditionID))
     );
-    fragments[3] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, LogicTypeCompID),
-      abi.encode(getLogicType(components, conditionID))
-    );
-    if (hasIndex) {
-      fragments[4] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexCompID),
-        abi.encode(getIndex(components, conditionID))
-      );
-    }
 
     uint256[] memory results = LibQuery.query(fragments);
     return results[0];
