@@ -13,7 +13,7 @@ import { IdHolderComponent, ID as HolderCompID } from "components/IdHolderCompon
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
-import { IsCompleteComponent, ID as CompletionCompID } from "components/IsCompleteComponent.sol";
+import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
@@ -32,13 +32,16 @@ import { LibString } from "solady/utils/LibString.sol";
 enum LOGIC {
   MIN,
   MAX,
-  EQUAL
+  EQUAL,
+  IS,
+  NOT
 }
 
 enum HANDLER {
   CURRENT,
   INCREASE,
-  DECREASE
+  DECREASE,
+  BOOLEAN
 }
 
 /*
@@ -155,7 +158,7 @@ library LibQuests {
       if (LibString.eq(logicType, "AT")) {
         result = checkCurrent(components, requirements[i], accountID, LOGIC.EQUAL);
       } else if (LibString.eq(logicType, "COMPLETE")) {
-        result = checkCurrent(components, requirements[i], accountID, LOGIC.EQUAL);
+        result = checkBoolean(components, requirements[i], accountID, LOGIC.IS);
       } else if (LibString.eq(logicType, "HAVE")) {
         result = checkCurrent(components, requirements[i], accountID, LOGIC.MIN);
       } else if (LibString.eq(logicType, "GREATER")) {
@@ -325,6 +328,36 @@ library LibQuests {
     return checkLogicOperator(prevValue - currValue, delta, logic);
   }
 
+  function checkBoolean(
+    IUintComp components,
+    uint256 conditionID,
+    uint256 accountID,
+    LOGIC logic
+  ) internal view returns (bool result) {
+    string memory _type = getType(components, conditionID);
+
+    if (LibString.eq(_type, "QUEST")) {
+      uint256 questIndex = getValue(components, conditionID);
+      result = checkAccQuestComplete(components, questIndex, accountID);
+    }
+
+    if (logic == LOGIC.NOT) {
+      result = !result;
+    } else {
+      require(logic == LOGIC.IS, "Unknown bool logic operator");
+    }
+  }
+
+  // checks if an account has completed a quest
+  function checkAccQuestComplete(
+    IUintComp components,
+    uint256 questIndex,
+    uint256 accountID
+  ) internal view returns (bool) {
+    uint256[] memory completedQuests = queryCompletedQuests(components, accountID, questIndex);
+    return completedQuests.length > 0;
+  }
+
   /////////////////
   // CHECKERS
 
@@ -345,7 +378,7 @@ library LibQuests {
   }
 
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsCompleteComponent(getAddressById(components, CompletionCompID)).has(id);
+    return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(id);
   }
 
   function isTypeInventory(string memory _type) internal view returns (bool) {
@@ -375,7 +408,7 @@ library LibQuests {
   }
 
   function setCompleted(IUintComp components, uint256 id) internal {
-    IsCompleteComponent(getAddressById(components, CompletionCompID)).set(id);
+    IsCompleteComponent(getAddressById(components, IsCompleteCompID)).set(id);
   }
 
   function setHolderId(IUintComp components, uint256 id, uint256 holderID) internal {
@@ -551,5 +584,27 @@ library LibQuests {
 
     uint256[] memory results = LibQuery.query(fragments);
     return results[0];
+  }
+
+  function queryCompletedQuests(
+    IUintComp components,
+    uint256 accountID,
+    uint256 questIndex
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](4);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsQuestCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsCompleteCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdAccountCompID),
+      abi.encode(accountID)
+    );
+    fragments[3] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexQuestCompID),
+      abi.encode(questIndex)
+    );
+
+    return LibQuery.query(fragments);
   }
 }

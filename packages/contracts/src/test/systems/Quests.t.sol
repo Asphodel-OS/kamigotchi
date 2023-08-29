@@ -164,4 +164,30 @@ contract QuestsTest is SetupTemplate {
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
   }
+
+  function testCompleteQuest() public {
+    // create quest(s)
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0);
+    _createQuest(2, "BasicQuest", "DESCRIPTION", 0);
+    _createRequirement(2, "COMPLETE", "QUEST", 0, 1);
+
+    // register account
+    _registerAccount(0);
+    address operator = _getOperator(0);
+
+    // check that quest cant be accepted without requirements
+    vm.prank(operator);
+    vm.expectRevert("QuestAccept: reqs not met");
+    _QuestAcceptSystem.executeTyped(2);
+
+    // finish required quest, accept new
+    uint256 preQuestID = _acceptQuest(0, 1);
+    _completeQuest(0, preQuestID);
+    uint256 questID = _acceptQuest(0, 2);
+    _assertQuestAccount(_getAccount(0), questID);
+
+    // check that quest can be completed when objectives met
+    _completeQuest(0, questID);
+    assertTrue(LibQuests.isCompleted(components, questID));
+  }
 }
