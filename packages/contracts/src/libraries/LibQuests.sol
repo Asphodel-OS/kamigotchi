@@ -483,6 +483,8 @@ library LibQuests {
       else return LibInventory.getBalance(components, invID);
     } else if (LibString.eq(_type, "COIN")) {
       return LibCoin.get(components, id);
+    } else if (LibString.eq(_type, "KAMI")) {
+      return LibAccount.getPetsOwned(components, id).length;
     } else if (LibString.eq(_type, "ROOM")) {
       return LibAccount.getLocation(components, id);
     } else {

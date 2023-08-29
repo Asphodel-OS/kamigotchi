@@ -258,6 +258,7 @@ library LibAccount {
       abi.encode(accountID)
     );
 
-    return LibQuery.query(fragments);
+    uint256[] memory results = LibQuery.query(fragments);
+    return results;
   }
 }

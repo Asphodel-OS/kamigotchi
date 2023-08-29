@@ -128,4 +128,40 @@ contract QuestsTest is SetupTemplate {
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
   }
+
+  function testMintKami() public {
+    // setup for kami mint
+    _createRoom("Room 1", 1, 2, 3, 4);
+    _createRoom("Room 2", 2, 1, 3, 4);
+    _createRoom("Room 3", 3, 1, 2, 4);
+    _createRoom("Room 4", 4, 1, 2, 3);
+    _initCommonTraits();
+
+    // create quest
+    _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0);
+    _createRequirement(1, "AT", "ROOM", 0, 1);
+    _createObjective(1, "NAME", "MINT", "KAMI", 0, 2);
+
+    // register account
+    _registerAccount(0);
+    address operator = _getOperator(0);
+
+    // accept quest
+    uint256 questID = _acceptQuest(0, 1);
+    _assertQuestAccount(_getAccount(0), questID);
+
+    // check that quest cant be completed when failing objectives
+    vm.prank(operator);
+    vm.expectRevert("QuestComplete: objs not met");
+    _QuestCompleteSystem.executeTyped(questID);
+    _mintPet(0);
+    vm.prank(operator);
+    vm.expectRevert("QuestComplete: objs not met");
+    _QuestCompleteSystem.executeTyped(questID);
+
+    // check that quest can be completed when objectives met
+    _mintPet(0);
+    _completeQuest(0, questID);
+    assertTrue(LibQuests.isCompleted(components, questID));
+  }
 }
