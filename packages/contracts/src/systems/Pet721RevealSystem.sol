@@ -23,6 +23,7 @@ contract Pet721RevealSystem is System {
 
     // checks
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    require(accountID != 0, "PetRevealSystem: no account");
     require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
 

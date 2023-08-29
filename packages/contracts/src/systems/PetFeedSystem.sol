@@ -22,6 +22,7 @@ contract PetFeedSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
+    require(accountID != 0, "PetFeed: no account");
     require(LibPet.isPet(components, id), "Pet: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
     require(LibPet.canAct(components, id), "Pet: on cooldown");

@@ -23,6 +23,7 @@ contract NodeCollectSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 nodeID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    require(accountID != 0, "NodeCollectSystem: no account");
     require(
       LibAccount.getLocation(components, accountID) == LibNode.getLocation(components, nodeID),
       "Node: too far"

@@ -20,6 +20,7 @@ contract TradeAddToSystem is System {
       (uint256, uint256, uint256)
     );
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    require(accountID != 0, "TradeAddTo: no account");
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE

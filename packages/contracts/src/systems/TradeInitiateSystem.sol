@@ -18,6 +18,7 @@ contract TradeInitiateSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // requirements
+    require(accountID != 0, "TradeInitiate: no account");
     require(accountID != toID, "Trade: no self-trade !!");
     require(LibTrade.canTrade(components, accountID, toID), "Trade: must be in same room");
     require(LibTrade.getRequest(components, accountID, toID) == 0, "Trade: request exists");

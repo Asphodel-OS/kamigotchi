@@ -19,6 +19,7 @@ contract QuestAcceptSystem is System {
     require(questID != 0, "Quest not found");
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    require(accountID != 0, "QuestAccept: no account");
 
     require(
       LibQuests.checkRequirements(components, questID, accountID),

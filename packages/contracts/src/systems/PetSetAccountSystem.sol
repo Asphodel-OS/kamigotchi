@@ -20,6 +20,7 @@ contract PetSetAccountSystem is System {
     (uint256 id, address to) = abi.decode(arguments, (uint256, address));
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
 
+    require(accountID != 0, "PetSetAccount: no account");
     require(LibPet.isPet(components, id), "Pet: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
 

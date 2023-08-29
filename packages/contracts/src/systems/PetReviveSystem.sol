@@ -21,6 +21,7 @@ contract PetReviveSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
+    require(accountID != 0, "PetRevive: no account");
     require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
     require(LibPet.canAct(components, id), "Pet: on cooldown");
     require(LibPet.isDead(components, id), "Pet: must be dead");

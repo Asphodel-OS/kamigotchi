@@ -21,6 +21,7 @@ contract PetLevelSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (type check, ownership, location)
+    require(accountID != 0, "PetLevel: no account");
     require(LibPet.isPet(components, id), "PetLevel: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "PetLevel: not urs");
     require(
