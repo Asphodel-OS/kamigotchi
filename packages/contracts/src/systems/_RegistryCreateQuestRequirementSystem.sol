@@ -29,8 +29,13 @@ contract _RegistryCreateQuestRequirementSystem is System {
     require(!LibString.eq(type_, ""), "Quest Requirement type cannot be empty");
 
     // create an empty Quest Requirement and set any non-zero fields
-    uint256 id = LibRegistryQuests.createEmptyRequirement(world, components, questIndex, type_);
-    if (!LibString.eq(logicType, "")) LibRegistryQuests.setLogicType(components, id, logicType);
+    uint256 id = LibRegistryQuests.createEmptyRequirement(
+      world,
+      components,
+      questIndex,
+      logicType,
+      type_
+    );
     if (index != 0) LibRegistryQuests.setIndex(components, id, index);
     if (value != 0) LibRegistryQuests.setValue(components, id, value);
 

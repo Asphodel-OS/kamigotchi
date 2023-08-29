@@ -80,12 +80,14 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 questIndex,
+    string memory logicType,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setQuestIndex(components, id, questIndex);
+    setLogicType(components, id, logicType);
     setType(components, id, type_);
     return id;
   }
