@@ -19,7 +19,7 @@ import { Battery } from 'layers/react/components/library/Battery';
 import { Countdown } from 'layers/react/components/library/Countdown';
 import { KamiCard2 } from 'layers/react/components/library/KamiCard2';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { NodeInfo } from 'layers/react/components/library/NodeContainer';
+import { NodeHeader } from 'layers/react/components/library/NodeHeader';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccount } from 'layers/react/shapes/Account';
@@ -600,8 +600,11 @@ export function registerNodeModal() {
       );
 
       return (
-        <ModalWrapperFull id='node' divName='node'>
-          <NodeInfo key={'node-info'} node={data.node} />
+        <ModalWrapperFull
+          id='node'
+          divName='node'
+          header={<NodeHeader node={data.node} />}
+        >
           {KamiTabs()}
           {KamiList(data.node.kamis)}
           <Underline key='separator' />

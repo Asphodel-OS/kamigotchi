@@ -8,7 +8,7 @@ interface Props {
   divName: keyof VisibleModals;
   id: string;
   children: React.ReactNode;
-  fill?: boolean; // whether the content should fit to the entire modal
+  header?: React.ReactNode;
   overlay?: boolean;
   hideModal?: Partial<VisibleModals>;
 }
@@ -42,17 +42,18 @@ export const ModalWrapperFull = (props: Props) => {
   element?.addEventListener('mousedown', handleClicks);
 
   // Some conditional styling to adapt the content to the wrapper.
-  const wrapperStyle = props.fill ? { height: '75vh' } : {};
-  const contentStyle = props.fill ? { height: '100%' } : {};
   const zindex = props.overlay ? { position: 'relative', zIndex: '1' } : {};
 
   return (
     <Wrapper
       id={props.id}
       isOpen={visibleModals[props.divName]}
-      style={{ ...wrapperStyle, ...zindex }}
+      style={{ ...zindex }}
     >
-      <Content style={contentStyle}>{props.children}</Content>
+      <Content>
+        {(props.header) ? <Header>{props.header}</Header> : null}
+        <Children>{props.children}</Children>
+      </Content>
     </Wrapper>
   );
 };
@@ -77,10 +78,27 @@ const Content = styled.div`
   border-width: 2px;
   border-radius: 10px;
   border-style: solid;
+
   background-color: white;
-  padding: 8px;
   width: 99%;
   height: 100%;
+  
+  display: flex;
+  flex-flow: column nowrap;
+  font-family: Pixel;
+`;
+
+
+const Header = styled.div`  
+  border-radius: 10px 10px 0px 0px;
+  display: flex;
+`;
+
+const Children = styled.div`
+  padding: .3vw;
+  overflow-y: scroll;
+  max-height: 100%;
+  
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
