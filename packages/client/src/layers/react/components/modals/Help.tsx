@@ -27,7 +27,7 @@ export function registerHelpModal() {
   registerUIComponent(
     'Help',
     {
-      colStart: 69,
+      colStart: 67,
       colEnd: 100,
       rowStart: 10,
       rowEnd: 100,

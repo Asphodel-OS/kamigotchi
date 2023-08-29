@@ -14,8 +14,8 @@ export function registerAccountInfoFixture() {
   registerUIComponent(
     'AccountInfo',
     {
-      colStart: 34,
-      colEnd: 68,
+      colStart: 33,
+      colEnd: 67,
       rowStart: 3,
       rowEnd: 30,
     },
@@ -137,7 +137,7 @@ const Container = styled.div`
     background-color: #ddd;
   }
   width: 100%;
-  padding: 0.2vw;
+  padding: 0.2vw 0vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -147,7 +147,7 @@ const Container = styled.div`
 
 const BottomRow = styled.div`
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6vw 0vw;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
@@ -167,7 +167,7 @@ const BatteryCell = styled.div`
 
 const NameCell = styled.div`
   border-bottom: 0.1vw solid black;
-  padding: 0.6vw;
+  padding: 0.6vw 0vw;
   width: 95%;
 
   display: flex;

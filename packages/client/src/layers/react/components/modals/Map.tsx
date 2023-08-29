@@ -18,7 +18,7 @@ export function registerMapModal() {
     'WorldMap',
     {
       colStart: 33,
-      colEnd: 69,
+      colEnd: 67,
       rowStart: 30,
       rowEnd: 99,
     },

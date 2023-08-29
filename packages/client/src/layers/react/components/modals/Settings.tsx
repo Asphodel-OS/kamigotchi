@@ -17,7 +17,7 @@ export function registerSettingsModal() {
   registerUIComponent(
     'Settings',
     {
-      colStart: 69,
+      colStart: 67,
       colEnd: 100,
       rowStart: 10,
       rowEnd: 50,

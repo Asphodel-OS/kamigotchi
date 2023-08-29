@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useCallback, useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -21,7 +20,7 @@ export function registerFundOperatorModal() {
   registerUIComponent(
     'FundOperatorModal',
     {
-      colStart: 28,
+      colStart: 30,
       colEnd: 70,
       rowStart: 30,
       rowEnd: 74,
