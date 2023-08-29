@@ -57,8 +57,8 @@ export const KamiCard2 = (props: Props) => {
         <TitleCorner>{props.cornerContent}</TitleCorner>
       ]}
       content={[
-        <ContentColumn>{Description()}</ContentColumn>,
-        <ContentColumn>
+        <ContentColumn key='column-1'>{Description()}</ContentColumn>,
+        <ContentColumn key='column-2'>
           <ContentSubtext>{props.subtext}</ContentSubtext>
           <ContentActions>{props.action}</ContentActions>
         </ContentColumn>

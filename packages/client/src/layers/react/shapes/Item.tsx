@@ -89,7 +89,6 @@ export const queryFoodRegistry = (layers: Layers, index: number): EntityIndex =>
       components: { FoodIndex, IsRegistry },
     },
   } = layers;
-  console.log(index);
 
   const entityIndices = Array.from(
     runQuery([
@@ -108,7 +107,6 @@ export const queryReviveRegistry = (layers: Layers, index: number): EntityIndex 
     },
   } = layers;
 
-  // console.log(index);
   const entityIndices = Array.from(
     runQuery([
       Has(IsRegistry),

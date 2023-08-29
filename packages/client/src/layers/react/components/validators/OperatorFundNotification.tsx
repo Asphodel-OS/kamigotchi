@@ -19,7 +19,7 @@ export function registerOperatorFundNotification() {
       colStart: 78,
       colEnd: 100,
       rowStart: 80,
-      rowEnd: 100,
+      rowEnd: 99,
     },
     (layers) => {
       const {

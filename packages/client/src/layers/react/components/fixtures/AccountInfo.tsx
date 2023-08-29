@@ -136,7 +136,7 @@ const Container = styled.div`
   &:active {
     background-color: #ddd;
   }
-  width: 100%;
+  width: 99%;
   padding: 0.2vw 0vw;
 
   display: flex;

@@ -46,10 +46,10 @@ export const getNode = (
 
   let node: Node = {
     id: world.entities[index],
-    index: getComponentValue(NodeIndex, index)?.value as number,
+    index: getComponentValue(NodeIndex, index)?.value as number * 1,
     entityIndex: index,
     type: getComponentValue(Type, index)?.value as string,
-    location: getComponentValue(Location, index)?.value as number,
+    location: getComponentValue(Location, index)?.value as number * 1,
     name: getComponentValue(Name, index)?.value as string,
     description: getComponentValue(Description, index)?.value as string,
     affinity: getComponentValue(Affinity, index)?.value as string, // does this break if there's no affinity?

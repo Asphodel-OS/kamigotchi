@@ -49,7 +49,7 @@ const Container = styled.div`
   border-style: solid;
   border-width: .15vw;
   color: black;
-  margin: .3vw .15vw 0vw .15vw;
+  margin: .15vw;
 
   display: flex;
   flex-flow: row nowrap;
