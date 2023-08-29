@@ -17,7 +17,7 @@ import {
 } from 'layers/react/components/library/ActionListButton';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Countdown } from 'layers/react/components/library/Countdown';
-import { KamiCard } from 'layers/react/components/library/KamiCard';
+import { KamiCard2 } from 'layers/react/components/library/KamiCard2';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { NodeInfo } from 'layers/react/components/library/NodeContainer';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -525,7 +525,7 @@ export function registerNodeModal() {
         ];
 
         return (
-          <KamiCard
+          <KamiCard2
             key={kami.index}
             kami={kami}
             subtext={`yours (\$${output})`}
@@ -553,7 +553,7 @@ export function registerNodeModal() {
         });
 
         return (
-          <KamiCard
+          <KamiCard2
             key={kami.index}
             kami={kami}
             subtext={`${kami.account!.name} (\$${output})`}
