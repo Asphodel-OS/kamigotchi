@@ -99,7 +99,7 @@ export function registerNameKamiModal() {
       };
 
       return (
-        <ModalWrapperFull id='name_kami_modal' divName='nameKami' fill={false}>
+        <ModalWrapperFull id='name_kami_modal' divName='nameKami'>
           <Stepper
             handleChange={handleChange}
             catchKeys={catchKeys}

@@ -150,7 +150,7 @@ export function registerKamisNamingModal() {
       }, [setVisibleModals, visibleModals]);
 
       return (
-        <ModalWrapperFull id='kamis_naming_modal' divName='kamisNaming' fill={true}>
+        <ModalWrapperFull id='kamis_naming_modal' divName='kamisNaming'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>

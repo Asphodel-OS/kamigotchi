@@ -269,7 +269,7 @@ export function registerERC721BridgeModal() {
         kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapperFull id='bridgeERC721' divName='bridgeERC721' fill={false} >
+        <ModalWrapperFull id='bridgeERC721' divName='bridgeERC721'>
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
