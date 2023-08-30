@@ -11,6 +11,8 @@ import {
 } from '@latticexyz/recs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
+import { Listings } from './Listings';
+
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccount } from 'layers/react/shapes/Account';
@@ -30,13 +32,6 @@ const ItemImages = new Map([
   [4, ribbon],
 ]);
 
-const ItemNames = new Map([
-  [1, 'Maple-Flavor Ghost Gum'],
-  [2, 'Pom-Pom Fruit Candy'],
-  [3, 'Gakki Cookie Sticks'],
-  [4, 'Red Gakki Ribbon'],
-]);
-
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerMerchantModal() {
   registerUIComponent(
@@ -44,9 +39,9 @@ export function registerMerchantModal() {
 
     // Grid Config
     {
-      colStart: 34,
-      colEnd: 68,
-      rowStart: 10,
+      colStart: 33,
+      colEnd: 67,
+      rowStart: 20,
       rowEnd: 60,
     },
 
@@ -120,9 +115,10 @@ export function registerMerchantModal() {
     // Render
     ({ actions, api, data }) => {
       // console.log('mMerchant: data', data);
-      const { visibleModals, setVisibleModals, selectedEntities, setSelectedEntities } =
-        dataStore();
-      ///////////////////
+      const { visibleModals, setVisibleModals } = dataStore();
+
+
+      /////////////////
       // ACTIONS
 
       // buy from a listing
@@ -140,30 +136,8 @@ export function registerMerchantModal() {
         });
       };
 
-      ///////////////////
+      /////////////////
       // DISPLAY
-
-      const BuyButton = (listing: Listing) => (
-        <ActionButton
-          id={`button-buy-${listing.item.index}`}
-          disabled={data.coin < listing.buyPrice}
-          onClick={() => buy(listing, 1)}
-          text='Buy'
-        />
-      );
-
-      // [listing: {id, index, itemIndex, buyPrice, sellPrice}]
-      const listings = (listings: Listing[]) => {
-        if (!listings) return;
-        return listings.map((listing) => (
-          <ShopEntry key={listing.item.index}>
-            <ItemImage src={ItemImages.get(listing.item.index)} />
-            <ItemName>{listing.item.name}</ItemName>
-            <ItemPrice>{listing.buyPrice}</ItemPrice>
-            <ButtonWrapper>{BuyButton(listing)}</ButtonWrapper>
-          </ShopEntry>
-        ));
-      };
 
       const hideModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, merchant: false });
@@ -174,65 +148,25 @@ export function registerMerchantModal() {
           <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
             X
           </TopButton>
-          {data.merchant && <ShopList>{listings(data.merchant.listings)}</ShopList>}
+          <Title>{`${data.merchant?.name}'s Shop`}</Title>
+          <Listings listings={data.merchant?.listings} handleBuy={buy} />
         </ModalWrapperFull>
       );
     }
   );
 }
 
-const ButtonWrapper = styled.div`
-  grid-column: 4;
-  align-self: center;
-`;
 
-const ItemImage = styled.img`
-  font-family: Pixel;
-  grid-column: 1;
-  align-self: center;
-  width: 50px;
-  border-style: solid;
-  border-width: 0px 2px 0px 0px;
-  border-color: black;
-  padding: 5px;
-  margin: 0px;
-`;
+const Title = styled.div`
+  width: 100%;
+  padding: 1vw;
 
-const ItemName = styled.p`
-  font-family: Pixel;
-  grid-column: 2;
-  align-self: center;
-  font-size: 15px;
-`;
-
-const ItemPrice = styled.p`
-  font-family: Pixel;
-  grid-column: 3;
-  align-self: center;
-  font-size: 14px;
-`;
-
-const ShopEntry = styled.li`
-  font-family: Pixel;
   color: black;
-  display: grid;
-  border-style: solid;
-  border-width: 0px 0px 2px 0px;
-  border-color: black;
-  padding: 0px;
+  font-family: Pixel;
+  font-size: 1.5vw;
+  text-align: center;
 `;
 
-const ShopList = styled.ul`
-  font-family: Pixel;
-  color: black;
-  grid-row: 2;
-  border-style: solid;
-  border-width: 2px 2px 0px 2px;
-  border-color: black;
-  grid-column: 1;
-  margin: 2px 0px 0px 0px;
-  border-radius: 5px;
-`;
 
 const TopButton = styled.button`
   background-color: #ffffff;

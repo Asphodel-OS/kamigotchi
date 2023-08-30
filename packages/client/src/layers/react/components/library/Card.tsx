@@ -44,10 +44,8 @@ export const Card = (props: Props) => {
 
 const Container = styled.div`
   background-color: #fff;
-  border-color: black;
+  border: .15vw solid black;
   border-radius: .35vw;
-  border-style: solid;
-  border-width: .15vw;
   color: black;
   margin: .15vw;
 

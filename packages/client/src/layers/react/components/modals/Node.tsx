@@ -623,6 +623,7 @@ export function registerNodeModal() {
 const Scrollable = styled.div`
   overflow-y: scroll;
   max-height: 100%;
+  flex-grow: 1;
 `;
 
 const Underline = styled.div`

@@ -18,7 +18,7 @@ import { registerKamiMintModal } from './modals/MintKami';
 import { registerKamiModal } from './modals/Kami';
 import { registerLeaderboardModal } from './modals/Leaderboard';
 import { registerMapModal } from './modals/Map';
-import { registerMerchantModal } from './modals/Merchant';
+import { registerMerchantModal } from './modals/merchant';
 import { registerPartyModal } from './modals/Party';
 import { registerNodeModal } from './modals/Node';
 import { registerSettingsModal } from './modals/Settings';
