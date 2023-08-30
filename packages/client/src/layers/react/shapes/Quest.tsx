@@ -13,7 +13,28 @@ import {
 import { Layers } from 'src/types';
 import { Inventory, queryInventoryX } from './Inventory';
 
-// standardized shape of Traits on an Entity
+
+/////////////////
+// GETTERS
+
+export const getRegistryQuests = (layers: Layers): Quest[] => {
+  return queryQuestsX(layers, { registry: true });
+};
+
+// get the ongoing quests for an account
+export const getOngoingQuests = (layers: Layers, accountEntityID: EntityID): Quest[] => {
+  return queryQuestsX(layers, { account: accountEntityID, completed: false });
+}
+
+// get the completed quests for an account
+export const getCompletedQuests = (layers: Layers, accountEntityID: EntityID): Quest[] => {
+  return queryQuestsX(layers, { account: accountEntityID, completed: true });
+}
+
+
+/////////////////
+// SHAPES
+
 export interface Quest {
   id: EntityID;
   index: number;
@@ -51,12 +72,8 @@ export interface Reward {
   target: Target;
 }
 
-
-////////////////
-// SHAPE GETTERS
-
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
-export const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
+const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
   const {
     network: {
       components: {
@@ -93,7 +110,7 @@ export const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
 }
 
 // Get a Requirement Registry object
-export const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requirement => {
+const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requirement => {
   const {
     network: {
       components: {
@@ -129,7 +146,7 @@ export const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requir
 }
 
 // Get an Objective Registry object
-export const getObjective = (layers: Layers, entityIndex: EntityIndex): Objective => {
+const getObjective = (layers: Layers, entityIndex: EntityIndex): Objective => {
   const {
     network: {
       components: {
@@ -169,7 +186,7 @@ export const getObjective = (layers: Layers, entityIndex: EntityIndex): Objectiv
 }
 
 // Get a Reward Registry object
-export const getReward = (layers: Layers, entityIndex: EntityIndex): Reward => {
+const getReward = (layers: Layers, entityIndex: EntityIndex): Reward => {
   const {
     network: {
       components: {
@@ -214,7 +231,7 @@ export interface QueryOptions {
 }
 
 // Query for Entity Indices of Quests, depending on the options provided
-export const queryQuestsX = (
+const queryQuestsX = (
   layers: Layers,
   options: QueryOptions,
 ): Quest[] => {

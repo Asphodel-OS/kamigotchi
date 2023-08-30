@@ -10,7 +10,7 @@ import {
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
 import { Kami, queryKamisX } from './Kami';
-import { Quest, queryQuestsX } from './Quest';
+import { Quest, getCompletedQuests, getOngoingQuests } from './Quest';
 import {
   Inventory,
   getInventory,
@@ -32,7 +32,10 @@ export interface Account {
   lastMoveTs: number;
   kamis?: Kami[];
   inventories?: AccountInventories;
-  quests?: Quest[];
+  quests?: {
+    ongoing: Quest[];
+    completed: Quest[];
+  }
 }
 
 export interface AccountOptions {
@@ -59,11 +62,9 @@ export const getAccount = (
     network: {
       world,
       components: {
-        AccountID,
         Coin,
         HolderID,
         IsInventory,
-        IsPet,
         LastBlock,
         LastTime,
         Location,
@@ -136,10 +137,10 @@ export const getAccount = (
 
   // populate Quests
   if (options?.quests) {
-    account.quests = queryQuestsX(
-      layers,
-      { account: account.id }
-    )
+    account.quests = {
+      ongoing: getOngoingQuests(layers, account.id),
+      completed: getCompletedQuests(layers, account.id),
+    }
   }
 
   /////////////////
