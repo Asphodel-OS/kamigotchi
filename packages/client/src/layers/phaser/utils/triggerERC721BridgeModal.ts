@@ -6,8 +6,8 @@ export const triggerERC721BridgeModal = () => {
     visibleModals,
     sound: { volume },
   } = dataStore.getState();
-  const clickFX = new Audio(clickSound);
 
+  const clickFX = new Audio(clickSound);
   clickFX.volume = volume;
   clickFX.play();
 

@@ -1,8 +1,17 @@
 import { dataStore } from 'layers/react/store/createStore';
+import clickSound from 'assets/sound/fx/mouseclick.wav';
 
 export const triggerPetMintModal = () => {
-  const { visibleModals } = dataStore.getState();
-  if (!visibleModals.kamiMintPost)
+  const {
+    visibleModals,
+    sound: { volume },
+  } = dataStore.getState();
+
+  const clickFX = new Audio(clickSound);
+  clickFX.volume = volume;
+  clickFX.play();
+
+  if (!visibleModals.kamiMint) {
     dataStore.setState({
       visibleModals: {
         ...visibleModals,
@@ -17,4 +26,7 @@ export const triggerPetMintModal = () => {
         node: false,
       },
     });
+  } else {
+    dataStore.setState({ visibleModals: { ...visibleModals, kamiMint: false } });
+  }
 };
