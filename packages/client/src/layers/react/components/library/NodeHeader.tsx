@@ -11,10 +11,9 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const NodeHeader = (props: Props) => {
-  console.log(props.node.index);
-
-  const Content = () => {
-    return (
+  return (
+    <Container key={props.node.name}>
+      <Image src={NodeImages[props.node.index]} />
       <ContentContainer>
         <TitleRow>
           <TitleText>{props.node.name}</TitleText>
@@ -22,13 +21,6 @@ export const NodeHeader = (props: Props) => {
         </TitleRow>
         <DescriptionText>{props.node.description}</DescriptionText>
       </ContentContainer>
-    );
-  };
-
-  return (
-    <Container key={props.node.name}>
-      <Image src={NodeImages[props.node.index]} />
-      {Content()}
     </Container>
   );
 };
