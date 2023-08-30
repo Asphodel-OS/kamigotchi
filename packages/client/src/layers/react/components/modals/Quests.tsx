@@ -94,9 +94,8 @@ export function registerQuestsModal() {
     // be using those + requirements to determine available quests
     ({ layers, actions, api, data }) => {
       console.log('mQuest:', data);
-      const [showCompleted, setShowCompleted] = useState(false);
-      // temp: show registry for testing
-      const [showRegistry, setShowRegistry] = useState(true);
+      const [questFilter, setQuestFilter] = useState('ONGOING');
+
 
       ///////////////////
       // INTERACTIONS
@@ -126,6 +125,7 @@ export function registerQuestsModal() {
           },
         });
       }
+
 
       ///////////////////
       // LOGIC
@@ -236,6 +236,7 @@ export function registerQuestsModal() {
       const canComplete = (quest: Quest): boolean => {
         return checkObjectives(quest);
       }
+
 
       /////////////////
       // DATA INTERPRETATION
@@ -370,7 +371,7 @@ export function registerQuestsModal() {
         )
       }
 
-      // TODO: logical support for repeatable quests
+      // TODO: logical support for repeatable quests (e.g. daily quests)
       const AvailableQuests = () => {
         // get quest registry. filter out any unavailable quests
         let quests = data.quests.filter((q: Quest) => {
@@ -385,8 +386,10 @@ export function registerQuestsModal() {
           <QuestContainer key={q.id}>
             <QuestName>{q.name}</QuestName>
             <QuestDescription>{q.description}</QuestDescription>
+            {RequirementDisplay(q.requirements)}
             {ObjectiveDisplay(q.objectives)}
             {RewardDisplay(q.rewards)}
+            {AcceptButton(q)}
           </QuestContainer>
         ))
       }
@@ -414,35 +417,38 @@ export function registerQuestsModal() {
         ));
       }
 
-      const RegistryQuests = () => {
-        return data.quests.map((q: Quest) => (
-          <QuestContainer key={q.id}>
-            <QuestName>{q.name}</QuestName>
-            <QuestDescription>{q.description}</QuestDescription>
-            {RequirementDisplay(q.requirements)}
-            {ObjectiveDisplay(q.objectives)}
-            {RewardDisplay(q.rewards)}
-            {AcceptButton(q)}
-          </QuestContainer>
-        ));
+      const QuestsDisplay = () => {
+        switch (questFilter) {
+          case 'AVAILABLE':
+            return AvailableQuests();
+          case 'ONGOING':
+            return OngoingQuests();
+          case 'COMPLETED':
+            return CompletedQuests();
+          default:
+            return <div />;
+        }
       }
 
       const Footer = (
         <div style={{ padding: '1vh 0.1vw' }}>
           <ActionButton
-            id={`pending-mode`}
-            onClick={() => setShowCompleted(false)}
-            text='Pending'
+            id={`ongoing-mode`}
+            onClick={() => setQuestFilter('ONGOING')}
+            text='Ongoing'
+            disabled={questFilter === 'ONGOING'}
+          />
+          <ActionButton
+            id={`available-mode`}
+            onClick={() => setQuestFilter('AVAILABLE')}
+            text='Available'
+            disabled={questFilter === 'AVAILABLE'}
           />
           <ActionButton
             id={`completed-mode`}
-            onClick={() => setShowCompleted(true)}
+            onClick={() => setQuestFilter('COMPLETED')}
             text='Completed'
-          />
-          <ActionButton
-            id={`registry-mode`}
-            onClick={() => setShowRegistry(!showRegistry)}
-            text='Toggle Registry'
+            disabled={questFilter === 'COMPLETED'}
           />
         </div>
       )
@@ -450,13 +456,7 @@ export function registerQuestsModal() {
       return (
         <ModalWrapperFull divName='quests' id='quest_modal'>
           <Header>Quests</Header>
-          <Scrollable>
-            {showRegistry ? RegistryQuests() : <div />}
-            {showCompleted
-              ? CompletedQuests()
-              : OngoingQuests()
-            }
-          </Scrollable>
+          <Scrollable>{QuestsDisplay()}</Scrollable>
           {Footer}
         </ModalWrapperFull>
       );
