@@ -120,7 +120,7 @@ export const getRequirement = (layers: Layers, entityIndex: EntityIndex): Requir
     requirement.target.index = getComponentValue(Index, entityIndex)?.value || 0 as number;
   }
 
-  const typesWithValue = ["COIN", "LEVEL", "KAMI", "ROOM"];
+  const typesWithValue = ["COIN", "LEVEL", "KAMI", "QUEST", "ROOM"];
   if (typesWithValue.indexOf(requirement.target.type) >= 0) {
     requirement.target.value = getComponentValue(Value, entityIndex)?.value || 0 as number;
   }
@@ -160,7 +160,7 @@ export const getObjective = (layers: Layers, entityIndex: EntityIndex): Objectiv
     objective.target.index = getComponentValue(Index, entityIndex)?.value || 0 as number;
   }
 
-  const typesWithValue = ["COIN", "ITEM", "NODE"];
+  const typesWithValue = ["COIN", "ITEM", "NODE", "ROOM"];
   if (typesWithValue.indexOf(objective.target.type) >= 0) {
     objective.target.value = getComponentValue(Value, entityIndex)?.value || 0 as number;
   }

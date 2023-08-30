@@ -90,7 +90,7 @@ export function registerQuestsModal() {
     // NOTE: Completed and Ongoing should be straitforward to pull. we should
     // be using those + requirements to determine available quests
     ({ layers, actions, api, data }) => {
-      // console.log('mQuest:', data);
+      console.log('mQuest:', data);
       const [showCompleted, setShowCompleted] = useState(false);
       // temp: show registry for testing
       const [showRegistry, setShowRegistry] = useState(true);
@@ -224,6 +224,38 @@ export function registerQuestsModal() {
         return checkObjectives(quest);
       }
 
+      /////////////////
+      // DATA INTERPRETATION
+
+      const getFoodName = (foodIndex: number): string => {
+        let foodRegistryEntityIndex = queryFoodRegistry(layers, foodIndex);
+        let foodObject = getItem(layers, foodRegistryEntityIndex);
+        return foodObject.name;
+      }
+
+      const getReviveName = (reviveIndex: number): string => {
+        let reviveRegistryEntityIndex = queryReviveRegistry(layers, reviveIndex);
+        let reviveObject = getItem(layers, reviveRegistryEntityIndex);
+        return reviveObject.name;
+      }
+
+      const getRequirementText = (requirement: Requirement): string => {
+        switch (requirement.target.type) {
+          case 'COIN':
+            return `${requirement.target.value! * 1} $MUSU`;
+          case 'LEVEL': // TODO: account for both min/max
+            return `Level ${requirement.target.value! * 1}`;
+          case 'FOOD':
+            return `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
+          case 'REVIVE':
+            return `${requirement.target.value! * 1} ${getReviveName(requirement.target.index!)}`;
+          case 'QUEST':
+            return `Complete Quest ${requirement.target.value! * 1}`;
+          default:
+            return '???';
+        }
+      }
+
       const getRewardText = (reward: Reward): string => {
         switch (reward.target.type) {
           case 'COIN':
@@ -231,15 +263,12 @@ export function registerQuestsModal() {
           case 'EXPERIENCE':
             return `${reward.target.value! * 1} Experience`;
           case 'FOOD':
-            let foodRegistryEntityIndex = queryFoodRegistry(layers, reward.target.index!);
-            let foodObject = getItem(layers, foodRegistryEntityIndex);
-            return `${reward.target.value! * 1} ${foodObject.name}`;
+            return `${reward.target.value! * 1} ${getFoodName(reward.target.index!)}`;
           case 'REVIVE':
-            let reviveRegistryEntityIndex = queryReviveRegistry(layers, reward.target.index!);
-            let reviveObject = getItem(layers, reviveRegistryEntityIndex);
-            return `${reward.target.value! * 1} ${reviveObject.name}`;
+            return `${reward.target.value! * 1} ${getReviveName(reward.target.index!)}`;
+          default:
+            return '';
         }
-        return '';
       }
 
 
@@ -296,7 +325,7 @@ export function registerQuestsModal() {
             <ConditionName>Requirements</ConditionName>
             {requirements.map((requirement) => (
               <ConditionDescription key={requirement.id}>
-                - {requirement.target.type} {requirement.logic} {requirement.target.index} {requirement.target.value}
+                - {`${getRequirementText(requirement)}`}
               </ConditionDescription>
             ))}
           </ConditionContainer>
