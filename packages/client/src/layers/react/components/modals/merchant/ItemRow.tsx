@@ -1,20 +1,10 @@
 import styled from 'styled-components';
 
+import { FoodImages, ReviveImages } from 'constants/food';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
+import { Item } from 'layers/react/shapes/Item';
 
-import pompom from 'assets/images/food/pompom.png';
-import gakki from 'assets/images/food/gakki.png';
-import gum from 'assets/images/food/gum.png';
-import ribbon from 'assets/images/food/ribbon.png';
-
-
-const ItemImages = new Map([
-  [1, gum],
-  [2, pompom],
-  [3, gakki],
-  [4, ribbon],
-]);
 
 export interface Props {
   listing: Listing;
@@ -23,6 +13,15 @@ export interface Props {
 
 // TODO: support multiple buys
 export const ItemRow = (props: Props) => {
+
+  const getImage = (item: Item) => {
+    if (item.type == 'FOOD') {
+      return FoodImages.get(item.familyIndex);
+    } else if (item.type == 'REVIVE') {
+      return ReviveImages.get(item.familyIndex);
+    }
+  }
+
   const BuyButton = (listing: Listing) => (
     <ActionButton
       id={`button-buy-${listing.item.index}`}
@@ -33,7 +32,7 @@ export const ItemRow = (props: Props) => {
 
   return (
     <Row key={props.listing.item.index}>
-      <Image src={ItemImages.get(props.listing.item.index)} />
+      <Image src={getImage(props.listing.item)} />
       <Name>{props.listing.item.name}</Name>
       <Price>{props.listing.buyPrice}</Price>
       <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>

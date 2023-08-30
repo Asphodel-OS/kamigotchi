@@ -29,7 +29,7 @@ const List = styled.div`
   border-color: black;
   border-radius: 5px;
   border-style: solid;
-  border-width: 2px 2px 0px 2px;
+  border-width: .15vw .15vw 0px .15vw;
 
   display: flex;
   flex-flow: column nowrap;
