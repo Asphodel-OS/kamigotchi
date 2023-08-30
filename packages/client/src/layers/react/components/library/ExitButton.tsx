@@ -31,22 +31,23 @@ export const ExitButton = (props: Props) => {
 
 const Button = styled.button`
   background-color: #ffffff;
-  border-color: black;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 2px;
+  border-radius: .4vw;
+  border: .15vw solid black;
 
   color: black;
   justify-self: right;
-  padding: 5px;
-  margin: 10px 5px;
-  width: 30px;
+  padding: .3vw .4vw;
+  margin: .7vw;
   
   font-family: Pixel;
-  font-size: 14px;
+  font-size: .9vw;
   
   cursor: pointer;
   pointer-events: auto;
+
+  &:hover {
+    background-color: #e8e8e8;
+  }
 
   &:active {
     background-color: #c4c4c4;

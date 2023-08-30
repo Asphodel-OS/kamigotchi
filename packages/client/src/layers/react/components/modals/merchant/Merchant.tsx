@@ -3,34 +3,19 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
   EntityID,
-  EntityIndex,
   Has,
   HasValue,
-  getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Listings } from './Listings';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccount } from 'layers/react/shapes/Account';
 import { Listing } from 'layers/react/shapes/Listing';
 import { Merchant, getMerchant } from 'layers/react/shapes/Merchant';
-
-import pompom from 'assets/images/food/pompom.png';
-import gakki from 'assets/images/food/gakki.png';
-import gum from 'assets/images/food/gum.png';
-import ribbon from 'assets/images/food/ribbon.png';
 import { dataStore } from 'layers/react/store/createStore';
-
-const ItemImages = new Map([
-  [1, gum],
-  [2, pompom],
-  [3, gakki],
-  [4, ribbon],
-]);
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerMerchantModal() {
@@ -139,16 +124,13 @@ export function registerMerchantModal() {
       /////////////////
       // DISPLAY
 
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, merchant: false });
-      }, [setVisibleModals, visibleModals]);
-
       return (
-        <ModalWrapperFull divName='merchant' id='merchant'>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
-          <Title>{`${data.merchant?.name}'s Shop`}</Title>
+        <ModalWrapperFull
+          divName='merchant'
+          id='merchant'
+          header={<Title>{`${data.merchant?.name}'s Shop`}</Title>}
+          canExit
+        >
           <Listings listings={data.merchant?.listings} handleBuy={buy} />
         </ModalWrapperFull>
       );
@@ -159,31 +141,10 @@ export function registerMerchantModal() {
 
 const Title = styled.div`
   width: 100%;
-  padding: 1vw;
+  padding: 2vw;
 
   color: black;
   font-family: Pixel;
   font-size: 1.5vw;
   text-align: center;
-`;
-
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
-  margin-bottom: 5px;
 `;

@@ -44,12 +44,13 @@ const Container = styled.div`
 
 const Image = styled.img`
   border-radius: 8px 0px 0px 0px;
+  border-right: .15vw solid black;
   height: 10vw;
 `;
 
 const ContentContainer = styled.div`
   flex-grow: 1;
-  padding: .7vw;
+  padding: 1.4vw .7vw;
 
   display: flex;
   flex-flow: column nowrap;

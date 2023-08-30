@@ -21,9 +21,6 @@ export const Listings = (props: Props) => {
 }
 
 const List = styled.div`
-  overflow-y: scroll;
-  max-height: 100%;
-  height: 100%;
   flex-grow: 1;
 
   border-color: black;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { ExitButton } from 'layers/react/components/library/ExitButton';
@@ -9,6 +9,7 @@ interface Props {
   id: string;
   children: React.ReactNode;
   header?: React.ReactNode;
+  canExit?: boolean;
   overlay?: boolean;
   hideModal?: Partial<VisibleModals>;
 }
@@ -44,6 +45,7 @@ export const ModalWrapperFull = (props: Props) => {
   // Some conditional styling to adapt the content to the wrapper.
   const zindex = props.overlay ? { position: 'relative', zIndex: '1' } : {};
 
+
   return (
     <Wrapper
       id={props.id}
@@ -51,6 +53,12 @@ export const ModalWrapperFull = (props: Props) => {
       style={{ ...zindex }}
     >
       <Content>
+        {(props.canExit)
+          ? <ButtonRow>
+            <ExitButton divName={props.divName} />
+          </ButtonRow>
+          : null
+        }
         {(props.header) ? <Header>{props.header}</Header> : null}
         <Children>{props.children}</Children>
       </Content>
@@ -74,6 +82,7 @@ const Wrapper = styled.div<Wrapper>`
 `;
 
 const Content = styled.div`
+  position: relative;
   border-color: black;
   border-width: 2px;
   border-radius: 10px;
@@ -88,6 +97,14 @@ const Content = styled.div`
   font-family: Pixel;
 `;
 
+const ButtonRow = styled.div`
+  position: absolute;
+  width: 100%;
+  
+  display: inline-flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+`;
 
 const Header = styled.div`  
   border-radius: 10px 10px 0px 0px;

@@ -22,8 +22,8 @@ export interface VisibleButtons {
   map: boolean;
   operatorInfo: boolean;
   party: boolean;
-  settings: boolean;
   quests: boolean;
+  settings: boolean;
 }
 
 export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
@@ -32,8 +32,8 @@ export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
   map: isOn,
   operatorInfo: isOn,
   party: isOn,
-  settings: isOn,
   quests: isOn,
+  settings: isOn,
 });
 
 export interface VisibleModals {
@@ -46,17 +46,17 @@ export interface VisibleModals {
   kami: boolean;
   kamiMint: boolean;
   kamisNaming: boolean;
+  leaderboard: boolean;
   nameKami: boolean;
   map: boolean;
   merchant: boolean;
   node: boolean;
+  operatorFund: boolean;
   operatorUpdater: boolean;
   party: boolean;
-  settings: boolean;
-  roomMovement: boolean;
-  operatorFund: boolean;
   quests: boolean;
-  leaderboard: boolean;
+  roomMovement: boolean;
+  settings: boolean;
 }
 
 export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
@@ -69,17 +69,17 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   kami: isOn,
   kamiMint: isOn,
   kamisNaming: isOn,
+  leaderboard: isOn,
   nameKami: isOn,
   map: isOn,
   merchant: isOn,
   node: isOn,
+  operatorFund: isOn,
   operatorUpdater: isOn,
   party: isOn,
-  settings: isOn,
-  roomMovement: isOn,
-  operatorFund: isOn,
   quests: isOn,
-  leaderboard: isOn,
+  roomMovement: isOn,
+  settings: isOn,
 });
 
 export interface DataStore {
@@ -120,16 +120,17 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       kami: false,
       kamiMint: false,
       kamisNaming: false,
-      nameKami: false,
+      leaderboard: false,
       map: false,
       merchant: false,
+      nameKami: false,
       node: false,
-      party: false,
-      operatorUpdater: false,
-      settings: false,
-      roomMovement: false,
       operatorFund: true,
-      leaderboard: false,
+      operatorUpdater: false,
+      party: false,
+      quests: false,
+      roomMovement: false,
+      settings: false,
     },
     visibleButtons: {
       chat: false,
@@ -137,6 +138,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       map: false,
       operatorInfo: false,
       party: false,
+      quests: false,
       settings: false,
     },
   };

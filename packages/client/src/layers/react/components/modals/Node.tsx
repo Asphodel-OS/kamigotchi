@@ -604,6 +604,7 @@ export function registerNodeModal() {
           id='node'
           divName='node'
           header={<NodeHeader node={data.node} />}
+          canExit
         >
           {KamiTabs()}
           {KamiList(data.node.kamis)}
