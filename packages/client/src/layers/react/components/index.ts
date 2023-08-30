@@ -68,7 +68,7 @@ export function registerUIComponents() {
   registerOperatorMovementModal();
 
   // menu modals
-  registerChatModal();
+  // registerChatModal();
   registerHelpModal();
   registerMapModal();
   registerSettingsModal();
