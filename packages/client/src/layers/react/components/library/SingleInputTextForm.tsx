@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { dataStore } from 'layers/react/store/createStore';
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
+import { set } from 'mobx';
 
 interface Props {
   id: string;
@@ -12,12 +13,15 @@ interface Props {
   onSubmit?: Function;
   hasButton?: boolean;
   initialValue?: string;
+  fullWidth?: boolean;
 }
 
 // SingleInputTextForm is a styled input field with some additional frills
 export const SingleInputTextForm = (props: Props) => {
   const { sound: { volume } } = dataStore();
   const [value, setValue] = useState(props.initialValue || '');
+  let styleOverride = {};
+  if (props.fullWidth) styleOverride = { width: '100%' };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -28,6 +32,7 @@ export const SingleInputTextForm = (props: Props) => {
     clickSound.volume = volume * 0.6;
     clickSound.play();
     props.onSubmit && props.onSubmit(value);
+    setValue('');
   };
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,7 +43,7 @@ export const SingleInputTextForm = (props: Props) => {
   };
 
   return (
-    <Container id={props.id}>
+    <Container id={props.id} style={styleOverride}>
       <InputGroup>
         {props.label && <Label>{props.label}</Label>}
         <Input

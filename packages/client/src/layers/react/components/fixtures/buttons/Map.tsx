@@ -23,7 +23,7 @@ export function registerMapButton() {
         bridgeERC721: false,
         dialogue: false,
         kami: false,
-        kamisNaming: false,
+        emaBoard: false,
         nameKami: false,
         node: false,
         merchant: false,

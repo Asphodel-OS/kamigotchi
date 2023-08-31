@@ -20,7 +20,7 @@ export const triggerDialogueModal = (description: string[]) => {
         bridgeERC721: false,
         bridgeERC20: false,
         kami: false,
-        kamisNaming: false,
+        emaBoard: false,
         map: false,
         nameKami: false,
         node: false,

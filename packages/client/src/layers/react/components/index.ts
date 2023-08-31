@@ -24,8 +24,8 @@ import { registerNodeModal } from './modals/Node';
 import { registerSettingsModal } from './modals/Settings';
 import { registerQuestsModal } from './modals/Quests';
 import { registerHelpModal } from './modals/Help';
-import { registerKamisNamingModal } from './modals/KamisNaming';
-import { registerNameKamiModal } from './modals/NameKami';
+import { registerEMABoardModal } from './modals/naming';
+import { registerNameKamiModal } from './modals/naming';
 import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
 
@@ -56,10 +56,10 @@ export function registerUIComponents() {
   // game modals
   registerERC20BridgeModal();
   registerERC721BridgeModal();
+  registerEMABoardModal();
   registerFundOperatorModal();
   registerKamiMintModal();
   registerKamiModal();
-  registerKamisNamingModal();
   registerLeaderboardModal();
   registerNameKamiModal();
   registerNodeModal();

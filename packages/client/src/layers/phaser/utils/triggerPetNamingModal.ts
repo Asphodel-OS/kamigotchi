@@ -11,11 +11,11 @@ export const triggerPetNamingModal = () => {
   clickFX.volume = volume;
   clickFX.play();
 
-  if (!visibleModals.kamisNaming) {
+  if (!visibleModals.emaBoard) {
     dataStore.setState({
       visibleModals: {
         ...visibleModals,
-        kamisNaming: true,
+        emaBoard: true,
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,
@@ -27,6 +27,6 @@ export const triggerPetNamingModal = () => {
       },
     });
   } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, kamisNaming: false } });
+    dataStore.setState({ visibleModals: { ...visibleModals, emaBoard: false } });
   }
 };

@@ -11,18 +11,22 @@ export const triggerNodeModal = () => {
   clickFX.volume = volume;
   clickFX.play();
 
-  dataStore.setState({
-    visibleModals: {
-      ...visibleModals,
-      node: true,
-      bridgeERC20: false,
-      bridgeERC721: false,
-      dialogue: false,
-      kami: false,
-      kamiMint: false,
-      kamisNaming: false,
-      map: false,
-      nameKami: false,
-    },
-  });
+  if (!visibleModals.node) {
+    dataStore.setState({
+      visibleModals: {
+        ...visibleModals,
+        node: true,
+        bridgeERC20: false,
+        bridgeERC721: false,
+        dialogue: false,
+        kami: false,
+        kamiMint: false,
+        emaBoard: false,
+        map: false,
+        nameKami: false,
+      },
+    });
+  } else {
+    dataStore.setState({ visibleModals: { ...visibleModals, node: false } });
+  }
 };

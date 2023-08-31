@@ -41,11 +41,11 @@ export interface VisibleModals {
   bridgeERC721: boolean;
   chat: boolean;
   dialogue: boolean;
+  emaBoard: boolean;
   help: boolean;
   inventory: boolean;
   kami: boolean;
   kamiMint: boolean;
-  kamisNaming: boolean;
   leaderboard: boolean;
   nameKami: boolean;
   map: boolean;
@@ -64,11 +64,11 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   bridgeERC721: isOn,
   chat: isOn,
   dialogue: isOn,
+  emaBoard: isOn,
   help: isOn,
   inventory: isOn,
   kami: isOn,
   kamiMint: isOn,
-  kamisNaming: isOn,
   leaderboard: isOn,
   nameKami: isOn,
   map: isOn,
@@ -115,11 +115,11 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       bridgeERC721: false,
       chat: false,
       dialogue: false,
+      emaBoard: false,
       help: false,
       inventory: false,
       kami: false,
       kamiMint: false,
-      kamisNaming: false,
       leaderboard: false,
       map: false,
       merchant: false,

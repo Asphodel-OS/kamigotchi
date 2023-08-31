@@ -39,7 +39,7 @@ export interface Kami {
   production?: Production;
   traits?: Traits;
   affinities?: string[];
-  canName?: boolean;
+  namable: boolean;
 }
 
 export interface KamiExperience {
@@ -54,7 +54,6 @@ export interface Options {
   kills?: boolean;
   production?: boolean;
   traits?: boolean;
-  namable?: boolean;
 }
 
 // items to query
@@ -114,6 +113,7 @@ export const getKami = (
     health: getComponentValue(HealthCurrent, index)?.value as number,
     healthRate: 0,
     state: getComponentValue(State, index)?.value as string,
+    namable: getComponentValue(CanName, index)?.value as boolean,
     lastUpdated: getComponentValue(LastTime, index)?.value as number,
     cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
     skillpoints: getComponentValue(SkillPoint, index)?.value as number,
@@ -209,15 +209,6 @@ export const getKami = (
       kami.traits.body.affinity,
       kami.traits.hand.affinity,
     ]
-  }
-
-  // check if canName
-  if (options?.namable) {
-    if (getComponentValue(CanName, index)) {
-      kami.canName = true;
-    } else {
-      kami.canName = false;
-    }
   }
 
   /////////////////

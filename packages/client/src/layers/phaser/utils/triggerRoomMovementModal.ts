@@ -14,7 +14,7 @@ export const triggerRoomMovementModal = (room: number) => {
 
   // if already open on this room, close the modal
   if (visibleModals.roomMovement && selectedEntities.room === room) {
-    return dataStore.setState({
+    dataStore.setState({
       visibleModals: { ...visibleModals, roomMovement: false }
     });
   } else {
@@ -28,7 +28,7 @@ export const triggerRoomMovementModal = (room: number) => {
         dialogue: false,
         kami: false,
         kamiMint: false,
-        kamisNaming: false,
+        emaBoard: false,
         map: false,
         nameKami: false,
       },
