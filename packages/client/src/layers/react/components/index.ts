@@ -16,18 +16,18 @@ import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerKamiModal } from './modals/Kami';
-import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/Map';
-import { registerMerchantModal } from './modals/merchant';
-import { registerPartyModal } from './modals/Party';
 import { registerNodeModal } from './modals/Node';
 import { registerSettingsModal } from './modals/Settings';
 import { registerQuestsModal } from './modals/Quests';
 import { registerHelpModal } from './modals/Help';
-import { registerEMABoardModal } from './modals/naming';
-import { registerNameKamiModal } from './modals/naming';
 import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
+
+import { registerLeaderboardModal } from './modals/leaderboard';
+import { registerMerchantModal } from './modals/merchant';
+import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
+import { registerPartyModal } from './modals/party';
 
 import { registerAccountRegistrar } from './validators/AccountRegistrar';
 import { registerBurnerDetector } from './validators/BurnerDetector';

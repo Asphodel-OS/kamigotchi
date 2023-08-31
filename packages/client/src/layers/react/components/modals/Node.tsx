@@ -17,7 +17,7 @@ import {
 } from 'layers/react/components/library/ActionListButton';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Countdown } from 'layers/react/components/library/Countdown';
-import { KamiCard2 } from 'layers/react/components/library/KamiCard2';
+import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { NodeHeader } from 'layers/react/components/library/NodeHeader';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -525,13 +525,14 @@ export function registerNodeModal() {
         ];
 
         return (
-          <KamiCard2
+          <KamiCard
             key={kami.index}
             kami={kami}
+            description={description}
             subtext={`yours (\$${output})`}
             action={[CollectButton(kami), StopButton(kami)]}
-            cornerContent={CornerContent(kami)}
-            description={description}
+            battery
+            cooldown
           />
         );
       };
@@ -553,7 +554,7 @@ export function registerNodeModal() {
         });
 
         return (
-          <KamiCard2
+          <KamiCard
             key={kami.index}
             kami={kami}
             subtext={`${kami.account!.name} (\$${output})`}

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { KamiCard2 } from 'layers/react/components/library/KamiCard2';
+import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -115,7 +115,7 @@ export function registerEMABoardModal() {
           `and loves you very much`,
         ];
         return (
-          <KamiCard2
+          <KamiCard
             key={kami.index}
             kami={kami}
             action={RenameButton(kami)}
