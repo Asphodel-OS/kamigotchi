@@ -11,7 +11,7 @@ import { Countdown } from 'layers/react/components/library/Countdown';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { AccountInventories, getAccount } from 'layers/react/shapes/Account';
+import { AccountInventories, getAccount, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { Inventory, getInventoryByFamilyIndex } from 'layers/react/shapes/Inventory';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -38,20 +38,17 @@ export function registerPartyModal() {
       const {
         network: {
           api: { player },
-          network,
           components: {
             AccountID,
             Balance,
             Coin,
             Health,
             HealthCurrent,
-            IsAccount,
             IsConfig,
             LastTime,
             Location,
             MediaURI,
             Name,
-            OperatorAddress,
             OwnerAddress,
             Rate,
             State,
@@ -81,17 +78,10 @@ export function registerPartyModal() {
         Value.update$,
       ).pipe(
         map(() => {
-          // get the account through the account entity of the controlling wallet
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account = getAccount(layers, accountIndex, { inventory: true, kamis: true });
+          const account = getAccountFromBurner(
+            layers,
+            { inventory: true, kamis: true },
+          );
 
           return {
             actions,
@@ -105,7 +95,7 @@ export function registerPartyModal() {
 
     // Render
     ({ actions, api, data, world }) => {
-      // console.log('PartyM: data', data);
+      console.log('PartyM: data', data);
       const {
         visibleModals,
         setVisibleModals,
@@ -474,9 +464,8 @@ export function registerPartyModal() {
       // Rendering of Individual Kami Cards in the Party Modal
       // TODO: consider ideal ordering here
       const KamiCards = (kamis: Kami[]) => {
-        const reversed = [...kamis];
-        reversed.reverse();
-        return reversed.map((kami) => {
+        let myKamis = kamis ?? [];
+        return myKamis.reverse().map((kami) => {
           const action = DisplayedAction(kami);
           const description = getDescription(kami);
 

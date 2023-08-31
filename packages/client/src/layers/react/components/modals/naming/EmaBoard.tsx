@@ -8,7 +8,7 @@ import { KamiCard2 } from 'layers/react/components/library/KamiCard2';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccount } from 'layers/react/shapes/Account';
+import { Account, getAccount, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 
@@ -27,16 +27,13 @@ export function registerEMABoardModal() {
     (layers) => {
       const {
         network: {
-          network,
           components: {
             AccountID,
             CanName,
-            IsAccount,
             IsPet,
             Location,
             MediaURI,
             Name,
-            OperatorAddress,
             State,
           },
         },
@@ -52,19 +49,7 @@ export function registerEMABoardModal() {
         MediaURI.update$
       ).pipe(
         map(() => {
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account = accountIndex !== undefined
-            ? getAccount(layers, accountIndex, { kamis: true })
-            : ({} as Account);
-
+          const account = getAccountFromBurner(layers, { kamis: true });
           return {
             data: { account } as any,
           };

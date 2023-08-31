@@ -1,17 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { useBalance } from 'wagmi';
+import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
-import { Account, getAccount } from '../../shapes/Account';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
@@ -28,7 +27,6 @@ export function registerFundOperatorModal() {
     (layers) => {
       const {
         network: {
-          network: { connectedAddress },
           components: {
             IsAccount,
             OperatorAddress
@@ -38,24 +36,7 @@ export function registerFundOperatorModal() {
 
       return merge(OperatorAddress.update$, IsAccount.update$).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
-          const accountEntityIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account =
-            accountEntityIndex !== undefined
-              ? getAccount(layers, accountEntityIndex)
-              : ({} as Account);
-
-          return {
-            layers
-          };
+          return { layers };
         })
       );
     },
@@ -71,8 +52,8 @@ export function registerFundOperatorModal() {
         },
       } = layers;
       const { details: accountDetails } = useKamiAccount();
-      const { sound: { volume }, visibleModals, setVisibleModals } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
+      const { sound: { volume } } = dataStore();
 
       const [isFundState, setIsFundState] = useState(true);
       const [amount, setAmount] = useState(0.05);

@@ -84,6 +84,11 @@ export const getAccount = (
     name: getComponentValue(Name, index)?.value as string,
     coin: getComponentValue(Coin, index)?.value as number,
     location: getComponentValue(Location, index)?.value as number,
+    // stamina: {
+    //   total: getComponentValue(Stamina, index)?.value as number,
+    //   last: getComponentValue(StaminaCurrent, index)?.value as number,
+    //   recoveryPeriod: 1, // dummy value
+    // },
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
     staminaRecoveryPeriod: 1, // dummy value
@@ -143,11 +148,36 @@ export const getAccount = (
     }
   }
 
+
   /////////////////
   // ADJUSTMENTS
+
   const staminaRecoveryPeriod = getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD');
   account.staminaRecoveryPeriod = staminaRecoveryPeriod;
 
-
   return account;
+};
+
+
+export const getAccountFromBurner = (layers: Layers, options?: AccountOptions) => {
+  const {
+    network: {
+      network,
+      components: {
+        IsAccount,
+        OperatorAddress,
+      },
+    },
+  } = layers;
+
+  const accountIndex = Array.from(
+    runQuery([
+      Has(IsAccount),
+      HasValue(OperatorAddress, {
+        value: network.connectedAddress.get(),
+      }),
+    ])
+  )[0];
+
+  return getAccount(layers, accountIndex, options);
 };

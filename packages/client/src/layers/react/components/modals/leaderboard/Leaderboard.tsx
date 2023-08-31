@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Table } from './Table';
 import { Filters } from './Filters';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { getAccount } from 'layers/react/shapes/Account';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Score, ScoresFilter, getScores } from 'layers/react/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
@@ -25,9 +25,7 @@ export function registerLeaderboardModal() {
     (layers) => {
       const {
         network: {
-          network,
           components: {
-            IsAccount,
             IsScore,
             Location,
             Name,
@@ -43,18 +41,7 @@ export function registerLeaderboardModal() {
         OperatorAddress.update$,
       ).pipe(
         map(() => {
-          // get the account through the account entity of the controlling wallet
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account = getAccount(layers, accountIndex);
-
+          const account = getAccountFromBurner(layers);
           return {
             layers,
             data: { account },
@@ -88,7 +75,6 @@ export function registerLeaderboardModal() {
           setTableData(tableData);
         }
       }, [filter, lastRefresh]);
-
 
       return (
         <ModalWrapperFull

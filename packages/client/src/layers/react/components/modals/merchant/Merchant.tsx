@@ -12,10 +12,9 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { Listings } from './Listings';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { getAccount } from 'layers/react/shapes/Account';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Listing } from 'layers/react/shapes/Listing';
-import { Merchant, getMerchant } from 'layers/react/shapes/Merchant';
-import { dataStore } from 'layers/react/store/createStore';
+import { getMerchant } from 'layers/react/shapes/Merchant';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerMerchantModal() {
@@ -35,17 +34,14 @@ export function registerMerchantModal() {
       const {
         network: {
           api: { player },
-          network,
           components: {
             AccountID,
             Description,
-            IsAccount,
             IsMerchant,
             IsListing,
             ItemIndex,
             Location,
             Name,
-            OperatorAddress,
           },
           actions,
         },
@@ -60,16 +56,7 @@ export function registerMerchantModal() {
         Name.update$,
       ).pipe(
         map(() => {
-          // get the account through the account entity of the controlling wallet
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-          const account = getAccount(layers, accountIndex);
+          const account = getAccountFromBurner(layers, { inventory: true });
 
           // get the merchant in this room
           const merchantResults = runQuery([
@@ -100,8 +87,6 @@ export function registerMerchantModal() {
     // Render
     ({ actions, api, data }) => {
       // console.log('mMerchant: data', data);
-      const { visibleModals, setVisibleModals } = dataStore();
-
 
       /////////////////
       // ACTIONS

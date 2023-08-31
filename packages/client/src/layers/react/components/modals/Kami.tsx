@@ -17,7 +17,6 @@ import { Kill } from 'layers/react/shapes/Kill';
 import { Trait, Traits } from 'layers/react/shapes/Trait';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import { ActionButton } from '../library/ActionButton';
 
 export function registerKamiModal() {
   registerUIComponent(
