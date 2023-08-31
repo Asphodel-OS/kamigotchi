@@ -54,7 +54,7 @@ export function registerOperatorMovementModal() {
           updates: () => [],
           execute: async () => {
             const roomMovment = await api.player.account.move(selectedRoom?.location);
-            hideModal();
+            setVisibleModals({ ...visibleModals, roomMovement: false });
             return roomMovment;
           },
         });
@@ -64,15 +64,13 @@ export function registerOperatorMovementModal() {
       //////////////////
       // RENDERING
 
-      const hideModal = () => {
-        setVisibleModals({ ...visibleModals, roomMovement: false });
-      };
-
       return (
-        <ModalWrapperFull divName='roomMovement' id='roomMovement'>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
+        <ModalWrapperFull
+          divName='roomMovement'
+          id='roomMovement'
+          canExit
+          overlay
+        >
           <TextWrapper>Do you really wish to move to {selectedRoom?.name}?</TextWrapper>
           <ButtonWrapper>
             <ActionButton
@@ -102,23 +100,4 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   height: 100%;
   align-items: center;
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
 `;

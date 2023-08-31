@@ -129,9 +129,6 @@ export function registerFundOperatorModal() {
         await waitForActionCompletion(actions.Action, actionIndex);
       };
 
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, operatorFund: false });
-      }, [setVisibleModals, visibleModals]);
 
       /////////////////
       // DISPLAY LOGIC
@@ -212,10 +209,12 @@ export function registerFundOperatorModal() {
       }, [amount, OwnerBal, OperatorBal, isFundState]);
 
       return (
-        <ModalWrapperFull divName='operatorFund' id='operatorFund'>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
+        <ModalWrapperFull
+          divName='operatorFund'
+          id='operatorFund'
+          canExit
+          overlay
+        >
           <Header>Operator gas</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>
@@ -263,10 +262,12 @@ const BoxButton = styled.button`
 `;
 
 const Header = styled.p`
-  font-size: 24px;
   color: black;
-  text-align: center;
+
+  padding: 32px;
   font-family: Pixel;
+  font-size: 24px;
+  text-align: center;
 `;
 
 const Grid = styled.div`
@@ -277,7 +278,7 @@ const Grid = styled.div`
   grid-column-gap: 6px;
   grid-row-gap: 6px;
   max-height: 80%;
-  padding: 32px;
+  padding: 20px;
 `;
 
 const Description = styled.p`

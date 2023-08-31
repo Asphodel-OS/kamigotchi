@@ -93,7 +93,7 @@ export function registerQuestsModal() {
     // NOTE: Completed and Ongoing should be straitforward to pull. we should
     // be using those + requirements to determine available quests
     ({ layers, actions, api, data }) => {
-      console.log('mQuest:', data);
+      // console.log('mQuest:', data);
       const [questFilter, setQuestFilter] = useState('ONGOING');
 
 
@@ -489,7 +489,6 @@ const QuestContainer = styled.div`
   flex-direction: column;
   padding: 1vw;
   margin: 0.8vw;
-
 `;
 
 const QuestName = styled.div`

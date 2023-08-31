@@ -27,7 +27,7 @@ export function registerKamiMintModal() {
       colStart: 30,
       colEnd: 70,
       rowStart: 30,
-      rowEnd: 70,
+      rowEnd: 75,
     },
     (layers) => {
       const {
@@ -190,24 +190,6 @@ export function registerKamiMintModal() {
         return actionID;
       };
 
-      // transaction to mint the Mint ERC20 Token
-      const mintTokenTx = (amount: number, value: number) => {
-        const network = networks.get(selectedAddress);
-        const api = network!.api.player;
-
-        const actionID = (amount == 1 ? `Minting Token` : `Minting Tokens`) as EntityID;
-        actions.add({
-          id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.mint.mintToken(amount, value);
-          },
-        });
-        return actionID;
-      }
-
       // transaction to roll/reveal the kami's metadata 
       const revealTx = async (kami: Kami) => {
         const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
@@ -244,18 +226,6 @@ export function registerKamiMintModal() {
         }
       };
 
-      const handleTokenMinting = (amount: number, value: number) => async () => {
-        try {
-          const mintActionID = mintTokenTx(amount, value);
-
-          const mintFX = new Audio(mintSound);
-          mintFX.volume = volume * 0.6;
-          mintFX.play();
-        } catch (e) {
-          console.log('KamiMint.tsx: handleTokenMinting() mint failed', e);
-        }
-      };
-
 
       ///////////////
       // DISPLAY
@@ -284,10 +254,7 @@ export function registerKamiMintModal() {
 
       const PetQuantityBox = () => {
         if (waitingToReveal) {
-          // waiting to reveal - dont leave the page!
-          return (
-            <SubText>Revealing... don't leave this page!</SubText>
-          );
+          return (<SubText>Revealing... don't leave this page!</SubText>);
         } else {
           return (
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0px 0px 0px' }}>
@@ -333,11 +300,6 @@ export function registerKamiMintModal() {
         </Grid>
       );
 
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, kamiMint: false });
-      }, [setVisibleModals, visibleModals]);
-
-
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
           handlePetMinting(amountToMint);
@@ -349,12 +311,13 @@ export function registerKamiMintModal() {
       };
 
       return (
-        <ModalWrapperFull divName='kamiMint' id='kamiMintModal' hideModal={{ party: false }}>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
+        <ModalWrapperFull
+          divName='kamiMint'
+          id='kamiMintModal'
+          overlay
+          canExit
+        >
           {PetMachine}
-          {/* <Stepper steps={steps} PetMachine={PetMachine} /> */}
         </ModalWrapperFull>
       );
     }
@@ -409,25 +372,6 @@ const KamiImage = styled.img`
   padding: 0px;
 `;
 
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background - color: #c4c4c4;
-  }
-  margin: 0px;
-`;
-
 const ProductBox = styled.div`
   border-color: black;
   border-radius: 2px;
@@ -442,10 +386,12 @@ const ProductBox = styled.div`
 `;
 
 const SubHeader = styled.p`
-  font-size: 16px;
   color: #333;
-  text-align: center;
+
+  padding: 1.5vw;
   font-family: Pixel;
+  font-size: 1.5vw;
+  text-align: center;
 `;
 
 const SubText = styled.div`

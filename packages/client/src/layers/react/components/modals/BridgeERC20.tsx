@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BigNumber, BigNumberish, utils } from 'ethers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
-import { useAccount, useBalance, useContractRead } from 'wagmi';
+import { useBalance, useContractRead } from 'wagmi';
+import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 
-import { Account, getAccount } from '../../shapes/Account';
+import { abi } from "abi/Farm20ProxySystem.json"
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { Account, getAccount } from 'layers/react/shapes/Account';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 
-import { abi } from "../../../../../abi/Farm20ProxySystem.json"
 
 export function registerERC20BridgeModal() {
   registerUIComponent(
@@ -168,10 +167,6 @@ export function registerERC20BridgeModal() {
       }, [amount, isDepositState, EOABal, GameBal]);
 
 
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, bridgeERC20: false });
-      }, [setVisibleModals, visibleModals]);
-
       ///////////////
       // COMPONENTS
 
@@ -196,10 +191,12 @@ export function registerERC20BridgeModal() {
       };
 
       return (
-        <ModalWrapperFull divName='bridgeERC20' id='bridgeERC20'>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
+        <ModalWrapperFull
+          divName='bridgeERC20'
+          id='bridgeERC20'
+          canExit
+          overlay
+        >
           <Header>Bridge $MUSU</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>
@@ -247,10 +244,12 @@ const BoxButton = styled.button`
 `;
 
 const Header = styled.p`
-  font-size: 24px;
   color: black;
-  text-align: center;
+  padding: 1.5vw;
+  
   font-family: Pixel;
+  font-size: 1.5vw;
+  text-align: center;
 `;
 
 const Grid = styled.div`
@@ -290,25 +289,6 @@ const Input = styled.input`
   &:focus {
     outline: none;
   }
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
 `;
 
 const SubDescription = styled.p`

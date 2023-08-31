@@ -179,23 +179,24 @@ export function registerERC721BridgeModal() {
         watch: true,
       });
 
+      // update list of externally owned kamis
       useEffect(() => {
-        // gets all kami entities externally owned 
         const getEOAKamis = (): Kami[] => {
-          // get indexes of external kamis
-          const getIndexes = (): bigint[] => {
+          // get indices of external kamis
+          const getIndices = (): bigint[] => {
             return erc721List ? [...erc721List] : [];
           }
 
           // get kamis from index
-          const getKamis = (indexes: bigint[]): Kami[] => {
+          const getKamis = (indices: bigint[]): Kami[] => {
             let kamis: Kami[] = [];
-
-            for (let i = 0; i < indexes.length; i++) {
+            let petIndex;
+            for (let i = 0; i < indices.length; i++) {
+              petIndex = ('0x' + indices[i].toString(16).padStart(2, '0')) as unknown as number;
               const entityID = Array.from(
                 runQuery([
                   Has(IsPet),
-                  HasValue(PetIndex, { value: '0x' + indexes[i].toString(16).padStart(2, '0') })
+                  HasValue(PetIndex, { value: petIndex })
                 ])
               )[0];
 
@@ -205,8 +206,8 @@ export function registerERC721BridgeModal() {
             return kamis;
           }
 
-          const indexes = getIndexes();
-          return getKamis(indexes);
+          const indices = getIndices();
+          return getKamis(indices);
         }
 
         setEOAKamis(getEOAKamis());
@@ -240,12 +241,9 @@ export function registerERC721BridgeModal() {
         });
       };
 
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, bridgeERC721: false });
-      }, [setVisibleModals, visibleModals]);
 
-      //////////////////
-      //  KAMI LOGIC  //
+      /////////////////
+      //  KAMI LOGIC 
 
       const isImportable = (kami: Kami): boolean => {
         return isOutOfWorld(kami);
@@ -269,10 +267,12 @@ export function registerERC721BridgeModal() {
         kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapperFull id='bridgeERC721' divName='bridgeERC721'>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
+        <ModalWrapperFull
+          id='bridgeERC721'
+          divName='bridgeERC721'
+          canExit
+          overlay
+        >
           <Title>Stake/Unstake Kamis</Title>
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>
@@ -386,10 +386,10 @@ const NotButton = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 24px;
+  font-size: 1.5vw;
   color: black;
   text-align: center;
-  padding: 10px;
+  padding: 1.5vw;
   font-family: Pixel;
 `;
 
@@ -414,23 +414,4 @@ const TitleText = styled.p`
   &:hover {
     opacity: 0.6;
   }
-`;
-
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
 `;
