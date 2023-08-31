@@ -16,7 +16,7 @@ import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerKamiModal } from './modals/Kami';
-import { registerLeaderboardModal } from './modals/Leaderboard';
+import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/Map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerPartyModal } from './modals/Party';
