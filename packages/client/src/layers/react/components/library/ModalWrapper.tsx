@@ -53,13 +53,12 @@ export const ModalWrapperFull = (props: Props) => {
       style={{ ...zindex }}
     >
       <Content>
-        {(props.canExit)
-          ? <ButtonRow>
+        {props.canExit &&
+          <ButtonRow>
             <ExitButton divName={props.divName} />
           </ButtonRow>
-          : null
         }
-        {(props.header) ? <Header>{props.header}</Header> : null}
+        {props.header && <Header>{props.header}</Header>}
         <Children>{props.children}</Children>
       </Content>
     </Wrapper>

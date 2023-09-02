@@ -41,7 +41,7 @@ export const Items = (props: Props) => {
   const cells = inventorySlots.map((slot, i) => {
     return (
       <Tooltip key={slot.id} text={slot.text} grow>
-        <CellGrid key={slot.id}>
+        <CellGrid>
           <Icon src={slot.image} />
           <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
         </CellGrid>
@@ -49,7 +49,7 @@ export const Items = (props: Props) => {
     );
   });
 
-  return <TopGrid>{cells}</TopGrid>;
+  return <TopGrid key='top-grid'>{cells}</TopGrid>;
 };
 
 

@@ -244,7 +244,7 @@ export const Kards = (props: Props) => {
     return <>{myKamis.reverse().map((kami) => {
       return (
         <KamiCard
-          key={kami.id}
+          key={kami.entityIndex}
           kami={kami}
           description={getDescription(kami)}
           subtext={`${calcOutput(kami)} $MUSU`}

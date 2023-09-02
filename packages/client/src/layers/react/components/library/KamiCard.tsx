@@ -104,14 +104,14 @@ export const KamiCard = (props: Props) => {
     const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
     const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
     return (
-      <TitleCorner>
+      <TitleCorner key='corner'>
         {props.cooldown &&
-          <Tooltip text={[cooldownString]}>
+          <Tooltip key='cooldown' text={[cooldownString]}>
             <Countdown total={kami.cooldown} current={cooldown} />
           </Tooltip>
         }
         {props.battery &&
-          <Tooltip text={[healthString]}>
+          <Tooltip key='battery' text={[healthString]}>
             <Battery level={100 * calcHealth(kami) / kami.stats.health} />
           </Tooltip>
         }
@@ -124,7 +124,7 @@ export const KamiCard = (props: Props) => {
       image={props.kami.uri}
       imageOnClick={() => kamiOnClick()}
       titleBarContent={[
-        <TitleText onClick={() => kamiOnClick()}>{props.kami.name}</TitleText>,
+        <TitleText key='title' onClick={() => kamiOnClick()}>{props.kami.name}</TitleText>,
         CornerContent(props.kami)
       ]}
       content={[

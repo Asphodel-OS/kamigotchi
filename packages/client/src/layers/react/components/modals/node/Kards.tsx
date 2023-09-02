@@ -158,10 +158,9 @@ export const Kards = (props: Props) => {
     let tooltipText = getDisabledText(kami);
 
     return (
-      <Tooltip text={[tooltipText]}>
+      <Tooltip key='collect-tooltip' text={[tooltipText]}>
         <ActionButton
           id={`harvest-collect-${kami.index}`}
-          key={`harvest-collect-${kami.index}`}
           onClick={() => props.actions.collect(kami)}
           text='Collect'
           disabled={kami.production === undefined || tooltipText !== ''}
@@ -174,10 +173,9 @@ export const Kards = (props: Props) => {
   const StopButton = (kami: Kami) => {
     let tooltipText = getDisabledText(kami);
     return (
-      <Tooltip text={[tooltipText]}>
+      <Tooltip key='stop-tooltip' text={[tooltipText]}>
         <ActionButton
           id={`harvest-stop-${kami.index}`}
-          key={`harvest-stop-${kami.index}`}
           text='Stop'
           onClick={() => props.actions.stop(kami)}
           disabled={kami.production === undefined || tooltipText !== ''}
@@ -220,7 +218,7 @@ export const Kards = (props: Props) => {
 
     return (
       <KamiCard
-        key={kami.index}
+        key={kami.entityIndex}
         kami={kami}
         description={description}
         subtext={`yours (\$${output})`}
@@ -249,7 +247,7 @@ export const Kards = (props: Props) => {
 
     return (
       <KamiCard
-        key={kami.index}
+        key={kami.entityIndex}
         kami={kami}
         subtext={`${kami.account!.name} (\$${output})`}
         action={LiquidateButton(kami, validLiquidators)}

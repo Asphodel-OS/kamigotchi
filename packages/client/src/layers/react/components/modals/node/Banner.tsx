@@ -37,7 +37,7 @@ export const Banner = (props: Props) => {
   return (
     <Container key={props.node.name}>
       <Image src={NodeImages[props.node.index]} />
-      <ContentContainer>
+      <Content>
         <ContentTop>
           <TitleRow>
             <TitleText>{props.node.name}</TitleText>
@@ -46,13 +46,13 @@ export const Banner = (props: Props) => {
           <DescriptionText>{props.node.description}</DescriptionText>
         </ContentTop>
         <ButtonRow>{AddButton(props.availableKamis)}</ButtonRow>
-      </ContentContainer>
+      </Content>
     </Container>
   );
 };
 
 const Container = styled.div`
-  border-bottom: .15vw solid black;
+  border-bottom: solid black .15vw;
   color: black;
 
   display: flex;
@@ -61,11 +61,11 @@ const Container = styled.div`
 
 const Image = styled.img`
   border-radius: 8px 0px 0px 0px;
-  border-right: .15vw solid black;
+  border-right: solid black .15vw;
   height: 10vw;
 `;
 
-const ContentContainer = styled.div`
+const Content = styled.div`
   flex-grow: 1;
   padding: 1.4vw .7vw .7vw .7vw;
 

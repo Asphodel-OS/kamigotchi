@@ -42,16 +42,16 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: left;
   font-family: Pixel;
-  margin: 0px 0px 17px 10px;
+  margin-left: 1vw;
 `;
 
 const BarContainer = styled.div`
-  border: 1px solid black;
-  border-radius: 10px;
+  border: solid black .1vw;
+  border-radius: 1vw;
   background-color: #bbb;
-  height: 20px;
-  min-width: 200px;
-  margin: 0px 10px;
+  height: 1.2vw;
+  min-width: 12vw;
+  margin: 0px .7vw;
 
   position: relative;
   display: flex;
@@ -61,20 +61,22 @@ const BarContainer = styled.div`
 
 const FilledBar = styled.div<{ percentage: number }>`
   background-color: #11ee11;
-  border-radius: 10px;
+  border-radius: 1vw;
   height: 100%;
   width: ${props => props.percentage}%;
 `;
 
-const Percentage = styled.p`
+const Percentage = styled.div`
+  width: 100%;
   color: black;
   position: absolute;
-  padding-left: 90px;
   font-family: Pixel;
-  font-size: 12px;
+  font-size: .6vw;
+  text-align: center;
 `;
 
-const Level = styled.p`
+const Level = styled.div`
   color: black;
   font-family: Pixel;
+  font-size: 1vw;
 `;

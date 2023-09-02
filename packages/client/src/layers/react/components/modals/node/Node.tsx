@@ -282,17 +282,22 @@ export function registerNodeModal() {
         return kamis.filter((kami) => isResting(kami) && !onCooldown(kami));
       };
 
+
+      /////////////////
+      // DISPLAY
+
       return (
         <ModalWrapperFull
           id='node'
           divName='node'
           header={[
             <Banner
+              key='banner'
               node={data.node}
               availableKamis={getKamiOptions(data.account.kamis || [])}
               addKami={(kami) => start(kami, data.node)}
             />,
-            <Tabs tab={tab} setTab={setTab} />
+            <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
           canExit
         >

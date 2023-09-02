@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
@@ -181,7 +180,7 @@ export function registerPartyModal() {
         <ModalWrapperFull
           id='party_modal'
           divName='party'
-          header={[<Items inventories={data.account.inventories!}></Items>]}
+          header={[<Items key='items' inventories={data.account.inventories!} />]}
         >
           <Kards
             kamis={data.account.kamis!}
@@ -197,9 +196,3 @@ export function registerPartyModal() {
     }
   );
 }
-
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  height: 100 %;
-  max-height: 100 %;
-`;
