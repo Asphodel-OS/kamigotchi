@@ -1,13 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Node } from 'layers/react/shapes/Node';
 import { NodeImages } from 'constants/nodes';
+import { ActionListButton } from 'layers/react/components/library/ActionListButton';
+import { Node } from 'layers/react/shapes/Node';
 import { Kami } from 'layers/react/shapes/Kami';
-import {
-  ActionListButton,
-  Option as ActionListOption,
-} from 'layers/react/components/library/ActionListButton';
 
 
 interface Props {

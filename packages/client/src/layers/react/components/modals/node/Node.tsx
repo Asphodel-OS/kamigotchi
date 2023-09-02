@@ -25,6 +25,7 @@ import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
 import { Tabs } from './Tabs';
+import { Kards } from './Kards';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -77,7 +78,7 @@ export function registerNodeModal() {
         OperatorAddress.update$
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers);
+          const account = getAccountFromBurner(layers, { kamis: true });
 
           // get the node through the location of the linked account
           const nodeEntityIndex = Array.from(
@@ -95,22 +96,6 @@ export function registerNodeModal() {
 
           /////////////////
           // DEPENDENT DATA
-
-          // get the resting kamis on this account
-          let restingKamis: Kami[] = [];
-          if (account) {
-            const accountKamiIndices = Array.from(
-              runQuery([
-                Has(IsPet),
-                HasValue(AccountID, { value: account.id }),
-                HasValue(State, { value: 'RESTING' }),
-              ])
-            );
-
-            restingKamis = accountKamiIndices.map((kamiIndex) => {
-              return getKami(layers, kamiIndex);
-            });
-          }
 
           // get the productions on this node
           let nodeKamis: Kami[] = [];
@@ -156,7 +141,7 @@ export function registerNodeModal() {
             actions,
             api: player,
             data: {
-              account: { ...account, kamis: restingKamis },
+              account,
               liquidationConfig: getLiquidationConfig(layers.network),
               node: {
                 ...node,
@@ -174,14 +159,13 @@ export function registerNodeModal() {
     // Render
     ({ actions, api, data }) => {
       // console.log('NodeM: data', data);
-
-      /////////////////
-      // STATE TRACKING
-
+      const [tab, setTab] = useState('allies');
+      const [lastRefresh, setLastRefresh] = useState(Date.now());
       const scrollableRef = useRef<HTMLDivElement>(null);
       const [scrollPosition, setScrollPosition] = useState<number>(0);
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const [tab, setTab] = useState('allies');
+
+      /////////////////
+      // TRACKING
 
       // scrolling
       useEffect(() => {
@@ -211,6 +195,7 @@ export function registerNodeModal() {
         };
       }, []);
 
+
       ///////////////////
       // ACTIONS
 
@@ -225,21 +210,6 @@ export function registerNodeModal() {
           updates: () => [],
           execute: async () => {
             return api.production.collect(kami.production!.id);
-          },
-        });
-      };
-
-      // collects on all eligible productions on a node
-      const collectAll = (node: Node) => {
-        const actionID = `Collecting All Harvests` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
-          id: actionID,
-          components: {},
-          // on: data.????,
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.node.collect(node.id);
           },
         });
       };
@@ -290,98 +260,18 @@ export function registerNodeModal() {
         });
       };
 
-      /////////////////
-      // DATA INTERPRETATION
 
-      // calculate health based on the drain against last confirmed health
-      const calcHealth = (kami: Kami): number => {
-        let health = 1 * kami.health;
-        let duration = calcIdleTime(kami);
-        health += kami.healthRate * duration;
-        health = Math.min(Math.max(health, 0), kami.stats.health);
-        return health;
-      };
+      /////////////////
+      // INTERPRETATION
 
       // calculate the time a kami has spent idle (in seconds)
       const calcIdleTime = (kami: Kami): number => {
         return lastRefresh / 1000 - kami.lastUpdated;
       };
 
-      // calculate the expected output from a pet production based on starttime
-      const calcOutput = (kami: Kami): number => {
-        let output = 0;
-        if (isHarvesting(kami) && kami.production) {
-          output = kami.production.balance * 1;
-          let duration = lastRefresh / 1000 - kami.production.startTime;
-          output += Math.floor(duration * kami.production?.rate);
-        }
-        return Math.max(output, 0);
-      };
-
-      const calcLiquidationAffinityMultiplier = (attacker: Kami, victim: Kami): number => {
-        const multiplierBase = data.liquidationConfig.multipliers.affinity.base;
-        const multiplierUp = data.liquidationConfig.multipliers.affinity.up;
-        const multiplierDown = data.liquidationConfig.multipliers.affinity.down;
-
-        let multiplier = multiplierBase;
-        if (attacker.traits && victim.traits) {
-          const attackerAffinity = attacker.traits.hand.affinity;
-          const victimAffinity = victim.traits.body.affinity;
-          if (attackerAffinity === 'EERIE') {
-            if (victimAffinity === 'SCRAP') multiplier = multiplierUp;
-            else if (victimAffinity === 'INSECT') multiplier = multiplierDown;
-          } else if (attackerAffinity === 'SCRAP') {
-            if (victimAffinity === 'INSECT') multiplier = multiplierUp;
-            else if (victimAffinity === 'EERIE') multiplier = multiplierDown;
-          } else if (attackerAffinity === 'INSECT') {
-            if (victimAffinity === 'EERIE') multiplier = multiplierUp;
-            else if (victimAffinity === 'SCRAP') multiplier = multiplierDown;
-          }
-        }
-        return multiplier;
-      };
-
-      // calculate the base liquidation threshold b/w two kamis as a %
-      const calcLiquidationThresholdBase = (attacker: Kami, victim: Kami): number => {
-        const ratio = attacker.stats.violence / victim.stats.harmony;
-        const weight = cdf(Math.log(ratio), 0, 1);
-        const peakBaseThreshold = data.liquidationConfig.threshold;
-        return weight * peakBaseThreshold;
-      };
-
-      // calculate the liquidation threshold b/w two kamis as a %
-      const calcLiquidationThreshold = (attacker: Kami, victim: Kami): number => {
-        const base = calcLiquidationThresholdBase(attacker, victim);
-        const multiplier = calcLiquidationAffinityMultiplier(attacker, victim);
-        return base * multiplier;
-      };
-
-      // determine if pet is healthy (currHealth > 0)
-      const isHealthy = (kami: Kami): boolean => {
-        return calcHealth(kami) > 0;
-      };
-
       // determine whether the kami is still on cooldown
       const onCooldown = (kami: Kami): boolean => {
         return calcIdleTime(kami) < kami.cooldown;
-      };
-
-      // determine whether a kami can liquidate another kami
-      const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
-        const thresholdPercent = calcLiquidationThreshold(attacker, victim);
-        const absoluteThreshold = thresholdPercent * victim.stats.health;
-        const canMog = calcHealth(victim) < absoluteThreshold;
-        return !onCooldown(attacker) && isHealthy(attacker) && canMog;
-      }
-
-      // check whether the kami is currently harvesting
-      // TODO: replace this with a general state check
-      const isHarvesting = (kami: Kami): boolean => {
-        let result = false;
-        if (kami.production) {
-          result = kami.production.state === 'ACTIVE';
-        }
-        return result;
       };
 
       const isResting = (kami: Kami): boolean => {
@@ -392,139 +282,6 @@ export function registerNodeModal() {
         return kamis.filter((kami) => isResting(kami) && !onCooldown(kami));
       };
 
-      ///////////////////
-      // DISPLAY
-
-      // derive disabled text for allied kami (return '' if not disabled)
-      const getDisabledText = (kami: Kami): string => {
-        let disabledText = '';
-        if (onCooldown(kami)) {
-          const cooldown = kami.cooldown - calcIdleTime(kami)
-          disabledText = 'On cooldown (' + cooldown.toFixed(0) + 's left)';
-        } else if (!isHealthy(kami)) {
-          disabledText = 'Kami is starving!';
-        }
-        return disabledText;
-      }
-
-      // button for collecting on production
-      const CollectButton = (kami: Kami) => {
-        let tooltipText = getDisabledText(kami);
-
-        return (
-          <Tooltip text={[tooltipText]}>
-            <ActionButton
-              id={`harvest-collect-${kami.index}`}
-              key={`harvest-collect-${kami.index}`}
-              onClick={() => collect(kami)}
-              text='Collect'
-              disabled={kami.production === undefined || tooltipText !== ''}
-            />
-          </Tooltip>
-        );
-      }
-
-      // button for stopping production
-      const StopButton = (kami: Kami) => {
-        let tooltipText = getDisabledText(kami);
-        return (
-          <Tooltip text={[tooltipText]}>
-            <ActionButton
-              id={`harvest-stop-${kami.index}`}
-              key={`harvest-stop-${kami.index}`}
-              text='Stop'
-              onClick={() => stop(kami)}
-              disabled={kami.production === undefined || tooltipText !== ''}
-            />
-          </Tooltip >
-        );
-      }
-
-      // button for liquidating production
-      const LiquidateButton = (target: Kami, allies: Kami[]) => {
-        const options: ActionListOption[] = allies.map((myKami) => {
-          return { text: `${myKami.name}`, onClick: () => liquidate(myKami, target) };
-        });
-
-        return (
-          <ActionListButton
-            id={`liquidate-button-${target.index}`}
-            key={`harvest-liquidate`}
-            text='Liquidate'
-            scrollPosition={scrollPosition}
-            options={options}
-            disabled={allies.length == 0}
-          />
-        );
-      };
-
-      // rendering of an ally kami on this node
-      const MyKard = (kami: Kami) => {
-        const health = calcHealth(kami);
-        const output = calcOutput(kami);
-
-        const description = [
-          '',
-          `Health: ${health.toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
-          `Harmony: ${kami.stats.harmony * 1}`,
-          `Violence: ${kami.stats.violence * 1}`,
-        ];
-
-        return (
-          <KamiCard
-            key={kami.index}
-            kami={kami}
-            description={description}
-            subtext={`yours (\$${output})`}
-            action={[CollectButton(kami), StopButton(kami)]}
-            battery
-            cooldown
-          />
-        );
-      };
-
-      // rendering of an enemy kami on this node
-      const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
-        const health = calcHealth(kami);
-        const output = calcOutput(kami);
-
-        const description = [
-          '',
-          `Health: ${health.toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
-          `Harmony: ${kami.stats.harmony * 1}`,
-          `Violence: ${kami.stats.violence * 1}`,
-        ];
-
-        const validLiquidators = myKamis.filter((myKami) => {
-          return canLiquidate(myKami, kami);
-        });
-
-        return (
-          <KamiCard
-            key={kami.index}
-            kami={kami}
-            subtext={`${kami.account!.name} (\$${output})`}
-            action={LiquidateButton(kami, validLiquidators)}
-            description={description}
-            battery
-            cooldown
-          />
-        );
-      };
-
-      // list of kamis to display
-      // chooses between allies and enemies depending on selected tab
-      const KamiList = (nodeKamis: NodeKamis) => {
-        const allies = nodeKamis.allies ?? [];
-        const enemies = nodeKamis.enemies ?? [];
-
-        return (
-          (tab === 'allies')
-            ? allies.map((ally: Kami) => MyKard(ally))
-            : enemies.map((enemy: Kami) => EnemyKard(enemy, allies))
-        );
-      };
-
       return (
         <ModalWrapperFull
           id='node'
@@ -532,22 +289,22 @@ export function registerNodeModal() {
           header={[
             <Banner
               node={data.node}
-              availableKamis={getKamiOptions(data.account.kamis)}
+              availableKamis={getKamiOptions(data.account.kamis || [])}
               addKami={(kami) => start(kami, data.node)}
             />,
             <Tabs tab={tab} setTab={setTab} />
           ]}
           canExit
         >
-          {KamiList(data.node.kamis)}
+          <Kards
+            allies={data.node.kamis.allies}
+            enemies={data.node.kamis.enemies}
+            actions={{ collect, stop, liquidate }}
+            liquidationConfig={data.liquidationConfig}
+            tab={tab}
+          />
         </ModalWrapperFull>
       );
     }
   );
 }
-
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  max-height: 100%;
-  flex-grow: 1;
-`;

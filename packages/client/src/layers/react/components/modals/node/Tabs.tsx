@@ -1,5 +1,5 @@
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import styled from 'styled-components';
+
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { dataStore } from 'layers/react/store/createStore';
 
@@ -17,10 +17,6 @@ export const Tabs = (props: Props) => {
     clickSound.volume = volume * 0.6;
     clickSound.play();
     await props.setTab(tab);
-  }
-
-  let stylesOverride = {
-
   }
 
   return (
