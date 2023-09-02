@@ -297,7 +297,7 @@ export function setUpWorldAPI(systems: any) {
       "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 2, we'll give you some free gum.",
       1
     );
-    await api.quest.add.objective(1, "Move to room 2", "AT", "ROOM", 0, 2);
+    await api.quest.add.objective(1, "AT", "ROOM", 0, 2);
     await api.quest.add.reward(1, "FOOD", 1, 1);
 
     await api.quest.create(
@@ -307,7 +307,7 @@ export function setUpWorldAPI(systems: any) {
       2
     );
     await api.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
-    await api.quest.add.objective(2, "Mint a Kami", "MINT", "KAMI", 0, 1);
+    await api.quest.add.objective(2, "MINT", "KAMI", 0, 1);
     await api.quest.add.reward(2, "FOOD", 2, 1);
 
     await api.quest.create(
@@ -317,7 +317,7 @@ export function setUpWorldAPI(systems: any) {
       4
     );
     await api.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
-    await api.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN", 0, 1);
+    await api.quest.add.objective(3, "GATHER", "COIN", 0, 1);
     await api.quest.add.reward(3, "REVIVE", 1, 1);
   }
 

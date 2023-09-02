@@ -31,7 +31,7 @@ export interface _RegistryCreateQuestObjectiveSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,string,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,string,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,7 +52,6 @@ export interface _RegistryCreateQuestObjectiveSystemInterface
     functionFragment: "executeTyped",
     values: [
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
@@ -129,7 +128,6 @@ export interface _RegistryCreateQuestObjectiveSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
@@ -152,7 +150,6 @@ export interface _RegistryCreateQuestObjectiveSystem extends BaseContract {
 
   executeTyped(
     questIndex: PromiseOrValue<BigNumberish>,
-    name: PromiseOrValue<string>,
     logicType: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
     index: PromiseOrValue<BigNumberish>,
@@ -175,7 +172,6 @@ export interface _RegistryCreateQuestObjectiveSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
@@ -210,7 +206,6 @@ export interface _RegistryCreateQuestObjectiveSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
@@ -234,7 +229,6 @@ export interface _RegistryCreateQuestObjectiveSystem extends BaseContract {
 
     executeTyped(
       questIndex: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
