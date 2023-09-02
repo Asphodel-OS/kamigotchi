@@ -12,6 +12,7 @@ import {
   getRegistryQuests,
   checkRequirement,
   checkObjective,
+  parseQuestsStatus
 } from 'layers/react/shapes/Quest';
 import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 
@@ -38,6 +39,7 @@ export function registerQuestsModal() {
           api: { player },
           components: {
             AccountID,
+            Coin,
             IsAccount,
             IsComplete,
             IsObjective,
@@ -55,6 +57,7 @@ export function registerQuestsModal() {
 
       return merge(
         AccountID.update$,
+        Coin.update$,
         IsComplete.update$,
         IsObjective.update$,
         IsQuest.update$,
@@ -76,13 +79,15 @@ export function registerQuestsModal() {
             ])
           )[0];
 
+          const account = getAccount(layers, accountIndex, { quests: true, kamis: true, inventory: true });
+
           return {
             layers,
             actions,
             api: player,
             data: {
-              account: getAccount(layers, accountIndex, { quests: true, kamis: true, inventory: true }),
-              quests: getRegistryQuests(layers),
+              account: account,
+              quests: parseQuestsStatus(layers, account, getRegistryQuests(layers)),
             },
           };
         })
@@ -151,7 +156,7 @@ export function registerQuestsModal() {
 
       const checkRequirements = (quest: Quest): boolean => {
         for (const requirement of quest.requirements) {
-          if (!checkRequirement(layers, requirement, data.account)) {
+          if (!requirement.status?.completable) {
             return false;
           }
         }
@@ -161,7 +166,7 @@ export function registerQuestsModal() {
 
       const checkObjectives = (quest: Quest): boolean => {
         for (const objective of quest.objectives) {
-          if (!checkObjective(layers, objective, quest, data.account)) {
+          if (!objective.status?.completable) {
             return false;
           }
         }

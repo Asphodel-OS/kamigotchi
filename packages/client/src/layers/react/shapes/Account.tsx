@@ -10,7 +10,7 @@ import {
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
 import { Kami, queryKamisX } from './Kami';
-import { Quest, getCompletedQuests, getOngoingQuests } from './Quest';
+import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
 import {
   Inventory,
   getInventory,
@@ -143,8 +143,8 @@ export const getAccount = (
   // populate Quests
   if (options?.quests) {
     account.quests = {
-      ongoing: getOngoingQuests(layers, account.id),
-      completed: getCompletedQuests(layers, account.id),
+      ongoing: parseQuestsStatus(layers, account, getOngoingQuests(layers, account.id)),
+      completed: parseQuestsStatus(layers, account, getCompletedQuests(layers, account.id)),
     }
   }
 

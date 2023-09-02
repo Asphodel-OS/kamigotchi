@@ -32,6 +32,13 @@ export const getCompletedQuests = (layers: Layers, accountEntityID: EntityID): Q
   return queryQuestsX(layers, { account: accountEntityID, completed: true });
 }
 
+// parse detailed quest status 
+export const parseQuestsStatus = (layers: Layers, account: Account, quests: Quest[]): Quest[] => {
+  return quests.map((quest: Quest) => {
+    return parseQuestStatus(layers, account, quest);
+  });
+}
+
 
 /////////////////
 // SHAPES
@@ -54,18 +61,26 @@ export interface Target {
   value?: number;
 }
 
+export interface Status {
+  target?: number;
+  current?: number;
+  completable: boolean;
+}
+
 export interface Objective {
   id: EntityID;
   index: number;
   name: string;
   logic: string;
   target: Target;
+  status?: Status;
 }
 
 export interface Requirement {
   id: EntityID;
   logic: string;
   target: Target;
+  status?: Status;
 }
 
 export interface Reward {
@@ -206,7 +221,18 @@ const getReward = (layers: Layers, entityIndex: EntityIndex): Reward => {
   if (value) reward.target.value = value;
 
   return reward;
+}
 
+const parseQuestStatus = (layers: Layers, account: Account, quest: Quest): Quest => {
+  for (let i = 0; i < quest.requirements.length; i++) {
+    quest.requirements[i].status = checkRequirement(layers, quest.requirements[i], account);
+  }
+
+  for (let i = 0; i < quest.objectives.length; i++) {
+    quest.objectives[i].status = checkObjective(layers, quest.objectives[i], quest, account);
+  }
+
+  return quest;
 }
 
 /////////////////
@@ -354,7 +380,7 @@ export const checkRequirement = (
   layers: Layers,
   requirement: Requirement,
   account: Account
-): boolean => {
+): Status => {
   switch (requirement.logic) {
     case 'AT':
       return checkCurrent(requirement.target, account, 'EQUAL');
@@ -380,7 +406,7 @@ export const checkObjective = (
   objective: Objective,
   quest: Quest,
   account: Account
-): boolean => {
+): Status => {
   switch (objective.logic) {
     case 'AT':
       return checkCurrent(objective.target, account, 'EQUAL');
@@ -404,10 +430,14 @@ const checkCurrent = (
   condition: Target,
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): boolean => {
+): Status => {
   const accVal = getAccBal(account, condition.index, condition.type);
 
-  return checkLogicOperator(accVal, condition.value ? condition.value : 0, logic);
+  return {
+    target: condition.value,
+    current: accVal,
+    completable: checkLogicOperator(accVal, condition.value ? condition.value : 0, logic)
+  };
 }
 
 const checkIncrease = (
@@ -416,11 +446,15 @@ const checkIncrease = (
   quest: Quest,
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): boolean => {
+): Status => {
   const prevVal = querySnapshotObjective(layers, quest.id, objective.index).target.value as number;
   const currVal = getAccBal(account, objective.target.index, objective.target.type);
 
-  return checkLogicOperator(currVal - prevVal, objective.target.value ? objective.target.value : 0, logic);
+  return {
+    target: objective.target.value,
+    current: currVal - prevVal,
+    completable: checkLogicOperator(currVal - prevVal, objective.target.value ? objective.target.value : 0, logic)
+  };
 }
 
 const checkDecrease = (
@@ -429,11 +463,15 @@ const checkDecrease = (
   quest: Quest,
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): boolean => {
+): Status => {
   const prevVal = querySnapshotObjective(layers, quest.id, objective.index).target.value as number;
   const currVal = getAccBal(account, objective.target.index, objective.target.type);
 
-  return checkLogicOperator(prevVal - currVal, objective.target.value ? objective.target.value : 0, logic);
+  return {
+    target: objective.target.value,
+    current: prevVal - currVal,
+    completable: checkLogicOperator(prevVal - currVal, objective.target.value ? objective.target.value : 0, logic)
+  }
 }
 
 const checkBoolean = (
@@ -441,7 +479,7 @@ const checkBoolean = (
   condition: Target,
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): boolean => {
+): Status => {
   const _type = condition.type;
 
   let result = false;
@@ -451,11 +489,14 @@ const checkBoolean = (
       result = checkQuestComplete(layers, condition.value as number, account);
       break;
     default:
-      return false; // should not get here
+      result = false; // should not get here
   }
 
-  if (logic == 'NOT') return !result;
-  else return result;
+  if (logic == 'NOT') result = !result;
+
+  return {
+    completable: result
+  }
 }
 
 const checkQuestComplete = (
