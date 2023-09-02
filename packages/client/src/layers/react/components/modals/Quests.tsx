@@ -199,20 +199,29 @@ export function registerQuestsModal() {
       }
 
       const getRequirementText = (requirement: Requirement): string => {
+        let text = '';
         switch (requirement.target.type) {
           case 'COIN':
-            return `${requirement.target.value! * 1} $MUSU`;
+            text = `${requirement.target.value! * 1} $MUSU`;
           case 'LEVEL': // TODO: account for both min/max
-            return `Level ${requirement.target.value! * 1}`;
+            text = `Level ${requirement.target.value! * 1}`;
           case 'FOOD':
-            return `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
+            text = `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
           case 'REVIVE':
-            return `${requirement.target.value! * 1} ${getReviveName(requirement.target.index!)}`;
+            text = `${requirement.target.value! * 1} ${getReviveName(requirement.target.index!)}`;
           case 'QUEST':
-            return `Complete Quest ${requirement.target.value! * 1}`;
+            text = `Complete Quest ${requirement.target.value! * 1}`;
           default:
-            return '???';
+            text = '???';
         }
+
+        if (requirement.status?.completable) {
+          text = text + ' ✅';
+        } else {
+          text = text + ` [${Number(requirement.status?.current)}/${Number(requirement.status?.target)}]`;
+        }
+
+        return text;
       }
 
       const getRewardText = (reward: Reward): string => {
@@ -228,6 +237,18 @@ export function registerQuestsModal() {
           default:
             return '';
         }
+      }
+
+      const getObjectiveText = (objective: Objective): string => {
+        let text = objective.name;
+
+        if (objective.status?.completable) {
+          text = text + ' ✅';
+        } else {
+          text = text + ` [${Number(objective.status?.current)}/${Number(objective.status?.target)}]`;
+        }
+
+        return text;
       }
 
 
@@ -295,7 +316,7 @@ export function registerQuestsModal() {
             <ConditionName>Objectives</ConditionName>
             {objectives.map((objective) => (
               <ConditionDescription key={objective.id}>
-                - {objective.name}
+                - {`${getObjectiveText(objective)}`}
               </ConditionDescription>
             ))}
           </ConditionContainer>

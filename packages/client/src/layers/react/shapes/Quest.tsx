@@ -397,7 +397,7 @@ export const checkRequirement = (
     case 'USE':
       return checkCurrent(requirement.target, account, 'MIN');
     default:
-      return false; // should not get here
+      return { completable: false }; // should not get here
   }
 }
 
@@ -407,6 +407,9 @@ export const checkObjective = (
   quest: Quest,
   account: Account
 ): Status => {
+  if (quest.complete) {
+    return { completable: true }
+  }
   switch (objective.logic) {
     case 'AT':
       return checkCurrent(objective.target, account, 'EQUAL');
@@ -421,7 +424,7 @@ export const checkObjective = (
     case 'USE':
       return checkDecrease(layers, objective, quest, account, 'MIN');
     default:
-      return false; // should not get here
+      return { completable: false }; // should not get here
   }
 }
 
