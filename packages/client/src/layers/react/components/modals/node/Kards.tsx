@@ -269,9 +269,3 @@ export const Kards = (props: Props) => {
     </>
   );
 }
-
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  max-height: 100%;
-  flex-grow: 1;
-`;

@@ -178,19 +178,20 @@ export function registerPartyModal() {
 
 
       return (
-        <ModalWrapperFull id='party_modal' divName='party'>
-          <Items inventories={data.account.inventories!}></Items>
-          <Scrollable ref={scrollableRef}>
-            <Kards
-              kamis={data.account.kamis!}
-              account={data.account}
-              actions={{
-                feed: feedKami,
-                revive: reviveKami,
-                reveal: revealKami,
-              }}
-            />
-          </Scrollable>
+        <ModalWrapperFull
+          id='party_modal'
+          divName='party'
+          header={[<Items inventories={data.account.inventories!}></Items>]}
+        >
+          <Kards
+            kamis={data.account.kamis!}
+            account={data.account}
+            actions={{
+              feed: feedKami,
+              revive: reviveKami,
+              reveal: revealKami,
+            }}
+          />
         </ModalWrapperFull>
       );
     }

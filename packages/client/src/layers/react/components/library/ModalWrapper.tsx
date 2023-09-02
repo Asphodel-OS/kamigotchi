@@ -112,7 +112,7 @@ const Header = styled.div`
 `;
 
 const Children = styled.div`
-  padding: .3vw;
+  padding: .4vw;
   overflow-y: scroll;
   max-height: 100%;
   
