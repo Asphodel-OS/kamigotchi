@@ -3,23 +3,52 @@ import styled from 'styled-components';
 
 import { Node } from 'layers/react/shapes/Node';
 import { NodeImages } from 'constants/nodes';
+import { Kami } from 'layers/react/shapes/Kami';
+import {
+  ActionListButton,
+  Option as ActionListOption,
+} from 'layers/react/components/library/ActionListButton';
+
 
 interface Props {
   node: Node;
+  availableKamis: Kami[];
+  addKami: (kami: Kami) => void;
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
-export const NodeHeader = (props: Props) => {
+export const Banner = (props: Props) => {
+
+  // button for adding Kami to node
+  const AddButton = (kamis: Kami[]) => {
+    const options = kamis.map((kami) => {
+      return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
+    });
+
+    return (
+      <ActionListButton
+        id={`harvest-add`}
+        key={`harvest-add`}
+        text='Add Kami'
+        options={options}
+        disabled={kamis.length == 0}
+      />
+    );
+  };
+
   return (
     <Container key={props.node.name}>
       <Image src={NodeImages[props.node.index]} />
       <ContentContainer>
-        <TitleRow>
-          <TitleText>{props.node.name}</TitleText>
-          <AffinityText>{props.node.affinity}</AffinityText>
-        </TitleRow>
-        <DescriptionText>{props.node.description}</DescriptionText>
+        <ContentTop>
+          <TitleRow>
+            <TitleText>{props.node.name}</TitleText>
+            <AffinityText>{props.node.affinity}</AffinityText>
+          </TitleRow>
+          <DescriptionText>{props.node.description}</DescriptionText>
+        </ContentTop>
+        <ButtonRow>{AddButton(props.availableKamis)}</ButtonRow>
       </ContentContainer>
     </Container>
   );
@@ -28,7 +57,6 @@ export const NodeHeader = (props: Props) => {
 const Container = styled.div`
   border-bottom: .15vw solid black;
   color: black;
-  margin-bottom: .2vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -42,10 +70,23 @@ const Image = styled.img`
 
 const ContentContainer = styled.div`
   flex-grow: 1;
-  padding: 1.4vw .7vw;
+  padding: 1.4vw .7vw .7vw .7vw;
 
   display: flex;
   flex-flow: column nowrap;
+  justify-content: space-between;
+`;
+
+const ContentTop = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: flex-end;
 `;
 
 const TitleRow = styled.div`

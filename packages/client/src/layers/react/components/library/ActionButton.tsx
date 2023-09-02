@@ -90,13 +90,12 @@ export const ActionButton = (props: Props) => {
 
 const Button = styled.button`
   background-color: #ffffff;
-  border-color: black;
-  border-style: solid;
-  color: black;
+  border: solid black;
 
+  color: black;
   justify-content: center;
+
   font-family: Pixel;
-  font-size: 14px;
   text-align: center;
   text-decoration: none;
 

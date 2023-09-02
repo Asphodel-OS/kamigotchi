@@ -15,17 +15,16 @@ import {
   ActionListButton,
   Option as ActionListOption,
 } from 'layers/react/components/library/ActionListButton';
-import { Battery } from 'layers/react/components/library/Battery';
-import { Countdown } from 'layers/react/components/library/Countdown';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { NodeHeader } from 'layers/react/components/library/NodeHeader';
+import { Banner } from 'layers/react/components/modals/node/Banner';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccount } from 'layers/react/shapes/Account';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
+import { Tabs } from './Tabs';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -48,13 +47,11 @@ export function registerNodeModal() {
           world,
           actions,
           api: { player },
-          network,
           components: {
             AccountID,
             Balance,
             NodeID,
             PetID,
-            IsAccount,
             IsNode,
             IsPet,
             IsProduction,
@@ -80,20 +77,7 @@ export function registerNodeModal() {
         OperatorAddress.update$
       ).pipe(
         map(() => {
-          /////////////////
-          // ROOT DATA
-
-          // get the account through the account entity of the controlling wallet
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-          const account =
-            accountIndex !== undefined ? getAccount(layers, accountIndex) : ({} as Account);
+          const account = getAccountFromBurner(layers);
 
           // get the node through the location of the linked account
           const nodeEntityIndex = Array.from(
@@ -197,7 +181,7 @@ export function registerNodeModal() {
       const scrollableRef = useRef<HTMLDivElement>(null);
       const [scrollPosition, setScrollPosition] = useState<number>(0);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const [tab, setTab] = useState<'allies' | 'enemies'>('allies');
+      const [tab, setTab] = useState('allies');
 
       // scrolling
       useEffect(() => {
@@ -400,6 +384,14 @@ export function registerNodeModal() {
         return result;
       };
 
+      const isResting = (kami: Kami): boolean => {
+        return kami.state === 'RESTING';
+      };
+
+      const getKamiOptions = (kamis: Kami[]): Kami[] => {
+        return kamis.filter((kami) => isResting(kami) && !onCooldown(kami));
+      };
+
       ///////////////////
       // DISPLAY
 
@@ -414,24 +406,6 @@ export function registerNodeModal() {
         }
         return disabledText;
       }
-
-      // button for adding Kami to node
-      const AddButton = (node: Node, kamis: Kami[]) => {
-        const availableKamis = kamis.filter((kami) => !onCooldown(kami));
-        const options: ActionListOption[] = availableKamis.map((kami) => {
-          return { text: `${kami.name}`, onClick: () => start(kami, node) };
-        });
-        return (
-          <ActionListButton
-            id={`harvest-add`}
-            key={`harvest-add`}
-            text='Add Kami'
-            scrollPosition={scrollPosition}
-            options={options}
-            disabled={kamis.length == 0}
-          />
-        );
-      };
 
       // button for collecting on production
       const CollectButton = (kami: Kami) => {
@@ -449,16 +423,6 @@ export function registerNodeModal() {
           </Tooltip>
         );
       }
-
-      const CollectAllButton = (node: Node, allies: Kami[]) => (
-        <ActionButton
-          id={`harvest-collect-all`}
-          key={`harvest-collect-all`}
-          onClick={() => collectAll(node)}
-          text='Collect All'
-          disabled={allies.length == 0}
-        />
-      );
 
       // button for stopping production
       const StopButton = (kami: Kami) => {
@@ -491,24 +455,6 @@ export function registerNodeModal() {
             options={options}
             disabled={allies.length == 0}
           />
-        );
-      };
-
-      // includes the Health Battery and Cooldown Clock
-      const CornerContent = (kami: Kami) => {
-        const health = calcHealth(kami);
-        const healthPercent = Math.round((health / kami.stats.health) * 100);
-        const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
-        const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
-        return (
-          <>
-            <Tooltip text={[cooldownString]}>
-              <Countdown total={kami.cooldown} current={cooldown} />
-            </Tooltip>
-            <Tooltip text={[`${healthPercent}%`]}>
-              <Battery level={100 * calcHealth(kami) / kami.stats.health} />
-            </Tooltip>
-          </>
         );
       };
 
@@ -559,8 +505,9 @@ export function registerNodeModal() {
             kami={kami}
             subtext={`${kami.account!.name} (\$${output})`}
             action={LiquidateButton(kami, validLiquidators)}
-            cornerContent={CornerContent(kami)}
             description={description}
+            battery
+            cooldown
           />
         );
       };
@@ -572,50 +519,27 @@ export function registerNodeModal() {
         const enemies = nodeKamis.enemies ?? [];
 
         return (
-          <Scrollable ref={scrollableRef} style={{ flexGrow: 1 }}>
-            {(tab === 'allies')
-              ? allies.map((ally: Kami) => MyKard(ally))
-              : enemies.map((enemy: Kami) => EnemyKard(enemy, allies))
-            }
-          </Scrollable>
+          (tab === 'allies')
+            ? allies.map((ally: Kami) => MyKard(ally))
+            : enemies.map((enemy: Kami) => EnemyKard(enemy, allies))
         );
       };
-
-      const KamiTabs = () => (
-        <Tabs>
-          <ActionButton
-            id={`my-tab`}
-            text='Allies'
-            onClick={() => setTab('allies')}
-            disabled={tab === 'allies'}
-            fill={true}
-          />
-          <ActionButton
-            id={`enemy-tab`}
-            text='Enemies'
-            onClick={() => setTab('enemies')}
-            disabled={tab === 'enemies'}
-            fill={true}
-          />
-        </Tabs>
-      );
 
       return (
         <ModalWrapperFull
           id='node'
           divName='node'
-          header={<NodeHeader node={data.node} />}
+          header={[
+            <Banner
+              node={data.node}
+              availableKamis={getKamiOptions(data.account.kamis)}
+              addKami={(kami) => start(kami, data.node)}
+            />,
+            <Tabs tab={tab} setTab={setTab} />
+          ]}
           canExit
         >
-          {KamiTabs()}
           {KamiList(data.node.kamis)}
-          <Underline key='separator' />
-          {(tab === 'allies') &&
-            <NodeActions>
-              {CollectAllButton(data.node, data.node.kamis.allies)}
-              {AddButton(data.node, data.account.kamis)}
-            </NodeActions>
-          }
         </ModalWrapperFull>
       );
     }
@@ -626,25 +550,4 @@ const Scrollable = styled.div`
   overflow-y: scroll;
   max-height: 100%;
   flex-grow: 1;
-`;
-
-const Underline = styled.div`
-  width: 90%;
-  margin: 3% auto;
-  border-bottom: 2px solid silver;
-  font-weight: bold;
-`;
-
-const Tabs = styled.div`
-  width: 100%;
-  padding: 0.2vw 0vw;
-  display: flex;
-  flex-flow: row nowrap;
-`;
-
-const NodeActions = styled.div`
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
 `;
