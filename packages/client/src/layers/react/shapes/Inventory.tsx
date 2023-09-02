@@ -86,6 +86,15 @@ export const getInventoryByFamilyIndex = (list: Inventory[], familyIndex: number
   }
 }
 
+export const getInventoryByIndex = (list: Inventory[], index: number) => {
+  if (!list) return;
+  for (let i = 0, len = list.length; i < len; i++) {
+    if (list[i].item.index === index) {
+      return list[i];
+    }
+  }
+}
+
 export const queryInventoryX = (
   layers: Layers,
   options: QueryOptions

@@ -10,8 +10,9 @@ import {
   Reward,
   Requirement,
   getRegistryQuests,
+  checkRequirement,
+  checkObjective,
 } from 'layers/react/shapes/Quest';
-import { Inventory, queryInventoryX } from 'layers/react/shapes/Inventory';
 import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -43,6 +44,7 @@ export function registerQuestsModal() {
             IsQuest,
             IsRequirement,
             IsReward,
+            Location,
             OperatorAddress,
             QuestIndex,
             Value,
@@ -59,6 +61,7 @@ export function registerQuestsModal() {
         IsRequirement.update$,
         IsReward.update$,
         IsObjective.update$,
+        Location.update$,
         QuestIndex.update$,
         Value.update$,
       ).pipe(
@@ -78,7 +81,7 @@ export function registerQuestsModal() {
             actions,
             api: player,
             data: {
-              account: getAccount(layers, accountIndex, { quests: true }),
+              account: getAccount(layers, accountIndex, { quests: true, kamis: true, inventory: true }),
               quests: getRegistryQuests(layers),
             },
           };
@@ -146,84 +149,21 @@ export function registerQuestsModal() {
         return ongoing;
       }
 
-
-      // const getBalanceOf = (owner: EntityID, condition: Condition): number => {
-      //   const type = condition.type;
-      //   switch (type) {
-      //     case 'COIN':
-      //       // TODO
-      //       return 0;
-      //       break;
-      //     case 'FUNG_INVENTORY':
-      //       return queryInventoryX(
-      //         layers,
-      //         { owner: owner, itemIndex: condition.itemIndex }
-      //       )[0]?.balance || 0;
-      //       break;
-      //   }
-
-      //   return 0;
-      // }
-
-      // // TODO: probably move these to Quest Conditions Shapes file
-      // const checkCurrMin = (objective: Objective): boolean => {
-      //   const accBal = getBalanceOf(data.account.id, objective);
-      //   const conBal = objective.balance ? objective.balance : 0;
-      //   return accBal <= conBal;
-      // }
-
-      // const checkCurrMax = (objective: Objective): boolean => {
-      //   const accBal = getBalanceOf(data.account.id, objective);
-      //   const conBal = objective.balance ? objective.balance : 0;
-      //   return accBal >= conBal;
-      // }
-
-      // const checkDeltaMin = (quest: Quest, objective: Objective): boolean => {
-      //   const oldBal = getBalanceOf(quest.id, objective);
-      //   const currBal = getBalanceOf(data.account.id, objective);
-      //   const delta = objective.balance ? objective.balance : 0;
-      //   return delta <= currBal - oldBal;
-      // }
-
-      // const checkDeltaMax = (quest: Quest, objective: Objective): boolean => {
-      //   const oldBal = getBalanceOf(quest.id, objective);
-      //   const currBal = getBalanceOf(data.account.id, objective);
-      //   const delta = objective.balance ? objective.balance : 0;
-      //   return delta >= currBal - oldBal;
-      // }
-
-      // const checkCondition = (quest: Quest, objective: Objective): boolean => {
-      //   switch (objective.logic) {
-      //     case 'CURR_MIN':
-      //       return checkCurrMin(objective);
-      //     case 'CURR_MAX':
-      //       return checkCurrMax(objective);
-      //     case 'DELTA_MIN':
-      //       return checkDeltaMin(quest, objective);
-      //     case 'DELTA_MAX':
-      //       return checkDeltaMax(quest, objective);
-      //   }
-
-      //   return false;
-      // }
-
-      // check that a quest's requirements are met by this account
       const checkRequirements = (quest: Quest): boolean => {
-        for (const condition of quest.requirements) {
-          // if (!checkCondition(quest, condition)) {
-          //   return false;
-          // }
+        for (const requirement of quest.requirements) {
+          if (!checkRequirement(layers, requirement, data.account)) {
+            return false;
+          }
         }
 
         return true;
       }
 
-      // check that a quest's objectives are met by this account
       const checkObjectives = (quest: Quest): boolean => {
-        for (const condition of quest.objectives) {
-          // if (!checkCondition(quest, condition)) {
-          //   return false;
-          // }
+        for (const objective of quest.objectives) {
+          if (!checkObjective(layers, objective, quest, data.account)) {
+            return false;
+          }
         }
 
         return true;
