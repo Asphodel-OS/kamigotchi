@@ -16,7 +16,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0);
     _createRequirement(1, "HAVE", "COIN", 0, 1);
-    _createObjective(1, "HAVE", "COIN", 0, 10);
+    _createObjective(1, "Quest 1", "HAVE", "COIN", 0, 10);
     _createReward(1, "COIN", 0, 1);
 
     // register the account
@@ -55,7 +55,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0);
     _createRequirement(1, "HAVE", "COIN", 0, 1);
-    _createObjective(1, "GATHER", "COIN", 0, 10);
+    _createObjective(1, "NAME", "GATHER", "COIN", 0, 10);
     _createReward(1, "COIN", 0, 1);
 
     // register account
@@ -98,7 +98,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 0);
     _createRequirement(1, "AT", "ROOM", 0, 3);
-    _createObjective(1, "AT", "ROOM", 0, 4);
+    _createObjective(1, "NAME", "AT", "ROOM", 0, 4);
 
     // register account
     _registerAccount(0);
@@ -140,7 +140,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0);
     _createRequirement(1, "AT", "ROOM", 0, 1);
-    _createObjective(1, "MINT", "KAMI", 0, 2);
+    _createObjective(1, "NAME", "MINT", "KAMI", 0, 2);
 
     // register account
     _registerAccount(0);

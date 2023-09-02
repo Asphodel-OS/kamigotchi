@@ -200,6 +200,7 @@ export function registerQuestsModal() {
 
       const getRequirementText = (requirement: Requirement, status: boolean): string => {
         let text = '';
+        console.log('req', requirement.target.type)
         switch (requirement.target.type) {
           case 'COIN':
             text = `${requirement.target.value! * 1} $MUSU`;
@@ -247,54 +248,7 @@ export function registerQuestsModal() {
       }
 
       const getObjectiveText = (objective: Objective, status: boolean): string => {
-        let text = '';
-
-        switch (objective.logic) {
-          case 'AT':
-            text += 'Move to ';
-            break;
-          case 'BUY':
-            text += 'Buy ';
-            break;
-          case 'HAVE':
-            text += 'Have ';
-            break;
-          case 'GATHER':
-            text += 'Gather ';
-            break;
-          case 'MINT':
-            text += 'Mint ';
-            break;
-          case 'USE':
-            text += 'Use ';
-            break;
-          default:
-            text += '??? ';
-        }
-
-        // append unit type
-        switch (objective.target.type) {
-          case 'COIN':
-            text += `${objective.target.value! * 1} $MUSU`;
-            break;
-          case 'KAMI': // TODO: account for both min/max
-            text += `${objective.target.value! * 1} Kamis`;
-            break;
-          case 'FOOD':
-            text += `${objective.target.value! * 1} ${getFoodName(objective.target.index!)}`;
-            break;
-          case 'REVIVE':
-            text += `${objective.target.value! * 1} ${getReviveName(objective.target.index!)}`;
-            break;
-          case 'QUEST':
-            text += `Complete Quest ${objective.target.value! * 1}`;
-            break;
-          case 'ROOM':
-            text += `Room ${objective.target.value! * 1}`;
-            break;
-          default:
-            text += '???';
-        }
+        let text = objective.name;
 
         if (status) {
           if (objective.status?.completable) {

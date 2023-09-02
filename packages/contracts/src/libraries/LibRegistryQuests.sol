@@ -59,6 +59,7 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 questIndex,
+    string memory name, // this is a crutch to help FE, ideally we drop this
     string memory logicType,
     string memory type_
   ) internal returns (uint256) {
@@ -66,6 +67,7 @@ library LibRegistryQuests {
     setIsRegistry(components, id);
     setIsObjective(components, id);
     setQuestIndex(components, id, questIndex);
+    setName(components, id, name);
     setLogicType(components, id, logicType);
     setType(components, id, type_);
 

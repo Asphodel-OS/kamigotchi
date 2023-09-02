@@ -304,13 +304,21 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createObjective(
     uint256 questIndex,
+    string memory name,
     string memory logicType,
     string memory _type,
     uint256 index, // can be empty
     uint256 value // can be empty
   ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestObjectiveSystem.executeTyped(questIndex, logicType, _type, index, value);
+    __RegistryCreateQuestObjectiveSystem.executeTyped(
+      questIndex,
+      name,
+      logicType,
+      _type,
+      index,
+      value
+    );
   }
 
   function _createRequirement(
