@@ -15,7 +15,7 @@ export const Tooltip = (props: Props) => {
 
   return <MUITooltip
     title={conjoinedText}
-    enterDelay={700}
+    enterDelay={100}
     style={{
       flexGrow: flexGrow,
       display: 'flex',
@@ -43,19 +43,4 @@ export const Tooltip = (props: Props) => {
     <span>{children}</span>
   </MUITooltip>;
 }
-
-const TextLine = styled.div`
-  zIndex: '2',
-  borderStyle: 'solid',
-  borderWidth: '2px',
-  borderColor: 'black',
-  backgroundColor: '#fff',
-  padding: '10px',
-
-  color: 'black',
-  fontSize: '12px',
-  fontFamily: 'Pixel',
-  white-space: 'pre-line';
-`;
-
 

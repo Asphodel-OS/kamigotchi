@@ -40,7 +40,6 @@ export function registerUIComponents() {
   registerLoadingState();
 
   // buttons
-  // registerChatButton();
   registerHelpButton();
   registerMapButton();
   registerPartyButton();
@@ -68,7 +67,6 @@ export function registerUIComponents() {
   registerOperatorMovementModal();
 
   // menu modals
-  // registerChatModal();
   registerHelpModal();
   registerMapModal();
   registerSettingsModal();
@@ -80,5 +78,4 @@ export function registerUIComponents() {
   registerBurnerDetector();
   registerOperatorUpdater();
   registerWalletConnecter();
-  // registerDetectAccountModal();
 }
