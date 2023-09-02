@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import {
@@ -8,13 +8,13 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { registerUIComponent } from 'layers/react/engine/store';
 import { Listings } from './Listings';
-
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Listing } from 'layers/react/shapes/Listing';
 import { getMerchant } from 'layers/react/shapes/Merchant';
+import { registerUIComponent } from 'layers/react/engine/store';
+
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerMerchantModal() {
