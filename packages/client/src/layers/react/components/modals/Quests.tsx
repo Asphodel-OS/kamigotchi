@@ -198,27 +198,35 @@ export function registerQuestsModal() {
         return reviveObject.name;
       }
 
-      const getRequirementText = (requirement: Requirement): string => {
+      const getRequirementText = (requirement: Requirement, status: boolean): string => {
         let text = '';
+        console.log('req', requirement.target.type)
         switch (requirement.target.type) {
           case 'COIN':
             text = `${requirement.target.value! * 1} $MUSU`;
+            break;
           case 'LEVEL': // TODO: account for both min/max
             text = `Level ${requirement.target.value! * 1}`;
+            break;
           case 'FOOD':
             text = `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
+            break;
           case 'REVIVE':
             text = `${requirement.target.value! * 1} ${getReviveName(requirement.target.index!)}`;
+            break;
           case 'QUEST':
             text = `Complete Quest ${requirement.target.value! * 1}`;
+            break;
           default:
             text = '???';
         }
 
-        if (requirement.status?.completable) {
-          text = text + ' ✅';
-        } else {
-          text = text + ` [${Number(requirement.status?.current)}/${Number(requirement.status?.target)}]`;
+        if (status) {
+          if (requirement.status?.completable) {
+            text = text + ' ✅';
+          } else {
+            text = text + ` [${Number(requirement.status?.current)}/${Number(requirement.status?.target)}]`;
+          }
         }
 
         return text;
@@ -239,13 +247,15 @@ export function registerQuestsModal() {
         }
       }
 
-      const getObjectiveText = (objective: Objective): string => {
+      const getObjectiveText = (objective: Objective, status: boolean): string => {
         let text = objective.name;
 
-        if (objective.status?.completable) {
-          text = text + ' ✅';
-        } else {
-          text = text + ` [${Number(objective.status?.current)}/${Number(objective.status?.target)}]`;
+        if (status) {
+          if (objective.status?.completable) {
+            text = text + ' ✅';
+          } else {
+            text = text + ` [${Number(objective.status?.current)}/${Number(objective.status?.target)}]`;
+          }
         }
 
         return text;
@@ -295,28 +305,28 @@ export function registerQuestsModal() {
         )
       };
 
-      const RequirementDisplay = (requirements: Requirement[]) => {
+      const RequirementDisplay = (requirements: Requirement[], status: boolean) => {
         if (requirements.length == 0) return <div />;
         return (
           <ConditionContainer>
             <ConditionName>Requirements</ConditionName>
             {requirements.map((requirement) => (
               <ConditionDescription key={requirement.id}>
-                - {`${getRequirementText(requirement)}`}
+                - {`${getRequirementText(requirement, true)}`}
               </ConditionDescription>
             ))}
           </ConditionContainer>
         )
       }
 
-      const ObjectiveDisplay = (objectives: Objective[]) => {
+      const ObjectiveDisplay = (objectives: Objective[], status: boolean) => {
         if (objectives.length == 0) return <div />;
         return (
           <ConditionContainer>
             <ConditionName>Objectives</ConditionName>
             {objectives.map((objective) => (
               <ConditionDescription key={objective.id}>
-                - {`${getObjectiveText(objective)}`}
+                - {`${getObjectiveText(objective, status)}`}
               </ConditionDescription>
             ))}
           </ConditionContainer>
@@ -352,8 +362,8 @@ export function registerQuestsModal() {
           <QuestContainer key={q.id}>
             <QuestName>{q.name}</QuestName>
             <QuestDescription>{q.description}</QuestDescription>
-            {RequirementDisplay(q.requirements)}
-            {ObjectiveDisplay(q.objectives)}
+            {RequirementDisplay(q.requirements, true)}
+            {ObjectiveDisplay(q.objectives, false)}
             {RewardDisplay(q.rewards)}
             {AcceptButton(q)}
           </QuestContainer>
@@ -365,7 +375,7 @@ export function registerQuestsModal() {
           <QuestContainer key={q.id}>
             <QuestName>{q.name}</QuestName>
             <QuestDescription>{q.description}</QuestDescription>
-            {ObjectiveDisplay(q.objectives)}
+            {ObjectiveDisplay(q.objectives, false)}
             {RewardDisplay(q.rewards)}
           </QuestContainer>
         ))
@@ -376,7 +386,7 @@ export function registerQuestsModal() {
           <QuestContainer key={q.id}>
             <QuestName>{q.name}</QuestName>
             <QuestDescription>{q.description}</QuestDescription>
-            {ObjectiveDisplay(q.objectives)}
+            {ObjectiveDisplay(q.objectives, true)}
             {RewardDisplay(q.rewards)}
             {CompleteButton(q)}
           </QuestContainer>
