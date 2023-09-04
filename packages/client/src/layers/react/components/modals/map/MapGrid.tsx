@@ -293,6 +293,7 @@ export const MapGrid = ({ currentRoom, move }: MapProps) => {
         <React.Fragment key={rowIndex}>
           {row.map((tile, colIndex) => (
             <Tile
+              key={colIndex}
               img={tile}
               currentRoom={currentRoom}
               move={move}

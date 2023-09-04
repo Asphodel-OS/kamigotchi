@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { dataStore } from 'layers/react/store/createStore';
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { set } from 'mobx';
 
 interface Props {
   id: string;
