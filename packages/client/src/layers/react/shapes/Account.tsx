@@ -20,6 +20,7 @@ import {
 // standardized shape of an Account Entity
 export interface Account {
   id: EntityID;
+  entityIndex: EntityIndex;
   ownerEOA: string;
   operatorEOA: string;
   name: string;
@@ -79,6 +80,7 @@ export const getAccount = (
 
   let account: Account = {
     id: world.entities[index],
+    entityIndex: index,
     ownerEOA: getComponentValue(OwnerAddress, index)?.value as string,
     operatorEOA: getComponentValue(OperatorAddress, index)?.value as string,
     name: getComponentValue(Name, index)?.value as string,

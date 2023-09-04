@@ -1,17 +1,15 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { EntityID, getComponentValue, runQuery, Has, HasValue } from '@latticexyz/recs';
-import styled from 'styled-components';
+import { EntityID } from '@latticexyz/recs';
 
+import { MapGrid } from './MapGrid';
+import { RoomInfo } from './RoomInfo';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import MapGrid from 'layers/react/components/modals/map/MapGrid';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { dataStore } from 'layers/react/store/createStore';
+
 
 export function registerMapModal() {
   registerUIComponent(
@@ -26,44 +24,30 @@ export function registerMapModal() {
       const {
         network: {
           api: { player },
-          components: { IsAccount, Location, OperatorAddress },
-          network,
+          components: { Location, OperatorAddress },
           actions,
         },
       } = layers;
 
       return merge(Location.update$, OperatorAddress.update$).pipe(
         map(() => {
-          // get the account through the account entity of the controlling wallet
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          // get location
-          const location = getComponentValue(
-            layers.network.components.Location,
-            accountIndex
-          )?.value as number * 1;
-
+          const account = getAccountFromBurner(layers);
           return {
             layers,
             actions,
             api: player,
-            curLoc: location
+            data: { account }
           };
         })
       );
     },
-    ({ layers, actions, api, curLoc }) => {
+    ({ layers, actions, api, data }) => {
+      // console.log('mRoom: ', data)
       const { selectedEntities, setSelectedEntities } = dataStore();
       const { visibleModals } = dataStore();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
+
 
       /////////////////
       // DATA FETCHING
@@ -71,7 +55,7 @@ export function registerMapModal() {
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
         if (visibleModals.map) {
-          setSelectedEntities({ ...selectedEntities, room: curLoc });
+          setSelectedEntities({ ...selectedEntities, room: data.account.location * 1 });
         }
       }, [visibleModals.map]);
 
@@ -85,130 +69,44 @@ export function registerMapModal() {
           );
           setSelectedRoom(room);
 
-          const exits = room.exits?.map((exit) => getRoomByLocation(layers, exit * 1));
+          const exits = (room.exits)
+            ? room.exits.map((exit) => getRoomByLocation(layers, exit * 1))
+            : [];
           setSelectedExits(exits);
         }
-      }, [selectedEntities.room, curLoc]);
+      }, [selectedEntities.room, data.account]);
 
 
       ///////////////////
       // ACTIONS
 
       const move = (location: number) => {
-        const actionID = `Moving to room ${location}` as EntityID;
+        const room = getRoomByLocation(layers, location);
+        const actionID = `Moving to ${room.name}` as EntityID;
         actions.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.account.move(location);
+            return api.account.move(location * 1);
           },
         });
-      };
-
-      const RoomInfo = ({ room, exits }: { room: Room | undefined, exits: Room[] }) => {
-        if (!room) return <div />;
-        return (
-          <Scrollable ref={scrollableRef}>
-            <SectionContainer>
-              <SectionTitle style={{ fontSize: 16 }}>Room {room.location}: {room.name}</SectionTitle>
-              <Description>{room.owner ? (room.owner.name) : ''}</Description>
-              <Description>{room.description}</Description>
-            </SectionContainer>
-
-            <SectionContainer>
-              <SectionTitle>Exits</SectionTitle>
-              {exits.map((exit) => {
-                return (
-                  <ClickableDescription key={exit.location} onClick={() => move(exit.location)}>
-                    {exit.name}
-                  </ClickableDescription>
-                );
-              })}
-            </SectionContainer>
-
-            <SectionContainer>
-              <SectionTitle>Players</SectionTitle>
-              <Description>{room.players?.map((player) => (player.name)).join(', ')}</Description>
-            </SectionContainer>
-          </Scrollable>
-        );
       };
 
 
       ///////////////////
       // DISPLAY
 
-      const scrollableRef = useRef<HTMLDivElement>(null);
-
       return (
-        <ModalWrapperFull id='world_map' divName='map'>
-          <MapBox>
-            <MapGrid currentRoom={curLoc} move={move} />
-          </MapBox>
-          <RoomInfo room={selectedRoom} exits={selectedExits} />
+        <ModalWrapperFull
+          id='world_map'
+          divName='map'
+          header={<MapGrid currentRoom={data.account.location * 1} move={move} />}
+        >
+          <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
         </ModalWrapperFull>
       );
     }
   );
 }
-
-const MapBox = styled.div`
-  border-style: solid;
-  border-width: 2px 2px 0px 2px;
-  border-color: black;
-  min-height: 50%;
-  flex-grow: 1;
-`;
-
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  padding: 10px;
-`;
-
-const SectionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 5px;
-  padding: 10px;
-`;
-
-const SectionTitle = styled.p`
-  font-size: 14px;
-  color: #333;
-  text-align: left;
-  font-family: Pixel;
-  padding: 5px 0px 10px 0px;
-`;
-
-const Description = styled.p`
-  color: #333;
-  padding: 5px;
-  
-  font-size: 12px;
-  font-family: Pixel;
-  text-align: left;
-`;
-
-// TODO: merge this with Description using props
-const ClickableDescription = styled.p`
-  color: #333;
-  cursor: pointer;
-  padding: 5px;
-  
-  font-size: 12px;
-  font-family: Pixel;
-  text-align: left;
-  &:hover {
-    opacity: 0.7;
-  }
-`;
-
-
-

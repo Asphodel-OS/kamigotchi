@@ -8,22 +8,14 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
-import cdf from '@stdlib/stats-base-dists-normal-cdf';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import {
-  ActionListButton,
-  Option as ActionListOption,
-} from 'layers/react/components/library/ActionListButton';
-import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Banner } from 'layers/react/components/modals/node/Banner';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
-import { Node, NodeKamis, getNode } from 'layers/react/shapes/Node';
+import { Node, getNode } from 'layers/react/shapes/Node';
 import { Tabs } from './Tabs';
 import { Kards } from './Kards';
 

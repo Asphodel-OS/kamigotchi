@@ -1,0 +1,77 @@
+import { Room } from "layers/react/shapes/Room";
+import styled from "styled-components";
+
+interface Props {
+  room: Room | undefined;
+  exits: Room[];
+  move: Function;
+}
+
+export const RoomInfo = (props: Props) => {
+  if (!props.room) return <div />;
+  return (
+    <>
+      <SectionContainer>
+        <SectionTitle style={{ fontSize: '1.2vw' }}>Room {props.room.location}: {props.room.name}</SectionTitle>
+        <Description>{props.room.owner ? (props.room.owner.name) : ''}</Description>
+        <Description>{props.room.description}</Description>
+      </SectionContainer>
+
+      <SectionContainer>
+        <SectionTitle>Exits</SectionTitle>
+        {props.exits.map((exit) => {
+          return (
+            <ClickableDescription key={exit.location} onClick={() => props.move(exit.location)}>
+              {exit.name}
+            </ClickableDescription>
+          );
+        })}
+      </SectionContainer>
+
+      <SectionContainer>
+        <SectionTitle>Players</SectionTitle>
+        <Description>{props.room.players?.map((player) => (player.name)).join(', ')}</Description>
+      </SectionContainer>
+    </>
+  );
+};
+
+
+const SectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 1.2vw;
+`;
+
+const SectionTitle = styled.p`
+  color: #333;
+  padding-bottom: .5vw;
+
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
+`;
+
+const Description = styled.p`
+  color: #333;
+  padding: .3vw;
+  
+  font-family: Pixel;
+  font-size: .8vw;
+  text-align: left;
+  line-height: 1.2vw;
+`;
+
+// TODO: merge this with Description using props
+const ClickableDescription = styled.p`
+  color: #333;
+  cursor: pointer;
+  padding: .3vw;
+  
+  font-size: .8vw;
+  font-family: Pixel;
+  text-align: left;
+  &:hover {
+    opacity: 0.7;
+  }
+`;

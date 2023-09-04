@@ -239,68 +239,66 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   const isCurrentRoom = location === currentRoom;
   const isNeighbor = NEIGHBOR_ROOMS[currentRoom]?.includes(location || 0);
   const isClickable = !!location;
+  const isTopLeft = rowIndex === 0 && colIndex === 0;
+  const isTopRight = rowIndex === 0 && colIndex === 16;
 
-  const hoverStyle = isClickable ? { cursor: 'pointer' } : {};
+  const clickableStyle = isClickable ? { cursor: 'pointer' } : {};
   const hoveredStyle = isNeighbor
-    ? { border: '1px solid green', opacity: '0.7' }
-    : { border: '1px solid red', opacity: '0.7' };
+    ? { border: '.1vw solid green', opacity: '0.7' }
+    : { border: '.1vw solid red', opacity: '0.7' };
   const currentRoomStyle = (isCurrentRoom)
-    ? { border: '2px solid transparent', opacity: '0.7' }
+    ? { border: '.15vw solid transparent', opacity: '0.7' }
     : {};
+  const cornerStyle = (isTopLeft) ? { borderRadius: '8px 0px 0px 0px' } : {};
+  const cornerStyle2 = (isTopRight) ? { borderRadius: '0px 8px 0px 0px' } : {};
 
   const handleMouseEnter = () => {
     if (isClickable) {
       setHovered(true);
-      setSelectedEntities({ ...selectedEntities, room: location });
+      setSelectedEntities({ ...selectedEntities, room: location * 1 });
     }
   };
 
   const handleMouseLeave = () => {
     if (isClickable) {
       setHovered(false);
-      setSelectedEntities({ ...selectedEntities, room: currentRoom });
+      setSelectedEntities({ ...selectedEntities, room: currentRoom * 1 });
     }
   };
 
-  if (!img) {
-    return <div style={{ width: '100%', height: '100%' }} />;
-  }
+  if (!img) return <div style={{ width: '100%', height: '100%' }} />;
 
   return (
-    <div
-      onClick={isClickable && isNeighbor ? () => move(location) : undefined}
+    <TileImage
+      src={img}
+      style={{
+        ...currentRoomStyle,
+        ...clickableStyle,
+        ...(isHovered ? hoveredStyle : {}),
+        ...cornerStyle,
+        ...cornerStyle2,
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        ...currentRoomStyle,
-        ...hoverStyle,
-        ...(isHovered ? hoveredStyle : {}),
-      }}
-    >
-      <img src={img} style={{ width: '200%', height: 'auto', }} />
-    </div>
+      onClick={isClickable && isNeighbor ? () => move(location) : undefined}
+    />
   );
 };
 
 
-const MapGrid = ({ currentRoom, move }: MapProps) => {
+export const MapGrid = ({ currentRoom, move }: MapProps) => {
   return (
     <GridContainer>
       {GRID_MAP.map((row, rowIndex) => (
         <React.Fragment key={rowIndex}>
           {row.map((tile, colIndex) => (
-            <GridTile key={colIndex}>
-              <Tile
-                img={tile}
-                currentRoom={currentRoom}
-                move={move}
-                rowIndex={rowIndex}
-                colIndex={colIndex}
-              />
-            </GridTile>
+            <Tile
+              img={tile}
+              currentRoom={currentRoom}
+              move={move}
+              rowIndex={rowIndex}
+              colIndex={colIndex}
+            />
           ))}
         </React.Fragment>
       ))}
@@ -308,10 +306,9 @@ const MapGrid = ({ currentRoom, move }: MapProps) => {
   );
 };
 
-export default MapGrid;
-
 
 const GridContainer = styled.div`
+  border-radius: 8px 8px 0px 0px;
   display: grid;
   grid-template-columns: repeat(17, 1fr);
   grid-template-rows: repeat(9, 1fr);
@@ -320,7 +317,7 @@ const GridContainer = styled.div`
   height: 100%;
 `;
 
-const GridTile = styled.div`
+const TileImage = styled.img`
   position: relative;
   width: 100%;
   height: 100%;
