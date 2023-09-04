@@ -110,10 +110,13 @@ export function registerEMABoardModal() {
 
       // Rendering of Individual Kami Cards in the Name Modal
       const Kard = (kami: Kami) => {
-        let description = [
-          `${kami.state[0] + kami.state.slice(1).toLowerCase()}`,
-          `and loves you very much`,
-        ];
+        let description = [] as string[];
+        if (kami.state) {
+          description = [
+            `${kami.state[0] + kami.state.slice(1).toLowerCase()}`,
+            `and loves you very much`,
+          ];
+        }
         return (
           <KamiCard
             key={kami.index}
