@@ -12,6 +12,7 @@ import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
+import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node/';
@@ -22,7 +23,6 @@ import { registerDialogueModal } from './modals/Dialogue';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerKamiMintModal } from './modals/MintKami';
-import { registerMapModal } from './modals/Map';
 import { registerSettingsModal } from './modals/Settings';
 import { registerQuestsModal } from './modals/Quests';
 import { registerHelpModal } from './modals/Help';

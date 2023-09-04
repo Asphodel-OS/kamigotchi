@@ -8,7 +8,7 @@ import { EntityID, getComponentValue, runQuery, Has, HasValue } from '@latticexy
 import styled from 'styled-components';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import MapGrid from 'layers/react/components/library/MapGrid';
+import MapGrid from 'layers/react/components/modals/map/MapGrid';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { dataStore } from 'layers/react/store/createStore';
