@@ -3,6 +3,7 @@ import {
   objectBeetle1,
   objectBeetle2,
   objectBeetle3,
+  objectBeetle4,
   objectSmallMushrooms,
 } from 'assets/images/rooms/9_forest';
 import { ost2 } from 'assets/sound/ost';
@@ -43,7 +44,17 @@ export const room9: Room = {
       key: 'beetle3',
       path: objectBeetle3,
       offset: { x: -59.5, y: -15.5 },
-      onClick: () => triggerDialogueModal(['Beetle number three. More private than the others.']),
+      onClick: () =>
+        triggerDialogueModal(['Beetle number three. More private than the others.'
+        ]),
+    },
+    {
+      key: 'beetle4',
+      path: objectBeetle4,
+      offset: { x: 43.5, y: 2 },
+      onClick: () =>
+        triggerDialogueModal(['Beetle number four. A bit of a loner.'
+        ]),
     },
     {
       key: 'smallmushrooms',
