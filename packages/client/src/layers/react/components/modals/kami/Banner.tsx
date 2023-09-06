@@ -37,7 +37,7 @@ export const Banner = (props: Props) => {
             triggerLevelUp={() => props.actions.levelUp(props.kami)}
           />
         </ContentTop>
-        <ContentBottom>
+        <ContentMiddle>
           {statsArray.map((stat: [string, number]) => {
             return (
               <Tooltip key={stat[0]} text={[statsDescriptions.get(stat[0]) as string]} grow>
@@ -48,7 +48,8 @@ export const Banner = (props: Props) => {
               </Tooltip>
             );
           })}
-        </ContentBottom>
+        </ContentMiddle>
+        <Footer>{props.kami.account?.name}</Footer>
       </Content>
     </Container>
   );
@@ -69,11 +70,12 @@ const Image = styled.img`
 
 const Content = styled.div`
   flex-grow: 1;
-  padding: 1.4vw .7vw .7vw .7vw;
+  padding: .7vw;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
+  position: relative;
 `;
 
 const ContentTop = styled.div`
@@ -86,12 +88,11 @@ const TitleRow = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-end;
-  margin: 1vw .3vw .7vw .3vw;
+  margin: 1.5vw .3vw .7vw .3vw;
 `;
 
 const Title = styled.div`
   background-color: #ffffff;
-
   color: black;
   font-family: Pixel;
   font-size: 2vw;
@@ -105,11 +106,13 @@ const Subtext = styled.div`
   font-size: .9vw;
 `;
 
-const ContentBottom = styled.div`
+const ContentMiddle = styled.div`
   flex-grow: 1;
+  width: 80%;
   display: flex;
   flex-direction: row wrap;
   align-items: center;
+  justify-content: flex-start;
 `;
 
 const InfoBox = styled.div`
@@ -120,6 +123,9 @@ const InfoBox = styled.div`
   
   display: flex;
   flex-direction: column;
+  &:hover {
+    background-color: #ddd;
+  }
 `
 
 const InfoLabel = styled.div`
@@ -136,8 +142,21 @@ const InfoContent = styled.div`
   padding: 5px;
   align-self: center;
 
+  font-family: Pixel;
   font-size: 1.2vw;
   font-weight: 600;
-  font-family: Pixel;
   margin: auto;
+`;
+
+const Footer = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: .7vw;
+  
+  font-family: Pixel;
+  font-size: .6vw;
+  text-align: right;
+  color: #666;
 `;

@@ -43,7 +43,7 @@ export const ModalWrapperFull = (props: Props) => {
   element?.addEventListener('mousedown', handleClicks);
 
   // Some conditional styling to adapt the content to the wrapper.
-  const zindex = props.overlay ? { position: 'relative', zIndex: '1' } : {};
+  const zindex = props.overlay ? { position: 'relative', zIndex: '2' } : {};
 
 
   return (

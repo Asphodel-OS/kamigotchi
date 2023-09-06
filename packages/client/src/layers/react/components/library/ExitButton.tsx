@@ -38,6 +38,7 @@ const Button = styled.button`
   justify-self: right;
   padding: .3vw .4vw;
   margin: .7vw;
+  z-index: 1;
   
   font-family: Pixel;
   font-size: .9vw;
