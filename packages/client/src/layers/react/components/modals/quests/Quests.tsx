@@ -11,6 +11,7 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Quest, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
 import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 import 'layers/react/styles/font.css';
+import { Tabs } from './Tabs';
 
 export function registerQuestsModal() {
   registerUIComponent(
@@ -76,7 +77,7 @@ export function registerQuestsModal() {
 
     ({ layers, actions, api, data }) => {
       // console.log('mQuest:', data);
-      const [questFilter, setQuestFilter] = useState<'ONGOING' | 'AVAILABLE' | 'COMPLETED'>('ONGOING');
+      const [tab, setTab] = useState<TabType>('ONGOING');
 
 
       ///////////////////
@@ -108,36 +109,19 @@ export function registerQuestsModal() {
         });
       }
 
-      const Footer = (
-        <div style={{ padding: '1vh 0.1vw' }}>
-          <ActionButton
-            id={`ongoing-mode`}
-            onClick={() => setQuestFilter('ONGOING')}
-            text='Ongoing'
-            disabled={questFilter === 'ONGOING'}
-          />
-          <ActionButton
-            id={`available-mode`}
-            onClick={() => setQuestFilter('AVAILABLE')}
-            text='Available'
-            disabled={questFilter === 'AVAILABLE'}
-          />
-          <ActionButton
-            id={`completed-mode`}
-            onClick={() => setQuestFilter('COMPLETED')}
-            text='Completed'
-            disabled={questFilter === 'COMPLETED'}
-          />
-        </div>
-      )
-
       return (
-        <ModalWrapperFull divName='quests' id='quest_modal'>
-          <Header>Quests</Header>
+        <ModalWrapperFull
+          id='quest_modal'
+          divName='quests'
+          header={[
+            <Header>Quests</Header>,
+            <Tabs tab={tab} setTab={setTab} />
+          ]}
+        >
           <List
             account={data.account}
             registryQuests={data.quests}
-            mode={questFilter}
+            mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{
               getItem: (index: EntityIndex) => getItem(layers, index),
@@ -145,17 +129,16 @@ export function registerQuestsModal() {
               queryReviveRegistry: (index: number) => queryReviveRegistry(layers, index),
             }}
           />
-          {Footer}
         </ModalWrapperFull>
       );
     }
   );
 }
 
-const Header = styled.p`
-  font-size: 24px;
+const Header = styled.div`
+  font-size: 2vw;
   color: #333;
   text-align: left;
-  padding: 1vh 0vw 0.5vh 0vw;
+  padding: 1vw;
   font-family: Pixel;
 `;

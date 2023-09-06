@@ -17,9 +17,9 @@ import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
-import { registerNodeModal } from './modals/node/';
+import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
-import { registerQuestsModal } from './modals/quests/Quests';
+import { registerQuestsModal } from './modals/quests';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';

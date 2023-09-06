@@ -1,0 +1,1 @@
+type TabType = 'AVAILABLE' | 'ONGOING' | 'COMPLETED';
