@@ -1,13 +1,16 @@
 import { registerLoadingState } from './LoadingState';
 
-import { registerChatButton } from './fixtures/buttons/Chat';
-import { registerHelpButton } from './fixtures/buttons/Help';
-import { registerMapButton } from './fixtures/buttons/Map';
-import { registerPartyButton } from './fixtures/buttons/Party';
-import { registerSettingsButton } from './fixtures/buttons/Settings';
-import { registerQuestsButton } from './fixtures/buttons/Quests';
+import {
+  registerChatButton,
+  registerHelpButton,
+  registerMapButton,
+  registerPartyButton,
+  registerQuestsButton,
+  registerSettingsButton,
+} from './fixtures/buttons';
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerActionQueue } from './fixtures/ActionQueue';
+import { registerFundOperatorFixture } from "./fixtures/FundOperator"
 import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerKamiModal } from './modals/kami';
@@ -18,7 +21,6 @@ import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node/';
 import { registerPartyModal } from './modals/party';
 
-import { registerChatModal } from './modals/Chat';
 import { registerDialogueModal } from './modals/Dialogue';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
@@ -26,7 +28,6 @@ import { registerKamiMintModal } from './modals/MintKami';
 import { registerSettingsModal } from './modals/Settings';
 import { registerQuestsModal } from './modals/Quests';
 import { registerHelpModal } from './modals/Help';
-import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
 
 import { registerAccountRegistrar } from './validators/AccountRegistrar';
@@ -48,6 +49,7 @@ export function registerUIComponents() {
 
   // other fixtures
   registerAccountInfoFixture();
+  registerFundOperatorFixture();
   registerWalletFixture();
   registerActionQueue();
   registerOperatorFundNotification();
@@ -56,7 +58,6 @@ export function registerUIComponents() {
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
-  registerFundOperatorModal();
   registerKamiMintModal();
   registerKamiModal();
   registerLeaderboardModal();

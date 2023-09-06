@@ -5,7 +5,7 @@ import { useAccount, useContractRead, useBalance } from 'wagmi';
 import styled from 'styled-components';
 
 import { abi as Pet721ProxySystemABI } from "abi/Pet721ProxySystem.json"
-import { Account, getAccount } from 'layers/react/shapes/Account';
+import { Account, getAccount, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
@@ -22,12 +22,9 @@ export function registerAccountInfoFixture() {
     (layers) => {
       const {
         network: {
-          network: { connectedAddress },
           components: {
             Coin,
             Name,
-            IsAccount,
-            OperatorAddress,
             StaminaCurrent,
             Stamina,
           },
@@ -40,24 +37,9 @@ export function registerAccountInfoFixture() {
         StaminaCurrent.update$,
       ).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
-          const accountEntityIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account =
-            accountEntityIndex !== undefined
-              ? getAccount(layers, accountEntityIndex)
-              : ({} as Account);
-
           return {
             layers,
-            data: { account },
+            data: { account: getAccountFromBurner(layers) },
           };
         })
       );

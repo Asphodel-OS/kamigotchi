@@ -15,9 +15,9 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import scribbleSound from 'assets/sound/fx/scribbling.mp3';
 import successSound from 'assets/sound/fx/bubble_success.mp3';
 
-export function registerFundOperatorModal() {
+export function registerFundOperatorFixture() {
   registerUIComponent(
-    'FundOperatorModal',
+    'FundOperator',
     {
       colStart: 30,
       colEnd: 70,
