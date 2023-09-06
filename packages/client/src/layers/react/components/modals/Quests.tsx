@@ -10,8 +10,6 @@ import {
   Reward,
   Requirement,
   getRegistryQuests,
-  checkRequirement,
-  checkObjective,
   parseQuestsStatus
 } from 'layers/react/shapes/Quest';
 import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
@@ -247,15 +245,19 @@ export function registerQuestsModal() {
         }
       }
 
-      const getObjectiveText = (objective: Objective, status: boolean): string => {
+      const getObjectiveText = (objective: Objective, showTracking: boolean): string => {
         let text = objective.name;
 
-        if (status) {
+        if (showTracking) {
+          let tracking = '';
           if (objective.status?.completable) {
-            text = text + ' ✅';
+            tracking = ' ✅';
           } else {
-            text = text + ` [${Number(objective.status?.current)}/${Number(objective.status?.target)}]`;
+            if (objective.target.type !== 'ROOM')
+              tracking = ` [${Number(objective.status?.current) ?? 0}/${Number(objective.status?.target)}]`;
           }
+
+          text += tracking;
         }
 
         return text;
@@ -305,7 +307,7 @@ export function registerQuestsModal() {
         )
       };
 
-      const RequirementDisplay = (requirements: Requirement[], status: boolean) => {
+      const RequirementDisplay = (requirements: Requirement[]) => {
         if (requirements.length == 0) return <div />;
         return (
           <ConditionContainer>
@@ -319,14 +321,14 @@ export function registerQuestsModal() {
         )
       }
 
-      const ObjectiveDisplay = (objectives: Objective[], status: boolean) => {
+      const ObjectiveDisplay = (objectives: Objective[], showTracking: boolean) => {
         if (objectives.length == 0) return <div />;
         return (
           <ConditionContainer>
             <ConditionName>Objectives</ConditionName>
             {objectives.map((objective) => (
               <ConditionDescription key={objective.id}>
-                - {`${getObjectiveText(objective, status)}`}
+                - {`${getObjectiveText(objective, showTracking)}`}
               </ConditionDescription>
             ))}
           </ConditionContainer>
@@ -362,7 +364,7 @@ export function registerQuestsModal() {
           <QuestContainer key={q.id}>
             <QuestName>{q.name}</QuestName>
             <QuestDescription>{q.description}</QuestDescription>
-            {RequirementDisplay(q.requirements, true)}
+            {RequirementDisplay(q.requirements)}
             {ObjectiveDisplay(q.objectives, false)}
             {RewardDisplay(q.rewards)}
             {AcceptButton(q)}
