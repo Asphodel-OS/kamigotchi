@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { EntityID } from '@latticexyz/recs';
@@ -33,7 +33,6 @@ export function registerERC721BridgeModal() {
           components: {
             AccountID,
             IsAccount,
-            IsPet,
             OperatorAddress,
             State,
           },

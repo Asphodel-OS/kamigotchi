@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { useBalance, useContractRead } from 'wagmi';
-import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID } from '@latticexyz/recs';
 
 import { abi } from "abi/Farm20ProxySystem.json"
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccount } from 'layers/react/shapes/Account';
-import { dataStore } from 'layers/react/store/createStore';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
@@ -28,45 +26,25 @@ export function registerERC20BridgeModal() {
       const {
         network: {
           systems,
-          network: { connectedAddress },
-          components: {
-            Coin,
-            IsAccount,
-            OperatorAddress,
-          },
+          components: { Coin },
         },
       } = layers;
 
       return merge(Coin.update$).pipe(
         map(() => {
-          // get the account entity of the controlling wallet
-          const accountEntityIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account =
-            accountEntityIndex !== undefined
-              ? getAccount(layers, accountEntityIndex)
-              : ({} as Account);
-
+          const account = getAccountFromBurner(layers);
           const { coin } = account;
 
           return {
-            GameBal: coin ?? 0,
+            account,
             proxyAddy: systems["system.Farm20.Proxy"].address
           };
         })
       );
     },
 
-    ({ GameBal, proxyAddy }) => {
+    ({ account, proxyAddy }) => {
       const { details: accountDetails } = useKamiAccount();
-      const { visibleModals, setVisibleModals } = dataStore();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [isDepositState, setIsDepositState] = useState(true);
@@ -152,7 +130,7 @@ export function registerERC20BridgeModal() {
           setEnableButton(false);
           setStatusText("");
         }
-        else if (isDepositState ? amount > Number(EOABal?.formatted) : amount > Number(GameBal)) {
+        else if (isDepositState ? amount > Number(EOABal?.formatted) : amount > Number(account.coin ?? 0)) {
           setEnableButton(false);
           setStatusText("Insufficient Balance");
         }
@@ -164,7 +142,7 @@ export function registerERC20BridgeModal() {
           setEnableButton(true);
           setStatusText("");
         }
-      }, [amount, isDepositState, EOABal, GameBal]);
+      }, [amount, isDepositState, EOABal, account.coin]);
 
 
       ///////////////
@@ -179,7 +157,7 @@ export function registerERC20BridgeModal() {
 
       const StateBox = (fundState: boolean) => {
         const text = fundState ? "Wallet" : "Game";
-        const balance = fundState ? Math.floor(Number(EOABal?.formatted)) : Number(GameBal);
+        const balance = fundState ? Math.floor(Number(EOABal?.formatted)) : Number(account.coin ?? 0);
         const color = (fundState == isDepositState) ? "grey" : "white";
         const textColor = (fundState == isDepositState) ? "white" : "black";
         return (

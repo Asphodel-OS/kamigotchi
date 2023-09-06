@@ -4,14 +4,13 @@ import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 
 import { List } from './List';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { Tabs } from './Tabs';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Quest, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
 import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 import 'layers/react/styles/font.css';
-import { Tabs } from './Tabs';
 
 export function registerQuestsModal() {
   registerUIComponent(

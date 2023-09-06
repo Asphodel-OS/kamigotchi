@@ -1,14 +1,13 @@
 import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccount, getAccountFromBurner } from 'layers/react/shapes/Account';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 
@@ -51,7 +50,7 @@ export function registerEMABoardModal() {
         map(() => {
           const account = getAccountFromBurner(layers, { kamis: true });
           return {
-            data: { account } as any,
+            data: { account },
           };
         })
       );
@@ -128,7 +127,6 @@ export function registerEMABoardModal() {
       }
 
       const KamiList = (kamis: Kami[]) => {
-        kamis = kamis ?? [];
         return kamis.map((kami: Kami) => Kard(kami));
       }
 
@@ -139,7 +137,7 @@ export function registerEMABoardModal() {
           header={<Title>Ema Board</Title>}
           canExit
         >
-          <List>{KamiList(data.account.kamis)}</List>
+          <List>{KamiList(data.account.kamis || [])}</List>
         </ModalWrapperFull>
       );
     }
