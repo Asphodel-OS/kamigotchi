@@ -35,7 +35,7 @@ export const room14: Room = {
       offset: { x: -12.4, y: 9.5 },
       onClick: () =>
         triggerDialogueModal([
-          "An apple Imac. Looks like the G3, actually. There's no power cable, so it's dead.",
+          "An apple iMac. Looks like the G3, actually. There's no power cable, so it's dead.",
         ]),
     },
     {
