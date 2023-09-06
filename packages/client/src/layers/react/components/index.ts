@@ -1,7 +1,6 @@
 import { registerLoadingState } from './LoadingState';
 
 import {
-  registerChatButton,
   registerHelpButton,
   registerMapButton,
   registerPartyButton,
@@ -9,8 +8,8 @@ import {
   registerSettingsButton,
 } from './fixtures/buttons';
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
-import { registerActionQueue } from './fixtures/ActionQueue';
-import { registerFundOperatorFixture } from "./fixtures/FundOperator"
+import { registerActionQueueFixture } from './fixtures/ActionQueue';
+import { registerGasWarningFixture } from './fixtures/GasWarning';
 import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerKamiModal } from './modals/kami';
@@ -20,21 +19,21 @@ import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node/';
 import { registerPartyModal } from './modals/party';
+import { registerQuestsModal } from './modals/quests/Quests';
 
-import { registerDialogueModal } from './modals/Dialogue';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
-import { registerKamiMintModal } from './modals/MintKami';
-import { registerSettingsModal } from './modals/Settings';
-import { registerQuestsModal } from './modals/Quests';
+import { registerDialogueModal } from './modals/Dialogue';
 import { registerHelpModal } from './modals/Help';
+import { registerFundOperatorModal } from "./modals/FundOperator"
+import { registerKamiMintModal } from './modals/MintKami';
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
+import { registerSettingsModal } from './modals/Settings';
 
 import { registerAccountRegistrar } from './validators/AccountRegistrar';
 import { registerBurnerDetector } from './validators/BurnerDetector';
 import { registerDetectAccountModal } from './validators/DetectAccount';
 import { registerWalletConnecter } from './validators/WalletConnector';
-import { registerOperatorFundNotification } from './validators/OperatorFundNotification';
 import { registerOperatorUpdater } from './validators/OperatorUpdater';
 
 export function registerUIComponents() {
@@ -49,15 +48,22 @@ export function registerUIComponents() {
 
   // other fixtures
   registerAccountInfoFixture();
-  registerFundOperatorFixture();
+  registerActionQueueFixture();
+  registerGasWarningFixture();
   registerWalletFixture();
-  registerActionQueue();
-  registerOperatorFundNotification();
+
+  // menu modals
+  registerHelpModal();
+  registerMapModal();
+  registerSettingsModal();
+  registerPartyModal();
+  registerQuestsModal();
 
   // game modals
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
+  registerFundOperatorModal();
   registerKamiMintModal();
   registerKamiModal();
   registerLeaderboardModal();
@@ -66,13 +72,6 @@ export function registerUIComponents() {
   registerMerchantModal();
   registerDialogueModal();
   registerOperatorMovementModal();
-
-  // menu modals
-  registerHelpModal();
-  registerMapModal();
-  registerSettingsModal();
-  registerPartyModal();
-  registerQuestsModal();
 
   // validators
   registerAccountRegistrar();

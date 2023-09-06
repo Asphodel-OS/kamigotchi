@@ -12,9 +12,9 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 // preset operator fund that allows users to choose how much to fund, but suggests a good number
 // tell users how many transactions / how long this balance will last
-export function registerOperatorFundNotification() {
+export function registerGasWarningFixture() {
   registerUIComponent(
-    'OperatorFundNotification',
+    'GasWarning',
     {
       colStart: 78,
       colEnd: 100,

@@ -9,6 +9,7 @@ interface Props {
   id: string;
   children: React.ReactNode;
   header?: React.ReactNode;
+  footer?: React.ReactNode;
   canExit?: boolean;
   overlay?: boolean;
   hideModal?: Partial<VisibleModals>;
@@ -60,6 +61,8 @@ export const ModalWrapperFull = (props: Props) => {
         }
         {props.header && <Header>{props.header}</Header>}
         <Children>{props.children}</Children>
+        {props.footer && <Footer>{props.footer}</Footer>}
+
       </Content>
     </Wrapper>
   );
@@ -106,6 +109,12 @@ const ButtonRow = styled.div`
 const Header = styled.div`  
   border-radius: 10px 10px 0px 0px;
   border-bottom: solid black .15vw;
+  display: flex;
+  flex-flow: column nowrap;
+`;
+
+const Footer = styled.div`  
+  border-radius: 0px 0px 10px 10px;
   display: flex;
   flex-flow: column nowrap;
 `;

@@ -16,7 +16,7 @@ const statusColors: ColorMapping = {
   "complete": "green",
 }
 
-export function registerActionQueue() {
+export function registerActionQueueFixture() {
   registerUIComponent(
     'ActionQueue',
     {
