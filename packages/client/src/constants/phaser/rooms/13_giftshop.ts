@@ -1,8 +1,10 @@
 import {
   backgroundMina,
   backgroundEmpty,
-  objectMina,
   objectCashRegister,
+  objectClock,
+  objectMina,
+  objectMinaRed,
 } from 'assets/images/rooms/13_giftshop';
 import { forest as forestOST } from 'assets/sound/ost';
 
@@ -28,9 +30,15 @@ export const room13: Room = {
       onClick: triggerShopModal,
     },
     {
+      key: 'clock',
+      path: objectClock,
+      offset: { x: 0, y: 0 },
+      onClick: () => triggerDialogueModal(['*tik tok*']),
+    },
+    {
       key: 'mina',
-      path: objectMina,
-      offset: { x: -15, y: -24.6 },
+      path: objectMinaRed,
+      offset: { x: -16.5, y: -25 },
       onClick: () =>
         triggerDialogueModal([
           "Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon.",
