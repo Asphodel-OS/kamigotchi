@@ -14,7 +14,7 @@ export const Listings = (props: Props) => {
     <List>
       {props.listings &&
         props.listings.map((l) => (
-          <ItemRow listing={l} handleBuy={props.handleBuy} />
+          <ItemRow key={l.entityIndex} listing={l} handleBuy={props.handleBuy} />
         ))}
     </List>
   );
