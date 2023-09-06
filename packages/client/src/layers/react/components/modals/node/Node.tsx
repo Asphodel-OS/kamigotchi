@@ -153,28 +153,9 @@ export function registerNodeModal() {
       // console.log('NodeM: data', data);
       const [tab, setTab] = useState('allies');
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const scrollableRef = useRef<HTMLDivElement>(null);
-      const [scrollPosition, setScrollPosition] = useState<number>(0);
 
       /////////////////
       // TRACKING
-
-      // scrolling
-      useEffect(() => {
-        const handleScroll = () => {
-          if (scrollableRef.current) {
-            setScrollPosition(scrollableRef.current.scrollTop);
-          }
-        };
-        if (scrollableRef.current) {
-          scrollableRef.current.addEventListener('scroll', handleScroll);
-        }
-        return () => {
-          if (scrollableRef.current) {
-            scrollableRef.current.removeEventListener('scroll', handleScroll);
-          }
-        };
-      }, []);
 
       // ticking
       useEffect(() => {
@@ -197,7 +178,6 @@ export function registerNodeModal() {
         actions.add({
           id: actionID,
           components: {},
-          // on: data.????,
           requirement: () => true,
           updates: () => [],
           execute: async () => {
@@ -213,7 +193,6 @@ export function registerNodeModal() {
         actions.add({
           id: actionID,
           components: {},
-          // on: data.account.index, // what's the appropriate value here?
           requirement: () => true,
           updates: () => [],
           execute: async () => {
@@ -228,7 +207,6 @@ export function registerNodeModal() {
         actions.add({
           id: actionID,
           components: {},
-          // on: data.????,
           requirement: () => true,
           updates: () => [],
           execute: async () => {
@@ -243,7 +221,6 @@ export function registerNodeModal() {
         actions.add({
           id: actionID,
           components: {},
-          // on: data.????,
           requirement: () => true,
           updates: () => [],
           execute: async () => {

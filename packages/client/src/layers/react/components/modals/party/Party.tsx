@@ -95,29 +95,6 @@ export function registerPartyModal() {
 
 
       /////////////////
-      // STATE TRACKING
-
-      // NOTE: not currently in use
-      const scrollableRef = useRef<HTMLDivElement>(null);
-      const [scrollPosition, setScrollPosition] = useState<number>(0);
-      useEffect(() => {
-        const handleScroll = () => {
-          if (scrollableRef.current) {
-            setScrollPosition(scrollableRef.current.scrollTop);
-          }
-        };
-        if (scrollableRef.current) {
-          scrollableRef.current.addEventListener('scroll', handleScroll);
-        }
-        return () => {
-          if (scrollableRef.current) {
-            scrollableRef.current.removeEventListener('scroll', handleScroll);
-          }
-        };
-      }, []);
-
-
-      /////////////////
       // INTERACTION
 
       // feed a kami

@@ -136,10 +136,10 @@ export function registerEMABoardModal() {
         <ModalWrapperFull
           id='ema_board_modal'
           divName='emaBoard'
+          header={<Title>Ema Board</Title>}
           canExit
         >
-          <Title>Ema Board</Title>
-          <Scrollable>{KamiList(data.account.kamis)}</Scrollable>
+          <List>{KamiList(data.account.kamis)}</List>
         </ModalWrapperFull>
       );
     }
@@ -155,7 +155,7 @@ const Title = styled.div`
   text-align: center;
 `;
 
-const Scrollable = styled.div`
+const List = styled.div`
   overflow-y: scroll;
   height: 100%;
   max-height: 100%;
