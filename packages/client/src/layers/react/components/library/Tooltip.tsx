@@ -26,15 +26,15 @@ export const Tooltip = (props: Props) => {
         sx: {
           zIndex: '2',
           borderStyle: 'solid',
-          borderWidth: '2px',
+          borderWidth: '.15vw',
           borderColor: 'black',
           backgroundColor: '#fff',
           padding: '10px',
 
           color: 'black',
-          fontSize: '12px',
+          fontSize: '.7vw',
           fontFamily: 'Pixel',
-          lineHeight: '18px',
+          lineHeight: '1vw',
           whiteSpace: 'pre-line',
         },
       }

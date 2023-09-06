@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { dataStore } from 'layers/react/store/createStore';
+import { Popover } from '@mui/material';
 
 interface Props {
   id: string;
@@ -19,27 +20,15 @@ export interface Option {
 
 export function ActionListButton(props: Props) {
   const { sound: { volume } } = dataStore();
-  const [isOpen, setIsOpen] = useState(false);
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [props.scrollPosition]);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!props.disabled) setAnchorEl(event.currentTarget);
+  };
 
-  const toggleMenu = (e) => {
-    const togglePosition = toggleRef.current?.getBoundingClientRect();
-    const screenHeight = window.innerHeight;
-    const targetHeight = (e.target as HTMLElement).clientHeight;
-
-    if (togglePosition) {
-      if (togglePosition.bottom + targetHeight > screenHeight * 0.7) {
-        setMenuPosition({ top: togglePosition.bottom * 0.85, left: togglePosition.left });
-      } else {
-        setMenuPosition({ top: togglePosition.bottom, left: togglePosition.left });
-      }
-    }
-    setIsOpen(!isOpen);
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   // close the menu and layer in a sound effect
@@ -48,49 +37,50 @@ export function ActionListButton(props: Props) {
     clickSound.volume = volume * 0.6;
     clickSound.play();
     option.onClick();
-    setIsOpen(false);
+    handleClose();
   }
 
   const setStyles = () => {
     var styles: any = {};
-    if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    if (props.disabled) styles.backgroundColor = '#bbb';
     return styles;
   };
 
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   return (
-    <Container>
-      <Toggle
+    <div>
+      <Button
         ref={toggleRef}
         id={props.id}
-        onClick={!props.disabled ? (e) => toggleMenu(e) : () => { }}
+        onClick={handleClick}
         style={setStyles()}
       >
         {props.text + ' ▾'}
-      </Toggle>
-
-      {isOpen && (
-        <MenuWrapper style={{ top: menuPosition.top, left: menuPosition.left }}>
-          <Menu>
-            {props.options.map((option, i) => (
-              <Item key={i} onClick={() => onSelect(option)}>
-                {option.text}
-              </Item>
-            ))}
-          </Menu>
-        </MenuWrapper>
-      )}
-    </Container>
+      </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Menu>
+          {props.options.map((option, i) => (
+            <Item key={i} onClick={() => onSelect(option)}>
+              {option.text}
+            </Item>
+          ))}
+        </Menu>
+      </Popover>
+    </div>
   );
 }
 
-const Container = styled.div``;
-
-const Toggle = styled.button`
-  background-color: #ffffff;
-  border-color: black;
+const Button = styled.button`
+  border: solid black .15vw;
   border-radius: .4vw;
-  border-style: solid;
-  border-width: .15vw;
   color: black;
   display: flex;
 
@@ -104,41 +94,34 @@ const Toggle = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #e8e8e8;
+    background-color: #ddd;
   }
   &:active {
-    background-color: #c4c4c4;
+    background-color: #bbb;
   }
-`;
-
-const MenuWrapper = styled.div`
-  position: absolute;
-  z-index: 1;
 `;
 
 const Menu = styled.div`
-  background-color: #ffffff;
-  border-color: black;
+  border: solid black .15vw;
   border-radius: .4vw;
-  border-style: solid;
-  border-width: .2vw;
   color: black;
-  padding: 0vw .3vw;
   min-width: 7vw;
 `;
 
 const Item = styled.div`
-  padding: .6vw .7vw;
+  border-radius: .4vw;
+  padding: .6vw;
   justify-content: left;
+
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: .8vw;
 
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #e8e8e8;
+    background-color: #ddd;
   }
   &:active {
-    background-color: #c4c4c4;
+    background-color: #bbb;
   }
 `;
