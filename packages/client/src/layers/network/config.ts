@@ -138,6 +138,7 @@ function createNetworkConfigLattice(externalProvider?: ExternalProvider): Networ
 
     // checkpointUrl: undefined,
     chainId: 4242,
+    // last depolyment update: 7 Sep 2023
     worldAddress: "0xe29DAb7C4d2ade77e99A57FD0aaFd4d03038e4A3",
     initialBlockNumber: 20740208,
   };
