@@ -1,11 +1,10 @@
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { useAccount, useContractRead, useBalance } from 'wagmi';
+import { useContractRead, useBalance } from 'wagmi';
 import styled from 'styled-components';
 
 import { abi as Pet721ProxySystemABI } from "abi/Pet721ProxySystem.json"
-import { Account, getAccount, getAccountFromBurner } from 'layers/react/shapes/Account';
+import { Account, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';

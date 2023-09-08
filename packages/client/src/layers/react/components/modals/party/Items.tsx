@@ -1,9 +1,9 @@
+import styled from "styled-components";
+
+import { FoodImages, ReviveImages } from 'constants/food';
+import { Tooltip } from "layers/react/components/library/Tooltip";
 import { AccountInventories } from "layers/react/shapes/Account";
 import { getInventoryByFamilyIndex } from "layers/react/shapes/Inventory";
-import { Tooltip } from "../../library/Tooltip";
-import styled from "styled-components";
-import { FoodImages, ReviveImages } from 'constants/food';
-import { Item } from "layers/react/shapes/Item";
 
 interface Props {
   inventories: AccountInventories;
