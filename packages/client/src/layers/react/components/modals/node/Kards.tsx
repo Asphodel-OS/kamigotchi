@@ -38,8 +38,9 @@ export const Kards = (props: Props) => {
     };
   }, []);
 
+
   /////////////////
-  // DATA INTERPRETATION
+  // INTERPRETATION
 
   // calculate health based on the drain against last confirmed health
   const calcHealth = (kami: Kami): number => {
@@ -105,22 +106,14 @@ export const Kards = (props: Props) => {
     return base * multiplier;
   };
 
-  // determine if pet is healthy (currHealth > 0)
-  const isHealthy = (kami: Kami): boolean => {
-    return calcHealth(kami) > 0;
-  };
-
-  // determine whether the kami is still on cooldown
-  const onCooldown = (kami: Kami): boolean => {
-    return calcIdleTime(kami) < kami.cooldown;
-  };
-
-  // determine whether a kami can liquidate another kami
-  const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
+  const canMog = (attacker: Kami, victim: Kami): boolean => {
     const thresholdPercent = calcLiquidationThreshold(attacker, victim);
     const absoluteThreshold = thresholdPercent * victim.stats.health;
-    const canMog = calcHealth(victim) < absoluteThreshold;
-    return !onCooldown(attacker) && isHealthy(attacker) && canMog;
+    return calcHealth(victim) < absoluteThreshold;
+  }
+  // determine whether a kami can liquidate another kami
+  const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
+    return !onCooldown(attacker) && isHealthy(attacker) && canMog(attacker, victim);
   }
 
   // check whether the kami is currently harvesting
@@ -133,28 +126,73 @@ export const Kards = (props: Props) => {
     return result;
   };
 
-  const isResting = (kami: Kami): boolean => {
-    return kami.state === 'RESTING';
+  // determine if pet is healthy (currHealth > 0)
+  const isHealthy = (kami: Kami): boolean => {
+    return calcHealth(kami) > 0;
   };
 
-  ///////////////////
-  // DISPLAY
+  // determine whether the kami is still on cooldown
+  const onCooldown = (kami: Kami): boolean => {
+    return calcIdleTime(kami) < kami.cooldown;
+  };
 
-  // derive disabled text for allied kami (return '' if not disabled)
-  const getDisabledText = (kami: Kami): string => {
-    let disabledText = '';
+  // get the description on the card
+  const getDescription = (kami: Kami): string[] => {
+    const health = calcHealth(kami);
+    const description = [
+      '',
+      `Health: ${health.toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
+      `Harmony: ${kami.stats.harmony * 1}`,
+      `Violence: ${kami.stats.violence * 1}`,
+    ];
+    return description;
+  }
+
+  // derive disabled text for allied kami Collect button. also used on Stop button
+  const getCollectTooltip = (kami: Kami): string => {
+    let reason = '';
     if (onCooldown(kami)) {
       const cooldown = kami.cooldown - calcIdleTime(kami)
-      disabledText = 'On cooldown (' + cooldown.toFixed(0) + 's left)';
+      reason = 'On cooldown (' + cooldown.toFixed(0) + 's left)';
     } else if (!isHealthy(kami)) {
-      disabledText = 'Kami is starving!';
+      reason = 'starving :(';
     }
-    return disabledText;
+    return reason;
   }
+
+  const getLiquidateTooltip = (target: Kami, allies: Kami[]): string => {
+    let reason = '';
+    let available = [...allies];
+    if (available.length == 0) {
+      reason = 'your kamis aren\'t on this node';
+    }
+
+    available = available.filter((kami) => isHealthy(kami));
+    if (available.length == 0 && reason === '') {
+      reason = 'your kamis are starving';
+    }
+
+    available = available.filter((kami) => !onCooldown(kami));
+    if (available.length == 0 && reason === '') {
+      reason = 'your kamis are on cooldown';
+    }
+
+    available = available.filter((kami) => canMog(kami, target));
+    if (available.length == 0 && reason === '') {
+      reason = 'your kamis could be more violent';
+    }
+
+    return reason;
+  }
+
+
+  ///////////////////
+  // DISPLAY (buttons)
+
 
   // button for collecting on production
   const CollectButton = (kami: Kami) => {
-    let tooltipText = getDisabledText(kami);
+    let tooltipText = getCollectTooltip(kami);
 
     return (
       <Tooltip key='collect-tooltip' text={[tooltipText]}>
@@ -170,7 +208,7 @@ export const Kards = (props: Props) => {
 
   // button for stopping production
   const StopButton = (kami: Kami) => {
-    let tooltipText = getDisabledText(kami);
+    let tooltipText = getCollectTooltip(kami);
     return (
       <Tooltip key='stop-tooltip' text={[tooltipText]}>
         <ActionButton
@@ -185,41 +223,44 @@ export const Kards = (props: Props) => {
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options: ActionListOption[] = allies.map((myKami) => {
+    const options = allies.filter((ally) => {
+      return canLiquidate(ally, target);
+    });
+
+    const actionOptions: ActionListOption[] = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
         onClick: () => props.actions.liquidate(myKami, target)
       };
     });
 
+    let tooltipText = getLiquidateTooltip(target, allies);
     return (
-      <ActionListButton
-        id={`liquidate-button-${target.index}`}
-        key={`harvest-liquidate`}
-        text='Liquidate'
-        options={options}
-        disabled={allies.length == 0}
-      />
+      <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
+        <ActionListButton
+          id={`liquidate-button-${target.index}`}
+          key={`harvest-liquidate`}
+          text='Liquidate'
+          options={actionOptions}
+          disabled={actionOptions.length == 0}
+        />
+      </Tooltip >
     );
   };
 
+
+  ///////////////////
+  // DISPLAY (kards)
+
   // rendering of an ally kami on this node
   const MyKard = (kami: Kami) => {
-    const health = calcHealth(kami);
     const output = calcOutput(kami);
-
-    const description = [
-      '',
-      `Health: ${health.toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
-      `Harmony: ${kami.stats.harmony * 1}`,
-      `Violence: ${kami.stats.violence * 1}`,
-    ];
 
     return (
       <KamiCard
         key={kami.entityIndex}
         kami={kami}
-        description={description}
+        description={getDescription(kami)}
         subtext={`yours (\$${output})`}
         action={[CollectButton(kami), StopButton(kami)]}
         battery
@@ -230,27 +271,13 @@ export const Kards = (props: Props) => {
 
   // rendering of an enemy kami on this node
   const EnemyKard = (kami: Kami, myKamis: Kami[]) => {
-    const health = calcHealth(kami);
-    const output = calcOutput(kami);
-
-    const description = [
-      '',
-      `Health: ${health.toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
-      `Harmony: ${kami.stats.harmony * 1}`,
-      `Violence: ${kami.stats.violence * 1}`,
-    ];
-
-    const validLiquidators = myKamis.filter((myKami) => {
-      return canLiquidate(myKami, kami);
-    });
-
     return (
       <KamiCard
         key={kami.entityIndex}
         kami={kami}
-        subtext={`${kami.account!.name} (\$${output})`}
-        action={LiquidateButton(kami, validLiquidators)}
-        description={description}
+        subtext={`${kami.account!.name} (\$${calcOutput(kami)})`}
+        action={LiquidateButton(kami, myKamis)}
+        description={getDescription(kami)}
         battery
         cooldown
       />

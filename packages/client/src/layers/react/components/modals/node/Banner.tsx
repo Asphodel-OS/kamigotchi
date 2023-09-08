@@ -58,19 +58,23 @@ export const Banner = (props: Props) => {
   // button for adding Kami to node
   const AddButton = (kamis: Kami[]) => {
     let reason = '';
+    let available = [...kamis];
+    if (available.length == 0) {
+      reason = 'you have no kamis';
+    }
 
-    let validKamis = getRestingKamis(kamis);
-    if (validKamis.length == 0) {
+    available = getRestingKamis(kamis);
+    if (available.length == 0 && reason === '') {
       reason = 'you have no resting kami';
     }
 
-    validKamis = getKamisOffCooldown(kamis)
-    if (validKamis.length == 0 && reason == '') {
+    available = getKamisOffCooldown(kamis)
+    if (available.length == 0 && reason === '') {
       reason = 'your kami are on cooldown';
     }
 
 
-    const options = validKamis.map((kami) => {
+    const options = available.map((kami) => {
       return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
     });
 
@@ -81,7 +85,7 @@ export const Banner = (props: Props) => {
           key={`harvest-add`}
           text='Add Kami'
           options={options}
-          disabled={validKamis.length == 0}
+          disabled={available.length == 0}
         />
       </Tooltip>
     );
