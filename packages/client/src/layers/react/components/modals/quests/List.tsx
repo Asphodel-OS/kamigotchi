@@ -152,7 +152,7 @@ export const List = (props: Props) => {
         tracking = ' ✅';
       } else {
         if (objective.target.type !== 'ROOM')
-          tracking = ` [${Number(objective.status?.current) ?? 0}/${Number(objective.status?.target)}]`;
+          tracking = ` [${objective.status?.current ?? 0}/${Number(objective.status?.target)}]`;
       }
 
       text += tracking;

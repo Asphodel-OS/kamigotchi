@@ -434,7 +434,7 @@ const checkCurrent = (
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
-  const accVal = getAccBal(account, condition.index, condition.type);
+  const accVal = getAccBal(account, condition.index, condition.type) || 0;
 
   return {
     target: condition.value,
@@ -517,26 +517,29 @@ const getAccBal = (
   index: number | undefined,
   type: string
 ): number => {
+  let balance = 0;
   switch (type) {
     // inventories
     case 'EQUIP':
-      return getInventoryBalance(account, index, type);
+      balance = getInventoryBalance(account, index, type);
     case 'FOOD':
-      return getInventoryBalance(account, index, type);
+      balance = getInventoryBalance(account, index, type);
     case 'MOD':
-      return getInventoryBalance(account, index, type);
+      balance = getInventoryBalance(account, index, type);
     case 'REVIVE':
-      return getInventoryBalance(account, index, type);
+      balance = getInventoryBalance(account, index, type);
     // others
     case 'COIN':
-      return account.coin;
+      balance = account.coin || 0;
     case 'KAMI':
-      return account.kamis?.length || 0;
+      balance = account.kamis?.length || 0;
     case 'ROOM':
-      return account.location;
+      balance = account.location || 0;
     default:
-      return 0; // should not reach here
+      balance = 0; // should not reach here
   }
+
+  return Number(balance);
 }
 
 ///////////////////////
@@ -550,18 +553,21 @@ const getInventoryBalance = (
   if (index === undefined) return 0; // should not reach here 
   if (account.inventories === undefined) return 0; // should not reach here
 
+  let balance = 0;
   switch (type) {
     case 'EQUIP':
-      return getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
     case 'FOOD':
-      return getInventoryByIndex(account.inventories.food, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.food, index)?.balance || 0;
     case 'MOD':
-      return getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
     case 'REVIVE':
-      return getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
     default:
-      return 0; // should not reach here
+      balance = 0; // should not reach here
   }
+
+  return Number(balance);
 }
 
 const checkLogicOperator = (a: number, b: number, logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'): boolean => {
