@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { default as MUITooltip } from '@mui/material/Tooltip';
 
 interface Props {

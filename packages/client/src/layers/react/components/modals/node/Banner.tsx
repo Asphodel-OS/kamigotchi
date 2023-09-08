@@ -1,36 +1,89 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { NodeImages } from 'constants/nodes';
 import { ActionListButton } from 'layers/react/components/library/ActionListButton';
 import { Node } from 'layers/react/shapes/Node';
 import { Kami } from 'layers/react/shapes/Kami';
+import { Tooltip } from '../../library/Tooltip';
 
 
 interface Props {
   node: Node;
-  availableKamis: Kami[];
+  kamis: Kami[];
   addKami: (kami: Kami) => void;
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+
+
+  /////////////////
+  // TRACKING
+
+  // ticking
+  useEffect(() => {
+    const refreshClock = () => {
+      setLastRefresh(Date.now());
+    };
+    const timerId = setInterval(refreshClock, 1000);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []);
+
+
+  /////////////////
+  // INTERPRETATION
+
+  // calculate the time a kami has spent idle (in seconds)
+  const calcIdleTime = (kami: Kami): number => {
+    return lastRefresh / 1000 - kami.lastUpdated;
+  };
+
+  const getRestingKamis = (kamis: Kami[]): Kami[] => {
+    return kamis.filter((kami) => kami.state === 'RESTING');
+  }
+
+  const getKamisOffCooldown = (kamis: Kami[]): Kami[] => {
+    return kamis.filter((kami) => calcIdleTime(kami) >= kami.cooldown);
+  };
+
+
+  /////////////////
+  // RENDERING
 
   // button for adding Kami to node
   const AddButton = (kamis: Kami[]) => {
-    const options = kamis.map((kami) => {
+    let reason = '';
+
+    let validKamis = getRestingKamis(kamis);
+    if (validKamis.length == 0) {
+      reason = 'you have no resting kami';
+    }
+
+    validKamis = getKamisOffCooldown(kamis)
+    if (validKamis.length == 0 && reason == '') {
+      reason = 'your kami are on cooldown';
+    }
+
+
+    const options = validKamis.map((kami) => {
       return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
     });
 
     return (
-      <ActionListButton
-        id={`harvest-add`}
-        key={`harvest-add`}
-        text='Add Kami'
-        options={options}
-        disabled={kamis.length == 0}
-      />
+      <Tooltip text={[reason]}>
+        <ActionListButton
+          id={`harvest-add`}
+          key={`harvest-add`}
+          text='Add Kami'
+          options={options}
+          disabled={validKamis.length == 0}
+        />
+      </Tooltip>
     );
   };
 
@@ -45,7 +98,7 @@ export const Banner = (props: Props) => {
           </TitleRow>
           <DescriptionText>{props.node.description}</DescriptionText>
         </ContentTop>
-        <ButtonRow>{AddButton(props.availableKamis)}</ButtonRow>
+        <ButtonRow>{AddButton(props.kamis)}</ButtonRow>
       </Content>
     </Container>
   );
