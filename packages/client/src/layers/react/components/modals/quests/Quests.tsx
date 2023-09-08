@@ -136,9 +136,9 @@ export function registerQuestsModal() {
 }
 
 const Header = styled.div`
-  font-size: 2vw;
+  font-size: 1.5vw;
   color: #333;
   text-align: left;
-  padding: 1.5vw 0vw 1.2vw 2vw;
+  padding: 1.2vw 1.8vw;
   font-family: Pixel;
 `;

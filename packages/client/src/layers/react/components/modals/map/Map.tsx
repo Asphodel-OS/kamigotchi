@@ -103,6 +103,7 @@ export function registerMapModal() {
           id='world_map'
           divName='map'
           header={<MapGrid currentRoom={data.account.location * 1} move={move} />}
+          canExit
         >
           <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
         </ModalWrapperFull>

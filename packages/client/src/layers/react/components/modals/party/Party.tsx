@@ -158,6 +158,7 @@ export function registerPartyModal() {
           id='party_modal'
           divName='party'
           header={[<Items key='items' inventories={data.account.inventories!} />]}
+          canExit
         >
           <Kards
             kamis={data.account.kamis!}

@@ -57,7 +57,9 @@ const TopGrid = styled.div`
   border: solid black .15vw;
   border-right: 0;
   border-radius: 5px;
-  margin: .5vw;
+  
+  width: 86.5%;
+  margin: .7vw;
 
   display: flex;
   flex-flow: row nowrap;
