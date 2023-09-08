@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useCallback, useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { useBalance } from 'wagmi';
 
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 // preset operator fund that allows users to choose how much to fund, but suggests a good number
 // tell users how many transactions / how long this balance will last
@@ -21,40 +20,12 @@ export function registerGasWarningFixture() {
       rowStart: 80,
       rowEnd: 99,
     },
-    (layers) => {
-      const {
-        network: {
-          network: { connectedAddress },
-          components: {
-            IsAccount,
-            OperatorAddress
-          },
-        },
-      } = layers;
+    (layers) => of(layers),
 
-      return merge(OperatorAddress.update$, IsAccount.update$).pipe(
-        map(() => {
-          // get the account entity of the controlling wallet
-          const accountEntityIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          return {};
-        })
-      );
-    },
-
-    ({ }) => {
+    () => {
       const { details: accountDetails } = useKamiAccount();
       const { visibleModals, setVisibleModals } = dataStore();
-
       const [isVisible, setIsVisible] = useState(false);
-
       const minGas = 0.005;
 
       /////////////////
@@ -65,20 +36,13 @@ export function registerGasWarningFixture() {
         watch: true
       });
 
-      // TODO: detect when balance falls below a certain amount
       useEffect(() => {
         setIsVisible(Number(OperatorBal?.formatted) < minGas);
       }, [OperatorBal]);
 
-
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, operatorFund: false });
-      }, [setVisibleModals, visibleModals]);
-
       const openFundModal = useCallback(() => {
         setVisibleModals({ ...visibleModals, operatorFund: true, });
-      }
-        , [setVisibleModals, visibleModals]);
+      }, [setVisibleModals, visibleModals]);
 
       return (
         <ModalWrapper id='operatorFundPreset' style={{ display: isVisible ? 'block' : 'none' }}>
@@ -121,7 +85,7 @@ const Content = styled.div`
   background-color: white;
   padding: 1.1vw;
   width: 99%;
-  height: 100%;
+  height: 99%;
   
   display: flex;
   justify-content: center;

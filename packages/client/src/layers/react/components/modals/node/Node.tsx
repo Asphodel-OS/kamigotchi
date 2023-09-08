@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 import {
   EntityID,
   Has,
@@ -9,15 +8,15 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
+import { Banner } from './Banner';
+import { Kards } from './Kards';
+import { Tabs } from './Tabs';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { Banner } from 'layers/react/components/modals/node/Banner';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, getNode } from 'layers/react/shapes/Node';
-import { Tabs } from './Tabs';
-import { Kards } from './Kards';
+import { registerUIComponent } from 'layers/react/engine/store';
 
 
 // merchant window with listings. assumes at most 1 merchant per room

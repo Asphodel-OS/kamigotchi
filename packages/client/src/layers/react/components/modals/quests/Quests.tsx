@@ -18,7 +18,7 @@ export function registerQuestsModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 52,
+      rowStart: 50,
       rowEnd: 99,
     },
 
