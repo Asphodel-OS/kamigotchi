@@ -43,13 +43,38 @@ export const Banner = (props: Props) => {
     return lastRefresh / 1000 - kami.lastUpdated;
   };
 
-  const getRestingKamis = (kamis: Kami[]): Kami[] => {
-    return kamis.filter((kami) => kami.state === 'RESTING');
-  }
-
-  const getKamisOffCooldown = (kamis: Kami[]): Kami[] => {
-    return kamis.filter((kami) => calcIdleTime(kami) >= kami.cooldown);
+  // determine whether the kami is still on cooldown
+  const onCooldown = (kami: Kami): boolean => {
+    return calcIdleTime(kami) < kami.cooldown;
   };
+
+  const isResting = (kami: Kami): boolean => {
+    return kami.state === 'RESTING';
+  };
+
+  const canHarvest = (kami: Kami): boolean => {
+    return !onCooldown(kami) && isResting(kami);
+  };
+
+  const getAddTooltip = (kamis: Kami[]): string => {
+    let reason = '';
+    let available = [...kamis];
+    if (available.length == 0) {
+      reason = 'you have no kamis';
+    }
+
+    available = available.filter((kami) => isResting(kami));
+    if (available.length == 0 && reason === '') {
+      reason = 'you have no resting kami';
+    }
+
+    available = available.filter((kami) => !onCooldown(kami));
+    if (available.length == 0 && reason === '') {
+      reason = 'your kami are on cooldown';
+    }
+
+    return reason;
+  }
 
 
   /////////////////
@@ -57,35 +82,20 @@ export const Banner = (props: Props) => {
 
   // button for adding Kami to node
   const AddButton = (kamis: Kami[]) => {
-    let reason = '';
-    let available = [...kamis];
-    if (available.length == 0) {
-      reason = 'you have no kamis';
-    }
-
-    available = getRestingKamis(kamis);
-    if (available.length == 0 && reason === '') {
-      reason = 'you have no resting kami';
-    }
-
-    available = getKamisOffCooldown(kamis)
-    if (available.length == 0 && reason === '') {
-      reason = 'your kami are on cooldown';
-    }
-
-
-    const options = available.map((kami) => {
+    const options = kamis.filter((kami) => canHarvest(kami));
+    const actionOptions = options.map((kami) => {
       return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
     });
 
+    let tooltipText = getAddTooltip(kamis);
     return (
-      <Tooltip text={[reason]}>
+      <Tooltip text={[tooltipText]}>
         <ActionListButton
           id={`harvest-add`}
           key={`harvest-add`}
           text='Add Kami'
-          options={options}
-          disabled={available.length == 0}
+          options={actionOptions}
+          disabled={options.length == 0}
         />
       </Tooltip>
     );

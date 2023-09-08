@@ -223,10 +223,7 @@ export const Kards = (props: Props) => {
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options = allies.filter((ally) => {
-      return canLiquidate(ally, target);
-    });
-
+    const options = allies.filter((ally) => canLiquidate(ally, target));
     const actionOptions: ActionListOption[] = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
