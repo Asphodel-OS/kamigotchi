@@ -208,7 +208,7 @@ export const List = (props: Props) => {
   const RequirementDisplay = (requirements: Requirement[]) => {
     if (requirements.length == 0) return <div />;
     return (
-      <ConditionContainer>
+      <ConditionContainer key='requirements'>
         <ConditionName>Requirements</ConditionName>
         {requirements.map((requirement) => (
           <ConditionDescription key={requirement.id}>
@@ -222,7 +222,7 @@ export const List = (props: Props) => {
   const ObjectiveDisplay = (objectives: Objective[], showTracking: boolean) => {
     if (objectives.length == 0) return <div />;
     return (
-      <ConditionContainer>
+      <ConditionContainer key='objectives'>
         <ConditionName>Objectives</ConditionName>
         {objectives.map((objective) => (
           <ConditionDescription key={objective.id}>
@@ -236,7 +236,7 @@ export const List = (props: Props) => {
   const RewardDisplay = (rewards: Reward[]) => {
     if (rewards.length == 0) return <div />;
     return (
-      <ConditionContainer>
+      <ConditionContainer key='rewards'>
         <ConditionName>Rewards</ConditionName>
         {rewards.map((reward) => (
           <ConditionDescription key={reward.id}>
