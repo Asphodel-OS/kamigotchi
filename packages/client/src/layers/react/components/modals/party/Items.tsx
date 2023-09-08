@@ -76,7 +76,7 @@ const Icon = styled.img`
 `;
 
 const ItemNumber = styled.p`
-  font-size: 14px;
+  font-size: 1vw;
   font-family: Pixel;
 
   flex-grow: 1;
