@@ -244,8 +244,8 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
 
   const clickableStyle = isClickable ? { cursor: 'pointer' } : {};
   const hoveredStyle = isNeighbor
-    ? { border: '.1vw solid green', opacity: '0.7' }
-    : { border: '.1vw solid red', opacity: '0.7' };
+    ? { border: '.15vw solid green', opacity: '0.7' }
+    : { border: '.15vw solid red', opacity: '0.7' };
   const currentRoomStyle = (isCurrentRoom)
     ? { border: '.15vw solid transparent', opacity: '0.7' }
     : {};
