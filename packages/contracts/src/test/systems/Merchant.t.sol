@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
-contract MerchantTest is SetupTemplate {
+contract NPCTest is SetupTemplate {
   // structure of Listing data for test purposes
   struct TestListingData {
-    uint merchantIndex;
+    uint npcIndex;
     uint itemIndex;
     uint priceBuy;
     uint priceSell;
@@ -30,99 +30,99 @@ contract MerchantTest is SetupTemplate {
   /////////////////
   // TESTS
 
-  // test the creation of a merchant and the setting of its fields
-  function testMerchantCreation() public {
-    // check that non-deployer cannot create a merchant
+  // test the creation of a npc and the setting of its fields
+  function testNPCCreation() public {
+    // check that non-deployer cannot create a npc
     for (uint i = 0; i < 5; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
-      __MerchantCreateSystem.executeTyped(1, "testMerchant", 2);
+      __NPCCreateSystem.executeTyped(1, "testNPC", 2);
 
       vm.prank(_getOperator(0));
       vm.expectRevert();
-      __MerchantCreateSystem.executeTyped(2, "testMerchant", 1);
+      __NPCCreateSystem.executeTyped(2, "testNPC", 1);
     }
 
-    // create a merchant and ensure its fields are correct
-    uint merchantIndex1 = 1;
-    uint merchantLocation1 = 3;
-    string memory merchantName1 = "testMerchant";
-    uint merchantID1 = _createMerchant(merchantIndex1, merchantLocation1, merchantName1);
-    assertEq(merchantIndex1, LibMerchant.getIndex(components, merchantID1));
-    assertEq(merchantLocation1, LibMerchant.getLocation(components, merchantID1));
-    assertEq(merchantName1, LibMerchant.getName(components, merchantID1));
+    // create a npc and ensure its fields are correct
+    uint npcIndex1 = 1;
+    uint npcLocation1 = 3;
+    string memory npcName1 = "testNPC";
+    uint npcID1 = _createNPC(npcIndex1, npcLocation1, npcName1);
+    assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
+    assertEq(npcLocation1, LibNPC.getLocation(components, npcID1));
+    assertEq(npcName1, LibNPC.getName(components, npcID1));
 
-    // test that we can't create a merchant with the same index
-    vm.expectRevert("Merchant: already exists");
+    // test that we can't create a npc with the same index
+    vm.expectRevert("NPC: already exists");
     vm.prank(deployer);
-    __MerchantCreateSystem.executeTyped(1, "testMerchant", 3); // index, name, location
+    __NPCCreateSystem.executeTyped(1, "testNPC", 3); // index, name, location
 
-    // but that we CAN create merchant with the same name and location
-    uint merchantIndex2 = 2;
-    uint merchantLocation2 = 3;
-    string memory merchantName2 = "testMerchant";
-    uint merchantID2 = _createMerchant(merchantIndex2, merchantLocation2, merchantName2);
-    assertEq(merchantIndex2, LibMerchant.getIndex(components, merchantID2));
-    assertEq(merchantLocation2, LibMerchant.getLocation(components, merchantID2));
-    assertEq(merchantName2, LibMerchant.getName(components, merchantID2));
-    // assertNotEq(merchantID1, merchantID2); // not available in this version of foundry
+    // but that we CAN create npc with the same name and location
+    uint npcIndex2 = 2;
+    uint npcLocation2 = 3;
+    string memory npcName2 = "testNPC";
+    uint npcID2 = _createNPC(npcIndex2, npcLocation2, npcName2);
+    assertEq(npcIndex2, LibNPC.getIndex(components, npcID2));
+    assertEq(npcLocation2, LibNPC.getLocation(components, npcID2));
+    assertEq(npcName2, LibNPC.getName(components, npcID2));
+    // assertNotEq(npcID1, npcID2); // not available in this version of foundry
 
-    // NOTE: we now have two merchants, named 'testMerchant' at location 3
+    // NOTE: we now have two npcs, named 'testNPC' at location 3
 
-    // update fields on merchant2 and check that both are correct
-    uint newMerchantLocation = 2;
-    string memory newMerchantName = "newMerchantName";
+    // update fields on npc2 and check that both are correct
+    uint newNPCLocation = 2;
+    string memory newNPCName = "newNPCName";
     vm.prank(deployer);
-    __MerchantSetLocationSystem.executeTyped(2, newMerchantLocation);
+    __NPCSetLocationSystem.executeTyped(2, newNPCLocation);
     vm.prank(deployer);
-    __MerchantSetNameSystem.executeTyped(2, newMerchantName);
+    __NPCSetNameSystem.executeTyped(2, newNPCName);
 
-    assertEq(merchantIndex1, LibMerchant.getIndex(components, merchantID1));
-    assertEq(merchantLocation1, LibMerchant.getLocation(components, merchantID1));
-    assertEq(merchantName1, LibMerchant.getName(components, merchantID1));
+    assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
+    assertEq(npcLocation1, LibNPC.getLocation(components, npcID1));
+    assertEq(npcName1, LibNPC.getName(components, npcID1));
 
-    assertEq(merchantIndex2, LibMerchant.getIndex(components, merchantID2));
-    assertEq(newMerchantLocation, LibMerchant.getLocation(components, merchantID2));
-    assertEq(newMerchantName, LibMerchant.getName(components, merchantID2));
+    assertEq(npcIndex2, LibNPC.getIndex(components, npcID2));
+    assertEq(newNPCLocation, LibNPC.getLocation(components, npcID2));
+    assertEq(newNPCName, LibNPC.getName(components, npcID2));
 
-    // test that we can't update a merchant that doesnt exist
+    // test that we can't update a npc that doesnt exist
     vm.prank(deployer);
-    vm.expectRevert("Merchant: does not exist");
-    __MerchantSetLocationSystem.executeTyped(3, newMerchantLocation);
+    vm.expectRevert("NPC: does not exist");
+    __NPCSetLocationSystem.executeTyped(3, newNPCLocation);
 
     vm.prank(deployer);
-    vm.expectRevert("Merchant: does not exist");
-    __MerchantSetNameSystem.executeTyped(4, newMerchantName);
+    vm.expectRevert("NPC: does not exist");
+    __NPCSetNameSystem.executeTyped(4, newNPCName);
 
-    // test that we can't update a merchant's attributes as a random address
+    // test that we can't update a npc's attributes as a random address
     for (uint i = 0; i < 5; i++) {
       vm.startPrank(_getOwner(i));
       vm.expectRevert();
-      __MerchantSetLocationSystem.executeTyped(1, newMerchantLocation);
+      __NPCSetLocationSystem.executeTyped(1, newNPCLocation);
 
       vm.expectRevert();
-      __MerchantSetNameSystem.executeTyped(1, newMerchantName);
+      __NPCSetNameSystem.executeTyped(1, newNPCName);
 
       vm.expectRevert();
-      __MerchantSetLocationSystem.executeTyped(2, newMerchantLocation);
+      __NPCSetLocationSystem.executeTyped(2, newNPCLocation);
 
       vm.expectRevert();
-      __MerchantSetNameSystem.executeTyped(2, newMerchantName);
+      __NPCSetNameSystem.executeTyped(2, newNPCName);
 
       vm.stopPrank();
     }
   }
 
   // test the creation of a listing and the setting of its fields
-  // listings work differently than merchants in that:
+  // listings work differently than npcs in that:
   // - they don't have an index unto themselves
-  // - a listing is identified by MerchantIndex and ItemIndex
+  // - a listing is identified by NPCIndex and ItemIndex
   // - there is a single EP for both creating and updating a listing
   // - whether a listing is created or updated is autodetected based on its existence
   function testListingSetting() public {
-    // create two merchants
-    _createMerchant(1, 1, "merchant1");
-    _createMerchant(2, 2, "merchant2");
+    // create two npcs
+    _createNPC(1, 1, "npc1");
+    _createNPC(2, 2, "npc2");
 
     // check that non deployer cannot create a listing
     for (uint i = 0; i < 5; i++) {
@@ -135,7 +135,7 @@ contract MerchantTest is SetupTemplate {
       __ListingSetSystem.executeTyped(2, 2, 50, 50);
     }
 
-    // initial creation, check that item/merchant indices and prices are correct
+    // initial creation, check that item/npc indices and prices are correct
     uint numListings = 4;
     TestListingData[] memory listings = new TestListingData[](numListings);
     listings[0] = TestListingData(1, 1, 100, 50);
@@ -146,12 +146,12 @@ contract MerchantTest is SetupTemplate {
     uint[] memory listingIDs = new uint[](numListings);
     for (uint i = 0; i < numListings; i++) {
       listingIDs[i] = _setListing(
-        listings[i].merchantIndex,
+        listings[i].npcIndex,
         listings[i].itemIndex,
         listings[i].priceBuy,
         listings[i].priceSell
       );
-      assertEq(listings[i].merchantIndex, LibListing.getMerchantIndex(components, listingIDs[i]));
+      assertEq(listings[i].npcIndex, LibListing.getNPCIndex(components, listingIDs[i]));
       assertEq(listings[i].itemIndex, LibListing.getItemIndex(components, listingIDs[i]));
       assertEq(listings[i].priceBuy, LibListing.getBuyPrice(components, listingIDs[i]));
       assertEq(listings[i].priceSell, LibListing.getSellPrice(components, listingIDs[i]));
@@ -166,46 +166,46 @@ contract MerchantTest is SetupTemplate {
     uint newListingID;
     for (uint i = 0; i < numListings; i++) {
       newListingID = _setListing(
-        listings[i].merchantIndex,
+        listings[i].npcIndex,
         listings[i].itemIndex,
         listings[i].priceBuy,
         listings[i].priceSell
       );
       assertEq(newListingID, listingIDs[i]);
-      assertEq(listings[i].merchantIndex, LibListing.getMerchantIndex(components, listingIDs[i]));
+      assertEq(listings[i].npcIndex, LibListing.getNPCIndex(components, listingIDs[i]));
       assertEq(listings[i].itemIndex, LibListing.getItemIndex(components, listingIDs[i]));
       assertEq(listings[i].priceBuy, LibListing.getBuyPrice(components, listingIDs[i]));
       assertEq(listings[i].priceSell, LibListing.getSellPrice(components, listingIDs[i]));
     }
 
-    // check that pulling by merchant/item index yields the correct listing, or 0 if none exists
+    // check that pulling by npc/item index yields the correct listing, or 0 if none exists
     // NOTE: this is somewhat of a given assumption of the test. but we should still verify
     for (uint i = 0; i < numListings; i++) {
       assertEq(
         listingIDs[i],
-        LibListing.get(components, listings[i].merchantIndex, listings[i].itemIndex)
+        LibListing.get(components, listings[i].npcIndex, listings[i].itemIndex)
       );
 
       // NOTE: this fails with an inexplicable OutOfGas error...
       // assertEq(0, LibListing.get(components, 2, listings[i].itemIndex));
     }
 
-    // check that listings cannot be created for nonexistent merchants
+    // check that listings cannot be created for nonexistent npcs
     numListings = 4;
-    TestListingData[] memory invalidMerchantListings = new TestListingData[](numListings);
-    invalidMerchantListings[0] = TestListingData(3, 1, 100, 50);
-    invalidMerchantListings[1] = TestListingData(3, 2, 80, 40);
-    invalidMerchantListings[2] = TestListingData(3, 3, 60, 30);
-    invalidMerchantListings[3] = TestListingData(3, 4, 40, 20);
+    TestListingData[] memory invalidNPCListings = new TestListingData[](numListings);
+    invalidNPCListings[0] = TestListingData(3, 1, 100, 50);
+    invalidNPCListings[1] = TestListingData(3, 2, 80, 40);
+    invalidNPCListings[2] = TestListingData(3, 3, 60, 30);
+    invalidNPCListings[3] = TestListingData(3, 4, 40, 20);
 
     for (uint i = 0; i < numListings; i++) {
       vm.prank(deployer);
-      vm.expectRevert("Merchant: does not exist");
+      vm.expectRevert("NPC: does not exist");
       __ListingSetSystem.executeTyped(
-        invalidMerchantListings[i].merchantIndex,
-        invalidMerchantListings[i].itemIndex,
-        invalidMerchantListings[i].priceBuy,
-        invalidMerchantListings[i].priceSell
+        invalidNPCListings[i].npcIndex,
+        invalidNPCListings[i].itemIndex,
+        invalidNPCListings[i].priceBuy,
+        invalidNPCListings[i].priceSell
       );
     }
 
@@ -221,7 +221,7 @@ contract MerchantTest is SetupTemplate {
       vm.prank(deployer);
       vm.expectRevert("Item: does not exist");
       __ListingSetSystem.executeTyped(
-        invalidItemListings[i].merchantIndex,
+        invalidItemListings[i].npcIndex,
         invalidItemListings[i].itemIndex,
         invalidItemListings[i].priceBuy,
         invalidItemListings[i].priceSell
@@ -230,11 +230,11 @@ contract MerchantTest is SetupTemplate {
   }
 
   function testListingInteractionConstraints() public {
-    // create two merchants
-    _createMerchant(1, 1, "merchant1");
-    _createMerchant(2, 2, "merchant2");
+    // create two npcs
+    _createNPC(1, 1, "npc1");
+    _createNPC(2, 2, "npc2");
 
-    // create listings for both merchants
+    // create listings for both npcs
     uint numListings = 4;
     TestListingData[] memory listings1 = new TestListingData[](numListings);
     listings1[0] = TestListingData(1, 1, 80, 40);
@@ -252,13 +252,13 @@ contract MerchantTest is SetupTemplate {
     uint[] memory listingIDs2 = new uint[](numListings);
     for (uint i = 0; i < numListings; i++) {
       listingIDs1[i] = _setListing(
-        listings1[i].merchantIndex,
+        listings1[i].npcIndex,
         listings1[i].itemIndex,
         listings1[i].priceBuy,
         listings1[i].priceSell
       );
       listingIDs2[i] = _setListing(
-        listings2[i].merchantIndex,
+        listings2[i].npcIndex,
         listings2[i].itemIndex,
         listings2[i].priceBuy,
         listings2[i].priceSell
@@ -286,8 +286,8 @@ contract MerchantTest is SetupTemplate {
     }
 
     // from room 1
-    // test that players CAN interact with merchant 1 listings
-    // test that players CANNOT interact with merchant 2 listings
+    // test that players CAN interact with npc 1 listings
+    // test that players CANNOT interact with npc 2 listings
     for (uint i = 0; i < numAccounts; i++) {
       for (uint j = 0; j < numListings; j++) {
         uint amt = j + 1;
@@ -295,11 +295,11 @@ contract MerchantTest is SetupTemplate {
         _sellToListing(i, listingIDs1[j], amt);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Buy(): must be in same room as merchant");
+        vm.expectRevert("Listing.Buy(): must be in same room as npc");
         _ListingBuySystem.executeTyped(listingIDs2[j], amt);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Sell(): must be in same room as merchant");
+        vm.expectRevert("Listing.Sell(): must be in same room as npc");
         _ListingSellSystem.executeTyped(listingIDs2[j], amt);
       }
     }
@@ -310,17 +310,17 @@ contract MerchantTest is SetupTemplate {
     }
 
     // from room 2
-    // test that players CANNOT interact with merchant 1 listings
-    // test that players CAN interact with merchant 2 listings
+    // test that players CANNOT interact with npc 1 listings
+    // test that players CAN interact with npc 2 listings
     for (uint i = 0; i < numAccounts; i++) {
       for (uint j = 0; j < numListings; j++) {
         uint amt = j + 1;
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Buy(): must be in same room as merchant");
+        vm.expectRevert("Listing.Buy(): must be in same room as npc");
         _ListingBuySystem.executeTyped(listingIDs1[j], amt);
 
         vm.prank(_getOperator(i));
-        vm.expectRevert("Listing.Sell(): must be in same room as merchant");
+        vm.expectRevert("Listing.Sell(): must be in same room as npc");
         _ListingSellSystem.executeTyped(listingIDs1[j], amt);
 
         _buyFromListing(i, listingIDs2[j], amt);
@@ -331,7 +331,7 @@ contract MerchantTest is SetupTemplate {
 
   // we're using this one to save on stack space
   struct BalanceTestData {
-    uint8 numMerchants;
+    uint8 numNPCs;
     uint8 numItems;
     uint8 numAccounts;
     uint8 playerIndex;
@@ -347,13 +347,13 @@ contract MerchantTest is SetupTemplate {
   function testListingInteractionBalances() public {
     BalanceTestData memory testData = BalanceTestData(3, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0);
 
-    // create the merchant and its listings
-    uint[] memory listingIDs = new uint[](testData.numMerchants * testData.numItems);
-    for (uint i = 0; i < testData.numMerchants; i++) {
-      _createMerchant(i, 1, "merchant");
+    // create the npc and its listings
+    uint[] memory listingIDs = new uint[](testData.numNPCs * testData.numItems);
+    for (uint i = 0; i < testData.numNPCs; i++) {
+      _createNPC(i, 1, "npc");
 
       for (uint j = 0; j < testData.numItems; j++) {
-        testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on merchant
+        testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc
         listingIDs[i * testData.numItems + j] = _setListing(
           i,
           j + 1,

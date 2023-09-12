@@ -22,7 +22,7 @@ contract MurderTest is SetupTemplate {
     _createRoom("testRoom3", 3, 1, 2, 4);
     _createRoom("testRoom4", 4, 1, 2, 3);
 
-    _createMerchant(1, 1, "Test Merchant");
+    _createNPC(1, 1, "Test NPC");
     _createFoodListings(1);
     _createReviveListings(1);
 
@@ -39,21 +39,21 @@ contract MurderTest is SetupTemplate {
   /////////////////
   // HELPER FUNCTIONS
 
-  function _createFoodListings(uint merchantIndex) internal {
+  function _createFoodListings(uint npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
-      _listingIDs.push(_setListing(merchantIndex, itemIndex, 10, 10));
+      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
-  function _createReviveListings(uint merchantIndex) internal {
+  function _createReviveListings(uint npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
-      _listingIDs.push(_setListing(merchantIndex, itemIndex, 10, 10));
+      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
