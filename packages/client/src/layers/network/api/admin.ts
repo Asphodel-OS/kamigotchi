@@ -47,12 +47,6 @@ export function createAdminAPI(systems: any) {
     return systems['system._NPC.Set.Name'].executeTyped(index, name);
   }
 
-  // (DEPRECATED) creates a merchant with the name at the specified location
-  async function createMerchant(index: number, name: string, location: number) {
-    await sleepIf();
-    return systems['system._Merchant.Create'].executeTyped(index, name, location);
-  }
-
   // sets the prices for the merchant at the specified location
   async function setListing(
     merchantIndex: number,
@@ -384,9 +378,6 @@ export function createAdminAPI(systems: any) {
       },
     },
     listing: { set: setListing },
-    merchant: {
-      create: createMerchant,
-    },
     node: {
       create: createNode,
       set: {

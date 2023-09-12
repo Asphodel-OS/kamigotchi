@@ -3,7 +3,6 @@ import _ConfigSetStringSystem from "../abi/_ConfigSetStringSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
 import _devGiveTokensSystem from "../abi/_devGiveTokensSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
-import _MerchantCreateSystem from "../abi/_MerchantCreateSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
 import _NodeSetAffinitySystem from "../abi/_NodeSetAffinitySystem.json";
 import _NodeSetDescriptionSystem from "../abi/_NodeSetDescriptionSystem.json";
@@ -73,7 +72,6 @@ export const SystemAbis = {
   "system._Config.Set": _ConfigSetSystem.abi,
   "system._devGiveTokens": _devGiveTokensSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
-  "system._Merchant.Create": _MerchantCreateSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
   "system._Node.Set.Affinity": _NodeSetAffinitySystem.abi,
   "system._Node.Set.Description": _NodeSetDescriptionSystem.abi,
