@@ -8,6 +8,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsNPCComponent, ID as IsNPCCompID } from "components/IsNPCComponent.sol";
+import { IsMerchantComponent, ID as IsMerchantCompID } from "components/IsMerchantComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -35,6 +36,11 @@ library LibNPC {
 
   /////////////////
   // CHECKERS
+
+  // Check whether an npc is a merchant
+  function isMerchant(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsMerchantComponent(getAddressById(components, IsNPCCompID)).has(id);
+  }
 
   // Check whether a user account shares a room with the specified merchant
   // Merchants with location 0 are considered global and are always accessible

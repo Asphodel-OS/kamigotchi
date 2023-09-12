@@ -7,11 +7,11 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
-import { LibMerchant } from "libraries/LibMerchant.sol";
+import { LibNPC } from "libraries/LibNPC.sol";
 
 uint256 constant ID = uint256(keccak256("system.Listing.Buy"));
 
-// ListingBuySystem allows a account to buy an item listed with a merchant
+// ListingBuySystem allows a account to buy an item listed with a merchant (npc)
 // NOTE: this currently assumes all purchases are for fungible items. need to generalize
 contract ListingBuySystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -23,8 +23,8 @@ contract ListingBuySystem is System {
 
     require(accountID != 0, "Account: not found");
     require(
-      LibMerchant.sharesRoomWith(components, merchantID, accountID),
-      "Listing.Buy(): must be in same room as merchant"
+      LibNPC.sharesRoomWith(components, merchantID, accountID),
+      "Listing.Buy(): must be in same room as npc"
     );
     require(
       LibListing.getBuyPrice(components, listingID) != 0,
