@@ -31,17 +31,15 @@ export const getMerchant = (
       components: {
         IsListing,
         Location,
-        MerchantIndex,
+        NPCIndex,
         Name,
       },
     },
   } = layers;
 
-  const merchantIndex = getComponentValue(MerchantIndex, index)?.value as number;
-
   let merchant: Merchant = {
     id: world.entities[index],
-    index: merchantIndex,
+    index: getComponentValue(NPCIndex, index)?.value as number,
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     location: getComponentValue(Location, index)?.value as number,
@@ -52,7 +50,7 @@ export const getMerchant = (
   const listingResults = Array.from(
     runQuery([
       Has(IsListing),
-      HasValue(MerchantIndex, { value: merchant.index }),
+      HasValue(NPCIndex, { value: merchant.index }),
     ])
   );
 

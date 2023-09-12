@@ -38,6 +38,7 @@ export function registerMerchantModal() {
             AccountID,
             Description,
             IsMerchant,
+            IsNPC,
             IsListing,
             ItemIndex,
             Location,
@@ -60,7 +61,7 @@ export function registerMerchantModal() {
 
           // get the merchant in this room
           const merchantResults = runQuery([
-            Has(IsMerchant),
+            Has(IsNPC),
             HasValue(Location, { value: account.location }),
           ]);
 

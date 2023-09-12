@@ -24,15 +24,9 @@ export const room13: Room = {
   },
   objects: [
     {
-      key: 'cashregister',
-      path: objectCashRegister,
-      offset: { x: -50.5, y: -8.02 },
-      onClick: triggerShopModal,
-    },
-    {
       key: 'clock',
       path: objectClock,
-      offset: { x: 0, y: 0 },
+      offset: { x: 31.5, y: -33.5 },
       onClick: () => triggerDialogueModal(['*tik tok*']),
     },
     {
@@ -43,6 +37,12 @@ export const room13: Room = {
         triggerDialogueModal([
           "Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon.",
         ]),
+    },
+    {
+      key: 'cashregister',
+      path: objectCashRegister,
+      offset: { x: -50.5, y: -8.02 },
+      onClick: triggerShopModal,
     },
   ],
 };
