@@ -8,13 +8,13 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IndexMerchantComponent, ID as IndexMerchantCompID } from "components/IndexMerchantComponent.sol";
+import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { IsListingComponent, ID as IsListingCompID } from "components/IsListingComponent.sol";
 import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComponent.sol";
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibMerchant } from "libraries/LibMerchant.sol";
+import { LibNPC } from "libraries/LibNPC.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 
 /*
@@ -35,7 +35,7 @@ library LibListing {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsListingComponent(getAddressById(components, IsListingCompID)).set(id);
-    IndexMerchantComponent(getAddressById(components, IndexMerchantCompID)).set(id, merchantIndex);
+    IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, merchantIndex);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
@@ -128,11 +128,11 @@ library LibListing {
 
   // return the ID of the merchant that hosts a listing
   function getMerchant(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibMerchant.getByIndex(components, getMerchantIndex(components, id));
+    return LibNPC.getByIndex(components, getNPCIndex(components, id));
   }
 
-  function getMerchantIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexMerchantComponent(getAddressById(components, IndexMerchantCompID)).getValue(id);
+  function getNPCIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).getValue(id);
   }
 
   // return the item index of a listing
@@ -190,7 +190,7 @@ library LibListing {
     if (merchantIndex != 0) {
       fragments[++filterCount] = QueryFragment(
         QueryType.HasValue,
-        getComponentById(components, IndexMerchantCompID),
+        getComponentById(components, IndexNPCComponentID),
         abi.encode(merchantIndex)
       );
     }

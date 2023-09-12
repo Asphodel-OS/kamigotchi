@@ -5,37 +5,37 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibListing } from "libraries/LibListing.sol";
-import { LibMerchant } from "libraries/LibMerchant.sol";
+import { LibNPC } from "libraries/LibNPC.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Listing.Set"));
 
-// create or update a Listing on a Merchant by its Merchnat Index
+// create or update a Listing on a NPC by its Merchnat Index
 contract _ListingSetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 merchantIndex, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
+    (uint256 npcIndex, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
       arguments,
       (uint256, uint256, uint256, uint256)
     );
 
-    require(LibMerchant.getByIndex(components, merchantIndex) != 0, "Merchant: does not exist");
+    require(LibNPC.getByIndex(components, npcIndex) != 0, "NPC: does not exist");
     require(LibRegistryItem.getByItemIndex(components, itemIndex) != 0, "Item: does not exist");
 
-    uint256 id = LibListing.get(components, merchantIndex, itemIndex);
+    uint256 id = LibListing.get(components, npcIndex, itemIndex);
     if (id == 0)
-      id = LibListing.create(world, components, merchantIndex, itemIndex, buyPrice, sellPrice);
+      id = LibListing.create(world, components, npcIndex, itemIndex, buyPrice, sellPrice);
     else LibListing.update(components, id, buyPrice, sellPrice);
     return abi.encode(id);
   }
 
   function executeTyped(
-    uint256 merchantIndex,
+    uint256 npcIndex,
     uint256 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(merchantIndex, itemIndex, buyPrice, sellPrice));
+    return execute(abi.encode(npcIndex, itemIndex, buyPrice, sellPrice));
   }
 }

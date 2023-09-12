@@ -5,21 +5,21 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibMerchant } from "libraries/LibMerchant.sol";
+import { LibNPC } from "libraries/LibNPC.sol";
 
-uint256 constant ID = uint256(keccak256("system._Merchant.Set.Name"));
+uint256 constant ID = uint256(keccak256("system._NPC.Set.Name"));
 
-// set the Name of a Merchant, identified by its Merchant Index
-contract _MerchantSetNameSystem is System {
+// set the Name of a NPC, identified by its NPC Index
+contract _NPCSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (uint256 index, string memory name) = abi.decode(arguments, (uint256, string));
-    uint256 id = LibMerchant.getByIndex(components, index);
+    uint256 id = LibNPC.getByIndex(components, index);
 
-    require(id != 0, "Merchant: does not exist");
+    require(id != 0, "NPC: does not exist");
 
-    LibMerchant.setName(components, id, name);
+    LibNPC.setName(components, id, name);
     return "";
   }
 
