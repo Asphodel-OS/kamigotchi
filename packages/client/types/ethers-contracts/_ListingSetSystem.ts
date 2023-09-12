@@ -125,7 +125,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      merchantIndex: PromiseOrValue<BigNumberish>,
+      npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
@@ -146,7 +146,7 @@ export interface _ListingSetSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    merchantIndex: PromiseOrValue<BigNumberish>,
+    npcIndex: PromiseOrValue<BigNumberish>,
     itemIndex: PromiseOrValue<BigNumberish>,
     buyPrice: PromiseOrValue<BigNumberish>,
     sellPrice: PromiseOrValue<BigNumberish>,
@@ -167,7 +167,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      merchantIndex: PromiseOrValue<BigNumberish>,
+      npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
@@ -200,7 +200,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      merchantIndex: PromiseOrValue<BigNumberish>,
+      npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
@@ -222,7 +222,7 @@ export interface _ListingSetSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      merchantIndex: PromiseOrValue<BigNumberish>,
+      npcIndex: PromiseOrValue<BigNumberish>,
       itemIndex: PromiseOrValue<BigNumberish>,
       buyPrice: PromiseOrValue<BigNumberish>,
       sellPrice: PromiseOrValue<BigNumberish>,
