@@ -1,5 +1,4 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { empty } from 'rxjs';
 import create from 'zustand';
 
 export interface AccountDetails {

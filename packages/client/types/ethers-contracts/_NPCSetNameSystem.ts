@@ -27,10 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface _MerchantSetLocationSystemInterface extends utils.Interface {
+export interface _NPCSetNameSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -49,7 +49,7 @@ export interface _MerchantSetLocationSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -87,12 +87,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _MerchantSetLocationSystem extends BaseContract {
+export interface _NPCSetNameSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _MerchantSetLocationSystemInterface;
+  interface: _NPCSetNameSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -121,7 +121,7 @@ export interface _MerchantSetLocationSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -140,7 +140,7 @@ export interface _MerchantSetLocationSystem extends BaseContract {
 
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
-    location: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -159,7 +159,7 @@ export interface _MerchantSetLocationSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -190,7 +190,7 @@ export interface _MerchantSetLocationSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -210,7 +210,7 @@ export interface _MerchantSetLocationSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      location: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
