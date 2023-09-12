@@ -36,6 +36,7 @@
     "IndexMerchantComponent",
     "IndexModComponent",
     "IndexNodeComponent",
+    "IndexNPCComponent",
     "IndexObjectiveComponent",
     "IndexPetComponent",
     "IndexReviveComponent",
@@ -53,6 +54,7 @@
     "IsMerchantComponent",
     "IsNodeComponent",
     "IsNonFungibleComponent",
+    "IsNPCComponent",
     "IsPetComponent",
     "IsProductionComponent",
     "IsRegistryComponent",
@@ -118,7 +120,7 @@
       "writeAccess": [
         "IsListingComponent",
         "IndexItemComponent",
-        "IndexMerchantComponent",
+        "IndexNPCComponent",
         "PriceBuyComponent",
         "PriceSellComponent"
       ]
@@ -129,18 +131,6 @@
         "IsMerchantComponent",
         "IndexMerchantComponent",
         "LocationComponent",
-        "NameComponent"
-      ]
-    },
-    {
-      "name": "_MerchantSetLocationSystem",
-      "writeAccess": [
-        "LocationComponent"
-      ]
-    },
-    {
-      "name": "_MerchantSetNameSystem",
-      "writeAccess": [
         "NameComponent"
       ]
     },
@@ -176,6 +166,27 @@
     },
     {
       "name": "_NodeSetNameSystem",
+      "writeAccess": [
+        "NameComponent"
+      ]
+    },
+    {
+      "name": "_NPCCreateSystem",
+      "writeAccess": [
+        "IsNPCComponent",
+        "IndexNPCComponent",
+        "LocationComponent",
+        "NameComponent"
+      ]
+    },
+    {
+      "name": "_NPCSetLocationSystem",
+      "writeAccess": [
+        "LocationComponent"
+      ]
+    },
+    {
+      "name": "_NPCSetNameSystem",
       "writeAccess": [
         "NameComponent"
       ]
@@ -605,6 +616,7 @@
     "LibMerchant",
     "LibMint20",
     "LibNode",
+    "LibNPC",
     "LibPet721",
     "LibPet",
     "LibProduction",
