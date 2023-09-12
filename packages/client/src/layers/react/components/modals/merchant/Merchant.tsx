@@ -93,7 +93,7 @@ export function registerMerchantModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} of ${listing.item.index} at ${Date.now()}` as EntityID; // itemIndex should be replaced with the item's name
+        const actionID = `Buying ${amt} ${listing.item.name}` as EntityID; // itemIndex should be replaced with the item's name
         actions.add({
           id: actionID,
           components: {},
