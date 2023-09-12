@@ -6,7 +6,7 @@ import "test/utils/SetupTemplate.s.sol";
 // this includes the feeding of both food and revives
 contract FeedingTest is SetupTemplate {
   uint _idleRequirement;
-  uint internal _merchantID;
+  uint internal _npcID;
   uint internal _nodeID;
   uint[] internal _listingIDs;
 
@@ -22,7 +22,7 @@ contract FeedingTest is SetupTemplate {
     _createRoom("testRoom4", 4, 1, 2, 3);
 
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
-    _merchantID = _createMerchant(1, 1, "Test Merchant");
+    _npcID = _createNPC(1, 1, "Test NPC");
 
     _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
   }
@@ -52,21 +52,21 @@ contract FeedingTest is SetupTemplate {
     return health;
   }
 
-  function _createFoodListings(uint merchantIndex) internal {
+  function _createFoodListings(uint npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
-      _listingIDs.push(_setListing(merchantIndex, itemIndex, 10, 10));
+      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
-  function _createReviveListings(uint merchantIndex) internal {
+  function _createReviveListings(uint npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
       itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
-      _listingIDs.push(_setListing(merchantIndex, itemIndex, 10, 10));
+      _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
@@ -76,8 +76,8 @@ contract FeedingTest is SetupTemplate {
   // test that feeding is only permissioned to the operating account of a pet
   function testFeedPermissionConstraints() public {
     uint foodIndex;
-    uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
-    _createFoodListings(merchantIndex);
+    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    _createFoodListings(npcIndex);
 
     // register some new accounts and buy some items through them
     uint numAccounts = 4;
@@ -130,8 +130,8 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is only permissioned to the operating account of a pet
   // NOTE: only one revive item to check for these
   function testRevivePermissionConstraints() public {
-    uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
-    _createReviveListings(merchantIndex);
+    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    _createReviveListings(npcIndex);
     uint listingID = _listingIDs[0];
     uint reviveIndex = _getListingReviveIndex(listingID);
 
@@ -183,8 +183,8 @@ contract FeedingTest is SetupTemplate {
   // test that feeding is restricted by pet location in respect to account
   function testFeedLocationConstraints() public {
     uint foodIndex;
-    uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
-    _createFoodListings(merchantIndex);
+    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    _createFoodListings(npcIndex);
 
     // register, fund and stock account
     uint playerIndex = 0;
@@ -251,8 +251,8 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is restricted by pet state
   function testFeedStateConstraints() public {
     uint foodIndex;
-    uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
-    _createFoodListings(merchantIndex);
+    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    _createFoodListings(npcIndex);
 
     // register, fund and stock account
     uint playerIndex = 0;
@@ -361,8 +361,8 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is restricted by pet state
   function testReviveStateConstraints() public {
     uint numPets = 5;
-    uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
-    _createReviveListings(merchantIndex);
+    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    _createReviveListings(npcIndex);
     uint listingID = _listingIDs[0];
     uint reviveIndex = _getListingReviveIndex(listingID);
 
@@ -434,8 +434,8 @@ contract FeedingTest is SetupTemplate {
   }
 
   function testFeedEffects() public {
-    uint merchantIndex = LibMerchant.getIndex(components, _merchantID);
-    _createFoodListings(merchantIndex);
+    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    _createFoodListings(npcIndex);
 
     // register, fund and stock account
     uint playerIndex = 0;

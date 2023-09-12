@@ -9,7 +9,8 @@ import "test/utils/SetupTemplate.s.sol";
 contract HarvestTest is SetupTemplate {
   uint _idleRequirement;
   mapping(uint => bool) internal _isStarved;
-  // structure of Merchant data for test purposes
+
+  // structure of Node data for test purposes
   struct TestNodeData {
     uint256 index;
     uint256 location;
