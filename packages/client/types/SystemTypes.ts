@@ -3,7 +3,6 @@ import { _ConfigSetStringSystem } from "./ethers-contracts/_ConfigSetStringSyste
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
 import { _devGiveTokensSystem } from "./ethers-contracts/_devGiveTokensSystem";
 import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
-import { _MerchantCreateSystem } from "./ethers-contracts/_MerchantCreateSystem";
 import { _NodeCreateSystem } from "./ethers-contracts/_NodeCreateSystem";
 import { _NodeSetAffinitySystem } from "./ethers-contracts/_NodeSetAffinitySystem";
 import { _NodeSetDescriptionSystem } from "./ethers-contracts/_NodeSetDescriptionSystem";
@@ -72,7 +71,6 @@ export type SystemTypes = {
   "system._Config.Set": _ConfigSetSystem;
   "system._devGiveTokens": _devGiveTokensSystem;
   "system._Listing.Set": _ListingSetSystem;
-  "system._Merchant.Create": _MerchantCreateSystem;
   "system._Node.Create": _NodeCreateSystem;
   "system._Node.Set.Affinity": _NodeSetAffinitySystem;
   "system._Node.Set.Description": _NodeSetDescriptionSystem;

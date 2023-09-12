@@ -37,7 +37,6 @@ export function registerMerchantModal() {
           components: {
             AccountID,
             Description,
-            IsMerchant,
             IsNPC,
             IsListing,
             ItemIndex,

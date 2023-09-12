@@ -33,7 +33,6 @@
     "IndexGearComponent",
     "IndexHandComponent",
     "IndexItemComponent",
-    "IndexMerchantComponent",
     "IndexModComponent",
     "IndexNodeComponent",
     "IndexNPCComponent",
@@ -51,7 +50,6 @@
     "IsInventoryComponent",
     "IsKillComponent",
     "IsListingComponent",
-    "IsMerchantComponent",
     "IsNodeComponent",
     "IsNonFungibleComponent",
     "IsNPCComponent",
@@ -123,15 +121,6 @@
         "IndexNPCComponent",
         "PriceBuyComponent",
         "PriceSellComponent"
-      ]
-    },
-    {
-      "name": "_MerchantCreateSystem",
-      "writeAccess": [
-        "IsMerchantComponent",
-        "IndexMerchantComponent",
-        "LocationComponent",
-        "NameComponent"
       ]
     },
     {
@@ -607,7 +596,6 @@
     "LibInventory",
     "LibKill",
     "LibListing",
-    "LibMerchant",
     "LibMint20",
     "LibNode",
     "LibNPC",
