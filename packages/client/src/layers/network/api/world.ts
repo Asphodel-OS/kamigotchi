@@ -26,8 +26,10 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
+
   ///////////////////
   // CONFIG
+
   async function initConfig(api: any) {
     await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami/');
 
@@ -98,8 +100,10 @@ export function setUpWorldAPI(systems: any) {
     await api.config.set.number('LIQ_BOUNTY_BASE_PREC', 2);
   }
 
+
   ////////////////////
   // ROOMS
+
   async function initRooms(api: any) {
     await api.room.create(0, 'deadzone', '', [1]); // in case we need this
     await api.room.create(
@@ -213,8 +217,10 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
+
   ////////////////////
   // ITEMS
+
   async function initItems(api: any) {
     await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
     await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
@@ -222,15 +228,17 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.revive.create(1, 'Red Gakki Ribbon', 10);
   }
 
+
   ////////////////////
   // NPCS
+
   async function initNpcs(api: any) {
     await initMerchants(api);
   }
 
   async function initMerchants(api: any) {
     // create our hottie merchant ugajin. names are unique
-    await api.merchant.create(1, 'Mina', 13);
+    await api.npc.create(1, 'Mina', 13);
 
     await api.listing.set(1, 1, 25, 0); // merchant index, item index, buy price, sell price
     await api.listing.set(1, 2, 90, 0);
@@ -238,8 +246,10 @@ export function setUpWorldAPI(systems: any) {
     await api.listing.set(1, 4, 500, 0);
   }
 
+
   ////////////////////
   // NODES
+
   async function initNodes(api: any) {
     await api.node.create(
       1,
@@ -358,8 +368,10 @@ export function setUpWorldAPI(systems: any) {
     await api.quest.add.reward(6, "REVIVE", 1, 10);
   }
 
+
   ////////////////////
   // TRAITS
+
   function csvToMap(arr: any) {
     let jsonObj = [];
     let headers = arr[0];
