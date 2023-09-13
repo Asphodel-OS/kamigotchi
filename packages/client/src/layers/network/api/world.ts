@@ -291,6 +291,8 @@ export function setUpWorldAPI(systems: any) {
   // QUESTS
   async function initQuests(api: any) {
     // create quests
+
+    // quest 1
     await api.quest.create(
       1,
       "Welcome",
@@ -300,6 +302,7 @@ export function setUpWorldAPI(systems: any) {
     await api.quest.add.objective(1, "Move to room 2", "AT", "ROOM", 0, 2);
     await api.quest.add.reward(1, "FOOD", 1, 1);
 
+    // quest 2
     await api.quest.create(
       2,
       "Mint",
@@ -310,6 +313,7 @@ export function setUpWorldAPI(systems: any) {
     await api.quest.add.objective(2, "Mint a Kami", "MINT", "KAMI", 0, 1);
     await api.quest.add.reward(2, "FOOD", 2, 1);
 
+    // quest 3
     await api.quest.create(
       3,
       "Harvest",
@@ -319,6 +323,39 @@ export function setUpWorldAPI(systems: any) {
     await api.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
     await api.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN", 0, 1);
     await api.quest.add.reward(3, "REVIVE", 1, 1);
+
+    // quest 4
+    await api.quest.create(
+      4,
+      "Farming 1: A Pocketful of $MUSU",
+      "You've gotten a taste for harvesting now. Did you know you can leave your Kamigotchi to harvest while you explore? Just remember to come back in time....",
+      0
+    );
+    await api.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
+    await api.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN", 0, 100);
+    await api.quest.add.reward(4, "REVIVE", 1, 3);
+
+    // quest 5
+    await api.quest.create(
+      5,
+      "Farming 2: Stacking $MUSU",
+      "You're getting the hang of it. \n\nYour Kamigotchi will passively restore HP over time, but you can feed them if you want to get back to harvesting sooner…",
+      0
+    );
+    await api.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
+    await api.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN", 0, 1000);
+    await api.quest.add.reward(5, "REVIVE", 1, 5);
+
+    // quest 6
+    await api.quest.create(
+      6,
+      "Farming 3: Accumulating $MUSU",
+      "Great, you're really taking this seriously. This one's a long haul. \n\nHope you're getting into a healthy routine with your Kamigotchi now. \n\nIf you haven't already noticed, there's plenty of secrets hidden around the world.",
+      0
+    );
+    await api.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
+    await api.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN", 0, 5000);
+    await api.quest.add.reward(6, "REVIVE", 1, 10);
   }
 
   ////////////////////
