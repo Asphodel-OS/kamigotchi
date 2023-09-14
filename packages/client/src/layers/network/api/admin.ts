@@ -133,6 +133,12 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+  // delete a quest along with its objectives, requirements and rewards
+  async function deleteQuest(index: number) {
+    await sleepIf();
+    return systems['system._Registry.Quest.Delete'].executeTyped(index);
+  }
+
   // creates a Objective for an existing Quest
   async function addQuestObjective(
     questIndex: number,
@@ -412,6 +418,7 @@ export function createAdminAPI(systems: any) {
     },
     quest: {
       create: createQuest,
+      delete: deleteQuest,
       add: {
         objective: addQuestObjective,
         requirement: addQuestRequirement,

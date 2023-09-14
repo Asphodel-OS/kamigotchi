@@ -235,6 +235,12 @@
       ]
     },
     {
+      "name": "_RegistryDeleteQuestSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_RegistryUpdateFoodSystem",
       "writeAccess": [
         "*"

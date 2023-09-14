@@ -106,6 +106,46 @@ library LibRegistryQuests {
     return id;
   }
 
+  function deleteQuest(IUintComp components, uint256 questID) internal {
+    unsetIsRegistry(components, questID);
+    unsetIsQuest(components, questID);
+    unsetQuestIndex(components, questID);
+    unsetName(components, questID);
+    unsetDescription(components, questID);
+    unsetLocation(components, questID);
+  }
+
+  function deleteObjective(IUintComp components, uint256 objectiveID) internal {
+    unsetIsRegistry(components, objectiveID);
+    unsetIsObjective(components, objectiveID);
+    unsetQuestIndex(components, objectiveID);
+    unsetObjectiveIndex(components, objectiveID);
+    unsetName(components, objectiveID);
+    unsetLogicType(components, objectiveID);
+    unsetType(components, objectiveID);
+    unsetIndex(components, objectiveID);
+    unsetValue(components, objectiveID);
+  }
+
+  function deleteRequirement(IUintComp components, uint256 requirementID) internal {
+    unsetIsRegistry(components, requirementID);
+    unsetIsRequirement(components, requirementID);
+    unsetQuestIndex(components, requirementID);
+    unsetLogicType(components, requirementID);
+    unsetType(components, requirementID);
+    unsetIndex(components, requirementID);
+    unsetValue(components, requirementID);
+  }
+
+  function deleteReward(IUintComp components, uint256 rewardID) internal {
+    unsetIsRegistry(components, rewardID);
+    unsetIsReward(components, rewardID);
+    unsetQuestIndex(components, rewardID);
+    unsetType(components, rewardID);
+    unsetIndex(components, rewardID);
+    unsetValue(components, rewardID);
+  }
+
   /////////////////
   // CHECKERS
 
@@ -186,6 +226,93 @@ library LibRegistryQuests {
 
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+  }
+
+  /////////////////
+  // UNSETTERS
+
+  function unsetIsRegistry(IUintComp components, uint256 id) internal {
+    if (IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id)) {
+      IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    }
+  }
+
+  function unsetIsQuest(IUintComp components, uint256 id) internal {
+    if (IsQuestComponent(getAddressById(components, IsQuestCompID)).has(id)) {
+      IsQuestComponent(getAddressById(components, IsQuestCompID)).remove(id);
+    }
+  }
+
+  function unsetIsObjective(IUintComp components, uint256 id) internal {
+    if (IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).has(id)) {
+      IsObjectiveComponent(getAddressById(components, IsObjectiveCompID)).remove(id);
+    }
+  }
+
+  function unsetIsRequirement(IUintComp components, uint256 id) internal {
+    if (IsRequirementComponent(getAddressById(components, IsRequirementCompID)).has(id)) {
+      IsRequirementComponent(getAddressById(components, IsRequirementCompID)).remove(id);
+    }
+  }
+
+  function unsetIsReward(IUintComp components, uint256 id) internal {
+    if (IsRewardComponent(getAddressById(components, IsRewardCompID)).has(id)) {
+      IsRewardComponent(getAddressById(components, IsRewardCompID)).remove(id);
+    }
+  }
+
+  function unsetIndex(IUintComp components, uint256 id) internal {
+    if (IndexComponent(getAddressById(components, IndexCompID)).has(id)) {
+      IndexComponent(getAddressById(components, IndexCompID)).remove(id);
+    }
+  }
+
+  function unsetObjectiveIndex(IUintComp components, uint256 id) internal {
+    if (IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).has(id)) {
+      IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).remove(id);
+    }
+  }
+
+  function unsetQuestIndex(IUintComp components, uint256 id) internal {
+    if (IndexQuestComponent(getAddressById(components, IndexQuestCompID)).has(id)) {
+      IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(id);
+    }
+  }
+
+  function unsetDescription(IUintComp components, uint256 id) internal {
+    if (DescriptionComponent(getAddressById(components, DescCompID)).has(id)) {
+      DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
+    }
+  }
+
+  function unsetLocation(IUintComp components, uint256 id) internal {
+    if (LocationComponent(getAddressById(components, LocationCompID)).has(id)) {
+      LocationComponent(getAddressById(components, LocationCompID)).remove(id);
+    }
+  }
+
+  function unsetLogicType(IUintComp components, uint256 id) internal {
+    if (LogicTypeComponent(getAddressById(components, LogicTypeCompID)).has(id)) {
+      LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
+    }
+  }
+
+  function unsetName(IUintComp components, uint256 id) internal {
+    if (NameComponent(getAddressById(components, NameCompID)).has(id)) {
+      NameComponent(getAddressById(components, NameCompID)).remove(id);
+    }
+  }
+
+  function unsetType(IUintComp components, uint256 id) internal {
+    if (TypeComponent(getAddressById(components, TypeCompID)).has(id)) {
+      TypeComponent(getAddressById(components, TypeCompID)).remove(id);
+    }
+  }
+
+  function unsetValue(IUintComp components, uint256 id) internal {
+    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
+      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
+    }
   }
 
   /////////////////

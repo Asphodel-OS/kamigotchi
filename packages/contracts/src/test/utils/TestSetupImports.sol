@@ -143,6 +143,7 @@ import { _RegistryCreateQuestRequirementSystem, ID as _RegistryCreateQuestRequir
 import { _RegistryCreateQuestRewardSystem, ID as _RegistryCreateQuestRewardSystemID } from "systems/_RegistryCreateQuestRewardSystem.sol";
 import { _RegistryCreateReviveSystem, ID as _RegistryCreateReviveSystemID } from "systems/_RegistryCreateReviveSystem.sol";
 import { _RegistryCreateTraitSystem, ID as _RegistryCreateTraitSystemID } from "systems/_RegistryCreateTraitSystem.sol";
+import { _RegistryDeleteQuestSystem, ID as _RegistryDeleteQuestSystemID } from "systems/_RegistryDeleteQuestSystem.sol";
 import { _RegistryUpdateFoodSystem, ID as _RegistryUpdateFoodSystemID } from "systems/_RegistryUpdateFoodSystem.sol";
 import { _RegistryUpdateGearSystem, ID as _RegistryUpdateGearSystemID } from "systems/_RegistryUpdateGearSystem.sol";
 import { _RegistryUpdateModSystem, ID as _RegistryUpdateModSystemID } from "systems/_RegistryUpdateModSystem.sol";
@@ -303,6 +304,7 @@ _RegistryCreateQuestRequirementSystem __RegistryCreateQuestRequirementSystem;
 _RegistryCreateQuestRewardSystem __RegistryCreateQuestRewardSystem;
 _RegistryCreateReviveSystem __RegistryCreateReviveSystem;
 _RegistryCreateTraitSystem __RegistryCreateTraitSystem;
+_RegistryDeleteQuestSystem __RegistryDeleteQuestSystem;
 _RegistryUpdateFoodSystem __RegistryUpdateFoodSystem;
 _RegistryUpdateGearSystem __RegistryUpdateGearSystem;
 _RegistryUpdateModSystem __RegistryUpdateModSystem;
@@ -463,6 +465,7 @@ __RegistryCreateQuestRequirementSystem = _RegistryCreateQuestRequirementSystem(s
 __RegistryCreateQuestRewardSystem = _RegistryCreateQuestRewardSystem(system(_RegistryCreateQuestRewardSystemID));
 __RegistryCreateReviveSystem = _RegistryCreateReviveSystem(system(_RegistryCreateReviveSystemID));
 __RegistryCreateTraitSystem = _RegistryCreateTraitSystem(system(_RegistryCreateTraitSystemID));
+__RegistryDeleteQuestSystem = _RegistryDeleteQuestSystem(system(_RegistryDeleteQuestSystemID));
 __RegistryUpdateFoodSystem = _RegistryUpdateFoodSystem(system(_RegistryUpdateFoodSystemID));
 __RegistryUpdateGearSystem = _RegistryUpdateGearSystem(system(_RegistryUpdateGearSystemID));
 __RegistryUpdateModSystem = _RegistryUpdateModSystem(system(_RegistryUpdateModSystemID));

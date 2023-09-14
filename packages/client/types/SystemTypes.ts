@@ -20,6 +20,7 @@ import { _RegistryCreateQuestRewardSystem } from "./ethers-contracts/_RegistryCr
 import { _RegistryCreateQuestSystem } from "./ethers-contracts/_RegistryCreateQuestSystem";
 import { _RegistryCreateReviveSystem } from "./ethers-contracts/_RegistryCreateReviveSystem";
 import { _RegistryCreateTraitSystem } from "./ethers-contracts/_RegistryCreateTraitSystem";
+import { _RegistryDeleteQuestSystem } from "./ethers-contracts/_RegistryDeleteQuestSystem";
 import { _RegistryUpdateFoodSystem } from "./ethers-contracts/_RegistryUpdateFoodSystem";
 import { _RegistryUpdateGearSystem } from "./ethers-contracts/_RegistryUpdateGearSystem";
 import { _RegistryUpdateModSystem } from "./ethers-contracts/_RegistryUpdateModSystem";
@@ -88,6 +89,7 @@ export type SystemTypes = {
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem;
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
+  "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem;
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem;
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem;
   "system._Registry.Mod.Update": _RegistryUpdateModSystem;

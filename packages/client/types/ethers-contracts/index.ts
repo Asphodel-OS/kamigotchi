@@ -152,6 +152,7 @@ export type { _RegistryCreateQuestRewardSystem } from "./_RegistryCreateQuestRew
 export type { _RegistryCreateQuestSystem } from "./_RegistryCreateQuestSystem";
 export type { _RegistryCreateReviveSystem } from "./_RegistryCreateReviveSystem";
 export type { _RegistryCreateTraitSystem } from "./_RegistryCreateTraitSystem";
+export type { _RegistryDeleteQuestSystem } from "./_RegistryDeleteQuestSystem";
 export type { _RegistryUpdateFoodSystem } from "./_RegistryUpdateFoodSystem";
 export type { _RegistryUpdateGearSystem } from "./_RegistryUpdateGearSystem";
 export type { _RegistryUpdateModSystem } from "./_RegistryUpdateModSystem";
@@ -314,6 +315,7 @@ export { _RegistryCreateQuestRewardSystem__factory } from "./factories/_Registry
 export { _RegistryCreateQuestSystem__factory } from "./factories/_RegistryCreateQuestSystem__factory";
 export { _RegistryCreateReviveSystem__factory } from "./factories/_RegistryCreateReviveSystem__factory";
 export { _RegistryCreateTraitSystem__factory } from "./factories/_RegistryCreateTraitSystem__factory";
+export { _RegistryDeleteQuestSystem__factory } from "./factories/_RegistryDeleteQuestSystem__factory";
 export { _RegistryUpdateFoodSystem__factory } from "./factories/_RegistryUpdateFoodSystem__factory";
 export { _RegistryUpdateGearSystem__factory } from "./factories/_RegistryUpdateGearSystem__factory";
 export { _RegistryUpdateModSystem__factory } from "./factories/_RegistryUpdateModSystem__factory";
