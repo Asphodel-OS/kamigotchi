@@ -439,7 +439,7 @@ const checkCurrent = (
   return {
     target: condition.value,
     current: accVal,
-    completable: checkLogicOperator(accVal, condition.value ? condition.value : 0, logic)
+    completable: checkLogicOperator(accVal, condition.value ?? 0, logic)
   };
 }
 
@@ -518,27 +518,17 @@ const getAccBal = (
   type: string
 ): number => {
   let balance = 0;
-  switch (type) {
-    // inventories
-    case 'EQUIP':
-      balance = getInventoryBalance(account, index, type);
-    case 'FOOD':
-      balance = getInventoryBalance(account, index, type);
-    case 'MOD':
-      balance = getInventoryBalance(account, index, type);
-    case 'REVIVE':
-      balance = getInventoryBalance(account, index, type);
-    // others
-    case 'COIN':
-      balance = account.coin || 0;
-    case 'KAMI':
-      balance = account.kamis?.length || 0;
-    case 'ROOM':
-      balance = account.location || 0;
-    default:
-      balance = 0; // should not reach here
+  if (['EQUIP', 'FOOD', 'MOD', 'REVIVE'].includes(type)) {
+    balance = getInventoryBalance(account, index, type);
+  } else if (type === 'COIN') {
+    balance = account.coin || 0;
+  } else if (type === 'KAMI') {
+    balance = account.kamis?.length || 0;
+  } else if (type === 'ROOM') {
+    balance = account.location || 0;
+  } else {
+    console.log('getAccBal: invalid type');
   }
-
   return Number(balance);
 }
 

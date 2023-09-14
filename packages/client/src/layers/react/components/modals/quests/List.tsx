@@ -96,7 +96,6 @@ export const List = (props: Props) => {
 
   const getRequirementText = (requirement: Requirement, status: boolean): string => {
     let text = '';
-    console.log('req', requirement.target.type)
     switch (requirement.target.type) {
       case 'COIN':
         text = `${requirement.target.value! * 1} $MUSU`;
