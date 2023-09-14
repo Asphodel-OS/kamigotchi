@@ -26,7 +26,7 @@ contract QuestAcceptSystem is System {
       "QuestAccept: reqs not met"
     );
 
-    uint256 assignedID = LibQuests.assignQuest(world, components, questIndex, accountID);
+    uint256 assignedID = LibQuests.assign(world, components, questIndex, accountID);
     return abi.encode(assignedID);
   }
 

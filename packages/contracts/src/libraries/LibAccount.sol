@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
@@ -19,9 +20,11 @@ import { StaminaComponent, ID as StaminaCompID } from "components/StaminaCompone
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
 
+import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { LibRoom } from "libraries/LibRoom.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
 
 library LibAccount {
   /////////////////
@@ -79,6 +82,39 @@ library LibAccount {
   // Update the TimeLastAction of the account. Used to throttle world movement.
   function updateLastTs(IUintComp components, uint256 id) internal {
     setLastTs(components, id, block.timestamp);
+  }
+
+  // increase the balance of X (type+index) of an account
+  function incBalanceOf(
+    IWorld world,
+    IUintComp components,
+    uint256 id,
+    string memory _type,
+    uint256 index,
+    uint256 amount
+  ) internal {
+    uint256 inventoryID;
+    if (LibString.eq(_type, "FOOD")) {
+      inventoryID = LibInventory.getFood(components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.createFood(world, components, id, index);
+      LibInventory.inc(components, inventoryID, amount);
+    } else if (LibString.eq(_type, "REVIVE")) {
+      inventoryID = LibInventory.getRevive(components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.createRevive(world, components, id, index);
+      LibInventory.inc(components, inventoryID, amount);
+    } else if (LibString.eq(_type, "MOD")) {
+      inventoryID = LibInventory.getMod(components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.createMod(world, components, id, index);
+      LibInventory.inc(components, inventoryID, amount);
+    } else if (LibString.eq(_type, "GEAR")) {
+      inventoryID = LibInventory.getGear(components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.createGear(world, components, id, index);
+      LibInventory.inc(components, inventoryID, amount);
+    } else if (LibString.eq(_type, "COIN")) {
+      LibCoin.inc(components, id, amount);
+    } else {
+      require(false, "LibAccount: unknown type");
+    }
   }
 
   /////////////////
@@ -192,12 +228,44 @@ library LibAccount {
     return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
   }
 
-  function getPetsMinted(IUintComp components, uint256 account) internal view returns (uint256) {
-    return LibDataEntity.getAccountData(components, account, "NUM_MINTED");
+  function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LibDataEntity.getAccountData(components, id, "NUM_MINTED");
   }
 
-  function getMint20Minted(IUintComp components, uint256 account) internal view returns (uint256) {
-    return LibDataEntity.getAccountData(components, account, "NUM_MINT20_MINTED");
+  function getMint20Minted(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LibDataEntity.getAccountData(components, id, "NUM_MINT20_MINTED");
+  }
+
+  // get the balance of X (type+index) of an account
+  function getBalanceOf(
+    IUintComp components,
+    uint256 id,
+    string memory _type,
+    uint256 index
+  ) internal view returns (uint256 balance) {
+    uint256 inventoryID;
+
+    if (LibString.eq(_type, "FOOD")) {
+      inventoryID = LibInventory.getFood(components, id, index);
+      balance = LibInventory.getBalance(components, inventoryID);
+    } else if (LibString.eq(_type, "REVIVE")) {
+      inventoryID = LibInventory.getRevive(components, id, index);
+      balance = LibInventory.getBalance(components, inventoryID);
+    } else if (LibString.eq(_type, "MOD")) {
+      inventoryID = LibInventory.getMod(components, id, index);
+      balance = LibInventory.getBalance(components, inventoryID);
+    } else if (LibString.eq(_type, "GEAR")) {
+      inventoryID = LibInventory.getGear(components, id, index);
+      balance = LibInventory.getBalance(components, inventoryID);
+    } else if (LibString.eq(_type, "COIN")) {
+      balance = LibCoin.get(components, id);
+    } else if (LibString.eq(_type, "KAMI")) {
+      balance = getPetsOwned(components, id).length;
+    } else if (LibString.eq(_type, "ROOM")) {
+      balance = getLocation(components, id);
+    } else {
+      require(false, "LibAccount: unknown type");
+    }
   }
 
   /////////////////

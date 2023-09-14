@@ -44,6 +44,54 @@ library LibInventory {
     return id;
   }
 
+  // create an inventory instance based on food index
+  function createFood(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 foodIndex
+  ) internal returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return create(world, components, holderID, itemIndex);
+  }
+
+  // create an inventory instance based on revive index
+  function createRevive(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 reviveIndex
+  ) internal returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByReviveIndex(components, reviveIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return create(world, components, holderID, itemIndex);
+  }
+
+  // create an inventory instance based on mod index
+  function createMod(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 modIndex
+  ) internal returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByModIndex(components, modIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return create(world, components, holderID, itemIndex);
+  }
+
+  // create an inventory instance based on gear index
+  function createGear(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 gearIndex
+  ) internal returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByGearIndex(components, gearIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return create(world, components, holderID, itemIndex);
+  }
+
   // Delete the inventory instance
   function del(IUintComp components, uint256 id) internal {
     getComponentById(components, IsInvCompID).remove(id);
@@ -182,7 +230,6 @@ library LibInventory {
   // QUERIES
 
   // Get the specified inventory instance.
-  // NOTE: only useful for fungible inventory instances
   function get(
     IUintComp components,
     uint256 holderID,
@@ -205,7 +252,51 @@ library LibInventory {
     if (results.length > 0) result = results[0];
   }
 
-  // get all the inventories belonging to a holder
+  // Get a food inventory instance for a holder, based on the food index
+  function getFood(
+    IUintComp components,
+    uint256 holderID,
+    uint256 foodIndex
+  ) internal view returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return get(components, holderID, itemIndex);
+  }
+
+  // Get a revive inventory instance for a holder, based on the revive index
+  function getRevive(
+    IUintComp components,
+    uint256 holderID,
+    uint256 reviveIndex
+  ) internal view returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByReviveIndex(components, reviveIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return get(components, holderID, itemIndex);
+  }
+
+  // Get a mod inventory instance for a holder, based on the mod index
+  function getMod(
+    IUintComp components,
+    uint256 holderID,
+    uint256 modIndex
+  ) internal view returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByModIndex(components, modIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return get(components, holderID, itemIndex);
+  }
+
+  // Get a gear inventory instance for a holder, based on the gear index
+  function getGear(
+    IUintComp components,
+    uint256 holderID,
+    uint256 gearIndex
+  ) internal view returns (uint256) {
+    uint256 registryID = LibRegistryItem.getByGearIndex(components, gearIndex);
+    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    return get(components, holderID, itemIndex);
+  }
+
+  // Get all the inventories belonging to a holder
   function getAllForHolder(
     IUintComp components,
     uint256 holderID

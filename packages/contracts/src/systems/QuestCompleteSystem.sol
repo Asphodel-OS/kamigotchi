@@ -24,7 +24,7 @@ contract QuestCompleteSystem is System {
       "QuestComplete: objs not met"
     );
 
-    LibQuests.completeQuest(world, components, questID, accountID);
+    LibQuests.complete(world, components, questID, accountID);
     return "";
   }
 
