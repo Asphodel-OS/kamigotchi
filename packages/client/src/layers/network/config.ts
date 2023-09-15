@@ -167,8 +167,8 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
 
     // checkpointUrl: undefined,
     chainId: 420,
-    worldAddress: "0x4d301762F058adb0088EeD53B5D6B66cD59126Bf",
-    initialBlockNumber: 12573634,
+    worldAddress: "0x5e6431c87a44Ca0c3135991AAE13d3F299E2365A",
+    initialBlockNumber: 14682946,
   };
 
   // EOAs and privatekey
