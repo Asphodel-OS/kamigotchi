@@ -62,6 +62,17 @@ library LibPet {
     return id;
   }
 
+  // called when a pet is revealed
+  // NOTE: most of the reveal logic (generation) is in the Pet721RevealSystem itself
+  //       this function is for components saved directly on the Pet Entity
+  function reveal(IUintComp components, uint256 id, string memory uri) internal {
+    setCanName(components, id, true);
+    revive(components, id);
+    setStats(components, id);
+    setMediaURI(components, id, uri);
+    setLastTs(components, id, block.timestamp);
+  }
+
   // bridging a pet Outside => MUD. Does not handle account details
   function stake(IUintComp components, uint256 id, uint256 accountID) internal {
     setState(components, id, "RESTING");
@@ -108,17 +119,6 @@ library LibPet {
   function kill(IUintComp components, uint256 id) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("DEAD"));
     setCurrHealth(components, id, 0);
-  }
-
-  // called when a pet is revealed
-  // NOTE: most of the reveal logic (generation) is in the Pet721RevealSystem itself
-  //       this function is for components saved directly on the Pet Entity
-  function reveal(IUintComp components, uint256 id, string memory uri) internal {
-    setCanName(components, id, true);
-    revive(components, id);
-    setStats(components, id);
-    setMediaURI(components, id, uri);
-    setLastTs(components, id, block.timestamp);
   }
 
   // Update a pet's state to RESTING
