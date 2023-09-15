@@ -102,8 +102,8 @@ export function registerOperatorUpdater() {
       }
 
       const setValues = () => {
-        setOperatorWithFx(newAddress);
-        setPrivKey(newPrivKey);
+        if (newAddress != '') setOperatorWithFx(newAddress);
+        if (newPrivKey != '') setPrivKey(newPrivKey);
       }
 
       const handleChangePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,10 +133,10 @@ export function registerOperatorUpdater() {
             <Description>Current Operator: {accountDetails.operatorAddress}</Description>
             <Description>Connected Burner: {burnerInfo.connected}</Description>
             <Container id='new-operator'>
-              <Label>new address</Label>
+              <Label>new address (optional)</Label>
               <Input
                 type='text'
-                placeholder='new operator address'
+                placeholder='update account operator address'
                 value={newAddress}
                 onChange={(e) => handleChangePublic(e)}
               />
@@ -145,7 +145,7 @@ export function registerOperatorUpdater() {
               <Label>new private key (optional)</Label>
               <Input
                 type='text'
-                placeholder='new operator private key (optional)'
+                placeholder='update connected operator private key'
                 value={newPrivKey}
                 onChange={(e) => handleChangePrivate(e)}
               />
