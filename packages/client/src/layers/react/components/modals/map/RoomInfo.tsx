@@ -12,7 +12,7 @@ export const RoomInfo = (props: Props) => {
   return (
     <>
       <SectionContainer>
-        <SectionTitle style={{ fontSize: '1.2vw' }}>Room {props.room.location}: {props.room.name}</SectionTitle>
+        <SectionTitle style={{ fontSize: '1.4vw' }}>{props.room.name}</SectionTitle>
         <Description>{props.room.owner ? (props.room.owner.name) : ''}</Description>
         <Description>{props.room.description}</Description>
       </SectionContainer>
