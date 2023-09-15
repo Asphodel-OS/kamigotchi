@@ -98,7 +98,7 @@ export function registerAccountInfoFixture() {
                 <Battery level={calcStaminaPercent(data.account)} />
               </Tooltip>
             </BatteryCell>
-            <WordCell>$KAMI: {Number(accountMint20Bal?.formatted) ?? 0}</WordCell>
+            <WordCell>$KAMI: {Number(accountMint20Bal?.formatted ?? 0) ?? '???'}</WordCell>
             <WordCell>$MUSU: {1 * (data.account.coin ?? 0)}</WordCell>
           </BottomRow>
         </Container>
