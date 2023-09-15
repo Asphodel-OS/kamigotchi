@@ -463,7 +463,7 @@ export function setUpWorldAPI(systems: any) {
     },
     traits: {
       init: () => initTraits(createAdminAPI(systems)),
-      tryInit: initTraitsWithFail(createAdminAPI(systems)),
+      tryInit: () => initTraitsWithFail(createAdminAPI(systems)),
     },
   }
 
