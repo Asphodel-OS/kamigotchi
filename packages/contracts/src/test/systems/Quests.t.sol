@@ -190,4 +190,21 @@ contract QuestsTest is SetupTemplate {
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
   }
+
+  function testRewardMint20() public {
+    // create quest
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0);
+    _createReward(1, "MINT20", 0, 2);
+
+    // register account
+    _registerAccount(0);
+    address operator = _getOperator(0);
+
+    // accept quest
+    uint256 questID = _acceptQuest(0, 1);
+
+    // check that Mint20 is properly distributed
+    _completeQuest(0, questID);
+    assertEq(2 * 10 ** 18, _Mint20.balanceOf(_getOwner(0)));
+  }
 }

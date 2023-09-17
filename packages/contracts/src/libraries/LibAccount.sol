@@ -24,6 +24,7 @@ import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 
 library LibAccount {
@@ -112,6 +113,15 @@ library LibAccount {
       LibInventory.inc(components, inventoryID, amount);
     } else if (LibString.eq(_type, "COIN")) {
       LibCoin.inc(components, id, amount);
+    } else if (LibString.eq(_type, "MINT20")) {
+      uint256 accountMinted = getMint20Minted(components, id);
+      require(
+        accountMinted + amount <= LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX"),
+        "Mint20Mint: account limit exceeded"
+      );
+      address to = getOwner(components, id);
+      setMint20Minted(world, components, id, accountMinted + amount);
+      LibMint20.mint(world, to, amount);
     } else {
       require(false, "LibAccount: unknown type");
     }
