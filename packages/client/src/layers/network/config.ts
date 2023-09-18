@@ -53,7 +53,7 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
 
   switch (process.env.MODE) {
     case 'TEST':
-      config = createNetworkConfigLattice(externalProvider);
+      config = createNetworkConfigOpGoerli(externalProvider);
       break;
     case 'OPGOERLI':
       config = createNetworkConfigOpGoerli(externalProvider);
