@@ -93,7 +93,7 @@ library LibAccount {
     string memory _type,
     uint256 index,
     uint256 amount
-  ) internal {
+  ) public {
     uint256 inventoryID;
     if (LibString.eq(_type, "FOOD")) {
       inventoryID = LibInventory.getFood(components, id, index);
@@ -252,7 +252,7 @@ library LibAccount {
     uint256 id,
     string memory _type,
     uint256 index
-  ) internal view returns (uint256 balance) {
+  ) public view returns (uint256 balance) {
     uint256 inventoryID;
 
     if (LibString.eq(_type, "FOOD")) {
