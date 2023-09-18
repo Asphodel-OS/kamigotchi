@@ -20,6 +20,10 @@ export function setUpWorldAPI(systems: any) {
     await initQuests(api);
     await initTraits(api);
 
+    if (!process.env.MODE || process.env.MODE == 'DEV') {
+      await initLocalConfig(api);
+    }
+
     createPlayerAPI(systems).account.register(
       '0x000000000000000000000000000000000000dead',
       'load_bearer'
@@ -98,6 +102,13 @@ export function setUpWorldAPI(systems: any) {
     // Liquidation Bounty
     await api.config.set.number('LIQ_BOUNTY_BASE', 50);
     await api.config.set.number('LIQ_BOUNTY_BASE_PREC', 2);
+  }
+
+  // local config settings for faster testing 
+  async function initLocalConfig(api: any) {
+    await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
+    await api.config.set.number('KAMI_IDLE_REQ', 10);
+    await api.config.set.number('HARVEST_RATE_BASE', 2500); // in respect to power
   }
 
 
