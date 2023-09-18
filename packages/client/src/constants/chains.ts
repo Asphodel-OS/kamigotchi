@@ -66,7 +66,7 @@ const opGoerli: Chain = {
 const chainConfigs: Map<string, Chain> = new Map([
   ['', localhost],  // default to localhost when no environment mode provided
   ['DEV', localhost],
-  ['TEST', mudChain],
+  ['TEST', opGoerli],
   ['PROD', optimism],
   ['OPGOERLI', opGoerli],
 ]);
