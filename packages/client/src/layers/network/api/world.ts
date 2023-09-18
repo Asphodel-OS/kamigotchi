@@ -306,11 +306,11 @@ export function setUpWorldAPI(systems: any) {
     await api.quest.create(
       1,
       "Welcome",
-      "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 2, we'll give you some free gum.",
+      "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 4, we'll give you something special.",
       1
     );
-    await api.quest.add.objective(1, "Move to room 2", "AT", "ROOM", 0, 2);
-    await api.quest.add.reward(1, "FOOD", 1, 1);
+    await api.quest.add.objective(1, "Move to room 4", "AT", "ROOM", 0, 4);
+    await api.quest.add.reward(1, "MINT20", 0, 5);
 
     // quest 2
     await api.quest.create(
