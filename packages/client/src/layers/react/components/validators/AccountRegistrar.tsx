@@ -189,13 +189,6 @@ export function registerAccountRegistrar() {
         });
       };
 
-      const createAccountWithFx = (username: string) => {
-        playSound(scribbleSound);
-        createAccount(username);
-        playSound(successSound);
-        // openFundModal(); // never seems to reach this with 
-      }
-
       const handleAccountCreation = async (username: string) => {
         playSound(scribbleSound);
         try {
@@ -205,16 +198,16 @@ export function registerAccountRegistrar() {
             world.entityToIndex.get(createAccountActionID) as EntityIndex
           );
 
-          try {
-            const mintTokenActionID = mintToken(5, 0);
-            await waitForActionCompletion(
-              actions.Action,
-              world.entityToIndex.get(mintTokenActionID) as EntityIndex
-            );
-            playSound(successSound);
-          } catch (e) {
-            console.log('ERROR MINTING TOKENS:', e);
-          }
+          // try {
+          //   const mintTokenActionID = mintToken(5, 0);
+          //   await waitForActionCompletion(
+          //     actions.Action,
+          //     world.entityToIndex.get(mintTokenActionID) as EntityIndex
+          //   );
+          //   playSound(successSound);
+          // } catch (e) {
+          //   console.log('ERROR MINTING TOKENS:', e);
+          // }
         } catch (e) {
           console.log('ERROR CREATING ACCOUNT:', e);
         }
