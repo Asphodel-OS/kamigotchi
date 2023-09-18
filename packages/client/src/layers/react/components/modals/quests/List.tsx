@@ -21,11 +21,6 @@ interface Props {
     queryReviveRegistry: (index: number) => EntityIndex;
     getItem: (index: EntityIndex) => Item;
   };
-  // quests: {
-  //   available: Quest[];
-  //   ongoing: Quest[];
-  //   completed: Quest[];
-  // }
 }
 
 export const List = (props: Props) => {
@@ -137,8 +132,10 @@ export const List = (props: Props) => {
         return `${reward.target.value! * 1} ${getFoodName(reward.target.index!)}`;
       case 'REVIVE':
         return `${reward.target.value! * 1} ${getReviveName(reward.target.index!)}`;
+      case 'MINT20':
+        return `${reward.target.value! * 1} $KAMI`;
       default:
-        return '';
+        return '???';
     }
   }
 
@@ -153,7 +150,6 @@ export const List = (props: Props) => {
         if (objective.target.type !== 'ROOM')
           tracking = ` [${objective.status?.current ?? 0}/${Number(objective.status?.target)}]`;
       }
-
       text += tracking;
     }
 
