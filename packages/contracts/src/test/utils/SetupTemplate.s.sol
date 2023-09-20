@@ -299,8 +299,11 @@ abstract contract SetupTemplate is TestSetupImports {
     return abi.decode(listingID, (uint));
   }
 
-  /////////////////
+  /////////////////////////////////////////////
   // REGISTRIES
+
+  /////////////////
+  // QUESTS
 
   function _createObjective(
     uint256 questIndex,
@@ -351,6 +354,37 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
   }
+
+  /////////////////
+  // SKILLS
+
+  function _createSkill(uint256 index, string memory type_) public {
+    vm.prank(deployer);
+    __RegistryCreateSkillSystem.executeTyped(index, type_);
+  }
+
+  function _createSkillRequirement(
+    uint256 skillIndex,
+    string memory logicType,
+    string memory type_,
+    uint256 index, // can be empty
+    uint256 value // can be empty
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateSkillRequirementSystem.executeTyped(skillIndex, logicType, type_, index, value);
+  }
+
+  function _createSkillDescription(
+    uint256 index,
+    string memory name,
+    string memory description
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateSkillDescriptionSystem.executeTyped(index, name, description);
+  }
+
+  /////////////////
+  // TRAITS
 
   function registerTrait(
     uint specialIndex,
