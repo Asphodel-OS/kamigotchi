@@ -157,19 +157,19 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     try {
       // Execute the action
       const tx = await action.execute(requirementResult);
-
-      // If the result includes a hash key (single tx) or hashes (multiple tx) key, wait for the transactions to complete before removing the pending actions
+      console.log("trying")
       if (tx) {
+        console.log("has tx reciept")
         // Wait for all tx events to be reduced
         updateComponent(Action, action.entityIndex, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });
-        const txConfirmed = tx.wait().catch((e) => handleError(e, action)); // Also catch the error if not awaiting
         await awaitStreamValue(txReduced$, (v) => v === tx.hash);
         updateComponent(Action, action.entityIndex, { state: ActionState.TxReduced });
-        if (action.awaitConfirmation) await txConfirmed;
+        if (action.awaitConfirmation) await tx.wait();
       }
 
       updateComponent(Action, action.entityIndex, { state: ActionState.Complete });
     } catch (e) {
+      console.log("catching")
       handleError(e, action);
     }
 
@@ -179,6 +179,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
 
   // Set the action's state to ActionState.Failed
   function handleError(error: any, action: ActionData) {
+    console.log('handle error')
     // console.log(error.reason);
     updateComponent(Action, action.entityIndex, { metadata: error.reason });
     updateComponent(Action, action.entityIndex, { state: ActionState.Failed });
