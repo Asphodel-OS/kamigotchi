@@ -1,4 +1,4 @@
-import { createAdminAPI } from './admin';
+import { AdminAPI, createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
 import { utils } from 'ethers';
 
@@ -19,6 +19,7 @@ export function setUpWorldAPI(systems: any) {
     await initNpcs(api);
     await initQuests(api);
     await initTraits(api);
+    await initRelationships(api);
 
     if (!process.env.MODE || process.env.MODE == 'DEV') {
       await initLocalConfig(api);
@@ -34,7 +35,7 @@ export function setUpWorldAPI(systems: any) {
   ///////////////////
   // CONFIG
 
-  async function initConfig(api: any) {
+  async function initConfig(api: AdminAPI) {
     await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami/');
 
     // Leaderboards
@@ -105,7 +106,7 @@ export function setUpWorldAPI(systems: any) {
   }
 
   // local config settings for faster testing 
-  async function initLocalConfig(api: any) {
+  async function initLocalConfig(api: AdminAPI) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
     await api.config.set.number('HARVEST_RATE_BASE', 2500); // in respect to power
@@ -115,7 +116,7 @@ export function setUpWorldAPI(systems: any) {
   ////////////////////
   // ROOMS
 
-  async function initRooms(api: any) {
+  async function initRooms(api: AdminAPI) {
     await api.room.create(0, 'deadzone', '', [1]); // in case we need this
     await api.room.create(
       1,
@@ -232,7 +233,7 @@ export function setUpWorldAPI(systems: any) {
   ////////////////////
   // ITEMS
 
-  async function initItems(api: any) {
+  async function initItems(api: AdminAPI) {
     await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
     await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
     await api.registry.food.create(3, 'Gakki Cookie Sticks', 200);
@@ -243,11 +244,11 @@ export function setUpWorldAPI(systems: any) {
   ////////////////////
   // NPCS
 
-  async function initNpcs(api: any) {
+  async function initNpcs(api: AdminAPI) {
     await initMerchants(api);
   }
 
-  async function initMerchants(api: any) {
+  async function initMerchants(api: AdminAPI) {
     // create our hottie merchant ugajin. names are unique
     await api.npc.create(1, 'Mina', 13);
 
@@ -261,7 +262,7 @@ export function setUpWorldAPI(systems: any) {
   ////////////////////
   // NODES
 
-  async function initNodes(api: any) {
+  async function initNodes(api: AdminAPI) {
     await api.node.create(
       1,
       'HARVEST',
@@ -310,73 +311,94 @@ export function setUpWorldAPI(systems: any) {
 
   ////////////////////
   // QUESTS
-  async function initQuests(api: any) {
+  async function initQuests(api: AdminAPI) {
     // create quests
 
     // quest 1
-    await api.quest.create(
+    await api.registry.quest.create(
       1,
       "Welcome",
       "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 4, we'll give you something special.",
       1
     );
-    await api.quest.add.objective(1, "Move to room 4", "AT", "ROOM", 0, 4);
-    await api.quest.add.reward(1, "MINT20", 0, 5);
+    await api.registry.quest.add.objective(1, "Move to room 4", "AT", "ROOM", 0, 4);
+    await api.registry.quest.add.reward(1, "MINT20", 0, 5);
 
     // quest 2
-    await api.quest.create(
+    await api.registry.quest.create(
       2,
       "Mint",
       "Well done.\n\nNow you've worked out how to move.But you won't be able to do much here unless you're able to get yourself a Kamigotchi.\n\nFind the vending machine.",
       2
     );
-    await api.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
-    await api.quest.add.objective(2, "Mint a Kami", "MINT", "KAMI", 0, 1);
-    await api.quest.add.reward(2, "FOOD", 2, 1);
+    await api.registry.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
+    await api.registry.quest.add.objective(2, "Mint a Kami", "MINT", "KAMI", 0, 1);
+    await api.registry.quest.add.reward(2, "FOOD", 2, 1);
 
     // quest 3
-    await api.quest.create(
+    await api.registry.quest.create(
       3,
       "Harvest",
       "With your Kamigotchi, your existence now has meaning.\n\nSeek out a Node if you also wish for your existence to have MUSU.",
       4
     );
-    await api.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
-    await api.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN", 0, 1);
-    await api.quest.add.reward(3, "REVIVE", 1, 1);
+    await api.registry.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
+    await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN", 0, 1);
+    await api.registry.quest.add.reward(3, "REVIVE", 1, 1);
 
     // quest 4
-    await api.quest.create(
+    await api.registry.quest.create(
       4,
       "Farming 1: A Pocketful of $MUSU",
       "You've gotten a taste for harvesting now. Did you know you can leave your Kamigotchi to harvest while you explore? Just remember to come back in time....",
       0
     );
-    await api.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
-    await api.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN", 0, 100);
-    await api.quest.add.reward(4, "REVIVE", 1, 3);
+    await api.registry.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
+    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN", 0, 100);
+    await api.registry.quest.add.reward(4, "REVIVE", 1, 3);
 
     // quest 5
-    await api.quest.create(
+    await api.registry.quest.create(
       5,
       "Farming 2: Stacking $MUSU",
       "You're getting the hang of it. \n\nYour Kamigotchi will passively restore HP over time, but you can feed them if you want to get back to harvesting sooner…",
       0
     );
-    await api.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
-    await api.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN", 0, 1000);
-    await api.quest.add.reward(5, "REVIVE", 1, 5);
+    await api.registry.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
+    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN", 0, 1000);
+    await api.registry.quest.add.reward(5, "REVIVE", 1, 5);
 
     // quest 6
-    await api.quest.create(
+    await api.registry.quest.create(
       6,
       "Farming 3: Accumulating $MUSU",
       "Great, you're really taking this seriously. This one's a long haul. \n\nHope you're getting into a healthy routine with your Kamigotchi now. \n\nIf you haven't already noticed, there's plenty of secrets hidden around the world.",
       0
     );
-    await api.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
-    await api.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN", 0, 5000);
-    await api.quest.add.reward(6, "REVIVE", 1, 10);
+    await api.registry.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
+    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN", 0, 5000);
+    await api.registry.quest.add.reward(6, "REVIVE", 1, 10);
+  }
+
+
+  ////////////////////
+  // RELATIONSHIPS
+
+  async function initRelationships(api: AdminAPI) {
+    //        /->8->9-\
+    // 1->2->3->4->5--->10
+    //        \->6->7-/
+    // top and bottom paths are mutually exclusive
+    api.registry.relationship.create(1, 1, 'mina 1', [], []);
+    api.registry.relationship.create(1, 2, 'mina 2', [1], []);
+    api.registry.relationship.create(1, 3, 'mina 3', [2], []);
+    api.registry.relationship.create(1, 4, 'mina 4', [3], []);
+    api.registry.relationship.create(1, 5, 'mina 5', [4], []);
+    api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
+    api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
+    api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
+    api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
+    api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
 
@@ -399,7 +421,7 @@ export function setUpWorldAPI(systems: any) {
     return jsonObj;
   }
 
-  async function initTraits(api: any) {
+  async function initTraits(api: AdminAPI) {
     // inits a single type of trait, returns number of traits
     async function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
@@ -431,7 +453,7 @@ export function setUpWorldAPI(systems: any) {
   }
 
   // try to update traits. meant for partial deployments to fill up the gaps
-  async function initTraitsWithFail(api: any) {
+  async function initTraitsWithFail(api: AdminAPI) {
     // inits a single type of trait, returns number of traits
     async function initSingle(dataRaw: any, type: string) {
       const data = csvToMap(dataRaw);
@@ -480,6 +502,9 @@ export function setUpWorldAPI(systems: any) {
     },
     quests: {
       init: () => initQuests(createAdminAPI(systems)),
+    },
+    relationships: {
+      init: () => initRelationships(createAdminAPI(systems)),
     },
     rooms: {
       init: () => initRooms(createAdminAPI(systems)),
