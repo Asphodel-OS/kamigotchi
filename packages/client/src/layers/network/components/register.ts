@@ -50,10 +50,11 @@ export function createComponents(world: World) {
     IsObjective: defineBoolEZ("IsObjective", "component.Is.Objective"),
     IsRegister: defineBoolEZ("IsRegister", "component.Is.Register"),
     IsRegistry: defineBoolEZ("IsRegistry", "component.Is.Registry"),
+    IsRelationship: defineBoolEZ("IsRelationship", "component.Is.Relationship"),
     IsRequest: defineBoolEZ("IsRequest", "component.Is.Request"),
-    IsRoom: defineBoolEZ("IsRoom", "component.Is.Room"),
     IsRequirement: defineBoolEZ("IsRequirement", "component.Is.Requirement"),
     IsReward: defineBoolEZ("IsReward", "component.Is.Reward"),
+    IsRoom: defineBoolEZ("IsRoom", "component.Is.Room"),
     IsScore: defineBoolEZ("IsScore", "component.Is.Score"),
     IsSkill: defineBoolEZ("IsSkill", "component.Is.Skill"),
     IsTrade: defineBoolEZ("IsTrade", "component.Is.Trade"),
@@ -87,6 +88,7 @@ export function createComponents(world: World) {
     ObjectiveIndex: defineNumberEZ("ObjectiveIndex", "component.Index.Objective"),
     QuestIndex: defineNumberEZ("QuestIndex", "component.Index.Quest"),
     PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
+    RelationshipIndex: defineNumberEZ("RelationshipIndex", "component.Index.Relationship"),
     ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
     SkillIndex: defineNumberEZ("SkillIndex", "component.Index.Skill"),
     TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
@@ -94,6 +96,7 @@ export function createComponents(world: World) {
     // Values
     Affinity: defineStringEZ("Affinity", "component.Affinity"),
     Balance: defineNumberEZ("Balance", "component.Balance"),
+    Blacklist: defineNumberArrayComponent(world, "Blacklist", "component.Blacklist"),
     Coin: defineNumberEZ("Coin", "component.Coin"),
     Description: defineStringEZ("Description", "component.Description"),
     Epoch: defineNumberEZ("Epoch", "component.Epoch"),
@@ -123,6 +126,8 @@ export function createComponents(world: World) {
     Upgrades: defineNumberEZ("Upgrades", "component.Upgrades"),
     Value: defineNumberEZ("Value", "component.Value"),
     Violence: defineNumberEZ("Violence", "component.Violence"),
+    Whitelist: defineNumberArrayComponent(world, "Whitelist", "component.Whitelist"),
+
 
     // Time/Block Tracking
     LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),
