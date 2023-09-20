@@ -1,9 +1,8 @@
 import { utils, BigNumberish } from "ethers";
 
 export function createPlayerAPI(systems: any) {
-  /*********************
-   *       Pet 
-   *********************/
+  /////////////////
+  //     PET
 
   // feed a pet using a Pet Item
   function feedPet(petID: BigNumberish, foodIndex: number) {
@@ -25,9 +24,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
-  /*********************
-   *     Account
-   *********************/
+
+  /////////////////
+  //   ACCOUNT
 
   // @dev funds an operator from owner address
   // @param amount   amount to fund
@@ -66,9 +65,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
   }
 
-  /*********************
-   *     Listings
-   *********************/
+
+  /////////////////
+  //   LISTINGS
 
   // @dev allows a character to buy an item through a merchant listing entity
   // @param listingID    entity ID of listing
@@ -84,9 +83,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Listing.Sell"].executeTyped(listingID, amt);
   }
 
-  /*********************
-   *      NODES
-   *********************/
+
+  /////////////////
+  //   NODES
 
   // @dev collects from all eligible productions on a node
   // @param nodeID   entityID of the node
@@ -94,9 +93,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Node.Collect"].executeTyped(nodeID);
   }
 
-  /*********************
-   *    PRODUCTIONS 
-   *********************/
+
+  /////////////////
+  // PRODUCTIONS 
 
   // @dev retrieves the amount due from a passive deposit production and resets the starting point
   function collectProduction(productionID: BigNumberish) {
@@ -118,9 +117,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Production.Stop"].executeTyped(productionID);
   }
 
-  /*********************
-  *    QUESTS
-  *********************/
+
+  /////////////////
+  //   QUESTS
 
   // @dev accept a quest for an account
   // @param index   index of the quest
@@ -134,18 +133,25 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Quest.Complete"].executeTyped(id);
   }
 
-  /*********************
-   *    SKILLS
-   *********************/
+
+  /////////////////
+  //  SKILLS
 
   function upgradeSkill(entityID: BigNumberish, skillIndex: number) {
     return systems["system.Skill.Upgrade"].executeTyped(entityID, skillIndex);
   }
 
 
-  /*********************
-   *       TRADE
-   *********************/
+  /////////////////
+  // RELATIONSHIP
+
+  function advanceRelationship(indexNPC: number, indexRelationship: number) {
+    return systems["system.Relationship.Advance"].executeTyped(indexNPC, indexRelationship);
+  }
+
+
+  /////////////////
+  //   TRADE
 
   // @dev Updates Trade to ACCEPTED, removes IsRequest Component, creates ACTIVE Registers
   // @param tradeID   entityID of the trade log
@@ -180,9 +186,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Trade.Initiate"].executeTyped(toID);
   }
 
-  /*********************
-  *       MINT
-  *********************/
+
+  /////////////////
+  //    MINT
 
   // @dev mint a pet with a mint20 token
   // @param amount  number of pets to mint
@@ -203,9 +209,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Mint20.Mint"].mint(amount, { value: utils.parseEther(cost.toString()) });
   }
 
-  /*********************
-  *       ERC721
-  *********************/
+
+  /////////////////
+  //   ERC721
 
   // @dev deposits pet from outside -> game world
   // @param tokenID  ERC721 petID, not MUD entity ID
@@ -219,9 +225,9 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet721.Unstake"].executeTyped(tokenID);
   }
 
-  /*********************
-  *       ERC20
-  *********************/
+
+  /////////////////
+  //    ERC20
 
   // @dev bridges ERC20 tokens from outside -> game world
   // @param amount  amount of ERC20 tokens to bridge
@@ -276,6 +282,9 @@ export function createPlayerAPI(systems: any) {
     },
     skill: {
       upgrade: upgradeSkill,
+    },
+    relationship: {
+      advance: advanceRelationship,
     },
     trade: {
       accept: acceptTrade,

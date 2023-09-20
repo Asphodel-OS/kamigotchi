@@ -1,4 +1,6 @@
-import { utils, BigNumberish } from 'ethers';
+import { BigNumberish } from 'ethers';
+
+export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
 export function createAdminAPI(systems: any) {
   /// NOTE: do not use in production
@@ -14,6 +16,7 @@ export function createAdminAPI(systems: any) {
     return systems['system.Pet721.Reveal'].forceReveal(tokenId);
   }
 
+
   /////////////////
   //  CONFIG
 
@@ -27,6 +30,7 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Config.Set.String'].executeTyped(field, value);
   }
+
 
   /////////////////
   //  NPCs
@@ -62,6 +66,7 @@ export function createAdminAPI(systems: any) {
       sellPrice
     );
   }
+
 
   /////////////////
   //  NODES
@@ -111,6 +116,7 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Node.Set.Name'].executeTyped(index, name);
   }
+
 
   /////////////////
   // QUESTS
@@ -193,6 +199,7 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+
   /////////////////
   //  ROOMS
 
@@ -216,6 +223,7 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Room.Set.Name'].executeTyped(location, name);
   }
+
 
   /////////////////
   // SKILLS
@@ -416,6 +424,53 @@ export function createAdminAPI(systems: any) {
     return systems['system._Registry.Revive.Update'].executeTyped(reviveIndex, name, health);
   }
 
+
+  //////////////////
+  // RELATIONSHIPS
+
+  async function registerRelationship(
+    indexNPC: number,
+    indexRelationship: number,
+    name: string,
+    whitelist: number[],
+    blacklist: number[]
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Relationship.Create'].executeTyped(
+      indexNPC,
+      indexRelationship,
+      name,
+      whitelist,
+      blacklist
+    );
+  }
+
+  async function updateRelationship(
+    indexNPC: number,
+    indexRelationship: number,
+    name: string,
+    whitelist: number[],
+    blacklist: number[]
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Relationship.Update'].executeTyped(
+      indexNPC,
+      indexRelationship,
+      name,
+      whitelist,
+      blacklist
+    );
+  }
+
+  async function deleteRelationship(indexNPC: number, indexRelationship: number) {
+    await sleepIf();
+    return systems['system._Registry.Relationship.Delete'].executeTyped(
+      indexNPC,
+      indexRelationship
+    );
+  }
+
+
   //////////////////
   // WAITS
 
@@ -450,7 +505,6 @@ export function createAdminAPI(systems: any) {
         name: setNPCName,
       },
     },
-
     pet: { forceReveal: petForceReveal },
     registry: {
       food: {
@@ -468,6 +522,20 @@ export function createAdminAPI(systems: any) {
         create: registerModification,
         update: updateRegistryModification,
       },
+      quest: {
+        create: createQuest,
+        delete: deleteQuest,
+        add: {
+          objective: addQuestObjective,
+          requirement: addQuestRequirement,
+          reward: addQuestReward,
+        }
+      },
+      relationship: {
+        create: registerRelationship,
+        update: updateRelationship,
+        delete: deleteRelationship,
+      },
       revive: {
         create: registerRevive,
         update: updateRegistryRevive,
@@ -480,15 +548,6 @@ export function createAdminAPI(systems: any) {
           requirement: addSkillRequirement,
         }
       },
-    },
-    quest: {
-      create: createQuest,
-      delete: deleteQuest,
-      add: {
-        objective: addQuestObjective,
-        requirement: addQuestRequirement,
-        reward: addQuestReward,
-      }
     },
     room: {
       create: createRoom,
