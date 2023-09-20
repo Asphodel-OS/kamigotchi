@@ -135,8 +135,7 @@ export function registerHelpModal() {
                 by the difference between the attacker's Violence and the defender's Harmony.
                 <br />
                 <br />
-                Slots don't do anything yet, but will soon. Very few traits give
-                them.
+                Slots are mysterious. We'll explain more on them later.
               </Description>
             </div>
           );
