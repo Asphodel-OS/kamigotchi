@@ -24,11 +24,8 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
-<<<<<<< HEAD
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
-=======
 import { LibRegistryRelationship } from "libraries/LibRegistryRelationship.sol";
->>>>>>> 4fc19405 (update deploy file)
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibRelationship } from "libraries/LibRelationship.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
@@ -161,11 +158,7 @@ import { _RegistryCreateSkillEffectSystem, ID as _RegistryCreateSkillEffectSyste
 import { _RegistryCreateSkillRequirementSystem, ID as _RegistryCreateSkillRequirementSystemID } from "systems/_RegistryCreateSkillRequirementSystem.sol";
 import { _RegistryCreateTraitSystem, ID as _RegistryCreateTraitSystemID } from "systems/_RegistryCreateTraitSystem.sol";
 import { _RegistryDeleteQuestSystem, ID as _RegistryDeleteQuestSystemID } from "systems/_RegistryDeleteQuestSystem.sol";
-<<<<<<< HEAD
 import { _RegistryDeleteSkillSystem, ID as _RegistryDeleteSkillSystemID } from "systems/_RegistryDeleteSkillSystem.sol";
-=======
-import { _RegistryDeleteRelationshipSystem, ID as _RegistryDeleteRelationshipSystemID } from "systems/_RegistryDeleteRelationshipSystem.sol";
->>>>>>> 4fc19405 (update deploy file)
 import { _RegistryUpdateFoodSystem, ID as _RegistryUpdateFoodSystemID } from "systems/_RegistryUpdateFoodSystem.sol";
 import { _RegistryUpdateGearSystem, ID as _RegistryUpdateGearSystemID } from "systems/_RegistryUpdateGearSystem.sol";
 import { _RegistryUpdateModSystem, ID as _RegistryUpdateModSystemID } from "systems/_RegistryUpdateModSystem.sol";
@@ -207,11 +200,8 @@ import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/Pr
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
 import { QuestAcceptSystem, ID as QuestAcceptSystemID } from "systems/QuestAcceptSystem.sol";
 import { QuestCompleteSystem, ID as QuestCompleteSystemID } from "systems/QuestCompleteSystem.sol";
-<<<<<<< HEAD
-import { SkillUpgradeSystem, ID as SkillUpgradeSystemID } from "systems/SkillUpgradeSystem.sol";
-=======
 import { RelationshipAdvanceSystem, ID as RelationshipAdvanceSystemID } from "systems/RelationshipAdvanceSystem.sol";
->>>>>>> 4fc19405 (update deploy file)
+import { SkillUpgradeSystem, ID as SkillUpgradeSystemID } from "systems/SkillUpgradeSystem.sol";
 
 // Tokens
 import { Farm20 } from "tokens/Farm20.sol";
@@ -344,11 +334,7 @@ _RegistryCreateSkillEffectSystem __RegistryCreateSkillEffectSystem;
 _RegistryCreateSkillRequirementSystem __RegistryCreateSkillRequirementSystem;
 _RegistryCreateTraitSystem __RegistryCreateTraitSystem;
 _RegistryDeleteQuestSystem __RegistryDeleteQuestSystem;
-<<<<<<< HEAD
 _RegistryDeleteSkillSystem __RegistryDeleteSkillSystem;
-=======
-_RegistryDeleteRelationshipSystem __RegistryDeleteRelationshipSystem;
->>>>>>> 4fc19405 (update deploy file)
 _RegistryUpdateFoodSystem __RegistryUpdateFoodSystem;
 _RegistryUpdateGearSystem __RegistryUpdateGearSystem;
 _RegistryUpdateModSystem __RegistryUpdateModSystem;
@@ -390,11 +376,8 @@ ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
 QuestAcceptSystem _QuestAcceptSystem;
 QuestCompleteSystem _QuestCompleteSystem;
-<<<<<<< HEAD
-SkillUpgradeSystem _SkillUpgradeSystem;
-=======
 RelationshipAdvanceSystem _RelationshipAdvanceSystem;
->>>>>>> 4fc19405 (update deploy file)
+SkillUpgradeSystem _SkillUpgradeSystem;
 
 // Token vars
 Farm20 _Farm20;
@@ -527,11 +510,7 @@ __RegistryCreateSkillEffectSystem = _RegistryCreateSkillEffectSystem(system(_Reg
 __RegistryCreateSkillRequirementSystem = _RegistryCreateSkillRequirementSystem(system(_RegistryCreateSkillRequirementSystemID));
 __RegistryCreateTraitSystem = _RegistryCreateTraitSystem(system(_RegistryCreateTraitSystemID));
 __RegistryDeleteQuestSystem = _RegistryDeleteQuestSystem(system(_RegistryDeleteQuestSystemID));
-<<<<<<< HEAD
 __RegistryDeleteSkillSystem = _RegistryDeleteSkillSystem(system(_RegistryDeleteSkillSystemID));
-=======
-__RegistryDeleteRelationshipSystem = _RegistryDeleteRelationshipSystem(system(_RegistryDeleteRelationshipSystemID));
->>>>>>> 4fc19405 (update deploy file)
 __RegistryUpdateFoodSystem = _RegistryUpdateFoodSystem(system(_RegistryUpdateFoodSystemID));
 __RegistryUpdateGearSystem = _RegistryUpdateGearSystem(system(_RegistryUpdateGearSystemID));
 __RegistryUpdateModSystem = _RegistryUpdateModSystem(system(_RegistryUpdateModSystemID));
@@ -573,11 +552,8 @@ _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 _QuestAcceptSystem = QuestAcceptSystem(system(QuestAcceptSystemID));
 _QuestCompleteSystem = QuestCompleteSystem(system(QuestCompleteSystemID));
-<<<<<<< HEAD
-_SkillUpgradeSystem = SkillUpgradeSystem(system(SkillUpgradeSystemID));
-=======
 _RelationshipAdvanceSystem = RelationshipAdvanceSystem(system(RelationshipAdvanceSystemID));
->>>>>>> 4fc19405 (update deploy file)
+_SkillUpgradeSystem = SkillUpgradeSystem(system(SkillUpgradeSystemID));
 
 _Farm20 = _Farm20ProxySystem.getToken();
 _Pet721 = _Pet721ProxySystem.getToken();

@@ -18,16 +18,19 @@ import _RegistryCreateQuestObjectiveSystem from "../abi/_RegistryCreateQuestObje
 import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRequirementSystem.json";
 import _RegistryCreateQuestRewardSystem from "../abi/_RegistryCreateQuestRewardSystem.json";
 import _RegistryCreateQuestSystem from "../abi/_RegistryCreateQuestSystem.json";
+import _RegistryCreateRelationshipSystem from "../abi/_RegistryCreateRelationshipSystem.json";
 import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
 import _RegistryCreateSkillEffectSystem from "../abi/_RegistryCreateSkillEffectSystem.json";
 import _RegistryCreateSkillRequirementSystem from "../abi/_RegistryCreateSkillRequirementSystem.json";
 import _RegistryCreateSkillSystem from "../abi/_RegistryCreateSkillSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
 import _RegistryDeleteQuestSystem from "../abi/_RegistryDeleteQuestSystem.json";
+import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshipSystem.json";
 import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
 import _RegistryUpdateFoodSystem from "../abi/_RegistryUpdateFoodSystem.json";
 import _RegistryUpdateGearSystem from "../abi/_RegistryUpdateGearSystem.json";
 import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
+import _RegistryUpdateRelationshipSystem from "../abi/_RegistryUpdateRelationshipSystem.json";
 import _RegistryUpdateReviveSystem from "../abi/_RegistryUpdateReviveSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
@@ -65,6 +68,7 @@ import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
 import QuestAcceptSystem from "../abi/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
+import RelationshipAdvanceSystem from "../abi/RelationshipAdvanceSystem.json";
 import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
@@ -92,16 +96,19 @@ export const SystemAbis = {
   "system._Registry.Quest.Create.Requirement": _RegistryCreateQuestRequirementSystem.abi,
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem.abi,
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
+  "system._Registry.Relationship.Create": _RegistryCreateRelationshipSystem.abi,
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
   "system._Registry.Skill.Create.Effect": _RegistryCreateSkillEffectSystem.abi,
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
+  "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem.abi,
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem.abi,
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem.abi,
   "system._Registry.Mod.Update": _RegistryUpdateModSystem.abi,
+  "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem.abi,
   "system._Registry.Revive.Update": _RegistryUpdateReviveSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
@@ -139,6 +146,7 @@ export const SystemAbis = {
   "system.Production.Stop": ProductionStopSystem.abi,
   "system.Quest.Accept": QuestAcceptSystem.abi,
   "system.Quest.Complete": QuestCompleteSystem.abi,
+  "system.Relationship.Advance": RelationshipAdvanceSystem.abi,
   "system.Skill.Upgrade": SkillUpgradeSystem.abi,
   "system.Trade.Accept": TradeAcceptSystem.abi,
   "system.Trade.AddTo": TradeAddToSystem.abi,
