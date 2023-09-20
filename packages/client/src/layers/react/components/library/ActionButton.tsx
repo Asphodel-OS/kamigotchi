@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { dataStore } from 'layers/react/store/createStore';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
@@ -16,13 +15,9 @@ interface Props {
 
 // ActionButton is a text button that triggers an Action when clicked
 export const ActionButton = (props: Props) => {
-  const { sound: { volume } } = dataStore();
-
   // layer on a sound effect
   const handleClick = async () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
+    playClick();
     await props.onClick();
   }
 

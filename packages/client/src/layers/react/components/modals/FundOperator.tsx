@@ -8,12 +8,9 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-
-import scribbleSound from 'assets/sound/fx/scribbling.mp3';
-import successSound from 'assets/sound/fx/bubble_success.mp3';
+import { playSuccess, playScribble } from 'utils/sounds';
 
 export function registerFundOperatorModal() {
   registerUIComponent(
@@ -53,7 +50,6 @@ export function registerFundOperatorModal() {
       } = layers;
       const { details: accountDetails } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
-      const { sound: { volume } } = dataStore();
 
       const [isFundState, setIsFundState] = useState(true);
       const [amount, setAmount] = useState(0.05);
@@ -115,13 +111,13 @@ export function registerFundOperatorModal() {
       // DISPLAY LOGIC
 
       const chooseTx = async () => {
-        playSound(scribbleSound);
+        playScribble();
         if (isFundState) {
           await fundTx();
         } else {
           await refundTx();
         }
-        playSound(successSound);
+        playSuccess();
       }
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -138,11 +134,6 @@ export function registerFundOperatorModal() {
         setAmount(Number(event.target.value));
       };
 
-      const playSound = (sound: any) => {
-        const soundFx = new Audio(sound);
-        soundFx.volume = volume;
-        soundFx.play();
-      }
 
       ///////////////
       // COMPONENTS

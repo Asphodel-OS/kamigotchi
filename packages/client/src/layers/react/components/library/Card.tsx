@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { dataStore } from 'layers/react/store/createStore';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   image: string;
@@ -13,20 +12,12 @@ interface Props {
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = (props: Props) => {
-  const { sound: { volume } } = dataStore();
-
-  // layer on a sound effect
-  const playClickAudio = async () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
-  };
 
   // toggle the kami modal settings depending on current its current state
   const imageOnClick = () => {
     if (props.imageOnClick) {
       props.imageOnClick();
-      playClickAudio();
+      playClick();
       return;
     }
   }

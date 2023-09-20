@@ -21,16 +21,9 @@ import { SingleInputTextForm } from 'layers/react/components/library/SingleInput
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
-import {
-  AccountDetails,
-  emptyAccountDetails,
-  useKamiAccount,
-} from 'layers/react/store/kamiAccount';
+import { AccountDetails, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-
-import successSound from 'assets/sound/fx/bubble_success.mp3';
-import scribbleSound from 'assets/sound/fx/scribbling.mp3';
-import 'layers/react/styles/font.css';
+import { playScribble } from 'utils/sounds';
 
 
 /** 
@@ -135,7 +128,6 @@ export function registerAccountRegistrar() {
       const { isConnected } = useAccount();
       const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { sound: { volume } } = dataStore();
       const { visibleModals, setVisibleModals } = dataStore();
       const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
@@ -166,12 +158,6 @@ export function registerAccountRegistrar() {
       /////////////////
       // ACTIONS
 
-      const playSound = (sound: any) => {
-        const soundFx = new Audio(sound);
-        soundFx.volume = volume;
-        soundFx.play();
-      }
-
       const copyBurnerAddress = () => {
         navigator.clipboard.writeText(burnerInfo.connected);
         console.log(burnerInfo.connected);
@@ -190,7 +176,7 @@ export function registerAccountRegistrar() {
       };
 
       const handleAccountCreation = async (username: string) => {
-        playSound(scribbleSound);
+        playScribble();
         try {
           const createAccountActionID = createAccount(username);
           await waitForActionCompletion(
@@ -204,7 +190,7 @@ export function registerAccountRegistrar() {
           //     actions.Action,
           //     world.entityToIndex.get(mintTokenActionID) as EntityIndex
           //   );
-          //   playSound(successSound);
+          //   playSuccess();
           // } catch (e) {
           //   console.log('ERROR MINTING TOKENS:', e);
           // }

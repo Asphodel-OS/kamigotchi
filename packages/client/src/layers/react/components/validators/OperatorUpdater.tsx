@@ -1,20 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { map, merge, of } from 'rxjs';
-import styled, { keyframes } from 'styled-components';
+import { of } from 'rxjs';
+import styled from 'styled-components';
 import { useAccount } from 'wagmi';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
-import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
-
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
+import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { playScribble, playSuccess } from 'utils/sounds';
 
-import scribbleSound from 'assets/sound/fx/scribbling.mp3';
-import successSound from 'assets/sound/fx/bubble_success.mp3';
 import 'layers/react/styles/font.css';
 
 // TODO: check for whether an account with the burner address already exists
@@ -32,7 +30,7 @@ export function registerOperatorUpdater() {
       const { isConnected } = useAccount();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { sound: { volume }, visibleModals, setVisibleModals } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
 
       const {
         network: {
@@ -60,19 +58,14 @@ export function registerOperatorUpdater() {
         }
       }, [isConnected, burnerInfo, accountDetails]);
 
+
       /////////////////
       // ACTIONS
 
-      const playSound = (sound: any) => {
-        const soundFx = new Audio(sound);
-        soundFx.volume = volume;
-        soundFx.play();
-      }
-
       const setOperatorWithFx = async (address: string) => {
-        playSound(scribbleSound);
+        playScribble();
         await setOperator(address);
-        playSound(successSound);
+        playSuccess();
       }
 
       const setOperator = async (address: string) => {

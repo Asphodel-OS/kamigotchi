@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { dataStore } from 'layers/react/store/createStore';
 import { Popover } from '@mui/material';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
@@ -19,7 +18,6 @@ export interface Option {
 }
 
 export function ActionListButton(props: Props) {
-  const { sound: { volume } } = dataStore();
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -33,9 +31,7 @@ export function ActionListButton(props: Props) {
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
+    playClick();
     option.onClick();
     handleClose();
   }

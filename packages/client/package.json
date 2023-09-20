@@ -79,6 +79,7 @@
     "assets": "./src/assets",
     "constants": "./src/constants",
     "layers": "./src/layers",
-    "types": "./types"
+    "types": "./types",
+    "utils": "./src/utils"
   }
 }

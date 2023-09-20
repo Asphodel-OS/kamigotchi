@@ -2,12 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
 
 import 'layers/react/styles/font.css';
 import { Sound } from './Sound';

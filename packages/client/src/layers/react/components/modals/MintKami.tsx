@@ -11,14 +11,14 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
+import { getConfigFieldValue } from 'layers/react/shapes/Config';
 import { getAccountData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { playVending } from 'utils/sounds';
 
-import mintSound from 'assets/sound/fx/vending_machine.mp3';
-import { getConfigFieldValue } from 'layers/react/shapes/Config';
 
 export function registerKamiMintModal() {
   registerUIComponent(
@@ -103,7 +103,7 @@ export function registerKamiMintModal() {
       } = layers;
 
       const { isConnected } = useAccount();
-      const { visibleModals, setVisibleModals, sound: { volume } } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
       const { details: accountDetails } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
@@ -217,10 +217,7 @@ export function registerKamiMintModal() {
             world.entityToIndex.get(mintActionID) as EntityIndex
           );
           setTriedReveal(false);
-
-          const mintFX = new Audio(mintSound);
-          mintFX.volume = volume * 0.6;
-          mintFX.play();
+          playVending();
         } catch (e) {
           console.log('KamiMint.tsx: handlePetMinting() mint failed', e);
         }

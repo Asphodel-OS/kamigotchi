@@ -5,7 +5,6 @@ import { map } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled, { keyframes } from 'styled-components';
 import { HasValue, runQuery } from '@latticexyz/recs';
-import mintSound from 'assets/sound/fx/vending_machine.mp3';
 import { dataStore } from 'layers/react/store/createStore';
 import { Stepper } from '../library/Stepper';
 
@@ -45,7 +44,6 @@ export function registerDetectAccountModal() {
 
       const [isDivVisible, setIsDivVisible] = useState(false);
       const [name, setName] = useState('');
-      const { volume } = dataStore((state) => state.sound);
       const { visibleButtons, toggleVisibleButtons } = dataStore();
 
       const hasAccount = Array.from(
@@ -54,11 +52,6 @@ export function registerDetectAccountModal() {
 
       const handleMinting = useCallback(async (name) => {
         try {
-          const mintFX = new Audio(mintSound);
-
-          mintFX.volume = volume;
-          mintFX.play();
-
           await player.account.register(connectedAddress.get()!, name);
 
           document.getElementById('detectAccount')!.style.display = 'none';

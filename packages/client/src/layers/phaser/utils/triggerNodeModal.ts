@@ -1,15 +1,9 @@
 import { dataStore } from 'layers/react/store/createStore';
-import clickSound from 'assets/sound/fx/mouseclick.wav';
+import { playClick } from 'utils/sounds';
 
 export const triggerNodeModal = () => {
-  const {
-    visibleModals,
-    sound: { volume },
-  } = dataStore.getState();
-
-  const clickFX = new Audio(clickSound);
-  clickFX.volume = volume;
-  clickFX.play();
+  const { visibleModals } = dataStore.getState();
+  playClick();
 
   if (!visibleModals.node) {
     dataStore.setState({

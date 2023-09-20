@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Tooltip } from './Tooltip';
 
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
 import { dataStore, VisibleModals } from 'layers/react/store/createStore';
-import 'layers/react/styles/font.css';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
@@ -21,15 +20,12 @@ export const MenuButton = (props: Props) => {
   const {
     visibleModals,
     setVisibleModals,
-    sound: { volume },
   } = dataStore();
   const { id, children, text, hideModal } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
+    playClick();
     const toggleModal = hideModal ? hideModal : {};
 
     setVisibleModals({

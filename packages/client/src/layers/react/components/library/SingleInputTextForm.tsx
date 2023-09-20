@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { dataStore } from 'layers/react/store/createStore';
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
@@ -17,7 +16,6 @@ interface Props {
 
 // SingleInputTextForm is a styled input field with some additional frills
 export const SingleInputTextForm = (props: Props) => {
-  const { sound: { volume } } = dataStore();
   const [value, setValue] = useState(props.initialValue || '');
   let styleOverride = {};
   if (props.fullWidth) styleOverride = { width: '100%' };
@@ -27,9 +25,7 @@ export const SingleInputTextForm = (props: Props) => {
   };
 
   const handleSubmit = () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
+    playClick();
     props.onSubmit && props.onSubmit(value);
     setValue('');
   };

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
-import { dataStore } from 'layers/react/store/createStore';
+import { playClick } from 'utils/sounds';
 
 
 interface Props {
@@ -10,14 +9,11 @@ interface Props {
 }
 
 export const Tabs = (props: Props) => {
-  const { sound: { volume } } = dataStore();
 
   // layer on a sound effect
   const setTab = async (tab: TabType) => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
-    await props.setTab(tab);
+    playClick();
+    props.setTab(tab);
   }
 
   return (

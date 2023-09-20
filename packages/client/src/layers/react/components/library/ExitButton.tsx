@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import clickSoundUrl from 'assets/sound/fx/mouseclick.wav';
+
 import { dataStore } from 'layers/react/store/createStore';
+import { playClick } from 'utils/sounds';
+
 
 interface Props {
   divName: string;
@@ -10,17 +12,11 @@ interface Props {
 
 // ExitButton is a rendering o fan exit button, which closes the modal it's on
 export const ExitButton = (props: Props) => {
-  const {
-    visibleModals,
-    setVisibleModals,
-    sound: { volume },
-  } = dataStore();
+  const { visibleModals, setVisibleModals } = dataStore();
 
   // closes the modal this exit button is on
   const handleClose = () => {
-    const clickSound = new Audio(clickSoundUrl);
-    clickSound.volume = volume * 0.6;
-    clickSound.play();
+    playClick();
     setVisibleModals({ ...visibleModals, [props.divName]: false });
   };
 
