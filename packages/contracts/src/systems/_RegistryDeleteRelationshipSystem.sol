@@ -11,6 +11,7 @@ import { LibRegistryRelationship as LibRegRel } from "libraries/LibRegistryRelat
 uint256 constant ID = uint256(keccak256("system._Registry.Relationship.Delete"));
 
 // _RegistryDeleteRelationshipSystem updates a relationship registry entry's optional fields
+// Q(ja): should we delete players' relationships as well by default.. maybe a flag?
 contract _RegistryDeleteRelationshipSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -18,7 +19,7 @@ contract _RegistryDeleteRelationshipSystem is System {
     (uint256 npcIndex, uint256 relIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 registryID = LibRegRel.get(components, npcIndex, relIndex);
 
-    require(registryID != 0, "Registry: Relationship does not exist");
+    require(registryID != 0, "RegistryDeleteRelationship: flag does not exist");
 
     LibRegRel.delete_(components, registryID);
 

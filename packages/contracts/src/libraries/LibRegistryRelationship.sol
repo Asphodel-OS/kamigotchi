@@ -63,6 +63,14 @@ library LibRegistryRelationship {
     return NameComponent(getAddressById(components, NameCompID)).has(id);
   }
 
+  function exists(
+    IUintComp components,
+    uint256 indexNPC,
+    uint256 indexRel
+  ) internal view returns (bool) {
+    return get(components, indexNPC, indexRel) != 0;
+  }
+
   /////////////////
   // SETTERS
 
@@ -100,7 +108,7 @@ library LibRegistryRelationship {
   }
 
   function getWhitelist(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    if (!hasBlacklist(components, id)) return new uint256[](0);
+    if (!hasWhitelist(components, id)) return new uint256[](0);
     return WhitelistComponent(getAddressById(components, WhitelistCompID)).getValue(id);
   }
 

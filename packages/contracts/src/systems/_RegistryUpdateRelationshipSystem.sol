@@ -24,7 +24,7 @@ contract _RegistryUpdateRelationshipSystem is System {
     ) = abi.decode(arguments, (uint256, uint256, string, uint256[], uint256[]));
     uint256 registryID = LibRegRel.get(components, npcIndex, relIndex);
 
-    require(registryID != 0, "Registry: Relationship does not exist");
+    require(registryID != 0, "RegistryUpdateRelationship: flag does not exist");
 
     if (!LibString.eq(name, "")) LibRegRel.setName(components, registryID, name);
     if (blacklist.length > 0) LibRegRel.setBlacklist(components, registryID, blacklist);

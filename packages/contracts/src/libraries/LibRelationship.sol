@@ -38,10 +38,9 @@ library LibRelationship {
   // CHECKERS
 
   // Check whether an account can advance to a specific relationship flag with an NPC.
+  // Assume the flag exists and the account doesnt already have it.
   // Any blacklist flags immediately invalidate the relationship advancement.
   // Any whitelist flags immediately validate the relationship advancement.
-  // If the whitelist is empty, the relationship advancement is valid.
-  // Assume the account doesnt already have the relationship flag.
   function canCreate(
     IUintComp components,
     uint256 accountID,
@@ -49,20 +48,8 @@ library LibRelationship {
     uint256 relIndex
   ) internal view returns (bool) {
     uint256 registryID = LibRegistryRelationship.get(components, npcIndex, relIndex);
-
-    // get the blacklist and compare
-    uint256[] memory blacklist = LibRegistryRelationship.getBlacklist(components, registryID);
-    for (uint256 i = 0; i < blacklist.length; i++) {
-      if (has(components, accountID, npcIndex, blacklist[i])) return false;
-    }
-
-    // get the whitelist and compare
-    uint256[] memory whitelist = LibRegistryRelationship.getWhitelist(components, registryID);
-    if (whitelist.length == 0) return true;
-    for (uint256 i = 0; i < whitelist.length; i++) {
-      if (has(components, accountID, npcIndex, whitelist[i])) return true;
-    }
-
+    if (isBlacklisted(components, accountID, registryID)) return false;
+    if (isWhitelisted(components, accountID, registryID)) return true;
     return false;
   }
 
@@ -74,6 +61,36 @@ library LibRelationship {
     uint256 relIndex
   ) internal view returns (bool) {
     return get(components, accountID, npcIndex, relIndex) != 0;
+  }
+
+  // Check whether an account is blacklisted from advancing to a specific relationship flag.
+  function isBlacklisted(
+    IUintComp components,
+    uint256 accountID,
+    uint256 registryID
+  ) internal view returns (bool) {
+    uint256[] memory blacklist = LibRegistryRelationship.getBlacklist(components, registryID);
+    uint256 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
+    for (uint256 i = 0; i < blacklist.length; i++) {
+      if (has(components, accountID, npcIndex, blacklist[i])) return true;
+    }
+    return false;
+  }
+
+  // Check whether an account is whitelisted to advance to a specific relationship flag.
+  // If the whitelist is empty, the relationship advancement is valid.
+  function isWhitelisted(
+    IUintComp components,
+    uint256 accountID,
+    uint256 registryID
+  ) internal view returns (bool) {
+    uint256[] memory whitelist = LibRegistryRelationship.getWhitelist(components, registryID);
+    uint256 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
+    if (whitelist.length == 0) return true;
+    for (uint256 i = 0; i < whitelist.length; i++) {
+      if (has(components, accountID, npcIndex, whitelist[i])) return true;
+    }
+    return false;
   }
 
   /////////////////
