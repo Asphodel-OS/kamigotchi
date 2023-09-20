@@ -27,14 +27,25 @@ library LibRegistryRelationship {
     IWorld world,
     IUintComp components,
     uint256 npcIndex,
-    uint256 relationshipIndex
+    uint256 relIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id);
-    setNpcIndex(components, id, npcIndex);
-    setRelationshipIndex(components, id, relationshipIndex);
+    IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, npcIndex);
+    IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, relIndex);
     return id;
+  }
+
+  // Delete a Registry entry for a Relationship.
+  function delete_(IUintComp components, uint256 id) internal {
+    removeIsRegistry(components, id);
+    removeIsRelationship(components, id);
+    removeRelationshipIndex(components, id);
+    removeNPCIndex(components, id);
+    removeName(components, id);
+    removeBlacklist(components, id);
+    removeWhitelist(components, id);
   }
 
   /////////////////
@@ -54,14 +65,6 @@ library LibRegistryRelationship {
 
   /////////////////
   // SETTERS
-
-  function setNpcIndex(IUintComp components, uint256 id, uint256 value) internal {
-    IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, value);
-  }
-
-  function setRelationshipIndex(IUintComp components, uint256 id, uint256 value) internal {
-    IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, value);
-  }
 
   function setBlacklist(IUintComp components, uint256 id, uint256[] memory value) internal {
     BlacklistComponent(getAddressById(components, BlacklistCompID)).set(id, value);
@@ -86,14 +89,14 @@ library LibRegistryRelationship {
     return IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).getValue(id);
   }
 
-  function getBlacklist(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    if (!hasBlacklist(components, id)) return new uint256[](0);
-    return BlacklistComponent(getAddressById(components, BlacklistCompID)).getValue(id);
-  }
-
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
     if (!hasName(components, id)) return "";
     return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+  }
+
+  function getBlacklist(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
+    if (!hasBlacklist(components, id)) return new uint256[](0);
+    return BlacklistComponent(getAddressById(components, BlacklistCompID)).getValue(id);
   }
 
   function getWhitelist(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
@@ -102,25 +105,61 @@ library LibRegistryRelationship {
   }
 
   /////////////////
+  // REMOVERS
+
+  function removeIsRegistry(IUintComp components, uint256 id) internal {
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+  }
+
+  function removeIsRelationship(IUintComp components, uint256 id) internal {
+    IsRelationshipComponent(getAddressById(components, IsRelCompID)).remove(id);
+  }
+
+  function removeRelationshipIndex(IUintComp components, uint256 id) internal {
+    IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).remove(id);
+  }
+
+  function removeNPCIndex(IUintComp components, uint256 id) internal {
+    IndexNPCComponent(getAddressById(components, IndexNPCCompID)).remove(id);
+  }
+
+  function removeName(IUintComp components, uint256 id) internal {
+    if (hasName(components, id)) NameComponent(getAddressById(components, NameCompID)).remove(id);
+  }
+
+  function removeBlacklist(IUintComp components, uint256 id) internal {
+    if (hasBlacklist(components, id))
+      BlacklistComponent(getAddressById(components, BlacklistCompID)).remove(id);
+  }
+
+  function removeWhitelist(IUintComp components, uint256 id) internal {
+    if (hasWhitelist(components, id))
+      WhitelistComponent(getAddressById(components, WhitelistCompID)).remove(id);
+  }
+
+  /////////////////
   // QUERIES
 
   // Get a Relationship Registry Entity by its RelationshipIndex and NPCIndex.
   function get(
     IUintComp components,
-    uint256 index,
-    uint256 npcIndex
+    uint256 npcIndex,
+    uint256 relIndex
   ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(
+    QueryFragment[] memory fragments = new QueryFragment[](4);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsRelCompID), "");
+    fragments[2] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IsRelCompID),
-      abi.encode(index)
-    );
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IsRegCompID),
+      getComponentById(components, IndexNPCCompID),
       abi.encode(npcIndex)
     );
+    fragments[3] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexRelCompID),
+      abi.encode(relIndex)
+    );
+
     uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) result = results[0];
   }
