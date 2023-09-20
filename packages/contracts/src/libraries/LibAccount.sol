@@ -183,6 +183,10 @@ library LibAccount {
   /////////////////
   // CHECKS
 
+  function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsAccountComponent(getAddressById(components, IsAccountCompID)).has(id);
+  }
+
   // Check whether an Account can move to a Location from where they currently are.
   // This function assumes that the id provided belongs to an Account.
   // NOTE(ja): This function can include any other checks we want moving forward.

@@ -19,8 +19,12 @@ import { _RegistryCreateQuestRequirementSystem } from "./ethers-contracts/_Regis
 import { _RegistryCreateQuestRewardSystem } from "./ethers-contracts/_RegistryCreateQuestRewardSystem";
 import { _RegistryCreateQuestSystem } from "./ethers-contracts/_RegistryCreateQuestSystem";
 import { _RegistryCreateReviveSystem } from "./ethers-contracts/_RegistryCreateReviveSystem";
+import { _RegistryCreateSkillDescriptionSystem } from "./ethers-contracts/_RegistryCreateSkillDescriptionSystem";
+import { _RegistryCreateSkillRequirementSystem } from "./ethers-contracts/_RegistryCreateSkillRequirementSystem";
+import { _RegistryCreateSkillSystem } from "./ethers-contracts/_RegistryCreateSkillSystem";
 import { _RegistryCreateTraitSystem } from "./ethers-contracts/_RegistryCreateTraitSystem";
 import { _RegistryDeleteQuestSystem } from "./ethers-contracts/_RegistryDeleteQuestSystem";
+import { _RegistryDeleteSkillSystem } from "./ethers-contracts/_RegistryDeleteSkillSystem";
 import { _RegistryUpdateFoodSystem } from "./ethers-contracts/_RegistryUpdateFoodSystem";
 import { _RegistryUpdateGearSystem } from "./ethers-contracts/_RegistryUpdateGearSystem";
 import { _RegistryUpdateModSystem } from "./ethers-contracts/_RegistryUpdateModSystem";
@@ -88,8 +92,12 @@ export type SystemTypes = {
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem;
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem;
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem;
+  "system._Registry.Skill.Create.Description": _RegistryCreateSkillDescriptionSystem;
+  "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem;
+  "system._Registry.Skill.Create.Skill": _RegistryCreateSkillSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem;
+  "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem;
   "system._Registry.Food.Update": _RegistryUpdateFoodSystem;
   "system._Registry.Gear.Update": _RegistryUpdateGearSystem;
   "system._Registry.Mod.Update": _RegistryUpdateModSystem;

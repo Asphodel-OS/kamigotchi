@@ -33,6 +33,7 @@
     "IndexGearComponent",
     "IndexHandComponent",
     "IndexItemComponent",
+    "IndexSkillComponent",
     "IndexModComponent",
     "IndexNodeComponent",
     "IndexNPCComponent",
@@ -45,6 +46,7 @@
     "IsConfigComponent",
     "IsCompleteComponent",
     "IsDataComponent",
+    "IsDescriptionComponent",
     "IsEquippedComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
@@ -62,6 +64,7 @@
     "IsObjectiveComponent",
     "IsQuestComponent",
     "IsScoreComponent",
+    "IsSkillComponent",
     "IsTraitComponent",
     "LevelComponent",
     "LocationComponent",
@@ -229,6 +232,24 @@
       ]
     },
     {
+      "name": "_RegistryCreateSkillSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateSkillDescriptionSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateSkillRequirementSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_RegistryCreateTraitSystem",
       "writeAccess": [
         "*"
@@ -236,6 +257,12 @@
     },
     {
       "name": "_RegistryDeleteQuestSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryDeleteSkillSystem",
       "writeAccess": [
         "*"
       ]

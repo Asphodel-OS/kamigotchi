@@ -36,7 +36,7 @@ contract PetLevelSystem is System {
     // consumer experience, level pet up, increase its SP and heal it to full
     LibExperience.dec(components, id, levelCost);
     LibExperience.incLevel(components, id, 1);
-    LibSkill.inc(components, id, 1);
+    LibSkill.incPoints(components, id, 1);
     LibPet.heal(components, id, LibPet.calcTotalHealth(components, id));
 
     // signal a metadata update

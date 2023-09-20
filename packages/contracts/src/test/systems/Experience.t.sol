@@ -98,12 +98,12 @@ contract ExperienceTest is SetupTemplate {
     while (++numLoops < levelingCurve.length - 1) {
       for (uint i; i < _numPets; i++) {
         currLevel = LibExperience.getLevel(components, _petIDs[i]);
-        skillPoints = LibSkill.get(components, _petIDs[i]);
+        skillPoints = LibSkill.getPoints(components, _petIDs[i]);
         expPoints = LibExperience.get(components, _petIDs[i]);
 
         _PetLevelSystem.executeTyped(_petIDs[i]);
         assertEq(LibExperience.getLevel(components, _petIDs[i]), currLevel + 1);
-        assertEq(LibSkill.get(components, _petIDs[i]), skillPoints + 1);
+        assertEq(LibSkill.getPoints(components, _petIDs[i]), skillPoints + 1);
         assertEq(LibExperience.get(components, _petIDs[i]), expPoints - levelingCurve[currLevel]);
       }
     }
