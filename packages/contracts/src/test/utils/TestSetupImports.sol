@@ -24,8 +24,13 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+<<<<<<< HEAD
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+=======
+import { LibRegistryRelationship } from "libraries/LibRegistryRelationship.sol";
+>>>>>>> 4fc19405 (update deploy file)
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibRelationship } from "libraries/LibRelationship.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
@@ -36,6 +41,7 @@ import { AddressOperatorComponent, ID as AddressOperatorComponentID } from "comp
 import { AddressOwnerComponent, ID as AddressOwnerComponentID } from "components/AddressOwnerComponent.sol";
 import { AffinityComponent, ID as AffinityComponentID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceComponentID } from "components/BalanceComponent.sol";
+import { BlacklistComponent, ID as BlacklistComponentID } from "components/BlacklistComponent.sol";
 import { BlockLastComponent, ID as BlockLastComponentID } from "components/BlockLastComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealComponentID } from "components/BlockRevealComponent.sol";
 import { CanNameComponent, ID as CanNameComponentID } from "components/CanNameComponent.sol";
@@ -71,6 +77,7 @@ import { IndexNodeComponent, ID as IndexNodeComponentID } from "components/Index
 import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNPCComponent.sol";
 import { IndexObjectiveComponent, ID as IndexObjectiveComponentID } from "components/IndexObjectiveComponent.sol";
 import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
+import { IndexRelationshipComponent, ID as IndexRelationshipComponentID } from "components/IndexRelationshipComponent.sol";
 import { IndexReviveComponent, ID as IndexReviveComponentID } from "components/IndexReviveComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestComponentID } from "components/IndexQuestComponent.sol";
 import { IndexTraitComponent, ID as IndexTraitComponentID } from "components/IndexTraitComponent.sol";
@@ -90,6 +97,7 @@ import { IsNPCComponent, ID as IsNPCComponentID } from "components/IsNPCComponen
 import { IsPetComponent, ID as IsPetComponentID } from "components/IsPetComponent.sol";
 import { IsProductionComponent, ID as IsProductionComponentID } from "components/IsProductionComponent.sol";
 import { IsRegistryComponent, ID as IsRegistryComponentID } from "components/IsRegistryComponent.sol";
+import { IsRelationshipComponent, ID as IsRelationshipComponentID } from "components/IsRelationshipComponent.sol";
 import { IsRequirementComponent, ID as IsRequirementComponentID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardComponentID } from "components/IsRewardComponent.sol";
 import { IsRoomComponent, ID as IsRoomComponentID } from "components/IsRoomComponent.sol";
@@ -124,6 +132,7 @@ import { TypeComponent, ID as TypeComponentID } from "components/TypeComponent.s
 import { UpgradesComponent, ID as UpgradesComponentID } from "components/UpgradesComponent.sol";
 import { ValueComponent, ID as ValueComponentID } from "components/ValueComponent.sol";
 import { ViolenceComponent, ID as ViolenceComponentID } from "components/ViolenceComponent.sol";
+import { WhitelistComponent, ID as WhitelistComponentID } from "components/WhitelistComponent.sol";
 
 // Systems
 import { _devGiveTokensSystem, ID as _devGiveTokensSystemID } from "systems/_devGiveTokensSystem.sol";
@@ -145,16 +154,22 @@ import { _RegistryCreateQuestSystem, ID as _RegistryCreateQuestSystemID } from "
 import { _RegistryCreateQuestObjectiveSystem, ID as _RegistryCreateQuestObjectiveSystemID } from "systems/_RegistryCreateQuestObjectiveSystem.sol";
 import { _RegistryCreateQuestRequirementSystem, ID as _RegistryCreateQuestRequirementSystemID } from "systems/_RegistryCreateQuestRequirementSystem.sol";
 import { _RegistryCreateQuestRewardSystem, ID as _RegistryCreateQuestRewardSystemID } from "systems/_RegistryCreateQuestRewardSystem.sol";
+import { _RegistryCreateRelationshipSystem, ID as _RegistryCreateRelationshipSystemID } from "systems/_RegistryCreateRelationshipSystem.sol";
 import { _RegistryCreateReviveSystem, ID as _RegistryCreateReviveSystemID } from "systems/_RegistryCreateReviveSystem.sol";
 import { _RegistryCreateSkillSystem, ID as _RegistryCreateSkillSystemID } from "systems/_RegistryCreateSkillSystem.sol";
 import { _RegistryCreateSkillEffectSystem, ID as _RegistryCreateSkillEffectSystemID } from "systems/_RegistryCreateSkillEffectSystem.sol";
 import { _RegistryCreateSkillRequirementSystem, ID as _RegistryCreateSkillRequirementSystemID } from "systems/_RegistryCreateSkillRequirementSystem.sol";
 import { _RegistryCreateTraitSystem, ID as _RegistryCreateTraitSystemID } from "systems/_RegistryCreateTraitSystem.sol";
 import { _RegistryDeleteQuestSystem, ID as _RegistryDeleteQuestSystemID } from "systems/_RegistryDeleteQuestSystem.sol";
+<<<<<<< HEAD
 import { _RegistryDeleteSkillSystem, ID as _RegistryDeleteSkillSystemID } from "systems/_RegistryDeleteSkillSystem.sol";
+=======
+import { _RegistryDeleteRelationshipSystem, ID as _RegistryDeleteRelationshipSystemID } from "systems/_RegistryDeleteRelationshipSystem.sol";
+>>>>>>> 4fc19405 (update deploy file)
 import { _RegistryUpdateFoodSystem, ID as _RegistryUpdateFoodSystemID } from "systems/_RegistryUpdateFoodSystem.sol";
 import { _RegistryUpdateGearSystem, ID as _RegistryUpdateGearSystemID } from "systems/_RegistryUpdateGearSystem.sol";
 import { _RegistryUpdateModSystem, ID as _RegistryUpdateModSystemID } from "systems/_RegistryUpdateModSystem.sol";
+import { _RegistryUpdateRelationshipSystem, ID as _RegistryUpdateRelationshipSystemID } from "systems/_RegistryUpdateRelationshipSystem.sol";
 import { _RegistryUpdateReviveSystem, ID as _RegistryUpdateReviveSystemID } from "systems/_RegistryUpdateReviveSystem.sol";
 import { _RegistryUpdateTraitSystem, ID as _RegistryUpdateTraitSystemID } from "systems/_RegistryUpdateTraitSystem.sol";
 import { _RoomCreateSystem, ID as _RoomCreateSystemID } from "systems/_RoomCreateSystem.sol";
@@ -192,7 +207,11 @@ import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/Pr
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
 import { QuestAcceptSystem, ID as QuestAcceptSystemID } from "systems/QuestAcceptSystem.sol";
 import { QuestCompleteSystem, ID as QuestCompleteSystemID } from "systems/QuestCompleteSystem.sol";
+<<<<<<< HEAD
 import { SkillUpgradeSystem, ID as SkillUpgradeSystemID } from "systems/SkillUpgradeSystem.sol";
+=======
+import { RelationshipAdvanceSystem, ID as RelationshipAdvanceSystemID } from "systems/RelationshipAdvanceSystem.sol";
+>>>>>>> 4fc19405 (update deploy file)
 
 // Tokens
 import { Farm20 } from "tokens/Farm20.sol";
@@ -205,6 +224,7 @@ AddressOperatorComponent _AddressOperatorComponent;
 AddressOwnerComponent _AddressOwnerComponent;
 AffinityComponent _AffinityComponent;
 BalanceComponent _BalanceComponent;
+BlacklistComponent _BlacklistComponent;
 BlockLastComponent _BlockLastComponent;
 BlockRevealComponent _BlockRevealComponent;
 CanNameComponent _CanNameComponent;
@@ -240,6 +260,7 @@ IndexNodeComponent _IndexNodeComponent;
 IndexNPCComponent _IndexNPCComponent;
 IndexObjectiveComponent _IndexObjectiveComponent;
 IndexPetComponent _IndexPetComponent;
+IndexRelationshipComponent _IndexRelationshipComponent;
 IndexReviveComponent _IndexReviveComponent;
 IndexQuestComponent _IndexQuestComponent;
 IndexTraitComponent _IndexTraitComponent;
@@ -259,6 +280,7 @@ IsNPCComponent _IsNPCComponent;
 IsPetComponent _IsPetComponent;
 IsProductionComponent _IsProductionComponent;
 IsRegistryComponent _IsRegistryComponent;
+IsRelationshipComponent _IsRelationshipComponent;
 IsRequirementComponent _IsRequirementComponent;
 IsRewardComponent _IsRewardComponent;
 IsRoomComponent _IsRoomComponent;
@@ -293,6 +315,7 @@ TypeComponent _TypeComponent;
 UpgradesComponent _UpgradesComponent;
 ValueComponent _ValueComponent;
 ViolenceComponent _ViolenceComponent;
+WhitelistComponent _WhitelistComponent;
 
 // System vars
 _devGiveTokensSystem __devGiveTokensSystem;
@@ -314,16 +337,22 @@ _RegistryCreateQuestSystem __RegistryCreateQuestSystem;
 _RegistryCreateQuestObjectiveSystem __RegistryCreateQuestObjectiveSystem;
 _RegistryCreateQuestRequirementSystem __RegistryCreateQuestRequirementSystem;
 _RegistryCreateQuestRewardSystem __RegistryCreateQuestRewardSystem;
+_RegistryCreateRelationshipSystem __RegistryCreateRelationshipSystem;
 _RegistryCreateReviveSystem __RegistryCreateReviveSystem;
 _RegistryCreateSkillSystem __RegistryCreateSkillSystem;
 _RegistryCreateSkillEffectSystem __RegistryCreateSkillEffectSystem;
 _RegistryCreateSkillRequirementSystem __RegistryCreateSkillRequirementSystem;
 _RegistryCreateTraitSystem __RegistryCreateTraitSystem;
 _RegistryDeleteQuestSystem __RegistryDeleteQuestSystem;
+<<<<<<< HEAD
 _RegistryDeleteSkillSystem __RegistryDeleteSkillSystem;
+=======
+_RegistryDeleteRelationshipSystem __RegistryDeleteRelationshipSystem;
+>>>>>>> 4fc19405 (update deploy file)
 _RegistryUpdateFoodSystem __RegistryUpdateFoodSystem;
 _RegistryUpdateGearSystem __RegistryUpdateGearSystem;
 _RegistryUpdateModSystem __RegistryUpdateModSystem;
+_RegistryUpdateRelationshipSystem __RegistryUpdateRelationshipSystem;
 _RegistryUpdateReviveSystem __RegistryUpdateReviveSystem;
 _RegistryUpdateTraitSystem __RegistryUpdateTraitSystem;
 _RoomCreateSystem __RoomCreateSystem;
@@ -361,7 +390,11 @@ ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
 QuestAcceptSystem _QuestAcceptSystem;
 QuestCompleteSystem _QuestCompleteSystem;
+<<<<<<< HEAD
 SkillUpgradeSystem _SkillUpgradeSystem;
+=======
+RelationshipAdvanceSystem _RelationshipAdvanceSystem;
+>>>>>>> 4fc19405 (update deploy file)
 
 // Token vars
 Farm20 _Farm20;
@@ -375,6 +408,7 @@ _AddressOperatorComponent = AddressOperatorComponent(component(AddressOperatorCo
 _AddressOwnerComponent = AddressOwnerComponent(component(AddressOwnerComponentID));
 _AffinityComponent = AffinityComponent(component(AffinityComponentID));
 _BalanceComponent = BalanceComponent(component(BalanceComponentID));
+_BlacklistComponent = BlacklistComponent(component(BlacklistComponentID));
 _BlockLastComponent = BlockLastComponent(component(BlockLastComponentID));
 _BlockRevealComponent = BlockRevealComponent(component(BlockRevealComponentID));
 _CanNameComponent = CanNameComponent(component(CanNameComponentID));
@@ -410,6 +444,7 @@ _IndexNodeComponent = IndexNodeComponent(component(IndexNodeComponentID));
 _IndexNPCComponent = IndexNPCComponent(component(IndexNPCComponentID));
 _IndexObjectiveComponent = IndexObjectiveComponent(component(IndexObjectiveComponentID));
 _IndexPetComponent = IndexPetComponent(component(IndexPetComponentID));
+_IndexRelationshipComponent = IndexRelationshipComponent(component(IndexRelationshipComponentID));
 _IndexReviveComponent = IndexReviveComponent(component(IndexReviveComponentID));
 _IndexQuestComponent = IndexQuestComponent(component(IndexQuestComponentID));
 _IndexTraitComponent = IndexTraitComponent(component(IndexTraitComponentID));
@@ -429,6 +464,7 @@ _IsNPCComponent = IsNPCComponent(component(IsNPCComponentID));
 _IsPetComponent = IsPetComponent(component(IsPetComponentID));
 _IsProductionComponent = IsProductionComponent(component(IsProductionComponentID));
 _IsRegistryComponent = IsRegistryComponent(component(IsRegistryComponentID));
+_IsRelationshipComponent = IsRelationshipComponent(component(IsRelationshipComponentID));
 _IsRequirementComponent = IsRequirementComponent(component(IsRequirementComponentID));
 _IsRewardComponent = IsRewardComponent(component(IsRewardComponentID));
 _IsRoomComponent = IsRoomComponent(component(IsRoomComponentID));
@@ -463,6 +499,7 @@ _TypeComponent = TypeComponent(component(TypeComponentID));
 _UpgradesComponent = UpgradesComponent(component(UpgradesComponentID));
 _ValueComponent = ValueComponent(component(ValueComponentID));
 _ViolenceComponent = ViolenceComponent(component(ViolenceComponentID));
+_WhitelistComponent = WhitelistComponent(component(WhitelistComponentID));
 
 __devGiveTokensSystem = _devGiveTokensSystem(system(_devGiveTokensSystemID));
 __ConfigSetSystem = _ConfigSetSystem(system(_ConfigSetSystemID));
@@ -483,16 +520,22 @@ __RegistryCreateQuestSystem = _RegistryCreateQuestSystem(system(_RegistryCreateQ
 __RegistryCreateQuestObjectiveSystem = _RegistryCreateQuestObjectiveSystem(system(_RegistryCreateQuestObjectiveSystemID));
 __RegistryCreateQuestRequirementSystem = _RegistryCreateQuestRequirementSystem(system(_RegistryCreateQuestRequirementSystemID));
 __RegistryCreateQuestRewardSystem = _RegistryCreateQuestRewardSystem(system(_RegistryCreateQuestRewardSystemID));
+__RegistryCreateRelationshipSystem = _RegistryCreateRelationshipSystem(system(_RegistryCreateRelationshipSystemID));
 __RegistryCreateReviveSystem = _RegistryCreateReviveSystem(system(_RegistryCreateReviveSystemID));
 __RegistryCreateSkillSystem = _RegistryCreateSkillSystem(system(_RegistryCreateSkillSystemID));
 __RegistryCreateSkillEffectSystem = _RegistryCreateSkillEffectSystem(system(_RegistryCreateSkillEffectSystemID));
 __RegistryCreateSkillRequirementSystem = _RegistryCreateSkillRequirementSystem(system(_RegistryCreateSkillRequirementSystemID));
 __RegistryCreateTraitSystem = _RegistryCreateTraitSystem(system(_RegistryCreateTraitSystemID));
 __RegistryDeleteQuestSystem = _RegistryDeleteQuestSystem(system(_RegistryDeleteQuestSystemID));
+<<<<<<< HEAD
 __RegistryDeleteSkillSystem = _RegistryDeleteSkillSystem(system(_RegistryDeleteSkillSystemID));
+=======
+__RegistryDeleteRelationshipSystem = _RegistryDeleteRelationshipSystem(system(_RegistryDeleteRelationshipSystemID));
+>>>>>>> 4fc19405 (update deploy file)
 __RegistryUpdateFoodSystem = _RegistryUpdateFoodSystem(system(_RegistryUpdateFoodSystemID));
 __RegistryUpdateGearSystem = _RegistryUpdateGearSystem(system(_RegistryUpdateGearSystemID));
 __RegistryUpdateModSystem = _RegistryUpdateModSystem(system(_RegistryUpdateModSystemID));
+__RegistryUpdateRelationshipSystem = _RegistryUpdateRelationshipSystem(system(_RegistryUpdateRelationshipSystemID));
 __RegistryUpdateReviveSystem = _RegistryUpdateReviveSystem(system(_RegistryUpdateReviveSystemID));
 __RegistryUpdateTraitSystem = _RegistryUpdateTraitSystem(system(_RegistryUpdateTraitSystemID));
 __RoomCreateSystem = _RoomCreateSystem(system(_RoomCreateSystemID));
@@ -530,7 +573,11 @@ _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 _QuestAcceptSystem = QuestAcceptSystem(system(QuestAcceptSystemID));
 _QuestCompleteSystem = QuestCompleteSystem(system(QuestCompleteSystemID));
+<<<<<<< HEAD
 _SkillUpgradeSystem = SkillUpgradeSystem(system(SkillUpgradeSystemID));
+=======
+_RelationshipAdvanceSystem = RelationshipAdvanceSystem(system(RelationshipAdvanceSystemID));
+>>>>>>> 4fc19405 (update deploy file)
 
 _Farm20 = _Farm20ProxySystem.getToken();
 _Pet721 = _Pet721ProxySystem.getToken();

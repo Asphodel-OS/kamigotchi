@@ -230,6 +230,12 @@
       ]
     },
     {
+      "name": "_RegistryCreateRelationshipSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "_RegistryCreateReviveSystem",
       "writeAccess": [
         "*"
@@ -285,6 +291,12 @@
     },
     {
       "name": "_RegistryUpdateModSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateRelationshipSystem",
       "writeAccess": [
         "*"
       ]
@@ -624,14 +636,18 @@
       ]
     },
     {
+      "name": "RelationshipAdvanceSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
-        "BalanceComponent",
         "BlockLastComponent",
         "IdHolderComponent",
         "IsSkillComponent",
-        "SkillPointComponent",
-        "TypeComponent"
+        "SkillPointComponent"
       ]
     }
   ],
@@ -657,7 +673,9 @@
     "LibRegistryItem",
     "LibRegistryQuests",
     "LibRegistrySkill",
+    "LibRegistryRelationship",
     "LibRegistryTrait",
+    "LibRelationship",
     "LibRoom",
     "LibScore",
     "LibSkill",
