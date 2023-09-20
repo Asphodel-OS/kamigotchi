@@ -24,6 +24,7 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -191,6 +192,7 @@ import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/Pr
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
 import { QuestAcceptSystem, ID as QuestAcceptSystemID } from "systems/QuestAcceptSystem.sol";
 import { QuestCompleteSystem, ID as QuestCompleteSystemID } from "systems/QuestCompleteSystem.sol";
+import { SkillSelectSystem, ID as SkillSelectSystemID } from "systems/SkillSelectSystem.sol";
 
 // Tokens
 import { Farm20 } from "tokens/Farm20.sol";
@@ -359,6 +361,7 @@ ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
 QuestAcceptSystem _QuestAcceptSystem;
 QuestCompleteSystem _QuestCompleteSystem;
+SkillSelectSystem _SkillSelectSystem;
 
 // Token vars
 Farm20 _Farm20;
@@ -527,6 +530,7 @@ _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 _QuestAcceptSystem = QuestAcceptSystem(system(QuestAcceptSystemID));
 _QuestCompleteSystem = QuestCompleteSystem(system(QuestCompleteSystemID));
+_SkillSelectSystem = SkillSelectSystem(system(SkillSelectSystemID));
 
 _Farm20 = _Farm20ProxySystem.getToken();
 _Pet721 = _Pet721ProxySystem.getToken();
