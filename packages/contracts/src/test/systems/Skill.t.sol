@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
-contract QuestsTest is SetupTemplate {
+contract SkillTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
   }
