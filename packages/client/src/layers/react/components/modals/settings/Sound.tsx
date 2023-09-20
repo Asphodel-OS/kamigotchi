@@ -1,41 +1,64 @@
-import { dataStore } from "layers/react/store/createStore";
 import styled from "styled-components";
+
 import mutedSoundImage from 'src/assets/images/icons/sound_muted_native.png';
 import soundImage from 'src/assets/images/icons/sound_native.png';
+import { useSoundSettings } from "layers/react/store/soundSettings";
+import { playClick } from "utils/sounds";
 
 
-interface Props { }
+export const Sound = () => {
+  const { volumeFX, volumeMusic, setVolumeFX, setVolumeMusic } = useSoundSettings();
 
-export const Sound = (props: Props) => {
-  const { sound: { volume }, setSoundState } = dataStore();
-  const muted = volume == 0;
-
-  const setVolume = (e: any) => {
-    const soundVolume = e.target.value as number;
-    setSoundState({ volume: soundVolume });
+  const toggleVolume = (type: string) => {
+    let volume = (type === 'fx') ? volumeFX : volumeMusic;
+    let setVolume = (type === 'fx') ? setVolumeFX : setVolumeMusic;
+    (volume == 0) ? setVolume(0.5) : setVolume(0);
+    playClick();
   };
 
-  const toggleSound = () => {
-    muted ? setSoundState({ volume: 0.5 }) : setSoundState({ volume: 0 });
-  };
+  const VolumeRow = (type: string) => {
+    let label = '';
+    let volume = 0;
+    let setVolume = (v: number) => { };
 
-  return (
-    <Section>
-      <Header>Sound</Header>
+    if (type === 'fx') {
+      label = 'FX';
+      volume = volumeFX;
+      setVolume = setVolumeFX;
+    } else if (type === 'music') {
+      label = 'Music';
+      volume = volumeMusic;
+      setVolume = setVolumeMusic;
+    }
+
+    return (
       <Row>
-        <Text style={{ flexGrow: 2 }}>Volume</Text>
+        <Text style={{ flexGrow: 2 }}>{label}</Text>
         <RangeInput
           type='range'
           min='0'
           max='1'
           step='0.1'
           value={volume}
-          onChange={setVolume}
+          onChange={(e) => setVolume(e.target.value as unknown as number)}
         />
-        <div className='window' onClick={toggleSound} style={{ pointerEvents: 'auto', padding: '0px 6px' }}>
-          <img src={!muted ? soundImage : mutedSoundImage} alt='sound_icon' />
+        <div
+          className='window'
+          onClick={() => toggleVolume(type)}
+          style={{ pointerEvents: 'auto', padding: '0px 6px' }
+          }>
+          <img src={(volume != 0) ? soundImage : mutedSoundImage} alt='sound_icon' />
         </div>
       </Row>
+    );
+  }
+
+
+  return (
+    <Section>
+      <Header>Sound</Header>
+      {VolumeRow('music')}
+      {VolumeRow('fx')}
     </Section>
   );
 }
@@ -51,10 +74,13 @@ const Header = styled.div`
   color: #333;
   text-align: left;
   font-family: Pixel;
+  padding-bottom: .5vw;
 `;
 
 const Row = styled.div`
-  padding: .7vw;
+  padding-left: .7vw;
+  padding-right: .7vw;
+  padding-bottom: .3vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -65,7 +91,7 @@ const Row = styled.div`
 const Text = styled.p`
   color: #333;
   font-family: Pixel;
-  font-size: .6vw;
+  font-size: .8vw;
   text-align: left;
 `;
 
