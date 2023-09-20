@@ -4,6 +4,7 @@
     "AddressOwnerComponent",
     "AffinityComponent",
     "BalanceComponent",
+    "BlacklistComponent",
     "BlockLastComponent",
     "BlockRevealComponent",
     "CanNameComponent",
@@ -39,6 +40,7 @@
     "IndexNPCComponent",
     "IndexObjectiveComponent",
     "IndexPetComponent",
+    "IndexRelationshipComponent",
     "IndexReviveComponent",
     "IndexQuestComponent",
     "IndexTraitComponent",
@@ -58,6 +60,7 @@
     "IsPetComponent",
     "IsProductionComponent",
     "IsRegistryComponent",
+    "IsRelationshipComponent",
     "IsRequirementComponent",
     "IsRewardComponent",
     "IsRoomComponent",
@@ -91,7 +94,8 @@
     "TypeComponent",
     "UpgradesComponent",
     "ValueComponent",
-    "ViolenceComponent"
+    "ViolenceComponent",
+    "WhitelistComponent"
   ],
   "systems": [
     {
