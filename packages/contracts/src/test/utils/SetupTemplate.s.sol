@@ -213,6 +213,8 @@ abstract contract SetupTemplate is TestSetupImports {
     _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
   }
 
+  /* QUESTS */
+
   function _acceptQuest(
     uint256 playerIndex,
     uint256 questIndex
@@ -228,6 +230,18 @@ abstract contract SetupTemplate is TestSetupImports {
     _QuestCompleteSystem.executeTyped(questID);
   }
 
+  /* SKILLS */
+
+  function _selectSkill(
+    uint256 playerIndex,
+    uint256 targetID,
+    uint256 skillIndex
+  ) internal virtual {
+    address operator = _getOperator(playerIndex);
+    vm.prank(operator);
+    _SkillSelectSystem.executeTyped(targetID, skillIndex);
+  }
+
   /////////////////
   // GETTERS
 
@@ -235,6 +249,15 @@ abstract contract SetupTemplate is TestSetupImports {
     uint accountID = _getAccount(playerIndex);
     uint inventoryID = LibInventory.get(components, accountID, itemIndex);
     return LibInventory.getBalance(components, inventoryID);
+  }
+
+  /////////////////
+  // ADMIN POWERS
+
+  function _giveSkillPoint(uint256 id, uint256 amt) internal {
+    vm.startPrank(deployer);
+    LibSkill.incPoints(components, id, 1);
+    vm.stopPrank();
   }
 
   /////////////////
@@ -302,8 +325,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////////////////////////////////
   // REGISTRIES
 
-  /////////////////
-  // QUESTS
+  /* QUESTS */
 
   function _createObjective(
     uint256 questIndex,
@@ -355,8 +377,7 @@ abstract contract SetupTemplate is TestSetupImports {
     __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
   }
 
-  /////////////////
-  // SKILLS
+  /* SKILLS */
 
   function _createSkill(uint256 index, string memory type_) public {
     vm.prank(deployer);
@@ -383,8 +404,7 @@ abstract contract SetupTemplate is TestSetupImports {
     __RegistryCreateSkillDescriptionSystem.executeTyped(index, name, description);
   }
 
-  /////////////////
-  // TRAITS
+  /* TRAITS */
 
   function registerTrait(
     uint specialIndex,

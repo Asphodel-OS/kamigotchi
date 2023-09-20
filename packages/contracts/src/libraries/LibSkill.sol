@@ -127,7 +127,7 @@ library LibSkill {
   function checkUseCurrent(
     IUintComp components,
     uint256 conditionID,
-    uint256 accountID
+    uint256 targetID
   ) internal returns (bool) {
     // details of condition
     string memory _type = getType(components, conditionID);
@@ -135,7 +135,7 @@ library LibSkill {
     uint256 expected = getValue(components, conditionID);
 
     // use resource
-    return useBalanceOf(components, accountID, expected, _type, index);
+    return useBalanceOf(components, targetID, expected, _type, index);
   }
 
   // if type is related to skill, handle it here. else direct to account/pet logic
@@ -195,8 +195,7 @@ library LibSkill {
   function decPoints(IUintComp components, uint256 id, uint256 value) internal {
     uint256 curr = getPoints(components, id);
     require(curr >= value, "LibSkill: not enough points");
-    uint256 diff = curr - value;
-    setPoints(components, id, diff);
+    setPoints(components, id, curr - value);
   }
 
   /////////////////

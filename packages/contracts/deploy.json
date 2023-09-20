@@ -623,9 +623,11 @@
       "name": "SkillSelectSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BlockLastComponent",
         "IdHolderComponent",
         "IsSkillComponent",
-        "SkillPointComponent"
+        "SkillPointComponent",
+        "TypeComponent"
       ]
     }
   ],

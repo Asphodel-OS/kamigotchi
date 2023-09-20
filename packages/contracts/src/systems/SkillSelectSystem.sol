@@ -30,7 +30,7 @@ contract SkillSelectSystem is System {
       require(false, "SkillSelect: not an account or pet");
     }
 
-    LibSkill.checkRequirements(components, id, skillIndex);
+    require(LibSkill.checkRequirements(components, id, skillIndex), "SkillSelect: req not met");
     LibSkill.assignSkillFromIndex(world, components, id, skillIndex);
 
     LibAccount.updateLastBlock(components, accountID);
