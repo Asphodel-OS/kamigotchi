@@ -2,6 +2,7 @@ import { dataStore } from 'layers/react/store/createStore';
 import { Room } from 'constants/phaser/rooms';
 import { disableClickableObjects } from '../utils/disableClickableObjects';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
+import { useSoundSettings } from 'layers/react/store/soundSettings';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -12,6 +13,7 @@ export interface GameScene {
 // the main game scene of Kamigotchi. this controls the rendering of assets
 // and the playback of sound in each room
 export class GameScene extends Phaser.Scene implements GameScene {
+  // TODO: use WebAudioSound which has the setVolume function
   private gameSound: Phaser.Sound.BaseSound | undefined;
   private currentVolume: number;
   public prevRoom: number;
@@ -73,12 +75,10 @@ export class GameScene extends Phaser.Scene implements GameScene {
       }
 
       if (this.room.music) {
-        const {
-          sound: { volume },
-        } = dataStore.getState();
-        this.currentVolume = volume;
+        const { volumeMusic } = useSoundSettings.getState();
+        this.currentVolume = volumeMusic;
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
-          this.gameSound = this.sound.add(this.room.music.key, { volume: volume, loop: true });
+          this.gameSound = this.sound.add(this.room.music.key, { volume: volumeMusic, loop: true });
           this.gameSound.play();
         }
       }
@@ -87,15 +87,13 @@ export class GameScene extends Phaser.Scene implements GameScene {
     this.prevRoom = this.currentRoom;
 
     // subscribe to changes in sound.volume
-    dataStore.subscribe(() => {
-      const {
-        sound: { volume },
-      } = dataStore.getState();
-      if (this.gameSound && volume !== this.currentVolume) {
-        this.currentVolume = volume;
-        this.gameSound.setVolume(volume);
-        this.update();
+    useSoundSettings.subscribe(() => {
+      const { volumeMusic } = useSoundSettings.getState();
+      if (this.gameSound && volumeMusic !== this.currentVolume) {
+        this.currentVolume = volumeMusic;
+        this.gameSound.setVolume(volumeMusic);
       }
+      this.update();
     });
   }
 

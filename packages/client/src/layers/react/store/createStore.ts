@@ -12,10 +12,6 @@ export interface SelectedEntities {
   room: number;
 }
 
-export interface SoundState {
-  volume: number;
-}
-
 export interface VisibleButtons {
   chat: boolean;
   help: boolean;
@@ -85,7 +81,6 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
 export interface DataStore {
   dialogue: Dialogue;
   selectedEntities: SelectedEntities;
-  sound: SoundState;
   visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
 }
@@ -94,7 +89,6 @@ interface DataStoreActions {
   setDialogue: (data: Dialogue) => void;
   setVisibleModals: (data: VisibleModals) => void;
   setVisibleButtons: (data: VisibleButtons) => void;
-  setSoundState: (data: SoundState) => void;
   setSelectedEntities: (data: SelectedEntities) => void;
   toggleVisibleButtons: (isOn: boolean) => void;
   toggleVisibleModals: (isOn: boolean) => void;
@@ -109,7 +103,6 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       node: 0 as EntityIndex,
       room: 0 as number,
     },
-    sound: { volume: 0.7 },
     visibleModals: {
       bridgeERC20: false,
       bridgeERC721: false,
@@ -148,7 +141,6 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
     setDialogue: (data: Dialogue) => set((state: DataStore) => ({ ...state, dialogue: data })),
     setSelectedEntities: (data: SelectedEntities) =>
       set((state: DataStore) => ({ ...state, selectedEntities: data })),
-    setSoundState: (data: SoundState) => set((state: DataStore) => ({ ...state, sound: data })),
     setVisibleButtons: (data: VisibleButtons) =>
       set((state: DataStore) => ({ ...state, visibleButtons: data })),
     setVisibleModals: (data: VisibleModals) =>
