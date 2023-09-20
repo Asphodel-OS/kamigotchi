@@ -117,9 +117,8 @@ export function registerHelpModal() {
                 <br />
                 <br />
                 Health determines a Kami's well being. The lower a Kami's health,
-                the easier it is for them to be Liquidated for other Kamigotchi,
-                will kills them. Dead Kamigotchi are not destroyed, but must be
-                resurrected using a Ribbon.
+                the easier it is for them to be liquidated by other Kami,
+                which kills them. Dead Kamigotchi must be resurrected using a Ribbon.
                 <br />
                 Health drains slowly when harvesting on a node. As Health drains, Kamigotchi
                 produce $MUSU based on their Power stat. More Power increases both Health drain rate
