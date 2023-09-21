@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface SkillSelectSystemInterface extends utils.Interface {
+export interface SkillUpgradeSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256,uint256)": FunctionFragment;
@@ -87,12 +87,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface SkillSelectSystem extends BaseContract {
+export interface SkillUpgradeSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SkillSelectSystemInterface;
+  interface: SkillUpgradeSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

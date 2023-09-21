@@ -65,7 +65,7 @@ import ProductionStartSystem from "../abi/ProductionStartSystem.json";
 import ProductionStopSystem from "../abi/ProductionStopSystem.json";
 import QuestAcceptSystem from "../abi/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
-import SkillSelectSystem from "../abi/SkillSelectSystem.json";
+import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
 import TradeCancelSystem from "../abi/TradeCancelSystem.json";
@@ -139,7 +139,7 @@ export const SystemAbis = {
   "system.Production.Stop": ProductionStopSystem.abi,
   "system.Quest.Accept": QuestAcceptSystem.abi,
   "system.Quest.Complete": QuestCompleteSystem.abi,
-  "system.Skill.Select": SkillSelectSystem.abi,
+  "system.Skill.Upgrade": SkillUpgradeSystem.abi,
   "system.Trade.Accept": TradeAcceptSystem.abi,
   "system.Trade.AddTo": TradeAddToSystem.abi,
   "system.Trade.Cancel": TradeCancelSystem.abi,

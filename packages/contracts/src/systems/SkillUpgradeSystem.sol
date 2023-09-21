@@ -8,29 +8,35 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
-uint256 constant ID = uint256(keccak256("system.Skill.Select"));
+uint256 constant ID = uint256(keccak256("system.Skill.Upgrade"));
 
-// level a pet up
-contract SkillSelectSystem is System {
+// upgrade a skill
+contract SkillUpgradeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 id, uint256 skillIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    if (LibAccount.isAccount(components, id)) {
-      require(accountID == id, "SkillSelect: acc not urs");
-    } else if (LibPet.isPet(components, id)) {
-      require(accountID == LibPet.getAccount(components, id), "SkillSelect: pet not urs");
+    bool isPet = LibPet.isPet(components, id);
+    bool isAccount = LibAccount.isAccount(components, id);
+
+    require(isPet || isAccount, "SkillUpgrade: invalid target");
+
+    if (isAccount) {
+      require(accountID == id, "SkillUpgrade: not your account");
+    } else if (isPet) {
+      require(accountID == LibPet.getAccount(components, id), "SkillUpgrade: pet not urs");
       require(
         LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
-        "PetLevel: must be in same room"
+        "SkillUpgrade: must be in same room"
       );
-    } else {
-      require(false, "SkillSelect: not an account or pet");
     }
 
-    require(LibSkill.checkRequirements(components, id, skillIndex), "SkillSelect: req not met");
+    require(
+      LibSkill.checkRequirements(components, id, skillIndex),
+      "SkillUpgrade: unmet requirements"
+    );
     LibSkill.assignSkillFromIndex(world, components, id, skillIndex);
 
     LibAccount.updateLastBlock(components, accountID);

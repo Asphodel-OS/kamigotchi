@@ -232,14 +232,14 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* SKILLS */
 
-  function _selectSkill(
+  function _upgradeSkill(
     uint256 playerIndex,
     uint256 targetID,
     uint256 skillIndex
   ) internal virtual {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
-    _SkillSelectSystem.executeTyped(targetID, skillIndex);
+    _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
   }
 
   /////////////////

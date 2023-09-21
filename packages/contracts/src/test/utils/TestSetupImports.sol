@@ -192,7 +192,7 @@ import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/Pr
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
 import { QuestAcceptSystem, ID as QuestAcceptSystemID } from "systems/QuestAcceptSystem.sol";
 import { QuestCompleteSystem, ID as QuestCompleteSystemID } from "systems/QuestCompleteSystem.sol";
-import { SkillSelectSystem, ID as SkillSelectSystemID } from "systems/SkillSelectSystem.sol";
+import { SkillUpgradeSystem, ID as SkillUpgradeSystemID } from "systems/SkillUpgradeSystem.sol";
 
 // Tokens
 import { Farm20 } from "tokens/Farm20.sol";
@@ -361,7 +361,7 @@ ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
 QuestAcceptSystem _QuestAcceptSystem;
 QuestCompleteSystem _QuestCompleteSystem;
-SkillSelectSystem _SkillSelectSystem;
+SkillUpgradeSystem _SkillUpgradeSystem;
 
 // Token vars
 Farm20 _Farm20;
@@ -530,7 +530,7 @@ _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 _QuestAcceptSystem = QuestAcceptSystem(system(QuestAcceptSystemID));
 _QuestCompleteSystem = QuestCompleteSystem(system(QuestCompleteSystemID));
-_SkillSelectSystem = SkillSelectSystem(system(SkillSelectSystemID));
+_SkillUpgradeSystem = SkillUpgradeSystem(system(SkillUpgradeSystemID));
 
 _Farm20 = _Farm20ProxySystem.getToken();
 _Pet721 = _Pet721ProxySystem.getToken();
