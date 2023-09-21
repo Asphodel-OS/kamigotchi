@@ -68,12 +68,22 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "skillIndex",
+          "name": "index",
           "type": "uint256"
         },
         {
           "internalType": "string",
           "name": "type_",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
           "type": "string"
         }
       ],
@@ -117,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string)": "68c47df2",
+    "executeTyped(uint256,string,string,string)": "5b220354",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

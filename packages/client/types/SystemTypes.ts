@@ -19,7 +19,7 @@ import { _RegistryCreateQuestRequirementSystem } from "./ethers-contracts/_Regis
 import { _RegistryCreateQuestRewardSystem } from "./ethers-contracts/_RegistryCreateQuestRewardSystem";
 import { _RegistryCreateQuestSystem } from "./ethers-contracts/_RegistryCreateQuestSystem";
 import { _RegistryCreateReviveSystem } from "./ethers-contracts/_RegistryCreateReviveSystem";
-import { _RegistryCreateSkillDescriptionSystem } from "./ethers-contracts/_RegistryCreateSkillDescriptionSystem";
+import { _RegistryCreateSkillEffectSystem } from "./ethers-contracts/_RegistryCreateSkillEffectSystem";
 import { _RegistryCreateSkillRequirementSystem } from "./ethers-contracts/_RegistryCreateSkillRequirementSystem";
 import { _RegistryCreateSkillSystem } from "./ethers-contracts/_RegistryCreateSkillSystem";
 import { _RegistryCreateTraitSystem } from "./ethers-contracts/_RegistryCreateTraitSystem";
@@ -93,9 +93,9 @@ export type SystemTypes = {
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem;
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem;
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem;
-  "system._Registry.Skill.Create.Description": _RegistryCreateSkillDescriptionSystem;
+  "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillEffectSystem;
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem;
-  "system._Registry.Skill.Create.Skill": _RegistryCreateSkillSystem;
+  "system._Registry.Skill.Create": _RegistryCreateSkillSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem;
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem;

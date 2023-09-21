@@ -58,7 +58,7 @@ export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
 export type { IsConfigComponent } from "./IsConfigComponent";
 export type { IsDataComponent } from "./IsDataComponent";
-export type { IsDescriptionComponent } from "./IsDescriptionComponent";
+export type { IsEffectComponent } from "./IsEffectComponent";
 export type { IsEquippedComponent } from "./IsEquippedComponent";
 export type { IsFungibleComponent } from "./IsFungibleComponent";
 export type { IsInventoryComponent } from "./IsInventoryComponent";
@@ -155,7 +155,6 @@ export type { _RegistryCreateQuestRequirementSystem } from "./_RegistryCreateQue
 export type { _RegistryCreateQuestRewardSystem } from "./_RegistryCreateQuestRewardSystem";
 export type { _RegistryCreateQuestSystem } from "./_RegistryCreateQuestSystem";
 export type { _RegistryCreateReviveSystem } from "./_RegistryCreateReviveSystem";
-export type { _RegistryCreateSkillDescriptionSystem } from "./_RegistryCreateSkillDescriptionSystem";
 export type { _RegistryCreateSkillRequirementSystem } from "./_RegistryCreateSkillRequirementSystem";
 export type { _RegistryCreateSkillSystem } from "./_RegistryCreateSkillSystem";
 export type { _RegistryCreateTraitSystem } from "./_RegistryCreateTraitSystem";
@@ -229,7 +228,7 @@ export { IsAccountComponent__factory } from "./factories/IsAccountComponent__fac
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
 export { IsConfigComponent__factory } from "./factories/IsConfigComponent__factory";
 export { IsDataComponent__factory } from "./factories/IsDataComponent__factory";
-export { IsDescriptionComponent__factory } from "./factories/IsDescriptionComponent__factory";
+export { IsEffectComponent__factory } from "./factories/IsEffectComponent__factory";
 export { IsEquippedComponent__factory } from "./factories/IsEquippedComponent__factory";
 export { IsFungibleComponent__factory } from "./factories/IsFungibleComponent__factory";
 export { IsInventoryComponent__factory } from "./factories/IsInventoryComponent__factory";
@@ -326,7 +325,6 @@ export { _RegistryCreateQuestRequirementSystem__factory } from "./factories/_Reg
 export { _RegistryCreateQuestRewardSystem__factory } from "./factories/_RegistryCreateQuestRewardSystem__factory";
 export { _RegistryCreateQuestSystem__factory } from "./factories/_RegistryCreateQuestSystem__factory";
 export { _RegistryCreateReviveSystem__factory } from "./factories/_RegistryCreateReviveSystem__factory";
-export { _RegistryCreateSkillDescriptionSystem__factory } from "./factories/_RegistryCreateSkillDescriptionSystem__factory";
 export { _RegistryCreateSkillRequirementSystem__factory } from "./factories/_RegistryCreateSkillRequirementSystem__factory";
 export { _RegistryCreateSkillSystem__factory } from "./factories/_RegistryCreateSkillSystem__factory";
 export { _RegistryCreateTraitSystem__factory } from "./factories/_RegistryCreateTraitSystem__factory";

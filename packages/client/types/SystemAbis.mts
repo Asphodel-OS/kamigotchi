@@ -19,7 +19,7 @@ import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRe
 import _RegistryCreateQuestRewardSystem from "../abi/_RegistryCreateQuestRewardSystem.json";
 import _RegistryCreateQuestSystem from "../abi/_RegistryCreateQuestSystem.json";
 import _RegistryCreateReviveSystem from "../abi/_RegistryCreateReviveSystem.json";
-import _RegistryCreateSkillDescriptionSystem from "../abi/_RegistryCreateSkillDescriptionSystem.json";
+import _RegistryCreateSkillEffectSystem from "../abi/_RegistryCreateSkillEffectSystem.json";
 import _RegistryCreateSkillRequirementSystem from "../abi/_RegistryCreateSkillRequirementSystem.json";
 import _RegistryCreateSkillSystem from "../abi/_RegistryCreateSkillSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
@@ -93,9 +93,9 @@ export const SystemAbis = {
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem.abi,
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
-  "system._Registry.Skill.Create.Description": _RegistryCreateSkillDescriptionSystem.abi,
+  "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillEffectSystem.abi,
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
-  "system._Registry.Skill.Create.Skill": _RegistryCreateSkillSystem.abi,
+  "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,

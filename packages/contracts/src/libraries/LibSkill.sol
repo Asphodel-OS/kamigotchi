@@ -14,7 +14,6 @@ import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillCompone
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
-import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { SkillPointComponent, ID as SPCompID } from "components/SkillPointComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -117,7 +116,7 @@ library LibSkill {
   // GETTERS
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexSkillComponent(getAddressById(components, IndexSkillCompID)).getValue(id);
+    return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
   }
 
   function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {

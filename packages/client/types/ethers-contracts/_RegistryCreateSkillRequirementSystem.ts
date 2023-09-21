@@ -31,7 +31,7 @@ export interface _RegistryCreateSkillRequirementSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,7 +52,6 @@ export interface _RegistryCreateSkillRequirementSystemInterface
     functionFragment: "executeTyped",
     values: [
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -128,7 +127,6 @@ export interface _RegistryCreateSkillRequirementSystem extends BaseContract {
 
     executeTyped(
       skillIndex: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
@@ -150,7 +148,6 @@ export interface _RegistryCreateSkillRequirementSystem extends BaseContract {
 
   executeTyped(
     skillIndex: PromiseOrValue<BigNumberish>,
-    logicType: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
     index: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BigNumberish>,
@@ -172,7 +169,6 @@ export interface _RegistryCreateSkillRequirementSystem extends BaseContract {
 
     executeTyped(
       skillIndex: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
@@ -206,7 +202,6 @@ export interface _RegistryCreateSkillRequirementSystem extends BaseContract {
 
     executeTyped(
       skillIndex: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
@@ -229,7 +224,6 @@ export interface _RegistryCreateSkillRequirementSystem extends BaseContract {
 
     executeTyped(
       skillIndex: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
