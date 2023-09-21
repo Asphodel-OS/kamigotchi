@@ -20,13 +20,12 @@ contract SkillUpgradeSystem is System {
 
     bool isPet = LibPet.isPet(components, id);
     bool isAccount = LibAccount.isAccount(components, id);
-
     require(isPet || isAccount, "SkillUpgrade: invalid target");
 
     if (isAccount) {
-      require(accountID == id, "SkillUpgrade: not your account");
+      require(accountID == id, "SkillUpgrade: not ur account");
     } else if (isPet) {
-      require(accountID == LibPet.getAccount(components, id), "SkillUpgrade: pet not urs");
+      require(accountID == LibPet.getAccount(components, id), "SkillUpgrade: not ur pet");
       require(
         LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
         "SkillUpgrade: must be in same room"
@@ -37,7 +36,15 @@ contract SkillUpgradeSystem is System {
       LibSkill.checkRequirements(components, id, skillIndex),
       "SkillUpgrade: unmet requirements"
     );
-    LibSkill.assignSkillFromIndex(world, components, id, skillIndex);
+
+    // create the skill if it doesnt exist
+    uint256 skillID = LibSkill.get(components, id, skillIndex);
+    if (skillID == 0) skillID = LibSkill.create(world, components, id, skillIndex);
+
+    // increment points on skill and decrement points on entity
+    // balance check is run in the library
+    LibSkill.dec(components, id, 1);
+    LibSkill.inc(components, skillID, 1);
 
     LibAccount.updateLastBlock(components, accountID);
     return "";
