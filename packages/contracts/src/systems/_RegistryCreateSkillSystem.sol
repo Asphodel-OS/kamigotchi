@@ -7,26 +7,34 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create.Skill"));
+uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create"));
 
 contract _RegistryCreateSkillSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 skillIndex, string memory type_) = abi.decode(arguments, (uint256, string));
+    (uint256 index, string memory type_, string memory name, string memory description) = abi
+      .decode(arguments, (uint256, string, string, string));
 
-    require(!LibString.eq(type_, ""), "Skill type cannot be empty");
+    require(index != 0, "SkillCreate: index cannot be 0");
+    require(!LibString.eq(type_, ""), "SkillCreate: type cannot be empty");
+    require(!LibString.eq(name, ""), "SkillCreate: name cannot be empty");
+    require(!LibString.eq(description, ""), "SkillCreate: description cannot be empty");
 
-    // create an empty Skill and set any non-zero fields
-    uint256 id = LibRegistrySkill.createSkill(world, components, skillIndex, type_);
+    uint256 registryID = LibRegistrySkill.getByIndex(components, index);
+    require(registryID == 0, "SkillCreate: already exists");
+
+    LibRegistrySkill.create(world, components, index, type_, name, description);
 
     return "";
   }
 
   function executeTyped(
-    uint256 skillIndex,
-    string memory type_
+    uint256 index,
+    string memory type_,
+    string memory name,
+    string memory description
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(skillIndex, type_));
+    return execute(abi.encode(index, type_, name, description));
   }
 }

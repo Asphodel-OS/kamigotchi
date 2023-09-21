@@ -14,13 +14,13 @@ contract _RegistryDeleteSkillSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     uint256 index = abi.decode(arguments, (uint256));
 
-    uint256 desID = LibRegistrySkill.getDescriptionByIndex(components, index);
+    uint256 desID = LibRegistrySkill.getByIndex(components, index);
     require(desID != 0, "Skill does not exist");
-    LibRegistrySkill.deleteSkillDescription(components, desID);
+    LibRegistrySkill.delete_(components, desID);
 
-    uint256[] memory skills = LibRegistrySkill.getSkillsByIndex(components, index);
+    uint256[] memory skills = LibRegistrySkill.getEffectsByIndex(components, index);
     for (uint256 i = 0; i < skills.length; i++) {
-      LibRegistrySkill.deleteSkill(components, skills[i]);
+      LibRegistrySkill.deleteEffect(components, skills[i]);
     }
 
     uint256[] memory requirements = LibRegistrySkill.getRequirementsByIndex(components, index);

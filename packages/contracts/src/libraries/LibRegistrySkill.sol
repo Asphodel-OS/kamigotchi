@@ -12,10 +12,10 @@ import { DescriptionComponent, ID as DescCompID } from "components/DescriptionCo
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
-import { IsDescriptionComponent, ID as IsDescriptionCompID } from "components/IsDescriptionComponent.sol";
-import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
+import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
+import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
+import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -31,74 +31,75 @@ library LibRegistrySkill {
   // Create a registry entry for a Skill
   // Skills have a similar structure to Quests,
   // except its copied permenently onto the entity once completed
-  function createSkill(
+  function create(
     IWorld world,
     IUintComp components,
     uint256 skillIndex,
-    string memory type_
+    string memory type_,
+    string memory name,
+    string memory description
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsSkill(components, id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
-    return id;
-  }
-
-  // Creates a description for a Skill
-  function createSkillDescription(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    string memory name,
-    string memory description
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsRegistry(components, id);
-    setIsDescription(components, id);
-    setSkillIndex(components, id, index);
     setName(components, id, name);
     setDescription(components, id, description);
-
     return id;
   }
 
-  function createEmptyRequirement(
+  function createEffect(
     IWorld world,
     IUintComp components,
     uint256 skillIndex,
-    string memory logicType,
+    string memory type_
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsEffect(components, id);
+    setSkillIndex(components, id, skillIndex);
+    setType(components, id, type_);
+    return id;
+  }
+
+  function createRequirement(
+    IWorld world,
+    IUintComp components,
+    uint256 skillIndex,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setSkillIndex(components, id, skillIndex);
-    setLogicType(components, id, logicType);
     setType(components, id, type_);
     return id;
   }
 
-  function deleteSkill(IUintComp components, uint256 id) internal {
+  function delete_(IUintComp components, uint256 id) internal {
     unsetIsRegistry(components, id);
     unsetIsSkill(components, id);
     unsetSkillIndex(components, id);
     unsetType(components, id);
-  }
-
-  function deleteSkillDescription(IUintComp components, uint256 id) internal {
-    unsetIsRegistry(components, id);
-    unsetIsDescription(components, id);
-    unsetSkillIndex(components, id);
     unsetName(components, id);
     unsetDescription(components, id);
+  }
+
+  function deleteEffect(IUintComp components, uint256 id) internal {
+    unsetIsRegistry(components, id);
+    unsetIsEffect(components, id);
+    unsetSkillIndex(components, id);
+    unsetType(components, id);
+    unsetLogicType(components, id);
+    unsetIndex(components, id);
+    unsetValue(components, id);
   }
 
   function deleteRequirement(IUintComp components, uint256 id) internal {
     unsetIsRegistry(components, id);
     unsetIsRequirement(components, id);
     unsetSkillIndex(components, id);
-    unsetLogicType(components, id);
     unsetType(components, id);
     unsetIndex(components, id);
     unsetValue(components, id);
@@ -107,20 +108,20 @@ library LibRegistrySkill {
   /////////////////
   // SETTERS
 
+  function setIsEffect(IUintComp components, uint256 id) internal {
+    IsEffectComponent(getAddressById(components, IsEffectCompID)).set(id);
+  }
+
   function setIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
   }
 
-  function setIsDescription(IUintComp components, uint256 id) internal {
-    IsDescriptionComponent(getAddressById(components, IsRegCompID)).set(id);
+  function setIsRequirement(IUintComp components, uint256 id) internal {
+    IsRequirementComponent(getAddressById(components, IsReqCompID)).set(id);
   }
 
   function setIsSkill(IUintComp components, uint256 id) internal {
     IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
-  }
-
-  function setIsRequirement(IUintComp components, uint256 id) internal {
-    IsRequirementComponent(getAddressById(components, IsRequirementCompID)).set(id);
   }
 
   function setIndex(IUintComp components, uint256 id, uint256 index) internal {
@@ -154,28 +155,20 @@ library LibRegistrySkill {
   /////////////////
   // UNSETTERS
 
-  function unsetIsDescription(IUintComp components, uint256 id) internal {
-    if (IsDescriptionComponent(getAddressById(components, IsRegCompID)).has(id)) {
-      IsDescriptionComponent(getAddressById(components, IsRegCompID)).remove(id);
-    }
+  function unsetIsEffect(IUintComp components, uint256 id) internal {
+    IsEffectComponent(getAddressById(components, IsEffectCompID)).remove(id);
   }
 
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    if (IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id)) {
-      IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
-    }
-  }
-
-  function unsetIsSkill(IUintComp components, uint256 id) internal {
-    if (IsSkillComponent(getAddressById(components, IsSkillCompID)).has(id)) {
-      IsSkillComponent(getAddressById(components, IsSkillCompID)).remove(id);
-    }
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
   }
 
   function unsetIsRequirement(IUintComp components, uint256 id) internal {
-    if (IsRequirementComponent(getAddressById(components, IsRequirementCompID)).has(id)) {
-      IsRequirementComponent(getAddressById(components, IsRequirementCompID)).remove(id);
-    }
+    IsRequirementComponent(getAddressById(components, IsReqCompID)).remove(id);
+  }
+
+  function unsetIsSkill(IUintComp components, uint256 id) internal {
+    IsSkillComponent(getAddressById(components, IsSkillCompID)).remove(id);
   }
 
   function unsetIndex(IUintComp components, uint256 id) internal {
@@ -185,15 +178,11 @@ library LibRegistrySkill {
   }
 
   function unsetSkillIndex(IUintComp components, uint256 id) internal {
-    if (IndexSkillComponent(getAddressById(components, IndexSkillCompID)).has(id)) {
-      IndexSkillComponent(getAddressById(components, IndexSkillCompID)).remove(id);
-    }
+    IndexSkillComponent(getAddressById(components, IndexSkillCompID)).remove(id);
   }
 
   function unsetDescription(IUintComp components, uint256 id) internal {
-    if (DescriptionComponent(getAddressById(components, DescCompID)).has(id)) {
-      DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
-    }
+    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
   }
 
   function unsetLogicType(IUintComp components, uint256 id) internal {
@@ -203,9 +192,7 @@ library LibRegistrySkill {
   }
 
   function unsetName(IUintComp components, uint256 id) internal {
-    if (NameComponent(getAddressById(components, NameCompID)).has(id)) {
-      NameComponent(getAddressById(components, NameCompID)).remove(id);
-    }
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
   }
 
   function unsetType(IUintComp components, uint256 id) internal {
@@ -224,10 +211,7 @@ library LibRegistrySkill {
   // QUERIES
 
   // get registry entry by Skill index
-  function getSkillsByIndex(
-    IUintComp components,
-    uint256 index
-  ) internal view returns (uint256[] memory results) {
+  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsSkillCompID), "");
@@ -237,50 +221,40 @@ library LibRegistrySkill {
       abi.encode(index)
     );
 
-    results = LibQuery.query(fragments);
+    uint256[] memory results = LibQuery.query(fragments);
+    if (results.length != 0) result = results[0];
+  }
+
+  function getEffectsByIndex(
+    IUintComp components,
+    uint256 index
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsEffectCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexSkillCompID),
+      abi.encode(index)
+    );
+
+    return LibQuery.query(fragments);
   }
 
   // get requirements by Skill index
   function getRequirementsByIndex(
     IUintComp components,
     uint256 index
-  ) internal view returns (uint256[] memory results) {
+  ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsRequirementCompID),
-      ""
-    );
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsReqCompID), "");
     fragments[2] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexSkillCompID),
       abi.encode(index)
     );
 
-    results = LibQuery.query(fragments);
-  }
-
-  function getDescriptionByIndex(
-    IUintComp components,
-    uint256 index
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsDescriptionCompID),
-      ""
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexSkillCompID),
-      abi.encode(index)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-
-    if (results.length == 0) return 0;
-    return results[0];
+    return LibQuery.query(fragments);
   }
 }

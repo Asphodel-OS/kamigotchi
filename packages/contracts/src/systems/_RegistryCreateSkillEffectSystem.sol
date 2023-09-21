@@ -13,15 +13,19 @@ contract _RegistryCreateSkillRequirementSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 skillIndex, string memory type_, uint256 index, uint256 value) = abi.decode(
-      arguments,
-      (uint256, string, uint256, uint256)
-    );
+    (
+      uint256 skillIndex,
+      string memory type_,
+      string memory logicType,
+      uint256 index,
+      uint256 value
+    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256));
 
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
     // create an empty Skill and set any non-zero fields
-    uint256 id = LibRegistrySkill.createRequirement(world, components, skillIndex, type_);
+    uint256 id = LibRegistrySkill.createEffect(world, components, skillIndex, type_);
+    if (!LibString.eq(logicType, "")) LibRegistrySkill.setLogicType(components, id, logicType);
     if (index != 0) LibRegistrySkill.setIndex(components, id, index);
     if (value != 0) LibRegistrySkill.setValue(components, id, value);
 
@@ -31,9 +35,10 @@ contract _RegistryCreateSkillRequirementSystem is System {
   function executeTyped(
     uint256 skillIndex,
     string memory type_,
-    uint256 index, // can be empty
-    uint256 value // can be empty
+    string memory logicType, // optional
+    uint256 index, // optional
+    uint256 value // optional
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(skillIndex, type_, index, value));
+    return execute(abi.encode(skillIndex, logicType, type_, index, value));
   }
 }

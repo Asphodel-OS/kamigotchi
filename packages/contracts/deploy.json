@@ -46,7 +46,7 @@
     "IsConfigComponent",
     "IsCompleteComponent",
     "IsDataComponent",
-    "IsDescriptionComponent",
+    "IsEffectComponent",
     "IsEquippedComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
@@ -238,7 +238,7 @@
       ]
     },
     {
-      "name": "_RegistryCreateSkillDescriptionSystem",
+      "name": "_RegistryCreateSkillEffectSystem",
       "writeAccess": [
         "*"
       ]
