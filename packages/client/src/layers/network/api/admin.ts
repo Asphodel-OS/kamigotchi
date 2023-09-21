@@ -218,7 +218,63 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
-  //  REGISTRIES
+  // SKILLS
+
+  async function createSkill(
+    index: number,
+    type: string,
+    name: string,
+    description: string,
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Skill.Create'].executeTyped(
+      index,
+      type,
+      name,
+      description,
+    );
+  }
+
+  async function deleteSkill(index: number) {
+    await sleepIf();
+    return systems['system._Registry.Skill.Delete'].executeTyped(index);
+  }
+
+  async function addSkillEffect(
+    skillIndex: number,
+    type: string,
+    logicType: string,
+    index: number,
+    value: number
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Skill.Create.Effect'].executeTyped(
+      skillIndex,
+      type,
+      logicType,
+      index,
+      value
+    );
+  }
+
+  async function addSkillRequirement(
+    skillIndex: number,
+    type: string,
+    index: number,
+    value: number
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Skill.Create.Requirement'].executeTyped(
+      skillIndex,
+      type,
+      index,
+      value
+    );
+  }
+
+
+  /////////////////
+  //  ITEMS
 
   // @dev add a food item registry entry
   async function registerFood(foodIndex: number, name: string, health: number) {
@@ -415,6 +471,14 @@ export function createAdminAPI(systems: any) {
       revive: {
         create: registerRevive,
         update: updateRegistryRevive,
+      },
+      skill: {
+        create: createSkill,
+        delete: deleteSkill,
+        add: {
+          effect: addSkillEffect,
+          requirement: addSkillRequirement,
+        }
       },
     },
     quest: {

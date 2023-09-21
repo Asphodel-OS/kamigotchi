@@ -135,6 +135,15 @@ export function createPlayerAPI(systems: any) {
   }
 
   /*********************
+   *    SKILLS
+   *********************/
+
+  function upgradeSkill(entityID: BigNumberish, skillIndex: number) {
+    return systems["system.Skill.Upgrade"].executeTyped(entityID, skillIndex);
+  }
+
+
+  /*********************
    *       TRADE
    *********************/
 
@@ -264,6 +273,9 @@ export function createPlayerAPI(systems: any) {
     quests: {
       accept: acceptQuest,
       complete: completeQuest,
+    },
+    skill: {
+      upgrade: upgradeSkill,
     },
     trade: {
       accept: acceptTrade,
