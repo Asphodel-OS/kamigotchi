@@ -93,7 +93,7 @@ export type SystemTypes = {
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem;
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem;
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem;
-  "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillEffectSystem;
+  "system._Registry.Skill.Create.Effect": _RegistryCreateSkillEffectSystem;
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem;
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;

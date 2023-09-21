@@ -7,9 +7,9 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create.Requirement"));
+uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create.Effect"));
 
-contract _RegistryCreateSkillRequirementSystem is System {
+contract _RegistryCreateSkillEffectSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {

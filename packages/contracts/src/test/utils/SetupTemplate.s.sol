@@ -131,7 +131,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _mintMint20(uint playerIndex, uint amount) internal {
     address owner = _owners[playerIndex];
 
-    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
+    uint price = LibConfig.getValueOf(components, "MINT_PRICE");
 
     vm.deal(owner, amount * price);
     vm.prank(owner);
@@ -215,16 +215,13 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
-  function _acceptQuest(
-    uint256 playerIndex,
-    uint256 questIndex
-  ) internal virtual returns (uint256) {
+  function _acceptQuest(uint playerIndex, uint questIndex) internal virtual returns (uint) {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
-    return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint256));
+    return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
   }
 
-  function _completeQuest(uint256 playerIndex, uint256 questID) internal virtual {
+  function _completeQuest(uint playerIndex, uint questID) internal virtual {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
     _QuestCompleteSystem.executeTyped(questID);
@@ -232,11 +229,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* SKILLS */
 
-  function _upgradeSkill(
-    uint256 playerIndex,
-    uint256 targetID,
-    uint256 skillIndex
-  ) internal virtual {
+  function _upgradeSkill(uint playerIndex, uint targetID, uint skillIndex) internal virtual {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
     _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
@@ -254,7 +247,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // ADMIN POWERS
 
-  function _giveSkillPoint(uint256 id, uint256 amt) internal {
+  function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
     LibSkill.incPoints(components, id, 1);
     vm.stopPrank();
@@ -327,13 +320,23 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
-  function _createObjective(
-    uint256 questIndex,
+  function _createQuest(
+    uint index,
+    string memory name,
+    string memory description,
+    uint location
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
+  }
+
+  function _createQuestObjective(
+    uint questIndex,
     string memory name,
     string memory logicType,
     string memory _type,
-    uint256 index, // can be empty
-    uint256 value // can be empty
+    uint index, // can be empty
+    uint value // can be empty
   ) public {
     vm.prank(deployer);
     __RegistryCreateQuestObjectiveSystem.executeTyped(
@@ -346,62 +349,58 @@ abstract contract SetupTemplate is TestSetupImports {
     );
   }
 
-  function _createRequirement(
-    uint256 questIndex,
+  function _createQuestRequirement(
+    uint questIndex,
     string memory logicType,
     string memory _type,
-    uint256 index, // can be empty
-    uint256 value // can be empty
+    uint index, // can be empty
+    uint value // can be empty
   ) public {
     vm.prank(deployer);
     __RegistryCreateQuestRequirementSystem.executeTyped(questIndex, logicType, _type, index, value);
   }
 
-  function _createReward(
-    uint256 questIndex,
+  function _createQuestReward(
+    uint questIndex,
     string memory _type,
-    uint256 itemIndex, // can be empty
-    uint256 value // can be empty
+    uint itemIndex, // can be empty
+    uint value // can be empty
   ) public {
     vm.prank(deployer);
     __RegistryCreateQuestRewardSystem.executeTyped(questIndex, _type, itemIndex, value);
   }
 
-  function _createQuest(
-    uint256 index,
-    string memory name,
-    string memory description,
-    uint256 location
-  ) public {
-    vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
-  }
-
   /* SKILLS */
 
-  function _createSkill(uint256 index, string memory type_) public {
-    vm.prank(deployer);
-    __RegistryCreateSkillSystem.executeTyped(index, type_);
-  }
-
-  function _createSkillRequirement(
-    uint256 skillIndex,
-    string memory logicType,
+  function _createSkill(
+    uint index,
     string memory type_,
-    uint256 index, // can be empty
-    uint256 value // can be empty
-  ) public {
-    vm.prank(deployer);
-    __RegistryCreateSkillRequirementSystem.executeTyped(skillIndex, logicType, type_, index, value);
-  }
-
-  function _createSkillDescription(
-    uint256 index,
     string memory name,
     string memory description
   ) public {
     vm.prank(deployer);
-    __RegistryCreateSkillDescriptionSystem.executeTyped(index, name, description);
+    __RegistryCreateSkillSystem.executeTyped(index, type_, name, description);
+  }
+
+  function _createSkillEffect(
+    uint skillIndex,
+    string memory type_,
+    string memory logicType, // can be empty
+    uint index, // can be empty
+    uint value // can be empty
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateSkillEffectSystem.executeTyped(index, type_, logicType, index, value);
+  }
+
+  function _createSkillRequirement(
+    uint skillIndex,
+    string memory type_,
+    uint index, // can be empty
+    uint value // can be empty
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateSkillRequirementSystem.executeTyped(skillIndex, type_, index, value);
   }
 
   /* TRAITS */

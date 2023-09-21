@@ -155,6 +155,7 @@ export type { _RegistryCreateQuestRequirementSystem } from "./_RegistryCreateQue
 export type { _RegistryCreateQuestRewardSystem } from "./_RegistryCreateQuestRewardSystem";
 export type { _RegistryCreateQuestSystem } from "./_RegistryCreateQuestSystem";
 export type { _RegistryCreateReviveSystem } from "./_RegistryCreateReviveSystem";
+export type { _RegistryCreateSkillEffectSystem } from "./_RegistryCreateSkillEffectSystem";
 export type { _RegistryCreateSkillRequirementSystem } from "./_RegistryCreateSkillRequirementSystem";
 export type { _RegistryCreateSkillSystem } from "./_RegistryCreateSkillSystem";
 export type { _RegistryCreateTraitSystem } from "./_RegistryCreateTraitSystem";
@@ -325,6 +326,7 @@ export { _RegistryCreateQuestRequirementSystem__factory } from "./factories/_Reg
 export { _RegistryCreateQuestRewardSystem__factory } from "./factories/_RegistryCreateQuestRewardSystem__factory";
 export { _RegistryCreateQuestSystem__factory } from "./factories/_RegistryCreateQuestSystem__factory";
 export { _RegistryCreateReviveSystem__factory } from "./factories/_RegistryCreateReviveSystem__factory";
+export { _RegistryCreateSkillEffectSystem__factory } from "./factories/_RegistryCreateSkillEffectSystem__factory";
 export { _RegistryCreateSkillRequirementSystem__factory } from "./factories/_RegistryCreateSkillRequirementSystem__factory";
 export { _RegistryCreateSkillSystem__factory } from "./factories/_RegistryCreateSkillSystem__factory";
 export { _RegistryCreateTraitSystem__factory } from "./factories/_RegistryCreateTraitSystem__factory";

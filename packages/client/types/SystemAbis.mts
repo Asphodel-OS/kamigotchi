@@ -93,7 +93,7 @@ export const SystemAbis = {
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem.abi,
   "system._Registry.Quest.Create": _RegistryCreateQuestSystem.abi,
   "system._Registry.Revive.Create": _RegistryCreateReviveSystem.abi,
-  "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillEffectSystem.abi,
+  "system._Registry.Skill.Create.Effect": _RegistryCreateSkillEffectSystem.abi,
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
