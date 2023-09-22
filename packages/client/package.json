@@ -10,10 +10,11 @@
     }
   },
   "scripts": {
+    "prepare": "rimraf dist && yarn cache:clear",
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
-    "build": "rimraf dist && yarn cache:clear && parcel build src/index.html",
+    "build": "parcel build src/index.html",
     "lint": "eslint . --fix --ext .ts",
-    "start": "yarn cache:clear && yarn parcel src/index.html --port 3000"
+    "start": "yarn prepare && yarn parcel src/index.html --port 3000"
   },
   "devDependencies": {
     "@latticexyz/cli": "^1.34.0",
