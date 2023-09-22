@@ -3,6 +3,11 @@
   "license": "MIT",
   "version": "0.0.0",
   "type": "module",
+  "targets": {
+    "main": {
+      "optimize": true
+    }
+  },
   "scripts": {
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
     "build": "rimraf dist && yarn cache:clear && parcel build src/index.html",
