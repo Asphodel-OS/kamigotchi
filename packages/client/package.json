@@ -12,7 +12,7 @@
   "scripts": {
     "prepare": "rimraf dist && yarn cache:clear",
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
-    "build": "parcel build src/index.html",
+    "build": "parcel build src/index.html --dist-dir ../../dist",
     "lint": "eslint . --fix --ext .ts",
     "start": "yarn prepare && yarn parcel src/index.html --port 3000"
   },
