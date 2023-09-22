@@ -13,6 +13,7 @@ import { registerGasWarningFixture } from './fixtures/GasWarning';
 import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerKamiModal } from './modals/kami';
+import { registerKamiSkillsModal } from './modals/skills';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
@@ -66,6 +67,7 @@ export function registerUIComponents() {
   registerFundOperatorModal();
   registerKamiMintModal();
   registerKamiModal();
+  registerKamiSkillsModal();
   registerLeaderboardModal();
   registerNameKamiModal();
   registerNodeModal();

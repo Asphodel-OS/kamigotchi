@@ -2,17 +2,17 @@ import React from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 
-import { Banner } from './Banner';
-import { KillLogs } from './KillLogs';
-import { Traits } from './Traits';
+import { Selected } from './Selected';
+import { Matrix } from './Matrix';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Skill, getRegistrySkills } from 'layers/react/shapes/Skill';
 import { dataStore } from 'layers/react/store/createStore';
 
-export function registerKamiModal() {
+export function registerKamiSkillsModal() {
   registerUIComponent(
-    'KamiDetails',
+    'KamiSkills',
     {
       colStart: 23,
       colEnd: 81,
@@ -59,7 +59,7 @@ export function registerKamiModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
+      const { selectedEntities } = dataStore();
 
 
       /////////////////
@@ -70,10 +70,7 @@ export function registerKamiModal() {
           layers,
           selectedEntities.kami,
           {
-            account: true,
-            deaths: true,
-            kills: true,
-            traits: true,
+            // account: true,
           }
         );
       }
@@ -81,22 +78,18 @@ export function registerKamiModal() {
       /////////////////
       // ACTIONS
 
-      const levelUp = (kami: Kami) => {
-        //   const actionID = `Leveling up ${kami.name}` as EntityID;
-        //   actions.add({
-        //     id: actionID,
-        //     components: {},
-        //     requirement: () => true,
-        //     updates: () => [],
-        //     execute: async () => {
-        //       return api.pet.level(kami.id);
-        //     },
-        //   })
-
-        // placeholder, clean up later. change to a skill matrix modal button instead
-        setVisibleModals({ ...visibleModals, kamiSkills: true });
+      const upgrade = (kami: Kami) => {
+        const actionID = `Leveling up ${kami.name}` as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.pet.level(kami.id);
+          },
+        })
       }
-
 
 
       /////////////////
@@ -104,14 +97,17 @@ export function registerKamiModal() {
 
       return (
         <ModalWrapperFull
-          divName='kami'
-          id='kamiModal'
-          header={<Banner kami={getSelectedKami()} actions={{ levelUp }}></Banner>}
+          divName='kamiSkills'
+          id='kamiSkillsModal'
+          header={<Selected kami={getSelectedKami()}></Selected>}
           canExit
           overlay
         >
-          <Traits kami={getSelectedKami()} />
-          <KillLogs kami={getSelectedKami()} />
+          <Matrix
+            skills={getRegistrySkills(layers)}
+            holder={getSelectedKami()}
+            actions={{ upgrade }}
+          />
         </ModalWrapperFull>
       );
     }

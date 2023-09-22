@@ -18,6 +18,7 @@ export function setUpWorldAPI(systems: any) {
     await initItems(api);
     await initNpcs(api);
     await initQuests(api);
+    await initSkills(api);
     await initTraits(api);
     await initRelationships(api);
 
@@ -401,6 +402,32 @@ export function setUpWorldAPI(systems: any) {
     api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
+  ////////////////////
+  // SKILL
+
+  async function initSkills(api: any) {
+    await api.registry.skill.create(1, 1, 3, "BASIC", "Aggression", "+1 Violence per level");
+    await api.registry.skill.add.effect(1, "VIOLENCE", "ADD", 0, 1);
+
+    await api.registry.skill.create(2, 1, 3, "BASIC", "Defensiveness", "+1 Harmony per level");
+    await api.registry.skill.add.effect(2, "HARMONY", "ADD", 0, 1);
+
+    await api.registry.skill.create(3, 1, 3, "BASIC", "Acquisitiveness", "+1 Power per level");
+    await api.registry.skill.add.effect(3, "POWER", "ADD", 0, 1);
+
+    await api.registry.skill.create(4, 1, 3, "ADV", "Warmonger", "+1 Health per level");
+    await api.registry.skill.add.effect(4, "VIOLENCE", "ADD", 0, 1);
+    await api.registry.skill.add.requirement(4, "SKILL", 1, 3);
+
+    await api.registry.skill.create(5, 1, 3, "ADV_HARMONY", "Protector", "+1 Harmony per level");
+    await api.registry.skill.add.effect(5, "HARMONY", "ADD", 0, 1);
+    await api.registry.skill.add.requirement(5, "SKILL", 2, 3);
+
+    await api.registry.skill.create(6, 1, 3, "ADV_POWER", "Predator", "+1 Power per level");
+    await api.registry.skill.add.effect(6, "POWER", "ADD", 0, 1);
+    await api.registry.skill.add.requirement(6, "SKILL", 3, 3);
+  }
+
 
   ////////////////////
   // TRAITS
@@ -508,6 +535,9 @@ export function setUpWorldAPI(systems: any) {
     },
     rooms: {
       init: () => initRooms(createAdminAPI(systems)),
+    },
+    skill: {
+      init: () => initSkills(createAdminAPI(systems)),
     },
     traits: {
       init: () => initTraits(createAdminAPI(systems)),

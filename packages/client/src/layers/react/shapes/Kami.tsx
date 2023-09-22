@@ -15,6 +15,7 @@ import { getConfigFieldValue } from './Config';
 import { Kill, getKill } from './Kill';
 import { Production, getProduction } from './Production';
 import { Stats, getStats } from './Stats';
+import { Skill, getSkills } from './Skill';
 import { Traits, TraitIndices, getTraits } from './Trait';
 
 // standardized shape of a Kami Entity
@@ -31,12 +32,13 @@ export interface Kami {
   state: string;
   lastUpdated: number;
   cooldown: number;
-  skillpoints: number;
+  skillPoints: number;
   stats: Stats;
   account?: Account;
   deaths?: Kill[];
   kills?: Kill[];
   production?: Production;
+  skills?: Skill[];
   traits?: Traits;
   affinities?: string[];
   namable: boolean;
@@ -53,6 +55,7 @@ export interface Options {
   deaths?: boolean;
   kills?: boolean;
   production?: boolean;
+  skills?: boolean;
   traits?: boolean;
 }
 
@@ -116,7 +119,7 @@ export const getKami = (
     namable: getComponentValue(CanName, index)?.value as boolean,
     lastUpdated: getComponentValue(LastTime, index)?.value as number,
     cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
-    skillpoints: getComponentValue(SkillPoint, index)?.value as number,
+    skillPoints: getComponentValue(SkillPoint, index)?.value as number,
     stats: getStats(layers, index),
   };
 
@@ -173,6 +176,11 @@ export const getKami = (
     )[0];
     if (productionIndex)
       kami.production = getProduction(layers, productionIndex, { node: true });
+  }
+
+  // populate Skills
+  if (options?.skills) {
+    kami.skills = getSkills(layers, kami.id);
   }
 
   // populate Traits

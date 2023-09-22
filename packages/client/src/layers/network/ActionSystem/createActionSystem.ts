@@ -157,9 +157,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     try {
       // Execute the action
       const tx = await action.execute(requirementResult);
-      console.log("trying")
       if (tx) {
-        console.log("has tx reciept")
         // Wait for all tx events to be reduced
         updateComponent(Action, action.entityIndex, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });
         await awaitStreamValue(txReduced$, (v) => v === tx.hash);
@@ -169,7 +167,6 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
 
       updateComponent(Action, action.entityIndex, { state: ActionState.Complete });
     } catch (e) {
-      console.log("catching")
       handleError(e, action);
     }
 
@@ -179,8 +176,6 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
 
   // Set the action's state to ActionState.Failed
   function handleError(error: any, action: ActionData) {
-    console.log('handle error')
-    // console.log(error.reason);
     updateComponent(Action, action.entityIndex, { metadata: error.reason });
     updateComponent(Action, action.entityIndex, { state: ActionState.Failed });
     remove(action.id);
