@@ -33,8 +33,8 @@ contract SkillUpgradeSystem is System {
     }
 
     require(
-      LibSkill.checkRequirements(components, id, skillIndex),
-      "SkillUpgrade: unmet requirements"
+      LibSkill.checkPrerequisites(components, id, skillIndex),
+      "SkillUpgrade: unmet prerequisites"
     );
 
     // create the skill if it doesnt exist

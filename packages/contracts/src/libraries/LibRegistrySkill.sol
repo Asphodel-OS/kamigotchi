@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
@@ -17,6 +18,7 @@ import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryCom
 import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
+import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -29,12 +31,12 @@ library LibRegistrySkill {
   // INTERACTIONS
 
   // Create a registry entry for a Skill
-  // Skills have a similar structure to Quests,
-  // except its copied permenently onto the entity once completed
   function create(
     IWorld world,
     IUintComp components,
     uint256 skillIndex,
+    uint256 cost,
+    uint256 max,
     string memory type_,
     string memory name,
     string memory description
@@ -43,6 +45,8 @@ library LibRegistrySkill {
     setIsRegistry(components, id);
     setIsSkill(components, id);
     setSkillIndex(components, id, skillIndex);
+    setCost(components, id, cost);
+    setMax(components, id, max);
     setType(components, id, type_);
     setName(components, id, name);
     setDescription(components, id, description);
@@ -81,9 +85,11 @@ library LibRegistrySkill {
     unsetIsRegistry(components, id);
     unsetIsSkill(components, id);
     unsetSkillIndex(components, id);
-    unsetType(components, id);
-    unsetName(components, id);
     unsetDescription(components, id);
+    unsetCost(components, id);
+    unsetType(components, id);
+    unsetMax(components, id);
+    unsetName(components, id);
   }
 
   function deleteEffect(IUintComp components, uint256 id) internal {
@@ -132,12 +138,20 @@ library LibRegistrySkill {
     IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, index);
   }
 
+  function setCost(IUintComp components, uint256 id, uint256 cost) internal {
+    CostComponent(getAddressById(components, CostCompID)).set(id, cost);
+  }
+
   function setDescription(IUintComp components, uint256 id, string memory description) internal {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
+  }
+
+  function setMax(IUintComp components, uint256 id, uint256 max) internal {
+    MaxComponent(getAddressById(components, MaxCompID)).set(id, max);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -171,6 +185,10 @@ library LibRegistrySkill {
     IsSkillComponent(getAddressById(components, IsSkillCompID)).remove(id);
   }
 
+  function unsetCost(IUintComp components, uint256 id) internal {
+    CostComponent(getAddressById(components, CostCompID)).remove(id);
+  }
+
   function unsetIndex(IUintComp components, uint256 id) internal {
     if (IndexComponent(getAddressById(components, IndexCompID)).has(id)) {
       IndexComponent(getAddressById(components, IndexCompID)).remove(id);
@@ -189,6 +207,10 @@ library LibRegistrySkill {
     if (LogicTypeComponent(getAddressById(components, LogicTypeCompID)).has(id)) {
       LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
     }
+  }
+
+  function unsetMax(IUintComp components, uint256 id) internal {
+    MaxComponent(getAddressById(components, MaxCompID)).remove(id);
   }
 
   function unsetName(IUintComp components, uint256 id) internal {
