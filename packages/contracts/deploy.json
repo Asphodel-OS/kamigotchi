@@ -648,8 +648,10 @@
       "writeAccess": [
         "BlockLastComponent",
         "IdHolderComponent",
+        "IndexSkillComponent",
         "IsSkillComponent",
-        "SkillPointComponent"
+        "SkillPointComponent",
+        "TypeComponent"
       ]
     }
   ],

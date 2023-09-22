@@ -46,12 +46,14 @@ library LibSkill {
     IUintComp components,
     uint256 targetID,
     uint256 skillIndex
-  ) internal view returns (bool) {
+  ) internal returns (bool) {
     uint256 skillID = LibRegistrySkill.getByIndex(components, skillIndex);
     require(skillID != 0, "no skill index found");
 
     // checking points
-    if (getPoints(components, targetID) < getCost(components, skillID)) return false;
+    uint256 cost = getCost(components, skillID);
+    if (getPoints(components, targetID) < cost) return false;
+    else dec(components, targetID, cost);
 
     // checking max skill level
     uint256 existingID = get(components, targetID, skillIndex);

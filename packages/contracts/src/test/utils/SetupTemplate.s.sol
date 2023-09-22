@@ -249,7 +249,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
-    LibSkill.incPoints(components, id, 1);
+    LibSkill.inc(components, id, 1);
     vm.stopPrank();
   }
 
@@ -374,12 +374,14 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createSkill(
     uint index,
+    uint cost,
+    uint max,
     string memory type_,
     string memory name,
     string memory description
   ) public {
     vm.prank(deployer);
-    __RegistryCreateSkillSystem.executeTyped(index, type_, name, description);
+    __RegistryCreateSkillSystem.executeTyped(index, cost, max, type_, name, description);
   }
 
   function _createSkillEffect(
