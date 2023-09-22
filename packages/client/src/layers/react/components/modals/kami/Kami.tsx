@@ -82,18 +82,19 @@ export function registerKamiModal() {
       // ACTIONS
 
       const levelUp = (kami: Kami) => {
-        //   const actionID = `Leveling up ${kami.name}` as EntityID;
-        //   actions.add({
-        //     id: actionID,
-        //     components: {},
-        //     requirement: () => true,
-        //     updates: () => [],
-        //     execute: async () => {
-        //       return api.pet.level(kami.id);
-        //     },
-        //   })
+        const actionID = `Leveling up ${kami.name}` as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.pet.level(kami.id);
+          },
+        })
+      }
 
-        // placeholder, clean up later. change to a skill matrix modal button instead
+      const openSkills = () => {
         setVisibleModals({ ...visibleModals, kamiSkills: true });
       }
 
@@ -106,7 +107,7 @@ export function registerKamiModal() {
         <ModalWrapperFull
           divName='kami'
           id='kamiModal'
-          header={<Banner kami={getSelectedKami()} actions={{ levelUp }}></Banner>}
+          header={<Banner kami={getSelectedKami()} actions={{ levelUp, openSkills }}></Banner>}
           canExit
           overlay
         >

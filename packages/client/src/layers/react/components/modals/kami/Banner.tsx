@@ -6,7 +6,8 @@ import { Tooltip } from "../../library/Tooltip";
 interface Props {
   kami: Kami;
   actions: {
-    levelUp: (kami: Kami) => void;
+    levelUp: (kami: Kami) => void,
+    openSkills: () => void,
   }
 }
 
@@ -35,6 +36,7 @@ export const Banner = (props: Props) => {
             current={props.kami.experience.current * 1}
             total={props.kami.experience.threshold}
             triggerLevelUp={() => props.actions.levelUp(props.kami)}
+            openSkills={() => props.actions.openSkills()}
           />
         </ContentTop>
         <ContentMiddle>

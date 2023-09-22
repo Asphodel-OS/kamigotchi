@@ -2,7 +2,9 @@ import styled from "styled-components";
 
 import { Account } from "layers/react/shapes/Account";
 import { Kami } from "layers/react/shapes/Kami";
-import { Skill, Effect, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
+import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
+import { ActionButton } from "../../library/ActionButton";
+import { Tooltip } from "layers/react/components/library/Tooltip";
 
 
 interface Props {
@@ -55,25 +57,54 @@ export const Matrix = (props: Props) => {
   // DISPLAY
 
   const parseReqText = (req: Requirement, status: Status): string => {
-    switch (req.logic) {
+    switch (req.type) {
       case 'LEVEL':
         return `Requires level ${status.target}`;
       case 'SKILL':
         // TODO: replace skill number with names
-        return `Requires skill ${req.index as number || 0} at level ${status.target} [${status.current}/${status.target}]`;
+        return `Requires skill ${Number(req.index as number || 0)} at level ${status.target} [${status.current}/${status.target}]`;
       default:
         return '???';
     }
   }
 
+  const ReqDisplay = (reqs: Requirement[]) => {
+    if (reqs.length == 0) return <div />;
+    return (
+      <ConditionContainer key='reqs'>
+        <ConditionName>Requirements</ConditionName>
+        {reqs.map((req) => (
+          <ConditionDescription key={req.id}>
+            - {`${parseReqText(req, checkRequirement(req, holder))}`}
+          </ConditionDescription>
+        ))}
+      </ConditionContainer>
+    )
+  }
+
+
   const DisplaySkills = () => {
     return skills.map((skill) => {
       const status = checkPrereqs(skill);
+      const curSkill = holder.skills?.find((n) => n.index === skill.index);
+      const curLevel = Number(curSkill?.level || 0);
 
       return (
         <SkillContainer key={skill.index}>
           <SkillName>{skill.name}</SkillName>
           <SkillDescription>{skill.description}</SkillDescription>
+          <SkillDescription>{`Cost: ${skill.cost} point`}</SkillDescription>
+          <SkillDescription>{`Level: ${curLevel}/${skill.max}`}</SkillDescription>
+          {ReqDisplay(skill.requirements)}
+
+          <Tooltip text={[status.text]}>
+            <ActionButton
+              id='upgrade'
+              text={'upgrade'}
+              disabled={!status.bool}
+              onClick={() => actions.upgrade(holder.id, skill.index)}
+            />
+          </Tooltip>
         </SkillContainer>
       )
     })

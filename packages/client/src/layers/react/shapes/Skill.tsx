@@ -92,13 +92,13 @@ const getSkill = (layers: Layers, entityIndex: EntityIndex): Skill => {
   return {
     id: world.entities[entityIndex],
     index: skillIndex,
-    cost: getComponentValue(Cost, registryIndex)?.value || 0 as number,
-    level: getComponentValue(SkillPoint, entityIndex)?.value || 0 as number,
-    max: getComponentValue(Max, registryIndex)?.value || 0 as number,
+    cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
+    level: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),
+    max: Number(getComponentValue(Max, registryIndex)?.value || 0),
     name: getComponentValue(Name, registryIndex)?.value || '' as string,
     description: getComponentValue(Description, registryIndex)?.value || '' as string,
-    effects: querySkillEffects(layers, registryIndex),
-    requirements: querySkillRequirements(layers, registryIndex),
+    effects: querySkillEffects(layers, skillIndex),
+    requirements: querySkillRequirements(layers, skillIndex),
   };
 }
 
@@ -276,7 +276,7 @@ export const checkRequirement = (
   requirement: Requirement,
   holder: Account | Kami,
 ): Status => {
-  switch (requirement.logic) {
+  switch (requirement.type) {
     case 'LEVEL':
       return checkLevel(requirement, holder);
     case 'SKILL':
@@ -290,8 +290,8 @@ const checkLevel = (
   condition: Requirement,
   holder: Account | Kami,
 ): Status => {
-  const target = condition.value as number || 0;
-  const current = holder.level;
+  const target = Number(condition.value as number || 0);
+  const current = Number(holder.level);
   return {
     target: target,
     current: current,
@@ -303,8 +303,8 @@ const checkSkill = (
   condition: Requirement,
   holder: Account | Kami,
 ): Status => {
-  const target = condition.value as number || 0;
-  const current = holder.skills?.find((n) => n.index === condition.index)?.level || 0;
+  const target = Number(condition.value as number || 0);
+  const current = Number(holder.skills?.find((n) => n.index === condition.index)?.level || 0);
   return {
     target: target,
     current: current,

@@ -23,30 +23,16 @@ export function registerKamiSkillsModal() {
       const {
         network: {
           components: {
-            Balance,
-            Experience,
-            IsPet,
-            IsKill,
-            Level,
-            MediaURI,
-            Name,
-            PetID,
-            SourceID,
-            TargetID,
+            IsSkill,
+            SkillIndex,
+            SkillPoint,
           },
         },
       } = layers;
       return merge(
-        Balance.update$,
-        IsPet.update$,
-        IsKill.update$,
-        Experience.update$,
-        Level.update$,
-        MediaURI.update$,
-        Name.update$,
-        PetID.update$,
-        SourceID.update$,
-        TargetID.update$,
+        IsSkill.update$,
+        SkillIndex.update$,
+        SkillPoint.update$,
       ).pipe(
         map(() => {
           return {
@@ -70,7 +56,7 @@ export function registerKamiSkillsModal() {
           layers,
           selectedEntities.kami,
           {
-            // account: true,
+            skills: true,
           }
         );
       }
@@ -78,15 +64,15 @@ export function registerKamiSkillsModal() {
       /////////////////
       // ACTIONS
 
-      const upgrade = (kami: Kami) => {
-        const actionID = `Leveling up ${kami.name}` as EntityID;
+      const upgrade = (id: string, index: number) => {
+        const actionID = `Upgrading skill ` as EntityID;
         actions.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.pet.level(kami.id);
+            return api.skill.upgrade(id, index);
           },
         })
       }
