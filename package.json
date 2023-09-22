@@ -1,8 +1,8 @@
 {
-  "name": "amudproject",
+  "name": "kamigotchi",
   "version": "1.0.0",
-  "private": true,
   "license": "MIT",
+  "private": true,
   "workspaces": [
     "packages/contracts",
     "packages/client"
@@ -10,10 +10,11 @@
   "scripts": {
     "prepare": "yarn workspace contracts prepare",
     "dev": "run-pty % yarn dev:node % yarn dev:client % yarn dev:contracts",
-    "dev:client": "yarn workspace client run dev",
-    "start:client": "yarn workspace client run start",
-    "dev:node": "yarn workspace contracts run devnode",
-    "dev:contracts": "yarn workspace contracts run dev"
+    "client:build": "yarn workspace client run build",
+    "client:dev": "yarn workspace client run dev",
+    "client:start": "yarn workspace client run start",
+    "contracts:node": "yarn workspace contracts run devnode",
+    "contracts:dev": "yarn workspace contracts run dev"
   },
   "devDependencies": {
     "buffer": "^5.5.0",
@@ -22,6 +23,7 @@
     "path-browserify": "^1.0.0",
     "punycode": "^1.4.1",
     "querystring-es3": "^0.2.1",
+    "rimraf": "^5.0.1",
     "run-pty": "^4.0.3",
     "url": "^0.11.0"
   },

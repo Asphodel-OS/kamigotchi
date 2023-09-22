@@ -249,7 +249,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
-    LibSkill.incPoints(components, id, 1);
+    LibSkill.inc(components, id, amt);
     vm.stopPrank();
   }
 
