@@ -9,9 +9,8 @@
     }
   },
   "scripts": {
-    "prepare": "rimraf dist && yarn cache:clear",
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
-    "build": "parcel build src/index.html",
+    "build": "rimraf dist && yarn cache:clear && parcel build src/index.html",
     "lint": "eslint . --fix --ext .ts",
     "start": "yarn prepare && yarn parcel src/index.html --port 3000"
   },
@@ -30,6 +29,7 @@
     "parcel-reporter-static-files-copy": "^1.4.0",
     "parcel-transformer-csv": "^0.0.3",
     "prettier": "^2.5.1",
+    "rimraf": "^5.0.1",
     "threads": "^1.7.0",
     "tspath": "^2.6.8",
     "typedoc": "^0.23.0",
