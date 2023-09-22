@@ -8,7 +8,6 @@
     "packages/client"
   ],
   "scripts": {
-    "prepare": "yarn workspace contracts prepare",
     "dev": "run-pty % yarn dev:node % yarn dev:client % yarn dev:contracts",
     "client:build": "yarn workspace client run build",
     "client:dev": "yarn workspace client run dev",
