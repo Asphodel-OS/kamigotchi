@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import chatImage from 'assets/images/icons/chat_native.png';
+import { chatIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -28,7 +28,7 @@ export function registerChatButton() {
           hideModal={modalsToHide}
           visible={visibleButtons.chat}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={chatImage} alt='chat_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={chatIcon} alt='chat_icon' />
         </MenuButton>
       );
     }

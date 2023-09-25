@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import kamiImage from 'assets/images/icons/kami_native.png';
+import { kamiIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -28,7 +28,7 @@ export function registerPartyButton() {
           visible={visibleButtons.party}
           hideModal={modalsToHide}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={kamiImage} alt='kami_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={kamiIcon} alt='kami_icon' />
         </MenuButton>
       );
     }
