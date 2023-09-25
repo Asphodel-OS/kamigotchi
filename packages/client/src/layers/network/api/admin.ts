@@ -364,7 +364,7 @@ export function createAdminAPI(systems: any) {
       rarity,
       affinity,
       name,
-      type
+      type,
     );
   }
 
