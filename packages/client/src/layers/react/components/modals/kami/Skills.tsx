@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
+import placeholderImage from "assets/images/icons/exit_native.png"
 
 
 interface Props {
@@ -92,7 +93,7 @@ export const Skills = (props: Props) => {
           return (
             <Tooltip text={tooltipText}>
               <SkillContainer key={skill.index} onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}>
-                <Image src={kami.uri} />
+                <Image src={placeholderImage} />
                 <SkillName>{skill.name}</SkillName>
                 <SkillDescription>{`[${curLevel}/${skill.max}]`}</SkillDescription>
               </SkillContainer>
