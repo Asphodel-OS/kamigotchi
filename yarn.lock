@@ -865,7 +865,7 @@
     "@json-rpc-tools/types" "^1.7.6"
     "@pedrouid/environment" "^1.0.1"
 
-"@latticexyz/cli@^1.34.0", "@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
+"@latticexyz/cli@1.34.0", "@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
   version "1.34.0"
   resolved "https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz#d324023fd75dc6b63c4d547de4171e041e4ffdd1"
   dependencies:
@@ -899,41 +899,41 @@
     uuid "^8.3.2"
     yargs "^17.5.1"
 
-"@latticexyz/network@^1.34.0":
+"@latticexyz/network@1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/network/-/network-1.34.0.tgz#6d7352902e3881dc3f5c54facd3bb908cad0169c"
   integrity sha512-I87MCRku/YBOVsF6KJHaEEriAi4Ict6llmuHf+kXvQX/FfGLEC7wmlFe7kTtleaG5S3L2sM6JPGfJxDRQkuiBA==
   dependencies:
     debug "^4.3.4"
 
-"@latticexyz/phaserx@^1.34.0":
+"@latticexyz/phaserx@1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/phaserx/-/phaserx-1.34.0.tgz#f9d1f470c3f2d8969039a76433a4f0b0a2d165c0"
   integrity sha512-1JsZUkHgXAQdVlmpJ1AS3eZV/E5qkQw7AycEcMleB+BBrBHXzSLgZ8fOxgZBm5tvWCOOBTpxNA8Gms8ZxA8wjQ==
   dependencies:
     "@use-gesture/vanilla" "10.2.9"
 
-"@latticexyz/recs@^1.34.0":
+"@latticexyz/recs@1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/recs/-/recs-1.34.0.tgz#41b0ae6a5f105f8d5a12afca9a35f0050060a490"
   integrity sha512-Eekp6ZlSotQ0kGIIIn87bpVtkGblXhKFNa6NvViG1EzlYfcwJgDjg4visT2pscfxpHr0jWs69Oq4S7pyIPuDOA==
 
-"@latticexyz/services@^1.30.1", "@latticexyz/services@^1.34.0":
+"@latticexyz/services@1.34.0", "@latticexyz/services@^1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/services/-/services-1.34.0.tgz#3085d391c54f845a7a17f78ba874592f5651d80d"
   integrity sha512-0oqk9ys1JxnlKIbzp+zsdQ59p0CLWm4zRZsx83GjJKb/9XiiCo26/GDrV00ALHAEtRU4dCrP9mbmaY8zrCOc5w==
 
-"@latticexyz/solecs@^1.34.0":
+"@latticexyz/solecs@1.34.0", "@latticexyz/solecs@^1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/solecs/-/solecs-1.34.0.tgz#bfbf6ca5b577f5c5f5912a35704d99c1ecc089e9"
   integrity sha512-tgUyHJWjs03PeOiqxzc+P98NUv2GcH+Ml87puhb/7RFv8WLrus7QOjkiwUcHHRO6+UZCBwr34ySaCY3AzJ4nUg==
 
-"@latticexyz/std-client@^1.30.1":
+"@latticexyz/std-client@1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/std-client/-/std-client-1.34.0.tgz#b41a69f7b2a900cdae19a9c2056e4b9b1b0784a7"
   integrity sha512-x4xuTmv/Ddmoo1gLT6kAgq0k7NTlgMAuiOVe9gIv8D3QKmVIpcmHQT6yI/sfB5rHlnZmJe3cmPyLGFUEwgkvXw==
 
-"@latticexyz/std-contracts@^1.34.0":
+"@latticexyz/std-contracts@1.34.0", "@latticexyz/std-contracts@^1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/std-contracts/-/std-contracts-1.34.0.tgz#3f2bdae721d7aaa641f94ca83592592ab60055f8"
   integrity sha512-eLX6qLQV+wQoJpkcO9OFFYB/uJq1ih+hZ1Ufg1n5NzOGzf3kWqJTwQwtSaYWDwUe9bszw2FtreivyqmwfYwubw==
