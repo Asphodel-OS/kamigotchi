@@ -252,10 +252,62 @@
       ]
     },
     {
+      "name": "_RegistryCreateRelationshipSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "IsRegistryComponent",
+        "IsRelationshipComponent",
+        "IndexNPCComponent",
+        "IndexRelationshipComponent",
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
+      ]
+    },
+    {
       "name": "_RegistryCreateReviveSystem",
       "last deployed": "18th September 2023",
       "writeAccess": [
         "*"
+      ]
+    },
+    {
+      "name": "_RegistryCreateSkillSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "IsRegistryComponent",
+        "IsSkillComponent",
+        "IndexSkillComponent",
+        "CostComponent",
+        "DescriptionComponent",
+        "MaxComponent",
+        "NameComponent",
+        "TypeComponent"
+      ]
+    },
+    {
+      "name": "_RegistryCreateSkillEffectSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "IsRegistryComponent",
+        "IsEffectComponent",
+        "IndexSkillComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "_RegistryCreateSkillRequirementSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "IsRegistryComponent",
+        "IsRequirementComponent",
+        "IndexSkillComponent",
+        "IndexComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -291,6 +343,15 @@
       "last deployed": "18th September 2023",
       "writeAccess": [
         "*"
+      ]
+    },
+    {
+      "name": "_RegistryUpdateRelationshipSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
       ]
     },
     {
@@ -662,6 +723,28 @@
       "last deployed": "18th September 2023",
       "writeAccess": [
         "*"
+      ]
+    },
+    {
+      "name": "RelationshipAdvanceSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "IsRelationshipComponent",
+        "IdAccountComponent",
+        "IndexNPCComponent",
+        "IndexRelationshipComponent"
+      ]
+    },
+    {
+      "name": "SkillUpgradeSystem",
+      "last deployed": "25th September 2023",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdHolderComponent",
+        "IndexSkillComponent",
+        "IsSkillComponent",
+        "SkillPointComponent",
+        "TypeComponent"
       ]
     }
   ],

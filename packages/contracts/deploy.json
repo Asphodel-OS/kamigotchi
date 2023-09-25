@@ -234,7 +234,13 @@
     {
       "name": "_RegistryCreateRelationshipSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsRelationshipComponent",
+        "IndexNPCComponent",
+        "IndexRelationshipComponent",
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
       ]
     },
     {
@@ -246,19 +252,37 @@
     {
       "name": "_RegistryCreateSkillSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsSkillComponent",
+        "IndexSkillComponent",
+        "CostComponent",
+        "DescriptionComponent",
+        "MaxComponent",
+        "NameComponent",
+        "TypeComponent"
       ]
     },
     {
       "name": "_RegistryCreateSkillEffectSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsEffectComponent",
+        "IndexSkillComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "_RegistryCreateSkillRequirementSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsRequirementComponent",
+        "IndexSkillComponent",
+        "IndexComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -276,7 +300,19 @@
     {
       "name": "_RegistryDeleteSkillSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsSkillComponent",
+        "IsEffectComponent",
+        "IsRequirementComponent",
+        "IndexSkillComponent",
+        "CostComponent",
+        "DescriptionComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "MaxComponent",
+        "NameComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -300,7 +336,9 @@
     {
       "name": "_RegistryUpdateRelationshipSystem",
       "writeAccess": [
-        "*"
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
       ]
     },
     {
@@ -640,7 +678,10 @@
     {
       "name": "RelationshipAdvanceSystem",
       "writeAccess": [
-        "*"
+        "IsRelationshipComponent",
+        "IdAccountComponent",
+        "IndexNPCComponent",
+        "IndexRelationshipComponent"
       ]
     },
     {
