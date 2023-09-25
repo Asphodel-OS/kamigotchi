@@ -28,13 +28,13 @@ export const Skills = (props: Props) => {
   const checkPrereqs = (skill: Skill): TextBool => {
     if (!checkMaxxed(skill, kami).completable)
       return {
-        text: `\nMax level reached!`,
+        text: `Max level reached!`,
         bool: false
       }
 
     if (!checkCost(skill, kami))
       return {
-        text: `\nInsufficient skill points`,
+        text: `Insufficient skill points`,
         bool: false
       }
 
@@ -42,7 +42,7 @@ export const Skills = (props: Props) => {
       const status = checkRequirement(requirement, kami);
       if (!status.completable) {
         return {
-          text: '\nRequirements not met',
+          text: 'Requirements not met',
           bool: false
         }
       }
@@ -58,12 +58,12 @@ export const Skills = (props: Props) => {
   const parseReqText = (req: Requirement, status: Status): string => {
     switch (req.type) {
       case 'LEVEL':
-        return `Requires level ${status.target}`;
+        return `• Kami Level ${status.target}`;
       case 'SKILL':
         const skillName = skills.find((n) => n.index === req.index)?.name;
-        return `Requires ${skillName} at level ${status.target} [${status.current}/${status.target}]`;
+        return `• ${skillName} Level ${status.target} [${status.current}/${status.target}]`;
       default:
-        return '???';
+        return ' ???';
     }
   }
 
@@ -80,22 +80,27 @@ export const Skills = (props: Props) => {
           const curSkill = kami.skills?.find((n) => n.index === skill.index);
           const curLevel = Number(curSkill?.level || 0);
 
-          let tooltipText = [
-            `${skill.description}`,
-            `Cost: ${skill.cost} point`
-          ];
-
+          let tooltipText = [];
           const reqs = getReqs(skill.requirements);
-          if (reqs.length > 0) tooltipText.push('');
-          tooltipText.push(...reqs);
           if (!status.bool) tooltipText.push(status.text);
+          if (reqs.length > 0) {
+            tooltipText.push('');
+            tooltipText.push('Requirements:');
+            tooltipText.push(...reqs);
+          }
 
           return (
             <Tooltip text={tooltipText}>
-              <SkillContainer key={skill.index} onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}>
+              <SkillContainer
+                key={skill.index}
+                onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
+                disabled={!status.bool}
+              >
                 <Image src={placeholderImage} />
                 <SkillName>{skill.name}</SkillName>
-                <SkillDescription>{`[${curLevel}/${skill.max}]`}</SkillDescription>
+                <SkillDescription>{skill.description}</SkillDescription>
+                <SkillDescription>{`Level: [${curLevel}/${skill.max}]`}</SkillDescription>
+                <SkillDescription>{`Cost: ${skill.cost} ${skill.cost > 1 ? "points" : "point"}`}</SkillDescription>
               </SkillContainer>
             </Tooltip>
           )
@@ -164,31 +169,5 @@ const SkillDescription = styled.div`
   font-family: Pixel;
   text-align: left;
   font-size: 0.7vw;
-  padding: 0vh 0.5vw;
-`;
-
-const ConditionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 0.4vw 0.5vw;
-`;
-
-const ConditionName = styled.div`
-  font-family: Pixel;
-  font-size: 0.85vw;
-  text-align: left;
-  justify-content: flex-start;
-  color: #333;
-  padding: 0vw 0vw 0.3vw 0vw;
-`;
-
-const ConditionDescription = styled.div`
-  color: #333;
-
-  font-family: Pixel;
-  text-align: left;
-  font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
+  padding: 0.1vw 0.5vw;
 `;
