@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
-import { ActionButton } from "../../library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 
 
@@ -28,13 +27,13 @@ export const Skills = (props: Props) => {
   const checkPrereqs = (skill: Skill): TextBool => {
     if (!checkMaxxed(skill, kami).completable)
       return {
-        text: `At max level`,
+        text: `\nMax level reached!`,
         bool: false
       }
 
     if (!checkCost(skill, kami))
       return {
-        text: `Insufficient skill points`,
+        text: `\nInsufficient skill points`,
         bool: false
       }
 
@@ -42,7 +41,7 @@ export const Skills = (props: Props) => {
       const status = checkRequirement(requirement, kami);
       if (!status.completable) {
         return {
-          text: parseReqText(requirement, status),
+          text: '\nRequirements not met',
           bool: false
         }
       }
@@ -67,52 +66,43 @@ export const Skills = (props: Props) => {
     }
   }
 
-  const ReqDisplay = (reqs: Requirement[]) => {
-    if (reqs.length == 0) return <div />;
-    return (
-      <ConditionContainer key='reqs'>
-        <ConditionName>Requirements</ConditionName>
-        {reqs.map((req) => (
-          <ConditionDescription key={req.id}>
-            - {`${parseReqText(req, checkRequirement(req, kami))}`}
-          </ConditionDescription>
-        ))}
-      </ConditionContainer>
-    )
+  const getReqs = (reqs: Requirement[]): string[] => {
+    return reqs.map((req) => parseReqText(req, checkRequirement(req, kami)));
   }
 
 
   const DisplaySkills = () => {
-    return skills.map((skill) => {
-      const status = checkPrereqs(skill);
-      const curSkill = kami.skills?.find((n) => n.index === skill.index);
-      const curLevel = Number(curSkill?.level || 0);
+    return (
+      <Wrapper>
+        {skills.map((skill) => {
+          const status = checkPrereqs(skill);
+          const curSkill = kami.skills?.find((n) => n.index === skill.index);
+          const curLevel = Number(curSkill?.level || 0);
 
-      return (
-        <SkillContainer key={skill.index}>
-          <SkillName>{skill.name}</SkillName>
-          <SkillDescription>{skill.description}</SkillDescription>
-          <SkillDescription>{`Cost: ${skill.cost} point`}</SkillDescription>
-          <SkillDescription>{`Level: ${curLevel}/${skill.max}`}</SkillDescription>
-          {ReqDisplay(skill.requirements)}
+          let tooltipText = [
+            `${skill.description}`,
+            `Cost: ${skill.cost} point`
+          ];
 
-          <Tooltip text={[status.text]}>
-            <ActionButton
-              id='upgrade'
-              text={'upgrade'}
-              disabled={!status.bool}
-              onClick={() => actions.upgrade(kami, skill.index)}
-            />
-          </Tooltip>
-        </SkillContainer>
-      )
-    })
+          const reqs = getReqs(skill.requirements);
+          if (reqs.length > 0) tooltipText.push('');
+          tooltipText.push(...reqs);
+          if (!status.bool) tooltipText.push(status.text);
+
+          return (
+            <Tooltip text={tooltipText}>
+              <SkillContainer key={skill.index} onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}>
+                <Image src={kami.uri} />
+                <SkillName>{skill.name}</SkillName>
+                <SkillDescription>{`[${curLevel}/${skill.max}]`}</SkillDescription>
+              </SkillContainer>
+            </Tooltip>
+          )
+        })}
+      </Wrapper>
+    );
   }
 
-
-
-  // skills are basic entries with name, description, cost, requirements
-  // a list view with all individual elements - this can be changed later
   return (
     <>
       {DisplaySkills()}
@@ -120,18 +110,42 @@ export const Skills = (props: Props) => {
   );
 }
 
+const Wrapper = styled.div`
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0.5vw;
+`;
 
-const SkillContainer = styled.div`
+const Image = styled.img`
+  height: 10vw;
+`;
+
+const SkillContainer = styled.button`
   border-color: black;
   border-radius: 10px;
   border-style: solid;
   border-width: 2px;
+
   display: flex;
-  justify-content: start;
-  align-items: start;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
+
   padding: 1vw;
   margin: 0.8vw;
+  width: 15vw;
+  height: 15vw;
+
+  background-color: #ffffff;
+  pointer-events: auto;
+  &:hover {
+    box-shadow: 0 0 11px rgba(33,33,33,.2); 
+  }
+  &:active {
+    box-shadow: 0 0 16px rgba(11,11,11,.2); 
+  }
 `;
 
 const SkillName = styled.div`
@@ -140,7 +154,7 @@ const SkillName = styled.div`
   text-align: left;
   justify-content: flex-start;
   color: #333;
-  padding: 0.7vh 0vw;
+  padding: 1vh 0vw;
 `;
 
 const SkillDescription = styled.div`
@@ -148,9 +162,8 @@ const SkillDescription = styled.div`
 
   font-family: Pixel;
   text-align: left;
-  line-height: 1.2vw;
   font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
+  padding: 0vh 0.5vw;
 `;
 
 const ConditionContainer = styled.div`

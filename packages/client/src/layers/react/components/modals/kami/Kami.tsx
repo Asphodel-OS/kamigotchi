@@ -86,6 +86,7 @@ export function registerKamiModal() {
             deaths: true,
             kills: true,
             traits: true,
+            skills: true,
           }
         );
       }
