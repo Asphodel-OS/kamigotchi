@@ -3,6 +3,13 @@ import styled from "styled-components";
 import { ExperienceBar } from "../../library/ExperienceBar";
 import { Tooltip } from "../../library/Tooltip";
 import { ActionButton } from "../../library/ActionButton";
+import {
+  healthIcon,
+  powerIcon,
+  violenceIcon,
+  harmonyIcon,
+} from "assets/images/icons/stats";
+import placeholderIcon from "assets/images/icons/exit_native.png";
 
 interface Props {
   kami: Kami;
@@ -15,12 +22,27 @@ interface Props {
 export const Banner = (props: Props) => {
   const statsArray = Object.entries(props.kami.stats);
   const affinities = props.kami.affinities?.join(' | ');
-  const statsDescriptions = new Map(Object.entries({
-    'health': 'defines how resilient a Kami is to accumulated damage',
-    'power': 'determines the potential rate at which $MUSU can be farmed',
-    'violence': 'dictates the threshold at which a Kami can liquidate others',
-    'harmony': 'divines resting recovery rate and defends against violence',
-    'slots': 'room for upgrades ^_^',
+  const statsDetails = new Map(Object.entries({
+    'health': {
+      description: 'Health defines how resilient a Kami is to accumulated damage',
+      image: healthIcon,
+    },
+    'power': {
+      description: 'Power determines the potential rate at which $MUSU can be farmed',
+      image: powerIcon,
+    },
+    'violence': {
+      description: 'Violence dictates the threshold at which a Kami can liquidate others',
+      image: violenceIcon,
+    },
+    'harmony': {
+      description: 'Harmony divines resting recovery rate and defends against violence',
+      image: harmonyIcon,
+    },
+    'slots': {
+      description: 'Slots are room for upgrades ^_^',
+      image: placeholderIcon,
+    },
   }));
 
   return (
@@ -53,9 +75,9 @@ export const Banner = (props: Props) => {
         <ContentMiddle>
           {statsArray.map((stat: [string, number]) => {
             return (
-              <Tooltip key={stat[0]} text={[statsDescriptions.get(stat[0]) as string]} grow>
+              <Tooltip key={stat[0]} text={[statsDetails.get(stat[0])?.description as string]} grow>
                 <InfoBox>
-                  <InfoLabel>{stat[0].toUpperCase()}</InfoLabel>
+                  <Icon src={statsDetails.get(stat[0])?.image} />
                   <InfoContent>{stat[1] * 1}</InfoContent>
                 </InfoBox>
               </Tooltip>
@@ -79,6 +101,10 @@ const Image = styled.img`
   border-radius: 8px 0px 0px 0px;
   border-right: solid black .15vw;
   height: 14vw;
+`;
+
+const Icon = styled.img`
+  height: 2vw;
 `;
 
 const Content = styled.div`
@@ -135,20 +161,11 @@ const InfoBox = styled.div`
   padding: .3vw;
   
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   &:hover {
     background-color: #ddd;
   }
 `
-
-const InfoLabel = styled.div`
-  margin: .3vw;
-  align-self: flex-start;
-  
-  color: black;
-  font-family: Pixel;
-  font-size: .9vw;
-`;
 
 const InfoContent = styled.div`
   color: black;
