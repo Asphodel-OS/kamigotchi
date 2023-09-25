@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
-    "build": "rimraf dist && yarn cache:clear && parcel build src/index.html",
+    "build": "rimraf dist && yarn cache:clear && parcel build src/index.html --no-optimize",
     "lint": "eslint . --fix --ext .ts",
     "start": "yarn cache:clear && yarn parcel src/index.html --port 3000"
   },
