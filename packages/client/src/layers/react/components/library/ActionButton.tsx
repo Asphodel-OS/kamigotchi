@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
@@ -11,6 +11,7 @@ interface Props {
   fill?: boolean;
   inverted?: boolean;
   size?: 'small' | 'medium' | 'large' | 'vending' | 'menu';
+  pulse?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -23,7 +24,7 @@ export const ActionButton = (props: Props) => {
 
   // override styles for sizes and disabling
   const setStyles = () => {
-    var styles: any = {};
+    let styles: any = {};
 
     const size = props.size || 'medium';
     if (size === 'small') {
@@ -69,10 +70,20 @@ export const ActionButton = (props: Props) => {
     }
 
     if (props.fill) styles.flexGrow = '1';
+
     return styles;
   };
 
-  return (
+  if (props.pulse) return (
+    <PulseButton
+      id={props.id}
+      onClick={!props.disabled ? handleClick : () => { }}
+      style={setStyles()}
+    >
+      {props.text}
+    </PulseButton>
+  );
+  else return (
     <Button
       id={props.id}
       onClick={!props.disabled ? handleClick : () => { }}
@@ -102,4 +113,17 @@ const Button = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
+`;
+
+const Pulse = keyframes`
+  0%, 80%, 90%, 100% {
+    background-color: #ffffff;
+  }
+  85%, 95% {
+    background-color: #e8e8e8;
+  }
+`
+
+const PulseButton = styled(Button)`
+  animation: ${Pulse} 3s ease-in-out infinite;
 `;

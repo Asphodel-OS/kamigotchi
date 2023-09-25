@@ -39,12 +39,13 @@ export const Banner = (props: Props) => {
               total={props.kami.experience.threshold}
               triggerLevelUp={() => props.actions.levelUp(props.kami)}
             />
-            <Tooltip text={['Skill Matrix']}>
+            <Tooltip text={['Skill Points']}>
               <ActionButton
                 id={`level-button`}
                 onClick={() => props.actions.toggleSkills()}
-                text=' + '
+                text={` (${props.kami.skillPoints > 0 ? Number(props.kami.skillPoints) : '+'}) `}
                 size='small'
+                pulse={props.kami.skillPoints > 0}
               />
             </Tooltip>
           </TitleRow>
