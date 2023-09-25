@@ -59,8 +59,8 @@ export const Skills = (props: Props) => {
       case 'LEVEL':
         return `Requires level ${status.target}`;
       case 'SKILL':
-        // TODO: replace skill number with names
-        return `Requires skill ${Number(req.index as number || 0)} at level ${status.target} [${status.current}/${status.target}]`;
+        const skillName = skills.find((n) => n.index === req.index)?.name;
+        return `Requires ${skillName} at level ${status.target} [${status.current}/${status.target}]`;
       default:
         return '???';
     }
