@@ -8,10 +8,9 @@ interface ExperienceBarProps {
   current: number;
   total: number;
   triggerLevelUp: Function;
-  openSkills: Function;
 }
 
-export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, total, triggerLevelUp, openSkills }) => {
+export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, total, triggerLevelUp }) => {
 
   const percentage = Math.round((current / total) * 100);
   const canLevelUp = percentage >= 100;
@@ -32,14 +31,6 @@ export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, to
           text=' ↑ '
           size='small'
           disabled={!canLevelUp}
-        />
-      </Tooltip>
-      <Tooltip text={['Skill Matrix']}>
-        <ActionButton
-          id={`level-button`}
-          onClick={() => openSkills()}
-          text=' + '
-          size='small'
         />
       </Tooltip>
     </Wrapper>

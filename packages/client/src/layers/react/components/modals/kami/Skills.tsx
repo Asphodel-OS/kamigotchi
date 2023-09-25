@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-import { Account } from "layers/react/shapes/Account";
 import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
 import { ActionButton } from "../../library/ActionButton";
@@ -9,7 +8,7 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 
 interface Props {
   skills: Skill[];
-  holder: Account | Kami;
+  kami: Kami;
   actions: {
     upgrade: Function;
   }
@@ -20,27 +19,27 @@ interface TextBool {
   bool: boolean;
 }
 
-export const Matrix = (props: Props) => {
-  const { skills, holder, actions } = props;
+export const Skills = (props: Props) => {
+  const { skills, kami, actions } = props;
 
   ///////////////////
   // LOGIC
 
   const checkPrereqs = (skill: Skill): TextBool => {
-    if (!checkMaxxed(skill, holder).completable)
+    if (!checkMaxxed(skill, kami).completable)
       return {
         text: `At max level`,
         bool: false
       }
 
-    if (!checkCost(skill, holder))
+    if (!checkCost(skill, kami))
       return {
         text: `Insufficient skill points`,
         bool: false
       }
 
     for (const requirement of skill.requirements) {
-      const status = checkRequirement(requirement, holder);
+      const status = checkRequirement(requirement, kami);
       if (!status.completable) {
         return {
           text: parseReqText(requirement, status),
@@ -53,7 +52,7 @@ export const Matrix = (props: Props) => {
   }
 
 
-  ///////////////////////
+  /////////////////
   // DISPLAY
 
   const parseReqText = (req: Requirement, status: Status): string => {
@@ -75,7 +74,7 @@ export const Matrix = (props: Props) => {
         <ConditionName>Requirements</ConditionName>
         {reqs.map((req) => (
           <ConditionDescription key={req.id}>
-            - {`${parseReqText(req, checkRequirement(req, holder))}`}
+            - {`${parseReqText(req, checkRequirement(req, kami))}`}
           </ConditionDescription>
         ))}
       </ConditionContainer>
@@ -86,7 +85,7 @@ export const Matrix = (props: Props) => {
   const DisplaySkills = () => {
     return skills.map((skill) => {
       const status = checkPrereqs(skill);
-      const curSkill = holder.skills?.find((n) => n.index === skill.index);
+      const curSkill = kami.skills?.find((n) => n.index === skill.index);
       const curLevel = Number(curSkill?.level || 0);
 
       return (
@@ -102,7 +101,7 @@ export const Matrix = (props: Props) => {
               id='upgrade'
               text={'upgrade'}
               disabled={!status.bool}
-              onClick={() => actions.upgrade(holder.id, skill.index)}
+              onClick={() => actions.upgrade(kami, skill.index)}
             />
           </Tooltip>
         </SkillContainer>
@@ -121,12 +120,6 @@ export const Matrix = (props: Props) => {
   );
 }
 
-
-const Container = styled.div`
-  overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
-`;
 
 const SkillContainer = styled.div`
   border-color: black;
