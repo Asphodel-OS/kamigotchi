@@ -90,7 +90,7 @@ export const Skills = (props: Props) => {
           }
 
           return (
-            <Tooltip text={tooltipText}>
+            <Tooltip text={tooltipText} key={skill.index}>
               <SkillContainer
                 key={skill.index}
                 onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
