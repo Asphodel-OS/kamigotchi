@@ -865,7 +865,7 @@
     "@json-rpc-tools/types" "^1.7.6"
     "@pedrouid/environment" "^1.0.1"
 
-"@latticexyz/cli@1.34.0", "@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
+"@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
   version "1.34.0"
   resolved "https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz#d324023fd75dc6b63c4d547de4171e041e4ffdd1"
   dependencies:
@@ -938,7 +938,7 @@
   resolved "https://registry.yarnpkg.com/@latticexyz/std-contracts/-/std-contracts-1.34.0.tgz#3f2bdae721d7aaa641f94ca83592592ab60055f8"
   integrity sha512-eLX6qLQV+wQoJpkcO9OFFYB/uJq1ih+hZ1Ufg1n5NzOGzf3kWqJTwQwtSaYWDwUe9bszw2FtreivyqmwfYwubw==
 
-"@latticexyz/utils@^1.34.0":
+"@latticexyz/utils@1.34.0", "@latticexyz/utils@^1.34.0":
   version "1.34.0"
   resolved "https://registry.yarnpkg.com/@latticexyz/utils/-/utils-1.34.0.tgz#90d98ac11eb3da8e9aa81af686f0f41151119d74"
   integrity sha512-tr/LV4QfhV0XYjtrY8DHLYEI2EPHzVQXmK1JtjupstLvK31WpE9xvgIqMYTawxupC9xw2c5q6zxEs/JZtiUmSQ==
