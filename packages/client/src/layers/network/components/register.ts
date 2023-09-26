@@ -1,4 +1,4 @@
-import { Type, World, defineComponent } from "@latticexyz/recs";
+import { World } from "@latticexyz/recs";
 import {
   defineBoolComponent,
   defineNumberComponent,
@@ -32,6 +32,7 @@ export function createComponents(world: World) {
   return {
     // Archetypes
     IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
+    IsBonus: defineBoolEZ("IsBonus", "component.Is.Bonus"),
     IsConfig: defineBoolEZ("IsConfig", "component.Is.Config"),
     IsComplete: defineBoolEZ("IsComplete", "component.Is.Complete"),
     IsData: defineBoolEZ("IsData", "component.Is.Data"),
@@ -124,13 +125,12 @@ export function createComponents(world: World) {
     StaminaCurrent: defineNumberEZ("Stamina", "component.Stamina.Current"),
     State: defineStringEZ("State", "component.State"),
     Status: defineStringEZ("Status", "component.Status"),
-    Subtype: defineStringEZ("Type", "component.Subtype"),
+    Subtype: defineStringEZ("Subtype", "component.Subtype"),
     Type: defineStringEZ("Type", "component.Type"),
     Upgrades: defineNumberEZ("Upgrades", "component.Upgrades"),
     Value: defineNumberEZ("Value", "component.Value"),
     Violence: defineNumberEZ("Violence", "component.Violence"),
     Whitelist: defineNumberArrayComponent(world, "Whitelist", "component.Whitelist"),
-
 
     // Time/Block Tracking
     LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),

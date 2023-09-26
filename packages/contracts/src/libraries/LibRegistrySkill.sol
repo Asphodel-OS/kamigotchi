@@ -242,6 +242,29 @@ library LibRegistrySkill {
   }
 
   /////////////////
+  // GETTERS
+
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
+  }
+
+  function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
+    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).getValue(id);
+  }
+
+  function getSubtype(IUintComp components, uint256 id) internal view returns (string memory) {
+    return SubtypeComponent(getAddressById(components, SubtypeCompID)).getValue(id);
+  }
+
+  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
+    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+  }
+
+  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
+    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+  }
+
+  /////////////////
   // QUERIES
 
   // get registry entry by Skill index

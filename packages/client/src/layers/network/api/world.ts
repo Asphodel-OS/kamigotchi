@@ -111,6 +111,7 @@ export function setUpWorldAPI(systems: any) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
     await api.config.set.number('HARVEST_RATE_BASE', 2500); // in respect to power
+    await api.config.set.number('KAMI_LVL_REQ_BASE', 10); // experience required for level 1->2
   }
 
 

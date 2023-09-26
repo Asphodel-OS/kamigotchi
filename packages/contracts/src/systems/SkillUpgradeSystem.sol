@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
 uint256 constant ID = uint256(keccak256("system.Skill.Upgrade"));
@@ -38,12 +41,24 @@ contract SkillUpgradeSystem is System {
       "SkillUpgrade: unmet prerequisites"
     );
 
-    // create the skill if it doesnt exist
+    // create the skill if it doesnt exist and increment it
     uint256 skillID = LibSkill.get(components, id, skillIndex);
     if (skillID == 0) skillID = LibSkill.create(world, components, id, skillIndex);
-
-    // increment points on skill
     LibSkill.inc(components, skillID, 1);
+
+    // if the holder doesn't have a bonus entity, create one
+    uint256 bonusID = LibBonus.getByHolder(components, id);
+    if (bonusID == 0) bonusID = LibBonus.create(world, components, id);
+
+    // get the skill's effects. for any stat effects update the holder's bonus
+    string memory type_;
+    uint256[] memory effectIDs = LibRegistrySkill.getEffectsByIndex(components, skillIndex);
+    for (uint256 i = 0; i < effectIDs.length; i++) {
+      type_ = LibRegistrySkill.getType(components, effectIDs[i]);
+      if (LibString.eq("STAT", type_)) {
+        LibSkill.processStatEffectUpgrade(components, id, effectIDs[i]);
+      }
+    }
 
     LibAccount.updateLastBlock(components, accountID);
     return "";

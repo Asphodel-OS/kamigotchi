@@ -46,6 +46,7 @@
     "IndexSkillComponent",
     "IndexTraitComponent",
     "IsAccountComponent",
+    "IsBonusComponent",
     "IsConfigComponent",
     "IsCompleteComponent",
     "IsDataComponent",
@@ -693,9 +694,14 @@
         "BlockLastComponent",
         "IdHolderComponent",
         "IndexSkillComponent",
+        "IsBonusComponent",
         "IsSkillComponent",
+        "HarmonyComponent",
+        "HealthComponent",
+        "PowerComponent",
         "SkillPointComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ViolenceComponent"
       ]
     }
   ],

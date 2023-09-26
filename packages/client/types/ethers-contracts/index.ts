@@ -58,6 +58,7 @@ export type { IndexReviveComponent } from "./IndexReviveComponent";
 export type { IndexSkillComponent } from "./IndexSkillComponent";
 export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
+export type { IsBonusComponent } from "./IsBonusComponent";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
 export type { IsConfigComponent } from "./IsConfigComponent";
 export type { IsDataComponent } from "./IsDataComponent";
@@ -240,6 +241,7 @@ export { IndexReviveComponent__factory } from "./factories/IndexReviveComponent_
 export { IndexSkillComponent__factory } from "./factories/IndexSkillComponent__factory";
 export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
+export { IsBonusComponent__factory } from "./factories/IsBonusComponent__factory";
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
 export { IsConfigComponent__factory } from "./factories/IsConfigComponent__factory";
 export { IsDataComponent__factory } from "./factories/IsDataComponent__factory";

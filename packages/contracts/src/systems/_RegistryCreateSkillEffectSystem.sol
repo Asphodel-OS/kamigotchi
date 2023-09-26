@@ -42,6 +42,6 @@ contract _RegistryCreateSkillEffectSystem is System {
     uint256 index, // optional
     uint256 value // optional
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(skillIndex, logicType, type_, subtype, index, value));
+    return execute(abi.encode(skillIndex, type_, subtype, logicType, index, value));
   }
 }
