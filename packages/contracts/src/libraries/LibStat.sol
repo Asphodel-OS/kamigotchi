@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
-import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol";
 import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol";
-import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
-import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
+import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol";
+import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
 
 // LibStat manages the retrieval and update of stats. This library differs from
 // others in the sense that it does not manage a single entity type, but rather
