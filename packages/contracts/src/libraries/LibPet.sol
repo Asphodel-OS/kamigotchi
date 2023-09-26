@@ -20,7 +20,9 @@ import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComp
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
@@ -242,42 +244,54 @@ library LibPet {
 
   // Calculate and return the total health of a pet (including mods and equips)
   function calcTotalHarmony(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 totalHarmony = LibStat.getHarmony(components, id);
+    uint256 total = LibStat.getHarmony(components, id);
+    uint256 bonusID = LibBonus.getByHolder(components, id);
+    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "HARMONY");
+
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
     for (uint256 i = 0; i < equipment.length; i++) {
-      totalHarmony += LibEquipment.getHarmony(components, equipment[i]);
+      total += LibEquipment.getHarmony(components, equipment[i]);
     }
-    return totalHarmony;
+    return total;
   }
 
   // Calculate and return the total health of a pet (including mods and equips)
   function calcTotalHealth(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 totalHealth = LibStat.getHealth(components, id);
+    uint256 total = LibStat.getHealth(components, id);
+    uint256 bonusID = LibBonus.getByHolder(components, id);
+    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "HEALTH");
+
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
     for (uint256 i = 0; i < equipment.length; i++) {
-      totalHealth += LibEquipment.getHealth(components, equipment[i]);
+      total += LibEquipment.getHealth(components, equipment[i]);
     }
-    return totalHealth;
+    return total;
   }
 
   // Calculate and return the total power of a pet (including mods and equips)
   function calcTotalPower(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 totalPower = LibStat.getPower(components, id);
+    uint256 total = LibStat.getPower(components, id);
+    uint256 bonusID = LibBonus.getByHolder(components, id);
+    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "POWER");
+
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
     for (uint256 i = 0; i < equipment.length; i++) {
-      totalPower += LibEquipment.getPower(components, equipment[i]);
+      total += LibEquipment.getPower(components, equipment[i]);
     }
-    return totalPower;
+    return total;
   }
 
   // Calculate and return the total violence of a pet (including mods and equips)
   function calcTotalViolence(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 totalViolence = LibStat.getViolence(components, id);
+    uint256 total = LibStat.getViolence(components, id);
+    uint256 bonusID = LibBonus.getByHolder(components, id);
+    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "VIOLENCE");
+
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
     for (uint256 i = 0; i < equipment.length; i++) {
-      totalViolence += LibEquipment.getViolence(components, equipment[i]);
+      total += LibEquipment.getViolence(components, equipment[i]);
     }
-    return totalViolence;
+    return total;
   }
 
   /////////////////
