@@ -406,25 +406,25 @@ export function setUpWorldAPI(systems: any) {
   // SKILL
 
   async function initSkills(api: any) {
-    await api.registry.skill.create(1, 1, 3, "BASIC", "Aggression", "+1 Violence per level");
-    await api.registry.skill.add.effect(1, "VIOLENCE", "ADD", 0, 1);
+    await api.registry.skill.create(1, 1, 3, "PASSIVE", "Aggression", "+1 Violence per level");
+    await api.registry.skill.add.effect(1, "STAT", "VIOLENCE", "INC", 0, 1);
 
-    await api.registry.skill.create(2, 1, 3, "BASIC", "Defensiveness", "+1 Harmony per level");
-    await api.registry.skill.add.effect(2, "HARMONY", "ADD", 0, 1);
+    await api.registry.skill.create(2, 1, 3, "PASSIVE", "Defensiveness", "+1 Harmony per level");
+    await api.registry.skill.add.effect(2, "STAT", "HARMONY", "INC", 0, 1);
 
-    await api.registry.skill.create(3, 1, 3, "BASIC", "Acquisitiveness", "+1 Power per level");
-    await api.registry.skill.add.effect(3, "POWER", "ADD", 0, 1);
+    await api.registry.skill.create(3, 1, 3, "PASSIVE", "Acquisitiveness", "+1 Power per level");
+    await api.registry.skill.add.effect(3, "STAT", "POWER", "INC", 0, 1);
 
-    await api.registry.skill.create(4, 1, 3, "ADV", "Warmonger", "+1 Violence per level");
-    await api.registry.skill.add.effect(4, "VIOLENCE", "ADD", 0, 1);
+    await api.registry.skill.create(4, 1, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
+    await api.registry.skill.add.effect(4, "STAT", "VIOLENCE", "INC", 0, 1);
     await api.registry.skill.add.requirement(4, "SKILL", 1, 3);
 
-    await api.registry.skill.create(5, 1, 3, "ADV_HARMONY", "Protector", "+1 Harmony per level");
-    await api.registry.skill.add.effect(5, "HARMONY", "ADD", 0, 1);
+    await api.registry.skill.create(5, 1, 3, "PASSIVE", "Protector", "+1 Harmony per level");
+    await api.registry.skill.add.effect(5, "STAT", "HARMONY", "INC", 0, 1);
     await api.registry.skill.add.requirement(5, "SKILL", 2, 3);
 
-    await api.registry.skill.create(6, 1, 3, "ADV_POWER", "Predator", "+1 Power per level");
-    await api.registry.skill.add.effect(6, "POWER", "ADD", 0, 1);
+    await api.registry.skill.create(6, 1, 3, "PASSIVE", "Predator", "+1 Power per level");
+    await api.registry.skill.add.effect(6, "STAT", "POWER", "INC", 0, 1);
     await api.registry.skill.add.requirement(6, "SKILL", 3, 3);
   }
 

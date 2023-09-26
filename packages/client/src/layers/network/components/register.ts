@@ -124,6 +124,7 @@ export function createComponents(world: World) {
     StaminaCurrent: defineNumberEZ("Stamina", "component.Stamina.Current"),
     State: defineStringEZ("State", "component.State"),
     Status: defineStringEZ("Status", "component.Status"),
+    Subtype: defineStringEZ("Type", "component.Subtype"),
     Type: defineStringEZ("Type", "component.Type"),
     Upgrades: defineNumberEZ("Upgrades", "component.Upgrades"),
     Value: defineNumberEZ("Value", "component.Value"),

@@ -20,6 +20,7 @@ import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillCompone
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
@@ -97,6 +98,7 @@ library LibRegistrySkill {
     unsetIsEffect(components, id);
     unsetSkillIndex(components, id);
     unsetType(components, id);
+    unsetSubtype(components, id);
     unsetLogicType(components, id);
     unsetIndex(components, id);
     unsetValue(components, id);
@@ -158,6 +160,10 @@ library LibRegistrySkill {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
+  function setSubtype(IUintComp components, uint256 id, string memory subtype) internal {
+    SubtypeComponent(getAddressById(components, SubtypeCompID)).set(id, subtype);
+  }
+
   function setType(IUintComp components, uint256 id, string memory _type) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
   }
@@ -215,6 +221,12 @@ library LibRegistrySkill {
 
   function unsetName(IUintComp components, uint256 id) internal {
     NameComponent(getAddressById(components, NameCompID)).remove(id);
+  }
+
+  function unsetSubtype(IUintComp components, uint256 id) internal {
+    if (SubtypeComponent(getAddressById(components, SubtypeCompID)).has(id)) {
+      SubtypeComponent(getAddressById(components, SubtypeCompID)).remove(id);
+    }
   }
 
   function unsetType(IUintComp components, uint256 id) internal {

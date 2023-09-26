@@ -254,6 +254,7 @@ export function createAdminAPI(systems: any) {
 
   async function addSkillEffect(
     skillIndex: number,
+    subtype: string,
     type: string,
     logicType: string,
     index: number,
@@ -262,6 +263,7 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Registry.Skill.Create.Effect'].executeTyped(
       skillIndex,
+      subtype,
       type,
       logicType,
       index,

@@ -129,6 +129,7 @@ export type { StaminaComponent } from "./StaminaComponent";
 export type { StaminaCurrentComponent } from "./StaminaCurrentComponent";
 export type { StateComponent } from "./StateComponent";
 export type { StringComponent } from "./StringComponent";
+export type { SubtypeComponent } from "./SubtypeComponent";
 export type { TimeComponent } from "./TimeComponent";
 export type { TimeLastActionComponent } from "./TimeLastActionComponent";
 export type { TimeStartComponent } from "./TimeStartComponent";
@@ -310,6 +311,7 @@ export { StaminaComponent__factory } from "./factories/StaminaComponent__factory
 export { StaminaCurrentComponent__factory } from "./factories/StaminaCurrentComponent__factory";
 export { StateComponent__factory } from "./factories/StateComponent__factory";
 export { StringComponent__factory } from "./factories/StringComponent__factory";
+export { SubtypeComponent__factory } from "./factories/SubtypeComponent__factory";
 export { TimeComponent__factory } from "./factories/TimeComponent__factory";
 export { TimeLastActionComponent__factory } from "./factories/TimeLastActionComponent__factory";
 export { TimeStartComponent__factory } from "./factories/TimeStartComponent__factory";

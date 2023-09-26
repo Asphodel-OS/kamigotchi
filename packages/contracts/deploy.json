@@ -90,6 +90,7 @@
     "StaminaComponent",
     "StaminaCurrentComponent",
     "StateComponent",
+    "SubtypeComponent",
     "TimeComponent",
     "TimeLastActionComponent",
     "TimeStartComponent",
@@ -270,6 +271,7 @@
         "IndexSkillComponent",
         "IndexComponent",
         "LogicTypeComponent",
+        "SubtypeComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -311,6 +313,7 @@
         "LogicTypeComponent",
         "MaxComponent",
         "NameComponent",
+        "SubtypeComponent",
         "TypeComponent",
         "ValueComponent"
       ]
