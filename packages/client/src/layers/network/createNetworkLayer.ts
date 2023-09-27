@@ -41,7 +41,11 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     },
   );
 
-  const actions = createActionSystem(world, txReduced$);
+  const provider = network.providers.get().json;
+  let actions;
+  if (provider) {
+    actions = createActionSystem(world, txReduced$, provider);
+  }
 
   /////////////////
   // API

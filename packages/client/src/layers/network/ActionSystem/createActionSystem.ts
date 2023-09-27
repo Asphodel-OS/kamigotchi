@@ -19,10 +19,11 @@ import { ActionState } from "./constants";
 import { ActionData, ActionRequest } from "./types";
 import { defineActionComponent } from "./ActionComponent";
 import { merge, Observable } from "rxjs";
+import { Provider } from "@ethersproject/providers";
 
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 
-export function createActionSystem<M = undefined>(world: World, txReduced$: Observable<string>) {
+export function createActionSystem<M = undefined>(world: World, txReduced$: Observable<string>, provider: Provider) {
   // Action component
   const Action = defineActionComponent<M>(world);
 
@@ -163,7 +164,17 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
         // Wait for all tx events to be reduced
         updateComponent(Action, action.entityIndex, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });
         // console.log(tx);
-        const txConfirmed = tx.wait(1).catch((e) => handleError(e, action)); // Also catch the error if not awaiting
+        async function waitFor(tx: any) {
+          // perform regular wait 
+          const txConfirmed = await provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
+          if (txConfirmed?.status === 0) {
+            // if tx did not complete, initiate tx.wait() to throw regular error
+            await tx.wait().catch((e: any) => handleError(e, action));
+          }
+          return txConfirmed;
+        }
+        // const txConfirmed = provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
+        const txConfirmed = waitFor(tx);
         await awaitStreamValue(txReduced$, (v) => v === tx.hash);
         updateComponent(Action, action.entityIndex, { state: ActionState.TxReduced });
         if (action.awaitConfirmation) await txConfirmed;
