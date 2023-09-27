@@ -93,7 +93,9 @@ export const Kards = (props: Props) => {
 
   // calculate the base liquidation threshold b/w two kamis as a %
   const calcLiquidationThresholdBase = (attacker: Kami, victim: Kami): number => {
-    const ratio = attacker.stats.violence / victim.stats.harmony;
+    const attackerTotalViolence = attacker.stats.violence + attacker.bonusStats.violence;
+    const victimTotalHarmony = victim.stats.harmony + victim.bonusStats.harmony;
+    const ratio = attackerTotalViolence / victimTotalHarmony;
     const weight = cdf(Math.log(ratio), 0, 1);
     const peakBaseThreshold = props.liquidationConfig.threshold;
     return weight * peakBaseThreshold;
@@ -108,7 +110,8 @@ export const Kards = (props: Props) => {
 
   const canMog = (attacker: Kami, victim: Kami): boolean => {
     const thresholdPercent = calcLiquidationThreshold(attacker, victim);
-    const absoluteThreshold = thresholdPercent * victim.stats.health;
+    const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
+    const absoluteThreshold = thresholdPercent * victimTotalHealth;
     return calcHealth(victim) < absoluteThreshold;
   }
   // determine whether a kami can liquidate another kami
@@ -141,9 +144,9 @@ export const Kards = (props: Props) => {
     const health = calcHealth(kami);
     const description = [
       '',
-      `Health: ${health.toFixed()}/${kami.stats.health * 1}`, // multiply by 1 to interpret hex
-      `Harmony: ${kami.stats.harmony * 1}`,
-      `Violence: ${kami.stats.violence * 1}`,
+      `Health: ${health.toFixed()}/${kami.stats.health + kami.bonusStats.health}`,
+      `Harmony: ${kami.stats.harmony + kami.bonusStats.harmony}`,
+      `Violence: ${kami.stats.violence + kami.bonusStats.violence}`,
     ];
     return description;
   }
