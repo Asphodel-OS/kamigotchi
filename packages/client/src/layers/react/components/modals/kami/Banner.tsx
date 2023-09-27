@@ -21,6 +21,7 @@ interface Props {
 
 export const Banner = (props: Props) => {
   const statsArray = Object.entries(props.kami.stats);
+  const bonusStatsArray = Object.entries(props.kami.bonusStats);
   const affinities = props.kami.affinities?.join(' | ');
   const statsDetails = new Map(Object.entries({
     'health': {
@@ -85,9 +86,10 @@ export const Banner = (props: Props) => {
         <ContentMiddle>
           {statsArray.map((stat: [string, number]) => {
             const details = statsDetails.get(stat[0]);
-            const valueString = `${details?.base! + details?.bonus!} (${details?.base} + ${details?.bonus})`;
+            const valueString = `${details?.base! + details?.bonus!}`;
+            const tooltipText = [`${details?.base} + ${details?.bonus}`, details?.description ?? ''];
             return (
-              <Tooltip key={stat[0]} text={[details?.description ?? '']} grow>
+              <Tooltip key={stat[0]} text={tooltipText} grow>
                 <InfoBox>
                   <Icon src={details?.image} />
                   <InfoContent>{valueString}</InfoContent>
@@ -116,7 +118,7 @@ const Image = styled.img`
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
+  height: 2vw;
 `;
 
 const Content = styled.div`
@@ -139,14 +141,14 @@ const TitleRow = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-end;
-  margin: .5vw .3vw .5vw .3vw;
+  margin: 1vw .3vw .5vw .3vw;
 `;
 
 const Title = styled.div`
   background-color: #ffffff;
   color: black;
   font-family: Pixel;
-  font-size: 1.5vw;
+  font-size: 2vw;
 `;
 
 const Subtext = styled.div`
@@ -154,21 +156,23 @@ const Subtext = styled.div`
   
   color: #666;
   font-family: Pixel;
-  font-size: .7vw;
+  font-size: .9vw;
 `;
 
 const ContentMiddle = styled.div`
   flex-grow: 1;
   width: 80%;
-  margin-left: 1vw;
   display: flex;
-  flex-flow: column nowrap;
-  align-items: flex-start;
+  flex-direction: row wrap;
+  align-items: center;
   justify-content: flex-start;
 `;
 
 const InfoBox = styled.div`
-  margin: .1vw;
+  border: solid black .12vw;
+  border-radius: 5px;
+  margin: .3vw;
+  padding: .3vw;
   
   display: flex;
   flex-direction: row;
@@ -179,11 +183,12 @@ const InfoBox = styled.div`
 
 const InfoContent = styled.div`
   color: black;
-  padding: .1vw;
+  padding: .3vw;
   align-self: center;
 
   font-family: Pixel;
-  font-size: .6vw;
+  font-size: .8vw;
+  font-weight: 600;
   margin: auto;
 `;
 
