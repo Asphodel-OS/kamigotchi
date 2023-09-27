@@ -26,22 +26,32 @@ export const Banner = (props: Props) => {
     'health': {
       description: 'Health defines how resilient a Kami is to accumulated damage',
       image: healthIcon,
+      base: props.kami.stats.health,
+      bonus: props.kami.bonusStats.health,
     },
     'power': {
       description: 'Power determines the potential rate at which $MUSU can be farmed',
       image: powerIcon,
+      base: props.kami.stats.power,
+      bonus: props.kami.bonusStats.power,
     },
     'violence': {
       description: 'Violence dictates the threshold at which a Kami can liquidate others',
       image: violenceIcon,
+      base: props.kami.stats.violence,
+      bonus: props.kami.bonusStats.violence,
     },
     'harmony': {
       description: 'Harmony divines resting recovery rate and defends against violence',
       image: harmonyIcon,
+      base: props.kami.stats.harmony,
+      bonus: props.kami.bonusStats.harmony,
     },
     'slots': {
       description: 'Slots are room for upgrades ^_^',
       image: placeholderIcon,
+      base: props.kami.stats.slots,
+      bonus: props.kami.bonusStats.slots,
     },
   }));
 
@@ -56,8 +66,8 @@ export const Banner = (props: Props) => {
           </TitleRow>
           <TitleRow>
             <ExperienceBar
-              level={props.kami.level * 1}
-              current={props.kami.experience.current * 1}
+              level={props.kami.level}
+              current={props.kami.experience.current}
               total={props.kami.experience.threshold}
               triggerLevelUp={() => props.actions.levelUp(props.kami)}
             />
@@ -74,11 +84,13 @@ export const Banner = (props: Props) => {
         </ContentTop>
         <ContentMiddle>
           {statsArray.map((stat: [string, number]) => {
+            const details = statsDetails.get(stat[0]);
+            const valueString = `${details?.base! + details?.bonus!} (${details?.base} + ${details?.bonus})`;
             return (
-              <Tooltip key={stat[0]} text={[statsDetails.get(stat[0])?.description as string]} grow>
+              <Tooltip key={stat[0]} text={[details?.description ?? '']} grow>
                 <InfoBox>
-                  <Icon src={statsDetails.get(stat[0])?.image} />
-                  <InfoContent>{stat[1] * 1}</InfoContent>
+                  <Icon src={details?.image} />
+                  <InfoContent>{valueString}</InfoContent>
                 </InfoBox>
               </Tooltip>
             );
@@ -104,7 +116,7 @@ const Image = styled.img`
 `;
 
 const Icon = styled.img`
-  height: 2vw;
+  height: 1.2vw;
 `;
 
 const Content = styled.div`
@@ -127,14 +139,14 @@ const TitleRow = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-end;
-  margin: 1.5vw .3vw .7vw .3vw;
+  margin: .5vw .3vw .5vw .3vw;
 `;
 
 const Title = styled.div`
   background-color: #ffffff;
   color: black;
   font-family: Pixel;
-  font-size: 2vw;
+  font-size: 1.5vw;
 `;
 
 const Subtext = styled.div`
@@ -142,23 +154,21 @@ const Subtext = styled.div`
   
   color: #666;
   font-family: Pixel;
-  font-size: .9vw;
+  font-size: .7vw;
 `;
 
 const ContentMiddle = styled.div`
   flex-grow: 1;
   width: 80%;
+  margin-left: 1vw;
   display: flex;
-  flex-direction: row wrap;
-  align-items: center;
+  flex-flow: column nowrap;
+  align-items: flex-start;
   justify-content: flex-start;
 `;
 
 const InfoBox = styled.div`
-  border: solid black .12vw;
-  border-radius: 5px;
-  margin: .3vw;
-  padding: .3vw;
+  margin: .1vw;
   
   display: flex;
   flex-direction: row;
@@ -169,12 +179,11 @@ const InfoBox = styled.div`
 
 const InfoContent = styled.div`
   color: black;
-  padding: 5px;
+  padding: .1vw;
   align-self: center;
 
   font-family: Pixel;
-  font-size: 1.2vw;
-  font-weight: 600;
+  font-size: .6vw;
   margin: auto;
 `;
 

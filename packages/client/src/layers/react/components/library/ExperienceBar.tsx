@@ -43,16 +43,16 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: left;
   font-family: Pixel;
-  margin-left: 1vw;
+  margin-left: .5vw;
 `;
 
 const BarContainer = styled.div`
   border: solid black .1vw;
   border-radius: 1vw;
   background-color: #bbb;
-  height: 1.2vw;
-  min-width: 12vw;
-  margin: 0px .7vw;
+  height: .8vw;
+  min-width: 8vw;
+  margin: 0px .5vw;
 
   position: relative;
   display: flex;
@@ -72,12 +72,12 @@ const Percentage = styled.div`
   color: black;
   position: absolute;
   font-family: Pixel;
-  font-size: .6vw;
+  font-size: .4vw;
   text-align: center;
 `;
 
 const Level = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: .8vw;
 `;
