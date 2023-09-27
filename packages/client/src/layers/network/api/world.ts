@@ -110,8 +110,9 @@ export function setUpWorldAPI(systems: any) {
   async function initLocalConfig(api: AdminAPI) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
-    await api.config.set.number('HARVEST_RATE_BASE', 2500); // in respect to power
     await api.config.set.number('KAMI_LVL_REQ_BASE', 10); // experience required for level 1->2
+    await api.config.set.number('HARVEST_RATE_BASE', 10000); // in respect to power
+    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 10000); // in respect to harmony
   }
 
 

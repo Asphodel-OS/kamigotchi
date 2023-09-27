@@ -34,6 +34,7 @@ export interface Kami {
   cooldown: number;
   skillPoints: number;
   stats: Stats;
+  bonusStats?: Stats;
   account?: Account;
   deaths?: Kill[];
   kills?: Kill[];
@@ -84,6 +85,8 @@ export const getKami = (
         FaceIndex,
         HealthCurrent,
         HandIndex,
+        HolderID,
+        IsBonus,
         IsKill,
         IsProduction,
         LastTime,
@@ -122,6 +125,15 @@ export const getKami = (
     skillPoints: getComponentValue(SkillPoint, index)?.value as number,
     stats: getStats(layers, index),
   };
+
+  // bonus stats
+  const bonusStatsEntityIndex = Array.from(
+    runQuery([
+      Has(IsBonus),
+      HasValue(HolderID, { value: kami.id }),
+    ])
+  );
+  if (bonusStatsEntityIndex.length > 0) kami.bonusStats = getStats(layers, bonusStatsEntityIndex[0]);
 
   /////////////////
   // OPTIONAL DATA
@@ -239,7 +251,7 @@ export const getKami = (
     const drainBasePrecision = 10 ** getConfigFieldValue(layers.network, 'HEALTH_RATE_DRAIN_BASE_PREC');
     healthRate = -1 * productionRate * drainBase / drainBasePrecision;
   } else if (kami.state === 'RESTING') {
-    const harmony = kami.stats.harmony;
+    const harmony = kami.stats.harmony + (kami.bonusStats?.harmony || 0);
     const healBase = getConfigFieldValue(layers.network, 'HEALTH_RATE_HEAL_BASE');
     const healBasePrecision = 10 ** getConfigFieldValue(layers.network, 'HEALTH_RATE_HEAL_BASE_PREC');
     healthRate = harmony * healBase / (3600 * healBasePrecision)
