@@ -417,15 +417,15 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.skill.create(3, 1, 3, "PASSIVE", "Acquisitiveness", "+1 Power per level");
     await api.registry.skill.add.effect(3, "STAT", "POWER", "INC", 0, 1);
 
-    await api.registry.skill.create(4, 1, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
+    await api.registry.skill.create(4, 2, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
     await api.registry.skill.add.effect(4, "STAT", "VIOLENCE", "INC", 0, 1);
     await api.registry.skill.add.requirement(4, "SKILL", 1, 3);
 
-    await api.registry.skill.create(5, 1, 3, "PASSIVE", "Protector", "+1 Harmony per level");
+    await api.registry.skill.create(5, 2, 3, "PASSIVE", "Protector", "+1 Harmony per level");
     await api.registry.skill.add.effect(5, "STAT", "HARMONY", "INC", 0, 1);
     await api.registry.skill.add.requirement(5, "SKILL", 2, 3);
 
-    await api.registry.skill.create(6, 1, 3, "PASSIVE", "Predator", "+1 Power per level");
+    await api.registry.skill.create(6, 2, 3, "PASSIVE", "Predator", "+1 Power per level");
     await api.registry.skill.add.effect(6, "STAT", "POWER", "INC", 0, 1);
     await api.registry.skill.add.requirement(6, "SKILL", 3, 3);
   }
