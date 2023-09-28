@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { ExitButton } from 'layers/react/components/library/ExitButton';
@@ -99,14 +99,14 @@ const Content = styled.div`
 
 const ButtonRow = styled.div`
   position: absolute;
-  width: 100%;
   
   display: inline-flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+  align-self: flex-end;
 `;
 
-const Header = styled.div`  
+const Header = styled.div`
   border-radius: 10px 10px 0px 0px;
   border-bottom: solid black .15vw;
   display: flex;
