@@ -322,7 +322,9 @@ export function setUpWorldAPI(systems: any) {
       1,
       "Welcome",
       "Welcome to Kamigotchi World.\n\nYou can move by opening the map menu - try the buttons on the top right. If you can work out how to move to room 4, we'll give you something special.",
-      1
+      1,
+      1,
+      0
     );
     await api.registry.quest.add.objective(1, "Move to room 4", "AT", "ROOM", 0, 4);
     await api.registry.quest.add.reward(1, "MINT20", 0, 5);
@@ -332,7 +334,9 @@ export function setUpWorldAPI(systems: any) {
       2,
       "Mint",
       "Well done.\n\nNow you've worked out how to move.But you won't be able to do much here unless you're able to get yourself a Kamigotchi.\n\nFind the vending machine.",
-      2
+      1,
+      2,
+      0
     );
     await api.registry.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
     await api.registry.quest.add.objective(2, "Mint a Kami", "MINT", "KAMI", 0, 1);
@@ -343,7 +347,9 @@ export function setUpWorldAPI(systems: any) {
       3,
       "Harvest",
       "With your Kamigotchi, your existence now has meaning.\n\nSeek out a Node if you also wish for your existence to have MUSU.",
-      4
+      1,
+      4,
+      0
     );
     await api.registry.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
     await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN", 0, 1);
@@ -354,6 +360,8 @@ export function setUpWorldAPI(systems: any) {
       4,
       "Farming 1: A Pocketful of $MUSU",
       "You've gotten a taste for harvesting now. Did you know you can leave your Kamigotchi to harvest while you explore? Just remember to come back in time....",
+      1,
+      0,
       0
     );
     await api.registry.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
@@ -365,6 +373,8 @@ export function setUpWorldAPI(systems: any) {
       5,
       "Farming 2: Stacking $MUSU",
       "You're getting the hang of it. \n\nYour Kamigotchi will passively restore HP over time, but you can feed them if you want to get back to harvesting sooner…",
+      1,
+      0,
       0
     );
     await api.registry.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
@@ -376,11 +386,39 @@ export function setUpWorldAPI(systems: any) {
       6,
       "Farming 3: Accumulating $MUSU",
       "Great, you're really taking this seriously. This one's a long haul. \n\nHope you're getting into a healthy routine with your Kamigotchi now. \n\nIf you haven't already noticed, there's plenty of secrets hidden around the world.",
+      1,
+      0,
       0
     );
     await api.registry.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
     await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN", 0, 5000);
     await api.registry.quest.add.reward(6, "REVIVE", 1, 10);
+
+    // TEST REPEAT QUESTS
+    await api.registry.quest.create(
+      7,
+      "Repeatablable Quest",
+      "repeatable every 30s.",
+      1,
+      0,
+      30
+    );
+    await api.registry.quest.create(
+      8,
+      "Repeatablable Quest",
+      "repeatable every 2 mins.",
+      1,
+      0,
+      120
+    )
+    await api.registry.quest.create(
+      9,
+      "Repeatablable Quest",
+      "repeatable every 2 hours.",
+      1,
+      0,
+      7200
+    )
   }
 
 

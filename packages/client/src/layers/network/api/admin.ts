@@ -128,14 +128,18 @@ export function createAdminAPI(systems: any) {
     index: number,
     name: string,
     description: string,
-    location: number
+    max: number,
+    location: number,
+    repeatTime: number
   ) {
     await sleepIf();
     return systems['system._Registry.Quest.Create'].executeTyped(
       index,
       name,
       description,
-      location
+      max,
+      location,
+      repeatTime
     );
   }
 

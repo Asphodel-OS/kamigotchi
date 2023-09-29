@@ -1,5 +1,6 @@
 import { EntityIndex } from "@latticexyz/recs";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
@@ -11,7 +12,7 @@ import { Objective, Quest, Requirement, Reward } from "layers/react/shapes/Quest
 interface Props {
   account: Account;
   registryQuests: Quest[];
-  mode: 'AVAILABLE' | 'ONGOING' | 'COMPLETED';
+  mode: TabType;
   actions: {
     acceptQuest: (quest: Quest) => void;
     completeQuest: (quest: Quest) => void;
@@ -23,7 +24,24 @@ interface Props {
   };
 }
 
+interface TextBool {
+  text: string;
+  bool: boolean;
+}
+
 export const List = (props: Props) => {
+  // ticking
+  // ticking
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  useEffect(() => {
+    const refreshClock = () => {
+      setLastRefresh(Date.now());
+    };
+    const timerId = setInterval(refreshClock, 1000);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []);
 
 
   ///////////////////
@@ -37,14 +55,45 @@ export const List = (props: Props) => {
     return complete;
   }
 
-  const isOngoing = (account: Account, questIndex: number): boolean => {
-    let ongoing = false;
-    account.quests?.ongoing.forEach((q: Quest) => {
-      if (q.index === questIndex) ongoing = true;
-    });
-    return ongoing;
+  const checkMax = (account: Account, quest: Quest): boolean => {
+    return getNumOngoing(account, quest.index) < quest.max;
   }
 
+  const checkRepeat = (quest: Quest): TextBool => {
+    const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
+    const curr = allQuests?.find((x) => (x.index == quest.index));
+
+    // has not accepted repeatable before
+    if (curr === undefined) return { text: '', bool: true };
+
+    // must be repeatable (should not get here)
+    if (!quest.repeatable) return { text: 'not repeatable', bool: false };
+
+    // must be completed
+    if (!curr.complete) return { text: 'already ongoing', bool: false };
+
+    const now = lastRefresh / 1000;
+    const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
+    if (Number(curr.startTime) + Number(wait) > Number(now)) {
+      const timeLeft = Number(curr.startTime) + Number(wait) - Number(now);
+      let timeText = '';
+      if (timeLeft > 3600) {
+        const hours = Math.floor(timeLeft / 3600);
+        timeText = `${hours} ${hours > 1 ? 'hours' : 'hour'} `;
+      }
+      if (timeLeft > 60) {
+        const mins = Math.floor((timeLeft % 3600) / 60);
+        timeText = timeText + `${mins} ${mins > 1 ? 'minutes' : 'minute'} `;
+      }
+      const seconds = Math.ceil(timeLeft % 60);
+      timeText = timeText + `${seconds} ${seconds > 1 ? 'seconds' : 'second'}`;
+      return { text: `repeats in ${timeText}`, bool: false };
+    } else {
+      return { text: '', bool: true };
+    }
+  }
+
+  // TODO: convert to TextBool
   const checkRequirements = (quest: Quest): boolean => {
     for (const requirement of quest.requirements) {
       if (!requirement.status?.completable) {
@@ -55,6 +104,7 @@ export const List = (props: Props) => {
     return true;
   }
 
+  // TODO: convert to TextBool
   const checkObjectives = (quest: Quest): boolean => {
     for (const objective of quest.objectives) {
       if (!objective.status?.completable) {
@@ -66,7 +116,11 @@ export const List = (props: Props) => {
   }
 
   const canAccept = (quest: Quest): boolean => {
-    return checkRequirements(quest);
+    if (!checkMax(props.account, quest)) return false;
+    if (quest.repeatable) {
+      if (checkRepeat(quest).bool && checkRequirements(quest)) return true;
+      else return false;
+    } else return checkRequirements(quest);
   }
 
   const canComplete = (quest: Quest): boolean => {
@@ -76,6 +130,14 @@ export const List = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
+
+  const getNumOngoing = (account: Account, questIndex: number): number => {
+    let ongoing = 0;
+    account.quests?.ongoing.forEach((q: Quest) => {
+      if (q.index === questIndex) ongoing++;
+    });
+    return ongoing;
+  }
 
   const getFoodName = (foodIndex: number): string => {
     let entityIndex = props.utils.queryFoodRegistry(foodIndex);
@@ -162,6 +224,14 @@ export const List = (props: Props) => {
 
   const AcceptButton = (quest: Quest) => {
     let tooltipText = '';
+
+    if (quest.repeatable) {
+      const result = checkRepeat(quest);
+      if (!result.bool) {
+        tooltipText = result.text;
+      }
+    }
+
     if (!checkRequirements(quest)) {
       tooltipText = 'Unmet requirements';
     }
@@ -242,14 +312,15 @@ export const List = (props: Props) => {
     )
   }
 
-  // TODO: logical support for repeatable quests (e.g. daily quests)
+  // acceptable registry quests, non-repeatable
   const AvailableQuests = () => {
     // get quest registry. filter out any unavailable quests
     let quests = props.registryQuests.filter((q: Quest) => {
       return (
-        canAccept(q)
+        checkRequirements(q)
+        && checkMax(props.account, q)
         && !isCompleted(props.account, q.index)
-        && !isOngoing(props.account, q.index)
+        && !q.repeatable
       );
     });
 
@@ -264,6 +335,28 @@ export const List = (props: Props) => {
       </QuestContainer>
     ))
   }
+
+  // acceptable registry quests, repeatable
+  const DailyQuests = () => {
+    // get quest registry, filter out non repeatables
+    let quests = props.registryQuests.filter((q: Quest) => {
+      return (
+        checkRequirements(q)
+        && q.repeatable
+      );
+    });
+
+    return quests.map((q: Quest) => (
+      <QuestContainer key={q.id}>
+        <QuestName>{q.name}</QuestName>
+        <QuestDescription>{q.description}</QuestDescription>
+        {RequirementDisplay(q.requirements)}
+        {ObjectiveDisplay(q.objectives, false)}
+        {RewardDisplay(q.rewards)}
+        {AcceptButton(q)}
+      </QuestContainer>
+    ))
+  };
 
   const CompletedQuests = () => {
     return props.account.quests?.completed.reverse().map((q: Quest) => (
@@ -291,7 +384,9 @@ export const List = (props: Props) => {
   const QuestsDisplay = () => {
     switch (props.mode) {
       case 'AVAILABLE':
-        return AvailableQuests();
+        return AvailableQuests()
+      case 'DAILY':
+        return DailyQuests()
       case 'ONGOING':
         return OngoingQuests();
       case 'COMPLETED':

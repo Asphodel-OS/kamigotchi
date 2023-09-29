@@ -52,6 +52,7 @@ export function createComponents(world: World) {
     IsRegister: defineBoolEZ("IsRegister", "component.Is.Register"),
     IsRegistry: defineBoolEZ("IsRegistry", "component.Is.Registry"),
     IsRelationship: defineBoolEZ("IsRelationship", "component.Is.Relationship"),
+    IsRepeatable: defineBoolEZ("IsRepeatable", "component.Is.Repeatable"),
     IsRequest: defineBoolEZ("IsRequest", "component.Is.Request"),
     IsRequirement: defineBoolEZ("IsRequirement", "component.Is.Requirement"),
     IsReward: defineBoolEZ("IsReward", "component.Is.Reward"),

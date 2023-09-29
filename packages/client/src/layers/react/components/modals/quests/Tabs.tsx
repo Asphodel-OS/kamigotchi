@@ -26,6 +26,13 @@ export const Tabs = (props: Props) => {
         Available
       </Button>
       <Button
+        onClick={() => setTab('DAILY')}
+        disabled={props.tab === 'DAILY'}
+        style={{ borderRight: 'solid black .15vw' }}
+      >
+        Daily
+      </Button>
+      <Button
         onClick={() => setTab('ONGOING')}
         disabled={props.tab === 'ONGOING'}
         style={{ borderRight: 'solid black .15vw' }}

@@ -48,7 +48,11 @@ export interface Quest {
   index: number;
   name: string;
   description: string;
+  startTime: number;
+  max: number;
   complete: boolean;
+  repeatable: boolean;
+  repeatDuration?: number;
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Reward[];
@@ -96,13 +100,18 @@ const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
         IsComplete,
         IsQuest,
         IsRegistry,
+        IsRepeatable,
         Description,
         Name,
+        Max,
+        Time,
         QuestIndex,
+        StartTime,
       },
       world,
     },
   } = layers;
+
 
   const questIndex = getComponentValue(QuestIndex, entityIndex)?.value || 0 as number;
   const registryIndex = Array.from(
@@ -113,16 +122,25 @@ const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
     ])
   )[0];
 
-  return {
+  let result: Quest = {
     id: world.entities[entityIndex],
     index: questIndex,
     name: getComponentValue(Name, registryIndex)?.value || '' as string,
     description: getComponentValue(Description, registryIndex)?.value || '' as string,
+    startTime: getComponentValue(StartTime, entityIndex)?.value || 0 as number,
+    max: getComponentValue(Max, registryIndex)?.value || 0 as number,
     complete: hasComponent(IsComplete, entityIndex) || false as boolean,
+    repeatable: hasComponent(IsRepeatable, registryIndex) || false as boolean,
     requirements: queryQuestRequirements(layers, questIndex),
     objectives: queryQuestObjectives(layers, questIndex),
     rewards: queryQuestRewards(layers, questIndex),
   };
+
+  if (hasComponent(IsRepeatable, registryIndex)) {
+    result.repeatDuration = getComponentValue(Time, registryIndex)?.value || 0 as number;
+  }
+
+  return result;
 }
 
 // Get a Requirement Registry object
