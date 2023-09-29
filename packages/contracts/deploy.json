@@ -63,6 +63,7 @@
     "IsProductionComponent",
     "IsRegistryComponent",
     "IsRelationshipComponent",
+    "IsRepeatableComponent",
     "IsRequirementComponent",
     "IsRewardComponent",
     "IsRoomComponent",
@@ -670,13 +671,41 @@
     {
       "name": "QuestAcceptSystem",
       "writeAccess": [
-        "*"
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IndexQuestComponent",
+        "IndexObjectiveComponent",
+        "IsCompleteComponent",
+        "IsQuestComponent",
+        "IsRepeatableComponent",
+        "IsObjectiveComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "QuestCompleteSystem",
       "writeAccess": [
         "*"
+      ]
+    },
+    {
+      "name": "QuestDropSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IndexQuestComponent",
+        "IndexObjectiveComponent",
+        "IsCompleteComponent",
+        "IsQuestComponent",
+        "IsRepeatableComponent",
+        "IsObjectiveComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent",
+        "ValueComponent"
       ]
     },
     {

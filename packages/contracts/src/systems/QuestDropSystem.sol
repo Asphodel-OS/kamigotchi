@@ -7,24 +7,20 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 
-uint256 constant ID = uint256(keccak256("system.Quest.Complete"));
+uint256 constant ID = uint256(keccak256("system.Quest.Drop"));
 
-contract QuestCompleteSystem is System {
+contract QuestDropSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(accountID != 0, "QuestComplete: no account");
-    require(accountID == LibQuests.getAccountId(components, questID), "QuestComplete: not account");
-    require(LibQuests.isQuest(components, questID), "QuestComplete: not a quest");
-    require(
-      LibQuests.checkObjectives(components, questID, accountID),
-      "QuestComplete: objs not met"
-    );
+    require(accountID != 0, "QuestDrop: no account");
+    require(accountID == LibQuests.getAccountId(components, questID), "QuestDrop: not account");
+    require(LibQuests.isQuest(components, questID), "QuestDrop: not a quest");
 
-    LibQuests.complete(world, components, questID, accountID);
+    LibQuests.drop(components, questID);
 
     LibAccount.updateLastBlock(components, accountID);
     LibAccount.updateLastTs(components, accountID);

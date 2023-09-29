@@ -227,6 +227,12 @@ abstract contract SetupTemplate is TestSetupImports {
     _QuestCompleteSystem.executeTyped(questID);
   }
 
+  function _dropQuest(uint playerIndex, uint questID) internal virtual {
+    address operator = _getOperator(playerIndex);
+    vm.prank(operator);
+    _QuestDropSystem.executeTyped(questID);
+  }
+
   /* SKILLS */
 
   function _upgradeSkill(uint playerIndex, uint targetID, uint skillIndex) internal virtual {
@@ -324,10 +330,12 @@ abstract contract SetupTemplate is TestSetupImports {
     uint index,
     string memory name,
     string memory description,
-    uint location
+    uint max,
+    uint location,
+    uint duration
   ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name, description, location);
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, max, location, duration);
   }
 
   function _createQuestObjective(

@@ -97,6 +97,7 @@ import { IsPetComponent, ID as IsPetComponentID } from "components/IsPetComponen
 import { IsProductionComponent, ID as IsProductionComponentID } from "components/IsProductionComponent.sol";
 import { IsRegistryComponent, ID as IsRegistryComponentID } from "components/IsRegistryComponent.sol";
 import { IsRelationshipComponent, ID as IsRelationshipComponentID } from "components/IsRelationshipComponent.sol";
+import { IsRepeatableComponent, ID as IsRepeatableComponentID } from "components/IsRepeatableComponent.sol";
 import { IsRequirementComponent, ID as IsRequirementComponentID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardComponentID } from "components/IsRewardComponent.sol";
 import { IsRoomComponent, ID as IsRoomComponentID } from "components/IsRoomComponent.sol";
@@ -204,6 +205,7 @@ import { ProductionStartSystem, ID as ProductionStartSystemID } from "systems/Pr
 import { ProductionStopSystem, ID as ProductionStopSystemID } from "systems/ProductionStopSystem.sol";
 import { QuestAcceptSystem, ID as QuestAcceptSystemID } from "systems/QuestAcceptSystem.sol";
 import { QuestCompleteSystem, ID as QuestCompleteSystemID } from "systems/QuestCompleteSystem.sol";
+import { QuestDropSystem, ID as QuestDropSystemID } from "systems/QuestDropSystem.sol";
 import { RelationshipAdvanceSystem, ID as RelationshipAdvanceSystemID } from "systems/RelationshipAdvanceSystem.sol";
 import { SkillUpgradeSystem, ID as SkillUpgradeSystemID } from "systems/SkillUpgradeSystem.sol";
 
@@ -277,6 +279,7 @@ IsPetComponent _IsPetComponent;
 IsProductionComponent _IsProductionComponent;
 IsRegistryComponent _IsRegistryComponent;
 IsRelationshipComponent _IsRelationshipComponent;
+IsRepeatableComponent _IsRepeatableComponent;
 IsRequirementComponent _IsRequirementComponent;
 IsRewardComponent _IsRewardComponent;
 IsRoomComponent _IsRoomComponent;
@@ -384,6 +387,7 @@ ProductionStartSystem _ProductionStartSystem;
 ProductionStopSystem _ProductionStopSystem;
 QuestAcceptSystem _QuestAcceptSystem;
 QuestCompleteSystem _QuestCompleteSystem;
+QuestDropSystem _QuestDropSystem;
 RelationshipAdvanceSystem _RelationshipAdvanceSystem;
 SkillUpgradeSystem _SkillUpgradeSystem;
 
@@ -458,6 +462,7 @@ _IsPetComponent = IsPetComponent(component(IsPetComponentID));
 _IsProductionComponent = IsProductionComponent(component(IsProductionComponentID));
 _IsRegistryComponent = IsRegistryComponent(component(IsRegistryComponentID));
 _IsRelationshipComponent = IsRelationshipComponent(component(IsRelationshipComponentID));
+_IsRepeatableComponent = IsRepeatableComponent(component(IsRepeatableComponentID));
 _IsRequirementComponent = IsRequirementComponent(component(IsRequirementComponentID));
 _IsRewardComponent = IsRewardComponent(component(IsRewardComponentID));
 _IsRoomComponent = IsRoomComponent(component(IsRoomComponentID));
@@ -564,6 +569,7 @@ _ProductionStartSystem = ProductionStartSystem(system(ProductionStartSystemID));
 _ProductionStopSystem = ProductionStopSystem(system(ProductionStopSystemID));
 _QuestAcceptSystem = QuestAcceptSystem(system(QuestAcceptSystemID));
 _QuestCompleteSystem = QuestCompleteSystem(system(QuestCompleteSystemID));
+_QuestDropSystem = QuestDropSystem(system(QuestDropSystemID));
 _RelationshipAdvanceSystem = RelationshipAdvanceSystem(system(RelationshipAdvanceSystemID));
 _SkillUpgradeSystem = SkillUpgradeSystem(system(SkillUpgradeSystemID));
 

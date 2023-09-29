@@ -13,14 +13,25 @@ contract _RegistryCreateQuestSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name, string memory description, uint256 location) = abi.decode(
-      arguments,
-      (uint256, string, string, uint256)
-    );
+    (
+      uint256 index,
+      string memory name,
+      string memory description,
+      uint256 max,
+      uint256 location,
+      uint256 duration
+    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256, uint256));
 
-    LibRegistryQuests.createQuest(world, components, index, name, description);
+    uint256 regID = LibRegistryQuests.createQuest(world, components, index, max, name, description);
+
+    // set location (if any)
     if (location != 0) {
-      LibRegistryQuests.setLocation(components, index, location);
+      LibRegistryQuests.setLocation(components, regID, location);
+    }
+
+    // set repeatable (if so)
+    if (duration > 0) {
+      LibRegistryQuests.setRepeatable(components, regID, duration);
     }
 
     return "";
@@ -30,8 +41,10 @@ contract _RegistryCreateQuestSystem is System {
     uint256 index,
     string memory name,
     string memory description,
-    uint256 location
+    uint256 max,
+    uint256 location,
+    uint256 duration
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, description, location));
+    return execute(abi.encode(index, name, description, max, location, duration));
   }
 }

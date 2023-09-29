@@ -13,6 +13,7 @@ import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
+import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
@@ -20,6 +21,8 @@ import { DescriptionComponent, ID as DescCompID } from "components/DescriptionCo
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
+import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
@@ -39,6 +42,7 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 index,
+    uint256 max,
     string memory name,
     string memory description
   ) internal returns (uint256) {
@@ -49,10 +53,16 @@ library LibRegistryQuests {
     setIsRegistry(components, id);
     setIsQuest(components, id);
     setQuestIndex(components, id, index);
+    setMax(components, id, max);
     setName(components, id, name);
     setDescription(components, id, description);
 
     return id;
+  }
+
+  function setRepeatable(IUintComp components, uint256 regID, uint256 duration) internal {
+    setIsRepeatable(components, regID);
+    setTime(components, regID, duration);
   }
 
   function createEmptyObjective(
@@ -111,8 +121,12 @@ library LibRegistryQuests {
     unsetIsQuest(components, questID);
     unsetQuestIndex(components, questID);
     unsetName(components, questID);
+    unsetMax(components, questID);
     unsetDescription(components, questID);
     unsetLocation(components, questID);
+
+    unsetIsRepeatable(components, questID);
+    unsetTime(components, questID);
   }
 
   function deleteObjective(IUintComp components, uint256 objectiveID) internal {
@@ -169,11 +183,19 @@ library LibRegistryQuests {
     return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).hasValue(id, _type);
   }
 
+  function isRepeatable(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).has(id);
+  }
+
   /////////////////
   // SETTERS
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+  }
+
+  function setIsRepeatable(IUintComp components, uint256 id) internal {
+    IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).set(id);
   }
 
   function setIsQuest(IUintComp components, uint256 id) internal {
@@ -220,6 +242,14 @@ library LibRegistryQuests {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
+  function setMax(IUintComp components, uint256 id, uint256 max) internal {
+    MaxComponent(getAddressById(components, MaxCompID)).set(id, max);
+  }
+
+  function setTime(IUintComp components, uint256 id, uint256 time) internal {
+    TimeComponent(getAddressById(components, TimeCompID)).set(id, time);
+  }
+
   function setType(IUintComp components, uint256 id, string memory _type) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
   }
@@ -234,6 +264,12 @@ library LibRegistryQuests {
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
     if (IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id)) {
       IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    }
+  }
+
+  function unsetIsRepeatable(IUintComp components, uint256 id) internal {
+    if (IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).has(id)) {
+      IsRepeatableComponent(getAddressById(components, IsRepeatableCompID)).remove(id);
     }
   }
 
@@ -300,6 +336,18 @@ library LibRegistryQuests {
   function unsetName(IUintComp components, uint256 id) internal {
     if (NameComponent(getAddressById(components, NameCompID)).has(id)) {
       NameComponent(getAddressById(components, NameCompID)).remove(id);
+    }
+  }
+
+  function unsetMax(IUintComp components, uint256 id) internal {
+    if (MaxComponent(getAddressById(components, MaxCompID)).has(id)) {
+      MaxComponent(getAddressById(components, MaxCompID)).remove(id);
+    }
+  }
+
+  function unsetTime(IUintComp components, uint256 id) internal {
+    if (TimeComponent(getAddressById(components, TimeCompID)).has(id)) {
+      TimeComponent(getAddressById(components, TimeCompID)).remove(id);
     }
   }
 

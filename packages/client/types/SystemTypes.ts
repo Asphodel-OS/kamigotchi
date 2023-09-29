@@ -68,6 +68,7 @@ import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem"
 import { ProductionStopSystem } from "./ethers-contracts/ProductionStopSystem";
 import { QuestAcceptSystem } from "./ethers-contracts/QuestAcceptSystem";
 import { QuestCompleteSystem } from "./ethers-contracts/QuestCompleteSystem";
+import { QuestDropSystem } from "./ethers-contracts/QuestDropSystem";
 import { RelationshipAdvanceSystem } from "./ethers-contracts/RelationshipAdvanceSystem";
 import { SkillUpgradeSystem } from "./ethers-contracts/SkillUpgradeSystem";
 import { TradeAcceptSystem } from "./ethers-contracts/TradeAcceptSystem";
@@ -146,6 +147,7 @@ export type SystemTypes = {
   "system.Production.Stop": ProductionStopSystem;
   "system.Quest.Accept": QuestAcceptSystem;
   "system.Quest.Complete": QuestCompleteSystem;
+  "system.Quest.Drop": QuestDropSystem;
   "system.Relationship.Advance": RelationshipAdvanceSystem;
   "system.Skill.Upgrade": SkillUpgradeSystem;
   "system.Trade.Accept": TradeAcceptSystem;

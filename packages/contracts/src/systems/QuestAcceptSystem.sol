@@ -15,18 +15,45 @@ contract QuestAcceptSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 questIndex = abi.decode(arguments, (uint256));
-    uint256 questID = LibRegistryQuests.getByQuestIndex(components, questIndex);
-    require(questID != 0, "Quest not found");
+    uint256 regID = LibRegistryQuests.getByQuestIndex(components, questIndex);
+    require(regID != 0, "Quest not found");
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "QuestAccept: no account");
 
     require(
-      LibQuests.checkRequirements(components, questID, accountID),
+      LibQuests.checkMax(components, regID, questIndex, accountID),
+      "QuestAccept: max active quests"
+    );
+    require(
+      LibQuests.checkRequirements(components, regID, questIndex, accountID),
       "QuestAccept: reqs not met"
     );
 
-    uint256 assignedID = LibQuests.assign(world, components, questIndex, accountID);
+    uint256 assignedID;
+    if (LibQuests.isRepeatable(components, regID)) {
+      uint256[] memory questIDs = LibQuests.queryAccountQuestIndex(
+        components,
+        accountID,
+        questIndex
+      );
+      // repeatable quests can only have 0 or 1 instances
+      // if no instance, leave assignedID as 0
+      if (questIDs.length == 1) {
+        assignedID = questIDs[0];
+      }
+      require(
+        LibQuests.checkRepeatConditions(components, questIndex, assignedID),
+        "QuestAccept: repeat cons not met"
+      );
+      assignedID = LibQuests.assignRepeatable(world, components, questIndex, assignedID, accountID);
+    } else {
+      assignedID = LibQuests.assign(world, components, questIndex, accountID);
+    }
+
+    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
+
     return abi.encode(assignedID);
   }
 
