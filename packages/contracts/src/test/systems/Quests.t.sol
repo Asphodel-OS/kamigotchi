@@ -35,7 +35,7 @@ contract QuestsTest is SetupTemplate {
     // check that quest cant be accepted over its max
     _acceptQuest(0, 1);
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: max active quests");
+    vm.expectRevert("QuestAccept: too many times");
     _QuestAcceptSystem.executeTyped(1);
   }
 

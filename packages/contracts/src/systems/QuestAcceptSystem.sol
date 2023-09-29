@@ -23,7 +23,7 @@ contract QuestAcceptSystem is System {
 
     require(
       LibQuests.checkMax(components, regID, questIndex, accountID),
-      "QuestAccept: max active quests"
+      "QuestAccept: too many times"
     );
     require(
       LibQuests.checkRequirements(components, regID, questIndex, accountID),
@@ -43,7 +43,7 @@ contract QuestAcceptSystem is System {
         assignedID = questIDs[0];
       }
       require(
-        LibQuests.checkRepeatConditions(components, questIndex, assignedID),
+        LibQuests.checkRepeat(components, questIndex, assignedID),
         "QuestAccept: repeat cons not met"
       );
       assignedID = LibQuests.assignRepeatable(world, components, questIndex, assignedID, accountID);

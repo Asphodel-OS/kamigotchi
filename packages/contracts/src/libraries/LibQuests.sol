@@ -200,15 +200,15 @@ library LibQuests {
     uint256 accountID
   ) internal view returns (bool) {
     uint256 max = getMax(components, questID);
-    uint256[] memory uncompletedQuests = queryUncompletedQuests(components, accountID, questIndex);
-    return uncompletedQuests.length < max;
+    uint256[] memory quests = queryAccountQuestIndex(components, accountID, questIndex);
+    return quests.length < max;
   }
 
-  function checkRepeatConditions(
+  function checkRepeat(
     IUintComp components,
     uint256 questIndex,
     uint256 repeatQuestID
-  ) internal returns (bool) {
+  ) internal view returns (bool) {
     // true if first time accepting
     if (repeatQuestID == 0) return true;
 

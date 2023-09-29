@@ -56,7 +56,7 @@ export const List = (props: Props) => {
   }
 
   const checkMax = (account: Account, quest: Quest): boolean => {
-    return getNumOngoing(account, quest.index) < quest.max;
+    return getNumOngoing(account, quest.index) + getNumCompleted(account, quest.index) < quest.max;
   }
 
   const checkRepeat = (quest: Quest): TextBool => {
@@ -134,6 +134,14 @@ export const List = (props: Props) => {
   const getNumOngoing = (account: Account, questIndex: number): number => {
     let ongoing = 0;
     account.quests?.ongoing.forEach((q: Quest) => {
+      if (q.index === questIndex) ongoing++;
+    });
+    return ongoing;
+  }
+
+  const getNumCompleted = (account: Account, questIndex: number): number => {
+    let ongoing = 0;
+    account.quests?.completed.forEach((q: Quest) => {
       if (q.index === questIndex) ongoing++;
     });
     return ongoing;
@@ -319,7 +327,6 @@ export const List = (props: Props) => {
       return (
         checkRequirements(q)
         && checkMax(props.account, q)
-        && !isCompleted(props.account, q.index)
         && !q.repeatable
       );
     });
