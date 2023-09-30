@@ -13,9 +13,9 @@ import {
   setupMUDNetwork,
 } from "@latticexyz/std-client";
 
-import { createActionSystem } from "./ActionSystem/createActionSystem";
 import { SystemTypes } from "types/SystemTypes";
 import { SystemAbis } from "types/SystemAbis.mjs";
+import { createActionSystem } from "./ActionSystem/createActionSystem";
 import { createAdminAPI } from "./api/admin";
 import { createPlayerAPI } from "./api/player";
 import { setUpWorldAPI } from "./api/world";

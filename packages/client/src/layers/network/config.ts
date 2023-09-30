@@ -52,6 +52,9 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
   let config: NetworkConfig = <NetworkConfig>{};
 
   switch (process.env.MODE) {
+    case 'DEV':
+      config = createNetworkConfigLocal(externalProvider);
+      break;
     case 'TEST':
       config = createNetworkConfigOpGoerli(externalProvider);
       break;
