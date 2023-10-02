@@ -15,6 +15,7 @@ import { getConfigFieldValue } from './Config';
 import { Kill, getKill } from './Kill';
 import { Production, getProduction } from './Production';
 import { Stats, getStats } from './Stats';
+import { Skill, getSkills } from './Skill';
 import { Traits, TraitIndices, getTraits } from './Trait';
 
 // standardized shape of a Kami Entity
@@ -31,12 +32,14 @@ export interface Kami {
   state: string;
   lastUpdated: number;
   cooldown: number;
-  skillpoints: number;
+  skillPoints: number;
   stats: Stats;
+  bonusStats: Stats;
   account?: Account;
   deaths?: Kill[];
   kills?: Kill[];
   production?: Production;
+  skills?: Skill[];
   traits?: Traits;
   affinities?: string[];
   namable: boolean;
@@ -53,6 +56,7 @@ export interface Options {
   deaths?: boolean;
   kills?: boolean;
   production?: boolean;
+  skills?: boolean;
   traits?: boolean;
 }
 
@@ -81,6 +85,8 @@ export const getKami = (
         FaceIndex,
         HealthCurrent,
         HandIndex,
+        HolderID,
+        IsBonus,
         IsKill,
         IsProduction,
         LastTime,
@@ -105,9 +111,9 @@ export const getKami = (
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     uri: getComponentValue(MediaURI, index)?.value as string,
-    level: getComponentValue(Level, index)?.value ?? 1 as number,
+    level: (getComponentValue(Level, index)?.value ?? 1 as number) * 1,
     experience: {
-      current: getComponentValue(Experience, index)?.value as number ?? 0,
+      current: (getComponentValue(Experience, index)?.value ?? 0 as number) * 1,
       threshold: 0,
     },
     health: getComponentValue(HealthCurrent, index)?.value as number,
@@ -116,9 +122,27 @@ export const getKami = (
     namable: getComponentValue(CanName, index)?.value as boolean,
     lastUpdated: getComponentValue(LastTime, index)?.value as number,
     cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
-    skillpoints: getComponentValue(SkillPoint, index)?.value as number,
+    skillPoints: getComponentValue(SkillPoint, index)?.value as number,
     stats: getStats(layers, index),
+    bonusStats: {
+      health: 0,
+      harmony: 0,
+      violence: 0,
+      power: 0,
+      slots: 0,
+    }
   };
+
+  // bonus stats
+  const bonusStatsEntityIndex = Array.from(
+    runQuery([
+      Has(IsBonus),
+      HasValue(HolderID, { value: kami.id }),
+    ])
+  );
+  if (bonusStatsEntityIndex.length > 0) {
+    kami.bonusStats = getStats(layers, bonusStatsEntityIndex[0]);
+  }
 
   /////////////////
   // OPTIONAL DATA
@@ -173,6 +197,11 @@ export const getKami = (
     )[0];
     if (productionIndex)
       kami.production = getProduction(layers, productionIndex, { node: true });
+  }
+
+  // populate Skills
+  if (options?.skills) {
+    kami.skills = getSkills(layers, kami.id);
   }
 
   // populate Traits
@@ -231,7 +260,7 @@ export const getKami = (
     const drainBasePrecision = 10 ** getConfigFieldValue(layers.network, 'HEALTH_RATE_DRAIN_BASE_PREC');
     healthRate = -1 * productionRate * drainBase / drainBasePrecision;
   } else if (kami.state === 'RESTING') {
-    const harmony = kami.stats.harmony;
+    const harmony = kami.stats.harmony + kami.bonusStats.harmony;
     const healBase = getConfigFieldValue(layers.network, 'HEALTH_RATE_HEAL_BASE');
     const healBasePrecision = 10 ** getConfigFieldValue(layers.network, 'HEALTH_RATE_HEAL_BASE_PREC');
     healthRate = harmony * healBase / (3600 * healBasePrecision)

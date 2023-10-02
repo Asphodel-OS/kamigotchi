@@ -40,33 +40,38 @@ export function registerNodeModal() {
           actions,
           api: { player },
           components: {
+            OperatorAddress,
+            IsNode,
+            IsProduction,
             AccountID,
-            Balance,
             NodeID,
             PetID,
-            IsNode,
-            IsPet,
-            IsProduction,
+            Balance,
+            Harmony,
+            Health,
             HealthCurrent,
             Location,
-            OperatorAddress,
             Rate,
             StartTime,
             State,
+            Violence,
           },
         },
       } = layers;
 
       // TODO: update this to support node input as props
       return merge(
+        OperatorAddress.update$,
         AccountID.update$,
         Balance.update$,
+        Harmony.update$,
+        Health.update$,
         HealthCurrent.update$,
         Location.update$,
         Rate.update$,
         StartTime.update$,
         State.update$,
-        OperatorAddress.update$
+        Violence.update$,
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(layers, { kamis: true });

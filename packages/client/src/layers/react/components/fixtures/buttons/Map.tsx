@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import mapImage from 'assets/images/icons/map_native.png';
+import { mapIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -38,7 +38,7 @@ export function registerMapButton() {
           visible={visibleButtons.map}
           hideModal={modalsToHide}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={mapImage} alt='map_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={mapIcon} alt='map_icon' />
         </MenuButton>
       );
     }

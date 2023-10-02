@@ -16,15 +16,17 @@ contract _RegistryCreateSkillEffectSystem is System {
     (
       uint256 skillIndex,
       string memory type_,
+      string memory subtype,
       string memory logicType,
       uint256 index,
       uint256 value
-    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256));
+    ) = abi.decode(arguments, (uint256, string, string, string, uint256, uint256));
 
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
     // create an empty Skill and set any non-zero fields
     uint256 id = LibRegistrySkill.createEffect(world, components, skillIndex, type_);
+    if (!LibString.eq(subtype, "")) LibRegistrySkill.setSubtype(components, id, subtype);
     if (!LibString.eq(logicType, "")) LibRegistrySkill.setLogicType(components, id, logicType);
     if (index != 0) LibRegistrySkill.setIndex(components, id, index);
     if (value != 0) LibRegistrySkill.setValue(components, id, value);
@@ -35,10 +37,11 @@ contract _RegistryCreateSkillEffectSystem is System {
   function executeTyped(
     uint256 skillIndex,
     string memory type_,
+    string memory subtype, // optional
     string memory logicType, // optional
     uint256 index, // optional
     uint256 value // optional
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(skillIndex, logicType, type_, index, value));
+    return execute(abi.encode(skillIndex, type_, subtype, logicType, index, value));
   }
 }

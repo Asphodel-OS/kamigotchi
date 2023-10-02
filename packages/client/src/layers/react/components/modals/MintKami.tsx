@@ -229,7 +229,7 @@ export function registerKamiMintModal() {
 
       const QuantityButton = (delta: number) => {
         return (
-          <QuantityStepper onClick={() => setAmountToMint(amountToMint + delta)}>
+          <QuantityStepper onClick={() => amountToMint + delta > 0 ? setAmountToMint(amountToMint + delta) : 0}>
             {delta > 0 ? '+' : '-'}
           </QuantityStepper>
         );
@@ -304,7 +304,7 @@ export function registerKamiMintModal() {
       };
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAmountToMint(Number(event.target.value));
+        if (Number(event.target.value) > 0) setAmountToMint(Number(event.target.value));
       };
 
       return (

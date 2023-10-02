@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import settingsImage from 'assets/images/icons/settings_native.png';
+import { settingsIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -28,7 +28,7 @@ export function registerSettingsButton() {
           visible={visibleButtons.settings}
           hideModal={modalsToHide}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={settingsImage} alt='settings_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={settingsIcon} alt='settings_icon' />
         </MenuButton>
       );
     }

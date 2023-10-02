@@ -9,6 +9,7 @@
     "BlockRevealComponent",
     "CanNameComponent",
     "CoinComponent",
+    "CostComponent",
     "DescriptionComponent",
     "EpochComponent",
     "ExitsComponent",
@@ -34,7 +35,6 @@
     "IndexGearComponent",
     "IndexHandComponent",
     "IndexItemComponent",
-    "IndexSkillComponent",
     "IndexModComponent",
     "IndexNodeComponent",
     "IndexNPCComponent",
@@ -43,8 +43,10 @@
     "IndexRelationshipComponent",
     "IndexReviveComponent",
     "IndexQuestComponent",
+    "IndexSkillComponent",
     "IndexTraitComponent",
     "IsAccountComponent",
+    "IsBonusComponent",
     "IsConfigComponent",
     "IsCompleteComponent",
     "IsDataComponent",
@@ -72,6 +74,7 @@
     "LevelComponent",
     "LocationComponent",
     "LogicTypeComponent",
+    "MaxComponent",
     "MediaURIComponent",
     "NameComponent",
     "PowerComponent",
@@ -88,6 +91,7 @@
     "StaminaComponent",
     "StaminaCurrentComponent",
     "StateComponent",
+    "SubtypeComponent",
     "TimeComponent",
     "TimeLastActionComponent",
     "TimeStartComponent",
@@ -232,7 +236,13 @@
     {
       "name": "_RegistryCreateRelationshipSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsRelationshipComponent",
+        "IndexNPCComponent",
+        "IndexRelationshipComponent",
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
       ]
     },
     {
@@ -244,19 +254,38 @@
     {
       "name": "_RegistryCreateSkillSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsSkillComponent",
+        "IndexSkillComponent",
+        "CostComponent",
+        "DescriptionComponent",
+        "MaxComponent",
+        "NameComponent",
+        "TypeComponent"
       ]
     },
     {
       "name": "_RegistryCreateSkillEffectSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsEffectComponent",
+        "IndexSkillComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "SubtypeComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "_RegistryCreateSkillRequirementSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsRequirementComponent",
+        "IndexSkillComponent",
+        "IndexComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -274,7 +303,20 @@
     {
       "name": "_RegistryDeleteSkillSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsSkillComponent",
+        "IsEffectComponent",
+        "IsRequirementComponent",
+        "IndexSkillComponent",
+        "CostComponent",
+        "DescriptionComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "MaxComponent",
+        "NameComponent",
+        "SubtypeComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -298,7 +340,9 @@
     {
       "name": "_RegistryUpdateRelationshipSystem",
       "writeAccess": [
-        "*"
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
       ]
     },
     {
@@ -638,7 +682,10 @@
     {
       "name": "RelationshipAdvanceSystem",
       "writeAccess": [
-        "*"
+        "IsRelationshipComponent",
+        "IdAccountComponent",
+        "IndexNPCComponent",
+        "IndexRelationshipComponent"
       ]
     },
     {
@@ -646,8 +693,15 @@
       "writeAccess": [
         "BlockLastComponent",
         "IdHolderComponent",
+        "IndexSkillComponent",
+        "IsBonusComponent",
         "IsSkillComponent",
-        "SkillPointComponent"
+        "HarmonyComponent",
+        "HealthComponent",
+        "PowerComponent",
+        "SkillPointComponent",
+        "TypeComponent",
+        "ViolenceComponent"
       ]
     }
   ],

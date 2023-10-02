@@ -18,6 +18,7 @@ export function setUpWorldAPI(systems: any) {
     await initItems(api);
     await initNpcs(api);
     await initQuests(api);
+    await initSkills(api);
     await initTraits(api);
     await initRelationships(api);
 
@@ -109,7 +110,9 @@ export function setUpWorldAPI(systems: any) {
   async function initLocalConfig(api: AdminAPI) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
-    await api.config.set.number('HARVEST_RATE_BASE', 2500); // in respect to power
+    await api.config.set.number('KAMI_LVL_REQ_BASE', 10); // experience required for level 1->2
+    await api.config.set.number('HARVEST_RATE_BASE', 10000); // in respect to power
+    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 10000); // in respect to harmony
   }
 
 
@@ -401,6 +404,32 @@ export function setUpWorldAPI(systems: any) {
     api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
+  ////////////////////
+  // SKILL
+
+  async function initSkills(api: any) {
+    await api.registry.skill.create(1, 1, 3, "PASSIVE", "Aggression", "+1 Violence per level");
+    await api.registry.skill.add.effect(1, "STAT", "VIOLENCE", "INC", 0, 1);
+
+    await api.registry.skill.create(2, 1, 3, "PASSIVE", "Defensiveness", "+1 Harmony per level");
+    await api.registry.skill.add.effect(2, "STAT", "HARMONY", "INC", 0, 1);
+
+    await api.registry.skill.create(3, 1, 3, "PASSIVE", "Acquisitiveness", "+1 Power per level");
+    await api.registry.skill.add.effect(3, "STAT", "POWER", "INC", 0, 1);
+
+    await api.registry.skill.create(4, 2, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
+    await api.registry.skill.add.effect(4, "STAT", "VIOLENCE", "INC", 0, 1);
+    await api.registry.skill.add.requirement(4, "SKILL", 1, 3);
+
+    await api.registry.skill.create(5, 2, 3, "PASSIVE", "Protector", "+1 Harmony per level");
+    await api.registry.skill.add.effect(5, "STAT", "HARMONY", "INC", 0, 1);
+    await api.registry.skill.add.requirement(5, "SKILL", 2, 3);
+
+    await api.registry.skill.create(6, 2, 3, "PASSIVE", "Predator", "+1 Power per level");
+    await api.registry.skill.add.effect(6, "STAT", "POWER", "INC", 0, 1);
+    await api.registry.skill.add.requirement(6, "SKILL", 3, 3);
+  }
+
 
   ////////////////////
   // TRAITS
@@ -508,6 +537,9 @@ export function setUpWorldAPI(systems: any) {
     },
     rooms: {
       init: () => initRooms(createAdminAPI(systems)),
+    },
+    skill: {
+      init: () => initSkills(createAdminAPI(systems)),
     },
     traits: {
       init: () => initTraits(createAdminAPI(systems)),

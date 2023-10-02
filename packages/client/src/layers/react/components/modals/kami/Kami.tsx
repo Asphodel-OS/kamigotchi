@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 
@@ -9,6 +9,8 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
+import { Skills } from './Skills';
+import { getRegistrySkills } from 'layers/react/shapes/Skill';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -23,30 +25,54 @@ export function registerKamiModal() {
       const {
         network: {
           components: {
+            IsBonus,
+            IsEffect,
+            IsKill,
+            IsPet,
+            IsRequirement,
+            IsSkill,
+            HolderID,
+            SourceID,
+            TargetID,
             Balance,
             Experience,
-            IsPet,
-            IsKill,
+            Harmony,
+            Health,
             Level,
             MediaURI,
             Name,
             PetID,
-            SourceID,
-            TargetID,
+            Power,
+            SkillIndex,
+            SkillPoint,
+            Slots,
+            Violence,
           },
         },
       } = layers;
       return merge(
-        Balance.update$,
-        IsPet.update$,
+        IsBonus.update$,
+        IsEffect.update$,
         IsKill.update$,
+        IsPet.update$,
+        IsRequirement.update$,
+        IsSkill.update$,
+        HolderID.update$,
+        SourceID.update$,
+        TargetID.update$,
+        Balance.update$,
         Experience.update$,
+        Harmony.update$,
+        Health.update$,
         Level.update$,
         MediaURI.update$,
         Name.update$,
         PetID.update$,
-        SourceID.update$,
-        TargetID.update$,
+        Power.update$,
+        SkillIndex.update$,
+        SkillPoint.update$,
+        Slots.update$,
+        Violence.update$,
       ).pipe(
         map(() => {
           return {
@@ -60,7 +86,7 @@ export function registerKamiModal() {
 
     ({ layers, actions, api }) => {
       const { selectedEntities } = dataStore();
-
+      const [mode, setMode] = useState('DETAILS');
 
       /////////////////
       // DATA FETCHING
@@ -74,6 +100,7 @@ export function registerKamiModal() {
             deaths: true,
             kills: true,
             traits: true,
+            skills: true,
           }
         );
       }
@@ -94,6 +121,23 @@ export function registerKamiModal() {
         })
       }
 
+      const upgradeSkill = (kami: Kami, skillIndex: number) => {
+        const actionID = `Upgrading skill ` as EntityID;
+        actions.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.skill.upgrade(kami.id, skillIndex);
+          },
+        })
+      }
+
+      const toggleSkills = () => {
+        setMode(mode === 'DETAILS' ? 'SKILLS' : 'DETAILS');
+      }
+
 
       /////////////////
       // DISPLAY
@@ -102,12 +146,21 @@ export function registerKamiModal() {
         <ModalWrapperFull
           divName='kami'
           id='kamiModal'
-          header={<Banner kami={getSelectedKami()} actions={{ levelUp }}></Banner>}
+          header={<Banner kami={getSelectedKami()} actions={{ levelUp, toggleSkills }}></Banner>}
           canExit
           overlay
         >
-          <Traits kami={getSelectedKami()} />
-          <KillLogs kami={getSelectedKami()} />
+          {(mode === 'DETAILS')
+            ? <>
+              <Traits kami={getSelectedKami()} />
+              <KillLogs kami={getSelectedKami()} />
+            </>
+            : <Skills
+              skills={getRegistrySkills(layers)}
+              kami={getSelectedKami()}
+              actions={{ upgrade: upgradeSkill }}
+            />
+          }
         </ModalWrapperFull>
       );
     }

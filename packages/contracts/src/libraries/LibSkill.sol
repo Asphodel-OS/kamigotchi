@@ -8,17 +8,19 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
+import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { SkillPointComponent, ID as SPCompID } from "components/SkillPointComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 
@@ -40,12 +42,58 @@ library LibSkill {
     return id;
   }
 
-  // check the requirements to access a skill
-  function checkRequirements(
+  // increase skill points by a specified value
+  function inc(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 curr = getPoints(components, id);
+    setPoints(components, id, curr + value);
+  }
+
+  // decrease skillPoints by a specified value
+  function dec(IUintComp components, uint256 id, uint256 value) internal {
+    uint256 curr = getPoints(components, id);
+    require(curr >= value, "LibSkill: not enough points");
+    setPoints(components, id, curr - value);
+  }
+
+  // processes the upgrade of a stat increment/decrement effect
+  // assume the holder's bonus entity exists
+  function processStatEffectUpgrade(
+    IUintComp components,
+    uint256 holderID,
+    uint256 effectID
+  ) internal {
+    uint256 bonusID = LibBonus.getByHolder(components, holderID);
+    string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
+    string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
+    uint256 value = LibRegistrySkill.getValue(components, effectID);
+
+    if (LibString.eq(logicType, "INC")) LibBonus.incStat(components, bonusID, subtype, value);
+    else if (LibString.eq(logicType, "DEC")) LibBonus.decStat(components, bonusID, subtype, value);
+  }
+
+  /////////////////
+  // CHECKERS
+
+  // check the existing points, max level, and requirements to access a skill
+  function checkPrerequisites(
     IUintComp components,
     uint256 targetID,
     uint256 skillIndex
-  ) internal view returns (bool) {
+  ) internal returns (bool) {
+    uint256 skillID = LibRegistrySkill.getByIndex(components, skillIndex);
+    require(skillID != 0, "no skill index found");
+
+    // checking points
+    uint256 cost = getCost(components, skillID);
+    if (getPoints(components, targetID) < cost) return false;
+    else dec(components, targetID, cost);
+
+    // checking max skill level
+    uint256 existingID = get(components, targetID, skillIndex);
+    if (existingID != 0 && getPoints(components, existingID) >= getMax(components, skillID))
+      return false;
+
+    // check all other requirements
     uint256[] memory requirements = LibRegistrySkill.getRequirementsByIndex(components, skillIndex);
     for (uint256 i; i < requirements.length; i++)
       if (!checkRequirement(components, targetID, requirements[i])) return false;
@@ -73,22 +121,6 @@ library LibSkill {
     return true;
   }
 
-  // increase skill points by a specified value
-  function inc(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 curr = getPoints(components, id);
-    setPoints(components, id, curr + value);
-  }
-
-  // decrease skillPoints by a specified value
-  function dec(IUintComp components, uint256 id, uint256 value) internal {
-    uint256 curr = getPoints(components, id);
-    require(curr >= value, "LibSkill: not enough points");
-    setPoints(components, id, curr - value);
-  }
-
-  /////////////////
-  // CHECKERS
-
   function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
     return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
   }
@@ -115,6 +147,10 @@ library LibSkill {
   /////////////////
   // GETTERS
 
+  function getCost(IUintComp components, uint256 id) internal view returns (uint256) {
+    return CostComponent(getAddressById(components, CostCompID)).getValue(id);
+  }
+
   function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
     return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
   }
@@ -126,6 +162,10 @@ library LibSkill {
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!hasPoints(components, id)) return 0;
     return SkillPointComponent(getAddressById(components, SPCompID)).getValue(id);
+  }
+
+  function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
+    return MaxComponent(getAddressById(components, MaxCompID)).getValue(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {

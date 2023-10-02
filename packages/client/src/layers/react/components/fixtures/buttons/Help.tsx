@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import helpImage from 'assets/images/icons/help_native.png';
+import { helpIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -28,7 +28,7 @@ export function registerHelpButton() {
           visible={visibleButtons.help}
           hideModal={modalsToHide}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={helpImage} alt='help_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={helpIcon} alt='help_icon' />
         </MenuButton>
       );
     }

@@ -24,7 +24,7 @@ export function registerMerchantModal() {
     // Grid Config
     {
       colStart: 33,
-      colEnd: 67,
+      colEnd: 75,
       rowStart: 20,
       rowEnd: 60,
     },

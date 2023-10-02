@@ -158,8 +158,6 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     try {
       // Execute the action
       const tx = await action.execute(requirementResult);
-
-      // If the result includes a hash key (single tx) or hashes (multiple tx) key, wait for the transactions to complete before removing the pending actions
       if (tx) {
         // Wait for all tx events to be reduced
         updateComponent(Action, action.entityIndex, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });

@@ -11,6 +11,7 @@ import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
 import { Kami, queryKamisX } from './Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
+import { Skill } from './Skill';
 import {
   Inventory,
   getInventory,
@@ -26,6 +27,8 @@ export interface Account {
   name: string;
   coin: number;
   location: number;
+  level: number;
+  skillPoints: number;
   stamina: number;
   staminaCurrent: number;
   staminaRecoveryPeriod: number;
@@ -37,6 +40,7 @@ export interface Account {
     ongoing: Quest[];
     completed: Quest[];
   }
+  skills?: Skill[]; // unimplemented for now
 }
 
 export interface AccountOptions {
@@ -86,11 +90,13 @@ export const getAccount = (
     name: getComponentValue(Name, index)?.value as string,
     coin: getComponentValue(Coin, index)?.value as number,
     location: getComponentValue(Location, index)?.value as number,
+    level: 0, // unimplemented for now, dummy value
     // stamina: {
     //   total: getComponentValue(Stamina, index)?.value as number,
     //   last: getComponentValue(StaminaCurrent, index)?.value as number,
     //   recoveryPeriod: 1, // dummy value
     // },
+    skillPoints: 0, // unimplemented for now, dummy value
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
     staminaRecoveryPeriod: 1, // dummy value

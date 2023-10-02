@@ -72,6 +72,16 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "cost",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "max",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
           "name": "type_",
           "type": "string"
@@ -127,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,string,string)": "5b220354",
+    "executeTyped(uint256,uint256,uint256,string,string,string)": "d7080019",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

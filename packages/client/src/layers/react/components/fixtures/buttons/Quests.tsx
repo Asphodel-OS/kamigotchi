@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import questsImage from 'assets/images/icons/quests_native.png';
+import { questsIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -28,7 +28,7 @@ export function registerQuestsButton() {
           hideModal={modalsToHide}
           visible={visibleButtons.chat}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={questsImage} alt='chat_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={questsIcon} alt='chat_icon' />
         </MenuButton>
       );
     }
