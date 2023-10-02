@@ -387,12 +387,20 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createSkillEffect(
     uint skillIndex,
     string memory type_,
+    string memory subtype, // can be empty
     string memory logicType, // can be empty
     uint index, // can be empty
     uint value // can be empty
   ) public {
     vm.prank(deployer);
-    __RegistryCreateSkillEffectSystem.executeTyped(index, type_, logicType, index, value);
+    __RegistryCreateSkillEffectSystem.executeTyped(
+      skillIndex,
+      type_,
+      subtype,
+      logicType,
+      index,
+      value
+    );
   }
 
   function _createSkillRequirement(
