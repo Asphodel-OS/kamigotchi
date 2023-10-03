@@ -135,9 +135,6 @@ export function registerAccountRegistrar() {
       // set visibility of this validator
       useEffect(() => {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
-
-        console.log('Account Registrar: Burner Account', burnerInfo);
-
         const networksMatch = chain?.id === defaultChainConfig.id;
         setIsVisible(isConnected && networksMatch && burnersMatch && !accountDetails.id);
       }, [accountDetails, burnerInfo, isConnected]);
@@ -147,16 +144,14 @@ export function registerAccountRegistrar() {
       useEffect(() => {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
-        setAccountDetails(accountDetails);
-
-        console.log('Account Registrar: Connector Account', accountIndex, accountDetails);
-
         if (accountDetails.id) {
           toggleVisibleButtons(true);
         } else {
           toggleVisibleButtons(false);
           toggleVisibleModals(false);
         }
+
+        setAccountDetails(accountDetails);
       }, [selectedAddress, isConnected, accountDetailsFromWorld, networks]);
 
 
