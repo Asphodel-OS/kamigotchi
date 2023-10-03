@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prepare": "cp ../../yarn.lock .",
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
     "build": "rimraf dist && yarn cache:clear && parcel build src/index.html",
     "lint": "eslint . --fix --ext .ts",
