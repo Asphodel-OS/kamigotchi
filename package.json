@@ -8,12 +8,12 @@
     "packages/client"
   ],
   "scripts": {
-    "prepare": "yarn workspace contracts prepare",
     "dev": "run-pty % yarn dev:node % yarn dev:client % yarn dev:contracts",
-    "dev:client": "yarn workspace client run dev",
-    "start:client": "yarn workspace client run start",
-    "dev:node": "yarn workspace contracts run devnode",
-    "dev:contracts": "yarn workspace contracts run dev"
+    "client:build": "rimraf dist && yarn workspace client run build",
+    "client:dev": "yarn workspace client run dev",
+    "client:start": "yarn workspace client run start",
+    "contracts:node": "yarn workspace contracts run devnode",
+    "contracts:dev": "yarn workspace contracts run dev"
   },
   "devDependencies": {
     "buffer": "^5.5.0",
