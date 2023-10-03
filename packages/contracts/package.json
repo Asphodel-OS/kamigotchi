@@ -49,7 +49,6 @@
     "memmove": "https://github.com/brockelmore/memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
-    "rimraf": "^3.0.2",
     "run-pty": "^4.0.3",
     "solhint": "^3.3.7",
     "ts-node": "^10.7.0",
