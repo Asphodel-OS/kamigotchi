@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "run-pty % yarn dev:node % yarn dev:client % yarn dev:contracts",
-    "client:build": "rimraf dist && yarn workspace client run build",
+    "client:build": "yarn workspace client run build",
     "client:dev": "yarn workspace client run dev",
     "client:start": "yarn workspace client run start",
     "contracts:node": "yarn workspace contracts run devnode",
