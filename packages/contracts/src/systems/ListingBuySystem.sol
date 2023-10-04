@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
@@ -37,6 +38,10 @@ contract ListingBuySystem is System {
       LibInventory.create(world, components, accountID, itemIndex);
     }
     LibListing.buyFrom(components, listingID, accountID, amt);
+
+    // updating account info
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_HAVE", amt);
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_BUY", amt);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }

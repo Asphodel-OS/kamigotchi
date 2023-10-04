@@ -48,6 +48,8 @@ contract Mint20MintSystem is System {
     // update num minted and mint the tokens
     LibAccount.setMint20Minted(world, components, accountID, accountMinted + amount);
     LibMint20.mint(world, msg.sender, amount);
+
+    LibAccount.updateLastBlock(components, accountID);
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

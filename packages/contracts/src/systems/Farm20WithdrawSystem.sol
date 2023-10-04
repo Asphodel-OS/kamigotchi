@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
@@ -34,6 +35,10 @@ contract Farm20WithdrawSystem is System {
     LibCoin.dec(components, accountID, amount);
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.withdraw(address(uint160(LibAccount.getOwner(components, accountID))), amount);
+
+    // updating account
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_WITHDRAW", amount);
+    LibAccount.updateLastBlock(components, accountID);
 
     return "";
   }

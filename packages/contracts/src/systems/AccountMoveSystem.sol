@@ -22,7 +22,6 @@ contract AccountMoveSystem is System {
 
     LibAccount.move(components, accountID, to);
     LibAccount.updateLastBlock(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

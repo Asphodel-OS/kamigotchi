@@ -160,11 +160,7 @@ library LibAccount {
     uint256 account,
     uint256 value
   ) internal {
-    uint256 dataID = LibDataEntity.queryDataEntity(components, account, 0, "NUM_MINTED");
-    if (dataID == 0) {
-      dataID = LibDataEntity.create(world, components, account, "NUM_MINTED");
-    }
-    LibDataEntity.setValue(components, dataID, value);
+    LibDataEntity.setFor(world, components, account, 0, "PET721_MINT", value);
   }
 
   function setMint20Minted(
@@ -173,11 +169,7 @@ library LibAccount {
     uint256 account,
     uint256 value
   ) internal {
-    uint256 dataID = LibDataEntity.queryDataEntity(components, account, 0, "NUM_MINT20_MINTED");
-    if (dataID == 0) {
-      dataID = LibDataEntity.create(world, components, account, "NUM_MINT20_MINTED");
-    }
-    LibDataEntity.setValue(components, dataID, value);
+    LibDataEntity.setFor(world, components, account, 0, "MINT20_MINT", value);
   }
 
   /////////////////
@@ -243,11 +235,11 @@ library LibAccount {
   }
 
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibDataEntity.get(components, id, 0, "NUM_MINTED");
+    return LibDataEntity.get(components, id, 0, "PET721_MINT");
   }
 
   function getMint20Minted(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LibDataEntity.get(components, id, 0, "NUM_MINT20_MINTED");
+    return LibDataEntity.get(components, id, 0, "MINT20_MINT");
   }
 
   // get the balance of X (type+index) of an account

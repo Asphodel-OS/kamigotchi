@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
@@ -40,6 +41,9 @@ contract PetReviveSystem is System {
     LibPet.revive(components, id);
     LibPet.heal(components, id, healAmt);
     LibPet.setLastTs(components, id, block.timestamp); // explicitly, as we don't sync health on this EP
+
+    // update account info
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_USE", 1);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }

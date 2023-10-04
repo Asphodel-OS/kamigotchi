@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -65,6 +66,16 @@ contract ProductionLiquidateSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", amt);
+    LibDataEntity.incFor(world, components, accountID, 0, "LIQUIDATE", 1);
+    LibDataEntity.incFor(
+      world,
+      components,
+      accountID,
+      LibNode.getIndex(components, nodeID),
+      "NODE_LIQUIDATE",
+      1
+    );
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }

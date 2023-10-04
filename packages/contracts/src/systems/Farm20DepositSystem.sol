@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
@@ -33,6 +34,11 @@ contract Farm20DepositSystem is System {
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
     LibCoin.inc(components, accountID, amount);
+
+    // updating account
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", amount);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_DEPOSIT", amount);
+    LibAccount.updateLastBlock(components, accountID);
 
     return "";
   }

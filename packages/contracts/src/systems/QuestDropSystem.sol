@@ -23,7 +23,6 @@ contract QuestDropSystem is System {
     LibQuests.drop(components, questID);
 
     LibAccount.updateLastBlock(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
 
     return "";
   }

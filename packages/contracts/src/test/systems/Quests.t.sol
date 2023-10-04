@@ -133,7 +133,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 1, 0, 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
-    _createQuestObjective(1, "NAME", "GATHER", "COIN", 0, 10);
+    _createQuestObjective(1, "NAME", "GATHER", "COIN_HAS", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
 
     // register account
@@ -218,7 +218,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "MintKamiQuest", "DESCRIPTION", 1, 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 1);
-    _createQuestObjective(1, "NAME", "MINT", "KAMI", 0, 2);
+    _createQuestObjective(1, "NAME", "MINT", "PET721_MINT", 0, 2);
 
     // register account
     _registerAccount(0);

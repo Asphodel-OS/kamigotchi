@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
@@ -41,6 +42,9 @@ contract Pet721UnstakeSystem is System {
     // checks before action
     require(LibPet.getAccount(components, petID) == accountID, "Pet721Unstake: not urs");
     require(LibPet.isResting(components, petID), "Pet721Unstake: must be resting");
+
+    LibDataEntity.incFor(world, components, accountID, 0, "PET721_UNSTAKE", 1);
+    LibAccount.updateLastBlock(components, accountID);
 
     // actions to be taken upon bridging out
     LibPet.unstake(components, petID);

@@ -49,17 +49,52 @@ library LibDataEntity {
     return dataID == 0 ? 0 : getValue(components, dataID);
   }
 
-  function inc(IUintComp components, uint256 entityID, uint256 amt) internal {
-    uint256 value = getValue(components, entityID);
-    setValue(components, entityID, value + amt);
+  function incFor(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 index,
+    string memory type_,
+    uint256 amt
+  ) internal {
+    uint256 dataID = queryDataEntity(components, holderID, index, type_);
+    if (dataID == 0) {
+      dataID = create(world, components, holderID, type_);
+      if (index != 0) setIndex(components, dataID, index);
+    }
+    _inc(components, dataID, amt);
   }
 
-  function dec(IUintComp components, uint256 entityID, uint256 amt) internal {
-    uint256 value = getValue(components, entityID);
-    require(value >= amt, "LibDataEntity: insufficient val");
-    unchecked {
-      setValue(components, entityID, value - amt);
+  function decFor(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 index,
+    string memory type_,
+    uint256 amt
+  ) internal {
+    uint256 dataID = queryDataEntity(components, holderID, index, type_);
+    if (dataID == 0) {
+      dataID = create(world, components, holderID, type_);
+      if (index != 0) setIndex(components, dataID, index);
     }
+    _dec(components, dataID, amt);
+  }
+
+  function setFor(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 index,
+    string memory type_,
+    uint256 value
+  ) internal {
+    uint256 dataID = queryDataEntity(components, holderID, index, type_);
+    if (dataID == 0) {
+      dataID = create(world, components, holderID, type_);
+      if (index != 0) setIndex(components, dataID, index);
+    }
+    setValue(components, dataID, value);
   }
 
   // SETTERS
@@ -82,6 +117,19 @@ library LibDataEntity {
 
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+  }
+
+  function _inc(IUintComp components, uint256 entityID, uint256 amt) internal {
+    uint256 value = getValue(components, entityID);
+    setValue(components, entityID, value + amt);
+  }
+
+  function _dec(IUintComp components, uint256 entityID, uint256 amt) internal {
+    uint256 value = getValue(components, entityID);
+    require(value >= amt, "LibDataEntity: insufficient val");
+    unchecked {
+      setValue(components, entityID, value - amt);
+    }
   }
 
   ///////////////////////

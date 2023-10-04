@@ -5,8 +5,9 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
 uint256 constant ID = uint256(keccak256("system._devGiveTokens"));
 
@@ -18,6 +19,15 @@ contract _devGiveTokensSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
     LibCoin.inc(components, LibAccount.getByOperator(components, to), amount);
+
+    LibDataEntity.incFor(
+      world,
+      components,
+      LibAccount.getByOperator(components, to),
+      0,
+      "COIN_HAS",
+      amount
+    );
     return "";
   }
 

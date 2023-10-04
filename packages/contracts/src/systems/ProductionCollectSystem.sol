@@ -5,9 +5,11 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -47,6 +49,15 @@ contract ProductionCollectSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", output);
+    LibDataEntity.incFor(
+      world,
+      components,
+      accountID,
+      LibNode.getIndex(components, LibProduction.getNode(components, id)),
+      "NODE_COLLECT",
+      output
+    );
     LibAccount.updateLastBlock(components, accountID);
 
     return abi.encode(output);

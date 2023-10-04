@@ -7,6 +7,7 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -54,6 +55,15 @@ contract NodeCollectSystem is System {
     // balance updates, score logging, action tracking
     LibCoin.inc(components, accountID, totalOutput);
     LibScore.incBy(world, components, accountID, "COLLECT", totalOutput);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", totalOutput);
+    LibDataEntity.incFor(
+      world,
+      components,
+      accountID,
+      LibNode.getIndex(components, nodeID),
+      "NODE_COLLECT",
+      totalOutput
+    );
     LibAccount.updateLastBlock(components, accountID);
     return abi.encode(totalOutput);
   }

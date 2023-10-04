@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
@@ -54,9 +55,10 @@ contract PetFeedSystem is System {
     uint256 healAmt = LibStat.getHealth(components, registryID);
     LibPet.heal(components, id, healAmt);
 
-    // logging and tracking
+    // updating account info
     LibScore.incBy(world, components, accountID, "FEED", 1);
-    LibAccount.updateLastBlock(components, accountID); // gas limit :|
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_USE", 1);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 

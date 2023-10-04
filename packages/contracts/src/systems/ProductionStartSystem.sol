@@ -43,7 +43,7 @@ contract ProductionStartSystem is System {
     else LibProduction.setNode(components, id, nodeID);
     LibProduction.start(components, id);
 
-    // update the pet's state and account's last block
+    // update the pet's state account info
     LibPet.setState(components, petID, "HARVESTING");
     LibAccount.updateLastBlock(components, accountID);
     return abi.encode(id);

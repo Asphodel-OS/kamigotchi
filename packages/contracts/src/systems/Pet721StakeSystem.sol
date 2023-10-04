@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
@@ -42,8 +43,12 @@ contract Pet721StakeSystem is System {
     require(LibPet.getAccount(components, petID) == 0, "Pet721Stake: already linked");
     require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
+    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", 1);
+    LibAccount.updateLastBlock(components, accountID);
+
     LibPet.stake(components, petID, accountID);
     LibPet721.stake(world, msg.sender, tokenID);
+
     return "";
   }
 

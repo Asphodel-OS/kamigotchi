@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibQuests } from "libraries/LibQuests.sol";
 
 uint256 constant ID = uint256(keccak256("system.Quest.Complete"));
@@ -27,7 +28,7 @@ contract QuestCompleteSystem is System {
     LibQuests.complete(world, components, questID, accountID);
 
     LibAccount.updateLastBlock(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
+    LibDataEntity.incFor(world, components, accountID, 0, "QUEST_COMPLETE", 1);
 
     return "";
   }

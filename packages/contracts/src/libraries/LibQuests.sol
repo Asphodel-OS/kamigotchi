@@ -29,6 +29,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
@@ -171,7 +172,7 @@ library LibQuests {
     string memory _type = getType(components, conditionID);
     uint256 index = getIndex(components, conditionID);
 
-    uint256 amount = LibAccount.getBalanceOf(components, accountID, _type, index);
+    uint256 amount = LibDataEntity.get(components, accountID, index, _type);
 
     // copy an objective
     uint256 id = world.getUniqueEntityId();
@@ -380,7 +381,7 @@ library LibQuests {
     // details of condition
     string memory _type = getType(components, conditionID);
     uint256 index = getIndex(components, conditionID);
-    uint256 currValue = LibAccount.getBalanceOf(components, accountID, _type, index);
+    uint256 currValue = LibDataEntity.get(components, accountID, index, _type);
 
     uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
     uint256 prevValue = getValue(components, snapshotID);
@@ -404,7 +405,7 @@ library LibQuests {
     // details of condition
     string memory _type = getType(components, conditionID);
     uint256 index = getIndex(components, conditionID);
-    uint256 currValue = LibAccount.getBalanceOf(components, accountID, _type, index);
+    uint256 currValue = LibDataEntity.get(components, accountID, index, _type);
 
     uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
     uint256 prevValue = getValue(components, snapshotID);

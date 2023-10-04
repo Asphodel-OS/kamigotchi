@@ -106,7 +106,11 @@
     {
       "name": "_devGiveTokensSystem",
       "writeAccess": [
-        "CoinComponent"
+        "IdHolderComponent",
+        "IsDataComponent",
+        "CoinComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -389,11 +393,14 @@
     {
       "name": "AccountFundSystem",
       "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
         "EpochComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IsScoreComponent",
         "TypeComponent",
-        "BalanceComponent"
+        "ValueComponent"
       ]
     },
     {
@@ -437,17 +444,27 @@
       "writeAccess": []
     },
     {
-      "name": "Farm20WithdrawSystem",
+      "name": "Farm20DepositSystem",
       "writeAccess": [
+        "BlockLastComponent",
         "CoinComponent",
-        "ProxyPermissionsFarm20Component"
+        "IdHolderComponent",
+        "IsDataComponent",
+        "ProxyPermissionsFarm20Component",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
-      "name": "Farm20DepositSystem",
+      "name": "Farm20WithdrawSystem",
       "writeAccess": [
+        "BlockLastComponent",
         "CoinComponent",
-        "ProxyPermissionsFarm20Component"
+        "IdHolderComponent",
+        "IsDataComponent",
+        "ProxyPermissionsFarm20Component",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -479,25 +496,34 @@
     {
       "name": "Pet721UnstakeSystem",
       "writeAccess": [
+        "BlockLastComponent",
         "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
         "ProxyPermissionsERC721Component",
-        "StateComponent"
+        "StateComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "Pet721StakeSystem",
       "writeAccess": [
-        "IsAccountComponent",
         "AddressOperatorComponent",
-        "BlockLastComponent",
         "AddressOwnerComponent",
+        "BlockLastComponent",
         "IdAccountComponent",
+        "IdHolderComponent",
+        "IsAccountComponent",
+        "IsDataComponent",
         "LocationComponent",
         "NameComponent",
         "ProxyPermissionsERC721Component",
         "StaminaComponent",
         "StaminaCurrentComponent",
-        "StateComponent"
+        "StateComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -507,9 +533,13 @@
         "BlockLastComponent",
         "CoinComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IndexItemComponent",
+        "IndexComponent",
         "IsFungibleComponent",
-        "IsInventoryComponent"
+        "IsInventoryComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -517,7 +547,12 @@
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
-        "CoinComponent"
+        "CoinComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "IndexComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -528,12 +563,15 @@
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
-        "IsScoreComponent",
         "IdHolderComponent",
+        "IsDataComponent",
+        "IsScoreComponent",
+        "IndexComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent",
         "TimeStartComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -543,6 +581,7 @@
     {
       "name": "Mint20MintSystem",
       "writeAccess": [
+        "BlockLastComponent",
         "IdAccountComponent",
         "IdPetComponent",
         "IdHolderComponent",
@@ -560,9 +599,12 @@
         "EpochComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IsScoreComponent",
+        "IndexComponent",
         "TimeLastActionComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -589,9 +631,14 @@
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "IndexComponent",
         "HealthCurrentComponent",
         "StateComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -608,12 +655,15 @@
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
-        "IsScoreComponent",
         "IdHolderComponent",
+        "IsDataComponent",
+        "IsScoreComponent",
+        "IndexComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent",
         "TimeStartComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -628,13 +678,16 @@
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
+        "IsDataComponent",
         "IsKillComponent",
+        "IndexComponent",
         "IsScoreComponent",
         "RateComponent",
         "StateComponent",
         "TimeComponent",
         "TimeLastActionComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -662,11 +715,14 @@
         "ExperienceComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IsScoreComponent",
+        "IndexComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
