@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import { Popover } from '@mui/material';
@@ -6,7 +6,7 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
-  text: string;
+  img: string;
   options: Option[];
   disabled?: boolean;
 }
@@ -16,7 +16,7 @@ export interface Option {
   onClick: Function;
 }
 
-export function ActionListButton(props: Props) {
+export function IconListButton(props: Props) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -52,7 +52,7 @@ export function ActionListButton(props: Props) {
         onClick={handleClick}
         style={setStyles()}
       >
-        {props.text + ' ▾'}
+        <Image src={props.img} /> {' ▾'}
       </Button>
       <Popover
         id={id}
@@ -74,15 +74,17 @@ export function ActionListButton(props: Props) {
 }
 
 const Button = styled.button`
-  border: solid black .15vw;
+  border: solid black .12vw;
   border-radius: .4vw;
   color: black;
+  
+  margin: .2vw;
+  padding: .4vw;
+  
   display: flex;
-
   font-family: Pixel;
   font-size: .8vw;
   justify-content: center;
-  padding: .35vw .7vw;
   text-align: center;
   text-decoration: none;
 
@@ -94,6 +96,10 @@ const Button = styled.button`
   &:active {
     background-color: #bbb;
   }
+`;
+
+const Image = styled.img`
+  width: 1.4vw;
 `;
 
 const Menu = styled.div`

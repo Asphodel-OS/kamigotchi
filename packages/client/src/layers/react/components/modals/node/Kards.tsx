@@ -6,8 +6,8 @@ import {
   Option as ActionListOption
 } from "layers/react/components/library/ActionListButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { ActionButton } from "layers/react/components/library/ActionButton";
 import { IconButton } from "layers/react/components/library/IconButton";
+import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
 import { Kami } from "layers/react/shapes/Kami";
 import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
@@ -207,6 +207,7 @@ export const Kards = (props: Props) => {
       reason = 'your kamis could be more violent';
     }
 
+    if (reason === '') reason = 'Liquidate this Kami';
     return reason;
   }
 
@@ -256,10 +257,10 @@ export const Kards = (props: Props) => {
     let tooltipText = getLiquidateTooltip(target, allies);
     return (
       <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
-        <ActionListButton
+        <IconListButton
           id={`liquidate-button-${target.index}`}
           key={`harvest-liquidate`}
-          text='Liquidate'
+          img={liquidateIcon}
           options={actionOptions}
           disabled={actionOptions.length == 0}
         />

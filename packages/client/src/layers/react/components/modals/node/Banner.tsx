@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { NodeImages } from 'constants/nodes';
-import { ActionListButton } from 'layers/react/components/library/ActionListButton';
+import { IconListButton } from "layers/react/components/library/IconListButton";
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Node } from 'layers/react/shapes/Node';
 import { Kami } from 'layers/react/shapes/Kami';
-import { Tooltip } from '../../library/Tooltip';
+import { harvestIcon } from 'assets/images/icons/actions';
 
 
 interface Props {
@@ -56,7 +57,14 @@ export const Banner = (props: Props) => {
     return !onCooldown(kami) && isResting(kami);
   };
 
+  // evaluate tooltip for allied kami Stop button
   const getAddTooltip = (kamis: Kami[]): string => {
+    let text = getDisabledReason(kamis);
+    if (text === '') text = 'Add Kami to Node';
+    return text;
+  }
+
+  const getDisabledReason = (kamis: Kami[]): string => {
     let reason = '';
     let available = [...kamis];
     if (available.length == 0) {
@@ -87,13 +95,12 @@ export const Banner = (props: Props) => {
       return { text: `${kami.name}`, onClick: () => props.addKami(kami) };
     });
 
-    let tooltipText = getAddTooltip(kamis);
     return (
-      <Tooltip text={[tooltipText]}>
-        <ActionListButton
+      <Tooltip text={[getAddTooltip(kamis)]}>
+        <IconListButton
           id={`harvest-add`}
           key={`harvest-add`}
-          text='Add Kami'
+          img={harvestIcon}
           options={actionOptions}
           disabled={options.length == 0}
         />
@@ -129,7 +136,7 @@ const Container = styled.div`
 const Image = styled.img`
   border-radius: 8px 0px 0px 0px;
   border-right: solid black .15vw;
-  height: 10vw;
+  height: 11vw;
 `;
 
 const Content = styled.div`
