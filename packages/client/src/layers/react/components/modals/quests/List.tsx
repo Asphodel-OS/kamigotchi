@@ -369,7 +369,7 @@ export const List = (props: Props) => {
 
     return quests.map((q: Quest) => (
       <QuestContainer key={q.id}>
-        <QuestName>{q.name}</QuestName>
+        <QuestName>{q.name} ⥀</QuestName>
         <QuestDescription>{q.description}</QuestDescription>
         {RequirementDisplay(q.requirements)}
         {ObjectiveDisplay(q.objectives, false)}
@@ -405,9 +405,10 @@ export const List = (props: Props) => {
   const QuestsDisplay = () => {
     switch (props.mode) {
       case 'AVAILABLE':
-        return AvailableQuests()
-      case 'DAILY':
-        return DailyQuests()
+        return <>
+          {DailyQuests()}
+          {AvailableQuests()}
+        </>
       case 'ONGOING':
         return OngoingQuests();
       case 'COMPLETED':

@@ -1,1 +1,1 @@
-type TabType = 'AVAILABLE' | 'DAILY' | 'ONGOING' | 'COMPLETED';
+type TabType = 'AVAILABLE' | 'ONGOING' | 'COMPLETED';
