@@ -193,6 +193,7 @@ library LibQuests {
     }
   }
 
+  // checks if it meets max requirements, and has no other ongoing quests with the same index
   function checkMax(
     IUintComp components,
     uint256 questID,
@@ -201,7 +202,8 @@ library LibQuests {
   ) internal view returns (bool) {
     uint256 max = getMax(components, questID);
     uint256[] memory quests = queryAccountQuestIndex(components, accountID, questIndex);
-    return quests.length < max;
+    uint256[] memory ongoing = queryUncompletedQuests(components, accountID, questIndex);
+    return ongoing.length < 1 && quests.length < max;
   }
 
   function checkRepeat(

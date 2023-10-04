@@ -33,7 +33,10 @@ contract QuestsTest is SetupTemplate {
     _assertQuestAccount(_getAccount(0), questID);
 
     // check that quest cant be accepted over its max
-    _acceptQuest(0, 1);
+    _completeQuest(0, questID);
+    questID = _acceptQuest(0, 1);
+    _completeQuest(0, questID);
+
     vm.prank(operator);
     vm.expectRevert("QuestAccept: too many times");
     _QuestAcceptSystem.executeTyped(1);
@@ -53,7 +56,7 @@ contract QuestsTest is SetupTemplate {
 
     // accept quest - second time, uncompleted, within time
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: repeat cons not met");
+    vm.expectRevert("QuestAccept: too many times");
     _QuestAcceptSystem.executeTyped(1);
 
     // accept quest - second time, completed, within time
