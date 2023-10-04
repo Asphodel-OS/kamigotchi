@@ -55,46 +55,36 @@ export const List = (props: Props) => {
     return complete;
   }
 
-  const checkMax = (account: Account, quest: Quest): boolean => {
-    return getNumOngoing(account, quest.index) + getNumCompleted(account, quest.index) < quest.max;
+  const isOngoing = (account: Account, questIndex: number): boolean => {
+    return account.quests?.ongoing.some((q: Quest) => q.index === questIndex) ?? false;
   }
 
-  const checkRepeat = (quest: Quest): TextBool => {
+  const meetsMax = (account: Account, quest: Quest): boolean => {
+    return (isOngoing(account, quest.index) ? 1 : 0) + getNumCompleted(account, quest.index) < quest.max;
+  }
+
+  const meetsRepeat = (quest: Quest): boolean => {
     const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
     const curr = allQuests?.find((x) => (x.index == quest.index));
 
     // has not accepted repeatable before
-    if (curr === undefined) return { text: '', bool: true };
+    if (curr === undefined) return true;
 
     // must be repeatable (should not get here)
-    if (!quest.repeatable) return { text: 'not repeatable', bool: false };
+    if (!quest.repeatable) return false;
 
     // must be completed
-    if (!curr.complete) return { text: 'already ongoing', bool: false };
+    if (!curr.complete) return false;
+
 
     const now = lastRefresh / 1000;
     const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
-    if (Number(curr.startTime) + Number(wait) > Number(now)) {
-      const timeLeft = Number(curr.startTime) + Number(wait) - Number(now);
-      let timeText = '';
-      if (timeLeft > 3600) {
-        const hours = Math.floor(timeLeft / 3600);
-        timeText = `${hours} ${hours > 1 ? 'hours' : 'hour'} `;
-      }
-      if (timeLeft > 60) {
-        const mins = Math.floor((timeLeft % 3600) / 60);
-        timeText = timeText + `${mins} ${mins > 1 ? 'minutes' : 'minute'} `;
-      }
-      const seconds = Math.ceil(timeLeft % 60);
-      timeText = timeText + `${seconds} ${seconds > 1 ? 'seconds' : 'second'}`;
-      return { text: `repeats in ${timeText}`, bool: false };
-    } else {
-      return { text: '', bool: true };
-    }
+    return Number(curr.startTime) + Number(wait) <= Number(now);
   }
 
+
   // TODO: convert to TextBool
-  const checkRequirements = (quest: Quest): boolean => {
+  const meetsRequirements = (quest: Quest): boolean => {
     for (const requirement of quest.requirements) {
       if (!requirement.status?.completable) {
         return false;
@@ -105,7 +95,7 @@ export const List = (props: Props) => {
   }
 
   // TODO: convert to TextBool
-  const checkObjectives = (quest: Quest): boolean => {
+  const meetsObjectives = (quest: Quest): boolean => {
     for (const objective of quest.objectives) {
       if (!objective.status?.completable) {
         return false;
@@ -116,28 +106,18 @@ export const List = (props: Props) => {
   }
 
   const canAccept = (quest: Quest): boolean => {
-    if (!checkMax(props.account, quest)) return false;
-    if (quest.repeatable) {
-      if (checkRepeat(quest).bool && checkRequirements(quest)) return true;
-      else return false;
-    } else return checkRequirements(quest);
+    if (!meetsMax(props.account, quest)) return false;
+    if (quest.repeatable) return meetsRepeat(quest) && meetsRequirements(quest);
+    return meetsRequirements(quest);
   }
 
   const canComplete = (quest: Quest): boolean => {
-    return checkObjectives(quest);
+    return meetsObjectives(quest);
   }
 
 
   /////////////////
   // INTERPRETATION
-
-  const getNumOngoing = (account: Account, questIndex: number): number => {
-    let ongoing = 0;
-    account.quests?.ongoing.forEach((q: Quest) => {
-      if (q.index === questIndex) ongoing++;
-    });
-    return ongoing;
-  }
 
   const getNumCompleted = (account: Account, questIndex: number): number => {
     let ongoing = 0;
@@ -157,6 +137,40 @@ export const List = (props: Props) => {
     let entityIndex = props.utils.queryReviveRegistry(reviveIndex);
     let registryObject = props.utils.getItem(entityIndex);
     return registryObject.name;
+  }
+
+  const getRepeatText = (quest: Quest): string => {
+    const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
+    const curr = allQuests?.find((x) => (x.index == quest.index));
+
+    // has not accepted repeatable before
+    if (curr === undefined) return '';
+
+    // must be repeatable (should not get here)
+    if (!quest.repeatable) return 'not repeatable';
+
+    // must be completed
+    if (curr === undefined || !curr.complete) return 'already ongoing';
+
+    const now = lastRefresh / 1000;
+    const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
+    if (Number(curr.startTime) + Number(wait) > Number(now)) {
+      const timeLeft = Number(curr.startTime) + Number(wait) - Number(now);
+      let timeText = '';
+      if (timeLeft > 3600) {
+        const hours = Math.floor(timeLeft / 3600);
+        timeText = `${hours} ${hours > 1 ? 'hours' : 'hour'} `;
+      }
+      if (timeLeft > 60) {
+        const mins = Math.floor((timeLeft % 3600) / 60);
+        timeText = timeText + `${mins} ${mins > 1 ? 'minutes' : 'minute'} `;
+      }
+      const seconds = Math.ceil(timeLeft % 60);
+      timeText = timeText + `${seconds} ${seconds > 1 ? 'seconds' : 'second'}`;
+      return `repeats in ${timeText}`;
+    } else {
+      return '';
+    }
   }
 
   const getRequirementText = (requirement: Requirement, status: boolean): string => {
@@ -234,13 +248,13 @@ export const List = (props: Props) => {
     let tooltipText = '';
 
     if (quest.repeatable) {
-      const result = checkRepeat(quest);
-      if (!result.bool) {
-        tooltipText = result.text;
+      const result = meetsRepeat(quest);
+      if (!result) {
+        tooltipText = getRepeatText(quest);
       }
     }
 
-    if (!checkRequirements(quest)) {
+    if (!meetsRequirements(quest)) {
       tooltipText = 'Unmet requirements';
     }
 
@@ -260,7 +274,7 @@ export const List = (props: Props) => {
 
   const CompleteButton = (quest: Quest) => {
     let tooltipText = '';
-    if (!checkObjectives(quest)) {
+    if (!meetsObjectives(quest)) {
       tooltipText = 'Unmet objectives';
     }
 
@@ -325,8 +339,8 @@ export const List = (props: Props) => {
     // get quest registry. filter out any unavailable quests
     let quests = props.registryQuests.filter((q: Quest) => {
       return (
-        checkRequirements(q)
-        && checkMax(props.account, q)
+        meetsRequirements(q)
+        && meetsMax(props.account, q)
         && !q.repeatable
       );
     });
@@ -348,7 +362,7 @@ export const List = (props: Props) => {
     // get quest registry, filter out non repeatables
     let quests = props.registryQuests.filter((q: Quest) => {
       return (
-        checkRequirements(q)
+        meetsRequirements(q)
         && q.repeatable
       );
     });
