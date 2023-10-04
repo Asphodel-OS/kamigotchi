@@ -114,7 +114,7 @@ export const Skills = (props: Props) => {
                 onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
                 disabled={!status.bool}
               >
-                <Image src={getImage(skill)} />
+                <Image srcSet={`${getImage(skill)} 0.5x`} />
                 <SkillName>{skill.name}</SkillName>
                 <SkillDescription>{skill.description}</SkillDescription>
                 <SkillDescription>{`Level: [${curLevel}/${skill.max}]`}</SkillDescription>
@@ -143,7 +143,6 @@ const Wrapper = styled.div`
 `;
 
 const Image = styled.img`
-
 `;
 
 const SkillContainer = styled.button`
