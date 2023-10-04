@@ -1,5 +1,5 @@
 {
-  "last deployed": "27th September 2023",
+  "last deployed": "4th October 2023 (IsRepeatable)",
   "components": [
     "AddressOperatorComponent",
     "AddressOwnerComponent",
@@ -64,6 +64,7 @@
     "IsProductionComponent",
     "IsRegistryComponent",
     "IsRelationshipComponent",
+    "IsRepeatableComponent",
     "IsRequirementComponent",
     "IsRewardComponent",
     "IsRoomComponent",
@@ -241,7 +242,7 @@
     },
     {
       "name": "_RegistryCreateQuestRequirementSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "4th October 2023",
       "writeAccess": [
         "*"
       ]
@@ -322,7 +323,7 @@
     },
     {
       "name": "_RegistryDeleteQuestSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "4th October 2023",
       "writeAccess": [
         "*"
       ]
@@ -716,16 +717,44 @@
     },
     {
       "name": "QuestAcceptSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "4th October 2023",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IndexQuestComponent",
+        "IndexObjectiveComponent",
+        "IsCompleteComponent",
+        "IsQuestComponent",
+        "IsRepeatableComponent",
+        "IsObjectiveComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "QuestCompleteSystem",
+      "last deployed": "4th October 2023",
       "writeAccess": [
         "*"
       ]
     },
     {
-      "name": "QuestCompleteSystem",
-      "last deployed": "18th September 2023",
+      "name": "QuestDropSystem",
       "writeAccess": [
-        "*"
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IndexQuestComponent",
+        "IndexObjectiveComponent",
+        "IsCompleteComponent",
+        "IsQuestComponent",
+        "IsRepeatableComponent",
+        "IsObjectiveComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent",
+        "ValueComponent"
       ]
     },
     {
