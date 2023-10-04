@@ -545,6 +545,7 @@
       "writeAccess": [
         "IdAccountComponent",
         "IdPetComponent",
+        "IdHolderComponent",
         "IsDataComponent",
         "TypeComponent",
         "ValueComponent",
