@@ -7,65 +7,58 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
-import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
-import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IsDataComponent, ID as IsDataCompID } from "components/IsDataComponent.sol";
+import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 /* Library for data entity patterns. basically a key value store entity linked to an owner
  * Basic structure:
  * - IsDataComponent
- * - Owner Entity (e.g IdAccount, IdPet)
+ * - IdHolderComponent
  * - TypeComponent (key)
- * - Any component to attatch (default: value)
+ * - IndexComponent (optional key)
+ * - ValueComponent (value)
  */
 library LibDataEntity {
   ///////////////////////
   // INTERACTIONS
 
   // creates a data entity owned by an account
-  function createForAccount(
+  function create(
     IWorld world,
     IUintComp components,
     uint256 accountID,
     string memory type_
   ) internal returns (uint256) {
-    require(
-      getAccountDataEntity(components, accountID, type_) == 0,
-      "LibDataEntity: data alr exists"
-    );
+    require(queryDataEntity(components, accountID, type_) == 0, "LibDataEntity: data alr exists");
     uint256 id = world.getUniqueEntityId();
     IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
+    IdHolderComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
     return id;
   }
 
-  // creates a data entity owned by a pet
-  function createForPet(
-    IWorld world,
-    IUintComp components,
-    uint256 petID,
-    string memory type_
-  ) internal returns (uint256) {
-    require(getPetDataEntity(components, petID, type_) == 0, "LibDataEntity: data alr exists");
-    uint256 id = world.getUniqueEntityId();
+  // SETTERS
+
+  function setIsData(IUintComp components, uint256 id) internal {
     IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-    IdPetComponent(getAddressById(components, IdPetCompID)).set(id, petID);
+  }
+
+  function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
+  }
+
+  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
+  }
+
+  function setType(IUintComp components, uint256 id, string memory type_) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    return id;
   }
 
-  // sets an existing data entity owned by an account
-  function setForAccount(IUintComp components, uint256 id, uint256 value) internal {
-    require(id != 0, "LibDataEntity: data doesnt exist");
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
-  // sets an existing data entity owned by a pet
-  function setForPet(IUintComp components, uint256 id, uint256 value) internal {
-    require(id != 0, "LibDataEntity: data doesnt exist");
+  function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
