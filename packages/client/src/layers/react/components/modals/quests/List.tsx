@@ -380,7 +380,8 @@ export const List = (props: Props) => {
   };
 
   const CompletedQuests = () => {
-    return props.account.quests?.completed.reverse().map((q: Quest) => (
+    let quests = [...props.account.quests?.completed ?? []];
+    return quests.map((q: Quest) => (
       <QuestContainer key={q.id}>
         <QuestName>{q.name}</QuestName>
         <QuestDescription>{q.description}</QuestDescription>
@@ -391,7 +392,8 @@ export const List = (props: Props) => {
   }
 
   const OngoingQuests = () => {
-    return props.account.quests?.ongoing.reverse().map((q: Quest) => (
+    let quests = [...props.account.quests?.ongoing ?? []];
+    return quests.reverse().map((q: Quest) => (
       <QuestContainer key={q.id}>
         <QuestName>{q.name}</QuestName>
         <QuestDescription>{q.description}</QuestDescription>
