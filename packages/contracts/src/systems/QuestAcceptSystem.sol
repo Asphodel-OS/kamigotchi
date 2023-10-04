@@ -52,7 +52,6 @@ contract QuestAcceptSystem is System {
     }
 
     LibAccount.updateLastBlock(components, accountID);
-    LibAccount.updateLastTs(components, accountID);
 
     return abi.encode(assignedID);
   }
