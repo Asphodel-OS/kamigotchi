@@ -21,6 +21,7 @@ export function IconListButton(props: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    playClick();
     if (!props.disabled) setAnchorEl(event.currentTarget);
   };
 
@@ -52,7 +53,7 @@ export function IconListButton(props: Props) {
         onClick={handleClick}
         style={setStyles()}
       >
-        <Image src={props.img} /> {' ▾'}
+        <Image src={props.img} />
       </Button>
       <Popover
         id={id}
@@ -74,6 +75,7 @@ export function IconListButton(props: Props) {
 }
 
 const Button = styled.button`
+  background-color: #fff;
   border: solid black .12vw;
   border-radius: .4vw;
   color: black;

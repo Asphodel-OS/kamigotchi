@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { ActionListButton } from "layers/react/components/library/ActionListButton";
+import { IconButton } from "layers/react/components/library/IconButton";
+import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { Kami } from "layers/react/shapes/Kami";
+import { feedIcon, reviveIcon } from "assets/images/icons/actions";
 
 
 interface Props {
@@ -200,9 +203,9 @@ export const Kards = (props: Props) => {
     });
 
     let returnVal = (
-      <ActionListButton
+      <IconListButton
         id={`feedKami-button-${kami.index}`}
-        text='Feed'
+        img={feedIcon}
         disabled={!canFeedKami}
         options={feedOptions}
       />
@@ -220,14 +223,23 @@ export const Kards = (props: Props) => {
     />
   );
 
-  const ReviveButton = (kami: Kami) => (
-    <ActionButton
-      id={`revive-kami`}
-      text='Revive'
-      onClick={() => props.actions.revive(kami, 1)}
-      disabled={!hasRevive() || onCooldown(kami)}
-    />
-  );
+  const ReviveButton = (kami: Kami) => {
+    let tooltipText = 'Revive your Kami';
+    if (!hasRevive()) tooltipText = 'no revives in inventory';
+    else if (getLocation(kami) != props.account.location) tooltipText = `not at your location`;
+    else if (onCooldown(kami)) tooltipText = 'on cooldown';
+
+    return (
+      <Tooltip text={[tooltipText]}>
+        <IconButton
+          id={`revive-kami`}
+          img={reviveIcon}
+          onClick={() => props.actions.revive(kami, 1)}
+          disabled={!hasRevive() || onCooldown(kami)}
+        />
+      </Tooltip>
+    );
+  };
 
   // Choose and return the action button to display
   const DisplayedAction = (kami: Kami) => {

@@ -74,6 +74,7 @@ export function ActionListButton(props: Props) {
 }
 
 const Button = styled.button`
+  background-color: #fff;
   border: solid black .15vw;
   border-radius: .4vw;
   color: black;
