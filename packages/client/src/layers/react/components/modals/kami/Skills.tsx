@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import placeholderImage from "assets/images/icons/exit_native.png"
+import { icons } from "assets/images/skills";
 
 
 interface Props {
@@ -71,6 +71,24 @@ export const Skills = (props: Props) => {
     return reqs.map((req) => parseReqText(req, checkRequirement(req, kami)));
   }
 
+  // TODO: should we convert to on chain image URIs?
+  // or better handling in general
+  const getImage = (skill: Skill): any => {
+    switch (skill.name.toUpperCase()) {
+      case 'ACQUISITIVENESS':
+        return icons.acquisitiveness;
+      case 'AGGRESSION':
+        return icons.aggression;
+      case 'DEFENSIVENESS':
+        return icons.defensiveness;
+      case 'PREDATOR':
+        return icons.predator;
+      case 'PROTECTOR':
+        return icons.protector;
+      case 'WARMONGER':
+        return icons.warmonger;
+    }
+  }
 
   const DisplaySkills = () => {
     return (
@@ -96,7 +114,7 @@ export const Skills = (props: Props) => {
                 onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
                 disabled={!status.bool}
               >
-                <Image src={placeholderImage} />
+                <Image src={getImage(skill)} />
                 <SkillName>{skill.name}</SkillName>
                 <SkillDescription>{skill.description}</SkillDescription>
                 <SkillDescription>{`Level: [${curLevel}/${skill.max}]`}</SkillDescription>
@@ -125,7 +143,7 @@ const Wrapper = styled.div`
 `;
 
 const Image = styled.img`
-  height: 10vw;
+
 `;
 
 const SkillContainer = styled.button`
