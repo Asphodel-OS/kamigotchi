@@ -7,9 +7,17 @@ import {
 } from "layers/react/components/library/ActionListButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { ActionButton } from "layers/react/components/library/ActionButton";
+import { IconButton } from "layers/react/components/library/IconButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
 import { Kami } from "layers/react/shapes/Kami";
 import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
+import {
+  collectIcon,
+  feedIcon,
+  liquidateIcon,
+  stopIcon,
+} from "assets/images/icons/actions";
+
 
 
 interface Props {
@@ -151,8 +159,22 @@ export const Kards = (props: Props) => {
     return description;
   }
 
-  // derive disabled text for allied kami Collect button. also used on Stop button
+  // evaluate tooltip for allied kami Collect button
   const getCollectTooltip = (kami: Kami): string => {
+    let text = getDisabledReason(kami);
+    if (text === '') text = 'Collect Harvest';
+    return text;
+  }
+
+  // evaluate tooltip for allied kami Stop button
+  const getStopTooltip = (kami: Kami): string => {
+    let text = getDisabledReason(kami);
+    if (text === '') text = 'Stop Harvest';
+    return text;
+  }
+
+  // derive general disabled reason for allied kami
+  const getDisabledReason = (kami: Kami): string => {
     let reason = '';
     if (onCooldown(kami)) {
       const cooldown = kami.cooldown - calcIdleTime(kami)
@@ -195,15 +217,13 @@ export const Kards = (props: Props) => {
 
   // button for collecting on production
   const CollectButton = (kami: Kami) => {
-    let tooltipText = getCollectTooltip(kami);
-
     return (
-      <Tooltip key='collect-tooltip' text={[tooltipText]}>
-        <ActionButton
+      <Tooltip key='collect-tooltip' text={[getCollectTooltip(kami)]}>
+        <IconButton
           id={`harvest-collect-${kami.index}`}
           onClick={() => props.actions.collect(kami)}
-          text='Collect'
-          disabled={kami.production === undefined || tooltipText !== ''}
+          img={collectIcon}
+          disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
         />
       </Tooltip>
     );
@@ -211,14 +231,13 @@ export const Kards = (props: Props) => {
 
   // button for stopping production
   const StopButton = (kami: Kami) => {
-    let tooltipText = getCollectTooltip(kami);
     return (
-      <Tooltip key='stop-tooltip' text={[tooltipText]}>
-        <ActionButton
+      <Tooltip key='stop-tooltip' text={[getStopTooltip(kami)]}>
+        <IconButton
           id={`harvest-stop-${kami.index}`}
-          text='Stop'
+          img={stopIcon}
           onClick={() => props.actions.stop(kami)}
-          disabled={kami.production === undefined || tooltipText !== ''}
+          disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
         />
       </Tooltip >
     );

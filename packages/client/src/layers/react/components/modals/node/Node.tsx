@@ -158,13 +158,13 @@ export function registerNodeModal() {
       const [tab, setTab] = useState('allies');
 
 
-      ///////////////////
+      /////////////////// 
       // ACTIONS
 
       // collects on an existing production
       const collect = (kami: Kami) => {
         const actionID = `Collecting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -179,7 +179,7 @@ export function registerNodeModal() {
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
         const actionID = `Liquidating ${enemyKami.name}` as EntityID; // itemIndex should be replaced with the item's name
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -193,7 +193,7 @@ export function registerNodeModal() {
       // starts a production for the given pet and node
       const start = (kami: Kami, node: Node) => {
         const actionID = `Starting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -207,7 +207,7 @@ export function registerNodeModal() {
       // stops a production
       const stop = (kami: Kami) => {
         const actionID = `Stopping Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
