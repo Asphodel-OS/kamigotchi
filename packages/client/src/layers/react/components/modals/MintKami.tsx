@@ -12,7 +12,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
-import { getAccountData } from 'layers/react/shapes/Data';
+import { getData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
@@ -57,7 +57,7 @@ export function registerKamiMintModal() {
           )[0];
 
           const account = getAccount(layers, accountIndex, { kamis: true });
-          const numMinted = getAccountData(layers, account, "NUM_MINT20_MINTED");
+          const numMinted = getData(layers, account.id, "MINT20_MINT");
           const unrevealedKamis = queryKamisX(
             layers,
             { account: account.id, state: 'UNREVEALED' }
@@ -70,7 +70,7 @@ export function registerKamiMintModal() {
               account: {
                 mint20: {
                   balance: 0, // TODO?: seems this is supported by wagmi hook
-                  minted: getAccountData(layers, account, "NUM_MINT20_MINTED"),
+                  minted: getData(layers, account.id, "MINT20_MINT"),
                   limit: getConfigFieldValue(layers.network, "MINT_ACCOUNT_MAX"),
                 },
                 kamis: {

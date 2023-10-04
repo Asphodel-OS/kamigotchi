@@ -12,6 +12,7 @@ import {
 
 import { Layers } from 'src/types';
 import { Account } from './Account';
+import { getData } from './Data';
 import { getInventoryByIndex } from './Inventory';
 
 
@@ -469,7 +470,7 @@ const checkIncrease = (
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
   const prevVal = querySnapshotObjective(layers, quest.id, objective.index).target.value as number;
-  const currVal = getAccBal(account, objective.target.index, objective.target.type);
+  const currVal = getData(layers, account.id, objective.target.type, objective.target.index);
 
   return {
     target: objective.target.value,
@@ -486,7 +487,7 @@ const checkDecrease = (
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
   const prevVal = querySnapshotObjective(layers, quest.id, objective.index).target.value as number;
-  const currVal = getAccBal(account, objective.target.index, objective.target.type);
+  const currVal = getData(layers, account.id, objective.target.type, objective.target.index);
 
   return {
     target: objective.target.value,
