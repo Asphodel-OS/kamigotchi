@@ -37,8 +37,8 @@ export function registerMerchantModal() {
           components: {
             AccountID,
             Description,
-            IsNPC,
             IsListing,
+            IsNPC,
             ItemIndex,
             Location,
             Name,
@@ -51,6 +51,7 @@ export function registerMerchantModal() {
         AccountID.update$,
         Description.update$,
         IsListing.update$,
+        IsNPC.update$,
         ItemIndex.update$,
         Location.update$,
         Name.update$,
