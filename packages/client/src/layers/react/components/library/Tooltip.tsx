@@ -14,10 +14,13 @@ export const Tooltip = (props: Props) => {
 
   return <MUITooltip
     title={conjoinedText}
-    enterDelay={100}
+    followCursor
+    enterDelay={500}
+    leaveTouchDelay={0}
     style={{
       flexGrow: flexGrow,
       display: 'flex',
+      cursor: 'help',
       flexDirection: 'column',
     }}
     componentsProps={{

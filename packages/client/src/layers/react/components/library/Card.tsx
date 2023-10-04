@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { playClick } from 'utils/sounds';
-
 interface Props {
   image: string;
   content: React.ReactNode;
@@ -17,7 +15,6 @@ export const Card = (props: Props) => {
   const imageOnClick = () => {
     if (props.imageOnClick) {
       props.imageOnClick();
-      playClick();
       return;
     }
   }
@@ -50,6 +47,7 @@ const Image = styled.img`
   border-color: black;
   border-radius: .15vw 0vw 0vw .15vw;
   height: 9vw;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.75;

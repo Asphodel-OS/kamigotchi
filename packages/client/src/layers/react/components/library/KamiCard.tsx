@@ -7,6 +7,7 @@ import { Tooltip } from './Tooltip';
 import { Card } from 'layers/react/components/library/Card';
 import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   kami: Kami;
@@ -59,6 +60,7 @@ export const KamiCard = (props: Props) => {
       setSelectedEntities({ ...selectedEntities, kami: props.kami.entityIndex });
       setVisibleModals({ ...visibleModals, kami: true });
     }
+    playClick();
   }
 
   /////////////////
@@ -143,6 +145,7 @@ const TitleText = styled.div`
   font-size: 1vw;
   text-align: left;
   justify-content: flex-start;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.6;
