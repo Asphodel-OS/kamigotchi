@@ -44,7 +44,7 @@ library LibDataEntity {
     uint256 holderID,
     uint256 index,
     string memory type_
-  ) internal view returns (uint256) {
+  ) public view returns (uint256) {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     return dataID == 0 ? 0 : getValue(components, dataID);
   }
@@ -56,7 +56,7 @@ library LibDataEntity {
     uint256 index,
     string memory type_,
     uint256 amt
-  ) internal {
+  ) public {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     if (dataID == 0) {
       dataID = create(world, components, holderID, type_);
@@ -72,7 +72,7 @@ library LibDataEntity {
     uint256 index,
     string memory type_,
     uint256 amt
-  ) internal {
+  ) public {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     if (dataID == 0) {
       dataID = create(world, components, holderID, type_);
@@ -88,7 +88,7 @@ library LibDataEntity {
     uint256 index,
     string memory type_,
     uint256 value
-  ) internal {
+  ) public {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     if (dataID == 0) {
       dataID = create(world, components, holderID, type_);
