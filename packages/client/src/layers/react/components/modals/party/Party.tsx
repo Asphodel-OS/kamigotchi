@@ -10,6 +10,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
 
 
@@ -27,6 +28,7 @@ export function registerPartyModal() {
     (layers) => {
       const {
         network: {
+          actions,
           api: { player },
           components: {
             AccountID,
@@ -50,7 +52,6 @@ export function registerPartyModal() {
             Value,
           },
           world,
-          actions,
         },
       } = layers;
 
@@ -94,12 +95,8 @@ export function registerPartyModal() {
     // Render
     ({ actions, api, data, world }) => {
       // console.log('PartyM: data', data);
-      const {
-        visibleModals,
-        setVisibleModals,
-        selectedEntities,
-        setSelectedEntities,
-      } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
+      const { setKami } = useSelectedEntities();
 
 
       /////////////////
@@ -108,7 +105,7 @@ export function registerPartyModal() {
       // feed a kami
       const feedKami = (kami: Kami, foodIndex: number) => {
         const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -122,7 +119,7 @@ export function registerPartyModal() {
       // revive a kami using a revive item
       const reviveKami = (kami: Kami, reviveIndex: number) => {
         const actionID = `Reviving ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -136,7 +133,7 @@ export function registerPartyModal() {
       // reveal kami
       const revealKami = async (kami: Kami) => {
         const actionID = `Revealing ${kami.name}` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -146,17 +143,14 @@ export function registerPartyModal() {
           },
         });
         await waitForActionCompletion(
-          actions.Action,
+          actions?.Action!,
           world.entityToIndex.get(actionID) as EntityIndex
         );
         openKamiModal(kami.entityIndex);
       };
 
       const openKamiModal = (entityIndex: EntityIndex) => {
-        setSelectedEntities({
-          ...selectedEntities,
-          kami: entityIndex,
-        });
+        setKami(entityIndex);
         setVisibleModals({ ...visibleModals, kami: true });
       };
 

@@ -10,6 +10,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
 export function registerEMABoardModal() {
@@ -58,18 +59,11 @@ export function registerEMABoardModal() {
 
     // Render
     ({ data }) => {
-      const {
-        visibleModals,
-        setVisibleModals,
-        selectedEntities,
-        setSelectedEntities
-      } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
+      const { setKami } = useSelectedEntities();
 
       const promptRename = (kami: Kami) => {
-        setSelectedEntities({
-          ...selectedEntities,
-          kami: kami.entityIndex,
-        });
+        setKami(kami.entityIndex);
         setVisibleModals({ ...visibleModals, emaBoard: false, nameKami: true });
       };
 

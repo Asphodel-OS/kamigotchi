@@ -8,6 +8,7 @@ import { SingleInputTextForm } from 'layers/react/components/library/SingleInput
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
 
 export function registerNameKamiModal() {
@@ -48,13 +49,14 @@ export function registerNameKamiModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
-      const kami = getKami(layers, selectedEntities.kami);
+      const { visibleModals, setVisibleModals } = dataStore();
+      const { kamiEntityIndex } = useSelectedEntities();
+      const kami = getKami(layers, kamiEntityIndex);
 
       // queue the naming action up
       const nameTx = (kami: Kami, name: string) => {
         const actionID = `Renaming ${kami.name}` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,

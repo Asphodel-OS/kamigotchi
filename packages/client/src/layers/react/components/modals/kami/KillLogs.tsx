@@ -9,8 +9,8 @@ import {
 } from '@mui/material';
 
 import { Kill } from 'layers/react/shapes/Kill';
-import { dataStore } from 'layers/react/store/createStore';
 import { Kami } from 'layers/react/shapes/Kami';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 
 // Rendering of the Kami's Kill/Death Logs
 export const KillLogs = (props: Props) => {
-  const { selectedEntities, setSelectedEntities } = dataStore();
+  const { setKami } = useSelectedEntities();
   const cellStyle = { fontFamily: 'Pixel', fontWeight: 12, border: 0 };
 
   let logs = props.kami.kills!.concat(props.kami.deaths!);
@@ -45,7 +45,7 @@ export const KillLogs = (props: Props) => {
         <TableCell sx={cellStyle}>{type}</TableCell>
         <TableCell
           sx={{ ...cellStyle, cursor: 'pointer' }}
-          onClick={() => setSelectedEntities({ ...selectedEntities, kami: subject?.entityIndex! })}
+          onClick={() => setKami(subject?.entityIndex!)}
         >
           {subject?.name}
         </TableCell>

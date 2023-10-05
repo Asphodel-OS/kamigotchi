@@ -5,13 +5,6 @@ export interface Dialogue {
   description: string[];
 }
 
-export interface SelectedEntities {
-  kami: EntityIndex;
-  merchant: EntityIndex;
-  node: EntityIndex;
-  room: number;
-}
-
 export interface VisibleButtons {
   chat: boolean;
   help: boolean;
@@ -82,7 +75,6 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
 
 export interface DataStore {
   dialogue: Dialogue;
-  selectedEntities: SelectedEntities;
   visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
 }
@@ -91,7 +83,6 @@ interface DataStoreActions {
   setDialogue: (data: Dialogue) => void;
   setVisibleModals: (data: VisibleModals) => void;
   setVisibleButtons: (data: VisibleButtons) => void;
-  setSelectedEntities: (data: SelectedEntities) => void;
   toggleVisibleButtons: (isOn: boolean) => void;
   toggleVisibleModals: (isOn: boolean) => void;
 }
@@ -99,12 +90,6 @@ interface DataStoreActions {
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
   const initialState: DataStore = {
     dialogue: { description: [] },
-    selectedEntities: {
-      kami: 0 as EntityIndex,
-      merchant: 0 as EntityIndex,
-      node: 0 as EntityIndex,
-      room: 0 as number,
-    },
     visibleModals: {
       bridgeERC20: false,
       bridgeERC721: false,
@@ -142,8 +127,6 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
   return {
     ...initialState,
     setDialogue: (data: Dialogue) => set((state: DataStore) => ({ ...state, dialogue: data })),
-    setSelectedEntities: (data: SelectedEntities) =>
-      set((state: DataStore) => ({ ...state, selectedEntities: data })),
     setVisibleButtons: (data: VisibleButtons) =>
       set((state: DataStore) => ({ ...state, visibleButtons: data })),
     setVisibleModals: (data: VisibleModals) =>

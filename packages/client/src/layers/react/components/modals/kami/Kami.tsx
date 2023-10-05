@@ -11,6 +11,7 @@ import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { Skills } from './Skills';
 import { getRegistrySkills } from 'layers/react/shapes/Skill';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -85,7 +86,7 @@ export function registerKamiModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { selectedEntities } = dataStore();
+      const { kamiEntityIndex } = useSelectedEntities();
       const [mode, setMode] = useState('DETAILS');
 
       /////////////////
@@ -94,7 +95,7 @@ export function registerKamiModal() {
       const getSelectedKami = () => {
         return getKami(
           layers,
-          selectedEntities.kami,
+          kamiEntityIndex,
           {
             account: true,
             deaths: true,
@@ -110,7 +111,7 @@ export function registerKamiModal() {
 
       const levelUp = (kami: Kami) => {
         const actionID = `Leveling up ${kami.name}` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -123,7 +124,7 @@ export function registerKamiModal() {
 
       const upgradeSkill = (kami: Kami, skillIndex: number) => {
         const actionID = `Upgrading skill ` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,

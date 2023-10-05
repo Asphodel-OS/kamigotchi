@@ -2,31 +2,31 @@ import { EntityIndex } from '@latticexyz/recs';
 import create from 'zustand';
 
 export interface SelectedEntities {
-  account: EntityIndex;
-  kami: EntityIndex;
-  merchant: EntityIndex;
-  node: EntityIndex;
-  npc: EntityIndex;
+  accountEntityIndex: EntityIndex;
+  kamiEntityIndex: EntityIndex;
+  merchantEntityIndex: EntityIndex;
+  nodeEntityIndex: EntityIndex;
+  npcEntityIndex: EntityIndex;
   room: number;
 }
 
 interface Actions {
   setSelectedEntities: (selectedEntities: SelectedEntities) => void;
-  setAccount: (account: EntityIndex) => void;
-  setKami: (kami: EntityIndex) => void;
-  setMerchant: (merchant: EntityIndex) => void;
-  setNode: (node: EntityIndex) => void;
-  setNpc: (npc: EntityIndex) => void;
+  setAccount: (accountEntityIndex: EntityIndex) => void;
+  setKami: (kamiEntityIndex: EntityIndex) => void;
+  setMerchant: (merchantEntityIndex: EntityIndex) => void;
+  setNode: (nodeEntityIndex: EntityIndex) => void;
+  setNpc: (npcEntityIndex: EntityIndex) => void;
   setRoom: (room: number) => void;
 }
 
 export const useSelectedEntities = create<SelectedEntities & Actions>((set) => {
   const initialState: SelectedEntities = {
-    account: 0 as EntityIndex,
-    kami: 0 as EntityIndex,
-    merchant: 0 as EntityIndex,
-    node: 0 as EntityIndex,
-    npc: 0 as EntityIndex,
+    accountEntityIndex: 0 as EntityIndex,
+    kamiEntityIndex: 0 as EntityIndex,
+    merchantEntityIndex: 0 as EntityIndex,
+    nodeEntityIndex: 0 as EntityIndex,
+    npcEntityIndex: 0 as EntityIndex,
     room: 0 as number,
   };
 
@@ -35,20 +35,20 @@ export const useSelectedEntities = create<SelectedEntities & Actions>((set) => {
     setSelectedEntities: (selectedEntities: SelectedEntities) => set(
       (state: SelectedEntities) => ({ ...state, ...selectedEntities })
     ),
-    setAccount: (account: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, account })
+    setAccount: (accountEntityIndex: EntityIndex) => set(
+      (state: SelectedEntities) => ({ ...state, accountEntityIndex })
     ),
-    setKami: (kami: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, kami })
+    setKami: (kamiEntityIndex: EntityIndex) => set(
+      (state: SelectedEntities) => ({ ...state, kamiEntityIndex })
     ),
-    setMerchant: (merchant: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, merchant })
+    setMerchant: (merchantEntityIndex: EntityIndex) => set(
+      (state: SelectedEntities) => ({ ...state, merchantEntityIndex })
     ),
-    setNode: (node: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, node })
+    setNode: (nodeEntityIndex: EntityIndex) => set(
+      (state: SelectedEntities) => ({ ...state, nodeEntityIndex })
     ),
-    setNpc: (npc: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, npc })
+    setNpc: (npcEntityIndex: EntityIndex) => set(
+      (state: SelectedEntities) => ({ ...state, npcEntityIndex })
     ),
     setRoom: (room: number) => set(
       (state: SelectedEntities) => ({ ...state, room })
