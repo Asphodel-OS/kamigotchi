@@ -64,9 +64,9 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
           let image = this.add.image(posX, posY, key);
           image.setScale(scale);
+          image.setInteractive({ useHandCursor: true });
 
           if (onClick) {
-            image.setInteractive();
             image.on('pointerdown', (e: Phaser.Input.Pointer) => {
               if (!disableClickableObjects(e)) onClick();
             });
