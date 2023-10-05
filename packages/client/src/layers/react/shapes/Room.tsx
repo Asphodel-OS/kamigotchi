@@ -28,7 +28,7 @@ export interface RoomOptions {
   players?: boolean;
 }
 
-const locationToHex = (location: number) => {
+export const locationToHex = (location: number) => {
   let hexLocation = location.toString(16);
   if (hexLocation.length % 2) hexLocation = '0' + hexLocation;
   return '0x' + hexLocation;
@@ -60,7 +60,7 @@ export const getRoom = (
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     description: getComponentValue(Description, index)?.value as string,
-    location: (getComponentValue(Location, index)?.value as number) * 1,
+    location: (getComponentValue(Location, index)?.value || 0 as number) * 1,
     exits: getComponentValue(Exits, index)?.value as number[],
   };
 
@@ -84,6 +84,9 @@ export const getRoom = (
       return getAccount(layers, accountEntityIndex);
     });
   }
+
+  // convert exits to proper numbers
+  if (room.exits) room.exits = room.exits.map((exit) => exit * 1);
 
   return room;
 };

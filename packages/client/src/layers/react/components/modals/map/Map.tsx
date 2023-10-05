@@ -55,9 +55,7 @@ export function registerMapModal() {
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
-        if (visibleModals.map) {
-          setRoom(data.account.location * 1)
-        }
+        if (visibleModals.map) setRoom(data.account.location)
       }, [visibleModals.map]);
 
       // update the selected room details
@@ -67,7 +65,7 @@ export function registerMapModal() {
           setSelectedRoom(roomObject);
 
           const exits = (roomObject.exits)
-            ? roomObject.exits.map((exit) => getRoomByLocation(layers, exit * 1))
+            ? roomObject.exits.map((exit) => getRoomByLocation(layers, exit))
             : [];
           setSelectedExits(exits);
         }
@@ -86,7 +84,7 @@ export function registerMapModal() {
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            return api.account.move(location * 1);
+            return api.account.move(location);
           },
         });
       };

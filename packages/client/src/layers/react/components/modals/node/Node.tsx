@@ -17,6 +17,7 @@ import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, getNode } from 'layers/react/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { locationToHex } from 'layers/react/shapes/Room';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -81,7 +82,7 @@ export function registerNodeModal() {
             runQuery([
               Has(IsNode),
               HasValue(Location, {
-                value: account.location,
+                value: locationToHex(account.location),
               }),
             ])
           )[0];
