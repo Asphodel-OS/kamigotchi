@@ -21,12 +21,6 @@ export interface Inventory {
   item: Item;
 }
 
-export interface QueryOptions {
-  owner?: EntityID;
-  registry?: boolean;
-  itemIndex?: number;
-}
-
 // get an Inventory from its EntityIndex
 export const getInventory = (
   layers: Layers,
@@ -71,28 +65,61 @@ export const getInventory = (
   return inventory;
 }
 
-export const sortInventories = (list: Inventory[]) => {
-  return list.sort((a: Inventory, b: Inventory) =>
+
+/////////////////
+// UTILS
+
+export interface AccountInventories {
+  food: Inventory[];
+  revives: Inventory[];
+  gear: Inventory[];
+  mods: Inventory[];
+}
+
+// create an empty instance of account inventories
+export const newAccountInventories = (): AccountInventories => ({
+  food: [],
+  revives: [],
+  gear: [],
+  mods: [],
+});
+
+
+// sorts a list of Inventories by their Family Indices (e.g. foodIndex, reviveIndex)
+export const sortInventories = (inventories: Inventory[]) => {
+  return inventories.sort((a: Inventory, b: Inventory) =>
     (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
   );
 }
 
-export const getInventoryByFamilyIndex = (list: Inventory[], familyIndex: number) => {
-  if (!list) return;
-  for (let i = 0, len = list.length; i < len; i++) {
-    if (list[i].item.familyIndex === familyIndex) {
-      return list[i];
+// gets an Inventory instance from a inventories of Inventories by its Family Index
+export const getInventoryByFamilyIndex = (inventories: Inventory[], familyIndex: number) => {
+  if (!inventories) return;
+  for (let i = 0, len = inventories.length; i < len; i++) {
+    if (inventories[i].item.familyIndex === familyIndex) {
+      return inventories[i];
     }
   }
 }
 
-export const getInventoryByIndex = (list: Inventory[], index: number) => {
-  if (!list) return;
-  for (let i = 0, len = list.length; i < len; i++) {
-    if (list[i].item.index === index) {
-      return list[i];
+// get an Inventory from a inventories of Inventories
+export const getInventoryByIndex = (inventories: Inventory[], index: number) => {
+  if (!inventories) return;
+  for (let i = 0, len = inventories.length; i < len; i++) {
+    if (inventories[i].item.index === index) {
+      return inventories[i];
     }
   }
+}
+
+
+/////////////////
+// QUERIES
+
+export interface QueryOptions {
+  owner?: EntityID;
+  registry?: boolean;
+  itemIndex?: number;
 }
 
 export const queryInventoryX = (
@@ -115,22 +142,15 @@ export const queryInventoryX = (
   if (options?.owner) {
     toQuery.push(HasValue(HolderID, { value: options.owner }));
   }
-
-  if (options?.registry !== undefined) {
-    if (options?.registry) {
-      toQuery.push(Has(IsRegistry));
-    } else {
-      toQuery.push(Not(IsRegistry));
-    }
-  }
-
   if (options?.itemIndex) {
     toQuery.push(HasValue(ItemIndex, { value: options.itemIndex }));
   }
+  if (options?.registry !== undefined) {
+    if (options?.registry) toQuery.push(Has(IsRegistry));
+    else toQuery.push(Not(IsRegistry));
+  }
 
-  const raw = Array.from(
-    runQuery(toQuery)
-  );
+  const raw = Array.from(runQuery(toQuery));
 
   return raw.map(
     (index): Inventory => getInventory(layers, index)
