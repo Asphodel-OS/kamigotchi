@@ -5,7 +5,7 @@ import predator from './predator.png';
 import protector from './protector.png';
 import warmonger from './warmonger.png';
 
-export const icons = {
+export const skillIcons = {
   acquisitiveness,
   aggression,
   defensiveness,

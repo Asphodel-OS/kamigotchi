@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { icons } from "assets/images/skills";
+import { skillIcons } from "assets/images/skills";
 
 
 interface Props {
@@ -76,17 +76,17 @@ export const Skills = (props: Props) => {
   const getImage = (skill: Skill): any => {
     switch (skill.name.toUpperCase()) {
       case 'ACQUISITIVENESS':
-        return icons.acquisitiveness;
+        return skillIcons.acquisitiveness;
       case 'AGGRESSION':
-        return icons.aggression;
+        return skillIcons.aggression;
       case 'DEFENSIVENESS':
-        return icons.defensiveness;
+        return skillIcons.defensiveness;
       case 'PREDATOR':
-        return icons.predator;
+        return skillIcons.predator;
       case 'PROTECTOR':
-        return icons.protector;
+        return skillIcons.protector;
       case 'WARMONGER':
-        return icons.warmonger;
+        return skillIcons.warmonger;
     }
   }
 
