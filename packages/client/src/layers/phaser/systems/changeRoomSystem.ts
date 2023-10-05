@@ -5,10 +5,8 @@ import {
   Has,
   HasValue,
   runQuery,
-  defineUpdateQuery
 } from '@latticexyz/recs';
-import { map, merge, of } from 'rxjs';
-import { makeObservable } from 'mobx';
+import { merge } from 'rxjs';
 
 import { rooms } from 'constants/phaser/rooms';
 import { NetworkLayer } from 'layers/network/types';
@@ -16,9 +14,7 @@ import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
 import { closeModalsOnRoomChange } from 'layers/phaser/utils';
 import { checkDuplicateRooms } from 'layers/phaser/utils/checkDuplicateRooms';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { dataStore } from 'layers/react/store/createStore';
-import { GodID } from '@latticexyz/network';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
@@ -37,8 +33,9 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const GameSceneInstance = Game as GameScene;
 
   const system = async (update: any) => {
-    const { selectedEntities, setSelectedEntities } = dataStore.getState();
-    const { selectedAddress } = useNetworkSettings.getState();
+    const { setRoom } = useSelectedEntities.getState();
+
+    // TODO: update this (and everything) to operate off of the selected Connector address
     const accountIndex = Array.from(
       runQuery([
         Has(IsAccount),
@@ -48,7 +45,7 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
     if (accountIndex == update.entity || 0 == update.entity) {
       const currentRoom = getComponentValue(Location, accountIndex)?.value as number * 1;
-      setSelectedEntities({ ...selectedEntities, room: currentRoom });
+      setRoom(currentRoom);
 
       GameSceneInstance.room = rooms[currentRoom];
       if (!checkDuplicateRooms(currentRoom, GameSceneInstance.prevRoom)) {

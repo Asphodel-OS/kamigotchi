@@ -89,14 +89,14 @@ export const getAccount = (
     operatorEOA: getComponentValue(OperatorAddress, index)?.value as string,
     name: getComponentValue(Name, index)?.value as string,
     coin: getComponentValue(Coin, index)?.value as number,
-    location: getComponentValue(Location, index)?.value as number,
-    level: 0, // unimplemented for now, dummy value
+    location: (getComponentValue(Location, index)?.value || 0 as number) * 1,
+    level: 0, // placeholder
+    skillPoints: 0, // placeholder
     // stamina: {
     //   total: getComponentValue(Stamina, index)?.value as number,
     //   last: getComponentValue(StaminaCurrent, index)?.value as number,
     //   recoveryPeriod: 1, // dummy value
     // },
-    skillPoints: 0, // unimplemented for now, dummy value
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
     staminaRecoveryPeriod: 1, // dummy value

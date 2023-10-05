@@ -11,7 +11,7 @@ import {
   Room,
   getRoomByLocation,
 } from 'layers/react/shapes/Room';
-import 'layers/react/styles/font.css';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 // TODO: update this file and component name to be more desctiptive
 export function registerOperatorMovementModal() {
@@ -29,15 +29,16 @@ export function registerOperatorMovementModal() {
         network: { api, actions },
       } = layers;
 
-      const { selectedEntities, visibleModals, setVisibleModals } = dataStore();
+      const { visibleModals, setVisibleModals } = dataStore();
+      const { room: location } = useSelectedEntities();
       const [selectedRoom, setSelectedRoom] = React.useState<Room>();
 
       useEffect(() => {
-        if (selectedEntities.room) {
-          const room = getRoomByLocation(layers, selectedEntities.room);
+        if (location) {
+          const room = getRoomByLocation(layers, location);
           setSelectedRoom(room);
         }
-      }, [selectedEntities.room]);
+      }, [location]);
 
 
       //////////////////
@@ -45,15 +46,15 @@ export function registerOperatorMovementModal() {
 
       const move = () => {
         if (!selectedRoom) return;
-        const actionID = `Moving to room ${selectedEntities.room}` as EntityID;
+        const actionID = `Moving to ${selectedRoom.name}` as EntityID;
 
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
           updates: () => [],
           execute: async () => {
-            const roomMovment = await api.player.account.move(selectedRoom?.location);
+            const roomMovment = await api.player.account.move(location);
             setVisibleModals({ ...visibleModals, roomMovement: false });
             return roomMovment;
           },

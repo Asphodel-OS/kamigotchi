@@ -1,18 +1,20 @@
 import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';
 
-export const triggerRoomMovementModal = (room: number) => {
-  const { selectedEntities, visibleModals } = dataStore.getState();
+export const triggerRoomMovementModal = (location: number) => {
+  const { room, setRoom } = useSelectedEntities.getState();
+  const { visibleModals } = dataStore.getState();
   playClick();
 
   // if already open on this room, close the modal
-  if (visibleModals.roomMovement && selectedEntities.room === room) {
+  if (visibleModals.roomMovement && room === location) {
     dataStore.setState({
       visibleModals: { ...visibleModals, roomMovement: false }
     });
   } else {
+    setRoom(location);
     dataStore.setState({
-      selectedEntities: { ...selectedEntities, room },
       visibleModals: {
         ...visibleModals,
         roomMovement: true,

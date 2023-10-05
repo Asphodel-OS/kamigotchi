@@ -9,6 +9,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
 export function registerMapModal() {
@@ -43,7 +44,7 @@ export function registerMapModal() {
     },
     ({ layers, actions, api, data }) => {
       // console.log('mRoom: ', data)
-      const { selectedEntities, setSelectedEntities } = dataStore();
+      const { room, setRoom } = useSelectedEntities();
       const { visibleModals } = dataStore();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
@@ -55,26 +56,22 @@ export function registerMapModal() {
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
         if (visibleModals.map) {
-          setSelectedEntities({ ...selectedEntities, room: data.account.location * 1 });
+          setRoom(data.account.location * 1)
         }
       }, [visibleModals.map]);
 
       // update the selected room details
       useEffect(() => {
-        if (selectedEntities.room) {
-          const room = getRoomByLocation(
-            layers,
-            selectedEntities.room,
-            { owner: true, players: true },
-          );
-          setSelectedRoom(room);
+        if (room) {
+          const roomObject = getRoomByLocation(layers, room, { players: true });
+          setSelectedRoom(roomObject);
 
-          const exits = (room.exits)
-            ? room.exits.map((exit) => getRoomByLocation(layers, exit * 1))
+          const exits = (roomObject.exits)
+            ? roomObject.exits.map((exit) => getRoomByLocation(layers, exit * 1))
             : [];
           setSelectedExits(exits);
         }
-      }, [selectedEntities.room, data.account]);
+      }, [room, data.account]);
 
 
       ///////////////////
@@ -83,7 +80,7 @@ export function registerMapModal() {
       const move = (location: number) => {
         const room = getRoomByLocation(layers, location);
         const actionID = `Moving to ${room.name}` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -102,7 +99,7 @@ export function registerMapModal() {
         <ModalWrapperFull
           id='world_map'
           divName='map'
-          header={<MapGrid currentRoom={data.account.location * 1} move={move} />}
+          header={<MapGrid currentRoom={data.account.location} move={move} />}
           canExit
         >
           <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
