@@ -10,57 +10,10 @@
 8 8888   `Y8.    .888888888. `88888.   ,8'       `8        `8.`8888.   8 8888     8888     ,88'   ` 8888     ,88'         8 8888          8888     ,88'  8 8888        8  8 8888
 8 8888     `Y8. .8'       `8. `88888. ,8'         `         `8.`8888.  8 8888      `8888888P'        `8888888P'           8 8888           `8888888P'    8 8888        8  8 8888
 ```
-
-*may they spare your soul*
-
-## Demo Instructions
-👏 install the packages 👏  build/deploy the contracts (locally) 👏 build/host the FE 👇 
-```
-kamigotchi/$ yarn install
-kamigotchi/packages/contracts/$ yarn dev
-kamigotchi/packages/client/$ yarn start
-```
-
-now wait (~80 blocks), you'll see..
-- a local EVM Node generated in the `contracts/` window
-- [MUD](https://mud.dev/) `Components` and `Systems` automagically deployed
-- a spawned browser tab with the newly generated url parameters
-
-you will be greeted by the void. you must..
-- open the developer console (`Option + ⌘ + J` || `Shift + CTRL + J`)
-- `layers.network.api.world.init()` *\*`\*Enter`\**
-- wait for the world to be populated ~230tx (yes)
-  
-the voices will prompt you to change the chain.
-- do so
-- ignore the burner mismatch validator. it tends to hallucinate
-- clear the wallet's activity data in your Connector (MM, Rainbow, Rabby etc)
-- append `&admin=false` to the url params
-
-an explanation on what you just saw..
-- the game operates off a dual EOA system
-  - the traditional one managed by the Connector
-  - and one derived from the private key of a burner address
-  - it's hosted as a private key in the browser's Application `Local storage`
-- we call them the Operator (burner EOA) and the Owner (connector EOA)
-  - the burner EOA signs off on all in-game actions
-  - the connector EOA signs off on more critical transations (asset migration, account creation etc)
-
-we'll let the experience speak for itself :^)
- 
-now, for the fun part 
-- choose a name for your account, *asdf* seems to be the most popular
-- sign off
-- explore
-
-
-## Hype Screenshots
-![Screen Shot 2023-10-06 at 6 19 56 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/93dd98a5-3b39-476b-a511-75d771deb6fe)
-![Screen Shot 2023-10-06 at 6 21 03 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/3d104a18-4019-4c48-8f82-f698b4425e14)
 ![Screen Shot 2023-10-06 at 6 22 13 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/a2fc7839-5ded-48df-8c15-248374b19ff1)
 
+<br>
 
-## Guts and Glory
 _built with love, powered by \[redacted\]_
 
 **Actually Built With**
@@ -69,6 +22,611 @@ _built with love, powered by \[redacted\]_
 - [Phaser](https://newdocs.phaser.io/docs/3.60.0) (the docs are ass)
 - a million other npm dependencies
 
+<br>
+<br>
+
+# Local Setup
+
+<br>
+<br>
+
+![the river calls](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/d52011c7-5d7b-432c-ac26-3abb064fe343)
+
+<br>
+<br>
+<br>
+
+*baby steps*
+
+*but let's at least assume*
+
+*you know how to clone a repo*
+
+<br>
+
+```
+kamigotchi/$ yarn install
+kamigotchi/packages/contracts/$ yarn dev
+kamigotchi/packages/client/$ yarn start
+```
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*wait. 80 blocks. patience is a virtue*
+
+*do you see it ?*
+
+<br>
+
+- a local EVM Node generated in the `contracts/` window
+- [MUD](https://mud.dev/) `Components` and `Systems` automagically deployed
+- a spawned browser tab with the newly generated url parameters
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+  
+*the void greets you*
+
+*respond in kind*
+
+<br>
+
+- open the developer console (`Option + ⌘ + J` || `Shift + CTRL + J`)
+- `layers.network.api.world.init()` \**`\*Enter`\**
+- wait for the world to be populated ~230tx (yes)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*the voices*
+
+*they urge you to switch the chain*
+
+<br>
+
+- listen to them
+- ignore the burner validator. he tends to hallucinate
+- clear the wallet activity in your Connector (MM, Rainbow, Rabby etc)
+- append `&admin=false` to the url params\
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*what was all that?*
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+- the game operates off a dual EOA system
+  - the traditional one managed by the Connector
+  - and one derived from the private key of a burner address
+  - it's hosted as a private key in the browser's Application `Local storage`
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*huh?*
+ 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+- we call them the Operator (burner EOA) and the Owner (connector EOA)
+  - the burner EOA signs off on all in-game actions
+  - the connector EOA signs off on more critical transations (asset migration, account creation etc)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*???*
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+![Screen Shot 2023-10-06 at 6 55 30 PM](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/b100ee16-d178-40ea-a2ea-5f98b06da13f)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*now, for the fun part*
+<br>
+
+- choose a name for your account
+- sign off
+- listen to the voices
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+![Screen Shot 2023-10-06 at 6 19 56 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/93dd98a5-3b39-476b-a511-75d771deb6fe)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*the voices are right*
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+![Screen Shot 2023-10-06 at 6 21 03 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/3d104a18-4019-4c48-8f82-f698b4425e14)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+*the intrusive thoughts should win*
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 ```
 8 8888     ,88'          .8.                   ,8.       ,8.           8 8888      ,o888888o.        ,o888888o.     8888888 8888888888     ,o888888o.    8 8888        8  8 8888
@@ -170,3 +728,4 @@ _built with love, powered by \[redacted\]_
 8 8888   `Y8.    .888888888. `88888.   ,8'       `8        `8.`8888.   8 8888     8888     ,88'   ` 8888     ,88'         8 8888          8888     ,88'  8 8888        8  8 8888
 8 8888     `Y8. .8'       `8. `88888. ,8'         `         `8.`8888.  8 8888      `8888888P'        `8888888P'           8 8888           `8888888P'    8 8888        8  8 8888
 ```
+*may they spare your soul*
