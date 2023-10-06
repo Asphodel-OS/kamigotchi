@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge, of } from 'rxjs';
+import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount } from 'wagmi';
 
@@ -51,8 +51,7 @@ export function registerBurnerDetector() {
       const [isMismatched, setIsMismatched] = useState(false);
       const [input, setInput] = useState('');
 
-      // set the detectedEOA upon detectedPrivateKey change
-      // check whether mismatched in the process
+      // set the detectedEOA upon detectedPrivateKey change and determine mismatch
       useEffect(() => {
         const detectedEOA = getAddressFromPrivateKey(detectedPrivateKey);
         setDetectedAddress(detectedEOA);
@@ -63,6 +62,14 @@ export function registerBurnerDetector() {
         });
         setIsMismatched(connectedEOA !== detectedEOA);
       }, [detectedPrivateKey, connectedEOA]);
+
+      // catch clicks on modal, prevents duplicate Phaser3 triggers
+      const handleClicks = (event: any) => {
+        event.stopPropagation();
+      };
+      const element = document.getElementById('burner-detector');
+      element?.addEventListener('mousedown', handleClicks);
+
 
       /////////////////
       // STATE

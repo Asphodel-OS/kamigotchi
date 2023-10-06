@@ -161,6 +161,13 @@ export function registerAccountRegistrar() {
         setAccountDetails(accountDetails);
       }, [selectedAddress, isConnected, accountDetailsFromWorld, networks]);
 
+      // catch clicks on modal, prevents duplicate Phaser3 triggers
+      const handleClicks = (event: any) => {
+        event.stopPropagation();
+      };
+      const element = document.getElementById('account-registrar');
+      element?.addEventListener('mousedown', handleClicks);
+
 
       /////////////////
       // ACTIONS
@@ -312,7 +319,7 @@ export function registerAccountRegistrar() {
       // DISPLAY
 
       return (
-        <ModalWrapper id='accountRegistration' style={{ display: isVisible ? 'block' : 'none' }}>
+        <ModalWrapper id='account-registrar' style={{ display: isVisible ? 'block' : 'none' }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
             <Subtitle>(no registered account for connected address)</Subtitle>

@@ -1,9 +1,9 @@
-import { EntityIndex } from '@latticexyz/recs';
 import create from 'zustand';
 
 export interface Dialogue {
   description: string[];
 }
+
 
 export interface VisibleButtons {
   chat: boolean;

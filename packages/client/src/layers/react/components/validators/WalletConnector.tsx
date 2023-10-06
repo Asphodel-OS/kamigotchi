@@ -74,6 +74,13 @@ export function registerWalletConnecter() {
         updateNetworkSettings(connector);
       }, [chain, connector, connectorAddress, isConnected, isCorrectNetwork]);
 
+      // catch clicks on modal, prevents duplicate Phaser3 triggers
+      const handleClicks = (event: any) => {
+        event.stopPropagation();
+      };
+      const element = document.getElementById('wallet-connector');
+      element?.addEventListener('mousedown', handleClicks);
+
 
       /////////////////
       // ACTIONS
@@ -124,7 +131,7 @@ export function registerWalletConnecter() {
       );
 
       return (
-        <ModalWrapper id='connect' style={{ display: modalDisplay() }}>
+        <ModalWrapper id='wallet-connector' style={{ display: modalDisplay() }}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>{title}</Title>
             <Description>({status})</Description>

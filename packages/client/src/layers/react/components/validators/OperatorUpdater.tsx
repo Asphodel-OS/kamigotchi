@@ -28,19 +28,14 @@ export function registerOperatorUpdater() {
     },
     (layers) => of(layers),
     (layers) => {
+      const { network: { actions } } = layers;
       const { isConnected } = useAccount();
       const { chain } = useNetwork();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
+
       const [isMismatched, setIsMismatched] = useState(false);
-
-      const {
-        network: {
-          actions,
-        },
-      } = layers;
-
       const [helperText, setHelperText] = useState("");
       const [newAddress, setNewAddress] = useState("");
       const [newPrivKey, setNewPrivKey] = useState("");
@@ -113,12 +108,9 @@ export function registerOperatorUpdater() {
         setNewPrivKey(event.target.value);
       };
 
+
       /////////////////
       // DISPLAY
-
-      const hideModal = useCallback(() => {
-        setVisibleModals({ ...visibleModals, operatorUpdater: false });
-      }, [setVisibleModals, visibleModals]);
 
       return (
         <ModalWrapperFull divName='operatorUpdater' id='operatorUpdater' canExit={!isMismatched}>
