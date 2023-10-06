@@ -23,8 +23,8 @@ export function registerOperatorUpdater() {
     {
       colStart: 20,
       colEnd: 80,
-      rowStart: 22,
-      rowEnd: 73,
+      rowStart: 25,
+      rowEnd: 70,
     },
     (layers) => of(layers),
     (layers) => {
@@ -33,6 +33,7 @@ export function registerOperatorUpdater() {
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
+      const [isMismatched, setIsMismatched] = useState(false);
 
       const {
         network: {
@@ -60,6 +61,7 @@ export function registerOperatorUpdater() {
 
         setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
         setHelperText(operatorMatch ? "" : "Connected Burner does not match Account Operator");
+        setIsMismatched(!operatorMatch);
       }, [isConnected, burnerInfo, accountDetails]);
 
 
@@ -119,10 +121,7 @@ export function registerOperatorUpdater() {
       }, [setVisibleModals, visibleModals]);
 
       return (
-        <ModalWrapperFull divName='operatorUpdater' id='operatorUpdater'>
-          <TopButton style={{ pointerEvents: 'auto' }} onClick={hideModal}>
-            X
-          </TopButton>
+        <ModalWrapperFull divName='operatorUpdater' id='operatorUpdater' canExit={!isMismatched}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Update Operator</Title>
             <Description style={{ color: '#FF785B' }}>{helperText}</Description>
