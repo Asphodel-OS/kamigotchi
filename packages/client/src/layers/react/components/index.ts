@@ -7,6 +7,7 @@ import {
   registerQuestsButton,
   registerSettingsButton,
 } from './fixtures/buttons';
+
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerActionQueueFixture } from './fixtures/ActionQueue';
 import { registerGasWarningFixture } from './fixtures/GasWarning';
@@ -30,11 +31,13 @@ import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
 
-import { registerAccountRegistrar } from './validators/AccountRegistrar';
-import { registerBurnerDetector } from './validators/BurnerDetector';
-import { registerDetectAccountModal } from './validators/DetectAccount';
-import { registerWalletConnecter } from './validators/WalletConnector';
-import { registerOperatorUpdater } from './validators/OperatorUpdater';
+import {
+  registerAccountRegistrar,
+  registerBurnerDetector,
+  registerWalletConnecter,
+  registerOperatorUpdater,
+} from './validators';
+
 
 export function registerUIComponents() {
   registerLoadingState();

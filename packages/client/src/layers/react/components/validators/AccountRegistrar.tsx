@@ -7,7 +7,7 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import { IconButton, TextField } from '@mui/material';
+import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { useEffect, useState } from 'react';
@@ -138,7 +138,12 @@ export function registerAccountRegistrar() {
       useEffect(() => {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
         const networksMatch = chain?.id === defaultChainConfig.id;
-        setIsVisible(isConnected && networksMatch && burnersMatch && !accountDetails.id);
+        setIsVisible(
+          isConnected
+          && networksMatch
+          && burnersMatch
+          && !accountDetails.id
+        );
       }, [accountDetails, burnerInfo, isConnected]);
 
       // track the account details in store for easy access
@@ -162,12 +167,12 @@ export function registerAccountRegistrar() {
 
       const copyBurnerAddress = () => {
         navigator.clipboard.writeText(burnerInfo.connected);
-        console.log(burnerInfo.connected);
+        // console.log(burnerInfo.connected);
       }
 
       const copyBurnerPrivateKey = () => {
         navigator.clipboard.writeText(burnerInfo.detectedPrivateKey);
-        console.log(burnerInfo.detectedPrivateKey);
+        // console.log(burnerInfo.detectedPrivateKey);
       }
 
       const openFundModal = () => {
@@ -182,7 +187,7 @@ export function registerAccountRegistrar() {
         try {
           const createAccountActionID = createAccount(username);
           await waitForActionCompletion(
-            actions.Action,
+            actions?.Action!,
             world.entityToIndex.get(createAccountActionID) as EntityIndex
           );
 
