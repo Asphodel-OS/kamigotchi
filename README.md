@@ -16,39 +16,59 @@
 ## Demo Instructions
 👏 install the packages 👏  build/deploy the contracts (locally) 👏 build/host the FE 👇 
 ```
-COH/$ yarn install
-COH/packages/contracts/$ yarn dev
-COH/packages/client/$ yarn start
+kamigotchi/$ yarn install
+kamigotchi/packages/contracts/$ yarn dev
+kamigotchi/packages/client/$ yarn start
 ```
 
-now wait (~50 blocks), you'll see..
+now wait (~80 blocks), you'll see..
+- a local EVM Node generated in the `contracts/` window
 - [MUD](https://mud.dev/) `Components` and `Systems` automagically deployed
-- a browser tab spawn with the newly generated url parameter
-- a loading screen and placeholder image prior to the world being intialized/indexed
+- a spawned browser tab with the newly generated url parameters
 
-from this window you should..
-- open the dev console (`Option + ⌘ + J` on macOS OR `Shift + CTRL + J` on Windows/Linux) on a chromium based browser
-- run `layers.network.api.admin.init()` in the console (the deployer address should already by connected for admin api access)
-- enter name and explore :yayayayayayay:
+you will be greeted by the void. you must..
+- open the developer console (`Option + ⌘ + J` || `Shift + CTRL + J`)
+- `layers.network.api.world.init()` *\*`\*Enter`\**
+- wait for the world to be populated ~230tx (yes)
+  
+the voices will prompt you to change the chain.
+- do so
+- ignore the burner mismatch validator. it tends to hallucinate
+- clear the wallet's activity data in your Connector (MM, Rainbow, Rabby etc)
+- append `&admin=false` to the url params
+
+an explanation on what you just saw..
+- the game operates off a dual EOA system
+  - the traditional one managed by the Connector
+  - and one derived from the private key of a burner address
+  - it's hosted as a private key in the browser's Application `Local storage`
+- we call them the Operator (burner EOA) and the Owner (connector EOA)
+  - the burner EOA signs off on all in-game actions
+  - the connector EOA signs off on more critical transations (asset migration, account creation etc)
+
+we'll let the experience speak for itself :^)
+ 
+now, for the fun part 
+- choose a name for your account, *asdf* seems to be the most popular
+- sign off
+- explore
+
 
 ## Hype Screenshots
-![image](https://user-images.githubusercontent.com/102979407/219812768-d2e8fb41-1d7f-4c96-b9d0-2673c0244ee1.png)
-![image](https://user-images.githubusercontent.com/102979407/219812800-61c58784-9bdf-452a-a874-2a38c7649c3e.png)
-![image](https://user-images.githubusercontent.com/102979407/219812818-7fd8fda5-56c0-4ca0-9500-a371f1e3534a.png)
+![Screen Shot 2023-10-06 at 6 19 56 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/93dd98a5-3b39-476b-a511-75d771deb6fe)
+![Screen Shot 2023-10-06 at 6 21 03 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/3d104a18-4019-4c48-8f82-f698b4425e14)
+![Screen Shot 2023-10-06 at 6 22 13 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/a2fc7839-5ded-48df-8c15-248374b19ff1)
+
 
 ## Guts and Glory
 _built with love, powered by \[redacted\]_
 
 **Actually Built With**
 - [MUD](https://mud.dev/)
-- Phaser
-- React
-- and a million other npm dependencies
+- [React](https://react.dev/)
+- [Phaser](https://newdocs.phaser.io/docs/3.60.0) (the docs are ass)
+- a million other npm dependencies
 
-**Key Innovations**
-- [MUD-CSR](https://github.com/Asphodel-OS/mud-csr) an integration between `MUD` and `CSR`
-- ECS-based economic primitives for Merchant listings, P2P trade and Staking
-- cute ass pixelated nft demon pets
 
 ```
 8 8888     ,88'          .8.                   ,8.       ,8.           8 8888      ,o888888o.        ,o888888o.     8888888 8888888888     ,o888888o.    8 8888        8  8 8888
