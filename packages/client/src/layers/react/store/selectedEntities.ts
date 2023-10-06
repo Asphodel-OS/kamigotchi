@@ -5,7 +5,7 @@ export interface SelectedEntities {
   accountEntityIndex: EntityIndex;
   kamiEntityIndex: EntityIndex;
   merchantEntityIndex: EntityIndex;
-  nodeEntityIndex: EntityIndex;
+  nodeIndex: number;
   npcEntityIndex: EntityIndex;
   room: number;
 }
@@ -15,7 +15,7 @@ interface Actions {
   setAccount: (accountEntityIndex: EntityIndex) => void;
   setKami: (kamiEntityIndex: EntityIndex) => void;
   setMerchant: (merchantEntityIndex: EntityIndex) => void;
-  setNode: (nodeEntityIndex: EntityIndex) => void;
+  setNode: (nodeIndex: number) => void;
   setNpc: (npcEntityIndex: EntityIndex) => void;
   setRoom: (room: number) => void;
 }
@@ -25,7 +25,7 @@ export const useSelectedEntities = create<SelectedEntities & Actions>((set) => {
     accountEntityIndex: 0 as EntityIndex,
     kamiEntityIndex: 0 as EntityIndex,
     merchantEntityIndex: 0 as EntityIndex,
-    nodeEntityIndex: 0 as EntityIndex,
+    nodeIndex: 0 as EntityIndex,
     npcEntityIndex: 0 as EntityIndex,
     room: 0 as number,
   };
@@ -44,8 +44,8 @@ export const useSelectedEntities = create<SelectedEntities & Actions>((set) => {
     setMerchant: (merchantEntityIndex: EntityIndex) => set(
       (state: SelectedEntities) => ({ ...state, merchantEntityIndex })
     ),
-    setNode: (nodeEntityIndex: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, nodeEntityIndex })
+    setNode: (nodeIndex: number) => set(
+      (state: SelectedEntities) => ({ ...state, nodeIndex })
     ),
     setNpc: (npcEntityIndex: EntityIndex) => set(
       (state: SelectedEntities) => ({ ...state, npcEntityIndex })

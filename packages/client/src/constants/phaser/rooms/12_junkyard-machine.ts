@@ -47,7 +47,7 @@ export const room12: Room = {
       key: 'monolith',
       path: objectMonolith,
       offset: { x: -48, y: -27.1 },
-      onClick: triggerNodeModal,
+      onClick: () => triggerNodeModal(5),
     },
   ],
 };

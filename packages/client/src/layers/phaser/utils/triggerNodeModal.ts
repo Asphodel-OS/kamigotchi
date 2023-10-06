@@ -1,11 +1,14 @@
 import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';
 
-export const triggerNodeModal = () => {
+export const triggerNodeModal = (index: number) => {
   const { visibleModals } = dataStore.getState();
+  const { setNode } = useSelectedEntities.getState();
   playClick();
 
   if (!visibleModals.node) {
+    setNode(index);
     dataStore.setState({
       visibleModals: {
         ...visibleModals,

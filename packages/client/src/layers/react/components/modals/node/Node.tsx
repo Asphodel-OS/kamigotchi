@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import {
-  EntityID,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityID } from '@latticexyz/recs';
 
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Kami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
-import { Node, getNode } from 'layers/react/shapes/Node';
+import { Node, getNodeByIndex } from 'layers/react/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { locationToHex } from 'layers/react/shapes/Room';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -37,16 +31,12 @@ export function registerNodeModal() {
     (layers) => {
       const {
         network: {
-          world,
           actions,
           api: { player },
           components: {
             OperatorAddress,
             IsNode,
-            IsProduction,
             AccountID,
-            NodeID,
-            PetID,
             Balance,
             Harmony,
             Health,
@@ -62,6 +52,7 @@ export function registerNodeModal() {
 
       // TODO: update this to support node input as props
       return merge(
+        IsNode.update$,
         OperatorAddress.update$,
         AccountID.update$,
         Balance.update$,
@@ -76,77 +67,17 @@ export function registerNodeModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(layers, { kamis: true });
-
-          // get the node through the location of the linked account
-          const nodeEntityIndex = Array.from(
-            runQuery([
-              Has(IsNode),
-              HasValue(Location, {
-                value: locationToHex(account.location),
-              }),
-            ])
-          )[0];
-          const node =
-            nodeEntityIndex !== undefined ? getNode(layers, nodeEntityIndex) : ({} as Node);
-
-          // get the selected Node
-
-          /////////////////
-          // DEPENDENT DATA
-
-          // get the productions on this node
-          let nodeKamis: Kami[] = [];
-          let nodeKamisMine: Kami[] = [];
-          let nodeKamisOthers: Kami[] = [];
-          if (node) {
-            // populate the account Kamis
-            const nodeProductionIndices = Array.from(
-              runQuery([
-                Has(IsProduction),
-                HasValue(NodeID, { value: node.id }),
-                HasValue(State, { value: 'ACTIVE' }),
-              ])
-            );
-
-            for (let i = 0; i < nodeProductionIndices.length; i++) {
-              const productionIndex = nodeProductionIndices[i];
-
-              // kami:production is 1:1, so we're guaranteed to find one here
-              const kamiID = getComponentValue(PetID, productionIndex)?.value as EntityID;
-              const kamiIndex = world.entityToIndex.get(kamiID);
-              nodeKamis.push(getKami(
-                layers,
-                kamiIndex!,
-                { account: true, production: true, traits: true }
-              ));
-            }
-
-            // split node kamis between mine and others
-            if (nodeKamis) {
-              const activeMine = nodeKamis.filter((kami) => {
-                return kami.account!.id === account.id;
-              });
-              const activeOthers = nodeKamis.filter((kami) => {
-                return kami.account!.id !== account.id;
-              });
-              nodeKamisMine = activeMine;
-              nodeKamisOthers = activeOthers;
-            }
-          }
+          const { nodeIndex } = useSelectedEntities.getState();
+          const node = getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: account.id });
 
           return {
+            layers,
             actions,
             api: player,
             data: {
               account,
+              node,
               liquidationConfig: getLiquidationConfig(layers.network),
-              node: {
-                ...node,
-                kamis: {
-                  allies: nodeKamisMine,
-                  enemies: nodeKamisOthers,
-                },
-              },
             },
           };
         })
@@ -154,9 +85,21 @@ export function registerNodeModal() {
     },
 
     // Render
-    ({ actions, api, data }) => {
+    ({ layers, actions, api, data }) => {
       // console.log('NodeM: data', data);
       const [tab, setTab] = useState('allies');
+      const { nodeIndex } = useSelectedEntities();
+      const [node, setNode] = useState<Node>(data.node);
+
+      // updates from selected Node updates
+      useEffect(() => {
+        setNode(getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: data.account.id }));
+      }, [nodeIndex]);
+
+      // updates from component subscription updates
+      useEffect(() => {
+        setNode(data.node);
+      }, [data.node]);
 
 
       /////////////////// 
@@ -230,17 +173,17 @@ export function registerNodeModal() {
           header={[
             <Banner
               key='banner'
-              node={data.node}
+              node={node}
               kamis={data.account.kamis || []}
-              addKami={(kami) => start(kami, data.node)}
+              addKami={(kami) => start(kami, node)}
             />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
           canExit
         >
           <Kards
-            allies={data.node.kamis.allies}
-            enemies={data.node.kamis.enemies}
+            allies={node.kamis?.allies!}
+            enemies={node.kamis?.enemies!}
             actions={{ collect, stop, liquidate }}
             liquidationConfig={data.liquidationConfig}
             tab={tab}

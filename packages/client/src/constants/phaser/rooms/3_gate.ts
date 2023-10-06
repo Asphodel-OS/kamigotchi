@@ -22,7 +22,7 @@ export const room3: Room = {
       key: 'toriigate',
       path: objectToriiGate,
       offset: { x: 21, y: -8 },
-      onClick: triggerNodeModal,
+      onClick: () => triggerNodeModal(1),
     },
   ],
 };

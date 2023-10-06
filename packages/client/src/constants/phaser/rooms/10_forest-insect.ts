@@ -50,7 +50,7 @@ export const room10: Room = {
       key: 'termitemound',
       path: objectTermiteMound,
       offset: { x: 5.4, y: 1.5 },
-      onClick: triggerNodeModal,
+      onClick: () => triggerNodeModal(3),
     },
   ],
 };

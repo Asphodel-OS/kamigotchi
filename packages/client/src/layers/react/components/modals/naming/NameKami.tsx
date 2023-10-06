@@ -54,7 +54,7 @@ export function registerNameKamiModal() {
       const kami = getKami(layers, kamiEntityIndex);
 
       // queue the naming action up
-      const nameTx = (kami: Kami, name: string) => {
+      const nameKami = (kami: Kami, name: string) => {
         const actionID = `Renaming ${kami.name}` as EntityID;
         actions?.add({
           id: actionID,
@@ -71,7 +71,7 @@ export function registerNameKamiModal() {
       // handle naming action response (need to modify for error handling)
       const handleNameTx = async (name: string) => {
         try {
-          nameTx(kami, name);
+          nameKami(kami, name);
           setVisibleModals({ ...visibleModals, nameKami: false });
         } catch (e) { }
       };

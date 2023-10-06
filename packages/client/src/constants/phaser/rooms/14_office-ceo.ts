@@ -27,7 +27,7 @@ export const room14: Room = {
       key: 'occultcircle',
       path: objectOccultCircle,
       offset: { x: 37, y: 40 },
-      onClick: triggerNodeModal,
+      onClick: () => triggerNodeModal(4),
     },
     {
       key: 'appleimac',
