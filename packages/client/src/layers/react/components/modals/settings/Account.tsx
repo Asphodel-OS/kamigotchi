@@ -5,6 +5,7 @@ import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { dataStore } from "layers/react/store/createStore";
 import { useKamiAccount } from "layers/react/store/kamiAccount";
+import CopyButton from "../../library/CopyButton";
 
 
 interface Props {
@@ -24,25 +25,6 @@ export const Account = (props: Props) => {
     props.setStatus('Copied to clipboard!');
   };
 
-
-
-  // template for a single row with an action button
-  const ButtonRow = (text: string, hoverText: string, buttonText: string, onClick: Function) => {
-    return (
-      <Row>
-        <Text>{text}</Text>
-        <Tooltip text={[hoverText]}>
-          <ActionButton
-            id='settings_button'
-            onClick={onClick}
-            size='small'
-            text={buttonText}
-          />
-        </Tooltip>
-      </Row>
-    )
-  };
-
   const FieldRow = (label: string, value: string) => {
     return (
       <Row>
@@ -52,12 +34,7 @@ export const Account = (props: Props) => {
             <Text>{truncateAddress(value)}</Text>
           </Tooltip>
           <Tooltip text={['copy']}>
-            <ActionButton
-              id='copy-button'
-              text='copy'
-              onClick={() => copyText(value)}
-              size='small'
-            />
+            <CopyButton onClick={() => copyText(value)}></CopyButton>
           </Tooltip>
 
         </RowContent>
