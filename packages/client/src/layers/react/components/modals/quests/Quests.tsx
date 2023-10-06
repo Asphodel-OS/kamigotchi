@@ -18,7 +18,7 @@ export function registerQuestsModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 50,
+      rowStart: 25,
       rowEnd: 99,
     },
 
@@ -84,7 +84,7 @@ export function registerQuestsModal() {
 
       const acceptQuest = async (quest: Quest) => {
         const actionID = `Accepting Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -97,7 +97,7 @@ export function registerQuestsModal() {
 
       const completeQuest = async (quest: Quest) => {
         const actionID = `Completing Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,

@@ -16,7 +16,7 @@ export function registerSettingsModal() {
       colStart: 67,
       colEnd: 100,
       rowStart: 10,
-      rowEnd: 50,
+      rowEnd: 75,
     },
 
     (layers) => of(layers),

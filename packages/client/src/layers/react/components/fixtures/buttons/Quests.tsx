@@ -18,7 +18,7 @@ export function registerQuestsButton() {
     (layers) => of(layers),
     () => {
       const { visibleButtons } = dataStore();
-      const modalsToHide = { help: false };
+      const modalsToHide = { chat: false, help: false, settings: false };
 
       return (
         <MenuButton
