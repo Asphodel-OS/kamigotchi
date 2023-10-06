@@ -7,6 +7,7 @@ import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { dataStore } from 'layers/react/store/createStore';
 import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address';
 
 import 'layers/react/styles/font.css';
@@ -46,6 +47,7 @@ export function registerBurnerDetector() {
     ({ connectedEOA, network }) => {
       const { isConnected } = useAccount(); // refers to Connector
       const { setBurnerInfo } = useNetworkSettings();
+      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const [detectedAddress, setDetectedAddress] = useState('');
       const [isMismatched, setIsMismatched] = useState(false);
@@ -70,6 +72,13 @@ export function registerBurnerDetector() {
       const element = document.getElementById('burner-detector');
       element?.addEventListener('mousedown', handleClicks);
 
+      // modal and button toggles
+      useEffect(() => {
+        if (isMismatched) {
+          toggleVisibleModals(false);
+          toggleVisibleButtons(false);
+        }
+      }, [isMismatched]);
 
       /////////////////
       // STATE

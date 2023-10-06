@@ -8,6 +8,7 @@ import { Account, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
+import { dataStore } from 'layers/react/store/createStore';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -46,6 +47,7 @@ export function registerAccountInfoFixture() {
     ({ layers, data }) => {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
+      const { visibleButtons } = dataStore();
 
       /////////////////
       // TRACKING
@@ -90,7 +92,10 @@ export function registerAccountInfoFixture() {
       }
 
       return (data.account &&
-        <Container id='operator_info'>
+        <Container
+          id='accountInfo'
+          style={{ display: visibleButtons.accountInfo ? 'block' : 'none' }}
+        >
           <NameCell>{data.account.name}</NameCell>
           <BottomRow>
             <BatteryCell>

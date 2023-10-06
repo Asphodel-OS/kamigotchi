@@ -151,9 +151,7 @@ export function registerAccountRegistrar() {
       useEffect(() => {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
-        if (accountDetails.id) {
-          toggleVisibleButtons(true);
-        } else {
+        if (!accountDetails.id) {
           toggleVisibleButtons(false);
           toggleVisibleModals(false);
         }

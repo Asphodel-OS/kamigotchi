@@ -3,13 +3,13 @@ import { of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount, useNetwork, Connector } from 'wagmi';
 
-import { ChainButton } from 'layers/react/components/library/CustomRainbowButton';
-
 import { defaultChainConfig } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { ChainButton } from 'layers/react/components/library/CustomRainbowButton';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { dataStore } from 'layers/react/store/createStore';
 import 'layers/react/styles/font.css';
 
 // Detects network changes and populates network clients for inidividual addresses.
@@ -26,6 +26,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { chain } = useNetwork();
+      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
 
       const {
         address: connectorAddress,
@@ -72,6 +73,10 @@ export function registerWalletConnecter() {
       useEffect(() => {
         console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
         updateNetworkSettings(connector);
+        if (!isConnected || !isCorrectNetwork) {
+          toggleVisibleModals(false);
+          toggleVisibleButtons(false);
+        }
       }, [chain, connector, connectorAddress, isConnected, isCorrectNetwork]);
 
       // catch clicks on modal, prevents duplicate Phaser3 triggers

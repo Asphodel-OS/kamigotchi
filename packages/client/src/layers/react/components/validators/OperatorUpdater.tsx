@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { useAccount, useNetwork } from 'wagmi';
@@ -34,6 +34,7 @@ export function registerOperatorUpdater() {
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
+      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
 
       const [isMismatched, setIsMismatched] = useState(false);
       const [helperText, setHelperText] = useState("");
@@ -45,18 +46,16 @@ export function registerOperatorUpdater() {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
         const networksMatch = chain?.id === defaultChainConfig.id;
         const hasAccount = !!accountDetails.id;
-        const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
-        const isVisible = (
-          isConnected
-          && burnersMatch
-          && networksMatch
-          && hasAccount
-          && !operatorMatch
-        );
+        const meetsPreconditions = isConnected && networksMatch && burnersMatch && hasAccount;
 
+        const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
+        const isVisible = (meetsPreconditions && !operatorMatch);
         setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
         setHelperText(operatorMatch ? "" : "Connected Burner does not match Account Operator");
         setIsMismatched(!operatorMatch);
+
+        // awkward place to put this trigger, but this is the last validator to be checked
+        if (meetsPreconditions && operatorMatch) toggleVisibleButtons(true);
       }, [isConnected, burnerInfo, accountDetails]);
 
 

@@ -6,20 +6,20 @@ export interface Dialogue {
 
 
 export interface VisibleButtons {
+  accountInfo: boolean; // doesnt exactly belong here but..
   chat: boolean;
   help: boolean;
   map: boolean;
-  operatorInfo: boolean;
   party: boolean;
   quests: boolean;
   settings: boolean;
 }
 
 export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
+  accountInfo: isOn, // doesnt exactly belong here but..
   chat: isOn,
   help: isOn,
   map: isOn,
-  operatorInfo: isOn,
   party: isOn,
   quests: isOn,
   settings: isOn,
@@ -114,10 +114,10 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       settings: false,
     },
     visibleButtons: {
+      accountInfo: false, // doesnt exactly belong here but makes like easier
       chat: false,
       help: false,
       map: false,
-      operatorInfo: false,
       party: false,
       quests: false,
       settings: false,
