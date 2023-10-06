@@ -133,6 +133,8 @@ export function registerAccountRegistrar() {
       const [isVisible, setIsVisible] = useState(false);
 
       // set visibility of this validator
+      // we only want to prompt when an EOA is Connected to the correct network
+      // and the connected burner address is the same as the current one in local storage 
       useEffect(() => {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
         const networksMatch = chain?.id === defaultChainConfig.id;
@@ -187,7 +189,7 @@ export function registerAccountRegistrar() {
           // try {
           //   const mintTokenActionID = mintToken(5, 0);
           //   await waitForActionCompletion(
-          //     actions.Action,
+          //     actions?.Action,
           //     world.entityToIndex.get(mintTokenActionID) as EntityIndex
           //   );
           //   playSuccess();
@@ -207,7 +209,7 @@ export function registerAccountRegistrar() {
 
         console.log('CREATING ACCOUNT FOR:', selectedAddress);
         const actionID = `Creating Account: ${username}` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -218,7 +220,7 @@ export function registerAccountRegistrar() {
         });
         return actionID;
         // const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        // return waitForActionCompletion(actions.Action, actionIndex);
+        // return waitForActionCompletion(actions?.Action, actionIndex);
       }
 
       // transaction to mint the Mint ERC20 Token
@@ -228,7 +230,7 @@ export function registerAccountRegistrar() {
 
         console.log(`MINTING ${amount} TOKENS`);
         const actionID = (amount == 1 ? `Minting Token` : `Minting Tokens`) as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
           components: {},
           requirement: () => true,

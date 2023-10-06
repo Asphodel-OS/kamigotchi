@@ -9,7 +9,6 @@ import {
 
 import { Layers } from 'src/types';
 import { Kami, getKami } from './Kami';
-import { Account, getAccountFromBurner } from './Account';
 import { numberToHex } from 'utils/hex';
 
 // standardized shape of a Node Entity
@@ -133,7 +132,6 @@ export const getNodeByIndex = (
       HasValue(NodeIndex, { value: numberToHex(index) }),
     ])
   )[0];
-  console.log('Shapes: entity index: ', entityIndex);
 
   return getNode(layers, entityIndex, options);
 }

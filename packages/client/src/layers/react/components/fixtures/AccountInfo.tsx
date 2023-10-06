@@ -44,6 +44,7 @@ export function registerAccountInfoFixture() {
       );
     },
     ({ layers, data }) => {
+      // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
       /////////////////

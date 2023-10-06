@@ -93,7 +93,7 @@ export const getAccount = (
     // },
     stamina: getComponentValue(Stamina, index)?.value as number,
     staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
-    staminaRecoveryPeriod: 1, // dummy value
+    staminaRecoveryPeriod: getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
     lastBlock: getComponentValue(LastBlock, index)?.value as number,
     lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
@@ -144,13 +144,6 @@ export const getAccount = (
       completed: parseQuestsStatus(layers, account, getCompletedQuests(layers, account.id)),
     }
   }
-
-
-  /////////////////
-  // ADJUSTMENTS
-
-  const staminaRecoveryPeriod = getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD');
-  account.staminaRecoveryPeriod = staminaRecoveryPeriod;
 
   return account;
 };
