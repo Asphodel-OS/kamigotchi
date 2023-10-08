@@ -14,7 +14,7 @@ export interface GameScene {
 // and the playback of sound in each room
 export class GameScene extends Phaser.Scene implements GameScene {
   // TODO: use WebAudioSound which has the setVolume function
-  private gameSound: Phaser.Sound.BaseSound | undefined;
+  private gameSound: Phaser.Sound.HTML5AudioSound | undefined;
   private currentVolume: number;
   public prevRoom: number;
   public currentRoom: number;
@@ -78,15 +78,21 @@ export class GameScene extends Phaser.Scene implements GameScene {
         const { volumeMusic } = useSoundSettings.getState();
         this.currentVolume = volumeMusic;
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
-          this.gameSound = this.sound.add(this.room.music.key, { volume: volumeMusic, loop: true });
-          this.gameSound.play();
+          const bgm = this.sound.add(
+            this.room.music.key,
+            { volume: volumeMusic, loop: true }
+          ) as Phaser.Sound.HTML5AudioSound;
+
+          bgm.setLoop(true);
+          bgm.play();
+          this.gameSound = bgm;
         }
       }
     }
 
     this.prevRoom = this.currentRoom;
 
-    // subscribe to changes in sound.volume
+    // subscribe to sound settings store to adjust BGM volume
     useSoundSettings.subscribe(() => {
       const { volumeMusic } = useSoundSettings.getState();
       if (this.gameSound && volumeMusic !== this.currentVolume) {
