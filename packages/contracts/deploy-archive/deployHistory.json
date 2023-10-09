@@ -1,5 +1,5 @@
 {
-  "last deployed": "4th October 2023 (IsRepeatable)",
+  "last deployed": "27th September 2023",
   "components": [
     "AddressOperatorComponent",
     "AddressOwnerComponent",
@@ -64,7 +64,6 @@
     "IsProductionComponent",
     "IsRegistryComponent",
     "IsRelationshipComponent",
-    "IsRepeatableComponent",
     "IsRequirementComponent",
     "IsRewardComponent",
     "IsRoomComponent",
@@ -106,9 +105,13 @@
   "systems": [
     {
       "name": "_devGiveTokensSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
-        "CoinComponent"
+        "IdHolderComponent",
+        "IsDataComponent",
+        "CoinComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -242,7 +245,7 @@
     },
     {
       "name": "_RegistryCreateQuestRequirementSystem",
-      "last deployed": "4th October 2023",
+      "last deployed": "18th September 2023",
       "writeAccess": [
         "*"
       ]
@@ -323,7 +326,7 @@
     },
     {
       "name": "_RegistryDeleteQuestSystem",
-      "last deployed": "4th October 2023",
+      "last deployed": "18th September 2023",
       "writeAccess": [
         "*"
       ]
@@ -406,18 +409,21 @@
     },
     {
       "name": "AccountFundSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
         "EpochComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IsScoreComponent",
         "TypeComponent",
-        "BalanceComponent"
+        "ValueComponent"
       ]
     },
     {
       "name": "AccountMoveSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BlockLastComponent",
         "LocationComponent",
@@ -461,19 +467,99 @@
       "writeAccess": []
     },
     {
-      "name": "Farm20WithdrawSystem",
-      "last deployed": "18th September 2023",
+      "name": "Farm20DepositSystem",
+      "last deployed": "9th October 2023",
       "writeAccess": [
+        "BlockLastComponent",
         "CoinComponent",
-        "ProxyPermissionsFarm20Component"
+        "IdHolderComponent",
+        "IsDataComponent",
+        "ProxyPermissionsFarm20Component",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
-      "name": "Farm20DepositSystem",
-      "last deployed": "18th September 2023",
+      "name": "Farm20WithdrawSystem",
+      "last deployed": "9th October 2023",
       "writeAccess": [
+        "BlockLastComponent",
         "CoinComponent",
-        "ProxyPermissionsFarm20Component"
+        "IdHolderComponent",
+        "IsDataComponent",
+        "ProxyPermissionsFarm20Component",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "ListingBuySystem",
+      "last deployed": "9th October 2023",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CoinComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "IndexItemComponent",
+        "IndexComponent",
+        "IsFungibleComponent",
+        "IsInventoryComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "ListingSellSystem",
+      "last deployed": "9th October 2023",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CoinComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "IndexComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "NodeCollectSystem",
+      "last deployed": "9th October 2023",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CoinComponent",
+        "EpochComponent",
+        "ExperienceComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "IsScoreComponent",
+        "IndexComponent",
+        "HealthCurrentComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "Mint20ProxySystem",
+      "last deployed": "18th September 2023",
+      "writeAccess": []
+    },
+    {
+      "name": "Mint20MintSystem",
+      "last deployed": "9th October 2023",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdPetComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "TypeComponent",
+        "ValueComponent",
+        "ProxyPermissionsMint20Component"
       ]
     },
     {
@@ -518,89 +604,40 @@
     },
     {
       "name": "Pet721StakeSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
-        "IsAccountComponent",
         "AddressOperatorComponent",
-        "BlockLastComponent",
         "AddressOwnerComponent",
+        "BlockLastComponent",
         "IdAccountComponent",
+        "IdHolderComponent",
+        "IsAccountComponent",
+        "IsDataComponent",
         "LocationComponent",
         "NameComponent",
         "ProxyPermissionsERC721Component",
         "StaminaComponent",
         "StaminaCurrentComponent",
-        "StateComponent"
-      ]
-    },
-    {
-      "name": "ListingBuySystem",
-      "last deployed": "18th September 2023",
-      "writeAccess": [
-        "BalanceComponent",
-        "BlockLastComponent",
-        "CoinComponent",
-        "IdHolderComponent",
-        "IndexItemComponent",
-        "IsFungibleComponent",
-        "IsInventoryComponent"
-      ]
-    },
-    {
-      "name": "ListingSellSystem",
-      "last deployed": "18th September 2023",
-      "writeAccess": [
-        "BalanceComponent",
-        "BlockLastComponent",
-        "CoinComponent"
-      ]
-    },
-    {
-      "name": "NodeCollectSystem",
-      "last deployed": "18th September 2023",
-      "writeAccess": [
-        "BalanceComponent",
-        "BlockLastComponent",
-        "CoinComponent",
-        "EpochComponent",
-        "ExperienceComponent",
-        "IsScoreComponent",
-        "IdHolderComponent",
-        "HealthCurrentComponent",
-        "TimeLastActionComponent",
-        "TimeStartComponent",
-        "TypeComponent"
-      ]
-    },
-    {
-      "name": "Mint20ProxySystem",
-      "last deployed": "18th September 2023",
-      "writeAccess": []
-    },
-    {
-      "name": "Mint20MintSystem",
-      "last deployed": "18th September 2023",
-      "writeAccess": [
-        "IdAccountComponent",
-        "IdPetComponent",
-        "IsDataComponent",
+        "StateComponent",
         "TypeComponent",
-        "ValueComponent",
-        "ProxyPermissionsMint20Component"
+        "ValueComponent"
       ]
     },
     {
       "name": "PetFeedSystem",
-      "last deployed": "27th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
         "EpochComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IsScoreComponent",
+        "IndexComponent",
         "TimeLastActionComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -626,13 +663,18 @@
     },
     {
       "name": "PetReviveSystem",
-      "last deployed": "18th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "IndexComponent",
         "HealthCurrentComponent",
         "StateComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -644,24 +686,27 @@
     },
     {
       "name": "ProductionCollectSystem",
-      "last deployed": "27th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
-        "IsScoreComponent",
         "IdHolderComponent",
+        "IsDataComponent",
+        "IsScoreComponent",
+        "IndexComponent",
         "HealthCurrentComponent",
         "TimeLastActionComponent",
         "TimeStartComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "ProductionLiquidateSystem",
-      "last deployed": "27th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
@@ -672,18 +717,21 @@
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
+        "IsDataComponent",
         "IsKillComponent",
+        "IndexComponent",
         "IsScoreComponent",
         "RateComponent",
         "StateComponent",
         "TimeComponent",
         "TimeLastActionComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "ProductionStartSystem",
-      "last deployed": "27th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "IsProductionComponent",
         "BlockLastComponent",
@@ -699,7 +747,7 @@
     },
     {
       "name": "ProductionStopSystem",
-      "last deployed": "27th September 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
@@ -708,16 +756,19 @@
         "ExperienceComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
+        "IsDataComponent",
         "IsScoreComponent",
+        "IndexComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
-        "TypeComponent"
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "QuestAcceptSystem",
-      "last deployed": "4th October 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BlockLastComponent",
         "IdAccountComponent",
@@ -735,13 +786,14 @@
     },
     {
       "name": "QuestCompleteSystem",
-      "last deployed": "4th October 2023",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "*"
       ]
     },
     {
       "name": "QuestDropSystem",
+      "last deployed": "9th October 2023",
       "writeAccess": [
         "BlockLastComponent",
         "IdAccountComponent",

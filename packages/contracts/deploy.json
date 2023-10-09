@@ -468,65 +468,6 @@
       ]
     },
     {
-      "name": "Pet721MetadataSystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Pet721MintSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "Pet721RevealSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "Pet721TransferSystem",
-      "writeAccess": [
-        "ProxyPermissionsERC721Component"
-      ]
-    },
-    {
-      "name": "Pet721ProxySystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Pet721UnstakeSystem",
-      "writeAccess": [
-        "BlockLastComponent",
-        "IdAccountComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
-        "ProxyPermissionsERC721Component",
-        "StateComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
-      "name": "Pet721StakeSystem",
-      "writeAccess": [
-        "AddressOperatorComponent",
-        "AddressOwnerComponent",
-        "BlockLastComponent",
-        "IdAccountComponent",
-        "IdHolderComponent",
-        "IsAccountComponent",
-        "IsDataComponent",
-        "LocationComponent",
-        "NameComponent",
-        "ProxyPermissionsERC721Component",
-        "StaminaComponent",
-        "StaminaCurrentComponent",
-        "StateComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
-    },
-    {
       "name": "ListingBuySystem",
       "writeAccess": [
         "BalanceComponent",
@@ -589,6 +530,65 @@
         "TypeComponent",
         "ValueComponent",
         "ProxyPermissionsMint20Component"
+      ]
+    },
+    {
+      "name": "Pet721MetadataSystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Pet721MintSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "Pet721RevealSystem",
+      "writeAccess": [
+        "*"
+      ]
+    },
+    {
+      "name": "Pet721TransferSystem",
+      "writeAccess": [
+        "ProxyPermissionsERC721Component"
+      ]
+    },
+    {
+      "name": "Pet721ProxySystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Pet721UnstakeSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "ProxyPermissionsERC721Component",
+        "StateComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "Pet721StakeSystem",
+      "writeAccess": [
+        "AddressOperatorComponent",
+        "AddressOwnerComponent",
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsAccountComponent",
+        "IsDataComponent",
+        "LocationComponent",
+        "NameComponent",
+        "ProxyPermissionsERC721Component",
+        "StaminaComponent",
+        "StaminaCurrentComponent",
+        "StateComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
