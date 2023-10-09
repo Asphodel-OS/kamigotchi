@@ -6,7 +6,6 @@ import { ItemRow } from './ItemRow';
 
 export interface Props {
   listings: Listing[];
-  handleBuy: (listing: Listing, amt: number) => void;
 }
 
 export const Listings = (props: Props) => {
@@ -14,7 +13,7 @@ export const Listings = (props: Props) => {
     <List>
       {props.listings &&
         props.listings.map((l) => (
-          <ItemRow key={l.entityIndex} listing={l} handleBuy={props.handleBuy} />
+          <ItemRow key={l.entityIndex} listing={l} />
         ))}
     </List>
   );

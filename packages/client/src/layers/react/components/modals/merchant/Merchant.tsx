@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { EntityID } from '@latticexyz/recs';
 
 import { Listings } from './Listings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Listing } from 'layers/react/shapes/Listing';
 import { Merchant, getMerchantByIndex } from 'layers/react/shapes/Merchant';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
@@ -29,7 +27,6 @@ export function registerMerchantModal() {
     (layers) => {
       const {
         network: {
-          api: { player },
           components: {
             AccountID,
             Description,
@@ -40,7 +37,6 @@ export function registerMerchantModal() {
             Location,
             Name,
           },
-          actions,
         },
       } = layers;
 
@@ -61,8 +57,6 @@ export function registerMerchantModal() {
 
           return {
             layers,
-            actions,
-            api: player,
             data: {
               account,
               merchant,
@@ -73,7 +67,7 @@ export function registerMerchantModal() {
     },
 
     // Render
-    ({ layers, actions, api, data }) => {
+    ({ layers, data }) => {
       // console.log('mMerchant: data', data);
       const { npcIndex } = useSelectedEntities();
       const [merchant, setMerchant] = useState<Merchant>(data.merchant);
@@ -90,24 +84,6 @@ export function registerMerchantModal() {
 
 
       /////////////////
-      // ACTIONS
-
-      // buy from a listing
-      const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} ${listing.item.name}` as EntityID;
-        actions?.add({
-          id: actionID,
-          components: {},
-          // on: data.account.index, // what's the appropriate value here?
-          requirement: () => true,
-          updates: () => [],
-          execute: async () => {
-            return api.listing.buy(listing.id, amt);
-          },
-        });
-      };
-
-      /////////////////
       // DISPLAY
 
       return (
@@ -117,7 +93,7 @@ export function registerMerchantModal() {
           header={<Title>{`${merchant?.name}'s Shop`}</Title>}
           canExit
         >
-          <Listings listings={merchant?.listings} handleBuy={buy} />
+          <Listings listings={merchant?.listings} />
         </ModalWrapperFull>
       );
     })

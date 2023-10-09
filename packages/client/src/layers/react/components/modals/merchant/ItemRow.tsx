@@ -10,7 +10,6 @@ import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 export interface Props {
   listing: Listing;
-  handleBuy: (listing: Listing, amt: number) => void;
 }
 
 // TODO: support multiple buys
