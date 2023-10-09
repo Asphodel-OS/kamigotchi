@@ -8,7 +8,6 @@ export const triggerShopModal = (npcIndex: number) => {
   playClick();
 
   if (!visibleModals.merchant) {
-    console.log('triggerShopModal: opening');
     setNpc(npcIndex);
     dataStore.setState({
       visibleModals: {
@@ -18,7 +17,6 @@ export const triggerShopModal = (npcIndex: number) => {
       },
     });
   } else {
-    console.log('triggerShopModal: closing');
     dataStore.setState({ visibleModals: { ...visibleModals, merchant: false } });
   }
 }

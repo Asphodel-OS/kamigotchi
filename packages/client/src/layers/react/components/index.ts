@@ -16,7 +16,7 @@ import { registerWalletFixture } from './fixtures/Wallet';
 import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
-import { registerMerchantModal } from './modals/merchant';
+import { registerBuyModal, registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
@@ -63,6 +63,7 @@ export function registerUIComponents() {
   registerQuestsModal();
 
   // game modals
+  registerBuyModal();
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerEMABoardModal();

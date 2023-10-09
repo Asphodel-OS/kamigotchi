@@ -10,6 +10,7 @@ import {
 
 import { Layers } from 'src/types';
 import { Stats, getStats } from './Stats';
+import { numberToHex } from 'utils/hex';
 
 // The standard shape of a FE Item Entity
 export interface Item {
@@ -79,6 +80,28 @@ export const getItem = (
   }
 
   return Item;
+}
+
+export const getItemByIndex = (
+  layers: Layers,
+  index: number, // item index of the registry instance
+): Item => {
+  const {
+    network: {
+      components: {
+        IsRegistry,
+        ItemIndex,
+      },
+    },
+  } = layers;
+
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      HasValue(ItemIndex, { value: numberToHex(index) })
+    ])
+  );
+  return getItem(layers, entityIndices[0]);
 }
 
 

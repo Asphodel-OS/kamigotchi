@@ -19,8 +19,8 @@ export function registerMerchantModal() {
 
     // Grid Config
     {
-      colStart: 33,
-      colEnd: 75,
+      colStart: 30,
+      colEnd: 70,
       rowStart: 20,
       rowEnd: 60,
     },
@@ -57,7 +57,6 @@ export function registerMerchantModal() {
         map(() => {
           const account = getAccountFromBurner(layers, { inventory: true });
           const { npcIndex } = useSelectedEntities.getState();
-          console.log('mMerchant: npcIndex', npcIndex);
           const merchant = getMerchantByIndex(layers, npcIndex);
 
           return {
@@ -75,7 +74,7 @@ export function registerMerchantModal() {
 
     // Render
     ({ layers, actions, api, data }) => {
-      console.log('mMerchant: data', data);
+      // console.log('mMerchant: data', data);
       const { npcIndex } = useSelectedEntities();
       const [merchant, setMerchant] = useState<Merchant>(data.merchant);
 
@@ -95,7 +94,7 @@ export function registerMerchantModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} ${listing.item.name}` as EntityID; // itemIndex should be replaced with the item's name
+        const actionID = `Buying ${amt} ${listing.item.name}` as EntityID;
         actions?.add({
           id: actionID,
           components: {},
@@ -113,16 +112,15 @@ export function registerMerchantModal() {
 
       return (
         <ModalWrapperFull
-          divName='merchant'
           id='merchant'
+          divName='merchant'
           header={<Title>{`${merchant?.name}'s Shop`}</Title>}
           canExit
         >
           <Listings listings={merchant?.listings} handleBuy={buy} />
         </ModalWrapperFull>
       );
-    }
-  );
+    })
 }
 
 

@@ -4,6 +4,8 @@ import { FoodImages, ReviveImages } from 'constants/food';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
 import { Item } from 'layers/react/shapes/Item';
+import { dataStore } from 'layers/react/store/createStore';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
 export interface Props {
@@ -13,6 +15,8 @@ export interface Props {
 
 // TODO: support multiple buys
 export const ItemRow = (props: Props) => {
+  const { visibleModals, setVisibleModals } = dataStore();
+  const { setListing } = useSelectedEntities();
 
   const getImage = (item: Item) => {
     if (item.type == 'FOOD') {
@@ -22,10 +26,15 @@ export const ItemRow = (props: Props) => {
     }
   }
 
+  const openBuyModal = () => {
+    setListing(props.listing.entityIndex);
+    setVisibleModals({ ...visibleModals, buy: true });
+  }
+
   const BuyButton = (listing: Listing) => (
     <ActionButton
       id={`button-buy-${listing.item.index}`}
-      onClick={() => props.handleBuy(listing, 1)}
+      onClick={openBuyModal}
       text='Buy'
     />
   );
