@@ -2,8 +2,7 @@ import styled from "styled-components";
 
 import { FoodImages, ReviveImages } from 'constants/food';
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { AccountInventories } from "layers/react/shapes/Account";
-import { getInventoryByFamilyIndex } from "layers/react/shapes/Inventory";
+import { getInventoryByFamilyIndex, AccountInventories } from "layers/react/shapes/Inventory";
 
 interface Props {
   inventories: AccountInventories;
@@ -15,25 +14,25 @@ export const Items = (props: Props) => {
     {
       id: 1,
       image: FoodImages.get(1),
-      text: ['Gum', 'Restores 25 health.'],
+      text: ['Maple-Flavor Ghost Gum', '', 'Restores 25 health.'],
       inventory: getInventoryByFamilyIndex(props.inventories?.food, 1),
     },
     {
       id: 2,
       image: FoodImages.get(2),
-      text: ['PomPom', 'Restores 100 health.'],
+      text: ['Pom-Pom Fruit Candy', '', 'Restores 100 health.'],
       inventory: getInventoryByFamilyIndex(props.inventories?.food, 2),
     },
     {
       id: 3,
       image: FoodImages.get(3),
-      text: ['Gakki', 'Restores 200 health.'],
+      text: ['Gakki Cookie Sticks', '', 'Restores 200 health.'],
       inventory: getInventoryByFamilyIndex(props.inventories?.food, 3),
     },
     {
       id: 4,
       image: ReviveImages.get(1),
-      text: ['Ribbon', 'Revives a fallen Kami.'],
+      text: ['Red Gakki Ribbon', '', 'Revives a fallen Kami.'],
       inventory: getInventoryByFamilyIndex(props.inventories?.revives, 1),
     },
   ];
