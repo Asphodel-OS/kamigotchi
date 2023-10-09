@@ -42,7 +42,7 @@ export const room13: Room = {
       key: 'cashregister',
       path: objectCashRegister,
       offset: { x: -50.5, y: -8.02 },
-      onClick: triggerShopModal,
+      onClick: () => triggerShopModal(1),
     },
   ],
 };

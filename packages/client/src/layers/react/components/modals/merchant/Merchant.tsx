@@ -1,19 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import {
-  EntityID,
-  Has,
-  HasValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityID } from '@latticexyz/recs';
 
 import { Listings } from './Listings';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Listing } from 'layers/react/shapes/Listing';
-import { getMerchant } from 'layers/react/shapes/Merchant';
+import { Merchant, getMerchantByIndex } from 'layers/react/shapes/Merchant';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -40,6 +36,7 @@ export function registerMerchantModal() {
             IsListing,
             IsNPC,
             ItemIndex,
+            NPCIndex,
             Location,
             Name,
           },
@@ -53,27 +50,18 @@ export function registerMerchantModal() {
         IsListing.update$,
         IsNPC.update$,
         ItemIndex.update$,
+        NPCIndex.update$,
         Location.update$,
         Name.update$,
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(layers, { inventory: true });
-
-          // get the merchant in this room
-          const merchantResults = runQuery([
-            Has(IsNPC),
-            HasValue(Location, { value: account.location }),
-          ]);
-
-          // if we have a merchant retrieve its listings
-          // only support one merchant per room for now
-          let merchant, merchantIndex;
-          if (merchantResults.size != 0) {
-            merchantIndex = Array.from(merchantResults)[0];
-            merchant = getMerchant(layers, merchantIndex);
-          }
+          const { npcIndex } = useSelectedEntities.getState();
+          console.log('mMerchant: npcIndex', npcIndex);
+          const merchant = getMerchantByIndex(layers, npcIndex);
 
           return {
+            layers,
             actions,
             api: player,
             data: {
@@ -86,8 +74,21 @@ export function registerMerchantModal() {
     },
 
     // Render
-    ({ actions, api, data }) => {
-      // console.log('mMerchant: data', data);
+    ({ layers, actions, api, data }) => {
+      console.log('mMerchant: data', data);
+      const { npcIndex } = useSelectedEntities();
+      const [merchant, setMerchant] = useState<Merchant>(data.merchant);
+
+      // updates from component subscription updates
+      useEffect(() => {
+        setMerchant(data.merchant);
+      }, [data.merchant]);
+
+      // updates from selected Merchant updates
+      useEffect(() => {
+        setMerchant(getMerchantByIndex(layers, npcIndex));
+      }, [npcIndex]);
+
 
       /////////////////
       // ACTIONS
@@ -114,10 +115,10 @@ export function registerMerchantModal() {
         <ModalWrapperFull
           divName='merchant'
           id='merchant'
-          header={<Title>{`${data.merchant?.name}'s Shop`}</Title>}
+          header={<Title>{`${merchant?.name}'s Shop`}</Title>}
           canExit
         >
-          <Listings listings={data.merchant?.listings} handleBuy={buy} />
+          <Listings listings={merchant?.listings} handleBuy={buy} />
         </ModalWrapperFull>
       );
     }
