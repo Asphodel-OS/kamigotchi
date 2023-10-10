@@ -8,3 +8,4 @@ out = "out"
 solc = "0.8.17"
 src = "src"
 verbosity = 1
+gas_reports = ["*"]
