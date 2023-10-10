@@ -394,31 +394,16 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN_HAS", 0, 5000);
     await api.registry.quest.add.reward(6, "REVIVE", 1, 10);
 
-    // TEST REPEAT QUESTS
+    // quest 7
     await api.registry.quest.create(
       7,
-      "Repeatablable Quest",
-      "repeatable every 30s.",
-      1,
+      "Daily quest: Harvesting",
+      "Harvest 200 $MUSU",
+      2,
       0,
-      30
+      64800
     );
-    await api.registry.quest.create(
-      8,
-      "Repeatablable Quest",
-      "repeatable every 2 mins.",
-      1,
-      0,
-      120
-    )
-    await api.registry.quest.create(
-      9,
-      "Repeatablable Quest",
-      "repeatable every 2 hours.",
-      1,
-      0,
-      7200
-    )
+    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_HAS", 0, 200);
   }
 
 
