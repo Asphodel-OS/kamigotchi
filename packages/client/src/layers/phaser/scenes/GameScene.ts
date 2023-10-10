@@ -1,8 +1,8 @@
-import { dataStore } from 'layers/react/store/createStore';
 import { Room } from 'constants/phaser/rooms';
 import { disableClickableObjects } from '../utils/disableClickableObjects';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
+import { kamiPattern } from 'assets/images/backgrounds';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -29,7 +29,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
   preload() {
     if (this.room) {
       const room = this.room;
-      // console.log('preload: room', room);
+      this.load.image('wallpaper', kamiPattern);
       if (room.background) this.load.image(room.background.key, room.background.path);
       if (room.objects) room.objects.map((obj) => this.load.image(obj.key, obj.path));
       if (room.music) this.load.audio(room.music.key, room.music.path);
@@ -43,7 +43,12 @@ export class GameScene extends Phaser.Scene implements GameScene {
       const room = this.room;
       let scale = 1; // scale of image assets
 
-      // set the background image
+      // set the wallpaper behind the game
+      let wallpaper = this.add.image(gameWidth / 2, gameHeight / 2, 'wallpaper');
+      scale = (1 * gameHeight) / wallpaper.height;
+      wallpaper.setScale(scale);
+
+      // set the room image
       if (room.background) {
         let bg = this.add.image(gameWidth / 2, gameHeight / 2, room.background.key);
         scale = (1 * gameHeight) / bg.height;
