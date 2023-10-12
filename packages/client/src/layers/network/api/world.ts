@@ -75,7 +75,7 @@ export function setUpWorldAPI(systems: any) {
     await api.config.set.number('HARVEST_RATE_PREC', 9); // ignore this
     await api.config.set.number('HARVEST_RATE_BASE', 250); // in respect to power
     await api.config.set.number('HARVEST_RATE_BASE_PREC', 2); // i.e. x/100
-    await api.config.set.number('HARVEST_RATE_MULT_PREC', 4); // should be hardcoded to 2x HARVEST_RATE_MULT_AFF_PREC
+    await api.config.set.number('HARVEST_RATE_MULT_PREC', 6); // 2 affinities and 1 bonus multiplier with precision of 2
     await api.config.set.number('HARVEST_RATE_MULT_AFF_BASE', 100);
     await api.config.set.number('HARVEST_RATE_MULT_AFF_UP', 150);
     await api.config.set.number('HARVEST_RATE_MULT_AFF_DOWN', 50);
@@ -444,6 +444,21 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.skill.create(6, 2, 3, "PASSIVE", "Predator", "+1 Power per level");
     await api.registry.skill.add.effect(6, "STAT", "POWER", "INC", 0, 1);
     await api.registry.skill.add.requirement(6, "SKILL", 3, 3);
+
+    await api.registry.skill.create(7, 1, 3, "PASSIVE", "Vigor", "+10 Health per level");
+    await api.registry.skill.add.effect(7, "STAT", "HEALTH", "INC", 0, 10);
+
+    await api.registry.skill.create(8, 2, 3, "PASSIVE", "Vitality", "+10 Health per level");
+    await api.registry.skill.add.effect(8, "STAT", "HEALTH", "INC", 0, 10);
+    await api.registry.skill.add.requirement(8, "SKILL", 7, 3);
+
+    await api.registry.skill.create(9, 1, 3, "PASSIVE", "Greed", "+5% Harvest Output per level");
+    await api.registry.skill.add.effect(9, "HARVEST", "OUTPUT", "INC", 0, 5);
+    await api.registry.skill.add.requirement(9, "SKILL", 3, 3);
+
+    await api.registry.skill.create(10, 1, 3, "PASSIVE", "Patience", "-5% Harvest Drain per level");
+    await api.registry.skill.add.effect(10, "HARVEST", "DRAIN", "DEC", 0, 5);
+    await api.registry.skill.add.requirement(10, "SKILL", 2, 3);
   }
 
 

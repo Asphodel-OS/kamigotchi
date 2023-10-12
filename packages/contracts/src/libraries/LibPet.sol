@@ -135,7 +135,7 @@ library LibPet {
   function syncHealth(IUintComp components, uint256 id) public {
     if (isHarvesting(components, id)) {
       // drain health if harvesting
-      uint256 drainAmt = calcProductionDrain(components, id);
+      uint256 drainAmt = LibProduction.calcDrain(components, id);
       drain(components, id, drainAmt);
     } else if (isResting(components, id)) {
       // recover health if resting
