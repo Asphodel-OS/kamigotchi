@@ -89,6 +89,10 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
+  function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
+    return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
+  }
+
   // check whether the target meets the prerequisites to invest in a skill
   // prereqs include cost of skill, max points, and requirements
   function meetsPrerequisites(
@@ -135,10 +139,6 @@ library LibSkill {
     }
 
     return true;
-  }
-
-  function hasPoints(IUintComp components, uint256 id) internal view returns (bool) {
-    return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
   }
 
   /////////////////
