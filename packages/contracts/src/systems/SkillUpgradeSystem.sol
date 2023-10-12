@@ -37,11 +37,19 @@ contract SkillUpgradeSystem is System {
       );
     }
 
+    // check that the skill exists
+    uint256 registryID = LibRegistrySkill.getByIndex(components, skillIndex);
+    require(registryID != 0, "SkillUpgrade: skill not found");
+
     // points are decremented when checking prerequisites
     require(
-      LibSkill.checkPrerequisites(components, id, skillIndex),
+      LibSkill.meetsPrerequisites(components, id, skillIndex),
       "SkillUpgrade: unmet prerequisites"
     );
+
+    // decrement the skill cost
+    uint256 cost = LibRegistrySkill.getCost(components, registryID);
+    LibSkill.dec(components, id, cost);
 
     // create the skill if it doesnt exist and increment it
     uint256 skillID = LibSkill.get(components, id, skillIndex);
@@ -64,7 +72,7 @@ contract SkillUpgradeSystem is System {
       bonusID = LibBonus.get(components, id, type_);
       if (bonusID == 0) bonusID = LibBonus.create(world, components, id, type_);
 
-      // update the bonus entities
+      // update the appropriate bonus entity
       if (LibString.eq("STAT", type_)) {
         LibSkill.processStatEffectUpgrade(components, id, effectIDs[i]);
       } else {
