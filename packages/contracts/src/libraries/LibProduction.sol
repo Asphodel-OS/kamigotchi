@@ -14,6 +14,8 @@ import { IsProductionComponent, ID as IsProdCompID } from "components/IsProducti
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -64,38 +66,29 @@ library LibProduction {
   /////////////////////
   // CALCULATIONS
 
-  // Calculate the multiplier for harvesting. This may include multipliers other than
-  // affinity in the future
-  function calcHarvestMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
-    return calcHarvestingAffinityMultiplier(components, id);
-  }
-
-  // Calculate the harvesting multiplier resulting from affinity matching
-  // (precision set by HARVEST_RATE_MULT_PREC)
-  function calcHarvestingAffinityMultiplier(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint256) {
-    uint256 nodeID = getNode(components, id);
-    string memory nodeAff = LibNode.getAffinity(components, nodeID);
-
-    uint256 petID = getPet(components, id);
-    string[] memory petAffs = LibPet.getAffinities(components, petID);
-
-    // layer the multipliers due to each trait on top of each other
-    uint256 totMultiplier = 1;
-    for (uint256 i = 0; i < petAffs.length; i++) {
-      totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
-    }
-    return totMultiplier;
-  }
-
   // Calculate the reward for liquidating this production, measured in $MUSU
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 output = calcOutput(components, id);
     uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
     uint256 precision = 10 ** LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE_PREC");
     return (output * base) / precision;
+  }
+
+  // Calculate the drain from this production based on its rate and start time
+  function calcDrain(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 output = calcOutput(components, id);
+    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    uint256 bonusMult = calcDrainMultiplier(components, id);
+    uint256 totalPrecision = basePrecision * 100; // 100 from bonus multiplier
+    return (output * base * bonusMult + (totalPrecision / 2)) / totalPrecision;
+  }
+
+  function calcDrainMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 petID = getPet(components, id);
+    uint256 bonusID = LibBonus.get(components, petID, "HARVEST_DRAIN");
+    uint256 bonusMult = LibBonus.getValue(components, bonusID);
+    return bonusMult;
   }
 
   // Calculate the duration since a production last started, measured in seconds.
@@ -123,10 +116,48 @@ library LibProduction {
     uint256 precision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
     uint256 base = LibConfig.getValueOf(components, "HARVEST_RATE_BASE");
     uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_BASE_PREC");
-    uint256 mult = calcHarvestMultiplier(components, id);
+    uint256 mult = calcRateMultiplier(components, id);
     uint256 multPrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_MULT_PREC");
 
     return (precision * base * power * mult) / (3600 * basePrecision * multPrecision);
+  }
+
+  // Calculate the multiplier for harvesting. This may include multipliers other than
+  // affinity in the future
+  function calcRateMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 bonusMult = calcRateBonusMultiplier(components, id);
+    uint256 affinityMult = calcRateAffinityMultiplier(components, id);
+    return affinityMult * bonusMult;
+  }
+
+  // Calculate the harvesting multiplier resulting from affinity matching
+  // (precision set by HARVEST_RATE_MULT_PREC)
+  function calcRateAffinityMultiplier(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (uint256) {
+    uint256 nodeID = getNode(components, id);
+    string memory nodeAff = LibNode.getAffinity(components, nodeID);
+
+    uint256 petID = getPet(components, id);
+    string[] memory petAffs = LibPet.getAffinities(components, petID);
+
+    // layer the multipliers due to each trait on top of each other
+    uint256 totMultiplier = 1;
+    for (uint256 i = 0; i < petAffs.length; i++) {
+      totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
+    }
+    return totMultiplier;
+  }
+
+  function calcRateBonusMultiplier(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (uint256) {
+    uint256 petID = getPet(components, id);
+    uint256 bonusID = LibBonus.get(components, petID, "HARVEST_OUTPUT");
+    uint256 bonusMult = LibBonus.getValue(components, bonusID);
+    return bonusMult;
   }
 
   /////////////////
