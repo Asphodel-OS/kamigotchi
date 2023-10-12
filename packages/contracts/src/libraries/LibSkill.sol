@@ -89,46 +89,46 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
-  // check the existing points, max level, and requirements to access a skill
-  // NOTE: this currently handles decrementing points, maybe take that logic out
-  function checkPrerequisites(
+  // check whether the target meets the prerequisites to invest in a skill
+  // prereqs include cost of skill, max points, and requirements
+  function meetsPrerequisites(
     IUintComp components,
     uint256 targetID,
-    uint256 skillIndex
-  ) internal returns (bool) {
-    uint256 skillID = LibRegistrySkill.getByIndex(components, skillIndex);
-    require(skillID != 0, "no skill index found");
+    uint256 registryID // skill registry entity id
+  ) internal view returns (bool) {
+    uint256 skillIndex = LibRegistrySkill.getIndex(components, registryID);
 
-    // checking points
-    uint256 cost = getCost(components, skillID);
+    // check point balance against skill cost
+    uint256 cost = LibRegistrySkill.getCost(components, registryID);
     if (getPoints(components, targetID) < cost) return false;
-    else dec(components, targetID, cost);
 
-    // checking max skill level
-    uint256 existingID = get(components, targetID, skillIndex);
-    if (existingID != 0 && getPoints(components, existingID) >= getMax(components, skillID))
-      return false;
+    // check current points invested in this skill against the max
+    uint256 id = get(components, targetID, skillIndex);
+    uint256 max = LibRegistrySkill.getMax(components, registryID);
+    if (getPoints(components, id) >= max) return false;
 
     // check all other requirements
     uint256[] memory requirements = LibRegistrySkill.getRequirementsByIndex(components, skillIndex);
-    for (uint256 i; i < requirements.length; i++)
-      if (!checkRequirement(components, targetID, requirements[i])) return false;
+    for (uint256 i; i < requirements.length; i++) {
+      if (!meetsRequirement(components, targetID, requirements[i])) return false;
+    }
 
     return true;
   }
 
-  function checkRequirement(
+  // check whether a target meets a specific requirement of a skill
+  function meetsRequirement(
     IUintComp components,
     uint256 targetID,
-    uint256 reqID
+    uint256 requirementID
   ) internal view returns (bool) {
-    string memory type_ = getType(components, reqID);
+    string memory type_ = getType(components, requirementID);
     if (LibString.eq(type_, "LEVEL")) {
-      return getLevel(components, targetID) >= getValue(components, reqID);
+      return getLevel(components, targetID) >= getValue(components, requirementID);
     }
     if (LibString.eq(type_, "SKILL")) {
-      uint256 index = getIndex(components, reqID);
-      return getPointsOf(components, targetID, index) >= getValue(components, reqID);
+      uint256 index = getIndex(components, requirementID);
+      return getPointsOf(components, targetID, index) >= getValue(components, requirementID);
     }
     if (LibString.eq(type_, "AFFINITY")) {
       require(false, "LibSkill: affinity requirement not yet implemented");
@@ -162,10 +162,6 @@ library LibSkill {
 
   /////////////////
   // GETTERS
-
-  function getCost(IUintComp components, uint256 id) internal view returns (uint256) {
-    return CostComponent(getAddressById(components, CostCompID)).getValue(id);
-  }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
     return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
