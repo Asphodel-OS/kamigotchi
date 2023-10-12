@@ -55,6 +55,21 @@ library LibSkill {
     setPoints(components, id, curr - value);
   }
 
+  // process the upgrade of a generic skill inc/dec effect
+  function processEffectUpgrade(
+    IUintComp components,
+    uint256 holderID,
+    uint256 effectID,
+    string memory type_
+  ) internal {
+    uint256 bonusID = LibBonus.get(components, holderID, type_);
+    string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
+    uint256 value = LibRegistrySkill.getValue(components, effectID);
+
+    if (LibString.eq(logicType, "INC")) LibBonus.inc(components, bonusID, value);
+    else if (LibString.eq(logicType, "DEC")) LibBonus.dec(components, bonusID, value);
+  }
+
   // processes the upgrade of a stat increment/decrement effect
   // assume the holder's bonus entity exists
   function processStatEffectUpgrade(
@@ -62,7 +77,7 @@ library LibSkill {
     uint256 holderID,
     uint256 effectID
   ) internal {
-    uint256 bonusID = LibBonus.getByHolder(components, holderID);
+    uint256 bonusID = LibBonus.get(components, holderID, "STAT");
     string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
     string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
     uint256 value = LibRegistrySkill.getValue(components, effectID);
@@ -75,6 +90,7 @@ library LibSkill {
   // CHECKERS
 
   // check the existing points, max level, and requirements to access a skill
+  // NOTE: this currently handles decrementing points, maybe take that logic out
   function checkPrerequisites(
     IUintComp components,
     uint256 targetID,
