@@ -840,7 +840,9 @@
         "HealthComponent",
         "PowerComponent",
         "SkillPointComponent",
+        "SlotsComponent",
         "TypeComponent",
+        "ValueComponent",
         "ViolenceComponent"
       ]
     }
