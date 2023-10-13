@@ -50,7 +50,6 @@ export interface Quest {
   name: string;
   description: string;
   startTime: number;
-  max: number;
   complete: boolean;
   repeatable: boolean;
   repeatDuration?: number;
@@ -104,7 +103,6 @@ const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
         IsRepeatable,
         Description,
         Name,
-        Max,
         Time,
         QuestIndex,
         StartTime,
@@ -129,7 +127,6 @@ const getQuest = (layers: Layers, entityIndex: EntityIndex): Quest => {
     name: getComponentValue(Name, registryIndex)?.value || '' as string,
     description: getComponentValue(Description, registryIndex)?.value || '' as string,
     startTime: getComponentValue(StartTime, entityIndex)?.value || 0 as number,
-    max: getComponentValue(Max, registryIndex)?.value || 0 as number,
     complete: hasComponent(IsComplete, entityIndex) || false as boolean,
     repeatable: hasComponent(IsRepeatable, registryIndex) || false as boolean,
     requirements: queryQuestRequirements(layers, questIndex),

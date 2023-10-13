@@ -60,7 +60,7 @@ export const List = (props: Props) => {
   }
 
   const meetsMax = (account: Account, quest: Quest): boolean => {
-    return (isOngoing(account, quest.index) ? 1 : 0) + getNumCompleted(account, quest.index) < quest.max;
+    return (isOngoing(account, quest.index) ? 1 : 0) + getNumCompleted(account, quest.index) < 1;
   }
 
   const meetsRepeat = (quest: Quest): boolean => {
