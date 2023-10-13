@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useBalance } from 'wagmi';
+import { GasConstants } from 'constants/gas';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -26,7 +27,6 @@ export function registerGasWarningFixture() {
       const { details: accountDetails } = useKamiAccount();
       const { visibleModals, setVisibleModals } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
-      const minGas = 0.005;
 
       /////////////////
       // BALANCES
@@ -37,7 +37,7 @@ export function registerGasWarningFixture() {
       });
 
       useEffect(() => {
-        setIsVisible(Number(OperatorBal?.formatted) < minGas);
+        setIsVisible(Number(OperatorBal?.formatted) < GasConstants.Low);
       }, [OperatorBal]);
 
       const openFundModal = useCallback(() => {
@@ -48,7 +48,7 @@ export function registerGasWarningFixture() {
         <ModalWrapper id='operatorFundPreset' style={{ display: isVisible ? 'block' : 'none' }}>
           <Content>
             <Header>Low operator gas</Header>
-            <Body>The connected operator has less than 0.005 eth in gas left. Consider topping up.</Body>
+            <Body>The connected operator has less than {GasConstants.Low} eth in gas left. Consider topping up.</Body>
             <ActionButton
               id='button-deposit'
               onClick={openFundModal}
