@@ -483,9 +483,9 @@ export function createAdminAPI(systems: any) {
   // WAITS
 
   function sleepIf() {
-    // if (process.env.MODE == 'OPGOERLI') {
-    return new Promise(resolve => setTimeout(resolve, 8000));
-    // }
+    if (process.env.MODE == 'OPGOERLI') {
+      return new Promise(resolve => setTimeout(resolve, 8000));
+    }
   }
 
   return {

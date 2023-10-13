@@ -64,7 +64,7 @@ const opGoerli: Chain = {
 
 // object mapping between environment MODEs and chain configs
 const chainConfigs: Map<string, Chain> = new Map([
-  ['', opGoerli],  // default to localhost when no environment mode provided
+  ['', localhost],  // default to localhost when no environment mode provided
   ['DEV', localhost],
   ['TEST', opGoerli],
   ['PROD', optimism],

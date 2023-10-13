@@ -377,7 +377,8 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.reward(5, "REVIVE", 1, 5);
 
     // quest 6
-    await api.registry.quest.create(6,
+    await api.registry.quest.create(
+      6,
       "Farming 3: Accumulating $MUSU",
       "Great, you're really taking this seriously. This one's a long haul. \n\nHope you're getting into a healthy routine with your Kamigotchi now. \n\nIf you haven't already noticed, there's plenty of secrets hidden around the world.",
       0,

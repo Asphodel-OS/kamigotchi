@@ -62,7 +62,7 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
       config = createNetworkConfigOpGoerli(externalProvider);
       break;
     default:
-      config = createNetworkConfigOpGoerli(externalProvider);
+      config = createNetworkConfigLocal(externalProvider);
   }
 
   if (
