@@ -17,6 +17,7 @@ import { Production, getProduction } from './Production';
 import { Stats, getStats } from './Stats';
 import { Skill, getSkills } from './Skill';
 import { Traits, TraitIndices, getTraits } from './Trait';
+import { Bonuses, getBonuses } from './Bonus';
 
 // standardized shape of a Kami Entity
 export interface Kami {
@@ -35,6 +36,7 @@ export interface Kami {
   skillPoints: number;
   stats: Stats;
   bonusStats: Stats;
+  bonuses: Bonuses;
   account?: Account;
   deaths?: Kill[];
   kills?: Kill[];
@@ -124,6 +126,7 @@ export const getKami = (
     cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
     skillPoints: getComponentValue(SkillPoint, index)?.value as number,
     stats: getStats(layers, index),
+    bonuses: getBonuses(layers, index),
     bonusStats: {
       health: 0,
       harmony: 0,
@@ -258,7 +261,8 @@ export const getKami = (
     if (kami.production) productionRate = kami.production.rate;
     const drainBase = getConfigFieldValue(layers.network, 'HEALTH_RATE_DRAIN_BASE');
     const drainBasePrecision = 10 ** getConfigFieldValue(layers.network, 'HEALTH_RATE_DRAIN_BASE_PREC');
-    healthRate = -1 * productionRate * drainBase / drainBasePrecision;
+    const multiplier = kami.bonuses.harvest.drain;
+    healthRate = -1 * productionRate * drainBase * multiplier / (100 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
     const harmony = kami.stats.harmony + kami.bonusStats.harmony;
     const healBase = getConfigFieldValue(layers.network, 'HEALTH_RATE_HEAL_BASE');
