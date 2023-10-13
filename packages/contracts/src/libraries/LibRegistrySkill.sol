@@ -244,12 +244,16 @@ library LibRegistrySkill {
   /////////////////
   // GETTERS
 
-  function getCost(IUintComp components, uint256 id) internal view returns (uint256) {
-    return CostComponent(getAddressById(components, CostCompID)).getValue(id);
-  }
-
   function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
     return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
+  }
+
+  function getSkillIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IndexSkillComponent(getAddressById(components, IndexSkillCompID)).getValue(id);
+  }
+
+  function getCost(IUintComp components, uint256 id) internal view returns (uint256) {
+    return CostComponent(getAddressById(components, CostCompID)).getValue(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {

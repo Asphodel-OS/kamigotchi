@@ -84,6 +84,8 @@ library LibProduction {
     return (output * base * bonusMult + (totalPrecision / 2)) / totalPrecision;
   }
 
+  // get the total drain multiplier for a production. for now this is just the Bonus
+  // multiplier, which defaults to 100 if not set for the pet
   function calcDrainMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 petID = getPet(components, id);
     uint256 bonusID = LibBonus.get(components, petID, "HARVEST_DRAIN");

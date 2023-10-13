@@ -43,7 +43,7 @@ contract SkillUpgradeSystem is System {
 
     // points are decremented when checking prerequisites
     require(
-      LibSkill.meetsPrerequisites(components, id, skillIndex),
+      LibSkill.meetsPrerequisites(components, id, registryID),
       "SkillUpgrade: unmet prerequisites"
     );
 

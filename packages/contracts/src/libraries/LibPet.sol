@@ -134,11 +134,10 @@ library LibPet {
   // in catching all the edge cases.
   function syncHealth(IUintComp components, uint256 id) public {
     if (isHarvesting(components, id)) {
-      // drain health if harvesting
-      uint256 drainAmt = LibProduction.calcDrain(components, id);
+      uint256 productionID = getProduction(components, id);
+      uint256 drainAmt = LibProduction.calcDrain(components, productionID);
       drain(components, id, drainAmt);
     } else if (isResting(components, id)) {
-      // recover health if resting
       uint256 healAmt = calcRestingRecovery(components, id);
       heal(components, id, healAmt);
     }
