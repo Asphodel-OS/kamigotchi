@@ -100,7 +100,7 @@ library LibSkill {
     uint256 targetID,
     uint256 registryID // skill registry entity id
   ) internal view returns (bool) {
-    uint256 skillIndex = LibRegistrySkill.getIndex(components, registryID);
+    uint256 skillIndex = LibRegistrySkill.getSkillIndex(components, registryID);
 
     // check point balance against skill cost
     uint256 cost = LibRegistrySkill.getCost(components, registryID);
