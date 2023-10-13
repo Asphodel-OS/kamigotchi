@@ -194,17 +194,15 @@ library LibQuests {
     }
   }
 
-  // checks if it meets max requirements, and has no other ongoing quests with the same index
+  // if not repeatable, quests can only be accepted and completed once
   function checkMax(
     IUintComp components,
     uint256 questID,
     uint256 questIndex,
     uint256 accountID
   ) internal view returns (bool) {
-    uint256 max = getMax(components, questID);
     uint256[] memory quests = queryAccountQuestIndex(components, accountID, questIndex);
-    uint256[] memory ongoing = queryUncompletedQuests(components, accountID, questIndex);
-    return ongoing.length < 1 && quests.length < max;
+    return quests.length < 1;
   }
 
   function checkRepeat(

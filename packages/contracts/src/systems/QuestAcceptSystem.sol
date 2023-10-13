@@ -22,16 +22,13 @@ contract QuestAcceptSystem is System {
     require(accountID != 0, "QuestAccept: no account");
 
     require(
-      LibQuests.checkMax(components, regID, questIndex, accountID),
-      "QuestAccept: too many times"
-    );
-    require(
       LibQuests.checkRequirements(components, regID, questIndex, accountID),
       "QuestAccept: reqs not met"
     );
 
     uint256 assignedID;
     if (LibQuests.isRepeatable(components, regID)) {
+      // repeatable quests - accepted before check is implicit
       uint256[] memory questIDs = LibQuests.queryAccountQuestIndex(
         components,
         accountID,
@@ -48,6 +45,11 @@ contract QuestAcceptSystem is System {
       );
       assignedID = LibQuests.assignRepeatable(world, components, questIndex, assignedID, accountID);
     } else {
+      // not repeatable - check that quest has not been accepted before
+      require(
+        LibQuests.checkMax(components, regID, questIndex, accountID),
+        "QuestAccept: accepted before"
+      );
       assignedID = LibQuests.assign(world, components, questIndex, accountID);
     }
 

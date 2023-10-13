@@ -21,7 +21,6 @@ import { DescriptionComponent, ID as DescCompID } from "components/DescriptionCo
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -42,7 +41,6 @@ library LibRegistryQuests {
     IWorld world,
     IUintComp components,
     uint256 index,
-    uint256 max,
     string memory name,
     string memory description
   ) internal returns (uint256) {
@@ -53,7 +51,6 @@ library LibRegistryQuests {
     setIsRegistry(components, id);
     setIsQuest(components, id);
     setQuestIndex(components, id, index);
-    setMax(components, id, max);
     setName(components, id, name);
     setDescription(components, id, description);
 
@@ -121,7 +118,6 @@ library LibRegistryQuests {
     unsetIsQuest(components, questID);
     unsetQuestIndex(components, questID);
     unsetName(components, questID);
-    unsetMax(components, questID);
     unsetDescription(components, questID);
     unsetLocation(components, questID);
 
@@ -242,10 +238,6 @@ library LibRegistryQuests {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
-  function setMax(IUintComp components, uint256 id, uint256 max) internal {
-    MaxComponent(getAddressById(components, MaxCompID)).set(id, max);
-  }
-
   function setTime(IUintComp components, uint256 id, uint256 time) internal {
     TimeComponent(getAddressById(components, TimeCompID)).set(id, time);
   }
@@ -336,12 +328,6 @@ library LibRegistryQuests {
   function unsetName(IUintComp components, uint256 id) internal {
     if (NameComponent(getAddressById(components, NameCompID)).has(id)) {
       NameComponent(getAddressById(components, NameCompID)).remove(id);
-    }
-  }
-
-  function unsetMax(IUintComp components, uint256 id) internal {
-    if (MaxComponent(getAddressById(components, MaxCompID)).has(id)) {
-      MaxComponent(getAddressById(components, MaxCompID)).remove(id);
     }
   }
 

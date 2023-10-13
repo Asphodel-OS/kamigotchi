@@ -17,12 +17,11 @@ contract _RegistryCreateQuestSystem is System {
       uint256 index,
       string memory name,
       string memory description,
-      uint256 max,
       uint256 location,
       uint256 duration
-    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256, uint256));
+    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256));
 
-    uint256 regID = LibRegistryQuests.createQuest(world, components, index, max, name, description);
+    uint256 regID = LibRegistryQuests.createQuest(world, components, index, name, description);
 
     // set location (if any)
     if (location != 0) {
@@ -41,10 +40,9 @@ contract _RegistryCreateQuestSystem is System {
     uint256 index,
     string memory name,
     string memory description,
-    uint256 max,
     uint256 location,
     uint256 duration
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, description, max, location, duration));
+    return execute(abi.encode(index, name, description, location, duration));
   }
 }

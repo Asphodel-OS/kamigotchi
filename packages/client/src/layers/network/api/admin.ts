@@ -128,7 +128,6 @@ export function createAdminAPI(systems: any) {
     index: number,
     name: string,
     description: string,
-    max: number,
     location: number,
     repeatTime: number
   ) {
@@ -137,7 +136,6 @@ export function createAdminAPI(systems: any) {
       index,
       name,
       description,
-      max,
       location,
       repeatTime
     );

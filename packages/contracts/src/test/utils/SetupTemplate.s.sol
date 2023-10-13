@@ -330,12 +330,11 @@ abstract contract SetupTemplate is TestSetupImports {
     uint index,
     string memory name,
     string memory description,
-    uint max,
     uint location,
     uint duration
   ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name, description, max, location, duration);
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, location, duration);
   }
 
   function _createQuestObjective(

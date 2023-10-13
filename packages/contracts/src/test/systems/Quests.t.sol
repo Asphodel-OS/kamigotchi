@@ -22,7 +22,7 @@ contract QuestsTest is SetupTemplate {
 
   function testAcceptQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 2, 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
 
     // register account
     _registerAccount(0);
@@ -32,19 +32,21 @@ contract QuestsTest is SetupTemplate {
     uint256 questID = _acceptQuest(0, 1);
     _assertQuestAccount(_getAccount(0), questID);
 
+    vm.prank(operator);
+    vm.expectRevert("QuestAccept: accepted before");
+    _QuestAcceptSystem.executeTyped(1);
+
     // check that quest cant be accepted over its max
-    _completeQuest(0, questID);
-    questID = _acceptQuest(0, 1);
     _completeQuest(0, questID);
 
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: too many times");
+    vm.expectRevert("QuestAccept: accepted before");
     _QuestAcceptSystem.executeTyped(1);
   }
 
   function testRepeatableQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 2, 0, 1000);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 1000);
 
     // register account
     _registerAccount(0);
@@ -56,7 +58,7 @@ contract QuestsTest is SetupTemplate {
 
     // accept quest - second time, uncompleted, within time
     vm.prank(operator);
-    vm.expectRevert("QuestAccept: too many times");
+    vm.expectRevert("QuestAccept: repeat cons not met");
     _QuestAcceptSystem.executeTyped(1);
 
     // accept quest - second time, completed, within time
@@ -75,7 +77,7 @@ contract QuestsTest is SetupTemplate {
 
   function testDropQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
 
     // register account
     _registerAccount(0);
@@ -92,7 +94,7 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestCoinHave() public {
     // create quest
-    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
     _createQuestObjective(1, "Quest 1", "HAVE", "COIN", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
@@ -131,7 +133,7 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestCoinGather() public {
     // create quest
-    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
     _createQuestObjective(1, "NAME", "GATHER", "COIN_HAS", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
@@ -174,7 +176,7 @@ contract QuestsTest is SetupTemplate {
     _createRoom("Room 4", 4, 1, 2, 3);
 
     // create quest
-    _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 3);
     _createQuestObjective(1, "NAME", "AT", "ROOM", 0, 4);
 
@@ -216,7 +218,7 @@ contract QuestsTest is SetupTemplate {
     _initCommonTraits();
 
     // create quest
-    _createQuest(1, "MintKamiQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 1);
     _createQuestObjective(1, "NAME", "MINT", "PET721_MINT", 0, 2);
 
@@ -245,8 +247,8 @@ contract QuestsTest is SetupTemplate {
 
   function testCompleteQuest() public {
     // create quest(s)
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 1, 0, 0);
-    _createQuest(2, "BasicQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(2, "BasicQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(2, "COMPLETE", "QUEST", 0, 1);
 
     // register account
@@ -271,7 +273,7 @@ contract QuestsTest is SetupTemplate {
 
   function testRewardMint20() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 1, 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
     _createQuestReward(1, "MINT20", 0, 2);
 
     // register account

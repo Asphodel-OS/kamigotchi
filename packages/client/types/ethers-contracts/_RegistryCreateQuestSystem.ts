@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateQuestSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,uint256,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,string,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -53,7 +53,6 @@ export interface _RegistryCreateQuestSystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
@@ -130,7 +129,6 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      max: PromiseOrValue<BigNumberish>,
       location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -153,7 +151,6 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
-    max: PromiseOrValue<BigNumberish>,
     location: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -176,7 +173,6 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      max: PromiseOrValue<BigNumberish>,
       location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -211,7 +207,6 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      max: PromiseOrValue<BigNumberish>,
       location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -235,7 +230,6 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      max: PromiseOrValue<BigNumberish>,
       location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
