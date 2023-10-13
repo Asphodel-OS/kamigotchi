@@ -4,6 +4,7 @@ import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { skillIcons } from "assets/images/skills";
+import exitIcon from "assets/images/icons/exit_native.png"
 
 
 interface Props {
@@ -87,6 +88,8 @@ export const Skills = (props: Props) => {
         return skillIcons.protector;
       case 'WARMONGER':
         return skillIcons.warmonger;
+      default:
+        return exitIcon;
     }
   }
 

@@ -49,6 +49,7 @@ export function registerPartyModal() {
             Rate,
             State,
             StartTime,
+            Type,
             Value,
           },
           world,
@@ -74,6 +75,7 @@ export function registerPartyModal() {
         Rate.update$,
         StartTime.update$,
         State.update$,
+        Type.update$,
         Value.update$,
       ).pipe(
         map(() => {
