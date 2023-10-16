@@ -527,17 +527,23 @@
       "name": "LootboxExecuteRevealSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BlockLastComponent",
         "BlockRevealComponent",
         "IdHolderComponent",
         "IndexItemComponent",
+        "IndexComponent",
+        "IsDataComponent",
         "IsLootboxComponent",
-        "IsInventoryComponent"
+        "IsInventoryComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
       "name": "LootboxStartRevealSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BlockLastComponent",
         "BlockRevealComponent",
         "IdHolderComponent",
         "IndexItemComponent",

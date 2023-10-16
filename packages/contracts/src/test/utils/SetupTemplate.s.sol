@@ -278,9 +278,7 @@ abstract contract SetupTemplate is TestSetupImports {
     uint256 invID = LibInventory.get(components, accountID, index);
     if (invID == 0) invID = LibInventory.create(world, components, accountID, index);
     LibInventory.inc(components, invID, amt);
-    vm.stopPrank();
-    vm.startPrank(deployer);
-    LibLootbox.logIncTotal(world, components, accountID, index, amt);
+    LibInventory.logIncItemTotal(world, components, accountID, index, amt);
     vm.stopPrank();
   }
 

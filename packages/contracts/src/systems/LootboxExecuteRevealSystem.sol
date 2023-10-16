@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibLootbox } from "libraries/LibLootbox.sol";
+import { LibRandom } from "libraries/LibRandom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Lootbox.Reveal.Execute"));
 
@@ -23,7 +24,34 @@ contract LootboxExecuteRevealSystem is System {
 
     LibLootbox.executeReveal(world, components, id, accountID);
 
+    // Account data logging
+    LibLootbox.logIncOpened(
+      world,
+      components,
+      accountID,
+      LibLootbox.getIndex(components, id),
+      LibLootbox.getBalance(components, id)
+    );
+    LibLootbox.deleteReveal(components, id);
+
+    LibAccount.updateLastBlock(components, accountID);
+
     return "";
+  }
+
+  function forceReveal(uint256 id) public onlyOwner {
+    LibRandom.setRevealBlock(components, id, block.number - 1);
+
+    uint256 accountID = LibLootbox.getHolder(components, id);
+    LibLootbox.executeReveal(world, components, id, accountID);
+    LibLootbox.logIncOpened(
+      world,
+      components,
+      accountID,
+      LibLootbox.getIndex(components, id),
+      LibLootbox.getBalance(components, id)
+    );
+    LibLootbox.deleteReveal(components, id);
   }
 
   function executeTyped(uint256 id) public returns (bytes memory) {

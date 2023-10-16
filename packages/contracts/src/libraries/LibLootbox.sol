@@ -82,13 +82,6 @@ library LibLootbox {
 
       executeDropTable(world, components, holderID, keys, weights, seed, amt);
     }
-
-    // delete reveal entity
-    unsetIsLootbox(components, revealID);
-    unsetBalance(components, revealID);
-    unsetHolder(components, revealID);
-    unsetIndex(components, revealID);
-    LibRandom.removeRevealBlock(components, revealID);
   }
 
   // @notice executes drop table logic for N lootboxes
@@ -138,6 +131,17 @@ library LibLootbox {
       invID = LibInventory.create(world, components, holderID, index);
     }
     LibInventory.inc(components, invID, amt);
+  }
+
+  // @notice deletes a reveal entity
+  // @param components  The components contract
+  // @param id          entityID
+  function deleteReveal(IUintComp components, uint256 id) internal {
+    unsetIsLootbox(components, id);
+    unsetBalance(components, id);
+    unsetHolder(components, id);
+    unsetIndex(components, id);
+    LibRandom.removeRevealBlock(components, id);
   }
 
   ///////////////////
@@ -205,13 +209,13 @@ library LibLootbox {
   //////////////////
   // DATA LOGGING
 
-  function logIncTotal(
+  function logIncOpened(
     IWorld world,
     IUintComp components,
     uint256 holderID,
     uint256 index,
     uint256 amt
   ) internal {
-    LibDataEntity.incFor(world, components, holderID, index, "LOOTBOX_TOTAL", amt);
+    LibDataEntity.incFor(world, components, holderID, index, "LOOTBOX_OPENED", amt);
   }
 }

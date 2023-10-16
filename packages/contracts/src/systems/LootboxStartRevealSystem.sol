@@ -27,6 +27,9 @@ contract LootboxStartRevealSystem is System {
 
     uint256 revealID = LibLootbox.startReveal(world, components, invID, amt);
 
+    // Account data logging
+    LibAccount.updateLastBlock(components, accountID);
+
     return abi.encode(revealID);
   }
 
