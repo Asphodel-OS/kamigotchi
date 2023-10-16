@@ -197,8 +197,9 @@ library LibInventory {
 
   // get the balance of a fungible inventory instance. return 0 if non-fungible or if none exists
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
-    if (hasBalance(components, id)) {
-      balance = BalanceComponent(getAddressById(components, BalanceCompID)).getValue(id);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    if (comp.has(id)) {
+      balance = comp.getValue(id);
     }
   }
 

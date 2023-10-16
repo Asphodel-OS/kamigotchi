@@ -37,16 +37,19 @@ library LibRandom {
     return BlockRevealComp(getAddressById(components, BlockRevealCompID)).getValue(id);
   }
 
+  function hasRevealBlock(IUintComp components, uint256 id) internal view returns (bool) {
+    return BlockRevealComp(getAddressById(components, BlockRevealCompID)).has(id);
+  }
+
   //////////////////
   // WEIGHTED
 
   // select an item from a weighted list of options
 
-  // @dev: picks from a weighted random array based on a random input
-  // @param keys: keys, position correspnds to weights
-  // @param weights: the weights for each item
-  // @param randN: the input random number
-  // @return (uint) the key of the selected item
+  // @notice picks from a weighted random array based on a random input
+  // @param keys     keys, position correspnds to weights
+  // @param weights  the weights for each item
+  // @param randN    the input random number
   function selectFromWeighted(
     uint256[] memory keys,
     uint256[] memory weights,
@@ -66,6 +69,67 @@ library LibRandom {
       currentWeight += weights[i];
       if (roll <= currentWeight) {
         return keys[i];
+      }
+    }
+
+    // should never get here
+    revert("LibRandom: no item found");
+  }
+
+  // @notice picks multiple results from weighted array
+  // @dev returns an array of results, with indices as number of results corresponding to key positions
+  // @dev uses a basic uint256(keccak256(abi.encode(seed, i))) for incrementing seeds
+  // @param keys     keys, position correspnds to weights
+  // @param weights  the weights for each item
+  // @param randN    the input random number
+  // @param amt      the number of rolls
+  function selectMultipleFromWeighted(
+    uint256[] memory keys,
+    uint256[] memory weights,
+    uint256 randN,
+    uint256 amt
+  ) internal pure returns (uint256[] memory) {
+    uint256 totalWeight;
+    for (uint256 i; i < weights.length; i++) {
+      totalWeight += weights[i];
+    }
+
+    uint256[] memory results = new uint256[](keys.length);
+
+    for (uint256 i; i < amt; i++) {
+      uint256 pos = _positionFromWeighted(
+        keys,
+        weights,
+        totalWeight,
+        uint256(keccak256(abi.encode(randN, i)))
+      );
+      results[pos]++;
+    }
+
+    return results;
+  }
+
+  // @notice picks from a weighted random array, returns position and value of result
+  // @dev low level function. not meant to be implemented outside of this lib
+  // @param keys         keys, position correspnds to weights
+  // @param weights      the weights for each item
+  // @param totalWeight  the total weight of all items
+  // @param randN        the input random number
+  function _positionFromWeighted(
+    uint256[] memory keys,
+    uint256[] memory weights,
+    uint256 totalWeight,
+    uint256 randN
+  ) internal pure returns (uint256) {
+    // roll for the constrained random number
+    uint256 roll = randN % totalWeight;
+
+    // iterate to find item
+    uint256 currentWeight;
+    for (uint256 i; i < weights.length; i++) {
+      currentWeight += weights[i];
+      if (roll <= currentWeight) {
+        return (i);
       }
     }
 

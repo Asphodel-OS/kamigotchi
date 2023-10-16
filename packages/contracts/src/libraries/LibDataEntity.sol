@@ -56,7 +56,7 @@ library LibDataEntity {
     uint256 index,
     string memory type_,
     uint256 amt
-  ) public {
+  ) internal {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     if (dataID == 0) {
       dataID = create(world, components, holderID, type_);
@@ -72,7 +72,7 @@ library LibDataEntity {
     uint256 index,
     string memory type_,
     uint256 amt
-  ) public {
+  ) internal {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     if (dataID == 0) {
       dataID = create(world, components, holderID, type_);
@@ -88,7 +88,7 @@ library LibDataEntity {
     uint256 index,
     string memory type_,
     uint256 value
-  ) public {
+  ) internal {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
     if (dataID == 0) {
       dataID = create(world, components, holderID, type_);
