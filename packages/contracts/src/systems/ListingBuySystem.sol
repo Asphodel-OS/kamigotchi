@@ -40,8 +40,8 @@ contract ListingBuySystem is System {
     LibListing.buyFrom(components, listingID, accountID, amt);
 
     // updating account info
-    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_HAVE", amt);
-    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_BUY", amt);
+    LibInventory.logIncItemTotal(world, components, accountID, itemIndex, amt);
+    LibListing.logIncItemBuy(world, components, accountID, itemIndex, amt);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }

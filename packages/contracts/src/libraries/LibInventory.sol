@@ -312,4 +312,18 @@ library LibInventory {
 
     return LibQuery.query(fragments);
   }
+
+  /////////////////
+  // DATA LOGGING
+
+  // @notice log increase for item total
+  function logIncItemTotal(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 itemIndex,
+    uint256 amt
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "ITEM_TOTAL", amt);
+  }
 }
