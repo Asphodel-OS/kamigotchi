@@ -91,7 +91,8 @@ library LibRegistryItem {
     IUintComp components,
     uint256 index,
     uint256[] memory keys,
-    uint256[] memory weights
+    uint256[] memory weights,
+    string memory name
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     setIsRegistry(components, id);
@@ -100,6 +101,7 @@ library LibRegistryItem {
     setItemIndex(components, id, index);
     setKeys(components, id, keys);
     setWeights(components, id, weights);
+    setName(components, id, name);
   }
 
   // Create a Registry entry for a Mod item. (e.g. cpu, gem, etc.)
@@ -255,6 +257,7 @@ library LibRegistryItem {
     unsetItemIndex(components, id);
     unsetKeys(components, id);
     unsetWeights(components, id);
+    unsetName(components, id);
   }
 
   /////////////////
@@ -377,6 +380,10 @@ library LibRegistryItem {
 
   function unsetWeights(IUintComp components, uint256 id) internal {
     WeightsComponent(getAddressById(components, WeightsCompID)).remove(id);
+  }
+
+  function unsetName(IUintComp components, uint256 id) internal {
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
   }
 
   /////////////////
