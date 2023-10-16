@@ -42,6 +42,7 @@ export function createComponents(world: World) {
     IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
     IsKill: defineBoolEZ("IsKill", "component.Is.Kill"),
     IsListing: defineBoolEZ("IsListing", "component.Is.Listing"),
+    IsLootbox: defineBoolEZ("IsLootbox", "component.Is.Lootbox"),
     IsNPC: defineBoolEZ("IsNPC", "component.Is.NPC"),
     IsNode: defineBoolEZ("IsNode", "component.Is.Node"),
     IsNonFungible: defineBoolEZ("IsNonFungible", "component.Is.NonFungible"),
@@ -109,6 +110,7 @@ export function createComponents(world: World) {
     Harmony: defineNumberEZ("Harmony", "component.Harmony"),
     Health: defineNumberEZ("Health", "component.Health"),
     HealthCurrent: defineNumberEZ("HealthCurrent", "component.Health.Current"),
+    Keys: defineNumberArrayComponent(world, "Keys", "component.Keys"),
     Level: defineNumberEZ("Level", "component.Level"),
     Location: defineNumberEZ("Location", "component.Location"),
     LogicType: defineStringEZ("LogicType", "component.LogicType"),
@@ -131,6 +133,7 @@ export function createComponents(world: World) {
     Upgrades: defineNumberEZ("Upgrades", "component.Upgrades"),
     Value: defineNumberEZ("Value", "component.Value"),
     Violence: defineNumberEZ("Violence", "component.Violence"),
+    Weights: defineNumberArrayComponent(world, "Weights", "component.Weights"),
     Whitelist: defineNumberArrayComponent(world, "Whitelist", "component.Whitelist"),
 
     // Time/Block Tracking

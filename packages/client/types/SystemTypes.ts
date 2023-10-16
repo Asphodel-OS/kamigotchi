@@ -108,7 +108,7 @@ export type SystemTypes = {
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem;
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
-  "system._Registry.Lootbox.delete": _RegistryDeleteLootboxSystem;
+  "system._Registry.Lootbox.Delete": _RegistryDeleteLootboxSystem;
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem;
   "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem;
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem;

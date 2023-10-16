@@ -31,6 +31,19 @@ export function createAdminAPI(systems: any) {
     return systems['system._Config.Set.String'].executeTyped(field, value);
   }
 
+  /////////////////
+  //  LOOTBOXES
+
+  async function createLootbox(index: number, keys: number[], weights: number[], name: string) {
+    await sleepIf();
+    return systems['system._Registry.Lootbox.Create'].executeTyped(index, keys, weights, name);
+  }
+
+  async function deleteLootbox(index: number) {
+    await sleepIf();
+    return systems['system._Registry.Lootbox.Delete'].executeTyped(index);
+  }
+
 
   /////////////////
   //  NPCs
@@ -522,6 +535,10 @@ export function createAdminAPI(systems: any) {
       gear: {
         create: registerGear,
         update: updateRegistryGear,
+      },
+      lootbox: {
+        create: createLootbox,
+        delete: deleteLootbox,
       },
       trait: {
         create: registerTrait,

@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.Lootbox.delete"));
+uint256 constant ID = uint256(keccak256("system._Registry.Lootbox.Delete"));
 
 contract _RegistryDeleteLootboxSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

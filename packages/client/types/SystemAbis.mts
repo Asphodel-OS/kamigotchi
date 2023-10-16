@@ -108,7 +108,7 @@ export const SystemAbis = {
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
-  "system._Registry.Lootbox.delete": _RegistryDeleteLootboxSystem.abi,
+  "system._Registry.Lootbox.Delete": _RegistryDeleteLootboxSystem.abi,
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
   "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem.abi,
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
