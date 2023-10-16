@@ -399,19 +399,19 @@ export const checkRequirement = (
 ): Status => {
   switch (requirement.logic) {
     case 'AT':
-      return checkCurrent(requirement.target, account, 'EQUAL');
+      return checkCurrent(layers, requirement.target, account, 'EQUAL');
     case 'COMPLETE':
       return checkBoolean(layers, requirement.target, account, 'IS');
     case 'HAVE':
-      return checkCurrent(requirement.target, account, 'MIN');
+      return checkCurrent(layers, requirement.target, account, 'MIN');
     case 'GREATER':
-      return checkCurrent(requirement.target, account, 'MIN');
+      return checkCurrent(layers, requirement.target, account, 'MIN');
     case 'LESSER':
-      return checkCurrent(requirement.target, account, 'MAX');
+      return checkCurrent(layers, requirement.target, account, 'MAX');
     case 'EQUAL':
-      return checkCurrent(requirement.target, account, 'EQUAL');
+      return checkCurrent(layers, requirement.target, account, 'EQUAL');
     case 'USE':
-      return checkCurrent(requirement.target, account, 'MIN');
+      return checkCurrent(layers, requirement.target, account, 'MIN');
     default:
       return { completable: false }; // should not get here
   }
@@ -428,11 +428,11 @@ export const checkObjective = (
   }
   switch (objective.logic) {
     case 'AT':
-      return checkCurrent(objective.target, account, 'EQUAL');
+      return checkCurrent(layers, objective.target, account, 'EQUAL');
     case 'BUY':
       return checkIncrease(layers, objective, quest, account, 'MIN');
     case 'HAVE':
-      return checkCurrent(objective.target, account, 'MIN');
+      return checkCurrent(layers, objective.target, account, 'MIN');
     case 'GATHER':
       return checkIncrease(layers, objective, quest, account, 'MIN');
     case 'MINT':
@@ -446,11 +446,12 @@ export const checkObjective = (
 
 
 const checkCurrent = (
+  layers: Layers,
   condition: Target,
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
-  const accVal = getAccBal(account, condition.index, condition.type) || 0;
+  const accVal = getAccBal(layers, account, condition.index, condition.type) || 0;
 
   return {
     target: condition.value,
@@ -529,6 +530,7 @@ const checkQuestComplete = (
 }
 
 const getAccBal = (
+  layers: Layers,
   account: Account,
   index: number | undefined,
   type: string
@@ -537,7 +539,7 @@ const getAccBal = (
   if (['EQUIP', 'FOOD', 'MOD', 'REVIVE'].includes(type)) {
     balance = getInventoryBalance(account, index, type);
   } else if (type === 'COIN') {
-    balance = account.coin || 0;
+    balance = getData(layers, account.id, "COIN_TOTAL", 0) || 0;
   } else if (type === 'KAMI') {
     balance = account.kamis?.length || 0;
   } else if (type === 'ROOM') {

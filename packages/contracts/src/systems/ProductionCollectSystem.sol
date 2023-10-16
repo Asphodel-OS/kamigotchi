@@ -45,7 +45,7 @@ contract ProductionCollectSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", output);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", output);
     LibDataEntity.incFor(
       world,
       components,
