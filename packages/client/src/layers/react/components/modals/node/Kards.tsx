@@ -69,7 +69,7 @@ export const Kards = (props: Props) => {
     let output = 0;
     if (isHarvesting(kami) && kami.production) {
       output = kami.production.balance * 1;
-      let duration = lastRefresh / 1000 - kami.production.startTime;
+      let duration = lastRefresh / 1000 - kami.lastUpdated;
       output += Math.floor(duration * kami.production?.rate);
     }
     return Math.max(output, 0);

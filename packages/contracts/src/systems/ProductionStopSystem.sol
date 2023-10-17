@@ -35,7 +35,7 @@ contract ProductionStopSystem is System {
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
 
     // health check
-    LibPet.syncHealth(components, petID);
+    LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
 
     // location check
@@ -44,9 +44,8 @@ contract ProductionStopSystem is System {
       "Node: too far"
     );
 
-    // add balance and experience
-    uint256 output = LibProduction.calcOutput(components, id);
-    LibCoin.inc(components, accountID, output);
+    // claim balance and increase experience
+    uint256 output = LibProduction.claim(components, id);
     LibExperience.inc(components, petID, output);
 
     // stop production

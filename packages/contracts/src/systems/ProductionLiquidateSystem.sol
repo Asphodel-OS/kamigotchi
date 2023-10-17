@@ -35,7 +35,7 @@ contract ProductionLiquidateSystem is System {
     require(LibProduction.isActive(components, targetProductionID), "Production: not active");
 
     // health check
-    LibPet.syncHealth(components, petID);
+    LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
 
     // check that the two kamis share the same node
@@ -47,16 +47,17 @@ contract ProductionLiquidateSystem is System {
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
-    LibPet.syncHealth(components, targetPetID);
+    LibPet.sync(components, targetPetID);
     require(
       LibProduction.isLiquidatableBy(components, targetProductionID, petID),
       "Pet: you lack violence"
     );
 
     // collect the money to the production. drain accordingly
-    uint256 amt = LibProduction.calcBounty(components, targetProductionID);
-    uint256 recoil = LibPet.calcDrainFromBalance(components, amt);
-    LibCoin.inc(components, productionID, amt);
+    uint256 balance = LibProduction.getBalance(components, targetProductionID);
+    uint256 bounty = LibPet.calcBounty(components, petID, balance);
+    uint256 recoil = LibPet.calcDrain(components, petID, bounty);
+    LibCoin.inc(components, productionID, bounty);
     LibPet.drain(components, petID, recoil);
 
     // kill the target and shut off the production
@@ -66,7 +67,7 @@ contract ProductionLiquidateSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", amt);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", bounty);
     LibDataEntity.incFor(world, components, accountID, 0, "LIQUIDATE", 1);
     LibDataEntity.incFor(
       world,
