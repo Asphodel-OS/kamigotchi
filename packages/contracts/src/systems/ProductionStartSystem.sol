@@ -30,7 +30,7 @@ contract ProductionStartSystem is System {
     require(LibPet.isResting(components, petID), "Pet: must be resting");
 
     // sync the pet's health with the current state
-    LibPet.syncHealth(components, petID);
+    LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
 
     // ensure the Pet is able to harvest on this Node

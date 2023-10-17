@@ -39,7 +39,7 @@ contract PetFeedSystem is System {
     );
 
     // check pet is not full
-    LibPet.syncHealth(components, id);
+    LibPet.sync(components, id);
     require(!LibPet.isFull(components, id), "Pet: already full");
 
     // get food registry entry
