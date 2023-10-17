@@ -156,7 +156,6 @@ library LibPet {
   // CALCULATIONS
 
   // Calculate the affinity multiplier (1e2 precision) for attacks between two kamis
-  // TODO: implement
   function calcAttackAffinityMultiplier(
     IUintComp components,
     uint256 sourceID,
@@ -188,7 +187,7 @@ library LibPet {
     uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
     uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
     uint256 multiplier = calcDrainMultiplier(components, id);
-    uint256 totalPrecision = basePrecision * 100; // 100 from bonus multiplier
+    uint256 totalPrecision = basePrecision * 1000; // 1000 from bonus multiplier
     return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
   }
 

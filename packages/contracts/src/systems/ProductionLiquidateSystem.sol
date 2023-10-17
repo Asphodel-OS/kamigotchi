@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibKill } from "libraries/LibKill.sol";
@@ -64,6 +65,13 @@ contract ProductionLiquidateSystem is System {
     LibPet.kill(components, targetPetID);
     LibProduction.stop(components, targetProductionID);
     LibKill.create(world, components, petID, targetPetID, nodeID);
+
+    // bump the cooldown by the value of the bonus
+    uint256 bonusID = LibBonus.get(components, petID, "ATTACK_COOLDOWN");
+    if (bonusID != 0) {
+      uint256 cooldownDiscount = LibBonus.getValue(components, bonusID);
+      LibPet.setLastTs(components, petID, block.timestamp - cooldownDiscount);
+    }
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
