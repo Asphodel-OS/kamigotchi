@@ -59,18 +59,23 @@ contract SkillUpgradeSystem is System {
     // get the skill's effects. for any stat effects update the holder's bonus
     uint256 bonusID;
     string memory type_;
+    string memory subtype;
     uint256[] memory effectIDs = LibRegistrySkill.getEffectsByIndex(components, skillIndex);
     for (uint256 i = 0; i < effectIDs.length; i++) {
       // determine the type of the Bonus entity to be affected
       type_ = LibRegistrySkill.getType(components, effectIDs[i]);
+      subtype = LibRegistrySkill.getSubtype(components, effectIDs[i]);
       if (!LibString.eq("STAT", type_)) {
         type_ = LibString.concat(type_, "_");
-        type_ = LibString.concat(type_, LibRegistrySkill.getSubtype(components, effectIDs[i]));
+        type_ = LibString.concat(type_, subtype);
       }
 
       // get the bonus entity or create one if it doesnt exist
       bonusID = LibBonus.get(components, id, type_);
       if (bonusID == 0) bonusID = LibBonus.create(world, components, id, type_);
+
+      // if it's a cooldown type then default the value to 0
+      if (LibString.eq("COOLDOWN", subtype)) LibBonus.setValue(components, bonusID, 0);
 
       // update the appropriate bonus entity
       if (LibString.eq("STAT", type_)) {

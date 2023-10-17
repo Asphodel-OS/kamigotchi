@@ -481,8 +481,15 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.skill.add.effect(210, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(210, "SKILL", 2, 3);
 
+    await api.registry.skill.create(220, 1, 3, "PASSIVE", "Bandit", "-20s Harvest Cooldown per level");
+    await api.registry.skill.add.effect(220, "HARVEST", "COOLDOWN", "INC", 0, 20);
+    await api.registry.skill.add.requirement(220, "SKILL", 2, 3);
+
 
     // (Violence) Skill Tree
+    await api.registry.skill.create(320, 1, 3, "PASSIVE", "Sniper", "-20s Attack Cooldown per level");
+    await api.registry.skill.add.effect(320, "ATTACK", "COOLDOWN", "INC", 0, 20);
+    await api.registry.skill.add.requirement(320, "SKILL", 3, 3);
 
 
     // (Harmony) Skill Tree
