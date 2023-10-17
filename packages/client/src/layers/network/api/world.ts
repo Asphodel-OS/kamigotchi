@@ -75,7 +75,7 @@ export function setUpWorldAPI(systems: any) {
     await api.config.set.number('HARVEST_RATE_PREC', 9); // ignore this
     await api.config.set.number('HARVEST_RATE_BASE', 250); // in respect to power
     await api.config.set.number('HARVEST_RATE_BASE_PREC', 2); // i.e. x/100
-    await api.config.set.number('HARVEST_RATE_MULT_PREC', 6); // 2 affinities and 1 bonus multiplier with precision of 2
+    await api.config.set.number('HARVEST_RATE_MULT_PREC', 7); // 2 affinities and 1 bonus multiplier with precision of 2
     await api.config.set.number('HARVEST_RATE_MULT_AFF_BASE', 100);
     await api.config.set.number('HARVEST_RATE_MULT_AFF_UP', 150);
     await api.config.set.number('HARVEST_RATE_MULT_AFF_DOWN', 50);
@@ -424,41 +424,74 @@ export function setUpWorldAPI(systems: any) {
   // SKILL
 
   async function initSkills(api: any) {
-    await api.registry.skill.create(1, 1, 3, "PASSIVE", "Aggression", "+1 Violence per level");
-    await api.registry.skill.add.effect(1, "STAT", "VIOLENCE", "INC", 0, 1);
+    // Stat Skills
+    await api.registry.skill.create(1, 1, 3, "PASSIVE", "Vigor", "+10 Health per level");
+    await api.registry.skill.add.effect(1, "STAT", "HEALTH", "INC", 0, 10);
 
-    await api.registry.skill.create(2, 1, 3, "PASSIVE", "Defensiveness", "+1 Harmony per level");
-    await api.registry.skill.add.effect(2, "STAT", "HARMONY", "INC", 0, 1);
+    await api.registry.skill.create(2, 1, 3, "PASSIVE", "Acquisitiveness", "+1 Power per level");
+    await api.registry.skill.add.effect(2, "STAT", "POWER", "INC", 0, 1);
 
-    await api.registry.skill.create(3, 1, 3, "PASSIVE", "Acquisitiveness", "+1 Power per level");
-    await api.registry.skill.add.effect(3, "STAT", "POWER", "INC", 0, 1);
+    await api.registry.skill.create(3, 1, 3, "PASSIVE", "Aggression", "+1 Violence per level");
+    await api.registry.skill.add.effect(3, "STAT", "VIOLENCE", "INC", 0, 1);
 
-    await api.registry.skill.create(4, 2, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
-    await api.registry.skill.add.effect(4, "STAT", "VIOLENCE", "INC", 0, 1);
-    await api.registry.skill.add.requirement(4, "SKILL", 1, 3);
+    await api.registry.skill.create(4, 1, 3, "PASSIVE", "Defensiveness", "+1 Harmony per level");
+    await api.registry.skill.add.effect(4, "STAT", "HARMONY", "INC", 0, 1);
 
-    await api.registry.skill.create(5, 2, 3, "PASSIVE", "Protector", "+1 Harmony per level");
-    await api.registry.skill.add.effect(5, "STAT", "HARMONY", "INC", 0, 1);
-    await api.registry.skill.add.requirement(5, "SKILL", 2, 3);
+    await api.registry.skill.create(5, 2, 3, "PASSIVE", "Vitality", "+10 Health per level");
+    await api.registry.skill.add.effect(5, "STAT", "HEALTH", "INC", 0, 10);
+    await api.registry.skill.add.requirement(5, "SKILL", 1, 3);
 
     await api.registry.skill.create(6, 2, 3, "PASSIVE", "Predator", "+1 Power per level");
     await api.registry.skill.add.effect(6, "STAT", "POWER", "INC", 0, 1);
-    await api.registry.skill.add.requirement(6, "SKILL", 3, 3);
+    await api.registry.skill.add.requirement(6, "SKILL", 2, 3);
 
-    await api.registry.skill.create(7, 1, 3, "PASSIVE", "Vigor", "+10 Health per level");
-    await api.registry.skill.add.effect(7, "STAT", "HEALTH", "INC", 0, 10);
+    await api.registry.skill.create(7, 2, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
+    await api.registry.skill.add.effect(7, "STAT", "VIOLENCE", "INC", 0, 1);
+    await api.registry.skill.add.requirement(7, "SKILL", 3, 3);
 
-    await api.registry.skill.create(8, 2, 3, "PASSIVE", "Vitality", "+10 Health per level");
-    await api.registry.skill.add.effect(8, "STAT", "HEALTH", "INC", 0, 10);
-    await api.registry.skill.add.requirement(8, "SKILL", 7, 3);
+    await api.registry.skill.create(8, 2, 3, "PASSIVE", "Protector", "+1 Harmony per level");
+    await api.registry.skill.add.effect(8, "STAT", "HARMONY", "INC", 0, 1);
+    await api.registry.skill.add.requirement(8, "SKILL", 4, 3);
 
-    await api.registry.skill.create(9, 1, 3, "PASSIVE", "Greed", "+5% Harvest Output per level");
-    await api.registry.skill.add.effect(9, "HARVEST", "OUTPUT", "INC", 0, 5);
-    await api.registry.skill.add.requirement(9, "SKILL", 3, 3);
 
-    await api.registry.skill.create(10, 1, 3, "PASSIVE", "Patience", "-5% Harvest Drain per level");
-    await api.registry.skill.add.effect(10, "HARVEST", "DRAIN", "DEC", 0, 5);
-    await api.registry.skill.add.requirement(10, "SKILL", 2, 3);
+    // (Health) Skill Tree
+    await api.registry.skill.create(110, 1, 3, "PASSIVE", "Workout Routine", "-5% Harvest Drain per level");
+    await api.registry.skill.add.effect(110, "HARVEST", "DRAIN", "DEC", 0, 50);
+    await api.registry.skill.add.requirement(110, "SKILL", 1, 3);
+
+
+    // (Power) Skill Tree
+    await api.registry.skill.create(201, 1, 3, "PASSIVE", "Greed", "+5% Harvest Output per level");
+    await api.registry.skill.add.effect(201, "HARVEST", "OUTPUT", "INC", 0, 50);
+    await api.registry.skill.add.requirement(201, "SKILL", 2, 3);
+
+    await api.registry.skill.create(202, 2, 3, "PASSIVE", "Leverage", "+7.5% Harvest Output per level");
+    await api.registry.skill.add.effect(202, "HARVEST", "OUTPUT", "INC", 0, 75);
+    await api.registry.skill.add.requirement(202, "SKILL", 201, 3);
+
+    await api.registry.skill.create(203, 3, 3, "PASSIVE", "Looping", "+10% Harvest Output per level");
+    await api.registry.skill.add.effect(203, "HARVEST", "OUTPUT", "INC", 0, 100);
+    await api.registry.skill.add.requirement(203, "SKILL", 202, 3);
+
+    await api.registry.skill.create(204, 3, 3, "PASSIVE", "Degenerate", "+12.5% Harvest Output per level");
+    await api.registry.skill.add.effect(204, "HARVEST", "OUTPUT", "INC", 0, 125);
+    await api.registry.skill.add.requirement(204, "SKILL", 203, 3);
+
+    await api.registry.skill.create(210, 1, 3, "PASSIVE", "Sunglasses Ownership", "-5% Harvest Drain per level");
+    await api.registry.skill.add.effect(210, "HARVEST", "DRAIN", "DEC", 0, 50);
+    await api.registry.skill.add.requirement(210, "SKILL", 2, 3);
+
+
+    // (Violence) Skill Tree
+
+
+    // (Harmony) Skill Tree
+    await api.registry.skill.create(401, 1, 3, "PASSIVE", "Patience", "-5% Harvest Drain per level");
+    await api.registry.skill.add.effect(401, "HARVEST", "DRAIN", "DEC", 0, 50);
+    await api.registry.skill.add.requirement(401, "SKILL", 4, 3);
+
+
+
   }
 
 

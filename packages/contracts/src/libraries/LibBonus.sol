@@ -76,9 +76,9 @@ library LibBonus {
     return 0;
   }
 
-  // default value of bonus multipliers is 100
+  // default value of bonus multipliers is 1000
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (!hasValue(components, id)) return 100;
+    if (!hasValue(components, id)) return 1000;
     return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
   }
 
