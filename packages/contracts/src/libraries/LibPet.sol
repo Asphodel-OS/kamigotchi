@@ -297,7 +297,7 @@ library LibPet {
   /////////////////
   // CHECKERS
 
-  function canAct(IUintComp components, uint256 id) internal view returns (bool) {
+  function canAct(IUintComp components, uint256 id) public view returns (bool) {
     uint256 idleTime = block.timestamp - getLastTs(components, id);
     uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
     return idleTime >= idleRequirement;
@@ -432,7 +432,7 @@ library LibPet {
   }
 
   // Get the implied location of a pet based on its state.
-  function getLocation(IUintComp components, uint256 id) internal view returns (uint256 location) {
+  function getLocation(IUintComp components, uint256 id) public view returns (uint256 location) {
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {

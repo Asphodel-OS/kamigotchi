@@ -13,6 +13,7 @@ import _NPCSetLocationSystem from "../abi/_NPCSetLocationSystem.json";
 import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
+import _RegistryCreateLootboxSystem from "../abi/_RegistryCreateLootboxSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
 import _RegistryCreateQuestObjectiveSystem from "../abi/_RegistryCreateQuestObjectiveSystem.json";
 import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRequirementSystem.json";
@@ -24,6 +25,7 @@ import _RegistryCreateSkillEffectSystem from "../abi/_RegistryCreateSkillEffectS
 import _RegistryCreateSkillRequirementSystem from "../abi/_RegistryCreateSkillRequirementSystem.json";
 import _RegistryCreateSkillSystem from "../abi/_RegistryCreateSkillSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
+import _RegistryDeleteLootboxSystem from "../abi/_RegistryDeleteLootboxSystem.json";
 import _RegistryDeleteQuestSystem from "../abi/_RegistryDeleteQuestSystem.json";
 import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshipSystem.json";
 import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
@@ -47,6 +49,8 @@ import Farm20ProxySystem from "../abi/Farm20ProxySystem.json";
 import Farm20WithdrawSystem from "../abi/Farm20WithdrawSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
+import LootboxExecuteRevealSystem from "../abi/LootboxExecuteRevealSystem.json";
+import LootboxStartRevealSystem from "../abi/LootboxStartRevealSystem.json";
 import Mint20MintSystem from "../abi/Mint20MintSystem.json";
 import Mint20ProxySystem from "../abi/Mint20ProxySystem.json";
 import NodeCollectSystem from "../abi/NodeCollectSystem.json";
@@ -92,6 +96,7 @@ export const SystemAbis = {
   "system._NPC.Set.Name": _NPCSetNameSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
+  "system._Registry.Lootbox.Create": _RegistryCreateLootboxSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
   "system._Registry.Quest.Create.Objective": _RegistryCreateQuestObjectiveSystem.abi,
   "system._Registry.Quest.Create.Requirement": _RegistryCreateQuestRequirementSystem.abi,
@@ -103,6 +108,7 @@ export const SystemAbis = {
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
+  "system._Registry.Lootbox.Delete": _RegistryDeleteLootboxSystem.abi,
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
   "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem.abi,
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
@@ -126,6 +132,8 @@ export const SystemAbis = {
   "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
+  "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem.abi,
+  "system.Lootbox.Reveal.Start": LootboxStartRevealSystem.abi,
   "system.Mint20.Mint": Mint20MintSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Node.Collect": NodeCollectSystem.abi,

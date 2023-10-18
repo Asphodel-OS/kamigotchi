@@ -85,6 +85,27 @@ export function createPlayerAPI(systems: any) {
 
 
   /////////////////
+  //   LOOTBOX
+
+  // @dev starts a lootbox reveal (commit)
+  // @param index   item index of lootbox
+  // @param amount  amount of lootboxes to open
+  function lootboxStartReveal(index: number, amount: number) {
+    return systems["system.Lootbox.Reveal.Start"].executeTyped(index, amount);
+  }
+
+  // @dev executes a lootbox reveal (reveal)
+  // @param id    entityID of reveal entity
+  function lootboxExecuteReveal(id: BigNumberish) {
+    return systems["system.Lootbox.Reveal.Execute"].executeTyped(id);
+  }
+
+  // TEMP: reveals lootbox from CLI, to be removed when proper UI implemented
+  function tempLootboxReveal() {
+    return systems["system.Lootbox.Reveal.Execute"].tempExecute();
+  }
+
+  /////////////////
   //   NODES
 
   // @dev collects from all eligible productions on a node
@@ -261,6 +282,11 @@ export function createPlayerAPI(systems: any) {
     listing: {
       buy: buyFromListing,
       sell: sellToListing,
+    },
+    lootbox: {
+      startReveal: lootboxStartReveal,
+      executeReveal: lootboxExecuteReveal,
+      tempReveal: tempLootboxReveal,
     },
     node: {
       collect: collectAllFromNode,

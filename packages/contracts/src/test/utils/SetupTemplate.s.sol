@@ -213,6 +213,18 @@ abstract contract SetupTemplate is TestSetupImports {
     _ProductionLiquidateSystem.executeTyped(productionID, attackerID);
   }
 
+  /* LOOTBOXES */
+
+  function _openLootbox(uint playerIndex, uint index, uint amount) internal virtual {
+    address operator = _getOperator(playerIndex);
+
+    vm.startPrank(operator);
+    uint256 id = abi.decode(_LootboxStartRevealSystem.executeTyped(index, amount), (uint256));
+    vm.roll(_currBlock++);
+    _LootboxExecuteRevealSystem.executeTyped(id);
+    vm.stopPrank();
+  }
+
   /* QUESTS */
 
   function _acceptQuest(uint playerIndex, uint questIndex) internal virtual returns (uint) {
@@ -256,6 +268,17 @@ abstract contract SetupTemplate is TestSetupImports {
   function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
     LibSkill.inc(components, id, amt);
+    vm.stopPrank();
+  }
+
+  function _giveLootbox(uint256 playerIndex, uint256 index, uint256 amt) internal {
+    uint256 accountID = _getAccount(playerIndex);
+
+    vm.startPrank(deployer);
+    uint256 invID = LibInventory.get(components, accountID, index);
+    if (invID == 0) invID = LibInventory.create(world, components, accountID, index);
+    LibInventory.inc(components, invID, amt);
+    LibInventory.logIncItemTotal(world, components, accountID, index, amt);
     vm.stopPrank();
   }
 
@@ -323,6 +346,30 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /////////////////////////////////////////////
   // REGISTRIES
+
+  /* ITEMS */
+
+  // @notice creates and empty item index for testing
+  function _createGenericItem(uint index) public {
+    vm.startPrank(deployer);
+
+    uint256 id = world.getUniqueEntityId();
+    _IsRegistryComponent.set(id);
+    _IsFungibleComponent.set(id);
+    _IndexItemComponent.set(id, index);
+
+    vm.stopPrank();
+  }
+
+  function _createLootbox(
+    uint index,
+    uint[] memory keys,
+    uint[] memory weights,
+    string memory name
+  ) public {
+    vm.prank(deployer);
+    __RegistryCreateLootboxSystem.executeTyped(index, keys, weights, name);
+  }
 
   /* QUESTS */
 

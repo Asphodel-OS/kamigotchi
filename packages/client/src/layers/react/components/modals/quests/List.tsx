@@ -18,6 +18,7 @@ interface Props {
     completeQuest: (quest: Quest) => void;
   };
   utils: {
+    queryItemRegistry: (index: number) => EntityIndex;
     queryFoodRegistry: (index: number) => EntityIndex;
     queryReviveRegistry: (index: number) => EntityIndex;
     getItem: (index: EntityIndex) => Item;
@@ -106,8 +107,8 @@ export const List = (props: Props) => {
   }
 
   const canAccept = (quest: Quest): boolean => {
-    if (!meetsMax(props.account, quest)) return false;
     if (quest.repeatable) return meetsRepeat(quest) && meetsRequirements(quest);
+    if (!meetsMax(props.account, quest)) return false;
     return meetsRequirements(quest);
   }
 
@@ -127,16 +128,22 @@ export const List = (props: Props) => {
     return ongoing;
   }
 
-  const getFoodName = (foodIndex: number): string => {
-    let entityIndex = props.utils.queryFoodRegistry(foodIndex);
+  const getItemName = (itemIndex: number): string => {
+    let entityIndex = props.utils.queryItemRegistry(Number(itemIndex));
     let registryObject = props.utils.getItem(entityIndex);
-    return registryObject.name;
+    return registryObject.name ? registryObject.name : `Item ${itemIndex}`;
+  }
+
+  const getFoodName = (foodIndex: number): string => {
+    let entityIndex = props.utils.queryItemRegistry(foodIndex);
+    let registryObject = props.utils.getItem(entityIndex);
+    return registryObject.name ? registryObject.name : `Food ${foodIndex}`;
   }
 
   const getReviveName = (reviveIndex: number): string => {
     let entityIndex = props.utils.queryReviveRegistry(reviveIndex);
     let registryObject = props.utils.getItem(entityIndex);
-    return registryObject.name;
+    return registryObject.name ? registryObject.name : `Revive ${reviveIndex}`;
   }
 
   const getRepeatText = (quest: Quest): string => {
@@ -210,6 +217,8 @@ export const List = (props: Props) => {
     switch (reward.target.type) {
       case 'COIN':
         return `${reward.target.value! * 1} $MUSU`;
+      case 'ITEM':
+        return `${reward.target.value! * 1} ${getItemName(reward.target.index!)}`;
       case 'EXPERIENCE':
         return `${reward.target.value! * 1} Experience`;
       case 'FOOD':

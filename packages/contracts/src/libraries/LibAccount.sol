@@ -95,7 +95,12 @@ library LibAccount {
     uint256 amount
   ) public {
     uint256 inventoryID;
-    if (LibString.eq(_type, "FOOD")) {
+    if (LibString.eq(_type, "ITEM")) {
+      inventoryID = LibInventory.get(components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.create(world, components, id, index);
+      LibInventory.inc(components, inventoryID, amount);
+      LibInventory.logIncItemTotal(world, components, id, index, amount);
+    } else if (LibString.eq(_type, "FOOD")) {
       inventoryID = LibInventory.getFood(components, id, index);
       if (inventoryID == 0) inventoryID = LibInventory.createFood(world, components, id, index);
       LibInventory.inc(components, inventoryID, amount);

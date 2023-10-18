@@ -13,6 +13,7 @@ import { _NPCSetLocationSystem } from "./ethers-contracts/_NPCSetLocationSystem"
 import { _NPCSetNameSystem } from "./ethers-contracts/_NPCSetNameSystem";
 import { _RegistryCreateFoodSystem } from "./ethers-contracts/_RegistryCreateFoodSystem";
 import { _RegistryCreateGearSystem } from "./ethers-contracts/_RegistryCreateGearSystem";
+import { _RegistryCreateLootboxSystem } from "./ethers-contracts/_RegistryCreateLootboxSystem";
 import { _RegistryCreateModSystem } from "./ethers-contracts/_RegistryCreateModSystem";
 import { _RegistryCreateQuestObjectiveSystem } from "./ethers-contracts/_RegistryCreateQuestObjectiveSystem";
 import { _RegistryCreateQuestRequirementSystem } from "./ethers-contracts/_RegistryCreateQuestRequirementSystem";
@@ -24,6 +25,7 @@ import { _RegistryCreateSkillEffectSystem } from "./ethers-contracts/_RegistryCr
 import { _RegistryCreateSkillRequirementSystem } from "./ethers-contracts/_RegistryCreateSkillRequirementSystem";
 import { _RegistryCreateSkillSystem } from "./ethers-contracts/_RegistryCreateSkillSystem";
 import { _RegistryCreateTraitSystem } from "./ethers-contracts/_RegistryCreateTraitSystem";
+import { _RegistryDeleteLootboxSystem } from "./ethers-contracts/_RegistryDeleteLootboxSystem";
 import { _RegistryDeleteQuestSystem } from "./ethers-contracts/_RegistryDeleteQuestSystem";
 import { _RegistryDeleteRelationshipSystem } from "./ethers-contracts/_RegistryDeleteRelationshipSystem";
 import { _RegistryDeleteSkillSystem } from "./ethers-contracts/_RegistryDeleteSkillSystem";
@@ -47,6 +49,8 @@ import { Farm20ProxySystem } from "./ethers-contracts/Farm20ProxySystem";
 import { Farm20WithdrawSystem } from "./ethers-contracts/Farm20WithdrawSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
+import { LootboxExecuteRevealSystem } from "./ethers-contracts/LootboxExecuteRevealSystem";
+import { LootboxStartRevealSystem } from "./ethers-contracts/LootboxStartRevealSystem";
 import { Mint20MintSystem } from "./ethers-contracts/Mint20MintSystem";
 import { Mint20ProxySystem } from "./ethers-contracts/Mint20ProxySystem";
 import { NodeCollectSystem } from "./ethers-contracts/NodeCollectSystem";
@@ -92,6 +96,7 @@ export type SystemTypes = {
   "system._NPC.Set.Name": _NPCSetNameSystem;
   "system._Registry.Food.Create": _RegistryCreateFoodSystem;
   "system._Registry.Gear.Create": _RegistryCreateGearSystem;
+  "system._Registry.Lootbox.Create": _RegistryCreateLootboxSystem;
   "system._Registry.Mod.Create": _RegistryCreateModSystem;
   "system._Registry.Quest.Create.Objective": _RegistryCreateQuestObjectiveSystem;
   "system._Registry.Quest.Create.Requirement": _RegistryCreateQuestRequirementSystem;
@@ -103,6 +108,7 @@ export type SystemTypes = {
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem;
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem;
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem;
+  "system._Registry.Lootbox.Delete": _RegistryDeleteLootboxSystem;
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem;
   "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem;
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem;
@@ -126,6 +132,8 @@ export type SystemTypes = {
   "system.Farm20.Withdraw": Farm20WithdrawSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
+  "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem;
+  "system.Lootbox.Reveal.Start": LootboxStartRevealSystem;
   "system.Mint20.Mint": Mint20MintSystem;
   "system.Mint20.Proxy": Mint20ProxySystem;
   "system.Node.Collect": NodeCollectSystem;

@@ -15,9 +15,13 @@ import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComp
 import { IndexReviveComponent, ID as IndexReviveCompID } from "components/IndexReviveComponent.sol";
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsNonFungibleComponent, ID as IsNonFungCompID } from "components/IsNonFungibleComponent.sol";
+import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
+import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
+
 import { LibStat } from "libraries/LibStat.sol";
 
 // Registries hold shared information on individual entity instances in the world.
@@ -74,6 +78,30 @@ library LibRegistryItem {
     uint256 gotID = setGear(components, id, name, type_, health, power, violence, harmony, slots);
     require(gotID == id, "LibRegistryItem.createGear(): id mismatch");
     return id;
+  }
+
+  // @notice sets lootbox registry entity
+  // @param world       The world contract
+  // @param components  The components contract
+  // @param index   The index of the item to create an inventory for
+  // @param keys    The keys of the items in lootbox's droptable
+  // @param weights The weights of the items in lootbox's droptable
+  function createLootbox(
+    IWorld world,
+    IUintComp components,
+    uint256 index,
+    uint256[] memory keys,
+    uint256[] memory weights,
+    string memory name
+  ) internal returns (uint256 id) {
+    id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsFungible(components, id);
+    setIsLootbox(components, id);
+    setItemIndex(components, id, index);
+    setKeys(components, id, keys);
+    setWeights(components, id, weights);
+    setName(components, id, name);
   }
 
   // Create a Registry entry for a Mod item. (e.g. cpu, gem, etc.)
@@ -219,6 +247,19 @@ library LibRegistryItem {
     return id;
   }
 
+  // @notice deletes a lootbox registry entity
+  // @param components  The components contract
+  // @param id          id to delete
+  function deleteLootbox(IUintComp components, uint256 id) internal {
+    unsetIsRegistry(components, id);
+    unsetIsFungible(components, id);
+    unsetIsLootbox(components, id);
+    unsetItemIndex(components, id);
+    unsetKeys(components, id);
+    unsetWeights(components, id);
+    unsetName(components, id);
+  }
+
   /////////////////
   // CHECKERS
 
@@ -277,8 +318,24 @@ library LibRegistryItem {
     IndexGearComponent(getAddressById(components, IndexGearCompID)).set(id, gearIndex);
   }
 
+  function setIsFungible(IUintComp components, uint256 id) internal {
+    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
+  }
+
+  function setIsLootbox(IUintComp components, uint256 id) internal {
+    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
+  }
+
+  function setIsRegistry(IUintComp components, uint256 id) internal {
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
+  }
+
   function setItemIndex(IUintComp components, uint256 id, uint256 itemIndex) internal {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
+  }
+
+  function setKeys(IUintComp components, uint256 id, uint256[] memory keys) internal {
+    KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
   }
 
   function setModIndex(IUintComp components, uint256 id, uint256 modIndex) internal {
@@ -295,6 +352,38 @@ library LibRegistryItem {
 
   function setType(IUintComp components, uint256 id, string memory type_) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
+  }
+
+  function setWeights(IUintComp components, uint256 id, uint256[] memory weights) internal {
+    WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
+  }
+
+  function unsetIsFungible(IUintComp components, uint256 id) internal {
+    IsFungibleComponent(getAddressById(components, IsFungCompID)).remove(id);
+  }
+
+  function unsetIsLootbox(IUintComp components, uint256 id) internal {
+    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).remove(id);
+  }
+
+  function unsetItemIndex(IUintComp components, uint256 id) internal {
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
+  }
+
+  function unsetIsRegistry(IUintComp components, uint256 id) internal {
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+  }
+
+  function unsetKeys(IUintComp components, uint256 id) internal {
+    KeysComponent(getAddressById(components, KeysCompID)).remove(id);
+  }
+
+  function unsetWeights(IUintComp components, uint256 id) internal {
+    WeightsComponent(getAddressById(components, WeightsCompID)).remove(id);
+  }
+
+  function unsetName(IUintComp components, uint256 id) internal {
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
   }
 
   /////////////////

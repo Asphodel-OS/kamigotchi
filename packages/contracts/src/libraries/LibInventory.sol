@@ -11,6 +11,8 @@ import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComp
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -197,8 +199,9 @@ library LibInventory {
 
   // get the balance of a fungible inventory instance. return 0 if non-fungible or if none exists
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
-    if (hasBalance(components, id)) {
-      balance = BalanceComponent(getAddressById(components, BalanceCompID)).getValue(id);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    if (comp.has(id)) {
+      balance = comp.getValue(id);
     }
   }
 
@@ -310,5 +313,19 @@ library LibInventory {
     );
 
     return LibQuery.query(fragments);
+  }
+
+  /////////////////
+  // DATA LOGGING
+
+  // @notice log increase for item total
+  function logIncItemTotal(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 itemIndex,
+    uint256 amt
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "ITEM_TOTAL", amt);
   }
 }

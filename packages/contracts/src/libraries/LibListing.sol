@@ -12,10 +12,12 @@ import { IndexNPCComponent, ID as IndexNPCComponentID } from "components/IndexNP
 import { IsListingComponent, ID as IsListingCompID } from "components/IsListingComponent.sol";
 import { PriceBuyComponent, ID as PriceBuyCompID } from "components/PriceBuyComponent.sol";
 import { PriceSellComponent, ID as PriceSellCompID } from "components/PriceSellComponent.sol";
+
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
-import { LibAccount } from "libraries/LibAccount.sol";
 
 /*
  * LibListing handles all operations interacting with Listings
@@ -202,5 +204,30 @@ library LibListing {
       );
     }
     return LibQuery.query(fragments);
+  }
+
+  //////////////////
+  // DATA LOGGING
+
+  // @notice log increase for item buy
+  function logIncItemBuy(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 itemIndex,
+    uint256 amt
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "ITEM_BUY", amt);
+  }
+
+  // @notice log increase for item sell
+  function logIncItemSell(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 itemIndex,
+    uint256 amt
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, itemIndex, "ITEM_SELL", amt);
   }
 }

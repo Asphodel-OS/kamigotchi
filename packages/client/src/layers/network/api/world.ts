@@ -237,10 +237,20 @@ export function setUpWorldAPI(systems: any) {
   // ITEMS
 
   async function initItems(api: AdminAPI) {
+    await initFood(api);
+    await initLootbox(api);
+  }
+
+  async function initFood(api: AdminAPI) {
     await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
     await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
     await api.registry.food.create(3, 'Gakki Cookie Sticks', 200);
     await api.registry.revive.create(1, 'Red Gakki Ribbon', 10);
+  }
+
+  async function initLootbox(api: AdminAPI) {
+    // @dev temp lootbox holder, droptable consists of food above
+    await api.registry.lootbox.create(1000, [1, 2, 3], [3, 2, 1], 'Lootbox');
   }
 
 
@@ -397,6 +407,17 @@ export function setUpWorldAPI(systems: any) {
       64800
     );
     await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_HAS", 0, 200);
+    await api.registry.quest.add.reward(7, "ITEM", 1000, 1); // temp lootbox handler
+
+    // temp lootbox quest for testing
+    await api.registry.quest.create(
+      8,
+      "Lootbox testing",
+      "Get a free lootbox!",
+      0,
+      10
+    );
+    await api.registry.quest.add.reward(8, "ITEM", 1000, 1); // temp lootbox handler
   }
 
 
@@ -538,6 +559,8 @@ export function setUpWorldAPI(systems: any) {
     },
     items: {
       init: () => initItems(createAdminAPI(systems)),
+      initFood: () => initFood(createAdminAPI(systems)),
+      initLootbox: () => initLootbox(createAdminAPI(systems)),
     },
     npcs: {
       init: () => initNpcs(createAdminAPI(systems)),

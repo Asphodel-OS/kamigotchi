@@ -9,7 +9,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Quest, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
-import { getItem, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
+import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 import 'layers/react/styles/font.css';
 
 export function registerQuestsModal() {
@@ -125,6 +125,7 @@ export function registerQuestsModal() {
             actions={{ acceptQuest, completeQuest }}
             utils={{
               getItem: (index: EntityIndex) => getItem(layers, index),
+              queryItemRegistry: (index: number) => getItemByIndex(layers, index).entityIndex,
               queryFoodRegistry: (index: number) => queryFoodRegistry(layers, index),
               queryReviveRegistry: (index: number) => queryReviveRegistry(layers, index),
             }}

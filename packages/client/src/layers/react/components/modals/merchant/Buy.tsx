@@ -74,9 +74,9 @@ export function registerBuyModal() {
 
       const getImage = (item: Item) => {
         if (item.type == 'FOOD') {
-          return FoodImages.get(item.familyIndex);
+          return FoodImages.get(item.familyIndex ? item.familyIndex : 0);
         } else if (item.type == 'REVIVE') {
-          return ReviveImages.get(item.familyIndex);
+          return ReviveImages.get(item.familyIndex ? item.familyIndex : 0);
         }
       }
 

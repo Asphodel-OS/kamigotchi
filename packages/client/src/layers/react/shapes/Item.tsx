@@ -4,6 +4,7 @@ import {
   Has,
   HasValue,
   getComponentValue,
+  hasComponent,
   runQuery,
 } from '@latticexyz/recs';
 
@@ -17,26 +18,18 @@ export interface Item {
   id: EntityID;
   entityIndex: EntityIndex;
   index: number;
-  familyIndex: number;
   isFungible: boolean;
   type: string;
-  name: string;
-  description: string;
+  name?: string;
+  familyIndex?: number;
+  description?: string;
   uri?: string;
-  stats: Stats;
+  stats?: Stats;
 }
 
-
 /** 
- * Dedicated item entities technically do not exist on the SC side, outside of
- * registry shapes. Instead they exist as instances of Inventory Listings or
- * Equipment. SC-side items also have inconsistent form. Namely, Fungible items
- * reference their stats from the registry of the linked index, while
- * non-fungible items hold their stats directly on the entity itself.
- * 
- * Consequently, we must interpret these shapes based on context. This function
- * strictly retrieves registry-populated items and relies on higher layers to
- * repopulate the correct stats (for non-fungible items).
+ * Gets info about an item from an SC item registry
+ * Supplements additional data for FE consumption if available
  */
 export const getItem = (
   layers: Layers,
@@ -50,33 +43,33 @@ export const getItem = (
         FoodIndex,
         ReviveIndex,
         ItemIndex,
+        IsLootbox,
         Name,
+        IsFungible,
       },
     },
   } = layers;
-
-  // determine the type of the item based on the presence of indices
-  let type = '';
-  let isFungible = true;
-  let familyIndex = 0;
-  if (getComponentValue(FoodIndex, index) !== undefined) {
-    type = 'FOOD';
-    familyIndex = getComponentValue(FoodIndex, index)?.value as number;
-  } else if (getComponentValue(ReviveIndex, index) !== undefined) {
-    type = 'REVIVE';
-    familyIndex = getComponentValue(ReviveIndex, index)?.value as number;
-  }
 
   let Item: Item = {
     id: world.entities[index],
     entityIndex: index,
     index: getComponentValue(ItemIndex, index)?.value as number * 1,
-    familyIndex: familyIndex * 1,
-    type,
-    isFungible,
+    isFungible: hasComponent(IsFungible, index),
+    type: '',
     name: getComponentValue(Name, index)?.value as string,
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(layers, index),
+  }
+
+  // determine the type of the item based on the presence of indices
+  if (getComponentValue(FoodIndex, index) !== undefined) {
+    Item.type = 'FOOD';
+    Item.familyIndex = getComponentValue(FoodIndex, index)?.value as number * 1;
+  } else if (getComponentValue(ReviveIndex, index) !== undefined) {
+    Item.type = 'REVIVE';
+    Item.familyIndex = getComponentValue(ReviveIndex, index)?.value as number * 1;
+  } else if (hasComponent(IsLootbox, index)) {
+    Item.type = 'LOOTBOX';
   }
 
   return Item;

@@ -85,10 +85,10 @@ export const newAccountInventories = (): AccountInventories => ({
 });
 
 
-// sorts a list of Inventories by their Family Indices (e.g. foodIndex, reviveIndex)
+// sorts a list of Inventories by their item indices
 export const sortInventories = (inventories: Inventory[]) => {
   return inventories.sort((a: Inventory, b: Inventory) =>
-    (a.item.familyIndex > b.item.familyIndex) ? 1 : -1
+    (a.item.index > b.item.index) ? 1 : -1
   );
 }
 
