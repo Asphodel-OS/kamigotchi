@@ -43,17 +43,15 @@ contract NodeCollectSystem is System {
       productionID = LibPet.getProduction(components, petID);
       if (LibProduction.getNode(components, productionID) != nodeID) continue;
 
-      LibPet.syncHealth(components, petID);
+      LibPet.sync(components, petID);
       if (!LibPet.isHealthy(components, petID)) continue;
 
-      output = LibProduction.calcOutput(components, productionID);
+      output = LibProduction.claim(components, productionID);
       LibExperience.inc(components, petID, output);
-      LibProduction.reset(components, productionID);
       totalOutput += output;
     }
 
     // balance updates, score logging, action tracking
-    LibCoin.inc(components, accountID, totalOutput);
     LibScore.incBy(world, components, accountID, "COLLECT", totalOutput);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", totalOutput);
     LibDataEntity.incFor(

@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
@@ -30,7 +31,7 @@ contract ProductionStartSystem is System {
     require(LibPet.isResting(components, petID), "Pet: must be resting");
 
     // sync the pet's health with the current state
-    LibPet.syncHealth(components, petID);
+    LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
 
     // ensure the Pet is able to harvest on this Node
@@ -42,6 +43,13 @@ contract ProductionStartSystem is System {
     if (id == 0) id = LibProduction.create(world, components, nodeID, petID);
     else LibProduction.setNode(components, id, nodeID);
     LibProduction.start(components, id);
+
+    // bump the cooldown by the value of the bonus
+    uint256 bonusID = LibBonus.get(components, petID, "HARVEST_COOLDOWN");
+    if (bonusID != 0) {
+      uint256 cooldownDiscount = LibBonus.getValue(components, bonusID);
+      LibPet.setLastTs(components, petID, block.timestamp - cooldownDiscount);
+    }
 
     // update the pet's state account info
     LibPet.setState(components, petID, "HARVESTING");

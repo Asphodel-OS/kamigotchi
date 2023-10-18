@@ -21,10 +21,12 @@ contract SkillUpgradeSystem is System {
     (uint256 id, uint256 skillIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
+    // entity type check
     bool isPet = LibPet.isPet(components, id);
     bool isAccount = LibAccount.isAccount(components, id);
     require(isPet || isAccount, "SkillUpgrade: invalid target");
 
+    // generic requirements
     if (isAccount) {
       require(accountID == id, "SkillUpgrade: not ur account");
     } else if (isPet) {
@@ -35,28 +37,51 @@ contract SkillUpgradeSystem is System {
       );
     }
 
+    // check that the skill exists
+    uint256 registryID = LibRegistrySkill.getByIndex(components, skillIndex);
+    require(registryID != 0, "SkillUpgrade: skill not found");
+
     // points are decremented when checking prerequisites
     require(
-      LibSkill.checkPrerequisites(components, id, skillIndex),
+      LibSkill.meetsPrerequisites(components, id, registryID),
       "SkillUpgrade: unmet prerequisites"
     );
+
+    // decrement the skill cost
+    uint256 cost = LibRegistrySkill.getCost(components, registryID);
+    LibSkill.dec(components, id, cost);
 
     // create the skill if it doesnt exist and increment it
     uint256 skillID = LibSkill.get(components, id, skillIndex);
     if (skillID == 0) skillID = LibSkill.create(world, components, id, skillIndex);
     LibSkill.inc(components, skillID, 1);
 
-    // if the holder doesn't have a bonus entity, create one
-    uint256 bonusID = LibBonus.getByHolder(components, id);
-    if (bonusID == 0) bonusID = LibBonus.create(world, components, id);
-
     // get the skill's effects. for any stat effects update the holder's bonus
+    uint256 bonusID;
     string memory type_;
+    string memory subtype;
     uint256[] memory effectIDs = LibRegistrySkill.getEffectsByIndex(components, skillIndex);
     for (uint256 i = 0; i < effectIDs.length; i++) {
+      // determine the type of the Bonus entity to be affected
       type_ = LibRegistrySkill.getType(components, effectIDs[i]);
+      subtype = LibRegistrySkill.getSubtype(components, effectIDs[i]);
+      if (!LibString.eq("STAT", type_)) {
+        type_ = LibString.concat(type_, "_");
+        type_ = LibString.concat(type_, subtype);
+      }
+
+      // get the bonus entity or create one if it doesnt exist
+      bonusID = LibBonus.get(components, id, type_);
+      if (bonusID == 0) bonusID = LibBonus.create(world, components, id, type_);
+
+      // if it's a cooldown type then default the value to 0
+      if (LibString.eq("COOLDOWN", subtype)) LibBonus.setValue(components, bonusID, 0);
+
+      // update the appropriate bonus entity
       if (LibString.eq("STAT", type_)) {
         LibSkill.processStatEffectUpgrade(components, id, effectIDs[i]);
+      } else {
+        LibSkill.processEffectUpgrade(components, id, effectIDs[i], type_);
       }
     }
 

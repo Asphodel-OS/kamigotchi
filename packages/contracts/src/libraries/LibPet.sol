@@ -128,17 +128,14 @@ library LibPet {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("RESTING"));
   }
 
-  // Update the current health of a pet based on its timestamp and health at last action.
-  // NOTE: should be called at the top of a System and folllowed up with a require(!isDead).
-  // it's a bit gas-inefficient to be doing it this way but saves us plenty of mental energy
-  // in catching all the edge cases.
-  function syncHealth(IUintComp components, uint256 id) public {
+  // Update the current health of a pet as well as any active production
+  function sync(IUintComp components, uint256 id) public {
     if (isHarvesting(components, id)) {
-      // drain health if harvesting
-      uint256 drainAmt = calcProductionDrain(components, id);
+      uint256 productionID = getProduction(components, id);
+      uint256 deltaBalance = LibProduction.sync(components, productionID);
+      uint256 drainAmt = calcDrain(components, id, deltaBalance);
       drain(components, id, drainAmt);
     } else if (isResting(components, id)) {
-      // recover health if resting
       uint256 healAmt = calcRestingRecovery(components, id);
       heal(components, id, healAmt);
     }
@@ -159,7 +156,6 @@ library LibPet {
   // CALCULATIONS
 
   // Calculate the affinity multiplier (1e2 precision) for attacks between two kamis
-  // TODO: implement
   function calcAttackAffinityMultiplier(
     IUintComp components,
     uint256 sourceID,
@@ -170,26 +166,37 @@ library LibPet {
     return LibRegistryAffinity.getAttackMultiplier(components, sourceAff, targetAff);
   }
 
-  // NOTE: consider using this for calcProductionDrain
-  function calcDrainFromBalance(IUintComp components, uint256 amt) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
-    return (amt * base + (basePrecision / 2)) / basePrecision;
+  // Calculate the reward for liquidating a specified Coin balance
+  function calcBounty(
+    IUintComp components,
+    uint256 id, // unused atm, but will be used for skill multipliers
+    uint256 amt
+  ) internal view returns (uint256) {
+    uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
+    uint256 precision = 10 ** LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE_PREC");
+    return (amt * base) / precision;
   }
 
-  // Calculate the total health drain from harvesting (rounded up) since the last check. This is
-  // based on the Kami's production and assumes that information is up to date.
-  // NOTE: we can't just use LibProd.calcOutput() here because that rounds down, while here
-  // we want to properly round. We need a game design discussion on how we want to do this.
-  function calcProductionDrain(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 productionID = getProduction(components, id);
-    uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 harvestRate = LibProduction.getRate(components, productionID);
-    uint256 harvestRatePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+  // NOTE: consider using this for calcProductionDrain
+  // Calculate the drain for a pet, based on coins received
+  function calcDrain(
+    IUintComp components,
+    uint256 id,
+    uint256 amt
+  ) internal view returns (uint256) {
     uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
     uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
-    uint256 totalPrecision = basePrecision * harvestRatePrecision;
-    return (duration * harvestRate * base + (totalPrecision / 2)) / totalPrecision;
+    uint256 multiplier = calcDrainMultiplier(components, id);
+    uint256 totalPrecision = basePrecision * 1000; // 1000 from bonus multiplier
+    return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
+  }
+
+  // get the total drain multiplier for receiving coins
+  // defaults to 100/100 if not set for the pet
+  function calcDrainMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 bonusID = LibBonus.get(components, id, "HARVEST_DRAIN");
+    uint256 bonusMult = LibBonus.getValue(components, bonusID);
+    return bonusMult;
   }
 
   // Calculate the recovery of the kami from resting. This assumes the Kami is actually resting.

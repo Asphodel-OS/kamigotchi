@@ -32,20 +32,16 @@ contract ProductionCollectSystem is System {
     require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
 
     // health check
-    LibPet.syncHealth(components, petID);
+    LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
     require(
       LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
       "Node: too far"
     );
 
-    // add balance and experience
-    uint256 output = LibProduction.calcOutput(components, id);
-    LibCoin.inc(components, accountID, output);
+    // claim balance and increase experience
+    uint256 output = LibProduction.claim(components, id);
     LibExperience.inc(components, petID, output);
-
-    // reset production
-    LibProduction.reset(components, id);
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);

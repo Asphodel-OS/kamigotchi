@@ -4,6 +4,7 @@ import { Kami } from "layers/react/shapes/Kami";
 import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { skillIcons } from "assets/images/skills";
+import exitIcon from "assets/images/icons/exit_native.png"
 
 
 interface Props {
@@ -71,22 +72,46 @@ export const Skills = (props: Props) => {
     return reqs.map((req) => parseReqText(req, checkRequirement(req, kami)));
   }
 
-  // TODO: should we convert to on chain image URIs?
-  // or better handling in general
+  // Q: should we convert to on chain image URIs?
+  // TODO: instantiate a map instead..
   const getImage = (skill: Skill): any => {
     switch (skill.name.toUpperCase()) {
       case 'ACQUISITIVENESS':
         return skillIcons.acquisitiveness;
       case 'AGGRESSION':
         return skillIcons.aggression;
+      case 'BANDIT':
+        return skillIcons.bandit;
       case 'DEFENSIVENESS':
         return skillIcons.defensiveness;
+      case 'DEGENERATE':
+        return skillIcons.degenerate;
+      case 'ENDURANCE':
+        return skillIcons.endurance;
+      case 'GREED':
+        return skillIcons.greed;
+      case 'LEVERAGE':
+        return skillIcons.leverage;
+      case 'LOOPING':
+        return skillIcons.looping;
+      case 'PATIENCE':
+        return skillIcons.patience;
       case 'PREDATOR':
         return skillIcons.predator;
       case 'PROTECTOR':
         return skillIcons.protector;
+      case 'SNIPER':
+        return skillIcons.sniper;
+      case 'SUNGLASSES OWNERSHIP':
+        return skillIcons.sunglassesOwnership;
+      case 'VIGOR':
+        return skillIcons.vigor;
       case 'WARMONGER':
         return skillIcons.warmonger;
+      case 'WORKOUT ROUTINE':
+        return skillIcons.workoutRoutine;
+      default:
+        return exitIcon;
     }
   }
 

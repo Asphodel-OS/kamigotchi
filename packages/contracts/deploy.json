@@ -551,6 +551,23 @@
       ]
     },
     {
+      "name": "Mint20ProxySystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Mint20MintSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdPetComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "TypeComponent",
+        "ValueComponent",
+        "ProxyPermissionsMint20Component"
+      ]
+    },
+    {
       "name": "NodeCollectSystem",
       "writeAccess": [
         "BalanceComponent",
@@ -567,23 +584,6 @@
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
-      ]
-    },
-    {
-      "name": "Mint20ProxySystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Mint20MintSystem",
-      "writeAccess": [
-        "BlockLastComponent",
-        "IdAccountComponent",
-        "IdPetComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
-        "TypeComponent",
-        "ValueComponent",
-        "ProxyPermissionsMint20Component"
       ]
     },
     {
@@ -650,12 +650,14 @@
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
+        "CoinComponent",
         "EpochComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
         "IsDataComponent",
         "IsScoreComponent",
         "IndexComponent",
+        "RateComponent",
         "TimeLastActionComponent",
         "TypeComponent",
         "ValueComponent"
@@ -665,10 +667,12 @@
       "name": "PetLevelSystem",
       "writeAccess": [
         "BlockLastComponent",
+        "CoinComponent",
         "ExperienceComponent",
         "HealthCurrentComponent",
         "LevelComponent",
         "ProxyPermissionsERC721Component",
+        "RateComponent",
         "SkillPointComponent"
       ]
     },
@@ -709,13 +713,13 @@
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
+        "HealthCurrentComponent",
         "IdHolderComponent",
         "IsDataComponent",
         "IsScoreComponent",
         "IndexComponent",
-        "HealthCurrentComponent",
+        "RateComponent",
         "TimeLastActionComponent",
-        "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -755,8 +759,7 @@
         "IdPetComponent",
         "RateComponent",
         "StateComponent",
-        "TimeLastActionComponent",
-        "TimeStartComponent"
+        "TimeLastActionComponent"
       ]
     },
     {
@@ -840,7 +843,9 @@
         "HealthComponent",
         "PowerComponent",
         "SkillPointComponent",
+        "SlotsComponent",
         "TypeComponent",
+        "ValueComponent",
         "ViolenceComponent"
       ]
     }
