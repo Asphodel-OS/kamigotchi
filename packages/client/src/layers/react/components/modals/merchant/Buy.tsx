@@ -65,6 +65,7 @@ export function registerBuyModal() {
       // NOTE: may need to subscribe to component updates too, to resolve edge cases
       useEffect(() => {
         setListing(getListing(layers, listingEntityIndex));
+        setQuantity(1);
       }, [listingEntityIndex]);
 
 
@@ -94,6 +95,7 @@ export function registerBuyModal() {
             return api.listing.buy(listing.id, amt);
           },
         });
+        closeModal();
       };
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +110,11 @@ export function registerBuyModal() {
           buy(listing, quantity);
         }
       };
+
+      const closeModal = () => {
+        setVisibleModals({ ...visibleModals, buy: false });
+        setQuantity(1);
+      }
 
 
       /////////////////
@@ -124,7 +131,7 @@ export function registerBuyModal() {
       const CancelButton = () => (
         <ActionButton
           id={`button-cancel`}
-          onClick={() => setVisibleModals({ ...visibleModals, buy: false })}
+          onClick={() => closeModal()}
           text='Cancel'
         />
       );
