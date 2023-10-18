@@ -28,23 +28,19 @@ library LibLootbox {
   // @param world       The world contract
   // @param components  The components contract
   // @param invID       EntityID of the lootbox inventory
-  // @param amt         The amount of items to reveal
+  // @param count       The amount of items to reveal
   function startReveal(
     IWorld world,
     IUintComp components,
     uint256 invID,
-    uint256 amt
+    uint256 count
   ) internal returns (uint256 id) {
-    // @dev extra check to make sure the item is a lootbox
-    uint256 regID = LibRegistryItem.getByInstance(components, invID);
-    require(isLootbox(components, regID), "LibLootbox: inv not lootbox");
-
-    LibInventory.dec(components, invID, amt);
+    LibInventory.dec(components, invID, count);
 
     // creating reveal entity
     id = world.getUniqueEntityId();
     setIsLootbox(components, id);
-    setBalance(components, id, amt);
+    setBalance(components, id, count);
     setHolder(components, id, LibInventory.getHolder(components, invID));
     setIndex(components, id, LibInventory.getItemIndex(components, invID));
     LibRandom.setRevealBlock(components, id, block.number);
@@ -59,15 +55,10 @@ library LibLootbox {
     uint256 revealID,
     uint256 holderID
   ) internal {
-    require(
-      isLootbox(components, revealID) && LibRandom.hasRevealBlock(components, revealID),
-      "LibLootbox: not reveal entity"
-    );
-
     // scoping to save memory
     {
       uint256 index = getIndex(components, revealID);
-      uint256 amt = getBalance(components, revealID);
+      uint256 count = getBalance(components, revealID);
       uint256 regID = LibRegistryItem.getByItemIndex(components, index);
       uint256[] memory keys = getKeys(components, regID);
       uint256[] memory weights = getWeights(components, regID);
@@ -80,7 +71,7 @@ library LibLootbox {
         )
       );
 
-      executeDropTable(world, components, holderID, keys, weights, seed, amt);
+      executeDropTable(world, components, holderID, keys, weights, seed, count);
     }
   }
 
@@ -90,7 +81,7 @@ library LibLootbox {
   // @param holderID  The entity ID of the lootbox holder
   // @param weights   Weights for lootbox drop table
   // @param keys      Keys for lootbox drop table
-  // @param amt       The amount of lootboxes to open
+  // @param count       The amount of lootboxes to open
   function executeDropTable(
     IWorld world,
     IUintComp components,
@@ -98,13 +89,13 @@ library LibLootbox {
     uint256[] memory keys,
     uint256[] memory weights,
     uint256 seed,
-    uint256 amt
+    uint256 count
   ) internal {
-    if (amt == 1) {
+    if (count == 1) {
       uint256 index = LibRandom.selectFromWeighted(keys, weights, seed);
       distribute(world, components, holderID, index, 1);
     } else {
-      uint256[] memory results = LibRandom.selectMultipleFromWeighted(keys, weights, seed, amt);
+      uint256[] memory results = LibRandom.selectMultipleFromWeighted(weights, seed, count);
       for (uint256 i; i < results.length; i++) {
         distribute(world, components, holderID, keys[i], results[i]);
       }
@@ -116,21 +107,21 @@ library LibLootbox {
   // @param components The components contract
   // @param holderID  The entityID of the holder
   // @param index     The index of the item to distribute
-  // @param amt       The amount of items to distribute
+  // @param count       The amount of items to distribute
   function distribute(
     IWorld world,
     IUintComp components,
     uint256 holderID,
     uint256 index,
-    uint256 amt
+    uint256 count
   ) internal {
-    if (amt == 0) return;
+    if (count == 0) return;
 
     uint256 invID = LibInventory.get(components, holderID, index);
     if (invID == 0) {
       invID = LibInventory.create(world, components, holderID, index);
     }
-    LibInventory.inc(components, invID, amt);
+    LibInventory.inc(components, invID, count);
   }
 
   // @notice deletes a reveal entity
@@ -214,8 +205,8 @@ library LibLootbox {
     IUintComp components,
     uint256 holderID,
     uint256 index,
-    uint256 amt
+    uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, holderID, index, "LOOTBOX_OPENED", amt);
+    LibDataEntity.incFor(world, components, holderID, index, "LOOTBOX_OPENED", count);
   }
 }
