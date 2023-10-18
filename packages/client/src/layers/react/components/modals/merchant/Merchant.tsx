@@ -91,6 +91,7 @@ export function registerMerchantModal() {
           id='merchant'
           divName='merchant'
           header={<Title>{`${merchant?.name}'s Shop`}</Title>}
+          hideModal={{ buy: false }}
           canExit
         >
           <Listings listings={merchant?.listings} />
