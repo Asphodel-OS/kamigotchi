@@ -242,17 +242,16 @@ export function setUpWorldAPI(systems: any) {
   }
 
   async function initFood(api: AdminAPI) {
-    await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
-    await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
-    await api.registry.food.create(3, 'Gakki Cookie Sticks', 200);
-    await api.registry.revive.create(1, 'Red Gakki Ribbon', 10);
+    await api.registry.food.create(1, 1, 'Maple-Flavor Ghost Gum', 25);
+    await api.registry.food.create(2, 2, 'Pom-Pom Fruit Candy', 100);
+    await api.registry.food.create(3, 3, 'Gakki Cookie Sticks', 200);
+    await api.registry.revive.create(4, 1, 'Red Gakki Ribbon', 10);
   }
 
   async function initLootbox(api: AdminAPI) {
     // @dev temp lootbox holder, droptable consists of food above
     await api.registry.lootbox.create(1000, [1, 2, 3], [3, 2, 1], 'Lootbox');
   }
-
 
   ////////////////////
   // NPCS
