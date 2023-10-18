@@ -116,6 +116,12 @@ export const Kards = (props: Props) => {
     return base * multiplier;
   };
 
+  const calcLiquidationThresholdValue = (attacker: Kami, victim: Kami): number => {
+    const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
+    const thresholdPercent = calcLiquidationThreshold(attacker, victim);
+    return thresholdPercent * victimTotalHealth;
+  }
+
   const canMog = (attacker: Kami, victim: Kami): boolean => {
     const thresholdPercent = calcLiquidationThreshold(attacker, victim);
     const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
@@ -202,9 +208,17 @@ export const Kards = (props: Props) => {
       reason = 'your kamis are on cooldown';
     }
 
-    available = available.filter((kami) => canMog(kami, target));
-    if (available.length == 0 && reason === '') {
-      reason = 'your kamis could be more violent';
+    // check what the liquidation threshold is for any kamis that have made it to 
+    const valid = available.filter((kami) => canMog(kami, target));
+    if (valid.length == 0 && reason === '') {
+      // get the details of the highest cap liquidation
+      const thresholds = available.map((ally) => calcLiquidationThresholdValue(ally, target));
+      const [threshold, index] = thresholds.reduce(
+        (a, b, i) => a[0] < b ? [b, i] : a,
+        [Number.MIN_VALUE, -1]
+      );
+      const champion = available[index];
+      reason = `${champion.name} can liquidate at ${Math.round(threshold)} Health`;
     }
 
     if (reason === '') reason = 'Liquidate this Kami';
