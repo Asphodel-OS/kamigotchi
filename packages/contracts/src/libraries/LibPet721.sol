@@ -37,8 +37,12 @@ library LibPet721 {
   ////////////////////////
   // INTERACTIONS
 
-  // reveals kami
-  // returns packed traits
+  // @notice  reveals and assigns a pet's traits. does not mint an ERC721
+  // @param   world     world contract
+  // @param   components  components contract
+  // @param   petID     entityID of pet
+  // @param   seed      seed for random generation - uses blockhash
+  // @return  packed    bitpacked traits, used for metadataURI
   function reveal(
     IWorld world,
     IUintComp components,
@@ -58,9 +62,10 @@ library LibPet721 {
     packed = LibRandom.packArray(traits, 8);
   }
 
-  // minting a new kami in game. the default
-  // mints to Pet721 contract as owner
-  // does not interact with other mud systems
+  // @notice  mints a pet with ERC721 for in-game kamis, with the ERC721 contract as owner
+  // @dev     this is the default state, with revealed kamis minted this way
+  // @param   world     world contract
+  // @param   index     ERC721 index of pet
   function mintInGame(IWorld world, uint256 index) internal {
     Pet721 token = getContract(world);
     token.mint(address(token), index);
