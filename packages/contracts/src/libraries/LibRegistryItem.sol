@@ -40,25 +40,30 @@ library LibRegistryItem {
   /////////////////
   // INTERACTIONS
 
-  // Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
+  // @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
   function createFood(
     IWorld world,
     IUintComp components,
-    uint256 foodIndex
+    uint256 index,
+    uint256 foodIndex,
+    string memory name,
+    uint256 health
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    uint256 itemIndex = getItemCount(components) + 1;
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
-    setItemIndex(components, id, itemIndex);
+    setIsRegistry(components, id);
+    setIsFungible(components, id);
+    setItemIndex(components, id, index);
     setFoodIndex(components, id, foodIndex);
+    setName(components, id, name);
+    LibStat.setHealth(components, id, health);
     return id;
   }
 
-  // Create a registry entry for an equipment item. (e.g. armor, helmet, etc.)
+  // @notice Create a registry entry for an equipment item. (e.g. armor, helmet, etc.)
   function createGear(
     IWorld world,
     IUintComp components,
+    uint256 index,
     uint256 gearIndex,
     string memory name,
     string memory type_,
@@ -69,14 +74,28 @@ library LibRegistryItem {
     uint256 slots
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    uint256 itemIndex = getItemCount(components) + 1;
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
-    setItemIndex(components, id, itemIndex);
+    setIsRegistry(components, id);
+    setIsNonFungible(components, id);
+    setItemIndex(components, id, index);
     setGearIndex(components, id, gearIndex);
+    setName(components, id, name);
+    setType(components, id, type_);
 
-    uint256 gotID = setGear(components, id, name, type_, health, power, violence, harmony, slots);
-    require(gotID == id, "LibRegistryItem.createGear(): id mismatch");
+    if (health > 0) LibStat.setHealth(components, id, health);
+    else LibStat.removeHealth(components, id);
+
+    if (power > 0) LibStat.setPower(components, id, power);
+    else LibStat.removePower(components, id);
+
+    if (violence > 0) LibStat.setViolence(components, id, violence);
+    else LibStat.removeViolence(components, id);
+
+    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHarmony(components, id);
+
+    if (slots > 0) LibStat.setSlots(components, id, slots);
+    else LibStat.removeSlots(components, id);
+
     return id;
   }
 
@@ -108,6 +127,7 @@ library LibRegistryItem {
   function createMod(
     IWorld world,
     IUintComp components,
+    uint256 index,
     uint256 modIndex,
     string memory name,
     uint256 health,
@@ -116,14 +136,24 @@ library LibRegistryItem {
     uint256 harmony
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    uint256 itemIndex = getItemCount(components) + 1;
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
-    setItemIndex(components, id, itemIndex);
+    setIsRegistry(components, id);
+    setIsFungible(components, id);
+    setItemIndex(components, id, index);
     setModIndex(components, id, modIndex);
+    setName(components, id, name);
 
-    uint256 gotID = setMod(components, modIndex, name, health, power, violence, harmony);
-    require(gotID == id, "LibRegistryItem.createMod(): entity ID mismatch");
+    if (health > 0) LibStat.setHealth(components, id, health);
+    else LibStat.removeHealth(components, id);
+
+    if (power > 0) LibStat.setPower(components, id, power);
+    else LibStat.removePower(components, id);
+
+    if (violence > 0) LibStat.setViolence(components, id, violence);
+    else LibStat.removeViolence(components, id);
+
+    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    else LibStat.removeHarmony(components, id);
+
     return id;
   }
 
@@ -131,133 +161,44 @@ library LibRegistryItem {
   function createRevive(
     IWorld world,
     IUintComp components,
-    uint256 foodIndex
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    uint256 itemIndex = getItemCount(components) + 1;
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
-    setItemIndex(components, id, itemIndex);
-    setReviveIndex(components, id, foodIndex);
-    return id;
-  }
-
-  // Set the field values of a food item registry entry
-  function setFood(
-    IUintComp components,
-    uint256 foodIndex,
-    string memory name,
-    uint256 health
-  ) internal returns (uint256) {
-    uint256 id = getByFoodIndex(components, foodIndex);
-    require(id != 0, "LibRegistryItem.setFood(): foodIndex not found");
-    require(!LibString.eq(name, ""), "LibRegistryItem.setFood(): name cannot be empty");
-    require(health > 0, "LibRegistryItem.setFood(): health must be greater than 0");
-
-    setName(components, id, name);
-    LibStat.setHealth(components, id, health);
-    return id;
-  }
-
-  // Set the field values of an existing equipment item registry entry
-  // NOTE: 0 values mean the component should be unset
-  function setGear(
-    IUintComp components,
-    uint256 gearIndex,
-    string memory name,
-    string memory type_,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots
-  ) internal returns (uint256) {
-    uint256 id = getByGearIndex(components, gearIndex);
-    require(id != 0, "LibRegistryItem.setGear(): gearIndex not found");
-    require(!LibString.eq(name, ""), "LibRegistryItem.setGear(): name cannot be empty");
-    require(!LibString.eq(type_, ""), "LibRegistryItem.setGear(): type cannot be empty");
-
-    setName(components, id, name);
-    setType(components, id, type_);
-
-    if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
-
-    if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
-
-    if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
-
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
-
-    if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
-
-    return id;
-  }
-
-  // Set the field values of an existing mod item registry entry
-  // NOTE: 0 values mean the component should be unset
-  function setMod(
-    IUintComp components,
-    uint256 modIndex,
-    string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony
-  ) internal returns (uint256) {
-    uint256 id = getByModIndex(components, modIndex);
-    require(id != 0, "LibRegistryItem.setMod(): modIndex not found");
-    require(!LibString.eq(name, ""), "LibRegistryItem.setMod(): name cannot be empty");
-
-    setName(components, id, name);
-
-    if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
-
-    if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
-
-    if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
-
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
-
-    return id;
-  }
-
-  // Set the field values of a food item registry entry
-  function setRevive(
-    IUintComp components,
+    uint256 index,
     uint256 reviveIndex,
     string memory name,
     uint256 health
   ) internal returns (uint256) {
-    uint256 id = getByReviveIndex(components, reviveIndex);
-    require(id != 0, "LibRegistryItem.setRevive(): reviveIndex not found");
-    require(!LibString.eq(name, ""), "LibRegistryItem.setRevive(): name cannot be empty");
-    require(health > 0, "LibRegistryItem.setRevive(): health must be greater than 0");
-
+    uint256 id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsFungible(components, id);
+    setItemIndex(components, id, index);
+    setReviveIndex(components, id, reviveIndex);
     setName(components, id, name);
     LibStat.setHealth(components, id, health);
     return id;
   }
 
-  // @notice deletes a lootbox registry entity
-  // @param components  The components contract
-  // @param id          id to delete
-  function deleteLootbox(IUintComp components, uint256 id) internal {
+  // @notice delete a Registry entry for an item.
+  function deleteItem(IUintComp components, uint256 id) internal {
     unsetIsRegistry(components, id);
     unsetIsFungible(components, id);
-    unsetIsLootbox(components, id);
+    unsetIsNonFungible(components, id);
     unsetItemIndex(components, id);
+    unsetName(components, id);
+    unsetType(components, id);
+
+    unsetFoodIndex(components, id);
+    unsetGearIndex(components, id);
+    unsetModIndex(components, id);
+    unsetReviveIndex(components, id);
+    unsetIsLootbox(components, id);
+
+    LibStat.removeHealth(components, id);
+    LibStat.removePower(components, id);
+    LibStat.removeViolence(components, id);
+    LibStat.removeHarmony(components, id);
+    LibStat.removeSlots(components, id);
+
     unsetKeys(components, id);
     unsetWeights(components, id);
-    unsetName(components, id);
   }
 
   /////////////////
@@ -322,6 +263,10 @@ library LibRegistryItem {
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
   }
 
+  function setIsNonFungible(IUintComp components, uint256 id) internal {
+    IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
+  }
+
   function setIsLootbox(IUintComp components, uint256 id) internal {
     IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
   }
@@ -358,32 +303,71 @@ library LibRegistryItem {
     WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
   }
 
+  function unsetFoodIndex(IUintComp components, uint256 id) internal {
+    IndexFoodComponent comp = IndexFoodComponent(getAddressById(components, IndexFoodCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetGearIndex(IUintComp components, uint256 id) internal {
+    IndexGearComponent comp = IndexGearComponent(getAddressById(components, IndexGearCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
   function unsetIsFungible(IUintComp components, uint256 id) internal {
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).remove(id);
+    IsFungibleComponent comp = IsFungibleComponent(getAddressById(components, IsFungCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetIsNonFungible(IUintComp components, uint256 id) internal {
+    IsNonFungibleComponent comp = IsNonFungibleComponent(
+      getAddressById(components, IsNonFungCompID)
+    );
+    if (comp.has(id)) comp.remove(id);
   }
 
   function unsetIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).remove(id);
-  }
-
-  function unsetItemIndex(IUintComp components, uint256 id) internal {
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
+    IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
+    if (comp.has(id)) comp.remove(id);
   }
 
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
-    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IsRegistryComponent comp = IsRegistryComponent(getAddressById(components, IsRegCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetItemIndex(IUintComp components, uint256 id) internal {
+    IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    if (comp.has(id)) comp.remove(id);
   }
 
   function unsetKeys(IUintComp components, uint256 id) internal {
-    KeysComponent(getAddressById(components, KeysCompID)).remove(id);
+    KeysComponent comp = KeysComponent(getAddressById(components, KeysCompID));
+    if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetWeights(IUintComp components, uint256 id) internal {
-    WeightsComponent(getAddressById(components, WeightsCompID)).remove(id);
+  function unsetModIndex(IUintComp components, uint256 id) internal {
+    IndexModComponent comp = IndexModComponent(getAddressById(components, IndexModCompID));
+    if (comp.has(id)) comp.remove(id);
   }
 
   function unsetName(IUintComp components, uint256 id) internal {
-    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    NameComponent comp = NameComponent(getAddressById(components, NameCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetType(IUintComp components, uint256 id) internal {
+    TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetReviveIndex(IUintComp components, uint256 id) internal {
+    IndexReviveComponent comp = IndexReviveComponent(getAddressById(components, IndexReviveCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetWeights(IUintComp components, uint256 id) internal {
+    WeightsComponent comp = WeightsComponent(getAddressById(components, WeightsCompID));
+    if (comp.has(id)) comp.remove(id);
   }
 
   /////////////////

@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { LibString } from "solady/utils/LibString.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Lootbox.Create"));
@@ -16,7 +17,8 @@ contract _RegistryCreateLootboxSystem is System {
       .decode(arguments, (uint256, uint256[], uint256[], string));
 
     uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
-    require(registryID == 0, "Item Registry: index alr exists");
+    require(registryID == 0, "CreateLootbox: index alr exists");
+    require(!LibString.eq(name, ""), "CreateLootbox: name empty");
 
     LibRegistryItem.createLootbox(world, components, index, keys, weights, name);
 

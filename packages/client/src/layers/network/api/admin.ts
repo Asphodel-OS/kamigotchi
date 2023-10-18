@@ -306,13 +306,14 @@ export function createAdminAPI(systems: any) {
   //  ITEMS
 
   // @dev add a food item registry entry
-  async function registerFood(foodIndex: number, name: string, health: number) {
+  async function registerFood(index: number, foodIndex: number, name: string, health: number) {
     await sleepIf();
-    return systems['system._Registry.Food.Create'].executeTyped(foodIndex, name, health);
+    return systems['system._Registry.Food.Create'].executeTyped(index, foodIndex, name, health);
   }
 
   // @dev add an equipment item registry entry
   async function registerGear(
+    index: number,
     gearIndex: number,
     name: string,
     type_: string,
@@ -324,6 +325,7 @@ export function createAdminAPI(systems: any) {
   ) {
     await sleepIf();
     return systems['system._Registry.Gear.Create'].executeTyped(
+      index,
       gearIndex,
       name,
       type_,
@@ -337,6 +339,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev add a modification item registry entry
   async function registerModification(
+    index: number,
     modIndex: number,
     name: string,
     health: number,
@@ -346,6 +349,7 @@ export function createAdminAPI(systems: any) {
   ) {
     await sleepIf();
     return systems['system._Registry.Mod.Create'].executeTyped(
+      index,
       modIndex,
       name,
       health,
@@ -356,9 +360,9 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev add a revive item registry entry
-  async function registerRevive(reviveIndex: number, name: string, health: number) {
+  async function registerRevive(index: number, reviveIndex: number, name: string, health: number) {
     await sleepIf();
-    return systems['system._Registry.Revive.Create'].executeTyped(reviveIndex, name, health);
+    return systems['system._Registry.Revive.Create'].executeTyped(index, reviveIndex, name, health);
   }
 
   // @dev adds a trait in registry

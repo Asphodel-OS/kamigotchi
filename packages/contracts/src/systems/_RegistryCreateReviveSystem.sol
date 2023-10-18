@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
+import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Revive.Create"));
 
@@ -14,25 +15,27 @@ contract _RegistryCreateReviveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name, uint256 health) = abi.decode(
+    (uint256 index, uint256 reviveIndex, string memory name, uint256 health) = abi.decode(
       arguments,
-      (uint256, string, uint256)
+      (uint256, uint256, string, uint256)
     );
-    uint256 registryID = LibRegistryItem.getByReviveIndex(components, index);
+    uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
 
-    require(registryID == 0, "Item Registry: Revive index already exists");
+    require(registryID == 0, "CreateRevive: index alr exists");
+    require(!LibString.eq(name, ""), "CreateRevive: name is empty");
+    require(health > 0, "CreateRevive: health not > 0");
 
-    LibRegistryItem.createRevive(world, components, index);
-    LibRegistryItem.setRevive(components, index, name, health);
+    LibRegistryItem.createRevive(world, components, index, reviveIndex, name, health);
 
     return "";
   }
 
   function executeTyped(
     uint256 index,
+    uint256 reviveIndex,
     string memory name,
     uint256 health
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, health));
+    return execute(abi.encode(index, reviveIndex, name, health));
   }
 }

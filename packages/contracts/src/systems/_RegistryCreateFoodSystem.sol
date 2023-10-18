@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { LibString } from "solady/utils/LibString.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Food.Create"));
@@ -14,25 +15,27 @@ contract _RegistryCreateFoodSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name, uint256 health) = abi.decode(
+    (uint256 index, uint256 foodIndex, string memory name, uint256 health) = abi.decode(
       arguments,
-      (uint256, string, uint256)
+      (uint256, uint256, string, uint256)
     );
-    uint256 registryID = LibRegistryItem.getByFoodIndex(components, index);
+    uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
 
-    require(registryID == 0, "Item Registry: Food index already exists");
+    require(!LibString.eq(name, ""), "CreateFood: name cannot be empty");
+    require(health > 0, "CreateFood: health not > than 0");
+    require(registryID == 0, "CreateFood: Index already exists");
 
-    LibRegistryItem.createFood(world, components, index);
-    LibRegistryItem.setFood(components, index, name, health);
+    LibRegistryItem.createFood(world, components, index, foodIndex, name, health);
 
     return "";
   }
 
   function executeTyped(
     uint256 index,
+    uint256 foodIndex,
     string memory name,
     uint256 health
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, health));
+    return execute(abi.encode(index, foodIndex, name, health));
   }
 }
