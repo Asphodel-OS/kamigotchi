@@ -131,6 +131,7 @@ export const List = (props: Props) => {
   const getItemName = (itemIndex: number): string => {
     let entityIndex = props.utils.queryItemRegistry(Number(itemIndex));
     let registryObject = props.utils.getItem(entityIndex);
+    console.log(registryObject.name)
     return registryObject.name ? registryObject.name : `Item ${itemIndex}`;
   }
 
