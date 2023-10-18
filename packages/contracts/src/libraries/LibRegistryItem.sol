@@ -109,9 +109,9 @@ library LibRegistryItem {
     IWorld world,
     IUintComp components,
     uint256 index,
+    string memory name,
     uint256[] memory keys,
-    uint256[] memory weights,
-    string memory name
+    uint256[] memory weights
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     setIsRegistry(components, id);

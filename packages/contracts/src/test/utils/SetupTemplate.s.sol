@@ -363,12 +363,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createLootbox(
     uint index,
+    string memory name,
     uint[] memory keys,
-    uint[] memory weights,
-    string memory name
+    uint[] memory weights
   ) public {
     vm.prank(deployer);
-    __RegistryCreateLootboxSystem.executeTyped(index, keys, weights, name);
+    __RegistryCreateLootboxSystem.executeTyped(index, name, keys, weights);
   }
 
   /* QUESTS */
