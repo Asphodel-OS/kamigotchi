@@ -64,7 +64,7 @@ contract ProductionLiquidateSystem is System {
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);
     LibProduction.stop(components, targetProductionID);
-    LibKill.create(world, components, petID, targetPetID, nodeID);
+    LibKill.create(world, components, petID, targetPetID, nodeID, balance, bounty);
 
     // bump the cooldown by the value of the bonus
     uint256 bonusID = LibBonus.get(components, petID, "ATTACK_COOLDOWN");
