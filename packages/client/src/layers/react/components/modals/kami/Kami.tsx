@@ -87,7 +87,7 @@ export function registerKamiModal() {
     },
 
     ({ layers, actions, api }) => {
-      const [tab, setTab] = useState('allies');
+      const [tab, setTab] = useState('traits');
       const { kamiEntityIndex } = useSelectedEntities();
       const [mode, setMode] = useState('DETAILS');
 
