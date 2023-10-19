@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {
   Table,
@@ -20,10 +20,20 @@ interface Props {
 // Rendering of the Kami's Kill/Death Logs
 export const KillLogs = (props: Props) => {
   const { setKami } = useSelectedEntities();
-  const cellStyle = { fontFamily: 'Pixel', fontWeight: 12, border: 0 };
-
+  const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
+  const headerStyle = { ...cellStyle, fontSize: '1vw' };
+  const killStyle = { ...cellStyle, color: 'green' };
+  const deathStyle = { ...cellStyle, color: 'red' };
   let logs = props.kami.kills!.concat(props.kami.deaths!);
   logs = logs.sort((a, b) => b.time - a.time);
+
+  const getMonetaryOutcomeString = (log: Kill): string => {
+    if (log.target?.index) {
+      return `+${log.bounty} $MUSU`;
+    } else {
+      return `-${log.balance} $MUSU`;
+    }
+  }
 
   const Row = (log: Kill, index: number) => {
     const type = log.source?.index === undefined ? 'kill' : 'death';
@@ -42,7 +52,7 @@ export const KillLogs = (props: Props) => {
     return (
       <TableRow key={index}>
         <TableCell sx={cellStyle}>{dateString}</TableCell>
-        <TableCell sx={cellStyle}>{type}</TableCell>
+        <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>{type}</TableCell>
         <TableCell
           sx={{ ...cellStyle, cursor: 'pointer' }}
           onClick={() => setKami(subject?.entityIndex!)}
@@ -50,16 +60,25 @@ export const KillLogs = (props: Props) => {
           {subject?.name}
         </TableCell>
         <TableCell sx={cellStyle}>{log.node.name}</TableCell>
+        <TableCell sx={cellStyle}>{getMonetaryOutcomeString(log)}</TableCell>
       </TableRow>
     );
   };
 
   return (
     <Container style={{ overflowY: 'scroll' }}>
-      <Title>Kill/Death Logs</Title>
       <TableContainer>
         <Table>
-          <TableHead>{logs.map((log, index) => Row(log, index))}</TableHead>
+          <TableHead>
+            <TableRow key='header'>
+              <TableCell sx={headerStyle}>Time</TableCell>
+              <TableCell sx={headerStyle}>Type</TableCell>
+              <TableCell sx={headerStyle}>Adversary</TableCell>
+              <TableCell sx={headerStyle}>Node</TableCell>
+              <TableCell sx={headerStyle}>Outcome</TableCell>
+            </TableRow>
+          </TableHead>
+          {logs.map((log, index) => Row(log, index))}
         </Table>
       </TableContainer>
     </Container>
