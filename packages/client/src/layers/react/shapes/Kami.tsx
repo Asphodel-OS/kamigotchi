@@ -124,7 +124,7 @@ export const getKami = (
     namable: getComponentValue(CanName, index)?.value as boolean,
     lastUpdated: (getComponentValue(LastTime, index)?.value as number) * 1,
     cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
-    skillPoints: (getComponentValue(SkillPoint, index)?.value as number) * 1,
+    skillPoints: (getComponentValue(SkillPoint, index)?.value ?? 0 as number) * 1,
     stats: getStats(layers, index),
     bonuses: getBonuses(layers, index),
     bonusStats: {

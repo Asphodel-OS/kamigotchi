@@ -154,6 +154,7 @@ export const Skills = (props: Props) => {
 
   return (
     <>
+      <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
       {DisplaySkills()}
     </>
   );
@@ -169,6 +170,15 @@ const Wrapper = styled.div`
 
 const Image = styled.img`
   height: 10vw;
+`;
+
+const Text = styled.div`
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
+  justify-content: flex-start;
+  color: #333;
+  padding: 1vh 0vw;
 `;
 
 const SkillContainer = styled.button`
