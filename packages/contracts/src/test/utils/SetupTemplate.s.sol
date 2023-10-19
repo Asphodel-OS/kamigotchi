@@ -719,7 +719,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("HARVEST_RATE_PREC", 9);
     _setConfig("HARVEST_RATE_BASE", 1000);
     _setConfig("HARVEST_RATE_BASE_PREC", 3);
-    _setConfig("HARVEST_RATE_MULT_PREC", 4);
+    _setConfig("HARVEST_RATE_MULT_PREC", 7);
     _setConfig("HARVEST_RATE_MULT_AFF_BASE", 100);
     _setConfig("HARVEST_RATE_MULT_AFF_UP", 150);
     _setConfig("HARVEST_RATE_MULT_AFF_DOWN", 50);
