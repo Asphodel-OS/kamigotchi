@@ -25,6 +25,7 @@ export type { ExperienceComponent } from "./ExperienceComponent";
 export type { Farm20DepositSystem } from "./Farm20DepositSystem";
 export type { Farm20ProxySystem } from "./Farm20ProxySystem";
 export type { Farm20WithdrawSystem } from "./Farm20WithdrawSystem";
+export type { ForComponent } from "./ForComponent";
 export type { HarmonyComponent } from "./HarmonyComponent";
 export type { HealthComponent } from "./HealthComponent";
 export type { HealthCurrentComponent } from "./HealthCurrentComponent";
@@ -213,6 +214,7 @@ export { ExperienceComponent__factory } from "./factories/ExperienceComponent__f
 export { Farm20DepositSystem__factory } from "./factories/Farm20DepositSystem__factory";
 export { Farm20ProxySystem__factory } from "./factories/Farm20ProxySystem__factory";
 export { Farm20WithdrawSystem__factory } from "./factories/Farm20WithdrawSystem__factory";
+export { ForComponent__factory } from "./factories/ForComponent__factory";
 export { HarmonyComponent__factory } from "./factories/HarmonyComponent__factory";
 export { HealthComponent__factory } from "./factories/HealthComponent__factory";
 export { HealthCurrentComponent__factory } from "./factories/HealthCurrentComponent__factory";

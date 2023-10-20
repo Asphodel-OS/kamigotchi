@@ -231,19 +231,21 @@ export function createAdminAPI(systems: any) {
 
   async function createSkill(
     index: number,
-    cost: number,
-    max: number,
+    for_: string,
     type: string,
     name: string,
+    cost: number,
+    max: number,
     description: string,
   ) {
     await sleepIf();
     return systems['system._Registry.Skill.Create'].executeTyped(
       index,
-      cost,
-      max,
+      for_,
       type,
       name,
+      cost,
+      max,
       description,
     );
   }

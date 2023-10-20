@@ -106,6 +106,7 @@ export function createComponents(world: World) {
     Epoch: defineNumberEZ("Epoch", "component.Epoch"),
     Exits: defineNumberArrayComponent(world, "Exits", "component.Exits"),
     Experience: defineNumberEZ("Experience", "component.Experience"),
+    For: defineNumberEZ("For", "component.For"),
     Genus: defineStringEZ("Genus", "component.Genus"),
     Harmony: defineNumberEZ("Harmony", "component.Harmony"),
     Health: defineNumberEZ("Health", "component.Health"),
