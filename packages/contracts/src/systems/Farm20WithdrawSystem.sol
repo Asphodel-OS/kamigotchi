@@ -15,9 +15,12 @@ import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol"
 uint256 constant ID = uint256(keccak256("system.Farm20.Withdraw"));
 uint256 constant ROOM = 12;
 
-// in game -> ERC20
-// bridges in game coins to ERC20 by minting ERC20 tokens in the ERC20 contract
-// sends it only to the Account owner's address
+/// @notice Farm20 game world => outside (ERC20)
+/** @dev
+ * Room 12 is the bridge room, system can only be called there
+ * Mints Farm20 tokens to recieving address, reduces CoinComponent balance
+ * to be called by account owner
+ */
 contract Farm20WithdrawSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -26,10 +29,10 @@ contract Farm20WithdrawSystem is System {
     require(amount > 0, "Farm20Withdraw: amt must be > 0");
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID != 0, "Farm20Withdraw: no account detected");
+    require(accountID != 0, "Farm20Withdraw: no account");
     require(
       LibAccount.getLocation(components, accountID) == ROOM,
-      "Farm20Withdraw: must be in room 12"
+      "Farm20Withdraw: not in room 12"
     );
 
     LibCoin.dec(components, accountID, amount);

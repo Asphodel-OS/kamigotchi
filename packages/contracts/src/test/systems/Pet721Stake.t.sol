@@ -53,7 +53,7 @@ contract Pet721StakeTest is SetupTemplate {
     _moveAccount(0, 4); // minting restricted to room 4
 
     // minting
-    _mintMint20(0, 1);
+    _giveMint20(0, 1);
     vm.prank(_getOwner(0));
     uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
     _assertPetState(petID, "UNREVEALED");
@@ -101,7 +101,7 @@ contract Pet721StakeTest is SetupTemplate {
   function testForceReveal() public {
     _moveAccount(0, 4); // minting restricted to room 4
 
-    _mintMint20(0, 1);
+    _giveMint20(0, 1);
     vm.prank(_getOwner(0));
     uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
 
@@ -109,7 +109,7 @@ contract Pet721StakeTest is SetupTemplate {
     _assertPetState(petID, "UNREVEALED");
 
     // do something to mine the block
-    _mintMint20(0, 1);
+    _giveMint20(0, 1);
     // vm.prank(_getOwner(0));
     // _Pet721MintSystem.executeTyped(1);
 

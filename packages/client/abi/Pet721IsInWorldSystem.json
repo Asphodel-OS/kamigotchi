@@ -61,17 +61,11 @@
           "type": "bytes"
         }
       ],
-      "stateMutability": "pure",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        }
-      ],
+      "inputs": [],
       "name": "executeTyped",
       "outputs": [
         {
@@ -80,7 +74,26 @@
           "type": "bytes"
         }
       ],
-      "stateMutability": "pure",
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "petIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "isInWorld",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -112,7 +125,8 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(address)": "240b27e6",
+    "executeTyped()": "e1df4ba6",
+    "isInWorld(uint256)": "b5f3365f",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

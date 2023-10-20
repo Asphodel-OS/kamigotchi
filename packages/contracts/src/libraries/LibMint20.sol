@@ -17,12 +17,12 @@ library LibMint20 {
   ////////////////////////
   // INTERACTIONS
 
-  // mints mint20 tokens
+  /// @notice DEPRECIATED mints mint20 tokens
   function mint(IWorld world, address to, uint256 amount) internal {
-    getContract(world).mint(to, amount);
+    getContract(world).depreciatedMint(to, amount);
   }
 
-  // burns mint20 tokens
+  /// @notice burns mint20 tokens
   function burn(IWorld world, address from, uint256 amount) internal {
     getContract(world).burn(from, amount);
   }
@@ -30,12 +30,12 @@ library LibMint20 {
   ///////////////////////
   // GETTERS
 
-  // get mint token contract
+  /// @notice get mint token contract
   function getContract(IWorld world) internal view returns (Mint20) {
     return Mint20ProxySystem(getAddressById(world.systems(), Mint20ProxyID)).getToken();
   }
 
-  // get totalMinted of mint20 token
+  /// @notice DEPRECIATED get totalMinted of mint20 token
   function getTotalMinted(IWorld world) internal view returns (uint256) {
     return getContract(world).getTotalMinted();
   }

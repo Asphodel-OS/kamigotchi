@@ -114,7 +114,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _moveAccount(playerIndex, 4);
 
     vm.roll(_currBlock++);
-    _mintMint20(playerIndex, 1);
+    _giveMint20(playerIndex, 1);
     vm.startPrank(owner);
     id = abi.decode(_Pet721MintSystem.executeTyped(1), (uint[]))[0];
     vm.stopPrank();
@@ -125,17 +125,6 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
 
     _moveAccount(playerIndex, initialLoc);
-  }
-
-  // mints an mint20 token for user
-  function _mintMint20(uint playerIndex, uint amount) internal {
-    address owner = _owners[playerIndex];
-
-    uint price = LibConfig.getValueOf(components, "MINT_PRICE");
-
-    vm.deal(owner, amount * price);
-    vm.prank(owner);
-    _Mint20MintSystem.mint{ value: amount * price }(amount);
   }
 
   /////////////////
@@ -265,10 +254,9 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // ADMIN POWERS
 
-  function _giveSkillPoint(uint id, uint amt) internal {
-    vm.startPrank(deployer);
-    LibSkill.inc(components, id, amt);
-    vm.stopPrank();
+  function _giveMint20(uint playerIndex, uint amount) internal {
+    vm.prank(deployer);
+    _Mint20.adminMint(_getOwner(playerIndex), amount);
   }
 
   function _giveLootbox(uint256 playerIndex, uint256 index, uint256 amt) internal {
@@ -279,6 +267,12 @@ abstract contract SetupTemplate is TestSetupImports {
     if (invID == 0) invID = LibInventory.create(world, components, accountID, index);
     LibInventory.inc(components, invID, amt);
     LibInventory.logIncItemTotal(world, components, accountID, index, amt);
+    vm.stopPrank();
+  }
+
+  function _giveSkillPoint(uint id, uint amt) internal {
+    vm.startPrank(deployer);
+    LibSkill.inc(components, id, amt);
     vm.stopPrank();
   }
 

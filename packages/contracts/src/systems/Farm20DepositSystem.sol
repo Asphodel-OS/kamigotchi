@@ -15,8 +15,12 @@ import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol"
 uint256 constant ID = uint256(keccak256("system.Farm20.Deposit"));
 uint256 constant ROOM = 12;
 
-// in game <- ERC20
-// brings ERC20 tokens back into the game, sends it to the sender's account entity
+/// @notice Farm20 outside (ERC20) => game world
+/** @dev
+ * Room 12 is the bridge room, system can only be called there
+ * Burns Farm20 bridged in, adds to CoinComponent balance for account
+ * to be called by account owner
+ */
 contract Farm20DepositSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

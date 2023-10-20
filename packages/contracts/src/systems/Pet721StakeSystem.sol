@@ -6,23 +6,23 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.Stake"));
 uint256 constant ROOM = 12;
 
-// sets a pet outside world => game world
-/* 
-  Invariants:
-    Before deposit:
-      1) Pet does not have an Account, owned by EOA
-      2) Pet state is "721_EXTERNAL"
-    After deposit:
-      1) Pet is linked to Account owned by msg.sender, token owned by Pet721
-      2) Pet state is not "721_EXTERNAL"
-*/
+/// @notice sets a pet outside world => game world
+/** @dev
+ * Room 12 is the bridge room, system can only be called there
+ *  Invariants:
+ *    Before deposit:
+ *      1) Pet does not have an Account, owned by EOA
+ *      2) Pet state is "721_EXTERNAL"
+ *    After deposit:
+ *      1) Pet is linked to Account owned by msg.sender, token owned by Pet721
+ *      2) Pet state is not "721_EXTERNAL"
+ */
 contract Pet721StakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -43,7 +43,7 @@ contract Pet721StakeSystem is System {
     require(LibPet.getAccount(components, petID) == 0, "Pet721Stake: already linked");
     require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
-    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", 1);
+    LibAccount.logIncPetsStaked(world, components, accountID, 1);
     LibAccount.updateLastBlock(components, accountID);
 
     LibPet.stake(components, petID, accountID);

@@ -34,6 +34,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
     "getToken()": FunctionFragment;
     "getTokenAddy()": FunctionFragment;
     "owner()": FunctionFragment;
+    "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -44,6 +45,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
       | "getToken"
       | "getTokenAddy"
       | "owner"
+      | "token"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -61,6 +63,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
@@ -77,6 +80,7 @@ export interface Pet721ProxySystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -144,6 +148,8 @@ export interface Pet721ProxySystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    token(overrides?: CallOverrides): Promise<[string]>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -166,6 +172,8 @@ export interface Pet721ProxySystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  token(overrides?: CallOverrides): Promise<string>;
+
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -187,6 +195,8 @@ export interface Pet721ProxySystem extends BaseContract {
     getTokenAddy(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    token(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -222,6 +232,8 @@ export interface Pet721ProxySystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    token(overrides?: CallOverrides): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -244,6 +256,8 @@ export interface Pet721ProxySystem extends BaseContract {
     getTokenAddy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

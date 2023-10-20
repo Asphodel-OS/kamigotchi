@@ -50,12 +50,12 @@ import LootboxStartRevealSystem from "../abi/LootboxStartRevealSystem.json";
 import Mint20MintSystem from "../abi/Mint20MintSystem.json";
 import Mint20ProxySystem from "../abi/Mint20ProxySystem.json";
 import NodeCollectSystem from "../abi/NodeCollectSystem.json";
+import Pet721IsInWorldSystem from "../abi/Pet721IsInWorldSystem.json";
 import Pet721MetadataSystem from "../abi/Pet721MetadataSystem.json";
 import Pet721MintSystem from "../abi/Pet721MintSystem.json";
 import Pet721ProxySystem from "../abi/Pet721ProxySystem.json";
 import Pet721RevealSystem from "../abi/Pet721RevealSystem.json";
 import Pet721StakeSystem from "../abi/Pet721StakeSystem.json";
-import Pet721TransferSystem from "../abi/Pet721TransferSystem.json";
 import Pet721UnstakeSystem from "../abi/Pet721UnstakeSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
 import PetLevelSystem from "../abi/PetLevelSystem.json";
@@ -129,12 +129,12 @@ export const SystemAbis = {
   "system.Mint20.Mint": Mint20MintSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
   "system.Node.Collect": NodeCollectSystem.abi,
+  "system.Pet721.IsInWorld": Pet721IsInWorldSystem.abi,
   "system.Pet721.Metadata": Pet721MetadataSystem.abi,
   "system.Pet721.Mint": Pet721MintSystem.abi,
   "system.Pet721.Proxy": Pet721ProxySystem.abi,
   "system.Pet721.Reveal": Pet721RevealSystem.abi,
   "system.Pet721.Stake": Pet721StakeSystem.abi,
-  "system.Pet721.Transfer": Pet721TransferSystem.abi,
   "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
   "system.Pet.Level": PetLevelSystem.abi,

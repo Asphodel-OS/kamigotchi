@@ -601,6 +601,10 @@
       ]
     },
     {
+      "name": "Pet721IsInWorldSystem",
+      "writeAccess": []
+    },
+    {
       "name": "Pet721MetadataSystem",
       "writeAccess": []
     },
@@ -614,12 +618,6 @@
       "name": "Pet721RevealSystem",
       "writeAccess": [
         "*"
-      ]
-    },
-    {
-      "name": "Pet721TransferSystem",
-      "writeAccess": [
-        "ProxyPermissionsERC721Component"
       ]
     },
     {

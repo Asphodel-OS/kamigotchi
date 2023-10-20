@@ -14,9 +14,16 @@ import { LibRandom } from "libraries/LibRandom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.Reveal"));
 
+/// @title Pet721RevealSystem
+/// @notice reveals an unrevealed pet!
+/** @dev
+ * Requires the blockhash to be available (256 blocks after minting)
+ * It is expected that the front end handles this automatically
+ */
 contract Pet721RevealSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
+  /// @notice reveals a player's pet, called by operator
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 petIndex = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.indexToID(components, petIndex);
@@ -34,25 +41,25 @@ contract Pet721RevealSystem is System {
     return reveal(petID, seed);
   }
 
-  // needed as a backup in case user misses the 256 block window to reveal (25 minutes)
-  // pet will be forever locked as unrevealed otherwise
-  // takes previous blockhash for random seed; fairly obvious if admin bots randomness
+  /// @notice a backup in case user misses the 256 block window to reveal
+  /// @dev takes previous blockhash for random seed; permissioned assumes caller won't abuse randomness
+  /// @dev likely to include other roles in the future just to reveal
   function forceReveal(uint256 petIndex) public onlyOwner returns (bytes memory) {
     uint256 petID = LibPet.indexToID(components, petIndex);
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
+
     uint256 seed = uint256(blockhash(block.number - 1));
     LibRandom.removeRevealBlock(components, petID);
+
     LibPet721.updateEvent(world, petIndex);
     return reveal(petID, seed);
   }
 
-  // accepts erc721 petIndex as input
   function executeTyped(uint256 petIndex) public returns (bytes memory) {
     return execute(abi.encode(petIndex));
   }
 
-  // sets metadata with a random seed
-  // second phase of commit/reveal scheme. pet owners call directly
+  /// @notice reveals a pet!
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
     uint256 packed = LibPet721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 

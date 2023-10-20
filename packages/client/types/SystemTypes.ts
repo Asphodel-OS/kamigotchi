@@ -50,12 +50,12 @@ import { LootboxStartRevealSystem } from "./ethers-contracts/LootboxStartRevealS
 import { Mint20MintSystem } from "./ethers-contracts/Mint20MintSystem";
 import { Mint20ProxySystem } from "./ethers-contracts/Mint20ProxySystem";
 import { NodeCollectSystem } from "./ethers-contracts/NodeCollectSystem";
+import { Pet721IsInWorldSystem } from "./ethers-contracts/Pet721IsInWorldSystem";
 import { Pet721MetadataSystem } from "./ethers-contracts/Pet721MetadataSystem";
 import { Pet721MintSystem } from "./ethers-contracts/Pet721MintSystem";
 import { Pet721ProxySystem } from "./ethers-contracts/Pet721ProxySystem";
 import { Pet721RevealSystem } from "./ethers-contracts/Pet721RevealSystem";
 import { Pet721StakeSystem } from "./ethers-contracts/Pet721StakeSystem";
-import { Pet721TransferSystem } from "./ethers-contracts/Pet721TransferSystem";
 import { Pet721UnstakeSystem } from "./ethers-contracts/Pet721UnstakeSystem";
 import { PetFeedSystem } from "./ethers-contracts/PetFeedSystem";
 import { PetLevelSystem } from "./ethers-contracts/PetLevelSystem";
@@ -129,12 +129,12 @@ export type SystemTypes = {
   "system.Mint20.Mint": Mint20MintSystem;
   "system.Mint20.Proxy": Mint20ProxySystem;
   "system.Node.Collect": NodeCollectSystem;
+  "system.Pet721.IsInWorld": Pet721IsInWorldSystem;
   "system.Pet721.Metadata": Pet721MetadataSystem;
   "system.Pet721.Mint": Pet721MintSystem;
   "system.Pet721.Proxy": Pet721ProxySystem;
   "system.Pet721.Reveal": Pet721RevealSystem;
   "system.Pet721.Stake": Pet721StakeSystem;
-  "system.Pet721.Transfer": Pet721TransferSystem;
   "system.Pet721.Unstake": Pet721UnstakeSystem;
   "system.Pet.Feed": PetFeedSystem;
   "system.Pet.Level": PetLevelSystem;

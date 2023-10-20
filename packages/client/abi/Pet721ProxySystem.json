@@ -123,6 +123,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "token",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -142,6 +155,7 @@
     "getToken()": "21df0da7",
     "getTokenAddy()": "96b443fe",
     "owner()": "8da5cb5b",
+    "token()": "fc0c546a",
     "transferOwnership(address)": "f2fde38b"
   }
 }
