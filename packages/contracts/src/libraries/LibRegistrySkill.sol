@@ -8,15 +8,18 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
-import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
+import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
+import { ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
+import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -36,21 +39,26 @@ library LibRegistrySkill {
     IWorld world,
     IUintComp components,
     uint256 skillIndex,
-    uint256 cost,
-    uint256 max,
+    string memory for_,
     string memory type_,
     string memory name,
+    uint256 cost,
+    uint256 max,
     string memory description
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
     setIsSkill(components, id);
     setSkillIndex(components, id, skillIndex);
-    setCost(components, id, cost);
-    setMax(components, id, max);
     setType(components, id, type_);
     setName(components, id, name);
+    setCost(components, id, cost);
+    setMax(components, id, max);
     setDescription(components, id, description);
+
+    if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
+    else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
+    else revert("LibRegistrySkill: invalid type");
     return id;
   }
 
@@ -86,11 +94,12 @@ library LibRegistrySkill {
     unsetIsRegistry(components, id);
     unsetIsSkill(components, id);
     unsetSkillIndex(components, id);
-    unsetDescription(components, id);
     unsetCost(components, id);
-    unsetType(components, id);
+    unsetDescription(components, id);
+    unsetFor(components, id);
     unsetMax(components, id);
     unsetName(components, id);
+    unsetType(components, id);
   }
 
   function deleteEffect(IUintComp components, uint256 id) internal {
@@ -148,6 +157,10 @@ library LibRegistrySkill {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
+  function setFor(IUintComp components, uint256 id, uint for_) internal {
+    ForComponent(getAddressById(components, ForCompID)).set(id, for_);
+  }
+
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
   }
@@ -191,10 +204,6 @@ library LibRegistrySkill {
     IsSkillComponent(getAddressById(components, IsSkillCompID)).remove(id);
   }
 
-  function unsetCost(IUintComp components, uint256 id) internal {
-    CostComponent(getAddressById(components, CostCompID)).remove(id);
-  }
-
   function unsetIndex(IUintComp components, uint256 id) internal {
     if (IndexComponent(getAddressById(components, IndexCompID)).has(id)) {
       IndexComponent(getAddressById(components, IndexCompID)).remove(id);
@@ -205,8 +214,16 @@ library LibRegistrySkill {
     IndexSkillComponent(getAddressById(components, IndexSkillCompID)).remove(id);
   }
 
+  function unsetCost(IUintComp components, uint256 id) internal {
+    CostComponent(getAddressById(components, CostCompID)).remove(id);
+  }
+
   function unsetDescription(IUintComp components, uint256 id) internal {
     DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
+  }
+
+  function unsetFor(IUintComp components, uint256 id) internal {
+    ForComponent(getAddressById(components, ForCompID)).remove(id);
   }
 
   function unsetLogicType(IUintComp components, uint256 id) internal {

@@ -75,7 +75,6 @@ contract ProductionLiquidateSystem is System {
 
     // logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", amt);
     LibDataEntity.incFor(world, components, accountID, 0, "LIQUIDATE", 1);
     LibDataEntity.incFor(
       world,

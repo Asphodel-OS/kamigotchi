@@ -10,7 +10,7 @@ contract SkillTest is SetupTemplate {
 
   function testSkillBasicAccount() public {
     // create skill
-    _createSkill(1, 0, 1, "PASSIVE", "TEST_SKILL", "test skill description");
+    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 0, 1, "test skill description");
 
     // register the account
     _registerAccount(0);
@@ -25,7 +25,7 @@ contract SkillTest is SetupTemplate {
 
   function testUseSkillPoints() public {
     // create skill
-    _createSkill(1, 1, 1, "PASSIVE", "TEST_SKILL", "test skill description");
+    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 1, 1, "test skill description");
 
     // register the account
     _registerAccount(0);
@@ -47,7 +47,7 @@ contract SkillTest is SetupTemplate {
 
   function testSkillMax() public {
     // create skill
-    _createSkill(1, 0, 2, "PASSIVE", "TEST_SKILL", "test skill description");
+    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 0, 2, "test skill description");
 
     // register the account
     _registerAccount(0);
