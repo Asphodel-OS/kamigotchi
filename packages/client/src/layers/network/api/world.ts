@@ -715,7 +715,6 @@ export function setUpWorldAPI(systems: any) {
       init: () => initTraits(createAdminAPI(systems)),
       tryInit: () => initTraitsWithFail(createAdminAPI(systems)),
     },
-    test: csv2dToMap(droptables),
   }
 
   function sleepIf() {
