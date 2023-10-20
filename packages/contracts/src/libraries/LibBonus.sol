@@ -120,22 +120,6 @@ library LibBonus {
     );
 
     uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
-  }
-
-  function getByHolder(
-    IUintComp components,
-    uint256 holderID
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsBonusCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdHolderCompID),
-      abi.encode(holderID)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+    if (results.length > 0) result = results[0];
   }
 }

@@ -53,7 +53,7 @@ contract NodeCollectSystem is System {
 
     // balance updates, score logging, action tracking
     LibScore.incBy(world, components, accountID, "COLLECT", totalOutput);
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", totalOutput);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", totalOutput);
     LibDataEntity.incFor(
       world,
       components,

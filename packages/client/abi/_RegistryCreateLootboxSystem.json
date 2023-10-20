@@ -72,6 +72,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
           "internalType": "uint256[]",
           "name": "keys",
           "type": "uint256[]"
@@ -80,11 +85,6 @@
           "internalType": "uint256[]",
           "name": "weights",
           "type": "uint256[]"
-        },
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -127,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256[],uint256[],string)": "697e5bce",
+    "executeTyped(uint256,string,uint256[],uint256[])": "a8ff31c6",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

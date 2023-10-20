@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateModSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,6 +50,7 @@ export interface _RegistryCreateModSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
@@ -127,6 +128,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
+      index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -150,6 +152,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
+    index: PromiseOrValue<BigNumberish>,
     modIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
@@ -173,6 +176,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
+      index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -208,6 +212,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
+      index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -232,6 +237,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
+      index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,

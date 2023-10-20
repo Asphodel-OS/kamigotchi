@@ -20,11 +20,11 @@ contract NPCTest is SetupTemplate {
     _createRoom("testRoom2", 2, 1, 3, 0);
     _createRoom("testRoom3", 3, 1, 2, 0);
 
-    _initItems();
-    // 1. gum    = 25  heal
-    // 2. candy  = 100 heal
-    // 3. sticks = 200 heal
-    // 4. ribbon = 10  heal, revive
+    // create empty items
+    _createGenericItem(1);
+    _createGenericItem(2);
+    _createGenericItem(3);
+    _createGenericItem(4);
   }
 
   /////////////////

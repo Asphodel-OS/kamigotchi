@@ -68,6 +68,11 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
           "name": "modIndex",
           "type": "uint256"
         },
@@ -137,7 +142,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,uint256,uint256,uint256,uint256)": "f24c69c5",
+    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256)": "43359b00",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

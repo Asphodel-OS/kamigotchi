@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { LibString } from "solady/utils/LibString.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Mod.Create"));
@@ -15,22 +16,36 @@ contract _RegistryCreateModSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
+      uint256 index,
       uint256 modIndex,
       string memory name,
       uint256 health,
       uint256 power,
       uint256 violence,
       uint256 harmony
-    ) = abi.decode(arguments, (uint256, string, uint256, uint256, uint256, uint256));
+    ) = abi.decode(arguments, (uint256, uint256, string, uint256, uint256, uint256, uint256));
     uint256 registryID = LibRegistryItem.getByModIndex(components, modIndex);
 
-    require(registryID == 0, "Item Registry: Mod index already exists");
+    require(registryID == 0, "CreateMod: index already exists");
+    require(registryID != 0, "CreateMod: modIndex not found");
+    require(!LibString.eq(name, ""), "CreateMod: name cannot be empty");
 
-    LibRegistryItem.createMod(world, components, modIndex, name, health, power, violence, harmony);
+    LibRegistryItem.createMod(
+      world,
+      components,
+      index,
+      modIndex,
+      name,
+      health,
+      power,
+      violence,
+      harmony
+    );
     return "";
   }
 
   function executeTyped(
+    uint256 index,
     uint256 modIndex,
     string memory name,
     uint256 health,
@@ -38,6 +53,6 @@ contract _RegistryCreateModSystem is System {
     uint256 violence,
     uint256 harmony
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(modIndex, name, health, power, violence, harmony));
+    return execute(abi.encode(index, modIndex, name, health, power, violence, harmony));
   }
 }

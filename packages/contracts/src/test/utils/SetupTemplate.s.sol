@@ -363,12 +363,12 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createLootbox(
     uint index,
+    string memory name,
     uint[] memory keys,
-    uint[] memory weights,
-    string memory name
+    uint[] memory weights
   ) public {
     vm.prank(deployer);
-    __RegistryCreateLootboxSystem.executeTyped(index, keys, weights, name);
+    __RegistryCreateLootboxSystem.executeTyped(index, name, keys, weights);
   }
 
   /* QUESTS */
@@ -428,14 +428,15 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _createSkill(
     uint index,
-    uint cost,
-    uint max,
+    string memory for_,
     string memory type_,
     string memory name,
+    uint cost,
+    uint max,
     string memory description
   ) public {
     vm.prank(deployer);
-    __RegistryCreateSkillSystem.executeTyped(index, cost, max, type_, name, description);
+    __RegistryCreateSkillSystem.executeTyped(index, for_, type_, name, cost, max, description);
   }
 
   function _createSkillEffect(
@@ -625,12 +626,12 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(deployer);
 
     // food (foodIndex, name, health)
-    __RegistryCreateFoodSystem.executeTyped(1, "Gum", 25); // itemIndex 1
-    __RegistryCreateFoodSystem.executeTyped(2, "Candy", 50); // itemIndex 2
-    __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", 100); // itemIndex 3
+    __RegistryCreateFoodSystem.executeTyped(1, 1, "Gum", 25); // itemIndex 1
+    __RegistryCreateFoodSystem.executeTyped(2, 2, "Candy", 50); // itemIndex 2
+    __RegistryCreateFoodSystem.executeTyped(3, 3, "Cookie Sticks", 100); // itemIndex 3
 
     // revives (reviveIndex, name, health)
-    __RegistryCreateReviveSystem.executeTyped(1, "Ribbon", 10); // itemIndex 4
+    __RegistryCreateReviveSystem.executeTyped(1000, 1, "Ribbon", 10); // itemIndex 4
 
     vm.stopPrank();
   }
@@ -719,7 +720,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("HARVEST_RATE_PREC", 9);
     _setConfig("HARVEST_RATE_BASE", 1000);
     _setConfig("HARVEST_RATE_BASE_PREC", 3);
-    _setConfig("HARVEST_RATE_MULT_PREC", 4);
+    _setConfig("HARVEST_RATE_MULT_PREC", 7);
     _setConfig("HARVEST_RATE_MULT_AFF_BASE", 100);
     _setConfig("HARVEST_RATE_MULT_AFF_UP", 150);
     _setConfig("HARVEST_RATE_MULT_AFF_DOWN", 50);

@@ -2,6 +2,8 @@ import { AdminAPI, createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
 import { utils } from 'ethers';
 
+import items from 'assets/data/items/Items.csv';
+import droptables from 'assets/data/items/Droptables.csv';
 import background from 'assets/data/kami/Background.csv';
 import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
@@ -232,27 +234,59 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
-
   ////////////////////
   // ITEMS
 
   async function initItems(api: AdminAPI) {
-    await initFood(api);
-    await initLootbox(api);
+    const allItems = csvToMap(items);
+    const allDroptables = csv2dToMap(droptables);
+
+    for (let i = 0; i < allItems.length; i++) {
+      await sleepIf();
+      try {
+        switch (allItems[i].get('Type').toUpperCase()) {
+          case "FOOD":
+            await setFood(api, allItems[i]);
+            break;
+          case "REVIVE":
+            await setRevive(api, allItems[i]);
+            break;
+          case "LOOTBOX":
+            await setLootbox(api, allItems[i], allDroptables);
+            break;
+          default:
+            console.error("Item type not found: " + allItems[i].get('Type'));
+        }
+      } catch { }
+    }
   }
 
-  async function initFood(api: AdminAPI) {
-    await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
-    await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
-    await api.registry.food.create(3, 'Gakki Cookie Sticks', 200);
-    await api.registry.revive.create(1, 'Red Gakki Ribbon', 10);
+  async function setFood(api: AdminAPI, item: any) {
+    await api.registry.item.create.food(
+      item.get('Index'),
+      item.get('FamilyIndex(depreciated)'),
+      item.get('Name'),
+      item.get('Health')
+    );
   }
 
-  async function initLootbox(api: AdminAPI) {
-    // @dev temp lootbox holder, droptable consists of food above
-    await api.registry.lootbox.create(1000, [1, 2, 3], [3, 2, 1], 'Lootbox');
+  async function setRevive(api: AdminAPI, item: any) {
+    await api.registry.item.create.revive(
+      item.get('Index'),
+      item.get('FamilyIndex(depreciated)'),
+      item.get('Name'),
+      item.get('Health')
+    );
   }
 
+  async function setLootbox(api: AdminAPI, item: any, droptables: any) {
+    await api.registry.item.create.lootbox(
+      item.get('Index'),
+      item.get('Name'),
+      droptables[Number(item.get('Droptable'))].get('Key'),
+      droptables[Number(item.get('Droptable'))].get('Tier')
+    );
+  }
 
   ////////////////////
   // NPCS
@@ -268,7 +302,7 @@ export function setUpWorldAPI(systems: any) {
     await api.listing.set(1, 1, 25, 0); // merchant index, item index, buy price, sell price
     await api.listing.set(1, 2, 90, 0);
     await api.listing.set(1, 3, 150, 0);
-    await api.listing.set(1, 4, 500, 0);
+    await api.listing.set(1, 1001, 500, 0);
   }
 
 
@@ -359,7 +393,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
-    await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN_HAS", 0, 1);
+    await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN_TOTAL", 0, 1);
     await api.registry.quest.add.reward(3, "REVIVE", 1, 1);
 
     // quest 4
@@ -371,7 +405,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
-    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN_HAS", 0, 100);
+    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN_TOTAL", 0, 100);
     await api.registry.quest.add.reward(4, "REVIVE", 1, 3);
 
     // quest 5
@@ -383,7 +417,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
-    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN_HAS", 0, 1000);
+    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN_TOTAL", 0, 1000);
     await api.registry.quest.add.reward(5, "REVIVE", 1, 5);
 
     // quest 6
@@ -395,7 +429,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
-    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN_HAS", 0, 5000);
+    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN_TOTAL", 0, 5000);
     await api.registry.quest.add.reward(6, "REVIVE", 1, 10);
 
     // quest 7
@@ -407,7 +441,7 @@ export function setUpWorldAPI(systems: any) {
       64800
     );
     await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_HAS", 0, 200);
-    await api.registry.quest.add.reward(7, "ITEM", 1000, 1); // temp lootbox handler
+    await api.registry.quest.add.reward(7, "ITEM", 10001, 1); // temp lootbox handler
 
     // temp lootbox quest for testing
     await api.registry.quest.create(
@@ -417,7 +451,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       10
     );
-    await api.registry.quest.add.reward(8, "ITEM", 1000, 1); // temp lootbox handler
+    await api.registry.quest.add.reward(8, "ITEM", 10001, 1); // temp lootbox handler
   }
 
 
@@ -446,75 +480,75 @@ export function setUpWorldAPI(systems: any) {
 
   async function initSkills(api: any) {
     // Stat Skills
-    await api.registry.skill.create(1, 1, 3, "PASSIVE", "Vigor", "+10 Health per level");
+    await api.registry.skill.create(1, "KAMI", "PASSIVE", "Vigor", 1, 3, "+10 Health per level");
     await api.registry.skill.add.effect(1, "STAT", "HEALTH", "INC", 0, 10);
 
-    await api.registry.skill.create(2, 1, 3, "PASSIVE", "Acquisitiveness", "+1 Power per level");
+    await api.registry.skill.create(2, "KAMI", "PASSIVE", "Acquisitiveness", 1, 3, "+1 Power per level");
     await api.registry.skill.add.effect(2, "STAT", "POWER", "INC", 0, 1);
 
-    await api.registry.skill.create(3, 1, 3, "PASSIVE", "Aggression", "+1 Violence per level");
+    await api.registry.skill.create(3, "KAMI", "PASSIVE", "Aggression", 1, 3, "+1 Violence per level");
     await api.registry.skill.add.effect(3, "STAT", "VIOLENCE", "INC", 0, 1);
 
-    await api.registry.skill.create(4, 1, 3, "PASSIVE", "Defensiveness", "+1 Harmony per level");
+    await api.registry.skill.create(4, "KAMI", "PASSIVE", "Defensiveness", 1, 3, "+1 Harmony per level");
     await api.registry.skill.add.effect(4, "STAT", "HARMONY", "INC", 0, 1);
 
-    await api.registry.skill.create(5, 2, 3, "PASSIVE", "Endurance", "+10 Health per level");
+    await api.registry.skill.create(5, "KAMI", "PASSIVE", "Endurance", 2, 3, "+10 Health per level");
     await api.registry.skill.add.effect(5, "STAT", "HEALTH", "INC", 0, 10);
     await api.registry.skill.add.requirement(5, "SKILL", 1, 3);
 
-    await api.registry.skill.create(6, 2, 3, "PASSIVE", "Predator", "+1 Power per level");
+    await api.registry.skill.create(6, "KAMI", "PASSIVE", "Predator", 2, 3, "+1 Power per level");
     await api.registry.skill.add.effect(6, "STAT", "POWER", "INC", 0, 1);
     await api.registry.skill.add.requirement(6, "SKILL", 2, 3);
 
-    await api.registry.skill.create(7, 2, 3, "PASSIVE", "Warmonger", "+1 Violence per level");
+    await api.registry.skill.create(7, "KAMI", "PASSIVE", "Warmonger", 2, 3, "+1 Violence per level");
     await api.registry.skill.add.effect(7, "STAT", "VIOLENCE", "INC", 0, 1);
     await api.registry.skill.add.requirement(7, "SKILL", 3, 3);
 
-    await api.registry.skill.create(8, 2, 3, "PASSIVE", "Protector", "+1 Harmony per level");
+    await api.registry.skill.create(8, "KAMI", "PASSIVE", "Protector", 2, 3, "+1 Harmony per level");
     await api.registry.skill.add.effect(8, "STAT", "HARMONY", "INC", 0, 1);
     await api.registry.skill.add.requirement(8, "SKILL", 4, 3);
 
 
     // (Health) Skill Tree
-    await api.registry.skill.create(110, 1, 3, "PASSIVE", "Workout Routine", "-5% Harvest Drain per level");
+    await api.registry.skill.create(110, "KAMI", "PASSIVE", "Workout Routine", 1, 3, "-5% Harvest Drain per level");
     await api.registry.skill.add.effect(110, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(110, "SKILL", 1, 3);
 
 
     // (Power) Skill Tree
-    await api.registry.skill.create(201, 1, 3, "PASSIVE", "Greed", "+5% Harvest Output per level");
+    await api.registry.skill.create(201, "KAMI", "PASSIVE", "Greed", 1, 3, "+5% Harvest Output per level");
     await api.registry.skill.add.effect(201, "HARVEST", "OUTPUT", "INC", 0, 50);
     await api.registry.skill.add.requirement(201, "SKILL", 2, 3);
 
-    await api.registry.skill.create(202, 2, 3, "PASSIVE", "Leverage", "+7.5% Harvest Output per level");
+    await api.registry.skill.create(202, "KAMI", "PASSIVE", "Leverage", 2, 3, "+7.5% Harvest Output per level");
     await api.registry.skill.add.effect(202, "HARVEST", "OUTPUT", "INC", 0, 75);
     await api.registry.skill.add.requirement(202, "SKILL", 201, 3);
 
-    await api.registry.skill.create(203, 3, 3, "PASSIVE", "Looping", "+10% Harvest Output per level");
+    await api.registry.skill.create(203, "KAMI", "PASSIVE", "Looping", 3, 3, "+10% Harvest Output per level");
     await api.registry.skill.add.effect(203, "HARVEST", "OUTPUT", "INC", 0, 100);
     await api.registry.skill.add.requirement(203, "SKILL", 202, 3);
 
-    await api.registry.skill.create(204, 3, 3, "PASSIVE", "Degenerate", "+12.5% Harvest Output per level");
+    await api.registry.skill.create(204, "KAMI", "PASSIVE", "Degenerate", 3, 3, "+12.5% Harvest Output per level");
     await api.registry.skill.add.effect(204, "HARVEST", "OUTPUT", "INC", 0, 125);
     await api.registry.skill.add.requirement(204, "SKILL", 203, 3);
 
-    await api.registry.skill.create(210, 1, 3, "PASSIVE", "Sunglasses Ownership", "-5% Harvest Drain per level");
+    await api.registry.skill.create(210, "KAMI", "PASSIVE", "Sunglasses Ownership", 1, 3, "-5% Harvest Drain per level");
     await api.registry.skill.add.effect(210, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(210, "SKILL", 2, 3);
 
-    await api.registry.skill.create(220, 1, 3, "PASSIVE", "Bandit", "-20s Harvest Cooldown per level");
+    await api.registry.skill.create(220, "KAMI", "PASSIVE", "Bandit", 1, 3, "-20s Harvest Cooldown per level");
     await api.registry.skill.add.effect(220, "HARVEST", "COOLDOWN", "INC", 0, 20);
     await api.registry.skill.add.requirement(220, "SKILL", 2, 3);
 
 
     // (Violence) Skill Tree
-    await api.registry.skill.create(320, 1, 3, "PASSIVE", "Sniper", "-20s Attack Cooldown per level");
+    await api.registry.skill.create(320, "KAMI", "PASSIVE", "Sniper", 1, 3, "-20s Attack Cooldown per level");
     await api.registry.skill.add.effect(320, "ATTACK", "COOLDOWN", "INC", 0, 20);
     await api.registry.skill.add.requirement(320, "SKILL", 3, 3);
 
 
     // (Harmony) Skill Tree
-    await api.registry.skill.create(401, 1, 3, "PASSIVE", "Patience", "-5% Harvest Drain per level");
+    await api.registry.skill.create(401, "KAMI", "PASSIVE", "Patience", 1, 3, "-5% Harvest Drain per level");
     await api.registry.skill.add.effect(401, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(401, "SKILL", 4, 3);
 
@@ -525,22 +559,6 @@ export function setUpWorldAPI(systems: any) {
 
   ////////////////////
   // TRAITS
-
-  function csvToMap(arr: any) {
-    let jsonObj = [];
-    let headers = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-      let data = arr[i];
-      // let obj: {[key: string]: number};
-      let mp = new Map();
-      for (let j = 0; j < data.length; j++) {
-        mp.set(headers[j].trim(), data[j].trim() ? data[j].trim() : "0");
-      }
-      jsonObj.push(mp);
-    }
-
-    return jsonObj;
-  }
 
   async function initTraits(api: AdminAPI) {
     // inits a single type of trait, returns number of traits
@@ -607,6 +625,66 @@ export function setUpWorldAPI(systems: any) {
     await initSingle(hand, "HAND");
   }
 
+  //////////////////////
+  // UTILS
+
+  // converts csv to array of maps
+  function csvToMap(arr: any) {
+    let jsonObj = [];
+    let headers = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      let data = arr[i];
+      let mp = new Map();
+      for (let j = 0; j < data.length; j++) {
+        mp.set(headers[j].trim(), data[j].trim() ? data[j].trim() : "0");
+      }
+      jsonObj.push(mp);
+    }
+    return jsonObj;
+  }
+
+  /* 2D CSV to a array of map. This is to parse 2d data in notion (eg droptables)
+  * eg: Index | Key   | Tier (Weight)
+  *     1     |       |
+  *           | 1     | 8
+  *           | 2     | 9
+  *     2     |       |
+  *           | 3     | 6
+  * would result in:
+  * [
+  *   {
+  *     Key: [1, 2],
+  *     Tier: [8, 9]
+  *   },
+  *   {
+  *    Key: [3],
+  *   Tier: [6]
+  *   }
+  * ]
+  **/
+  function csv2dToMap(arr: any) {
+    let results = [];
+    let headers = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      const data = arr[i];
+      if (data[0] != "") {
+        let mp = new Map();
+        for (let n = 1; n < headers.length; n++) {
+          mp.set(headers[n].trim(), []);
+        }
+        for (let j = i + 1; data[j] == ""; j++) {
+          const data = arr[j];
+          for (let k = 1; k < headers.length; k++) {
+            mp.get(headers[k].trim()).push(data[k].trim() ? data[k].trim() : "0");
+          }
+          i = j;
+        }
+        results.push(mp);
+      }
+    }
+    return results;
+  }
+
   return {
     init: initAll,
     config: {
@@ -614,8 +692,6 @@ export function setUpWorldAPI(systems: any) {
     },
     items: {
       init: () => initItems(createAdminAPI(systems)),
-      initFood: () => initFood(createAdminAPI(systems)),
-      initLootbox: () => initLootbox(createAdminAPI(systems)),
     },
     npcs: {
       init: () => initNpcs(createAdminAPI(systems)),
@@ -639,6 +715,7 @@ export function setUpWorldAPI(systems: any) {
       init: () => initTraits(createAdminAPI(systems)),
       tryInit: () => initTraitsWithFail(createAdminAPI(systems)),
     },
+    test: csv2dToMap(droptables),
   }
 
   function sleepIf() {
