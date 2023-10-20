@@ -164,6 +164,7 @@ export function registerKamiModal() {
           id='kamiModal'
           header={[
             <Banner
+              key='banner'
               kami={getSelectedKami()}
               actions={{ levelUp, toggleSkills }}
             />,
