@@ -865,7 +865,7 @@
     "@json-rpc-tools/types" "^1.7.6"
     "@pedrouid/environment" "^1.0.1"
 
-"@latticexyz/cli@1.34.0", "@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
+"@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
   version "1.34.0"
   resolved "https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz#d324023fd75dc6b63c4d547de4171e041e4ffdd1"
   dependencies:
