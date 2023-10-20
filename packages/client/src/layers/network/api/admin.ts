@@ -473,22 +473,17 @@ export function createAdminAPI(systems: any) {
     pet: { forceReveal: petForceReveal },
     registry: {
       item: {
+        create: {
+          food: registerFood,
+          gear: registerGear,
+          lootbox: registerLootbox,
+          modification: registerModification,
+          revive: registerRevive,
+        },
         delete: deleteItem,
-      },
-      food: {
-        create: registerFood,
-      },
-      gear: {
-        create: registerGear,
-      },
-      lootbox: {
-        create: registerLootbox,
       },
       trait: {
         create: registerTrait,
-      },
-      modification: {
-        create: registerModification,
       },
       quest: {
         create: createQuest,
@@ -503,9 +498,6 @@ export function createAdminAPI(systems: any) {
         create: registerRelationship,
         update: updateRelationship,
         delete: deleteRelationship,
-      },
-      revive: {
-        create: registerRevive,
       },
       skill: {
         create: createSkill,
