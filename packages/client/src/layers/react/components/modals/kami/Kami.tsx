@@ -12,6 +12,7 @@ import { dataStore } from 'layers/react/store/createStore';
 import { Skills } from './Skills';
 import { getRegistrySkills } from 'layers/react/shapes/Skill';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { Tabs } from './Tabs';
 
 export function registerKamiModal() {
   registerUIComponent(
@@ -86,6 +87,7 @@ export function registerKamiModal() {
     },
 
     ({ layers, actions, api }) => {
+      const [tab, setTab] = useState('traits');
       const { kamiEntityIndex } = useSelectedEntities();
       const [mode, setMode] = useState('DETAILS');
 
@@ -139,6 +141,19 @@ export function registerKamiModal() {
         setMode(mode === 'DETAILS' ? 'SKILLS' : 'DETAILS');
       }
 
+      const Content = () => {
+        if (tab === 'traits') {
+          return <Traits kami={getSelectedKami()} />
+        } else if (tab === 'skills') {
+          return <Skills
+            skills={getRegistrySkills(layers)}
+            kami={getSelectedKami()}
+            actions={{ upgrade: upgradeSkill }}
+          />
+        } else if (tab === 'battles') {
+          return <KillLogs kami={getSelectedKami()} />
+        }
+      }
 
       /////////////////
       // DISPLAY
@@ -147,21 +162,18 @@ export function registerKamiModal() {
         <ModalWrapperFull
           divName='kami'
           id='kamiModal'
-          header={<Banner kami={getSelectedKami()} actions={{ levelUp, toggleSkills }}></Banner>}
+          header={[
+            <Banner
+              key='banner'
+              kami={getSelectedKami()}
+              actions={{ levelUp, toggleSkills }}
+            />,
+            <Tabs key='tabs' tab={tab} setTab={setTab} />
+          ]}
           canExit
           overlay
         >
-          {(mode === 'DETAILS')
-            ? <>
-              <Traits kami={getSelectedKami()} />
-              <KillLogs kami={getSelectedKami()} />
-            </>
-            : <Skills
-              skills={getRegistrySkills(layers)}
-              kami={getSelectedKami()}
-              actions={{ upgrade: upgradeSkill }}
-            />
-          }
+          {Content()}
         </ModalWrapperFull>
       );
     }

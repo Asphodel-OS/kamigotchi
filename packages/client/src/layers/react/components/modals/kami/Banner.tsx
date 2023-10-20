@@ -21,7 +21,6 @@ interface Props {
 
 export const Banner = (props: Props) => {
   const statsArray = Object.entries(props.kami.stats);
-  const bonusStatsArray = Object.entries(props.kami.bonusStats);
   const affinities = props.kami.affinities?.join(' | ');
   const statsDetails = new Map(Object.entries({
     'health': {
@@ -72,15 +71,6 @@ export const Banner = (props: Props) => {
               total={props.kami.experience.threshold}
               triggerLevelUp={() => props.actions.levelUp(props.kami)}
             />
-            <Tooltip text={['Skill Points']}>
-              <ActionButton
-                id={`level-button`}
-                onClick={() => props.actions.toggleSkills()}
-                text={` (${props.kami.skillPoints > 0 ? Number(props.kami.skillPoints) : '+'}) `}
-                size='small'
-                pulse={props.kami.skillPoints > 0}
-              />
-            </Tooltip>
           </TitleRow>
         </ContentTop>
         <ContentMiddle>
@@ -105,6 +95,7 @@ export const Banner = (props: Props) => {
 }
 
 const Container = styled.div`
+  border-bottom: solid black .15vw;
   color: black;
 
   display: flex;

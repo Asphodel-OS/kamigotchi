@@ -15,6 +15,8 @@ export interface Kill {
   source?: Kami;
   target?: Kami;
   node: Node;
+  balance: number;
+  bounty: number;
   time: number;
 }
 
@@ -35,6 +37,8 @@ export const getKill = (
         NodeID,
         SourceID,
         TargetID,
+        Balance,
+        Coin,
         Time,
       },
       world,
@@ -50,7 +54,9 @@ export const getKill = (
     id: world.entities[index],
     entityIndex: index,
     node,
-    time: getComponentValue(Time, index)?.value as number * 1,
+    balance: (getComponentValue(Balance, index)?.value as number) * 1,
+    bounty: (getComponentValue(Coin, index)?.value as number) * 1,
+    time: (getComponentValue(Time, index)?.value as number) * 1,
   };
 
   /////////////////
