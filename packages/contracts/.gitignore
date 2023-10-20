@@ -16,5 +16,5 @@ broadcast/
 /cache/
 out/
 src/libraries/LibDeploy.sol
-src/test/TestSetupImports.sol
+src/test/utils/TestSetupImports.sol
 types/
