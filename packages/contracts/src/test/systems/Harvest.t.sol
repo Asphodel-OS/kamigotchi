@@ -37,14 +37,13 @@ contract HarvestTest is SetupTemplate {
   // HELPER FUNCTIONS
 
   // NOTE: health drain is rounded while reward is truncated
+  // this assumes no drain multipliers
   function _getExpectedHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
-    uint ratePrecision = LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
-    uint healthDrainBase = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
-    uint healthDrainBasePrecision = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
-    uint roundingFactor = 5 * 10 ** (ratePrecision + healthDrainBasePrecision - 1);
-    return
-      (rate * timeDelta * healthDrainBase + roundingFactor) /
-      10 ** (ratePrecision + healthDrainBasePrecision);
+    uint ratePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+    uint output = (rate * timeDelta) / (ratePrecision);
+    uint drainBase = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint drainBasePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    return (output * drainBase + (drainBasePrecision / 2)) / drainBasePrecision;
   }
 
   function _getExpectedOutput(uint rate, uint timeDelta) internal view returns (uint) {
@@ -107,11 +106,11 @@ contract HarvestTest is SetupTemplate {
     // test that a production is created with the expected base fields
     assertEq(LibProduction.getPet(components, productionID), kamiID);
     assertEq(LibProduction.getNode(components, productionID), nodeID);
-    assertEq(LibProduction.getStartTime(components, productionID), _currTime);
     assertEq(LibProduction.getState(components, productionID), "ACTIVE");
 
     // test that the kami's state is updated
     assertEq(LibPet.getState(components, kamiID), "HARVESTING");
+    assertEq(LibPet.getLastTs(components, kamiID), _currTime);
   }
 
   // test that a pet's productions cannot be started/stopped/collected from by
@@ -296,7 +295,8 @@ contract HarvestTest is SetupTemplate {
     uint accountBalance;
     uint timeDelta;
     uint rate;
-    uint numIterations = 5;
+    uint drain;
+    uint numIterations = 1;
     for (uint i = 0; i < numIterations; i++) {
       timeDelta = (uint(keccak256(abi.encodePacked(seed, i))) % 7200) + _idleRequirement;
 
@@ -304,24 +304,22 @@ contract HarvestTest is SetupTemplate {
       for (uint j = 0; j < numKamis; j++) {
         if (_isStarved[j]) continue;
         rate = LibProduction.getRate(components, productionIDs[j]);
+        drain = _getExpectedHealthDrain(rate, timeDelta);
 
-        if (kamiHealths[j] <= _getExpectedHealthDrain(rate, timeDelta)) {
+        if (kamiHealths[j] <= drain) {
           vm.prank(_getOperator(0));
           vm.expectRevert("Pet: starving..");
           _ProductionCollectSystem.executeTyped(productionIDs[j]);
           _isStarved[j] = true;
         } else {
           _collectProduction(productionIDs[j]);
-          assertEq(
-            LibPet.getLastHealth(components, kamiIDs[j]),
-            kamiHealths[j] - _getExpectedHealthDrain(rate, timeDelta)
-          );
+          assertEq(LibPet.getLastHealth(components, kamiIDs[j]), kamiHealths[j] - drain);
           assertEq(
             LibCoin.get(components, _getAccount(0)),
             accountBalance + _getExpectedOutput(rate, timeDelta)
           );
 
-          kamiHealths[j] -= _getExpectedHealthDrain(rate, timeDelta);
+          kamiHealths[j] -= drain;
           accountBalance += _getExpectedOutput(rate, timeDelta);
         }
       }

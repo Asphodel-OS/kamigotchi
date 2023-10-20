@@ -252,7 +252,7 @@ library LibPet {
   // Calculate and return the total health of a pet (including mods and equips)
   function calcTotalHarmony(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 total = LibStat.getHarmony(components, id);
-    uint256 bonusID = LibBonus.getByHolder(components, id);
+    uint256 bonusID = LibBonus.get(components, id, "STAT");
     if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "HARMONY");
 
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
@@ -265,7 +265,7 @@ library LibPet {
   // Calculate and return the total health of a pet (including mods and equips)
   function calcTotalHealth(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 total = LibStat.getHealth(components, id);
-    uint256 bonusID = LibBonus.getByHolder(components, id);
+    uint256 bonusID = LibBonus.get(components, id, "STAT");
     if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "HEALTH");
 
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
@@ -278,7 +278,7 @@ library LibPet {
   // Calculate and return the total power of a pet (including mods and equips)
   function calcTotalPower(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 total = LibStat.getPower(components, id);
-    uint256 bonusID = LibBonus.getByHolder(components, id);
+    uint256 bonusID = LibBonus.get(components, id, "STAT");
     if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "POWER");
 
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
@@ -291,7 +291,7 @@ library LibPet {
   // Calculate and return the total violence of a pet (including mods and equips)
   function calcTotalViolence(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 total = LibStat.getViolence(components, id);
-    uint256 bonusID = LibBonus.getByHolder(components, id);
+    uint256 bonusID = LibBonus.get(components, id, "STAT");
     if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "VIOLENCE");
 
     uint256[] memory equipment = LibEquipment.getForPet(components, id);
