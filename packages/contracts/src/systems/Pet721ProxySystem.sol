@@ -11,13 +11,15 @@ uint256 constant ID = uint256(keccak256("system.Pet721.Proxy"));
 string constant name = "Kami";
 string constant symbol = "KAMI";
 
-// this is a hopper system for the ERC20 contract
-// it only exists to allow the ERC20 contract to be deployed without changing the MUD deployment script
-// How it works:
-// 1) deploys the ERC20 contract in constructor
-// 2) returns the token address when called
+/// @title a hopper system for the Pet ERC721 contract
+/** @dev
+ * this is used for the ERC721 contract to be deployed without changing the MUD deployment script
+ * How it works:
+ * 1) deploys the ERC721 contract in constructor
+ * 2) returns the token address when called
+ */
 contract Pet721ProxySystem is System {
-  address token;
+  address public token;
 
   constructor(IWorld _world, address _components) System(_world, _components) {
     Pet721 erc721 = new Pet721(_world, name, symbol);

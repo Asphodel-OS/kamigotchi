@@ -8,17 +8,20 @@ import { ProxyPermissionsFarm20Component as PermissionsComp, ID as PermissionsCo
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
-// a non-upgradable implementation of a basic ERC20 with mint/burn functionality
-// uses a Component for Permissions; systems that can write to the ProxyComponent can write to this contract
-// 2 systems are used (may be upgraded in the future):
-// 1) ERC20WithdrawSystem: mints ERC20 and sends to an EOA
-// 2) ERC20DepositSystem: burns ERC20 and sends to an in game Entity
-// otherwise, the ERC20 is completely normal.
-// Coins are considered 'out of game' and cannot be touched by in game systems
-
+/// @title Farm20 | $MUSU
+/// @notice a non-upgradable implementation of a basic ERC20 with mint/burn functionality
+/** @dev
+ * uses a Component for Permissions; systems that can write to the ProxyComponent can write to this contract
+ * 2 systems are used (may be upgraded in the future):
+ * 1) ERC20WithdrawSystem: mints ERC20 and sends to an EOA
+ * 2) ERC20DepositSystem: burns ERC20 and sends to an in game Entity
+ * otherwise, coins are considered 'out of game' and cannot be touched by in game systems.
+ * Game uses only whole tokens (no decimals)
+ */
 contract Farm20 is ERC20 {
-  IWorld immutable World;
+  IWorld internal immutable World;
 
+  /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
     require(
       PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(

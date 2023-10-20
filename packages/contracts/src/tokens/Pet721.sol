@@ -2,12 +2,10 @@
 pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { Pet721IsInWorldSystem as IsInWorldSystem, ID as IsInWorldSystemID } from "systems/Pet721IsInWorldSystem.sol";
 import { Pet721MetadataSystem as MetadataSystem, ID as MetadataSystemID } from "systems/Pet721MetadataSystem.sol";
 import { ProxyPermissionsERC721Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsERC721Component.sol";
-
-import { LibPet } from "libraries/LibPet.sol";
 
 import { IERC165 } from "openzeppelin/utils/introspection/IERC165.sol";
 import { IERC4906 } from "openzeppelin/interfaces/IERC4906.sol";
@@ -41,11 +39,10 @@ string constant SYMBOL = "KAMI";
 
   Metadata is linked to a system for easier MUD compatibility. However, any view function on a contract can be used. 
 */
-
 contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   IWorld internal immutable World;
 
-  // mirror writable permissions from ProxyPermissionsComponent
+  /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
     require(
       PermissionsComp(getAddressById(World.components(), PermissionsCompID)).writeAccess(
@@ -56,7 +53,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
     _;
   }
 
-  // mirror owner permissions from ProxyPermissionsComponent
+  /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyOwner() {
     require(
       PermissionsComp(getAddressById(World.components(), PermissionsCompID)).owner() == msg.sender,
@@ -65,10 +62,13 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
     _;
   }
 
-  // requires an ERC721 token to be out of game world
+  /// @notice requires an ERC721 token to be out of game world
+  /// @dev uses an external system call to allow for upgradability
   modifier isOutOfWorld(uint256 tokenID) {
-    uint256 entityID = LibPet.indexToID(World.components(), tokenID);
-    require(!LibPet.isInWorld(World.components(), entityID), "721: not out of game world");
+    require(
+      !IsInWorldSystem(getAddressById(World.systems(), IsInWorldSystemID)).isInWorld(tokenID),
+      "721: not out of game world"
+    );
     _;
   }
 
@@ -84,41 +84,40 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
 
   ////////////////////
   // INTERACTIONS
-  // these functions are called by systems and are gated
 
-  // allow minting for approved systems
+  /// @notice allow minting for approved systems
   function mint(address to, uint256 id) external onlyWriter {
     _mint(to, id);
   }
 
-  // bridges NFTs out of game -> in game [stake]
-  // only to be called by system
+  /// @notice bridges NFTs out of game -> in game [stake]
+  /// @dev only to be called by system
   function stakeToken(address from, uint256 id) external onlyWriter {
     super._transfer(from, address(this), id);
   }
 
-  // bridges NFTs in game -> out of game [unstake]
-  // only to be called by system
+  /// @notice bridges NFTs in game -> out of game [unstake]
+  /// @dev only to be called by system
   function unstakeToken(address to, uint256 id) external onlyWriter {
     super._transfer(address(this), to, id);
   }
 
-  // signals to marketplaces that metadata has been updated
+  /// @notice signals to marketplaces that metadata has been updated
   function emitMetadataUpdate(uint256 id) external onlyWriter {
     emit MetadataUpdate(id);
   }
 
-  // updates default royalty via ERC2981
+  /// @notice updates default royalty via ERC2981
   function setDefaultRoyalty(address recipient, uint256 feeNumerator) external onlyOwner {
     _setDefaultRoyalty(recipient, uint96(feeNumerator));
   }
 
-  // delete default token royalty
+  /// @notice delete default token royalty
   function deleteDefaultRoyalty() external onlyOwner {
     _deleteDefaultRoyalty();
   }
 
-  // set royalty for a specific token
+  /// @notice set royalty for a specific token
   function setTokenRoyalty(
     uint256 tokenId,
     address receiver,
@@ -127,7 +126,7 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
     _setTokenRoyalty(tokenId, receiver, uint96(feeNumerator));
   }
 
-  // reset royalty for a specific token
+  /// @notice reset royalty for a specific token
   function resetTokenRoyalty(uint256 tokenId) external onlyOwner {
     _resetTokenRoyalty(tokenId);
   }
@@ -141,21 +140,23 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   ////////////////////
   // ERC721 Overrides
 
-  // disables transfer if token is in game world
-  // transfers work as per usual, save for the in-game check
+  /// @notice disables transfer if token is in game world
+  /// @dev otherwise, transfers work as per usual, save for the in-game check
   function _transfer(address from, address to, uint256 id) internal override isOutOfWorld(id) {
     super._transfer(from, to, id);
   }
 
-  // retrives token metadata from Pet721RevealSystem.
-  function tokenURI(uint256 id) public view override returns (string memory) {
-    return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(id);
+  /// @notice retrives token metadata from Pet721MetadataSystem.
+  function tokenURI(uint256 index) public view override returns (string memory) {
+    return MetadataSystem(getAddressById(World.systems(), MetadataSystemID)).tokenURI(index);
   }
 
   ////////////////////
   // ENUMERABLE
 
-  // returns ERC721Enum result in an array
+  /// @notice a hopper function to help querying on front end
+  /// @dev not used in game
+  /// @return array of all tokens owned by address
   function getAllTokens(address owner) external view returns (uint256[] memory) {
     uint256[] memory tokens = new uint256[](balanceOf(owner));
     for (uint256 i = 0; i < tokens.length; i++) {

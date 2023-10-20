@@ -91,35 +91,18 @@ contract Pet721MintTest is SetupTemplate {
     vm.assume(num721 < ((~uint(0)) / 1e18));
 
     address owner = _getOwner(0);
-    uint price = LibConfig.getValueOf(components, "MINT_PRICE");
-    uint accountLimit = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX");
-    uint supplyLimit = LibConfig.getValueOf(components, "MINT_INITIAL_MAX");
 
-    _moveAccount(0, 4); // minting restricted to room 4
-
-    if (num20 == 0) {
-      vm.deal(owner, price * num20);
-      vm.prank(owner);
-      vm.expectRevert("Mint20Mint: must be > 0");
-      _Mint20MintSystem.mint(num20);
-      return;
-    } else if (num20 > supplyLimit) {
-      vm.deal(owner, price * num20);
-      vm.prank(owner);
-      vm.expectRevert("Mint20Mint: supply limit exceeded");
-      _Mint20MintSystem.mint{ value: price * num20 }(num20);
-      return;
-    } else if (num20 > accountLimit) {
-      vm.deal(owner, price * num20);
-      vm.prank(owner);
-      vm.expectRevert("Mint20Mint: account limit exceeded");
-      _Mint20MintSystem.mint{ value: price * num20 }(num20);
+    uint supplyLimit = LibConfig.getValueOf(components, "MINT_TOTAL_MAX");
+    if (supplyLimit < num20) {
+      vm.prank(deployer);
+      vm.expectRevert("Mint20: totalMinted exceeded");
+      _Mint20.adminMint(owner, num20);
       return;
     } else {
-      vm.deal(owner, price * num20);
-      vm.prank(owner);
-      _Mint20MintSystem.mint{ value: price * num20 }(num20);
+      _giveMint20(0, num20);
     }
+
+    _moveAccount(0, 4); // minting restricted to room 4
 
     if (num721 == 0) {
       vm.prank(owner);
@@ -155,30 +138,10 @@ contract Pet721MintTest is SetupTemplate {
     _assertOwnerInGame(3, _getOwner(0));
   }
 
-  function testFailMaxMintSeparateTx() public {
-    uint amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
-    for (uint i = 0; i < amount; i++) {
-      _mintMint20(0, 1);
-    }
-  }
-
-  function testFailMaxMintSingleTx() public {
-    uint amount = LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX") + 1;
-    _mintMint20(0, amount);
-  }
-
   function testInsufficentBalance() public {
     vm.prank(_getOwner(0));
     // evm underflows on this revert
     vm.expectRevert();
     _Pet721MintSystem.executeTyped(1);
-  }
-
-  function testInsufficentFunds() public {
-    vm.deal(_getOwner(0), mintPrice);
-    vm.prank(_getOwner(0));
-    // evm underflows on this revert
-    vm.expectRevert();
-    _Mint20MintSystem.mint{ value: mintPrice - 1 }(1);
   }
 }

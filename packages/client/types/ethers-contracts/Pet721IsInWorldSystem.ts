@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -26,10 +27,11 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface Pet721TransferSystemInterface extends utils.Interface {
+export interface Pet721IsInWorldSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(address)": FunctionFragment;
+    "executeTyped()": FunctionFragment;
+    "isInWorld(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -38,6 +40,7 @@ export interface Pet721TransferSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "execute"
       | "executeTyped"
+      | "isInWorld"
       | "owner"
       | "transferOwnership"
   ): FunctionFragment;
@@ -48,7 +51,11 @@ export interface Pet721TransferSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>]
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isInWorld",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -61,6 +68,7 @@ export interface Pet721TransferSystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isInWorld", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -86,12 +94,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface Pet721TransferSystem extends BaseContract {
+export interface Pet721IsInWorldSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: Pet721TransferSystemInterface;
+  interface: Pet721IsInWorldSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -115,13 +123,17 @@ export interface Pet721TransferSystem extends BaseContract {
   functions: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    isInWorld(
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -133,13 +145,17 @@ export interface Pet721TransferSystem extends BaseContract {
 
   execute(
     arguments: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   executeTyped(
-    to: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  isInWorld(
+    petIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -154,10 +170,12 @@ export interface Pet721TransferSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    executeTyped(
-      to: PromiseOrValue<string>,
+    executeTyped(overrides?: CallOverrides): Promise<string>;
+
+    isInWorld(
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -181,11 +199,15 @@ export interface Pet721TransferSystem extends BaseContract {
   estimateGas: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    isInWorld(
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -200,11 +222,15 @@ export interface Pet721TransferSystem extends BaseContract {
   populateTransaction: {
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isInWorld(
+      petIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

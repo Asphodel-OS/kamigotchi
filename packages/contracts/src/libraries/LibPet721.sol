@@ -3,23 +3,10 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
-import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { getAddressById } from "solecs/utils.sol";
 
 import { Base64 } from "solady/utils/Base64.sol";
 import { LibString } from "solady/utils/LibString.sol";
-
-import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
-import { IdHolderComponent, ID as IdHolderComponentID } from "components/IdHolderComponent.sol";
-import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
-import { IndexBackgroundComponent, ID as IndexBgCompID } from "components/IndexBackgroundComponent.sol";
-import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
-import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
-import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
-import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 
 import { Pet721ProxySystem, ID as ProxyID } from "systems/Pet721ProxySystem.sol";
 import { Pet721 } from "tokens/Pet721.sol";
@@ -32,17 +19,19 @@ import { LibRandom } from "libraries/LibRandom.sol";
 
 uint256 constant NUM_TRAITS = 5;
 
-// Library for ERC721 interactions and metadata generation functions
+/// @title  Library for Pet721 interactions and metadata generation functions
+/// @notice used for Pet721 related systems and interactions
+/// @dev    systems do not interact with the ERC721 directly, only through this lib
 library LibPet721 {
   ////////////////////////
   // INTERACTIONS
 
-  // @notice  reveals and assigns a pet's traits. does not mint an ERC721
-  // @param   world     world contract
-  // @param   components  components contract
-  // @param   petID     entityID of pet
-  // @param   seed      seed for random generation - uses blockhash
-  // @return  packed    bitpacked traits, used for metadataURI
+  /// @notice  reveals and assigns a pet's traits. does not mint an ERC721
+  /// @param   world     world contract
+  /// @param   components  components contract
+  /// @param   petID     entityID of pet
+  /// @param   seed      seed for random generation - uses blockhash
+  /// @return  packed    bitpacked traits, used for metadataURI
   function reveal(
     IWorld world,
     IUintComp components,
@@ -62,36 +51,49 @@ library LibPet721 {
     packed = LibRandom.packArray(traits, 8);
   }
 
-  // @notice  mints a pet with ERC721 for in-game kamis, with the ERC721 contract as owner
-  // @dev     this is the default state, with revealed kamis minted this way
-  // @param   world     world contract
-  // @param   index     ERC721 index of pet
+  /// @notice  mints a pet with ERC721 for in-game kamis, with the ERC721 contract as owner
+  /// @dev     this is the default state, with revealed kamis minted this way
+  /// @param   world     world contract
+  /// @param   index     ERC721 index of pet
   function mintInGame(IWorld world, uint256 index) internal {
     Pet721 token = getContract(world);
     token.mint(address(token), index);
   }
 
-  // minting out of game
-  // mints directly to EOA
-  // does not interact with other mud systems
+  /// @notice  mints a pet with ERC721 for out-of-game kamis, with the EOA as owner
+  /// @dev     no reason to use rn, created before Mint20. does not interact with other mud systems
+  /// @param   world     world contract
+  /// @param   to        EOA to mint to
+  /// @param   index     ERC721 index of pet
   function mintOutGame(IWorld world, address to, uint256 index) internal {
     Pet721 token = getContract(world);
     token.mint(to, index);
   }
 
-  // stakes a kami, out of game -> in game
+  /// @notice  stakes a kami, out of game -> in game ('bridging in')
+  /// @dev     checks are performed in system
+  /// @param   world     world contract
+  /// @param   from      EOA to stake from
+  /// @param   index     ERC721 index of pet
   function stake(IWorld world, address from, uint256 index) internal {
     Pet721 token = getContract(world);
     token.stakeToken(from, index);
   }
 
-  // unstakes a kami, in game -> out of game
+  /// @notice  unstakes a kami, in game -> out of game
+  /// @dev     checks are performed in system
+  /// @param   world     world contract
+  /// @param   to        EOA to unstake to
+  /// @param   index     ERC721 index of pet
   function unstake(IWorld world, address to, uint256 index) internal {
     Pet721 token = getContract(world);
     token.unstakeToken(to, index);
   }
 
-  // emits a metadata update event. to be called whenever metadata changes
+  /// @notice  emits a metadata update event. to be called whenever metadata changes
+  /// @dev     no state changes, only emits event. for marketplaces
+  /// @param   world     world contract
+  /// @param   index     ERC721 index of pet
   function updateEvent(IWorld world, uint256 index) internal {
     Pet721 token = getContract(world);
     token.emitMetadataUpdate(index);
@@ -116,6 +118,11 @@ library LibPet721 {
   ////////////////////////
   // METADATA GENERATION
 
+  /// @notice  performs random generation of traits, does NOT assign to pet
+  /// @param   components  components contract
+  /// @param   petID       entityID of pet
+  /// @param   seed        seed for random generation
+  /// @return  traits      array of traits, indices ordered [Face, Hand, Body, Background, Color]
   function genRandTraits(
     IUintComp components,
     uint256 petID,
@@ -182,7 +189,10 @@ library LibPet721 {
     return traits;
   }
 
-  // Set the trait indices for a pet
+  /// @notice  writes assigned traits to pet
+  /// @param   components  components contract
+  /// @param   petID       entityID of pet
+  /// @param   traits      array of traits, indices ordered [Face, Hand, Body, Background, Color]
   function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) internal {
     LibRegistryTrait.setColorIndex(components, petID, traits[4]);
     LibRegistryTrait.setBackgroundIndex(components, petID, traits[3]);
@@ -194,7 +204,10 @@ library LibPet721 {
   //////////////////
   // JSON STRINGIFY
 
-  // gets json in base64 format
+  /// @notice  gets json in base64 format. for NFT marketplaces
+  /// @param   components  components contract
+  /// @param   petIndex    ERC721 index of pet
+  /// @return  string      base64 encoded json
   function getJsonBase64(
     IUintComp components,
     uint256 petIndex
@@ -206,7 +219,10 @@ library LibPet721 {
       );
   }
 
-  // gets json in UTF-8 format
+  /// @notice  gets json in UTF-8 format. to view in plaintext
+  /// @param   components  components contract
+  /// @param   petIndex    ERC721 index of pet
+  /// @return  string      json in UTF-8 format
   function getJsonUtf(IUintComp components, uint256 petIndex) public view returns (string memory) {
     uint256 petID = LibPet.indexToID(components, petIndex);
 
@@ -232,6 +248,10 @@ library LibPet721 {
       );
   }
 
+  /// @notice  gets and parses base traits (body, color, face, hand, background)
+  /// @param   components  components contract
+  /// @param   petID       entityID of pet
+  /// @return  string      base traits in json format
   function _getBaseTraits(
     IUintComp components,
     uint256 petID
@@ -261,6 +281,10 @@ library LibPet721 {
     return result;
   }
 
+  /// @notice  gets and parses the 4 main stats (health, power, violence, harmony) and level
+  /// @param   components  components contract
+  /// @param   petID       entityID of pet
+  /// @return  string      stats in json format
   function _getStats(IUintComp components, uint256 petID) internal view returns (string memory) {
     string memory result = "";
 
@@ -293,7 +317,11 @@ library LibPet721 {
     return result;
   }
 
-  // appends trait and trait type to metadata format
+  /// @notice  appends trait and trait type to metadata format
+  /// @param   name        name of trait
+  /// @param   value       value of trait
+  /// @param   comma       whether to append a comma (depending on position)
+  /// @return  string      { "trait_type": *name*, "value": *value* } *,*
   function _traitToString(
     string memory name,
     string memory value,
@@ -306,7 +334,11 @@ library LibPet721 {
     }
   }
 
-  // appends trait and trait type to metadata format, but with a uint256 value
+  /// @notice  appends trait and trait type to metadata format
+  /// @param   name        name of trait
+  /// @param   value       value of trait (uint256)
+  /// @param   comma       whether to append a comma (depending on position)
+  /// @return  string      { "trait_type": *name*, "value": *value* } *,*
   function _traitToString(
     string memory name,
     uint256 value,

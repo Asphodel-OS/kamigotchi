@@ -14,9 +14,8 @@ import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol"
 
 uint256 constant ID = uint256(keccak256("system.Mint20.Mint"));
 
-// initial 1111 supply, minted before GDA for a fixed price
-// mints here are capped when supply reaches 1111, including whitelist.
-// assumes GDA only starts when this is minted out, otherwise GDA mints will count to 1111 (which is ok)
+/// @notice depreciated
+/// @dev depreciated but still left in for testnet. Not needed for audit
 contract Mint20MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 

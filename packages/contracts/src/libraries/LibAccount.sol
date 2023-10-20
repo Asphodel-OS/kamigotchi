@@ -159,15 +159,6 @@ library LibAccount {
     StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, amt);
   }
 
-  function setPetsMinted(
-    IWorld world,
-    IUintComp components,
-    uint256 account,
-    uint256 value
-  ) internal {
-    LibDataEntity.setFor(world, components, account, 0, "PET721_MINT", value);
-  }
-
   function setMint20Minted(
     IWorld world,
     IUintComp components,
@@ -339,5 +330,26 @@ library LibAccount {
 
     uint256[] memory results = LibQuery.query(fragments);
     return results;
+  }
+
+  //////////////////
+  // DATA LOGGING
+
+  function logIncPetsMinted(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 count
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, 0, "PET721_MINT", count);
+  }
+
+  function logIncPetsStaked(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 count
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", 1);
   }
 }

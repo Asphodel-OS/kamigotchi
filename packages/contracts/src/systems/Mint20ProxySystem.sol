@@ -11,11 +11,13 @@ uint256 constant ID = uint256(keccak256("system.Mint20.Proxy"));
 string constant name = "Kami";
 string constant symbol = "KAMI";
 
-// this is a hopper system for the ERC20 contract
-// it only exists to allow the ERC20 contract to be deployed without changing the MUD deployment script
-// How it works:
-// 1) deploys the ERC20 contract in constructor
-// 2) returns the token address when called
+/// @title a hopper system for the Mint ERC20 contract
+/** @dev
+ * this is used for the ERC20 contract to be deployed without changing the MUD deployment script
+ * How it works:
+ * 1) deploys the ERC20 contract in constructor
+ * 2) returns the token address when called
+ */
 contract Mint20ProxySystem is System {
   address token;
 
