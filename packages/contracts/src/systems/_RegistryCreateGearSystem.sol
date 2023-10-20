@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { LibString } from "solady/utils/LibString.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Gear.Create"));
@@ -15,6 +16,7 @@ contract _RegistryCreateGearSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
+      uint256 index,
       uint256 gearIndex,
       string memory name,
       string memory type_,
@@ -25,15 +27,18 @@ contract _RegistryCreateGearSystem is System {
       uint256 slots
     ) = abi.decode(
         arguments,
-        (uint256, string, string, uint256, uint256, uint256, uint256, uint256)
+        (uint256, uint256, string, string, uint256, uint256, uint256, uint256, uint256)
       );
     uint256 registryID = LibRegistryItem.getByGearIndex(components, gearIndex);
 
-    require(registryID == 0, "Item Registry: Equip index already exists");
+    require(registryID == 0, "CreateGear: index alr exists");
+    require(!LibString.eq(name, ""), "CreateGear: name cannot be empty");
+    require(!LibString.eq(type_, ""), "CreateGear: type cannot be empty");
 
     LibRegistryItem.createGear(
       world,
       components,
+      index,
       gearIndex,
       name,
       type_,
@@ -47,6 +52,7 @@ contract _RegistryCreateGearSystem is System {
   }
 
   function executeTyped(
+    uint256 index,
     uint256 gearIndex,
     string memory name,
     string memory type_,
@@ -56,6 +62,7 @@ contract _RegistryCreateGearSystem is System {
     uint256 harmony,
     uint256 slots
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(gearIndex, name, type_, health, power, violence, harmony, slots));
+    return
+      execute(abi.encode(index, gearIndex, name, type_, health, power, violence, harmony, slots));
   }
 }

@@ -25,7 +25,7 @@ contract LootboxTest is SetupTemplate {
     weights[0] = 1;
 
     uint256 lootboxIndex = 10;
-    _createLootbox(lootboxIndex, keys, weights, "Lootbox");
+    _createLootbox(lootboxIndex, "Lootbox", keys, weights);
 
     _giveLootbox(0, lootboxIndex, startAmt);
     assertEq(_getItemBalance(0, lootboxIndex), startAmt);

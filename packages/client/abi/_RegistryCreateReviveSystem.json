@@ -72,6 +72,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "reviveIndex",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
           "name": "name",
           "type": "string"
@@ -122,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,uint256)": "effde02f",
+    "executeTyped(uint256,uint256,string,uint256)": "8f041edf",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

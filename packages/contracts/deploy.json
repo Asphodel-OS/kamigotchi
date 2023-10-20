@@ -202,13 +202,28 @@
     {
       "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsFungibleComponent",
+        "IndexItemComponent",
+        "IndexFoodComponent",
+        "NameComponent",
+        "HealthComponent"
       ]
     },
     {
       "name": "_RegistryCreateGearSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsNonFungibleComponent",
+        "IndexItemComponent",
+        "IndexGearComponent",
+        "NameComponent",
+        "TypeComponent",
+        "HealthComponent",
+        "PowerComponent",
+        "ViolenceComponent",
+        "HarmonyComponent",
+        "SlotsComponent"
       ]
     },
     {
@@ -226,7 +241,16 @@
     {
       "name": "_RegistryCreateModSystem",
       "writeAccess": [
-        "*"
+        "IsRegistryComponent",
+        "IsFungibleComponent",
+        "IndexItemComponent",
+        "IndexGearComponent",
+        "NameComponent",
+        "TypeComponent",
+        "HealthComponent",
+        "PowerComponent",
+        "ViolenceComponent",
+        "HarmonyComponent"
       ]
     },
     {
@@ -315,15 +339,26 @@
       ]
     },
     {
-      "name": "_RegistryDeleteLootboxSystem",
+      "name": "_RegistryDeleteItemSystem",
       "writeAccess": [
         "IsRegistryComponent",
         "IsFungibleComponent",
-        "IsLootboxComponent",
+        "IsNonFungibleComponent",
         "IndexItemComponent",
+        "NameComponent",
+        "TypeComponent",
+        "IndexFoodComponent",
+        "IndexGearComponent",
+        "IndexModComponent",
+        "IndexReviveComponent",
+        "IsLootboxComponent",
+        "HealthComponent",
+        "PowerComponent",
+        "ViolenceComponent",
+        "HarmonyComponent",
+        "SlotsComponent",
         "KeysComponent",
-        "WeightsComponent",
-        "NameComponent"
+        "WeightsComponent"
       ]
     },
     {
@@ -352,35 +387,11 @@
       ]
     },
     {
-      "name": "_RegistryUpdateFoodSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "_RegistryUpdateGearSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "_RegistryUpdateModSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
       "name": "_RegistryUpdateRelationshipSystem",
       "writeAccess": [
         "NameComponent",
         "BlacklistComponent",
         "WhitelistComponent"
-      ]
-    },
-    {
-      "name": "_RegistryUpdateReviveSystem",
-      "writeAccess": [
-        "*"
       ]
     },
     {

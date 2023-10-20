@@ -25,15 +25,11 @@ import _RegistryCreateSkillEffectSystem from "../abi/_RegistryCreateSkillEffectS
 import _RegistryCreateSkillRequirementSystem from "../abi/_RegistryCreateSkillRequirementSystem.json";
 import _RegistryCreateSkillSystem from "../abi/_RegistryCreateSkillSystem.json";
 import _RegistryCreateTraitSystem from "../abi/_RegistryCreateTraitSystem.json";
-import _RegistryDeleteLootboxSystem from "../abi/_RegistryDeleteLootboxSystem.json";
+import _RegistryDeleteItemSystem from "../abi/_RegistryDeleteItemSystem.json";
 import _RegistryDeleteQuestSystem from "../abi/_RegistryDeleteQuestSystem.json";
 import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshipSystem.json";
 import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
-import _RegistryUpdateFoodSystem from "../abi/_RegistryUpdateFoodSystem.json";
-import _RegistryUpdateGearSystem from "../abi/_RegistryUpdateGearSystem.json";
-import _RegistryUpdateModSystem from "../abi/_RegistryUpdateModSystem.json";
 import _RegistryUpdateRelationshipSystem from "../abi/_RegistryUpdateRelationshipSystem.json";
-import _RegistryUpdateReviveSystem from "../abi/_RegistryUpdateReviveSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import _RoomSetDescriptionSystem from "../abi/_RoomSetDescriptionSystem.json";
@@ -108,15 +104,11 @@ export const SystemAbis = {
   "system._Registry.Skill.Create.Requirement": _RegistryCreateSkillRequirementSystem.abi,
   "system._Registry.Skill.Create": _RegistryCreateSkillSystem.abi,
   "system._Registry.Trait.Create": _RegistryCreateTraitSystem.abi,
-  "system._Registry.Lootbox.Delete": _RegistryDeleteLootboxSystem.abi,
+  "system._Registry.Item.Delete": _RegistryDeleteItemSystem.abi,
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
   "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem.abi,
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
-  "system._Registry.Food.Update": _RegistryUpdateFoodSystem.abi,
-  "system._Registry.Gear.Update": _RegistryUpdateGearSystem.abi,
-  "system._Registry.Mod.Update": _RegistryUpdateModSystem.abi,
   "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem.abi,
-  "system._Registry.Revive.Update": _RegistryUpdateReviveSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
   "system._Room.Set.Description": _RoomSetDescriptionSystem.abi,

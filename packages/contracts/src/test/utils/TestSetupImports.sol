@@ -167,14 +167,10 @@ import { _RegistryCreateSkillSystem, ID as _RegistryCreateSkillSystemID } from "
 import { _RegistryCreateSkillEffectSystem, ID as _RegistryCreateSkillEffectSystemID } from "systems/_RegistryCreateSkillEffectSystem.sol";
 import { _RegistryCreateSkillRequirementSystem, ID as _RegistryCreateSkillRequirementSystemID } from "systems/_RegistryCreateSkillRequirementSystem.sol";
 import { _RegistryCreateTraitSystem, ID as _RegistryCreateTraitSystemID } from "systems/_RegistryCreateTraitSystem.sol";
-import { _RegistryDeleteLootboxSystem, ID as _RegistryDeleteLootboxSystemID } from "systems/_RegistryDeleteLootboxSystem.sol";
+import { _RegistryDeleteItemSystem, ID as _RegistryDeleteItemSystemID } from "systems/_RegistryDeleteItemSystem.sol";
 import { _RegistryDeleteQuestSystem, ID as _RegistryDeleteQuestSystemID } from "systems/_RegistryDeleteQuestSystem.sol";
 import { _RegistryDeleteSkillSystem, ID as _RegistryDeleteSkillSystemID } from "systems/_RegistryDeleteSkillSystem.sol";
-import { _RegistryUpdateFoodSystem, ID as _RegistryUpdateFoodSystemID } from "systems/_RegistryUpdateFoodSystem.sol";
-import { _RegistryUpdateGearSystem, ID as _RegistryUpdateGearSystemID } from "systems/_RegistryUpdateGearSystem.sol";
-import { _RegistryUpdateModSystem, ID as _RegistryUpdateModSystemID } from "systems/_RegistryUpdateModSystem.sol";
 import { _RegistryUpdateRelationshipSystem, ID as _RegistryUpdateRelationshipSystemID } from "systems/_RegistryUpdateRelationshipSystem.sol";
-import { _RegistryUpdateReviveSystem, ID as _RegistryUpdateReviveSystemID } from "systems/_RegistryUpdateReviveSystem.sol";
 import { _RegistryUpdateTraitSystem, ID as _RegistryUpdateTraitSystemID } from "systems/_RegistryUpdateTraitSystem.sol";
 import { _RoomCreateSystem, ID as _RoomCreateSystemID } from "systems/_RoomCreateSystem.sol";
 import { _RoomSetDescriptionSystem, ID as _RoomSetDescriptionSystemID } from "systems/_RoomSetDescriptionSystem.sol";
@@ -356,14 +352,10 @@ abstract contract TestSetupImports is MudTest {
   _RegistryCreateSkillEffectSystem __RegistryCreateSkillEffectSystem;
   _RegistryCreateSkillRequirementSystem __RegistryCreateSkillRequirementSystem;
   _RegistryCreateTraitSystem __RegistryCreateTraitSystem;
-  _RegistryDeleteLootboxSystem __RegistryDeleteLootboxSystem;
+  _RegistryDeleteItemSystem __RegistryDeleteItemSystem;
   _RegistryDeleteQuestSystem __RegistryDeleteQuestSystem;
   _RegistryDeleteSkillSystem __RegistryDeleteSkillSystem;
-  _RegistryUpdateFoodSystem __RegistryUpdateFoodSystem;
-  _RegistryUpdateGearSystem __RegistryUpdateGearSystem;
-  _RegistryUpdateModSystem __RegistryUpdateModSystem;
   _RegistryUpdateRelationshipSystem __RegistryUpdateRelationshipSystem;
-  _RegistryUpdateReviveSystem __RegistryUpdateReviveSystem;
   _RegistryUpdateTraitSystem __RegistryUpdateTraitSystem;
   _RoomCreateSystem __RoomCreateSystem;
   _RoomSetDescriptionSystem __RoomSetDescriptionSystem;
@@ -381,9 +373,9 @@ abstract contract TestSetupImports is MudTest {
   ListingSellSystem _ListingSellSystem;
   LootboxExecuteRevealSystem _LootboxExecuteRevealSystem;
   LootboxStartRevealSystem _LootboxStartRevealSystem;
+  NodeCollectSystem _NodeCollectSystem;
   Mint20ProxySystem _Mint20ProxySystem;
   Mint20MintSystem _Mint20MintSystem;
-  NodeCollectSystem _NodeCollectSystem;
   Pet721MetadataSystem _Pet721MetadataSystem;
   Pet721MintSystem _Pet721MintSystem;
   Pet721RevealSystem _Pet721RevealSystem;
@@ -569,19 +561,11 @@ abstract contract TestSetupImports is MudTest {
       system(_RegistryCreateSkillRequirementSystemID)
     );
     __RegistryCreateTraitSystem = _RegistryCreateTraitSystem(system(_RegistryCreateTraitSystemID));
-    __RegistryDeleteLootboxSystem = _RegistryDeleteLootboxSystem(
-      system(_RegistryDeleteLootboxSystemID)
-    );
+    __RegistryDeleteItemSystem = _RegistryDeleteItemSystem(system(_RegistryDeleteItemSystemID));
     __RegistryDeleteQuestSystem = _RegistryDeleteQuestSystem(system(_RegistryDeleteQuestSystemID));
     __RegistryDeleteSkillSystem = _RegistryDeleteSkillSystem(system(_RegistryDeleteSkillSystemID));
-    __RegistryUpdateFoodSystem = _RegistryUpdateFoodSystem(system(_RegistryUpdateFoodSystemID));
-    __RegistryUpdateGearSystem = _RegistryUpdateGearSystem(system(_RegistryUpdateGearSystemID));
-    __RegistryUpdateModSystem = _RegistryUpdateModSystem(system(_RegistryUpdateModSystemID));
     __RegistryUpdateRelationshipSystem = _RegistryUpdateRelationshipSystem(
       system(_RegistryUpdateRelationshipSystemID)
-    );
-    __RegistryUpdateReviveSystem = _RegistryUpdateReviveSystem(
-      system(_RegistryUpdateReviveSystemID)
     );
     __RegistryUpdateTraitSystem = _RegistryUpdateTraitSystem(system(_RegistryUpdateTraitSystemID));
     __RoomCreateSystem = _RoomCreateSystem(system(_RoomCreateSystemID));
@@ -600,9 +584,9 @@ abstract contract TestSetupImports is MudTest {
     _ListingSellSystem = ListingSellSystem(system(ListingSellSystemID));
     _LootboxExecuteRevealSystem = LootboxExecuteRevealSystem(system(LootboxExecuteRevealSystemID));
     _LootboxStartRevealSystem = LootboxStartRevealSystem(system(LootboxStartRevealSystemID));
+    _NodeCollectSystem = NodeCollectSystem(system(NodeCollectSystemID));
     _Mint20ProxySystem = Mint20ProxySystem(system(Mint20ProxySystemID));
     _Mint20MintSystem = Mint20MintSystem(system(Mint20MintSystemID));
-    _NodeCollectSystem = NodeCollectSystem(system(NodeCollectSystemID));
     _Pet721MetadataSystem = Pet721MetadataSystem(system(Pet721MetadataSystemID));
     _Pet721MintSystem = Pet721MintSystem(system(Pet721MintSystemID));
     _Pet721RevealSystem = Pet721RevealSystem(system(Pet721RevealSystemID));

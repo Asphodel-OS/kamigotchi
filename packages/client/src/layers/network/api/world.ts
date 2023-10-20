@@ -2,6 +2,8 @@ import { AdminAPI, createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
 import { utils } from 'ethers';
 
+import items from 'assets/data/items/Items.csv';
+import droptables from 'assets/data/items/Droptables.csv';
 import background from 'assets/data/kami/Background.csv';
 import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
@@ -232,27 +234,59 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
-
   ////////////////////
   // ITEMS
 
   async function initItems(api: AdminAPI) {
-    await initFood(api);
-    await initLootbox(api);
+    const allItems = csvToMap(items);
+    const allDroptables = csv2dToMap(droptables);
+
+    for (let i = 0; i < allItems.length; i++) {
+      await sleepIf();
+      try {
+        switch (allItems[i].get('Type').toUpperCase()) {
+          case "FOOD":
+            await setFood(api, allItems[i]);
+            break;
+          case "REVIVE":
+            await setRevive(api, allItems[i]);
+            break;
+          case "LOOTBOX":
+            await setLootbox(api, allItems[i], allDroptables);
+            break;
+          default:
+            console.error("Item type not found: " + allItems[i].get('Type'));
+        }
+      } catch { }
+    }
   }
 
-  async function initFood(api: AdminAPI) {
-    await api.registry.food.create(1, 'Maple-Flavor Ghost Gum', 25);
-    await api.registry.food.create(2, 'Pom-Pom Fruit Candy', 100);
-    await api.registry.food.create(3, 'Gakki Cookie Sticks', 200);
-    await api.registry.revive.create(1, 'Red Gakki Ribbon', 10);
+  async function setFood(api: AdminAPI, item: any) {
+    await api.registry.item.create.food(
+      item.get('Index'),
+      item.get('FamilyIndex(depreciated)'),
+      item.get('Name'),
+      item.get('Health')
+    );
   }
 
-  async function initLootbox(api: AdminAPI) {
-    // @dev temp lootbox holder, droptable consists of food above
-    await api.registry.lootbox.create(1000, [1, 2, 3], [3, 2, 1], 'Lootbox');
+  async function setRevive(api: AdminAPI, item: any) {
+    await api.registry.item.create.revive(
+      item.get('Index'),
+      item.get('FamilyIndex(depreciated)'),
+      item.get('Name'),
+      item.get('Health')
+    );
   }
 
+  async function setLootbox(api: AdminAPI, item: any, droptables: any) {
+    await api.registry.item.create.lootbox(
+      item.get('Index'),
+      item.get('Name'),
+      droptables[Number(item.get('Droptable'))].get('Key'),
+      droptables[Number(item.get('Droptable'))].get('Tier')
+    );
+  }
 
   ////////////////////
   // NPCS
@@ -268,7 +302,7 @@ export function setUpWorldAPI(systems: any) {
     await api.listing.set(1, 1, 25, 0); // merchant index, item index, buy price, sell price
     await api.listing.set(1, 2, 90, 0);
     await api.listing.set(1, 3, 150, 0);
-    await api.listing.set(1, 4, 500, 0);
+    await api.listing.set(1, 1001, 500, 0);
   }
 
 
@@ -407,7 +441,7 @@ export function setUpWorldAPI(systems: any) {
       64800
     );
     await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_HAS", 0, 200);
-    await api.registry.quest.add.reward(7, "ITEM", 1000, 1); // temp lootbox handler
+    await api.registry.quest.add.reward(7, "ITEM", 10001, 1); // temp lootbox handler
 
     // temp lootbox quest for testing
     await api.registry.quest.create(
@@ -417,7 +451,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       10
     );
-    await api.registry.quest.add.reward(8, "ITEM", 1000, 1); // temp lootbox handler
+    await api.registry.quest.add.reward(8, "ITEM", 10001, 1); // temp lootbox handler
   }
 
 
@@ -526,22 +560,6 @@ export function setUpWorldAPI(systems: any) {
   ////////////////////
   // TRAITS
 
-  function csvToMap(arr: any) {
-    let jsonObj = [];
-    let headers = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-      let data = arr[i];
-      // let obj: {[key: string]: number};
-      let mp = new Map();
-      for (let j = 0; j < data.length; j++) {
-        mp.set(headers[j].trim(), data[j].trim() ? data[j].trim() : "0");
-      }
-      jsonObj.push(mp);
-    }
-
-    return jsonObj;
-  }
-
   async function initTraits(api: AdminAPI) {
     // inits a single type of trait, returns number of traits
     async function initSingle(dataRaw: any, type: string) {
@@ -607,6 +625,66 @@ export function setUpWorldAPI(systems: any) {
     await initSingle(hand, "HAND");
   }
 
+  //////////////////////
+  // UTILS
+
+  // converts csv to array of maps
+  function csvToMap(arr: any) {
+    let jsonObj = [];
+    let headers = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      let data = arr[i];
+      let mp = new Map();
+      for (let j = 0; j < data.length; j++) {
+        mp.set(headers[j].trim(), data[j].trim() ? data[j].trim() : "0");
+      }
+      jsonObj.push(mp);
+    }
+    return jsonObj;
+  }
+
+  /* 2D CSV to a array of map. This is to parse 2d data in notion (eg droptables)
+  * eg: Index | Key   | Tier (Weight)
+  *     1     |       |
+  *           | 1     | 8
+  *           | 2     | 9
+  *     2     |       |
+  *           | 3     | 6
+  * would result in:
+  * [
+  *   {
+  *     Key: [1, 2],
+  *     Tier: [8, 9]
+  *   },
+  *   {
+  *    Key: [3],
+  *   Tier: [6]
+  *   }
+  * ]
+  **/
+  function csv2dToMap(arr: any) {
+    let results = [];
+    let headers = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      const data = arr[i];
+      if (data[0] != "") {
+        let mp = new Map();
+        for (let n = 1; n < headers.length; n++) {
+          mp.set(headers[n].trim(), []);
+        }
+        for (let j = i + 1; data[j] == ""; j++) {
+          const data = arr[j];
+          for (let k = 1; k < headers.length; k++) {
+            mp.get(headers[k].trim()).push(data[k].trim() ? data[k].trim() : "0");
+          }
+          i = j;
+        }
+        results.push(mp);
+      }
+    }
+    return results;
+  }
+
   return {
     init: initAll,
     config: {
@@ -614,8 +692,6 @@ export function setUpWorldAPI(systems: any) {
     },
     items: {
       init: () => initItems(createAdminAPI(systems)),
-      initFood: () => initFood(createAdminAPI(systems)),
-      initLootbox: () => initLootbox(createAdminAPI(systems)),
     },
     npcs: {
       init: () => initNpcs(createAdminAPI(systems)),
@@ -639,6 +715,7 @@ export function setUpWorldAPI(systems: any) {
       init: () => initTraits(createAdminAPI(systems)),
       tryInit: () => initTraitsWithFail(createAdminAPI(systems)),
     },
+    test: csv2dToMap(droptables),
   }
 
   function sleepIf() {

@@ -32,20 +32,6 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
-  //  LOOTBOXES
-
-  async function createLootbox(index: number, keys: number[], weights: number[], name: string) {
-    await sleepIf();
-    return systems['system._Registry.Lootbox.Create'].executeTyped(index, keys, weights, name);
-  }
-
-  async function deleteLootbox(index: number) {
-    await sleepIf();
-    return systems['system._Registry.Lootbox.Delete'].executeTyped(index);
-  }
-
-
-  /////////////////
   //  NPCs
 
   // (creates an NPC with the name at the specified location
@@ -306,13 +292,14 @@ export function createAdminAPI(systems: any) {
   //  ITEMS
 
   // @dev add a food item registry entry
-  async function registerFood(foodIndex: number, name: string, health: number) {
+  async function registerFood(index: number, foodIndex: number, name: string, health: number) {
     await sleepIf();
-    return systems['system._Registry.Food.Create'].executeTyped(foodIndex, name, health);
+    return systems['system._Registry.Food.Create'].executeTyped(index, foodIndex, name, health);
   }
 
   // @dev add an equipment item registry entry
   async function registerGear(
+    index: number,
     gearIndex: number,
     name: string,
     type_: string,
@@ -324,6 +311,7 @@ export function createAdminAPI(systems: any) {
   ) {
     await sleepIf();
     return systems['system._Registry.Gear.Create'].executeTyped(
+      index,
       gearIndex,
       name,
       type_,
@@ -335,8 +323,14 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+  async function registerLootbox(index: number, name: string, keys: number[], weights: number[]) {
+    await sleepIf();
+    return systems['system._Registry.Lootbox.Create'].executeTyped(index, name, keys, weights);
+  }
+
   // @dev add a modification item registry entry
   async function registerModification(
+    index: number,
     modIndex: number,
     name: string,
     health: number,
@@ -346,6 +340,7 @@ export function createAdminAPI(systems: any) {
   ) {
     await sleepIf();
     return systems['system._Registry.Mod.Create'].executeTyped(
+      index,
       modIndex,
       name,
       health,
@@ -356,9 +351,15 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev add a revive item registry entry
-  async function registerRevive(reviveIndex: number, name: string, health: number) {
+  async function registerRevive(index: number, reviveIndex: number, name: string, health: number) {
     await sleepIf();
-    return systems['system._Registry.Revive.Create'].executeTyped(reviveIndex, name, health);
+    return systems['system._Registry.Revive.Create'].executeTyped(index, reviveIndex, name, health);
+  }
+
+  // @dev deletes an item registry
+  async function deleteItem(index: number) {
+    await sleepIf();
+    return systems['system._Registry.Item.Delete'].executeTyped(index);
   }
 
   // @dev adds a trait in registry
@@ -388,63 +389,6 @@ export function createAdminAPI(systems: any) {
       type
     );
   }
-
-  // @dev update a food item registry entry
-  async function updateRegistryFood(foodIndex: number, name: string, health: number) {
-    await sleepIf();
-    return systems['system._Registry.Food.Update'].executeTyped(foodIndex, name, health);
-  }
-
-  // @dev update an equipment item registry entry
-  async function updateRegistryGear(
-    gearIndex: number,
-    name: string,
-    type_: string,
-    health: number,
-    power: number,
-    violence: number,
-    harmony: number,
-    slots: number
-  ) {
-    await sleepIf();
-    return systems['system._Registry.Gear.Update'].executeTyped(
-      gearIndex,
-      name,
-      type_,
-      health,
-      power,
-      violence,
-      harmony,
-      slots
-    );
-  }
-
-  // @dev update a modification item registry entry
-  async function updateRegistryModification(
-    modIndex: number,
-    name: string,
-    health: number,
-    power: number,
-    harmony: number,
-    violence: number
-  ) {
-    await sleepIf();
-    return systems['system._Registry.Mod.Update'].executeTyped(
-      modIndex,
-      name,
-      health,
-      power,
-      violence,
-      harmony
-    );
-  }
-
-  // @dev update a revive item registry entry
-  async function updateRegistryRevive(reviveIndex: number, name: string, health: number) {
-    await sleepIf();
-    return systems['system._Registry.Revive.Update'].executeTyped(reviveIndex, name, health);
-  }
-
 
   //////////////////
   // RELATIONSHIPS
@@ -528,24 +472,18 @@ export function createAdminAPI(systems: any) {
     },
     pet: { forceReveal: petForceReveal },
     registry: {
-      food: {
-        create: registerFood,
-        update: updateRegistryFood,
-      },
-      gear: {
-        create: registerGear,
-        update: updateRegistryGear,
-      },
-      lootbox: {
-        create: createLootbox,
-        delete: deleteLootbox,
+      item: {
+        create: {
+          food: registerFood,
+          gear: registerGear,
+          lootbox: registerLootbox,
+          modification: registerModification,
+          revive: registerRevive,
+        },
+        delete: deleteItem,
       },
       trait: {
         create: registerTrait,
-      },
-      modification: {
-        create: registerModification,
-        update: updateRegistryModification,
       },
       quest: {
         create: createQuest,
@@ -560,10 +498,6 @@ export function createAdminAPI(systems: any) {
         create: registerRelationship,
         update: updateRelationship,
         delete: deleteRelationship,
-      },
-      revive: {
-        create: registerRevive,
-        update: updateRegistryRevive,
       },
       skill: {
         create: createSkill,
