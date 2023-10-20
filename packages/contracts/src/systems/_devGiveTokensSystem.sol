@@ -25,7 +25,7 @@ contract _devGiveTokensSystem is System {
       components,
       LibAccount.getByOperator(components, to),
       0,
-      "COIN_HAS",
+      "COIN_TOTAL",
       amount
     );
     return "";

@@ -269,7 +269,7 @@ library LibAccount {
       inventoryID = LibInventory.getGear(components, id, index);
       balance = LibInventory.getBalance(components, inventoryID);
     } else if (LibString.eq(_type, "COIN")) {
-      balance = LibCoin.get(components, id);
+      balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");
     } else if (LibString.eq(_type, "KAMI")) {
       balance = getPetsOwned(components, id).length;
     } else if (LibString.eq(_type, "ROOM")) {

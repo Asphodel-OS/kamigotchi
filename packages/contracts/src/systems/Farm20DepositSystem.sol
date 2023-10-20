@@ -36,7 +36,7 @@ contract Farm20DepositSystem is System {
     LibCoin.inc(components, accountID, amount);
 
     // updating account
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_HAS", amount);
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", amount);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_DEPOSIT", amount);
     LibAccount.updateLastBlock(components, accountID);
 

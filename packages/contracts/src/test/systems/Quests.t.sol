@@ -135,7 +135,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
-    _createQuestObjective(1, "NAME", "GATHER", "COIN_HAS", 0, 10);
+    _createQuestObjective(1, "NAME", "GATHER", "COIN_TOTAL", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
 
     // register account

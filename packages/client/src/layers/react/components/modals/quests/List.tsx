@@ -25,11 +25,6 @@ interface Props {
   };
 }
 
-interface TextBool {
-  text: string;
-  bool: boolean;
-}
-
 export const List = (props: Props) => {
   // ticking
   // ticking
