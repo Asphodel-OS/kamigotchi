@@ -510,7 +510,7 @@ export function setUpWorldAPI(systems: any) {
 
 
     // (Health) Skill Tree
-    await api.registry.skill.create(110, "KAMI", "PASSIVE", "Workout R1, 3,outine", "-5% Harvest Drain per level");
+    await api.registry.skill.create(110, "KAMI", "PASSIVE", "Workout Routine", 1, 3, "-5% Harvest Drain per level");
     await api.registry.skill.add.effect(110, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(110, "SKILL", 1, 3);
 
@@ -532,7 +532,7 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.skill.add.effect(204, "HARVEST", "OUTPUT", "INC", 0, 125);
     await api.registry.skill.add.requirement(204, "SKILL", 203, 3);
 
-    await api.registry.skill.create(210, "KAMI", "PASSIVE", "Sunglasses O1, 3,wnership", "-5% Harvest Drain per level");
+    await api.registry.skill.create(210, "KAMI", "PASSIVE", "Sunglasses Ownership", 1, 3, "-5% Harvest Drain per level");
     await api.registry.skill.add.effect(210, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(210, "SKILL", 2, 3);
 
