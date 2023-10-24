@@ -6,7 +6,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Fund"));
 
@@ -22,7 +21,6 @@ contract AccountFundSystem is System {
     require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.incBy(world, components, accountID, "OPERATOR_GAS", msg.value);
     LibDataEntity.incFor(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
     LibAccount.updateLastBlock(components, accountID);
 
@@ -38,7 +36,6 @@ contract AccountFundSystem is System {
     require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.decBy(world, components, accountID, "OPERATOR_GAS", msg.value);
     LibDataEntity.decFor(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
     LibAccount.updateLastBlock(components, accountID);
 
