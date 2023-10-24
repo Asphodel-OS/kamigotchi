@@ -470,6 +470,8 @@
       "name": "AccountRegisterSystem",
       "writeAccess": [
         "IsAccountComponent",
+        "IsDataComponent",
+        "IdHolderComponent",
         "AddressOperatorComponent",
         "AddressOwnerComponent",
         "BlockLastComponent",
@@ -477,7 +479,9 @@
         "NameComponent",
         "StaminaComponent",
         "StaminaCurrentComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {

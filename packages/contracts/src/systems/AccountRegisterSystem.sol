@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Register"));
 
@@ -27,6 +28,7 @@ contract AccountRegisterSystem is System {
 
     accountID = LibAccount.create(world, components, msg.sender, operator);
     LibAccount.setName(components, accountID, name);
+    LibDataEntity.incFor(world, components, accountID, 0, "OPERATOR_GAS", operator.balance);
     return abi.encode(accountID);
   }
 
