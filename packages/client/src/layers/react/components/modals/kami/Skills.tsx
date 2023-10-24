@@ -23,6 +23,7 @@ interface TextBool {
 export const Skills = (props: Props) => {
   const { skills, kami, actions } = props;
 
+
   ///////////////////
   // LOGIC
 
@@ -115,47 +116,51 @@ export const Skills = (props: Props) => {
     }
   }
 
-  const DisplaySkills = () => {
+  const getTooltipText = (skill: Skill): string[] => {
+    const status = checkPrereqs(skill);
+    const curSkill = kami.skills?.find((n) => n.index === skill.index);
+    const curLevel = Number(curSkill?.level || 0);
+
+    let tooltipText = [skill.description, ''];
+    tooltipText.push(`Level: [${curLevel}/${skill.max}]`);
+    tooltipText.push(`Cost: ${skill.cost} ${skill.cost > 1 ? "points" : "point"}`);
+
+    const reqs = getReqs(skill.requirements);
+    if (reqs.length > 0) {
+      tooltipText.push('Requirements:');
+      tooltipText.push(...reqs);
+    }
+    if (!status.bool) {
+      tooltipText.push('');
+      tooltipText.push(status.text);
+    }
+    return tooltipText;
+  }
+
+  const SkillCard = (skill: Skill) => {
+    const status = checkPrereqs(skill);
+
     return (
-      <Wrapper>
-        {skills.map((skill) => {
-          const status = checkPrereqs(skill);
-          const curSkill = kami.skills?.find((n) => n.index === skill.index);
-          const curLevel = Number(curSkill?.level || 0);
-
-          let tooltipText = [];
-          const reqs = getReqs(skill.requirements);
-          if (!status.bool) tooltipText.push(status.text);
-          if (reqs.length > 0) {
-            tooltipText.push('');
-            tooltipText.push('Requirements:');
-            tooltipText.push(...reqs);
-          }
-
-          return (
-            <Tooltip text={tooltipText} key={skill.index}>
-              <SkillContainer
-                key={skill.index}
-                onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
-                disabled={!status.bool}
-              >
-                <Image src={getImage(skill)} />
-                <SkillName>{skill.name}</SkillName>
-                <SkillDescription>{skill.description}</SkillDescription>
-                <SkillDescription>{`Level: [${curLevel}/${skill.max}]`}</SkillDescription>
-                <SkillDescription>{`Cost: ${skill.cost} ${skill.cost > 1 ? "points" : "point"}`}</SkillDescription>
-              </SkillContainer>
-            </Tooltip>
-          )
-        })}
-      </Wrapper>
+      <Tooltip text={getTooltipText(skill)} key={skill.index}>
+        <SkillContainer
+          key={skill.index}
+          onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
+          disabled={!status.bool}
+        >
+          <Image src={getImage(skill)} />
+          <SkillName>{skill.name}</SkillName>
+        </SkillContainer>
+      </Tooltip>
     );
   }
 
   return (
     <>
       <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
-      {DisplaySkills()}
+      <Wrapper>
+        {skills.sort((a, b) => a.index - b.index)
+          .map((skill) => SkillCard(skill))}
+      </Wrapper>
     </>
   );
 }
@@ -169,12 +174,13 @@ const Wrapper = styled.div`
 `;
 
 const Image = styled.img`
-  height: 10vw;
+  width: 7vw;
 `;
 
 const Text = styled.div`
   font-family: Pixel;
   font-size: 1vw;
+  font-weight: bold;
   text-align: left;
   justify-content: flex-start;
   color: #333;
@@ -182,45 +188,43 @@ const Text = styled.div`
 `;
 
 const SkillContainer = styled.button`
-  border-color: black;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
+  border: solid black  .14vw;
+  border-radius: .7vw;
 
   display: flex;
+  flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
 
-  padding: 1vw;
   margin: 0.8vw;
-  width: 15vw;
-  height: 15vw;
+  padding: 0.5vw;
+  width: 11vw;
+  height: 11vw;
 
-  background-color: #ffffff;
+  background-color: #fff;
   pointer-events: auto;
   &:hover {
-    box-shadow: 0 0 11px rgba(33,33,33,.2); 
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+    background-color: #ddd;
+    cursor: pointer;
   }
   &:active {
     box-shadow: 0 0 16px rgba(11,11,11,.2); 
+    background-color: #999;
+    cursor: pointer;
+  }
+  &:disabled {
+    background-color: #b2b2b2;
+    cursor: default;
+    pointer-events: none;
   }
 `;
 
 const SkillName = styled.div`
   font-family: Pixel;
-  font-size: 1vw;
-  text-align: left;
-  justify-content: flex-start;
+  font-size: .7vw;
+  text-align: center;
+  justify-content: center;
   color: #333;
-  padding: 1vh 0vw;
-`;
-
-const SkillDescription = styled.div`
-  color: #333;
-
-  font-family: Pixel;
-  text-align: left;
-  font-size: 0.7vw;
-  padding: 0.1vw 0.5vw;
+  padding: 1vw;
 `;
