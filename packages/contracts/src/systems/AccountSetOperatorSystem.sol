@@ -21,6 +21,9 @@ contract AccountSetOperatorSystem is System {
     accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Account: does not exist");
 
+    address operatorOld = LibAccount.getOperator(components, accountID);
+    LibDataEntity.decFor(world, components, accountID, 0, "OPERATOR_GAS", operatorOld.balance);
+
     LibAccount.setOperator(components, accountID, operator);
     LibDataEntity.incFor(world, components, accountID, 0, "OPERATOR_GAS", operator.balance);
     return abi.encode(accountID);
