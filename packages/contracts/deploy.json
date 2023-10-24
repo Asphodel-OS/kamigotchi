@@ -463,7 +463,11 @@
     {
       "name": "AccountSetOperatorSystem",
       "writeAccess": [
-        "AddressOperatorComponent"
+        "AddressOperatorComponent",
+        "IsDataComponent",
+        "IdHolderComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
