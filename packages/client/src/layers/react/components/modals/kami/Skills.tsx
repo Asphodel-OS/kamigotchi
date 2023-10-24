@@ -118,11 +118,8 @@ export const Skills = (props: Props) => {
 
   const getTooltipText = (skill: Skill): string[] => {
     const status = checkPrereqs(skill);
-    const curSkill = kami.skills?.find((n) => n.index === skill.index);
-    const curLevel = Number(curSkill?.level || 0);
 
     let tooltipText = [skill.description, ''];
-    tooltipText.push(`Level: [${curLevel}/${skill.max}]`);
     tooltipText.push(`Cost: ${skill.cost} ${skill.cost > 1 ? "points" : "point"}`);
 
     const reqs = getReqs(skill.requirements);
@@ -139,6 +136,8 @@ export const Skills = (props: Props) => {
 
   const SkillCard = (skill: Skill) => {
     const status = checkPrereqs(skill);
+    const curSkill = kami.skills?.find((n) => n.index === skill.index);
+    const curLevel = Number(curSkill?.level || 0);
 
     return (
       <Tooltip text={getTooltipText(skill)} key={skill.index}>
@@ -149,6 +148,7 @@ export const Skills = (props: Props) => {
         >
           <Image src={getImage(skill)} />
           <SkillName>{skill.name}</SkillName>
+          <SkillName>{`[${curLevel}/${skill.max}]`}</SkillName>
         </SkillContainer>
       </Tooltip>
     );
@@ -174,6 +174,7 @@ const Wrapper = styled.div`
 `;
 
 const Image = styled.img`
+  border-radius: 1.5vw;
   width: 7vw;
 `;
 
@@ -189,7 +190,7 @@ const Text = styled.div`
 
 const SkillContainer = styled.button`
   border: solid black  .14vw;
-  border-radius: .7vw;
+  border-radius: 1vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -226,5 +227,5 @@ const SkillName = styled.div`
   text-align: center;
   justify-content: center;
   color: #333;
-  padding: 1vw;
+  padding: .4vw;
 `;
