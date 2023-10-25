@@ -3,6 +3,7 @@ import create from 'zustand';
 
 export interface SelectedEntities {
   accountEntityIndex: EntityIndex;
+  dialogueIndex: number;
   kamiEntityIndex: EntityIndex;
   listingEntityIndex: EntityIndex;
   nodeIndex: number;
@@ -13,6 +14,7 @@ export interface SelectedEntities {
 interface Actions {
   setSelectedEntities: (selectedEntities: SelectedEntities) => void;
   setAccount: (accountEntityIndex: EntityIndex) => void;
+  setDialogue: (dialogueIndex: number) => void;
   setKami: (kamiEntityIndex: EntityIndex) => void;
   setListing: (listingEntityIndex: EntityIndex) => void;
   setNode: (nodeIndex: number) => void;
@@ -23,6 +25,7 @@ interface Actions {
 export const useSelectedEntities = create<SelectedEntities & Actions>((set) => {
   const initialState: SelectedEntities = {
     accountEntityIndex: 0 as EntityIndex,
+    dialogueIndex: 0 as number,
     kamiEntityIndex: 0 as EntityIndex,
     listingEntityIndex: 0 as EntityIndex,
     nodeIndex: 0 as number,
@@ -37,6 +40,9 @@ export const useSelectedEntities = create<SelectedEntities & Actions>((set) => {
     ),
     setAccount: (accountEntityIndex: EntityIndex) => set(
       (state: SelectedEntities) => ({ ...state, accountEntityIndex })
+    ),
+    setDialogue: (dialogueIndex: number) => set(
+      (state: SelectedEntities) => ({ ...state, dialogueIndex })
     ),
     setKami: (kamiEntityIndex: EntityIndex) => set(
       (state: SelectedEntities) => ({ ...state, kamiEntityIndex })
