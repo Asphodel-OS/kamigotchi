@@ -7,7 +7,8 @@ import opnpc from './opnpc_black.png';
 import qko from './qko_black.png';
 import simsrichard from './simsrichard_black.png';
 
-export const loadingScreens = [
+
+export const loadingScreens = {
   jackkahunalaguna,
   killyou,
   longrng,
@@ -16,4 +17,4 @@ export const loadingScreens = [
   opnpc,
   qko,
   simsrichard
-];
+};

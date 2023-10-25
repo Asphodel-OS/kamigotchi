@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { loadingScreens } from "assets/images/loading";
 
 export const BootScreen: React.FC<{}> = ({ children }) => {
-  const [image, setImage] = useState();
+  const [rand, setRand] = useState(0); // index of randomly selected banner
+  const bannerKeys = Object.keys(loadingScreens);
+  const bannerValues = Object.values(loadingScreens);
 
   // set the banner on startup and on a 5 second interval
   useEffect(() => {
@@ -16,15 +18,14 @@ export const BootScreen: React.FC<{}> = ({ children }) => {
 
   // swaps the banner image
   const refreshBanner = () => {
-    const rand = Math.floor(Math.random() * loadingScreens.length)
-    const randomBanner = loadingScreens[rand];
-    setImage(randomBanner);
+    setRand(Math.floor(Math.random() * bannerKeys.length));
   };
 
   return (
     <Container>
-      <Image src={image} />
-      <Text>{children || <>&nbsp</>}</Text>
+      <Image src={bannerValues[rand]} />
+      <Status>{children}</Status>
+      <Tag>banner by: {bannerKeys[rand]}</Tag>
     </Container>
   );
 };
@@ -45,16 +46,30 @@ const Container = styled.div`
 
 const Image = styled.img`
   transition: all 2s ease;
+  height: 100%;
   width: 100%;
+  align-self: right;
 `;
 
-const Text = styled.div`
+const Status = styled.div`
   color: #fff;
   position: absolute;
-  bottom: 15vw;
+  bottom: 30vh;
   width: 100%;
 
   text-align: center;
   font-family: "Space Grotesk", sans-serif;
-  font-size: 20px;
+  font-size: 3vh;
+`;
+
+const Tag = styled.div`
+  color: #fff;
+  position: absolute;
+  bottom: 5vh;
+  left: 5vw;
+  width: 100%;
+
+  text-align: left;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 2vh;
 `;
