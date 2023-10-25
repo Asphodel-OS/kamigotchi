@@ -126,85 +126,85 @@ export function setUpWorldAPI(systems: any) {
     await api.room.create(
       1,
       'Misty Riverside',
-      'You have no memory of arriving here. The air is quiet. The trees grow so thick overhead that it would still be dark at noon.',
+      'A dark forest, the sky above blotted out by trees. Blue butterflies flutter around, looking lost.',
       [2]
     );
     await api.room.create(
       2,
       'Tunnel of Trees',
-      'You see the light at the end of the tunnel; a way out of the forest. Also, you see a blue door made of light. It says “SHOP”.',
+      'The light at the end of the tunnel; a way out of the forest. Also, a blue door made of light hangs in the air - it says “SHOP”.',
       [1, 3, 13]
     );
     await api.room.create(
       3,
       'Torii Gate',
-      'The end of the road. This gate seems to mark the transition between the misty forest and the massive scrapyard.',
+      'This road is overgrown and disappears in the grass before a large wooden gate. Behind it the forest changes, swelling and darkening.\nHills of garbage seem to be growing out of the ground in the distance and mark a horizon against the blue sky.',
       [2, 4]
     );
     await api.room.create(
       4,
       'Vending Machine',
-      'Deep in the scrap you find a vending machine well stocked and operating. Behind it you see the power cord is cut off.',
+      'Day turns into night here deep in the scrap. The vending machine bleeps happily despite lacking a power cord. A long-tailed comet bravely dives across the sky.',
       [3, 5, 12]
     );
     await api.room.create(
       5,
       'Restricted Area',
-      'A restricted area. Follow the road lined with cherry trees to reach an office complex. Across from the office is another forest.',
+      'A paved road lined with cherry trees leads away from the junkyard, toward a large office complex.',
       [4, 6, 9]
     );
     await api.room.create(
       6,
       'Labs Entrance',
-      'This exterior seems designed to resemble a shrine almost as much as it does a corporate office building.',
+      'The office building\'s exterior is in disrepair.A breeze is slowly shifting the air.',
       [5, 7]
     );
     await api.room.create(
       7,
       'Lobby',
-      'The lobby decor is sparse, with only one uncomfortable chair. The elevator buttons are broken except for “B” and “PH”.',
+      'The doors close around a sparsely decorated lobby. A blue roof and white walls, with blue skirting framing an elevator.',
       [6, 8, 14]
     );
     await api.room.create(
       8,
       'Junk Shop',
-      'The electrical room in the basement has been converted into a living space and workshop. Do people live like this?',
+      'This electrical room has been converted into a living space and workshop. The walls are covered in panels and buttons. A prickly, burnt smell lingers in the air.',
       [7]
     );
     await api.room.create(
       9,
       'Old Growth',
-      'You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.',
+      'The forest is older here, and untouched, long vines and moss climbing the trees. Giant insects cause a ruckus with their ceaseless buzzing.',
       [5, 10, 11]
     );
     await api.room.create(
       10,
       'Insect Node',
-      'The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.',
+      'A procession of insects is slowly moving towards the great mound here. The buzzing creates an overwhelming cacophony as you approach.',
       [9]
     );
     await api.room.create(
       11,
       'Waterfall Shrine',
-      'By the edge of the waterfall basin, a humble shrine grants this place a peaceful aura.',
+      'A large waterfall creates a cool and invigorating mist here. Before the basin stands a whispering shrine.',
       [9, 15]
     );
     await api.room.create(
       12,
       'Machine Node',
-      'A collection of strange and hard to identify objects is buried deep in the scrapyard. It feels dangerous just to be near them.',
+      'Deep in the scrapyard a collection of strange objects are vibrating, screeching, pulsating, whispering, cackling, hissing and in general making a disturbance.',
       [4]
     );
     await api.room.create(
       13,
       'Convenience Store',
-      'The glowing blue door transports you inside of a little candy store. Check the glowing “exit” sign to leave.',
+      'The shop walls are lined with exotically stocked shelves. Behind the counter stands a woman occupied with the snake coiled around her neck.',
       [2]
     );
     await api.room.create(
       14,
       "Manager's Office",
-      'A slick penthouse office. It seems that this room has been untouched since a magic ritual was performed inside.',
+      'A stylish penthouse office with a view. It\'s seen a bit of a commotion.',
       [7]
     );
     await api.room.create(
