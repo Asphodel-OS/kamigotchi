@@ -5,8 +5,6 @@ import {
   objectWarningSign,
 } from 'assets/images/rooms/5_restricted';
 import { ost1 } from 'assets/sound/ost';
-
-import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
 import { Room } from 'constants/phaser/rooms';
 
 export const room5: Room = {
@@ -24,22 +22,28 @@ export const room5: Room = {
       key: 'trashbag',
       path: objectTrashBag,
       offset: { x: -55.5, y: 50 },
-      onClick: () => triggerDialogueModal(['A bag of trash. But rooting through it...']),
+      dialogue: [
+        'This road has been poorly maintained, but the cherry trees around it are thriving and elegantly posed.',
+        'The writing on the sign itself doesn\'t make any sense, but red usually means danger.',
+      ],
     },
     {
       key: 'acompanybuilding',
       path: objectCompanyBuilding,
       offset: { x: -30.1, y: -35 },
-      onClick: () => triggerDialogueModal(['An office building?']),
+      dialogue: [
+        'A tall office - like building with the letter A on it.The sun reflecting on the windows makes it sparkle. Curiously, but not unusually, straight.',
+        'That\'s just how buildings are, before you get to know their odds and bends.',
+      ],
     },
     {
       key: 'warningsign',
       path: objectWarningSign,
       offset: { x: 10.5, y: 39.6 },
-      onClick: () =>
-        triggerDialogueModal([
-          'The "writing" on this sign is illegible nonsense. It looks like a warning, however.',
-        ]),
+      dialogue: [
+        'This road has been poorly maintained, but the cherry trees around it are thriving and elegantly posed.',
+        'The writing on the sign itself doesn\'t make any sense, but red usually means danger.',
+      ],
     },
   ],
 };

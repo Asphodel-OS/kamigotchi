@@ -3,6 +3,7 @@ import { disableClickableObjects } from '../utils/disableClickableObjects';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
 import { kamiPattern } from 'assets/images/backgrounds';
+import { triggerDialogueModal } from '../utils/triggerDialogueModal';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -58,7 +59,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
       // generate all in-room visual assets
       if (room.objects) {
         room.objects.map((obj) => {
-          const { key, offset, onClick } = obj;
+          const { key, offset, onClick, dialogue } = obj;
           let posX: number = gameWidth / 2;
           let posY: number = gameHeight / 2;
 
@@ -71,10 +72,14 @@ export class GameScene extends Phaser.Scene implements GameScene {
           image.setScale(scale);
           image.setInteractive({ useHandCursor: true });
 
+          // TODO: remove this once room objects are cleaned up
           if (onClick) {
             image.on('pointerdown', (e: Phaser.Input.Pointer) => {
               if (!disableClickableObjects(e)) onClick();
             });
+          }
+          if (dialogue) {
+            image.on('pointerdown', () => triggerDialogueModal(dialogue));
           }
         });
       }

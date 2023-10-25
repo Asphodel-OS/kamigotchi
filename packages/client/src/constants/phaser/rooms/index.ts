@@ -31,6 +31,7 @@ interface RoomAsset {
   key: string;
   path: string;
   offset?: { x: number; y: number };
+  dialogue?: string[];
   onClick?: Function;
 }
 
