@@ -3,9 +3,9 @@ import {
   objectToriiGate,
 } from 'assets/images/rooms/3_gate';
 import { opening } from 'assets/sound/ost';
-
-import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { Room } from 'constants/phaser/rooms';
+import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
+
 
 export const room3: Room = {
   location: 3,

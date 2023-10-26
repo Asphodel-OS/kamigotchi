@@ -7,11 +7,10 @@ import {
   objectWaterfall,
 } from 'assets/images/rooms/11_waterfall';
 import { ost2 } from 'assets/sound/ost';
-
-import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
+import { Room } from 'constants/phaser/rooms';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
 import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
-import { Room } from 'constants/phaser/rooms';
+
 
 export const room11: Room = {
   location: 11,
@@ -34,7 +33,7 @@ export const room11: Room = {
       key: 'stonelantern',
       path: objectStoneLantern,
       offset: { x: -50.4, y: 34.6 },
-      onClick: () => triggerDialogueModal(['A stone lantern. Very roughly carved.']),
+      dialogue: 111,
     },
     {
       key: 'waterfall',
@@ -46,10 +45,7 @@ export const room11: Room = {
       key: 'smallshrine',
       path: objectSmallShrine,
       offset: { x: -5.48, y: 16.1 },
-      onClick: () =>
-        triggerDialogueModal([
-          'A small shrine. This almost has the energy of a Node, but something is off...',
-        ]),
+      dialogue: 112,
     },
   ],
 };

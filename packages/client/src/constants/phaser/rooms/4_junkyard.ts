@@ -5,9 +5,9 @@ import {
   objectVendingMachine,
 } from 'assets/images/rooms/4_junkyard';
 import { forest } from 'assets/sound/ost';
-
-import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 import { Room } from 'constants/phaser/rooms';
+import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
+
 
 export const room4: Room = {
   location: 4,

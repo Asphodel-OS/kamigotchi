@@ -6,10 +6,9 @@ import {
   objectTermiteMound,
 } from 'assets/images/rooms/10_forest-insect';
 import { ost2 } from 'assets/sound/ost';
-
-import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
-import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { Room } from 'constants/phaser/rooms';
+import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
+
 
 export const room10: Room = {
   location: 10,
@@ -26,25 +25,19 @@ export const room10: Room = {
       key: '10beetle4',
       path: objectBeetle4,
       offset: { x: -42.55, y: 38.6 },
-      onClick: () => triggerDialogueModal(['Beetle four. The black sheep.']),
+      dialogue: 101,
     },
     {
       key: 'centipedeandgrub',
       path: objectCentipede,
       offset: { x: 41.6, y: 52.5 },
-      onClick: () =>
-        triggerDialogueModal([
-          'A centipede and a grub. The relationship between them is ambiguous and of great interest to the beetles nearby.',
-        ]),
+      dialogue: 102,
     },
     {
       key: 'foresttrunk',
       path: objectHollowTrunk,
       offset: { x: -53, y: -7 },
-      onClick: () =>
-        triggerDialogueModal([
-          "A hollow tree-trunk. This should obviously have a secret item or something in it, right? To be honest, we haven't implemented those yet.",
-        ]),
+      dialogue: 103,
     },
     {
       key: 'termitemound',

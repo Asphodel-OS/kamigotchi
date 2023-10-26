@@ -22,7 +22,7 @@ export function registerDialogueModal() {
     },
     (layers) => of(layers),
     () => {
-      const { visibleModals, setVisibleModals } = dataStore();
+      const { visibleModals } = dataStore();
       const { dialogueIndex } = useSelectedEntities();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
@@ -33,6 +33,7 @@ export function registerDialogueModal() {
 
       // set the current dialogue node when the dialogue index changes
       useEffect(() => {
+        setStep(0);
         setDialogueNode(dialogueMap[dialogueIndex]);
         setDialogueLength(dialogueMap[dialogueIndex].text.length);
       }, [dialogueIndex]);

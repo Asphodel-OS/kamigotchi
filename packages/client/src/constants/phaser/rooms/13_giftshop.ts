@@ -7,10 +7,9 @@ import {
   objectMinaRed,
 } from 'assets/images/rooms/13_giftshop';
 import { forest as forestOST } from 'assets/sound/ost';
-
-import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
-import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
 import { Room } from 'constants/phaser/rooms';
+import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
+
 
 export const room13: Room = {
   location: 13,
@@ -27,16 +26,13 @@ export const room13: Room = {
       key: 'clock',
       path: objectClock,
       offset: { x: 31.5, y: -33.5 },
-      onClick: () => triggerDialogueModal(['*tik tok*']),
+      dialogue: 131,
     },
     {
       key: 'mina',
       path: objectMinaRed,
       offset: { x: -16.5, y: -25 },
-      onClick: () =>
-        triggerDialogueModal([
-          "Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon.",
-        ]),
+      dialogue: 132,
     },
     {
       key: 'cashregister',

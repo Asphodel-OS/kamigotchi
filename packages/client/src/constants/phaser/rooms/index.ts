@@ -31,8 +31,8 @@ interface RoomAsset {
   key: string;
   path: string;
   offset?: { x: number; y: number };
-  dialogue?: string[];
-  onClick?: Function;
+  dialogue?: number;
+  onClick?: Function; // TODO: wipe this in favor of inputs
 }
 
 // represents the music in a room

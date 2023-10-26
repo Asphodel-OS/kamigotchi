@@ -6,12 +6,11 @@ import {
   objectPrayerWheels,
 } from 'assets/images/rooms/12_junkyard-machine';
 import { forest as forestOST } from 'assets/sound/ost';
-
-import { triggerDialogueModal } from 'layers/phaser/utils/triggerDialogueModal';
+import { Room } from 'constants/phaser/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
 import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggerERC721BridgeModal';
-import { Room } from 'constants/phaser/rooms';
+
 
 export const room12: Room = {
   location: 12,
@@ -40,8 +39,7 @@ export const room12: Room = {
       key: 'glassbox',
       path: objectGlassBox,
       offset: { x: -9, y: -3.92 },
-      onClick: () =>
-        triggerDialogueModal(['This device will allow you to view information about balances.']),
+      dialogue: 121,
     },
     {
       key: 'monolith',

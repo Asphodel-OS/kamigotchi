@@ -5,6 +5,7 @@ import {
 import { opening } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
+
 export const room1: Room = {
   location: 1,
   background: {
@@ -20,9 +21,7 @@ export const room1: Room = {
       key: 'mooringpost',
       path: objectMooringPost,
       offset: { x: -19, y: 38 },
-      dialogue: [
-        "You see what looks like a mooring post with rope attached to it. You don't remember a boat, but how else would you have gotten here?",
-      ],
+      dialogue: 11,
     },
   ],
 };
