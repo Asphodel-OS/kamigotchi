@@ -1,5 +1,4 @@
 import { Room } from 'constants/phaser/rooms';
-import { disableClickableObjects } from '../utils/disableClickableObjects';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
 import { kamiPattern } from 'assets/images/backgrounds';
@@ -74,9 +73,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
           // TODO: remove this once room objects are cleaned up
           if (onClick) {
-            image.on('pointerdown', (e: Phaser.Input.Pointer) => {
-              if (!disableClickableObjects(e)) onClick();
-            });
+            image.on('pointerdown', (e: Phaser.Input.Pointer) => onClick());
           }
           if (dialogue) {
             image.on('pointerdown', () => triggerDialogueModal(dialogue));
