@@ -77,10 +77,12 @@ export function registerDialogueModal() {
 }
 
 const Text = styled.div`
+  border: 0.2vw dashed #bbb;
+  border-radius: 7px;
   color: #333;
-  background-color: red;
   height: 100%;
   width: 100%;
+  padding: 0vw 9vw 2vw 9vw;
 
   display: flex;
   flex-grow: 1;
@@ -89,8 +91,9 @@ const Text = styled.div`
   align-items: center;
 
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.1vw;
   text-align: center;
+  line-height: 1.8vw;
 `;
 
 const ButtonRow = styled.div`

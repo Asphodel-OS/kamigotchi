@@ -123,6 +123,7 @@ const Children = styled.div`
   padding: .4vw;
   overflow-y: scroll;
   max-height: 100%;
+  height: 100%;
   
   display: flex;
   flex-flow: column nowrap;
