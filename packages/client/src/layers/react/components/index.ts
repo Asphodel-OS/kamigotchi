@@ -13,6 +13,7 @@ import { registerActionQueueFixture } from './fixtures/ActionQueue';
 import { registerGasWarningFixture } from './fixtures/GasWarning';
 import { registerWalletFixture } from './fixtures/Wallet';
 
+import { registerDialogueModal } from './modals/dialogue';
 import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
@@ -25,7 +26,6 @@ import { registerSettingsModal } from './modals/settings';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
-import { registerDialogueModal } from './modals/Dialogue';
 import { registerHelpModal } from './modals/Help';
 import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerKamiMintModal } from './modals/MintKami';

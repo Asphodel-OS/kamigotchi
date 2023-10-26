@@ -23,7 +23,11 @@ export interface DialogueNode {
 const dialogue00: DialogueNode[] = [
   {
     index: 0,
-    text: ['There seems to be a gap in dialogue here..'],
+    text: [
+      'There seems to be a gap in dialogue here..',
+      'Seriously.. this needs to be fixed.',
+      'Might be worth talking to an admin about this.',
+    ],
   },
 ];
 
