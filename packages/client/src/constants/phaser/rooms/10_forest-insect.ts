@@ -23,7 +23,7 @@ export const room10: Room = {
   },
   objects: [
     {
-      key: 'beetle4',
+      key: '10beetle4',
       path: objectBeetle4,
       offset: { x: -42.55, y: 38.6 },
       onClick: () => triggerDialogueModal(['Beetle four. The black sheep.']),
