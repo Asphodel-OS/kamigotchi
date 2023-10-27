@@ -1,10 +1,18 @@
 import styled from "styled-components";
 
-import { Kami } from "layers/react/shapes/Kami";
-import { Skill, Requirement, Status, checkCost, checkMaxxed, checkRequirement } from "layers/react/shapes/Skill";
-import { Tooltip } from "layers/react/components/library/Tooltip";
 import { skillIcons } from "assets/images/skills";
 import exitIcon from "assets/images/icons/exit_native.png"
+import { Kami } from "layers/react/shapes/Kami";
+import {
+  Skill,
+  Requirement,
+  Status,
+  checkCost,
+  checkMaxxed,
+  checkRequirement
+} from "layers/react/shapes/Skill";
+import { Tooltip } from "layers/react/components/library/Tooltip";
+import { playClick } from 'utils/sounds';
 
 
 interface Props {
@@ -51,6 +59,16 @@ export const Skills = (props: Props) => {
     }
 
     return { text: '', bool: true };
+  }
+
+
+
+  /////////////////
+  // ACTIONS
+
+  const triggerUpgrade = (skill: Skill) => {
+    playClick();
+    actions.upgrade(kami, skill.index);
   }
 
 
@@ -143,7 +161,7 @@ export const Skills = (props: Props) => {
       <Tooltip text={getTooltipText(skill)} key={skill.index}>
         <SkillContainer
           key={skill.index}
-          onClick={() => { status.bool ? actions.upgrade(kami, skill.index) : () => { } }}
+          onClick={() => { status.bool ? triggerUpgrade(skill) : () => { } }}
           disabled={!status.bool}
         >
           <Image src={getImage(skill)} />
