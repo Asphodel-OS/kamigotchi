@@ -53,8 +53,6 @@ contract LootboxExecuteRevealSystem is System {
       LibLootbox.getIndex(components, id),
       LibLootbox.getBalance(components, id)
     );
-    LibLootbox.deleteReveal(components, id);
-
     LibAccount.updateLastBlock(components, accountID);
 
     return "";
@@ -81,8 +79,6 @@ contract LootboxExecuteRevealSystem is System {
       LibLootbox.getIndex(components, id),
       LibLootbox.getBalance(components, id)
     );
-    LibLootbox.deleteReveal(components, id);
-
     LibAccount.updateLastBlock(components, accountID);
 
     return "";
@@ -100,7 +96,6 @@ contract LootboxExecuteRevealSystem is System {
       LibLootbox.getIndex(components, id),
       LibLootbox.getBalance(components, id)
     );
-    LibLootbox.deleteReveal(components, id);
   }
 
   function executeTyped(uint256 id) public returns (bytes memory) {

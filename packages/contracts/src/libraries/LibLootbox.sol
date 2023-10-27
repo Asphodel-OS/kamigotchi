@@ -6,8 +6,10 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { getAddressById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { BalancesComponent, ID as BalancesCompID } from "components/BalancesComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
+import { IsLogComponent, ID as IsLogCompID } from "components/IsLogComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
@@ -18,17 +20,17 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 library LibLootbox {
-  /*
+  /**
    * @notice creates a reveal entity for a lootbox
    *   Lootbox reveal entities are an intemediate step to store pre-reveal data
    *   and are identified by
    *     - IsLootbox
    *     - RevealBlock
    **/
-  // @param world       The world contract
-  // @param components  The components contract
-  // @param invID       EntityID of the lootbox inventory
-  // @param count       The amount of items to reveal
+  /// @param world       The world contract
+  /// @param components  The components contract
+  /// @param invID       EntityID of the lootbox inventory
+  /// @param count       The amount of items to reveal
   function startReveal(
     IWorld world,
     IUintComp components,
@@ -46,42 +48,53 @@ library LibLootbox {
     LibRandom.setRevealBlock(components, id, block.number);
   }
 
-  // @notice executes a reveal for a lootbox
-  // @param components  The components contract
-  // @param revealID    The entity ID of the lootbox reveal
+  /** @notice
+   * executes a reveal for a lootbox, leaving a result log
+   * result logs are identified by
+   *   - IsLootbox
+   *   - IsLog
+   */
+  /// @param components  The components contract
+  /// @param revealID    The entity ID of the lootbox reveal
   function executeReveal(
     IWorld world,
     IUintComp components,
     uint256 revealID,
     uint256 holderID
   ) internal {
-    // scoping to save memory
-    {
-      uint256 index = getIndex(components, revealID);
-      uint256 count = getBalance(components, revealID);
-      uint256 regID = LibRegistryItem.getByItemIndex(components, index);
-      uint256[] memory keys = getKeys(components, regID);
-      uint256[] memory weights = getWeights(components, regID);
-      uint256 seed = uint256(
-        keccak256(
-          abi.encode(
-            LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, revealID)),
-            holderID
-          )
+    uint256 count = getBalance(components, revealID);
+    uint256 regID = LibRegistryItem.getByItemIndex(components, getIndex(components, revealID));
+    uint256[] memory keys = getKeys(components, regID);
+    uint256[] memory weights = getWeights(components, regID);
+    uint256 seed = uint256(
+      keccak256(
+        abi.encode(
+          LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, revealID)),
+          holderID
         )
-      );
+      )
+    );
 
-      executeDropTable(world, components, holderID, keys, weights, seed, count);
-    }
+    uint256[] memory results = executeDropTable(
+      world,
+      components,
+      holderID,
+      keys,
+      weights,
+      seed,
+      count
+    );
+
+    logReveal(components, revealID, results);
   }
 
-  // @notice executes drop table logic for N lootboxes
-  // @param world      The world contract
-  // @param components The components contract
-  // @param holderID  The entity ID of the lootbox holder
-  // @param weights   Weights for lootbox drop table
-  // @param keys      Keys for lootbox drop table
-  // @param count       The amount of lootboxes to open
+  /// @notice executes drop table logic for N lootboxes
+  /// @param world      The world contract
+  /// @param components The components contract
+  /// @param holderID  The entity ID of the lootbox holder
+  /// @param weights   Weights for lootbox drop table
+  /// @param keys      Keys for lootbox drop table
+  /// @param count       The amount of lootboxes to open
   function executeDropTable(
     IWorld world,
     IUintComp components,
@@ -90,24 +103,20 @@ library LibLootbox {
     uint256[] memory weights,
     uint256 seed,
     uint256 count
-  ) internal {
-    if (count == 1) {
-      uint256 index = LibRandom.selectFromWeighted(keys, weights, seed);
-      distribute(world, components, holderID, index, 1);
-    } else {
-      uint256[] memory results = LibRandom.selectMultipleFromWeighted(weights, seed, count);
-      for (uint256 i; i < results.length; i++) {
-        distribute(world, components, holderID, keys[i], results[i]);
-      }
+  ) internal returns (uint256[] memory) {
+    uint256[] memory results = LibRandom.selectMultipleFromWeighted(weights, seed, count);
+    for (uint256 i; i < results.length; i++) {
+      distribute(world, components, holderID, keys[i], results[i]);
     }
+    return results;
   }
 
-  // @notice distributes item(s) to holder
-  // @param world      The world contract
-  // @param components The components contract
-  // @param holderID  The entityID of the holder
-  // @param index     The index of the item to distribute
-  // @param count       The amount of items to distribute
+  /// @notice distributes item(s) to holder
+  /// @param world      The world contract
+  /// @param components The components contract
+  /// @param holderID  The entityID of the holder
+  /// @param index     The index of the item to distribute
+  /// @param count       The amount of items to distribute
   function distribute(
     IWorld world,
     IUintComp components,
@@ -124,14 +133,14 @@ library LibLootbox {
     LibInventory.inc(components, invID, count);
   }
 
-  // @notice deletes a reveal entity
-  // @param components  The components contract
-  // @param id          entityID
-  function deleteReveal(IUintComp components, uint256 id) internal {
-    unsetIsLootbox(components, id);
-    unsetBalance(components, id);
-    unsetHolder(components, id);
-    unsetIndex(components, id);
+  /// @notice logs the reveal result, deleting unessary fields
+  /// @param components The components contract
+  /// @param id         The entityID of the lootbox reveal
+  /// @param amounts    resultant amounts
+  function logReveal(IUintComp components, uint256 id, uint256[] memory amounts) internal {
+    setBalances(components, id, amounts);
+    setIsLog(components, id);
+
     LibRandom.removeRevealBlock(components, id);
   }
 
@@ -169,12 +178,20 @@ library LibLootbox {
     BalanceComponent(getAddressById(components, BalanceCompID)).set(id, balance);
   }
 
+  function setBalances(IUintComp components, uint256 id, uint256[] memory balances) internal {
+    BalancesComponent(getAddressById(components, BalancesCompID)).set(id, balances);
+  }
+
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
   }
 
   function setIndex(IUintComp components, uint256 id, uint256 index) internal {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
+  }
+
+  function setIsLog(IUintComp components, uint256 id) internal {
+    IsLogComponent(getAddressById(components, IsLogCompID)).set(id);
   }
 
   function setIsLootbox(IUintComp components, uint256 id) internal {

@@ -4,6 +4,7 @@
     "AddressOwnerComponent",
     "AffinityComponent",
     "BalanceComponent",
+    "BalancesComponent",
     "BlacklistComponent",
     "BlockLastComponent",
     "BlockRevealComponent",
@@ -57,6 +58,7 @@
     "IsInventoryComponent",
     "IsKillComponent",
     "IsListingComponent",
+    "IsLogComponent",
     "IsLootboxComponent",
     "IsNodeComponent",
     "IsNonFungibleComponent",
@@ -541,6 +543,7 @@
       "name": "LootboxExecuteRevealSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BalancesComponent",
         "BlockLastComponent",
         "BlockRevealComponent",
         "IdHolderComponent",
@@ -548,6 +551,7 @@
         "IndexComponent",
         "IsDataComponent",
         "IsLootboxComponent",
+        "IsLogComponent",
         "IsInventoryComponent",
         "TypeComponent",
         "ValueComponent"
