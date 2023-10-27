@@ -47,8 +47,8 @@ library LibAccount {
     uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
     setStamina(components, id, baseStamina);
     setCurrStamina(components, id, baseStamina);
-    setLastBlock(components, id, block.number);
-    setLastTs(components, id, block.timestamp);
+    updateLastBlock(components, id);
+    updateLastTs(components, id);
     return id;
   }
 
@@ -72,6 +72,7 @@ library LibAccount {
     uint256 timePassed = block.timestamp - getLastTs(components, id);
     uint256 recoveryPeriod = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
     uint256 recoveredAmt = timePassed / recoveryPeriod;
+    updateLastTs(components, id);
     return recover(components, id, recoveredAmt);
   }
 
