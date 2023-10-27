@@ -94,7 +94,11 @@ export const Kards = (props: Props) => {
   };
 
   const hasFood = (): boolean => {
-    return props.account.inventories!.food.length > 0;
+    const total = props.account.inventories!.food.reduce(
+      (tot: number, inv: Inventory) => tot + (inv.balance || 0),
+      0
+    );
+    return total > 0;
   };
 
   const hasRevive = (): boolean => {
@@ -197,7 +201,7 @@ export const Kards = (props: Props) => {
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
-        text: inv.item.name,
+        text: inv.item.name!,
         onClick: () => props.actions.feed(kami, inv.item.familyIndex),
       };
     });
