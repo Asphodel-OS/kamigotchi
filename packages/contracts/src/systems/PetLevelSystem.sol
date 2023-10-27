@@ -33,7 +33,10 @@ contract PetLevelSystem is System {
     uint256 levelCost = LibExperience.calcLevelCost(components, id);
     require(LibExperience.get(components, id) >= levelCost, "PetLevel: need more experience");
 
-    // consumer experience, level pet up, increase its SP and heal it to full
+    // sync pet health
+    LibPet.sync(components, id);
+
+    // consume experience, level pet up, increase its SP and heal it to full
     LibExperience.dec(components, id, levelCost);
     LibExperience.incLevel(components, id, 1);
     LibSkill.inc(components, id, 1);

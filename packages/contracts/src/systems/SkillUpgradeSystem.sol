@@ -21,6 +21,10 @@ contract SkillUpgradeSystem is System {
     (uint256 id, uint256 skillIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
+    // check that the skill exists
+    uint256 registryID = LibRegistrySkill.getByIndex(components, skillIndex);
+    require(registryID != 0, "SkillUpgrade: skill not found");
+
     // entity type check
     bool isPet = LibPet.isPet(components, id);
     bool isAccount = LibAccount.isAccount(components, id);
@@ -35,11 +39,8 @@ contract SkillUpgradeSystem is System {
         LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
         "SkillUpgrade: must be in same room"
       );
+      LibPet.sync(components, id);
     }
-
-    // check that the skill exists
-    uint256 registryID = LibRegistrySkill.getByIndex(components, skillIndex);
-    require(registryID != 0, "SkillUpgrade: skill not found");
 
     // points are decremented when checking prerequisites
     require(

@@ -685,7 +685,8 @@
         "LevelComponent",
         "ProxyPermissionsERC721Component",
         "RateComponent",
-        "SkillPointComponent"
+        "SkillPointComponent",
+        "TimeLastActionComponent"
       ]
     },
     {
@@ -847,15 +848,19 @@
       "name": "SkillUpgradeSystem",
       "writeAccess": [
         "BlockLastComponent",
+        "CoinComponent",
         "IdHolderComponent",
         "IndexSkillComponent",
         "IsBonusComponent",
         "IsSkillComponent",
         "HarmonyComponent",
         "HealthComponent",
+        "HealthCurrentComponent",
         "PowerComponent",
+        "RateComponent",
         "SkillPointComponent",
         "SlotsComponent",
+        "TimeLastActionComponent",
         "TypeComponent",
         "ValueComponent",
         "ViolenceComponent"
