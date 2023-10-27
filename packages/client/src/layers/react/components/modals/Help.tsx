@@ -168,10 +168,6 @@ export function registerHelpModal() {
                 <br />
                 All actions taken within this world are blockchain transactions. Your Operator -
                 that is, the entity you named on entry - is a representation of you within this world.
-                <br />
-                <br />
-
-                The chat feature relies on a centralized backend at this time.
               </Description>
             </div>
           );
