@@ -43,8 +43,8 @@ export const getBonuses = (layers: Layers, entityIndex: EntityIndex): Bonuses =>
       multiplier: 100,
     },
     harvest: {
-      output: (getBonusValue(layers, holderID, 'HARVEST_OUTPUT') ?? 100) * 1,
-      drain: (getBonusValue(layers, holderID, 'HARVEST_DRAIN') ?? 100) * 1,
+      output: (getBonusValue(layers, holderID, 'HARVEST_OUTPUT') ?? 1000) * 1,
+      drain: (getBonusValue(layers, holderID, 'HARVEST_DRAIN') ?? 1000) * 1,
       cooldown: 0,
     },
   };
