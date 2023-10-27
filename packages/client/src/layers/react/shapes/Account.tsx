@@ -57,11 +57,11 @@ export interface AccountOptions {
 }
 
 export interface Inventories {
-  food?: Inventory[];
-  revives?: Inventory[];
-  gear?: Inventory[];
-  mods?: Inventory[];
-  lootboxes?: Inventory[];
+  food: Inventory[];
+  revives: Inventory[];
+  gear: Inventory[];
+  mods: Inventory[];
+  lootboxes: Inventory[];
 }
 
 // get an Account from its EnityIndex
@@ -117,8 +117,6 @@ export const getAccount = (
 
   // populate inventories
   if (options?.inventory) {
-    account.inventories = {};
-
     const inventoryResults = queryInventoryX(layers, { owner: account.id });
     const foods: Inventory[] = [];
     const revives: Inventory[] = [];

@@ -2,10 +2,11 @@ import styled from "styled-components";
 
 import { FoodImages, ReviveImages } from 'constants/food';
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { getInventoryByFamilyIndex, AccountInventories } from "layers/react/shapes/Inventory";
+import { getInventoryByFamilyIndex } from "layers/react/shapes/Inventory";
+import { Inventories } from "layers/react/shapes/Account";
 
 interface Props {
-  inventories: AccountInventories;
+  inventories: Inventories;
 };
 
 // get the row of consumable items to display in the player inventory

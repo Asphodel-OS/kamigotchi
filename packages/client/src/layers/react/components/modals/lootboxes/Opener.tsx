@@ -6,37 +6,49 @@ import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
-import { Lootbox, LootboxLog } from "layers/react/shapes/Lootbox";
+import { Lootbox, LootboxLog, getLootboxLog } from "layers/react/shapes/Lootbox";
 
 interface Props {
   account: Account;
   actions: {
     openTx: (index: number, amount: number) => Promise<void>;
     revealTx: (id: EntityID) => Promise<void>;
+    setState: (state: string) => void;
+    setLog: (log: LootboxLog) => void;
   };
-  lootbox: Lootbox;
   inventory: Inventory;
+  utils: {
+    getLootbox: (index: number) => Lootbox;
+    getLog: (index: EntityIndex) => LootboxLog;
+  }
 }
 
 export const Opener = (props: Props) => {
   const [state, setState] = useState("START");
   const [triedReveal, setTriedReveal] = useState(false);
   const [waitingToReveal, setWaitingToReveal] = useState(false);
+  const [selectedBox, setSelectedBox] = useState<Lootbox>();
 
   // AUTO REVEAL
+  // TODO: convert to manual reveal - triggered in main modal, triggered by state
   useEffect(() => {
     const tx = async () => {
       if (!triedReveal) {
         setTriedReveal(true);
         // wait to give buffer for OP rpc
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        props.account.lootboxLogs?.unrevealed.forEach(async (LootboxLog) => {
-          try { await props.actions.revealTx(LootboxLog.id); }
+        const raw = [...props.account.lootboxLogs?.unrevealed!];
+        const reversed = raw.reverse();
+        reversed.forEach(async (LootboxLog) => {
+          try {
+            await props.actions.revealTx(LootboxLog.id);
+            props.actions.setLog(props.utils.getLog(LootboxLog.entityIndex));
+            props.actions.setState("REWARDS");
+          }
           catch (e) { console.log(e); }
         });
         if (waitingToReveal) {
           setWaitingToReveal(false);
-          setState("END");
         }
       }
     }
@@ -44,11 +56,17 @@ export const Opener = (props: Props) => {
 
   }, [props.account.lootboxLogs?.unrevealed]);
 
+  useEffect(() => {
+    setSelectedBox(
+      props.utils.getLootbox(props.inventory.item.index)
+    );
+  }, [props.inventory.item.index]);
+
   const startReveal = async (amount: number) => {
     setWaitingToReveal(true);
     setTriedReveal(false);
     setState("REVEALING");
-    await props.actions.openTx(props.lootbox.index, amount);
+    await props.actions.openTx(selectedBox?.index!, amount);
     return;
   }
 
@@ -83,9 +101,6 @@ export const Opener = (props: Props) => {
       case "REVEALING":
         return RevealScreen;
         break;
-      case "END":
-        return EndScreen;
-        break;
       default:
         return StartScreen;
     }
@@ -101,7 +116,7 @@ export const Opener = (props: Props) => {
         {OpenButton(10)}
       </ProductBox>
       <SubText style={{ gridRow: 3 }}>
-        You have: {(props.inventory.balance ? props.inventory.balance : 0)} {props.lootbox.name}es
+        You have: {(props.inventory.balance ? props.inventory.balance : 0)} {selectedBox?.name}es
       </SubText>
     </Grid>
   );
@@ -109,12 +124,6 @@ export const Opener = (props: Props) => {
   const RevealScreen = (
     <SubText>
       Revealing... please don't leave this page!
-    </SubText>
-  );
-
-  const EndScreen = (
-    <SubText>
-      Revealed!
     </SubText>
   );
 

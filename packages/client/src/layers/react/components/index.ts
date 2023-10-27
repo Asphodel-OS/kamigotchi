@@ -50,7 +50,7 @@ export function registerUIComponents() {
   registerPartyButton();
   registerQuestsButton();
   registerSettingsButton();
-  // registerChatButton();
+  registerChatButton();
 
   // other fixtures
   registerAccountInfoFixture();

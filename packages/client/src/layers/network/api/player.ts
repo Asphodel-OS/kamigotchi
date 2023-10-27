@@ -101,8 +101,8 @@ export function createPlayerAPI(systems: any) {
   }
 
   // TEMP: reveals lootbox from CLI, to be removed when proper UI implemented
-  function tempLootboxReveal() {
-    return systems["system.Lootbox.Reveal.Execute"].tempExecute();
+  function tempLootboxReveal(id: BigNumberish) {
+    return systems["system.Lootbox.Reveal.Execute"].forceReveal(id);
   }
 
   /////////////////

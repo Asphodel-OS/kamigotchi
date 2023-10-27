@@ -120,7 +120,6 @@ export const getLootboxLog = (
       HasValue(ItemIndex, { value: itemIndex })
     ])
   )[0];
-  console.log("regid:", regID)
 
   const log: LootboxLog = {
     id: world.entities[index],

@@ -7,11 +7,13 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 
 import { Opener } from './Opener';
-import { getLootboxByIndex } from 'layers/react/shapes/Lootbox';
+import { Rewards } from './Rewards';
+import { Lootbox, LootboxLog, getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
+import { getItemByIndex } from 'layers/react/shapes/Item';
+
 
 
 export function registerLootboxesModal() {
@@ -62,11 +64,13 @@ export function registerLootboxesModal() {
         network: {
           actions,
           api: { player },
-          systems,
           world,
           network: { blockNumber$ }
         },
       } = layers;
+
+      const [state, setState] = useState("OPEN");
+      const [log, setLog] = useState<LootboxLog>();
 
       /////////////////
       // ACTIONS
@@ -108,64 +112,101 @@ export function registerLootboxesModal() {
       };
 
       ///////////////
+      // UTILS
+
+      const getLog = (index: EntityIndex) => {
+        return getLootboxLog(layers, index);
+      }
+
+      const getLootbox = (index: number) => {
+        return getLootboxByIndex(layers, index);
+      }
+
+      const getItem = (index: number) => {
+        return getItemByIndex(layers, index);
+      }
+
+      ///////////////
       // DISPLAY
+
+      const BackButton = () => {
+        if (state === "OPEN") return (<div></div>);
+        return (
+          <ActionButton
+            key='button-back'
+            id='button-back'
+            text='<'
+            size='medium'
+            onClick={() => setState("OPEN")}
+          />
+        );
+      };
+
+      const Header = () => {
+        return (
+          <Container>
+            <div style={{ position: "absolute" }}>{BackButton()}</div>
+
+            <SubHeader style={{ width: "100%" }}>Open Lootboxes</SubHeader>
+          </Container>
+        );
+      };
+
+      const SelectScreen = () => {
+        switch (state) {
+          case "OPEN":
+            return (
+              <Opener
+                account={account}
+                actions={{ openTx, revealTx, setState, setLog }}
+                inventory={account.inventories?.lootboxes![0]!}
+                utils={{ getLog, getLootbox }}
+              />
+            );
+            break;
+          case "REWARDS":
+            return (
+              <Rewards
+                log={log!}
+                utils={{ getItem }}
+              />
+            );
+            break;
+          default:
+            return (
+              <Opener
+                account={account}
+                actions={{ openTx, revealTx, setState, setLog }}
+                inventory={account.inventories?.lootboxes![0]!}
+                utils={{ getLog, getLootbox }}
+              />
+            );
+            break;
+        }
+      }
+
+
 
       return (
         <ModalWrapperFull
           divName='lootboxes'
           id='LootboxesModal'
+          header={Header()}
           overlay
-          canExit
         >
-          <Opener
-            account={account}
-            actions={{ openTx, revealTx }}
-            lootbox={getLootboxByIndex(layers, 10001)}
-            inventory={account.inventories?.lootboxes![0]!}
-          />
+          {SelectScreen()}
         </ModalWrapperFull>
       );
     }
   );
 }
 
-const Grid = styled.div`
-  display: grid;
-  grid-row-gap: 6px;
-  grid-column-gap: 12px;
-  justify-items: center;
-  justify-content: center;
-
-  padding: 24px 6px;
-  margin: 0px 6px;
-`;
-
-const Input = styled.input`
-  width: 50%;
-
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  justify-content: center;
-  font-family: Pixel;
-
-  border-width: 0px;
-  padding: 6px;
-
-  &:focus {
-    outline: none;
-  }
-
-  ::-webkit-inner-spin-button{
-    -webkit-appearance: none; 
-    margin: 0; 
-  }
-  ::-webkit-outer-spin-button{
-    -webkit-appearance: none; 
-    margin: 0; 
-  }  
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: .4vh 1.2vw;
 `;
 
 const KamiImage = styled.img`
@@ -188,6 +229,22 @@ const ProductBox = styled.div`
   flex-direction: column;
   padding: 5px;
   max-width: 75%;
+`;
+
+const FullText = styled.div`
+  color: #333;
+
+  padding: 1.5vw;
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: center;
+
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const SubHeader = styled.p`
