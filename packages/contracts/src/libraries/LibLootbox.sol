@@ -11,6 +11,7 @@ import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComp
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsLogComponent, ID as IsLogCompID } from "components/IsLogComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
+import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { WeightsComponent, ID as WeightsCompID } from "components/WeightsComponent.sol";
 
@@ -42,6 +43,7 @@ library LibLootbox {
     // creating reveal entity
     id = world.getUniqueEntityId();
     setIsLootbox(components, id);
+    setIsLog(components, id);
     setBalance(components, id, count);
     setHolder(components, id, LibInventory.getHolder(components, invID));
     setIndex(components, id, LibInventory.getItemIndex(components, invID));
@@ -139,7 +141,7 @@ library LibLootbox {
   /// @param amounts    resultant amounts
   function logReveal(IUintComp components, uint256 id, uint256[] memory amounts) internal {
     setBalances(components, id, amounts);
-    setIsLog(components, id);
+    setTime(components, id, block.timestamp);
 
     LibRandom.removeRevealBlock(components, id);
   }
@@ -196,6 +198,10 @@ library LibLootbox {
 
   function setIsLootbox(IUintComp components, uint256 id) internal {
     IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
+  }
+
+  function setTime(IUintComp components, uint256 id, uint256 time) internal {
+    TimeComponent(getAddressById(components, TimeCompID)).set(id, time);
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {

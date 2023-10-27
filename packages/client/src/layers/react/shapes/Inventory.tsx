@@ -26,6 +26,14 @@ export const getInventory = (
   layers: Layers,
   index: EntityIndex,
 ): Inventory => {
+  return getTypedInventory(layers, index, getItem);
+}
+
+export const getTypedInventory = (
+  layers: Layers,
+  index: EntityIndex,
+  getTypedItem: (layers: Layers, index: EntityIndex) => Item,
+): Inventory => {
   const {
     network: {
       world,
@@ -45,7 +53,7 @@ export const getInventory = (
       HasValue(ItemIndex, { value: itemIndex }),
     ])
   )[0];
-  const item = getItem(layers, registryEntityIndex);
+  const item = getTypedItem(layers, registryEntityIndex);
 
   let inventory: Inventory = {
     id: world.entities[index],
@@ -68,22 +76,6 @@ export const getInventory = (
 
 /////////////////
 // UTILS
-
-export interface AccountInventories {
-  food: Inventory[];
-  revives: Inventory[];
-  gear: Inventory[];
-  mods: Inventory[];
-}
-
-// create an empty instance of account inventories
-export const newAccountInventories = (): AccountInventories => ({
-  food: [],
-  revives: [],
-  gear: [],
-  mods: [],
-});
-
 
 // sorts a list of Inventories by their item indices
 export const sortInventories = (inventories: Inventory[]) => {
@@ -129,10 +121,11 @@ export const queryInventoryX = (
   const {
     network: {
       components: {
+        HolderID,
         IsInventory,
         IsRegistry,
         ItemIndex,
-        HolderID,
+
       },
     },
   } = layers;

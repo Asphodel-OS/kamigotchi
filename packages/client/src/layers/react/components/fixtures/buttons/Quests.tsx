@@ -26,7 +26,7 @@ export function registerQuestsButton() {
           targetDiv='quests'
           text='Quests'
           hideModal={modalsToHide}
-          visible={visibleButtons.chat}
+          visible={visibleButtons.quests}
         >
           <img style={{ height: '100%', width: 'auto' }} src={questsIcon} alt='chat_icon' />
         </MenuButton>

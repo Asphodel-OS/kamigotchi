@@ -11,13 +11,13 @@ import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
 import { Kami, queryKamisX } from './Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
+import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
 import { Skill } from './Skill';
 import {
-  AccountInventories,
   Inventory,
   getInventory,
-  newAccountInventories,
   sortInventories,
+  queryInventoryX,
 } from './Inventory';
 
 // standardized shape of an Account Entity
@@ -37,7 +37,11 @@ export interface Account {
   lastBlock: number;
   lastMoveTs: number;
   kamis?: Kami[];
-  inventories?: AccountInventories;
+  inventories?: Inventories;
+  lootboxLogs?: {
+    unrevealed: LootboxLog[];
+    revealed: LootboxLog[];
+  }
   quests?: {
     ongoing: Quest[];
     completed: Quest[];
@@ -49,6 +53,15 @@ export interface AccountOptions {
   kamis?: boolean;
   inventory?: boolean;
   quests?: boolean;
+  lootboxLogs?: boolean;
+}
+
+export interface Inventories {
+  food?: Inventory[];
+  revives?: Inventory[];
+  gear?: Inventory[];
+  mods?: Inventory[];
+  lootboxes?: Inventory[];
 }
 
 // get an Account from its EnityIndex
@@ -104,28 +117,36 @@ export const getAccount = (
 
   // populate inventories
   if (options?.inventory) {
-    const inventoryResults = Array.from(
-      runQuery([
-        Has(IsInventory),
-        HasValue(HolderID, { value: account.id })
-      ])
-    );
+    account.inventories = {};
 
-    let inventory: Inventory;
-    let inventories = newAccountInventories();
+    const inventoryResults = queryInventoryX(layers, { owner: account.id });
+    const foods: Inventory[] = [];
+    const revives: Inventory[] = [];
+    const gear: Inventory[] = [];
+    const mods: Inventory[] = [];
+    const lootboxes: Inventory[] = [];
     for (let i = 0; i < inventoryResults.length; i++) {
-      inventory = getInventory(layers, inventoryResults[i]);
-      if (inventory.item.type === 'FOOD') inventories.food.push(inventory);
-      if (inventory.item.type === 'REVIVE') inventories.revives.push(inventory);
-      if (inventory.item.type === 'GEAR') inventories.gear.push(inventory);
-      if (inventory.item.type === 'MOD') inventories.mods.push(inventory);
-    }
+      const inventory = inventoryResults[i];
 
-    sortInventories(inventories.food);
-    sortInventories(inventories.revives);
-    sortInventories(inventories.gear);
-    sortInventories(inventories.mods);
-    account.inventories = inventories;
+      if (inventory.item.type === 'FOOD') foods.push(inventory);
+      if (inventory.item.type === 'REVIVE') revives.push(inventory);
+      if (inventory.item.type === 'GEAR') gear.push(inventory);
+      if (inventory.item.type === 'MOD') mods.push(inventory);
+      if (inventory.item.type === 'LOOTBOX') lootboxes.push(inventory);
+    }
+    sortInventories(foods);
+    sortInventories(revives);
+    sortInventories(gear);
+    sortInventories(mods);
+    sortInventories(lootboxes);
+
+    account.inventories = {
+      food: foods,
+      revives: revives,
+      gear: gear,
+      mods: mods,
+      lootboxes: lootboxes,
+    }
   }
 
   // populate Kamis
@@ -142,6 +163,13 @@ export const getAccount = (
     account.quests = {
       ongoing: parseQuestsStatus(layers, account, getOngoingQuests(layers, account.id)),
       completed: parseQuestsStatus(layers, account, getCompletedQuests(layers, account.id)),
+    }
+  }
+
+  if (options?.lootboxLogs) {
+    account.lootboxLogs = {
+      unrevealed: queryAccLBLogs(layers, account.id, false),
+      revealed: queryAccLBLogs(layers, account.id, true)
     }
   }
 

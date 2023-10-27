@@ -38,6 +38,7 @@ export interface VisibleModals {
   kamiSkills: boolean;
   kamiMint: boolean;
   leaderboard: boolean;
+  lootboxes: boolean;
   nameKami: boolean;
   map: boolean;
   merchant: boolean;
@@ -63,6 +64,7 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
   kamiSkills: isOn,
   kamiMint: isOn,
   leaderboard: isOn,
+  lootboxes: isOn,
   nameKami: isOn,
   map: isOn,
   merchant: isOn,
@@ -105,6 +107,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       kamiSkills: false,
       kamiMint: false,
       leaderboard: false,
+      lootboxes: false,
       map: false,
       merchant: false,
       nameKami: false,

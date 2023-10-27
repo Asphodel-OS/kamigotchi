@@ -178,7 +178,7 @@ export function registerKamiMintModal() {
         const api = network!.api.player;
 
         const actionID = (amount == 1 ? `Minting Kami` : `Minting Kamis`) as EntityID;
-        actions.add({
+        actions!.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -193,7 +193,7 @@ export function registerKamiMintModal() {
       // transaction to roll/reveal the kami's metadata 
       const revealTx = async (kami: Kami) => {
         const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
-        actions.add({
+        actions!.add({
           id: actionID,
           components: {},
           requirement: () => true,
@@ -203,7 +203,7 @@ export function registerKamiMintModal() {
           },
         });
         await waitForActionCompletion(
-          actions.Action,
+          actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex
         );
       };
@@ -213,7 +213,7 @@ export function registerKamiMintModal() {
           setWaitingToReveal(true);
           const mintActionID = mintPetTx(amount);
           await waitForActionCompletion(
-            actions.Action,
+            actions!.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex
           );
           setTriedReveal(false);

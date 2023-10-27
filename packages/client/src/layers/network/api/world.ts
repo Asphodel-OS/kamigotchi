@@ -283,8 +283,8 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.item.create.lootbox(
       item.get('Index'),
       item.get('Name'),
-      droptables[Number(item.get('Droptable'))].get('Key'),
-      droptables[Number(item.get('Droptable'))].get('Tier')
+      droptables[Number(item.get('Droptable')) - 1].get('Key'),
+      droptables[Number(item.get('Droptable')) - 1].get('Tier')
     );
   }
 
@@ -666,18 +666,18 @@ export function setUpWorldAPI(systems: any) {
     let results = [];
     let headers = arr[0];
     for (let i = 1; i < arr.length; i++) {
-      const data = arr[i];
+      let data = arr[i];
       if (data[0] != "") {
         let mp = new Map();
         for (let n = 1; n < headers.length; n++) {
           mp.set(headers[n].trim(), []);
         }
-        for (let j = i + 1; data[j] == ""; j++) {
-          const data = arr[j];
+        for (let j = i + 1; j < arr.length && arr[j][0] === ""; j++) {
+          data = arr[j];
           for (let k = 1; k < headers.length; k++) {
             mp.get(headers[k].trim()).push(data[k].trim() ? data[k].trim() : "0");
           }
-          i = j;
+          i = j - 1;
         }
         results.push(mp);
       }
