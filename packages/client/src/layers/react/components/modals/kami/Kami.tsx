@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 
-import { Banner } from './Banner';
-import { KillLogs } from './KillLogs';
-import { Traits } from './Traits';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
-import { Skills } from './Skills';
 import { getRegistrySkills } from 'layers/react/shapes/Skill';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { Banner } from './Banner';
+import { KillLogs } from './KillLogs';
+import { Skills } from './Skills';
 import { Tabs } from './Tabs';
+import { Traits } from './Traits';
+
 
 export function registerKamiModal() {
   registerUIComponent(

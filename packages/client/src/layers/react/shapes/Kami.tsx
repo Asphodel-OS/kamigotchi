@@ -262,7 +262,7 @@ export const getKami = (
     const drainBase = getConfigFieldValue(layers.network, 'HEALTH_RATE_DRAIN_BASE');
     const drainBasePrecision = 10 ** getConfigFieldValue(layers.network, 'HEALTH_RATE_DRAIN_BASE_PREC');
     const multiplier = kami.bonuses.harvest.drain;
-    healthRate = -1 * productionRate * drainBase * multiplier / (100 * drainBasePrecision);
+    healthRate = -1 * productionRate * drainBase * multiplier / (1000 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
     const harmony = kami.stats.harmony + kami.bonusStats.harmony;
     const healBase = getConfigFieldValue(layers.network, 'HEALTH_RATE_HEAL_BASE');
