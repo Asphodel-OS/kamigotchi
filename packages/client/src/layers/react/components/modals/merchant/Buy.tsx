@@ -164,8 +164,8 @@ export function registerBuyModal() {
             </InfoSection>
           </Content>
           <ButtonRow>
-            <ConfirmButton />
             <CancelButton />
+            <ConfirmButton />
           </ButtonRow>
         </ModalWrapperFull>
       );
