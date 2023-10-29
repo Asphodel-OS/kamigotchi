@@ -362,7 +362,7 @@ abstract contract SetupTemplate is TestSetupImports {
     uint[] memory weights
   ) public {
     vm.prank(deployer);
-    __RegistryCreateLootboxSystem.executeTyped(index, name, keys, weights, "");
+    __RegistryCreateLootboxSystem.executeTyped(index, name, "DESCRIPTION", keys, weights, "");
   }
 
   /* QUESTS */
@@ -620,12 +620,12 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(deployer);
 
     // food (foodIndex, name, health)
-    __RegistryCreateFoodSystem.executeTyped(1, 1, "Gum", 25, ""); // itemIndex 1
-    __RegistryCreateFoodSystem.executeTyped(2, 2, "Candy", 50, ""); // itemIndex 2
-    __RegistryCreateFoodSystem.executeTyped(3, 3, "Cookie Sticks", 100, ""); // itemIndex 3
+    __RegistryCreateFoodSystem.executeTyped(1, 1, "Gum", "DESCRIPTION", 25, ""); // itemIndex 1
+    __RegistryCreateFoodSystem.executeTyped(2, 2, "Candy", "DESCRIPTION", 50, ""); // itemIndex 2
+    __RegistryCreateFoodSystem.executeTyped(3, 3, "Cookie Sticks", "DESCRIPTION", 100, ""); // itemIndex 3
 
     // revives (reviveIndex, name, health)
-    __RegistryCreateReviveSystem.executeTyped(1000, 1, "Ribbon", 10, ""); // itemIndex 4
+    __RegistryCreateReviveSystem.executeTyped(1000, 1, "Ribbon", "DESCRIPTION", 10, ""); // itemIndex 4
 
     vm.stopPrank();
   }

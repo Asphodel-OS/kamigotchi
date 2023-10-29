@@ -19,6 +19,7 @@ contract _RegistryCreateGearSystem is System {
       uint256 index,
       uint256 gearIndex,
       string memory name,
+      string memory description,
       string memory type_,
       uint256 health,
       uint256 power,
@@ -28,7 +29,19 @@ contract _RegistryCreateGearSystem is System {
       string memory media
     ) = abi.decode(
         arguments,
-        (uint256, uint256, string, string, uint256, uint256, uint256, uint256, uint256, string)
+        (
+          uint256,
+          uint256,
+          string,
+          string,
+          string,
+          uint256,
+          uint256,
+          uint256,
+          uint256,
+          uint256,
+          string
+        )
       );
     uint256 registryID = LibRegistryItem.getByGearIndex(components, gearIndex);
 
@@ -42,6 +55,7 @@ contract _RegistryCreateGearSystem is System {
       index,
       gearIndex,
       name,
+      description,
       type_,
       health,
       power,
@@ -57,6 +71,7 @@ contract _RegistryCreateGearSystem is System {
     uint256 index,
     uint256 gearIndex,
     string memory name,
+    string memory description,
     string memory type_,
     uint256 health,
     uint256 power,
@@ -66,6 +81,19 @@ contract _RegistryCreateGearSystem is System {
     string memory media
   ) public onlyOwner returns (bytes memory) {
     return
-      execute(abi.encode(index, gearIndex, name, type_, health, power, violence, harmony, slots));
+      execute(
+        abi.encode(
+          index,
+          gearIndex,
+          name,
+          description,
+          type_,
+          health,
+          power,
+          violence,
+          harmony,
+          slots
+        )
+      );
   }
 }

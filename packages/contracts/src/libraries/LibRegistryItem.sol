@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexFoodComponent, ID as IndexFoodCompID } from "components/IndexFoodComponent.sol";
 import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
@@ -48,6 +49,7 @@ library LibRegistryItem {
     uint256 index,
     uint256 foodIndex,
     string memory name,
+    string memory description,
     uint256 health,
     string memory mediaURI
   ) internal returns (uint256) {
@@ -57,6 +59,7 @@ library LibRegistryItem {
     setItemIndex(components, id, index);
     setFoodIndex(components, id, foodIndex);
     setName(components, id, name);
+    setDescription(components, id, description);
     LibStat.setHealth(components, id, health);
     setMediaURI(components, id, mediaURI);
     return id;
@@ -69,6 +72,7 @@ library LibRegistryItem {
     uint256 index,
     uint256 gearIndex,
     string memory name,
+    string memory description,
     string memory type_,
     uint256 health,
     uint256 power,
@@ -83,6 +87,7 @@ library LibRegistryItem {
     setItemIndex(components, id, index);
     setGearIndex(components, id, gearIndex);
     setName(components, id, name);
+    setDescription(components, id, description);
     setType(components, id, type_);
     setMediaURI(components, id, mediaURI);
 
@@ -115,6 +120,7 @@ library LibRegistryItem {
     IUintComp components,
     uint256 index,
     string memory name,
+    string memory description,
     uint256[] memory keys,
     uint256[] memory weights,
     string memory mediaURI
@@ -127,6 +133,7 @@ library LibRegistryItem {
     setKeys(components, id, keys);
     setWeights(components, id, weights);
     setName(components, id, name);
+    setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
   }
 
@@ -137,6 +144,7 @@ library LibRegistryItem {
     uint256 index,
     uint256 modIndex,
     string memory name,
+    string memory description,
     uint256 health,
     uint256 power,
     uint256 violence,
@@ -149,6 +157,7 @@ library LibRegistryItem {
     setItemIndex(components, id, index);
     setModIndex(components, id, modIndex);
     setName(components, id, name);
+    setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
 
     if (health > 0) LibStat.setHealth(components, id, health);
@@ -173,6 +182,7 @@ library LibRegistryItem {
     uint256 index,
     uint256 reviveIndex,
     string memory name,
+    string memory description,
     uint256 health,
     string memory mediaURI
   ) internal returns (uint256) {
@@ -182,6 +192,7 @@ library LibRegistryItem {
     setItemIndex(components, id, index);
     setReviveIndex(components, id, reviveIndex);
     setName(components, id, name);
+    setDescription(components, id, description);
     LibStat.setHealth(components, id, health);
     setMediaURI(components, id, mediaURI);
     return id;
@@ -194,6 +205,7 @@ library LibRegistryItem {
     unsetIsNonFungible(components, id);
     unsetItemIndex(components, id);
     unsetName(components, id);
+    unsetDescription(components, id);
     unsetType(components, id);
     unsetMediaURI(components, id);
 
@@ -267,6 +279,10 @@ library LibRegistryItem {
     IndexFoodComponent(getAddressById(components, IndexFoodCompID)).set(id, foodIndex);
   }
 
+  function setDescription(IUintComp components, uint256 id, string memory description) internal {
+    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
+  }
+
   function setGearIndex(IUintComp components, uint256 id, uint256 gearIndex) internal {
     IndexGearComponent(getAddressById(components, IndexGearCompID)).set(id, gearIndex);
   }
@@ -321,6 +337,11 @@ library LibRegistryItem {
 
   function unsetFoodIndex(IUintComp components, uint256 id) internal {
     IndexFoodComponent comp = IndexFoodComponent(getAddressById(components, IndexFoodCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetDescription(IUintComp components, uint256 id) internal {
+    DescriptionComponent comp = DescriptionComponent(getAddressById(components, DescriptionCompID));
     if (comp.has(id)) comp.remove(id);
   }
 

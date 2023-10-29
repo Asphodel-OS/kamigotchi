@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateFoodSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,string,uint256,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,string,string,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,6 +52,7 @@ export interface _RegistryCreateFoodSystemInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
@@ -129,6 +130,7 @@ export interface _RegistryCreateFoodSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -151,6 +153,7 @@ export interface _RegistryCreateFoodSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     foodIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
+    description: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
     media: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -173,6 +176,7 @@ export interface _RegistryCreateFoodSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       media: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -207,6 +211,7 @@ export interface _RegistryCreateFoodSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -230,6 +235,7 @@ export interface _RegistryCreateFoodSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       foodIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

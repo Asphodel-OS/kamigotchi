@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateGearSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,string,string,uint256,uint256,uint256,uint256,uint256,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,string,string,string,uint256,uint256,uint256,uint256,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,6 +52,7 @@ export interface _RegistryCreateGearSystemInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
@@ -134,6 +135,7 @@ export interface _RegistryCreateGearSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       gearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
@@ -161,6 +163,7 @@ export interface _RegistryCreateGearSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     gearIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
+    description: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
     power: PromiseOrValue<BigNumberish>,
@@ -188,6 +191,7 @@ export interface _RegistryCreateGearSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       gearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
@@ -227,6 +231,7 @@ export interface _RegistryCreateGearSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       gearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
@@ -255,6 +260,7 @@ export interface _RegistryCreateGearSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       gearIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,

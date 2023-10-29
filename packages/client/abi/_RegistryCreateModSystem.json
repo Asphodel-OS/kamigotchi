@@ -82,6 +82,11 @@
           "type": "string"
         },
         {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
           "internalType": "uint256",
           "name": "health",
           "type": "uint256"
@@ -147,7 +152,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256,string)": "f466059a",
+    "executeTyped(uint256,uint256,string,string,uint256,uint256,uint256,uint256,string)": "4e523328",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

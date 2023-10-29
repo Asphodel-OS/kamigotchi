@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateSkillSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,string,uint256,uint256,string)": FunctionFragment;
+    "executeTyped(uint256,string,string,string,uint256,uint256,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -56,6 +56,7 @@ export interface _RegistryCreateSkillSystemInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
   ): string;
@@ -135,6 +136,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       description: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -159,6 +161,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
     cost: PromiseOrValue<BigNumberish>,
     max: PromiseOrValue<BigNumberish>,
     description: PromiseOrValue<string>,
+    media: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -183,6 +186,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       description: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -219,6 +223,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       description: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -244,6 +249,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       description: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

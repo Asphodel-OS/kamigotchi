@@ -19,16 +19,26 @@ contract _RegistryCreateReviveSystem is System {
       uint256 index,
       uint256 reviveIndex,
       string memory name,
+      string memory description,
       uint256 health,
       string memory media
-    ) = abi.decode(arguments, (uint256, uint256, string, uint256, string));
+    ) = abi.decode(arguments, (uint256, uint256, string, string, uint256, string));
     uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
 
     require(registryID == 0, "CreateRevive: index alr exists");
     require(!LibString.eq(name, ""), "CreateRevive: name is empty");
     require(health > 0, "CreateRevive: health not > 0");
 
-    LibRegistryItem.createRevive(world, components, index, reviveIndex, name, health, media);
+    LibRegistryItem.createRevive(
+      world,
+      components,
+      index,
+      reviveIndex,
+      name,
+      description,
+      health,
+      media
+    );
 
     return "";
   }
@@ -37,9 +47,10 @@ contract _RegistryCreateReviveSystem is System {
     uint256 index,
     uint256 reviveIndex,
     string memory name,
+    string memory description,
     uint256 health,
     string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, reviveIndex, name, health, media));
+    return execute(abi.encode(index, reviveIndex, name, description, health, media));
   }
 }

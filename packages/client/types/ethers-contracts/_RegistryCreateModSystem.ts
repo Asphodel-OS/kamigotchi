@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateModSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256,string)": FunctionFragment;
+    "executeTyped(uint256,uint256,string,string,uint256,uint256,uint256,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,6 +52,7 @@ export interface _RegistryCreateModSystemInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -132,6 +133,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
@@ -157,6 +159,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     modIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
+    description: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
     power: PromiseOrValue<BigNumberish>,
     violence: PromiseOrValue<BigNumberish>,
@@ -182,6 +185,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
@@ -219,6 +223,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
@@ -245,6 +250,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       modIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,

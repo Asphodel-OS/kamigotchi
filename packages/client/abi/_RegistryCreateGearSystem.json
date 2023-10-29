@@ -83,6 +83,11 @@
         },
         {
           "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
           "name": "type_",
           "type": "string"
         },
@@ -157,7 +162,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,string,uint256,uint256,uint256,uint256,uint256,string)": "3e492a39",
+    "executeTyped(uint256,uint256,string,string,string,uint256,uint256,uint256,uint256,uint256,string)": "b9773c00",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }
