@@ -12,6 +12,7 @@ import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
+import { getItemByIndex } from 'layers/react/shapes/Item';
 
 
 export function registerPartyModal() {
@@ -85,6 +86,7 @@ export function registerPartyModal() {
           );
 
           return {
+            layers,
             actions,
             api: player,
             data: { account },
@@ -95,7 +97,7 @@ export function registerPartyModal() {
     },
 
     // Render
-    ({ actions, api, data, world }) => {
+    ({ layers, actions, api, data, world }) => {
       // console.log('PartyM: data', data);
       const { visibleModals, setVisibleModals } = dataStore();
       const { setKami } = useSelectedEntities();
@@ -151,6 +153,10 @@ export function registerPartyModal() {
         openKamiModal(kami.entityIndex);
       };
 
+      const getItem = (itemIndex: number) => {
+        return getItemByIndex(layers, itemIndex);
+      };
+
       const openKamiModal = (entityIndex: EntityIndex) => {
         setKami(entityIndex);
         setVisibleModals({ ...visibleModals, kami: true });
@@ -161,7 +167,7 @@ export function registerPartyModal() {
         <ModalWrapperFull
           id='party_modal'
           divName='party'
-          header={[<Items key='items' inventories={data.account.inventories!} />]}
+          header={[<Items key='items' inventories={data.account.inventories!} getItem={getItem} />]}
           canExit
         >
           <Kards

@@ -8,10 +8,11 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-
 import { Layers } from 'src/types';
 import { Stats, getStats } from './Stats';
 import { numberToHex } from 'utils/hex';
+
+import { baseURI } from "src/constants/media";
 
 // The standard shape of a FE Item Entity
 export interface Item {
@@ -20,10 +21,10 @@ export interface Item {
   index: number;
   isFungible: boolean;
   type: string;
-  name?: string;
+  uri: string;
+  name: string;
+  description: string;
   familyIndex?: number;
-  description?: string;
-  uri?: string;
   stats?: Stats;
 }
 
@@ -44,6 +45,7 @@ export const getItem = (
         ReviveIndex,
         ItemIndex,
         IsLootbox,
+        MediaURI,
         Name,
         IsFungible,
       },
@@ -57,6 +59,7 @@ export const getItem = (
     isFungible: hasComponent(IsFungible, index),
     type: '',
     name: getComponentValue(Name, index)?.value as string,
+    uri: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(layers, index),
   }

@@ -1,47 +1,40 @@
 import styled from "styled-components";
 
-import { FoodImages, ReviveImages } from 'constants/food';
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { getInventoryByFamilyIndex, AccountInventories } from "layers/react/shapes/Inventory";
+import { Item } from "layers/react/shapes/Item";
 
 interface Props {
   inventories: AccountInventories;
+  getItem: (index: number) => Item;
 };
 
 // get the row of consumable items to display in the player inventory
 export const Items = (props: Props) => {
   const inventorySlots = [
     {
-      id: 1,
-      image: FoodImages.get(1),
-      text: ['Maple-Flavor Ghost Gum', '', 'Restores 25 health.'],
+      item: props.getItem(1),
       inventory: getInventoryByFamilyIndex(props.inventories?.food, 1),
     },
     {
-      id: 2,
-      image: FoodImages.get(2),
-      text: ['Pom-Pom Fruit Candy', '', 'Restores 100 health.'],
+      item: props.getItem(2),
       inventory: getInventoryByFamilyIndex(props.inventories?.food, 2),
     },
     {
-      id: 3,
-      image: FoodImages.get(3),
-      text: ['Gakki Cookie Sticks', '', 'Restores 200 health.'],
+      item: props.getItem(3),
       inventory: getInventoryByFamilyIndex(props.inventories?.food, 3),
     },
     {
-      id: 4,
-      image: ReviveImages.get(1),
-      text: ['Red Gakki Ribbon', '', 'Revives a fallen Kami.'],
+      item: props.getItem(1001),
       inventory: getInventoryByFamilyIndex(props.inventories?.revives, 1),
     },
   ];
 
   const cells = inventorySlots.map((slot, i) => {
     return (
-      <Tooltip key={slot.id} text={slot.text} grow>
+      <Tooltip text={[slot.item.name, slot.item.description]} grow>
         <CellGrid>
-          <Icon src={slot.image} />
+          <Icon src={slot.item.uri} />
           <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
         </CellGrid>
       </Tooltip>

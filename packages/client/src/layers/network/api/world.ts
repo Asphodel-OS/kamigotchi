@@ -516,7 +516,7 @@ export function setUpWorldAPI(systems: any) {
 
 
     // (Health) Skill Tree
-    await api.registry.skill.create(110, "KAMI", "PASSIVE", "Workout Routine", 1, 3, "-5% Harvest Drain per level", "images/skills/workout.png");
+    await api.registry.skill.create(110, "KAMI", "PASSIVE", "Workout Routine", 1, 3, "-5% Harvest Drain per level", "images/skills/workout-routine.png");
     await api.registry.skill.add.effect(110, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(110, "SKILL", 1, 3);
 

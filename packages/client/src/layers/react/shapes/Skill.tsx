@@ -12,6 +12,7 @@ import { Layers } from 'src/types';
 import { Account } from './Account';
 import { Kami } from './Kami';
 
+import { baseURI } from "src/constants/media";
 
 /////////////////
 // GETTERS
@@ -37,6 +38,7 @@ export interface Skill {
   max: number;
   effects: Effect[];
   requirements: Requirement[];
+  uri: string;
 }
 
 export interface Effect {
@@ -72,6 +74,7 @@ const getSkill = (layers: Layers, entityIndex: EntityIndex): Skill => {
         Cost,
         Description,
         Max,
+        MediaURI,
         Name,
         SkillIndex,
         SkillPoint
@@ -99,6 +102,7 @@ const getSkill = (layers: Layers, entityIndex: EntityIndex): Skill => {
     description: getComponentValue(Description, registryIndex)?.value || '' as string,
     effects: querySkillEffects(layers, skillIndex),
     requirements: querySkillRequirements(layers, skillIndex),
+    uri: `${baseURI}${getComponentValue(MediaURI, registryIndex)?.value || '' as string}`,
   };
 }
 

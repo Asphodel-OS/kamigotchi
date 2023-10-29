@@ -264,7 +264,6 @@ export function createAdminAPI(systems: any) {
     logicType: string,
     index: number,
     value: number,
-    media: string
   ) {
     await sleepIf();
     return systems['system._Registry.Skill.Create.Effect'].executeTyped(
@@ -274,7 +273,6 @@ export function createAdminAPI(systems: any) {
       logicType,
       index,
       value,
-      media
     );
   }
 
