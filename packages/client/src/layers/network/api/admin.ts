@@ -237,6 +237,7 @@ export function createAdminAPI(systems: any) {
     cost: number,
     max: number,
     description: string,
+    media: string
   ) {
     await sleepIf();
     return systems['system._Registry.Skill.Create'].executeTyped(
@@ -247,6 +248,7 @@ export function createAdminAPI(systems: any) {
       cost,
       max,
       description,
+      media
     );
   }
 
@@ -261,7 +263,8 @@ export function createAdminAPI(systems: any) {
     subtype: string,
     logicType: string,
     index: number,
-    value: number
+    value: number,
+    media: string
   ) {
     await sleepIf();
     return systems['system._Registry.Skill.Create.Effect'].executeTyped(
@@ -270,7 +273,8 @@ export function createAdminAPI(systems: any) {
       subtype,
       logicType,
       index,
-      value
+      value,
+      media
     );
   }
 
@@ -294,9 +298,9 @@ export function createAdminAPI(systems: any) {
   //  ITEMS
 
   // @dev add a food item registry entry
-  async function registerFood(index: number, foodIndex: number, name: string, health: number) {
+  async function registerFood(index: number, foodIndex: number, name: string, health: number, media: string) {
     await sleepIf();
-    return systems['system._Registry.Food.Create'].executeTyped(index, foodIndex, name, health);
+    return systems['system._Registry.Food.Create'].executeTyped(index, foodIndex, name, health, media);
   }
 
   // @dev add an equipment item registry entry
@@ -309,7 +313,8 @@ export function createAdminAPI(systems: any) {
     power: number,
     violence: number,
     harmony: number,
-    slots: number
+    slots: number,
+    media: string
   ) {
     await sleepIf();
     return systems['system._Registry.Gear.Create'].executeTyped(
@@ -321,13 +326,14 @@ export function createAdminAPI(systems: any) {
       power,
       violence,
       harmony,
-      slots
+      slots,
+      media
     );
   }
 
-  async function registerLootbox(index: number, name: string, keys: number[], weights: number[]) {
+  async function registerLootbox(index: number, name: string, keys: number[], weights: number[], media: string) {
     await sleepIf();
-    return systems['system._Registry.Lootbox.Create'].executeTyped(index, name, keys, weights);
+    return systems['system._Registry.Lootbox.Create'].executeTyped(index, name, keys, weights, media);
   }
 
   // @dev add a modification item registry entry
@@ -338,7 +344,8 @@ export function createAdminAPI(systems: any) {
     health: number,
     power: number,
     harmony: number,
-    violence: number
+    violence: number,
+    media: string
   ) {
     await sleepIf();
     return systems['system._Registry.Mod.Create'].executeTyped(
@@ -348,14 +355,15 @@ export function createAdminAPI(systems: any) {
       health,
       power,
       violence,
-      harmony
+      harmony,
+      media
     );
   }
 
   // @dev add a revive item registry entry
-  async function registerRevive(index: number, reviveIndex: number, name: string, health: number) {
+  async function registerRevive(index: number, reviveIndex: number, name: string, health: number, media: string) {
     await sleepIf();
-    return systems['system._Registry.Revive.Create'].executeTyped(index, reviveIndex, name, health);
+    return systems['system._Registry.Revive.Create'].executeTyped(index, reviveIndex, name, health, media);
   }
 
   // @dev deletes an item registry
