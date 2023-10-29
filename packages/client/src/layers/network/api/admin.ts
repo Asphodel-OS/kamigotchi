@@ -298,9 +298,23 @@ export function createAdminAPI(systems: any) {
   //  ITEMS
 
   // @dev add a food item registry entry
-  async function registerFood(index: number, foodIndex: number, name: string, health: number, media: string) {
+  async function registerFood(
+    index: number,
+    foodIndex: number,
+    name: string,
+    description: string,
+    health: number,
+    media: string
+  ) {
     await sleepIf();
-    return systems['system._Registry.Food.Create'].executeTyped(index, foodIndex, name, health, media);
+    return systems['system._Registry.Food.Create'].executeTyped(
+      index,
+      foodIndex,
+      name,
+      description,
+      health,
+      media
+    );
   }
 
   // @dev add an equipment item registry entry
@@ -308,6 +322,7 @@ export function createAdminAPI(systems: any) {
     index: number,
     gearIndex: number,
     name: string,
+    description: string,
     type_: string,
     health: number,
     power: number,
@@ -321,6 +336,7 @@ export function createAdminAPI(systems: any) {
       index,
       gearIndex,
       name,
+      description,
       type_,
       health,
       power,
@@ -331,9 +347,23 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  async function registerLootbox(index: number, name: string, keys: number[], weights: number[], media: string) {
+  async function registerLootbox(
+    index: number,
+    name: string,
+    description: string,
+    keys: number[],
+    weights: number[],
+    media: string
+  ) {
     await sleepIf();
-    return systems['system._Registry.Lootbox.Create'].executeTyped(index, name, keys, weights, media);
+    return systems['system._Registry.Lootbox.Create'].executeTyped(
+      index,
+      name,
+      description,
+      keys,
+      weights,
+      media
+    );
   }
 
   // @dev add a modification item registry entry
@@ -341,6 +371,7 @@ export function createAdminAPI(systems: any) {
     index: number,
     modIndex: number,
     name: string,
+    description: string,
     health: number,
     power: number,
     harmony: number,
@@ -352,6 +383,7 @@ export function createAdminAPI(systems: any) {
       index,
       modIndex,
       name,
+      description,
       health,
       power,
       violence,
@@ -361,9 +393,23 @@ export function createAdminAPI(systems: any) {
   }
 
   // @dev add a revive item registry entry
-  async function registerRevive(index: number, reviveIndex: number, name: string, health: number, media: string) {
+  async function registerRevive(
+    index: number,
+    reviveIndex: number,
+    name: string,
+    description: string,
+    health: number,
+    media: string
+  ) {
     await sleepIf();
-    return systems['system._Registry.Revive.Create'].executeTyped(index, reviveIndex, name, health, media);
+    return systems['system._Registry.Revive.Create'].executeTyped(
+      index,
+      reviveIndex,
+      name,
+      description,
+      health,
+      media
+    );
   }
 
   // @dev deletes an item registry
