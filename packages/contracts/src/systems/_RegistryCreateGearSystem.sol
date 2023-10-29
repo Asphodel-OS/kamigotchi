@@ -24,10 +24,11 @@ contract _RegistryCreateGearSystem is System {
       uint256 power,
       uint256 violence,
       uint256 harmony,
-      uint256 slots
+      uint256 slots,
+      string memory media
     ) = abi.decode(
         arguments,
-        (uint256, uint256, string, string, uint256, uint256, uint256, uint256, uint256)
+        (uint256, uint256, string, string, uint256, uint256, uint256, uint256, uint256, string)
       );
     uint256 registryID = LibRegistryItem.getByGearIndex(components, gearIndex);
 
@@ -46,7 +47,8 @@ contract _RegistryCreateGearSystem is System {
       power,
       violence,
       harmony,
-      slots
+      slots,
+      media
     );
     return "";
   }
@@ -60,7 +62,8 @@ contract _RegistryCreateGearSystem is System {
     uint256 power,
     uint256 violence,
     uint256 harmony,
-    uint256 slots
+    uint256 slots,
+    string memory media
   ) public onlyOwner returns (bytes memory) {
     return
       execute(abi.encode(index, gearIndex, name, type_, health, power, violence, harmony, slots));

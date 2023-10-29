@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateModSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -56,7 +56,8 @@ export interface _RegistryCreateModSystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -135,6 +136,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -159,6 +161,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
     power: PromiseOrValue<BigNumberish>,
     violence: PromiseOrValue<BigNumberish>,
     harmony: PromiseOrValue<BigNumberish>,
+    media: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -183,6 +186,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      media: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -219,6 +223,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -244,6 +249,7 @@ export interface _RegistryCreateModSystem extends BaseContract {
       power: PromiseOrValue<BigNumberish>,
       violence: PromiseOrValue<BigNumberish>,
       harmony: PromiseOrValue<BigNumberish>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

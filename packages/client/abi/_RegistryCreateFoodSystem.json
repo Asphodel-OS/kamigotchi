@@ -85,6 +85,11 @@
           "internalType": "uint256",
           "name": "health",
           "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "media",
+          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -127,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,uint256)": "8f041edf",
+    "executeTyped(uint256,uint256,string,uint256,string)": "afadcd1e",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

@@ -20,18 +20,30 @@ contract _RegistryCreateSkillSystem is System {
       string memory name,
       uint256 cost,
       uint256 max,
-      string memory description
-    ) = abi.decode(arguments, (uint256, string, string, string, uint256, uint256, string));
+      string memory description,
+      string memory media
+    ) = abi.decode(arguments, (uint256, string, string, string, uint256, uint256, string, string));
 
     require(index != 0, "SkillCreate: index cannot be 0");
-    require(!LibString.eq(type_, ""), "SkillCreate: type cannot be empty");
-    require(!LibString.eq(name, ""), "SkillCreate: name cannot be empty");
-    require(!LibString.eq(description, ""), "SkillCreate: description cannot be empty");
+    require(!LibString.eq(type_, ""), "SkillCreate: type empty");
+    require(!LibString.eq(name, ""), "SkillCreate: name empty");
+    require(!LibString.eq(description, ""), "SkillCreate: description empty");
 
     uint256 registryID = LibRegistrySkill.getByIndex(components, index);
     require(registryID == 0, "SkillCreate: already exists");
 
-    LibRegistrySkill.create(world, components, index, for_, type_, name, cost, max, description);
+    LibRegistrySkill.create(
+      world,
+      components,
+      index,
+      for_,
+      type_,
+      name,
+      cost,
+      max,
+      description,
+      media
+    );
 
     return "";
   }
@@ -43,8 +55,9 @@ contract _RegistryCreateSkillSystem is System {
     string memory name,
     uint256 cost,
     uint256 max,
-    string memory description
+    string memory description,
+    string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, for_, type_, name, cost, max, description));
+    return execute(abi.encode(index, for_, type_, name, cost, max, description, media));
   }
 }

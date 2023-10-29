@@ -100,6 +100,11 @@
           "internalType": "uint256",
           "name": "harmony",
           "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "media",
+          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -142,7 +147,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256)": "43359b00",
+    "executeTyped(uint256,uint256,string,uint256,uint256,uint256,uint256,string)": "f466059a",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

@@ -22,6 +22,7 @@ import { DescriptionComponent, ID as DescCompID } from "components/DescriptionCo
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
+import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -44,7 +45,8 @@ library LibRegistrySkill {
     string memory name,
     uint256 cost,
     uint256 max,
-    string memory description
+    string memory description,
+    string memory media
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsRegistry(components, id);
@@ -55,6 +57,7 @@ library LibRegistrySkill {
     setCost(components, id, cost);
     setMax(components, id, max);
     setDescription(components, id, description);
+    setMediaURI(components, id, media);
 
     if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
     else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
@@ -98,6 +101,7 @@ library LibRegistrySkill {
     unsetDescription(components, id);
     unsetFor(components, id);
     unsetMax(components, id);
+    unsetMediaURI(components, id);
     unsetName(components, id);
     unsetType(components, id);
   }
@@ -169,6 +173,10 @@ library LibRegistrySkill {
     MaxComponent(getAddressById(components, MaxCompID)).set(id, max);
   }
 
+  function setMediaURI(IUintComp components, uint256 id, string memory mediaURI) internal {
+    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
+  }
+
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
@@ -234,6 +242,12 @@ library LibRegistrySkill {
 
   function unsetMax(IUintComp components, uint256 id) internal {
     MaxComponent(getAddressById(components, MaxCompID)).remove(id);
+  }
+
+  function unsetMediaURI(IUintComp components, uint256 id) internal {
+    if (MediaURIComponent(getAddressById(components, MediaURICompID)).has(id)) {
+      MediaURIComponent(getAddressById(components, MediaURICompID)).remove(id);
+    }
   }
 
   function unsetName(IUintComp components, uint256 id) internal {

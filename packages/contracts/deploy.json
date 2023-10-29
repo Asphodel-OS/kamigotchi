@@ -208,7 +208,8 @@
         "IndexItemComponent",
         "IndexFoodComponent",
         "NameComponent",
-        "HealthComponent"
+        "HealthComponent",
+        "MediaURIComponent"
       ]
     },
     {
@@ -224,7 +225,8 @@
         "PowerComponent",
         "ViolenceComponent",
         "HarmonyComponent",
-        "SlotsComponent"
+        "SlotsComponent",
+        "MediaURIComponent"
       ]
     },
     {
@@ -236,7 +238,8 @@
         "IndexItemComponent",
         "KeysComponent",
         "WeightsComponent",
-        "NameComponent"
+        "NameComponent",
+        "MediaURIComponent"
       ]
     },
     {
@@ -251,7 +254,8 @@
         "HealthComponent",
         "PowerComponent",
         "ViolenceComponent",
-        "HarmonyComponent"
+        "HarmonyComponent",
+        "MediaURIComponent"
       ]
     },
     {
@@ -306,6 +310,7 @@
         "DescriptionComponent",
         "ForComponent",
         "MaxComponent",
+        "MediaURIComponent",
         "NameComponent",
         "TypeComponent"
       ]
@@ -358,6 +363,7 @@
         "PowerComponent",
         "ViolenceComponent",
         "HarmonyComponent",
+        "MediaURIComponent",
         "SlotsComponent",
         "KeysComponent",
         "WeightsComponent"
@@ -383,6 +389,7 @@
         "IndexComponent",
         "LogicTypeComponent",
         "MaxComponent",
+        "MediaURIComponent",
         "NameComponent",
         "SubtypeComponent",
         "TypeComponent",
