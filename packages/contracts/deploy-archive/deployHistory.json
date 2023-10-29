@@ -214,7 +214,7 @@
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
         "IsRegistryComponent",
@@ -222,13 +222,16 @@
         "IndexItemComponent",
         "IndexFoodComponent",
         "NameComponent",
-        "HealthComponent"
+        "DescriptionComponent",
+        "HealthComponent",
+        "MediaURIComponent"
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryCreateGearSystem",
       "writeAccess": [
+        "DescriptionComponent",
         "IsRegistryComponent",
         "IsNonFungibleComponent",
         "IndexItemComponent",
@@ -239,26 +242,30 @@
         "PowerComponent",
         "ViolenceComponent",
         "HarmonyComponent",
-        "SlotsComponent"
+        "SlotsComponent",
+        "MediaURIComponent"
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryCreateLootboxSystem",
       "writeAccess": [
+        "DescriptionComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
         "IsLootboxComponent",
         "IndexItemComponent",
         "KeysComponent",
         "WeightsComponent",
-        "NameComponent"
+        "NameComponent",
+        "MediaURIComponent"
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryCreateModSystem",
       "writeAccess": [
+        "DescriptionComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
         "IndexItemComponent",
@@ -268,7 +275,8 @@
         "HealthComponent",
         "PowerComponent",
         "ViolenceComponent",
-        "HarmonyComponent"
+        "HarmonyComponent",
+        "MediaURIComponent"
       ]
     },
     {
@@ -313,14 +321,14 @@
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryCreateReviveSystem",
       "writeAccess": [
         "*"
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryCreateSkillSystem",
       "writeAccess": [
         "IsRegistryComponent",
@@ -330,6 +338,7 @@
         "DescriptionComponent",
         "ForComponent",
         "MaxComponent",
+        "MediaURIComponent",
         "NameComponent",
         "TypeComponent"
       ]
@@ -368,9 +377,10 @@
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "29th October 2023",
       "name": "_RegistryDeleteItemSystem",
       "writeAccess": [
+        "DescriptionComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
         "IsNonFungibleComponent",
@@ -386,6 +396,7 @@
         "PowerComponent",
         "ViolenceComponent",
         "HarmonyComponent",
+        "MediaURIComponent",
         "SlotsComponent",
         "KeysComponent",
         "WeightsComponent"
