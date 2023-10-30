@@ -1,17 +1,17 @@
 import React from 'react';
 import { of } from 'rxjs';
-import { questsIcon } from 'assets/images/icons/menu';
 
+import placeholderIcon from "assets/images/icons/exit_native.png";
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { VisibleModals, dataStore } from 'layers/react/store/createStore';
+import { dataStore, VisibleModals } from 'layers/react/store/createStore';
 
-export function registerQuestsButton() {
+export function registerInventoryButton() {
   registerUIComponent(
-    'QuestsButton',
+    'InventoryButton',
     {
-      colStart: 82,
-      colEnd: 85,
+      colStart: 79,
+      colEnd: 82,
       rowStart: 3,
       rowEnd: 10,
     },
@@ -24,23 +24,22 @@ export function registerQuestsButton() {
         dialogue: false,
         emaBoard: false,
         help: false,
-        inventory: false,
         kami: false,
         leaderboard: false,
         nameKami: false,
+        quests: false,
         settings: false,
       };
 
-
       return (
         <MenuButton
-          id='quests_button'
-          targetDiv='quests'
-          text='Quests'
+          id='inventory-button'
+          targetDiv='inventory'
+          text='Inventory'
+          visible={visibleButtons.inventory}
           hideModal={modalsToHide}
-          visible={visibleButtons.chat}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={questsIcon} alt='chat_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={placeholderIcon} alt='map_icon' />
         </MenuButton>
       );
     }
