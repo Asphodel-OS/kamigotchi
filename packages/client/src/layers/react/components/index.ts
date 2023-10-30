@@ -2,6 +2,7 @@ import { registerLoadingState } from './LoadingState';
 
 import {
   registerHelpButton,
+  registerInventoryButton,
   registerMapButton,
   registerPartyButton,
   registerQuestsButton,
@@ -15,6 +16,7 @@ import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerDialogueModal } from './modals/dialogue';
 import { registerKamiModal } from './modals/kami';
+import { registerInventoryModal } from './modals/inventory';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerBuyModal, registerMerchantModal } from './modals/merchant';
@@ -44,6 +46,7 @@ export function registerUIComponents() {
 
   // buttons
   registerHelpButton();
+  registerInventoryButton();
   registerMapButton();
   registerPartyButton();
   registerQuestsButton();
@@ -57,10 +60,11 @@ export function registerUIComponents() {
 
   // menu modals
   registerHelpModal();
+  registerInventoryModal();
   registerMapModal();
-  registerSettingsModal();
   registerPartyModal();
   registerQuestsModal();
+  registerSettingsModal();
 
   // game modals
   registerBuyModal();

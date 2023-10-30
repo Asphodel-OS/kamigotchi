@@ -1,0 +1,96 @@
+import React from 'react';
+import { map, merge } from 'rxjs';
+import styled from 'styled-components';
+
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { getAccountFromBurner } from 'layers/react/shapes/Account';
+import { Grid } from './Grid';
+
+
+export function registerInventoryModal() {
+  registerUIComponent(
+    'Inventory',
+    {
+      colStart: 67,
+      colEnd: 100,
+      rowStart: 10,
+      rowEnd: 75,
+    },
+    (layers) => {
+      const {
+        network: {
+          actions,
+          api: { player },
+          components: {
+            AccountID,
+            Balance,
+            Coin,
+            Description,
+            HolderID,
+            ItemIndex,
+            MediaURI,
+            Name,
+            OwnerAddress,
+          },
+        },
+      } = layers;
+
+      return merge(
+        AccountID.update$,
+        Balance.update$,
+        Coin.update$,
+        Description.update$,
+        HolderID.update$,
+        ItemIndex.update$,
+        MediaURI.update$,
+        Name.update$,
+        OwnerAddress.update$,
+      ).pipe(
+        map(() => {
+          return {
+            layers,
+            actions: layers.network.actions,
+            api: layers.network.api.player,
+            data: {
+              account: getAccountFromBurner(layers, { inventory: true }),
+            }
+          };
+        })
+      );
+    },
+
+    ({ layers, actions, api, data }) => {
+
+      const Content = () => {
+        return (
+          <Grid key='grid' inventories={data.account.inventories!} />
+        );
+      }
+
+      /////////////////
+      // DISPLAY
+
+      return (
+        <ModalWrapperFull
+          id='inventory-modal'
+          divName='inventory'
+          header={<Header key='header'>Inventory</Header>}
+          canExit
+          overlay
+        >
+          <Content />
+        </ModalWrapperFull>
+      );
+    }
+  );
+}
+
+
+const Header = styled.div`
+  font-size: 1.5vw;
+  color: #333;
+  text-align: left;
+  padding: 1.2vw 1.8vw;
+  font-family: Pixel;
+`;
