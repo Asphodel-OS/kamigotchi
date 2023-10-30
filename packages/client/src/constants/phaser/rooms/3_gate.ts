@@ -2,7 +2,7 @@ import {
   backgroundDefault,
   objectToriiGate,
 } from 'assets/images/rooms/3_gate';
-import { opening } from 'assets/sound/ost';
+import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 
@@ -14,8 +14,8 @@ export const room3: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'opening',
-    path: opening,
+    key: 'arrival',
+    path: arrival,
   },
   objects: [
     {

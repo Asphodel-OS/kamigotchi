@@ -87,10 +87,10 @@ export class GameScene extends Phaser.Scene implements GameScene {
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
           const bgm = this.sound.add(
             this.room.music.key,
-            { volume: volumeMusic, loop: true }
+            { volume: volumeMusic }
           ) as Phaser.Sound.HTML5AudioSound;
 
-          bgm.setLoop(true);
+          bgm.loop = true;
           bgm.play();
           this.gameSound = bgm;
         }

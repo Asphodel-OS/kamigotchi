@@ -2,7 +2,7 @@ import {
   backgroundSign,
   objectMooringPost,
 } from 'assets/images/rooms/1_misty-river';
-import { opening } from 'assets/sound/ost';
+import { cave, arrival } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
 
@@ -13,8 +13,8 @@ export const room1: Room = {
     path: backgroundSign,
   },
   music: {
-    key: 'opening',
-    path: opening,
+    key: 'arrival',
+    path: arrival,
   },
   objects: [
     {

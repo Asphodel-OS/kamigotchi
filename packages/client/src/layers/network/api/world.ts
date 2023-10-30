@@ -356,8 +356,10 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
+
   ////////////////////
   // QUESTS
+
   async function initQuests(api: AdminAPI) {
     // create quests
 
@@ -551,8 +553,6 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.skill.create(401, "KAMI", "PASSIVE", "Patience", 1, 3, "-5% Harvest Drain per level");
     await api.registry.skill.add.effect(401, "HARVEST", "DRAIN", "DEC", 0, 50);
     await api.registry.skill.add.requirement(401, "SKILL", 4, 3);
-
-
 
   }
 

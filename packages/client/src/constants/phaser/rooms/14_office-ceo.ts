@@ -6,7 +6,7 @@ import {
   objectPaperwork,
   objectWaterfall,
 } from 'assets/images/rooms/14_office-ceo';
-import { ost3 } from 'assets/sound/ost';
+import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 
@@ -18,8 +18,8 @@ export const room14: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost3',
-    path: ost3,
+    key: 'abandoned',
+    path: abandoned,
   },
   objects: [
     {

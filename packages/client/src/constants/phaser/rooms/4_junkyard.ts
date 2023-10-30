@@ -4,7 +4,7 @@ import {
   backgroundSunset,
   objectVendingMachine,
 } from 'assets/images/rooms/4_junkyard';
-import { forest } from 'assets/sound/ost';
+import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 
@@ -16,8 +16,8 @@ export const room4: Room = {
     path: backgroundNight,
   },
   music: {
-    key: 'forest',
-    path: forest,
+    key: 'mystique',
+    path: mystique,
   },
   objects: [
     {

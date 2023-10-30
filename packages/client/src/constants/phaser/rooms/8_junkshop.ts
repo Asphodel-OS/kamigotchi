@@ -5,7 +5,7 @@ import {
   objectPoster,
   objectVendingWall,
 } from 'assets/images/rooms/8_junkshop';
-import { ost3 } from 'assets/sound/ost';
+import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
 
@@ -16,8 +16,8 @@ export const room8: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost3',
-    path: ost3,
+    key: 'abandoned',
+    path: abandoned,
   },
   objects: [
     {

@@ -6,7 +6,7 @@ import {
   objectBeetle4,
   objectSmallMushrooms,
 } from 'assets/images/rooms/9_forest';
-import { ost2 } from 'assets/sound/ost';
+import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
 
@@ -17,8 +17,8 @@ export const room9: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost2',
-    path: ost2,
+    key: 'glitter',
+    path: glitter,
   },
   objects: [
     {

@@ -3,7 +3,7 @@ import {
   path18,
   objectDharmaWheel,
 } from 'assets/images/rooms/19_violence-temple';
-import { ost3 } from 'assets/sound/ost';
+import { cave } from 'assets/sound/ost';
 
 import { triggerLeaderboardModal } from 'layers/phaser/utils/triggerLeaderboardModal';
 import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
@@ -16,8 +16,8 @@ export const room19: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost3',
-    path: ost3,
+    key: 'cave',
+    path: cave,
   },
   objects: [
     {

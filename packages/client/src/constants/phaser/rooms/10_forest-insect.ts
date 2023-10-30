@@ -5,7 +5,7 @@ import {
   objectHollowTrunk,
   objectTermiteMound,
 } from 'assets/images/rooms/10_forest-insect';
-import { ost2 } from 'assets/sound/ost';
+import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 
@@ -17,8 +17,8 @@ export const room10: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost2',
-    path: ost2,
+    key: 'glitter',
+    path: glitter,
   },
   objects: [
     {

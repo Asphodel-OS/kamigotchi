@@ -46,7 +46,8 @@ export const duplicateRoomMusic = [
   [5, 6],
   [9, 10, 11],
   [7, 8, 14],
-  [4, 9, 10, 12, 13],
+  [4, 12, 13],
+  [15, 16, 18, 19],
 ];
 
 // all our lovely, hardcoded room details
