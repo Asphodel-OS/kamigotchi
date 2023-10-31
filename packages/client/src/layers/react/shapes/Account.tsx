@@ -31,9 +31,11 @@ export interface Account {
   location: number;
   level: number;
   skillPoints: number;
-  stamina: number;
-  staminaCurrent: number;
-  staminaRecoveryPeriod: number;
+  stamina: {
+    total: number;
+    last: number;
+    recoveryPeriod: number;
+  };
   lastBlock: number;
   lastMoveTs: number;
   kamis?: Kami[];
@@ -86,14 +88,11 @@ export const getAccount = (
     location: (getComponentValue(Location, index)?.value || 0 as number) * 1,
     level: 0, // placeholder
     skillPoints: 0, // placeholder
-    // stamina: {
-    //   total: getComponentValue(Stamina, index)?.value as number,
-    //   last: getComponentValue(StaminaCurrent, index)?.value as number,
-    //   recoveryPeriod: 1, // dummy value
-    // },
-    stamina: getComponentValue(Stamina, index)?.value as number,
-    staminaCurrent: getComponentValue(StaminaCurrent, index)?.value as number,
-    staminaRecoveryPeriod: getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
+    stamina: {
+      total: getComponentValue(Stamina, index)?.value as number,
+      last: getComponentValue(StaminaCurrent, index)?.value as number,
+      recoveryPeriod: getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
+    },
     lastBlock: getComponentValue(LastBlock, index)?.value as number,
     lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
