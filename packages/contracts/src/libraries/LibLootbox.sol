@@ -77,40 +77,12 @@ library LibLootbox {
       )
     );
 
-    uint256[] memory results = executeDropTable(
-      world,
-      components,
-      holderID,
-      keys,
-      weights,
-      seed,
-      count
-    );
-
-    logReveal(components, revealID, results);
-  }
-
-  /// @notice executes drop table logic for N lootboxes
-  /// @param world      The world contract
-  /// @param components The components contract
-  /// @param holderID  The entity ID of the lootbox holder
-  /// @param weights   Weights for lootbox drop table
-  /// @param keys      Keys for lootbox drop table
-  /// @param count       The amount of lootboxes to open
-  function executeDropTable(
-    IWorld world,
-    IUintComp components,
-    uint256 holderID,
-    uint256[] memory keys,
-    uint256[] memory weights,
-    uint256 seed,
-    uint256 count
-  ) internal returns (uint256[] memory) {
     uint256[] memory results = LibRandom.selectMultipleFromWeighted(weights, seed, count);
     for (uint256 i; i < results.length; i++) {
       distribute(world, components, holderID, keys[i], results[i]);
     }
-    return results;
+
+    logReveal(components, revealID, results);
   }
 
   /// @notice distributes item(s) to holder

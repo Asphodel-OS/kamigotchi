@@ -109,7 +109,7 @@ export const Opener = (props: Props) => {
   const StartScreen = (
     <Grid>
       <div style={{ gridRow: 1 }}>
-        <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
+        <Image src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
       </div>
       <ProductBox style={{ gridRow: 2 }}>
         {OpenButton(1)}
@@ -145,35 +145,7 @@ const Grid = styled.div`
   margin: 0px 6px;
 `;
 
-const Input = styled.input`
-  width: 50%;
-
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  justify-content: center;
-  font-family: Pixel;
-
-  border-width: 0px;
-  padding: 6px;
-
-  &:focus {
-    outline: none;
-  }
-
-  ::-webkit-inner-spin-button{
-    -webkit-appearance: none; 
-    margin: 0; 
-  }
-  ::-webkit-outer-spin-button{
-    -webkit-appearance: none; 
-    margin: 0; 
-  }  
-`;
-
-const KamiImage = styled.img`
+const Image = styled.img`
   border-style: solid;
   border-width: 0px;
   border-color: black;
@@ -195,33 +167,10 @@ const ProductBox = styled.div`
   max-width: 75%;
 `;
 
-const SubHeader = styled.p`
-  color: #333;
-
-  padding: 1.5vw;
-  font-family: Pixel;
-  font-size: 1.5vw;
-  text-align: center;
-`;
-
 const SubText = styled.div`
   font-size: 12px;
   color: #000;
   text-align: center;
   padding: 4px 6px 0px 6px;
   font-family: Pixel;
-`;
-
-const QuantityStepper = styled.button`
-  font-size: 16px;
-  color: #777;
-  text-align: center;
-  font-family: Pixel;
-
-  border-style: none;
-  background-color: transparent;
-
-  &:hover {
-    color: #000;  
-  }
 `;

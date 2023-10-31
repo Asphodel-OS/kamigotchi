@@ -192,7 +192,7 @@ export function registerLootboxesModal() {
           divName='lootboxes'
           id='LootboxesModal'
           header={Header()}
-          overlay
+          overlay canExit
         >
           {SelectScreen()}
         </ModalWrapperFull>
@@ -209,44 +209,6 @@ const Container = styled.div`
   padding: .4vh 1.2vw;
 `;
 
-const KamiImage = styled.img`
-  border-style: solid;
-  border-width: 0px;
-  border-color: black;
-  height: 90px;
-  margin: 0px;
-  padding: 0px;
-`;
-
-const ProductBox = styled.div`
-  border-color: black;
-  border-radius: 2px;
-  border-style: solid;
-  border-width: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 5px;
-  max-width: 75%;
-`;
-
-const FullText = styled.div`
-  color: #333;
-
-  padding: 1.5vw;
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: center;
-
-  height: 100%;
-  width: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 const SubHeader = styled.p`
   color: #333;
 
@@ -254,26 +216,4 @@ const SubHeader = styled.p`
   font-family: Pixel;
   font-size: 1.5vw;
   text-align: center;
-`;
-
-const SubText = styled.div`
-  font-size: 12px;
-  color: #000;
-  text-align: center;
-  padding: 4px 6px 0px 6px;
-  font-family: Pixel;
-`;
-
-const QuantityStepper = styled.button`
-  font-size: 16px;
-  color: #777;
-  text-align: center;
-  font-family: Pixel;
-
-  border-style: none;
-  background-color: transparent;
-
-  &:hover {
-    color: #000;  
-  }
 `;

@@ -33,7 +33,6 @@ export interface LootboxExecuteRevealSystemInterface extends utils.Interface {
     "executeTyped(uint256)": FunctionFragment;
     "forceReveal(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "tempExecute()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -43,7 +42,6 @@ export interface LootboxExecuteRevealSystemInterface extends utils.Interface {
       | "executeTyped"
       | "forceReveal"
       | "owner"
-      | "tempExecute"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -61,10 +59,6 @@ export interface LootboxExecuteRevealSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "tempExecute",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -79,10 +73,6 @@ export interface LootboxExecuteRevealSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tempExecute",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -151,10 +141,6 @@ export interface LootboxExecuteRevealSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    tempExecute(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -178,10 +164,6 @@ export interface LootboxExecuteRevealSystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  tempExecute(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -204,8 +186,6 @@ export interface LootboxExecuteRevealSystem extends BaseContract {
     ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    tempExecute(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -242,10 +222,6 @@ export interface LootboxExecuteRevealSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    tempExecute(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -269,10 +245,6 @@ export interface LootboxExecuteRevealSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tempExecute(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
