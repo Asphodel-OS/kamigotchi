@@ -38,13 +38,17 @@ export const Rewards = (props: Props) => {
 
     return (
       <ResultTable>
-        <tr>
-          <TableTitle></TableTitle>
-          <TableTitle>Item</TableTitle>
-          <TableTitle>Quantity</TableTitle>
-        </tr>
-        {list}
-      </ResultTable>
+        <thead>
+          <tr>
+            <TableTitle></TableTitle>
+            <TableTitle>Item</TableTitle>
+            <TableTitle>Quantity</TableTitle>
+          </tr>
+        </thead>
+        <tbody>
+          {list}
+        </tbody >
+      </ResultTable >
     )
   }
 
