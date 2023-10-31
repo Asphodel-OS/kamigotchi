@@ -36,9 +36,9 @@ export const Rewards = (props: Props) => {
     // TODO: display all logs
     const logs = props.account.lootboxLogs?.revealed;
     if (logs && logs.length > 0) {
-      console.log(logs)
+      // console.log(logs)
       const log = props.utils.getLog(logs[logs.length - 1].entityIndex);
-      console.log(log);
+      // console.log(log);
       const items = log.droptable.keys;
       const amounts = log.droptable.results!;
 
