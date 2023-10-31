@@ -8,7 +8,6 @@ import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { Lootbox, LootboxLog, getLootboxLog } from "layers/react/shapes/Lootbox";
 import { Item } from "layers/react/shapes/Item";
-import { FoodImages, ReviveImages } from 'constants/items';
 
 interface Props {
   log: LootboxLog;
@@ -20,22 +19,6 @@ interface Props {
 export const Rewards = (props: Props) => {
 
   ///////////////
-  // TEMP ITEM IMAGES
-
-  // temporary till item images are dynamimcally stored in URI
-  const getImage = (item: Item) => {
-    switch (item.type) {
-      case "FOOD":
-        return FoodImages.get(item.familyIndex!);
-      case "REVIVE":
-        return ReviveImages.get(item.familyIndex!);
-      default:
-        return;
-    }
-  }
-
-
-  ///////////////
   // DISPLAY
 
   const parseItem = (index: number, amount: number) => {
@@ -44,7 +27,7 @@ export const Rewards = (props: Props) => {
     return (
       <tr>
         {/* <TableData><Image src={item.uri!} /></TableData> */}
-        <TableData><Image src={getImage(item)} /></TableData>
+        <TableData><Image src={item.uri} /></TableData>
         <TableData>{item.name!}</TableData>
         <TableData>x{Number(amount)}</TableData>
       </tr>

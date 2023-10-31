@@ -1,9 +1,6 @@
 import styled from 'styled-components';
-
-import { FoodImages, ReviveImages } from 'constants/items';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
-import { Item } from 'layers/react/shapes/Item';
 import { dataStore } from 'layers/react/store/createStore';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
@@ -16,14 +13,6 @@ export interface Props {
 export const ItemRow = (props: Props) => {
   const { visibleModals, setVisibleModals } = dataStore();
   const { setListing } = useSelectedEntities();
-
-  const getImage = (item: Item) => {
-    if (item.type == 'FOOD') {
-      return FoodImages.get(item.familyIndex);
-    } else if (item.type == 'REVIVE') {
-      return ReviveImages.get(item.familyIndex);
-    }
-  }
 
   const openBuyModal = () => {
     setListing(props.listing.entityIndex);
@@ -40,7 +29,7 @@ export const ItemRow = (props: Props) => {
 
   return (
     <Row key={props.listing.item.index}>
-      <Image src={getImage(props.listing.item)} />
+      <Image src={props.listing.item.uri} />
       <Name>{props.listing.item.name}</Name>
       <Price>{props.listing.buyPrice}</Price>
       <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>

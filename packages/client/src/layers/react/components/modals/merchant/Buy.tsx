@@ -7,7 +7,6 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
-import { FoodImages, ReviveImages } from 'constants/items';
 import { Item, getItem, getItemByIndex } from 'layers/react/shapes/Item';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';
@@ -67,18 +66,6 @@ export function registerBuyModal() {
         setListing(getListing(layers, listingEntityIndex));
         setQuantity(1);
       }, [listingEntityIndex]);
-
-
-      /////////////////
-      // INTERPRETATION
-
-      const getImage = (item: Item) => {
-        if (item.type == 'FOOD') {
-          return FoodImages.get(item.familyIndex ? item.familyIndex : 0);
-        } else if (item.type == 'REVIVE') {
-          return ReviveImages.get(item.familyIndex ? item.familyIndex : 0);
-        }
-      }
 
       /////////////////
       // ACTIONS
@@ -144,7 +131,7 @@ export function registerBuyModal() {
           overlay
         >
           <Content>
-            <Image src={getImage(listing.item)} />
+            <Image src={listing.item.uri} />
             <InfoSection>
               <Name>{listing.item.name}</Name>
               <Description>{`lorem ipsum, description will go here`}</Description>
