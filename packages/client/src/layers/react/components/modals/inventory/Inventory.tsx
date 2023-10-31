@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Grid } from './Grid';
+import { ItemGrid } from './ItemGrid';
 import { Inventory } from 'layers/react/shapes/Inventory';
+import { MusuRow } from './MusuRow';
 
 
 export function registerInventoryModal() {
@@ -75,12 +76,6 @@ export function registerInventoryModal() {
         return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
       }
 
-      const Content = () => {
-        return (
-          <Grid key='grid' inventories={getInventories()} />
-        );
-      }
-
       /////////////////
       // DISPLAY
 
@@ -89,10 +84,11 @@ export function registerInventoryModal() {
           id='inventory-modal'
           divName='inventory'
           header={<Header key='header'>Inventory</Header>}
+          footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit
           overlay
         >
-          <Content />
+          <ItemGrid key='grid' inventories={getInventories()} />
         </ModalWrapperFull>
       );
     }

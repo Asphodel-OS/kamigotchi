@@ -82,7 +82,7 @@ export const getAccount = (
     ownerEOA: getComponentValue(OwnerAddress, index)?.value as string,
     operatorEOA: getComponentValue(OperatorAddress, index)?.value as string,
     name: getComponentValue(Name, index)?.value as string,
-    coin: getComponentValue(Coin, index)?.value as number,
+    coin: (getComponentValue(Coin, index)?.value as number) * 1,
     location: (getComponentValue(Location, index)?.value || 0 as number) * 1,
     level: 0, // placeholder
     skillPoints: 0, // placeholder

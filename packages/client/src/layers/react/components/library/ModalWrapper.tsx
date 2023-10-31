@@ -115,6 +115,7 @@ const Header = styled.div`
 
 const Footer = styled.div`  
   border-radius: 0px 0px 10px 10px;
+  border-top: solid black .15vw;
   display: flex;
   flex-flow: column nowrap;
 `;

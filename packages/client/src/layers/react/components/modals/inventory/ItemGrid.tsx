@@ -9,7 +9,7 @@ interface Props {
 };
 
 // get the row of consumable items to display in the player inventory
-export const Grid = (props: Props) => {
+export const ItemGrid = (props: Props) => {
 
   const Cell = (inventory: Inventory) => {
     let image: any;
