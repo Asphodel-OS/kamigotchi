@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-import { FoodImages, ReviveImages } from 'constants/food';
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Inventory } from "layers/react/shapes/Inventory";
+import { dataStore } from "layers/react/store/createStore";
 
 interface Props {
   inventories: Inventory[];
@@ -11,19 +11,42 @@ interface Props {
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
 
-  const Cell = (inventory: Inventory) => {
-    let image: any;
+  const { visibleModals, setVisibleModals } = dataStore();
 
-    if (inventory.item.type === 'FOOD') {
-      image = FoodImages.get(inventory.item.familyIndex ?? 1);
-    } else if (inventory.item.type === 'REVIVE') {
-      image = ReviveImages.get(inventory.item.familyIndex ?? 1);
+  const openLootbox = () => {
+    setVisibleModals({ ...visibleModals, lootboxes: true, inventory: false });
+  }
+
+  const Cell = (inventory: Inventory) => {
+    const ImgButton = (inv: Inventory) => {
+      let foo = () => { };
+      let clickable = false;
+      switch (inv.item.type) {
+        case 'LOOTBOX':
+          foo = openLootbox;
+          clickable = true;
+          break;
+        default:
+          clickable = false;
+          break;
+      }
+
+      if (clickable) {
+        return (
+          <IconClickable src={inv.item.uri} onClick={foo} />
+        );
+      } else {
+        return (
+          <Icon src={inv.item.uri} />
+        );
+      }
     }
+
 
     return (
       <Tooltip key={inventory.id} text={[inventory.item.name]}>
         <Slot>
-          <Icon src={image} />
+          {ImgButton(inventory)}
           <Balance>{inventory.balance}</Balance>
         </Slot>
       </Tooltip>
@@ -61,6 +84,16 @@ const Icon = styled.img`
   height: 100%;
   width: 100%;
   padding: .5vw;
+`;
+
+const IconClickable = styled.img`
+  height: 100%;
+  width: 100%;
+  padding: .5vw;
+
+    &:hover {
+    background-color: #BBB;
+  }
 `;
 
 const Balance = styled.div` 

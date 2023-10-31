@@ -3,7 +3,8 @@ import {
   GumImage,
   PomPomImage,
   RibbonImage,
-} from 'assets/images/food';
+  LootboxImage,
+} from 'assets/images/items';
 
 export const FoodImages = new Map([
   [1, GumImage],
@@ -13,4 +14,8 @@ export const FoodImages = new Map([
 
 export const ReviveImages = new Map([
   [1, RibbonImage],
+]);
+
+export const LootboxImages = new Map([
+  [10001, LootboxImage],
 ]);

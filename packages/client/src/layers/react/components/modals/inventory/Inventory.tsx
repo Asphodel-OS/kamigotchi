@@ -72,6 +72,7 @@ export function registerInventoryModal() {
         if (accInv?.revives) inventories = inventories.concat(accInv.revives);
         if (accInv?.mods) inventories = inventories.concat(accInv.mods);
         if (accInv?.gear) inventories = inventories.concat(accInv.gear);
+        if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
 
         return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
       }

@@ -8,7 +8,7 @@ import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { Lootbox, LootboxLog, getLootboxLog } from "layers/react/shapes/Lootbox";
 import { Item } from "layers/react/shapes/Item";
-import { FoodImages, ReviveImages } from 'constants/food';
+import { FoodImages, ReviveImages } from 'constants/items';
 
 interface Props {
   log: LootboxLog;

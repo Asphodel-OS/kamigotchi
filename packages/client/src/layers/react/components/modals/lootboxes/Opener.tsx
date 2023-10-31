@@ -116,7 +116,8 @@ export const Opener = (props: Props) => {
         {OpenButton(10)}
       </ProductBox>
       <SubText style={{ gridRow: 3 }}>
-        You have: {(props.inventory.balance ? props.inventory.balance : 0)} {selectedBox?.name}es
+        You have: {(props.inventory.balance ? props.inventory.balance : 0)} {selectedBox?.name}
+        {props.inventory.balance == 1 ? '' : 'es'}
       </SubText>
     </Grid>
   );

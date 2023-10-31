@@ -7,7 +7,7 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
-import { FoodImages, ReviveImages } from 'constants/food';
+import { FoodImages, ReviveImages } from 'constants/items';
 import { Item, getItem, getItemByIndex } from 'layers/react/shapes/Item';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';

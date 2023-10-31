@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FoodImages, ReviveImages } from 'constants/food';
+import { FoodImages, ReviveImages } from 'constants/items';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
 import { Item } from 'layers/react/shapes/Item';

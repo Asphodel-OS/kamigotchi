@@ -15,7 +15,6 @@ import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
 import { Skill } from './Skill';
 import {
   Inventory,
-  getInventory,
   sortInventories,
   queryInventoryX,
 } from './Inventory';
