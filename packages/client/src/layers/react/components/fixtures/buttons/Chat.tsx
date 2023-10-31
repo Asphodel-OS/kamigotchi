@@ -10,8 +10,8 @@ export function registerChatButton() {
   registerUIComponent(
     'ChatButton',
     {
-      colStart: 82,
-      colEnd: 85,
+      colStart: 73,
+      colEnd: 76,
       rowStart: 3,
       rowEnd: 10,
     },
@@ -23,7 +23,7 @@ export function registerChatButton() {
       return (
         <MenuButton
           id='chat_button'
-          targetDiv='chat'
+          targetDiv='lootboxes'
           text='Chat'
           hideModal={modalsToHide}
           visible={visibleButtons.chat}

@@ -6,7 +6,7 @@ import {
   getComponentValue,
   defineComponent,
   Type,
-  setComponent,
+  setComponent
 } from "@latticexyz/recs";
 import {
   SetupContractConfig,

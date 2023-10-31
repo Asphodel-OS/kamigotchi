@@ -3,7 +3,7 @@ import {
   objectBuildingLogo,
   objectFoxStatues,
 } from 'assets/images/rooms/6_office-front';
-import { ost1 } from 'assets/sound/ost';
+import { amusement } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
 
@@ -14,8 +14,8 @@ export const room6: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost1',
-    path: ost1,
+    key: 'amusement',
+    path: amusement,
   },
   objects: [
     {

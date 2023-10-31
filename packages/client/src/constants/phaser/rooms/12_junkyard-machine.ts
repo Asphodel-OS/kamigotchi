@@ -5,7 +5,7 @@ import {
   objectMonolith,
   objectPrayerWheels,
 } from 'assets/images/rooms/12_junkyard-machine';
-import { forest as forestOST } from 'assets/sound/ost';
+import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
@@ -19,8 +19,8 @@ export const room12: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'forest',
-    path: forestOST,
+    key: 'mystique',
+    path: mystique,
   },
   objects: [
     {

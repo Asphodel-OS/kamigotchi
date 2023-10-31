@@ -1,5 +1,5 @@
 import { backgroundDefault, path15 } from 'assets/images/rooms/16_techno-temple';
-import { ost3 } from 'assets/sound/ost';
+import { cave } from 'assets/sound/ost';
 
 import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
 import { Room } from 'constants/phaser/rooms';
@@ -11,8 +11,8 @@ export const room16: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost3',
-    path: ost3,
+    key: 'cave',
+    path: cave,
   },
   objects: [
     {

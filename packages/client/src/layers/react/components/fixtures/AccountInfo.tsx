@@ -105,14 +105,14 @@ export function registerAccountInfoFixture() {
 
       const calcCurrentStamina = (account: Account) => {
         const timePassed = lastRefresh / 1000 - account.lastMoveTs;
-        const recovered = Math.floor(timePassed / account.staminaRecoveryPeriod);
-        const total = 1.0 * account.staminaCurrent + recovered;
-        return Math.min(account.stamina, total);
+        const recovered = Math.floor(timePassed / account.stamina.recoveryPeriod);
+        const current = 1.0 * account.stamina.last + recovered;
+        return Math.min(account.stamina.total, current);
       }
 
       const calcStaminaPercent = (account: Account) => {
         const currentStamina = calcCurrentStamina(account);
-        return Math.round(100.0 * currentStamina / account.stamina);
+        return Math.round(100.0 * currentStamina / account.stamina.total);
       }
 
       return (data.account &&

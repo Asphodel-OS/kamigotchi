@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
-import { ActionListButton } from "layers/react/components/library/ActionListButton";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
@@ -94,7 +93,7 @@ export const Kards = (props: Props) => {
   };
 
   const hasFood = (): boolean => {
-    const total = props.account.inventories!.food.reduce(
+    const total = props.account.inventories!.food!.reduce(
       (tot: number, inv: Inventory) => tot + (inv.balance || 0),
       0
     );
@@ -102,7 +101,7 @@ export const Kards = (props: Props) => {
   };
 
   const hasRevive = (): boolean => {
-    return props.account.inventories!.revives.length > 0;
+    return props.account.inventories!.revives!.length > 0;
   };
 
   // determine whether the kami is still on cooldown
@@ -195,7 +194,7 @@ export const Kards = (props: Props) => {
     const canFeedKami = canFeed(kami);
     const tooltipText = whyCantFeed(kami);
 
-    const stockedInventory = props.account.inventories!.food.filter(
+    const stockedInventory = props.account.inventories!.food!.filter(
       (inv: Inventory) => inv.balance && inv.balance > 0
     );
 

@@ -30,7 +30,7 @@ export function registerHelpModal() {
       colStart: 67,
       colEnd: 100,
       rowStart: 10,
-      rowEnd: 100,
+      rowEnd: 75,
     },
 
     (layers) => of(layers),

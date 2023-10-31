@@ -42,6 +42,7 @@ export function createComponents(world: World) {
     IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
     IsKill: defineBoolEZ("IsKill", "component.Is.Kill"),
     IsListing: defineBoolEZ("IsListing", "component.Is.Listing"),
+    IsLog: defineBoolEZ("IsLog", "component.Is.Log"),
     IsLootbox: defineBoolEZ("IsLootbox", "component.Is.Lootbox"),
     IsNPC: defineBoolEZ("IsNPC", "component.Is.NPC"),
     IsNode: defineBoolEZ("IsNode", "component.Is.Node"),
@@ -99,6 +100,7 @@ export function createComponents(world: World) {
     // Values
     Affinity: defineStringEZ("Affinity", "component.Affinity"),
     Balance: defineNumberEZ("Balance", "component.Balance"),
+    Balances: defineNumberArrayComponent(world, "Balances", "component.Balances"),
     Blacklist: defineNumberArrayComponent(world, "Blacklist", "component.Blacklist"),
     Coin: defineNumberEZ("Coin", "component.Coin"),
     Cost: defineNumberEZ("Cost", "component.Cost"),

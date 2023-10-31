@@ -100,11 +100,6 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Lootbox.Reveal.Execute"].executeTyped(id);
   }
 
-  // TEMP: reveals lootbox from CLI, to be removed when proper UI implemented
-  function tempLootboxReveal() {
-    return systems["system.Lootbox.Reveal.Execute"].tempExecute();
-  }
-
   /////////////////
   //   NODES
 
@@ -286,7 +281,6 @@ export function createPlayerAPI(systems: any) {
     lootbox: {
       startReveal: lootboxStartReveal,
       executeReveal: lootboxExecuteReveal,
-      tempReveal: tempLootboxReveal,
     },
     node: {
       collect: collectAllFromNode,

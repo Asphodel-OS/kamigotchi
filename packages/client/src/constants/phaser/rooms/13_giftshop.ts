@@ -6,7 +6,7 @@ import {
   objectMina,
   objectMinaRed,
 } from 'assets/images/rooms/13_giftshop';
-import { forest as forestOST } from 'assets/sound/ost';
+import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerShopModal } from 'layers/phaser/utils/triggerShopModal';
 
@@ -18,8 +18,8 @@ export const room13: Room = {
     path: backgroundMina,
   },
   music: {
-    key: 'forest',
-    path: forestOST,
+    key: 'mystique',
+    path: mystique,
   },
   objects: [
     {

@@ -1,5 +1,5 @@
 import { backgroundDefault } from 'assets/images/rooms/17_misty-park';
-import { ost3 } from 'assets/sound/ost';
+import { cave } from 'assets/sound/ost';
 
 import { Room } from 'constants/phaser/rooms';
 
@@ -10,7 +10,7 @@ export const room17: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost3',
-    path: ost3,
+    key: 'cave',
+    path: cave,
   },
 };

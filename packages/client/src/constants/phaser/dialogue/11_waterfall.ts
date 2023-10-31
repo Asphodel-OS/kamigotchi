@@ -24,8 +24,8 @@ export default [stonelantern, smallshrine];
 //     path: backgroundDefault,
 //   },
 //   music: {
-//     key: 'ost2',
-//     path: ost2,
+//     key: 'glitter',
+//     path: glitter,
 //   },
 //   objects: [
 //     {

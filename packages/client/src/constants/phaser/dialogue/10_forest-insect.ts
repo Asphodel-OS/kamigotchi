@@ -4,7 +4,7 @@ import { DialogueNode } from '.';
 const beetle5: DialogueNode = {
   index: 101,
   text: [
-    'Beetle four. The black sheep.'
+    'Beetle five. The black sheep.'
   ],
 };
 

@@ -5,9 +5,9 @@ import { playClick } from 'utils/sounds';
 export const triggerNodeModal = (index: number) => {
   const { visibleModals } = dataStore.getState();
   const { setNode } = useSelectedEntities.getState();
-  playClick();
 
   if (!visibleModals.node) {
+    playClick();
     setNode(index);
     dataStore.setState({
       visibleModals: {
@@ -23,7 +23,8 @@ export const triggerNodeModal = (index: number) => {
         nameKami: false,
       },
     });
-  } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, node: false } });
   }
+  // } else {
+  //   dataStore.setState({ visibleModals: { ...visibleModals, node: false } });
+  // }
 };

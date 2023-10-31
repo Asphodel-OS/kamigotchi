@@ -58,7 +58,7 @@ export const getItem = (
     index: getComponentValue(ItemIndex, index)?.value as number * 1,
     isFungible: hasComponent(IsFungible, index),
     type: '',
-    name: getComponentValue(Name, index)?.value as string,
+    name: getComponentValue(Name, index)?.value as string ?? 'Unknown Item',
     uri: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(layers, index),

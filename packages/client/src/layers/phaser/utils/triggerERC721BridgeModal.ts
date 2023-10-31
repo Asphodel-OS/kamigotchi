@@ -3,9 +3,9 @@ import { playClick } from 'utils/sounds';
 
 export const triggerERC721BridgeModal = () => {
   const { visibleModals } = dataStore.getState();
-  playClick();
 
-  if (!visibleModals.bridgeERC721) {
+  if (!visibleModals.bridgeERC721 && !visibleModals.node) {
+    playClick();
     dataStore.setState({
       visibleModals: {
         ...visibleModals,
@@ -20,7 +20,8 @@ export const triggerERC721BridgeModal = () => {
         leaderboard: false,
       },
     });
-  } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, bridgeERC721: false } });
   }
+  // else {
+  //   dataStore.setState({ visibleModals: { ...visibleModals, bridgeERC721: false } });
+  // }
 };

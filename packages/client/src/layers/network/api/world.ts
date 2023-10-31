@@ -362,8 +362,10 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
+
   ////////////////////
   // QUESTS
+
   async function initQuests(api: AdminAPI) {
     // create quests
 
@@ -446,7 +448,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       64800
     );
-    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_HAS", 0, 200);
+    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_TOTAL", 0, 200);
     await api.registry.quest.add.reward(7, "ITEM", 10001, 1); // temp lootbox handler
 
     // temp lootbox quest for testing
@@ -669,18 +671,18 @@ export function setUpWorldAPI(systems: any) {
     let results = [];
     let headers = arr[0];
     for (let i = 1; i < arr.length; i++) {
-      const data = arr[i];
+      let data = arr[i];
       if (data[0] != "") {
         let mp = new Map();
         for (let n = 1; n < headers.length; n++) {
           mp.set(headers[n].trim(), []);
         }
-        for (let j = i + 1; data[j] == ""; j++) {
-          const data = arr[j];
+        for (let j = i + 1; j < arr.length && arr[j][0] === ""; j++) {
+          data = arr[j];
           for (let k = 1; k < headers.length; k++) {
             mp.get(headers[k].trim()).push(data[k].trim() ? data[k].trim() : "0");
           }
-          i = j;
+          i = j - 1;
         }
         results.push(mp);
       }

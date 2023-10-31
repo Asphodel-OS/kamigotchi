@@ -1,7 +1,9 @@
 import { registerLoadingState } from './LoadingState';
 
 import {
+  registerChatButton,
   registerHelpButton,
+  registerInventoryButton,
   registerMapButton,
   registerPartyButton,
   registerQuestsButton,
@@ -15,7 +17,9 @@ import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerDialogueModal } from './modals/dialogue';
 import { registerKamiModal } from './modals/kami';
+import { registerInventoryModal } from './modals/inventory';
 import { registerLeaderboardModal } from './modals/leaderboard';
+import { registerLootboxesModal } from './modals/lootboxes/Lootboxes';
 import { registerMapModal } from './modals/map';
 import { registerBuyModal, registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
@@ -44,10 +48,12 @@ export function registerUIComponents() {
 
   // buttons
   registerHelpButton();
+  registerInventoryButton();
   registerMapButton();
   registerPartyButton();
   registerQuestsButton();
   registerSettingsButton();
+  // registerChatButton();
 
   // other fixtures
   registerAccountInfoFixture();
@@ -57,10 +63,11 @@ export function registerUIComponents() {
 
   // menu modals
   registerHelpModal();
+  registerInventoryModal();
   registerMapModal();
-  registerSettingsModal();
   registerPartyModal();
   registerQuestsModal();
+  registerSettingsModal();
 
   // game modals
   registerBuyModal();
@@ -71,6 +78,7 @@ export function registerUIComponents() {
   registerKamiMintModal();
   registerKamiModal();
   registerLeaderboardModal();
+  registerLootboxesModal();
   registerNameKamiModal();
   registerNodeModal();
   registerMerchantModal();

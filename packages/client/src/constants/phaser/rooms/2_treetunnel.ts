@@ -4,7 +4,7 @@ import {
   objectHollowStump,
   objectShopDoor,
 } from 'assets/images/rooms/2_tree-tunnel';
-import { opening } from 'assets/sound/ost';
+import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
 
@@ -15,8 +15,8 @@ export const room2: Room = {
     path: backgroundShop,
   },
   music: {
-    key: 'opening',
-    path: opening,
+    key: 'arrival',
+    path: arrival,
   },
   objects: [
     {

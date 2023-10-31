@@ -6,7 +6,7 @@ import {
   objectStoneLantern,
   objectWaterfall,
 } from 'assets/images/rooms/11_waterfall';
-import { ost2 } from 'assets/sound/ost';
+import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
 import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
@@ -19,8 +19,8 @@ export const room11: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost2',
-    path: ost2,
+    key: 'glitter',
+    path: glitter,
   },
   objects: [
     {

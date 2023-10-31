@@ -1,7 +1,15 @@
-import forest from './r4.mp3';
-import opening from './r1.mp3';
-import ost1 from './r5.mp3';
-import ost2 from './r9.mp3';
-import ost3 from './r7.mp3';
+import abandoned from './abandoned.mp3';
+import amusement from './amusement.mp3';
+import arrival from './arrival.mp3';
+import cave from './cave.mp3';
+import glitter from './glitter.mp3';
+import mystique from './mystique.mp3';
 
-export { forest, opening, ost1, ost2, ost3 };
+export {
+  abandoned,
+  amusement,
+  arrival,
+  cave,
+  glitter,
+  mystique,
+};

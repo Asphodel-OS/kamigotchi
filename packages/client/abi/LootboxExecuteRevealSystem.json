@@ -110,19 +110,6 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "tempExecute",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
@@ -141,7 +128,6 @@
     "executeTyped(uint256)": "3e991df3",
     "forceReveal(uint256)": "265ab676",
     "owner()": "8da5cb5b",
-    "tempExecute()": "2343f7c4",
     "transferOwnership(address)": "f2fde38b"
   }
 }

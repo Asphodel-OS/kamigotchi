@@ -3,7 +3,7 @@ import {
   objectCabinet,
   objectChair,
 } from 'assets/images/rooms/7_office-lobby';
-import { ost3 } from 'assets/sound/ost';
+import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/phaser/rooms';
 
 
@@ -14,8 +14,8 @@ export const room7: Room = {
     path: backgroundDefault,
   },
   music: {
-    key: 'ost3',
-    path: ost3,
+    key: 'abandoned',
+    path: abandoned,
   },
   objects: [
     {
