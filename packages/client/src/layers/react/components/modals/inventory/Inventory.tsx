@@ -6,6 +6,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Grid } from './Grid';
+import { Inventory } from 'layers/react/shapes/Inventory';
 
 
 export function registerInventoryModal() {
@@ -61,10 +62,22 @@ export function registerInventoryModal() {
     },
 
     ({ layers, actions, api, data }) => {
+      // console.log('mInventory', data);
+      const getInventories = () => {
+        let accInv = data.account.inventories;
+        let inventories: Inventory[] = [];
+
+        if (accInv?.food) inventories = inventories.concat(accInv.food);
+        if (accInv?.revives) inventories = inventories.concat(accInv.revives);
+        if (accInv?.mods) inventories = inventories.concat(accInv.mods);
+        if (accInv?.gear) inventories = inventories.concat(accInv.gear);
+
+        return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
+      }
 
       const Content = () => {
         return (
-          <Grid key='grid' inventories={data.account.inventories!} />
+          <Grid key='grid' inventories={getInventories()} />
         );
       }
 

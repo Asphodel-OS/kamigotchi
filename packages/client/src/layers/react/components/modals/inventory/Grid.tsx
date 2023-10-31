@@ -2,86 +2,78 @@ import styled from "styled-components";
 
 import { FoodImages, ReviveImages } from 'constants/food';
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { getInventoryByFamilyIndex, AccountInventories } from "layers/react/shapes/Inventory";
+import { Inventory } from "layers/react/shapes/Inventory";
 
 interface Props {
-  inventories: AccountInventories;
+  inventories: Inventory[];
 };
 
 // get the row of consumable items to display in the player inventory
 export const Grid = (props: Props) => {
-  const inventorySlots = [
-    {
-      id: 1,
-      image: FoodImages.get(1),
-      text: ['Maple-Flavor Ghost Gum', '', 'Restores 25 health.'],
-      inventory: getInventoryByFamilyIndex(props.inventories?.food, 1),
-    },
-    {
-      id: 2,
-      image: FoodImages.get(2),
-      text: ['Pom-Pom Fruit Candy', '', 'Restores 100 health.'],
-      inventory: getInventoryByFamilyIndex(props.inventories?.food, 2),
-    },
-    {
-      id: 3,
-      image: FoodImages.get(3),
-      text: ['Gakki Cookie Sticks', '', 'Restores 200 health.'],
-      inventory: getInventoryByFamilyIndex(props.inventories?.food, 3),
-    },
-    {
-      id: 4,
-      image: ReviveImages.get(1),
-      text: ['Red Gakki Ribbon', '', 'Revives a fallen Kami.'],
-      inventory: getInventoryByFamilyIndex(props.inventories?.revives, 1),
-    },
-  ];
 
-  const cells = inventorySlots.map((slot, i) => {
+  const Cell = (inventory: Inventory) => {
+    let image: any;
+
+    if (inventory.item.type === 'FOOD') {
+      image = FoodImages.get(inventory.item.familyIndex ?? 1);
+    } else if (inventory.item.type === 'REVIVE') {
+      image = ReviveImages.get(inventory.item.familyIndex ?? 1);
+    }
+
     return (
-      <Tooltip key={slot.id} text={slot.text} grow>
-        <CellGrid>
-          <Icon src={slot.image} />
-          {/* <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber> */}
-        </CellGrid>
+      <Tooltip key={inventory.id} text={[inventory.item.name]}>
+        <Slot>
+          <Icon src={image} />
+          <Balance>{inventory.balance}</Balance>
+        </Slot>
       </Tooltip>
     );
-  });
+  }
 
-  return <TopGrid key='top-grid'>{cells}</TopGrid>;
+  return (
+    <Container key='grid'>
+      {props.inventories.map((inv) => Cell(inv))}
+    </Container>
+  );
 };
 
 
-const TopGrid = styled.div`
-  border: solid black .15vw;
-  border-right: 0;
-  border-radius: 5px;
-  
-  width: 86.5%;
-  margin: .7vw;
-
+const Container = styled.div`
   display: flex;
-  flex-flow: row;
+  flex-flow: row wrap;
+  justify-content: flex-start;
 `;
 
-const CellGrid = styled.div`
-  border-right: solid black .15vw;
-  display: flex;
-  flex-flow: row;
+const Slot = styled.div`
+  position: relative;
+  border: solid black .15vw;
+  border-radius: .5vw;
+
+  width: 5vw;
+  height: 5vw;
+  margin: .7vw;
+
+  align-items: center;
+  justify-content: center;
 `;
 
 const Icon = styled.img`
-  border-right: solid black .15vw;
-  height: 2.5vw;
-  padding: .2vw;
+  height: 100%;
+  width: 100%;
+  padding: .5vw;
 `;
 
-const ItemNumber = styled.p`
-  font-size: 1vw;
-  font-family: Pixel;
+const Balance = styled.div` 
+  border-top: solid black .15vw;
+  border-left: solid black .15vw;
+  border-radius: .3vw 0 0 0;
 
-  flex-grow: 1;
-  color: #333;
-  align-self: center;
-  text-align: center;
+  position: absolute;
+  color: black;
+  right: 0;
+  bottom: 0;
+  padding: .2vw;
+
+  font-family: Pixel;
+  font-size: .5vw;
 `;

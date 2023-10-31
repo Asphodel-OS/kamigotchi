@@ -20,7 +20,7 @@ export interface Item {
   index: number;
   isFungible: boolean;
   type: string;
-  name?: string;
+  name: string;
   familyIndex?: number;
   description?: string;
   uri?: string;
@@ -56,7 +56,7 @@ export const getItem = (
     index: getComponentValue(ItemIndex, index)?.value as number * 1,
     isFungible: hasComponent(IsFungible, index),
     type: '',
-    name: getComponentValue(Name, index)?.value as string,
+    name: getComponentValue(Name, index)?.value as string ?? 'Unknown Item',
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(layers, index),
   }
