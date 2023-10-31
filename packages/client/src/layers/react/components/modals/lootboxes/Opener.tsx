@@ -6,7 +6,7 @@ import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
-import { Lootbox, LootboxLog, getLootboxLog } from "layers/react/shapes/Lootbox";
+import { Lootbox } from "layers/react/shapes/Lootbox";
 
 interface Props {
   account: Account;
@@ -14,12 +14,10 @@ interface Props {
     openTx: (index: number, amount: number) => Promise<void>;
     revealTx: (id: EntityID) => Promise<void>;
     setState: (state: string) => void;
-    setLog: (log: LootboxLog) => void;
   };
   inventory: Inventory | undefined;
   utils: {
     getLootbox: (index: number) => Lootbox;
-    getLog: (index: EntityIndex) => LootboxLog;
   }
 }
 
@@ -43,7 +41,6 @@ export const Opener = (props: Props) => {
         reversed.forEach(async (LootboxLog) => {
           try {
             await props.actions.revealTx(LootboxLog.id);
-            props.actions.setLog(props.utils.getLog(LootboxLog.entityIndex));
             props.actions.setState("REWARDS");
           }
           catch (e) { console.log(e); }

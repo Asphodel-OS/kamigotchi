@@ -16,6 +16,11 @@ export function createAdminAPI(systems: any) {
     return systems['system.Pet721.Reveal'].forceReveal(tokenId);
   }
 
+  // @dev admin reveal for lootbox if blockhash has lapsed
+  async function lootboxForceReveal(entityID: string) {
+    return systems['system.Lootbox.Reveal.Execute'].forceReveal(entityID);
+  }
+
 
   /////////////////
   //  CONFIG
@@ -524,7 +529,10 @@ export function createAdminAPI(systems: any) {
         name: setNPCName,
       },
     },
-    pet: { forceReveal: petForceReveal },
+    forceReveal: {
+      pet: petForceReveal,
+      lootbox: lootboxForceReveal,
+    },
     registry: {
       item: {
         create: {

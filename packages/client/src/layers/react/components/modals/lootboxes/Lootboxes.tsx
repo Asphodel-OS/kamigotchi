@@ -70,10 +70,10 @@ export function registerLootboxesModal() {
         },
       } = layers;
 
-      const { visibleModals, setVisibleModals } = dataStore();
+      const { visibleModals } = dataStore();
 
       const [state, setState] = useState("OPEN");
-      const [log, setLog] = useState<LootboxLog>();
+      const [log, setLog] = useState<EntityIndex>();
 
       // Refresh modal upon closure
       useEffect(() => {
@@ -169,17 +169,17 @@ export function registerLootboxesModal() {
             return (
               <Opener
                 account={account}
-                actions={{ openTx, revealTx, setState, setLog }}
+                actions={{ openTx, revealTx, setState }}
                 inventory={account.inventories?.lootboxes![0]}
-                utils={{ getLog, getLootbox }}
+                utils={{ getLootbox }}
               />
             );
             break;
           case "REWARDS":
             return (
               <Rewards
-                log={log}
-                utils={{ getItem }}
+                account={account}
+                utils={{ getItem, getLog }}
               />
             );
             break;
@@ -187,9 +187,9 @@ export function registerLootboxesModal() {
             return (
               <Opener
                 account={account}
-                actions={{ openTx, revealTx, setState, setLog }}
+                actions={{ openTx, revealTx, setState }}
                 inventory={account.inventories?.lootboxes![0]}
-                utils={{ getLog, getLootbox }}
+                utils={{ getLootbox }}
               />
             );
             break;
