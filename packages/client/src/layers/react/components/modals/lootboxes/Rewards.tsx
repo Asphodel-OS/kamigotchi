@@ -4,7 +4,7 @@ import { LootboxLog } from "layers/react/shapes/Lootbox";
 import { Item } from "layers/react/shapes/Item";
 
 interface Props {
-  log: LootboxLog;
+  log: LootboxLog | undefined;
   utils: {
     getItem: (index: number) => Item;
   }
@@ -28,12 +28,14 @@ export const Rewards = (props: Props) => {
   }
 
   const ItemsList = () => {
-    const items = props.log?.droptable.keys;
-    const amounts = props.log?.droptable.results!;
-    let list = [];
+    if (props.log) {
+      const items = props.log?.droptable.keys;
+      const amounts = props.log?.droptable.results!;
+      let list = [];
 
-    for (let i = 0; i < items.length; i++) {
-      if (amounts[i] > 0) list.push(parseItem(items[i], amounts[i]));
+      for (let i = 0; i < items.length; i++) {
+        if (amounts[i] > 0) list.push(parseItem(items[i], amounts[i]));
+      }
     }
 
     return (
