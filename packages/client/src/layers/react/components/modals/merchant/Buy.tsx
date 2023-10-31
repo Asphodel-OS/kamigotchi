@@ -3,11 +3,9 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
-import { Item, getItem, getItemByIndex } from 'layers/react/shapes/Item';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';
 import { dataStore } from 'layers/react/store/createStore';
@@ -72,7 +70,7 @@ export function registerBuyModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} ${listing.item.name}` as EntityID;
+        const actionID = `Buying ${amt} ${listing.item!.name}` as EntityID;
         actions?.add({
           id: actionID,
           components: {},
@@ -131,9 +129,9 @@ export function registerBuyModal() {
           overlay
         >
           <Content>
-            <Image src={listing.item.uri} />
+            <Image src={listing.item!.uri} />
             <InfoSection>
-              <Name>{listing.item.name}</Name>
+              <Name>{listing.item!.name}</Name>
               <Description>{`lorem ipsum, description will go here`}</Description>
               <Description>{`unit price: $${listing.buyPrice}`}</Description>
               <InputRow>

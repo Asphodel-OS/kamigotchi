@@ -33,9 +33,9 @@ export const Items = (props: Props) => {
 
   const cells = inventorySlots.map((slot, i) => {
     return (
-      <Tooltip text={[slot.item.name, slot.item.description]} grow>
+      <Tooltip text={[slot.item.name!, slot.item.description!]} grow>
         <CellGrid>
-          <Icon src={slot.item.uri} />
+          <Icon src={slot.item.uri!} />
           <ItemNumber>{slot.inventory?.balance ?? 0}</ItemNumber>
         </CellGrid>
       </Tooltip>

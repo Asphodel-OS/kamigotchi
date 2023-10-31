@@ -1,12 +1,6 @@
-import { EntityID, EntityIndex } from "@latticexyz/recs";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
 
-import { ActionButton } from "layers/react/components/library/ActionButton";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/react/shapes/Account";
-import { Inventory } from "layers/react/shapes/Inventory";
-import { Lootbox, LootboxLog, getLootboxLog } from "layers/react/shapes/Lootbox";
+import { LootboxLog } from "layers/react/shapes/Lootbox";
 import { Item } from "layers/react/shapes/Item";
 
 interface Props {
@@ -26,9 +20,8 @@ export const Rewards = (props: Props) => {
 
     return (
       <tr>
-        {/* <TableData><Image src={item.uri!} /></TableData> */}
-        <TableData><Image src={item.uri} /></TableData>
-        <TableData>{item.name!}</TableData>
+        <TableData><Image src={item!.uri!} /></TableData>
+        <TableData>{item!.name!}</TableData>
         <TableData>x{Number(amount)}</TableData>
       </tr>
     )

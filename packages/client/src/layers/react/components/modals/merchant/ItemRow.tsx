@@ -21,17 +21,17 @@ export const ItemRow = (props: Props) => {
 
   const BuyButton = (listing: Listing) => (
     <ActionButton
-      id={`button-buy-${listing.item.index}`}
+      id={`button-buy-${listing.item!.index}`}
       onClick={openBuyModal}
       text='Buy'
     />
   );
 
   return (
-    <Row key={props.listing.item.index}>
-      <Image src={props.listing.item.uri} />
-      <Name>{props.listing.item.name}</Name>
-      <Price>{props.listing.buyPrice}</Price>
+    <Row key={props.listing.item!.index}>
+      <Image src={props.listing.item!.uri} />
+      <Name>{props.listing.item!.name}</Name>
+      <Price>{props.listing!.buyPrice}</Price>
       <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>
     </Row>
   );

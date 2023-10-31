@@ -188,7 +188,7 @@ export function registerLootboxesModal() {
               <Opener
                 account={account}
                 actions={{ openTx, revealTx, setState, setLog }}
-                inventory={account.inventories?.lootboxes![0]!}
+                inventory={account.inventories?.lootboxes![0]}
                 utils={{ getLog, getLootbox }}
               />
             );

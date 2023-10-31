@@ -16,7 +16,7 @@ interface Props {
     setState: (state: string) => void;
     setLog: (log: LootboxLog) => void;
   };
-  inventory: Inventory;
+  inventory: Inventory | undefined;
   utils: {
     getLootbox: (index: number) => Lootbox;
     getLog: (index: EntityIndex) => LootboxLog;
@@ -25,6 +25,7 @@ interface Props {
 
 export const Opener = (props: Props) => {
   const [state, setState] = useState("START");
+  const [curBal, setCurBal] = useState(0);
   const [triedReveal, setTriedReveal] = useState(false);
   const [waitingToReveal, setWaitingToReveal] = useState(false);
   const [selectedBox, setSelectedBox] = useState<Lootbox>();
@@ -58,9 +59,10 @@ export const Opener = (props: Props) => {
 
   useEffect(() => {
     setSelectedBox(
-      props.utils.getLootbox(props.inventory.item.index)
+      props.utils.getLootbox(props.inventory?.item.index || 0)
     );
-  }, [props.inventory.item.index]);
+    setCurBal(props.inventory?.balance || 0);
+  }, [props.inventory ? props.inventory.item : 0]);
 
   const startReveal = async (amount: number) => {
     setWaitingToReveal(true);
@@ -77,7 +79,7 @@ export const Opener = (props: Props) => {
     if (waitingToReveal) {
       return (<div></div>)
     } else {
-      const enabled = (amount <= (props.inventory.balance ? props.inventory.balance : 0));
+      const enabled = (amount <= (curBal));
       const warnText = enabled ? '' : 'Insufficient boxes';
       return (
         <Tooltip text={[warnText]}>
@@ -116,8 +118,7 @@ export const Opener = (props: Props) => {
         {OpenButton(10)}
       </ProductBox>
       <SubText style={{ gridRow: 3 }}>
-        You have: {(props.inventory.balance ? props.inventory.balance : 0)} {selectedBox?.name}
-        {props.inventory.balance == 1 ? '' : 'es'}
+        You have: {curBal} {selectedBox?.name}es
       </SubText>
     </Grid>
   );
