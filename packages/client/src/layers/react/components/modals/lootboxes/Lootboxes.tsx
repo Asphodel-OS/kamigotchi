@@ -105,7 +105,7 @@ export function registerLootboxesModal() {
       };
 
       const revealTx = async (id: EntityID) => {
-        const actionID = (`Revealing...`) as EntityID;
+        const actionID = (`Revealing lootboxes...`) as EntityID;
         actions?.add({
           id: actionID,
           components: {},
