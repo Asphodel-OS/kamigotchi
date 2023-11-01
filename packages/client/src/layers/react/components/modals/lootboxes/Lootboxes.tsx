@@ -15,8 +15,6 @@ import { Lootbox, LootboxLog, getLootboxByIndex, getLootboxLog } from 'layers/re
 import { getItemByIndex } from 'layers/react/shapes/Item';
 import { dataStore } from 'layers/react/store/createStore';
 
-
-
 export function registerLootboxesModal() {
   registerUIComponent(
     'Lootboxes',
@@ -29,14 +27,12 @@ export function registerLootboxesModal() {
     (layers) => {
       const {
         network: {
-          network,
           components: {
             Balance,
             Balances,
             RevealBlock,
             HolderID,
           },
-          systems,
         },
       } = layers;
 
