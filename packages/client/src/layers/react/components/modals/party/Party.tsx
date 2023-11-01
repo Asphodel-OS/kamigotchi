@@ -1,10 +1,10 @@
 import React from 'react';
 import { map, merge } from 'rxjs';
+import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { Kards } from './Kards';
-import { Items } from './Items';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
@@ -12,7 +12,6 @@ import { Kami } from 'layers/react/shapes/Kami';
 import { dataStore } from 'layers/react/store/createStore';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
-import { getItemByIndex } from 'layers/react/shapes/Item';
 
 
 export function registerPartyModal() {
@@ -153,10 +152,6 @@ export function registerPartyModal() {
         openKamiModal(kami.entityIndex);
       };
 
-      const getItem = (itemIndex: number) => {
-        return getItemByIndex(layers, itemIndex);
-      };
-
       const openKamiModal = (entityIndex: EntityIndex) => {
         setKami(entityIndex);
         setVisibleModals({ ...visibleModals, kami: true });
@@ -167,7 +162,7 @@ export function registerPartyModal() {
         <ModalWrapperFull
           id='party_modal'
           divName='party'
-          header={[<Items key='items' inventories={data.account.inventories!} getItem={getItem} />]}
+          header={<Header key='header'>Party</Header>}
           canExit
         >
           <Kards
@@ -184,3 +179,11 @@ export function registerPartyModal() {
     }
   );
 }
+
+const Header = styled.div`
+  font-size: 1.5vw;
+  color: #333;
+  text-align: left;
+  padding: 1.2vw 1.8vw;
+  font-family: Pixel;
+`;
