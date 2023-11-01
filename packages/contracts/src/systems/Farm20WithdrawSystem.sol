@@ -41,6 +41,7 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
       LibAccount.getLocation(components, accountID) == ROOM,
       "Farm20Withdraw: not in room 12"
     );
+    require(LibCoin.get(components, accountID) >= value, "Coin: insufficient balance");
 
     // scheduling timelock
     _schedule(msg.sender, value, block.timestamp);

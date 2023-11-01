@@ -59,6 +59,11 @@ contract Farm20Test is SetupTemplate {
       vm.expectRevert("operation not ready");
       _Farm20WithdrawSystem.executeWithdraw(id);
     } else {
+      if (amt > startingBalance) {
+        vm.expectRevert("Coin: insufficient balance");
+        _Farm20WithdrawSystem.scheduleWithdraw(amt);
+        return;
+      }
       uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt);
       // check operation struct
       (address target, uint256 value, uint256 salt) = LibTimelock.getTimelock(components, id);
@@ -185,10 +190,8 @@ contract Farm20Test is SetupTemplate {
 
       return;
     } else if (amt0 > startBal0) {
-      uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt0);
-      _fastForward(minDelay + 1);
       vm.expectRevert("Coin: insufficient balance");
-      _Farm20WithdrawSystem.executeWithdraw(id);
+      uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt0);
 
       return;
     } else {
@@ -226,10 +229,8 @@ contract Farm20Test is SetupTemplate {
       vm.expectRevert("Farm20Withdraw: amt must be > 0");
       uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt1);
     } else if (amt1 > startBal1) {
-      uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt1);
-      _fastForward(minDelay + 1);
       vm.expectRevert("Coin: insufficient balance");
-      _Farm20WithdrawSystem.executeWithdraw(id);
+      uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt1);
     } else {
       uint256 id = _Farm20WithdrawSystem.scheduleWithdraw(amt1);
       _fastForward(minDelay + 1);
