@@ -122,10 +122,6 @@ export function registerAccountInfoFixture() {
         >
           <Row>
             <NameCell>{data.account.name}</NameCell>
-            <GaugeCell>
-              <Text>Gas: {operatorBal}Ξ</Text>
-              <Gauge level={calcOperatorGauge()} />
-            </GaugeCell>
           </Row>
           <Line />
           <Row>
@@ -136,7 +132,10 @@ export function registerAccountInfoFixture() {
               </Tooltip>
             </BatteryCell>
             <WordCell>$KAMI: {Number(accountMint20Bal?.formatted ?? 0) ?? '???'}</WordCell>
-            <WordCell>$MUSU: {1 * (data.account.coin ?? 0)}</WordCell>
+            <GaugeCell>
+              <Text>Gas: {operatorBal}Ξ</Text>
+              <Gauge level={calcOperatorGauge()} />
+            </GaugeCell>
           </Row>
         </Container>
       );
