@@ -42,7 +42,7 @@ export const MenuButton = (props: Props) => {
     <Tooltip text={[text]}>
       <div id={id}>
         <Button
-          style={{ pointerEvents: 'auto', display: props.visible ? 'block' : 'none' }}
+          style={{ display: props.visible ? 'flex' : 'none' }}
           onClick={handleToggle}
         >
           {children}
@@ -54,9 +54,11 @@ export const MenuButton = (props: Props) => {
 
 
 const Button = styled.button`
+  border-radius: 10px;
   cursor: pointer;
+  pointer-events: auto;
+
   &:active {
     background-color: #c4c4c4;
   }
-  border-radius: 10px;
 `;
