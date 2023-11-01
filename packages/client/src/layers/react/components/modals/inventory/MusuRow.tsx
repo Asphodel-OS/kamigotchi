@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import musuIcon from "assets/images/icons/musu.png";
 
 interface Props {
   balance: number;
@@ -9,7 +9,8 @@ interface Props {
 export const MusuRow = (props: Props) => {
   return (
     <Container key='musu'>
-      <Balance>${props.balance}</Balance>
+      <Icon src={musuIcon} />
+      <Balance>{props.balance}</Balance>
     </Container>
   );
 };
@@ -21,11 +22,18 @@ const Container = styled.div`
   display: flex;
   flex-flow: column no-wrap;
   justify-content: flex-end;
+  align-items: center;
   width: 100%;
 `;
 
+const Icon = styled.img`
+  width: 1.8vw;
+  height: 1.8vw;
+  margin-right: .5vw;
+`;
+
 const Balance = styled.div`
-  border: solid black .15vw;
+  border: solid #666 .15vw;
   border-radius: .3vw;
   padding: .5vw;
   width: 50%;

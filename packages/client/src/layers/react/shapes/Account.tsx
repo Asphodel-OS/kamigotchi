@@ -169,6 +169,9 @@ export const getAccount = (
     }
   }
 
+  // adjustments
+  if (isNaN(account.coin)) account.coin = 0;
+
   return account;
 };
 
