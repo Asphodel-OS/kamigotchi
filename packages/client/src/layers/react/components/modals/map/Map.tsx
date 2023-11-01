@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
+import styled from 'styled-components';
 
-import { MapGrid } from './MapGrid';
 import { RoomInfo } from './RoomInfo';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -16,10 +16,10 @@ export function registerMapModal() {
   registerUIComponent(
     'WorldMap',
     {
-      colStart: 33,
-      colEnd: 67,
-      rowStart: 14,
-      rowEnd: 99,
+      colStart: 3,
+      colEnd: 33,
+      rowStart: 3,
+      rowEnd: 50,
     },
     (layers) => {
       const {
@@ -97,7 +97,7 @@ export function registerMapModal() {
         <ModalWrapperFull
           id='world_map'
           divName='map'
-          header={<MapGrid currentRoom={data.account.location} move={move} />}
+          header={<Header key='header'>{selectedRoom?.name}</Header>}
           canExit
         >
           <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
@@ -106,3 +106,11 @@ export function registerMapModal() {
     }
   );
 }
+
+const Header = styled.div`
+  font-size: 1.5vw;
+  color: #333;
+  text-align: left;
+  padding: 1.2vw 1.8vw;
+  font-family: Pixel;
+`;

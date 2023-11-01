@@ -12,8 +12,7 @@ export const RoomInfo = (props: Props) => {
   return (
     <>
       <SectionContainer>
-        <SectionTitle style={{ fontSize: '1.4vw' }}>{props.room.name}</SectionTitle>
-        <Description>{props.room.owner ? (props.room.owner.name) : ''}</Description>
+        {props.room.owner && <Description>{props.room.owner.name}</Description>}
         <Description>{props.room.description}</Description>
       </SectionContainer>
 
@@ -22,7 +21,7 @@ export const RoomInfo = (props: Props) => {
         {props.exits.map((exit) => {
           return (
             <ClickableDescription key={exit.location} onClick={() => props.move(exit.location)}>
-              {exit.name}
+              → {exit.name}
             </ClickableDescription>
           );
         })}
@@ -38,9 +37,10 @@ export const RoomInfo = (props: Props) => {
 
 
 const SectionContainer = styled.div`
+  margin: 1.2vw;
   display: flex;
   flex-direction: column;
-  margin: 1.2vw;
+  justify-content: flex-start;
 `;
 
 const SectionTitle = styled.p`
@@ -63,7 +63,7 @@ const Description = styled.p`
 `;
 
 // TODO: merge this with Description using props
-const ClickableDescription = styled.p`
+const ClickableDescription = styled.div`
   color: #333;
   cursor: pointer;
   padding: .3vw;
@@ -72,6 +72,9 @@ const ClickableDescription = styled.p`
   font-family: Pixel;
   text-align: left;
   &:hover {
-    opacity: 0.7;
+    background-color: #ddd;
+  }
+  &:active {
+    background-color: #bbb;
   }
 `;
