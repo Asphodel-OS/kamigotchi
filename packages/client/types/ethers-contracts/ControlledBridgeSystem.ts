@@ -27,13 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface Farm20WithdrawSystemInterface extends utils.Interface {
+export interface ControlledBridgeSystemInterface extends utils.Interface {
   functions: {
-    "ADMIN_ROLE()": FunctionFragment;
     "blacklist(address)": FunctionFragment;
-    "cancelWithdraw(uint256)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeWithdraw(uint256)": FunctionFragment;
     "getMinDelay()": FunctionFragment;
     "getOperationState(bytes32)": FunctionFragment;
     "getTimestamp(bytes32)": FunctionFragment;
@@ -45,7 +42,6 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     "isOperationPending(bytes32)": FunctionFragment;
     "isOperationReady(bytes32)": FunctionFragment;
     "owner()": FunctionFragment;
-    "scheduleWithdraw(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unblacklist(address)": FunctionFragment;
     "updateAdmin(address,bool)": FunctionFragment;
@@ -54,11 +50,8 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "ADMIN_ROLE"
       | "blacklist"
-      | "cancelWithdraw"
       | "execute"
-      | "executeWithdraw"
       | "getMinDelay"
       | "getOperationState"
       | "getTimestamp"
@@ -70,7 +63,6 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
       | "isOperationPending"
       | "isOperationReady"
       | "owner"
-      | "scheduleWithdraw"
       | "transferOwnership"
       | "unblacklist"
       | "updateAdmin"
@@ -78,24 +70,12 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "blacklist",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "cancelWithdraw",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeWithdraw",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getMinDelay",
@@ -143,10 +123,6 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "scheduleWithdraw",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -163,17 +139,8 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "blacklist", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "cancelWithdraw",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "executeWithdraw",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getMinDelay",
     data: BytesLike
@@ -212,10 +179,6 @@ export interface Farm20WithdrawSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "scheduleWithdraw",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -290,12 +253,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface Farm20WithdrawSystem extends BaseContract {
+export interface ControlledBridgeSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: Farm20WithdrawSystemInterface;
+  interface: ControlledBridgeSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -317,25 +280,13 @@ export interface Farm20WithdrawSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<[number]>;
-
     blacklist(
       target: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    cancelWithdraw(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    executeWithdraw(
-      id: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -390,11 +341,6 @@ export interface Farm20WithdrawSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    scheduleWithdraw(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -417,25 +363,13 @@ export interface Farm20WithdrawSystem extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  ADMIN_ROLE(overrides?: CallOverrides): Promise<number>;
-
   blacklist(
     target: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  cancelWithdraw(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   execute(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  executeWithdraw(
-    id: PromiseOrValue<BigNumberish>,
+    args: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -490,11 +424,6 @@ export interface Farm20WithdrawSystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  scheduleWithdraw(
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -517,27 +446,15 @@ export interface Farm20WithdrawSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<number>;
-
     blacklist(
       target: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    cancelWithdraw(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     execute(
-      arguments: PromiseOrValue<BytesLike>,
+      args: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    executeWithdraw(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getMinDelay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -589,11 +506,6 @@ export interface Farm20WithdrawSystem extends BaseContract {
     ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    scheduleWithdraw(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -660,25 +572,13 @@ export interface Farm20WithdrawSystem extends BaseContract {
   };
 
   estimateGas: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
     blacklist(
       target: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    cancelWithdraw(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeWithdraw(
-      id: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -733,11 +633,6 @@ export interface Farm20WithdrawSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    scheduleWithdraw(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -761,25 +656,13 @@ export interface Farm20WithdrawSystem extends BaseContract {
   };
 
   populateTransaction: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     blacklist(
       target: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    cancelWithdraw(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeWithdraw(
-      id: PromiseOrValue<BigNumberish>,
+      args: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -833,11 +716,6 @@ export interface Farm20WithdrawSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    scheduleWithdraw(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

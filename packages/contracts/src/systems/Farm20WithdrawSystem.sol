@@ -4,10 +4,12 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { ControlledBridgeSystem } from "utils/ControlledBridgeSystem.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibTimelock } from "libraries/LibTimelock.sol";
 
 import { Farm20 } from "tokens/Farm20.sol";
 import { Farm20ProxySystem, ID as ProxyID } from "systems/Farm20ProxySystem.sol";
@@ -21,12 +23,17 @@ uint256 constant ROOM = 12;
  * Mints Farm20 tokens to recieving address, reduces CoinComponent balance
  * to be called by account owner
  */
-contract Farm20WithdrawSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+contract Farm20WithdrawSystem is ControlledBridgeSystem {
+  uint8 public constant ADMIN_ROLE = 1;
 
-  function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 amount = abi.decode(arguments, (uint256));
-    require(amount > 0, "Farm20Withdraw: amt must be > 0");
+  constructor(
+    IWorld _world,
+    address _components
+  ) System(_world, _components) ControlledBridgeSystem(1 days) {}
+
+  /// @notice starts the withdraw process. required to wait min delay
+  function scheduleWithdraw(uint256 value) public returns (uint256 id) {
+    require(value > 0, "Farm20Withdraw: amt must be > 0");
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Withdraw: no account");
@@ -35,18 +42,45 @@ contract Farm20WithdrawSystem is System {
       "Farm20Withdraw: not in room 12"
     );
 
-    LibCoin.dec(components, accountID, amount);
-    Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
-    token.withdraw(address(uint160(LibAccount.getOwner(components, accountID))), amount);
+    // scheduling timelock
+    _schedule(msg.sender, value, block.timestamp);
+    id = LibTimelock.create(world, components, accountID, msg.sender, value, block.timestamp);
 
     // updating account
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_WITHDRAW", amount);
     LibAccount.updateLastBlock(components, accountID);
-
-    return "";
   }
 
-  function executeTyped(uint256 amount) public returns (bytes memory) {
-    return execute(abi.encode(amount));
+  /// @notice executes the withdraw process
+  function executeWithdraw(uint256 id) public {
+    (address target, uint256 value, uint256 salt) = LibTimelock.getTimelock(components, id);
+
+    // check and set timelock operation
+    _execute(target, value, salt);
+    LibTimelock.unset(components, id);
+
+    // withdraw balance
+    uint256 accountID = LibAccount.getByOwner(components, target);
+    LibCoin.dec(components, accountID, value);
+    Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
+    token.withdraw((target), value);
+
+    // updating account
+    LibDataEntity.incFor(world, components, accountID, 0, "COIN_WITHDRAW", value);
+    LibAccount.updateLastBlock(components, accountID);
+  }
+
+  /// @notice cancels a transaction, either by Admin (if tx is suspicious) or by user
+  function cancelWithdraw(uint256 id) public {
+    (address target, uint256 value, uint256 salt) = LibTimelock.getTimelock(components, id);
+    require(isAdmin(msg.sender) || target == msg.sender, "not authorized");
+
+    // cancel timelock operation
+    _cancel(hashOperation(target, value, salt));
+    LibTimelock.unset(components, id);
+  }
+
+  function execute(bytes memory arguments) public returns (bytes memory) {
+    require(false, "unimplemented");
+    return "";
   }
 }

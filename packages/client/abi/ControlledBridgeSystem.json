@@ -1,22 +1,6 @@
 {
   "abi": [
     {
-      "inputs": [
-        {
-          "internalType": "contract IWorld",
-          "name": "_world",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_components",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
       "inputs": [],
       "name": "Ownable__NotOwner",
       "type": "error"
@@ -115,19 +99,6 @@
       "type": "event"
     },
     {
-      "inputs": [],
-      "name": "ADMIN_ROLE",
-      "outputs": [
-        {
-          "internalType": "uint8",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
@@ -143,21 +114,8 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
-      "name": "cancelWithdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes",
-          "name": "arguments",
+          "name": "args",
           "type": "bytes"
         }
       ],
@@ -169,19 +127,6 @@
           "type": "bytes"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
-      "name": "executeWithdraw",
-      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -395,25 +340,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "scheduleWithdraw",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "account",
           "type": "address"
@@ -470,11 +396,8 @@
     }
   ],
   "methodIdentifiers": {
-    "ADMIN_ROLE()": "75b238fc",
     "blacklist(address)": "f9f92be4",
-    "cancelWithdraw(uint256)": "9f01f7ba",
     "execute(bytes)": "09c5eabe",
-    "executeWithdraw(uint256)": "2104ebf1",
     "getMinDelay()": "f27a0c92",
     "getOperationState(bytes32)": "7958004c",
     "getTimestamp(bytes32)": "d45c4435",
@@ -486,7 +409,6 @@
     "isOperationPending(bytes32)": "584b153e",
     "isOperationReady(bytes32)": "13bc9f20",
     "owner()": "8da5cb5b",
-    "scheduleWithdraw(uint256)": "cce9d801",
     "transferOwnership(address)": "f2fde38b",
     "unblacklist(address)": "75e3661e",
     "updateAdmin(address,bool)": "670a6fd9",

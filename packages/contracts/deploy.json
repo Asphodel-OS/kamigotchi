@@ -99,6 +99,7 @@
     "StateComponent",
     "SubtypeComponent",
     "TimeComponent",
+    "TimelockComponent",
     "TimeLastActionComponent",
     "TimeStartComponent",
     "TypeComponent",
@@ -526,6 +527,7 @@
         "IsDataComponent",
         "ProxyPermissionsFarm20Component",
         "TypeComponent",
+        "TimelockComponent",
         "ValueComponent"
       ]
     },
@@ -919,6 +921,7 @@
     "LibRegistryTrait",
     "LibRelationship",
     "LibRoom",
+    "LibTimelock",
     "LibScore",
     "LibSkill",
     "LibStat"
