@@ -108,7 +108,7 @@ export const Opener = (props: Props) => {
   const StartScreen = (
     <Grid>
       <div style={{ gridRow: 1 }}>
-        <Image src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
+        <Image src={props.inventory?.item.uri} />
       </div>
       <ProductBox style={{ gridRow: 2 }}>
         {OpenButton(1)}
