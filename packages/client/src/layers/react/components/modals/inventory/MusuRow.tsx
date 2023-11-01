@@ -1,5 +1,7 @@
 import styled from "styled-components";
+
 import musuIcon from "assets/images/icons/musu.png";
+import { Tooltip } from "layers/react/components/library/Tooltip";
 
 interface Props {
   balance: number;
@@ -9,7 +11,9 @@ interface Props {
 export const MusuRow = (props: Props) => {
   return (
     <Container key='musu'>
-      <Icon src={musuIcon} />
+      <Tooltip text={['$MUSU']}>
+        <Icon src={musuIcon} />
+      </Tooltip>
       <Balance>{props.balance}</Balance>
     </Container>
   );
