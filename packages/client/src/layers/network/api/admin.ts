@@ -21,6 +21,10 @@ export function createAdminAPI(systems: any) {
     return systems['system.Lootbox.Reveal.Execute'].forceReveal(entityID);
   }
 
+  // @dev cancels outgoing bridge tx
+  async function cancelBridgeTx(id: string) {
+    return systems["system.Farm20.Withdraw"].cancelWithdraw(id);
+  }
 
   /////////////////
   //  CONFIG
@@ -506,6 +510,9 @@ export function createAdminAPI(systems: any) {
 
   return {
     giveCoins,
+    bridge: {
+      cancel: cancelBridgeTx,
+    },
     config: {
       set: {
         number: setConfig,
