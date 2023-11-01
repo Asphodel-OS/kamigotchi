@@ -12,7 +12,6 @@ interface Props {
   footer?: React.ReactNode;
   canExit?: boolean;
   overlay?: boolean;
-  hideModal?: Partial<VisibleModals>;
 }
 
 // ModalWrapperFull is an animated wrapper around all modals.
@@ -28,18 +27,15 @@ export const ModalWrapperFull = (props: Props) => {
       const isVisible = visibleModals[props.divName];
       element.style.display = isVisible ? 'block' : 'none';
 
-      const toggleModal = props.hideModal ? props.hideModal : {};
-      setVisibleModals({
-        ...visibleModals,
-        ...toggleModal
-      });
+      const toggleModal = props.hideModals ? props.hideModals : {};
+      setVisibleModals({ ...visibleModals, ...toggleModal });
     }
   }, [visibleModals[props.divName]]);
 
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
     event.stopPropagation();
-  };
+  }
   const element = document.getElementById(props.id);
   element?.addEventListener('mousedown', handleClicks);
 

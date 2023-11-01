@@ -38,8 +38,8 @@ export function registerSettingsButton() {
           id='settings_button'
           targetDiv='settings'
           text='Settings'
+          hideModals={modalsToHide}
           visible={visibleButtons.settings}
-          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={settingsIcon} alt='settings_icon' />
         </MenuButton>

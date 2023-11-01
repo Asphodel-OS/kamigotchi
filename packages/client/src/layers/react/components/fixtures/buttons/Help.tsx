@@ -36,8 +36,8 @@ export function registerHelpButton() {
           id='help_button'
           targetDiv='help'
           text='Help'
+          hideModals={modalsToHide}
           visible={visibleButtons.help}
-          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={helpIcon} alt='help_icon' />
         </MenuButton>

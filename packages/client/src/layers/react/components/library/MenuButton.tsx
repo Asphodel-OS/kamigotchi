@@ -11,23 +11,19 @@ interface Props {
   children: React.ReactNode;
   text: string;
   visible: boolean;
-  hideModal?: Partial<VisibleModals>;
+  hideModals?: Partial<VisibleModals>;
 }
 
 // MenuButton renders a button that toggles a target modal. It supports a generic
 // input of children, though this will usually just be text.
 export const MenuButton = (props: Props) => {
-  const {
-    visibleModals,
-    setVisibleModals,
-  } = dataStore();
-  const { id, children, text, hideModal } = props;
+  const { visibleModals, setVisibleModals } = dataStore();
+  const { id, children, text, hideModals } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
     playClick();
-    const toggleModal = hideModal ? hideModal : {};
-
+    const toggleModal = hideModals ? hideModals : {};
     setVisibleModals({
       ...visibleModals,
       ...toggleModal,

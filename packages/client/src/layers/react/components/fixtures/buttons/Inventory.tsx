@@ -36,8 +36,8 @@ export function registerInventoryButton() {
           id='inventory-button'
           targetDiv='inventory'
           text='Inventory'
+          hideModals={modalsToHide}
           visible={visibleButtons.inventory}
-          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={placeholderIcon} alt='map_icon' />
         </MenuButton>

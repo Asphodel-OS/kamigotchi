@@ -37,7 +37,7 @@ export function registerQuestsButton() {
           id='quests_button'
           targetDiv='quests'
           text='Quests'
-          hideModal={modalsToHide}
+          hideModals={modalsToHide}
           visible={visibleButtons.quests}
         >
           <img style={{ height: '100%', width: 'auto' }} src={questsIcon} alt='chat_icon' />

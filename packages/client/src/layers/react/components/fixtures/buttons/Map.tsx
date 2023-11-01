@@ -35,8 +35,8 @@ export function registerMapButton() {
           id='map_button'
           targetDiv='map'
           text='Map'
+          hideModals={modalsToHide}
           visible={visibleButtons.map}
-          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={mapIcon} alt='map_icon' />
         </MenuButton>

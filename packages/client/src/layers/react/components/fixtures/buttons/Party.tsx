@@ -25,8 +25,8 @@ export function registerPartyButton() {
           id='party_button'
           targetDiv='party'
           text='Party'
+          hideModals={modalsToHide}
           visible={visibleButtons.party}
-          hideModal={modalsToHide}
         >
           <img style={{ height: '100%', width: 'auto' }} src={kamiIcon} alt='kami_icon' />
         </MenuButton>

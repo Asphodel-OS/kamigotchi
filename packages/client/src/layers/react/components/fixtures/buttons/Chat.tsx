@@ -25,7 +25,7 @@ export function registerChatButton() {
           id='chat_button'
           targetDiv='lootboxes'
           text='Chat'
-          hideModal={modalsToHide}
+          hideModals={modalsToHide}
           visible={visibleButtons.chat}
         >
           <img style={{ height: '100%', width: 'auto' }} src={chatIcon} alt='chat_icon' />
