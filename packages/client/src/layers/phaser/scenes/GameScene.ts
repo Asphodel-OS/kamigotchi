@@ -3,6 +3,7 @@ import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
 import { kamiPattern } from 'assets/images/backgrounds';
 import { triggerDialogueModal } from '../utils/triggerDialogueModal';
+import { checkModalCoverage } from '../utils/checkModalCoverage';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -73,10 +74,13 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
           // TODO: remove this once room objects are cleaned up
           if (onClick) {
-            image.on('pointerdown', (e: Phaser.Input.Pointer) => onClick());
-          }
-          if (dialogue) {
-            image.on('pointerdown', () => triggerDialogueModal(dialogue));
+            image.on('pointerdown', (e: Phaser.Input.Pointer) => {
+              if (!checkModalCoverage(e)) onClick();
+            });
+          } else if (dialogue) {
+            image.on('pointerdown', (e: Phaser.Input.Pointer) => {
+              if (!checkModalCoverage(e)) triggerDialogueModal(dialogue);
+            });
           }
         });
       }
