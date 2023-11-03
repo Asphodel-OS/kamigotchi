@@ -1,9 +1,4 @@
 import styled from "styled-components";
-import { EntityIndex } from "@latticexyz/recs";
-
-import { LootboxLog } from "layers/react/shapes/Lootbox";
-import { Item } from "layers/react/shapes/Item";
-import { Account } from "layers/react/shapes/Account";
 
 interface Props { }
 

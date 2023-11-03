@@ -1,6 +1,6 @@
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
