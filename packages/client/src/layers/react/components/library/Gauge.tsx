@@ -28,7 +28,7 @@ const GaugeOutline = styled.div`
   justify-content: flex-start;
 `;
 
-const GaugeArrow = styled.line`
+const GaugeArrow = styled.div`
   border: .05vw solid #444;
   height: 0.5vw;
   margin: 0.125vw 0 0 -0.875vw ;
@@ -46,8 +46,8 @@ export const Gauge = (props: GaugeProps) => {
   const arrowStyles = {
     backgroundColor: getColor(props.level),
     transform: `rotate(${props.level * 1.6 - 80}deg)`,
-
   }
+
   return (
     <GaugeContainer>
       <GaugeOutline />
