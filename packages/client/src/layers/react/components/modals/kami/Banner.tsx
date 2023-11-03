@@ -1,8 +1,6 @@
 import { Kami } from "layers/react/shapes/Kami";
 import styled from "styled-components";
-import { ExperienceBar } from "../../library/ExperienceBar";
-import { Tooltip } from "../../library/Tooltip";
-import { ActionButton } from "../../library/ActionButton";
+
 import {
   healthIcon,
   powerIcon,
@@ -10,6 +8,8 @@ import {
   harmonyIcon,
 } from "assets/images/icons/stats";
 import placeholderIcon from "assets/images/icons/exit_native.png";
+import { ExperienceBar } from "layers/react/components/library/ExperienceBar";
+import { Tooltip } from "layers/react/components/library/Tooltip";
 
 interface Props {
   kami: Kami;

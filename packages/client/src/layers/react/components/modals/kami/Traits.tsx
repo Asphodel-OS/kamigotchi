@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 
+import {
+  healthIcon,
+  powerIcon,
+  violenceIcon,
+  harmonyIcon,
+} from "assets/images/icons/stats";
+import placeholderIcon from "assets/images/icons/exit_native.png";
 import { Kami } from "layers/react/shapes/Kami";
 import { Tooltip } from "../../library/Tooltip";
 import { Trait } from "layers/react/shapes/Trait";
@@ -9,36 +16,61 @@ interface Props {
 }
 
 export const Traits = (props: Props) => {
+  const statsDetails = new Map(Object.entries({
+    'health': {
+      description: 'Health defines how resilient a Kami is to accumulated damage',
+      image: healthIcon,
+    },
+    'power': {
+      description: 'Power determines the potential rate at which $MUSU can be farmed',
+      image: powerIcon,
+    },
+    'violence': {
+      description: 'Violence dictates the threshold at which a Kami can liquidate others',
+      image: violenceIcon,
+    },
+    'harmony': {
+      description: 'Harmony divines resting recovery rate and defends against violence',
+      image: harmonyIcon,
+    },
+    'slots': {
+      description: 'Slots are room for upgrades ^_^',
+      image: placeholderIcon,
+    },
+  }));
 
-  // get the stats text from a trait
-  const getStatsText = (trait: Trait) => {
-    const statArray = Object.entries(trait.stats).filter((stat: [string, number]) => stat[1] > 0);
-    return statArray.map(
-      (stat: [string, number]) => {
-        const name = stat[0].charAt(0).toUpperCase() + stat[0].slice(1);
-        const value = stat[1] * 1;
-        return `${name}: ${value}`;
-      }
-    );
+
+  const TraitBox = (type: string, trait: Trait) => {
+    const statArray = Object.entries(trait.stats).filter(([_, value]) => value > 0);
+    return (
+      <Container>
+        <Title>{`${type}: ${trait.name}`}</Title>
+        <Content>
+          {statArray.map(([name, value]) => {
+            const details = statsDetails.get(name);
+            const tooltipText = [details?.description ?? ''];
+            return (
+              <Tooltip key={name} text={tooltipText}>
+                <InfoBox>
+                  <InfoIcon src={details?.image} />
+                  <InfoNumber>{value}</InfoNumber>
+                </InfoBox>
+              </Tooltip>
+            );
+          })}
+        </Content>
+      </Container>
+    )
   }
 
   return (
-    <Container>
-      <Title>Traits</Title>
-      <Content>
-        {Object.entries(props.kami.traits!).map((trait: [string, Trait]) => {
-          const statsText = getStatsText(trait[1]);
-          return (
-            <Tooltip key={trait[0]} text={['STATS'].concat(statsText)} grow>
-              <InfoBox>
-                <InfoLabel>{trait[0].toUpperCase()}</InfoLabel>
-                <InfoContent>{trait[1].name}</InfoContent>
-              </InfoBox>
-            </Tooltip>
-          );
-        })}
-      </Content>
-    </Container>
+    <>
+      {TraitBox('Body', props.kami.traits?.body!)}
+      {TraitBox('Hands', props.kami.traits?.hand!)}
+      {TraitBox('Face', props.kami.traits?.face!)}
+      {TraitBox('Color', props.kami.traits?.color!)}
+      {TraitBox('Background', props.kami.traits?.background!)}
+    </>
   );
 }
 
@@ -46,58 +78,57 @@ const Container = styled.div`
   border: solid black .15vw;
   border-radius: .5vw;
   margin: .7vw;
-  padding: .7vw;
+  padding: .5vw;
 
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
+  align-items: center;
 `;
 
 const Title = styled.div`
   padding: .5vw;  
   color: black;
   font-family: Pixel;
-  font-size: 2vw;
+  font-size: 1.5vw;
 `;
 
 const Content = styled.div`
-  flex-grow: 1;
-  padding: 1.4vw .7vw .7vw .7vw;
+  padding: .7vw;
 
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
 `;
+
 
 const InfoBox = styled.div`
   border: solid black .12vw;
   border-radius: 5px;
   margin: .3vw;
-  padding: .3vw;
+  padding: .5vw 1vw;
+  gap: .5vw;
   
   display: flex;
-  flex-direction: column;
+  flex-direction: row nowrap;
+  justify-content: space-between;
 
   &:hover {
     background-color: #ddd;
   }
 `;
 
-const InfoLabel = styled.div`
-  margin: .3vw;
-  align-self: flex-start;
-  
-  color: black;
-  font-family: Pixel;
-  font-size: .9vw;
+const InfoIcon = styled.img`
+  height: 2vw;
+  align-self: center;
 `;
 
-const InfoContent = styled.div`
+
+const InfoNumber = styled.div`
   color: black;
-  padding: 5px;
   align-self: center;
 
   font-size: 1.2vw;
-  font-weight: 600;
   font-family: Pixel;
   margin: auto;
 `;
