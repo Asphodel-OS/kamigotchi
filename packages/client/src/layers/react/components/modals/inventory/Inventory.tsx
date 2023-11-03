@@ -50,6 +50,7 @@ export function registerInventoryModal() {
         OwnerAddress.update$,
       ).pipe(
         map(() => {
+          console.log('mInventory', getAccountFromBurner(layers, { inventory: true }));
           return {
             layers,
             actions: layers.network.actions,

@@ -22,9 +22,9 @@ export const Rewards = (props: Props) => {
     const item = props.utils.getItem(Number(index));
 
     return (
-      <tr>
-        <TableData><Image src={item!.uri} /></TableData>
-        <TableData>{item!.name}</TableData>
+      <tr key={item.index}>
+        <TableData><Image src={item.uri} /></TableData>
+        <TableData>{item.name}</TableData>
         <TableData>x{Number(amount)}</TableData>
       </tr>
     )
@@ -35,6 +35,7 @@ export const Rewards = (props: Props) => {
     // display the latest log for account
     // TODO: display all logs
     const logs = props.account.lootboxLogs?.revealed;
+    console.log(logs);
     if (logs && logs.length > 0) {
       // console.log(logs)
       const log = props.utils.getLog(logs[logs.length - 1].entityIndex);

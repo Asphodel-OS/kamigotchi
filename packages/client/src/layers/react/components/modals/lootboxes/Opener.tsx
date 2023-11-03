@@ -10,62 +10,25 @@ import { Lootbox } from "layers/react/shapes/Lootbox";
 
 interface Props {
   account: Account;
-  actions: {
-    openTx: (index: number, amount: number) => Promise<void>;
-    revealTx: (id: EntityID) => Promise<void>;
-    setState: (state: string) => void;
-  };
   inventory: Inventory | undefined;
+  lootbox: Lootbox;
   utils: {
-    getLootbox: (index: number) => Lootbox;
+    setState: (state: string) => void;
+    setAmount: (amount: number) => void;
   }
 }
 
 export const Opener = (props: Props) => {
-  const [state, setState] = useState("START");
+
   const [curBal, setCurBal] = useState(0);
-  const [triedReveal, setTriedReveal] = useState(false);
-  const [waitingToReveal, setWaitingToReveal] = useState(false);
-  const [selectedBox, setSelectedBox] = useState<Lootbox>();
-
-  // AUTO REVEAL
-  // TODO: convert to manual reveal - triggered in main modal, triggered by state
-  useEffect(() => {
-    const tx = async () => {
-      if (!triedReveal) {
-        setTriedReveal(true);
-        // wait to give buffer for OP rpc
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const raw = [...props.account.lootboxLogs?.unrevealed!];
-        const reversed = raw.reverse();
-        reversed.forEach(async (LootboxLog) => {
-          try {
-            await props.actions.revealTx(LootboxLog.id);
-            props.actions.setState("REWARDS");
-          }
-          catch (e) { console.log(e); }
-        });
-        if (waitingToReveal) {
-          setWaitingToReveal(false);
-        }
-      }
-    }
-    tx();
-
-  }, [props.account.lootboxLogs?.unrevealed]);
 
   useEffect(() => {
-    setSelectedBox(
-      props.utils.getLootbox(props.inventory?.item.index || 0)
-    );
     setCurBal(props.inventory?.balance || 0);
   }, [props.inventory ? props.inventory.item : 0]);
 
   const startReveal = async (amount: number) => {
-    setWaitingToReveal(true);
-    setTriedReveal(false);
-    setState("REVEALING");
-    await props.actions.openTx(selectedBox?.index!, amount);
+    props.utils.setAmount(amount);
+    props.utils.setState("REVEALING");
     return;
   }
 
@@ -73,39 +36,22 @@ export const Opener = (props: Props) => {
   // DISPLAY
 
   const OpenButton = (amount: number) => {
-    if (waitingToReveal) {
-      return (<div></div>)
-    } else {
-      const enabled = (amount <= (curBal));
-      const warnText = enabled ? '' : 'Insufficient boxes';
-      return (
-        <Tooltip text={[warnText]}>
-          <ActionButton
-            id='button-open'
-            onClick={() => startReveal(amount)}
-            size='vending'
-            text={`Open ${amount} box${amount > 1 ? 'es' : ''}`}
-            inverted disabled={!enabled}
-          />
-        </Tooltip>
-      );
-    }
+    const enabled = (amount <= (curBal));
+    const warnText = enabled ? '' : 'Insufficient boxes';
+    return (
+      <Tooltip text={[warnText]}>
+        <ActionButton
+          id='button-open'
+          onClick={() => startReveal(amount)}
+          size='vending'
+          text={`Open ${amount} box${amount > 1 ? 'es' : ''}`}
+          inverted disabled={!enabled}
+        />
+      </Tooltip>
+    );
   }
 
-  const ScreenSelector = () => {
-    switch (state) {
-      case "START":
-        return StartScreen;
-        break;
-      case "REVEALING":
-        return RevealScreen;
-        break;
-      default:
-        return StartScreen;
-    }
-  }
-
-  const StartScreen = (
+  return (
     <Grid>
       <div style={{ gridRow: 1 }}>
         <Image src={props.inventory?.item.uri} />
@@ -115,21 +61,9 @@ export const Opener = (props: Props) => {
         {OpenButton(10)}
       </ProductBox>
       <SubText style={{ gridRow: 3 }}>
-        You have: {curBal} {selectedBox?.name}es
+        You have: {curBal} box{curBal != 1 ? 'es' : ''}
       </SubText>
     </Grid>
-  );
-
-  const RevealScreen = (
-    <SubText>
-      Revealing... please don't leave this page!
-    </SubText>
-  );
-
-  return (
-    <div>
-      {ScreenSelector()}
-    </div>
   );
 }
 
