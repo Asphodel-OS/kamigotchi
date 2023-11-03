@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -12,7 +12,7 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
-import { Lootbox, LootboxLog, getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
+import { getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
 import { getItemByIndex } from 'layers/react/shapes/Item';
 import { dataStore } from 'layers/react/store/createStore';
 

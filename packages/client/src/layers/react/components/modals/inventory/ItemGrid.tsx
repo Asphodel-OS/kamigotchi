@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-import { Tooltip } from "layers/react/components/library/Tooltip";
 import { ItemIcon } from "layers/react/components/library/ItemIcon";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { dataStore } from "layers/react/store/createStore";
