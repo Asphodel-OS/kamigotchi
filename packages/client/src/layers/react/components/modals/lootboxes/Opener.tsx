@@ -7,6 +7,7 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { Lootbox } from "layers/react/shapes/Lootbox";
+import { ItemIcon } from "layers/react/components/library/ItemIcon";
 
 interface Props {
   account: Account;
@@ -53,10 +54,12 @@ export const Opener = (props: Props) => {
 
   return (
     <Container>
-      <ItemBox>
-        <Image src={props.inventory?.item.image.x4} />
-        <ItemBalance>{props.inventory?.balance}</ItemBalance>
-      </ItemBox>
+      <ItemIcon
+        id={props.lootbox.index.toString()}
+        item={props.lootbox}
+        balance={curBal}
+        size='large'
+      />
       <ButtonBox>
         {OpenButton(1)}
         {OpenButton(10)}
@@ -72,40 +75,6 @@ const Container = styled.div`
   flex-direction: column;
 
   height: 90%;
-`;
-
-const Image = styled.img`
-  height: 100%;
-  width: 100%;
-  padding: 1vw;
-`;
-
-const ItemBox = styled.div`
-  position: relative;
-  border: solid black .2vw;
-  border-radius: 1vw;
-
-  width: 10vw;
-  height: 10vw;
-  margin: 1.4vw;
-
-  align-items: center;
-  justify-content: center;
-`;
-
-const ItemBalance = styled.div` 
-  border-top: solid black .2vw;
-  border-left: solid black .2vw;
-  border-radius: 0.5vw 0 0 0;
-
-  position: absolute;
-  color: black;
-  right: 0;
-  bottom: 0;
-  padding: .4vh .4vw;
-
-  font-family: Pixel;
-  font-size: 1vw;
 `;
 
 const ButtonBox = styled.div`  
