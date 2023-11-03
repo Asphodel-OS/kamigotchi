@@ -23,7 +23,7 @@ export const Rewards = (props: Props) => {
 
     return (
       <tr key={item.index}>
-        <TableData><Image src={item.uri} /></TableData>
+        <TableData><Image src={item.image.default} /></TableData>
         <TableData>{item.name}</TableData>
         <TableData>x{Number(amount)}</TableData>
       </tr>
