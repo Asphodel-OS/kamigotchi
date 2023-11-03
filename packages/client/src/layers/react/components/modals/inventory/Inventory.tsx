@@ -49,7 +49,6 @@ export function registerInventoryModal() {
         OwnerAddress.update$,
       ).pipe(
         map(() => {
-          console.log('mInventory', getAccountFromBurner(layers, { inventory: true }));
           return {
             data: {
               account: getAccountFromBurner(layers, { inventory: true }),

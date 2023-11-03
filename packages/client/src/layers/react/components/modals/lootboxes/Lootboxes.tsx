@@ -55,8 +55,6 @@ export function registerLootboxesModal() {
             { lootboxLogs: true, inventory: true },
           );
 
-          console.log('box:', account);
-
           return {
             layers,
             account,
