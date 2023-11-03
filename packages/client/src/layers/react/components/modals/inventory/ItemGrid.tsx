@@ -33,11 +33,11 @@ export const ItemGrid = (props: Props) => {
 
       if (clickable) {
         return (
-          <IconClickable src={inv.item.uri} onClick={foo} />
+          <IconClickable src={inv.item.image.default} onClick={foo} />
         );
       } else {
         return (
-          <Icon src={inv.item.uri} />
+          <Icon src={inv.item.image.default} />
         );
       }
     }
