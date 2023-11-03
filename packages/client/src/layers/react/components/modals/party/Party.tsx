@@ -106,7 +106,7 @@ export function registerPartyModal() {
       // INTERACTION
 
       // feed a kami
-      const feedKami = (kami: Kami, foodIndex: number) => {
+      const feed = (kami: Kami, foodIndex: number) => {
         const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
@@ -120,7 +120,7 @@ export function registerPartyModal() {
       };
 
       // revive a kami using a revive item
-      const reviveKami = (kami: Kami, reviveIndex: number) => {
+      const revive = (kami: Kami, reviveIndex: number) => {
         const actionID = `Reviving ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
@@ -134,7 +134,7 @@ export function registerPartyModal() {
       };
 
       // reveal kami
-      const revealKami = async (kami: Kami) => {
+      const reveal = async (kami: Kami) => {
         const actionID = `Revealing ${kami.name}` as EntityID;
         actions?.add({
           id: actionID,
@@ -168,11 +168,7 @@ export function registerPartyModal() {
           <Kards
             kamis={data.account.kamis!}
             account={data.account}
-            actions={{
-              feed: feedKami,
-              revive: reviveKami,
-              reveal: revealKami,
-            }}
+            actions={{ feed, revive, reveal }}
           />
         </ModalWrapperFull>
       );

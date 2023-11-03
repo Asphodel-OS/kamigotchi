@@ -66,7 +66,7 @@ export function registerNodeModal() {
         Violence.update$,
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers, { kamis: true });
+          const account = getAccountFromBurner(layers, { kamis: true, inventory: true });
           const { nodeIndex } = useSelectedEntities.getState();
           const node = getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: account.id });
 
@@ -115,6 +115,20 @@ export function registerNodeModal() {
           updates: () => [],
           execute: async () => {
             return api.production.collect(kami.production!.id);
+          },
+        });
+      };
+
+      // feed a kami
+      const feed = (kami: Kami, foodIndex: number) => {
+        const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        actions?.add({
+          id: actionID,
+          components: {},
+          requirement: () => true,
+          updates: () => [],
+          execute: async () => {
+            return api.pet.feed(kami.id, foodIndex);
           },
         });
       };
@@ -182,9 +196,10 @@ export function registerNodeModal() {
           canExit
         >
           <Kards
+            account={data.account}
             allies={node.kamis?.allies!}
             enemies={node.kamis?.enemies!}
-            actions={{ collect, stop, liquidate }}
+            actions={{ collect, feed, liquidate, stop }}
             liquidationConfig={data.liquidationConfig}
             tab={tab}
           />

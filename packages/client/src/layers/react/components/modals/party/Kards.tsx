@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { feedIcon, reviveIcon } from "assets/images/icons/actions";
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { IconListButton } from "layers/react/components/library/IconListButton";
@@ -8,17 +9,16 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { Kami } from "layers/react/shapes/Kami";
-import { feedIcon, reviveIcon } from "assets/images/icons/actions";
 
 
 interface Props {
-  kamis: Kami[];
   account: Account;
   actions: {
-    reveal: Function;
-    feed: Function;
-    revive: Function;
+    reveal: (kami: Kami) => void;
+    feed: (kami: Kami, foodIndex: number) => void;
+    revive: (kami: Kami, reviveIndex: number) => void;
   }
+  kamis: Kami[];
 }
 
 export const Kards = (props: Props) => {
@@ -201,7 +201,7 @@ export const Kards = (props: Props) => {
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
         text: inv.item.name!,
-        onClick: () => props.actions.feed(kami, inv.item.familyIndex),
+        onClick: () => props.actions.feed(kami, inv.item.familyIndex || 1),
       };
     });
 

@@ -2,40 +2,38 @@ import { useEffect, useState } from "react";
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
 
 import {
-  ActionListButton,
-  Option as ActionListOption
-} from "layers/react/components/library/ActionListButton";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { IconButton } from "layers/react/components/library/IconButton";
-import { IconListButton } from "layers/react/components/library/IconListButton";
-import { KamiCard } from "layers/react/components/library/KamiCard";
-import { Kami } from "layers/react/shapes/Kami";
-import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
-import {
   collectIcon,
   feedIcon,
   liquidateIcon,
   stopIcon,
 } from "assets/images/icons/actions";
-
+import { Tooltip } from "layers/react/components/library/Tooltip";
+import { IconButton } from "layers/react/components/library/IconButton";
+import { IconListButton } from "layers/react/components/library/IconListButton";
+import { KamiCard } from "layers/react/components/library/KamiCard";
+import { Account } from "layers/react/shapes/Account";
+import { Inventory } from "layers/react/shapes/Inventory";
+import { Kami } from "layers/react/shapes/Kami";
+import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
 
 
 interface Props {
-  allies: Kami[];
-  enemies: Kami[];
+  account: Account;
   actions: {
     collect: (kami: Kami) => void;
+    feed: (kami: Kami, foodIndex: number) => void;
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
     stop: (kami: Kami) => void;
   };
+  allies: Kami[];
+  enemies: Kami[];
   liquidationConfig: LiquidationConfig;
   tab: string;
 }
 
 export const Kards = (props: Props) => {
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-
   // ticking
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
   useEffect(() => {
     const refreshClock = () => {
       setLastRefresh(Date.now());
@@ -121,6 +119,38 @@ export const Kards = (props: Props) => {
     const thresholdPercent = calcLiquidationThreshold(attacker, victim);
     return thresholdPercent * victimTotalHealth;
   }
+
+
+  const isFull = (kami: Kami): boolean => {
+    return Math.round(calcHealth(kami)) >= kami.stats.health;
+  };
+
+  const hasFood = (): boolean => {
+    const total = props.account.inventories!.food!.reduce(
+      (tot: number, inv: Inventory) => tot + (inv.balance || 0),
+      0
+    );
+    return total > 0;
+  };
+
+  // get the reason why a kami can't feed. assume the kami is either resting or harvesting
+  const whyCantFeed = (kami: Kami): string => {
+    let reason = '';
+    if (kami.production?.node?.location != props.account.location) {
+      reason = `not at your location`;
+    } else if (isFull(kami)) {
+      reason = `already full`;
+    } else if (!hasFood()) {
+      reason = `buy food, poore`;
+    } else if (onCooldown(kami)) {
+      reason = `can't eat, on cooldown`;
+    }
+    return reason;
+  };
+
+  const canFeed = (kami: Kami): boolean => {
+    return !whyCantFeed(kami);
+  };
 
   const canMog = (attacker: Kami, victim: Kami): boolean => {
     const thresholdPercent = calcLiquidationThreshold(attacker, victim);
@@ -244,6 +274,34 @@ export const Kards = (props: Props) => {
     );
   }
 
+  const FeedButton = (kami: Kami) => {
+    const canFeedKami = canFeed(kami);
+    const tooltipText = whyCantFeed(kami);
+
+    const stockedInventory = props.account.inventories?.food?.filter(
+      (inv: Inventory) => inv.balance && inv.balance > 0
+    ) ?? [];
+
+    const feedOptions = stockedInventory.map((inv: Inventory) => {
+      return {
+        text: inv.item.name!,
+        onClick: () => props.actions.feed(kami, inv.item.familyIndex || 1),
+      };
+    });
+
+    let returnVal = (
+      <IconListButton
+        id={`feed-button-${kami.index}`}
+        img={feedIcon}
+        disabled={!canFeedKami}
+        options={feedOptions}
+      />
+    );
+    if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
+
+    return returnVal;
+  };
+
   // button for stopping production
   const StopButton = (kami: Kami) => {
     return (
@@ -261,7 +319,7 @@ export const Kards = (props: Props) => {
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
     const options = allies.filter((ally) => canLiquidate(ally, target));
-    const actionOptions: ActionListOption[] = options.map((myKami) => {
+    const actionOptions = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
         onClick: () => props.actions.liquidate(myKami, target)
@@ -296,7 +354,7 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        action={[CollectButton(kami), StopButton(kami)]}
+        action={[FeedButton(kami), CollectButton(kami), StopButton(kami)]}
         battery
         cooldown
       />
