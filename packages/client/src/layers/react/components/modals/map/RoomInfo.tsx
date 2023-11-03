@@ -1,5 +1,6 @@
 import { Room } from "layers/react/shapes/Room";
 import styled from "styled-components";
+import { playClick } from "utils/sounds";
 
 interface Props {
   room: Room | undefined;
@@ -9,6 +10,12 @@ interface Props {
 
 export const RoomInfo = (props: Props) => {
   if (!props.room) return <div />;
+
+  const handleClick = (location: number) => {
+    playClick();
+    props.move(location);
+  }
+
   return (
     <>
       <SectionContainer>
@@ -20,7 +27,7 @@ export const RoomInfo = (props: Props) => {
         <SectionTitle>Exits</SectionTitle>
         {props.exits.map((exit) => {
           return (
-            <ClickableDescription key={exit.location} onClick={() => props.move(exit.location)}>
+            <ClickableDescription key={exit.location} onClick={() => handleClick(exit.location)}>
               → {exit.name}
             </ClickableDescription>
           );
