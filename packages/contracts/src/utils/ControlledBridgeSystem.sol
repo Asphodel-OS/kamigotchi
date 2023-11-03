@@ -43,6 +43,11 @@ abstract contract ControlledBridgeSystem is System {
     _;
   }
 
+  modifier notBlacklisted(address target) {
+    require(!_blacklist[target], "address blacklisted");
+    _;
+  }
+
   constructor(uint256 minDelay) {
     _minDelay = minDelay;
   }
@@ -131,8 +136,7 @@ abstract contract ControlledBridgeSystem is System {
     address target,
     uint256 value,
     uint256 salt
-  ) internal virtual returns (bytes32) {
-    require(!_blacklist[target], "address blacklisted");
+  ) internal virtual notBlacklisted(target) returns (bytes32) {
     bytes32 id = hashOperation(target, value, salt);
     require(!isOperation(id), "operation already exists");
 
@@ -148,8 +152,7 @@ abstract contract ControlledBridgeSystem is System {
     address target,
     uint256 value,
     uint256 salt
-  ) internal virtual returns (bytes32) {
-    require(!_blacklist[target], "address blacklisted");
+  ) internal virtual notBlacklisted(target) returns (bytes32) {
     bytes32 id = hashOperation(target, value, salt);
     require(isOperationReady(id), "operation not ready");
     _timestamps[id] = _DONE_TIMESTAMP;
