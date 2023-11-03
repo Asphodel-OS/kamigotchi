@@ -121,7 +121,6 @@ export const getAccount = (
     const gear: Inventory[] = [];
     const mods: Inventory[] = [];
     const lootboxes: Inventory[] = [];
-    console.log('inv:', inventoryResults);
     for (let i = 0; i < inventoryResults.length; i++) {
       const inventory = inventoryResults[i];
 

@@ -50,7 +50,6 @@ export function registerInventoryModal() {
         OwnerAddress.update$,
       ).pipe(
         map(() => {
-          console.log('mInventory', getAccountFromBurner(layers, { inventory: true }));
           return {
             layers,
             actions: layers.network.actions,
@@ -64,7 +63,6 @@ export function registerInventoryModal() {
     },
 
     ({ layers, actions, api, data }) => {
-      // console.log('mInventory', data);
       const getInventories = () => {
         let accInv = data.account.inventories;
         let inventories: Inventory[] = [];

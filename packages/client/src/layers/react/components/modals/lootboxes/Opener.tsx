@@ -43,67 +43,78 @@ export const Opener = (props: Props) => {
         <ActionButton
           id='button-open'
           onClick={() => startReveal(amount)}
-          size='vending'
-          text={`Open ${amount} box${amount > 1 ? 'es' : ''}`}
-          inverted disabled={!enabled}
+          text={`Open ${amount}`}
+          size='large'
+          disabled={!enabled}
         />
       </Tooltip>
     );
   }
 
   return (
-    <Grid>
-      <div style={{ gridRow: 1 }}>
-        <Image src={props.inventory?.item.uri} />
-      </div>
-      <ProductBox style={{ gridRow: 2 }}>
+    <Container>
+      <ItemBox>
+        <Image src={props.inventory?.item.image.x4} />
+        <ItemBalance>{props.inventory?.balance}</ItemBalance>
+      </ItemBox>
+      <ButtonBox>
         {OpenButton(1)}
         {OpenButton(10)}
-      </ProductBox>
-      <SubText style={{ gridRow: 3 }}>
-        You have: {curBal} box{curBal != 1 ? 'es' : ''}
-      </SubText>
-    </Grid>
+      </ButtonBox>
+    </Container>
   );
 }
 
-const Grid = styled.div`
-  display: grid;
-  grid-row-gap: 6px;
-  grid-column-gap: 12px;
-  justify-items: center;
-  justify-content: center;
-
-  padding: 24px 6px;
-  margin: 0px 6px;
-`;
-
-const Image = styled.img`
-  border-style: solid;
-  border-width: 0px;
-  border-color: black;
-  height: 90px;
-  margin: 0px;
-  padding: 0px;
-`;
-
-const ProductBox = styled.div`
-  border-color: black;
-  border-radius: 2px;
-  border-style: solid;
-  border-width: 2px;
+const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 5px;
-  max-width: 75%;
+
+  height: 90%;
 `;
 
-const SubText = styled.div`
-  font-size: 12px;
-  color: #000;
-  text-align: center;
-  padding: 4px 6px 0px 6px;
+const Image = styled.img`
+  height: 100%;
+  width: 100%;
+  padding: 1vw;
+`;
+
+const ItemBox = styled.div`
+  position: relative;
+  border: solid black .2vw;
+  border-radius: 1vw;
+
+  width: 10vw;
+  height: 10vw;
+  margin: 1.4vw;
+
+  align-items: center;
+  justify-content: center;
+`;
+
+const ItemBalance = styled.div` 
+  border-top: solid black .2vw;
+  border-left: solid black .2vw;
+  border-radius: 0.5vw 0 0 0;
+
+  position: absolute;
+  color: black;
+  right: 0;
+  bottom: 0;
+  padding: .4vh .4vw;
+
   font-family: Pixel;
+  font-size: 1vw;
+`;
+
+const ButtonBox = styled.div`  
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  width: 75%;
+  padding: 1vw;
 `;

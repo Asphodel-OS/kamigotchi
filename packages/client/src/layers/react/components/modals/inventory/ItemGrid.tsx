@@ -69,26 +69,25 @@ const Container = styled.div`
 
 const Slot = styled.div`
   position: relative;
-  border: solid black .15vw;
-  border-radius: .5vw;
+  border: solid black 1.5px;
+  border-radius: 4px;
 
-  width: 5vw;
-  height: 5vw;
-  margin: .7vw;
+  margin: 5px;
 
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 `;
 
 const Icon = styled.img`
-  height: 100%;
-  width: 100%;
-  padding: .5vw;
+  height: 50px;
+  width: 50px;
+  padding: 5px;
 `;
 
 const IconClickable = styled.img`
-  height: 100%;
-  width: 100%;
+  height: 50px;
+  width: 50px;
   padding: .5vw;
 
     &:hover {
@@ -97,16 +96,17 @@ const IconClickable = styled.img`
 `;
 
 const Balance = styled.div` 
-  border-top: solid black .15vw;
-  border-left: solid black .15vw;
-  border-radius: .3vw 0 0 0;
+  border-top: solid black 1.25px;
+  border-left: solid black 1.25px;
+  border-radius: 2.5px 0 0 0;
+  background-color: #FFF;
 
   position: absolute;
   color: black;
   right: 0;
   bottom: 0;
-  padding: .2vw;
+  padding: 2px;
 
   font-family: Pixel;
-  font-size: .5vw;
+  font-size: 8px;
 `;
