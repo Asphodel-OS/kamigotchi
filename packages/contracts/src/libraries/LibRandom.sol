@@ -62,9 +62,6 @@ library LibRandom {
     }
 
     return keys[_positionFromWeighted(weights, totalWeight, randN)];
-
-    // should never get here
-    revert("LibRandom: no item found");
   }
 
   // @notice picks multiple results from weighted array
@@ -116,7 +113,7 @@ library LibRandom {
     uint256 currentWeight;
     for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
-      if (roll <= currentWeight) {
+      if (roll < currentWeight) {
         return (i);
       }
     }
