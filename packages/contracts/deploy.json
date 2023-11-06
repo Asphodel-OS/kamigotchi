@@ -421,6 +421,7 @@
     {
       "name": "AccountMoveSystem",
       "writeAccess": [
+        "BareValueComponent",
         "IndexRoomComponent",
         "StaminaComponent",
         "TimeLastComponent",
@@ -737,6 +738,7 @@
     {
       "name": "PetLevelSystem",
       "writeAccess": [
+        "BareValueComponent",
         "CoinComponent",
         "ExperienceComponent",
         "HealthComponent",
@@ -921,6 +923,7 @@
     {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
+        "BareValueComponent",
         "CoinComponent",
         "IdHolderComponent",
         "IndexSkillComponent",

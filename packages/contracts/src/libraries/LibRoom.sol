@@ -18,6 +18,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
 import { LibBoolean } from "libraries/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
 struct Location {
   int32 x;
@@ -294,6 +295,13 @@ library LibRoom {
       abi.encode(toIndex)
     );
     return LibQuery.query(fragments);
+  }
+
+  //////////////////////
+  // LOGGING
+
+  function logMove(IUintComp components, uint256 holderID) internal {
+    LibDataEntity.inc(components, holderID, 0, "MOVE", 1);
   }
 
   //////////////////////

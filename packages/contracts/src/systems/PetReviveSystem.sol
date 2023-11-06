@@ -43,6 +43,7 @@ contract PetReviveSystem is System {
 
     // standard logging and tracking
     LibDataEntity.inc(components, accountID, itemIndex, "INV_USE", 1);
+    LibPet.logRevive(components, accountID);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

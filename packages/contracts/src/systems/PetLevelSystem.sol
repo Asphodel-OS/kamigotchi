@@ -45,6 +45,7 @@ contract PetLevelSystem is System {
     LibPet721.updateEvent(world, LibPet.getIndex(components, id));
 
     // standard logging and tracking
+    LibExperience.logPetLevelInc(components, accountID);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
