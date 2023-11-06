@@ -5,6 +5,7 @@
     "AffinityComponent",
     "BalanceComponent",
     "BalancesComponent",
+    "BareValueComponent",
     "BlacklistComponent",
     "BlockRevealComponent",
     "CanNameComponent",
@@ -106,7 +107,6 @@
     "TypeComponent",
     "ValueComponent",
     "ViolenceComponent",
-    "WeiComponent",
     "WeightsComponent",
     "WhitelistComponent"
   ],
@@ -123,15 +123,7 @@
     },
     {
       "name": "_ConfigSetSystem",
-      "writeAccess": ["IsConfigComponent", "NameComponent", "ValueComponent"]
-    },
-    {
-      "name": "_ConfigSetStringSystem",
-      "writeAccess": ["IsConfigComponent", "NameComponent", "ValueComponent"]
-    },
-    {
-      "name": "_ConfigSetWeiSystem",
-      "writeAccess": ["IsConfigComponent", "NameComponent", "WeiComponent"]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "BareValueComponent"]
     },
     {
       "name": "_ListingSetSystem",

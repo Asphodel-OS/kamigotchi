@@ -72,7 +72,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
     await api.config.set.number('MINT_INITIAL_MAX', 1111);
     await api.config.set.number('MINT_TOTAL_MAX', 4444);
     await api.config.set.number('MINT_PRICE', utils.parseEther('0.0'));
-    await api.config.set.wei('GACHA_REROLL_PRICE', utils.parseEther('0.0001'));
+    await api.config.set.number('GACHA_REROLL_PRICE', utils.parseEther('0.0001'));
 
     // Kami Base Stats
     await api.config.set.number('KAMI_BASE_HEALTH', 50);
@@ -83,20 +83,16 @@ export function setUpWorldAPI(systems: any, provider: any) {
 
     // Kami Leveling Curve
     await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
-    await api.config.set.number('KAMI_LVL_REQ_MULT_BASE', 1259); // compounding increase per level
-    await api.config.set.number('KAMI_LVL_REQ_MULT_BASE_PREC', 3); // precision of compounding increase
+    await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 
     // Harvest Rates
     // HarvestRate = power * base * multiplier
     // NOTE: precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
-    await api.config.set.number('HARVEST_RATE_PREC', 9); // ignore this
-    await api.config.set.number('HARVEST_RATE_BASE', 250); // in respect to power
-    await api.config.set.number('HARVEST_RATE_BASE_PREC', 2); // i.e. x/100
-    await api.config.set.number('HARVEST_RATE_MULT_PREC', 7); // 2 affinities and 1 bonus multiplier with precision of 2
-    await api.config.set.number('HARVEST_RATE_MULT_AFF_BASE', 100);
-    await api.config.set.number('HARVEST_RATE_MULT_AFF_UP', 150);
-    await api.config.set.number('HARVEST_RATE_MULT_AFF_DOWN', 50);
+    // [prec, base, base_prec, mult_prec]
+    await api.config.set.array('HARVEST_RATE', [9, 250, 2, 7]);
+    // [base, up, down]
+    await api.config.set.array('HARVEST_RATE_MULT_AFF', [100, 150, 50]);
     await api.config.set.number('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
 
     // Kami Health Drain/Heal Rates
@@ -104,23 +100,18 @@ export function setUpWorldAPI(systems: any, provider: any) {
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
     // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    await api.config.set.number('HEALTH_RATE_DRAIN_BASE', 20); // in respect to harvest rate
-    await api.config.set.number('HEALTH_RATE_DRAIN_BASE_PREC', 2); // i.e. x/100
-    await api.config.set.number('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
-    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 120); // in respect to harmony
-    await api.config.set.number('HEALTH_RATE_HEAL_BASE_PREC', 2); // i.e. x/100
+    await api.config.set.array('HEALTH_RATE_DRAIN_BASE', [20, 2]);
+    // (prec, base, base_prec)
+    await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 120, 2]);
 
     // Liquidation Calcs
-    await api.config.set.number('LIQ_THRESH_BASE', 40);
-    await api.config.set.number('LIQ_THRESH_BASE_PREC', 2);
-    await api.config.set.number('LIQ_THRESH_MULT_AFF_BASE', 100);
-    await api.config.set.number('LIQ_THRESH_MULT_AFF_UP', 200);
-    await api.config.set.number('LIQ_THRESH_MULT_AFF_DOWN', 50);
+    await api.config.set.array('LIQ_THRESH_BASE', [40, 2]);
+    // [base, up, down]
+    await api.config.set.array('LIQ_THRESH_MULT_AFF', [100, 200, 50]);
     await api.config.set.number('LIQ_THRESH_MULT_AFF_PREC', 2);
 
     // Liquidation Bounty
-    await api.config.set.number('LIQ_BOUNTY_BASE', 50);
-    await api.config.set.number('LIQ_BOUNTY_BASE_PREC', 2);
+    await api.config.set.array('LIQ_BOUNTY_BASE', [50, 2]);
   }
 
   // local config settings for faster testing
@@ -128,8 +119,8 @@ export function setUpWorldAPI(systems: any, provider: any) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
-    await api.config.set.number('HARVEST_RATE_BASE', 10000); // in respect to power
-    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 10000); // in respect to harmony
+    await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 7]); // in respect to power
+    await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 10000, 2]); // in respect to harmony
   }
 
   ////////////////////

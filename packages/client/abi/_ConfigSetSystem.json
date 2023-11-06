@@ -37,7 +37,20 @@
     },
     {
       "type": "function",
-      "name": "executeTyped",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "setValue",
       "inputs": [
         {
           "name": "name",
@@ -50,27 +63,44 @@
           "internalType": "uint256"
         }
       ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
+      "outputs": [],
       "stateMutability": "nonpayable"
     },
     {
       "type": "function",
-      "name": "owner",
-      "inputs": [],
-      "outputs": [
+      "name": "setValueArray",
+      "inputs": [
         {
-          "name": "",
-          "type": "address",
-          "internalType": "address"
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "values",
+          "type": "uint32[8]",
+          "internalType": "uint32[8]"
         }
       ],
-      "stateMutability": "view"
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setValueString",
+      "inputs": [
+        {
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -117,8 +147,10 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(string,uint256)": "92976665",
     "owner()": "8da5cb5b",
+    "setValue(string,uint256)": "7c2da7aa",
+    "setValueArray(string,uint32[8])": "348984f3",
+    "setValueString(string,string)": "ab7d4d8c",
     "transferOwnership(address)": "f2fde38b"
   }
 }
