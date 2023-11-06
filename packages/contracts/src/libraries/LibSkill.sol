@@ -21,6 +21,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -245,5 +246,12 @@ library LibSkill {
 
     if (results.length == 0) return 0;
     return results[0];
+  }
+
+  //////////////////////
+  // LOGGING
+
+  function logUsePoint(IUintComp components, uint256 holderID) internal {
+    LibDataEntity.inc(components, holderID, 0, "SKILL_POINTS_USE", 1);
   }
 }

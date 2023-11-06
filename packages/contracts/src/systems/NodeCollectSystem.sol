@@ -35,6 +35,7 @@ contract NodeCollectSystem is System {
     uint256 productionID;
     uint256 output;
     uint256 totalOutput;
+    uint256 totalTime;
     uint256[] memory petIDs = LibPet.getAllForAccount(components, accountID);
     for (uint256 i = 0; i < petIDs.length; i++) {
       petID = petIDs[i];
@@ -42,6 +43,7 @@ contract NodeCollectSystem is System {
 
       productionID = LibPet.getProduction(components, petID);
       if (LibProduction.getNode(components, productionID) != nodeID) continue;
+      totalTime += block.timestamp - LibProduction.getLastTs(components, productionID);
 
       LibPet.sync(components, petID);
       if (!LibPet.isHealthy(components, petID)) continue;
@@ -54,13 +56,8 @@ contract NodeCollectSystem is System {
     // standard logging and tracking
     LibScore.inc(components, accountID, "COLLECT", totalOutput);
     LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", totalOutput);
-    LibDataEntity.inc(
-      components,
-      accountID,
-      LibNode.getIndex(components, nodeID),
-      "NODE_COLLECT",
-      totalOutput
-    );
+    LibNode.logHarvestAt(components, accountID, LibNode.getIndex(components, nodeID), output);
+    LibProduction.logHarvestTime(components, accountID, totalTime);
     LibAccount.updateLastTs(components, accountID);
     return abi.encode(totalOutput);
   }

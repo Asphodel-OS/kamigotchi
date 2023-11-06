@@ -20,6 +20,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
@@ -310,5 +311,12 @@ library LibProduction {
     }
 
     return LibQuery.query(fragments);
+  }
+
+  /////////////////////
+  // LOGGING
+
+  function logHarvestTime(IUintComp components, uint256 accountID, uint256 value) internal {
+    LibDataEntity.inc(components, accountID, 0, "HARVEST_TIME", value);
   }
 }

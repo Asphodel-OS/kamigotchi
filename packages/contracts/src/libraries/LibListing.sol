@@ -209,9 +209,8 @@ library LibListing {
   //////////////////
   // DATA LOGGING
 
-  // @notice log increase for item buy
+  /// @notice log increase for item buy
   function logIncItemBuy(
-    IWorld world,
     IUintComp components,
     uint256 accountID,
     uint32 itemIndex,
@@ -220,14 +219,23 @@ library LibListing {
     LibDataEntity.inc(components, accountID, itemIndex, "ITEM_BUY", amt);
   }
 
-  // @notice log increase for item sell
+  /// @notice log increase for item sell
   function logIncItemSell(
-    IWorld world,
     IUintComp components,
     uint256 accountID,
     uint32 itemIndex,
     uint256 amt
   ) internal {
     LibDataEntity.inc(components, accountID, itemIndex, "ITEM_SELL", amt);
+  }
+
+  /// @notice log coins spent
+  function logSpendCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
+    LibDataEntity.inc(components, accountID, 0, "COIN_SPEND", amt);
+  }
+
+  /// @notice log coin revenue earned
+  function logEarnCoin(IUintComp components, uint256 accountID, uint256 amt) internal {
+    LibDataEntity.inc(components, accountID, 0, "COIN_REVENUE", amt);
   }
 }

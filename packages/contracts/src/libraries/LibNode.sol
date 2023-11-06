@@ -8,6 +8,8 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
+
 import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.sol";
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
@@ -184,5 +186,17 @@ library LibNode {
     if (results.length != 0) {
       result = results[0];
     }
+  }
+
+  /////////////////////
+  // LOGGING
+
+  function logHarvestAt(
+    IUintComp components,
+    uint256 holderID,
+    uint32 index,
+    uint256 amt
+  ) internal {
+    LibDataEntity.inc(components, holderID, index, "HARVEST_AT_NODE", amt);
   }
 }

@@ -34,14 +34,15 @@ contract ListingBuySystem is System {
 
     // create an inventory for the account first if one doesn't exist
     uint32 itemIndex = LibListing.getItemIndex(components, listingID);
-    if (LibInventory.get(components, accountID, itemIndex) == 0) {
+    if (LibInventory.get(components, accountID, itemIndex) == 0)
       LibInventory.create(world, components, accountID, itemIndex);
-    }
+    uint256 price = LibListing.getBuyPrice(components, listingID);
     LibListing.buyFrom(components, listingID, accountID, amt);
 
     // standard logging and tracking
     LibInventory.logIncItemTotal(world, components, accountID, itemIndex, amt);
-    LibListing.logIncItemBuy(world, components, accountID, itemIndex, amt);
+    LibListing.logEarnCoin(components, accountID, amt * price);
+    LibListing.logIncItemBuy(components, accountID, itemIndex, amt);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
