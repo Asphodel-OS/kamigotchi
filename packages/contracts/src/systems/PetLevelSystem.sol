@@ -36,11 +36,10 @@ contract PetLevelSystem is System {
     // sync pet health
     LibPet.sync(components, id);
 
-    // consume experience, level pet up, increase its SP and heal it to full
+    // consume experience, level pet up and increase its SP
     LibExperience.dec(components, id, levelCost);
     LibExperience.incLevel(components, id, 1);
     LibSkill.inc(components, id, 1);
-    LibPet.heal(components, id, LibPet.calcTotalHealth(components, id));
 
     // signal a metadata update
     LibPet721.updateEvent(world, LibPet.idToIndex(components, id));
