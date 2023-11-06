@@ -39,6 +39,9 @@ contract SkillUpgradeSystem is System {
         LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
         "SkillUpgrade: must be in same room"
       );
+
+      // NOTE: we don't block skill upgrading by cooldown time or pet status
+      // but we need to sync in advance to get accurate historical output
       LibPet.sync(components, id);
     }
 
@@ -86,6 +89,10 @@ contract SkillUpgradeSystem is System {
       }
     }
 
+    // NOTE: we sync the pet a second time here, because the updated Production Rate
+    // informs the FE. it's gas inefficient, but it keeps the code sane up there.
+    // Can consider wiping once the calculations are mirrored on the FE.
+    LibPet.sync(components, id);
     LibAccount.updateLastBlock(components, accountID);
     return "";
   }

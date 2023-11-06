@@ -66,6 +66,7 @@ library LibProduction {
     setState(components, id, "ACTIVE");
     setBalance(components, id, 0);
     setRate(components, id, calcRate(components, id)); // always last
+    setStartTime(components, id, block.timestamp);
   }
 
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
@@ -80,6 +81,7 @@ library LibProduction {
       delta = calcOutput(components, id);
       inc(components, id, delta);
       setRate(components, id, calcRate(components, id));
+      setStartTime(components, id, block.timestamp);
     }
   }
 
@@ -88,8 +90,7 @@ library LibProduction {
 
   // Calculate the duration since a production last started, measured in seconds.
   function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 petID = getPet(components, id);
-    return block.timestamp - LibPet.getLastTs(components, petID);
+    return block.timestamp - getStartTime(components, id);
   }
 
   // Calculate the accrued output of the production since the pet's last snapshot
@@ -197,7 +198,7 @@ library LibProduction {
     StateComponent(getAddressById(components, StateCompID)).set(id, state);
   }
 
-  function setTimeStart(IUintComp components, uint256 id, uint256 timeStart) internal {
+  function setStartTime(IUintComp components, uint256 id, uint256 timeStart) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
   }
 

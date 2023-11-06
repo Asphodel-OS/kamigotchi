@@ -698,6 +698,7 @@
         "IndexComponent",
         "RateComponent",
         "TimeLastActionComponent",
+        "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -713,7 +714,8 @@
         "ProxyPermissionsERC721Component",
         "RateComponent",
         "SkillPointComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TimeStartComponent"
       ]
     },
     {
@@ -760,6 +762,7 @@
         "IndexComponent",
         "RateComponent",
         "TimeLastActionComponent",
+        "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -784,6 +787,7 @@
         "StateComponent",
         "TimeComponent",
         "TimeLastActionComponent",
+        "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -799,7 +803,8 @@
         "IdPetComponent",
         "RateComponent",
         "StateComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TimeStartComponent"
       ]
     },
     {
@@ -818,6 +823,7 @@
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
+        "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -888,6 +894,7 @@
         "SkillPointComponent",
         "SlotsComponent",
         "TimeLastActionComponent",
+        "TimeStartComponent",
         "TypeComponent",
         "ValueComponent",
         "ViolenceComponent"
