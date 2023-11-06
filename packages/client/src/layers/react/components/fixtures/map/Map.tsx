@@ -13,7 +13,7 @@ export function registerMapButton() {
   registerUIComponent(
     'MapButton',
     {
-      colStart: 3,
+      colStart: 6,
       colEnd: 30,
       rowStart: 3,
       rowEnd: 10,
@@ -79,8 +79,8 @@ export function registerMapButton() {
 
 const Wrapper = styled.div`
   width: 100%;
-  padding: 1vw 1.1vw;
-  gap: .7vw;
+  padding-right: .5vw;
+  gap: .3vw;
   
   display: flex;
   flex-flow: row nowrap;
@@ -94,7 +94,7 @@ const Image = styled.img`
 `;
 
 const Text = styled.div`
-  font-size: 1.5vw;
+  font-size: 1vw;
   color: #333;
   font-family: Pixel;
 `;

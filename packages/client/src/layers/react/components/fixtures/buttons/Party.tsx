@@ -10,8 +10,8 @@ export function registerPartyButton() {
   registerUIComponent(
     'PartyButton',
     {
-      colStart: 76,
-      colEnd: 79,
+      colStart: 3,
+      colEnd: 10,
       rowStart: 3,
       rowEnd: 10,
     },
