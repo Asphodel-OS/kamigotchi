@@ -63,7 +63,7 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     token.withdraw((target), value);
 
     // standard logging and tracking
-    LibDataEntity.inc(world, components, accountID, 0, "COIN_WITHDRAW", value);
+    LibDataEntity.inc(components, accountID, 0, "COIN_WITHDRAW", value);
     LibAccount.updateLastTs(components, accountID);
   }
 

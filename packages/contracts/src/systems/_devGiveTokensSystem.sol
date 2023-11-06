@@ -21,7 +21,6 @@ contract _devGiveTokensSystem is System {
     LibCoin.inc(components, LibAccount.getByOperator(components, to), amount);
 
     LibDataEntity.inc(
-      world,
       components,
       LibAccount.getByOperator(components, to),
       0,
