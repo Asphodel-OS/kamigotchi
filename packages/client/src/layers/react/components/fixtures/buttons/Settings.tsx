@@ -37,7 +37,7 @@ export function registerSettingsButton() {
         <MenuButton
           id='settings_button'
           targetDiv='settings'
-          text='Settings'
+          tooltip='Settings'
           hideModals={modalsToHide}
           visible={visibleButtons.settings}
         >

@@ -35,7 +35,7 @@ export function registerInventoryButton() {
         <MenuButton
           id='inventory-button'
           targetDiv='inventory'
-          text='Inventory'
+          tooltip='Inventory'
           hideModals={modalsToHide}
           visible={visibleButtons.inventory}
         >

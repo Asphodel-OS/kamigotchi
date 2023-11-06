@@ -62,14 +62,11 @@ export function registerMapButton() {
         <MenuButton
           id='map_button'
           targetDiv='map'
-          text='Map'
+          tooltip={`Map (${roomObject?.name})`}
           hideModals={modalsToHide}
           visible={visibleButtons.map}
         >
-          <Wrapper>
-            <Image src={mapIcon} alt='map_icon' />
-            <Text>{roomObject?.name}</Text>
-          </Wrapper>
+          <Image src={mapIcon} alt='map_icon' />
         </MenuButton>
       );
     }

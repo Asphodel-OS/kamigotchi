@@ -36,7 +36,7 @@ export function registerQuestsButton() {
         <MenuButton
           id='quests_button'
           targetDiv='quests'
-          text='Quests'
+          tooltip='Quests'
           hideModals={modalsToHide}
           visible={visibleButtons.quests}
         >

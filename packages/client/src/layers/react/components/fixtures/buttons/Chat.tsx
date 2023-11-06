@@ -24,7 +24,7 @@ export function registerChatButton() {
         <MenuButton
           id='chat_button'
           targetDiv='lootboxes'
-          text='Chat'
+          tooltip='Chat'
           hideModals={modalsToHide}
           visible={visibleButtons.chat}
         >

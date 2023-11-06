@@ -9,16 +9,15 @@ interface Props {
   id: string;
   targetDiv: keyof VisibleModals;
   children: React.ReactNode;
-  text: string;
+  tooltip: string;
   visible: boolean;
   hideModals?: Partial<VisibleModals>;
 }
 
-// MenuButton renders a button that toggles a target modal. It supports a generic
-// input of children, though this will usually just be text.
+// MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
   const { visibleModals, setVisibleModals } = dataStore();
-  const { id, children, text, hideModals } = props;
+  const { id, children, tooltip, hideModals } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
@@ -39,7 +38,7 @@ export const MenuButton = (props: Props) => {
   element?.addEventListener('mousedown', handleClicks);
 
   return (
-    <Tooltip text={[text]}>
+    <Tooltip text={[tooltip]}>
       <div id={id}>
         <Button
           style={{ display: props.visible ? 'flex' : 'none' }}

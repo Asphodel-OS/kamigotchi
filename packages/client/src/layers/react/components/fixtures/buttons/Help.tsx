@@ -35,7 +35,7 @@ export function registerHelpButton() {
         <MenuButton
           id='help_button'
           targetDiv='help'
-          text='Help'
+          tooltip='Help'
           hideModals={modalsToHide}
           visible={visibleButtons.help}
         >

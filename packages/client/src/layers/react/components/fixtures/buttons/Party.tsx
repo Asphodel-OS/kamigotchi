@@ -35,7 +35,7 @@ export function registerPartyButton() {
         <MenuButton
           id='party_button'
           targetDiv='party'
-          text='Party'
+          tooltip='Party'
           hideModals={modalsToHide}
           visible={visibleButtons.party}
         >
