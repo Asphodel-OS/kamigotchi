@@ -17,48 +17,44 @@ interface Props {
 // ModalWrapperFull is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapperFull = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { visibleModals } = dataStore();
+  const { divName, id, children, header, footer, canExit, overlay } = props;
 
-  // Updates modal visibility if the divName is updated to visible in the store.
-  // Closes other modals (if specified)
+  // update modal visibility according to store settings
   useEffect(() => {
-    const element = document.getElementById(props.id);
+    const element = document.getElementById(id);
     if (element) {
-      const isVisible = visibleModals[props.divName];
+      const isVisible = visibleModals[divName];
       element.style.display = isVisible ? 'block' : 'none';
-
-      const toggleModal = props.hideModals ? props.hideModals : {};
-      setVisibleModals({ ...visibleModals, ...toggleModal });
     }
-  }, [visibleModals[props.divName]]);
+  }, [visibleModals[divName]]);
 
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
     event.stopPropagation();
   }
-  const element = document.getElementById(props.id);
+  const element = document.getElementById(id);
   element?.addEventListener('mousedown', handleClicks);
 
-  // Some conditional styling to adapt the content to the wrapper.
-  const zindex = props.overlay ? { position: 'relative', zIndex: '2' } : {};
+  // conditional stlying for modals overlayed on top
+  const zindex = overlay ? { position: 'relative', zIndex: '2' } : {};
 
 
   return (
     <Wrapper
-      id={props.id}
-      isOpen={visibleModals[props.divName]}
+      id={id}
+      isOpen={visibleModals[divName]}
       style={{ ...zindex }}
     >
       <Content>
-        {props.canExit &&
+        {canExit &&
           <ButtonRow>
-            <ExitButton divName={props.divName} />
+            <ExitButton divName={divName} />
           </ButtonRow>
         }
-        {props.header && <Header>{props.header}</Header>}
-        <Children>{props.children}</Children>
-        {props.footer && <Footer>{props.footer}</Footer>}
-
+        {header && <Header>{header}</Header>}
+        <Children>{children}</Children>
+        {footer && <Footer>{footer}</Footer>}
       </Content>
     </Wrapper>
   );
