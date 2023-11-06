@@ -15,29 +15,24 @@ contract _ConfigSetSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (string memory name, uint256 value) = abi.decode(arguments, (string, uint256));
-    uint256 configID = LibConfig.get(components, name);
-
-    if (configID == 0) configID = LibConfig.create(world, components, name);
+    uint256 configID = LibConfig.getID(name);
     LibConfig.setValue(components, configID, value);
 
     return "";
   }
 
   function setValue(string memory name, uint256 value) public onlyOwner {
-    uint256 configID = LibConfig.get(components, name);
-    if (configID == 0) configID = LibConfig.create(world, components, name);
+    uint256 configID = LibConfig.getID(name);
     LibConfig.setValue(components, configID, value);
   }
 
   function setValueArray(string memory name, uint32[8] memory values) public onlyOwner {
-    uint256 configID = LibConfig.get(components, name);
-    if (configID == 0) configID = LibConfig.create(world, components, name);
+    uint256 configID = LibConfig.getID(name);
     LibConfig.setValueArray(components, configID, values);
   }
 
   function setValueString(string memory name, string memory value) public onlyOwner {
-    uint256 configID = LibConfig.get(components, name);
-    if (configID == 0) configID = LibConfig.create(world, components, name);
+    uint256 configID = LibConfig.getID(name);
     LibConfig.setValueString(components, configID, value);
   }
 }

@@ -20,7 +20,7 @@ contract _devGiveTokensSystem is System {
     (address to, uint256 amount) = abi.decode(arguments, (address, uint256));
     LibCoin.inc(components, LibAccount.getByOperator(components, to), amount);
 
-    LibDataEntity.incFor(
+    LibDataEntity.inc(
       world,
       components,
       LibAccount.getByOperator(components, to),

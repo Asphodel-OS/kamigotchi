@@ -52,9 +52,9 @@ contract NodeCollectSystem is System {
     }
 
     // standard logging and tracking
-    LibScore.incBy(world, components, accountID, "COLLECT", totalOutput);
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", totalOutput);
-    LibDataEntity.incFor(
+    LibScore.inc(world, components, accountID, "COLLECT", totalOutput);
+    LibDataEntity.inc(world, components, accountID, 0, "COIN_TOTAL", totalOutput);
+    LibDataEntity.inc(
       world,
       components,
       accountID,

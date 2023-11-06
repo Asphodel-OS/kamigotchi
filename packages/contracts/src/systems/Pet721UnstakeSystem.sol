@@ -46,7 +46,7 @@ contract Pet721UnstakeSystem is System {
     LibPet721.unstake(world, msg.sender, tokenID);
 
     // standard logging and tracking
-    LibDataEntity.incFor(world, components, accountID, 0, "PET721_UNSTAKE", 1);
+    LibDataEntity.inc(world, components, accountID, 0, "PET721_UNSTAKE", 1);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

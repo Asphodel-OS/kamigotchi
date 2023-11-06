@@ -27,7 +27,7 @@ contract FriendRequestSystem is System {
     // friendship specific checks
     require(
       LibFriend.getAccountRequests(components, targetID).length <
-        LibConfig.getValueOf(components, "FRIENDS_REQUEST_LIMIT"),
+        LibConfig.get(components, "FRIENDS_REQUEST_LIMIT"),
       "Max friend requests reached"
     );
     /// @dev FE should not get here; if either alr requested, friends, or blocked, a friendship will exist

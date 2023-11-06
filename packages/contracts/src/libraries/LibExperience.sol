@@ -45,11 +45,11 @@ library LibExperience {
   // cost = k * a^(x-1); k := base, a := multiplierBase, x := level, a^(x-1) := multiplier
   function calcLevelCost(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 level = getLevel(components, id);
-    uint256 base = LibConfig.getValueOf(components, "KAMI_LVL_REQ_BASE");
+    uint256 base = LibConfig.get(components, "KAMI_LVL_REQ_BASE");
     uint256 multiplier = 1e18;
 
     if (level > 1) {
-      uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "KAMI_LVL_REQ_MULT_BASE");
+      uint32[8] memory configVals = LibConfig.getArray(components, "KAMI_LVL_REQ_MULT_BASE");
       uint multiplierBase = uint256(configVals[0]);
       uint256 multiplierBasePrec = 10 ** uint256(configVals[1]);
       int256 multiplierBaseFormatted = int256((1e18 * multiplierBase) / multiplierBasePrec);

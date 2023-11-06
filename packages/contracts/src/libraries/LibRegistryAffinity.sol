@@ -23,7 +23,7 @@ library LibRegistryAffinity {
     string memory sourceAff,
     string memory targetAff
   ) public view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "LIQ_THRESH_MULT_AFF");
+    uint32[8] memory configVals = LibConfig.getArray(components, "LIQ_THRESH_MULT_AFF");
     uint256 multBase = uint256(configVals[0]);
     uint256 multUp = uint256(configVals[1]);
     uint256 multDown = uint256(configVals[2]);
@@ -49,7 +49,7 @@ library LibRegistryAffinity {
     string memory sourceAff,
     string memory targetAff
   ) public view returns (uint256) {
-    uint32[8] memory values = LibConfig.getValueArrayOf(components, "HARVEST_RATE_MULT_AFF");
+    uint32[8] memory values = LibConfig.getArray(components, "HARVEST_RATE_MULT_AFF");
 
     uint256 multBase = uint256(values[0]);
     uint256 multUp = uint256(values[1]);

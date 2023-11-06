@@ -30,18 +30,15 @@ contract Farm20DepositSystem is System {
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Deposit: no account detected");
-    require(
-      LibAccount.getRoom(components, accountID) == ROOM,
-      "Farm20Deposit: must be in room 12"
-    );
+    require(LibAccount.getRoom(components, accountID) == ROOM, "Farm20Deposit: must be in room 12");
 
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
     LibCoin.inc(components, accountID, amount);
 
     // standard logging and tracking
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", amount);
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_DEPOSIT", amount);
+    LibDataEntity.inc(world, components, accountID, 0, "COIN_TOTAL", amount);
+    LibDataEntity.inc(world, components, accountID, 0, "COIN_DEPOSIT", amount);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
