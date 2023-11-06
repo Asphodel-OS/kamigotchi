@@ -50,9 +50,7 @@ export function registerMapButton() {
         emaBoard: false,
         kami: false,
         leaderboard: false,
-        merchant: false,
         nameKami: false,
-        node: false,
         party: false,
       };
 

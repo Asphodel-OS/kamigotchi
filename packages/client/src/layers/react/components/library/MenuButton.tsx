@@ -22,11 +22,10 @@ export const MenuButton = (props: Props) => {
   // toggles the target modal open and closed
   const handleToggle = () => {
     playClick();
-    setVisibleModals({
-      ...visibleModals,
-      ...hideModals,
-      [targetDiv]: !visibleModals[targetDiv],
-    });
+    const isModalOpen = visibleModals[targetDiv];
+    let nextVisibleModals = { ...visibleModals, [targetDiv]: !isModalOpen };
+    if (!isModalOpen) nextVisibleModals = { ...nextVisibleModals, ...hideModals };
+    setVisibleModals(nextVisibleModals);
   };
 
   // catch clicks on modal, prevents duplicate Phaser3 triggers

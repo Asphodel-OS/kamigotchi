@@ -25,10 +25,8 @@ export function registerPartyButton() {
         emaBoard: false,
         kami: false,
         leaderboard: false,
-        merchant: false,
         map: false,
         nameKami: false,
-        node: false,
       };
 
       return (
