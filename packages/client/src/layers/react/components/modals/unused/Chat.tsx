@@ -24,7 +24,7 @@ export function registerChatModal() {
     {
       colStart: 69,
       colEnd: 100,
-      rowStart: 10,
+      rowStart: 8,
       rowEnd: 62,
     },
 

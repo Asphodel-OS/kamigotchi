@@ -16,7 +16,7 @@ export function registerInventoryModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 10,
+      rowStart: 8,
       rowEnd: 75,
     },
     (layers) => {
