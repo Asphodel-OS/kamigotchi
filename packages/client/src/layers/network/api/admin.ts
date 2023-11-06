@@ -489,8 +489,8 @@ export function createAdminAPI(systems: any) {
 
   function sleepIf() {
     const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode') || process.env.MODE;
-    if (mode && mode == 'TEST') {
+    const mode = urlParams.get('mode') || import.meta.env.MODE;
+    if (mode && ['production', 'staging'].includes(mode)) {
       console.log('sleeping');
       return new Promise((resolve) => setTimeout(resolve, 8000));
     }

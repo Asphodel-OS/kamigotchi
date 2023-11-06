@@ -1,5 +1,4 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import crypto from 'crypto';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -80,9 +79,7 @@ export function registerQuestsModal() {
       // INTERACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'QuestAccept',
           params: [quest.index * 1],
           description: `Accepting Quest ${quest.index * 1}`,
@@ -93,9 +90,7 @@ export function registerQuestsModal() {
       };
 
       const completeQuest = async (quest: Quest) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'QuestComplete',
           params: [quest.id],
           description: `Completing Quest ${quest.index * 1}`,

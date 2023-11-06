@@ -6,7 +6,7 @@ import {
   getComponentValue,
   hasComponent,
   runQuery,
-} from '@latticexyz/recs';
+} from '@mud-classic/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 import { baseURI } from 'src/constants/media';
@@ -63,10 +63,7 @@ export const getItem = (
     description: getComponentValue(Description, entityIndex)?.value as string,
     image: {
       default: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
-      x4: `${baseURI}${(getComponentValue(MediaURI, entityIndex)?.value as string).slice(
-        0,
-        -4
-      )}_x4.png`,
+      x4: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
     },
     stats: getStats(network, entityIndex),
     is: {

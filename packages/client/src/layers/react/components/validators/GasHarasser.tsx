@@ -1,6 +1,5 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from 'crypto';
+import { EntityIndex } from '@mud-classic/recs';
+import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -85,9 +84,7 @@ export function registerGasHarasser() {
         const network = networks.get(selectedAddress);
         const account = network!.api.player.account;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'AccountFund',
           params: [value.toString()],
           description: `Funding Operator ${value.toString()}`,

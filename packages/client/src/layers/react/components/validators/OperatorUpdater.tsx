@@ -1,6 +1,5 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from 'crypto';
+import { EntityIndex } from '@mud-classic/recs';
+import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -97,9 +96,7 @@ export function registerOperatorUpdater() {
         const world = network!.world;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'AccountSetOperator',
           params: [address],
           description: `Setting Account Avatar to ${address}`,

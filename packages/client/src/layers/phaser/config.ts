@@ -1,4 +1,4 @@
-import { defineScaleConfig, defineScene } from '@latticexyz/phaserx';
+import { defineScaleConfig, defineScene } from '@mud-classic/phaserx';
 import { GameScene } from './scenes/GameScene';
 
 export type PhaserConfig = {

@@ -1,10 +1,11 @@
 import { ExternalProvider } from '@ethersproject/providers';
-import { SetupContractConfig } from '@latticexyz/std-client';
-import { chainConfigs } from 'constants/chains';
 import { Wallet } from 'ethers';
 
+import { chainConfigs } from 'constants/chains';
+import { SetupContractConfig } from 'layers/network/setup';
+
 // flat network configuration struct
-// TODO: replace this with Lattice's version in "@latticexyz/network/dist/types"
+// TODO: replace this with Lattice's version in "@mud-classic/network/dist/types"
 export type NetworkConfig = {
   devMode: boolean;
   worldAddress: string;
@@ -52,11 +53,11 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
   let config: NetworkConfig = <NetworkConfig>{};
 
   // get the determined environment mode
-  let mode = process.env.MODE;
-  if (mode) console.warn(`Environment mode ${mode} detected.\n`);
+  let mode = import.meta.env.MODE;
+  if (mode) console.log(`Environment mode ${mode} detected.\n`);
   else {
-    console.warn(`No environment mode detected. Defaulting to 'DEV'\n`);
-    mode = 'DEV';
+    console.warn(`No environment mode detected. Defaulting to 'development'\n`);
+    mode = 'development';
   }
 
   // override the environment mode if the url param is set
@@ -64,10 +65,10 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
 
   // resolve the network config based on the environment mode
   switch (mode) {
-    case 'DEV':
+    case 'development':
       config = createConfigRawLocal(externalProvider);
       break;
-    case 'TEST':
+    case 'staging':
       config = createConfigRawOPSepolia(externalProvider);
       break;
     default:
@@ -171,7 +172,7 @@ const getModeOverride = () => {
     console.warn(
       `No chain config found for override mode '${modeOverride}'.\n`,
       `Must be one of [${Array.from(chainConfigs.keys()).join(' | ')}].\n`,
-      `Defaulting to environment mode.`
+      `Defaulting to provided environment mode.`
     );
   }
 };

@@ -1,9 +1,7 @@
-import crypto from 'crypto';
 import React, { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { EntityID } from '@latticexyz/recs';
 import { Listing, getListing } from 'layers/network/shapes/Listing';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -50,9 +48,7 @@ export function registerBuyModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'ListingBuy',
           params: [listing.id, amt],
           description: `Buying ${amt} of ${listing.item!.name}`,

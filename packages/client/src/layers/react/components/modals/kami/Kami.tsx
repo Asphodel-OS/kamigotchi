@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -66,9 +64,7 @@ export function registerKamiModal() {
       // ACTIONS
 
       const levelUp = (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiLevel',
           params: [kami.id],
           description: `Leveling up ${kami.name}`,
@@ -79,9 +75,7 @@ export function registerKamiModal() {
       };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'SkillUpgrade',
           params: [kami.id, skill.index],
           description: `Upgrading ${skill.name} for ${kami.name}`,

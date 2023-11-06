@@ -8,7 +8,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
-import { Gaussian } from "solstat/Gaussian.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
@@ -39,6 +38,7 @@ import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { Gaussian } from "utils/Gaussian.sol";
 
 // placeholders for config values
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";

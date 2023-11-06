@@ -5,7 +5,7 @@ import {
   HasValue,
   getComponentValue,
   runQuery,
-} from '@latticexyz/recs';
+} from '@mud-classic/recs';
 
 import { baseURI } from 'constants/media';
 import { NetworkLayer } from 'layers/network/types';

@@ -1,6 +1,5 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from 'crypto';
+import { EntityIndex } from '@mud-classic/recs';
+import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -74,9 +73,7 @@ export function registerFundOperatorModal() {
         const network = networks.get(selectedAddress);
         const account = network!.api.player.account;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'AccountFund',
           params: [amount.toString()],
           description: `Funding Operator ${amount.toString()}`,
@@ -89,9 +86,7 @@ export function registerFundOperatorModal() {
       };
 
       const refundTx = async () => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'AccountRefund',
           params: [amount.toString()],
           description: `Refunding Owner ${amount.toString()}`,

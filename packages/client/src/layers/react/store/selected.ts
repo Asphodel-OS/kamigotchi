@@ -1,4 +1,4 @@
-import { EntityIndex } from '@latticexyz/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { create } from 'zustand';
 
 export interface State {

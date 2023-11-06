@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentEntities, getComponentValue } from '@latticexyz/recs';
+import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-classic/recs';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 

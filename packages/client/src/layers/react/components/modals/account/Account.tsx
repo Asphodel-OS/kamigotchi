@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -81,9 +79,7 @@ export function registerAccountModal() {
       // INTERACTION
 
       const acceptFren = (friendship: Friendship) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'AcceptFriend',
           params: [friendship.id],
           description: `Accepting ${friendship.account.name} Friend Request`,
@@ -95,9 +91,7 @@ export function registerAccountModal() {
 
       // block an account
       const blockFren = (account: Account) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'BlockFriend',
           params: [account.ownerEOA],
           description: `Blocking ${account.name}`,
@@ -109,9 +103,7 @@ export function registerAccountModal() {
 
       // cancel a friendship - a request, block, or existing friendship
       const cancelFren = (friendship: Friendship) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'CancelFriend',
           params: [friendship.id],
           description: `Cancelling ${friendship.target.name} Friendship`,
@@ -123,9 +115,7 @@ export function registerAccountModal() {
 
       // send a friend request
       const requestFren = (account: Account) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'RequestFriend',
           params: [account.ownerEOA],
           description: `Sending ${account.name} Friend Request`,

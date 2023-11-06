@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { getComponentValue, removeComponent, setComponent } from '@latticexyz/recs';
+import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
 
 import { createNetworkConfig, createNetworkLayer } from 'layers/network';
 import { createPhaserLayer } from 'layers/phaser/createPhaserLayer';
@@ -15,6 +15,14 @@ export async function boot() {
   mountReact.current(true);
   setLayers.current(layers as Layers);
 }
+
+  // console.log('KAMITGOTCHI: creating test web worker');
+  // const workerURL = new URL('./workers/worker.ts', import.meta.url);
+  // console.log('root url', import.meta.url);
+  // console.log('worker URL', workerURL);
+  // const myWorker1 = new Worker(workerURL, { type: 'module' });
+  // myWorker1.postMessage('Hello, worker!'); 
+
 
 // boot the game (phaser and network layers)
 // TODO: split this apart and boot the logic over to the network and phaser layers

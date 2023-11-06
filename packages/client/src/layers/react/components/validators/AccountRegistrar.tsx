@@ -5,14 +5,14 @@ import {
   HasValue,
   getComponentValue,
   runQuery,
-} from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
+} from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
 import { IconButton } from '@mui/material';
-import crypto from 'crypto';
+import { waitForActionCompletion } from 'layers/network/utils';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import { getAccountByName } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -207,7 +207,8 @@ export function registerAccountRegistrar() {
         const connectedBurner = burner.connected.address;
 
         console.log('CREATING ACCOUNT:', selectedAddress);
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
+
+        const actionID = uuid() as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountCreate',

@@ -2,7 +2,7 @@ import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { User } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useAccount } from 'layers/react/store/account';
 
-export const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY!);
+export const client = new NeynarAPIClient(import.meta.env.VITE_NEYNAR_API_KEY!);
 
 interface UUIDHolder {
   signer_uuid?: string;
@@ -29,9 +29,9 @@ export const emptyFaracasterUser: FarcasterUser = {
 // spawns a window and listens for the resulting message event
 let authWindow: Window | null;
 export const handleSignIn = () => {
-  const loginURL = process.env.NEYNAR_LOGIN_URL; // https://app.neynar.com/login
-  const clientID = process.env.NEYNAR_CLIENT_ID;
-  const redirectURI = process.env.NEYNAR_REDIRECT_URI;
+  const loginURL = import.meta.env.VITE_NEYNAR_LOGIN_URL; // https://app.neynar.com/login
+  const clientID = import.meta.env.VITE_NEYNAR_CLIENT_ID;
+  const redirectURI = import.meta.env.VITE_NEYNAR_REDIRECT_URI;
   if (!loginURL || !clientID) {
     console.error(
       'Required environment variable(s) not set.',

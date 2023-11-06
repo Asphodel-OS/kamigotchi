@@ -1,6 +1,5 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from 'crypto';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { waitForActionCompletion } from 'layers/network/utils';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
@@ -102,9 +101,7 @@ export function registerLootboxesModal() {
       }, [waitingToReveal, amount, state]);
 
       const openTx = async (index: number, amount: number) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'LootboxCommit',
           params: [index, amount],
           description: `Opening ${amount} of lootbox ${index}`,
@@ -120,9 +117,7 @@ export function registerLootboxesModal() {
       };
 
       const revealTx = async (id: EntityID) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'LootboxReveal',
           params: [id],
           description: `Inspecting lootbox contents`,

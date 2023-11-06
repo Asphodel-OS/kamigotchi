@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
@@ -38,9 +36,7 @@ export function registerNameKamiModal() {
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiName',
           params: [kami.id, name],
           description: `Renaming ${kami.name}`,

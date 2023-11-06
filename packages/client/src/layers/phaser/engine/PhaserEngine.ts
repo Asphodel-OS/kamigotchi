@@ -1,4 +1,4 @@
-import { deferred, filterNullish } from '@latticexyz/utils';
+import { deferred, filterNullish } from '@mud-classic/utils';
 import Phaser from 'phaser';
 
 import {

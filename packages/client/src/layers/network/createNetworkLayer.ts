@@ -1,4 +1,3 @@
-import { GodID } from '@latticexyz/network';
 import {
   EntityIndex,
   Type,
@@ -6,13 +5,14 @@ import {
   defineComponent,
   getComponentValue,
   setComponent,
-} from '@latticexyz/recs';
-import { SetupContractConfig, setupMUDNetwork } from '@latticexyz/std-client';
+} from '@mud-classic/recs';
 
+import { GodID } from './workers/workers';
+import { SetupContractConfig, setupMUDNetwork } from "layers/network/setup";
 import { SystemAbis } from 'types/SystemAbis.mjs';
 import { SystemTypes } from 'types/SystemTypes';
-import { createActionSystem } from './LocalSystems/ActionSystem/createActionSystem';
-import { createNotificationSystem } from './LocalSystems/NotificationSystem/createNotificationSystem';
+import { createActionSystem } from './systems/ActionSystem/createActionSystem';
+import { createNotificationSystem } from './systems/NotificationSystem/createNotificationSystem';
 import { createAdminAPI } from './api/admin';
 import { createPlayerAPI } from './api/player';
 import { setUpWorldAPI } from './api/world';

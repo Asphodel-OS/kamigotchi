@@ -5,7 +5,7 @@ import {
   defineRxSystem,
   getComponentValue,
   runQuery,
-} from '@latticexyz/recs';
+} from '@mud-classic/recs';
 import { merge } from 'rxjs';
 
 import { rooms } from 'constants/rooms';

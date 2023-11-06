@@ -64,6 +64,7 @@ const getWorld = (mode: string) => {
 };
 
 const setAutoMine = async (mode: string, on: boolean) => {
+  console.log(`** Setting automine to ${on} **`);
   if (mode === "DEV") {
     const provider = new JsonRpcProvider(process.env.DEV_RPC!);
     await provider.send(`${on ? "anvil_setAutomine" : "evm_setIntervalMining"}`, [on ? true : 1]);

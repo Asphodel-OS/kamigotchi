@@ -1,4 +1,4 @@
-import { Component, EntityIndex, Metadata, Schema, getComponentValue } from '@latticexyz/recs';
+import { Component, EntityIndex, Metadata, Schema, getComponentValue } from '@mud-classic/recs';
 
 export const hexToDecimal = (hex: string) => parseInt(hex, 16);
 

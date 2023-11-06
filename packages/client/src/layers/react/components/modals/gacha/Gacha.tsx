@@ -1,9 +1,9 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from 'crypto';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { waitForActionCompletion } from 'layers/network/utils';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 import { useAccount, useBalance, useContractRead } from 'wagmi';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
@@ -171,7 +171,7 @@ export function registerGachaModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
+        const actionID = uuid() as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiMint',
@@ -189,7 +189,7 @@ export function registerGachaModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
+        const actionID = uuid() as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiReroll',
@@ -208,7 +208,8 @@ export function registerGachaModal() {
       // reveal gacha result(s)
       const revealTx = async (commits: GachaCommit[]) => {
         const toReveal = commits.map((n) => n.id);
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
+
+        const actionID = uuid() as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiReveal',

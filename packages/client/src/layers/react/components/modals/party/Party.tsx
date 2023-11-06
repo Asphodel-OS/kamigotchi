@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { interval, map } from 'rxjs';
 
 import { kamiIcon } from 'assets/images/icons/menu';
@@ -47,9 +45,7 @@ export function registerPartyModal() {
 
       // feed a kami
       const feed = (kami: Kami, itemIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiFeed',
           params: [kami.id, itemIndex],
           description: `Feeding ${kami.name}`,
@@ -61,9 +57,7 @@ export function registerPartyModal() {
 
       // revive a kami using a revive item
       const revive = (kami: Kami, itemIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiRevive',
           params: [kami.id, itemIndex],
           description: `Reviving ${kami.name}`,

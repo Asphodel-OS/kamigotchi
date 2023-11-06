@@ -1,4 +1,4 @@
-import { EntityID, Has, HasValue, QueryFragment, runQuery } from '@latticexyz/recs';
+import { EntityID, Has, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
 import { NetworkLayer } from 'layers/network/types';
 import { Effect, Options, Requirement, Skill, getEffect, getRequirement, getSkill } from './types';
 

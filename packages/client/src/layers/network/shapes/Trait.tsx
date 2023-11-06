@@ -1,4 +1,4 @@
-import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
+import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 import { Stats, getStats } from './Stats';

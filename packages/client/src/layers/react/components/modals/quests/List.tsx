@@ -1,4 +1,4 @@
-import { EntityIndex } from '@latticexyz/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 

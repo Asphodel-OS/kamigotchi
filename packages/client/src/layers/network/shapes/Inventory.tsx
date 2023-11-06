@@ -7,7 +7,7 @@ import {
   QueryFragment,
   getComponentValue,
   runQuery,
-} from '@latticexyz/recs';
+} from '@mud-classic/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 import { Item, getItem } from './Item';

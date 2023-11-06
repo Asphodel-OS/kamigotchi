@@ -1,0 +1,12 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 05ed95f5686c5f7b5754ad02414fe90951036c2d..0000000000000000000000000000000000000000
+diff --git a/index.mjs b/index.mjs
+index 0e7864eccf4bcea200cbfc8cc073900faa353874..86d77066a0c4ff1c738f3ecbcc33b4ac1c27e70b 100644
+--- a/index.mjs
++++ b/index.mjs
+@@ -8,3 +8,4 @@ export const Pool = Threads.Pool
+ export const Thread = Threads.Thread
+ export const Transfer = Threads.Transfer
+ export const Worker = Threads.Worker
++export const expose = Threads.expose

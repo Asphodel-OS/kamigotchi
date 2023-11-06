@@ -1,11 +1,9 @@
-import { World } from '@latticexyz/recs';
+import { World } from "@mud-classic/recs";
+
 import {
   defineBoolComponent,
   defineNumberComponent,
   defineStringComponent,
-} from '@latticexyz/std-client';
-
-import {
   defineLoadingStateComponent,
   defineLocationComponent,
   defineNumberArrayComponent,

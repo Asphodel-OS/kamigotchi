@@ -5,7 +5,7 @@ import {
   NotValue,
   getComponentValue,
   runQuery,
-} from '@latticexyz/recs';
+} from '@mud-classic/recs';
 import { map, merge } from 'rxjs';
 
 import { registerUIComponent } from 'layers/react/engine/store';

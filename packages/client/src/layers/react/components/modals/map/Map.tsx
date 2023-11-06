@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
@@ -74,9 +72,7 @@ export function registerMapModal() {
       // ACTIONS
 
       const move = (index: number) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'AccountMove',
           params: [index],
           description: `Moving to ${roomMap.get(index)?.name}`,

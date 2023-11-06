@@ -1,11 +1,12 @@
-import { useStream } from '@latticexyz/std-client';
-import { filterNullishValues } from '@latticexyz/utils';
+import { filterNullishValues } from '@mud-classic/utils';
 import { useEngineStore, useLayers } from 'layers/react/engine/hooks';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Layers } from '../../../../types';
-import { GridConfiguration, UIComponent } from '../types';
+
+import { useStream } from 'layers/network/utils';
+import { GridConfiguration, UIComponent } from 'layers/react/engine/types';
+import { Layers } from 'src/types';
 import { Cell } from './Cell';
 
 const UIGrid = styled.div`

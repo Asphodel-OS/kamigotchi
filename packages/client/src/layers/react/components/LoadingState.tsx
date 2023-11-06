@@ -1,7 +1,7 @@
-import { GodID, SyncState } from '@latticexyz/network';
-import { getComponentValue } from '@latticexyz/recs';
+import { getComponentValue } from '@mud-classic/recs';
 import { concat, map } from 'rxjs';
 
+import { GodID, SyncState } from 'layers/network/workers/workers';
 import { BootScreen } from 'layers/react/engine/components';
 import { registerUIComponent } from 'layers/react/engine/store';
 

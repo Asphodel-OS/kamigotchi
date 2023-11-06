@@ -1,11 +1,11 @@
-import { EntityIndex, getComponentValueStrict } from '@latticexyz/recs';
+import { EntityIndex, getComponentValueStrict } from '@mud-classic/recs';
 import PendingIcon from '@mui/icons-material/Pending';
 import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { IndicatorIcons } from 'assets/images/icons/indicators';
-import { ActionState, ActionStateString } from 'layers/network/LocalSystems/ActionSystem/constants';
+import { ActionState, ActionStateString } from 'layers/network/systems/ActionSystem/constants';
 import { NetworkLayer } from 'layers/network/types';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 

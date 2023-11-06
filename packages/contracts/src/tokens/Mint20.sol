@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { ProxyPermissionsMint20Component as PermissionsComp, ID as PermissionsCompID } from "components/ProxyPermissionsMint20Component.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
-
-import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 /// @title Mint20 | $KAMI
 /// @notice a non-upgradable implementation of a basic ERC20 with mint/burn functionality

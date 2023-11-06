@@ -1,4 +1,4 @@
-import { EntityIndex } from '@latticexyz/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { getRarities } from 'constants/rarities';
 import { ItemIcon } from 'layers/react/components/library/ItemIcon';
 import styled from 'styled-components';

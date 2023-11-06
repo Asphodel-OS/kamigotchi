@@ -1,5 +1,4 @@
-import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
-import crypto from 'crypto';
+import { Has, HasValue, runQuery } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
@@ -82,9 +81,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiDeposit',
           params: [tokenID],
           description: `Staking Kami ${tokenID}`,
@@ -100,9 +97,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiWithdraw',
           params: [tokenID],
           description: `Unstaking Kami ${tokenID}`,

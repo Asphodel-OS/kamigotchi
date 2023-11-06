@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentValue } from '@latticexyz/recs';
+import { EntityIndex, getComponentValue } from '@mud-classic/recs';
 
 import { StatComponent } from 'layers/network/components/definitions/StatComponent';
 import { NetworkLayer } from 'layers/network/types';

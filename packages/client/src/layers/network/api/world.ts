@@ -1,17 +1,17 @@
 import { utils } from 'ethers';
-import { AdminAPI, createAdminAPI } from './admin';
-import { createPlayerAPI } from './player';
 
-import droptables from 'assets/data/items/Droptables.csv';
-import items from 'assets/data/items/Items.csv';
-import background from 'assets/data/kami/Background.csv';
-import body from 'assets/data/kami/Body.csv';
-import color from 'assets/data/kami/Color.csv';
-import face from 'assets/data/kami/Face.csv';
-import hand from 'assets/data/kami/Hand.csv';
-import nodes from 'assets/data/nodes/Nodes.csv';
-import maps from 'assets/data/rooms/Maps.csv';
-import rooms from 'assets/data/rooms/Rooms.csv';
+import droptablesCSV from 'assets/data/items/Droptables.csv';
+import itemsCSV from 'assets/data/items/items.csv';
+import nodesCSV from 'assets/data/nodes/nodes.csv';
+import roomsCSV from 'assets/data/rooms/rooms.csv';
+import backgroundCSV from 'assets/data/traits/backgrounds.csv';
+import bodyCSV from 'assets/data/traits/bodies.csv';
+import colorCSV from 'assets/data/traits/colors.csv';
+import faceCSV from 'assets/data/traits/faces.csv';
+import handCSV from 'assets/data/traits/hands.csv';
+
+import { createAdminAPI } from './admin';
+import { createPlayerAPI } from './player';
 
 export function setUpWorldAPI(systems: any, provider: any) {
   const api = createAdminAPI(systems);
@@ -19,21 +19,21 @@ export function setUpWorldAPI(systems: any, provider: any) {
   async function initAll() {
     setAutoMine(true);
 
-    await initConfig(api);
-    await initRooms(api);
-    await initNodes(api);
-    await initItems(api);
-    await initNpcs(api);
-    await initQuests(api);
-    await initSkills(api);
-    await initTraits(api);
-    await initRelationships(api);
+    await initConfig();
+    await initRooms();
+    await initNodes();
+    await initItems();
+    await initNpcs();
+    await initQuests();
+    await initSkills();
+    await initTraits();
+    await initRelationships();
 
-    if (!process.env.MODE || process.env.MODE == 'DEV') {
-      await initLocalConfig(api);
-      await initGachaPool(api, 333);
+    if (!import.meta.env.MODE || import.meta.env.MODE == 'development') {
+      await initLocalConfig();
+      await initGachaPool(333);
     } else {
-      await initGachaPool(api, 3333);
+      await initGachaPool(3333);
     }
 
     createPlayerAPI(systems).account.register(
@@ -49,7 +49,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ///////////////////
   // CONFIG
 
-  async function initConfig(api: AdminAPI) {
+  async function initConfig() {
     await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami/');
 
     // Leaderboards
@@ -124,7 +124,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
   }
 
   // local config settings for faster testing
-  async function initLocalConfig(api: AdminAPI) {
+  async function initLocalConfig() {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
@@ -135,39 +135,40 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // ROOMS
 
-  async function initRooms(api: AdminAPI) {
-    const allRooms = csvToMap(rooms);
-    const map = csvToCoords(maps);
-    for (let i = 0; i < allRooms.length; i++) {
+  async function initRooms() {
+    for (let i = 0; i < roomsCSV.length; i++) {
       await sleepIf();
-      try {
-        if (allRooms[i].get('Enabled') === 'Yes') {
-          await api.room.create(
-            map.get(allRooms[i].get('Name').trim()),
-            Number(allRooms[i].get('Index')),
-            allRooms[i].get('Name'),
-            allRooms[i].get('Description'),
-            allRooms[i]
-              .get('Exits')
-              .split(',')
-              .map((n: string) => n.trim())
-          );
-        }
-      } catch {}
+      console.log(roomsCSV[i]);
+      if (roomsCSV[i]['Enabled'] === 'Yes') {
+        await api.room.create(
+          {
+            x: Number(roomsCSV[i]['X']),
+            y: Number(roomsCSV[i]['Y']),
+            z: Number(roomsCSV[i]['Z']),
+          },
+          Number(roomsCSV[i]['Index']),
+          roomsCSV[i]['Name'],
+          roomsCSV[i]['Description'],
+          roomsCSV[i]['Exits'].split(',').map((n: string) => Number(n.trim()))
+        );
+      }
     }
+
+    // load bearing test to initialse IndexSourceComponent - queries wont work without
     try {
-      // load bearing test to initialse IndexSourceComponent - queries wont work without
       api.room.createGate(1, 1, 0, 0, 'CURR_MIN', 'KAMI');
-    } catch {}
+    } catch (e) {
+      console.log('gate creation failure:', e);
+    }
   }
 
-  async function deleteRooms(api: AdminAPI, roomIndexs: number[]) {
-    for (let i = 0; i < roomIndexs.length; i++) {
+  async function deleteRooms(indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
-        await api.room.delete(roomIndexs[i]);
+        await api.room.delete(indices[i]);
       } catch {
-        console.error('Could not delete room at roomIndex ' + roomIndexs[i]);
+        console.error('Could not delete room at roomIndex ' + indices[i]);
       }
     }
   }
@@ -175,34 +176,25 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // ITEMS
 
-  async function initItems(api: AdminAPI) {
-    const allItems = csvToMap(items);
-    const allDroptables = csvLayeredToMap(droptables);
-
-    for (let i = 0; i < allItems.length; i++) {
+  async function initItems() {
+    console.log(roomsCSV);
+    console.log(itemsCSV);
+    for (let i = 0; i < itemsCSV.length; i++) {
       await sleepIf();
+      const item = itemsCSV[i];
+      const type = item['Type'].toUpperCase();
+      console.log(itemsCSV[i]);
       try {
-        switch (allItems[i].get('Type').toUpperCase()) {
-          case 'FOOD':
-            await setFood(api, allItems[i]);
-            break;
-          case 'REVIVE':
-            await setRevive(api, allItems[i]);
-            break;
-          case 'MISC':
-            await setMisc(api, allItems[i]);
-            break;
-          case 'LOOTBOX':
-            await setLootbox(api, allItems[i], allDroptables);
-            break;
-          default:
-            console.error('Item type not found: ' + allItems[i].get('Type'));
-        }
+        if (type === 'FOOD') await setFood(item);
+        else if (type === 'REVIVE') await setRevive(item);
+        else if (type === 'MISC') await setMisc(item);
+        else if (type === 'LOOTBOX') await setLootbox(item, droptablesCSV);
+        else console.error('Item type not found: ' + type);
       } catch {}
     }
   }
 
-  async function deleteItems(api: AdminAPI, indices: number[]) {
+  async function deleteItems(indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -213,56 +205,57 @@ export function setUpWorldAPI(systems: any, provider: any) {
     }
   }
 
-  async function setFood(api: AdminAPI, item: any) {
+  async function setFood(item: any) {
     await api.registry.item.create.food(
-      item.get('Index'),
-      item.get('Name'),
-      item.get('Description'),
-      item.get('Health'),
-      item.get('XP'),
-      item.get('MediaURI')
+      Number(item['Index']),
+      item['Name'],
+      item['Description'],
+      Number(item['Health'] ?? 0),
+      Number(item['XP'] ?? 0),
+      item['MediaURI']
     );
   }
 
-  async function setRevive(api: AdminAPI, item: any) {
+  async function setRevive(item: any) {
     await api.registry.item.create.revive(
-      item.get('Index'),
-      item.get('Name'),
-      item.get('Description'),
-      item.get('Health'),
-      item.get('MediaURI')
+      Number(item['Index']),
+      item['Name'],
+      item['Description'],
+      Number(item['Health'] ?? 0),
+      item['MediaURI']
     );
   }
 
-  async function setMisc(api: AdminAPI, item: any) {
+  async function setMisc(item: any) {
     await api.registry.item.create.consumable(
-      item.get('Index'),
-      item.get('Name'),
-      item.get('Description'),
-      item.get('miscCategory'),
-      item.get('MediaURI')
+      Number(item['Index']),
+      item['Name'],
+      item['Description'],
+      item['miscCategory'],
+      item['MediaURI']
     );
   }
 
-  async function setLootbox(api: AdminAPI, item: any, droptables: any) {
+  async function setLootbox(item: any, droptables: any) {
+    return; // skip lootboxes for now. similar challenges in representation to rooms
     await api.registry.item.create.lootbox(
-      item.get('Index'),
-      item.get('Name'),
-      item.get('Description'),
-      droptables[Number(item.get('Droptable')) - 1].get('Key'),
-      droptables[Number(item.get('Droptable')) - 1].get('Tier'),
-      item.get('MediaURI')
+      Number(item['Index']),
+      item['Name'],
+      item['Description'],
+      droptables[Number(item['Droptable']) - 1]['Key'],
+      droptables[Number(item['Droptable']) - 1]['Tier'],
+      item['MediaURI']
     );
   }
 
   ////////////////////
   // NPCS
 
-  async function initNpcs(api: AdminAPI) {
-    await initMerchants(api);
+  async function initNpcs() {
+    await initMerchants();
   }
 
-  async function initMerchants(api: AdminAPI) {
+  async function initMerchants() {
     // create our hottie merchant ugajin. names are unique
     await api.npc.create(1, 'Mina', 13);
 
@@ -275,24 +268,24 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // NODES
 
-  async function initNodes(api: AdminAPI) {
-    const allNodes = csvToMap(nodes);
-    for (let i = 0; i < allNodes.length; i++) {
+  async function initNodes() {
+    for (let i = 0; i < nodesCSV.length; i++) {
+      const node = nodesCSV[i];
       await sleepIf();
       try {
         await api.node.create(
-          Number(allNodes[i].get('Index')),
-          allNodes[i].get('Type'),
-          allNodes[i].get('RoomIndex'),
-          allNodes[i].get('Name'),
-          allNodes[i].get('Description'),
-          allNodes[i].get('Affinity')
+          Number(node['Index']),
+          node['Type'],
+          Number(node['RoomIndex']),
+          node['Name'],
+          node['Description'],
+          node['Affinity']
         );
       } catch {}
     }
   }
 
-  async function deleteNodes(api: AdminAPI, indices: number[]) {
+  async function deleteNodes(indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -306,7 +299,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ///////////////////
   // MINT FLOW
 
-  async function initGachaPool(api: AdminAPI, numToMint: number) {
+  async function initGachaPool(numToMint: number) {
     await api.mint.gacha.init();
     await api.mint.batchMinter.init();
 
@@ -322,7 +315,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // QUESTS
 
-  async function initQuests(api: AdminAPI) {
+  async function initQuests() {
     // create quests
 
     // quest 1
@@ -449,7 +442,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
     await api.registry.quest.add.reward(11, 'ITEM', 4, 1);
   }
 
-  async function deleteQuests(api: AdminAPI, indices: number[]) {
+  async function deleteQuests(indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -463,7 +456,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // RELATIONSHIPS
 
-  async function initRelationships(api: AdminAPI) {
+  async function initRelationships() {
     //        /->8->9-\
     // 1->2->3->4->5--->10
     //        \->6->7-/
@@ -480,7 +473,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
     await api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
-  async function deleteRelationships(api: AdminAPI, npcs: number[], indices: number[]) {
+  async function deleteRelationships(npcs: number[], indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -494,7 +487,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // SKILL
 
-  async function initSkills(api: any) {
+  async function initSkills() {
     // Stat Skills
     await api.registry.skill.create(
       1,
@@ -718,7 +711,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
     await api.registry.skill.add.requirement(401, 'SKILL', 4, 3);
   }
 
-  async function deleteSkills(api: AdminAPI, indices: number[]) {
+  async function deleteSkills(indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -732,72 +725,41 @@ export function setUpWorldAPI(systems: any, provider: any) {
   ////////////////////
   // TRAITS
 
-  async function initTraits(api: AdminAPI) {
-    // inits a single type of trait, returns number of traits
-    async function initSingle(dataRaw: any, type: string) {
-      const data = csvToMap(dataRaw);
-      for (let i = 0; i < data.length; i++) {
-        await sleepIf();
+  async function initTraits() {
+    await initTraitTable(backgroundCSV, 'BACKGROUND');
+    await initTraitTable(bodyCSV, 'BODY');
+    await initTraitTable(colorCSV, 'COLOR');
+    await initTraitTable(faceCSV, 'FACE');
+    await initTraitTable(handCSV, 'HAND');
+  }
+
+  // inits a single type of trait, returns number of traits
+  async function initTraitTable(table: any, type: string) {
+    for (let i = 0; i < table.length; i++) {
+      const trait = table[i];
+      await sleepIf();
+      try {
         api.registry.trait.create(
-          data[i].get('Index'), // individual trait index
-          data[i].get('Health') ? data[i].get('Health') : 0,
-          data[i].get('Power') ? data[i].get('Power') : 0,
-          data[i].get('Violence') ? data[i].get('Violence') : 0,
-          data[i].get('Harmony') ? data[i].get('Harmony') : 0,
-          data[i].get('Slots') ? data[i].get('Slots') : 0,
-          data[i].get('Tier') ? data[i].get('Tier') : 0,
-          data[i].get('Affinity') ? data[i].get('Affinity').toUpperCase() : '',
-          data[i].get('Name'), // name of trait
+          Number(trait['Index']), // individual trait index
+          Number(trait['Health'] ?? 0),
+          Number(trait['Power'] ?? 0),
+          Number(trait['Violence'] ?? 0),
+          Number(trait['Harmony'] ?? 0),
+          Number(trait['Slots'] ?? 0),
+          Number(trait['Tier'] ?? 0),
+          (trait['Affinity'] ?? '').toUpperCase(),
+          trait['Name'], // name of trait
           type // type: body, color, etc
         );
+      } catch (e) {
+        console.error('Failed to create trait ', trait, e);
       }
-
-      // -1 because max includes 0, should remove this
-      return data.length - 1;
     }
 
-    await initSingle(background, 'BACKGROUND');
-    await initSingle(body, 'BODY');
-    await initSingle(color, 'COLOR');
-    await initSingle(face, 'FACE');
-    await initSingle(hand, 'HAND');
+    return table.length;
   }
 
-  // try to update traits. meant for partial deployments to fill up the gaps
-  async function initTraitsWithFail(api: AdminAPI) {
-    // inits a single type of trait, returns number of traits
-    async function initSingle(dataRaw: any, type: string) {
-      const data = csvToMap(dataRaw);
-      for (let i = 0; i < data.length; i++) {
-        await sleepIf();
-        try {
-          api.registry.trait.create(
-            data[i].get('Index'), // individual trait index
-            data[i].get('Health') ? data[i].get('Health') : 0,
-            data[i].get('Power') ? data[i].get('Power') : 0,
-            data[i].get('Violence') ? data[i].get('Violence') : 0,
-            data[i].get('Harmony') ? data[i].get('Harmony') : 0,
-            data[i].get('Slots') ? data[i].get('Slots') : 0,
-            data[i].get('Tier') ? data[i].get('Tier') : 0,
-            data[i].get('Affinity') ? data[i].get('Affinity').toUpperCase() : '',
-            data[i].get('Name'), // name of trait
-            type // type: body, color, etc
-          );
-        } catch {}
-      }
-
-      // -1 because max includes 0, should remove this
-      return data.length - 1;
-    }
-
-    await initSingle(background, 'BACKGROUND');
-    await initSingle(body, 'BODY');
-    await initSingle(color, 'COLOR');
-    await initSingle(face, 'FACE');
-    await initSingle(hand, 'HAND');
-  }
-
-  async function deleteTraits(api: AdminAPI, indices: number[], types: string[]) {
+  async function deleteTraits(indices: number[], types: string[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -808,130 +770,51 @@ export function setUpWorldAPI(systems: any, provider: any) {
     }
   }
 
-  //////////////////////
-  // UTILS
-
-  // converts csv to array of maps
-  function csvToMap(arr: any) {
-    let jsonObj = [];
-    let headers = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-      let data = arr[i];
-      let mp = new Map();
-      for (let j = 0; j < data.length; j++) {
-        mp.set(headers[j].trim(), data[j].trim() ? data[j].trim() : '0');
-      }
-      jsonObj.push(mp);
-    }
-    return jsonObj;
-  }
-
-  function csvToCoords(arr: any) {
-    const mp = new Map();
-    for (let i = 1; i < arr.length; i++) {
-      let data = arr[i];
-      for (let j = 2; j < data.length; j++) {
-        if (data[j].trim() !== '') {
-          const name = data[j].split('(')[0].trim();
-          mp.set(name, {
-            x: Number(arr[0][j].trim()),
-            y: Number(data[0].trim()),
-            z: Number(data[1].trim()),
-          });
-        }
-      }
-    }
-    return mp;
-  }
-
-  /* Layed CSV to a array of map. This is to parse 2d data in notion (eg droptables)
-   * eg: Index | Key   | Tier (Weight)
-   *     1     |       |
-   *           | 1     | 8
-   *           | 2     | 9
-   *     2     |       |
-   *           | 3     | 6
-   * would result in:
-   * [
-   *   {
-   *     Key: [1, 2],
-   *     Tier: [8, 9]
-   *   },
-   *   {
-   *    Key: [3],
-   *   Tier: [6]
-   *   }
-   * ]
-   **/
-  function csvLayeredToMap(arr: any) {
-    let results = [];
-    let headers = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-      let data = arr[i];
-      if (data[0] != '') {
-        let mp = new Map();
-        for (let n = 1; n < headers.length; n++) {
-          mp.set(headers[n].trim(), []);
-        }
-        for (let j = i + 1; j < arr.length && arr[j][0] === ''; j++) {
-          data = arr[j];
-          for (let k = 1; k < headers.length; k++) {
-            mp.get(headers[k].trim()).push(data[k].trim() ? data[k].trim() : '0');
-          }
-          i = j - 1;
-        }
-        results.push(mp);
-      }
-    }
-    return results;
-  }
-
   return {
     init: initAll,
     config: {
-      init: () => initConfig(api),
+      init: () => initConfig(),
     },
     items: {
-      init: () => initItems(api),
-      delete: (indices: number[]) => deleteItems(api, indices),
+      init: () => initItems(),
+      delete: (indices: number[]) => deleteItems(indices),
     },
     npcs: {
-      init: () => initNpcs(api),
+      init: () => initNpcs(),
     },
     nodes: {
-      init: () => initNodes(api),
-      delete: (indices: number[]) => deleteNodes(api, indices),
+      init: () => initNodes(),
+      delete: (indices: number[]) => deleteNodes(indices),
     },
     mint: {
-      init: (n: number) => initGachaPool(api, n),
+      init: (n: number) => initGachaPool(n),
     },
     quests: {
-      init: () => initQuests(api),
-      delete: (indices: number[]) => deleteQuests(api, indices),
+      init: () => initQuests(),
+      delete: (indices: number[]) => deleteQuests(indices),
     },
     relationships: {
-      init: () => initRelationships(api),
-      delete: (npcs: number[], indices: number[]) => deleteRelationships(api, indices, npcs),
+      init: () => initRelationships(),
+      delete: (npcs: number[], indices: number[]) => deleteRelationships(indices, npcs),
     },
     rooms: {
-      init: () => initRooms(api),
-      delete: (indices: number[]) => deleteRooms(api, indices),
+      init: () => initRooms(),
+      delete: (indices: number[]) => deleteRooms(indices),
     },
     skill: {
-      init: () => initSkills(api),
-      delete: (indices: number[]) => deleteSkills(api, indices),
+      init: () => initSkills(),
+      delete: (indices: number[]) => deleteSkills(indices),
     },
     traits: {
-      init: () => initTraits(api),
-      tryInit: () => initTraitsWithFail(api),
-      delete: (indices: number[], types: string[]) => deleteTraits(api, indices, types),
+      init: () => initTraits(),
+      delete: (indices: number[], types: string[]) => deleteTraits(indices, types),
     },
   };
 
   function sleepIf() {
     const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode') || process.env.MODE;
-    if (mode && mode == 'TEST') {
+    const mode = urlParams.get('mode') || import.meta.env.MODE;
+    if (mode && (mode == 'staging' || mode == 'production')) {
       console.log('sleeping');
       return new Promise((resolve) => setTimeout(resolve, 8000));
     }
@@ -940,13 +823,13 @@ export function setUpWorldAPI(systems: any, provider: any) {
   // temporary function to enable switch anvil modes for sending many transactions at one go
   // will not be needed when world.ts migrates to solidity
   function setAutoMine(on: boolean) {
-    if (process.env.MODE == 'DEV' || process.env.MODE == undefined) {
+    if (import.meta.env.MODE == 'development' || import.meta.env.MODE == undefined) {
       provider.send(`${on ? 'evm_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
     }
   }
 
   function setTimestamp() {
-    if (process.env.MODE == 'DEV' || process.env.MODE == undefined) {
+    if (import.meta.env.MODE == 'development' || import.meta.env.MODE == undefined) {
       const timestamp = Math.floor(new Date().getTime() / 1000);
       provider.send('evm_setNextBlockTimestamp', [timestamp]);
     }

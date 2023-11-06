@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
@@ -56,9 +54,7 @@ export function registerEMABoardModal() {
         const inv = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001);
         if (!inv) return;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiFeed',
           params: [kami.id, inv.id],
           description: `Using holy dust on ${kami.name}`,

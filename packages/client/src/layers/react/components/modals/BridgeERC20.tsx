@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -72,9 +70,7 @@ export function registerERC20BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'MUSUDeposit',
           params: [amount],
           description: `Depositing ${amount} $MUSU`,
@@ -90,9 +86,7 @@ export function registerERC20BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'MUSUWithdraw',
           params: [amount],
           description: `Withdrawing ${amount} $MUSU`,

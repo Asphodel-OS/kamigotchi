@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { useEffect } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
@@ -99,9 +97,7 @@ export const FarcasterConnect = (props: Props) => {
       return;
     }
 
-    const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
     network.actions?.add({
-      id: actionID,
       action: 'ConnectFarcaster',
       params: [fid, pfpURI],
       description: `Connecting to Farcaster Account ${fid}`,

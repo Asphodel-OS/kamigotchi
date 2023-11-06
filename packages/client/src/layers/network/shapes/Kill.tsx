@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
+import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 import { Kami, getKami } from './Kami';

@@ -3,28 +3,31 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "workspaces": [
-    "packages/contracts",
-    "packages/client"
-  ],
+  "packageManager": "pnpm@8.14.1",
   "scripts": {
-    "dev": "run-pty % yarn dev:node % yarn dev:client % yarn dev:contracts",
-    "client:build": "yarn workspace client run build",
-    "client:dev": "yarn workspace client run dev",
-    "client:start": "yarn workspace client run start",
-    "contracts:node": "yarn workspace contracts run devnode",
-    "contracts:dev": "yarn workspace contracts run dev"
+    "dev": "run-pty % pnpm contracts:node % pnpm client:dev % pnpm contracts:dev",
+    "nuke": "pnpm -r nuke && rimraf node_modules pnpm-lock* yarn.lock",
+    "build": "pnpm -r build",
+    "client:dev": "pnpm -F client dev",
+    "contracts:dev": "pnpm -F contracts dev",
+    "contracts:node": "pnpm -F contracts devnode"
   },
   "devDependencies": {
     "buffer": "^5.5.0",
-    "crypto-browserify": "^3.12.0",
+    "ejs": "^3.1.9",
     "events": "^3.1.0",
     "npm-run-all": "^4.1.5",
     "path-browserify": "^1.0.0",
     "punycode": "^1.4.1",
     "querystring-es3": "^0.2.1",
+    "rimraf": "^5.0.5",
     "run-pty": "^4.0.3",
+    "threads": "^1.7.0",
     "url": "^0.11.0"
   },
-  "dependencies": {}
+  "pnpm": {
+    "patchedDependencies": {
+      "threads@1.7.0": "patches/threads@1.7.0.patch"
+    }
+  }
 }

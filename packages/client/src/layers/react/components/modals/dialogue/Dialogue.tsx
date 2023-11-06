@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import React, { useEffect } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
@@ -56,10 +54,8 @@ export function registerDialogueModal() {
 
       const move = (roomIndex: number) => {
         const room = getRoomByIndex(network, roomIndex);
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
 
         network.actions?.add({
-          id: actionID,
           action: 'AccountMove',
           params: [roomIndex],
           description: `Moving to ${room.name}`,

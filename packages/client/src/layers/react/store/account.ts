@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { create } from 'zustand';
 
 ////////////////

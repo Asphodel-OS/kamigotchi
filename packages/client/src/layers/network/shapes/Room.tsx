@@ -7,7 +7,7 @@ import {
   getComponentValue,
   hasComponent,
   runQuery,
-} from '@latticexyz/recs';
+} from '@mud-classic/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 import { Account, getAccount } from './Account';

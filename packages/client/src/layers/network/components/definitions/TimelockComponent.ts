@@ -1,4 +1,4 @@
-import { Type, World, defineComponent } from '@latticexyz/recs';
+import { defineComponent, World, Type } from "@mud-classic/recs";
 
 export function defineTimelockComponent(world: World) {
   return defineComponent(

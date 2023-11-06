@@ -1,4 +1,4 @@
-import { namespaceWorld } from '@latticexyz/recs';
+import { namespaceWorld } from '@mud-classic/recs';
 import { phaserConfig, PhaserConfig } from './config';
 import CreatePhaserEngine from './engine/PhaserEngine';
 import { changeRoomSystem } from './systems/changeRoomSystem';

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { map } from 'rxjs';
 import styled from 'styled-components';
 
-import { EntityIndex, getComponentEntities } from '@latticexyz/recs';
+import { EntityIndex, getComponentEntities } from '@mud-classic/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
 import { Controls } from './Controls';

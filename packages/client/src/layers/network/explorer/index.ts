@@ -1,4 +1,4 @@
-import { Component, EntityIndex, getComponentValue } from '@latticexyz/recs';
+import { Component, EntityIndex, getComponentValue } from '@mud-classic/recs';
 
 import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
 import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';

@@ -1,5 +1,3 @@
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
@@ -75,9 +73,7 @@ export function registerNodeModal() {
 
       // collects on an existing production
       const collect = (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'ProductionCollect',
           params: [kami.id],
           description: `Collecting ${kami.name}'s Harvest`,
@@ -89,9 +85,7 @@ export function registerNodeModal() {
 
       // feed a kami
       const feed = (kami: Kami, itemIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'KamiFeed',
           params: [kami.id, itemIndex],
           description: `Feeding ${kami.name}`,
@@ -104,9 +98,7 @@ export function registerNodeModal() {
       // liquidate a production
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'ProductionLiquidate',
           params: [enemyKami.production!.id, myKami.id],
           description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
@@ -118,9 +110,7 @@ export function registerNodeModal() {
 
       // starts a production for the given pet and node
       const start = (kami: Kami, node: Node) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'ProductionStart',
           params: [kami.id, node.id],
           description: `Placing ${kami.name} on ${node.name}`,
@@ -132,9 +122,7 @@ export function registerNodeModal() {
 
       // stops a production
       const stop = (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
-          id: actionID,
           action: 'ProductionStop',
           params: [kami.production!.id],
           description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
