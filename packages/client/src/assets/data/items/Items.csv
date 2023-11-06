@@ -1,6 +1,6 @@
 ﻿Index,Name,Type,Description,MediaURI,FamilyIndex(depreciated),Health,Power,Violence,Harmony,Slots,Droptable,_type
-1,Maple-Flavor Ghost Gum,Food,Restores 25 health,images/items/gum.png,1,25,,,,,,
-2,Pom-Pom Fruit Candy,Food,Restores 100 health,images/items/pompom.png,2,100,,,,,,
-3,Gakki Cookie Sticks,Food,Restores 200 health,images/items/gakki.png,3,200,,,,,,
-1001,Red Gakki Ribbon,Revive,Revives a fallen Kami,images/items/ribbon.png,1,10,,,,,,
+1,Maple-Flavor Ghost Gum,Food,Apparently Maple-flavored. Restores 25 Health to a Kamigotchi.,images/items/gum.png,1,25,,,,,,
+2,Pom-Pom Fruit Candy,Food,A type of fruit candy. Restores 100 Health to a Kamigotchi.,images/items/pompom.png,2,100,,,,,,
+3,Gakki Cookie Sticks,Food,Fancy cookie sticks. Restores 200 Health to a Kamigotchi.,images/items/gakki.png,3,200,,,,,,
+1001,Red Gakki Ribbon,Revive,Bright red. Restores life to a fallen Kamigotchi.,images/items/ribbon.png,1,10,,,,,,
 10001,Lootbox,Lootbox,Get a random item!,images/items/lootbox.png,,,,,,,1,
