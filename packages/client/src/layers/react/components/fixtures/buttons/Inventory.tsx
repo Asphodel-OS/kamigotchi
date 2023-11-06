@@ -1,7 +1,7 @@
 import React from 'react';
 import { of } from 'rxjs';
 
-import placeholderIcon from "assets/images/icons/exit_native.png";
+import { inventoryIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore, VisibleModals } from 'layers/react/store/createStore';
@@ -39,7 +39,7 @@ export function registerInventoryButton() {
           hideModals={modalsToHide}
           visible={visibleButtons.inventory}
         >
-          <img style={{ height: '100%', width: 'auto' }} src={placeholderIcon} alt='map_icon' />
+          <img style={{ height: '100%', width: 'auto' }} src={inventoryIcon} alt='map_icon' />
         </MenuButton>
       );
     }
