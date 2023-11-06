@@ -6,6 +6,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 
 import { Kards } from './Kards';
 import { kamiIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
@@ -163,7 +164,7 @@ export function registerPartyModal() {
         <ModalWrapperFull
           id='party_modal'
           divName='party'
-          header={<Header key='header'>Party</Header>}
+          header={<ModalHeader title='Party' icon={kamiIcon} />}
           canExit
         >
           <Kards

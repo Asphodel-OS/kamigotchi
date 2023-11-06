@@ -4,6 +4,8 @@ import { EntityID } from '@latticexyz/recs';
 import styled from 'styled-components';
 
 import { RoomInfo } from './RoomInfo';
+import { mapIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
@@ -97,7 +99,7 @@ export function registerMapModal() {
         <ModalWrapperFull
           id='world_map'
           divName='map'
-          header={<Header key='header'>{selectedRoom?.name}</Header>}
+          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
           canExit
         >
           <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />

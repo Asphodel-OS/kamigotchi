@@ -5,12 +5,15 @@ import { EntityID, EntityIndex } from '@latticexyz/recs';
 
 import { List } from './List';
 import { Tabs } from './Tabs';
+import { questsIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Quest, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
 import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 import 'layers/react/styles/font.css';
+
 
 export function registerQuestsModal() {
   registerUIComponent(
@@ -113,7 +116,7 @@ export function registerQuestsModal() {
           id='quest_modal'
           divName='quests'
           header={[
-            <Header key='header'>Quests</Header>,
+            <ModalHeader title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
           canExit

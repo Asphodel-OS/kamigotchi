@@ -2,12 +2,14 @@ import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
+import { ItemGrid } from './ItemGrid';
+import { MusuRow } from './MusuRow';
+import { inventoryIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { ItemGrid } from './ItemGrid';
 import { Inventory } from 'layers/react/shapes/Inventory';
-import { MusuRow } from './MusuRow';
 
 
 export function registerInventoryModal() {
@@ -84,7 +86,7 @@ export function registerInventoryModal() {
         <ModalWrapperFull
           id='inventory-modal'
           divName='inventory'
-          header={<Header key='header'>Inventory</Header>}
+          header={<ModalHeader title='Inventory' icon={inventoryIcon} />}
           footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit
           overlay
