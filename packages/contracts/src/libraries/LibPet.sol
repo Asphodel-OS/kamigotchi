@@ -31,6 +31,7 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // placeholders for config values
@@ -58,6 +59,7 @@ library LibPet {
 
     LibExperience.setLevel(components, id, 1);
     LibExperience.set(components, id, 0);
+    LibSkill.setPoints(components, id, 1);
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
