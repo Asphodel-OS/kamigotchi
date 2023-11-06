@@ -34,13 +34,12 @@ export function registerHelpButton() {
       return (
         <MenuButton
           id='help_button'
-          targetDiv='help'
+          image={helpIcon}
           tooltip='Help'
+          targetDiv='help'
           hideModals={modalsToHide}
           visible={visibleButtons.help}
-        >
-          <img style={{ height: '100%', width: 'auto' }} src={helpIcon} alt='help_icon' />
-        </MenuButton>
+        />
       );
     }
   );

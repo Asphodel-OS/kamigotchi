@@ -4,11 +4,11 @@ import {
   registerChatButton,
   registerHelpButton,
   registerInventoryButton,
+  registerMapButton,
   registerPartyButton,
   registerQuestsButton,
   registerSettingsButton,
 } from './fixtures/buttons';
-import { registerMapButton } from './fixtures/map/Map';
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerActionQueueFixture } from './fixtures/ActionQueue';

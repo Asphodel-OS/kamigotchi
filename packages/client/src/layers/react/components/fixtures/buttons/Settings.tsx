@@ -36,13 +36,12 @@ export function registerSettingsButton() {
       return (
         <MenuButton
           id='settings_button'
-          targetDiv='settings'
+          image={settingsIcon}
           tooltip='Settings'
+          targetDiv='settings'
           hideModals={modalsToHide}
           visible={visibleButtons.settings}
-        >
-          <img style={{ height: '100%', width: 'auto' }} src={settingsIcon} alt='settings_icon' />
-        </MenuButton>
+        />
       );
     }
   );

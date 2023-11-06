@@ -34,13 +34,12 @@ export function registerPartyButton() {
       return (
         <MenuButton
           id='party_button'
-          targetDiv='party'
+          image={kamiIcon}
           tooltip='Party'
+          targetDiv='party'
           hideModals={modalsToHide}
           visible={visibleButtons.party}
-        >
-          <img style={{ height: '100%', width: 'auto' }} src={kamiIcon} alt='kami_icon' />
-        </MenuButton>
+        />
       );
     }
   );

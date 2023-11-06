@@ -34,13 +34,12 @@ export function registerInventoryButton() {
       return (
         <MenuButton
           id='inventory-button'
-          targetDiv='inventory'
+          image={inventoryIcon}
           tooltip='Inventory'
+          targetDiv='inventory'
           hideModals={modalsToHide}
           visible={visibleButtons.inventory}
-        >
-          <img style={{ height: '100%', width: 'auto' }} src={inventoryIcon} alt='map_icon' />
-        </MenuButton>
+        />
       );
     }
   );

@@ -7,9 +7,9 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
-  targetDiv: keyof VisibleModals;
-  children: React.ReactNode;
+  image: string,
   tooltip: string;
+  targetDiv: keyof VisibleModals;
   visible: boolean;
   hideModals?: Partial<VisibleModals>;
 }
@@ -17,16 +17,15 @@ interface Props {
 // MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
   const { visibleModals, setVisibleModals } = dataStore();
-  const { id, children, tooltip, hideModals } = props;
+  const { id, image, tooltip, targetDiv, hideModals, visible } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
     playClick();
-    const toggleModal = hideModals ? hideModals : {};
     setVisibleModals({
       ...visibleModals,
-      ...toggleModal,
-      [props.targetDiv]: !visibleModals[props.targetDiv],
+      ...hideModals,
+      [targetDiv]: !visibleModals[targetDiv],
     });
   };
 
@@ -34,17 +33,17 @@ export const MenuButton = (props: Props) => {
   const handleClicks = (event: any) => {
     event.stopPropagation();
   };
-  const element = document.getElementById(props.id);
+  const element = document.getElementById(id);
   element?.addEventListener('mousedown', handleClicks);
 
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>
         <Button
-          style={{ display: props.visible ? 'flex' : 'none' }}
+          style={{ display: visible ? 'flex' : 'none' }}
           onClick={handleToggle}
         >
-          {children}
+          <Image src={image} alt={id} />
         </Button>
       </div>
     </Tooltip>
@@ -60,4 +59,9 @@ const Button = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
+`;
+
+const Image = styled.img`
+  height: 100%; 
+  width: auto;
 `;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 
 import { mapIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
@@ -36,9 +35,8 @@ export function registerMapButton() {
       );
     },
     ({ layers, data }) => {
-      // console.log('mRoom: ', data)
       const [roomObject, setRoomObject] = useState<Room>();
-      const { visibleButtons, visibleModals } = dataStore();
+      const { visibleButtons } = dataStore();
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
@@ -61,37 +59,13 @@ export function registerMapButton() {
       return (
         <MenuButton
           id='map_button'
-          targetDiv='map'
+          image={mapIcon}
           tooltip={`Map (${roomObject?.name})`}
+          targetDiv='map'
           hideModals={modalsToHide}
           visible={visibleButtons.map}
-        >
-          <Image src={mapIcon} alt='map_icon' />
-        </MenuButton>
+        />
       );
     }
   );
 }
-
-
-const Wrapper = styled.div`
-  width: 100%;
-  padding-right: .5vw;
-  gap: .3vw;
-  
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Image = styled.img`
-  height: 100%; 
-  width: auto;
-`;
-
-const Text = styled.div`
-  font-size: 1vw;
-  color: #333;
-  font-family: Pixel;
-`;
