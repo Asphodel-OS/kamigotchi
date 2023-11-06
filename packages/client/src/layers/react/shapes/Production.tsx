@@ -48,7 +48,7 @@ export const getProduction = (
 
   let production: Production = {
     id: world.entities[index],
-    balance: getComponentValue(Coin, index)?.value as number,
+    balance: (getComponentValue(Coin, index)?.value as number ?? 0) * 1,
     rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
     startTime: getComponentValue(StartTime, index)?.value as number,

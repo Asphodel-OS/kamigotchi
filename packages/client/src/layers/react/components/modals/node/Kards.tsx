@@ -48,26 +48,35 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // calculate health based on the drain against last confirmed health
-  const calcHealth = (kami: Kami): number => {
-    let health = 1 * kami.health;
-    let duration = calcIdleTime(kami);
-    health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), kami.stats.health);
-    return health;
-  };
-
   // calculate the time a kami has spent idle (in seconds)
   const calcIdleTime = (kami: Kami): number => {
     return lastRefresh / 1000 - kami.lastUpdated;
+  };
+
+  // calculate the time a production has been active since its last update
+  const calcProductionTime = (kami: Kami): number => {
+    let productionTime = 0;
+    if (isHarvesting(kami) && kami.production) {
+      productionTime = lastRefresh / 1000 - kami.production.startTime;
+    }
+    return productionTime;
+  }
+
+  // calculate health based on the drain against last confirmed health
+  const calcHealth = (kami: Kami): number => {
+    let health = 1 * kami.health;
+    let duration = calcProductionTime(kami);
+    health += kami.healthRate * duration;
+    health = Math.min(Math.max(health, 0), kami.stats.health);
+    return health;
   };
 
   // calculate the expected output from a pet production based on starttime
   const calcOutput = (kami: Kami): number => {
     let output = 0;
     if (isHarvesting(kami) && kami.production) {
-      output = kami.production.balance * 1;
-      let duration = lastRefresh / 1000 - kami.lastUpdated;
+      output = kami.production.balance;
+      let duration = calcProductionTime(kami);
       output += Math.floor(duration * kami.production?.rate);
     }
     return Math.max(output, 0);
