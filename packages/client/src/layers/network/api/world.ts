@@ -24,7 +24,7 @@ export function setUpWorldAPI(systems: any) {
     await initTraits(api);
     await initRelationships(api);
 
-    if (!process.env.MODE || process.env.MODE == 'DEV') {
+    if (!import.meta.env.MODE || import.meta.env.MODE == 'DEV') {
       await initLocalConfig(api);
     }
 
@@ -723,7 +723,7 @@ export function setUpWorldAPI(systems: any) {
   }
 
   function sleepIf() {
-    if (process.env.MODE == 'OPGOERLI') {
+    if (import.meta.env.MODE == 'OPGOERLI') {
       return new Promise(resolve => setTimeout(resolve, 10000));
     }
   }

@@ -503,7 +503,7 @@ export function createAdminAPI(systems: any) {
   // WAITS
 
   function sleepIf() {
-    if (process.env.MODE == 'OPGOERLI' || process.env.MODE == 'TEST') {
+    if (import.meta.env.MODE == 'OPGOERLI' || import.meta.env.MODE == 'TEST') {
       return new Promise(resolve => setTimeout(resolve, 8000));
     }
   }

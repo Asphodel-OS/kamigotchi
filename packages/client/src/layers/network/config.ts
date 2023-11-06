@@ -50,8 +50,8 @@ export const shapeNetworkConfig: (networkConfig: NetworkConfig) => SetupContract
 // Populate the network config based on url params
 export function createNetworkConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
-
-  switch (process.env.MODE) {
+  console.log(import.meta.env.MODE)
+  switch (import.meta.env.MODE) {
     case 'DEV':
       config = createNetworkConfigLocal(externalProvider);
       break;
