@@ -18,11 +18,11 @@ export const ItemGrid = (props: Props) => {
   }
 
   const Cell = (inventory: Inventory) => {
-    let foo = () => { };
+    let onClick = () => { };
     let clickable = false;
     switch (inventory.item.type) {
       case 'LOOTBOX':
-        foo = openLootbox;
+        onClick = openLootbox;
         clickable = true;
         break;
       default:
@@ -37,7 +37,7 @@ export const ItemGrid = (props: Props) => {
         item={inventory.item}
         balance={inventory.balance}
         size='fixed'
-        onClick={clickable ? foo : undefined}
+        onClick={clickable ? onClick : undefined}
         named
       />
     );
