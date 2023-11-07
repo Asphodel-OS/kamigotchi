@@ -62,9 +62,7 @@ export const Rewards = (props: Props) => {
 
   return (
     <Bound>
-      <SubText>
-        You recieved:
-      </SubText>
+      <SubText>You received:</SubText>
       {ItemsList()}
     </Bound>
   );
