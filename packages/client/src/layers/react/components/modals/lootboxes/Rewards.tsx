@@ -66,7 +66,7 @@ export const Rewards = (props: Props) => {
   return (
     <Bound>
       <SubText>
-        You recieved:
+        You received:
       </SubText>
       {ItemsList()}
     </Bound>
