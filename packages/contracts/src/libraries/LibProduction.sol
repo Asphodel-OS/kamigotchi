@@ -90,7 +90,12 @@ library LibProduction {
 
   // Calculate the duration since a production last started, measured in seconds.
   function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    return block.timestamp - getStartTime(components, id);
+    uint256 startTime = getStartTime(components, id);
+    if (startTime == 0) {
+      uint256 petID = getPet(components, id);
+      startTime = LibPet.getLastTs(components, petID);
+    }
+    return block.timestamp - startTime;
   }
 
   // Calculate the accrued output of the production since the pet's last snapshot
@@ -226,6 +231,7 @@ library LibProduction {
   }
 
   function getStartTime(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (!TimeStartComponent(getAddressById(components, TimeStartCompID)).has(id)) return 0;
     return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
   }
 
