@@ -129,9 +129,9 @@ export function registerBuyModal() {
           overlay
         >
           <Content>
-            <Image src={listing.item.image.default} />
+            <Image src={listing.item!.uri} />
             <InfoSection>
-              <Name>{listing.item.name}</Name>
+              <Name>{listing.item!.name}</Name>
               <Description>{`lorem ipsum, description will go here`}</Description>
               <Description>{`unit price: $${listing.buyPrice}`}</Description>
               <InputRow>

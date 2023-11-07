@@ -288,8 +288,8 @@ export function setUpWorldAPI(systems: any) {
       item.get('Index'),
       item.get('Name'),
       item.get('Description'),
-      droptables[Number(item.get('Droptable')) - 1].get('Key'),
-      droptables[Number(item.get('Droptable')) - 1].get('Tier'),
+      droptables[Number(item.get('Droptable'))].get('Key'),
+      droptables[Number(item.get('Droptable'))].get('Tier'),
       item.get('MediaURI')
     );
   }
@@ -457,7 +457,7 @@ export function setUpWorldAPI(systems: any) {
       "Lootbox testing",
       "Get a free lootbox!",
       0,
-      1
+      10
     );
     await api.registry.quest.add.reward(8, "ITEM", 10001, 1); // temp lootbox handler
   }
