@@ -867,7 +867,7 @@
 
 "@latticexyz/cli@https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz":
   version "1.34.0"
-  resolved "https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz#d324023fd75dc6b63c4d547de4171e041e4ffdd1"
+  resolved "https://github.com/Asphodel-OS/mud-classic/raw/main/packages/cli/latticexyz-cli-1.34.0.tgz#334eb33d2bb32f809b618140fd5150777fcee3e9"
   dependencies:
     "@latticexyz/services" "^1.34.0"
     "@latticexyz/solecs" "^1.34.0"
