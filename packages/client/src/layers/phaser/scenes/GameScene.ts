@@ -1,7 +1,7 @@
 import { Room } from 'constants/phaser/rooms';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
-import { kamiPattern } from 'assets/images/backgrounds';
+import { backgrounds } from 'assets/images/backgrounds';
 import { triggerDialogueModal } from '../utils/triggerDialogueModal';
 import { checkModalCoverage } from '../utils/checkModalCoverage';
 
@@ -28,9 +28,14 @@ export class GameScene extends Phaser.Scene implements GameScene {
   }
 
   preload() {
+    // choose a random wallpaper background
+    const bgKeys = Object.keys(backgrounds);
+    const bgValues = Object.values(backgrounds);
+    const chosenBg = Math.floor(Math.random() * bgKeys.length);
+    this.load.image('wallpaper', bgValues[chosenBg]);
+
     if (this.room) {
       const room = this.room;
-      this.load.image('wallpaper', kamiPattern);
       if (room.background) this.load.image(room.background.key, room.background.path);
       if (room.objects) room.objects.map((obj) => this.load.image(obj.key, obj.path));
       if (room.music) this.load.audio(room.music.key, room.music.path);
@@ -40,14 +45,16 @@ export class GameScene extends Phaser.Scene implements GameScene {
   create() {
     const { width: gameWidth, height: gameHeight } = this.sys.game.canvas;
     this.game.scene.scenes[0].sound.pauseOnBlur = false;
+
+    // set the wallpaper behind the game
+    let wallpaper = this.add.image(gameWidth / 2, gameHeight / 2, 'wallpaper');
+    let wpHeightScale = (1 * gameHeight) / wallpaper.height;
+    let wpWidthScale = (1 * gameWidth) / wallpaper.width;
+    wallpaper.setScale(Math.max(wpHeightScale, wpWidthScale));
+
     if (this.room) {
       const room = this.room;
       let scale = 1; // scale of image assets
-
-      // set the wallpaper behind the game
-      let wallpaper = this.add.image(gameWidth / 2, gameHeight / 2, 'wallpaper');
-      scale = (1 * gameHeight) / wallpaper.height;
-      wallpaper.setScale(scale);
 
       // set the room image
       if (room.background) {
