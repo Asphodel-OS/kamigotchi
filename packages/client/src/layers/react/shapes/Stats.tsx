@@ -5,8 +5,6 @@ import {
 
 import { Layers } from 'src/types';
 
-// TODO: generalize this to any entities with stats
-
 // standardized shape of Stats on an Entity
 export interface Stats {
   health: number;

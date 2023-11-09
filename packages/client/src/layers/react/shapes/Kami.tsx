@@ -7,6 +7,7 @@ import {
   getComponentValue,
   runQuery,
   QueryFragment,
+  Not,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
@@ -102,6 +103,7 @@ export const getKami = (
         State,
         TargetID,
         TraitIndex,
+        Type,
       },
     },
   } = layers;
@@ -140,6 +142,7 @@ export const getKami = (
   const bonusStatsEntityIndex = Array.from(
     runQuery([
       Has(IsBonus),
+      Not(Type),
       HasValue(HolderID, { value: kami.id }),
     ])
   );

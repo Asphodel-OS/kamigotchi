@@ -48,6 +48,7 @@ export function registerKamiModal() {
             SkillIndex,
             SkillPoint,
             Slots,
+            Type,
             Violence,
           },
         },
@@ -74,6 +75,7 @@ export function registerKamiModal() {
         SkillIndex.update$,
         SkillPoint.update$,
         Slots.update$,
+        Type.update$,
         Violence.update$,
       ).pipe(
         map(() => {
