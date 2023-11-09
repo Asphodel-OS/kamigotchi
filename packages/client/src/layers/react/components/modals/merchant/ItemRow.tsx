@@ -3,6 +3,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
 import { dataStore } from 'layers/react/store/createStore';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { Tooltip } from '../../library/Tooltip';
 
 
 export interface Props {
@@ -29,7 +30,9 @@ export const ItemRow = (props: Props) => {
 
   return (
     <Row key={props.listing.item!.index}>
-      <Image src={props.listing.item!.uri} />
+      <Tooltip text={[props.listing.item!.description]}>
+        <Image src={props.listing.item!.uri} />
+      </Tooltip>
       <Name>{props.listing.item!.name}</Name>
       <Price>{props.listing!.buyPrice}</Price>
       <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>
@@ -48,7 +51,7 @@ const Row = styled.div`
 
 const Image = styled.img`
   border-right: .15vw solid black;
-  width: 3vw;
+  width: 3.5vw;
   padding: .3vw;
   font-family: Pixel;
 `;
