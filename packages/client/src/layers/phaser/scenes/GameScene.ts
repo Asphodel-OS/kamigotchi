@@ -28,11 +28,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
   }
 
   preload() {
-    // choose a random wallpaper background
-    const bgKeys = Object.keys(backgrounds);
-    const bgValues = Object.values(backgrounds);
-    const chosenBg = Math.floor(Math.random() * bgKeys.length);
-    this.load.image('wallpaper', bgValues[chosenBg]);
+    this.load.image('wallpaper', backgrounds.kamiPatternWide);
 
     if (this.room) {
       const room = this.room;
@@ -92,12 +88,12 @@ export class GameScene extends Phaser.Scene implements GameScene {
         });
       }
 
-      if (this.room.music) {
+      if (room.music) {
         const { volumeMusic } = useSoundSettings.getState();
         this.currentVolume = volumeMusic;
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
           const bgm = this.sound.add(
-            this.room.music.key,
+            room.music.key,
             { volume: volumeMusic }
           ) as Phaser.Sound.HTML5AudioSound;
 
