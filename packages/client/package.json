@@ -53,6 +53,7 @@
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@rainbow-me/rainbowkit": "^1.0.0",
     "@stdlib/stats-base-dists-normal-cdf": "^0.0.7",
+    "@uidotdev/usehooks": "^2.4.1",
     "antd": "^5.4.3",
     "async-mutex": "^0.3.2",
     "ethers": "^5",

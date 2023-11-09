@@ -1,13 +1,20 @@
+import { useEffect } from "react";
+import { useLocalStorage } from "usehooks-ts";
 import styled from "styled-components";
 
-import mutedSoundImage from 'src/assets/images/icons/sound_muted_native.png';
-import soundImage from 'src/assets/images/icons/sound_native.png';
+import mutedSoundImage from 'assets/images/icons/sound_muted_native.png';
+import soundImage from 'assets/images/icons/sound_native.png';
 import { useSoundSettings } from "layers/react/store/soundSettings";
 import { playClick } from "utils/sounds";
 
 
 export const Sound = () => {
-  const { volumeFX, volumeMusic, setVolumeFX, setVolumeMusic } = useSoundSettings();
+  const [volumeFX, setVolumeFX] = useLocalStorage('volumeFX', .5);
+  const [volumeMusic, setVolumeMusic] = useLocalStorage('volumeMusic', .5);
+
+  useEffect(() => {
+    useSoundSettings.setState({ volumeFX, volumeMusic });
+  }, [volumeFX, volumeMusic]);
 
   const toggleVolume = (type: string) => {
     let volume = (type === 'fx') ? volumeFX : volumeMusic;
