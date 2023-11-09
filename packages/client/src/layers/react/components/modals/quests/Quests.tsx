@@ -116,7 +116,7 @@ export function registerQuestsModal() {
           id='quest_modal'
           divName='quests'
           header={[
-            <ModalHeader title='Quests' icon={questsIcon} />,
+            <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
           canExit
