@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
-import styled from 'styled-components';
 
 import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
@@ -108,11 +107,3 @@ export function registerMapModal() {
     }
   );
 }
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;

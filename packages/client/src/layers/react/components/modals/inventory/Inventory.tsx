@@ -1,6 +1,5 @@
 import React from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -24,8 +23,6 @@ export function registerInventoryModal() {
     (layers) => {
       const {
         network: {
-          actions,
-          api: { player },
           components: {
             AccountID,
             Balance,
@@ -53,9 +50,6 @@ export function registerInventoryModal() {
       ).pipe(
         map(() => {
           return {
-            layers,
-            actions: layers.network.actions,
-            api: layers.network.api.player,
             data: {
               account: getAccountFromBurner(layers, { inventory: true }),
             }
@@ -64,7 +58,7 @@ export function registerInventoryModal() {
       );
     },
 
-    ({ layers, actions, api, data }) => {
+    ({ data }) => {
       // console.log('mInventory', data);
       const getInventories = () => {
         let accInv = data.account.inventories;
@@ -97,12 +91,3 @@ export function registerInventoryModal() {
     }
   );
 }
-
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;

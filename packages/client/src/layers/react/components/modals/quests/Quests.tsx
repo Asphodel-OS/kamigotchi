@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 
 import { List } from './List';
@@ -138,11 +137,3 @@ export function registerQuestsModal() {
     }
   );
 }
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;

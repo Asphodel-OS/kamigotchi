@@ -51,15 +51,6 @@ export function registerSettingsModal() {
   );
 }
 
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;
-
 const Divider = styled.hr`
   color: #333;
   width: 90%;
