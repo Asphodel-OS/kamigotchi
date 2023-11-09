@@ -10,7 +10,6 @@ interface Props {
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
-
   const { visibleModals, setVisibleModals } = dataStore();
 
   const openLootbox = () => {
@@ -18,35 +17,15 @@ export const ItemGrid = (props: Props) => {
   }
 
   const Cell = (inventory: Inventory) => {
-    const ImgButton = (inv: Inventory) => {
-      let foo = () => { };
-      let clickable = false;
-      switch (inv.item.type) {
-        case 'LOOTBOX':
-          foo = openLootbox;
-          clickable = true;
-          break;
-        default:
-          clickable = false;
-          break;
-      }
-
-      if (clickable) {
-        return (
-          <IconClickable src={inv.item.uri} onClick={foo} />
-        );
-      } else {
-        return (
-          <Icon src={inv.item.uri} />
-        );
-      }
-    }
-
+    const tooltip = [inventory.item.name, '', inventory.item.description];
 
     return (
-      <Tooltip key={inventory.id} text={[inventory.item.name]}>
+      <Tooltip key={inventory.id} text={tooltip}>
         <Slot>
-          {ImgButton(inventory)}
+          {(inventory.item.type === 'LOOTBOX')
+            ? <IconClickable src={inventory.item.uri} onClick={openLootbox} />
+            : <Icon src={inventory.item.uri} />
+          }
           <Balance>{inventory.balance}</Balance>
         </Slot>
       </Tooltip>
@@ -91,7 +70,7 @@ const IconClickable = styled.img`
   width: 100%;
   padding: .5vw;
 
-    &:hover {
+  &:hover {
     background-color: #BBB;
   }
 `;
