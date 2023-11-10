@@ -368,6 +368,7 @@ export const List = (props: Props) => {
       return (
         meetsRequirements(q)
         && q.repeatable
+        && meetsRepeat(q)
       );
     });
 
