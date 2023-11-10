@@ -81,10 +81,13 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     });
 
     setComponent(Action, entityIndex, {
-      state: ActionState.Requested,
-      on: actionRequest.on ? world.entities[actionRequest.on] : undefined,
+      action: actionRequest.action,
       metadata: actionRequest.metadata,
+      on: actionRequest.on ? world.entities[actionRequest.on] : undefined,
       overrides: undefined,
+      params: actionRequest.params,
+      state: ActionState.Requested,
+      time: Date.now(),
       txHash: undefined,
     });
 
