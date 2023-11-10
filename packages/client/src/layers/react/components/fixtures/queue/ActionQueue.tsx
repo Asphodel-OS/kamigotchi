@@ -4,7 +4,7 @@ import {
   getComponentValueStrict,
 } from '@latticexyz/recs';
 import { map } from 'rxjs';
-import { ActionStateString, ActionState } from '../../../network/ActionSystem/constants';
+import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
 import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 
@@ -20,25 +20,21 @@ export function registerActionQueueFixture() {
   registerUIComponent(
     'ActionQueue',
     {
-      rowStart: 13,
-      rowEnd: 50,
+      rowStart: 100,
+      rowEnd: 70,
       colStart: 80,
       colEnd: 100,
     },
     (layers) => {
-      const {
-        network: {
-          actions: { Action },
-        },
-      } = layers;
-
-      return Action.update$.pipe(
-        map(() => ({
-          Action,
-        }))
+      const { network: { actions } } = layers;
+      return actions?.Action.update$.pipe(
+        map(() => {
+          return { actions };
+        })
       );
     },
-    ({ Action }) => {
+    ({ actions }) => {
+      const { Action } = actions;
 
       const StyledStatus = (status: string, metadata: string) => {
         const text = status.toLowerCase();
@@ -58,6 +54,7 @@ export function registerActionQueueFixture() {
 
       const TxQueue = () => (
         [...getComponentEntities(Action)].map((entities) => {
+
           const actionData = getComponentValueStrict(Action, entities);
           let state = ActionStateString[actionData.state as ActionState];
           let metadata = actionData.metadata ? actionData.metadata : "";
@@ -71,19 +68,19 @@ export function registerActionQueueFixture() {
       );
 
       return (
-        <ModalWrapper>
+        <Wrapper>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Description>TX Queue:</Description>
             {TxQueue()}
           </ModalContent>
-        </ModalWrapper>
+        </Wrapper>
       );
     }
   );
 }
 
-const ModalWrapper = styled.div`
-  display: grid;
+const Wrapper = styled.div`
+  display: flex;
   align-items: left;
 `;
 

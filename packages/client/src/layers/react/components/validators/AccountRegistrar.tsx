@@ -317,8 +317,8 @@ export function registerAccountRegistrar() {
       // DISPLAY
 
       return (
-        <ModalWrapper id='account-registrar' style={{ display: isVisible ? 'block' : 'none' }}>
-          <ModalContent style={{ pointerEvents: 'auto' }}>
+        <Wrapper id='account-registrar' style={{ display: isVisible ? 'block' : 'none' }}>
+          <Content style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
             <Subtitle>(no registered account for connected address)</Subtitle>
             <Header>Connected Addresses</Header>
@@ -331,8 +331,8 @@ export function registerAccountRegistrar() {
               hasButton={true}
               onSubmit={(v: string) => handleAccountCreation(v)}
             />
-          </ModalContent>
-        </ModalWrapper>
+          </Content>
+        </Wrapper>
       );
     }
   );
@@ -347,13 +347,13 @@ const fadeIn = keyframes`
   }
 `;
 
-const ModalWrapper = styled.div`
+const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   animation: ${fadeIn} 1.3s ease-in-out;
 `;
 
-const ModalContent = styled.div`
+const Content = styled.div`
   background-color: white;
   border-style: solid;
   border-width: 2px;

@@ -45,7 +45,7 @@ export function registerGasWarningFixture() {
       }, [setVisibleModals, visibleModals]);
 
       return (
-        <ModalWrapper id='operatorFundPreset' style={{ display: isVisible ? 'block' : 'none' }}>
+        <Wrapper id='operatorFundPreset' style={{ display: isVisible ? 'block' : 'none' }}>
           <Content>
             <Header>Low operator gas</Header>
             <Body>The connected operator has less than {GasConstants.Low} eth in gas left. Consider topping up.</Body>
@@ -56,7 +56,7 @@ export function registerGasWarningFixture() {
               text='add gas'
             />
           </Content>
-        </ModalWrapper>
+        </Wrapper>
       );
     }
   );
@@ -71,7 +71,7 @@ const fadeIn = keyframes`
   }
 `;
 
-const ModalWrapper = styled.div`
+const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   animation: ${fadeIn} 1.3s ease-in-out;
