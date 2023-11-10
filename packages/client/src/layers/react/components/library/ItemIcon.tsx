@@ -10,7 +10,7 @@ interface Props {
   id: string;
   item: Item;
   size: 'small' | 'large' | 'fixed';
-  named?: boolean;
+  description?: boolean;
   balance?: number;
   glow?: string;
   onClick?: Function;
@@ -107,9 +107,9 @@ export const ItemIcon = (props: Props) => {
   let result = base();
 
 
-  if (props.named) {
+  if (props.description) {
     result = (
-      <Tooltip text={[props.item.name]}>
+      <Tooltip text={[props.item.name, "", props.item.description]}>
         {result}
       </Tooltip>
     );

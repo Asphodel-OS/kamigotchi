@@ -29,7 +29,7 @@ export const Rewards = (props: Props) => {
           item={item}
           size='small'
           glow={getRarities(rarity).color}
-          named
+          description
         />
         <ItemText>x{Number(amount)}</ItemText>
       </ItemBox>

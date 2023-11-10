@@ -5,6 +5,7 @@ import { Inventory } from "layers/react/shapes/Inventory";
 import { dataStore } from "layers/react/store/createStore";
 
 interface Props {
+  accountId: string;
   inventories: Inventory[];
 };
 
@@ -17,18 +18,16 @@ export const ItemGrid = (props: Props) => {
   }
 
   const Cell = (inventory: Inventory) => {
-    const tooltip = [inventory.item.name, '', inventory.item.description];
-
     return (
-      <Tooltip key={inventory.id} text={tooltip}>
-        <Slot>
-          {(inventory.item.type === 'LOOTBOX')
-            ? <IconClickable src={inventory.item.uri} onClick={openLootbox} />
-            : <Icon src={inventory.item.uri} />
-          }
-          <Balance>{inventory.balance}</Balance>
-        </Slot>
-      </Tooltip>
+      <ItemIcon
+        key={`${inventory.item.index}-${props.accountId}`}
+        id={`item-${inventory.item.index}`}
+        item={inventory.item}
+        size='fixed'
+        balance={inventory.balance}
+        onClick={inventory.item.type === "LOOTBOX" ? openLootbox : undefined}
+        description
+      />
     );
   }
 

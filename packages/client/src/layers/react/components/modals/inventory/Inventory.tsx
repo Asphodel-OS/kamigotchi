@@ -85,7 +85,7 @@ export function registerInventoryModal() {
           canExit
           overlay
         >
-          <ItemGrid key='grid' inventories={getInventories()} />
+          <ItemGrid key='grid' inventories={getInventories()} accountId={data.account.id} />
         </ModalWrapperFull>
       );
     }
