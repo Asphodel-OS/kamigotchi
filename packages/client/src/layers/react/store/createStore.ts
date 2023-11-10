@@ -1,10 +1,5 @@
 import create from 'zustand';
 
-export interface Dialogue {
-  description: string[];
-}
-
-
 export interface VisibleButtons {
   accountInfo: boolean; // doesnt exactly belong here but..
   chat: boolean;
@@ -16,7 +11,7 @@ export interface VisibleButtons {
   settings: boolean;
 }
 
-export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
+export const toggleButtons = (isOn: boolean): VisibleButtons => ({
   accountInfo: isOn, // doesnt exactly belong here but..
   chat: isOn,
   help: isOn,
@@ -25,6 +20,16 @@ export const visibleButtonsToggled = (isOn: boolean): VisibleButtons => ({
   party: isOn,
   quests: isOn,
   settings: isOn,
+});
+
+export interface Fixtures {
+  accountInfo: boolean,
+  actionQueue: boolean,
+}
+
+export const toggleFixtures = (isOn: boolean): Fixtures => ({
+  accountInfo: isOn,
+  actionQueue: isOn,
 });
 
 export interface VisibleModals {
@@ -53,7 +58,7 @@ export interface VisibleModals {
   settings: boolean;
 }
 
-export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
+export const toggleModals = (isOn: boolean): VisibleModals => ({
   bridgeERC20: isOn,
   bridgeERC721: isOn,
   buy: isOn,
@@ -80,13 +85,12 @@ export const visibleModalsToggled = (isOn: boolean): VisibleModals => ({
 });
 
 export interface DataStore {
-  dialogue: Dialogue;
-  visibleModals: VisibleModals;
   visibleButtons: VisibleButtons;
+  fixtures: Fixtures;
+  visibleModals: VisibleModals;
 }
 
 interface DataStoreActions {
-  setDialogue: (data: Dialogue) => void;
   setVisibleModals: (data: VisibleModals) => void;
   setVisibleButtons: (data: VisibleButtons) => void;
   toggleVisibleButtons: (isOn: boolean) => void;
@@ -95,7 +99,6 @@ interface DataStoreActions {
 
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
   const initialState: DataStore = {
-    dialogue: { description: [] },
     visibleModals: {
       bridgeERC20: false,
       bridgeERC721: false,
@@ -131,18 +134,21 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       quests: false,
       settings: false,
     },
+    fixtures: {
+      accountInfo: false,
+      actionQueue: false,
+    },
   };
 
   return {
     ...initialState,
-    setDialogue: (data: Dialogue) => set((state: DataStore) => ({ ...state, dialogue: data })),
     setVisibleButtons: (data: VisibleButtons) =>
       set((state: DataStore) => ({ ...state, visibleButtons: data })),
     setVisibleModals: (data: VisibleModals) =>
       set((state: DataStore) => ({ ...state, visibleModals: data })),
     toggleVisibleButtons: (isOn: boolean) =>
-      set((state: DataStore) => ({ ...state, visibleButtons: visibleButtonsToggled(isOn) })),
+      set((state: DataStore) => ({ ...state, visibleButtons: toggleButtons(isOn) })),
     toggleVisibleModals: (isOn: boolean) =>
-      set((state: DataStore) => ({ ...state, visibleModals: visibleModalsToggled(isOn) })),
+      set((state: DataStore) => ({ ...state, visibleModals: toggleModals(isOn) })),
   };
 });

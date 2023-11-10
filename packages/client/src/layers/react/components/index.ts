@@ -11,7 +11,7 @@ import {
 } from './fixtures/buttons';
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
-import { registerActionQueueFixture } from './fixtures/ActionQueue';
+import { registerActionQueueFixture } from './fixtures/queue/ActionQueue';
 import { registerGasWarningFixture } from './fixtures/GasWarning';
 import { registerWalletFixture } from './fixtures/Wallet';
 
