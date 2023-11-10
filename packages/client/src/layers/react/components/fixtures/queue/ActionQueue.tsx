@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {
-  getComponentEntities,
-  getComponentValueStrict,
-} from '@latticexyz/recs';
 import { map } from 'rxjs';
-import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
-import { registerUIComponent } from 'layers/react/engine/store';
 import styled from 'styled-components';
 
-// Color coding of action queue
-type ColorMapping = { [key: string]: string };
-const statusColors: ColorMapping = {
-  "pending": "orange",
-  "failed": "red",
-  "complete": "green",
-}
+import { registerUIComponent } from 'layers/react/engine/store';
+import { Log } from './Log';
 
 export function registerActionQueueFixture() {
   registerUIComponent(
@@ -25,54 +14,23 @@ export function registerActionQueueFixture() {
       colStart: 80,
       colEnd: 100,
     },
+
     (layers) => {
       const { network: { actions } } = layers;
-      return actions?.Action.update$.pipe(
+      return actions!.Action.update$.pipe(
         map(() => {
-          return { actions };
+          return { layers };
         })
       );
     },
-    ({ actions }) => {
-      const { Action } = actions;
 
-      const StyledStatus = (status: string, metadata: string) => {
-        const text = status.toLowerCase();
-        const color = statusColors[text];
-        const reason = metadata.substring(metadata.indexOf(":") + 1);
-        return (
-          <div>
-            <Description style={{ color: `${color}`, display: "inline" }}>
-              {text}
-            </Description>
-            <Description style={{ color: `FF7777` }}>
-              {reason}
-            </Description>
-          </div>
-        );
-      }
-
-      const TxQueue = () => (
-        [...getComponentEntities(Action)].map((entities) => {
-
-          const actionData = getComponentValueStrict(Action, entities);
-          let state = ActionStateString[actionData.state as ActionState];
-          let metadata = actionData.metadata ? actionData.metadata : "";
-          if (state == "WaitingForTxEvents") state = "Pending";
-          return (
-            <Description key={`action${entities}`}>
-              {Action.world.entities[entities]}: {StyledStatus(state, metadata)}
-            </Description>
-          );
-        })
-      );
-
+    ({ layers }) => {
       return (
         <Wrapper>
-          <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Description>TX Queue:</Description>
-            {TxQueue()}
-          </ModalContent>
+          <Content style={{ pointerEvents: 'auto' }}>
+            <Log network={layers.network} />
+          </Content>
+          <Description>TX Queue:</Description>
         </Wrapper>
       );
     }
@@ -80,11 +38,11 @@ export function registerActionQueueFixture() {
 }
 
 const Wrapper = styled.div`
-  display: flex;
+  display: block;
   align-items: left;
 `;
 
-const ModalContent = styled.div`
+const Content = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
