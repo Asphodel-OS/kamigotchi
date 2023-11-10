@@ -187,14 +187,14 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     }
 
     // After the action is done executing (failed or completed), remove its actionData and remove the Action component
-    remove(action.id);
+    // remove(action.id);
   }
 
   // Set the action's state to ActionState.Failed
   function handleError(error: any, action: ActionData) {
     updateComponent(Action, action.entityIndex, { metadata: error.reason });
     updateComponent(Action, action.entityIndex, { state: ActionState.Failed });
-    remove(action.id);
+    // remove(action.id);
   }
 
   /**
@@ -209,7 +209,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
       return false;
     }
     updateComponent(Action, action.entityIndex, { state: ActionState.Cancelled });
-    remove(actionId);
+    // remove(actionId);
     return true;
   }
 
