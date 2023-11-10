@@ -54,6 +54,15 @@ export type ActionRequest<C extends Components, T, M = undefined> = {
 
   // Metadata
   metadata?: M;
+
+  // Action (name of system called)
+  action?: string;
+
+  // Human readable description of the action
+  description?: string;
+
+  // Parameters to be passed to the execute function
+  params?: any[];
 };
 
 export type ActionData<M = undefined> = ActionRequest<Components, unknown, M> & {
