@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { map } from 'rxjs';
 import styled from 'styled-components';
 
@@ -6,6 +6,7 @@ import { Log } from './Log';
 import { Controls } from './Controls';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
+
 
 export function registerActionQueueFixture() {
   registerUIComponent(
