@@ -1,7 +1,6 @@
 import create from 'zustand';
 
 export interface VisibleButtons {
-  chat: boolean;
   help: boolean;
   inventory: boolean;
   map: boolean;
@@ -11,7 +10,6 @@ export interface VisibleButtons {
 }
 
 export const toggleButtons = (isOn: boolean): VisibleButtons => ({
-  chat: isOn,
   help: isOn,
   inventory: isOn,
   map: isOn,
@@ -124,7 +122,6 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       settings: false,
     },
     visibleButtons: {
-      chat: false,
       help: false,
       inventory: false,
       map: false,
