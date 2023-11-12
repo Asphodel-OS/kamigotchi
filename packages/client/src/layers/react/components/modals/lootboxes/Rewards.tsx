@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { EntityIndex } from "@latticexyz/recs";
-import { getRarities } from "constants/media";
+import { getRarities } from "constants/rarities";
 import { ItemIcon } from "layers/react/components/library/ItemIcon";
 
 import { LootboxLog } from "layers/react/shapes/Lootbox";

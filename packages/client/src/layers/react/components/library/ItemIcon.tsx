@@ -38,74 +38,66 @@ export const ItemIcon = (props: Props) => {
 
   const balance = () => {
     if (props.balance) {
-      switch (props.size) {
-        case 'small':
-          return (
-            <SmallBalance>{props.balance}</SmallBalance>
-          );
-          break;
-        case 'large':
-          return (
-            <LargeBalance>{props.balance}</LargeBalance>
-          );
-          break;
-        case 'fixed':
-          return (
-            <FixedBalance>{props.balance}</FixedBalance>
-          );
-          break;
-      }
-    } else {
+      if (props.size == 'small')
+        return (
+          <SmallBalance>{props.balance}</SmallBalance>
+        );
+      else if (props.size == 'large')
+        return (
+          <LargeBalance>{props.balance}</LargeBalance>
+        );
+
+      else if (props.size == 'fixed')
+        return (
+          <FixedBalance>{props.balance}</FixedBalance>
+        );
+    }
+    else {
       return (<></>);
     }
   }
 
   const base = () => {
-    switch (props.size) {
-      case 'small':
-        return (
-          <SmallBox style={setStyles()}>
-            {props.onClick
-              ? <ButtonWrapper onClick={handleClick}>
-                <SmallIcon src={props.item.image.default} />
-              </ButtonWrapper>
-              : <SmallIcon src={props.item.image.default} />
-            }
-            {balance()}
-          </SmallBox>
-        );
-        break;
-      case 'large':
-        return (
-          <LargeBox style={setStyles()}>
-            {props.onClick
-              ? <ButtonWrapper onClick={handleClick}>
-                <LargeIcon src={props.item.image.x4} />
-              </ButtonWrapper>
-              : <LargeIcon src={props.item.image.x4} />
-            }
-            {balance()}
-          </LargeBox>
-        );
-        break;
-      case 'fixed':
-        return (
-          <FixedBox style={setStyles()}>
-            {props.onClick
-              ? <ButtonWrapper onClick={handleClick}>
-                <FixedIcon src={props.item.image.default} />
-              </ButtonWrapper>
-              : <FixedIcon src={props.item.image.default} />
-            }
-            {balance()}
-          </FixedBox>
-        );
-        break;
-    }
+    if (props.size == 'small')
+      return (
+        <SmallBox style={setStyles()}>
+          {props.onClick
+            ? <ButtonWrapper onClick={handleClick}>
+              <SmallIcon src={props.item.image.default} />
+            </ButtonWrapper>
+            : <SmallIcon src={props.item.image.default} />
+          }
+          {balance()}
+        </SmallBox>
+      );
+
+    else if (props.size == 'large')
+      return (
+        <LargeBox style={setStyles()}>
+          {props.onClick
+            ? <ButtonWrapper onClick={handleClick}>
+              <LargeIcon src={props.item.image.x4} />
+            </ButtonWrapper>
+            : <LargeIcon src={props.item.image.x4} />
+          }
+          {balance()}
+        </LargeBox>
+      );
+    else (props.size == 'fixed')
+    return (
+      <FixedBox style={setStyles()}>
+        {props.onClick
+          ? <ButtonWrapper onClick={handleClick}>
+            <FixedIcon src={props.item.image.default} />
+          </ButtonWrapper>
+          : <FixedIcon src={props.item.image.default} />
+        }
+        {balance()}
+      </FixedBox>
+    );
   }
 
   let result = base();
-
 
   if (props.description) {
     result = (

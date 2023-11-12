@@ -19,7 +19,6 @@ interface Props {
 }
 
 export const Opener = (props: Props) => {
-
   const [curBal, setCurBal] = useState(0);
 
   useEffect(() => {
