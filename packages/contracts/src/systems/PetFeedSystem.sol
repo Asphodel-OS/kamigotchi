@@ -38,9 +38,7 @@ contract PetFeedSystem is System {
       "Pet: must be in same room"
     );
 
-    // check pet is not full
     LibPet.sync(components, id);
-    require(!LibPet.isFull(components, id), "Pet: already full");
 
     // get food registry entry
     uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);

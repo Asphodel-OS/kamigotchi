@@ -118,8 +118,6 @@ export const Kards = (props: Props) => {
     let reason = '';
     if (getLocation(kami) != props.account.location) {
       reason = `not at your location`;
-    } else if (isFull(kami)) {
-      reason = `already full`;
     } else if (!hasFood()) {
       reason = `buy food, poore`;
     } else if (onCooldown(kami)) {
@@ -197,6 +195,7 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami) => {
     const canFeedKami = canFeed(kami);
     const tooltipText = whyCantFeed(kami);
+    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health! == 0;
 
     const stockedInventory = props.account.inventories!.food!.filter(
       (inv: Inventory) => inv.balance && inv.balance > 0
@@ -204,8 +203,9 @@ export const Kards = (props: Props) => {
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
-        text: inv.item.name!,
+        text: `${inv.item.name!} ${!canHeal(inv) ? ' [Kami full]' : ''}`,
         onClick: () => props.actions.feed(kami, inv.item.familyIndex || 1),
+        disabled: !canHeal(inv)
       };
     });
 

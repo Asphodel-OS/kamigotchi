@@ -14,6 +14,7 @@ interface Props {
 export interface Option {
   text: string;
   onClick: Function;
+  disabled?: boolean;
 }
 
 export function IconListButton(props: Props) {
@@ -45,6 +46,21 @@ export function IconListButton(props: Props) {
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
+  const element = (option: Option, i: number) => {
+    if (option.disabled)
+      return (
+        <Item key={i} style={{ backgroundColor: "#ccc" }}>
+          {option.text}
+        </Item>
+      );
+    else
+      return (
+        <Item key={i} onClick={() => onSelect(option)}>
+          {option.text}
+        </Item>
+      );
+  };
+
   return (
     <div>
       <Button
@@ -64,9 +80,7 @@ export function IconListButton(props: Props) {
       >
         <Menu>
           {props.options.map((option, i) => (
-            <Item key={i} onClick={() => onSelect(option)}>
-              {option.text}
-            </Item>
+            element(option, i)
           ))}
         </Menu>
       </Popover>
