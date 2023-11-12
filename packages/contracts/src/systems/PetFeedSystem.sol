@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibFood } from "libraries/LibFood.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -45,15 +45,12 @@ contract PetFeedSystem is System {
     // get food registry entry
     uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
     require(registryID != 0, "RegistryItem: no such food");
-
     // decrement item from inventory
     uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
-    uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
+    LibFood.decInv(components, accountID, itemIndex);
 
-    // heal according to item stats
-    uint256 healAmt = LibStat.getHealth(components, registryID);
-    LibPet.heal(components, id, healAmt);
+    // execute feeding actions
+    LibFood.feed(components, id, foodIndex);
 
     // updating account info
     LibScore.incBy(world, components, accountID, "FEED", 1);

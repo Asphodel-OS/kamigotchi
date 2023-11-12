@@ -9,6 +9,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
+import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IndexFoodComponent, ID as IndexFoodCompID } from "components/IndexFoodComponent.sol";
 import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
@@ -51,6 +52,7 @@ library LibRegistryItem {
     string memory name,
     string memory description,
     uint256 health,
+    uint256 experience,
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -60,7 +62,8 @@ library LibRegistryItem {
     setFoodIndex(components, id, foodIndex);
     setName(components, id, name);
     setDescription(components, id, description);
-    LibStat.setHealth(components, id, health);
+    if (health > 0) LibStat.setHealth(components, id, health);
+    if (experience > 0) setExperience(components, id, experience);
     setMediaURI(components, id, mediaURI);
     return id;
   }
@@ -220,6 +223,7 @@ library LibRegistryItem {
     LibStat.removeViolence(components, id);
     LibStat.removeHarmony(components, id);
     LibStat.removeSlots(components, id);
+    unsetExperience(components, id);
 
     unsetKeys(components, id);
     unsetWeights(components, id);
@@ -283,6 +287,10 @@ library LibRegistryItem {
     DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
   }
 
+  function setExperience(IUintComp components, uint256 id, uint256 experience) internal {
+    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
+  }
+
   function setGearIndex(IUintComp components, uint256 id, uint256 gearIndex) internal {
     IndexGearComponent(getAddressById(components, IndexGearCompID)).set(id, gearIndex);
   }
@@ -333,6 +341,11 @@ library LibRegistryItem {
 
   function setWeights(IUintComp components, uint256 id, uint256[] memory weights) internal {
     WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
+  }
+
+  function unsetExperience(IUintComp components, uint256 id) internal {
+    ExperienceComponent comp = ExperienceComponent(getAddressById(components, ExpCompID));
+    if (comp.has(id)) comp.remove(id);
   }
 
   function unsetFoodIndex(IUintComp components, uint256 id) internal {

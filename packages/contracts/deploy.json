@@ -363,6 +363,7 @@
       "name": "_RegistryDeleteItemSystem",
       "writeAccess": [
         "DescriptionComponent",
+        "ExperienceComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
         "IsNonFungibleComponent",
@@ -691,6 +692,7 @@
         "BlockLastComponent",
         "CoinComponent",
         "EpochComponent",
+        "ExperienceComponent",
         "HealthCurrentComponent",
         "IdHolderComponent",
         "IsDataComponent",
