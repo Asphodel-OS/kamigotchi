@@ -311,6 +311,7 @@ export function createAdminAPI(systems: any) {
     name: string,
     description: string,
     health: number,
+    experience: number,
     media: string
   ) {
     await sleepIf();
@@ -320,6 +321,7 @@ export function createAdminAPI(systems: any) {
       name,
       description,
       health,
+      experience,
       media
     );
   }

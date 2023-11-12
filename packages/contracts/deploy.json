@@ -206,6 +206,7 @@
     {
       "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
+        "ExperienceComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
         "IndexItemComponent",

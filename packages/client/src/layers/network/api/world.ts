@@ -249,10 +249,10 @@ export function setUpWorldAPI(systems: any) {
             await setFood(api, allItems[i]);
             break;
           case "REVIVE":
-            await setRevive(api, allItems[i]);
+            // await setRevive(api, allItems[i]);
             break;
           case "LOOTBOX":
-            await setLootbox(api, allItems[i], allDroptables);
+            // await setLootbox(api, allItems[i], allDroptables);
             break;
           default:
             console.error("Item type not found: " + allItems[i].get('Type'));
@@ -268,6 +268,7 @@ export function setUpWorldAPI(systems: any) {
       item.get('Name'),
       item.get('Description'),
       item.get('Health'),
+      item.get('XP'),
       item.get('MediaURI')
     );
   }
@@ -390,7 +391,7 @@ export function setUpWorldAPI(systems: any) {
     );
     await api.registry.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
     await api.registry.quest.add.objective(2, "Mint a Kami", "MINT", "PET721_MINT", 0, 1);
-    await api.registry.quest.add.reward(2, "FOOD", 2, 1);
+    await api.registry.quest.add.reward(2, "ITEM", 2, 1);
 
     // quest 3
     await api.registry.quest.create(
