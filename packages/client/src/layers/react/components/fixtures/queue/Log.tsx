@@ -68,12 +68,12 @@ const Content = styled.div`
   border-width: 2px;
   border-color: black;
 
-  overflow: scroll;
+  overflow-y: scroll;
   max-height: 300px;
 `;
 
 const Description = styled.div`
-  font-size: 14px;
+  font-size: .7vw;
   color: #333;
   text-align: left;
   padding: 2px;
