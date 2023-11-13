@@ -111,9 +111,9 @@ export function registerPartyModal() {
         const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiFeed',
+          params: [kami.id, foodIndex],
+          description: `Feeding ${kami.name}`,
           execute: async () => {
             return api.pet.feed(kami.id, foodIndex);
           },
@@ -125,9 +125,9 @@ export function registerPartyModal() {
         const actionID = `Reviving ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiRevive',
+          params: [kami.id, reviveIndex],
+          description: `Reviving ${kami.name}`,
           execute: async () => {
             return api.pet.revive(kami.id, reviveIndex);
           },
@@ -139,9 +139,9 @@ export function registerPartyModal() {
         const actionID = `Revealing ${kami.name}` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiReveal',
+          params: [kami.index],
+          description: `Inspecting ${kami.name}`,
           execute: async () => {
             return api.ERC721.reveal(kami.index);
           },

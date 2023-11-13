@@ -50,9 +50,9 @@ export function registerOperatorMovementModal() {
 
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountMove',
+          params: [location],
+          description: `Moving to ${selectedRoom.name}`,
           execute: async () => {
             const roomMovment = await api.player.account.move(location);
             setVisibleModals({ ...visibleModals, roomMovement: false });

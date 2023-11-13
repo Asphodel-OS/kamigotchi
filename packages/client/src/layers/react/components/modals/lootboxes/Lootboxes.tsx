@@ -87,12 +87,12 @@ export function registerLootboxesModal() {
       // ACTIONS
 
       const openTx = async (index: number, amount: number) => {
-        const actionID = (`Opening ${amount} lootbox${amount > 1 ? "es" : ""}`) as EntityID;
+        const actionID = (`Opening ${amount} of lootbox ${index}`) as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'LootboxCommit',
+          params: [index, amount],
+          description: `Opening ${amount} of lootbox ${index}`,
           execute: async () => {
             return player.lootbox.startReveal(index, amount);
           },
@@ -108,9 +108,9 @@ export function registerLootboxesModal() {
         const actionID = (`Revealing lootboxes...`) as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'LootboxReveal',
+          params: [id],
+          description: `Inspecting lootbox contents`,
           execute: async () => {
             return player.lootbox.executeReveal(id);
           },

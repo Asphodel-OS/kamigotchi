@@ -79,9 +79,9 @@ export function registerOperatorUpdater() {
         const actionID = `Setting Operator` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountSetOperator',
+          params: [address],
+          description: `Setting Account Operator to ${address}`,
           execute: async () => {
             return api.account.set.operator(address);
           },

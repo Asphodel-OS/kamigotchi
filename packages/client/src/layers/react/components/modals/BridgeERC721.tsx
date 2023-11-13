@@ -95,11 +95,11 @@ export function registerERC721BridgeModal() {
         const api = network!.api.player;
 
         const actionID = `Staking Kami` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiDeposit',
+          params: [tokenID],
+          description: `Staking Kami ${tokenID}`,
           execute: async () => {
             return api.ERC721.deposit(tokenID);
           },
@@ -113,11 +113,11 @@ export function registerERC721BridgeModal() {
         const api = network!.api.player;
 
         const actionID = `Unstaking Kami` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiWithdraw',
+          params: [tokenID],
+          description: `Unstaking Kami ${tokenID}`,
           execute: async () => {
             return api.ERC721.withdraw(tokenID);
           },

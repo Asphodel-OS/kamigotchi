@@ -81,9 +81,9 @@ export function registerMapModal() {
         const actionID = `Moving to ${room.name}` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountMove',
+          params: [location],
+          description: `Moving to ${room.name}`,
           execute: async () => {
             return api.account.move(location);
           },

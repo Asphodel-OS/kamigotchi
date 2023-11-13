@@ -38,6 +38,16 @@ export const Log = (props: Props) => {
     );
   }
 
+  const Time = (time: number) => {
+    return (
+      <Tooltip text={[moment(time).format()]}>
+        <Text>
+          {getTimeString(time)}
+        </Text>
+      </Tooltip>
+    );
+  }
+
   const TxQueue = () => (
     [...getComponentEntities(ActionComponent)].map((entityIndex) => {
       const actionData = getComponentValueStrict(ActionComponent, entityIndex);
@@ -46,8 +56,8 @@ export const Log = (props: Props) => {
       return (
         <Row key={`action${entityIndex}`}>
           {Status(state, metadata)}
-          <Text>{world.entities[entityIndex]}</Text>
-          <Text>{getTimeString(actionData.time)}</Text>
+          <Text>{actionData.description}</Text>
+          {Time(actionData.time)}
         </Row>
       );
     })

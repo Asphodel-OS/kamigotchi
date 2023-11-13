@@ -70,12 +70,12 @@ export function registerBuyModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} ${listing.item!.name}` as EntityID;
+        const actionID = `Buying ${amt} of ${listing.item!.name}` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ListingBuy',
+          params: [listing.id, amt],
+          description: `Buying ${amt} of ${listing.item!.name}`,
           execute: async () => {
             return api.listing.buy(listing.id, amt);
           },

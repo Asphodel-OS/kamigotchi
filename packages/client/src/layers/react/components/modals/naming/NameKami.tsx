@@ -58,9 +58,9 @@ export function registerNameKamiModal() {
         const actionID = `Renaming ${kami.name}` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiName',
+          params: [kami.id, name],
+          description: `Renaming ${kami.name}`,
           execute: async () => {
             return api.pet.name(kami.id, name);
           },

@@ -5,10 +5,11 @@ export function defineActionComponent<T = undefined>(world: World) {
     world,
     {
       action: Type.OptionalString,
+      description: Type.String,
+      params: Type.OptionalEntityArray,
       metadata: Type.OptionalT,
       on: Type.OptionalEntity,
       overrides: Type.OptionalStringArray,
-      params: Type.OptionalEntityArray,
       state: Type.Number,
       time: Type.Number,
       txHash: Type.OptionalString,

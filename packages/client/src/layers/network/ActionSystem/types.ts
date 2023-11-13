@@ -14,19 +14,28 @@ export type ActionRequest<C extends Components, T, M = undefined> = {
   // Identifier of this action. Will be used as entity id of the Action component.
   id: EntityID;
 
+  // Action (name of system called)
+  action?: string;
+
+  // Human readable description of the action
+  description: string;
+
+  // Parameters to be passed to the execute function
+  params?: any[];
+
   // Specify which entity this action is related to.
   on?: EntityIndex;
 
   // Components this action depends on in requirement and updates
-  components: C;
+  components?: C;
 
   // Action will be executed once requirement function returns a truthy value.
   // Requirement will be rechecked if any component value accessed in the requirement changes (including optimistic updates)
-  requirement: (componentsWithOptimisticUpdates: C) => T | null;
+  requirement?: (componentsWithOptimisticUpdates: C) => T | null;
 
   // Declare effects this action will have on components.
   // Used to compute component values with optimistic updates for other requested actions.
-  updates: (componentsWithOptimisticUpdates: C, data: T) => ComponentUpdate<C>[];
+  updates?: (componentsWithOptimisticUpdates: C, data: T) => ComponentUpdate<C>[];
 
   // Logic to be executed when the action is executed.
   // If txHashes are returned from the txQueue, the action will only be completed (and pending updates removed)
@@ -45,15 +54,6 @@ export type ActionRequest<C extends Components, T, M = undefined> = {
 
   // Metadata
   metadata?: M;
-
-  // Action (name of system called)
-  action?: string;
-
-  // Human readable description of the action
-  description?: string;
-
-  // Parameters to be passed to the execute function
-  params?: any[];
 };
 
 export type ActionData<M = undefined> = ActionRequest<Components, unknown, M> & {

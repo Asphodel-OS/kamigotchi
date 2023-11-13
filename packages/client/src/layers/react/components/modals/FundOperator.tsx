@@ -78,32 +78,32 @@ export function registerFundOperatorModal() {
         const account = network!.api.player.account;
 
         const actionID = `Funding Operator` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountFund',
+          params: [amount.toString()],
+          description: `Funding Operator ${amount.toString()}`,
           execute: async () => {
             return account.fund(amount.toString());
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions.Action, actionIndex);
+        await waitForActionCompletion(actions!.Action, actionIndex);
       };
 
       const refundTx = async () => {
         const actionID = `Refunding Owner` as EntityID;
-        actions.add({
+        actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountRefund',
+          params: [amount.toString()],
+          description: `Refunding Owner ${amount.toString()}`,
           execute: async () => {
             return account.refund(amount.toString());
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions.Action, actionIndex);
+        await waitForActionCompletion(actions!.Action, actionIndex);
       };
 
 

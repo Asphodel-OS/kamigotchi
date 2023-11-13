@@ -88,9 +88,9 @@ export function registerQuestsModal() {
         const actionID = `Accepting Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'QuestAccept',
+          params: [quest.index],
+          description: `Accepting Quest ${quest.index * 1}`,
           execute: async () => {
             return api.quests.accept(quest.index);
           },
@@ -101,9 +101,9 @@ export function registerQuestsModal() {
         const actionID = `Completing Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'QuestComplete',
+          params: [quest.id],
+          description: `Completing Quest ${quest.index * 1}`,
           execute: async () => {
             return api.quests.complete(quest.id);
           },

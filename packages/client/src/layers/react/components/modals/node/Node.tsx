@@ -110,9 +110,9 @@ export function registerNodeModal() {
         const actionID = `Collecting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionCollect',
+          params: [kami.id],
+          description: `Collecting ${kami.name}'s Harvest`,
           execute: async () => {
             return api.production.collect(kami.production!.id);
           },
@@ -124,9 +124,9 @@ export function registerNodeModal() {
         const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiFeed',
+          params: [kami.id, foodIndex],
+          description: `Feeding ${kami.name}`,
           execute: async () => {
             return api.pet.feed(kami.id, foodIndex);
           },
@@ -139,9 +139,9 @@ export function registerNodeModal() {
         const actionID = `Liquidating ${enemyKami.name}` as EntityID; // itemIndex should be replaced with the item's name
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionLiquidate',
+          params: [enemyKami.production!.id, myKami.id],
+          description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
             return api.production.liquidate(enemyKami.production!.id, myKami.id);
           },
@@ -153,9 +153,9 @@ export function registerNodeModal() {
         const actionID = `Starting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionStart',
+          params: [kami.id, node.id],
+          description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
             return api.production.start(kami.id, node.id);
           },
@@ -167,9 +167,9 @@ export function registerNodeModal() {
         const actionID = `Stopping Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionStop',
+          params: [kami.production!.id],
+          description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
           execute: async () => {
             return api.production.stop(kami.production!.id);
           },

@@ -222,9 +222,9 @@ export function registerAccountRegistrar() {
         const actionID = `Creating Account: ${username}` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountCreate',
+          params: [burnerInfo.connected, username],
+          description: `Creating Account for ${username}`,
           execute: async () => {
             return api.account.register(burnerInfo.connected, username);
           },
@@ -234,7 +234,7 @@ export function registerAccountRegistrar() {
         // return waitForActionCompletion(actions?.Action, actionIndex);
       }
 
-      // transaction to mint the Mint ERC20 Token
+      // transaction to mint the Mint Token (ERC20)
       const mintToken = (amount: number, value: number) => {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
@@ -243,9 +243,6 @@ export function registerAccountRegistrar() {
         const actionID = (amount == 1 ? `Minting Token` : `Minting Tokens`) as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
           execute: async () => {
             return api.mint.mintToken(amount, value);
           },

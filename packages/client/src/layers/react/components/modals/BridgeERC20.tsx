@@ -75,9 +75,9 @@ export function registerERC20BridgeModal() {
         const actionID = `Depositing $MUSU` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'MUSUDeposit',
+          params: [amount],
+          description: `Depositing ${amount} $MUSU`,
           execute: async () => {
             return api.ERC20.deposit(amount);
           },
@@ -93,9 +93,9 @@ export function registerERC20BridgeModal() {
         const actionID = `Withdrawing $MUSU` as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'MUSUWithdraw',
+          params: [amount],
+          description: `Withdrawing ${amount} $MUSU`,
           execute: async () => {
             // unimplemented
             // return api.ERC20.withdraw(amount);

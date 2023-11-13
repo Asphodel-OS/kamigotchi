@@ -68,6 +68,8 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    * @returns index of the entity created for the action
    */
   function add<C extends Components, T>(actionRequest: ActionRequest<C, T, M>): EntityIndex {
+    if (!actionRequest.components) actionRequest.components = {} as C;
+
     // Prevent the same actions from being scheduled multiple times
     const existingAction = world.entityToIndex.get(actionRequest.id);
     if (existingAction != null) {
@@ -82,10 +84,11 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
 
     setComponent(Action, entityIndex, {
       action: actionRequest.action,
+      description: actionRequest.description,
+      params: actionRequest.params ?? [],
       metadata: actionRequest.metadata,
       on: actionRequest.on ? world.entities[actionRequest.on] : undefined,
       overrides: undefined,
-      params: actionRequest.params,
       state: ActionState.Requested,
       time: Date.now(),
       txHash: undefined,
@@ -122,6 +125,8 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    * @returns void
    */
   function checkRequirement(action: ActionData) {
+    if (!action.requirement) action.requirement = () => true;
+
     // Only check requirements of requested actions
     if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) return;
 
@@ -146,6 +151,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     updateComponent(Action, action.entityIndex, { state: ActionState.Executing });
 
     // Compute overrides
+    if (!action.updates) action.updates = () => [];
     const overrides = action
       .updates(action.componentsWithOptimisticUpdates, requirementResult)
       .map((o) => ({ ...o, id: uuid() }));
