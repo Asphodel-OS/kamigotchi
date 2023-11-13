@@ -47,7 +47,7 @@ export function registerBurnerDetector() {
     ({ connectedEOA, network }) => {
       const { isConnected } = useAccount(); // refers to Connector
       const { setBurnerInfo } = useNetworkSettings();
-      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
+      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const [detectedAddress, setDetectedAddress] = useState('');
       const [isMismatched, setIsMismatched] = useState(false);
@@ -77,6 +77,7 @@ export function registerBurnerDetector() {
         if (isMismatched) {
           toggleVisibleModals(false);
           toggleVisibleButtons(false);
+          toggleFixtures(false);
         }
       }, [isMismatched]);
 

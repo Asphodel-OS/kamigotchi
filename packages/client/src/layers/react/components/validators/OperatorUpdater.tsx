@@ -34,7 +34,7 @@ export function registerOperatorUpdater() {
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
+      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
 
       const [isMismatched, setIsMismatched] = useState(false);
       const [helperText, setHelperText] = useState("");
@@ -55,7 +55,10 @@ export function registerOperatorUpdater() {
         setIsMismatched(!operatorMatch);
 
         // awkward place to put this trigger, but this is the last validator to be checked
-        if (meetsPreconditions && operatorMatch) toggleVisibleButtons(true);
+        if (meetsPreconditions && operatorMatch) {
+          toggleVisibleButtons(true);
+          toggleFixtures(true);
+        }
       }, [isConnected, burnerInfo, accountDetails]);
 
 

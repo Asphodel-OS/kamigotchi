@@ -57,8 +57,8 @@ export function registerAccountInfoFixture() {
     ({ layers, data }) => {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const { visibleButtons } = dataStore();
       const { account, room } = data;
+      const { fixtures } = dataStore();
 
       /////////////////
       // TRACKING
@@ -162,7 +162,7 @@ export function registerAccountInfoFixture() {
       return (account &&
         <Container
           id='accountInfo'
-          style={{ display: visibleButtons.accountInfo ? 'block' : 'none' }}
+          style={{ display: fixtures.accountInfo ? 'block' : 'none' }}
         >
           <Row>
             <TextBox>{account.name} - {room.name}</TextBox>

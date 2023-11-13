@@ -129,7 +129,7 @@ export function registerAccountRegistrar() {
       const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
+      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
       const [isVisible, setIsVisible] = useState(false);
 
       // set visibility of this validator
@@ -153,6 +153,7 @@ export function registerAccountRegistrar() {
         const accountDetails = getAccountDetails(accountIndex);
         if (!accountDetails.id) {
           toggleVisibleButtons(false);
+          toggleFixtures(false);
           toggleVisibleModals(false);
         }
 

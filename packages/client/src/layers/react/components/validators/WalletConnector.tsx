@@ -26,7 +26,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { chain } = useNetwork();
-      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
+      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
 
       const {
         address: connectorAddress,
@@ -76,6 +76,7 @@ export function registerWalletConnecter() {
         if (!isConnected || !isCorrectNetwork) {
           toggleVisibleModals(false);
           toggleVisibleButtons(false);
+          toggleFixtures(false);
         }
       }, [chain, connector, connectorAddress, isConnected, isCorrectNetwork]);
 

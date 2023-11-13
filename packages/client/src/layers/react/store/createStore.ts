@@ -1,7 +1,6 @@
 import create from 'zustand';
 
 export interface VisibleButtons {
-  accountInfo: boolean; // doesnt exactly belong here but..
   chat: boolean;
   help: boolean;
   inventory: boolean;
@@ -12,7 +11,6 @@ export interface VisibleButtons {
 }
 
 export const toggleButtons = (isOn: boolean): VisibleButtons => ({
-  accountInfo: isOn, // doesnt exactly belong here but..
   chat: isOn,
   help: isOn,
   inventory: isOn,
@@ -95,6 +93,7 @@ interface DataStoreActions {
   setVisibleButtons: (data: VisibleButtons) => void;
   toggleVisibleButtons: (isOn: boolean) => void;
   toggleVisibleModals: (isOn: boolean) => void;
+  toggleFixtures: (isOn: boolean) => void;
 }
 
 export const dataStore = create<DataStore & DataStoreActions>((set) => {
@@ -125,7 +124,6 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       settings: false,
     },
     visibleButtons: {
-      accountInfo: false, // doesnt exactly belong here but makes like easier
       chat: false,
       help: false,
       inventory: false,
@@ -150,5 +148,7 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       set((state: DataStore) => ({ ...state, visibleButtons: toggleButtons(isOn) })),
     toggleVisibleModals: (isOn: boolean) =>
       set((state: DataStore) => ({ ...state, visibleModals: toggleModals(isOn) })),
+    toggleFixtures: (isOn: boolean) =>
+      set((state: DataStore) => ({ ...state, fixtures: toggleFixtures(isOn) })),
   };
 });
