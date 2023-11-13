@@ -117,28 +117,26 @@ export function registerAccountInfoFixture() {
         return Number(bal?.formatted ?? 0).toFixed(precision);
       }
 
-
+      const borderLeftStyle = { borderLeft: '.1vw solid black' };
       return (data.account &&
         <Container
           id='accountInfo'
           style={{ display: visibleButtons.accountInfo ? 'block' : 'none' }}
         >
           <Row>
-            <NameCell>{data.account.name} - {data.account.location}</NameCell>
+            <Cell>{data.account.name} - {data.account.location}</Cell>
           </Row>
           <Line />
           <Row>
-            <BatteryCell>
+            <Cell>
               {`${calcStaminaPercent(data.account)}%`}
-              <Tooltip text={[calcStaminaPercent(data.account).toString()]}>
-                <Battery level={calcStaminaPercent(data.account)} />
-              </Tooltip>
-            </BatteryCell>
-            <WordCell>$KAMI: {parseBalanceResult(ownerKAMI, 1)}</WordCell>
-            <GaugeCell>
-              <Text>Gas: {parseBalanceResult(operatorGas)} Ξ</Text>
+              <Battery level={calcStaminaPercent(data.account)} />
+            </Cell>
+            <Cell style={borderLeftStyle}>$KAMI: {parseBalanceResult(ownerKAMI, 1)}</Cell>
+            <Cell style={borderLeftStyle}>
+              <Text>Gas: {parseBalanceResult(operatorGas)}Ξ</Text>
               <Gauge level={calcGaugeSetting(operatorGas)} />
-            </GaugeCell>
+            </Cell>
           </Row>
         </Container>
       );
@@ -167,10 +165,23 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  padding: 0.6vw 0vw;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-around;
+  justify-content: space-evenly;
+`;
+
+const Cell = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  padding: 0.8vw 0vw;
+  gap: 0.5vw;
+  width: 33%;
+
+  color: black;
+  font-family: Pixel;
+  font-size: 0.8vw;
 `;
 
 const Line = styled.div`
@@ -179,58 +190,7 @@ const Line = styled.div`
   height: 1px;
 `;
 
-const Text = styled.p`
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-
-  padding: 0 0.5vw 0 0 ;
-`;
-
-const BatteryCell = styled.div`
-  display: flex;
-  flex-grow: 1;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-`;
-
-const NameCell = styled.div`
-  display: flex;
-  flex-grow: 3;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-`;
-
-const GaugeCell = styled.div`
-  display: flex;
-  flex-grow: 1;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-  border-left: 0.1vw solid black;
-`;
-
-const WordCell = styled.div`
-  border-left: 0.1vw solid black;
-  
-  display: flex;
-  flex-grow: 1;
-  justify-content: center;
-  align-items: center;
-
+const Text = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 0.8vw;
