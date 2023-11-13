@@ -117,6 +117,39 @@ export function registerAccountInfoFixture() {
         return Number(bal?.formatted ?? 0).toFixed(precision);
       }
 
+      const parseStaminaString = (account: Account) => {
+        const staminaCurr = calcCurrentStamina(account);
+        const staminaTotal = account.stamina.total;
+        return `${staminaCurr}/${staminaTotal * 1}`;
+      }
+
+
+      /////////////////
+      // CONTENT
+
+      const getStaminaTooltip = (account: Account) => {
+        const staminaString = parseStaminaString(account);
+        const recoveryPeriod = account.stamina.recoveryPeriod;
+        return [
+          `Account Stamina (${staminaString})`,
+          '',
+          `Determines how far your Operator can travel. Recovers every ${recoveryPeriod}s`
+        ];
+      }
+
+      const getKAMITooltip = () => {
+        return [`$KAMI Balance`, '', `Use this to mint your party of Kamigotchi.`];
+      }
+
+      const getGasTooltip = () => {
+        return [
+          `Operator Gas`,
+          '',
+          `Your Operator won't function without this. Make sure to stay topped up for the journey!`
+        ];
+      }
+
+
       const borderLeftStyle = { borderLeft: '.1vw solid black' };
       return (data.account &&
         <Container
@@ -129,13 +162,27 @@ export function registerAccountInfoFixture() {
           <Line />
           <Row>
             <Cell>
-              {`${calcStaminaPercent(data.account)}%`}
-              <Battery level={calcStaminaPercent(data.account)} />
+              <Tooltip text={getStaminaTooltip(data.account)}>
+                <TextBox>
+                  {`${calcStaminaPercent(data.account)}%`}
+                  <Battery level={calcStaminaPercent(data.account)} />
+                </TextBox>
+              </Tooltip>
             </Cell>
-            <Cell style={borderLeftStyle}>$KAMI: {parseBalanceResult(ownerKAMI, 1)}</Cell>
             <Cell style={borderLeftStyle}>
-              <Text>Gas: {parseBalanceResult(operatorGas)}Ξ</Text>
-              <Gauge level={calcGaugeSetting(operatorGas)} />
+              <Tooltip text={getKAMITooltip()}>
+                <TextBox>
+                  $KAMI: {parseBalanceResult(ownerKAMI, 1)}
+                </TextBox>
+              </Tooltip>
+            </Cell>
+            <Cell style={borderLeftStyle}>
+              <Tooltip text={getGasTooltip()}>
+                <TextBox>
+                  Gas: {parseBalanceResult(operatorGas)}Ξ
+                  <Gauge level={calcGaugeSetting(operatorGas)} />
+                </TextBox>
+              </Tooltip>
             </Cell>
           </Row>
         </Container>
@@ -190,7 +237,13 @@ const Line = styled.div`
   height: 1px;
 `;
 
-const Text = styled.div`
+const TextBox = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+
   color: black;
   font-family: Pixel;
   font-size: 0.8vw;
