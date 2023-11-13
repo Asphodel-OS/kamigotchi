@@ -20,7 +20,7 @@ export const ItemGrid = (props: Props) => {
   if (props.inventories.length === 0) {
     return (
       <EmptyText>
-        Inventory is empty
+        Inventory is empty. Go get something.
       </EmptyText>
     );
   }

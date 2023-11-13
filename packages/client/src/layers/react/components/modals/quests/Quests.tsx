@@ -78,7 +78,7 @@ export function registerQuestsModal() {
 
     ({ layers, actions, api, data }) => {
       // console.log('mQuest:', data);
-      const [tab, setTab] = useState<TabType>('ONGOING');
+      const [tab, setTab] = useState<TabType>('AVAILABLE');
 
 
       ///////////////////

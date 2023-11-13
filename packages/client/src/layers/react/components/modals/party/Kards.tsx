@@ -282,7 +282,7 @@ export const Kards = (props: Props) => {
   if (props.kamis.length === 0) {
     return (
       <EmptyText>
-        You have no kamis.
+        You have no kamis. Get some.
       </EmptyText>
     );
   }
