@@ -12,6 +12,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
 import { dataStore } from 'layers/react/store/createStore';
+import { getRoomByLocation } from 'layers/react/shapes/Room';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -28,6 +29,7 @@ export function registerAccountInfoFixture() {
           components: {
             Coin,
             Name,
+            Location,
             StaminaCurrent,
             Stamina,
           },
@@ -36,13 +38,18 @@ export function registerAccountInfoFixture() {
       return merge(
         Name.update$,
         Coin.update$,
+        Location.update$,
         Stamina.update$,
         StaminaCurrent.update$,
       ).pipe(
         map(() => {
+          const account = getAccountFromBurner(layers);
           return {
             layers,
-            data: { account: getAccountFromBurner(layers) },
+            data: {
+              account,
+              room: getRoomByLocation(layers, account.location)
+            },
           };
         })
       );
@@ -51,6 +58,7 @@ export function registerAccountInfoFixture() {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const { visibleButtons } = dataStore();
+      const { account, room } = data;
 
       /////////////////
       // TRACKING
@@ -68,7 +76,7 @@ export function registerAccountInfoFixture() {
 
       // Operator Balance
       const { data: operatorGas } = useBalance({
-        address: data.account.operatorEOA as `0x${string}`,
+        address: account.operatorEOA as `0x${string}`,
         watch: true
       });
 
@@ -80,7 +88,7 @@ export function registerAccountInfoFixture() {
       });
 
       const { data: ownerKAMI } = useBalance({
-        address: data.account.ownerEOA as `0x${string}`,
+        address: account.ownerEOA as `0x${string}`,
         token: mint20Addy as `0x${string}`,
         watch: true
       });
@@ -151,21 +159,21 @@ export function registerAccountInfoFixture() {
 
 
       const borderLeftStyle = { borderLeft: '.1vw solid black' };
-      return (data.account &&
+      return (account &&
         <Container
           id='accountInfo'
           style={{ display: visibleButtons.accountInfo ? 'block' : 'none' }}
         >
           <Row>
-            <Cell>{data.account.name} - {data.account.location}</Cell>
+            <TextBox>{account.name} - {room.name}</TextBox>
           </Row>
           <Line />
           <Row>
             <Cell>
-              <Tooltip text={getStaminaTooltip(data.account)}>
+              <Tooltip text={getStaminaTooltip(account)}>
                 <TextBox>
-                  {`${calcStaminaPercent(data.account)}%`}
-                  <Battery level={calcStaminaPercent(data.account)} />
+                  {`${calcStaminaPercent(account)}%`}
+                  <Battery level={calcStaminaPercent(account)} />
                 </TextBox>
               </Tooltip>
             </Cell>
@@ -222,7 +230,6 @@ const Cell = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  padding: 0.8vw 0vw;
   gap: 0.5vw;
   width: 33%;
 
@@ -242,6 +249,7 @@ const TextBox = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
+  padding: 0.8vw 0vw;
   gap: 0.5vw;
 
   color: black;
