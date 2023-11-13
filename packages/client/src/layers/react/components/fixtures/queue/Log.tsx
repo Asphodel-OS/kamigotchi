@@ -2,7 +2,8 @@ import { getComponentEntities, getComponentValueStrict } from "@latticexyz/recs"
 import { NetworkLayer } from "layers/network/types";
 import styled from "styled-components";
 import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
-
+import { Tooltip } from "../../library/Tooltip";
+import moment from 'moment';
 
 // Color coding of action queue
 type ColorMapping = { [key: string]: string };
@@ -20,19 +21,20 @@ export const Log = (props: Props) => {
   const { network: { world, actions } } = props;
   const ActionComponent = actions!.Action;
 
-  const StyledStatus = (status: string, metadata: string) => {
+  const getTimeString = (time: number) => {
+    return moment(time).fromNow();
+  }
+
+  const Status = (status: string, metadata: string) => {
     const text = status.toLowerCase();
     const color = statusColors[text];
     const reason = metadata.substring(metadata.indexOf(":") + 1);
     return (
-      <div>
-        <Description style={{ color: `${color}`, display: "inline" }}>
+      <Tooltip text={[reason]}>
+        <Text style={{ color: `${color}`, display: "inline" }}>
           {text}
-        </Description>
-        <Description style={{ color: `FF7777` }}>
-          {reason}
-        </Description>
-      </div>
+        </Text>
+      </Tooltip>
     );
   }
 
@@ -40,11 +42,13 @@ export const Log = (props: Props) => {
     [...getComponentEntities(ActionComponent)].map((entityIndex) => {
       const actionData = getComponentValueStrict(ActionComponent, entityIndex);
       let state = ActionStateString[actionData.state as ActionState];
-      let metadata = actionData.metadata ? actionData.metadata : "";
+      let metadata = actionData.metadata ?? '';
       return (
-        <Description key={`action${entityIndex}`}>
-          {world.entities[entityIndex]}: {StyledStatus(state, metadata as string)}
-        </Description>
+        <Row key={`action${entityIndex}`}>
+          {Status(state, metadata)}
+          <Text>{world.entities[entityIndex]}</Text>
+          <Text>{getTimeString(actionData.time)}</Text>
+        </Row>
       );
     })
   );
@@ -59,20 +63,29 @@ export const Log = (props: Props) => {
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: #ddd;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  width: 99%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
+  padding: 1vw;
+  border: solid grey 2px;
 
   overflow-y: scroll;
-  max-height: 300px;
 `;
 
-const Description = styled.div`
+const Row = styled.div`
+  padding: .2vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  font-family: Pixel;
+  font-size: .7vw;
+  text-align: left;
+`;
+
+
+const Text = styled.div`
   font-size: .7vw;
   color: #333;
   text-align: left;

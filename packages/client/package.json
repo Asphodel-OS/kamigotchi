@@ -60,6 +60,7 @@
     "google-protobuf": "^3.14.0",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",
+    "moment": "^2.29.4",
     "mqtt": "^4.3.7",
     "nice-grpc": "^2.1.4",
     "nice-grpc-web": "^2.0.1",

@@ -54,16 +54,17 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.div`
-  border: solid black 2px;
-  border-radius: 10px;
   position: absolute;
   bottom: 1vw;
   right: 1vw;
-  width: 33%;
+  width: 33vw;
   padding: .2vw;
-  max-height: 300px;
+  max-height: 33vh;
 
+  border: solid black 2px;
+  border-radius: 10px;
   
+
   background-color: white;  
   display: flex;
   flex-flow: column nowrap;
