@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { useContractRead, useBalance } from 'wagmi';
+import { FetchBalanceResult } from '@wagmi/core';
 import styled from 'styled-components';
-import { GasConstants } from 'constants/gas';
 
 import { abi as Pet721ProxySystemABI } from "abi/Pet721ProxySystem.json"
+import { GasConstants } from 'constants/gas';
 import { Account, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -49,7 +50,6 @@ export function registerAccountInfoFixture() {
     ({ layers, data }) => {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const [operatorBal, setOperatorBal] = useState(0);
       const { visibleButtons } = dataStore();
 
       /////////////////
@@ -67,16 +67,10 @@ export function registerAccountInfoFixture() {
       }, []);
 
       // Operator Balance
-
-      const { data: rawOperatorBal } = useBalance({
+      const { data: operatorGas } = useBalance({
         address: data.account.operatorEOA as `0x${string}`,
         watch: true
       });
-
-      useEffect(() => {
-        const bal = Number(rawOperatorBal?.formatted).toFixed(4);
-        setOperatorBal(Number(bal));
-      }, [rawOperatorBal]);
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
@@ -85,23 +79,15 @@ export function registerAccountInfoFixture() {
         functionName: 'getTokenAddy'
       });
 
-      const { data: accountMint20Bal } = useBalance({
+      const { data: ownerKAMI } = useBalance({
         address: data.account.ownerEOA as `0x${string}`,
         token: mint20Addy as `0x${string}`,
         watch: true
       });
 
 
-
       /////////////////
-      // CALCULATIONS
-
-      const calcOperatorGauge = (): number => {
-        if (Number(rawOperatorBal?.formatted) >= GasConstants.Full) return 100;
-        if (Number(rawOperatorBal?.formatted) <= GasConstants.Low) return 0;
-        return Number(rawOperatorBal?.formatted) / GasConstants.Full * 100;
-      }
-
+      // INTERPRETATION
 
       const calcCurrentStamina = (account: Account) => {
         const timePassed = lastRefresh / 1000 - account.lastMoveTs;
@@ -115,13 +101,30 @@ export function registerAccountInfoFixture() {
         return Math.round(100.0 * currentStamina / account.stamina.total);
       }
 
+      // calculated the gas gauge level
+      const calcGaugeSetting = (gasBalance: FetchBalanceResult | undefined): number => {
+        const amt = Number(gasBalance?.formatted);
+        if (amt >= GasConstants.Full) return 100;
+        if (amt <= GasConstants.Low) return 0;
+        return amt / GasConstants.Full * 100;
+      }
+
+      // parses a wagmi FetchBalanceResult 
+      const parseBalanceResult = (
+        bal: FetchBalanceResult | undefined,
+        precision: number = 4
+      ) => {
+        return Number(bal?.formatted ?? 0).toFixed(precision);
+      }
+
+
       return (data.account &&
         <Container
           id='accountInfo'
           style={{ display: visibleButtons.accountInfo ? 'block' : 'none' }}
         >
           <Row>
-            <NameCell>{data.account.name}</NameCell>
+            <NameCell>{data.account.name} - {data.account.location}</NameCell>
           </Row>
           <Line />
           <Row>
@@ -131,10 +134,10 @@ export function registerAccountInfoFixture() {
                 <Battery level={calcStaminaPercent(data.account)} />
               </Tooltip>
             </BatteryCell>
-            <WordCell>$KAMI: {Number(accountMint20Bal?.formatted ?? 0) ?? '???'}</WordCell>
+            <WordCell>$KAMI: {parseBalanceResult(ownerKAMI, 1)}</WordCell>
             <GaugeCell>
-              <Text>Gas: {operatorBal}Ξ</Text>
-              <Gauge level={calcOperatorGauge()} />
+              <Text>Gas: {parseBalanceResult(operatorGas)} Ξ</Text>
+              <Gauge level={calcGaugeSetting(operatorGas)} />
             </GaugeCell>
           </Row>
         </Container>
@@ -144,7 +147,7 @@ export function registerAccountInfoFixture() {
 }
 
 const Container = styled.div`
-  cursor: pointer;
+  pointer-events: auto;
   border-color: black;
   border-width: 2px;
   border-radius: 10px;
