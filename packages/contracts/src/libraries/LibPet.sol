@@ -96,23 +96,9 @@ library LibPet {
     setCurrHealth(components, id, health);
   }
 
-  // feed the pet with a food item
-  // NOTE: assumes the pet health is synced prior to this call
-  function feed(
-    IUintComp components,
-    uint256 id,
-    uint256 foodIndex
-  ) internal returns (bool success) {
-    uint256 foodRegistryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    if (foodRegistryID != 0) {
-      success = true;
-      uint256 healAmt = LibStat.getHealth(components, foodRegistryID);
-      heal(components, id, healAmt);
-    }
-  }
-
   // heal the pet by a given amount
   function heal(IUintComp components, uint256 id, uint256 amt) internal {
+    if (amt == 0) return; // skip if no healing
     uint256 totalHealth = calcTotalHealth(components, id);
     uint256 health = getLastHealth(components, id) + amt;
     if (health > totalHealth) health = totalHealth;
