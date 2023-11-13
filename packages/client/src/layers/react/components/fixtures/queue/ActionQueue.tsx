@@ -7,7 +7,6 @@ import { Controls } from './Controls';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 
-
 export function registerActionQueueFixture() {
   registerUIComponent(
     'ActionQueue',
