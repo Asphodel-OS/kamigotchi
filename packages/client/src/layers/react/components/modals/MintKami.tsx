@@ -198,7 +198,7 @@ export function registerKamiMintModal() {
           id: actionID,
           action: 'KamiReveal',
           params: [kami.index],
-          description: `Inspecting Kami ${kami.index}`,
+          description: `Inspecting Kami ${kami.index * 1}`,
           execute: async () => {
             return player.ERC721.reveal(kami.index);
           },
