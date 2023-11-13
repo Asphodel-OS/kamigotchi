@@ -17,6 +17,14 @@ export const ItemGrid = (props: Props) => {
     setVisibleModals({ ...visibleModals, lootboxes: true, inventory: false });
   }
 
+  if (props.inventories.length === 0) {
+    return (
+      <EmptyText>
+        Inventory is empty
+      </EmptyText>
+    );
+  }
+
   const Cell = (inventory: Inventory) => {
     return (
       <ItemIcon
@@ -45,18 +53,14 @@ const Container = styled.div`
   justify-content: flex-start;
 `;
 
-const Balance = styled.div` 
-  border-top: solid black 1.25px;
-  border-left: solid black 1.25px;
-  border-radius: 2.5px 0 0 0;
-  background-color: #FFF;
-
-  position: absolute;
-  color: black;
-  right: 0;
-  bottom: 0;
-  padding: 2px;
-
+const EmptyText = styled.div`
   font-family: Pixel;
-  font-size: 8px;
+  font-size: 1vw;
+  text-align: center;
+  color: #333;
+  padding: 0.7vh 0vw;
+
+  margin: 1.5vh;
+
+  height: 100%;
 `;

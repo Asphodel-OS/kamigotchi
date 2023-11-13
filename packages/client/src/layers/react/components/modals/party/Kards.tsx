@@ -9,6 +9,7 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { Kami } from "layers/react/shapes/Kami";
+import styled from "styled-components";
 
 
 interface Props {
@@ -33,7 +34,6 @@ export const Kards = (props: Props) => {
       clearInterval(timerId);
     };
   }, []);
-
 
   /////////////////
   // INTERPRETATION
@@ -276,5 +276,28 @@ export const Kards = (props: Props) => {
     </>;
   };
 
+  ///////////////////
+  // EMPTY TEXT
+
+  if (props.kamis.length === 0) {
+    return (
+      <EmptyText>
+        You have no kamis.
+      </EmptyText>
+    );
+  }
+
   return KamiCards(props.kamis);
 }
+
+const EmptyText = styled.div`
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: center;
+  color: #333;
+  padding: 0.7vh 0vw;
+
+  margin: 3vh;
+
+  height: 100%;
+`;
