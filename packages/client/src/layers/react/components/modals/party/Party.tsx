@@ -2,6 +2,7 @@ import React from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import crypto from "crypto";
 
 import { Kards } from './Kards';
 import { kamiIcon } from 'assets/images/icons/menu';
@@ -108,7 +109,7 @@ export function registerPartyModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',
@@ -122,7 +123,7 @@ export function registerPartyModal() {
 
       // revive a kami using a revive item
       const revive = (kami: Kami, reviveIndex: number) => {
-        const actionID = `Reviving ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiRevive',
@@ -136,7 +137,7 @@ export function registerPartyModal() {
 
       // reveal kami
       const reveal = async (kami: Kami) => {
-        const actionID = `Revealing ${kami.name}` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiReveal',

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useAccount, useNetwork } from 'wagmi';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import crypto from "crypto";
 
 import { defaultChainConfig } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -34,7 +35,7 @@ export function registerOperatorUpdater() {
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
+      const { toggleVisibleButtons, toggleFixtures } = dataStore();
 
       const [isMismatched, setIsMismatched] = useState(false);
       const [helperText, setHelperText] = useState("");
@@ -76,7 +77,7 @@ export function registerOperatorUpdater() {
         const world = network!.world;
         const api = network!.api.player;
 
-        const actionID = `Setting Operator` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountSetOperator',

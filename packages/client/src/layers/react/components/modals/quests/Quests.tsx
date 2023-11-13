@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
+import crypto from "crypto";
 
 import { List } from './List';
 import { Tabs } from './Tabs';
@@ -85,7 +86,7 @@ export function registerQuestsModal() {
       // INTERACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        const actionID = `Accepting Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'QuestAccept',
@@ -98,7 +99,7 @@ export function registerQuestsModal() {
       }
 
       const completeQuest = async (quest: Quest) => {
-        const actionID = `Completing Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'QuestComplete',

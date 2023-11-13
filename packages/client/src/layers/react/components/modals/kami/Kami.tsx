@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
+import crypto from "crypto";
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -114,7 +115,7 @@ export function registerKamiModal() {
       // ACTIONS
 
       const levelUp = (kami: Kami) => {
-        const actionID = `Leveling up ${kami.name}` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiLevel',
@@ -127,7 +128,7 @@ export function registerKamiModal() {
       }
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
-        const actionID = `Upgrading skill ` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'SkillUpgrade',

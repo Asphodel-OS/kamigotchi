@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
+import crypto from "crypto";
 
 import { Banner } from './Banner';
 import { Kards } from './Kards';
@@ -107,7 +108,7 @@ export function registerNodeModal() {
 
       // collects on an existing production
       const collect = (kami: Kami) => {
-        const actionID = `Collecting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionCollect',
@@ -121,7 +122,7 @@ export function registerNodeModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',
@@ -136,7 +137,7 @@ export function registerNodeModal() {
       // liquidate a production
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
-        const actionID = `Liquidating ${enemyKami.name}` as EntityID; // itemIndex should be replaced with the item's name
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionLiquidate',
@@ -150,7 +151,7 @@ export function registerNodeModal() {
 
       // starts a production for the given pet and node
       const start = (kami: Kami, node: Node) => {
-        const actionID = `Starting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionStart',
@@ -164,7 +165,7 @@ export function registerNodeModal() {
 
       // stops a production
       const stop = (kami: Kami) => {
-        const actionID = `Stopping Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionStop',

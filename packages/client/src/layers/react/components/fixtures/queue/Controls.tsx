@@ -2,8 +2,7 @@ import styled from "styled-components";
 
 import PlaceHolderIcon from 'assets/images/icons/exit_native.png';
 import { NetworkLayer } from "layers/network/types";
-import { IconButton } from "../../library/IconButton";
-
+import { IconButton } from "layers/react/components/library/IconButton";
 
 interface Props {
   mode: 'collapsed' | 'expanded';

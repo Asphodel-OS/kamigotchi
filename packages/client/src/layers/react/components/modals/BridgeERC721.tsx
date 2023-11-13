@@ -4,6 +4,7 @@ import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { EntityID } from '@latticexyz/recs';
 import { BigNumberish } from 'ethers';
 import { useContractRead } from 'wagmi';
+import crypto from "crypto";
 import styled from 'styled-components';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
@@ -94,7 +95,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Staking Kami` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiDeposit',
@@ -112,7 +113,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Unstaking Kami` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiWithdraw',

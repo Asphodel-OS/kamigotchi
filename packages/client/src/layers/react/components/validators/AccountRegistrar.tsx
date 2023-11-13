@@ -9,6 +9,7 @@ import {
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import crypto from "crypto";
 
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
@@ -219,7 +220,7 @@ export function registerAccountRegistrar() {
         const api = network!.api.player;
 
         console.log('CREATING ACCOUNT FOR:', selectedAddress);
-        const actionID = `Creating Account: ${username}` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountCreate',
@@ -240,9 +241,12 @@ export function registerAccountRegistrar() {
         const api = network!.api.player;
 
         console.log(`MINTING ${amount} TOKENS`);
-        const actionID = (amount == 1 ? `Minting Token` : `Minting Tokens`) as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
+          action: 'AccountCreate',
+          params: [amount, value],
+          description: `Minting ${amount} $KAMI for ${value}`,
           execute: async () => {
             return api.mint.mintToken(amount, value);
           },

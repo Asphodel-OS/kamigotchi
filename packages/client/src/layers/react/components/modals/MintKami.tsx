@@ -5,6 +5,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
+import crypto from "crypto";
 
 import { abi } from "abi/Pet721ProxySystem.json"
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -177,12 +178,12 @@ export function registerKamiMintModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = (amount == 1 ? `Minting Kami` : `Minting Kamis`) as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiMind',
+          params: [amount],
+          description: `Minting ${amount} Kami`,
           execute: async () => {
             return api.mint.mintPet(amount);
           },
@@ -192,12 +193,12 @@ export function registerKamiMintModal() {
 
       // transaction to roll/reveal the kami's metadata 
       const revealTx = async (kami: Kami) => {
-        const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiReveal',
+          params: [kami.index],
+          description: `Inspecting Kami ${kami.index}`,
           execute: async () => {
             return player.ERC721.reveal(kami.index);
           },

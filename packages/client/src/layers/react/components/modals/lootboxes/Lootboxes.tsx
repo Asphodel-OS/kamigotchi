@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import crypto from "crypto";
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -87,7 +88,7 @@ export function registerLootboxesModal() {
       // ACTIONS
 
       const openTx = async (index: number, amount: number) => {
-        const actionID = (`Opening ${amount} of lootbox ${index}`) as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'LootboxCommit',
@@ -105,7 +106,7 @@ export function registerLootboxesModal() {
       };
 
       const revealTx = async (id: EntityID) => {
-        const actionID = (`Revealing lootboxes...`) as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'LootboxReveal',
