@@ -13,7 +13,6 @@ import { Quest, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes
 import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 import 'layers/react/styles/font.css';
 
-
 export function registerQuestsModal() {
   registerUIComponent(
     'Quests',
@@ -78,7 +77,7 @@ export function registerQuestsModal() {
 
     ({ layers, actions, api, data }) => {
       // console.log('mQuest:', data);
-      const [tab, setTab] = useState<TabType>('ONGOING');
+      const [tab, setTab] = useState<TabType>('AVAILABLE');
 
 
       ///////////////////
