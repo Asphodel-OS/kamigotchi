@@ -338,29 +338,16 @@ export const List = (props: Props) => {
     )
   }
 
+  // acceptable registry quests, non-repeatable
   const AvailableQuests = () => {
-    // get available, non-repeatable quests from registry
-    const oneTimes = props.registryQuests.filter((q: Quest) => {
+    // get quest registry. filter out any unavailable quests
+    let quests = props.registryQuests.filter((q: Quest) => {
       return (
         meetsRequirements(q)
         && meetsMax(props.account, q)
         && !q.repeatable
       );
     });
-
-    // get available, repeatable quests from registry
-    const repeats = props.registryQuests.filter((q: Quest) => {
-      return (
-        meetsRequirements(q)
-        && q.repeatable
-        && meetsRepeat(q)
-      );
-    });
-
-    const quests = repeats.concat(oneTimes);
-
-    if (quests.length == 0)
-      return <EmptyText>No available quests</EmptyText>;
 
     return quests.map((q: Quest) => (
       <QuestContainer key={q.id}>
@@ -374,23 +361,44 @@ export const List = (props: Props) => {
     ))
   }
 
-  const OngoingQuests = () => {
-    const rawQuests = [...props.account.quests?.ongoing ?? []];
-
-    if (rawQuests.length == 0)
-      return <EmptyText>No ongoing quests</EmptyText>;
-
-    rawQuests.reverse();
-
-    const completable: Quest[] = [];
-    const uncompletable: Quest[] = [];
-    rawQuests.forEach((q: Quest) => {
-      if (canComplete(q)) completable.push(q);
-      else uncompletable.push(q);
+  // acceptable registry quests, repeatable
+  const DailyQuests = () => {
+    // get quest registry, filter out non repeatables
+    let quests = props.registryQuests.filter((q: Quest) => {
+      return (
+        meetsRequirements(q)
+        && q.repeatable
+        && meetsRepeat(q)
+      );
     });
-    const quests = completable.concat(uncompletable);
 
     return quests.map((q: Quest) => (
+      <QuestContainer key={q.id}>
+        <QuestName>{q.name} ⥀</QuestName>
+        <QuestDescription>{q.description}</QuestDescription>
+        {RequirementDisplay(q.requirements)}
+        {ObjectiveDisplay(q.objectives, false)}
+        {RewardDisplay(q.rewards)}
+        {AcceptButton(q)}
+      </QuestContainer>
+    ))
+  };
+
+  const CompletedQuests = () => {
+    let quests = [...props.account.quests?.completed ?? []];
+    return quests.map((q: Quest) => (
+      <QuestContainer key={q.id}>
+        <QuestName>{q.name}</QuestName>
+        <QuestDescription>{q.description}</QuestDescription>
+        {ObjectiveDisplay(q.objectives, false)}
+        {RewardDisplay(q.rewards)}
+      </QuestContainer>
+    ))
+  }
+
+  const OngoingQuests = () => {
+    let quests = [...props.account.quests?.ongoing ?? []];
+    return quests.reverse().map((q: Quest) => (
       <QuestContainer key={q.id}>
         <QuestName>{q.name}</QuestName>
         <QuestDescription>{q.description}</QuestDescription>
@@ -402,12 +410,19 @@ export const List = (props: Props) => {
   }
 
   const QuestsDisplay = () => {
-    if (props.mode == 'AVAILABLE')
-      return AvailableQuests();
-    else if (props.mode == 'ONGOING')
-      return OngoingQuests();
-    else
-      return <div />;
+    switch (props.mode) {
+      case 'AVAILABLE':
+        return <>
+          {DailyQuests()}
+          {AvailableQuests()}
+        </>
+      case 'ONGOING':
+        return OngoingQuests();
+      case 'COMPLETED':
+        return CompletedQuests();
+      default:
+        return <div />;
+    }
   }
 
   return <Container>{QuestsDisplay()}</Container>;
@@ -417,18 +432,6 @@ const Container = styled.div`
   overflow-y: scroll;
   height: 100%;
   max-height: 100%;
-`;
-
-const EmptyText = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: center;
-  color: #333;
-  padding: 0.7vh 0vw;
-
-  margin: 1.5vh;
-
-  height: 100%;
 `;
 
 const QuestContainer = styled.div`
