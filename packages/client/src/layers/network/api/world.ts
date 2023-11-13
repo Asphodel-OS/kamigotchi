@@ -34,7 +34,6 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
-
   ///////////////////
   // CONFIG
 
@@ -249,10 +248,10 @@ export function setUpWorldAPI(systems: any) {
             await setFood(api, allItems[i]);
             break;
           case "REVIVE":
-            // await setRevive(api, allItems[i]);
+            await setRevive(api, allItems[i]);
             break;
           case "LOOTBOX":
-            // await setLootbox(api, allItems[i], allDroptables);
+            await setLootbox(api, allItems[i], allDroptables);
             break;
           default:
             console.error("Item type not found: " + allItems[i].get('Type'));
