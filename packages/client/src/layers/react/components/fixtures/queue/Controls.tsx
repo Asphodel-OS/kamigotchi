@@ -1,8 +1,6 @@
-import { getComponentEntities, getComponentValueStrict } from "@latticexyz/recs";
 import styled from "styled-components";
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import PlaceHolderIcon from 'assets/images/icons/exit_native.png';
 import { NetworkLayer } from "layers/network/types";
 import { IconButton } from "../../library/IconButton";
 
@@ -21,9 +19,8 @@ export const Controls = (props: Props) => {
   }
 
   const getIcon = () => {
-    console.log(ExpandLessIcon.muiName);
-    if (mode === 'collapsed') return ExpandLessIcon.muiName;
-    return ExpandMoreIcon.muiName;
+    if (mode === 'collapsed') return PlaceHolderIcon;
+    return PlaceHolderIcon;
   }
 
   return (

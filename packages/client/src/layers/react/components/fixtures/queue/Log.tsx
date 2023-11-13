@@ -1,9 +1,10 @@
 import { getComponentEntities, getComponentValueStrict } from "@latticexyz/recs";
-import { NetworkLayer } from "layers/network/types";
 import styled from "styled-components";
-import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
-import { Tooltip } from "../../library/Tooltip";
 import moment from 'moment';
+
+import { NetworkLayer } from "layers/network/types";
+import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
+import { Tooltip } from "layers/react/components/library/Tooltip";
 
 // Color coding of action queue
 type ColorMapping = { [key: string]: string };
@@ -38,6 +39,20 @@ export const Log = (props: Props) => {
     );
   }
 
+  const Description = (action: any) => {
+    const tooltip = [
+      `Action: ${action.action}`,
+      `Input(s): ${action.params.join(", ")}`,
+    ]
+    return (
+      <Tooltip text={tooltip}>
+        <Text>
+          {action.description}
+        </Text>
+      </Tooltip>
+    );
+  }
+
   const Time = (time: number) => {
     return (
       <Tooltip text={[moment(time).format()]}>
@@ -56,7 +71,7 @@ export const Log = (props: Props) => {
       return (
         <Row key={`action${entityIndex}`}>
           {Status(state, metadata)}
-          <Text>{actionData.description}</Text>
+          {Description(actionData)}
           {Time(actionData.time)}
         </Row>
       );
