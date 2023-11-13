@@ -15,13 +15,13 @@ export type ActionRequest<C extends Components, T, M = undefined> = {
   id: EntityID;
 
   // Action (name of system called)
-  action?: string;
+  action: string;
 
   // Human readable description of the action
   description: string;
 
   // Parameters to be passed to the execute function
-  params?: any[];
+  params: any[];
 
   // Specify which entity this action is related to.
   on?: EntityIndex;
