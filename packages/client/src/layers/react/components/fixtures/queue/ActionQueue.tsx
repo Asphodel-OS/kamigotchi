@@ -53,17 +53,20 @@ const Wrapper = styled.div`
   align-items: left;
 `;
 
+// cancer. just absolute cancer
 const Content = styled.div`
   position: absolute;
-  bottom: 1vw;
-  right: 1vw;
-  width: 33vw;
   padding: .2vw;
-  max-height: 33vh;
+  
+  right: 1.33vw;
+  width: 32.66vw;
+  max-width: 32.66vw;
+
+  bottom: 3vh;
+  max-height: 23vh;
 
   border: solid black 2px;
   border-radius: 10px;
-  
 
   background-color: white;  
   display: flex;

@@ -21,8 +21,8 @@ export function registerQuestsModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 25,
-      rowEnd: 99,
+      rowStart: 8,
+      rowEnd: 75,
     },
 
     (layers) => {
@@ -90,7 +90,7 @@ export function registerQuestsModal() {
         actions?.add({
           id: actionID,
           action: 'QuestAccept',
-          params: [quest.index],
+          params: [quest.index * 1],
           description: `Accepting Quest ${quest.index * 1}`,
           execute: async () => {
             return api.quests.accept(quest.index);

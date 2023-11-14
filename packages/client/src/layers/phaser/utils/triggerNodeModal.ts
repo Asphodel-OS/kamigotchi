@@ -19,7 +19,6 @@ export const triggerNodeModal = (index: number) => {
         kami: false,
         kamiMint: false,
         emaBoard: false,
-        map: false,
         nameKami: false,
       },
     });

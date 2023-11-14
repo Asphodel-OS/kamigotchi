@@ -94,12 +94,15 @@ export const Log = (props: Props) => {
 }
 
 const Content = styled.div`
+  border: solid grey .14vw;
+  border-radius: 10px;
+
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+
   background-color: #ddd;
-  border-radius: 10px;
   padding: 1vw;
-  border: solid grey 2px;
 
   overflow-y: scroll;
 `;
