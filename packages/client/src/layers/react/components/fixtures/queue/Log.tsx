@@ -2,16 +2,23 @@ import { getComponentEntities, getComponentValueStrict } from "@latticexyz/recs"
 import styled from "styled-components";
 import moment from 'moment';
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PendingIcon from '@mui/icons-material/Pending';
+import ErrorIcon from '@mui/icons-material/Error';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 import { NetworkLayer } from "layers/network/types";
 import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
 import { Tooltip } from "layers/react/components/library/Tooltip";
 
-// Color coding of action queue
-type ColorMapping = { [key: string]: string };
-const statusColors: ColorMapping = {
-  "pending": "orange",
-  "failed": "red",
-  "complete": "green",
+// Color coded icon mapping of action queue
+type ColorMapping = { [key: string]: any };
+const statusIcons: ColorMapping = {
+  "executing": <PendingIcon style={{ color: 'yellow' }} />,
+  "pending": <PendingIcon style={{ color: 'orange' }} />,
+  "complete": <CheckCircleIcon style={{ color: 'green' }} />,
+  "failed": <ErrorIcon style={{ color: 'red' }} />,
+  "cancelled": <CancelIcon style={{ color: 'red' }} />,
 }
 
 interface Props {
@@ -26,17 +33,18 @@ export const Log = (props: Props) => {
     return moment(time).fromNow();
   }
 
+  // generate the status icon
   const Status = (status: string, metadata: string) => {
-    const text = status.toLowerCase();
-    const color = statusColors[text];
-    const reason = metadata.substring(metadata.indexOf(":") + 1);
-    return (
-      <Tooltip text={[reason]}>
-        <Text style={{ color: `${color}`, display: "inline" }}>
-          {text}
-        </Text>
-      </Tooltip>
-    );
+    const icon = statusIcons[status.toLowerCase()];
+
+    let tooltip = [status];
+    if (metadata) {
+      const event = metadata.substring(0, metadata.indexOf(":"));
+      const reason = metadata.substring(metadata.indexOf(":") + 1);
+      tooltip = [`${status} (${event})`, '', `${reason}`]
+    }
+
+    return (<Tooltip text={tooltip}>{icon}</Tooltip>);
   }
 
   const Description = (action: any) => {
