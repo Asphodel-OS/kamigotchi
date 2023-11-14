@@ -1,11 +1,10 @@
 import styled from "styled-components";
 
-import { ItemIcon } from "layers/react/components/library/ItemIcon";
+import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Inventory } from "layers/react/shapes/Inventory";
 import { dataStore } from "layers/react/store/createStore";
 
 interface Props {
-  accountId: string;
   inventories: Inventory[];
 };
 
@@ -26,16 +25,18 @@ export const ItemGrid = (props: Props) => {
   }
 
   const Cell = (inventory: Inventory) => {
+    const tooltip = [inventory.item.name, '', inventory.item.description];
+
     return (
-      <ItemIcon
-        key={`${inventory.item.index}-${props.accountId}`}
-        id={`item-${inventory.item.index}`}
-        item={inventory.item}
-        size='fixed'
-        balance={inventory.balance}
-        onClick={inventory.item.type === "LOOTBOX" ? openLootbox : undefined}
-        description
-      />
+      <Tooltip key={inventory.id} text={tooltip}>
+        <Slot>
+          {(inventory.item.type === 'LOOTBOX')
+            ? <IconClickable src={inventory.item.uri} onClick={openLootbox} />
+            : <Icon src={inventory.item.uri} />
+          }
+          <Balance>{inventory.balance}</Balance>
+        </Slot>
+      </Tooltip>
     );
   }
 
@@ -63,4 +64,48 @@ const EmptyText = styled.div`
   margin: 1.5vh;
 
   height: 100%;
+`;
+
+const Slot = styled.div`
+  position: relative;
+  border: solid black .15vw;
+  border-radius: .5vw;
+
+  width: 5vw;
+  height: 5vw;
+  margin: .7vw;
+
+  align-items: center;
+  justify-content: center;
+`;
+
+const Icon = styled.img`
+  height: 100%;
+  width: 100%;
+  padding: .5vw;
+`;
+
+const IconClickable = styled.img`
+  height: 100%;
+  width: 100%;
+  padding: .5vw;
+
+  &:hover {
+    background-color: #BBB;
+  }
+`;
+
+const Balance = styled.div` 
+  border-top: solid black .15vw;
+  border-left: solid black .15vw;
+  border-radius: .3vw 0 0 0;
+
+  position: absolute;
+  color: black;
+  right: 0;
+  bottom: 0;
+  padding: .2vw;
+
+  font-family: Pixel;
+  font-size: .5vw;
 `;
