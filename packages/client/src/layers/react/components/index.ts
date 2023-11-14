@@ -1,7 +1,6 @@
 import { registerLoadingState } from './LoadingState';
 
 import {
-  registerChatButton,
   registerHelpButton,
   registerInventoryButton,
   registerMapButton,
@@ -11,8 +10,7 @@ import {
 } from './fixtures/buttons';
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
-import { registerActionQueueFixture } from './fixtures/queue/ActionQueue';
-import { registerGasWarningFixture } from './fixtures/GasWarning';
+import { registerActionQueueFixture } from './fixtures/queue/';
 import { registerWalletFixture } from './fixtures/Wallet';
 
 import { registerDialogueModal } from './modals/dialogue';
@@ -58,7 +56,6 @@ export function registerUIComponents() {
   // other fixtures
   registerAccountInfoFixture();
   registerActionQueueFixture();
-  registerGasWarningFixture();
   registerWalletFixture();
 
   // menu modals
