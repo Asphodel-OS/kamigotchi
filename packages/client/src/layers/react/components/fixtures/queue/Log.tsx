@@ -1,11 +1,10 @@
 import { getComponentEntities, getComponentValueStrict } from "@latticexyz/recs";
-import styled from "styled-components";
-import moment from 'moment';
-
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import ErrorIcon from '@mui/icons-material/Error';
 import CancelIcon from '@mui/icons-material/Cancel';
+import moment from 'moment';
+import styled from "styled-components";
 
 import { NetworkLayer } from "layers/network/types";
 import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
@@ -78,9 +77,13 @@ export const Log = (props: Props) => {
       let metadata = actionData.metadata ?? '';
       return (
         <Row key={`action${entityIndex}`}>
-          {Status(state, metadata)}
-          {Description(actionData)}
-          {Time(actionData.time)}
+          <RowSection1>
+            {Status(state, metadata)}
+            {Description(actionData)}
+          </RowSection1>
+          <RowSection2>
+            {Time(actionData.time)}
+          </RowSection2>
         </Row>
       );
     })
@@ -97,22 +100,22 @@ const Content = styled.div`
   border: solid grey .14vw;
   border-radius: 10px;
 
+  background-color: #ddd;
+  padding: .2vw;
+  overflow-y: scroll;
+
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-
-  background-color: #ddd;
-  padding: 1vw;
-
-  overflow-y: scroll;
 `;
 
 const Row = styled.div`
   padding: .2vw;
+  height: 100%;
 
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
 
   font-family: Pixel;
@@ -120,11 +123,23 @@ const Row = styled.div`
   text-align: left;
 `;
 
+const RowSection1 = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: .2vw;
+`;
+
+const RowSection2 = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+`;
 
 const Text = styled.div`
   font-size: .7vw;
   color: #333;
   text-align: left;
-  padding: 2px;
+  padding: .2vw;
   font-family: Pixel;
 `;

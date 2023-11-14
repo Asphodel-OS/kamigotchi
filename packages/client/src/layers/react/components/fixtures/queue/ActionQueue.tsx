@@ -35,7 +35,7 @@ export function registerActionQueueFixture() {
           style={{ display: fixtures.actionQueue ? 'block' : 'none' }}
         >
           <Content style={{ pointerEvents: 'auto' }}>
-            {(mode === 'expanded') && <Log network={layers.network} />}
+            {(mode !== 'collapsed') && <Log network={layers.network} />}
             <Controls
               mode={mode}
               setMode={setMode}
@@ -71,5 +71,4 @@ const Content = styled.div`
   background-color: white;  
   display: flex;
   flex-flow: column nowrap;
-
 `;

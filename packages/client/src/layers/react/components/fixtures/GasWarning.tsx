@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useBalance } from 'wagmi';
-import { GasConstants } from 'constants/gas';
 
+import { GasConstants } from 'constants/gas';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
