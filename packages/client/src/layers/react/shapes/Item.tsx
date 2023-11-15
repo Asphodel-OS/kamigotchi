@@ -21,7 +21,10 @@ export interface Item {
   index: number;
   isFungible: boolean;
   type: string;
-  uri: string;
+  image: {
+    default: string;
+    x4: string;
+  }
   name: string;
   description: string;
   familyIndex?: number;
@@ -59,7 +62,10 @@ export const getItem = (
     isFungible: hasComponent(IsFungible, index),
     type: '',
     name: getComponentValue(Name, index)?.value as string ?? 'Unknown Item',
-    uri: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
+    image: {
+      default: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
+      x4: `${baseURI}${(getComponentValue(MediaURI, index)?.value as string).slice(0, -4)}_x4.png`,
+    },
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(layers, index),
   }

@@ -22,7 +22,7 @@ export const ItemRow = (props: Props) => {
 
   const BuyButton = (listing: Listing) => (
     <ActionButton
-      id={`button-buy-${listing.item!.index}`}
+      id={`button-buy-${listing.item.index}`}
       onClick={openBuyModal}
       text='Buy'
     />
@@ -31,7 +31,7 @@ export const ItemRow = (props: Props) => {
   return (
     <Row key={props.listing.item!.index}>
       <Tooltip text={[props.listing.item!.description]}>
-        <Image src={props.listing.item!.uri} />
+        <Image src={props.listing.item!.image.default} />
       </Tooltip>
       <Name>{props.listing.item!.name}</Name>
       <Price>{props.listing!.buyPrice}</Price>

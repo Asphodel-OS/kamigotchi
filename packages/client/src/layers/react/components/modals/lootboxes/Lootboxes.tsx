@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 
@@ -11,12 +11,11 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 
 import { Opener } from './Opener';
+import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
-import { Lootbox, LootboxLog, getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
+import { getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
 import { getItemByIndex } from 'layers/react/shapes/Item';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
-
-
 
 export function registerLootboxesModal() {
   registerUIComponent(
@@ -30,22 +29,26 @@ export function registerLootboxesModal() {
     (layers) => {
       const {
         network: {
-          network,
           components: {
+            AccountID,
             Balance,
             Balances,
             RevealBlock,
             HolderID,
+            ItemIndex,
+            MediaURI,
           },
-          systems,
         },
       } = layers;
 
       return merge(
+        AccountID.update$,
         Balance.update$,
         Balances.update$,
         RevealBlock.update$,
         HolderID.update$,
+        ItemIndex.update$,
+        MediaURI.update$,
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(
@@ -55,13 +58,14 @@ export function registerLootboxesModal() {
 
           return {
             layers,
-            account
+            account,
+            selectedBox: getLootboxByIndex(layers, 10001),
           };
         })
       );
     },
 
-    ({ layers, account }) => {
+    ({ layers, account, selectedBox }) => {
       const {
         network: {
           actions,
@@ -74,18 +78,53 @@ export function registerLootboxesModal() {
       const { modals } = useComponentSettings();
 
       const [state, setState] = useState("OPEN");
-      const [log, setLog] = useState<EntityIndex>();
+      const [amount, setAmount] = useState(0);
+      const [waitingToReveal, setWaitingToReveal] = useState(false);
 
       // Refresh modal upon closure
       useEffect(() => {
         if (!modals.lootboxes) {
           setState("OPEN");
-          setLog(undefined);
         }
       }, [modals.lootboxes]);
 
       /////////////////
       // ACTIONS
+
+      // (AUTO) REVEAL latest box
+      useEffect(() => {
+        const tx = async () => {
+          if (waitingToReveal) {
+            // wait to give buffer for OP rpc
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            const raw = [...account.lootboxLogs?.unrevealed!];
+            const reversed = raw.reverse();
+            reversed.forEach(async (LootboxLog) => {
+              try {
+                await revealTx(LootboxLog.id);
+                setWaitingToReveal(false);
+                setState("REWARDS");
+              }
+              catch (e) { console.log(e); }
+            });
+          }
+        }
+        tx();
+      }, [account.lootboxLogs?.unrevealed, waitingToReveal]);
+
+      // COMMIT REVEAL selected box
+      useEffect(() => {
+        const tx = async () => {
+          if (!waitingToReveal && state === "REVEALING") {
+            try {
+              setWaitingToReveal(true);
+              await openTx(selectedBox?.index!, amount);
+            }
+            catch (e) { console.log(e); }
+          }
+        }
+        tx();
+      }, [waitingToReveal, amount, state]);
 
       const openTx = async (index: number, amount: number) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
@@ -130,10 +169,6 @@ export function registerLootboxesModal() {
         return getLootboxLog(layers, index);
       }
 
-      const getLootbox = (index: number) => {
-        return getLootboxByIndex(layers, index);
-      }
-
       const getItem = (index: number) => {
         return getItemByIndex(layers, index);
       }
@@ -170,10 +205,15 @@ export function registerLootboxesModal() {
             return (
               <Opener
                 account={account}
-                actions={{ openTx, revealTx, setState }}
                 inventory={account.inventories?.lootboxes![0]}
-                utils={{ getLootbox }}
+                lootbox={selectedBox}
+                utils={{ setAmount, setState }}
               />
+            );
+            break;
+          case "REVEALING":
+            return (
+              <Revealing />
             );
             break;
           case "REWARDS":
@@ -188,9 +228,9 @@ export function registerLootboxesModal() {
             return (
               <Opener
                 account={account}
-                actions={{ openTx, revealTx, setState }}
                 inventory={account.inventories?.lootboxes![0]}
-                utils={{ getLootbox }}
+                lootbox={selectedBox}
+                utils={{ setAmount, setState }}
               />
             );
             break;
