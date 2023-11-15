@@ -29,8 +29,8 @@ export function registerActionQueueFixture() {
 
     ({ layers }) => {
       const ActionComponent = layers.network.actions!.Action;
-      const [mode, setMode] = useState<'collapsed' | 'expanded'>('expanded');
       const { fixtures } = useComponentSettings();
+      const [mode, setMode] = useState<number>(1);
       const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
 
       // track the full list of Actions by their Entity Index
@@ -38,12 +38,13 @@ export function registerActionQueueFixture() {
         setActionIndices([...getComponentEntities(ActionComponent)]);
       }, [([...getComponentEntities(ActionComponent)]).length]);
 
+      const sizes = ['none', '23vh', '90vh'];
       return (
         <Wrapper
           style={{ display: fixtures.actionQueue ? 'block' : 'none' }}
         >
-          <Content style={{ pointerEvents: 'auto' }}>
-            {(mode !== 'collapsed') && <Logs actionIndices={actionIndices} network={layers.network} />}
+          <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
+            {(mode !== 0) && <Logs actionIndices={actionIndices} network={layers.network} />}
             <Controls
               mode={mode}
               setMode={setMode}

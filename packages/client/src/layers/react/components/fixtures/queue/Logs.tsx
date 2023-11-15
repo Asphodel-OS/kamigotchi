@@ -36,12 +36,16 @@ export const Logs = (props: Props) => {
     if (logs) logs.scrollTop = logs.scrollHeight + 100;
   }, [actionIndices]);
 
+
+  //////////////////
+  // RENDERINGS
+
   // generate the status icon
   const Status = (status: string, metadata: string) => {
     const icon = statusIcons[status.toLowerCase()];
 
     let tooltip = [status];
-    if (metadata) {
+    if (/\S/.test(metadata)) {
       const event = metadata.substring(0, metadata.indexOf(":"));
       const reason = metadata.substring(metadata.indexOf(":") + 1);
       tooltip = [`${status} (${event})`, '', `${reason}`]

@@ -12,7 +12,7 @@ import { playClick } from 'utils/sounds';
 import { Tooltip } from '../../library/Tooltip';
 
 interface Props {
-  mode: 'collapsed' | 'expanded';
+  mode: number;
   setMode: Function;
   network: NetworkLayer;
 }
@@ -29,7 +29,7 @@ export const Controls = (props: Props) => {
   });
 
   const toggleMode = () => {
-    setMode(mode === 'collapsed' ? 'expanded' : 'collapsed');
+    setMode((mode + 1) % 3);
   }
 
   const clickGasIcon = () => {
@@ -40,17 +40,11 @@ export const Controls = (props: Props) => {
     });
   }
 
-  const ToggleButton = () => {
-    const icon = PlaceHolderIcon;
-    return (
-      <IconButton
-        id='toggle'
-        onClick={() => toggleMode()}
-        img={icon}
-      />
-    );
-  }
 
+  //////////////////
+  // RENDERINGS
+
+  // gas warning icon, becomes more prominent as gas is depleted
   const GasWarning = () => {
     let warning = '';
     let color = '';
@@ -77,6 +71,18 @@ export const Controls = (props: Props) => {
         />
       </Tooltip>
     )
+  }
+
+  // button to toggle the modal between difference sizes
+  const ToggleButton = () => {
+    const icon = PlaceHolderIcon;
+    return (
+      <IconButton
+        id='toggle'
+        onClick={() => toggleMode()}
+        img={icon}
+      />
+    );
   }
 
   return (
