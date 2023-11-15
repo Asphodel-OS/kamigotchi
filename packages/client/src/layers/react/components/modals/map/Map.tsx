@@ -12,6 +12,8 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { dataStore } from 'layers/react/store/createStore';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import styled from 'styled-components';
+import { playClick } from 'utils/sounds';
 
 
 export function registerMapModal() {
@@ -21,7 +23,7 @@ export function registerMapModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 60,
+      rowEnd: 50,
     },
     (layers) => {
       const {
@@ -91,6 +93,26 @@ export function registerMapModal() {
         });
       };
 
+      const handleClick = (location: number) => {
+        playClick();
+        move(location);
+      }
+
+      const ExitsDisplay = () => {
+        return (
+          <Section>
+            <Title>Go To..</Title>
+            {selectedExits.map((exit) => {
+              return (
+                <ClickableDescription key={exit.location} onClick={() => handleClick(exit.location)}>
+                  → {exit.name}
+                </ClickableDescription>
+              );
+            })}
+          </Section>
+        );
+      }
+
 
       ///////////////////
       // DISPLAY
@@ -100,6 +122,7 @@ export function registerMapModal() {
           id='world_map'
           divName='map'
           header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
+          footer={<ExitsDisplay />}
           canExit
         >
           <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
@@ -108,3 +131,38 @@ export function registerMapModal() {
     }
   );
 }
+
+
+const Section = styled.div`
+  margin: 1.2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
+
+
+const Title = styled.p`
+  color: #333;
+  padding-bottom: .5vw;
+
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
+`;
+
+// TODO: merge this with Description using props
+const ClickableDescription = styled.div`
+  color: #333;
+  cursor: pointer;
+  padding: .3vw;
+  
+  font-size: .8vw;
+  font-family: Pixel;
+  text-align: left;
+  &:hover {
+    background-color: #ddd;
+  }
+  &:active {
+    background-color: #bbb;
+  }
+`;

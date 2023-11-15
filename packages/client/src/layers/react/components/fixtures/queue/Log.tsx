@@ -115,7 +115,7 @@ const Row = styled.div`
 
   display: flex;
   flex-flow: row nowrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
 
   font-family: Pixel;
