@@ -155,13 +155,13 @@ export function registerBurnerDetector() {
         <Wrapper id='burner-detector' style={{ display: modalDisplay() }}>
           <Content style={{ pointerEvents: 'auto' }}>
             <Title>Burner Address Detector</Title>
+            {ErrorMessage()}
             <br />
             <Description>Connected: {network.connectedAddress.get()}</Description>
             <br />
             <Description>Detected: {detectedAddress}</Description>
             <br />
             <br />
-            {ErrorMessage()}
             {PrivateKeyInput()}
             <ActionWrapper>
               {GenerateButton()}

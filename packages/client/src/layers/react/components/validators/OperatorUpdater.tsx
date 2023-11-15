@@ -7,15 +7,17 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 
 import { defaultChainConfig } from 'constants/chains';
+import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { dataStore } from 'layers/react/store/createStore';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
-import { playScribble, playSuccess } from 'utils/sounds';
-
+import { generatePrivateKey } from 'utils/address';
+import { playClick, playScribble, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
+
 
 // TODO: check for whether an account with the burner address already exists
 export function registerOperatorUpdater() {
@@ -33,14 +35,14 @@ export function registerOperatorUpdater() {
       const { isConnected } = useAccount();
       const { chain } = useNetwork();
       const { details: accountDetails } = useKamiAccount();
+      const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { visibleModals, setVisibleModals } = dataStore();
       const { toggleVisibleButtons, toggleFixtures } = dataStore();
 
       const [isMismatched, setIsMismatched] = useState(false);
-      const [helperText, setHelperText] = useState("");
-      const [newAddress, setNewAddress] = useState("");
-      const [newPrivKey, setNewPrivKey] = useState("");
+      const [mode, setMode] = useState('key');
+      const [value, setValue] = useState('');
 
       // toggle visibility based on many things
       useEffect(() => {
@@ -52,7 +54,6 @@ export function registerOperatorUpdater() {
         const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
         const isVisible = (meetsPreconditions && !operatorMatch);
         setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
-        setHelperText(operatorMatch ? "" : "Connected Burner does not match Account Operator");
         setIsMismatched(!operatorMatch);
 
         // awkward place to put this trigger, but this is the last validator to be checked
@@ -60,7 +61,7 @@ export function registerOperatorUpdater() {
           toggleVisibleButtons(true);
           toggleFixtures(true);
         }
-      }, [isConnected, burnerInfo, accountDetails]);
+      }, [isConnected, burnerInfo, accountDetails.operatorAddress]);
 
 
       /////////////////
@@ -92,24 +93,51 @@ export function registerOperatorUpdater() {
       }
 
       const setPrivKey = (privKey: string) => {
+        playScribble();
         if (privKey.length > 0) {
-          localStorage.setItem('operatorPrivateKey', privKey);
-          setHelperText("Operator updated, please refresh!");
+          setDetectedPrivateKey(privKey);
         }
       }
 
-      const setValues = () => {
-        if (newAddress != '') setOperatorWithFx(newAddress);
-        if (newPrivKey != '') setPrivKey(newPrivKey);
+
+      /////////////////
+      // FORM HANDLING
+
+      const submit = () => {
+        if (mode === 'key') setPrivKey(value);
+        else setOperatorWithFx(value);
       }
 
-      const handleChangePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNewAddress(event.target.value);
+      const generate = () => {
+        const privKey = generatePrivateKey();
+        setValue(privKey);
+      }
+
+      const copy = () => {
+        setValue(burnerInfo.connected);
+      }
+
+      const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(event.target.value);
       };
 
-      const handleChangePrivate = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNewPrivKey(event.target.value);
-      };
+      const getLabel = () => {
+        return (mode === 'key')
+          ? "Private Key of Current Operator on Account"
+          : "Address of New Operator for Account";
+      }
+
+      const getPlaceholder = () => {
+        return (mode === 'key')
+          ? `Private Key of ${accountDetails.operatorAddress}`
+          : "Any ol' Operator will do...";
+      }
+
+      const handleSetMode = (newMode: string) => {
+        playClick();
+        setMode(newMode);
+        setValue('');
+      }
 
 
       /////////////////
@@ -119,29 +147,34 @@ export function registerOperatorUpdater() {
         <ModalWrapperFull divName='operatorUpdater' id='operatorUpdater' canExit={!isMismatched}>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Update Operator</Title>
-            <Description style={{ color: '#FF785B' }}>{helperText}</Description>
+            <Warning>Connected Burner != Account Operator</Warning>
             <br />
-            <Description>Current Operator: {accountDetails.operatorAddress}</Description>
+            <Description>Account Operator: {accountDetails.operatorAddress}</Description>
             <Description>Connected Burner: {burnerInfo.connected}</Description>
+            <br />
+            <Warning2 onClick={() => handleSetMode('key')}>
+              {(mode === 'key') ? '→ ' : ''}Please find your keys, {accountDetails.name}
+            </Warning2>
+            <Warning2 onClick={() => handleSetMode('address')}>
+              {(mode !== 'key') ? '→ ' : ''}Or you'll have to find a new Operator
+            </Warning2>
+            <br />
             <Container id='new-operator'>
-              <Label>new address (optional)</Label>
+              <Label>{getLabel()}</Label>
               <Input
                 type='text'
-                placeholder='update account operator address'
-                value={newAddress}
-                onChange={(e) => handleChangePublic(e)}
+                placeholder={getPlaceholder()}
+                value={value}
+                onChange={(e) => handleInputChange(e)}
               />
             </Container>
-            <Container id='new-operator-priv'>
-              <Label>new private key (optional)</Label>
-              <Input
-                type='text'
-                placeholder='update connected operator private key'
-                value={newPrivKey}
-                onChange={(e) => handleChangePrivate(e)}
-              />
-            </Container>
-            <ActionButton id={`submit`} text='Submit' onClick={setValues} />
+            <Row>
+              {(mode === 'key')
+                ? <ActionButton id={`generate`} text="I'm feeling Lucky" onClick={generate} />
+                : <ActionButton id={`copy`} text='Use connected one' onClick={copy} />
+              }
+              <ActionButton id={`submit`} text='Submit' onClick={submit} />
+            </Row>
           </ModalContent>
         </ModalWrapperFull>
       );
@@ -154,7 +187,7 @@ const ModalContent = styled.div`
   display: grid;
   justify-content: center;
   background-color: white;
-  padding: 20px;
+  padding: 3vw;
   width: 99%;
 `;
 
@@ -183,6 +216,28 @@ const Description = styled.p`
   padding: 5px 0px;
 `;
 
+const Warning = styled.p`
+  font-size: 12px;
+  color: #FF785B;
+  text-align: center;
+  font-family: Pixel;
+  padding: 5px 0px;
+`;
+
+const Warning2 = styled.p`
+  font-size: 12px;
+  color: #FF785B;
+  text-align: center;
+  font-family: Pixel;
+  padding: 5px 0px;
+
+  cursor: pointer;
+  &:hover {
+    color: #FF785B;
+    text-decoration: underline;
+  }
+`;
+
 const Input = styled.input`
   background-color: #ffffff;
   border-style: solid;
@@ -209,21 +264,9 @@ const Label = styled.label`
   margin: 0px 5px;
 `;
 
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
