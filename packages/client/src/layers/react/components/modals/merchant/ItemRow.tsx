@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { Tooltip } from '../../library/Tooltip';
 
@@ -12,12 +12,12 @@ export interface Props {
 
 // TODO: support multiple buys
 export const ItemRow = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { modals, setModals } = useComponentSettings();
   const { setListing } = useSelectedEntities();
 
   const openBuyModal = () => {
     setListing(props.listing.entityIndex);
-    setVisibleModals({ ...visibleModals, buy: true });
+    setModals({ ...modals, buy: true });
   }
 
   const BuyButton = (listing: Listing) => (

@@ -3,7 +3,7 @@ import styled from "styled-components"
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { dataStore } from "layers/react/store/createStore";
+import { useComponentSettings } from "layers/react/store/componentSettings";
 import { useKamiAccount } from "layers/react/store/kamiAccount";
 import CopyButton from "../../library/CopyButton";
 
@@ -14,7 +14,7 @@ interface Props {
 
 export const Account = (props: Props) => {
   const { details: accountDetails } = useKamiAccount();
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { modals, setModals } = useComponentSettings();
 
   const truncateAddress = (address: string) => {
     return address.slice(0, 6) + '...' + address.slice(-4);
@@ -58,7 +58,7 @@ export const Account = (props: Props) => {
             <ActionButton
               id='update-button'
               text='update'
-              onClick={() => setVisibleModals({ ...visibleModals, operatorUpdater: true })}
+              onClick={() => setModals({ ...modals, operatorUpdater: true })}
               size='small'
             />
           </Tooltip>
@@ -66,7 +66,7 @@ export const Account = (props: Props) => {
             <ActionButton
               id='fund-button'
               text='fund'
-              onClick={() => setVisibleModals({ ...visibleModals, operatorFund: true })}
+              onClick={() => setModals({ ...modals, operatorFund: true })}
               size='small'
             />
           </Tooltip>

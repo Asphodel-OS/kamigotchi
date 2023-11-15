@@ -10,7 +10,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
@@ -47,7 +47,7 @@ export function registerMapModal() {
     ({ layers, actions, api, data }) => {
       // console.log('mRoom: ', data)
       const { room, setRoom } = useSelectedEntities();
-      const { visibleModals } = dataStore();
+      const { modals } = useComponentSettings();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 
@@ -57,8 +57,8 @@ export function registerMapModal() {
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
-        if (visibleModals.map) setRoom(data.account.location)
-      }, [visibleModals.map]);
+        if (modals.map) setRoom(data.account.location)
+      }, [modals.map]);
 
       // update the selected room details
       useEffect(() => {

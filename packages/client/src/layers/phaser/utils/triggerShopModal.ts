@@ -1,22 +1,22 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities'
 import { playClick } from 'utils/sounds';
 
 export const triggerShopModal = (npcIndex: number) => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
   const { setNpc } = useSelectedEntities.getState();
   playClick();
 
-  if (!visibleModals.merchant) {
+  if (!modals.merchant) {
     setNpc(npcIndex);
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         merchant: true,
         map: false,
       },
     });
   } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, merchant: false } });
+    useComponentSettings.setState({ modals: { ...modals, merchant: false } });
   }
 }

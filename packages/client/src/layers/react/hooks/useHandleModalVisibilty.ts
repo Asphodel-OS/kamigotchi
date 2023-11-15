@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
 
 type UseModalVisibilityParams = {
-  divName: keyof VisibleModals;
+  divName: keyof Modals;
   elementId: string;
 };
 
@@ -10,18 +10,18 @@ export const useModalVisibility = ({
   divName,
   elementId,
 }: UseModalVisibilityParams) => {
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { modals, setModals } = useComponentSettings();
 
   const handleClick = () => {
-    setVisibleModals({ ...visibleModals, [divName]: !visibleModals[divName] });
+    setModals({ ...modals, [divName]: !modals[divName] });
   };
 
   useEffect(() => {
     const element = document.getElementById(elementId);
-    if (element && visibleModals[divName]) {
+    if (element && modals[divName]) {
       element.style.display = 'block';
     }
-  }, [visibleModals[divName], elementId]);
+  }, [modals[divName], elementId]);
 
-  return { handleClick, isVisible: visibleModals[divName] };
+  return { handleClick, isVisible: modals[divName] };
 };

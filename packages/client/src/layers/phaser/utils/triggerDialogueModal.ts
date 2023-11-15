@@ -1,17 +1,17 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';
 
 export const triggerDialogueModal = (index: number) => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
   const { dialogueIndex } = useSelectedEntities.getState();
   playClick();
 
   useSelectedEntities.setState({ dialogueIndex: index });
-  if (!visibleModals.dialogue) {
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+  if (!modals.dialogue) {
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         dialogue: true,
         bridgeERC721: false,
         bridgeERC20: false,
@@ -25,6 +25,6 @@ export const triggerDialogueModal = (index: number) => {
       },
     });
   } else if (dialogueIndex === index) {
-    dataStore.setState({ visibleModals: { ...visibleModals, dialogue: false } });
+    useComponentSettings.setState({ modals: { ...modals, dialogue: false } });
   }
 };

@@ -6,7 +6,7 @@ import { Countdown } from './Countdown';
 import { Tooltip } from './Tooltip';
 import { Card } from 'layers/react/components/library/Card';
 import { Kami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';
 
@@ -23,7 +23,7 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { modals, setModals } = useComponentSettings();
   const { kamiEntityIndex, setKami } = useSelectedEntities();
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
@@ -45,12 +45,12 @@ export const KamiCard = (props: Props) => {
 
   // toggle the kami modal settings depending on its current state
   const kamiOnClick = () => {
-    const modalIsOpen = visibleModals.kami;
+    const modalIsOpen = modals.kami;
     const sameKami = kamiEntityIndex === props.kami.entityIndex;
     setKami(props.kami.entityIndex);
 
-    if (modalIsOpen && sameKami) setVisibleModals({ ...visibleModals, kami: false });
-    else setVisibleModals({ ...visibleModals, kami: true });
+    if (modalIsOpen && sameKami) setModals({ ...modals, kami: false });
+    else setModals({ ...modals, kami: true });
     playClick();
   }
 

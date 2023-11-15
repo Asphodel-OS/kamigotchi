@@ -21,7 +21,7 @@ import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { AccountDetails, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playScribble } from 'utils/sounds';
@@ -129,8 +129,8 @@ export function registerAccountRegistrar() {
       const { isConnected } = useAccount();
       const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
+      const { modals, setModals } = useComponentSettings();
+      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const [isVisible, setIsVisible] = useState(false);
 
       // set visibility of this validator
@@ -153,9 +153,9 @@ export function registerAccountRegistrar() {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         if (!accountDetails.id) {
-          toggleVisibleButtons(false);
+          toggleButtons(false);
           toggleFixtures(false);
-          toggleVisibleModals(false);
+          toggleModals(false);
         }
 
         setAccountDetails(accountDetails);
@@ -183,8 +183,8 @@ export function registerAccountRegistrar() {
       }
 
       const openFundModal = () => {
-        setVisibleModals({
-          ...visibleModals,
+        setModals({
+          ...modals,
           operatorFund: true,
         });
       };

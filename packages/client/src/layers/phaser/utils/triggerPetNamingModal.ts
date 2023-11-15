@@ -1,14 +1,14 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { playClick } from 'utils/sounds';
 
 export const triggerPetNamingModal = () => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
   playClick();
 
-  if (!visibleModals.emaBoard) {
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+  if (!modals.emaBoard) {
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         emaBoard: true,
         bridgeERC20: false,
         bridgeERC721: false,
@@ -21,6 +21,6 @@ export const triggerPetNamingModal = () => {
       },
     });
   } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, emaBoard: false } });
+    useComponentSettings.setState({ modals: { ...modals, emaBoard: false } });
   }
 };

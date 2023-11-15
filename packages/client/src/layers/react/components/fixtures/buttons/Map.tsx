@@ -6,7 +6,7 @@ import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { getRoomByLocation, Room } from 'layers/react/shapes/Room';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
 
 export function registerMapButton() {
   registerUIComponent(
@@ -36,14 +36,14 @@ export function registerMapButton() {
     },
     ({ layers, data }) => {
       const [roomObject, setRoomObject] = useState<Room>();
-      const { visibleButtons } = dataStore();
+      const { buttons } = useComponentSettings();
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
         setRoomObject(getRoomByLocation(layers, data.account.location));
       }, [data?.account.location]);
 
-      const modalsToHide: Partial<VisibleModals> = {
+      const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,
@@ -61,7 +61,7 @@ export function registerMapButton() {
           tooltip={`Location (${roomObject?.name})`}
           targetDiv='map'
           hideModals={modalsToHide}
-          visible={visibleButtons.map}
+          visible={buttons.map}
         />
       );
     }

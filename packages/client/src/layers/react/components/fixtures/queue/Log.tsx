@@ -25,7 +25,7 @@ interface Props {
 }
 
 export const Log = (props: Props) => {
-  const { network: { world, actions } } = props;
+  const { network: { actions } } = props;
   const ActionComponent = actions!.Action;
 
   const getTimeString = (time: number) => {

@@ -10,7 +10,7 @@ import { defaultChainConfig } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { playScribble, playSuccess } from 'utils/sounds';
@@ -34,8 +34,8 @@ export function registerOperatorUpdater() {
       const { chain } = useNetwork();
       const { details: accountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleFixtures } = dataStore();
+      const { modals, setModals } = useComponentSettings();
+      const { toggleButtons, toggleFixtures } = useComponentSettings();
 
       const [isMismatched, setIsMismatched] = useState(false);
       const [helperText, setHelperText] = useState("");
@@ -51,13 +51,13 @@ export function registerOperatorUpdater() {
 
         const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
         const isVisible = (meetsPreconditions && !operatorMatch);
-        setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
+        setModals({ ...modals, operatorUpdater: isVisible });
         setHelperText(operatorMatch ? "" : "Connected Burner does not match Account Operator");
         setIsMismatched(!operatorMatch);
 
         // awkward place to put this trigger, but this is the last validator to be checked
         if (meetsPreconditions && operatorMatch) {
-          toggleVisibleButtons(true);
+          toggleButtons(true);
           toggleFixtures(true);
         }
       }, [isConnected, burnerInfo, accountDetails]);
