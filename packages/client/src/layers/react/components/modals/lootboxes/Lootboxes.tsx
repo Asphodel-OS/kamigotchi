@@ -14,7 +14,7 @@ import { Opener } from './Opener';
 import { Rewards } from './Rewards';
 import { Lootbox, LootboxLog, getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
 import { getItemByIndex } from 'layers/react/shapes/Item';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 
 
 
@@ -71,18 +71,18 @@ export function registerLootboxesModal() {
         },
       } = layers;
 
-      const { visibleModals } = dataStore();
+      const { modals } = useComponentSettings();
 
       const [state, setState] = useState("OPEN");
       const [log, setLog] = useState<EntityIndex>();
 
       // Refresh modal upon closure
       useEffect(() => {
-        if (!visibleModals.lootboxes) {
+        if (!modals.lootboxes) {
           setState("OPEN");
           setLog(undefined);
         }
-      }, [visibleModals.lootboxes]);
+      }, [modals.lootboxes]);
 
       /////////////////
       // ACTIONS

@@ -1,11 +1,11 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 
 export const closeModalsOnRoomChange = () => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
 
-  dataStore.setState({
-    visibleModals: {
-      ...visibleModals,
+  useComponentSettings.setState({
+    modals: {
+      ...modals,
       dialogue: false,
       merchant: false,
       kamiMint: false,

@@ -11,7 +11,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
 
 export function registerAccountInfoFixture() {
@@ -58,7 +58,7 @@ export function registerAccountInfoFixture() {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const { account, room } = data;
-      const { fixtures } = dataStore();
+      const { fixtures } = useComponentSettings();
 
       /////////////////
       // TRACKING

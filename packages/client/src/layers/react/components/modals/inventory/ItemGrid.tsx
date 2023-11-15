@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Inventory } from "layers/react/shapes/Inventory";
-import { dataStore } from "layers/react/store/createStore";
+import { useComponentSettings } from "layers/react/store/componentSettings";
 
 interface Props {
   inventories: Inventory[];
@@ -10,10 +10,10 @@ interface Props {
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { modals, setModals } = useComponentSettings();
 
   const openLootbox = () => {
-    setVisibleModals({ ...visibleModals, lootboxes: true, inventory: false });
+    setModals({ ...modals, lootboxes: true, inventory: false });
   }
 
   if (props.inventories.length === 0) {

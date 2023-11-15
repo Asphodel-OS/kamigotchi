@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-export interface VisibleButtons {
+export interface Buttons {
   help: boolean;
   inventory: boolean;
   map: boolean;
@@ -9,7 +9,7 @@ export interface VisibleButtons {
   settings: boolean;
 }
 
-export const toggleButtons = (isOn: boolean): VisibleButtons => ({
+export const toggleButtons = (isOn: boolean): Buttons => ({
   help: isOn,
   inventory: isOn,
   map: isOn,
@@ -28,7 +28,7 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
   actionQueue: isOn,
 });
 
-export interface VisibleModals {
+export interface Modals {
   bridgeERC20: boolean;
   bridgeERC721: boolean;
   buy: boolean;
@@ -54,7 +54,7 @@ export interface VisibleModals {
   settings: boolean;
 }
 
-export const toggleModals = (isOn: boolean): VisibleModals => ({
+export const toggleModals = (isOn: boolean): Modals => ({
   bridgeERC20: isOn,
   bridgeERC721: isOn,
   buy: isOn,
@@ -80,23 +80,36 @@ export const toggleModals = (isOn: boolean): VisibleModals => ({
   settings: isOn,
 });
 
-export interface DataStore {
-  visibleButtons: VisibleButtons;
+export interface ComponentSettings {
+  buttons: Buttons;
   fixtures: Fixtures;
-  visibleModals: VisibleModals;
+  modals: Modals;
 }
 
-interface DataStoreActions {
-  setVisibleModals: (data: VisibleModals) => void;
-  setVisibleButtons: (data: VisibleButtons) => void;
-  toggleVisibleButtons: (isOn: boolean) => void;
-  toggleVisibleModals: (isOn: boolean) => void;
+interface ComponentSettingsActions {
+  setButtons: (data: Buttons) => void;
+  setFixtures: (data: Fixtures) => void;
+  setModals: (data: Modals) => void;
+  toggleButtons: (isOn: boolean) => void;
+  toggleModals: (isOn: boolean) => void;
   toggleFixtures: (isOn: boolean) => void;
 }
 
-export const dataStore = create<DataStore & DataStoreActions>((set) => {
-  const initialState: DataStore = {
-    visibleModals: {
+export const useComponentSettings = create<ComponentSettings & ComponentSettingsActions>((set) => {
+  const initialState: ComponentSettings = {
+    buttons: {
+      help: false,
+      inventory: false,
+      map: false,
+      party: false,
+      quests: false,
+      settings: false,
+    },
+    fixtures: {
+      accountInfo: false,
+      actionQueue: false,
+    },
+    modals: {
       bridgeERC20: false,
       bridgeERC721: false,
       buy: false,
@@ -121,31 +134,22 @@ export const dataStore = create<DataStore & DataStoreActions>((set) => {
       roomMovement: false,
       settings: false,
     },
-    visibleButtons: {
-      help: false,
-      inventory: false,
-      map: false,
-      party: false,
-      quests: false,
-      settings: false,
-    },
-    fixtures: {
-      accountInfo: false,
-      actionQueue: false,
-    },
   };
 
   return {
     ...initialState,
-    setVisibleButtons: (data: VisibleButtons) =>
-      set((state: DataStore) => ({ ...state, visibleButtons: data })),
-    setVisibleModals: (data: VisibleModals) =>
-      set((state: DataStore) => ({ ...state, visibleModals: data })),
-    toggleVisibleButtons: (isOn: boolean) =>
-      set((state: DataStore) => ({ ...state, visibleButtons: toggleButtons(isOn) })),
-    toggleVisibleModals: (isOn: boolean) =>
-      set((state: DataStore) => ({ ...state, visibleModals: toggleModals(isOn) })),
+    setButtons: (data: Buttons) =>
+      set((state: ComponentSettings) => ({ ...state, buttons: data })),
+    setFixtures: (data: Fixtures) =>
+      set((state: ComponentSettings) => ({ ...state, fixtures: data })),
+    setModals: (data: Modals) =>
+      set((state: ComponentSettings) => ({ ...state, modals: data })),
+    toggleButtons: (isOn: boolean) =>
+      set((state: ComponentSettings) => ({ ...state, buttons: toggleButtons(isOn) })),
     toggleFixtures: (isOn: boolean) =>
-      set((state: DataStore) => ({ ...state, fixtures: toggleFixtures(isOn) })),
+      set((state: ComponentSettings) => ({ ...state, fixtures: toggleFixtures(isOn) })),
+    toggleModals: (isOn: boolean) =>
+      set((state: ComponentSettings) => ({ ...state, modals: toggleModals(isOn) })),
+
   };
 });

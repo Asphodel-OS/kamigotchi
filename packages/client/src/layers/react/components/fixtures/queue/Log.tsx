@@ -25,7 +25,7 @@ interface Props {
 }
 
 export const Log = (props: Props) => {
-  const { network: { world, actions } } = props;
+  const { network: { actions } } = props;
   const ActionComponent = actions!.Action;
 
   const getTimeString = (time: number) => {
@@ -115,7 +115,7 @@ const Row = styled.div`
 
   display: flex;
   flex-flow: row nowrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
 
   font-family: Pixel;

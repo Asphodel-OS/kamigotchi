@@ -9,7 +9,7 @@ import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { ChainButton } from 'layers/react/components/library/CustomRainbowButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import 'layers/react/styles/font.css';
 
 // Detects network changes and populates network clients for inidividual addresses.
@@ -26,7 +26,7 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { chain } = useNetwork();
-      const { toggleVisibleButtons, toggleVisibleModals, toggleFixtures } = dataStore();
+      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
 
       const {
         address: connectorAddress,
@@ -74,8 +74,8 @@ export function registerWalletConnecter() {
         console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
         updateNetworkSettings(connector);
         if (!isConnected || !isCorrectNetwork) {
-          toggleVisibleModals(false);
-          toggleVisibleButtons(false);
+          toggleModals(false);
+          toggleButtons(false);
           toggleFixtures(false);
         }
       }, [chain, connector, connectorAddress, isConnected, isCorrectNetwork]);

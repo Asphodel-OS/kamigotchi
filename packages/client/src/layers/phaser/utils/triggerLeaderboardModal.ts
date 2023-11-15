@@ -1,14 +1,14 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { playClick } from 'utils/sounds';
 
 export const triggerLeaderboardModal = () => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
   playClick();
 
-  if (!visibleModals.leaderboard) {
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+  if (!modals.leaderboard) {
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         leaderboard: true,
         bridgeERC20: false,
         bridgeERC721: false,
@@ -19,6 +19,6 @@ export const triggerLeaderboardModal = () => {
       },
     });
   } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, leaderboard: false } });
+    useComponentSettings.setState({ modals: { ...modals, leaderboard: false } });
   }
 };

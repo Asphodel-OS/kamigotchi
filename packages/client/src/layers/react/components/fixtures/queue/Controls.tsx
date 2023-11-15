@@ -7,7 +7,7 @@ import { GasConstants } from 'constants/gas';
 import { NetworkLayer } from "layers/network/types";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { playClick } from 'utils/sounds';
 import { Tooltip } from '../../library/Tooltip';
 
@@ -19,7 +19,7 @@ interface Props {
 
 export const Controls = (props: Props) => {
   const { details: accountDetails } = useKamiAccount();
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { modals, setModals } = useComponentSettings();
   const { mode, setMode } = props;
 
 
@@ -34,9 +34,9 @@ export const Controls = (props: Props) => {
 
   const clickGasIcon = () => {
     playClick();
-    setVisibleModals({
-      ...visibleModals,
-      operatorFund: !visibleModals.operatorFund
+    setModals({
+      ...modals,
+      operatorFund: !modals.operatorFund
     });
   }
 

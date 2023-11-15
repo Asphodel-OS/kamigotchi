@@ -1,14 +1,14 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { playClick } from 'utils/sounds';
 
 export const triggerPetMintModal = () => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
   playClick();
 
-  if (!visibleModals.kamiMint) {
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+  if (!modals.kamiMint) {
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         kamiMint: true,
         bridgeERC20: false,
         bridgeERC721: false,
@@ -21,6 +21,6 @@ export const triggerPetMintModal = () => {
       },
     });
   } else {
-    dataStore.setState({ visibleModals: { ...visibleModals, kamiMint: false } });
+    useComponentSettings.setState({ modals: { ...modals, kamiMint: false } });
   }
 };

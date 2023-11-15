@@ -7,7 +7,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import 'layers/react/styles/font.css';
 
 
@@ -22,14 +22,14 @@ export function registerDialogueModal() {
     },
     (layers) => of(layers),
     () => {
-      const { visibleModals } = dataStore();
+      const { modals } = useComponentSettings();
       const { dialogueIndex } = useSelectedEntities();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
       const [step, setStep] = React.useState(0);
 
       // reset the step to 0 whenever the dialogue modal is toggled
-      useEffect(() => setStep(0), [visibleModals.dialogue]);
+      useEffect(() => setStep(0), [modals.dialogue]);
 
       // set the current dialogue node when the dialogue index changes
       useEffect(() => {

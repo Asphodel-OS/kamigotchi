@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
 
 export function registerInventoryButton() {
   registerUIComponent(
@@ -17,8 +17,8 @@ export function registerInventoryButton() {
     },
     (layers) => of(layers),
     () => {
-      const { visibleButtons } = dataStore();
-      const modalsToHide: Partial<VisibleModals> = {
+      const { buttons } = useComponentSettings();
+      const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,
@@ -38,7 +38,7 @@ export function registerInventoryButton() {
           tooltip='Inventory'
           targetDiv='inventory'
           hideModals={modalsToHide}
-          visible={visibleButtons.inventory}
+          visible={buttons.inventory}
         />
       );
     }

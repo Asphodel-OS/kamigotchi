@@ -1,14 +1,14 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { playClick } from 'utils/sounds';
 
 export const triggerERC721BridgeModal = () => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
 
-  if (!visibleModals.bridgeERC721 && !visibleModals.node) {
+  if (!modals.bridgeERC721 && !modals.node) {
     playClick();
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         bridgeERC721: true,
         bridgeERC20: false,
         dialogue: false,
@@ -22,6 +22,6 @@ export const triggerERC721BridgeModal = () => {
     });
   }
   // else {
-  //   dataStore.setState({ visibleModals: { ...visibleModals, bridgeERC721: false } });
+  //   useComponentSettings.setState({ modals: { ...modals, bridgeERC721: false } });
   // }
 };

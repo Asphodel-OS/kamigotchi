@@ -8,7 +8,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
 
@@ -50,7 +50,7 @@ export function registerNameKamiModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { visibleModals, setVisibleModals } = dataStore();
+      const { modals, setModals } = useComponentSettings();
       const { kamiEntityIndex } = useSelectedEntities();
       const kami = getKami(layers, kamiEntityIndex);
 
@@ -73,7 +73,7 @@ export function registerNameKamiModal() {
       const handleNameTx = async (name: string) => {
         try {
           nameKami(kami, name);
-          setVisibleModals({ ...visibleModals, nameKami: false });
+          setModals({ ...modals, nameKami: false });
         } catch (e) { }
       };
 

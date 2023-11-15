@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Log } from './Log';
 import { Controls } from './Controls';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 
 export function registerActionQueueFixture() {
   registerUIComponent(
@@ -28,7 +28,7 @@ export function registerActionQueueFixture() {
 
     ({ layers }) => {
       const [mode, setMode] = useState<'collapsed' | 'expanded'>('expanded');
-      const { fixtures } = dataStore();
+      const { fixtures } = useComponentSettings();
 
       return (
         <Wrapper

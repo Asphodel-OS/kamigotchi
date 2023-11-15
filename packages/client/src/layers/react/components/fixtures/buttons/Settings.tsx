@@ -4,7 +4,7 @@ import { settingsIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { VisibleModals, dataStore } from 'layers/react/store/createStore';
+import { Modals, useComponentSettings } from 'layers/react/store/componentSettings';
 
 export function registerSettingsButton() {
   registerUIComponent(
@@ -17,8 +17,8 @@ export function registerSettingsButton() {
     },
     (layers) => of(layers),
     () => {
-      const { visibleButtons } = dataStore();
-      const modalsToHide: Partial<VisibleModals> = {
+      const { buttons } = useComponentSettings();
+      const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,
@@ -40,7 +40,7 @@ export function registerSettingsButton() {
           tooltip='Settings'
           targetDiv='settings'
           hideModals={modalsToHide}
-          visible={visibleButtons.settings}
+          visible={buttons.settings}
         />
       );
     }

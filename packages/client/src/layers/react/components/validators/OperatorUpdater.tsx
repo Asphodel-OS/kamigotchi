@@ -11,7 +11,7 @@ import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { generatePrivateKey } from 'utils/address';
@@ -37,8 +37,8 @@ export function registerOperatorUpdater() {
       const { details: accountDetails } = useKamiAccount();
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleFixtures } = dataStore();
+      const { modals, setModals } = useComponentSettings();
+      const { toggleButtons, toggleFixtures } = useComponentSettings();
 
       const [isMismatched, setIsMismatched] = useState(false);
       const [mode, setMode] = useState('key');
@@ -53,12 +53,12 @@ export function registerOperatorUpdater() {
 
         const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
         const isVisible = (meetsPreconditions && !operatorMatch);
-        setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
+        setModals({ ...modals, operatorUpdater: isVisible });
         setIsMismatched(!operatorMatch);
 
         // awkward place to put this trigger, but this is the last validator to be checked
         if (meetsPreconditions && operatorMatch) {
-          toggleVisibleButtons(true);
+          toggleButtons(true);
           toggleFixtures(true);
         }
       }, [isConnected, burnerInfo, accountDetails.operatorAddress]);

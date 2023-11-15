@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { ExitButton } from 'layers/react/components/library/ExitButton';
-import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
 
 interface Props {
-  divName: keyof VisibleModals;
+  divName: keyof Modals;
   id: string;
   children: React.ReactNode;
   header?: React.ReactNode;
@@ -17,17 +17,17 @@ interface Props {
 // ModalWrapperFull is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapperFull = (props: Props) => {
-  const { visibleModals } = dataStore();
+  const { modals } = useComponentSettings();
   const { divName, id, children, header, footer, canExit, overlay } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
     const element = document.getElementById(id);
     if (element) {
-      const isVisible = visibleModals[divName];
+      const isVisible = modals[divName];
       element.style.display = isVisible ? 'block' : 'none';
     }
-  }, [visibleModals[divName]]);
+  }, [modals[divName]]);
 
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
@@ -43,7 +43,7 @@ export const ModalWrapperFull = (props: Props) => {
   return (
     <Wrapper
       id={id}
-      isOpen={visibleModals[divName]}
+      isOpen={modals[divName]}
       style={{ ...zindex }}
     >
       <Content>

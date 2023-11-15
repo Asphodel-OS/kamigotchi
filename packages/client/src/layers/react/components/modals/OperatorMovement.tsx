@@ -7,7 +7,7 @@ import crypto from "crypto";
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
@@ -27,7 +27,7 @@ export function registerOperatorMovementModal() {
         network: { api, actions },
       } = layers;
 
-      const { visibleModals, setVisibleModals } = dataStore();
+      const { modals, setModals } = useComponentSettings();
       const { room: location } = useSelectedEntities();
       const [selectedRoom, setSelectedRoom] = React.useState<Room>();
 
@@ -53,7 +53,7 @@ export function registerOperatorMovementModal() {
           description: `Moving to ${selectedRoom.name}`,
           execute: async () => {
             const roomMovment = await api.player.account.move(location);
-            setVisibleModals({ ...visibleModals, roomMovement: false });
+            setModals({ ...modals, roomMovement: false });
             return roomMovment;
           },
         });

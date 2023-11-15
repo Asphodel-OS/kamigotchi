@@ -1,17 +1,17 @@
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';
 
 export const triggerNodeModal = (index: number) => {
-  const { visibleModals } = dataStore.getState();
+  const { modals } = useComponentSettings.getState();
   const { setNode } = useSelectedEntities.getState();
 
-  if (!visibleModals.node) {
+  if (!modals.node) {
     playClick();
     setNode(index);
-    dataStore.setState({
-      visibleModals: {
-        ...visibleModals,
+    useComponentSettings.setState({
+      modals: {
+        ...modals,
         node: true,
         bridgeERC20: false,
         bridgeERC721: false,
@@ -24,6 +24,6 @@ export const triggerNodeModal = (index: number) => {
     });
   }
   // } else {
-  //   dataStore.setState({ visibleModals: { ...visibleModals, node: false } });
+  //   useComponentSettings.setState({ modals: { ...modals, node: false } });
   // }
 };

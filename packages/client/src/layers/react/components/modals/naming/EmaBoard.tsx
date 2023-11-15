@@ -9,7 +9,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 
@@ -59,12 +59,12 @@ export function registerEMABoardModal() {
 
     // Render
     ({ data }) => {
-      const { visibleModals, setVisibleModals } = dataStore();
+      const { modals, setModals } = useComponentSettings();
       const { setKami } = useSelectedEntities();
 
       const promptRename = (kami: Kami) => {
         setKami(kami.entityIndex);
-        setVisibleModals({ ...visibleModals, emaBoard: false, nameKami: true });
+        setModals({ ...modals, emaBoard: false, nameKami: true });
       };
 
       // check whether the kami is harvesting
