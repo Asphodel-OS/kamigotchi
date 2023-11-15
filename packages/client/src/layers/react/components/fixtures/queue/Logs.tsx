@@ -1,15 +1,16 @@
-import { EntityIndex, getComponentEntities, getComponentValueStrict } from "@latticexyz/recs";
+import { useEffect } from "react";
+import moment from 'moment';
+import styled from "styled-components";
+import { EntityIndex, getComponentValueStrict } from "@latticexyz/recs";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import ErrorIcon from '@mui/icons-material/Error';
 import CancelIcon from '@mui/icons-material/Cancel';
-import moment from 'moment';
-import styled from "styled-components";
 
 import { NetworkLayer } from "layers/network/types";
 import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { useEffect, useState } from "react";
+
 
 // Color coded icon mapping of action queue
 type ColorMapping = { [key: string]: any };
