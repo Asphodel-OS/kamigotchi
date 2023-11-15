@@ -41,6 +41,7 @@ export type { IdRequesteeComponent } from "./IdRequesteeComponent";
 export type { IdRequesterComponent } from "./IdRequesterComponent";
 export type { IdSourceComponent } from "./IdSourceComponent";
 export type { IdTargetComponent } from "./IdTargetComponent";
+export type { IndexAccountComponent } from "./IndexAccountComponent";
 export type { IndexBackgroundComponent } from "./IndexBackgroundComponent";
 export type { IndexBodyComponent } from "./IndexBodyComponent";
 export type { IndexColorComponent } from "./IndexColorComponent";
@@ -234,6 +235,7 @@ export { IdRequesteeComponent__factory } from "./factories/IdRequesteeComponent_
 export { IdRequesterComponent__factory } from "./factories/IdRequesterComponent__factory";
 export { IdSourceComponent__factory } from "./factories/IdSourceComponent__factory";
 export { IdTargetComponent__factory } from "./factories/IdTargetComponent__factory";
+export { IndexAccountComponent__factory } from "./factories/IndexAccountComponent__factory";
 export { IndexBackgroundComponent__factory } from "./factories/IndexBackgroundComponent__factory";
 export { IndexBodyComponent__factory } from "./factories/IndexBodyComponent__factory";
 export { IndexColorComponent__factory } from "./factories/IndexColorComponent__factory";
