@@ -78,6 +78,7 @@ export function createComponents(world: World) {
 
     // Indices
     Index: defineNumberEZ("Index", "component.Index"), // generic index
+    AccountIndex: defineNumberEZ("AccountIndex", "component.Index.Account"),
     BackgroundIndex: defineNumberEZ("BackgroundIndex", "component.Index.Background"),
     BodyIndex: defineNumberEZ("BodyIndex", "component.Index.Body"),
     ColorIndex: defineNumberEZ("ColorIndex", "component.Index.Color"),

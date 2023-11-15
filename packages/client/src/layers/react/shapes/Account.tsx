@@ -22,6 +22,7 @@ import {
 // standardized shape of an Account Entity
 export interface Account {
   id: EntityID;
+  index: number;
   entityIndex: EntityIndex;
   ownerEOA: string;
   operatorEOA: string;
@@ -37,6 +38,7 @@ export interface Account {
   };
   lastBlock: number;
   lastMoveTs: number;
+  creationTs: number;
   kamis?: Kami[];
   inventories?: Inventories;
   lootboxLogs?: {
@@ -68,16 +70,15 @@ export interface Inventories {
 // get an Account from its EnityIndex
 export const getAccount = (
   layers: Layers,
-  index: EntityIndex,
+  entityIndex: EntityIndex,
   options?: AccountOptions
 ): Account => {
   const {
     network: {
       world,
       components: {
+        AccountIndex,
         Coin,
-        HolderID,
-        IsInventory,
         LastBlock,
         LastTime,
         Location,
@@ -85,28 +86,31 @@ export const getAccount = (
         OperatorAddress,
         OwnerAddress,
         Stamina,
-        StaminaCurrent
+        StaminaCurrent,
+        StartTime,
       },
     },
   } = layers;
 
   let account: Account = {
-    id: world.entities[index],
-    entityIndex: index,
-    ownerEOA: getComponentValue(OwnerAddress, index)?.value as string,
-    operatorEOA: getComponentValue(OperatorAddress, index)?.value as string,
-    name: getComponentValue(Name, index)?.value as string,
-    coin: (getComponentValue(Coin, index)?.value as number) * 1,
-    location: (getComponentValue(Location, index)?.value || 0 as number) * 1,
+    entityIndex,
+    id: world.entities[entityIndex],
+    index: getComponentValue(AccountIndex, entityIndex)?.value as number,
+    ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
+    operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+    name: getComponentValue(Name, entityIndex)?.value as string,
+    coin: (getComponentValue(Coin, entityIndex)?.value as number) * 1,
+    location: (getComponentValue(Location, entityIndex)?.value || 0 as number) * 1,
     level: 0, // placeholder
     skillPoints: 0, // placeholder
     stamina: {
-      total: getComponentValue(Stamina, index)?.value as number,
-      last: getComponentValue(StaminaCurrent, index)?.value as number,
+      total: getComponentValue(Stamina, entityIndex)?.value as number,
+      last: getComponentValue(StaminaCurrent, entityIndex)?.value as number,
       recoveryPeriod: getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
     },
-    lastBlock: getComponentValue(LastBlock, index)?.value as number,
-    lastMoveTs: getComponentValue(LastTime, index)?.value as number,
+    lastBlock: getComponentValue(LastBlock, entityIndex)?.value as number,
+    lastMoveTs: getComponentValue(LastTime, entityIndex)?.value as number,
+    creationTs: getComponentValue(StartTime, entityIndex)?.value as number,
   };
 
 
