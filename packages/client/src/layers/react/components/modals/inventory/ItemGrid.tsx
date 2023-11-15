@@ -5,7 +5,6 @@ import { Inventory } from "layers/react/shapes/Inventory";
 import { useComponentSettings } from "layers/react/store/componentSettings";
 
 interface Props {
-  accountId: string;
   inventories: Inventory[];
 };
 
@@ -28,7 +27,7 @@ export const ItemGrid = (props: Props) => {
   const Cell = (inventory: Inventory) => {
     return (
       <ItemIcon
-        key={`${inventory.item.index}-${props.accountId}`}
+        key={`${inventory.item.index}`}
         id={`item-${inventory.item.index}`}
         item={inventory.item}
         size='fixed'

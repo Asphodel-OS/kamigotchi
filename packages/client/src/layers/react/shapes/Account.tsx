@@ -109,6 +109,8 @@ export const getAccount = (
     lastMoveTs: getComponentValue(LastTime, index)?.value as number,
   };
 
+  // prevent queries account hasnt loaded yet
+  if (!account.ownerEOA) return account;
 
   /////////////////
   // OPTIONAL DATA

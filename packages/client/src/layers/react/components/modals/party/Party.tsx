@@ -168,7 +168,7 @@ export function registerPartyModal() {
           canExit
         >
           <Kards
-            kamis={data.account.kamis!}
+            kamis={data.account.kamis ? data.account.kamis : []}
             account={data.account}
             actions={{ feed, revive, reveal }}
           />
