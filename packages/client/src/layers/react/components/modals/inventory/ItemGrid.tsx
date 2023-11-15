@@ -27,8 +27,8 @@ export const ItemGrid = (props: Props) => {
   const Cell = (inventory: Inventory) => {
     return (
       <ItemIcon
-        key={`${inventory.item.index}`}
-        id={`item-${inventory.item.index}`}
+        key={`${inventory.id}`}
+        id={`item-${inventory.id}`}
         item={inventory.item}
         size='fixed'
         balance={inventory.balance}
