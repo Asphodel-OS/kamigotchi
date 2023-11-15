@@ -70,6 +70,9 @@ export function registerInventoryModal() {
         if (accInv?.gear) inventories = inventories.concat(accInv.gear);
         if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
 
+        console.log('inventories', inventories);
+        console.log('filtered', inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0));
+
         return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
       }
 
