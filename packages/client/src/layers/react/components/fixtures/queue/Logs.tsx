@@ -1,4 +1,4 @@
-import { getComponentEntities, getComponentValueStrict } from "@latticexyz/recs";
+import { EntityIndex, getComponentEntities, getComponentValueStrict } from "@latticexyz/recs";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { NetworkLayer } from "layers/network/types";
 import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
 import { Tooltip } from "layers/react/components/library/Tooltip";
+import { useEffect, useState } from "react";
 
 // Color coded icon mapping of action queue
 type ColorMapping = { [key: string]: any };
@@ -22,15 +23,18 @@ const statusIcons: ColorMapping = {
 
 interface Props {
   network: NetworkLayer;
+  actionIndices: EntityIndex[];
 }
 
-export const Log = (props: Props) => {
-  const { network: { actions } } = props;
+export const Logs = (props: Props) => {
+  const { network: { actions }, actionIndices } = props;
   const ActionComponent = actions!.Action;
 
-  const getTimeString = (time: number) => {
-    return moment(time).fromNow();
-  }
+  // scroll to bottom when tx added
+  useEffect(() => {
+    const logs = document.getElementById('tx-logs');
+    if (logs) logs.scrollTop = logs.scrollHeight + 100;
+  }, [actionIndices]);
 
   // generate the status icon
   const Status = (status: string, metadata: string) => {
@@ -46,6 +50,7 @@ export const Log = (props: Props) => {
     return (<Tooltip text={tooltip}>{icon}</Tooltip>);
   }
 
+  // render the human readable description and detailed tooltip of a given action
   const Description = (action: any) => {
     const tooltip = [
       `Action: ${action.action}`,
@@ -53,9 +58,7 @@ export const Log = (props: Props) => {
     ]
     return (
       <Tooltip text={tooltip}>
-        <Text>
-          {action.description}
-        </Text>
+        <Text>{action.description}</Text>
       </Tooltip>
     );
   }
@@ -63,35 +66,31 @@ export const Log = (props: Props) => {
   const Time = (time: number) => {
     return (
       <Tooltip text={[moment(time).format()]}>
-        <Text>
-          {getTimeString(time)}
-        </Text>
+        <Text>{moment(time).fromNow()}</Text>
       </Tooltip>
     );
   }
 
-  const TxQueue = () => (
-    [...getComponentEntities(ActionComponent)].map((entityIndex) => {
-      const actionData = getComponentValueStrict(ActionComponent, entityIndex);
-      let state = ActionStateString[actionData.state as ActionState];
-      let metadata = actionData.metadata ?? '';
-      return (
-        <Row key={`action${entityIndex}`}>
-          <RowSection1>
-            {Status(state, metadata)}
-            {Description(actionData)}
-          </RowSection1>
-          <RowSection2>
-            {Time(actionData.time)}
-          </RowSection2>
-        </Row>
-      );
-    })
-  );
+  const Log = (entityIndex: EntityIndex) => {
+    const actionData = getComponentValueStrict(ActionComponent, entityIndex);
+    let state = ActionStateString[actionData.state as ActionState];
+    let metadata = actionData.metadata ?? '';
+    return (
+      <Row key={`action${entityIndex}`}>
+        <RowSection1>
+          {Status(state, metadata)}
+          {Description(actionData)}
+        </RowSection1>
+        <RowSection2>
+          {Time(actionData.time)}
+        </RowSection2>
+      </Row>
+    );
+  }
 
   return (
-    <Content>
-      {TxQueue()}
+    <Content id='tx-logs'>
+      {actionIndices.map((entityIndex) => Log(entityIndex))}
     </Content>
   );
 }

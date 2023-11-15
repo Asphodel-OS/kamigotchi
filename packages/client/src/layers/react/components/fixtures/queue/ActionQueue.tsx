@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Log } from './Log';
+import { Logs } from './Logs';
 import { Controls } from './Controls';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { EntityIndex, getComponentEntities } from '@latticexyz/recs';
 
 export function registerActionQueueFixture() {
   registerUIComponent(
@@ -27,15 +28,22 @@ export function registerActionQueueFixture() {
     },
 
     ({ layers }) => {
+      const ActionComponent = layers.network.actions!.Action;
       const [mode, setMode] = useState<'collapsed' | 'expanded'>('expanded');
       const { fixtures } = useComponentSettings();
+      const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
+
+      // track the full list of Actions by their Entity Index
+      useEffect(() => {
+        setActionIndices([...getComponentEntities(ActionComponent)]);
+      }, [([...getComponentEntities(ActionComponent)]).length]);
 
       return (
         <Wrapper
           style={{ display: fixtures.actionQueue ? 'block' : 'none' }}
         >
           <Content style={{ pointerEvents: 'auto' }}>
-            {(mode !== 'collapsed') && <Log network={layers.network} />}
+            {(mode !== 'collapsed') && <Logs actionIndices={actionIndices} network={layers.network} />}
             <Controls
               mode={mode}
               setMode={setMode}
