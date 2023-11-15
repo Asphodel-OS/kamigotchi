@@ -29,6 +29,7 @@
     "IdSourceComponent",
     "IdTargetComponent",
     "IndexComponent",
+    "IndexAccountComponent",
     "IndexBackgroundComponent",
     "IndexBodyComponent",
     "IndexColorComponent",
@@ -479,6 +480,22 @@
       ]
     },
     {
+      "name": "AccountRegisterSystem",
+      "writeAccess": [
+        "IsAccountComponent",
+        "IndexAccountComponent",
+        "AddressOperatorComponent",
+        "AddressOwnerComponent",
+        "BlockLastComponent",
+        "LocationComponent",
+        "NameComponent",
+        "StaminaComponent",
+        "StaminaCurrentComponent",
+        "TimeLastActionComponent",
+        "TimeStartComponent"
+      ]
+    },
+    {
       "name": "AccountSetNameSystem",
       "writeAccess": [
         "NameComponent"
@@ -488,20 +505,6 @@
       "name": "AccountSetOperatorSystem",
       "writeAccess": [
         "AddressOperatorComponent"
-      ]
-    },
-    {
-      "name": "AccountRegisterSystem",
-      "writeAccess": [
-        "IsAccountComponent",
-        "AddressOperatorComponent",
-        "AddressOwnerComponent",
-        "BlockLastComponent",
-        "LocationComponent",
-        "NameComponent",
-        "StaminaComponent",
-        "StaminaCurrentComponent",
-        "TimeLastActionComponent"
       ]
     },
     {

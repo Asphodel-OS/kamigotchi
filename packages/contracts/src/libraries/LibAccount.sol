@@ -8,9 +8,10 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
-import { IsAccountComponent, ID as IsAccountCompID } from "components/IsAccountComponent.sol";
+import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
@@ -19,6 +20,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -39,10 +41,12 @@ library LibAccount {
     address operatorAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsAccountComponent(getAddressById(components, IsAccountCompID)).set(id);
+    IsAccountComponent(getAddressById(components, IsAccCompID)).set(id);
+    IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(id, getTotal(components));
     AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
+    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
 
     uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
     setStamina(components, id, baseStamina);
@@ -173,7 +177,7 @@ library LibAccount {
   // CHECKS
 
   function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsAccountComponent(getAddressById(components, IsAccountCompID)).has(id);
+    return IsAccountComponent(getAddressById(components, IsAccCompID)).has(id);
   }
 
   // Check whether an Account can move to a Location from where they currently are.
@@ -274,10 +278,15 @@ library LibAccount {
   /////////////////
   // QUERIES
 
+  // Get the total number of accounts
+  function getTotal(IUintComp components) internal view returns (uint256) {
+    return getAll(components).length;
+  }
+
   // retrieves the pet with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, NameCompID),
@@ -291,7 +300,7 @@ library LibAccount {
   // Get an account entity by Wallet address. Assume only 1.
   function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, AddrOperatorCompID),
@@ -305,7 +314,7 @@ library LibAccount {
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, AddrOwnerCompID),
@@ -333,6 +342,13 @@ library LibAccount {
     return results;
   }
 
+  // Get all accounts
+  function getAll(IUintComp components) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](1);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
+    return LibQuery.query(fragments);
+  }
+
   //////////////////
   // DATA LOGGING
 
@@ -351,6 +367,6 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", 1);
+    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", count);
   }
 }
