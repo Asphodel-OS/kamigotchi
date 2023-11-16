@@ -15,6 +15,7 @@ import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAcc
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
+import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
@@ -142,6 +143,10 @@ library LibAccount {
 
   function setOperator(IUintComp components, uint256 id, address addr) internal {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
+  }
+
+  function setFavoriteFood(IUintComp components, uint256 id, string memory food) internal {
+    FavoriteFoodComponent(getAddressById(components, FavFoodCompID)).set(id, food);
   }
 
   function setLastBlock(IUintComp components, uint256 id, uint256 blockNum) internal {

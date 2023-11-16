@@ -1,8 +1,9 @@
 {
   "last deployed": "7th November 2023",
   "undeployed": [
-    "TimelockComponent",
-    "IndexAccountComponent"
+    "FavoriteFoodComponent",
+    "IndexAccountComponent",
+    "TimelockComponent"
   ],
   "components": [
     "AddressOperatorComponent",
