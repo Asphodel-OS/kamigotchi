@@ -113,11 +113,14 @@ export const Kards = (props: Props) => {
     return kami.cooldown > idleTime;
   }
 
-  // get the reason why a kami can't feed. assume the kami is either resting or harvesting
+  // get the reason why a kami can't feed.
+  // assume the kami is either resting or harvesting
   const whyCantFeed = (kami: Kami): string => {
     let reason = '';
     if (getLocation(kami) != props.account.location) {
       reason = `not at your location`;
+    } else if (isFull(kami)) {
+      reason = `can't eat, full`;
     } else if (!hasFood()) {
       reason = `buy food, poore`;
     } else if (onCooldown(kami)) {
