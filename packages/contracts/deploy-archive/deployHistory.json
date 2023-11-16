@@ -1,10 +1,6 @@
 {
-  "last deployed": "7th November 2023",
-  "undeployed": [
-    "FavoriteFoodComponent",
-    "IndexAccountComponent",
-    "TimelockComponent"
-  ],
+  "last deployed": "16th November 2023",
+  "undeployed": [],
   "components": [
     "AddressOperatorComponent",
     "AddressOwnerComponent",
@@ -21,6 +17,7 @@
     "EpochComponent",
     "ExitsComponent",
     "ExperienceComponent",
+    "FavoriteFoodComponent",
     "ForComponent",
     "GenusComponent",
     "HarmonyComponent",
@@ -35,6 +32,7 @@
     "IdSourceComponent",
     "IdTargetComponent",
     "IndexComponent",
+    "IndexAccountComponent",
     "IndexBackgroundComponent",
     "IndexBodyComponent",
     "IndexColorComponent",
@@ -106,6 +104,7 @@
     "SubtypeComponent",
     "TimeComponent",
     "TimeLastActionComponent",
+    "TimelockComponent",
     "TimeStartComponent",
     "TypeComponent",
     "UpgradesComponent",
@@ -525,18 +524,21 @@
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "16th November 2023",
       "name": "AccountRegisterSystem",
       "writeAccess": [
         "IsAccountComponent",
+        "IndexAccountComponent",
         "AddressOperatorComponent",
         "AddressOwnerComponent",
         "BlockLastComponent",
+        "FavoriteFoodComponent",
         "LocationComponent",
         "NameComponent",
         "StaminaComponent",
         "StaminaCurrentComponent",
-        "TimeLastActionComponent"
+        "TimeLastActionComponent",
+        "TimeStartComponent"
       ]
     },
     {

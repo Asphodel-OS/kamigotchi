@@ -141,6 +141,7 @@ export function createComponents(world: World) {
     Whitelist: defineNumberArrayComponent(world, "Whitelist", "component.Whitelist"),
 
     // Time/Block Tracking
+    // TODO: define and add timelock component
     LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),
     RevealBlock: defineNumberEZ("BlockReveal", "component.Block.Reveal"),
     LastTime: defineNumberEZ("LastTime", "component.Time.LastAction"),
