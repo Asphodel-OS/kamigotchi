@@ -4,7 +4,7 @@ import "std-contracts/components/Uint256Component.sol";
 
 uint256 constant ID = uint256(keccak256("component.Index.Account"));
 
-// Body is a trait, non-fungible
+// Auto-incremented index of an Account
 contract IndexAccountComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }
