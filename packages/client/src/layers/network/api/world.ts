@@ -30,7 +30,8 @@ export function setUpWorldAPI(systems: any) {
 
     createPlayerAPI(systems).account.register(
       '0x000000000000000000000000000000000000dead',
-      'load_bearer'
+      'load_bearer',
+      'fudge',
     );
   }
 

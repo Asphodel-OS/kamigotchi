@@ -224,10 +224,10 @@ export function registerAccountRegistrar() {
         actions?.add({
           id: actionID,
           action: 'AccountCreate',
-          params: [burnerInfo.connected, username],
+          params: [burnerInfo.connected, username, 'doot'],
           description: `Creating Account for ${username}`,
           execute: async () => {
-            return api.account.register(burnerInfo.connected, username);
+            return api.account.register(burnerInfo.connected, username, 'doot');
           },
         });
         return actionID;
@@ -253,6 +253,7 @@ export function registerAccountRegistrar() {
         });
         return actionID;
       }
+
 
       /////////////////
       // VISUAL COMPONENTS

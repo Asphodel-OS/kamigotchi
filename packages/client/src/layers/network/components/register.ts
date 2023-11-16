@@ -149,6 +149,7 @@ export function createComponents(world: World) {
 
     // speeeeecial
     CanName: defineBoolEZ("CanName", "component.Can.Name"),
+    FavoriteFood: defineStringEZ("FavoriteFood", "component.Favorite.Food"),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
     OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),

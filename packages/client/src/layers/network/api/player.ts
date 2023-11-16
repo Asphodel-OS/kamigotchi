@@ -49,8 +49,9 @@ export function createPlayerAPI(systems: any) {
   // @dev registers an account. should be called by Owner wallet
   // @param operatorAddress   address of the Operator wallet
   // @param name              name of the account
-  function registerAccount(operatorAddress: BigNumberish, name: string) {
-    return systems["system.Account.Register"].executeTyped(operatorAddress, name);
+  // @param food              player's reported favorite food 
+  function registerAccount(operatorAddress: BigNumberish, name: string, food: string) {
+    return systems["system.Account.Register"].executeTyped(operatorAddress, name, food);
   }
 
   // @dev renames account. should be called by Owner EOA
