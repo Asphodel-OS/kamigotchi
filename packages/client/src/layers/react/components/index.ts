@@ -38,6 +38,7 @@ import {
   registerBurnerDetector,
   registerWalletConnecter,
   registerOperatorUpdater,
+  registerGasHarasser,
 } from './validators';
 
 
@@ -87,4 +88,5 @@ export function registerUIComponents() {
   registerBurnerDetector();
   registerOperatorUpdater();
   registerWalletConnecter();
+  registerGasHarasser();
 }

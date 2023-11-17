@@ -191,6 +191,7 @@ export function registerAccountRegistrar() {
 
       const handleAccountCreation = async (username: string) => {
         playScribble();
+        toggleFixtures(true);
         try {
           const createAccountActionID = createAccount(username);
           await waitForActionCompletion(
