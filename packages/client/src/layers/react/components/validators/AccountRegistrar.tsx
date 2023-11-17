@@ -25,6 +25,7 @@ import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { AccountDetails, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playScribble } from 'utils/sounds';
+import { ActionButton } from '../library/ActionButton';
 
 
 /** 
@@ -129,9 +130,11 @@ export function registerAccountRegistrar() {
       const { isConnected } = useAccount();
       const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { modals, setModals } = useComponentSettings();
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const [isVisible, setIsVisible] = useState(false);
+      const [step, setStep] = useState(0);
+      const [name, setName] = useState('');
+      const [food, setFood] = useState('');
 
       // set visibility of this validator
       // we only want to prompt when an EOA is Connected to the correct network
@@ -182,40 +185,22 @@ export function registerAccountRegistrar() {
         // console.log(burnerInfo.detectedPrivateKey);
       }
 
-      const openFundModal = () => {
-        setModals({
-          ...modals,
-          operatorFund: true,
-        });
-      };
-
-      const handleAccountCreation = async (username: string) => {
+      const handleAccountCreation = async (username: string, food: string) => {
         playScribble();
         toggleFixtures(true);
         try {
-          const createAccountActionID = createAccount(username);
+          const createAccountActionID = createAccount(username, food);
           await waitForActionCompletion(
             actions?.Action!,
             world.entityToIndex.get(createAccountActionID) as EntityIndex
           );
-
-          // try {
-          //   const mintTokenActionID = mintToken(5, 0);
-          //   await waitForActionCompletion(
-          //     actions?.Action,
-          //     world.entityToIndex.get(mintTokenActionID) as EntityIndex
-          //   );
-          //   playSuccess();
-          // } catch (e) {
-          //   console.log('ERROR MINTING TOKENS:', e);
-          // }
         } catch (e) {
           console.log('ERROR CREATING ACCOUNT:', e);
         }
       }
 
 
-      const createAccount = (username: string) => {
+      const createAccount = (username: string, food: string) => {
         const network = networks.get(selectedAddress);
         const world = network!.world;
         const api = network!.api.player;
@@ -225,10 +210,10 @@ export function registerAccountRegistrar() {
         actions?.add({
           id: actionID,
           action: 'AccountCreate',
-          params: [burnerInfo.connected, username, 'doot'],
+          params: [burnerInfo.connected, username, food],
           description: `Creating Account for ${username}`,
           execute: async () => {
-            return api.account.register(burnerInfo.connected, username, 'doot');
+            return api.account.register(burnerInfo.connected, username, food);
           },
         });
         return actionID;
@@ -236,24 +221,13 @@ export function registerAccountRegistrar() {
         // return waitForActionCompletion(actions?.Action, actionIndex);
       }
 
-      // transaction to mint the Mint Token (ERC20)
-      const mintToken = (amount: number, value: number) => {
-        const network = networks.get(selectedAddress);
-        const api = network!.api.player;
+      const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+      };
 
-        console.log(`MINTING ${amount} TOKENS`);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        actions?.add({
-          id: actionID,
-          action: 'AccountCreate',
-          params: [amount, value],
-          description: `Minting ${amount} $KAMI for ${value}`,
-          execute: async () => {
-            return api.mint.mintToken(amount, value);
-          },
-        });
-        return actionID;
-      }
+      const handleChangeFood = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFood(event.target.value);
+      };
 
 
       /////////////////
@@ -316,6 +290,99 @@ export function registerAccountRegistrar() {
         );
       }
 
+      const NextButton = () => (
+        <ActionButton
+          id='next'
+          text='Next'
+          onClick={() => setStep(step + 1)}
+        />
+      );
+
+      const BackButton = () => (
+        <ActionButton
+          id='back'
+          text='Back'
+          disabled={step === 0}
+          onClick={() => setStep(step - 1)}
+        />
+      );
+
+
+      const Step0 = () => {
+        return (
+          <>
+            <br />
+            <Description>Lorem Ipsum Yo</Description>
+            <br />
+            <NextButton />
+          </>
+        );
+      }
+      const Step1 = () => {
+        return (
+          <>
+            <br />
+            <Description>Lorem Ipsum Yo</Description>
+            <br />
+            <Row>
+              <BackButton />
+              <NextButton />
+            </Row>
+          </>
+        );
+      }
+
+      const Step2 = () => {
+        return (
+          <>
+            <Header>Connected Addresses</Header>
+            {OwnerDisplay()}
+            {OperatorDisplay()}
+            <Input
+              type='string'
+              value={name}
+              onChange={(e) => handleChangeName(e)}
+              placeholder='username'
+              style={{ pointerEvents: 'auto' }}
+            />
+            <Row>
+              <BackButton />
+              <NextButton />
+            </Row>
+          </>
+        );
+      }
+
+      const Step3 = () => {
+        return (
+          <>
+            <br />
+            <Description>And your favorite food?</Description>
+            <br />
+            <Input
+              type='string'
+              value={food}
+              placeholder='stawberi'
+              onChange={(e) => handleChangeFood(e)}
+              style={{ pointerEvents: 'auto' }}
+            />
+            <Row>
+              <BackButton />
+              <ActionButton
+                id='submit'
+                text='Submit'
+                disabled={name === '' || food === ''}
+                onClick={() => handleAccountCreation(name, food)}
+              />
+            </Row>
+          </>
+        );
+      }
+
+      const GetSteps = () => {
+        return [Step0(), Step1(), Step2(), Step3()];
+      }
+
 
       /////////////////
       // DISPLAY
@@ -325,16 +392,7 @@ export function registerAccountRegistrar() {
           <Content style={{ pointerEvents: 'auto' }}>
             <Title>Register Your Account</Title>
             <Subtitle>(no registered account for connected address)</Subtitle>
-            <Header>Connected Addresses</Header>
-            {OwnerDisplay()}
-            {OperatorDisplay()}
-            <SingleInputTextForm
-              id={`username`}
-              label='username'
-              placeholder='BPD_GOD'
-              hasButton={true}
-              onSubmit={(v: string) => handleAccountCreation(v)}
-            />
+            {GetSteps()[step]}
           </Content>
         </Wrapper>
       );
@@ -379,6 +437,13 @@ const AddressRow = styled.div`
   justify-content: center;
 `
 
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Title = styled.p`
   margin: 25px 0px 0px 0px;
 
@@ -411,4 +476,23 @@ const Description = styled.p`
   text-align: center;
   font-family: Pixel;
   padding: 5px;
+`;
+
+const Input = styled.input`
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  color: black;
+  padding: 15px 12px;
+  margin: 5px 0px;
+
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  justify-content: center;
+  font-family: Pixel;
 `;
