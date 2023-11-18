@@ -5,8 +5,8 @@ import { ExitButton } from 'layers/react/components/library/ExitButton';
 import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
 
 interface Props {
-  id: string;
   divName: keyof Modals;
+  id: string;
   children: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;

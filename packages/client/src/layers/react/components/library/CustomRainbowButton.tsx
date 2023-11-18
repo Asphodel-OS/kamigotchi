@@ -94,3 +94,83 @@ export const AccountButton = (props: Props) => {
     </ConnectButton.Custom>
   );
 };
+
+export const ChainButton = (props: Props) => {
+  return (
+    <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        openChainModal,
+        openConnectModal,
+        authenticationStatus,
+        mounted,
+      }) => {
+        const ready = mounted && authenticationStatus !== 'loading';
+        const connected =
+          ready &&
+          account &&
+          chain &&
+          (!authenticationStatus ||
+            authenticationStatus === 'authenticated');
+
+        return (
+          <div
+            {...(!ready && {
+              'aria-hidden': true,
+              'style': {
+                opacity: 0,
+                pointerEvents: 'none',
+                userSelect: 'none',
+              },
+            })}
+          >
+            {(() => {
+              if (!connected) {
+                return (
+                  <ActionButton
+                    id='connect-button'
+                    onClick={openConnectModal}
+                    text='Wallet Disconnected'
+                    size={props.size}
+                    disabled={props.disabled}
+                    fill={props.fill}
+                    inverted={props.inverted}
+                  />
+                );
+              }
+
+              if (chain.unsupported) {
+                return (
+                  <ActionButton
+                    id='unsupported-chain-button'
+                    onClick={openChainModal}
+                    text="Change Chain"
+                    size={props.size}
+                    disabled={props.disabled}
+                    fill={props.fill}
+                    inverted={props.inverted}
+                  />
+                );
+              }
+
+              return (
+                <div style={{ display: 'flex' }}>
+                  <ActionButton
+                    id='chain-button'
+                    onClick={openChainModal}
+                    text='Change Chain'
+                    size={props.size}
+                    disabled={props.disabled}
+                    fill={props.fill}
+                    inverted={props.inverted}
+                  />
+                </div>
+              );
+            })()}
+          </div>
+        );
+      }}
+    </ConnectButton.Custom>
+  );
+};

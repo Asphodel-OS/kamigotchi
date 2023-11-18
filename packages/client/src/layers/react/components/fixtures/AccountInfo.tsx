@@ -28,19 +28,17 @@ export function registerAccountInfoFixture() {
         network: {
           components: {
             Coin,
-            Location,
             Name,
-            OperatorAddress,
+            Location,
             StaminaCurrent,
             Stamina,
           },
         },
       } = layers;
       return merge(
+        Name.update$,
         Coin.update$,
         Location.update$,
-        Name.update$,
-        OperatorAddress.update$,
         Stamina.update$,
         StaminaCurrent.update$,
       ).pipe(

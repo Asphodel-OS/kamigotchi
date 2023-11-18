@@ -10,20 +10,22 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import crypto from "crypto";
+
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import { useAccount, useNetwork } from 'wagmi';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { defaultChainConfig } from 'constants/chains';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
+import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountByName } from 'layers/react/shapes/Account'
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { AccountDetails, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playScribble } from 'utils/sounds';
+import { ActionButton } from '../library/ActionButton';
 
 
 /** 
@@ -105,7 +107,6 @@ export function registerAccountRegistrar() {
           const accountDetailsFromWorld = getAccountDetails(accountIndexUpdatedByWorld);
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
-            layers,
             actions,
             world,
             accountDetailsFromWorld,
@@ -118,55 +119,57 @@ export function registerAccountRegistrar() {
     },
 
     ({
-      layers,
+      actions,
+      world,
       accountDetailsFromWorld,
       operatorAddresses,
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
-      const { network: { actions, world } } = layers;
-      const { setDetails: setAccountDetails } = useKamiAccount();
+      const { chain } = useNetwork();
+      const { isConnected } = useAccount();
+      const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
       const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
-      const { validators, setValidators } = useComponentSettings();
-
       const [isVisible, setIsVisible] = useState(false);
-      const [nameTaken, setNameTaken] = useState(false);
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
       const [food, setFood] = useState('');
 
+      // set visibility of this validator
+      // we only want to prompt when an EOA is Connected to the correct network
+      // and the connected burner address is the same as the current one in local storage 
+      useEffect(() => {
+        const burnersMatch = burnerInfo.connected === burnerInfo.detected;
+        const networksMatch = chain?.id === defaultChainConfig.id;
+        setIsVisible(
+          isConnected
+          && networksMatch
+          && burnersMatch
+          && !accountDetails.id
+        );
+      }, [accountDetails, burnerInfo, isConnected]);
+
       // track the account details in store for easy access
       // expose/hide components accordingly
       useEffect(() => {
-        const meetsPreconditions = !validators.walletConnector && !validators.burnerDetector;
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
-        setAccountDetails(accountDetails);
-
-        if (meetsPreconditions && !accountDetails.id) {
+        if (!accountDetails.id) {
           toggleButtons(false);
+          toggleFixtures(false);
           toggleModals(false);
         }
 
-        setIsVisible(meetsPreconditions && !accountDetails.id);
-      }, [
-        validators.walletConnector,
-        validators.burnerDetector,
-        selectedAddress,
-        accountDetailsFromWorld
-      ]);
+        setAccountDetails(accountDetails);
+      }, [selectedAddress, isConnected, accountDetailsFromWorld, networks]);
 
-      // visibility effect hook. updated outside of the above to avoid race conditions
-      useEffect(() => {
-        setValidators({ ...validators, accountRegistrar: isVisible });
-      }, [isVisible]);
-
-      // validation for username input
-      useEffect(() => {
-        const account = getAccountByName(layers, name);
-        setNameTaken(!!account.id);
-      }, [name]);
+      // catch clicks on modal, prevents duplicate Phaser3 triggers
+      const handleClicks = (event: any) => {
+        event.stopPropagation();
+      };
+      const element = document.getElementById('account-registrar');
+      element?.addEventListener('mousedown', handleClicks);
 
 
       /////////////////
@@ -174,10 +177,12 @@ export function registerAccountRegistrar() {
 
       const copyBurnerAddress = () => {
         navigator.clipboard.writeText(burnerInfo.connected);
+        // console.log(burnerInfo.connected);
       }
 
       const copyBurnerPrivateKey = () => {
         navigator.clipboard.writeText(burnerInfo.detectedPrivateKey);
+        // console.log(burnerInfo.detectedPrivateKey);
       }
 
       const handleAccountCreation = async (username: string, food: string) => {
@@ -226,7 +231,7 @@ export function registerAccountRegistrar() {
 
 
       /////////////////
-      // RENDERING
+      // VISUAL COMPONENTS
 
       const OperatorDisplay = () => {
         const address = burnerInfo.connected;
@@ -302,19 +307,18 @@ export function registerAccountRegistrar() {
         />
       );
 
-      const IntroStep1 = () => {
+
+      const Step0 = () => {
         return (
           <>
             <br />
             <Description>Lorem Ipsum Yo</Description>
             <br />
-            <Row>
-              <NextButton />
-            </Row>
+            <NextButton />
           </>
         );
       }
-      const IntroStep2 = () => {
+      const Step1 = () => {
         return (
           <>
             <br />
@@ -328,32 +332,7 @@ export function registerAccountRegistrar() {
         );
       }
 
-      const UsernameStep = () => {
-        const NextButton = () => {
-          let button = (
-            <ActionButton
-              id='next'
-              text='Next'
-              onClick={() => setStep(step + 1)}
-              disabled={name === '' || nameTaken}
-            />
-          );
-          if (nameTaken) {
-            button = (
-              <Tooltip text={['Unfortunately, that one is already taken.']}>
-                {button}
-              </Tooltip>
-            );
-          } else if (name === '') {
-            button = (
-              <Tooltip text={['It\'s dangerous to go alone.', 'One needs to take a name.']}>
-                {button}
-              </Tooltip>
-            );
-          }
-          return button;
-        }
-
+      const Step2 = () => {
         return (
           <>
             <Header>Connected Addresses</Header>
@@ -374,7 +353,7 @@ export function registerAccountRegistrar() {
         );
       }
 
-      const FoodStep = () => {
+      const Step3 = () => {
         return (
           <>
             <br />
@@ -389,21 +368,19 @@ export function registerAccountRegistrar() {
             />
             <Row>
               <BackButton />
-              <Tooltip text={(food === '') ? ['You shouldn\'t skip lunch..'] : []}>
-                <ActionButton
-                  id='submit'
-                  text='Submit'
-                  disabled={food === ''}
-                  onClick={() => handleAccountCreation(name, food)}
-                />
-              </Tooltip>
+              <ActionButton
+                id='submit'
+                text='Submit'
+                disabled={name === '' || food === ''}
+                onClick={() => handleAccountCreation(name, food)}
+              />
             </Row>
           </>
         );
       }
 
       const GetSteps = () => {
-        return [IntroStep1(), IntroStep2(), UsernameStep(), FoodStep()];
+        return [Step0(), Step1(), Step2(), Step3()];
       }
 
 
@@ -411,19 +388,47 @@ export function registerAccountRegistrar() {
       // DISPLAY
 
       return (
-        <ValidatorWrapper
-          id='account-registrar'
-          divName='accountRegistrar'
-          title='Register Your Account'
-          subtitle='(no registered account for connected address)'
-        >
-          {GetSteps()[step]}
-        </ValidatorWrapper>
+        <Wrapper id='account-registrar' style={{ display: isVisible ? 'block' : 'none' }}>
+          <Content style={{ pointerEvents: 'auto' }}>
+            <Title>Register Your Account</Title>
+            <Subtitle>(no registered account for connected address)</Subtitle>
+            {GetSteps()[step]}
+          </Content>
+        </Wrapper>
       );
     }
   );
 }
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const Wrapper = styled.div`
+  justify-content: center;
+  align-items: center;
+  animation: ${fadeIn} 1.3s ease-in-out;
+`;
+
+const Content = styled.div`
+  background-color: white;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  border-radius: 10px;
+  width: 99%;
+
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const AddressRow = styled.div`
   display: flex;
@@ -437,6 +442,16 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+`;
+
+const Title = styled.p`
+  margin: 25px 0px 0px 0px;
+
+  padding: 5px 0px;
+  color: #333;
+  font-family: Pixel;
+  font-size: 24px;
+  text-align: center;
 `;
 
 const Subtitle = styled.p`
