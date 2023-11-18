@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
@@ -16,7 +17,6 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { generatePrivateKey } from 'utils/address';
 import { playClick, playScribble, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
-import { Tooltip } from '../library/Tooltip';
 
 
 // TODO: check for whether an account with the burner address already exists
@@ -184,8 +184,6 @@ export function registerOperatorUpdater() {
       }
 
 
-
-
       /////////////////
       // DISPLAY
 
@@ -194,7 +192,7 @@ export function registerOperatorUpdater() {
           id='operator-updater'
           divName='operatorUpdater'
           title='Update Operator'
-          error='Connected Burner != Account Operator'
+          errorPrimary='Connected Burner != Account Operator'
         >
           <Description>Account Operator: {accountDetails.operatorAddress}</Description>
           <Description>Connected Burner: {burnerInfo.connected}</Description>

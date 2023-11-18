@@ -53,6 +53,8 @@ export function registerBurnerDetector() {
       const [detectedAddress, setDetectedAddress] = useState('');
       const [isMismatched, setIsMismatched] = useState(false);
       const [input, setInput] = useState('');
+      const [errorPrimary, setErrorPrimary] = useState('');
+      const [errorSecondary, setErrorSecondary] = useState('');
 
       // set the detectedEOA upon detectedPrivateKey change and determine mismatch
       useEffect(() => {
@@ -64,6 +66,17 @@ export function registerBurnerDetector() {
           detectedPrivateKey,
         });
         setIsMismatched(connectedEOA !== detectedEOA);
+
+        if (!detectedPrivateKey) {
+          setErrorPrimary('No Burner Detected');
+          setErrorSecondary('Please enter a private key.');
+        } else if (!detectedEOA) {
+          setErrorPrimary('Invalid Burner Detected');
+          setErrorSecondary('Please enter a private key.');
+        } else if (connectedEOA !== detectedEOA) {
+          setErrorPrimary('Mismatch Detected');
+          setErrorSecondary('Please Refresh or enter the correct private key.');
+        }
       }, [detectedPrivateKey, connectedEOA]);
 
       // adjust visibility of windows based on above determination
@@ -124,42 +137,16 @@ export function registerBurnerDetector() {
         />
       );
 
-      const ErrorMessage = () => {
-        let title = '', message = '';
-
-        if (!detectedPrivateKey) {
-          title = 'No Burner Detected';
-          message = 'Please enter a private key.';
-        } else if (!detectedAddress) {
-          title = 'Invalid Burner Detected';
-          message = 'Please enter a private key.';
-        } else if (isMismatched) {
-          title = 'Mismatch Detected';
-          message = 'Please Refresh or enter the correct private key.';
-        }
-
-        return (
-          <>
-            <ErrorTitle>{title}</ErrorTitle>
-            <ErrorText>{message}</ErrorText>
-          </>
-        )
-      };
-
-
       return (
         <ValidatorWrapper
           id='burner-detector'
           divName='burnerDetector'
           title='Burner Address Detector'
+          errorPrimary={errorPrimary}
+          errorSecondary={errorSecondary}
         >
-          {ErrorMessage()}
-          <br />
-          <br />
           <Description>Connected: {network.connectedAddress.get()}</Description>
-          <br />
           <Description>Detected: {detectedAddress}</Description>
-          <br />
           <br />
           {PrivateKeyInput()}
           <ActionWrapper>
@@ -197,21 +184,7 @@ const Description = styled.p`
   color: #333;
   text-align: center;
   font-family: Pixel;
-`;
-
-const ErrorTitle = styled.div`
-  font-size: 14px;
-  color: #922;
-  padding: 10px;
-  text-align: center;
-  font-family: Pixel;
-`
-
-const ErrorText = styled.p`
-  font-size: 12px;
-  color: #922;
-  text-align: center;
-  font-family: Pixel;
+  padding: 5px 0px;
 `;
 
 const ActionWrapper = styled.div`

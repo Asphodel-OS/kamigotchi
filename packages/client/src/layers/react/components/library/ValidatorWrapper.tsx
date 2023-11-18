@@ -9,14 +9,15 @@ interface Props {
   title: string;
   children: React.ReactNode;
   subtitle?: string;
-  error?: string;
+  errorPrimary?: string;
+  errorSecondary?: string;
 }
 
 // ValidatorWrapper is an animated wrapper around all validators.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
   const { validators } = useComponentSettings();
-  const { id, divName, title, subtitle, children, error } = props;
+  const { id, divName, title, subtitle, children, errorPrimary, errorSecondary } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
@@ -43,8 +44,9 @@ export const ValidatorWrapper = (props: Props) => {
       <Content>
         <Header>
           <Title>{title}</Title>
-          <Subtitle>{subtitle}</Subtitle>
-          <Error>{error}</Error>
+          {subtitle && <Subtitle>{subtitle}</Subtitle>}
+          {errorPrimary && <ErrorPrimary>{errorPrimary}</ErrorPrimary>}
+          {errorSecondary && <ErrorSecondary>{errorSecondary}</ErrorSecondary>}
         </Header>
         <Children>{children}</Children>
       </Content>
@@ -110,7 +112,15 @@ const Subtitle = styled.div`
   text-align: center;
 `;
 
-const Error = styled.div`
+const ErrorPrimary = styled.div`
+  color: #922;
+  padding: 5px;
+  font-family: Pixel;
+  font-size: 14px;
+  text-align: center;
+`;
+
+const ErrorSecondary = styled.div`
   color: #922;
   padding: 5px;
   font-family: Pixel;
