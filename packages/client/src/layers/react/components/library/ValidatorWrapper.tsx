@@ -98,7 +98,7 @@ const Header = styled.div`
 
 const Title = styled.div`
   color: #333;
-  padding: 5px;
+  padding: 7px;
   font-family: Pixel;
   font-size: 24px;
   text-align: center;

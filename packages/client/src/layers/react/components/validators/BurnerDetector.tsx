@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';

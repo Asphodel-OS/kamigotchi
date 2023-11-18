@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { of } from 'rxjs';
-import styled, { keyframes } from 'styled-components';
-import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
+import React, { useEffect, useState } from 'react';
+import { of } from 'rxjs';
+import styled, { keyframes } from 'styled-components';
+import { useBalance } from 'wagmi';
 
 import { defaultChainConfig } from 'constants/chains';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { playClick, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
 
@@ -28,13 +30,9 @@ export function registerGasHarasser() {
     (layers) => of(layers),
     (layers) => {
       const { network: { actions, world } } = layers;
-
-      // TODO(ja): Refactor all these goddamn validator hooks into a store 
-      const { isConnected } = useAccount();
-      const { chain } = useNetwork();
       const { details: accountDetails } = useKamiAccount();
-      const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const [isVisible, setIsVisible] = useState(false);
+      const { selectedAddress, networks } = useNetworkSettings();
+      const { validators, setValidators } = useComponentSettings();
       const [value, setValue] = useState(.05);
 
       const { data: OperatorBal } = useBalance({
@@ -45,16 +43,26 @@ export function registerGasHarasser() {
       // toggle visibility based on many things
       useEffect(() => {
         const meetsPreconditions = (
-          isConnected
-          && chain?.id === defaultChainConfig.id
-          && burnerInfo.connected === burnerInfo.detected
-          && !!accountDetails.id
-          && accountDetails.operatorAddress === burnerInfo.connected
+          !validators.walletConnector
+          && !validators.burnerDetector
+          && !validators.accountRegistrar
+          && !validators.operatorUpdater
         );
 
         const hasGas = Number(OperatorBal?.formatted) > 0;
-        setIsVisible(meetsPreconditions && !hasGas);
-      }, [chain, isConnected, burnerInfo, accountDetails.operatorAddress, OperatorBal]);
+        setValidators({
+          ...validators,
+          gasHarasser: meetsPreconditions
+            // && defaultChainConfig.id !== 31337
+            && !hasGas
+        });
+      }, [
+        validators.walletConnector,
+        validators.burnerDetector,
+        validators.accountRegistrar,
+        validators.operatorUpdater,
+        OperatorBal,
+      ]);
 
 
       /////////////////
@@ -106,83 +114,35 @@ export function registerGasHarasser() {
       // DISPLAY
 
       return (
-        <Wrapper id='gas-harasser' style={{ display: isVisible ? 'block' : 'none' }}>
-          <Content style={{ pointerEvents: 'auto' }}>
-            <Title>Feed Your Operator</Title>
-            <Warning>Your Operator is EMPTY</Warning>
-            <br />
-            <Warning>You're lucky we don't report you to the authorities..</Warning>
-            <Description>Account Operator: {accountDetails.operatorAddress}</Description>
-            <br />
-            <Row>
-              <Input
-                type='number'
-                value={value}
-                step='0.01'
-                onChange={(e) => handleChange(e)}
-                onKeyDown={(e) => catchKeys(e)}
-                style={{ pointerEvents: 'auto' }}
-              />
-              <ActionButton id={`feed`} text='Feed' onClick={feed} size='vending' />
-            </Row>
-          </Content>
-        </Wrapper>
+        <ValidatorWrapper
+          id='gas-harasser'
+          divName='gasHarasser'
+          title='Feed Your Operator'
+          errorPrimary='Operator is EMPTY and STARVING'
+          errorSecondary={`You're lucky we don't report you to the authorities..`}
+        >
+          <Description>Account Operator: {accountDetails.operatorAddress}</Description>
+          <br />
+          <Row>
+            <Input
+              type='number'
+              value={value}
+              step='0.01'
+              onChange={(e) => handleChange(e)}
+              onKeyDown={(e) => catchKeys(e)}
+              style={{ pointerEvents: 'auto' }}
+            />
+            <ActionButton id={`feed`} text='Feed' onClick={feed} size='vending' />
+          </Row>
+        </ValidatorWrapper>
       );
     }
   );
 }
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const Wrapper = styled.div`
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 1.3s ease-in-out;
-`;
-
-const Content = styled.div`
-  width: 99%;    
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-
-  background-color: white;
-  padding: 30px 20px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-
-const Title = styled.p`
-  font-size: 18px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-  padding: 5px 0px;
-`;
-
-const Description = styled.p`
+const Description = styled.div`
   font-size: 12px;
   color: #333;
-  text-align: center;
-  font-family: Pixel;
-  padding: 5px 0px;
-`;
-
-const Warning = styled.p`
-  font-size: 12px;
-  color: #FF785B;
   text-align: center;
   font-family: Pixel;
   padding: 5px 0px;
