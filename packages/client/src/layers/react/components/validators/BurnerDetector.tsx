@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
-import { useAccount } from 'wagmi';
 
-import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address';
-
+import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { generatePrivateKey, getAddressFromPrivateKey } from 'utils/address';
 import 'layers/react/styles/font.css';
-import { ValidatorWrapper } from '../library/ValidatorWrapper';
 
 
 export function registerBurnerDetector() {
@@ -174,14 +172,6 @@ export function registerBurnerDetector() {
   );
 }
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
 
 const Input = styled.input`
   background-color: #ffffff;

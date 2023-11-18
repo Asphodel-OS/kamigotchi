@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
-import { useAccount, useNetwork, Connector } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 
 import { defaultChainConfig } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
-import { ActionButton } from '../library/ActionButton';
-import { ValidatorWrapper } from '../library/ValidatorWrapper';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import 'layers/react/styles/font.css';
 
 

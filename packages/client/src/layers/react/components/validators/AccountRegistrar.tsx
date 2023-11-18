@@ -14,17 +14,16 @@ import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-
-import { getAccountByName, getAccountByOperator } from 'layers/react/shapes/Account'
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { getAccountByName } from 'layers/react/shapes/Account'
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { AccountDetails, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playScribble } from 'utils/sounds';
-import { ActionButton } from '../library/ActionButton';
-import { ValidatorWrapper } from '../library/ValidatorWrapper';
 
 
 /** 
@@ -135,28 +134,23 @@ export function registerAccountRegistrar() {
       const [name, setName] = useState('');
       const [food, setFood] = useState('');
       const [nameTaken, setNameTaken] = useState(false);
-      const [operatorTaken, setOperatorTaken] = useState(false);
 
       // track the account details in store for easy access
       // expose/hide components accordingly
       useEffect(() => {
+        const meetsPreconditions = !validators.walletConnector && !validators.burnerDetector;
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountDetails = getAccountDetails(accountIndex);
         setAccountDetails(accountDetails);
 
-        if (!accountDetails.id) {
+        if (meetsPreconditions && !accountDetails.id) {
           toggleButtons(false);
-          toggleFixtures(false);
           toggleModals(false);
         }
 
         setValidators({
           ...validators,
-          accountRegistrar: (
-            !validators.walletConnector
-            && !validators.burnerDetector
-            && !accountDetails.id
-          ),
+          accountRegistrar: meetsPreconditions && !accountDetails.id
         });
       }, [
         validators.walletConnector,
@@ -170,12 +164,6 @@ export function registerAccountRegistrar() {
         const account = getAccountByName(layers, name);
         setNameTaken(!!account.id);
       }, [name]);
-
-      // validation for operator input
-      useEffect(() => {
-        const account = getAccountByOperator(layers, burnerInfo.detected);
-        setOperatorTaken(!!account.id);
-      }, [burnerInfo.detected]);
 
 
       /////////////////

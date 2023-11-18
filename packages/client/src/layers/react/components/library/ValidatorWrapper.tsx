@@ -7,16 +7,16 @@ interface Props {
   id: string;
   divName: keyof Validators;
   title: string;
-  subtitle?: string;
   children: React.ReactNode;
-  header?: React.ReactNode;
+  subtitle?: string;
+  error?: string;
 }
 
 // ValidatorWrapper is an animated wrapper around all validators.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
   const { validators } = useComponentSettings();
-  const { id, divName, title, subtitle, children } = props;
+  const { id, divName, title, subtitle, children, error } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
@@ -41,8 +41,11 @@ export const ValidatorWrapper = (props: Props) => {
       isOpen={validators[divName]}
     >
       <Content>
-        <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
+        <Header>
+          <Title>{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
+          <Error>{error}</Error>
+        </Header>
         <Children>{children}</Children>
       </Content>
     </Wrapper>
@@ -82,21 +85,37 @@ const Content = styled.div`
   font-family: Pixel;
 `;
 
+const Header = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+`;
 
 const Title = styled.div`
-  font-size: 24px;
   color: #333;
-  padding: 15px;
-  text-align: center;
+  padding: 5px;
   font-family: Pixel;
+  font-size: 24px;
+  text-align: center;
 `;
 
 const Subtitle = styled.div`
-  font-size: 14px;
   color: #666;
-  text-align: center;
-  font-family: Pixel;
   padding: 5px;
+  font-family: Pixel;
+  font-size: 14px;
+  text-align: center;
+`;
+
+const Error = styled.div`
+  color: #922;
+  padding: 5px;
+  font-family: Pixel;
+  font-size: 12px;
+  text-align: center;
 `;
 
 const Children = styled.div`
