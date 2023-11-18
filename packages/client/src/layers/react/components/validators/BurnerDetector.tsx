@@ -11,6 +11,8 @@ import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address';
 
 import 'layers/react/styles/font.css';
+import { ValidatorWrapper } from '../library/ValidatorWrapper';
+
 
 export function registerBurnerDetector() {
   registerUIComponent(
@@ -45,10 +47,11 @@ export function registerBurnerDetector() {
     },
 
     ({ connectedEOA, network }) => {
-      const { isConnected } = useAccount(); // refers to Connector
-      const { setBurnerInfo } = useNetworkSettings();
-      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
+      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
+      const { validators, setValidators } = useComponentSettings();
+      const { setBurnerInfo } = useNetworkSettings();
+
       const [detectedAddress, setDetectedAddress] = useState('');
       const [isMismatched, setIsMismatched] = useState(false);
       const [input, setInput] = useState('');
@@ -65,29 +68,22 @@ export function registerBurnerDetector() {
         setIsMismatched(connectedEOA !== detectedEOA);
       }, [detectedPrivateKey, connectedEOA]);
 
-      // catch clicks on modal, prevents duplicate Phaser3 triggers
-      const handleClicks = (event: any) => {
-        event.stopPropagation();
-      };
-      const element = document.getElementById('burner-detector');
-      element?.addEventListener('mousedown', handleClicks);
-
-      // modal and button toggles
+      // adjust visibility of windows based on above determination
       useEffect(() => {
         if (isMismatched) {
           toggleModals(false);
           toggleButtons(false);
           toggleFixtures(false);
         }
-      }, [isMismatched]);
+        setValidators({
+          ...validators,
+          burnerDetector: !validators.walletConnector && isMismatched
+        });
+      }, [validators.walletConnector, isMismatched]);
+
 
       /////////////////
       // STATE
-
-      // how to render the modal
-      const modalDisplay = () => (
-        (isConnected && isMismatched) ? 'block' : 'none'
-      );
 
       const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value);
@@ -107,6 +103,7 @@ export function registerBurnerDetector() {
           id={`generate-burner`}
           onClick={() => setInput(generatePrivateKey())}
           text='Generate'
+          size='vending'
         />
       );
 
@@ -115,6 +112,7 @@ export function registerBurnerDetector() {
           id={`set-burner`}
           onClick={() => setDetectedPrivateKey(input)}
           text='Submit'
+          size='vending'
         />
       )
 
@@ -139,7 +137,7 @@ export function registerBurnerDetector() {
           message = 'Please enter a private key.';
         } else if (isMismatched) {
           title = 'Mismatch Detected';
-          message = 'Please refresh or enter the correct private key.';
+          message = 'Please Refresh or enter the correct private key.';
         }
 
         return (
@@ -152,23 +150,25 @@ export function registerBurnerDetector() {
 
 
       return (
-        <Wrapper id='burner-detector' style={{ display: modalDisplay() }}>
-          <Content style={{ pointerEvents: 'auto' }}>
-            <Title>Burner Address Detector</Title>
-            {ErrorMessage()}
-            <br />
-            <Description>Connected: {network.connectedAddress.get()}</Description>
-            <br />
-            <Description>Detected: {detectedAddress}</Description>
-            <br />
-            <br />
-            {PrivateKeyInput()}
-            <ActionWrapper>
-              {GenerateButton()}
-              {SubmitButton()}
-            </ActionWrapper>
-          </Content>
-        </Wrapper>
+        <ValidatorWrapper
+          id='burner-detector'
+          divName='burnerDetector'
+          title='Burner Address Detector'
+        >
+          {ErrorMessage()}
+          <br />
+          <br />
+          <Description>Connected: {network.connectedAddress.get()}</Description>
+          <br />
+          <Description>Detected: {detectedAddress}</Description>
+          <br />
+          <br />
+          {PrivateKeyInput()}
+          <ActionWrapper>
+            {GenerateButton()}
+            {SubmitButton()}
+          </ActionWrapper>
+        </ValidatorWrapper>
       );
     }
   );
@@ -184,8 +184,6 @@ const fadeIn = keyframes`
 `;
 
 const Input = styled.input`
-  width: 80%;
-
   background-color: #ffffff;
   border-style: solid;
   border-width: 2px;
@@ -201,37 +199,6 @@ const Input = styled.input`
   cursor: pointer;
   border-radius: 5px;
   justify-content: center;
-  font-family: Pixel;
-`;
-
-const Wrapper = styled.div`
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 1.3s ease-in-out;
-`;
-
-const Content = styled.div`
-  width: 99%;    
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-
-  background-color: white;
-  padding: 30px 20px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-
-const Title = styled.p`
-  font-size: 18px;
-  color: #333;
-  padding: 15px;
-  text-align: center;
   font-family: Pixel;
 `;
 

@@ -14,6 +14,7 @@ import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import 'layers/react/styles/font.css';
 
+
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
 export function registerWalletConnecter() {
@@ -38,12 +39,14 @@ export function registerWalletConnecter() {
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const { validators, setValidators } = useComponentSettings();
 
+      const [isVisible, setIsVisible] = useState(false);
       const [title, setTitle] = useState('');
       const [description, setDescription] = useState('');
       const [buttonLabel, setButtonLabel] = useState('');
 
 
       // update the network settings whenever the connector/address changes
+      // determine whether/with what content this Validator should be populated
       useEffect(() => {
         let isVisible = true;
         console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
@@ -64,14 +67,18 @@ export function registerWalletConnecter() {
           UpdateNetwork();
         }
 
-        // wipe game state if validator triggered
+        setIsVisible(isVisible);
+      }, [chain?.id, connector, connectorAddress, isConnected]);
+
+      // adjust visibility of windows based on above determination
+      useEffect(() => {
         if (isVisible) {
           toggleModals(false);
           toggleButtons(false);
           toggleFixtures(false);
         }
         setValidators({ ...validators, walletConnector: isVisible });
-      }, [chain?.id, connector, connectorAddress, isConnected]);
+      }, [isVisible]);
 
 
       /////////////////
