@@ -16,7 +16,7 @@ interface Props {
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
   const { validators } = useComponentSettings();
-  const { id, divName, title, children, } = props;
+  const { id, divName, title, subtitle, children } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
@@ -42,6 +42,7 @@ export const ValidatorWrapper = (props: Props) => {
     >
       <Content>
         <Title>{title}</Title>
+        <Subtitle>{subtitle}</Subtitle>
         <Children>{children}</Children>
       </Content>
     </Wrapper>
@@ -83,11 +84,19 @@ const Content = styled.div`
 
 
 const Title = styled.div`
-  font-size: 18px;
+  font-size: 24px;
   color: #333;
   padding: 15px;
   text-align: center;
   font-family: Pixel;
+`;
+
+const Subtitle = styled.div`
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  font-family: Pixel;
+  padding: 5px;
 `;
 
 const Children = styled.div`
