@@ -33,6 +33,7 @@ export function registerGasHarasser() {
       const { details: accountDetails } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
       const { validators, setValidators } = useComponentSettings();
+      const [isVisible, setIsVisible] = useState(false);
       const [value, setValue] = useState(.05);
 
       const { data: OperatorBal } = useBalance({
@@ -50,12 +51,7 @@ export function registerGasHarasser() {
         );
 
         const hasGas = Number(OperatorBal?.formatted) > 0;
-        setValidators({
-          ...validators,
-          gasHarasser: meetsPreconditions
-            // && defaultChainConfig.id !== 31337
-            && !hasGas
-        });
+        setIsVisible(meetsPreconditions && !hasGas && defaultChainConfig.id !== 31337);
       }, [
         validators.walletConnector,
         validators.burnerDetector,
@@ -63,6 +59,11 @@ export function registerGasHarasser() {
         validators.operatorUpdater,
         OperatorBal,
       ]);
+
+      // visibility effect hook. updated outside of the above to avoid race conditions
+      useEffect(() => {
+        setValidators({ ...validators, gasHarasser: isVisible });
+      }, [isVisible]);
 
 
       /////////////////

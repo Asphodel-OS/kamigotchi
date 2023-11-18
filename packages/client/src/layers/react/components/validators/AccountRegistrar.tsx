@@ -130,10 +130,11 @@ export function registerAccountRegistrar() {
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const { validators, setValidators } = useComponentSettings();
 
+      const [isVisible, setIsVisible] = useState(false);
+      const [nameTaken, setNameTaken] = useState(false);
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
       const [food, setFood] = useState('');
-      const [nameTaken, setNameTaken] = useState(false);
 
       // track the account details in store for easy access
       // expose/hide components accordingly
@@ -148,16 +149,18 @@ export function registerAccountRegistrar() {
           toggleModals(false);
         }
 
-        setValidators({
-          ...validators,
-          accountRegistrar: meetsPreconditions && !accountDetails.id
-        });
+        setIsVisible(meetsPreconditions && !accountDetails.id);
       }, [
         validators.walletConnector,
         validators.burnerDetector,
         selectedAddress,
         accountDetailsFromWorld
       ]);
+
+      // visibility effect hook. updated outside of the above to avoid race conditions
+      useEffect(() => {
+        setValidators({ ...validators, accountRegistrar: isVisible });
+      }, [isVisible]);
 
       // validation for username input
       useEffect(() => {

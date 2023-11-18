@@ -41,6 +41,7 @@ export function registerOperatorUpdater() {
       const [mode, setMode] = useState('key');
       const [value, setValue] = useState('');
       const [operatorTaken, setOperatorTaken] = useState(false);
+      const [isVisible, setIsVisible] = useState(false);
 
 
       // track the account details in store for easy access
@@ -62,11 +63,7 @@ export function registerOperatorUpdater() {
             toggleFixtures(true);
           }
         }
-
-        setValidators({
-          ...validators,
-          operatorUpdater: meetsPreconditions && !operatorMatch,
-        });
+        setIsVisible(meetsPreconditions && !operatorMatch);
       }, [
         validators.walletConnector,
         validators.burnerDetector,
@@ -74,6 +71,11 @@ export function registerOperatorUpdater() {
         burnerInfo.connected,
         accountDetails.operatorAddress
       ]);
+
+      // visibility effect hook. updated outside of the above to avoid race conditions
+      useEffect(() => {
+        setValidators({ ...validators, operatorUpdater: isVisible });
+      }, [isVisible]);
 
       // check if the connected burner is already taken by an account
       useEffect(() => {

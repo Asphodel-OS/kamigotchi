@@ -50,8 +50,8 @@ export function registerBurnerDetector() {
       const { validators, setValidators } = useComponentSettings();
       const { setBurnerInfo } = useNetworkSettings();
 
-      const [detectedAddress, setDetectedAddress] = useState('');
       const [isMismatched, setIsMismatched] = useState(false);
+      const [detectedAddress, setDetectedAddress] = useState('');
       const [input, setInput] = useState('');
       const [errorPrimary, setErrorPrimary] = useState('');
       const [errorSecondary, setErrorSecondary] = useState('');
