@@ -1,33 +1,31 @@
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { ExitButton } from 'layers/react/components/library/ExitButton';
-import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
+import { useComponentSettings, Validators } from 'layers/react/store/componentSettings';
 
 interface Props {
   id: string;
-  divName: keyof Modals;
+  divName: keyof Validators;
+  title: string;
+  subtitle?: string;
   children: React.ReactNode;
   header?: React.ReactNode;
-  footer?: React.ReactNode;
-  canExit?: boolean;
-  overlay?: boolean;
 }
 
-// ModalWrapperFull is an animated wrapper around all modals.
+// ValidatorWrapper is an animated wrapper around all validators.
 // It includes and exit button with a click sound as well as Content formatting.
-export const ModalWrapperFull = (props: Props) => {
-  const { modals } = useComponentSettings();
-  const { divName, id, children, header, footer, canExit, overlay } = props;
+export const ValidatorWrapper = (props: Props) => {
+  const { validators } = useComponentSettings();
+  const { id, divName, title, children, } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
     const element = document.getElementById(id);
     if (element) {
-      const isVisible = modals[divName];
+      const isVisible = validators[divName];
       element.style.display = isVisible ? 'block' : 'none';
     }
-  }, [modals[divName]]);
+  }, [validators[divName]]);
 
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
@@ -36,35 +34,23 @@ export const ModalWrapperFull = (props: Props) => {
   const element = document.getElementById(id);
   element?.addEventListener('mousedown', handleClicks);
 
-  // conditional stlying for modals overlayed on top
-  const zindex = overlay ? { position: 'relative', zIndex: '2' } : {};
-
 
   return (
     <Wrapper
       id={id}
-      isOpen={modals[divName]}
-      style={{ ...zindex }}
+      isOpen={validators[divName]}
     >
       <Content>
-        {canExit &&
-          <ButtonRow>
-            <ExitButton divName={divName} />
-          </ButtonRow>
-        }
-        {header && <Header>{header}</Header>}
+        <Title>{title}</Title>
         <Children>{children}</Children>
-        {footer && <Footer>{footer}</Footer>}
       </Content>
     </Wrapper>
   );
 };
 
-interface Wrapper {
-  isOpen: boolean;
-}
 
-// Wrapper is an invisible animated wrapper around all modals sans any frills.
+// Wrapper is an invisible animated wrapper around all validators sans frills.
+interface Wrapper { isOpen: boolean };
 const Wrapper = styled.div<Wrapper>`
   display: none;
   justify-content: center;
@@ -82,34 +68,23 @@ const Content = styled.div`
 
   background-color: white;
   width: 99%;
-  height: 99%;
+  max-height: 1000px;
+  padding: 3vh 3vw;
   
   display: flex;
   flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
   font-family: Pixel;
 `;
 
-const ButtonRow = styled.div`
-  position: absolute;
-  
-  display: inline-flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-  align-self: flex-end;
-`;
 
-const Header = styled.div`
-  border-radius: 10px 10px 0px 0px;
-  border-bottom: solid black .15vw;
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const Footer = styled.div`  
-  border-radius: 0px 0px 10px 10px;
-  border-top: solid black .15vw;
-  display: flex;
-  flex-flow: column nowrap;
+const Title = styled.div`
+  font-size: 18px;
+  color: #333;
+  padding: 15px;
+  text-align: center;
+  font-family: Pixel;
 `;
 
 const Children = styled.div`
@@ -143,4 +118,4 @@ const fadeOut = keyframes`
   }
 `;
 
-export { Wrapper as ModalWrapperLite };
+export { Wrapper as ValidatorWrapperLite };
