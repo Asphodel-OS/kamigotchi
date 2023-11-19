@@ -88,13 +88,19 @@ export function registerQuestsModal() {
         if (notifications.has(id as EntityID)) {
           if (numAvail == 0)
             notifications.remove(id as EntityID);
-          notifications.update(id as EntityID, { description: `You have ${numAvail} quest${numAvail == 1 ? '' : 's'} available.` });
+          notifications.update(
+            id as EntityID,
+            {
+              description:
+                `There ${numAvail == 1 ? 'is' : 'are'} ${numAvail} quest${numAvail == 1 ? '' : 's'} you can accept.`
+            });
         } else {
           if (numAvail > 0)
             notifications.add({
               id: id as EntityID,
               title: `Available Quest${numAvail == 1 ? '' : 's'}!`,
-              description: `You have ${numAvail} quest${numAvail == 1 ? '' : 's'} available.`,
+              description:
+                `There ${numAvail == 1 ? 'is' : 'are'} ${numAvail} quest${numAvail == 1 ? '' : 's'} you can accept.`,
               time: Date.now().toString(),
               modal: "quests",
             });
