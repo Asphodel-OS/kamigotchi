@@ -25,6 +25,7 @@ import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
+import { registerNotificationModal } from './modals/Notifications';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
@@ -58,6 +59,7 @@ export function registerUIComponents() {
   registerAccountInfoFixture();
   registerActionQueueFixture();
   registerWalletFixture();
+  registerNotificationModal();
 
   // menu modals
   registerHelpModal();

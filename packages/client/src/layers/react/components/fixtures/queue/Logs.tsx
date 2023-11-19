@@ -8,7 +8,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import { NetworkLayer } from "layers/network/types";
-import { ActionStateString, ActionState } from 'layers/network/ActionSystem/constants';
+import { ActionStateString, ActionState } from 'layers/network/LocalSystems/ActionSystem/constants';
 import { Tooltip } from "layers/react/components/library/Tooltip";
 
 

@@ -13,7 +13,8 @@ import {
   setupMUDNetwork,
 } from "@latticexyz/std-client";
 
-import { createActionSystem } from "./ActionSystem/createActionSystem";
+import { createActionSystem } from "./LocalSystems/ActionSystem/createActionSystem";
+import { createNotificationSystem } from "./LocalSystems/NotificationSystem/createNotificationSystem";
 import { SystemTypes } from "types/SystemTypes";
 import { SystemAbis } from "types/SystemAbis.mjs";
 import { createAdminAPI } from "./api/admin";
@@ -46,6 +47,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   if (provider) {
     actions = createActionSystem(world, txReduced$, provider);
   }
+  const notifications = createNotificationSystem(world);
 
   /////////////////
   // API
@@ -114,6 +116,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     startSync,
     network,
     actions,
+    notifications,
     api: {
       admin: adminAPI,
       player: playerAPI,

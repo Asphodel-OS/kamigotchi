@@ -156,6 +156,5 @@ export function createComponents(world: World) {
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
     OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),
     OwnerAddress: defineStringEZ("OwnerAddress", "component.Address.Owner"),
-
   }
 }

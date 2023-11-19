@@ -21,11 +21,13 @@ export const toggleButtons = (isOn: boolean): Buttons => ({
 export interface Fixtures {
   accountInfo: boolean,
   actionQueue: boolean,
+  notification: boolean;
 }
 
 export const toggleFixtures = (isOn: boolean): Fixtures => ({
   accountInfo: isOn,
   actionQueue: isOn,
+  notification: isOn,
 });
 
 export interface Modals {
@@ -108,6 +110,7 @@ export const useComponentSettings = create<ComponentSettings & ComponentSettings
     fixtures: {
       accountInfo: false,
       actionQueue: false,
+      notification: true,
     },
     modals: {
       bridgeERC20: false,
