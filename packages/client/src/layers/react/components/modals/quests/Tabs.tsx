@@ -29,7 +29,7 @@ export const Tabs = (props: Props) => {
         onClick={() => setTab('ONGOING')}
         disabled={props.tab === 'ONGOING'}
       >
-        Ongoing
+        Accepted
       </Button>
     </Container>
   );
