@@ -438,8 +438,6 @@ export const List = (props: Props) => {
       return AvailableQuests();
     else if (props.mode == 'ONGOING')
       return OngoingQuests();
-    else if (props.mode == 'COMPLETED')
-      return CompletedQuests();
     else
       return <div />;
   }
