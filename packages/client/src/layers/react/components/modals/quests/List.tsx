@@ -7,6 +7,7 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Item } from "layers/react/shapes/Item";
 import { Objective, Quest, Requirement, Reward } from "layers/react/shapes/Quest";
+import { Room } from "layers/react/shapes/Room";
 
 
 interface Props {
@@ -22,6 +23,8 @@ interface Props {
     queryFoodRegistry: (index: number) => EntityIndex;
     queryReviveRegistry: (index: number) => EntityIndex;
     getItem: (index: EntityIndex) => Item;
+    getRoom: (location: number) => Room;
+    getQuestByIndex: (index: number) => Quest | undefined;
   };
 }
 
@@ -187,11 +190,11 @@ export const List = (props: Props) => {
       case 'FOOD':
         text = `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
         break;
-      case 'REVIVE':
-        text = `${requirement.target.value! * 1} ${getReviveName(requirement.target.index!)}`;
-        break;
       case 'QUEST':
-        text = `Complete Quest ${requirement.target.value! * 1}`;
+        text = `Complete Quest [${props.utils.getQuestByIndex(requirement.target.value!)
+          ? props.utils.getQuestByIndex(requirement.target.value!)?.name
+          : requirement.target.value! * 1
+          }]`;
         break;
       default:
         text = '???';
@@ -216,10 +219,6 @@ export const List = (props: Props) => {
         return `${reward.target.value! * 1} ${getItemName(reward.target.index!)}`;
       case 'EXPERIENCE':
         return `${reward.target.value! * 1} Experience`;
-      case 'FOOD':
-        return `${reward.target.value! * 1} ${getFoodName(reward.target.index!)}`;
-      case 'REVIVE':
-        return `${reward.target.value! * 1} ${getReviveName(reward.target.index!)}`;
       case 'MINT20':
         return `${reward.target.value! * 1} $KAMI`;
       default:
@@ -375,14 +374,33 @@ export const List = (props: Props) => {
 
   const CompletedQuests = () => {
     let quests = [...props.account.quests?.completed ?? []];
-    return quests.map((q: Quest) => (
-      <QuestContainer key={q.id}>
-        <QuestName>{q.name}</QuestName>
-        <QuestDescription>{q.description}</QuestDescription>
-        {ObjectiveDisplay(q.objectives, false)}
-        {RewardDisplay(q.rewards)}
-      </QuestContainer>
-    ))
+
+    const line = (quests.length > 0) ? (
+      <ConditionName
+        style={{
+          color: "#BBB",
+          width: "100%",
+          textAlign: "center",
+          padding: "0.5vw",
+        }}>
+        - Completed -
+      </ConditionName>
+    ) : (
+      <div />
+    );
+
+    return <div>
+      {line}
+      {quests.map((q: Quest) => (
+        <DoneContainer key={q.id}>
+          <QuestName>{q.name}</QuestName>
+          <QuestDescription>{q.description}</QuestDescription>
+          {ObjectiveDisplay(q.objectives, false)}
+          {RewardDisplay(q.rewards)}
+        </DoneContainer>
+      ))}
+    </div>
+
   }
 
   const OngoingQuests = () => {
@@ -401,15 +419,18 @@ export const List = (props: Props) => {
     });
     const quests = completable.concat(uncompletable);
 
-    return quests.map((q: Quest) => (
-      <QuestContainer key={q.id}>
-        <QuestName>{q.name}</QuestName>
-        <QuestDescription>{q.description}</QuestDescription>
-        {ObjectiveDisplay(q.objectives, true)}
-        {RewardDisplay(q.rewards)}
-        {CompleteButton(q)}
-      </QuestContainer>
-    ));
+    return (<div>
+      {quests.map((q: Quest) => (
+        <QuestContainer key={q.id}>
+          <QuestName>{q.name}</QuestName>
+          <QuestDescription>{q.description}</QuestDescription>
+          {ObjectiveDisplay(q.objectives, true)}
+          {RewardDisplay(q.rewards)}
+          {CompleteButton(q)}
+        </QuestContainer>
+      ))}
+      {CompletedQuests()}
+    </div>);
   }
 
   const QuestsDisplay = () => {
@@ -429,7 +450,6 @@ export const List = (props: Props) => {
 const Container = styled.div`
   overflow-y: scroll;
   height: 100%;
-  max-height: 100%;
 `;
 
 const EmptyText = styled.div`
@@ -455,6 +475,8 @@ const QuestContainer = styled.div`
   flex-direction: column;
   padding: 1vw;
   margin: 0.8vw;
+
+  color: #333;
 `;
 
 const QuestName = styled.div`
@@ -462,13 +484,10 @@ const QuestName = styled.div`
   font-size: 1vw;
   text-align: left;
   justify-content: flex-start;
-  color: #333;
   padding: 0.7vh 0vw;
 `;
 
 const QuestDescription = styled.div`
-  color: #333;
-
   font-family: Pixel;
   text-align: left;
   line-height: 1.2vw;
@@ -489,15 +508,18 @@ const ConditionName = styled.div`
   font-size: 0.85vw;
   text-align: left;
   justify-content: flex-start;
-  color: #333;
   padding: 0vw 0vw 0.3vw 0vw;
 `;
 
 const ConditionDescription = styled.div`
-  color: #333;
-
   font-family: Pixel;
   text-align: left;
   font-size: 0.7vw;
   padding: 0.4vh 0.5vw;
+`;
+
+const DoneContainer = styled(QuestContainer)`
+  border-color: #999;
+  border-width: 1.5px;
+  color: #BBB;
 `;
