@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 import { NetworkLayer } from 'src/layers/network/types';
 

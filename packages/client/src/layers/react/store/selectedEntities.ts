@@ -1,5 +1,5 @@
 import { EntityIndex } from '@latticexyz/recs';
-import create from 'zustand';
+import { create } from 'zustand';
 
 export interface SelectedEntities {
   accountEntityIndex: EntityIndex;
