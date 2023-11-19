@@ -42,6 +42,7 @@ export const List = (props: Props) => {
     };
   }, []);
 
+  const [collaspeDone, setCollapseDone] = useState(true);
 
   ///////////////////
   // LOGIC
@@ -376,29 +377,27 @@ export const List = (props: Props) => {
     let quests = [...props.account.quests?.completed ?? []];
 
     const line = (quests.length > 0) ? (
-      <ConditionName
-        style={{
-          color: "#BBB",
-          width: "100%",
-          textAlign: "center",
-          padding: "0.5vw",
-        }}>
-        - Completed -
-      </ConditionName>
+      <CollapseText
+        onClick={() => setCollapseDone(!collaspeDone)}
+      >
+        {collaspeDone ? '- Completed (collasped) -' : '- Completed -'}
+      </CollapseText>
     ) : (
       <div />
     );
 
+    const dones = quests.map((q: Quest) => (
+      <DoneContainer key={q.id}>
+        <QuestName>{q.name}</QuestName>
+        <QuestDescription>{q.description}</QuestDescription>
+        {ObjectiveDisplay(q.objectives, false)}
+        {RewardDisplay(q.rewards)}
+      </DoneContainer>
+    ));
+
     return <div>
       {line}
-      {quests.map((q: Quest) => (
-        <DoneContainer key={q.id}>
-          <QuestName>{q.name}</QuestName>
-          <QuestDescription>{q.description}</QuestDescription>
-          {ObjectiveDisplay(q.objectives, false)}
-          {RewardDisplay(q.rewards)}
-        </DoneContainer>
-      ))}
+      {collaspeDone ? <div /> : dones}
     </div>
 
   }
@@ -461,6 +460,25 @@ const EmptyText = styled.div`
 
   height: 100%;
 `;
+
+const CollapseText = styled.button`
+  border: none;
+  background-color: transparent;
+
+  width: 100%;
+  textAlign: center;
+  padding: 0.5vw;
+
+  color: #BBB;
+  font-family: Pixel;
+  font-size: 0.85vw;
+  text-align: center;
+
+  &:hover {
+    color: #666;
+    cursor: pointer;
+  }
+`
 
 const QuestContainer = styled.div`
   border-color: black;
