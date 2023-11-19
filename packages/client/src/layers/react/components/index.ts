@@ -12,6 +12,7 @@ import {
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerActionQueueFixture } from './fixtures/queue/';
 import { registerWalletFixture } from './fixtures/Wallet';
+import { registerNotificationFixture } from './fixtures/Notifications';
 
 import { registerDialogueModal } from './modals/dialogue';
 import { registerKamiModal } from './modals/kami';
@@ -25,7 +26,6 @@ import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
-import { registerNotificationModal } from './modals/Notifications';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
@@ -59,7 +59,7 @@ export function registerUIComponents() {
   registerAccountInfoFixture();
   registerActionQueueFixture();
   registerWalletFixture();
-  registerNotificationModal();
+  registerNotificationFixture();
 
   // menu modals
   registerHelpModal();

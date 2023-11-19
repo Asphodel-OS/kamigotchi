@@ -8,9 +8,9 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 import { Modals, useComponentSettings } from 'layers/react/store/componentSettings';
 
-export function registerNotificationModal() {
+export function registerNotificationFixture() {
   registerUIComponent(
-    'NotificationModal',
+    'NotificationFixture',
     {
       colStart: 72,
       colEnd: 99,
@@ -46,14 +46,11 @@ export function registerNotificationModal() {
         setModals({ ...modals, [target]: true });
       }
 
-      console.log(notifications);
-      console.log(list);
-
       const SingleNotif = (id: EntityIndex) => {
         const { title, description, time, modal } = getComponentValue(notifications.Notification, id)!;
         return (
           <Card
-            id={id.toString()}
+            key={id.toString()}
             onClick={() => handleClick(modal)}
           >
             <Title>{title}</Title>

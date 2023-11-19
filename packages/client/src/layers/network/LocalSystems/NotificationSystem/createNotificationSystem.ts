@@ -24,13 +24,6 @@ export function createNotificationSystem<M = undefined>(world: World) {
    * @returns index of the entity created for the action
    */
   function add(toAdd: NotificationData): EntityIndex {
-    // Prevent the same notification from being added multiple times
-    if (toAdd.id && world.entityToIndex.get(toAdd.id) != null) {
-      const existingAction = world.entityToIndex.get(toAdd.id);
-      console.warn(`Action with id ${toAdd.id} is already requested.`);
-      return existingAction!;
-    }
-
     // Set the action component
     const entityIndex = createEntity(world, undefined, {
       id: toAdd.id,
@@ -76,5 +69,10 @@ export function createNotificationSystem<M = undefined>(world: World) {
     return true;
   }
 
-  return { add, remove, update, Notification };
+  function has(id: EntityID) {
+    const index = world.entityToIndex.get(id);
+    return index && getComponentValue(Notification, index);
+  }
+
+  return { add, remove, update, has, Notification };
 }
