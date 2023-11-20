@@ -1,5 +1,29 @@
 import create from 'zustand';
 
+////////////////
+// OVERVIEW
+
+interface State {
+  buttons: Buttons;
+  fixtures: Fixtures;
+  modals: Modals;
+  validators: Validators;
+}
+
+interface Actions {
+  setButtons: (data: Buttons) => void;
+  setFixtures: (data: Fixtures) => void;
+  setModals: (data: Modals) => void;
+  setValidators: (data: Validators) => void;
+  toggleButtons: (isOn: boolean) => void;
+  toggleModals: (isOn: boolean) => void;
+  toggleFixtures: (isOn: boolean) => void;
+}
+
+
+////////////////
+// BUTTONS
+
 export interface Buttons {
   help: boolean;
   inventory: boolean;
@@ -18,6 +42,10 @@ export const toggleButtons = (isOn: boolean): Buttons => ({
   settings: isOn,
 });
 
+
+////////////////
+// FIXTURES
+
 export interface Fixtures {
   accountInfo: boolean,
   actionQueue: boolean,
@@ -27,6 +55,10 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
   accountInfo: isOn,
   actionQueue: isOn,
 });
+
+
+////////////////
+// MODALS
 
 export interface Modals {
   bridgeERC20: boolean;
@@ -80,23 +112,24 @@ export const toggleModals = (isOn: boolean): Modals => ({
   settings: isOn,
 });
 
-export interface ComponentSettings {
-  buttons: Buttons;
-  fixtures: Fixtures;
-  modals: Modals;
+
+////////////////
+// VALIDATORS
+
+export interface Validators {
+  accountRegistrar: boolean;
+  burnerDetector: boolean;
+  gasHarasser: boolean;
+  operatorUpdater: boolean;
+  walletConnector: boolean;
 }
 
-interface ComponentSettingsActions {
-  setButtons: (data: Buttons) => void;
-  setFixtures: (data: Fixtures) => void;
-  setModals: (data: Modals) => void;
-  toggleButtons: (isOn: boolean) => void;
-  toggleModals: (isOn: boolean) => void;
-  toggleFixtures: (isOn: boolean) => void;
-}
 
-export const useComponentSettings = create<ComponentSettings & ComponentSettingsActions>((set) => {
-  const initialState: ComponentSettings = {
+////////////////
+// WAGMI WAGMI WAGMI WAGMI
+
+export const useComponentSettings = create<State & Actions>((set) => {
+  const initialState: State = {
     buttons: {
       help: false,
       inventory: false,
@@ -134,22 +167,37 @@ export const useComponentSettings = create<ComponentSettings & ComponentSettings
       roomMovement: false,
       settings: false,
     },
+    validators: {
+      accountRegistrar: false,
+      burnerDetector: false,
+      gasHarasser: false,
+      operatorUpdater: false,
+      walletConnector: false,
+    }
   };
 
   return {
     ...initialState,
-    setButtons: (data: Buttons) =>
-      set((state: ComponentSettings) => ({ ...state, buttons: data })),
-    setFixtures: (data: Fixtures) =>
-      set((state: ComponentSettings) => ({ ...state, fixtures: data })),
-    setModals: (data: Modals) =>
-      set((state: ComponentSettings) => ({ ...state, modals: data })),
-    toggleButtons: (isOn: boolean) =>
-      set((state: ComponentSettings) => ({ ...state, buttons: toggleButtons(isOn) })),
-    toggleFixtures: (isOn: boolean) =>
-      set((state: ComponentSettings) => ({ ...state, fixtures: toggleFixtures(isOn) })),
-    toggleModals: (isOn: boolean) =>
-      set((state: ComponentSettings) => ({ ...state, modals: toggleModals(isOn) })),
-
+    setButtons: (data: Buttons) => set(
+      (state: State) => ({ ...state, buttons: data })
+    ),
+    setFixtures: (data: Fixtures) => set(
+      (state: State) => ({ ...state, fixtures: data })
+    ),
+    setModals: (data: Modals) => set(
+      (state: State) => ({ ...state, modals: data })
+    ),
+    setValidators: (data: Validators) => set(
+      (state: State) => ({ ...state, validators: data })
+    ),
+    toggleButtons: (isOn: boolean) => set(
+      (state: State) => ({ ...state, buttons: toggleButtons(isOn) })
+    ),
+    toggleFixtures: (isOn: boolean) => set(
+      (state: State) => ({ ...state, fixtures: toggleFixtures(isOn) })
+    ),
+    toggleModals: (isOn: boolean) => set(
+      (state: State) => ({ ...state, modals: toggleModals(isOn) })
+    ),
   };
 });
