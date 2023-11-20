@@ -42,7 +42,7 @@ export const List = (props: Props) => {
     };
   }, []);
 
-  const [collaspeDone, setCollapseDone] = useState(true);
+  const [isCollasped, setIsCollapsed] = useState(true);
 
   ///////////////////
   // LOGIC
@@ -378,9 +378,9 @@ export const List = (props: Props) => {
 
     const line = (quests.length > 0) ? (
       <CollapseText
-        onClick={() => setCollapseDone(!collaspeDone)}
+        onClick={() => setIsCollapsed(!isCollasped)}
       >
-        {collaspeDone ? '- Completed (collasped) -' : '- Completed -'}
+        {isCollasped ? '- Completed (collasped) -' : '- Completed -'}
       </CollapseText>
     ) : (
       <div />
@@ -397,7 +397,7 @@ export const List = (props: Props) => {
 
     return <div>
       {line}
-      {collaspeDone ? <div /> : dones}
+      {isCollasped ? <div /> : dones}
     </div>
 
   }
