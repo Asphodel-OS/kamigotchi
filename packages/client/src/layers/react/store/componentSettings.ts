@@ -48,6 +48,30 @@ interface Actions {
 ////////////////
 // BUTTONS
 
+////////////////
+// OVERVIEW
+
+interface State {
+  buttons: Buttons;
+  fixtures: Fixtures;
+  modals: Modals;
+  validators: Validators;
+}
+
+interface Actions {
+  setButtons: (data: Buttons) => void;
+  setFixtures: (data: Fixtures) => void;
+  setModals: (data: Modals) => void;
+  setValidators: (data: Validators) => void;
+  toggleButtons: (isOn: boolean) => void;
+  toggleModals: (isOn: boolean) => void;
+  toggleFixtures: (isOn: boolean) => void;
+}
+
+
+////////////////
+// BUTTONS
+
 export interface Buttons {
   help: boolean;
   inventory: boolean;
