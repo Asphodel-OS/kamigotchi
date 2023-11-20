@@ -10,21 +10,20 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import crypto from "crypto";
-
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled, { keyframes } from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
+import styled from 'styled-components';
 
-import { defaultChain } from 'constants/chains';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { getAccountByName } from 'layers/react/shapes/Account'
 import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { AccountDetails, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
+import { Account, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playScribble } from 'utils/sounds';
-import { ActionButton } from '../library/ActionButton';
 
 
 /** 
@@ -70,8 +69,8 @@ export function registerAccountRegistrar() {
         },
       } = layers;
 
-      // TODO: replace this with getAccount shape
-      const getAccountDetails = (index: EntityIndex): AccountDetails => {
+      // TODO?: replace this with getAccount shape
+      const getAccountDetails = (index: EntityIndex): Account => {
         if (!index) return emptyAccountDetails();
         return {
           id: world.entities[index],
@@ -103,12 +102,13 @@ export function registerAccountRegistrar() {
         map(() => {
           const { selectedAddress } = useNetworkSettings.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
-          const accountDetailsFromWorld = getAccountDetails(accountIndexUpdatedByWorld);
+          const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
+            layers,
             actions,
             world,
-            accountDetailsFromWorld,
+            kamiAccountFromWorldUpdate,
             operatorAddresses,
             getAccountIndexFromOwner,
             getAccountDetails,
@@ -118,57 +118,62 @@ export function registerAccountRegistrar() {
     },
 
     ({
-      actions,
-      world,
-      accountDetailsFromWorld,
+      layers,
+      kamiAccountFromWorldUpdate,
       operatorAddresses,
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
-      const { chain } = useNetwork();
-      const { isConnected } = useAccount();
-      const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
-      const { burner, selectedAddress, networks } = useNetworkSettings();
+      const { network: { actions, world } } = layers;
+      const { burner, selectedAddress, networks, validations } = useNetworkSettings();
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
+      const { validators, setValidators } = useComponentSettings();
+      const { setAccount } = useKamiAccount();
+
       const [isVisible, setIsVisible] = useState(false);
+      const [accountExists, setAccountExists] = useState(false);
+      const [nameTaken, setNameTaken] = useState(false);
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
       const [food, setFood] = useState('');
 
-      // set visibility of this validator
-      // we only want to prompt when an EOA is Connected to the correct network
-      // and the connected burner address is the same as the current one in local storage 
-      useEffect(() => {
-        const burnersMatch = burner.connected.address === burner.detected.address;
-        const networksMatch = chain?.id === defaultChain.id;
-        setIsVisible(
-          isConnected
-          && networksMatch
-          && burnersMatch
-          && !accountDetails.id
-        );
-      }, [accountDetails, burner, isConnected]);
-
-      // track the account details in store for easy access
-      // expose/hide components accordingly
+      // run the primary check(s) for this validator
+      // track in store for easy access and updatae any local state variables accordingly
       useEffect(() => {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
-        const accountDetails = getAccountDetails(accountIndex);
-        if (!accountDetails.id) {
-          toggleButtons(false);
-          toggleFixtures(false);
-          toggleModals(false);
+        setAccountExists(!!accountIndex)
+        if (accountIndex) {
+          const kamiAccount = getAccountDetails(accountIndex);
+          setAccount(kamiAccount);
         }
+      }, [selectedAddress, kamiAccountFromWorldUpdate]);
 
-        setAccountDetails(accountDetails);
-      }, [selectedAddress, isConnected, accountDetailsFromWorld, networks]);
+      // determine visibility based on above/prev checks
+      useEffect(() => {
+        setIsVisible(
+          validations.isConnected &&
+          validations.chainMatches &&
+          validations.burnerMatches &&
+          !accountExists
+        );
+      }, [validations, selectedAddress, accountExists]);
 
-      // catch clicks on modal, prevents duplicate Phaser3 triggers
-      const handleClicks = (event: any) => {
-        event.stopPropagation();
-      };
-      const element = document.getElementById('account-registrar');
-      element?.addEventListener('mousedown', handleClicks);
+      // adjust actual visibility of windows based on above determination
+      useEffect(() => {
+        if (isVisible) {
+          toggleModals(false);
+          toggleButtons(false);
+        }
+        if (isVisible != validators.accountRegistrar) {
+          setValidators({ ...validators, accountRegistrar: isVisible });
+        }
+      }, [isVisible, validators.walletConnector, validators.burnerDetector]);
+
+      // validation for username input
+      useEffect(() => {
+        const account = getAccountByName(layers, name);
+        setNameTaken(!!account.id);
+      }, [name]);
 
 
       /////////////////
@@ -176,22 +181,20 @@ export function registerAccountRegistrar() {
 
       const copyBurnerAddress = () => {
         navigator.clipboard.writeText(burner.connected.address);
-        // console.log(burner.connected);
       }
 
       const copyBurnerPrivateKey = () => {
         navigator.clipboard.writeText(burner.detected.key);
-        // console.log(burner.detectedPrivateKey);
       }
 
       const handleAccountCreation = async (username: string, food: string) => {
         playScribble();
         toggleFixtures(true);
         try {
-          const createAccountActionID = createAccount(username, food);
+          const actionID = createAccount(username, food);
           await waitForActionCompletion(
             actions?.Action!,
-            world.entityToIndex.get(createAccountActionID) as EntityIndex
+            world.entityToIndex.get(actionID) as EntityIndex
           );
         } catch (e) {
           console.log('ERROR CREATING ACCOUNT:', e);
@@ -201,24 +204,21 @@ export function registerAccountRegistrar() {
 
       const createAccount = (username: string, food: string) => {
         const network = networks.get(selectedAddress);
-        const world = network!.world;
         const api = network!.api.player;
+        const connectedBurner = burner.connected.address;
 
-
-        console.log('CREATING ACCOUNT FOR:', selectedAddress);
+        console.log('CREATING ACCOUNT:', selectedAddress);
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountCreate',
-          params: [burner.connected, username, food],
+          params: [connectedBurner, username, food],
           description: `Creating Account for ${username}`,
           execute: async () => {
-            return api.account.register(burner.connected.address, username, food);
+            return api.account.register(connectedBurner, username, food);
           },
         });
         return actionID;
-        // const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        // return waitForActionCompletion(actions?.Action, actionIndex);
       }
 
       const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,7 +231,7 @@ export function registerAccountRegistrar() {
 
 
       /////////////////
-      // VISUAL COMPONENTS
+      // RENDERING
 
       const OperatorDisplay = () => {
         const address = burner.connected.address;
@@ -244,11 +244,11 @@ export function registerAccountRegistrar() {
         if (addressTaken) {
           color = '#b22';
           infoText = [
-            'This burner address is taken by another account.',
+            'This burner address references an Avatar already taken by another Account.',
             '',
-            'But the odds of someone generating the same address are 1 in 10^48.. fascinating',
+            'But the odds of someone generating the same address are 1 in 10^48.',
             '',
-            'You can take a look at localstorage.',
+            'Fascinating. You can take a look at localstorage..',
           ];
         } else {
           color = '#666';
@@ -263,17 +263,17 @@ export function registerAccountRegistrar() {
 
         return (
           <AddressRow>
-            <Description>Operator: {`${addrPrefix}...${addrSuffix}`}</Description>
+            <Description>Avatar: {`${addrPrefix}...${addrSuffix}`}</Description>
             <Tooltip text={infoText}>
               <IconButton size='small'>
                 <InfoIcon fontSize='small' style={{ color }} />
               </IconButton>
             </Tooltip>
             <Tooltip text={['copy address']}>
-              <CopyButton onClick={() => copyBurnerAddress()}></CopyButton>
+              <CopyButton onClick={() => copyBurnerAddress()} />
             </Tooltip>
             <Tooltip text={['copy private key']}>
-              <CopyButton onClick={() => copyBurnerPrivateKey()}></CopyButton>
+              <CopyButton onClick={() => copyBurnerPrivateKey()} />
             </Tooltip>
           </AddressRow>
         );
@@ -307,22 +307,25 @@ export function registerAccountRegistrar() {
         />
       );
 
-
-      const Step0 = () => {
+      const IntroStep1 = () => {
         return (
           <>
             <br />
-            <Description>Lorem Ipsum Yo</Description>
+            <Description>Welcome to Kamigotchi World.</Description>
+            <Description>This world exists entirely on-chain.</Description>
             <br />
-            <NextButton />
+            <Row>
+              <NextButton />
+            </Row>
           </>
         );
       }
-      const Step1 = () => {
+      const IntroStep2 = () => {
         return (
           <>
             <br />
-            <Description>Lorem Ipsum Yo</Description>
+            <Description>Kamigotchi are key to this world.</Description>
+            <Description>You will need them to progress.</Description>
             <br />
             <Row>
               <BackButton />
@@ -332,10 +335,33 @@ export function registerAccountRegistrar() {
         );
       }
 
-      const Step2 = () => {
+      const UsernameStep = () => {
+        const addressTaken = operatorAddresses.has(burner.connected.address);
+
+        const NextButton = () => {
+          let button = (
+            <ActionButton
+              id='next'
+              text='Next'
+              onClick={() => setStep(step + 1)}
+              disabled={addressTaken || name === '' || nameTaken}
+            />
+          );
+
+          let tooltip: string[] = [];
+          if (addressTaken) tooltip = ['Unfortunately, that Avatar is already taken.']
+          else if (nameTaken) tooltip = ['Unfortunately, that Name is already taken.']
+          else if (name === '') tooltip = [`It's dangerous to go alone.`, `One needs to take an Avatar.`]
+          if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>
+
+          return button;
+        }
+
         return (
           <>
-            <Header>Connected Addresses</Header>
+            <Description>You will be assigned an avatar.</Description>
+            <Description>Please give it a name.</Description>
+            <br />
             {OwnerDisplay()}
             {OperatorDisplay()}
             <Input
@@ -353,7 +379,7 @@ export function registerAccountRegistrar() {
         );
       }
 
-      const Step3 = () => {
+      const FoodStep = () => {
         return (
           <>
             <br />
@@ -368,19 +394,21 @@ export function registerAccountRegistrar() {
             />
             <Row>
               <BackButton />
-              <ActionButton
-                id='submit'
-                text='Submit'
-                disabled={name === '' || food === ''}
-                onClick={() => handleAccountCreation(name, food)}
-              />
+              <Tooltip text={(food === '') ? ['You shouldn\'t skip lunch..'] : []}>
+                <ActionButton
+                  id='submit'
+                  text='Submit'
+                  disabled={food === ''}
+                  onClick={() => handleAccountCreation(name, food)}
+                />
+              </Tooltip>
             </Row>
           </>
         );
       }
 
       const GetSteps = () => {
-        return [Step0(), Step1(), Step2(), Step3()];
+        return [IntroStep1(), IntroStep2(), UsernameStep(), FoodStep()];
       }
 
 
@@ -388,47 +416,19 @@ export function registerAccountRegistrar() {
       // DISPLAY
 
       return (
-        <Wrapper id='account-registrar' style={{ display: isVisible ? 'block' : 'none' }}>
-          <Content style={{ pointerEvents: 'auto' }}>
-            <Title>Register Your Account</Title>
-            <Subtitle>(no registered account for connected address)</Subtitle>
-            {GetSteps()[step]}
-          </Content>
-        </Wrapper>
+        <ValidatorWrapper
+          id='account-registrar'
+          divName='accountRegistrar'
+          title='Welcome'
+          subtitle='You must register an Account.'
+        >
+          {GetSteps()[step]}
+        </ValidatorWrapper>
       );
     }
   );
 }
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const Wrapper = styled.div`
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 1.3s ease-in-out;
-`;
-
-const Content = styled.div`
-  background-color: white;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  border-radius: 10px;
-  width: 99%;
-
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
 
 const AddressRow = styled.div`
   display: flex;
@@ -442,32 +442,7 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-`;
-
-const Title = styled.p`
-  margin: 25px 0px 0px 0px;
-
-  padding: 5px 0px;
-  color: #333;
-  font-family: Pixel;
-  font-size: 24px;
-  text-align: center;
-`;
-
-const Subtitle = styled.p`
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  font-family: Pixel;
-  padding: 5px;
-`;
-
-const Header = styled.p`
-  font-size: 18px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-  padding: 20px 0px 10px 0px;
+  padding-top: 10px;
 `;
 
 const Description = styled.p`
@@ -475,7 +450,7 @@ const Description = styled.p`
   color: #333;
   text-align: center;
   font-family: Pixel;
-  padding: 5px;
+  padding: 10px;
 `;
 
 const Input = styled.input`

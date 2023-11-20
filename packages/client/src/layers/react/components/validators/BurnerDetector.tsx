@@ -48,8 +48,7 @@ export function registerBurnerDetector() {
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const { validators, setValidators } = useComponentSettings();
-      const { validations, setValidations } = useNetworkSettings();
-      const { burner, setBurner } = useNetworkSettings();
+      const { validations, setValidations, setBurner } = useNetworkSettings();
 
       const [isVisible, setIsVisible] = useState(false);
       const [burnerMatches, setBurnerMatches] = useState(false);
@@ -89,8 +88,12 @@ export function registerBurnerDetector() {
 
       // determining visibility based on above/prev checks
       useEffect(() => {
-        setIsVisible(!validators.walletConnector && !burnerMatches);
-      }, [validators, burnerMatches]);
+        setIsVisible(
+          validations.isConnected &&
+          validations.chainMatches &&
+          !burnerMatches
+        );
+      }, [validations, burnerMatches]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -99,8 +102,10 @@ export function registerBurnerDetector() {
           toggleButtons(false);
           toggleFixtures(false);
         }
-        setValidators({ ...validators, burnerDetector: isVisible });
-      }, [isVisible]);
+        if (isVisible != validators.burnerDetector) {
+          setValidators({ ...validators, burnerDetector: isVisible });
+        }
+      }, [isVisible, validators.walletConnector]);
 
 
       /////////////////

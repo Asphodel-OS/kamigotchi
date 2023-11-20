@@ -181,6 +181,22 @@ export const getAccount = (
   return account;
 };
 
+// get an Account from its Username
+export const getAccountByName = (
+  layers: Layers,
+  name: string,
+  options?: AccountOptions
+) => {
+  const { network: { components: { IsAccount, Name } } } = layers;
+  const accountIndex = Array.from(
+    runQuery([
+      Has(IsAccount),
+      HasValue(Name, { value: name }),
+    ])
+  )[0];
+  return getAccount(layers, accountIndex, options);
+}
+
 // get an Account from its Operator address
 export const getAccountByOperator = (
   layers: Layers,

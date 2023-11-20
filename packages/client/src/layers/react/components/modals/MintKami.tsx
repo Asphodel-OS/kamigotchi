@@ -105,7 +105,7 @@ export function registerKamiMintModal() {
 
       const { isConnected } = useAccount();
       const { modals, setModals } = useComponentSettings();
-      const { details: accountDetails } = useKamiAccount();
+      const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [amountToMint, setAmountToMint] = useState(1);
@@ -143,7 +143,7 @@ export function registerKamiMintModal() {
       });
 
       const { data: accountMint20Bal } = useBalance({
-        address: accountDetails.ownerAddress as `0x${string}`,
+        address: kamiAccount.ownerAddress as `0x${string}`,
         token: mint20Addy as `0x${string}`,
         watch: true
       });

@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const Account = (props: Props) => {
-  const { details: accountDetails } = useKamiAccount();
+  const { account: kamiAccount } = useKamiAccount();
   const { modals, setModals } = useComponentSettings();
 
   const truncateAddress = (address: string) => {
@@ -44,12 +44,12 @@ export const Account = (props: Props) => {
 
   return (
     <Container>
-      <Header>Account ({accountDetails.name})</Header>
+      <Header>Account ({kamiAccount.name})</Header>
       <Section key='owner'>
         <SubHeaderRow>
           <SubHeader>Owner</SubHeader>
         </SubHeaderRow>
-        {FieldRow('Address', accountDetails.ownerAddress)}
+        {FieldRow('Address', kamiAccount.ownerAddress)}
       </Section>
       <Section key='operator'>
         <SubHeaderRow>
@@ -71,7 +71,7 @@ export const Account = (props: Props) => {
             />
           </Tooltip>
         </SubHeaderRow>
-        {FieldRow('Address', accountDetails.operatorAddress)}
+        {FieldRow('Address', kamiAccount.operatorAddress)}
         {FieldRow('Private Key', localStorage.getItem("operatorPrivateKey") || '')}
       </Section>
     </Container>

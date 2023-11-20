@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { create } from 'zustand';
 
-export interface AccountDetails {
+export interface Account {
   id: EntityID;
   index: EntityIndex;
   name: string;
@@ -9,7 +9,7 @@ export interface AccountDetails {
   operatorAddress: string;
 }
 
-export const emptyAccountDetails = (): AccountDetails => ({
+export const emptyAccountDetails = (): Account => ({
   id: '' as EntityID,
   index: 0 as EntityIndex,
   name: '',
@@ -17,22 +17,32 @@ export const emptyAccountDetails = (): AccountDetails => ({
   operatorAddress: '',
 });
 
-interface KamiAccount {
-  details: AccountDetails;
+interface State {
+  account: Account;
+  validations: {
+    accountExists: boolean;
+    operatorMatches: boolean;
+    operatorEmpty: boolean;
+  };
 }
 
-interface KamiAccountActions {
-  setDetails: (data: AccountDetails) => void;
+interface Actions {
+  setAccount: (data: Account) => void;
 }
 
-export const useKamiAccount = create<KamiAccount & KamiAccountActions>((set) => {
-  const initialState: KamiAccount = {
-    details: emptyAccountDetails(),
+export const useKamiAccount = create<State & Actions>((set) => {
+  const initialState: State = {
+    account: emptyAccountDetails(),
+    validations: {
+      accountExists: false,
+      operatorMatches: false,
+      operatorEmpty: false,
+    },
   };
   return {
     ...initialState,
-    setDetails: (data: AccountDetails) => set(
-      (state: KamiAccount) => ({ ...state, details: data })
+    setAccount: (data: Account) => set(
+      (state: State) => ({ ...state, account: data })
     ),
   };
 });

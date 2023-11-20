@@ -32,13 +32,13 @@ export function registerGasHarasser() {
       // TODO(ja): Refactor all these goddamn validator hooks into a store 
       const { isConnected } = useAccount();
       const { chain } = useNetwork();
-      const { details: accountDetails } = useKamiAccount();
+      const { account: kamiAccount } = useKamiAccount();
       const { burner, selectedAddress, networks } = useNetworkSettings();
       const [isVisible, setIsVisible] = useState(false);
       const [value, setValue] = useState(.05);
 
       const { data: OperatorBal } = useBalance({
-        address: accountDetails.operatorAddress as `0x${string}`,
+        address: kamiAccount.operatorAddress as `0x${string}`,
         watch: true
       });
 
@@ -48,13 +48,13 @@ export function registerGasHarasser() {
           isConnected
           && chain?.id === defaultChain.id
           && burner.connected.address === burner.detected.address
-          && !!accountDetails.id
-          && accountDetails.operatorAddress === burner.connected.address
+          && !!kamiAccount.id
+          && kamiAccount.operatorAddress === burner.connected.address
         );
 
         const hasGas = Number(OperatorBal?.formatted) > 0;
         setIsVisible(meetsPreconditions && !hasGas);
-      }, [chain, isConnected, burner, accountDetails.operatorAddress, OperatorBal]);
+      }, [chain, isConnected, burner, kamiAccount.operatorAddress, OperatorBal]);
 
 
       /////////////////
@@ -112,7 +112,7 @@ export function registerGasHarasser() {
             <Warning>Your Operator is EMPTY</Warning>
             <br />
             <Warning>You're lucky we don't report you to the authorities..</Warning>
-            <Description>Account Operator: {accountDetails.operatorAddress}</Description>
+            <Description>Account Operator: {kamiAccount.operatorAddress}</Description>
             <br />
             <Row>
               <Input

@@ -80,7 +80,7 @@ export function registerERC721BridgeModal() {
         }
       } = layers;
 
-      const { details: accountDetails } = useKamiAccount();
+      const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
@@ -174,7 +174,7 @@ export function registerERC721BridgeModal() {
             "type": "function"
           }],
         functionName: 'getAllTokens',
-        args: [accountDetails.ownerAddress as `0x${string}`],
+        args: [kamiAccount.ownerAddress as `0x${string}`],
         watch: true,
       });
 

@@ -44,7 +44,7 @@ export function registerERC20BridgeModal() {
     },
 
     ({ account, proxyAddy }) => {
-      const { details: accountDetails } = useKamiAccount();
+      const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [isDepositState, setIsDepositState] = useState(true);
@@ -59,7 +59,7 @@ export function registerERC20BridgeModal() {
         functionName: 'getTokenAddy'
       });
       const { data: EOABal } = useBalance({
-        address: accountDetails.ownerAddress as `0x${string}`,
+        address: kamiAccount.ownerAddress as `0x${string}`,
         token: erc20Addy as `0x${string}`,
         watch: true
       });

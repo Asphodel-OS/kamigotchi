@@ -49,7 +49,7 @@ export function registerFundOperatorModal() {
           world,
         },
       } = layers;
-      const { details: accountDetails } = useKamiAccount();
+      const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [isFundState, setIsFundState] = useState(true);
@@ -62,12 +62,12 @@ export function registerFundOperatorModal() {
       // BALANCES
 
       const { data: OwnerBal } = useBalance({
-        address: accountDetails.ownerAddress as `0x${string}`,
+        address: kamiAccount.ownerAddress as `0x${string}`,
         watch: true
       });
 
       const { data: OperatorBal } = useBalance({
-        address: accountDetails.operatorAddress as `0x${string}`,
+        address: kamiAccount.operatorAddress as `0x${string}`,
         watch: true
       });
 

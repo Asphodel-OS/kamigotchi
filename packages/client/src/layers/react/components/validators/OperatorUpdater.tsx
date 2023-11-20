@@ -34,7 +34,7 @@ export function registerOperatorUpdater() {
       const { network: { actions } } = layers;
       const { isConnected } = useAccount();
       const { chain } = useNetwork();
-      const { details: accountDetails } = useKamiAccount();
+      const { account: accountDetails } = useKamiAccount();
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { burner, selectedAddress, networks } = useNetworkSettings();
       const { modals, setModals } = useComponentSettings();

@@ -22,11 +22,11 @@ interface Props {
 
 export const Controls = (props: Props) => {
   const { mode, setMode } = props;
-  const { details: accountDetails } = useKamiAccount();
+  const { account: kamiAccount } = useKamiAccount();
   const { modals, setModals } = useComponentSettings();
 
   const { data: OperatorBal } = useBalance({
-    address: accountDetails.operatorAddress as `0x${string}`,
+    address: kamiAccount.operatorAddress as `0x${string}`,
     watch: true
   });
 
