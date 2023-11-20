@@ -40,8 +40,8 @@ export const useNetworkSettings = create<State & Actions>((set) => {
     networks: new Map<string, NetworkLayer>(),
     validations: {
       isConnected: false,
-      burnerMatches: false,
       chainMatches: false,
+      burnerMatches: false,
     }
   };
 

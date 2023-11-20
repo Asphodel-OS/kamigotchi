@@ -140,7 +140,7 @@ export function registerWalletConnecter() {
   );
 }
 
-const Description = styled.p`
+const Description = styled.div`
   font-size: 12px;
   color: #333;
   text-align: center;
