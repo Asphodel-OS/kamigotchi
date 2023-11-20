@@ -59,7 +59,7 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
   defineRxSystem(
     world,
-    merge(defineQuery([Has(OwnerAddress), Has(Location)]).update$, Network.update$).pipe(),
+    merge(defineQuery([Has(Location), Has(OperatorAddress), Has(OwnerAddress)]).update$, Network.update$).pipe(),
     system
   );
 }
