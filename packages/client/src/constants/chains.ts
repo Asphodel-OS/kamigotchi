@@ -71,4 +71,4 @@ const chainConfigs: Map<string, Chain> = new Map([
   ['OPGOERLI', opGoerli],
 ]);
 
-export const defaultChainConfig = chainConfigs.get(process.env.MODE ?? '')!;
+export const defaultChain = chainConfigs.get(process.env.MODE ?? '')!;

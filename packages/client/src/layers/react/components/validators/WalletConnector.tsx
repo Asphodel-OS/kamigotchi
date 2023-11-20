@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 import { useAccount, useNetwork, Connector } from 'wagmi';
 
-import { defaultChainConfig } from 'constants/chains';
+import { defaultChain } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -53,7 +53,7 @@ export function registerWalletConnecter() {
         let isVisible = true;
         console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
 
-        const chainMatches = (chain?.id === defaultChainConfig.id);
+        const chainMatches = (chain?.id === defaultChain.id);
         setValidations({ ...validations, chainMatches, isConnected })
 
         // populate validator or initialize network depending on network validity
@@ -64,7 +64,7 @@ export function registerWalletConnecter() {
           setButtonLabel('Connect Wallet');
         } else if (!chainMatches) {
           setTitle('Wrong Network');
-          setDescription(`Please connect to ${defaultChainConfig.name} network.`);
+          setDescription(`Please connect to ${defaultChain.name} network.`);
           setButtonLabel('Change Networks');
         } else {
           isVisible = false;
@@ -111,7 +111,7 @@ export function registerWalletConnecter() {
         if (!isConnected) {
           return openConnectModal;
         }
-        if (chain?.id !== defaultChainConfig.id) {
+        if (chain?.id !== defaultChain.id) {
           return openChainModal;
         }
       }
@@ -125,6 +125,7 @@ export function registerWalletConnecter() {
           id='wallet-connector'
           divName='walletConnector'
           title={title}
+          errorPrimary={`You're currently connected to the ${chain?.name} network`}
         >
           <Description>{description}</Description>
           <ActionButton

@@ -6,7 +6,7 @@ import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 
-import { defaultChainConfig } from 'constants/chains';
+import { defaultChain } from 'constants/chains';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
@@ -46,7 +46,7 @@ export function registerGasHarasser() {
       useEffect(() => {
         const meetsPreconditions = (
           isConnected
-          && chain?.id === defaultChainConfig.id
+          && chain?.id === defaultChain.id
           && burnerInfo.connected === burnerInfo.detected
           && !!accountDetails.id
           && accountDetails.operatorAddress === burnerInfo.connected

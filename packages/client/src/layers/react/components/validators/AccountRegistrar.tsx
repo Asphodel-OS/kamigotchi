@@ -16,7 +16,7 @@ import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 import { useAccount, useNetwork } from 'wagmi';
 
-import { defaultChainConfig } from 'constants/chains';
+import { defaultChain } from 'constants/chains';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -141,7 +141,7 @@ export function registerAccountRegistrar() {
       // and the connected burner address is the same as the current one in local storage 
       useEffect(() => {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
-        const networksMatch = chain?.id === defaultChainConfig.id;
+        const networksMatch = chain?.id === defaultChain.id;
         setIsVisible(
           isConnected
           && networksMatch

@@ -8,11 +8,11 @@ import { publicProvider } from 'wagmi/providers/public';
 import { BootScreen, MainWindow } from "./components";
 import { EngineContext, LayerContext } from "./context";
 import { EngineStore } from "./store";
-import { defaultChainConfig } from 'constants/chains';
+import { defaultChain } from 'constants/chains';
 import { Layers } from 'src/types';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [defaultChainConfig],
+  [defaultChain],
   [publicProvider()]
 );
 
@@ -41,7 +41,7 @@ export const Engine: React.FC<{
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE (chain ${defaultChainConfig.id})`);
+    console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE (chain ${defaultChain.id})`);
   }, []);
 
   if (!mounted || !layers) return customBootScreen || <BootScreen />;
@@ -54,7 +54,7 @@ export const Engine: React.FC<{
           fontStack: 'system'
         })}
         chains={chains}
-        initialChain={defaultChainConfig} // technically this is unnecessary, defaults to 1st chain
+        initialChain={defaultChain} // technically this is unnecessary, defaults to 1st chain
       >
         <LayerContext.Provider value={layers}>
           <EngineContext.Provider value={EngineStore}>

@@ -6,7 +6,7 @@ import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 
-import { defaultChainConfig } from 'constants/chains';
+import { defaultChain } from 'constants/chains';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -47,7 +47,7 @@ export function registerOperatorUpdater() {
       // toggle visibility based on many things
       useEffect(() => {
         const burnersMatch = burnerInfo.connected === burnerInfo.detected;
-        const networksMatch = chain?.id === defaultChainConfig.id;
+        const networksMatch = chain?.id === defaultChain.id;
         const hasAccount = !!accountDetails.id;
         const meetsPreconditions = isConnected && networksMatch && burnersMatch && hasAccount;
 
