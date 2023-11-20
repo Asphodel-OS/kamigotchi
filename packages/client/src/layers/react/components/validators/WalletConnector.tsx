@@ -29,8 +29,9 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { UpdateNetwork } = layers.network.updates.functions;
-      const { address: connectorAddress, connector } = useAccount();
-      const { isConnected, status } = useAccount();
+      const { address, connector, isConnected, status } = useAccount();
+      const { openConnectModal } = useConnectModal();
+      const { openChainModal } = useChainModal();
       const { chain } = useNetwork();
 
       const { validators, setValidators } = useComponentSettings();
@@ -38,12 +39,10 @@ export function registerWalletConnecter() {
       const { networks, addNetwork, setSelectedAddress } = useNetworkSettings();
       const { validations, setValidations } = useNetworkSettings();
 
-      const { openConnectModal } = useConnectModal();
-      const { openChainModal } = useChainModal();
-
       const [isVisible, setIsVisible] = useState(false);
       const [title, setTitle] = useState('');
       const [description, setDescription] = useState('');
+      const [warning, setWarning] = useState('');
       const [buttonLabel, setButtonLabel] = useState('');
 
 
@@ -57,13 +56,15 @@ export function registerWalletConnecter() {
         setValidations({ ...validations, chainMatches, isConnected })
 
         // populate validator or initialize network depending on network validity
-        if (!connector || !isConnected || !connectorAddress) {
+        if (!connector || !isConnected || !address) {
           setSelectedAddress('');
           setTitle('Wallet Disconnected');
-          setDescription('You must connect a wallet to continue.');
-          setButtonLabel('Connect Wallet');
+          setWarning(`Your wallet is currently disconnected.`);
+          setDescription('You must connect one to continue.');
+          setButtonLabel('Connect');
         } else if (!chainMatches) {
           setTitle('Wrong Network');
+          setWarning(`You're currently connected to the ${chain?.name} network`);
           setDescription(`Please connect to ${defaultChain.name} network.`);
           setButtonLabel('Change Networks');
         } else {
@@ -73,7 +74,7 @@ export function registerWalletConnecter() {
         }
 
         setIsVisible(isVisible);
-      }, [chain?.id, connector, connectorAddress, isConnected, Connector]);
+      }, [chain?.id, connector, address, isConnected, Connector]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -92,7 +93,7 @@ export function registerWalletConnecter() {
       // add a network layer if one for the connection doesnt exist
       const updateNetworkSettings = async () => {
         // set the selected address and spawn network client for address as needed
-        const connectorAddressLowerCase = connectorAddress!.toLowerCase();
+        const connectorAddressLowerCase = address!.toLowerCase();
         setSelectedAddress(connectorAddressLowerCase);
         if (!networks.has(connectorAddressLowerCase)) {
           console.log(`CREATING NETWORK FOR..`, connectorAddressLowerCase);
@@ -125,7 +126,7 @@ export function registerWalletConnecter() {
           id='wallet-connector'
           divName='walletConnector'
           title={title}
-          errorPrimary={`You're currently connected to the ${chain?.name} network`}
+          errorPrimary={warning}
         >
           <Description>{description}</Description>
           <ActionButton

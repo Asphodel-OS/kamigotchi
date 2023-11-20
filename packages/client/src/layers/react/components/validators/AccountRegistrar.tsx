@@ -18,7 +18,6 @@ import { useAccount, useNetwork } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
-import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
@@ -129,7 +128,7 @@ export function registerAccountRegistrar() {
       const { chain } = useNetwork();
       const { isConnected } = useAccount();
       const { details: accountDetails, setDetails: setAccountDetails } = useKamiAccount();
-      const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
+      const { burner, selectedAddress, networks } = useNetworkSettings();
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const [isVisible, setIsVisible] = useState(false);
       const [step, setStep] = useState(0);
@@ -140,7 +139,7 @@ export function registerAccountRegistrar() {
       // we only want to prompt when an EOA is Connected to the correct network
       // and the connected burner address is the same as the current one in local storage 
       useEffect(() => {
-        const burnersMatch = burnerInfo.connected === burnerInfo.detected;
+        const burnersMatch = burner.connected.address === burner.detected.address;
         const networksMatch = chain?.id === defaultChain.id;
         setIsVisible(
           isConnected
@@ -148,7 +147,7 @@ export function registerAccountRegistrar() {
           && burnersMatch
           && !accountDetails.id
         );
-      }, [accountDetails, burnerInfo, isConnected]);
+      }, [accountDetails, burner, isConnected]);
 
       // track the account details in store for easy access
       // expose/hide components accordingly
@@ -176,13 +175,13 @@ export function registerAccountRegistrar() {
       // ACTIONS
 
       const copyBurnerAddress = () => {
-        navigator.clipboard.writeText(burnerInfo.connected);
-        // console.log(burnerInfo.connected);
+        navigator.clipboard.writeText(burner.connected.address);
+        // console.log(burner.connected);
       }
 
       const copyBurnerPrivateKey = () => {
-        navigator.clipboard.writeText(burnerInfo.detectedPrivateKey);
-        // console.log(burnerInfo.detectedPrivateKey);
+        navigator.clipboard.writeText(burner.detected.key);
+        // console.log(burner.detectedPrivateKey);
       }
 
       const handleAccountCreation = async (username: string, food: string) => {
@@ -205,15 +204,16 @@ export function registerAccountRegistrar() {
         const world = network!.world;
         const api = network!.api.player;
 
+
         console.log('CREATING ACCOUNT FOR:', selectedAddress);
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountCreate',
-          params: [burnerInfo.connected, username, food],
+          params: [burner.connected, username, food],
           description: `Creating Account for ${username}`,
           execute: async () => {
-            return api.account.register(burnerInfo.connected, username, food);
+            return api.account.register(burner.connected.address, username, food);
           },
         });
         return actionID;
@@ -234,7 +234,7 @@ export function registerAccountRegistrar() {
       // VISUAL COMPONENTS
 
       const OperatorDisplay = () => {
-        const address = burnerInfo.connected;
+        const address = burner.connected.address;
         const addrPrefix = address.slice(0, 6);
         const addrSuffix = address.slice(-4);
         const addressTaken = operatorAddresses.has(address);

@@ -36,7 +36,7 @@ export function registerOperatorUpdater() {
       const { chain } = useNetwork();
       const { details: accountDetails } = useKamiAccount();
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
+      const { burner, selectedAddress, networks } = useNetworkSettings();
       const { modals, setModals } = useComponentSettings();
       const { toggleButtons, toggleFixtures } = useComponentSettings();
 
@@ -46,12 +46,12 @@ export function registerOperatorUpdater() {
 
       // toggle visibility based on many things
       useEffect(() => {
-        const burnersMatch = burnerInfo.connected === burnerInfo.detected;
+        const burnersMatch = burner.connected.address === burner.detected.address;
         const networksMatch = chain?.id === defaultChain.id;
         const hasAccount = !!accountDetails.id;
         const meetsPreconditions = isConnected && networksMatch && burnersMatch && hasAccount;
 
-        const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
+        const operatorMatch = accountDetails.operatorAddress === burner.connected.address;
         const isVisible = (meetsPreconditions && !operatorMatch);
         setModals({ ...modals, operatorUpdater: isVisible });
         setIsMismatched(!operatorMatch);
@@ -61,7 +61,7 @@ export function registerOperatorUpdater() {
           toggleButtons(true);
           toggleFixtures(true);
         }
-      }, [isConnected, burnerInfo, accountDetails.operatorAddress]);
+      }, [isConnected, burner, accountDetails.operatorAddress]);
 
 
       /////////////////
@@ -114,7 +114,7 @@ export function registerOperatorUpdater() {
       }
 
       const copy = () => {
-        setValue(burnerInfo.connected);
+        setValue(burner.connected.address);
       }
 
       const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,7 +150,7 @@ export function registerOperatorUpdater() {
             <Warning>Connected Burner != Account Operator</Warning>
             <br />
             <Description>Account Operator: {accountDetails.operatorAddress}</Description>
-            <Description>Connected Burner: {burnerInfo.connected}</Description>
+            <Description>Connected Burner: {burner.connected.address}</Description>
             <br />
             <Warning2 onClick={() => handleSetMode('key')}>
               {(mode === 'key') ? '→ ' : ''}Please find your keys, {accountDetails.name}

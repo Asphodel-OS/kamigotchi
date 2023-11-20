@@ -33,7 +33,7 @@ export function registerGasHarasser() {
       const { isConnected } = useAccount();
       const { chain } = useNetwork();
       const { details: accountDetails } = useKamiAccount();
-      const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
+      const { burner, selectedAddress, networks } = useNetworkSettings();
       const [isVisible, setIsVisible] = useState(false);
       const [value, setValue] = useState(.05);
 
@@ -47,14 +47,14 @@ export function registerGasHarasser() {
         const meetsPreconditions = (
           isConnected
           && chain?.id === defaultChain.id
-          && burnerInfo.connected === burnerInfo.detected
+          && burner.connected.address === burner.detected.address
           && !!accountDetails.id
-          && accountDetails.operatorAddress === burnerInfo.connected
+          && accountDetails.operatorAddress === burner.connected.address
         );
 
         const hasGas = Number(OperatorBal?.formatted) > 0;
         setIsVisible(meetsPreconditions && !hasGas);
-      }, [chain, isConnected, burnerInfo, accountDetails.operatorAddress, OperatorBal]);
+      }, [chain, isConnected, burner, accountDetails.operatorAddress, OperatorBal]);
 
 
       /////////////////

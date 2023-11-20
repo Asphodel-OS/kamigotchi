@@ -49,7 +49,7 @@ export function registerBurnerDetector() {
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const { validators, setValidators } = useComponentSettings();
       const { validations, setValidations } = useNetworkSettings();
-      const { burnerInfo, setBurnerInfo } = useNetworkSettings();
+      const { burner, setBurner } = useNetworkSettings();
 
       const [isVisible, setIsVisible] = useState(false);
       const [burnerMatches, setBurnerMatches] = useState(false);
@@ -77,10 +77,12 @@ export function registerBurnerDetector() {
           setErrorSecondary('Please Refresh or enter the correct private key.');
         }
 
-        setBurnerInfo({
-          connected: connectedEOA ?? '',
-          detected: detectedEOA,
-          detectedPrivateKey,
+        setBurner({
+          connected: { address: connectedEOA ?? '' },
+          detected: {
+            address: detectedEOA,
+            key: detectedPrivateKey,
+          }
         });
         setValidations({ ...validations, burnerMatches })
       }, [detectedPrivateKey, connectedEOA]);
