@@ -40,6 +40,10 @@ export const parseQuestsStatus = (layers: Layers, account: Account, quests: Ques
   });
 }
 
+export const getQuestByIndex = (layers: Layers, index: number): Quest | undefined => {
+  return queryQuestsX(layers, { index: index, registry: true })[0];
+}
+
 
 /////////////////
 // SHAPES

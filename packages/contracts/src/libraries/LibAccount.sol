@@ -106,14 +106,6 @@ library LibAccount {
       if (inventoryID == 0) inventoryID = LibInventory.create(world, components, id, index);
       LibInventory.inc(components, inventoryID, amount);
       LibInventory.logIncItemTotal(world, components, id, index, amount);
-    } else if (LibString.eq(_type, "FOOD")) {
-      inventoryID = LibInventory.getFood(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.createFood(world, components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
-    } else if (LibString.eq(_type, "REVIVE")) {
-      inventoryID = LibInventory.getRevive(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.createRevive(world, components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
     } else if (LibString.eq(_type, "MOD")) {
       inventoryID = LibInventory.getMod(components, id, index);
       if (inventoryID == 0) inventoryID = LibInventory.createMod(world, components, id, index);
@@ -257,11 +249,8 @@ library LibAccount {
   ) public view returns (uint256 balance) {
     uint256 inventoryID;
 
-    if (LibString.eq(_type, "FOOD")) {
-      inventoryID = LibInventory.getFood(components, id, index);
-      balance = LibInventory.getBalance(components, inventoryID);
-    } else if (LibString.eq(_type, "REVIVE")) {
-      inventoryID = LibInventory.getRevive(components, id, index);
+    if (LibString.eq(_type, "ITEM")) {
+      inventoryID = LibInventory.get(components, id, index);
       balance = LibInventory.getBalance(components, inventoryID);
     } else if (LibString.eq(_type, "MOD")) {
       inventoryID = LibInventory.getMod(components, id, index);

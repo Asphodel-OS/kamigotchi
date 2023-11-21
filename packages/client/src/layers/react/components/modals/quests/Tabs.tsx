@@ -28,15 +28,8 @@ export const Tabs = (props: Props) => {
       <Button
         onClick={() => setTab('ONGOING')}
         disabled={props.tab === 'ONGOING'}
-        style={{ borderRight: 'solid black .15vw' }}
       >
-        Ongoing
-      </Button>
-      <Button
-        onClick={() => setTab('COMPLETED')}
-        disabled={props.tab === 'COMPLETED'}
-      >
-        Completed
+        Accepted
       </Button>
     </Container>
   );
