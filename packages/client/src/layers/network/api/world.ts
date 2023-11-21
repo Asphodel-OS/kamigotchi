@@ -451,16 +451,6 @@ export function setUpWorldAPI(systems: any) {
     );
     await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_TOTAL", 0, 200);
     await api.registry.quest.add.reward(7, "ITEM", 10001, 1); // temp lootbox handler
-
-    // temp lootbox quest for testing
-    await api.registry.quest.create(
-      8,
-      "Lootbox testing",
-      "Get a free lootbox!",
-      0,
-      1
-    );
-    await api.registry.quest.add.reward(8, "ITEM", 10001, 1); // temp lootbox handler
   }
 
 
