@@ -33,6 +33,7 @@ import { registerHelpModal } from './modals/Help';
 import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerOperatorMovementModal } from './modals/OperatorMovement';
+import { registerAccountOperator } from './modals/AccountOperator';
 
 import {
   registerAccountRegistrar,
@@ -70,6 +71,7 @@ export function registerUIComponents() {
   registerSettingsModal();
 
   // game modals
+  registerAccountOperator();
   registerBuyModal();
   registerERC20BridgeModal();
   registerERC721BridgeModal();

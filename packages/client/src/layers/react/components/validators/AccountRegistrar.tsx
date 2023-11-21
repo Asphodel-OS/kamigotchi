@@ -125,10 +125,10 @@ export function registerAccountRegistrar() {
       getAccountDetails,
     }) => {
       const { network: { actions, world } } = layers;
-      const { burner, selectedAddress, networks, validations } = useNetworkSettings();
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
       const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
       const { validators, setValidators } = useComponentSettings();
-      const { setAccount } = useKamiAccount();
+      const { setAccount, validations, setValidations } = useKamiAccount();
 
       const [isVisible, setIsVisible] = useState(false);
       const [accountExists, setAccountExists] = useState(false);
@@ -138,11 +138,13 @@ export function registerAccountRegistrar() {
       const [food, setFood] = useState('');
 
       // run the primary check(s) for this validator
-      // track in store for easy access and updatae any local state variables accordingly
+      // track in store for easy access and update any local state variables accordingly
       useEffect(() => {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
-        setAccountExists(!!accountIndex)
-        if (accountIndex) {
+        const accountExists = !!accountIndex; // locally overloaded variable yes
+        setValidations({ ...validations, accountExists });
+        setAccountExists(accountExists)
+        if (accountExists) {
           const kamiAccount = getAccountDetails(accountIndex);
           setAccount(kamiAccount);
         }
@@ -151,12 +153,12 @@ export function registerAccountRegistrar() {
       // determine visibility based on above/prev checks
       useEffect(() => {
         setIsVisible(
-          validations.isConnected &&
-          validations.chainMatches &&
-          validations.burnerMatches &&
+          networkValidations.isConnected &&
+          networkValidations.chainMatches &&
+          networkValidations.burnerMatches &&
           !accountExists
         );
-      }, [validations, selectedAddress, accountExists]);
+      }, [networkValidations, selectedAddress, accountExists]);
 
       // adjust actual visibility of windows based on above determination
       useEffect(() => {
@@ -164,6 +166,7 @@ export function registerAccountRegistrar() {
           toggleModals(false);
           toggleButtons(false);
         }
+        toggleFixtures(!isVisible && !validators.walletConnector && !validators.burnerDetector);
         if (isVisible != validators.accountRegistrar) {
           setValidators({ ...validators, accountRegistrar: isVisible });
         }

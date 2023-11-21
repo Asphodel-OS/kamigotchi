@@ -1,6 +1,24 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { create } from 'zustand';
 
+
+////////////////
+// OVERVIEW
+
+interface State {
+  account: Account;
+  validations: Validations;
+}
+
+interface Actions {
+  setAccount: (data: Account) => void;
+  setValidations: (data: Validations) => void;
+}
+
+
+////////////////
+// ACCOUNT
+
 export interface Account {
   id: EntityID;
   index: EntityIndex;
@@ -17,18 +35,18 @@ export const emptyAccountDetails = (): Account => ({
   operatorAddress: '',
 });
 
-interface State {
-  account: Account;
-  validations: {
-    accountExists: boolean;
-    operatorMatches: boolean;
-    operatorEmpty: boolean;
-  };
+
+////////////////
+// VALIDATIONS
+interface Validations {
+  accountExists: boolean;
+  operatorMatches: boolean;
+  operatorEmpty: boolean;
 }
 
-interface Actions {
-  setAccount: (data: Account) => void;
-}
+
+////////////////
+// SYNTHESIS
 
 export const useKamiAccount = create<State & Actions>((set) => {
   const initialState: State = {
@@ -43,6 +61,9 @@ export const useKamiAccount = create<State & Actions>((set) => {
     ...initialState,
     setAccount: (data: Account) => set(
       (state: State) => ({ ...state, account: data })
+    ),
+    setValidations: (data: Validations) => set(
+      (state: State) => ({ ...state, validations: data })
     ),
   };
 });

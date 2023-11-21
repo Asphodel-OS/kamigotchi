@@ -58,7 +58,7 @@ export const Account = (props: Props) => {
             <ActionButton
               id='update-button'
               text='update'
-              onClick={() => setModals({ ...modals, operatorUpdater: true })}
+              onClick={() => setModals({ ...modals, accountOperator: true })}
               size='small'
             />
           </Tooltip>
