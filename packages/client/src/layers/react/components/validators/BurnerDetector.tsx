@@ -103,6 +103,7 @@ export function registerBurnerDetector() {
           toggleFixtures(false);
         }
         if (isVisible != validators.burnerDetector) {
+          const { validators } = useComponentSettings.getState();
           setValidators({ ...validators, burnerDetector: isVisible });
         }
       }, [isVisible, validators.walletConnector]);

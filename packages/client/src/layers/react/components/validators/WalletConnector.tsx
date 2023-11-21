@@ -84,6 +84,7 @@ export function registerWalletConnecter() {
           toggleFixtures(false);
         }
         if (isVisible != validators.walletConnector) {
+          const { validators } = useComponentSettings.getState();
           setValidators({ ...validators, walletConnector: isVisible });
         }
       }, [isVisible]);

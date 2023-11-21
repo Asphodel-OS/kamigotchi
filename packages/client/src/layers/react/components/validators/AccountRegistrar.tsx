@@ -168,6 +168,7 @@ export function registerAccountRegistrar() {
         }
         toggleFixtures(!isVisible && !validators.walletConnector && !validators.burnerDetector);
         if (isVisible != validators.accountRegistrar) {
+          const { validators } = useComponentSettings.getState();
           setValidators({ ...validators, accountRegistrar: isVisible });
         }
       }, [isVisible, validators.walletConnector, validators.burnerDetector]);

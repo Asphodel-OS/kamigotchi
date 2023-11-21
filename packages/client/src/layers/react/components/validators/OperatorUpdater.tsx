@@ -38,6 +38,7 @@ export function registerOperatorUpdater() {
       const { validators, setValidators } = useComponentSettings();
       const { account: kamiAccount, validations, setValidations } = useKamiAccount();
 
+      const [operatorMatches, setOperatorMatches] = useState(false);
       const [operatorTaken, setOperatorTaken] = useState(false);
       const [isVisible, setIsVisible] = useState(false);
       const [mode, setMode] = useState('key');
@@ -46,19 +47,20 @@ export function registerOperatorUpdater() {
       // run the primary check(s) for this validator, track in store for easy access 
       useEffect(() => {
         const operatorMatches = (kamiAccount.operatorAddress === burner.connected.address);
+        setOperatorMatches(operatorMatches);
         setValidations({ ...validations, operatorMatches });
       }, [burner.connected.address, kamiAccount.operatorAddress]);
 
-      // determining visibility based on above/prev checks
+      // determine visibility based on above/prev checks
       useEffect(() => {
         setIsVisible(
           networkValidations.isConnected &&
           networkValidations.chainMatches &&
           networkValidations.burnerMatches &&
           validations.accountExists &&
-          !validations.operatorMatches
+          !operatorMatches
         );
-      }, [networkValidations, validations]);
+      }, [networkValidations, validations, operatorMatches]);
 
       // adjust actual visibility of windows based on above determination
       useEffect(() => {
@@ -70,6 +72,7 @@ export function registerOperatorUpdater() {
           !validators.accountRegistrar
         );
         if (isVisible != validators.operatorUpdater) {
+          const { validators } = useComponentSettings.getState();
           setValidators({ ...validators, operatorUpdater: isVisible });
         }
       }, [
