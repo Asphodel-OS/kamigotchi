@@ -41,7 +41,7 @@ export const emptyAccountDetails = (): Account => ({
 interface Validations {
   accountExists: boolean;
   operatorMatches: boolean;
-  operatorEmpty: boolean;
+  operatorHasGas: boolean;
 }
 
 
@@ -54,7 +54,7 @@ export const useKamiAccount = create<State & Actions>((set) => {
     validations: {
       accountExists: false,
       operatorMatches: false,
-      operatorEmpty: false,
+      operatorHasGas: false,
     },
   };
   return {
