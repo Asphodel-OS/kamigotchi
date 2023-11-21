@@ -1,5 +1,4 @@
 import {
-  Components,
   World,
   createEntity,
   getComponentValue,
@@ -45,7 +44,8 @@ export function createNotificationSystem<M = undefined>(world: World) {
    * @returns void
    */
   function remove(id: EntityID): boolean {
-    if (world.entityToIndex.get(id) == undefined || !getComponentValue(Notification, world.entityToIndex.get(id)!)) {
+    const index = world.entityToIndex.get(id);
+    if (index == undefined || getComponentValue(Notification, index) == undefined) {
       console.warn(`Notification ${id} was not found`);
       return false;
     }
@@ -64,8 +64,8 @@ export function createNotificationSystem<M = undefined>(world: World) {
       console.warn(`Notification ${id} was not found`);
       return;
     }
-    const cur = getComponentValue(Notification, index)!;
-    updateComponent(Notification, index, { ...cur, ...toUpdate });
+    const curr = getComponentValue(Notification, index)!;
+    updateComponent(Notification, index, { ...curr, ...toUpdate });
     return true;
   }
 
