@@ -156,7 +156,7 @@ export function setUpWorldAPI(systems: any) {
     await api.room.create(
       6,
       'Labs Entrance',
-      'The office building\'s exterior is in disrepair.A breeze is slowly shifting the air.',
+      'The office building\'s exterior is in disrepair. A breeze is slowly shifting the air.',
       [5, 7]
     );
     await api.room.create(

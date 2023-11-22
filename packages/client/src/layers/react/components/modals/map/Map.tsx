@@ -125,7 +125,7 @@ export function registerMapModal() {
           footer={<ExitsDisplay />}
           canExit
         >
-          <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
+          <RoomInfo room={selectedRoom} />
         </ModalWrapperFull>
       );
     }

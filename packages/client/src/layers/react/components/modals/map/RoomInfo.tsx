@@ -1,27 +1,23 @@
-import { Divider } from "@mui/material";
 import { Room } from "layers/react/shapes/Room";
 import styled from "styled-components";
-import { playClick } from "utils/sounds";
 
 interface Props {
   room: Room | undefined;
-  exits: Room[];
-  move: Function;
 }
 
 export const RoomInfo = (props: Props) => {
-  if (!props.room) return <div />;
+  const { room } = props;
+  if (!room) return <div />;
 
   return (
     <Container>
       <Section>
-        {props.room.owner && <Description>{props.room.owner.name}</Description>}
-        <Description>{props.room.description}</Description>
+        {room.owner && <Description>{room.owner.name}</Description>}
+        <Description>{room.description}</Description>
       </Section>
-
       <Section>
         <Title>Players</Title>
-        <Description>{props.room.players?.map((player) => (player.name)).join(', ')}</Description>
+        <Description>{room.players?.map((player) => (player.name)).join(', ')}</Description>
       </Section>
     </ Container>
   );
