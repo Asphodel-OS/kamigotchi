@@ -39,23 +39,35 @@ export function registerDialogueModal() {
       }, [dialogueIndex]);
 
 
-      const NextButton = () => (
-        <ActionButton
-          id='next'
-          text='Next'
-          disabled={step === dialogueLength - 1}
-          onClick={() => setStep(step + 1)}
-        />
-      );
+      const BackButton = () => {
+        const disabled = step === 0;
+        return (
+          <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
+            <ActionButton
+              id='back'
+              text='←'
+              disabled={step === 0}
+              onClick={() => setStep(step - 1)}
+            />
+          </div>
+        );
+      }
 
-      const BackButton = () => (
-        <ActionButton
-          id='back'
-          text='Back'
-          disabled={step === 0}
-          onClick={() => setStep(step - 1)}
-        />
-      );
+      const NextButton = () => {
+        const disabled = step === dialogueLength - 1;
+        return (
+          <div style={{
+            visibility: disabled ? 'hidden' : 'visible',
+          }}>
+            <ActionButton
+              id='next'
+              text='→'
+              disabled={step === dialogueLength - 1}
+              onClick={() => setStep(step + 1)}
+            />
+          </div>
+        );
+      }
 
 
       return (
@@ -65,11 +77,14 @@ export function registerDialogueModal() {
           canExit
           overlay
         >
-          <Text>{dialogueNode.text[step]}</Text>
-          <ButtonRow>
-            <BackButton />
-            <NextButton />
-          </ButtonRow>
+          <Text>
+            {dialogueNode.text[step]}
+            <ButtonRow>
+              <BackButton />
+              <NextButton />
+            </ButtonRow>
+          </Text>
+
         </ModalWrapperFull>
       );
     }
@@ -77,12 +92,11 @@ export function registerDialogueModal() {
 }
 
 const Text = styled.div`
-  border: 0.2vw dashed #bbb;
-  border-radius: 7px;
-  color: #333;
+  background-color: #ffc;
+  color: #339;
   height: 100%;
   width: 100%;
-  padding: 0vw 9vw 2vw 9vw;
+  padding: 0vw 9vw;
 
   display: flex;
   flex-grow: 1;
@@ -97,10 +111,11 @@ const Text = styled.div`
 `;
 
 const ButtonRow = styled.div`
-  margin: 1vw;
   position: absolute;
+  align-self: center;
+  width: 100%;
   bottom: 0;
-  right: 0;
+  padding: .7vw;
 
   display: flex;
   flex-flow: row nowrap;
