@@ -2,9 +2,7 @@ import styled from "styled-components";
 import { useBalance } from "wagmi";
 import ErrorIcon from '@mui/icons-material/Error';
 
-import PlaceHolderIcon1 from 'assets/images/icons/exit_native.png';
-import PlaceHolderIcon2 from 'assets/images/icons/home_native.png';
-import PlaceHolderIcon3 from 'assets/images/icons/sound_native.png';
+import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';
 import { NetworkLayer } from "layers/network/types";
 import { IconButton } from "layers/react/components/library/IconButton";
@@ -78,9 +76,9 @@ export const Controls = (props: Props) => {
   // button to toggle the modal between difference sizes
   const ToggleButton = () => {
     const iconMapping = [
-      PlaceHolderIcon1,
-      PlaceHolderIcon2,
-      PlaceHolderIcon3,
+      triggerIcons.eyeClosed,
+      triggerIcons.eyeHalf,
+      triggerIcons.eyeOpen,
     ];
 
     return (

@@ -6,7 +6,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
-import homeImage from 'src/assets/images/icons/home_native.png';
+import { triggerIcons } from 'assets/images/icons/triggers';
 import gettingStarted from 'src/assets/images/banners/gettingStarted.png';
 import welcome from 'src/assets/images/banners/welcome.png';
 import whatKami from 'src/assets/images/banners/whatKami.png';
@@ -47,7 +47,7 @@ export function registerHelpModal() {
       const Header = (
         <div style={{ display: `${helpState == HelpComponentState.HOME ? 'none' : 'flex'}` }}>
           <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
-            <img style={{ height: '100%', width: 'auto' }} src={homeImage} alt='home_icon' />
+            <img style={{ height: '100%', width: 'auto' }} src={triggerIcons.home} alt='home_icon' />
           </Button>
         </div>
       )

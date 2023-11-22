@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import styled from "styled-components";
 
-import mutedSoundImage from 'assets/images/icons/sound_muted_native.png';
-import soundImage from 'assets/images/icons/sound_native.png';
+import { triggerIcons } from "assets/images/icons/triggers";
 import { useSoundSettings } from "layers/react/store/soundSettings";
 import { playClick } from "utils/sounds";
 
@@ -54,7 +53,7 @@ export const Sound = () => {
           onClick={() => toggleVolume(type)}
           style={{ pointerEvents: 'auto', padding: '0px 6px' }
           }>
-          <img src={(volume != 0) ? soundImage : mutedSoundImage} alt='sound_icon' />
+          <img src={(volume != 0) ? triggerIcons.soundOn : triggerIcons.soundOff} alt='sound_icon' />
         </div>
       </Row>
     );
