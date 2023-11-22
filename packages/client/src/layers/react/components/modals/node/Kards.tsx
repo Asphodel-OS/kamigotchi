@@ -64,10 +64,11 @@ export const Kards = (props: Props) => {
 
   // calculate health based on the drain against last confirmed health
   const calcHealth = (kami: Kami): number => {
+    const duration = calcProductionTime(kami);
+    const totalHealth = kami.stats.health + kami.bonusStats.health;
     let health = 1 * kami.health;
-    let duration = calcProductionTime(kami);
     health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), kami.stats.health);
+    health = Math.min(Math.max(health, 0), totalHealth);
     return health;
   };
 
@@ -129,9 +130,9 @@ export const Kards = (props: Props) => {
     return thresholdPercent * victimTotalHealth;
   }
 
-
   const isFull = (kami: Kami): boolean => {
-    return Math.round(calcHealth(kami)) >= kami.stats.health;
+    const totalHealth = kami.stats.health + kami.bonusStats.health;
+    return Math.round(calcHealth(kami)) >= totalHealth;
   };
 
   const hasFood = (): boolean => {
@@ -299,14 +300,15 @@ export const Kards = (props: Props) => {
     });
 
     let returnVal = (
-      <IconListButton
-        id={`feed-button-${kami.index}`}
-        img={feedIcon}
-        disabled={!canFeedKami}
-        options={feedOptions}
-      />
+      <Tooltip key={`feed-tooltip`} text={[tooltipText]}>
+        <IconListButton
+          id={`feed-button-${kami.index}`}
+          img={feedIcon}
+          disabled={!canFeedKami}
+          options={feedOptions}
+        />
+      </Tooltip>
     );
-    if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
 
     return returnVal;
   };

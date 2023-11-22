@@ -62,12 +62,26 @@ export const KamiCard = (props: Props) => {
     return lastRefresh / 1000 - kami.lastUpdated;
   };
 
+  // calculate the time a production has been active since its last update
+  const calcProductionTime = (kami: Kami): number => {
+    let productionTime = 0;
+    if (isHarvesting(kami) && kami.production) {
+      productionTime = lastRefresh / 1000 - kami.production.startTime;
+    }
+    return productionTime;
+  }
+
+  // check whether the kami is harvesting
+  const isHarvesting = (kami: Kami): boolean =>
+    kami.state === 'HARVESTING' && kami.production != undefined;
+
   // calculate health based on the drain against last confirmed health
   const calcHealth = (kami: Kami): number => {
+    const duration = calcProductionTime(kami);
+    const totalHealth = kami.stats.health + kami.bonusStats.health;
     let health = 1 * kami.health;
-    let duration = calcIdleTime(kami);
     health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), kami.stats.health);
+    health = Math.min(Math.max(health, 0), totalHealth);
     return health;
   };
 
@@ -90,8 +104,9 @@ export const KamiCard = (props: Props) => {
   };
 
   const CornerContent = (kami: Kami) => {
+    const totalHealth = kami.stats.health + kami.bonusStats.health;
     const healthString = !isUnrevealed(kami)
-      ? `Health: ${calcHealth(kami).toFixed()}/${kami.stats.health * 1}`
+      ? `Health: ${calcHealth(kami).toFixed()}/${totalHealth}`
       : '';
 
     const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
@@ -105,7 +120,7 @@ export const KamiCard = (props: Props) => {
         }
         {props.battery &&
           <Tooltip key='battery' text={[healthString]}>
-            <Battery level={100 * calcHealth(kami) / kami.stats.health} />
+            <Battery level={100 * calcHealth(kami) / totalHealth} />
           </Tooltip>
         }
       </TitleCorner>
