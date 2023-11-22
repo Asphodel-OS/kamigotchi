@@ -12,8 +12,8 @@ interface ExperienceBarProps {
 
 export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, total, triggerLevelUp }) => {
 
-  const percentage = Math.round((current / total) * 100);
-  const canLevelUp = percentage >= 100;
+  const percentage = Math.round((current / total) * 1000) / 10;
+  const canLevelUp = current >= total;
 
   return (
     <Wrapper>
