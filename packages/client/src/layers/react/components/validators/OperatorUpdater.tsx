@@ -166,6 +166,7 @@ export function registerOperatorUpdater() {
               id={`generate`}
               text={`I'm feeling Lucky`}
               onClick={() => setValue(generatePrivateKey())}
+              size='vending'
             />
           </Tooltip>
         );
@@ -177,6 +178,7 @@ export function registerOperatorUpdater() {
               text='Use connected one'
               onClick={() => setValue(burner.connected.address)}
               disabled={operatorTaken}
+              size='vending'
             />
           );
           if (operatorTaken) {
@@ -223,7 +225,7 @@ export function registerOperatorUpdater() {
           </InputContainer>
           <Row>
             <SupportButton />
-            <ActionButton id={`submit`} text='Submit' onClick={submit} />
+            <ActionButton id={`submit`} text='Submit' onClick={submit} size='vending' />
           </Row>
         </ValidatorWrapper>
       );

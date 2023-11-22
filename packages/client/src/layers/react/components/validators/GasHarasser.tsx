@@ -130,11 +130,11 @@ export function registerGasHarasser() {
         <ValidatorWrapper
           id='gas-harasser'
           divName='gasHarasser'
-          title='Feed Your Operator'
-          errorPrimary='Operator is EMPTY and STARVING'
+          title='Feed Your Avatar'
+          errorPrimary='Avatar is EMPTY and STARVING'
           errorSecondary={`You're lucky we don't report you to the authorities..`}
         >
-          <Description>Account Operator: {account.operatorAddress}</Description>
+          <Description>Account Avatar: {account.operatorAddress}</Description>
           <br />
           <Row>
             <Input

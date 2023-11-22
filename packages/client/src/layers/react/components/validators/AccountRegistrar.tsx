@@ -299,6 +299,7 @@ export function registerAccountRegistrar() {
           id='next'
           text='Next'
           onClick={() => setStep(step + 1)}
+          size='vending'
         />
       );
 
@@ -308,6 +309,7 @@ export function registerAccountRegistrar() {
           text='Back'
           disabled={step === 0}
           onClick={() => setStep(step - 1)}
+          size='vending'
         />
       );
 
@@ -349,6 +351,7 @@ export function registerAccountRegistrar() {
               text='Next'
               onClick={() => setStep(step + 1)}
               disabled={addressTaken || name === '' || nameTaken}
+              size='vending'
             />
           );
 
@@ -404,6 +407,7 @@ export function registerAccountRegistrar() {
                   text='Submit'
                   disabled={food === ''}
                   onClick={() => handleAccountCreation(name, food)}
+                  size='vending'
                 />
               </Tooltip>
             </Row>
