@@ -47,14 +47,16 @@ export function registerNotificationFixture() {
       }
 
       const SingleNotif = (id: EntityIndex) => {
-        const { title, description, time, modal } = getComponentValue(notifications.Notification, id)!;
+        const notification = getComponentValue(notifications.Notification, id);
+        if (!notification) return null;
+
         return (
           <Card
             key={id.toString()}
-            onClick={() => handleClick(modal)}
+            onClick={() => handleClick(notification.modal)}
           >
-            <Title>{title}</Title>
-            <Description>{description}</Description>
+            <Title>{notification.title}</Title>
+            <Description>{notification.description}</Description>
           </Card>
         );
       }
