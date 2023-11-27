@@ -886,6 +886,14 @@
       ]
     },
     {
+      "name": "RenamePotionSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CanNameComponent"
+      ]
+    },
+    {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
         "BlockLastComponent",
