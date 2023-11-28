@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
 import { EntityIndex, getComponentValue, getComponentEntities } from '@latticexyz/recs';
+import React from 'react';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { registerUIComponent } from 'layers/react/engine/store';
-
-import 'layers/react/styles/font.css';
 import { Modals, useComponentSettings } from 'layers/react/store/componentSettings';
+import 'layers/react/styles/font.css';
 
 export function registerNotificationFixture() {
   registerUIComponent(

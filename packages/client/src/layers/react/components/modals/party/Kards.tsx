@@ -98,7 +98,10 @@ export const Kards = (props: Props) => {
   };
 
   const hasFood = (): boolean => {
-    const total = props.account.inventories!.food!.reduce(
+    let inventories = props.account.inventories;
+    if (!inventories || !inventories.food) return false;
+
+    const total = inventories.food.reduce(
       (tot: number, inv: Inventory) => tot + (inv.balance || 0),
       0
     );
@@ -106,7 +109,14 @@ export const Kards = (props: Props) => {
   };
 
   const hasRevive = (): boolean => {
-    return props.account.inventories!.revives!.length > 0;
+    let inventories = props.account.inventories;
+    if (!inventories || !inventories.revives) return false;
+
+    const total = inventories.revives.reduce(
+      (tot: number, inv: Inventory) => tot + (inv.balance || 0),
+      0
+    );
+    return total > 0;
   };
 
   // determine whether the kami is still on cooldown
@@ -174,17 +184,17 @@ export const Kards = (props: Props) => {
     } else if (isDead(kami)) {
       description = [`Murdered`];
       if (kami.deaths && kami.deaths.length > 0) {
-        description.push(`by ${kami.deaths[0]!.source!.name}`);
-        description.push(`on ${kami.deaths[0]!.node.name} `);
+        description.push(`by ${kami.deaths[0].source!.name}`);
+        description.push(`on ${kami.deaths[0].node.name} `);
       }
-    } else if (isHarvesting(kami)) {
+    } else if (isHarvesting(kami) && kami.production) {
       if (calcHealth(kami) == 0) {
-        description = [`Starving.. `, `on ${kami.production!.node?.name}`];
-      } else if (kami.production?.node != undefined) {
-        const harvestRate = getRateDisplay(kami.production?.rate, 2);
+        description = [`Starving.. `, `on ${kami.production.node?.name}`];
+      } else if (kami.production.node != undefined) {
+        const harvestRate = getRateDisplay(kami.production.rate, 2);
         description = [
           `Harvesting`,
-          `on ${kami.production!.node!.name}`,
+          `on ${kami.production.node.name}`,
           `${harvestRate} $MUSU/hr`,
           `${healthRate} HP/hr`,
         ];
@@ -202,9 +212,9 @@ export const Kards = (props: Props) => {
     const tooltipText = whyCantFeed(kami);
     const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health! == 0;
 
-    const stockedInventory = props.account.inventories!.food!.filter(
+    const stockedInventory = props.account.inventories?.food?.filter(
       (inv: Inventory) => inv.balance && inv.balance > 0
-    );
+    ) ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
@@ -301,8 +311,6 @@ const EmptyText = styled.div`
   text-align: center;
   color: #333;
   padding: 0.7vh 0vw;
-
   margin: 3vh;
-
   height: 100%;
 `;

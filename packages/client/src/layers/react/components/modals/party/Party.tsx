@@ -1,8 +1,8 @@
-import React from 'react';
-import { map, merge } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
+import React from 'react';
+import { map, merge } from 'rxjs';
 
 import { Kards } from './Kards';
 import { kamiIcon } from 'assets/images/icons/menu';
@@ -33,24 +33,27 @@ export function registerPartyModal() {
           actions,
           api: { player },
           components: {
+            OperatorAddress,
+            OwnerAddress,
+            IsAccount,
+            IsBonus,
+            IsConfig,
+            IsProduction,
             AccountID,
+            HolderID,
+            ItemIndex,
             Balance,
             Coin,
             Harmony,
             Health,
             HealthCurrent,
-            HolderID,
-            IsBonus,
-            IsConfig,
             LastTime,
             Location,
             MediaURI,
             Name,
-            OwnerAddress,
-            Power,
             Rate,
-            State,
             StartTime,
+            State,
             Type,
             Value,
           },
@@ -59,21 +62,24 @@ export function registerPartyModal() {
       } = layers;
 
       return merge(
+        OperatorAddress.update$,
+        OwnerAddress.update$,
+        IsAccount.update$,
+        IsBonus.update$,
+        IsConfig.update$,
+        IsProduction.update$,
         AccountID.update$,
+        HolderID.update$,
+        ItemIndex.update$,
         Balance.update$,
         Coin.update$,
         Harmony.update$,
         HealthCurrent.update$,
         Health.update$,
-        HolderID.update$,
-        IsBonus.update$,
-        IsConfig.update$,
         LastTime.update$,
         Location.update$,
         MediaURI.update$,
         Name.update$,
-        OwnerAddress.update$,
-        Power.update$,
         Rate.update$,
         StartTime.update$,
         State.update$,

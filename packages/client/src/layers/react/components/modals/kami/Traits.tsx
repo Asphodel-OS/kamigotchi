@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 
 import { statIcons } from "assets/images/icons/stats";
-import placeholderIcon from "assets/images/icons/exit_native.png";
+import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Kami } from "layers/react/shapes/Kami";
-import { Tooltip } from "../../library/Tooltip";
 import { Trait } from "layers/react/shapes/Trait";
 
 interface Props {
@@ -95,7 +94,6 @@ const Content = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
-
 
 const InfoBox = styled.div`
   border: solid black .12vw;

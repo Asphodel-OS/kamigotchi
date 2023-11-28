@@ -136,7 +136,10 @@ export const Kards = (props: Props) => {
   };
 
   const hasFood = (): boolean => {
-    const total = props.account.inventories!.food!.reduce(
+    let inventories = props.account.inventories;
+    if (!inventories || !inventories.food) return false;
+
+    const total = inventories.food.reduce(
       (tot: number, inv: Inventory) => tot + (inv.balance || 0),
       0
     );
