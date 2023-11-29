@@ -40,9 +40,11 @@ export function registerNodeModal() {
             IsBonus,
             IsConfig,
             IsInventory,
+            IsProduction,
             IsNode,
             AccountID,
             HolderID,
+            PetID,
             ItemIndex,
             Balance,
             Coin,
@@ -71,8 +73,10 @@ export function registerNodeModal() {
         IsConfig.update$,
         IsInventory.update$,
         IsNode.update$,
+        IsProduction.update$,
         AccountID.update$,
         HolderID.update$,
+        PetID.update$,
         ItemIndex.update$,
         Balance.update$,
         Coin.update$,
@@ -111,7 +115,7 @@ export function registerNodeModal() {
 
     // Render
     ({ layers, actions, api, data }) => {
-      // console.log('NodeM: data', data);
+      console.log('NodeM: data', data);
       const [tab, setTab] = useState('allies');
       const { nodeIndex } = useSelectedEntities();
       const [node, setNode] = useState<Node>(data.node);

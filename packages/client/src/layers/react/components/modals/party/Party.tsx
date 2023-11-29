@@ -41,6 +41,7 @@ export function registerPartyModal() {
             IsProduction,
             AccountID,
             HolderID,
+            PetID,
             ItemIndex,
             Balance,
             Coin,
@@ -70,6 +71,7 @@ export function registerPartyModal() {
         IsProduction.update$,
         AccountID.update$,
         HolderID.update$,
+        PetID.update$,
         ItemIndex.update$,
         Balance.update$,
         Coin.update$,
@@ -105,7 +107,7 @@ export function registerPartyModal() {
 
     // Render
     ({ layers, actions, api, data, world }) => {
-      // console.log('PartyM: data', data);
+      console.log('PartyM: data', data);
       const { modals, setModals } = useComponentSettings();
       const { setKami } = useSelectedEntities();
 
