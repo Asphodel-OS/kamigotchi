@@ -57,7 +57,6 @@ export const Kards = (props: Props) => {
     let duration;
     if (isHarvesting(kami)) duration = calcProductionTime(kami);
     else duration = calcIdleTime(kami);
-    console.log(`${kami.name} Duration:`, duration);
 
     const totalHealth = kami.stats.health + kami.bonusStats.health;
     let health = 1 * kami.health;

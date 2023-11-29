@@ -115,7 +115,7 @@ export function registerNodeModal() {
 
     // Render
     ({ layers, actions, api, data }) => {
-      console.log('NodeM: data', data);
+      // console.log('NodeM: data', data);
       const [tab, setTab] = useState('allies');
       const { nodeIndex } = useSelectedEntities();
       const [node, setNode] = useState<Node>(data.node);

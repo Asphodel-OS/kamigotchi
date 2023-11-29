@@ -107,7 +107,7 @@ export function registerPartyModal() {
 
     // Render
     ({ layers, actions, api, data, world }) => {
-      console.log('PartyM: data', data);
+      // console.log('PartyM: data', data);
       const { modals, setModals } = useComponentSettings();
       const { setKami } = useSelectedEntities();
 
