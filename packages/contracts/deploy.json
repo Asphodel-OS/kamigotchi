@@ -65,6 +65,7 @@
     "IsNodeComponent",
     "IsNonFungibleComponent",
     "IsNPCComponent",
+    "IsMiscItemComponent",
     "IsPetComponent",
     "IsProductionComponent",
     "IsRegistryComponent",
@@ -252,6 +253,19 @@
       ]
     },
     {
+      "name": "_RegistryCreatemiscItemSystem",
+      "writeAccess": [
+        "DescriptionComponent",
+        "IsRegistryComponent",
+        "IsFungibleComponent",
+        "IsMiscItemComponent",
+        "IndexItemComponent",
+        "TypeComponent",
+        "NameComponent",
+        "MediaURIComponent"
+      ]
+    },
+    {
       "name": "_RegistryCreateModSystem",
       "writeAccess": [
         "DescriptionComponent",
@@ -378,6 +392,7 @@
         "IndexModComponent",
         "IndexReviveComponent",
         "IsLootboxComponent",
+        "IsMiscItemComponent",
         "HealthComponent",
         "PowerComponent",
         "ViolenceComponent",

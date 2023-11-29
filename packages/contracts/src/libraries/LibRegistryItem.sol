@@ -17,6 +17,7 @@ import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComp
 import { IndexReviveComponent, ID as IndexReviveCompID } from "components/IndexReviveComponent.sol";
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsNonFungibleComponent, ID as IsNonFungCompID } from "components/IsNonFungibleComponent.sol";
+import { IsMiscItemComponent, ID as IsMiscCompID } from "components/IsMiscItemComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
@@ -140,6 +141,28 @@ library LibRegistryItem {
     setMediaURI(components, id, mediaURI);
   }
 
+  function createMisc(
+    IWorld world,
+    IUintComp components,
+    uint256 index,
+    string memory name,
+    string memory description,
+    bool isFungible,
+    string memory type_,
+    string memory mediaURI
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    setIsRegistry(components, id);
+    setIsMisc(components, id);
+    setItemIndex(components, id, index);
+    setName(components, id, name);
+    setDescription(components, id, description);
+    setType(components, id, type_);
+    setMediaURI(components, id, mediaURI);
+
+    if (isFungible) setIsFungible(components, id);
+  }
+
   // Create a Registry entry for a Mod item. (e.g. cpu, gem, etc.)
   function createMod(
     IWorld world,
@@ -217,6 +240,7 @@ library LibRegistryItem {
     unsetModIndex(components, id);
     unsetReviveIndex(components, id);
     unsetIsLootbox(components, id);
+    unsetIsMisc(components, id);
 
     LibStat.removeHealth(components, id);
     LibStat.removePower(components, id);
@@ -299,12 +323,16 @@ library LibRegistryItem {
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
   }
 
+  function setIsLootbox(IUintComp components, uint256 id) internal {
+    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
+  }
+
   function setIsNonFungible(IUintComp components, uint256 id) internal {
     IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
   }
 
-  function setIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
+  function setIsMisc(IUintComp components, uint256 id) internal {
+    IsMiscItemComponent(getAddressById(components, IsMiscCompID)).set(id);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
@@ -368,6 +396,11 @@ library LibRegistryItem {
     if (comp.has(id)) comp.remove(id);
   }
 
+  function unsetIsLootbox(IUintComp components, uint256 id) internal {
+    IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
   function unsetIsNonFungible(IUintComp components, uint256 id) internal {
     IsNonFungibleComponent comp = IsNonFungibleComponent(
       getAddressById(components, IsNonFungCompID)
@@ -375,8 +408,8 @@ library LibRegistryItem {
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
+  function unsetIsMisc(IUintComp components, uint256 id) internal {
+    IsMiscItemComponent comp = IsMiscItemComponent(getAddressById(components, IsMiscCompID));
     if (comp.has(id)) comp.remove(id);
   }
 

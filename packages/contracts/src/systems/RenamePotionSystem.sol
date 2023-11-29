@@ -5,6 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { LibString } from "solady/utils/LibString.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -23,7 +24,10 @@ contract RenamePotionSystem is System {
     require(accountID != 0, "no account");
     require(LibPet.isPet(components, id), "not a pet");
     require(LibPet.getAccount(components, id) == accountID, "Pet not urs");
-    require(LibInventory.getType(components, invID) == "rename_potion", "not a rename potion");
+    require(
+      LibString.eq(LibInventory.getType(components, invID), "RENAME_POTION"),
+      "not a rename potion"
+    );
 
     LibInventory.dec(components, invID, 1);
     LibPet.setCanName(components, id, true);
