@@ -55,8 +55,9 @@ export const Kards = (props: Props) => {
   // calculate health based on the drain against last confirmed health
   const calcHealth = (kami: Kami): number => {
     let duration;
-    if (isHarvesting(kami) && kami.production) duration = calcProductionTime(kami);
+    if (isHarvesting(kami)) duration = calcProductionTime(kami);
     else duration = calcIdleTime(kami);
+    console.log(`${kami.name} Duration:`, duration);
 
     const totalHealth = kami.stats.health + kami.bonusStats.health;
     let health = 1 * kami.health;
