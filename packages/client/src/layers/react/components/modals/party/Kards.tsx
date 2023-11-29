@@ -38,14 +38,9 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // calculate health based on the drain against last confirmed health
-  const calcHealth = (kami: Kami): number => {
-    const duration = calcProductionTime(kami);
-    const totalHealth = kami.stats.health + kami.bonusStats.health;
-    let health = 1 * kami.health;
-    health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), totalHealth);
-    return health;
+  // calculate the time a kami has spent idle (in seconds)
+  const calcIdleTime = (kami: Kami): number => {
+    return lastRefresh / 1000 - kami.lastUpdated;
   };
 
   // calculate the time a production has been active since its last update
@@ -56,6 +51,20 @@ export const Kards = (props: Props) => {
     }
     return productionTime;
   }
+
+  // calculate health based on the drain against last confirmed health
+  const calcHealth = (kami: Kami): number => {
+    let duration;
+    if (isHarvesting(kami) && kami.production) duration = calcProductionTime(kami);
+    else duration = calcIdleTime(kami);
+
+    const totalHealth = kami.stats.health + kami.bonusStats.health;
+    let health = 1 * kami.health;
+    health += kami.healthRate * duration;
+    health = Math.min(Math.max(health, 0), totalHealth);
+    return health;
+  };
+
   // converts a per-second rate to a per-hour rate string with a given precision
   const getRateDisplay = (rate: number | undefined, roundTo: number): string => {
     if (rate === undefined) rate = 0;
