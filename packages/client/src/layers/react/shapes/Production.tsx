@@ -6,7 +6,7 @@ import {
 
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
-import { Kami, getKami } from './Kami/Kami';
+import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
 
 // standardized shape of an Production Entity

@@ -2,10 +2,15 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Battery } from './Battery';
+import { Card } from './Card';
 import { Countdown } from './Countdown';
 import { Tooltip } from './Tooltip';
-import { Card } from 'layers/react/components/library/Card';
-import { Kami } from 'layers/react/shapes/Kami';
+import {
+  Kami,
+  isUnrevealed,
+  getCooldown,
+  calcHealth,
+} from "layers/react/shapes/Kami";
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';
@@ -25,10 +30,9 @@ interface Props {
 export const KamiCard = (props: Props) => {
   const { modals, setModals } = useComponentSettings();
   const { kamiEntityIndex, setKami } = useSelectedEntities();
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-
 
   // ticking
+  const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
     const refreshClock = () => {
       setLastRefresh(Date.now());
@@ -54,45 +58,6 @@ export const KamiCard = (props: Props) => {
     playClick();
   }
 
-  /////////////////
-  // INTERPRETATION
-
-  // calculate the time a kami has spent idle (in seconds)
-  const calcIdleTime = (kami: Kami): number => {
-    return lastRefresh / 1000 - kami.lastUpdated;
-  };
-
-  // calculate the time a production has been active since its last update
-  const calcProductionTime = (kami: Kami): number => {
-    let productionTime = 0;
-    if (isHarvesting(kami) && kami.production) {
-      productionTime = lastRefresh / 1000 - kami.production.startTime;
-    }
-    return productionTime;
-  }
-
-  // check whether the kami is harvesting
-  const isHarvesting = (kami: Kami): boolean =>
-    kami.state === 'HARVESTING' && kami.production != undefined;
-
-  // calculate health based on the drain against last confirmed health
-  const calcHealth = (kami: Kami): number => {
-    let duration;
-    if (isHarvesting(kami)) duration = calcProductionTime(kami);
-    else duration = calcIdleTime(kami);
-
-    const totalHealth = kami.stats.health + kami.bonusStats.health;
-    let health = 1 * kami.health;
-    health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), totalHealth);
-    return health;
-  };
-
-  // check whether the kami is revealed
-  const isUnrevealed = (kami: Kami): boolean => {
-    return kami.state === 'UNREVEALED';
-  };
-
 
   /////////////////
   // DISPLAY
@@ -107,13 +72,13 @@ export const KamiCard = (props: Props) => {
   };
 
   const CornerContent = (kami: Kami) => {
+    const cooldown = getCooldown(kami);
+    const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
     const totalHealth = kami.stats.health + kami.bonusStats.health;
-    const healthString = !isUnrevealed(kami)
+    const batteryString = !isUnrevealed(kami)
       ? `Health: ${calcHealth(kami).toFixed()}/${totalHealth}`
       : '';
 
-    const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
-    const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
     return (
       <TitleCorner key='corner'>
         {props.cooldown &&
@@ -122,7 +87,7 @@ export const KamiCard = (props: Props) => {
           </Tooltip>
         }
         {props.battery &&
-          <Tooltip key='battery' text={[healthString]}>
+          <Tooltip key='battery' text={[batteryString]}>
             <Battery level={100 * calcHealth(kami) / totalHealth} />
           </Tooltip>
         }

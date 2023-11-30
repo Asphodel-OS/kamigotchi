@@ -9,15 +9,12 @@ import {
 
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
-import { Kami, queryKamisX } from './Kami/Kami';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
+import { Kami, queryKamisX } from './Kami';
+import { Inventory, sortInventories, queryInventoryX } from './Inventory';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
+import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
 import { Skill } from './Skill';
-import {
-  Inventory,
-  sortInventories,
-  queryInventoryX,
-} from './Inventory';
+
 
 // standardized shape of an Account Entity
 export interface Account {

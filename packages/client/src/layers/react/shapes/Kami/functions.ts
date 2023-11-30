@@ -1,5 +1,5 @@
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
-import { Kami } from './Kami';
+import { Kami } from './type';
 import { LiquidationConfig } from '../LiquidationConfig';
 
 
