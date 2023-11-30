@@ -60,7 +60,7 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  const hasFood = (): boolean => {
+  const hasFood = (account: Account): boolean => {
     let inventories = account.inventories;
     if (!inventories || !inventories.food) return false;
 
@@ -72,13 +72,13 @@ export const Kards = (props: Props) => {
   };
 
   // get the reason why a kami can't feed. assume the kami is either resting or harvesting
-  const whyCantFeed = (kami: Kami): string => {
+  const whyCantFeed = (kami: Kami, account: Account): string => {
     let reason = '';
     if (kami.production?.node?.location != account.location) {
       reason = `not at your location`;
     } else if (isFull(kami)) {
       reason = `already full`;
-    } else if (!hasFood()) {
+    } else if (!hasFood(account)) {
       reason = `buy food, poore`;
     } else if (onCooldown(kami)) {
       reason = `can't eat, on cooldown`;
@@ -86,8 +86,8 @@ export const Kards = (props: Props) => {
     return reason;
   };
 
-  const canFeed = (kami: Kami): boolean => {
-    return !whyCantFeed(kami);
+  const canFeed = (kami: Kami, account: Account): boolean => {
+    return !whyCantFeed(kami, account);
   };
 
   // get the description on the card
@@ -179,9 +179,9 @@ export const Kards = (props: Props) => {
     );
   }
 
-  const FeedButton = (kami: Kami) => {
-    const canFeedKami = canFeed(kami);
-    const tooltipText = whyCantFeed(kami);
+  const FeedButton = (kami: Kami, account: Account) => {
+    const canFeedKami = canFeed(kami, account);
+    const tooltipText = whyCantFeed(kami, account);
 
     const stockedInventory = account.inventories?.food?.filter(
       (inv: Inventory) => inv.balance && inv.balance > 0
@@ -260,7 +260,7 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        action={[FeedButton(kami), CollectButton(kami), StopButton(kami)]}
+        action={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
         battery
         cooldown
       />
