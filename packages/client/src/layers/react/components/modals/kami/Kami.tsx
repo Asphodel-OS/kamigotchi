@@ -5,7 +5,7 @@ import crypto from "crypto";
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Kami, getKami } from 'layers/react/shapes/Kami/Kami';
+import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { Skill, getRegistrySkills } from 'layers/react/shapes/Skill';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { Banner } from './Banner';

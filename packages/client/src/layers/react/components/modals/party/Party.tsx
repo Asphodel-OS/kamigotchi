@@ -10,7 +10,7 @@ import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami } from 'layers/react/shapes/Kami/Kami';
+import { Kami } from 'layers/react/shapes/Kami';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';

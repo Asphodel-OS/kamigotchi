@@ -1,4 +1,4 @@
-import { Kami } from "layers/react/shapes/Kami/Kami";
+import { Kami } from "layers/react/shapes/Kami";
 import styled from "styled-components";
 
 import { statIcons } from "assets/images/icons/stats";

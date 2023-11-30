@@ -5,7 +5,7 @@ import { Battery } from './Battery';
 import { Countdown } from './Countdown';
 import { Tooltip } from './Tooltip';
 import { Card } from 'layers/react/components/library/Card';
-import { Kami } from 'layers/react/shapes/Kami/Kami';
+import { Kami } from 'layers/react/shapes/Kami';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { playClick } from 'utils/sounds';

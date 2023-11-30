@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Kami } from "layers/react/shapes/Kami/Kami";
+import { Kami } from "layers/react/shapes/Kami";
 import {
   Skill,
   Requirement,

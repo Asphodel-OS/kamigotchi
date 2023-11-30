@@ -14,7 +14,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
 import { getData } from 'layers/react/shapes/Data';
-import { Kami, queryKamisX } from 'layers/react/shapes/Kami/Kami';
+import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
