@@ -47,25 +47,19 @@ export interface Kami {
   namable: boolean;
 }
 
-export interface KamiExperience {
+interface KamiExperience {
   current: number;
   threshold: number;
 }
 
 // optional data to populate for a Kami Entity
-export interface Options {
+interface Options {
   account?: boolean;
   deaths?: boolean;
   kills?: boolean;
   production?: boolean;
   skills?: boolean;
   traits?: boolean;
-}
-
-// items to query
-export interface QueryOptions {
-  account?: EntityID;
-  state?: string;
 }
 
 // get a Kami from its EnityIndex. includes options for which data to include
@@ -275,6 +269,12 @@ export const getKami = (
 
   return kami;
 };
+
+// items to query
+interface QueryOptions {
+  account?: EntityID;
+  state?: string;
+}
 
 export const queryKamisX = (
   layers: Layers,
