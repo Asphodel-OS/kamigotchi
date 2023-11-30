@@ -1,4 +1,6 @@
+import cdf from '@stdlib/stats-base-dists-normal-cdf';
 import { Kami } from './Kami';
+import { LiquidationConfig } from '../LiquidationConfig';
 
 
 ////////////////
@@ -57,9 +59,13 @@ export const calcHarvestTime = (kami: Kami): number => {
   return productionTime;
 }
 
+export const getCooldown = (kami: Kami): number => {
+  return Math.max(0, kami.cooldown - calcRestTime(kami));
+}
+
 // determine whether the kami is still on cooldown
 export const onCooldown = (kami: Kami): boolean => {
-  return kami.cooldown > calcRestTime(kami);
+  return getCooldown(kami) > 0;
 }
 
 
@@ -79,6 +85,10 @@ export const calcHealth = (kami: Kami): number => {
   return health;
 };
 
+export const isStarving = (kami: Kami): boolean => {
+  return calcHealth(kami) === 0;
+}
+
 // check whether the kami is full
 export const isFull = (kami: Kami): boolean => {
   const totalHealth = kami.stats.health + kami.bonusStats.health;
@@ -96,3 +106,91 @@ export const calcOutput = (kami: Kami): number => {
   }
   return Math.max(output, 0);
 };
+
+
+////////////////
+// LIQUIDATION
+
+// calculate the affinity multiplier for liquidation threshold
+const calcLiqAffinityMultiplier = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): number => {
+  const multiplierBase = config.multipliers.affinity.base;
+  const multiplierUp = config.multipliers.affinity.up;
+  const multiplierDown = config.multipliers.affinity.down;
+
+  let multiplier = multiplierBase;
+  if (attacker.traits && victim.traits) {
+    const attackerAffinity = attacker.traits.hand.affinity;
+    const victimAffinity = victim.traits.body.affinity;
+    if (attackerAffinity === 'EERIE') {
+      if (victimAffinity === 'SCRAP') multiplier = multiplierUp;
+      else if (victimAffinity === 'INSECT') multiplier = multiplierDown;
+    } else if (attackerAffinity === 'SCRAP') {
+      if (victimAffinity === 'INSECT') multiplier = multiplierUp;
+      else if (victimAffinity === 'EERIE') multiplier = multiplierDown;
+    } else if (attackerAffinity === 'INSECT') {
+      if (victimAffinity === 'EERIE') multiplier = multiplierUp;
+      else if (victimAffinity === 'SCRAP') multiplier = multiplierDown;
+    }
+  }
+  return multiplier;
+};
+
+// calculate the base liquidation threshold b/w two kamis as a %
+const calcLiqThresholdBase = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): number => {
+  const attackerTotalViolence = attacker.stats.violence + attacker.bonusStats.violence;
+  const victimTotalHarmony = victim.stats.harmony + victim.bonusStats.harmony;
+  const ratio = attackerTotalViolence / victimTotalHarmony;
+  const weight = cdf(Math.log(ratio), 0, 1);
+  const peakBaseThreshold = config.threshold;
+  return weight * peakBaseThreshold;
+};
+
+// calculate the liquidation threshold b/w two kamis as a %
+const calcLiqThresholdPercent = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): number => {
+  const base = calcLiqThresholdBase(attacker, victim, config);
+  const multiplier = calcLiqAffinityMultiplier(attacker, victim, config);
+  return base * multiplier;
+};
+
+export const calcLiqThresholdValue = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): number => {
+  const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
+  const thresholdPercent = calcLiqThresholdPercent(attacker, victim, config);
+  return thresholdPercent * victimTotalHealth;
+}
+
+export const canMog = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): boolean => {
+  const thresholdPercent = calcLiqThresholdPercent(attacker, victim, config);
+  const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
+  const absoluteThreshold = thresholdPercent * victimTotalHealth;
+  return calcHealth(victim) < absoluteThreshold;
+}
+
+// determine whether a kami can liquidate another kami
+export const canLiquidate = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): boolean => {
+  return !onCooldown(attacker) && !isStarving(attacker) && canMog(attacker, victim, config);
+}
+

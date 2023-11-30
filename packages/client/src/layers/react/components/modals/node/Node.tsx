@@ -8,7 +8,7 @@ import { Kards } from './Kards';
 import { Tabs } from './Tabs';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami } from 'layers/react/shapes/Kami/Kami';
+import { Kami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/react/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -229,7 +229,7 @@ export function registerNodeModal() {
             allies={node.kamis?.allies!}
             enemies={node.kamis?.enemies!}
             actions={{ collect, feed, liquidate, stop }}
-            liquidationConfig={data.liquidationConfig}
+            battleConfig={data.liquidationConfig}
             tab={tab}
           />
         </ModalWrapperFull>
