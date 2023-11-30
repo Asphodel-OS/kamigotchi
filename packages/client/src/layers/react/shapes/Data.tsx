@@ -8,7 +8,7 @@ import {
 
 import { Layers } from 'src/types';
 import { Account } from 'src/layers/react/shapes/Account';
-import { Kami } from 'src/layers/react/shapes/Kami';
+import { Kami } from 'layers/react/shapes/Kami/Kami';
 
 // get a DataEntity for an account 
 export const getData = (

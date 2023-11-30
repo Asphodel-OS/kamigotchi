@@ -5,7 +5,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { Kami, getKami } from './Kami';
+import { Kami, getKami } from './Kami/Kami';
 import { Node, getNode } from './Node';
 
 // standardized Object shape of a Kill Entity

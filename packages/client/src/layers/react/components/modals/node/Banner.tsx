@@ -5,7 +5,7 @@ import { NodeImages } from 'constants/nodes';
 import { IconListButton } from "layers/react/components/library/IconListButton";
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Node } from 'layers/react/shapes/Node';
-import { Kami } from 'layers/react/shapes/Kami';
+import { Kami } from 'layers/react/shapes/Kami/Kami';
 import { harvestIcon } from 'assets/images/icons/actions';
 
 

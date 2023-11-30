@@ -10,14 +10,14 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { Account, getAccount } from './Account';
-import { getConfigFieldValue } from './Config';
-import { Kill, getKill } from './Kill';
-import { Production, getProduction } from './Production';
-import { Stats, getStats } from './Stats';
-import { Skill, getSkills } from './Skill';
-import { Traits, TraitIndices, getTraits } from './Trait';
-import { Bonuses, getBonuses } from './Bonus';
+import { Account, getAccount } from '../Account';
+import { getConfigFieldValue } from '../Config';
+import { Kill, getKill } from '../Kill';
+import { Production, getProduction } from '../Production';
+import { Stats, getStats } from '../Stats';
+import { Skill, getSkills } from '../Skill';
+import { Traits, TraitIndices, getTraits } from '../Trait';
+import { Bonuses, getBonuses } from '../Bonus';
 
 // standardized shape of a Kami Entity
 export interface Kami {

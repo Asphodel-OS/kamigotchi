@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 import { Kill } from 'layers/react/shapes/Kill';
-import { Kami } from 'layers/react/shapes/Kami';
+import { Kami } from 'layers/react/shapes/Kami/Kami';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 

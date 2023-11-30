@@ -8,7 +8,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { Kami, getKami } from './Kami';
+import { Kami, getKami } from './Kami/Kami';
 import { numberToHex } from 'utils/hex';
 
 // standardized shape of a Node Entity

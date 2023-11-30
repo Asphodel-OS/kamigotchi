@@ -8,7 +8,7 @@ import { Kards } from './Kards';
 import { Tabs } from './Tabs';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami } from 'layers/react/shapes/Kami';
+import { Kami } from 'layers/react/shapes/Kami/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/react/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';

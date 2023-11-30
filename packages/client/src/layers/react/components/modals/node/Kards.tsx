@@ -13,7 +13,7 @@ import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
-import { Kami } from "layers/react/shapes/Kami";
+import { Kami } from "layers/react/shapes/Kami/Kami";
 import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
 
 

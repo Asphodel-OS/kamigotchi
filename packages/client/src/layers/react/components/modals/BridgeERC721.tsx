@@ -11,7 +11,7 @@ import { abi } from 'abi/Pet721ProxySystem.json';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccount } from 'layers/react/shapes/Account';
-import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Kami, getKami } from 'layers/react/shapes/Kami/Kami';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 

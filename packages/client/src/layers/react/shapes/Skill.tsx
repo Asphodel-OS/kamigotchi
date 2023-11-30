@@ -10,7 +10,7 @@ import {
 
 import { Layers } from 'src/types';
 import { Account } from './Account';
-import { Kami } from './Kami';
+import { Kami } from './Kami/Kami';
 
 import { baseURI } from "src/constants/media";
 

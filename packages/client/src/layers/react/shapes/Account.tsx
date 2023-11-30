@@ -9,7 +9,7 @@ import {
 
 import { Layers } from 'src/types';
 import { getConfigFieldValue } from './Config';
-import { Kami, queryKamisX } from './Kami';
+import { Kami, queryKamisX } from './Kami/Kami';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
 import { Skill } from './Skill';
