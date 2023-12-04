@@ -48,6 +48,7 @@ export function createComponents(world: World) {
     IsNPC: defineBoolEZ("IsNPC", "component.Is.NPC"),
     IsNode: defineBoolEZ("IsNode", "component.Is.Node"),
     IsNonFungible: defineBoolEZ("IsNonFungible", "component.Is.NonFungible"),
+    IsMiscItem: defineBoolEZ("IsMiscItem", "component.Is.MiscItem"),
     IsPet: defineBoolEZ("IsPet", "component.Is.Pet"),
     IsProduction: defineBoolEZ("IsProduction", "component.Is.Production"),
     IsQuest: defineBoolEZ("IsQuest", "component.Is.Quest"),

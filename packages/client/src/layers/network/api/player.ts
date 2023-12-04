@@ -66,6 +66,13 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
   }
 
+  /////////////////
+  //   ITEMS
+
+  // use a rename potion
+  function useRenamePotion(petID: BigNumberish, invID: BigNumberish) {
+    return systems["system.Item.Rename"].executeTyped(petID, invID);
+  }
 
   /////////////////
   //   LISTINGS
@@ -83,7 +90,6 @@ export function createPlayerAPI(systems: any) {
   function sellToListing(listingID: BigNumberish, amt: number) {
     return systems["system.Listing.Sell"].executeTyped(listingID, amt);
   }
-
 
   /////////////////
   //   LOOTBOX
@@ -158,14 +164,12 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Skill.Upgrade"].executeTyped(entityID, skillIndex);
   }
 
-
   /////////////////
   // RELATIONSHIP
 
   function advanceRelationship(indexNPC: number, indexRelationship: number) {
     return systems["system.Relationship.Advance"].executeTyped(indexNPC, indexRelationship);
   }
-
 
   /////////////////
   //   TRADE
@@ -280,6 +284,13 @@ export function createPlayerAPI(systems: any) {
         name: setAccountName,
         operator: setAccountOperator,
       },
+    },
+    item: {
+      use: {
+        misc: {
+          renamePotion: useRenamePotion,
+        },
+      }
     },
     listing: {
       buy: buyFromListing,

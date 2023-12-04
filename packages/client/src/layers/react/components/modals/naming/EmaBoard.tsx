@@ -1,7 +1,9 @@
 import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import crypto from "crypto";
 
+import { feedIcon } from "assets/images/icons/actions";
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
@@ -11,6 +13,8 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { IconButton } from '../../library';
+import { EntityID } from '@latticexyz/recs';
 
 
 export function registerEMABoardModal() {
@@ -27,8 +31,10 @@ export function registerEMABoardModal() {
     (layers) => {
       const {
         network: {
+          actions,
           components: {
             AccountID,
+            Balance,
             CanName,
             IsPet,
             Location,
@@ -36,11 +42,13 @@ export function registerEMABoardModal() {
             Name,
             State,
           },
+          api: { player },
         },
       } = layers;
 
       return merge(
         AccountID.update$,
+        Balance.update$,
         CanName.update$,
         IsPet.update$,
         Location.update$,
@@ -49,16 +57,18 @@ export function registerEMABoardModal() {
         MediaURI.update$
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers, { kamis: true });
+          const account = getAccountFromBurner(layers, { kamis: true, inventory: true });
           return {
+            actions,
             data: { account },
+            api: player,
           };
         })
       );
     },
 
     // Render
-    ({ data }) => {
+    ({ actions, data, api }) => {
       const { modals, setModals } = useComponentSettings();
       const { setKami } = useSelectedEntities();
 
@@ -66,6 +76,22 @@ export function registerEMABoardModal() {
         setKami(kami.entityIndex);
         setModals({ ...modals, emaBoard: false, nameKami: true });
       };
+
+      const useRenamePotion = (kami: Kami) => {
+        const inv = data.account.inventories?.misc.find((inv) => inv.item.index === 9001);
+        if (!inv) return;
+
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions?.add({
+          id: actionID,
+          action: 'KamiFeed',
+          params: [kami.id, inv.id],
+          description: `Using holy dust on ${kami.name}`,
+          execute: async () => {
+            return api.item.use.misc.renamePotion(kami.id, inv.id);
+          },
+        });
+      }
 
       // check whether the kami is harvesting
       const isHarvesting = (kami: Kami): boolean => {
@@ -96,9 +122,45 @@ export function registerEMABoardModal() {
         } else if (isDead(kami)) {
           return <Tooltip text={['cannot hear you (dead)']}>{button}</Tooltip>
         } else if (!canName(kami)) {
-          return <Tooltip text={['already named']}>{button}</Tooltip>
+          return <Tooltip text={['cannot rename;', 'use some holy dust!']}>{button}</Tooltip>
         }
         return button;
+      }
+
+      // button to use holy dust (rename potion)
+      const UseDustButton = (kami: Kami) => {
+        if (canName(kami)) return <div></div>;
+
+        console.log(data.account.inventories)
+        const dustAmtRaw = data.account.inventories?.misc.find((inv) => inv.item.index === 9001)?.balance;
+        const dustAmt = dustAmtRaw ? dustAmtRaw : 0;
+
+        let button = (
+          <IconButton
+            id='use_dust_button'
+            img={feedIcon}
+            onClick={() => useRenamePotion(kami)}
+            disabled={dustAmt == 0 || isHarvesting(kami) || isDead(kami)}
+          />
+        );
+
+        if (isHarvesting(kami)) {
+          return <Tooltip text={['too far away']}>{button}</Tooltip>
+        } else if (isDead(kami)) {
+          return <Tooltip text={['cannot hear you (dead)']}>{button}</Tooltip>
+        } else if (dustAmt == 0) {
+          return <Tooltip text={['you have no holy dust']}>{button}</Tooltip>
+        }
+        return button;
+      }
+
+      const CombinedButton = (kami: Kami) => {
+        return (
+          <ButtonsContainer>
+            {UseDustButton(kami)}
+            {RenameButton(kami)}
+          </ButtonsContainer>
+        );
       }
 
       // Rendering of Individual Kami Cards in the Name Modal
@@ -114,7 +176,7 @@ export function registerEMABoardModal() {
           <KamiCard
             key={kami.index}
             kami={kami}
-            action={RenameButton(kami)}
+            action={CombinedButton(kami)}
             description={description}
           />
         );
@@ -151,6 +213,13 @@ const List = styled.div`
   overflow-y: scroll;
   height: 100%;
   max-height: 100%;
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
 `;
 
 

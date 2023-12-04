@@ -48,6 +48,7 @@ export const getItem = (
         ReviveIndex,
         ItemIndex,
         IsLootbox,
+        IsMiscItem,
         MediaURI,
         Name,
         IsFungible,
@@ -79,6 +80,8 @@ export const getItem = (
     Item.familyIndex = getComponentValue(ReviveIndex, index)?.value as number * 1;
   } else if (hasComponent(IsLootbox, index)) {
     Item.type = 'LOOTBOX';
+  } else if (hasComponent(IsMiscItem, index)) {
+    Item.type = 'MISC';
   }
 
   return Item;
