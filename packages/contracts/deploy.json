@@ -253,7 +253,7 @@
       ]
     },
     {
-      "name": "_RegistryCreatemiscItemSystem",
+      "name": "_RegistryCreateMiscItemSystem",
       "writeAccess": [
         "DescriptionComponent",
         "IsRegistryComponent",

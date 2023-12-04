@@ -375,6 +375,26 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+  // @dev add a misc item in registry entry
+  async function registerMiscItem(
+    index: number,
+    name: string,
+    description: string,
+    fungible: boolean,
+    type_: string,
+    media: string
+  ) {
+    await sleepIf();
+    return systems['system._Registry.MiscItem.Create'].executeTyped(
+      index,
+      name,
+      description,
+      fungible,
+      type_,
+      media
+    );
+  }
+
   // @dev add a modification item registry entry
   async function registerModification(
     index: number,
@@ -548,6 +568,7 @@ export function createAdminAPI(systems: any) {
           food: registerFood,
           gear: registerGear,
           lootbox: registerLootbox,
+          misc: registerMiscItem,
           modification: registerModification,
           revive: registerRevive,
         },

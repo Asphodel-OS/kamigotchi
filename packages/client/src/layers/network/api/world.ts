@@ -251,6 +251,9 @@ export function setUpWorldAPI(systems: any) {
           case "REVIVE":
             await setRevive(api, allItems[i]);
             break;
+          case "MISC":
+            await setMisc(api, allItems[i]);
+            break;
           case "LOOTBOX":
             await setLootbox(api, allItems[i], allDroptables);
             break;
@@ -280,6 +283,17 @@ export function setUpWorldAPI(systems: any) {
       item.get('Name'),
       item.get('Description'),
       item.get('Health'),
+      item.get('MediaURI')
+    );
+  }
+
+  async function setMisc(api: AdminAPI, item: any) {
+    await api.registry.item.create.misc(
+      item.get('Index'),
+      item.get('Name'),
+      item.get('Description'),
+      item.get('miscFungible') === 'TRUE',
+      item.get('miscCategory'),
       item.get('MediaURI')
     );
   }
