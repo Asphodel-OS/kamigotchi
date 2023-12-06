@@ -36,16 +36,16 @@ export const room11: Room = {
       dialogue: 111,
     },
     {
-      key: 'waterfall',
-      path: objectWaterfall,
-      offset: { x: 22.6, y: -33.5 },
-      onClick: () => triggerRoomMovementModal(15),
-    },
-    {
       key: 'smallshrine',
       path: objectSmallShrine,
       offset: { x: -5.48, y: 16.1 },
       dialogue: 112,
+    },
+    {
+      key: 'waterfall',
+      path: objectWaterfall,
+      offset: { x: 22.6, y: -33.5 },
+      dialogue: 113,
     },
   ],
 };

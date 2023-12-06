@@ -1,11 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
-import { of } from 'rxjs';
+import { EntityID } from '@latticexyz/recs';
+import crypto from "crypto";
+import React, { useEffect } from 'react';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { DialogueNode, dialogueMap } from 'constants/phaser/dialogue';
+import { DialogueNode, dialogues } from 'constants/phaser/dialogue';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { getRoomByLocation } from 'layers/react/shapes/Room';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import 'layers/react/styles/font.css';
@@ -20,8 +23,45 @@ export function registerDialogueModal() {
       rowStart: 75,
       rowEnd: 100,
     },
-    (layers) => of(layers),
-    () => {
+    (layers) => {
+      const {
+        network: {
+          actions,
+          components: {
+            AccountID,
+            Balance,
+            Coin,
+            Description,
+            HolderID,
+            ItemIndex,
+            MediaURI,
+            Name,
+            OwnerAddress,
+          },
+        },
+      } = layers;
+
+      return merge(
+        AccountID.update$,
+        Balance.update$,
+        Coin.update$,
+        Description.update$,
+        HolderID.update$,
+        ItemIndex.update$,
+        MediaURI.update$,
+        Name.update$,
+        OwnerAddress.update$,
+      ).pipe(
+        map(() => {
+          return {
+            layers,
+            actions,
+            api: layers.network.api.player,
+          };
+        })
+      );
+    },
+    ({ layers, actions, api }) => {
       const { modals } = useComponentSettings();
       const { dialogueIndex } = useSelectedEntities();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
@@ -34,19 +74,42 @@ export function registerDialogueModal() {
       // set the current dialogue node when the dialogue index changes
       useEffect(() => {
         setStep(0);
-        setDialogueNode(dialogueMap[dialogueIndex]);
-        setDialogueLength(dialogueMap[dialogueIndex].text.length);
+        setDialogueNode(dialogues[dialogueIndex]);
+        setDialogueLength(dialogues[dialogueIndex].text.length);
       }, [dialogueIndex]);
 
 
+      //////////////////
+      // ACTIONS
+
+      const move = (location: number) => {
+        const room = getRoomByLocation(layers, location);
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+
+        actions?.add({
+          id: actionID,
+          action: 'AccountMove',
+          params: [location],
+          description: `Moving to ${room.name}`,
+          execute: async () => {
+            const roomMovment = await api.account.move(location);
+            return roomMovment;
+          },
+        });
+      };
+
+
+      //////////////////
+      // DISPLAY
+
       const BackButton = () => {
-        const disabled = step === 0;
+        const disabled = (step === 0);
         return (
           <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
             <ActionButton
               id='back'
               text='←'
-              disabled={step === 0}
+              disabled={disabled}
               onClick={() => setStep(step - 1)}
             />
           </div>
@@ -54,7 +117,7 @@ export function registerDialogueModal() {
       }
 
       const NextButton = () => {
-        const disabled = step === dialogueLength - 1;
+        const disabled = (step === dialogueLength - 1);
         return (
           <div style={{
             visibility: disabled ? 'hidden' : 'visible',
@@ -62,13 +125,31 @@ export function registerDialogueModal() {
             <ActionButton
               id='next'
               text='→'
-              disabled={step === dialogueLength - 1}
+              disabled={disabled}
               onClick={() => setStep(step + 1)}
             />
           </div>
         );
       }
 
+      const MiddleButton = () => {
+        if (!dialogueNode.action) return (<div />);
+        const action = dialogueNode.action;
+        const disabled = (step !== dialogueLength - 1) && !!action;
+
+        return (
+          <div style={{
+            visibility: disabled ? 'hidden' : 'visible',
+          }}>
+            <ActionButton
+              id='middle'
+              text={action.label}
+              disabled={disabled}
+              onClick={() => move(action.input)} // hardcoded for now
+            />
+          </div>
+        );
+      }
 
       return (
         <ModalWrapperFull
@@ -81,6 +162,7 @@ export function registerDialogueModal() {
             {dialogueNode.text[step]}
             <ButtonRow>
               <BackButton />
+              <MiddleButton />
               <NextButton />
             </ButtonRow>
           </Text>
