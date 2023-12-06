@@ -13,6 +13,10 @@ import dialogues11 from './11_waterfall';
 import dialogues12 from './12_junkyard-machine';
 import dialogues13 from './13_giftshop';
 import dialogues14 from './14_office-ceo';
+import dialogues15 from './15_temple-cave';
+import dialogues16 from './16_techno-temple';
+import dialogues18 from './18_cave-crossroads';
+import dialogues19 from './19_violence-temple';
 
 const dialogues00: DialogueNode[] = [
   {
@@ -41,6 +45,10 @@ const dialogueList = dialogues00.concat(
   dialogues12,
   dialogues13,
   dialogues14,
+  dialogues15,
+  dialogues16,
+  dialogues18,
+  dialogues19,
 );
 
 // aggregated map of all dialogue nodes, referenced by index

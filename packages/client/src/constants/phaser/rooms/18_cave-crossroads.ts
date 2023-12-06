@@ -5,9 +5,8 @@ import {
   path20,
 } from 'assets/images/rooms/18_cave-crossroads';
 import { cave } from 'assets/sound/ost';
-
-import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
 import { Room } from 'constants/phaser/rooms';
+
 
 export const room18: Room = {
   location: 18,
@@ -24,19 +23,19 @@ export const room18: Room = {
       key: 'cavefloor',
       path: path15,
       offset: { x: 25, y: 53.1 },
-      onClick: () => triggerRoomMovementModal(15),
+      dialogue: 181,
     },
     {
       key: 'cavecrossleft',
       path: path19,
       offset: { x: -46, y: -5.8 },
-      onClick: () => triggerRoomMovementModal(19),
+      dialogue: 182,
     },
     {
       key: 'cavecrossright',
       path: path20,
       offset: { x: 18.5, y: -19.7 },
-      onClick: () => triggerRoomMovementModal(15),
+      dialogue: 183,
     },
   ],
 };

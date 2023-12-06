@@ -5,9 +5,8 @@ import {
   path18
 } from 'assets/images/rooms/15_temple-cave';
 import { cave } from 'assets/sound/ost';
-
-import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
 import { Room } from 'constants/phaser/rooms';
+
 
 export const room15: Room = {
   location: 15,
@@ -24,19 +23,19 @@ export const room15: Room = {
       key: 'templegrass',
       path: path11,
       offset: { x: -8.5, y: 57 },
-      onClick: () => triggerRoomMovementModal(11),
+      dialogue: 151,
     },
     {
       key: 'templedoor',
       path: path16,
       offset: { x: 41.3, y: -8.7 },
-      onClick: () => triggerRoomMovementModal(16),
+      dialogue: 152,
     },
     {
       key: 'templecave',
       path: path18,
       offset: { x: -18, y: -15 },
-      onClick: () => triggerRoomMovementModal(18),
+      dialogue: 153,
     },
   ],
 };

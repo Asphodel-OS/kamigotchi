@@ -4,10 +4,9 @@ import {
   objectDharmaWheel,
 } from 'assets/images/rooms/19_violence-temple';
 import { cave } from 'assets/sound/ost';
-
-import { triggerLeaderboardModal } from 'layers/phaser/utils/triggerLeaderboardModal';
-import { triggerRoomMovementModal } from 'layers/phaser/utils/triggerRoomMovementModal';
 import { Room } from 'constants/phaser/rooms';
+import { triggerLeaderboardModal } from 'layers/phaser/utils/triggerLeaderboardModal';
+
 
 export const room19: Room = {
   location: 19,
@@ -24,7 +23,7 @@ export const room19: Room = {
       key: 'violencefloor',
       path: path18,
       offset: { x: -4, y: 59.1 },
-      onClick: () => triggerRoomMovementModal(18),
+      dialogue: 191,
     },
     {
       key: 'dharmawheel',

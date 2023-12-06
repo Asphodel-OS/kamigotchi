@@ -18,10 +18,8 @@ const smallshrine: DialogueNode = {
 const waterfall: DialogueNode = {
   index: 113,
   text: [
-    'The currents in the pond are twisting themselves into a knot.',
-    'The water turns thick and still like in an abandoned aquarium, covered in slime and layers of rotten plant matter.',
-    'Decaying, throbbing algae and seaweed reach out from the bottom, and a melodic howling echoes from behind.',
-    'Would you like to explore beyond?'
+    "Water pours down from a great height, but the pool is shallower than expected.",
+    "Where could the water be going? Maybe we should explore further.",
   ],
   action: {
     type: 'move',
