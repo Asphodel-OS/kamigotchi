@@ -214,15 +214,18 @@ export const List = (props: Props) => {
   }
 
   const getRewardText = (reward: Reward): string => {
+    const value = reward.target.value! * 1;
     switch (reward.target.type) {
       case 'COIN':
-        return `${reward.target.value! * 1} $MUSU`;
+        return `${value} $MUSU`;
       case 'ITEM':
-        return `${reward.target.value! * 1} ${getItemName(reward.target.index!)}`;
+        return `${value} ${getItemName(reward.target.index!)}`;
       case 'EXPERIENCE':
-        return `${reward.target.value! * 1} Experience`;
+        return `${value} Experience`;
       case 'MINT20':
-        return `${reward.target.value! * 1} $KAMI`;
+        return `${value} $KAMI`;
+      case 'QUEST_POINTS':
+        return `${value} Quest Point${value == 1 ? '' : 's'}`;
       default:
         return '???';
     }
@@ -351,6 +354,10 @@ export const List = (props: Props) => {
 
   const RewardDisplay = (rewards: Reward[]) => {
     if (rewards.length == 0) return <div />;
+
+    // sort rewards so Quest Points are always first
+    const first = "QUEST_POINTS";
+    rewards.sort((x, y) => { return x.target.type == first ? -1 : y.target.type == first ? 1 : 0; });
     return (
       <ConditionContainer key='rewards'>
         <ConditionName>Rewards</ConditionName>

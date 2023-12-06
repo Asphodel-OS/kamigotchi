@@ -27,6 +27,7 @@ export interface Account {
   coin: number;
   location: number;
   level: number;
+  questPoints: number;
   skillPoints: number;
   stamina: {
     total: number;
@@ -83,6 +84,7 @@ export const getAccount = (
         Name,
         OperatorAddress,
         OwnerAddress,
+        QuestPoint,
         Stamina,
         StaminaCurrent,
         StartTime,
@@ -100,6 +102,7 @@ export const getAccount = (
     coin: (getComponentValue(Coin, entityIndex)?.value as number) * 1,
     location: (getComponentValue(Location, entityIndex)?.value || 0 as number) * 1,
     level: 0, // placeholder
+    questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || 0) as number,
     skillPoints: 0, // placeholder
     stamina: {
       total: getComponentValue(Stamina, entityIndex)?.value as number,

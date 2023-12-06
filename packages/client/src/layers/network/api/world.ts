@@ -393,6 +393,7 @@ export function setUpWorldAPI(systems: any) {
     );
     await api.registry.quest.add.objective(1, "Find the vending machine", "AT", "ROOM", 0, 4);
     await api.registry.quest.add.reward(1, "MINT20", 0, 5);
+    await api.registry.quest.add.reward(1, "QUEST_POINTS", 0, 1);
 
     // quest 2
     await api.registry.quest.create(
@@ -405,6 +406,7 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
     await api.registry.quest.add.objective(2, "Mint a Kami", "MINT", "PET721_MINT", 0, 1);
     await api.registry.quest.add.reward(2, "ITEM", 2, 1);
+    await api.registry.quest.add.reward(2, "QUEST_POINTS", 0, 2);
 
     // quest 3
     await api.registry.quest.create(
@@ -417,6 +419,7 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
     await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN_TOTAL", 0, 1);
     await api.registry.quest.add.reward(3, "ITEM", 1001, 1);
+    await api.registry.quest.add.reward(3, "QUEST_POINTS", 0, 2);
 
     // quest 4
     await api.registry.quest.create(
@@ -429,6 +432,7 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
     await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN_TOTAL", 0, 100);
     await api.registry.quest.add.reward(4, "ITEM", 1001, 3);
+    await api.registry.quest.add.reward(4, "QUEST_POINTS", 0, 3);
 
     // quest 5
     await api.registry.quest.create(
@@ -441,6 +445,7 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
     await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN_TOTAL", 0, 1000);
     await api.registry.quest.add.reward(5, "ITEM", 1001, 5);
+    await api.registry.quest.add.reward(5, "QUEST_POINTS", 0, 4);
 
     // quest 6
     await api.registry.quest.create(
@@ -453,6 +458,7 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
     await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN_TOTAL", 0, 5000);
     await api.registry.quest.add.reward(6, "ITEM", 1001, 10);
+    await api.registry.quest.add.reward(6, "QUEST_POINTS", 0, 8);
 
     // quest 7
     await api.registry.quest.create(

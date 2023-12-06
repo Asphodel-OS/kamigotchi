@@ -122,6 +122,7 @@ export function createComponents(world: World) {
     LogicType: defineStringEZ("LogicType", "component.LogicType"),
     Max: defineNumberEZ("Max", "component.Max"),
     Name: defineStringEZ("Name", "component.Name"),
+    QuestPoint: defineNumberEZ("QuestPoint", "component.QuestPoint"),
     Power: defineNumberEZ("Power", "component.Power"),
     PriceBuy: defineNumberEZ("PriceBuy", "component.PriceBuy"),
     PriceSell: defineNumberEZ("PriceSell", "component.PriceSell"),
