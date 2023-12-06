@@ -1,3 +1,4 @@
+import { EntityID } from '@latticexyz/recs';
 import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -5,6 +6,7 @@ import crypto from "crypto";
 
 import { feedIcon } from "assets/images/icons/actions";
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { IconButton } from 'layers/react/components/library/IconButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -13,8 +15,6 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
-import { IconButton } from '../../library';
-import { EntityID } from '@latticexyz/recs';
 
 
 export function registerEMABoardModal() {
