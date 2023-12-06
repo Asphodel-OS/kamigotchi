@@ -47,8 +47,8 @@ export const getItem = (
         FoodIndex,
         ReviveIndex,
         ItemIndex,
+        IsConsumable,
         IsLootbox,
-        IsMiscItem,
         MediaURI,
         Name,
         IsFungible,
@@ -80,8 +80,8 @@ export const getItem = (
     Item.familyIndex = getComponentValue(ReviveIndex, index)?.value as number * 1;
   } else if (hasComponent(IsLootbox, index)) {
     Item.type = 'LOOTBOX';
-  } else if (hasComponent(IsMiscItem, index)) {
-    Item.type = 'MISC';
+  } else if (hasComponent(IsConsumable, index)) {
+    Item.type = 'CONSUMABLE';
   }
 
   return Item;

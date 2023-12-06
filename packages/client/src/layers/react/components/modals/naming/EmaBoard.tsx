@@ -78,7 +78,7 @@ export function registerEMABoardModal() {
       };
 
       const useRenamePotion = (kami: Kami) => {
-        const inv = data.account.inventories?.misc.find((inv) => inv.item.index === 9001);
+        const inv = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001);
         if (!inv) return;
 
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
@@ -88,7 +88,7 @@ export function registerEMABoardModal() {
           params: [kami.id, inv.id],
           description: `Using holy dust on ${kami.name}`,
           execute: async () => {
-            return api.item.use.misc.renamePotion(kami.id, inv.id);
+            return api.pet.use(kami.id, inv.id);
           },
         });
       }
@@ -132,7 +132,7 @@ export function registerEMABoardModal() {
         if (canName(kami)) return <div></div>;
 
         console.log(data.account.inventories)
-        const dustAmtRaw = data.account.inventories?.misc.find((inv) => inv.item.index === 9001)?.balance;
+        const dustAmtRaw = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001)?.balance;
         const dustAmt = dustAmtRaw ? dustAmtRaw : 0;
 
         let button = (

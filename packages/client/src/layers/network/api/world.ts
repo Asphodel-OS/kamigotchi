@@ -288,11 +288,10 @@ export function setUpWorldAPI(systems: any) {
   }
 
   async function setMisc(api: AdminAPI, item: any) {
-    await api.registry.item.create.misc(
+    await api.registry.item.create.consumable(
       item.get('Index'),
       item.get('Name'),
       item.get('Description'),
-      item.get('miscFungible') === 'TRUE',
       item.get('miscCategory'),
       item.get('MediaURI')
     );

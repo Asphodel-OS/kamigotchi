@@ -24,6 +24,10 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
+  // use a pet item
+  function usePetItem(petID: BigNumberish, invID: BigNumberish) {
+    return systems["system.Pet.Use.Item"].executeTyped(petID, invID);
+  }
 
   /////////////////
   //   ACCOUNT
@@ -64,14 +68,6 @@ export function createPlayerAPI(systems: any) {
   // @param operatorAddress   address of the Operator wallet
   function setAccountOperator(operatorAddress: BigNumberish) {
     return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
-  }
-
-  /////////////////
-  //   ITEMS
-
-  // use a rename potion
-  function useRenamePotion(petID: BigNumberish, invID: BigNumberish) {
-    return systems["system.Item.Rename"].executeTyped(petID, invID);
   }
 
   /////////////////
@@ -274,6 +270,7 @@ export function createPlayerAPI(systems: any) {
       level: levelPet,
       name: namePet,
       revive: revivePet,
+      use: usePetItem,
     },
     account: {
       fund: fundOperator,
@@ -284,13 +281,6 @@ export function createPlayerAPI(systems: any) {
         name: setAccountName,
         operator: setAccountOperator,
       },
-    },
-    item: {
-      use: {
-        misc: {
-          renamePotion: useRenamePotion,
-        },
-      }
     },
     listing: {
       buy: buyFromListing,
