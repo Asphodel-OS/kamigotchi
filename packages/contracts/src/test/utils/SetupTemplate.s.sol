@@ -88,7 +88,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.startPrank(owner);
     // string memory name = LibString.slice(LibString.toHexString(owner), 0, 15); // maxlen 16
-    _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex));
+    _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex), "strawberry");
     vm.stopPrank();
   }
 

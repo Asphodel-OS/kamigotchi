@@ -7,9 +7,9 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
-uint256 constant ID = uint256(keccak256("system._Registry.MiscItem.Create"));
+uint256 constant ID = uint256(keccak256("system._Registry.Create.Item.Consumable"));
 
-contract _RegistryCreateMiscItemSystem is System {
+contract _RegistryCreateItemConsumableSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
@@ -17,16 +17,15 @@ contract _RegistryCreateMiscItemSystem is System {
       uint256 index,
       string memory name,
       string memory description,
-      bool fungible,
       string memory type_,
       string memory media
-    ) = abi.decode(arguments, (uint256, string, string, bool, string, string));
+    ) = abi.decode(arguments, (uint256, string, string, string, string));
 
     uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
     require(registryID == 0, "CreateMiscItem: index alr exists");
     require(!LibString.eq(name, ""), "CreateMiscItem: name empty");
 
-    LibRegistryItem.createMisc(world, components, index, name, description, fungible, type_, media);
+    LibRegistryItem.createConsumable(world, components, index, name, description, type_, media);
 
     return "";
   }
@@ -35,10 +34,9 @@ contract _RegistryCreateMiscItemSystem is System {
     uint256 index,
     string memory name,
     string memory description,
-    bool fungible,
     string memory type_,
     string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, description, fungible, type_, media));
+    return execute(abi.encode(index, name, description, type_, media));
   }
 }

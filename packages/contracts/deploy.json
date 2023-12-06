@@ -51,8 +51,9 @@
     "IndexTraitComponent",
     "IsAccountComponent",
     "IsBonusComponent",
-    "IsConfigComponent",
     "IsCompleteComponent",
+    "IsConfigComponent",
+    "IsConsumableComponent",
     "IsDataComponent",
     "IsEffectComponent",
     "IsEquippedComponent",
@@ -65,7 +66,6 @@
     "IsNodeComponent",
     "IsNonFungibleComponent",
     "IsNPCComponent",
-    "IsMiscItemComponent",
     "IsPetComponent",
     "IsProductionComponent",
     "IsRegistryComponent",
@@ -207,6 +207,19 @@
       ]
     },
     {
+      "name": "_RegistryCreateItemConsumableSystem",
+      "writeAccess": [
+        "IsConsumableComponent",
+        "IsRegistryComponent",
+        "IsFungibleComponent",
+        "IndexItemComponent",
+        "DescriptionComponent",
+        "MediaURIComponent",
+        "NameComponent",
+        "TypeComponent"
+      ]
+    },
+    {
       "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
         "ExperienceComponent",
@@ -248,19 +261,6 @@
         "IndexItemComponent",
         "KeysComponent",
         "WeightsComponent",
-        "NameComponent",
-        "MediaURIComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateMiscItemSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "IsRegistryComponent",
-        "IsFungibleComponent",
-        "IsMiscItemComponent",
-        "IndexItemComponent",
-        "TypeComponent",
         "NameComponent",
         "MediaURIComponent"
       ]
@@ -392,7 +392,7 @@
         "IndexModComponent",
         "IndexReviveComponent",
         "IsLootboxComponent",
-        "IsMiscItemComponent",
+        "IsConsumableComponent",
         "HealthComponent",
         "PowerComponent",
         "ViolenceComponent",
@@ -771,6 +771,14 @@
       ]
     },
     {
+      "name": "PetUseItemSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CanNameComponent"
+      ]
+    },
+    {
       "name": "ProductionCollectSystem",
       "writeAccess": [
         "BalanceComponent",
@@ -898,14 +906,6 @@
         "IdAccountComponent",
         "IndexNPCComponent",
         "IndexRelationshipComponent"
-      ]
-    },
-    {
-      "name": "RenamePotionSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "BlockLastComponent",
-        "CanNameComponent"
       ]
     },
     {
