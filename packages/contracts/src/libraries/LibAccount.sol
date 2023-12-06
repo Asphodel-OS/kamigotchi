@@ -18,6 +18,7 @@ import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastC
 import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
@@ -125,6 +126,8 @@ library LibAccount {
       address to = getOwner(components, id);
       setMint20Minted(world, components, id, accountMinted + amount);
       LibMint20.mint(world, to, amount);
+    } else if (LibString.eq(_type, "QUEST_POINTS")) {
+      setQuestPoints(components, id, getQuestPoints(components, id) + amount);
     } else {
       require(false, "LibAccount: unknown type");
     }
@@ -159,6 +162,10 @@ library LibAccount {
 
   function setCurrStamina(IUintComp components, uint256 id, uint256 amt) internal {
     StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, amt);
+  }
+
+  function setQuestPoints(IUintComp components, uint256 id, uint256 amt) internal {
+    QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, amt);
   }
 
   function setMint20Minted(
@@ -230,6 +237,12 @@ library LibAccount {
 
   function getCurrStamina(IUintComp components, uint256 id) internal view returns (uint256) {
     return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
+  }
+
+  function getQuestPoints(IUintComp components, uint256 id) internal view returns (uint256) {
+    QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
+    if (comp.has(id)) return comp.getValue(id);
+    else return 0;
   }
 
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {

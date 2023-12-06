@@ -287,4 +287,21 @@ contract QuestsTest is SetupTemplate {
     _completeQuest(0, questID);
     assertEq(2 * 10 ** 18, _Mint20.balanceOf(_getOwner(0)));
   }
+
+  function testRewardPoints() public {
+    // create quest
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuestReward(1, "QUEST_POINTS", 0, 2);
+
+    // register account
+    _registerAccount(0);
+    address operator = _getOperator(0);
+
+    // accept quest
+    uint256 questID = _acceptQuest(0, 1);
+
+    // check that Mint20 is properly distributed
+    _completeQuest(0, questID);
+    assertEq(LibAccount.getQuestPoints(components, _getAccount(0)), 2);
+  }
 }
