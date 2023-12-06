@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { of } from 'rxjs';
-import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
+import React, { useState } from 'react';
+import { of } from 'rxjs';
+import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
