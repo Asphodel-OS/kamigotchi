@@ -4,7 +4,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import crypto from "crypto";
 
-import { feedIcon } from "assets/images/icons/actions";
+import { useIcon } from "assets/images/icons/actions";
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
@@ -131,14 +131,13 @@ export function registerEMABoardModal() {
       const UseDustButton = (kami: Kami) => {
         if (canName(kami)) return <div></div>;
 
-        console.log(data.account.inventories)
         const dustAmtRaw = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001)?.balance;
         const dustAmt = dustAmtRaw ? dustAmtRaw : 0;
 
         let button = (
           <IconButton
             id='use_dust_button'
-            img={feedIcon}
+            img={useIcon}
             onClick={() => useRenamePotion(kami)}
             disabled={dustAmt == 0 || isHarvesting(kami) || isDead(kami)}
           />
@@ -151,7 +150,7 @@ export function registerEMABoardModal() {
         } else if (dustAmt == 0) {
           return <Tooltip text={['you have no holy dust']}>{button}</Tooltip>
         }
-        return button;
+        return <Tooltip text={['use holy dust']}>{button}</Tooltip>;
       }
 
       const CombinedButton = (kami: Kami) => {
