@@ -82,11 +82,6 @@
           "type": "string"
         },
         {
-          "internalType": "bool",
-          "name": "fungible",
-          "type": "bool"
-        },
-        {
           "internalType": "string",
           "name": "type_",
           "type": "string"
@@ -137,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,string,bool,string,string)": "788df13f",
+    "executeTyped(uint256,string,string,string,string)": "0b485fcd",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

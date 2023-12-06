@@ -27,10 +27,11 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface RenamePotionSystemInterface extends utils.Interface {
+export interface _RegistryCreateItemConsumableSystemInterface
+  extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -49,7 +50,13 @@ export interface RenamePotionSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -87,12 +94,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface RenamePotionSystem extends BaseContract {
+export interface _RegistryCreateItemConsumableSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: RenamePotionSystemInterface;
+  interface: _RegistryCreateItemConsumableSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -120,8 +127,11 @@ export interface RenamePotionSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -139,8 +149,11 @@ export interface RenamePotionSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    id: PromiseOrValue<BigNumberish>,
-    invID: PromiseOrValue<BigNumberish>,
+    index: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
+    description: PromiseOrValue<string>,
+    type_: PromiseOrValue<string>,
+    media: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -158,8 +171,11 @@ export interface RenamePotionSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -189,8 +205,11 @@ export interface RenamePotionSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -209,8 +228,11 @@ export interface RenamePotionSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      id: PromiseOrValue<BigNumberish>,
-      invID: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
+      type_: PromiseOrValue<string>,
+      media: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

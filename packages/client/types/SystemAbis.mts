@@ -13,8 +13,8 @@ import _NPCSetLocationSystem from "../abi/_NPCSetLocationSystem.json";
 import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
+import _RegistryCreateItemConsumableSystem from "../abi/_RegistryCreateItemConsumableSystem.json";
 import _RegistryCreateLootboxSystem from "../abi/_RegistryCreateLootboxSystem.json";
-import _RegistryCreateMiscItemSystem from "../abi/_RegistryCreateMiscItemSystem.json";
 import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
 import _RegistryCreateQuestObjectiveSystem from "../abi/_RegistryCreateQuestObjectiveSystem.json";
 import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRequirementSystem.json";
@@ -63,6 +63,7 @@ import PetLevelSystem from "../abi/PetLevelSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetReviveSystem from "../abi/PetReviveSystem.json";
 import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
+import PetUseItemSystem from "../abi/PetUseItemSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
 import ProductionLiquidateSystem from "../abi/ProductionLiquidateSystem.json";
 import ProductionStartSystem from "../abi/ProductionStartSystem.json";
@@ -71,7 +72,6 @@ import QuestAcceptSystem from "../abi/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
 import QuestDropSystem from "../abi/QuestDropSystem.json";
 import RelationshipAdvanceSystem from "../abi/RelationshipAdvanceSystem.json";
-import RenamePotionSystem from "../abi/RenamePotionSystem.json";
 import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
 import TradeAcceptSystem from "../abi/TradeAcceptSystem.json";
 import TradeAddToSystem from "../abi/TradeAddToSystem.json";
@@ -94,8 +94,8 @@ export const SystemAbis = {
   "system._NPC.Set.Name": _NPCSetNameSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
+  "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem.abi,
   "system._Registry.Lootbox.Create": _RegistryCreateLootboxSystem.abi,
-  "system._Registry.MiscItem.Create": _RegistryCreateMiscItemSystem.abi,
   "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
   "system._Registry.Quest.Create.Objective": _RegistryCreateQuestObjectiveSystem.abi,
   "system._Registry.Quest.Create.Requirement": _RegistryCreateQuestRequirementSystem.abi,
@@ -144,6 +144,7 @@ export const SystemAbis = {
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,
   "system.Pet.SetAccount": PetSetAccountSystem.abi,
+  "system.Pet.Use.Item": PetUseItemSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
   "system.Production.Liquidate": ProductionLiquidateSystem.abi,
   "system.Production.Start": ProductionStartSystem.abi,
@@ -152,7 +153,6 @@ export const SystemAbis = {
   "system.Quest.Complete": QuestCompleteSystem.abi,
   "system.Quest.Drop": QuestDropSystem.abi,
   "system.Relationship.Advance": RelationshipAdvanceSystem.abi,
-  "system.Item.Rename": RenamePotionSystem.abi,
   "system.Skill.Upgrade": SkillUpgradeSystem.abi,
   "system.Trade.Accept": TradeAcceptSystem.abi,
   "system.Trade.AddTo": TradeAddToSystem.abi,
