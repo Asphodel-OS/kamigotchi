@@ -3,6 +3,7 @@ import { map, merge } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import crypto from "crypto";
 
+import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';
 import { questsIcon } from 'assets/images/icons/menu';
@@ -13,7 +14,6 @@ import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
 import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
-import 'layers/react/styles/font.css';
 
 
 export function registerQuestsModal() {
@@ -41,6 +41,7 @@ export function registerQuestsModal() {
             IsReward,
             Location,
             QuestIndex,
+            QuestPoint,
             Value,
           },
           notifications
@@ -58,6 +59,7 @@ export function registerQuestsModal() {
         IsObjective.update$,
         Location.update$,
         QuestIndex.update$,
+        QuestPoint.update$,
         Value.update$,
       ).pipe(
         map(() => {
@@ -145,6 +147,7 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
+          footer={<Footer balance={data.account.questPoints} />}
           canExit
         >
           <List
