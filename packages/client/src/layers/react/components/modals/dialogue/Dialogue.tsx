@@ -28,29 +28,19 @@ export function registerDialogueModal() {
         network: {
           actions,
           components: {
-            AccountID,
-            Balance,
-            Coin,
-            Description,
-            HolderID,
-            ItemIndex,
-            MediaURI,
+            IsRoom,
+            Exits,
+            Location,
             Name,
-            OwnerAddress,
           },
         },
       } = layers;
 
       return merge(
-        AccountID.update$,
-        Balance.update$,
-        Coin.update$,
-        Description.update$,
-        HolderID.update$,
-        ItemIndex.update$,
-        MediaURI.update$,
+        IsRoom.update$,
+        Exits.update$,
+        Location.update$,
         Name.update$,
-        OwnerAddress.update$,
       ).pipe(
         map(() => {
           return {
