@@ -521,7 +521,9 @@ export function createAdminAPI(systems: any) {
         string: setConfigString,
       },
     },
-    listing: { set: setListing },
+    listing: {
+      set: setListing,
+    },
     node: {
       create: createNode,
       set: {

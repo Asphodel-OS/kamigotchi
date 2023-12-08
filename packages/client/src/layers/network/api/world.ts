@@ -88,10 +88,10 @@ export function setUpWorldAPI(systems: any) {
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
     // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    await api.config.set.number('HEALTH_RATE_DRAIN_BASE', 40); // in respect to harvest rate
+    await api.config.set.number('HEALTH_RATE_DRAIN_BASE', 20); // in respect to harvest rate
     await api.config.set.number('HEALTH_RATE_DRAIN_BASE_PREC', 2); // i.e. x/100
     await api.config.set.number('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
-    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 150); // in respect to harmony
+    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 120); // in respect to harmony
     await api.config.set.number('HEALTH_RATE_HEAL_BASE_PREC', 2); // i.e. x/100
 
 
@@ -112,7 +112,7 @@ export function setUpWorldAPI(systems: any) {
   async function initLocalConfig(api: AdminAPI) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
-    await api.config.set.number('KAMI_LVL_REQ_BASE', 10); // experience required for level 1->2
+    await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
     await api.config.set.number('HARVEST_RATE_BASE', 10000); // in respect to power
     await api.config.set.number('HEALTH_RATE_HEAL_BASE', 10000); // in respect to harmony
   }
@@ -306,9 +306,9 @@ export function setUpWorldAPI(systems: any) {
     // create our hottie merchant ugajin. names are unique
     await api.npc.create(1, 'Mina', 13);
 
-    await api.listing.set(1, 1, 25, 0); // merchant index, item index, buy price, sell price
-    await api.listing.set(1, 2, 90, 0);
-    await api.listing.set(1, 3, 150, 0);
+    await api.listing.set(1, 1, 50, 0); // merchant index, item index, buy price, sell price
+    await api.listing.set(1, 2, 180, 0);
+    await api.listing.set(1, 3, 320, 0);
     await api.listing.set(1, 1001, 500, 0);
   }
 
