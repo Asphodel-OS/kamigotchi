@@ -1,5 +1,5 @@
 {
-  "last deployed": "16th November 2023",
+  "last deployed": "9th December 2023",
   "undeployed": [],
   "components": [
     "AddressOperatorComponent",
@@ -54,6 +54,7 @@
     "IsAccountComponent",
     "IsBonusComponent",
     "IsConfigComponent",
+    "IsConsumableComponent",
     "IsCompleteComponent",
     "IsDataComponent",
     "IsEffectComponent",
@@ -220,6 +221,20 @@
       ]
     },
     {
+      "name": "_RegistryCreateItemConsumableSystem",
+      "last deployed": "9th December 2023",
+      "writeAccess": [
+        "IsConsumableComponent",
+        "IsRegistryComponent",
+        "IsFungibleComponent",
+        "IndexItemComponent",
+        "DescriptionComponent",
+        "MediaURIComponent",
+        "NameComponent",
+        "TypeComponent"
+      ]
+    },
+    {
       "last deployed": "29th October 2023",
       "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
@@ -383,10 +398,11 @@
       ]
     },
     {
-      "last deployed": "29th October 2023",
+      "last deployed": "9th December 2023",
       "name": "_RegistryDeleteItemSystem",
       "writeAccess": [
         "DescriptionComponent",
+        "ExperienceComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
         "IsNonFungibleComponent",
@@ -398,6 +414,7 @@
         "IndexModComponent",
         "IndexReviveComponent",
         "IsLootboxComponent",
+        "IsConsumableComponent",
         "HealthComponent",
         "PowerComponent",
         "ViolenceComponent",
@@ -805,6 +822,15 @@
       "name": "PetSetAccountSystem",
       "writeAccess": [
         "IdAccountComponent"
+      ]
+    },
+    {
+      "last deployed": "9th December 2023",
+      "name": "PetUseItemSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CanNameComponent"
       ]
     },
     {
