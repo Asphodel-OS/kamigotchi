@@ -67,9 +67,15 @@
     {
       "inputs": [
         {
+<<<<<<< HEAD
           "internalType": "address",
           "name": "addr",
           "type": "address"
+=======
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+>>>>>>> 9e95531 (friends system FE)
         }
       ],
       "name": "executeTyped",
@@ -112,7 +118,11 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
+<<<<<<< HEAD
     "executeTyped(address)": "240b27e6",
+=======
+    "executeTyped(uint256)": "3e991df3",
+>>>>>>> 9e95531 (friends system FE)
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }
