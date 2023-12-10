@@ -44,6 +44,10 @@ import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
 import Farm20DepositSystem from "../abi/Farm20DepositSystem.json";
 import Farm20ProxySystem from "../abi/Farm20ProxySystem.json";
 import Farm20WithdrawSystem from "../abi/Farm20WithdrawSystem.json";
+import FriendAcceptSystem from "../abi/FriendAcceptSystem.json";
+import FriendBlockSystem from "../abi/FriendBlockSystem.json";
+import FriendCancelSystem from "../abi/FriendCancelSystem.json";
+import FriendRequestSystem from "../abi/FriendRequestSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
 import LootboxExecuteRevealSystem from "../abi/LootboxExecuteRevealSystem.json";
@@ -125,6 +129,10 @@ export const SystemAbis = {
   "system.Farm20.Deposit": Farm20DepositSystem.abi,
   "system.Farm20.Proxy": Farm20ProxySystem.abi,
   "system.Farm20.Withdraw": Farm20WithdrawSystem.abi,
+  "system.Friend.Accept": FriendAcceptSystem.abi,
+  "system.Friend.Block": FriendBlockSystem.abi,
+  "system.Friend.Cancel": FriendCancelSystem.abi,
+  "system.Friend.Request": FriendRequestSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem.abi,

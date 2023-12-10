@@ -44,6 +44,10 @@ import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorS
 import { Farm20DepositSystem } from "./ethers-contracts/Farm20DepositSystem";
 import { Farm20ProxySystem } from "./ethers-contracts/Farm20ProxySystem";
 import { Farm20WithdrawSystem } from "./ethers-contracts/Farm20WithdrawSystem";
+import { FriendAcceptSystem } from "./ethers-contracts/FriendAcceptSystem";
+import { FriendBlockSystem } from "./ethers-contracts/FriendBlockSystem";
+import { FriendCancelSystem } from "./ethers-contracts/FriendCancelSystem";
+import { FriendRequestSystem } from "./ethers-contracts/FriendRequestSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
 import { LootboxExecuteRevealSystem } from "./ethers-contracts/LootboxExecuteRevealSystem";
@@ -125,6 +129,10 @@ export type SystemTypes = {
   "system.Farm20.Deposit": Farm20DepositSystem;
   "system.Farm20.Proxy": Farm20ProxySystem;
   "system.Farm20.Withdraw": Farm20WithdrawSystem;
+  "system.Friend.Accept": FriendAcceptSystem;
+  "system.Friend.Block": FriendBlockSystem;
+  "system.Friend.Cancel": FriendCancelSystem;
+  "system.Friend.Request": FriendRequestSystem;
   "system.Listing.Buy": ListingBuySystem;
   "system.Listing.Sell": ListingSellSystem;
   "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem;

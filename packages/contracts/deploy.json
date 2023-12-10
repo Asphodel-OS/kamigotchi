@@ -57,6 +57,7 @@
     "IsDataComponent",
     "IsEffectComponent",
     "IsEquippedComponent",
+    "IsFriendshipComponent",
     "IsFungibleComponent",
     "IsInventoryComponent",
     "IsKillComponent",
@@ -555,6 +556,46 @@
       ]
     },
     {
+      "name": "FriendAcceptSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "FriendBlockSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "FriendCancelSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "FriendRequestSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
       "name": "ListingBuySystem",
       "writeAccess": [
         "BalanceComponent",
@@ -939,6 +980,7 @@
     "LibConfig",
     "LibDataEntity",
     "LibExperience",
+    "LibFriend",
     "LibInventory",
     "LibKill",
     "LibListing",
