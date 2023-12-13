@@ -1,7 +1,7 @@
 import { backgroundDefault } from 'assets/images/rooms/17_misty-park';
 import { cave } from 'assets/sound/ost';
 
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 export const room17: Room = {
   location: 17,

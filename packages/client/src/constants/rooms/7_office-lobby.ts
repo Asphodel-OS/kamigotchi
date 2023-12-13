@@ -4,7 +4,7 @@ import {
   objectChair,
 } from 'assets/images/rooms/7_office-lobby';
 import { abandoned } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room7: Room = {

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { DialogueNode, dialogues } from 'constants/phaser/dialogue';
+import { DialogueNode, dialogues } from 'constants/dialogue';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';

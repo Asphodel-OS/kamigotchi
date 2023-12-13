@@ -5,7 +5,7 @@ import {
   objectShopDoor,
 } from 'assets/images/rooms/2_tree-tunnel';
 import { arrival } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room2: Room = {

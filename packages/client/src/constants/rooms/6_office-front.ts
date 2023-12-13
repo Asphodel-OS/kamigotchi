@@ -4,7 +4,7 @@ import {
   objectFoxStatues,
 } from 'assets/images/rooms/6_office-front';
 import { amusement } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room6: Room = {

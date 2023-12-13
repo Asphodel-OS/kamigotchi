@@ -1,6 +1,6 @@
 import { backgroundDefault, path15 } from 'assets/images/rooms/16_techno-temple';
 import { cave } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room16: Room = {

@@ -6,7 +6,7 @@ import {
   objectPrayerWheels,
 } from 'assets/images/rooms/12_junkyard-machine';
 import { mystique } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
 import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggerERC721BridgeModal';

@@ -7,7 +7,7 @@ import {
   objectWaterfall,
 } from 'assets/images/rooms/14_office-ceo';
 import { abandoned } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
 
 

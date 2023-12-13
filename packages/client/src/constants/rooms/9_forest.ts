@@ -7,7 +7,7 @@ import {
   objectSmallMushrooms,
 } from 'assets/images/rooms/9_forest';
 import { glitter } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room9: Room = {

@@ -5,7 +5,7 @@ import {
   objectVendingMachine,
 } from 'assets/images/rooms/4_junkyard';
 import { mystique } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggerPetMintModal';
 
 

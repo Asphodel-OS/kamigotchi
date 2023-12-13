@@ -5,7 +5,7 @@ import {
   objectWarningSign,
 } from 'assets/images/rooms/5_restricted';
 import { amusement } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room5: Room = {

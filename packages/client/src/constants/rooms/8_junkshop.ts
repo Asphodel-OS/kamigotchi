@@ -6,7 +6,7 @@ import {
   objectVendingWall,
 } from 'assets/images/rooms/8_junkshop';
 import { abandoned } from 'assets/sound/ost';
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 
 
 export const room8: Room = {
