@@ -14,6 +14,7 @@ import { Inventory, sortInventories, queryInventoryX } from './Inventory';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
 import { Skill } from './Skill';
+import { Friendship, getAccFriends, getAccIncoming, getAccOutgoing, getAccBlocked } from './Friendship';
 
 
 // standardized shape of an Account Entity
@@ -38,6 +39,12 @@ export interface Account {
   lastMoveTs: number;
   creationTs: number;
   kamis?: Kami[];
+  friends?: {
+    friends: Friendship[];
+    incomingReqs: Friendship[];
+    outgoingReqs: Friendship[];
+    blocked: Friendship[];
+  }
   inventories?: Inventories;
   lootboxLogs?: {
     unrevealed: LootboxLog[];
@@ -55,6 +62,7 @@ export interface AccountOptions {
   inventory?: boolean;
   quests?: boolean;
   lootboxLogs?: boolean;
+  friends?: boolean;
 }
 
 export interface Inventories {
@@ -165,6 +173,16 @@ export const getAccount = (
     );
   }
 
+  // populate Friends
+  if (options?.friends) {
+    account.friends = {
+      friends: getAccFriends(layers, account),
+      incomingReqs: getAccIncoming(layers, account),
+      outgoingReqs: getAccOutgoing(layers, account),
+      blocked: getAccBlocked(layers, account),
+    }
+  }
+
   // populate Quests
   if (options?.quests) {
     account.quests = {
@@ -185,6 +203,20 @@ export const getAccount = (
 
   return account;
 };
+
+// get an Account from its entityID
+export const getAccountByID = (
+  layers: Layers,
+  id: EntityID,
+  options?: AccountOptions
+) => {
+  const { network: { world } } = layers;
+  return getAccount(
+    layers,
+    world.entityToIndex.get(id) as EntityIndex,
+    options
+  );
+}
 
 // get an Account from its Username
 export const getAccountByName = (

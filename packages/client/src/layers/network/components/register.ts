@@ -41,6 +41,7 @@ export function createComponents(world: World) {
     IsEffect: defineBoolEZ("IsEffect", "component.Is.Effect"),
     IsEquipped: defineBoolEZ("IsEquipped", "component.Is.Equipped"),
     IsFungible: defineBoolEZ("IsFungible", "component.Is.Fungible"),
+    IsFriendship: defineBoolEZ("IsFriendship", "component.Is.Friendship"),
     IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
     IsKill: defineBoolEZ("IsKill", "component.Is.Kill"),
     IsListing: defineBoolEZ("IsListing", "component.Is.Listing"),

@@ -23,8 +23,6 @@ import {
 } from "layers/react/shapes/Kami";
 import { getRateDisplay } from 'utils/rates';
 
-
-
 interface Props {
   account: Account;
   actions: {

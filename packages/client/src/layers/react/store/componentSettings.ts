@@ -55,6 +55,7 @@ export interface Buttons {
   party: boolean;
   quests: boolean;
   settings: boolean;
+  social: boolean;
 }
 
 export const toggleButtons = (isOn: boolean): Buttons => ({
@@ -64,6 +65,7 @@ export const toggleButtons = (isOn: boolean): Buttons => ({
   party: isOn,
   quests: isOn,
   settings: isOn,
+  social: isOn,
 });
 
 
@@ -110,6 +112,7 @@ export interface Modals {
   quests: boolean;
   roomMovement: boolean;
   settings: boolean;
+  social: boolean;
 }
 
 export const toggleModals = (isOn: boolean): Modals => ({
@@ -136,6 +139,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   quests: isOn,
   roomMovement: isOn,
   settings: isOn,
+  social: isOn,
 });
 
 
@@ -163,6 +167,7 @@ export const useComponentSettings = create<State & Actions>((set) => {
       party: false,
       quests: false,
       settings: false,
+      social: false,
     },
     fixtures: {
       accountInfo: false,
@@ -193,6 +198,7 @@ export const useComponentSettings = create<State & Actions>((set) => {
       quests: false,
       roomMovement: false,
       settings: false,
+      social: false,
     },
     validators: {
       accountRegistrar: false,

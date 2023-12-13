@@ -71,6 +71,33 @@ export function createPlayerAPI(systems: any) {
   }
 
   /////////////////
+  //  FRIENDS
+
+  // @dev send a friend request 
+  // @param targetAddr owner address of the target account
+  function sendFriendRequest(targetAddr: string) {
+    return systems["system.Friend.Request"].executeTyped(targetAddr);
+  }
+
+  // @dev accept a friend request
+  // @param reqID entityID of the friend request
+  function acceptFriendRequest(reqID: BigNumberish) {
+    return systems["system.Friend.Accept"].executeTyped(reqID);
+  }
+
+  // @dev cancel a friend request, an existing friend, or a block
+  // @param entityID entityID of the friendship entity
+  function cancelFriendship(entityID: BigNumberish) {
+    return systems["system.Friend.Cancel"].executeTyped(entityID);
+  }
+
+  // @dev block an account
+  // @param targetAddr owner address of the target account
+  function blockAccount(targetAddr: string) {
+    return systems["system.Friend.Block"].executeTyped(targetAddr);
+  }
+
+  /////////////////
   //   LISTINGS
 
   // @dev allows a character to buy an item through a merchant listing entity
@@ -160,12 +187,14 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Skill.Upgrade"].executeTyped(entityID, skillIndex);
   }
 
+
   /////////////////
   // RELATIONSHIP
 
   function advanceRelationship(indexNPC: number, indexRelationship: number) {
     return systems["system.Relationship.Advance"].executeTyped(indexNPC, indexRelationship);
   }
+
 
   /////////////////
   //   TRADE
@@ -280,6 +309,14 @@ export function createPlayerAPI(systems: any) {
       set: {
         name: setAccountName,
         operator: setAccountOperator,
+      },
+    },
+    social: {
+      friend: {
+        accept: acceptFriendRequest,
+        block: blockAccount,
+        cancel: cancelFriendship,
+        request: sendFriendRequest,
       },
     },
     listing: {

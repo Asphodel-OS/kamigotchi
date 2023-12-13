@@ -4,6 +4,7 @@ import { registerMapButton } from "./Map";
 import { registerPartyButton } from "./Party";
 import { registerQuestsButton } from "./Quests";
 import { registerSettingsButton } from "./Settings";
+import { registerSocialButton } from "./Social";
 
 export {
   registerHelpButton,
@@ -12,4 +13,5 @@ export {
   registerPartyButton,
   registerQuestsButton,
   registerSettingsButton,
+  registerSocialButton,
 };
