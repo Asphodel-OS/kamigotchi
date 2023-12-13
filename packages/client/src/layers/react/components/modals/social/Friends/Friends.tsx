@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
 import { FrenList } from "./FrenList"
 import { Header } from "./Header"
 import { Requests } from "./Requests";
 import { Search } from "./Search";
-
-import { feedIcon, reviveIcon } from "assets/images/icons/actions";
-import { ActionButton } from "layers/react/components/library/ActionButton";
-import { IconButton } from "layers/react/components/library/IconButton";
-import { IconListButton } from "layers/react/components/library/IconListButton";
-import { ModalWrapperLite } from "layers/react/components/library/ModalWrapper";
-import { Card } from "layers/react/components/library/Card";
-import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Friendship } from "layers/react/shapes/Friendship";
 

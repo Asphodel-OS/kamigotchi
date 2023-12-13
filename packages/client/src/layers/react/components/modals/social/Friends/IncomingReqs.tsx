@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { useIcon } from "assets/images/icons/actions";
+import { ActionButton } from "layers/react/components/library";
 import { ActionListButton } from "layers/react/components/library/ActionListButton";
 import { Card } from "layers/react/components/library/Card";
+import { useIcon } from "assets/images/icons/actions";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Friendship } from "layers/react/shapes/Friendship";
@@ -11,12 +12,13 @@ import { Friendship } from "layers/react/shapes/Friendship";
 interface Props {
   account: Account;
   actions: {
+    acceptFriend: (friendship: Friendship) => void;
     blockFriend: (target: Account) => void;
     cancelFriend: (friendship: Friendship, actionText: string) => void;
   }
 }
 
-export const FrenList = (props: Props) => {
+export const IncomingReqs = (props: Props) => {
   const { actions, account } = props;
 
   ////////////////////
@@ -27,6 +29,7 @@ export const FrenList = (props: Props) => {
       <BodyContainer>
         {BodyText(friendship)}
         <BoxRow>
+          {AcceptButton(friendship)}
           {OptionsButton(friendship)}
         </BoxRow>
       </BodyContainer>
@@ -37,13 +40,23 @@ export const FrenList = (props: Props) => {
     return (
       <BoxContainer>
         <BoxName>
-          {friendship.target.name} [{friendship.target.ownerEOA.slice(0, 6)}]
+          {friendship.account.name} [{friendship.account.ownerEOA.slice(0, 6)}]
         </BoxName>
         <BoxDescription>
-          is a fren!
+          Wants to be your friend!
         </BoxDescription>
       </BoxContainer>
     )
+  }
+
+  const AcceptButton = (friendship: Friendship) => {
+    return (
+      <ActionButton
+        id={`friendship-accept-${friendship.entityIndex}`}
+        text="Accept"
+        onClick={() => actions.acceptFriend(friendship)}
+      />
+    );
   }
 
   const OptionsButton = (friendship: Friendship) => {
@@ -53,8 +66,8 @@ export const FrenList = (props: Props) => {
         text=""
         options={[
           {
-            text: "Unfriend",
-            onClick: () => actions.cancelFriend(friendship, `friendship over with ${friendship.target.name} !`),
+            text: "Reject",
+            onClick: () => actions.cancelFriend(friendship, `unfriending ${friendship.target.name}`),
           },
           {
             text: "Block",
@@ -65,13 +78,13 @@ export const FrenList = (props: Props) => {
     );
   }
 
-  const FriendCards = (frens: Friendship[]) => {
-    let myFrens = [...frens] ?? [];
-    return <>{myFrens.reverse().map((fren) => {
+  const FriendCards = (reqs: Friendship[]) => {
+    let myReqs = [...reqs] ?? [];
+    return <>{myReqs.reverse().map((req) => {
       return (
         <Card
-          key={fren.entityIndex}
-          content={Body(fren)}
+          key={req.entityIndex}
+          content={Body(req)}
           image="https://miladymaker.net/milady/9248.png"
         />
       );
@@ -82,16 +95,25 @@ export const FrenList = (props: Props) => {
   ///////////////////
   // EMPTY TEXT
 
-  if (account.friends === undefined || account.friends!.friends.length === 0) {
+  if (account.friends === undefined || account.friends!.incomingReqs.length === 0) {
     return (
       <EmptyText>
-        You have no friends. Touch some grass?
+        No one wants to be your friend :/
       </EmptyText>
     );
   }
 
-  return FriendCards(account.friends!.friends);
+  return (
+    <Container>
+      {FriendCards(account.friends!.incomingReqs)}
+    </Container>
+  );
 }
+
+const Container = styled.div`
+  overflow-y: scroll;
+  height: 100%;
+`;
 
 const BodyContainer = styled.div`
   display: flex;
