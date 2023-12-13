@@ -14,7 +14,7 @@ import { Inventory, sortInventories, queryInventoryX } from './Inventory';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
 import { Skill } from './Skill';
-import { Friendship, getAccFriends, getAccIncoming, getAccOutgoing, getAccBlocked } from './Friendship';
+import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from './Friendship';
 
 
 // standardized shape of an Account Entity
@@ -177,8 +177,8 @@ export const getAccount = (
   if (options?.friends) {
     account.friends = {
       friends: getAccFriends(layers, account),
-      incomingReqs: getAccIncoming(layers, account),
-      outgoingReqs: getAccOutgoing(layers, account),
+      incomingReqs: getAccIncomingRequests(layers, account),
+      outgoingReqs: getAccOutgoingRequests(layers, account),
       blocked: getAccBlocked(layers, account),
     }
   }
