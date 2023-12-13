@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { ActionButton } from "layers/react/components/library";
 import { ActionListButton } from "layers/react/components/library/ActionListButton";
 import { Card } from "layers/react/components/library/Card";
-import { useIcon } from "assets/images/icons/actions";
-import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Friendship } from "layers/react/shapes/Friendship";
 
@@ -18,7 +15,7 @@ interface Props {
   }
 }
 
-export const IncomingReqs = (props: Props) => {
+export const Requests = (props: Props) => {
   const { actions, account } = props;
 
   ////////////////////
@@ -78,18 +75,30 @@ export const IncomingReqs = (props: Props) => {
     );
   }
 
-  const FriendCards = (reqs: Friendship[]) => {
-    let myReqs = [...reqs] ?? [];
-    return <>{myReqs.reverse().map((req) => {
-      return (
-        <Card
-          key={req.entityIndex}
-          content={Body(req)}
-          image="https://miladymaker.net/milady/9248.png"
-        />
-      );
-    })}
-    </>;
+  const FriendCards = (incoming: Friendship[], outgoing: Friendship[]) => {
+    let inReqs = [...incoming] ?? [];
+    let outReqs = [...outgoing] ?? [];
+    return (<>
+      {inReqs.reverse().map((req) => {
+        return (
+          <Card
+            key={req.entityIndex}
+            content={Body(req)}
+            image="https://miladymaker.net/milady/9248.png"
+          />
+        );
+      })}
+      <CollapseText>{outgoing.length > 0 ? 'Sent requests' : ''}</CollapseText>
+      {outReqs.reverse().map((req) => {
+        return (
+          <Card
+            key={req.entityIndex}
+            content={Body(req)}
+            image="https://miladymaker.net/milady/9248.png"
+          />
+        );
+      })}
+    </>);
   };
 
   ///////////////////
@@ -105,7 +114,7 @@ export const IncomingReqs = (props: Props) => {
 
   return (
     <Container>
-      {FriendCards(account.friends!.incomingReqs)}
+      {FriendCards(account.friends!.incomingReqs, account.friends!.outgoingReqs)}
     </Container>
   );
 }
@@ -154,6 +163,20 @@ const BoxDescription = styled.div`
   font-size: 0.7vw;
   padding: 0.4vh 0.3vw;
 `;
+
+const CollapseText = styled.p`
+  border: none;
+  background-color: transparent;
+
+  width: 100%;
+  textAlign: center;
+  padding: 0.5vw;
+
+  color: #BBB;
+  font-family: Pixel;
+  font-size: 0.85vw;
+  text-align: center;
+`
 
 const EmptyText = styled.div`
   font-family: Pixel;

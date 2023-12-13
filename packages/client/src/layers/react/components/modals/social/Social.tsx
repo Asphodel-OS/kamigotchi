@@ -109,7 +109,6 @@ export function registerSocialModal() {
 
     // Render
     ({ layers, actions, api, data, world }) => {
-      // console.log('PartyM: data', data);
       const { modals, setModals } = useComponentSettings();
       const { setKami } = useSelectedEntities();
 
@@ -211,7 +210,7 @@ export function registerSocialModal() {
         <ModalWrapperFull
           id='social_modal'
           divName='social'
-          header={<ModalHeader title='Party' icon={kamiIcon} />}
+          header={<ModalHeader title='Social' icon={kamiIcon} />}
           canExit
         >
           <Friends

@@ -26,8 +26,14 @@ export const Header = (props: Props) => {
         Friends
       </Button>
       <Button
-        onClick={() => setTab('INCOMING')}
-        disabled={props.tab === 'INCOMING'}
+        onClick={() => setTab('SEARCH')}
+        disabled={props.tab === 'SEARCH'}
+      >
+        Search
+      </Button>
+      <Button
+        onClick={() => setTab('REQUESTS')}
+        disabled={props.tab === 'REQUESTS'}
       >
         Friend Requests
       </Button>

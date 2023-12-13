@@ -488,7 +488,6 @@ const CollapseText = styled.button`
     cursor: pointer;
   }
 `
-
 const QuestContainer = styled.div`
   border-color: black;
   border-radius: 10px;

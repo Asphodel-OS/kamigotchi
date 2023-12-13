@@ -3,7 +3,8 @@ import styled from "styled-components";
 
 import { FrenList } from "./FrenList"
 import { Header } from "./Header"
-import { IncomingReqs } from "./IncomingReqs";
+import { Requests } from "./Requests";
+import { Search } from "./Search";
 
 import { feedIcon, reviveIcon } from "assets/images/icons/actions";
 import { ActionButton } from "layers/react/components/library/ActionButton";
@@ -30,12 +31,15 @@ interface Props {
   }
 }
 
-export type TabType = "FRIENDS" | "SEARCH" | "INCOMING" | "OUTGOING" | "BLOCKED";
+export type TabType = "FRIENDS" | "REQUESTS" | "SEARCH";
 
 export const Friends = (props: Props) => {
   const { actions, account, queries } = props;
 
   const [tab, setTab] = useState<TabType>("FRIENDS");
+
+  ///////////////////
+  // DISPLAY
 
   const Content = () => {
     if (tab === "FRIENDS") {
@@ -45,17 +49,23 @@ export const Friends = (props: Props) => {
           actions={actions}
         />
       );
-    } else if (tab === "INCOMING") {
+    } else if (tab === "SEARCH") {
       return (
-        <IncomingReqs
+        <Search
+          account={account}
+          actions={actions}
+          queries={queries}
+        />
+      );
+    } else if (tab === "REQUESTS") {
+      return (
+        <Requests
           account={account}
           actions={actions}
         />
       );
     }
   }
-
-  console.log(account.friends)
 
   return (
     <div>
