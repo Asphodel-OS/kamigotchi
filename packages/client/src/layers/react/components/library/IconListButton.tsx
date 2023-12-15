@@ -90,7 +90,7 @@ export function IconListButton(props: Props) {
 const Button = styled.button`
   position: relative;
   background-color: #fff;
-  border: solid black .12vw;
+  border: solid black .15vw;
   border-radius: .4vw;
   color: black;
   

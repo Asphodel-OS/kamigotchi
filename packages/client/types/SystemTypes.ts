@@ -13,6 +13,7 @@ import { _NPCSetLocationSystem } from "./ethers-contracts/_NPCSetLocationSystem"
 import { _NPCSetNameSystem } from "./ethers-contracts/_NPCSetNameSystem";
 import { _RegistryCreateFoodSystem } from "./ethers-contracts/_RegistryCreateFoodSystem";
 import { _RegistryCreateGearSystem } from "./ethers-contracts/_RegistryCreateGearSystem";
+import { _RegistryCreateItemConsumableSystem } from "./ethers-contracts/_RegistryCreateItemConsumableSystem";
 import { _RegistryCreateLootboxSystem } from "./ethers-contracts/_RegistryCreateLootboxSystem";
 import { _RegistryCreateModSystem } from "./ethers-contracts/_RegistryCreateModSystem";
 import { _RegistryCreateQuestObjectiveSystem } from "./ethers-contracts/_RegistryCreateQuestObjectiveSystem";
@@ -62,6 +63,7 @@ import { PetLevelSystem } from "./ethers-contracts/PetLevelSystem";
 import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetReviveSystem } from "./ethers-contracts/PetReviveSystem";
 import { PetSetAccountSystem } from "./ethers-contracts/PetSetAccountSystem";
+import { PetUseItemSystem } from "./ethers-contracts/PetUseItemSystem";
 import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSystem";
 import { ProductionLiquidateSystem } from "./ethers-contracts/ProductionLiquidateSystem";
 import { ProductionStartSystem } from "./ethers-contracts/ProductionStartSystem";
@@ -92,6 +94,7 @@ export type SystemTypes = {
   "system._NPC.Set.Name": _NPCSetNameSystem;
   "system._Registry.Food.Create": _RegistryCreateFoodSystem;
   "system._Registry.Gear.Create": _RegistryCreateGearSystem;
+  "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem;
   "system._Registry.Lootbox.Create": _RegistryCreateLootboxSystem;
   "system._Registry.Mod.Create": _RegistryCreateModSystem;
   "system._Registry.Quest.Create.Objective": _RegistryCreateQuestObjectiveSystem;
@@ -141,6 +144,7 @@ export type SystemTypes = {
   "system.Pet.Name": PetNameSystem;
   "system.Pet.Revive": PetReviveSystem;
   "system.Pet.SetAccount": PetSetAccountSystem;
+  "system.Pet.Use.Item": PetUseItemSystem;
   "system.Production.Collect": ProductionCollectSystem;
   "system.Production.Liquidate": ProductionLiquidateSystem;
   "system.Production.Start": ProductionStartSystem;

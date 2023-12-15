@@ -30,19 +30,19 @@ export const IconButton = (props: Props) => {
       styles.margin = '.15vw';
       styles.padding = '.3vw';
       styles.borderRadius = '.3vw';
-      styles.borderWidth = '.09vw';
+      styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
       styles.fontSize = '.8vw';
       styles.margin = '.2vw';
       styles.padding = '.4vw';
       styles.borderRadius = '.4vw';
-      styles.borderWidth = '.12vw';
+      styles.borderWidth = '.15vw';
     } else if (size === 'large') {
       styles.fontSize = '1.4vw';
       styles.margin = '.35vw';
       styles.padding = '.7vw';
       styles.borderRadius = '.7vw';
-      styles.borderWidth = '.21vw';
+      styles.borderWidth = '.2vw';
     }
 
     if (props.disabled) styles.backgroundColor = '#b2b2b2';

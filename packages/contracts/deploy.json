@@ -51,8 +51,9 @@
     "IndexTraitComponent",
     "IsAccountComponent",
     "IsBonusComponent",
-    "IsConfigComponent",
     "IsCompleteComponent",
+    "IsConfigComponent",
+    "IsConsumableComponent",
     "IsDataComponent",
     "IsEffectComponent",
     "IsEquippedComponent",
@@ -204,6 +205,19 @@
       "name": "_NPCSetNameSystem",
       "writeAccess": [
         "NameComponent"
+      ]
+    },
+    {
+      "name": "_RegistryCreateItemConsumableSystem",
+      "writeAccess": [
+        "IsConsumableComponent",
+        "IsRegistryComponent",
+        "IsFungibleComponent",
+        "IndexItemComponent",
+        "DescriptionComponent",
+        "MediaURIComponent",
+        "NameComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -379,6 +393,7 @@
         "IndexModComponent",
         "IndexReviveComponent",
         "IsLootboxComponent",
+        "IsConsumableComponent",
         "HealthComponent",
         "PowerComponent",
         "ViolenceComponent",
@@ -754,6 +769,14 @@
       "name": "PetSetAccountSystem",
       "writeAccess": [
         "IdAccountComponent"
+      ]
+    },
+    {
+      "name": "PetUseItemSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockLastComponent",
+        "CanNameComponent"
       ]
     },
     {

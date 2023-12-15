@@ -1,9 +1,10 @@
-﻿Index,Name,Type,Description,MediaURI,FamilyIndex(depreciated),Health,Power,Violence,Harmony,Slots,XP,Droptable,_type
-1,Maple-Flavor Ghost Gum,Food,Apparently Maple-flavored. Restores 25 Health to a Kamigotchi.,images/items/gum.png,1,25,,,,,,,
-2,Pom-Pom Fruit Candy,Food,A type of fruit candy. Restores 100 Health to a Kamigotchi.,images/items/pompom.png,2,100,,,,,,,
-3,Gakki Cookie Sticks,Food,Fancy cookie sticks. Restores 200 Health to a Kamigotchi.,images/items/gakki.png,3,200,,,,,,,
-4,XP Candy (Large),Food,XP? XP.,images/items/xp_candy_large.png,4,,,,,,200,,
-5,XP Candy (Medium),Food,Gain a decent amount of XP.,images/items/xp_candy_medium.png,5,,,,,,100,,
-6,XP Candy (Small),Food,Gain a small amount of XP.,images/items/xp_candy_small.png,6,,,,,,25,,
-1001,Red Gakki Ribbon,Revive,Bright red. Restores life to a fallen Kamigotchi.,images/items/ribbon.png,1,10,,,,,,,
-10001,Lootbox,Lootbox,Get a random item!,images/items/lootbox.png,,,,,,,,1,
+﻿Index,Name,Type,Description,MediaURI,FamilyIndex(depreciated),Health,Power,Violence,Harmony,Slots,XP,Droptable,_type,miscCategory
+1,Maple-Flavor Ghost Gum,Food,Apparently Maple-flavored. Restores 25 Health to a Kamigotchi.,images/items/gum.png,1,25,,,,,,,,
+2,Pom-Pom Fruit Candy,Food,A type of fruit candy. Restores 100 Health to a Kamigotchi.,images/items/pompom.png,2,100,,,,,,,,
+3,Gakki Cookie Sticks,Food,Fancy cookie sticks. Restores 200 Health to a Kamigotchi.,images/items/gakki.png,3,200,,,,,,,,
+4,XP Candy (Large),Food,XP? XP.,images/items/xp_candy_large.png,4,,,,,,200,,,
+5,XP Candy (Medium),Food,Gain a decent amount of XP.,images/items/xp_candy_medium.png,5,,,,,,100,,,
+6,XP Candy (Small),Food,Gain a small amount of XP.,images/items/xp_candy_small.png,6,,,,,,25,,,
+1001,Red Gakki Ribbon,Revive,Bright red. Restores life to a fallen Kamigotchi.,images/items/ribbon.png,1,10,,,,,,,,
+9001,Holy Dust,Misc,Allows you to change a Kamigotchi’s name once,images/items/holy_dust.png,,,,,,,,,,RENAME_POTION
+10001,Lootbox,Lootbox,Get a random item!,images/items/lootbox.png,,,,,,,,1,,

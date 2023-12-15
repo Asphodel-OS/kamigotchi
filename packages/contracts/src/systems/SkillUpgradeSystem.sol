@@ -75,11 +75,12 @@ contract SkillUpgradeSystem is System {
       }
 
       // get the bonus entity or create one if it doesnt exist
+      // default the initial value of new Bonus to 0 if Cooldown type
       bonusID = LibBonus.get(components, id, type_);
-      if (bonusID == 0) bonusID = LibBonus.create(world, components, id, type_);
-
-      // if it's a cooldown type then default the value to 0
-      if (LibString.eq("COOLDOWN", subtype)) LibBonus.setValue(components, bonusID, 0);
+      if (bonusID == 0) {
+        bonusID = LibBonus.create(world, components, id, type_);
+        if (LibString.eq("COOLDOWN", subtype)) LibBonus.setValue(components, bonusID, 0);
+      }
 
       // update the appropriate bonus entity
       if (LibString.eq("STAT", type_)) {

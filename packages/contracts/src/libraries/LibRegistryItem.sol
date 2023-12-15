@@ -15,6 +15,7 @@ import { IndexFoodComponent, ID as IndexFoodCompID } from "components/IndexFoodC
 import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
 import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComponent.sol";
 import { IndexReviveComponent, ID as IndexReviveCompID } from "components/IndexReviveComponent.sol";
+import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsNonFungibleComponent, ID as IsNonFungCompID } from "components/IsNonFungibleComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
@@ -42,6 +43,28 @@ import { LibStat } from "libraries/LibStat.sol";
 library LibRegistryItem {
   /////////////////
   // INTERACTIONS
+
+  // Create a Registry entry for a Consumable Item.
+  function createConsumable(
+    IWorld world,
+    IUintComp components,
+    uint256 index,
+    string memory name,
+    string memory description,
+    string memory type_,
+    string memory mediaURI
+  ) internal returns (uint256) {
+    uint256 id = world.getUniqueEntityId();
+    setIsFungible(components, id);
+    setIsRegistry(components, id);
+    setItemIndex(components, id, index);
+    setIsConsumable(components, id);
+    setName(components, id, name);
+    setDescription(components, id, description);
+    setType(components, id, type_);
+    setMediaURI(components, id, mediaURI);
+    return id;
+  }
 
   // @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
   function createFood(
@@ -211,7 +234,6 @@ library LibRegistryItem {
     unsetDescription(components, id);
     unsetType(components, id);
     unsetMediaURI(components, id);
-
     unsetFoodIndex(components, id);
     unsetGearIndex(components, id);
     unsetModIndex(components, id);
@@ -295,16 +317,20 @@ library LibRegistryItem {
     IndexGearComponent(getAddressById(components, IndexGearCompID)).set(id, gearIndex);
   }
 
+  function setIsConsumable(IUintComp components, uint256 id) internal {
+    IsConsumableComponent(getAddressById(components, IsConsumableCompID)).set(id);
+  }
+
   function setIsFungible(IUintComp components, uint256 id) internal {
     IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
   }
 
-  function setIsNonFungible(IUintComp components, uint256 id) internal {
-    IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
-  }
-
   function setIsLootbox(IUintComp components, uint256 id) internal {
     IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
+  }
+
+  function setIsNonFungible(IUintComp components, uint256 id) internal {
+    IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
@@ -363,8 +389,20 @@ library LibRegistryItem {
     if (comp.has(id)) comp.remove(id);
   }
 
+  function unsetIsConsumable(IUintComp components, uint256 id) internal {
+    IsConsumableComponent comp = IsConsumableComponent(
+      getAddressById(components, IsConsumableCompID)
+    );
+    if (comp.has(id)) comp.remove(id);
+  }
+
   function unsetIsFungible(IUintComp components, uint256 id) internal {
     IsFungibleComponent comp = IsFungibleComponent(getAddressById(components, IsFungCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetIsLootbox(IUintComp components, uint256 id) internal {
+    IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
@@ -372,11 +410,6 @@ library LibRegistryItem {
     IsNonFungibleComponent comp = IsNonFungibleComponent(
       getAddressById(components, IsNonFungCompID)
     );
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetIsLootbox(IUintComp components, uint256 id) internal {
-    IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
     if (comp.has(id)) comp.remove(id);
   }
 

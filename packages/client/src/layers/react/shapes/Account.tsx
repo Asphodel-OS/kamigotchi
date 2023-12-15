@@ -61,6 +61,7 @@ export interface Inventories {
   revives: Inventory[];
   gear: Inventory[];
   mods: Inventory[];
+  consumables: Inventory[];
   lootboxes: Inventory[];
 }
 
@@ -123,6 +124,7 @@ export const getAccount = (
     const revives: Inventory[] = [];
     const gear: Inventory[] = [];
     const mods: Inventory[] = [];
+    const consumables: Inventory[] = [];
     const lootboxes: Inventory[] = [];
     for (let i = 0; i < inventoryResults.length; i++) {
       const inventory = inventoryResults[i];
@@ -131,12 +133,14 @@ export const getAccount = (
       if (inventory.item.type === 'REVIVE') revives.push(inventory);
       if (inventory.item.type === 'GEAR') gear.push(inventory);
       if (inventory.item.type === 'MOD') mods.push(inventory);
+      if (inventory.item.type === 'CONSUMABLE') consumables.push(inventory);
       if (inventory.item.type === 'LOOTBOX') lootboxes.push(inventory);
     }
     sortInventories(foods);
     sortInventories(revives);
     sortInventories(gear);
     sortInventories(mods);
+    sortInventories(consumables);
     sortInventories(lootboxes);
 
     account.inventories = {
@@ -144,6 +148,7 @@ export const getAccount = (
       revives: revives,
       gear: gear,
       mods: mods,
+      consumables: consumables,
       lootboxes: lootboxes,
     }
   }

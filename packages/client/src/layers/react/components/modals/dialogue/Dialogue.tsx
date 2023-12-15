@@ -1,11 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
-import { of } from 'rxjs';
+import { EntityID } from '@latticexyz/recs';
+import crypto from "crypto";
+import React, { useEffect } from 'react';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { DialogueNode, dialogueMap } from 'constants/phaser/dialogue';
+import { DialogueNode, dialogues } from 'constants/dialogue';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { getRoomByLocation } from 'layers/react/shapes/Room';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { useComponentSettings } from 'layers/react/store/componentSettings';
 import 'layers/react/styles/font.css';
@@ -20,8 +23,35 @@ export function registerDialogueModal() {
       rowStart: 75,
       rowEnd: 100,
     },
-    (layers) => of(layers),
-    () => {
+    (layers) => {
+      const {
+        network: {
+          actions,
+          components: {
+            IsRoom,
+            Exits,
+            Location,
+            Name,
+          },
+        },
+      } = layers;
+
+      return merge(
+        IsRoom.update$,
+        Exits.update$,
+        Location.update$,
+        Name.update$,
+      ).pipe(
+        map(() => {
+          return {
+            layers,
+            actions,
+            api: layers.network.api.player,
+          };
+        })
+      );
+    },
+    ({ layers, actions, api }) => {
       const { modals } = useComponentSettings();
       const { dialogueIndex } = useSelectedEntities();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
@@ -34,29 +64,82 @@ export function registerDialogueModal() {
       // set the current dialogue node when the dialogue index changes
       useEffect(() => {
         setStep(0);
-        setDialogueNode(dialogueMap[dialogueIndex]);
-        setDialogueLength(dialogueMap[dialogueIndex].text.length);
+        setDialogueNode(dialogues[dialogueIndex]);
+        setDialogueLength(dialogues[dialogueIndex].text.length);
       }, [dialogueIndex]);
 
 
-      const NextButton = () => (
-        <ActionButton
-          id='next'
-          text='Next'
-          disabled={step === dialogueLength - 1}
-          onClick={() => setStep(step + 1)}
-        />
-      );
+      //////////////////
+      // ACTIONS
 
-      const BackButton = () => (
-        <ActionButton
-          id='back'
-          text='Back'
-          disabled={step === 0}
-          onClick={() => setStep(step - 1)}
-        />
-      );
+      const move = (location: number) => {
+        const room = getRoomByLocation(layers, location);
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
 
+        actions?.add({
+          id: actionID,
+          action: 'AccountMove',
+          params: [location],
+          description: `Moving to ${room.name}`,
+          execute: async () => {
+            const roomMovment = await api.account.move(location);
+            return roomMovment;
+          },
+        });
+      };
+
+
+      //////////////////
+      // DISPLAY
+
+      const BackButton = () => {
+        const disabled = (step === 0);
+        return (
+          <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
+            <ActionButton
+              id='back'
+              text='←'
+              disabled={disabled}
+              onClick={() => setStep(step - 1)}
+            />
+          </div>
+        );
+      }
+
+      const NextButton = () => {
+        const disabled = (step === dialogueLength - 1);
+        return (
+          <div style={{
+            visibility: disabled ? 'hidden' : 'visible',
+          }}>
+            <ActionButton
+              id='next'
+              text='→'
+              disabled={disabled}
+              onClick={() => setStep(step + 1)}
+            />
+          </div>
+        );
+      }
+
+      const MiddleButton = () => {
+        if (!dialogueNode.action) return (<div />);
+        const action = dialogueNode.action;
+        const disabled = (step !== dialogueLength - 1) && !!action;
+
+        return (
+          <div style={{
+            visibility: disabled ? 'hidden' : 'visible',
+          }}>
+            <ActionButton
+              id='middle'
+              text={action.label}
+              disabled={disabled}
+              onClick={() => move(action.input)} // hardcoded for now
+            />
+          </div>
+        );
+      }
 
       return (
         <ModalWrapperFull
@@ -65,11 +148,15 @@ export function registerDialogueModal() {
           canExit
           overlay
         >
-          <Text>{dialogueNode.text[step]}</Text>
-          <ButtonRow>
-            <BackButton />
-            <NextButton />
-          </ButtonRow>
+          <Text>
+            {dialogueNode.text[step]}
+            <ButtonRow>
+              <BackButton />
+              <MiddleButton />
+              <NextButton />
+            </ButtonRow>
+          </Text>
+
         </ModalWrapperFull>
       );
     }
@@ -77,12 +164,11 @@ export function registerDialogueModal() {
 }
 
 const Text = styled.div`
-  border: 0.2vw dashed #bbb;
-  border-radius: 7px;
-  color: #333;
+  background-color: #ffc;
+  color: #339;
   height: 100%;
   width: 100%;
-  padding: 0vw 9vw 2vw 9vw;
+  padding: 0vw 9vw;
 
   display: flex;
   flex-grow: 1;
@@ -97,10 +183,11 @@ const Text = styled.div`
 `;
 
 const ButtonRow = styled.div`
-  margin: 1vw;
   position: absolute;
+  align-self: center;
+  width: 100%;
   bottom: 0;
-  right: 0;
+  padding: .7vw;
 
   display: flex;
   flex-flow: row nowrap;

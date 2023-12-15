@@ -1,4 +1,4 @@
-import { Room } from 'constants/phaser/rooms';
+import { Room } from 'constants/rooms';
 import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
 import { backgrounds } from 'assets/images/backgrounds';

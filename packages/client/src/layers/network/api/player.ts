@@ -24,6 +24,10 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
+  // use a pet item
+  function usePetItem(petID: BigNumberish, invID: BigNumberish) {
+    return systems["system.Pet.Use.Item"].executeTyped(petID, invID);
+  }
 
   /////////////////
   //   ACCOUNT
@@ -66,7 +70,6 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
   }
 
-
   /////////////////
   //   LISTINGS
 
@@ -83,7 +86,6 @@ export function createPlayerAPI(systems: any) {
   function sellToListing(listingID: BigNumberish, amt: number) {
     return systems["system.Listing.Sell"].executeTyped(listingID, amt);
   }
-
 
   /////////////////
   //   LOOTBOX
@@ -158,14 +160,12 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Skill.Upgrade"].executeTyped(entityID, skillIndex);
   }
 
-
   /////////////////
   // RELATIONSHIP
 
   function advanceRelationship(indexNPC: number, indexRelationship: number) {
     return systems["system.Relationship.Advance"].executeTyped(indexNPC, indexRelationship);
   }
-
 
   /////////////////
   //   TRADE
@@ -270,6 +270,7 @@ export function createPlayerAPI(systems: any) {
       level: levelPet,
       name: namePet,
       revive: revivePet,
+      use: usePetItem,
     },
     account: {
       fund: fundOperator,

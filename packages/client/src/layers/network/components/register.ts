@@ -35,6 +35,7 @@ export function createComponents(world: World) {
     IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
     IsBonus: defineBoolEZ("IsBonus", "component.Is.Bonus"),
     IsConfig: defineBoolEZ("IsConfig", "component.Is.Config"),
+    IsConsumable: defineBoolEZ("IsConsumable", "component.Is.Consumable"),
     IsComplete: defineBoolEZ("IsComplete", "component.Is.Complete"),
     IsData: defineBoolEZ("IsData", "component.Is.Data"),
     IsEffect: defineBoolEZ("IsEffect", "component.Is.Effect"),

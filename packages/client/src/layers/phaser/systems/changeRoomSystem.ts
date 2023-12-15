@@ -8,7 +8,7 @@ import {
 } from '@latticexyz/recs';
 import { merge } from 'rxjs';
 
-import { rooms } from 'constants/phaser/rooms';
+import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';

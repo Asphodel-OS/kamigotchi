@@ -375,6 +375,24 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+  // @dev add a misc item in registry entry
+  async function registerConsumable(
+    index: number,
+    name: string,
+    description: string,
+    type_: string,
+    media: string
+  ) {
+    await sleepIf();
+    return systems['system._Registry.Create.Item.Consumable'].executeTyped(
+      index,
+      name,
+      description,
+      type_,
+      media
+    );
+  }
+
   // @dev add a modification item registry entry
   async function registerModification(
     index: number,
@@ -521,7 +539,9 @@ export function createAdminAPI(systems: any) {
         string: setConfigString,
       },
     },
-    listing: { set: setListing },
+    listing: {
+      set: setListing,
+    },
     node: {
       create: createNode,
       set: {
@@ -548,6 +568,7 @@ export function createAdminAPI(systems: any) {
           food: registerFood,
           gear: registerGear,
           lootbox: registerLootbox,
+          consumable: registerConsumable,
           modification: registerModification,
           revive: registerRevive,
         },
