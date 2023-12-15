@@ -95,6 +95,7 @@
     "ProxyPermissionsFarm20Component",
     "ProxyPermissionsERC721Component",
     "ProxyPermissionsMint20Component",
+    "QuestPointComponent",
     "RarityComponent",
     "RateComponent",
     "SkillPointComponent",
@@ -933,7 +934,7 @@
       ]
     },
     {
-      "last deployed": "20th October 2023",
+      "last deployed": "15th December 2023",
       "name": "QuestCompleteSystem",
       "writeAccess": [
         "*"
