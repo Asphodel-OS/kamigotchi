@@ -518,6 +518,7 @@
     {
       "name": "AccountSetNameSystem",
       "writeAccess": [
+        "BlockLastComponent",
         "NameComponent"
       ]
     },

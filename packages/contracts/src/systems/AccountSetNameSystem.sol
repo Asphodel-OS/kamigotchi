@@ -22,6 +22,7 @@ contract AccountSetNameSystem is System {
     require(LibAccount.getByName(components, name) == 0, "Account: name taken");
 
     LibAccount.setName(components, accountID, name);
+    LibAccount.updateLastBlock(components, accountID);
     return "";
   }
 
