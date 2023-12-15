@@ -24,7 +24,6 @@ contract PetReviveSystem is System {
     // standard checks (ownership, cooldown, state)
     require(accountID != 0, "PetRevive: no account");
     require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
-    require(LibPet.canAct(components, id), "Pet: on cooldown");
     require(LibPet.isDead(components, id), "Pet: must be dead");
 
     // find the registry entry

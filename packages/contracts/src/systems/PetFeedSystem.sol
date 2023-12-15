@@ -23,17 +23,14 @@ contract PetFeedSystem is System {
     (uint256 id, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    // standard checks (ownership, cooldown, state)
+    // standard checks (ownership, state, location)
     require(accountID != 0, "PetFeed: no account");
     require(LibPet.isPet(components, id), "Pet: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
-    require(LibPet.canAct(components, id), "Pet: on cooldown");
     require(
       LibPet.isResting(components, id) || LibPet.isHarvesting(components, id),
       "Pet: must be resting|harvesting"
     );
-
-    // check pet is in same room as account
     require(
       LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
       "Pet: must be in same room"
