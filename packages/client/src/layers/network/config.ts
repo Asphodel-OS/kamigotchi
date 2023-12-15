@@ -164,11 +164,8 @@ function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): Netwo
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: "https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli",
     wsRpc: "wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli/",
-    // faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
-    // relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
-    snapshotUrl: "https://ecs-snapshot.asphodel-mud-services.linfra.xyz",
+    snapshotUrl: "https://snapshot.asphodel.io",
 
-    // checkpointUrl: undefined,
     chainId: 420,
     worldAddress: "0xb5bc82AC41B58421FD73a5949184251866985839",
     initialBlockNumber: 16183942,
