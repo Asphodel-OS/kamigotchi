@@ -4,7 +4,6 @@ interface Props {
   balance: number;
 };
 
-// get the row of consumable items to display in the player inventory
 export const Footer = (props: Props) => {
   return (
     <Container key='quest points'>
@@ -13,7 +12,6 @@ export const Footer = (props: Props) => {
     </Container>
   );
 };
-
 
 const Container = styled.div`
   padding: .7vh 0.8vw;  
