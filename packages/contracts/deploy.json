@@ -106,6 +106,7 @@
     "TimeComponent",
     "TimelockComponent",
     "TimeLastActionComponent",
+    "TimeLastComponent",
     "TimeStartComponent",
     "TypeComponent",
     "UpgradesComponent",
@@ -762,7 +763,7 @@
         "IsScoreComponent",
         "IndexComponent",
         "RateComponent",
-        "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
@@ -779,7 +780,7 @@
         "ProxyPermissionsERC721Component",
         "RateComponent",
         "SkillPointComponent",
-        "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent"
       ]
     },
@@ -801,7 +802,7 @@
         "IndexComponent",
         "HealthCurrentComponent",
         "StateComponent",
-        "TimeLastActionComponent",
+        "TimeLastComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -835,6 +836,7 @@
         "IndexComponent",
         "RateComponent",
         "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
@@ -860,6 +862,7 @@
         "StateComponent",
         "TimeComponent",
         "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
@@ -877,6 +880,7 @@
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent"
       ]
     },
@@ -896,6 +900,7 @@
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
@@ -966,7 +971,7 @@
         "RateComponent",
         "SkillPointComponent",
         "SlotsComponent",
-        "TimeLastActionComponent",
+        "TimeLastComponent",
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent",

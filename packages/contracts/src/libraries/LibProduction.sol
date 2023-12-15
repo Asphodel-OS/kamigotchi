@@ -26,7 +26,7 @@ import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
  */
 library LibProduction {
-  /////////////////////
+  /////////////////
   // INTERACTIONS
 
   // Creates a production for a pet at a deposit. Assumes one doesn't already exist.

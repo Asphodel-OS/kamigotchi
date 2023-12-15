@@ -28,11 +28,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibExperience } from "libraries/LibExperience.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
-import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 
 enum LOGIC {
