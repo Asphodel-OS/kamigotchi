@@ -432,14 +432,16 @@ export const checkObjective = (
   }
 
   const subLogics = objective.logic.split('_');
-  if (subLogics[0] === 'CURR')
-    return checkCurrent(layers, objective.target, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
-  else if (subLogics[0] === 'INC')
-    return checkIncrease(layers, objective, quest, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
-  else if (subLogics[0] === 'DEC')
-    return checkDecrease(layers, objective, quest, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
-  else if (subLogics[0] === 'BOOL')
-    return checkBoolean(layers, objective.target, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
+  const deltaType = subLogics[0];
+  const operator = subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
+  if (deltaType === 'CURR')
+    return checkCurrent(layers, objective.target, account, operator);
+  else if (deltaType === 'INC')
+    return checkIncrease(layers, objective, quest, account, operator);
+  else if (deltaType === 'DEC')
+    return checkDecrease(layers, objective, quest, account, operator);
+  else if (deltaType === 'BOOL')
+    return checkBoolean(layers, objective.target, account, operator);
   else
     return { completable: false }; // should not get here
 }
