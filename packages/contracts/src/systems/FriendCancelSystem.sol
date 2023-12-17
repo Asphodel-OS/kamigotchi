@@ -42,12 +42,12 @@ contract FriendCancelSystem is System {
         "FriendCancel: not owner"
       );
 
-      uint256 counterparty = LibFriend.getFriendship(
+      uint256 counterpartyID = LibFriend.getFriendship(
         components,
         LibFriend.getTarget(components, friendshipID),
         accountID
       );
-      LibFriend.remove(components, counterparty);
+      LibFriend.remove(components, counterpartyID);
     }
 
     LibFriend.remove(components, friendshipID);

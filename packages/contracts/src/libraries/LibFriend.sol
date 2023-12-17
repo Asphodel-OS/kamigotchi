@@ -41,7 +41,7 @@ library LibFriend {
     return id;
   }
 
-  /// @notice Accepts a friend request from existing request. Does not update request.
+  /// @notice Accepts a friend request from existing request. Updates request for bidirectional friendship.
   function accept(
     IWorld world,
     IUintComp components,
@@ -55,7 +55,6 @@ library LibFriend {
     IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
     accComp.set(id, accID);
     setTarget(components, id, accComp.getValue(requestID));
-    setAccount(components, id, accID);
 
     // set state - raw component for efficiency
     StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));

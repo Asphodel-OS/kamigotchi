@@ -22,7 +22,7 @@ contract FriendRequestSystem is System {
     require(targetID != 0, "FriendReq: target no account");
     require(accountID != targetID, "FriendReq: cannot friend self");
 
-    // friendship speicific checks
+    // friendship specific checks
     /// @dev FE should not get here; if either alr requested, friends, or blocked, a friendship will exist
     require(
       LibFriend.getFriendship(components, accountID, targetID) == 0,
@@ -31,10 +31,11 @@ contract FriendRequestSystem is System {
 
     uint256 incomingReq = LibFriend.getFriendship(components, targetID, accountID);
     if (incomingReq != 0) {
-      // either incoming request or blocked (alr friends checked above)
-      if (LibString.eq(LibFriend.getState(components, incomingReq), "REQUEST"))
-        return abi.encode(LibFriend.accept(world, components, accountID, incomingReq));
-      else require(false, "FriendReq: blocked");
+      require(
+        LibString.eq(LibFriend.getState(components, incomingReq), "REQUEST"),
+        "FriendReq: not request"
+      );
+      return abi.encode(LibFriend.accept(world, components, accountID, incomingReq));
     }
 
     // create request
