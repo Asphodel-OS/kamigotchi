@@ -96,7 +96,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
-    _createQuestObjective(1, "Quest 1", "HAVE", "COIN", 0, 10);
+    _createQuestObjective(1, "Quest 1", "CURR_MIN", "COIN", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
 
     // register the account
@@ -135,7 +135,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
-    _createQuestObjective(1, "NAME", "GATHER", "COIN_TOTAL", 0, 10);
+    _createQuestObjective(1, "NAME", "INC_MIN", "COIN_TOTAL", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
 
     // register account
@@ -178,7 +178,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 3);
-    _createQuestObjective(1, "NAME", "AT", "ROOM", 0, 4);
+    _createQuestObjective(1, "NAME", "CURR_EQUAL", "ROOM", 0, 4);
 
     // register account
     _registerAccount(0);
@@ -220,7 +220,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 1);
-    _createQuestObjective(1, "NAME", "MINT", "PET721_MINT", 0, 2);
+    _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
 
     // register account
     _registerAccount(0);

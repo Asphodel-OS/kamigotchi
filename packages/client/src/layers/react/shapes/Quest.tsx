@@ -430,22 +430,18 @@ export const checkObjective = (
   if (quest.complete) {
     return { completable: true }
   }
-  switch (objective.logic) {
-    case 'AT':
-      return checkCurrent(layers, objective.target, account, 'EQUAL');
-    case 'BUY':
-      return checkIncrease(layers, objective, quest, account, 'MIN');
-    case 'HAVE':
-      return checkCurrent(layers, objective.target, account, 'MIN');
-    case 'GATHER':
-      return checkIncrease(layers, objective, quest, account, 'MIN');
-    case 'MINT':
-      return checkIncrease(layers, objective, quest, account, 'MIN');
-    case 'USE':
-      return checkDecrease(layers, objective, quest, account, 'MIN');
-    default:
-      return { completable: false }; // should not get here
-  }
+
+  const subLogics = objective.logic.split('_');
+  if (subLogics[0] === 'CURR')
+    return checkCurrent(layers, objective.target, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
+  else if (subLogics[0] === 'INC')
+    return checkIncrease(layers, objective, quest, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
+  else if (subLogics[0] === 'DEC')
+    return checkDecrease(layers, objective, quest, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
+  else if (subLogics[0] === 'BOOL')
+    return checkBoolean(layers, objective.target, account, subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT');
+  else
+    return { completable: false }; // should not get here
 }
 
 

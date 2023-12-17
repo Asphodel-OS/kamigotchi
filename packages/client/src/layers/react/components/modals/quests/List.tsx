@@ -43,7 +43,7 @@ export const List = (props: Props) => {
     };
   }, []);
 
-  const [isCollasped, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   ///////////////////
   // LOGIC
@@ -140,12 +140,6 @@ export const List = (props: Props) => {
     return registryObject.name ? registryObject.name : `Food ${foodIndex}`;
   }
 
-  const getReviveName = (reviveIndex: number): string => {
-    let entityIndex = props.utils.queryReviveRegistry(reviveIndex);
-    let registryObject = props.utils.getItem(entityIndex);
-    return registryObject.name ? registryObject.name : `Revive ${reviveIndex}`;
-  }
-
   const getRepeatText = (quest: Quest): string => {
     const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
     const curr = allQuests?.find((x) => (x.index == quest.index));
@@ -239,8 +233,7 @@ export const List = (props: Props) => {
       if (objective.status?.completable) {
         tracking = ' ✅';
       } else {
-        if (objective.target.type !== 'ROOM')
-          tracking = ` [${objective.status?.current ?? 0}/${Number(objective.status?.target)}]`;
+        tracking = ` [${objective.status?.current ?? 0}/${Number(objective.status?.target)}]`;
       }
       text += tracking;
     }
@@ -251,7 +244,7 @@ export const List = (props: Props) => {
   ///////////////////
   // DISPLAY
 
-  const getAvaliableQuests = () => {
+  const getAvailableQuests = () => {
     // get available, non-repeatable quests from registry
     const oneTimes = props.registryQuests.filter((q: Quest) => {
       return (
@@ -371,7 +364,7 @@ export const List = (props: Props) => {
   }
 
   const AvailableQuests = () => {
-    const quests = getAvaliableQuests();
+    const quests = getAvailableQuests();
 
     if (quests.length == 0)
       return <EmptyText>No available quests. Do something else.</EmptyText>;
@@ -393,9 +386,9 @@ export const List = (props: Props) => {
 
     const line = (quests.length > 0) ? (
       <CollapseText
-        onClick={() => setIsCollapsed(!isCollasped)}
+        onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        {isCollasped ? '- Completed (collasped) -' : '- Completed -'}
+        {isCollapsed ? '- Completed (collapsed) -' : '- Completed -'}
       </CollapseText>
     ) : (
       <div />
@@ -412,13 +405,13 @@ export const List = (props: Props) => {
 
     return <div>
       {line}
-      {isCollasped ? <div /> : dones}
+      {isCollapsed ? <div /> : dones}
     </div>
 
   }
 
   const OngoingQuests = () => {
-    getAvaliableQuests(); // update numAvail
+    getAvailableQuests(); // update numAvail
     const rawQuests = [...props.account.quests?.ongoing ?? []];
 
     if (rawQuests.length == 0)

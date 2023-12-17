@@ -633,21 +633,23 @@ library LibQuests {
 
   // determins objective logic handler and operator
   function parseObjectiveLogic(string memory _type) internal pure returns (HANDLER, LOGIC) {
-    if (LibString.eq(_type, "AT")) {
-      return (HANDLER.CURRENT, LOGIC.EQUAL);
-    } else if (LibString.eq(_type, "BUY")) {
-      return (HANDLER.INCREASE, LOGIC.MIN);
-    } else if (LibString.eq(_type, "HAVE")) {
-      return (HANDLER.CURRENT, LOGIC.MIN);
-    } else if (LibString.eq(_type, "GATHER")) {
-      return (HANDLER.INCREASE, LOGIC.MIN);
-    } else if (LibString.eq(_type, "MINT")) {
-      return (HANDLER.INCREASE, LOGIC.MIN);
-    } else if (LibString.eq(_type, "USE")) {
-      return (HANDLER.DECREASE, LOGIC.MIN);
-    } else {
-      require(false, "Unknown condition logic type");
-    }
+    HANDLER handler;
+    LOGIC operator;
+
+    if (LibString.startsWith(_type, "CURR")) handler = HANDLER.CURRENT;
+    else if (LibString.startsWith(_type, "INC")) handler = HANDLER.INCREASE;
+    else if (LibString.startsWith(_type, "DEC")) handler = HANDLER.DECREASE;
+    else if (LibString.startsWith(_type, "BOOL")) handler = HANDLER.BOOLEAN;
+    else require(false, "Unknown condition handler");
+
+    if (LibString.endsWith(_type, "MIN")) operator = LOGIC.MIN;
+    else if (LibString.endsWith(_type, "MAX")) operator = LOGIC.MAX;
+    else if (LibString.endsWith(_type, "EQUAL")) operator = LOGIC.EQUAL;
+    else if (LibString.endsWith(_type, "IS")) operator = LOGIC.IS;
+    else if (LibString.endsWith(_type, "NOT")) operator = LOGIC.NOT;
+    else require(false, "Unknown condition operator");
+
+    return (handler, operator);
   }
 
   function getSnapshotObjective(

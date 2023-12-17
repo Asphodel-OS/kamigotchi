@@ -391,7 +391,7 @@ export function setUpWorldAPI(systems: any) {
       1,
       0
     );
-    await api.registry.quest.add.objective(1, "Find the vending machine", "AT", "ROOM", 0, 4);
+    await api.registry.quest.add.objective(1, "Find the vending machine", "CURR_EQUAL", "ROOM", 0, 4);
     await api.registry.quest.add.reward(1, "MINT20", 0, 5);
     await api.registry.quest.add.reward(1, "QUEST_POINTS", 0, 1);
 
@@ -404,7 +404,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
-    await api.registry.quest.add.objective(2, "Mint a Kami", "MINT", "PET721_MINT", 0, 1);
+    await api.registry.quest.add.objective(2, "Mint a Kami", "CURR_MIN", "KAMI", 0, 1);
     await api.registry.quest.add.reward(2, "ITEM", 2, 1);
     await api.registry.quest.add.reward(2, "QUEST_POINTS", 0, 2);
 
@@ -417,7 +417,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
-    await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN_TOTAL", 0, 1);
+    await api.registry.quest.add.objective(3, "Harvest from a Node", "INC_MIN", "COIN_TOTAL", 0, 1);
     await api.registry.quest.add.reward(3, "ITEM", 1001, 1);
     await api.registry.quest.add.reward(3, "QUEST_POINTS", 0, 2);
 
@@ -430,7 +430,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
-    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN_TOTAL", 0, 100);
+    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 100);
     await api.registry.quest.add.reward(4, "ITEM", 1001, 3);
     await api.registry.quest.add.reward(4, "QUEST_POINTS", 0, 3);
 
@@ -443,7 +443,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
-    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN_TOTAL", 0, 1000);
+    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 1000);
     await api.registry.quest.add.reward(5, "ITEM", 1001, 5);
     await api.registry.quest.add.reward(5, "QUEST_POINTS", 0, 4);
 
@@ -456,7 +456,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
-    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN_TOTAL", 0, 5000);
+    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 5000);
     await api.registry.quest.add.reward(6, "ITEM", 1001, 10);
     await api.registry.quest.add.reward(6, "QUEST_POINTS", 0, 8);
 
@@ -468,8 +468,24 @@ export function setUpWorldAPI(systems: any) {
       0,
       64800
     );
-    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_TOTAL", 0, 200);
-    await api.registry.quest.add.reward(7, "ITEM", 10001, 1); // temp lootbox handler
+    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 200);
+    await api.registry.quest.add.reward(7, "ITEM", 10001, 1);
+
+    // quest 8 and 9 have previously been repeatable quests for testing
+    // can't use for new non-repeatable quests for backwards compatibility
+
+    await api.registry.quest.create(
+      10,
+      "Liquidation 1: An Unforgiving World/You're Not Alone ",
+      "Your Kamigotchi has had enough of farming for now. Why don't you take it exploring? Remember to stock up on supplies and watch out. This is a Kami-eat-Kami world.\
+      \n\nIf Kamigotchi are reduced to 0 Health on a Node and get tired, the other Kamigotchi may see them as just another resource to be claimed.\
+      \n\nTry it out.If you have a Kamigotchi with a Violent nature, let it indulge.Liquidating exhausted Kami is another way to gain $MUSU.",
+      0,
+      0
+    );
+    await api.registry.quest.add.requirement(10, "COMPLETE", "QUEST", 0, 3);
+    await api.registry.quest.add.objective(10, "Liquidate 1 Kami", "INC_MIN", "LIQUIDATE", 0, 1);
+    await api.registry.quest.add.reward(10, "ITEM", 5, 1);
   }
 
 
