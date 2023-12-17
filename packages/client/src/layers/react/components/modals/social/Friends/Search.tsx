@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { useEnsResolver } from 'wagmi'
 
 import { ActionButton } from "layers/react/components/library";
 import { ActionListButton } from "layers/react/components/library/ActionListButton";
 import { Card } from "layers/react/components/library/Card";
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
-import { useIcon } from "assets/images/icons/actions";
-import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Account } from "layers/react/shapes/Account";
 import { Friendship } from "layers/react/shapes/Friendship";
 
@@ -32,12 +29,13 @@ export const Search = (props: Props) => {
   ////////////////////
   // SEARCH
 
+  const [searchText, setSearchText] = useState<string>("search by name");
   const [searchResult, setSearchResult] = useState<Account>();
 
   const searchByName = (name: string) => {
     const result = queries.queryAccountByName(name);
-    console.log(result);
     setSearchResult(result);
+    setSearchText(name);
   }
 
   ////////////////////
@@ -170,14 +168,16 @@ export const Search = (props: Props) => {
   }
 
   const ResultCard = () => {
-    if (searchResult === undefined || searchResult.name === undefined) return (
-      <EmptyText>
-        No account found
-      </EmptyText>
-    );
+    if (searchResult === undefined || searchResult.name === undefined)
+      if (searchText === "search by name") return <div></div>
+      else return (
+        <EmptyText>
+          No account found for [{searchText}]
+        </EmptyText>
+      );
     return (
       <Card
-        key={searchResult.entityIndex}
+        key={searchResult!.entityIndex}
         content={Body(searchResult)}
         image="https://miladymaker.net/milady/9248.png"
       />
@@ -193,7 +193,7 @@ export const Search = (props: Props) => {
       }}>
         <SingleInputTextForm
           id={`kami-name`}
-          placeholder="search by name"
+          placeholder={searchText}
           onSubmit={(v: string) => searchByName(v)}
           fullWidth
         />
@@ -213,7 +213,6 @@ const BodyContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: space-between;
-  height: 100%;
   width: 100%;
 `;
 

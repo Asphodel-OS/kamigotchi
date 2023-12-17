@@ -4,7 +4,7 @@ import React from 'react';
 import { map, merge } from 'rxjs';
 
 import { Friends } from './Friends';
-import { kamiIcon } from 'assets/images/icons/menu';
+import { socialIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -203,7 +203,7 @@ export function registerSocialModal() {
         <ModalWrapperFull
           id='social_modal'
           divName='social'
-          header={<ModalHeader title='Social' icon={kamiIcon} />}
+          header={<ModalHeader title='Social' icon={socialIcon} />}
           canExit
         >
           <Friends

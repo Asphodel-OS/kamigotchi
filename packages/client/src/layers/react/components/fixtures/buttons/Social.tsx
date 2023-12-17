@@ -1,6 +1,6 @@
 import React from 'react';
 import { of } from 'rxjs';
-import { kamiIcon } from 'assets/images/icons/menu';
+import { socialIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -23,16 +23,19 @@ export function registerSocialButton() {
         bridgeERC721: false,
         dialogue: false,
         emaBoard: false,
+        help: false,
+        inventory: false,
         kami: false,
         leaderboard: false,
-        map: false,
         nameKami: false,
+        settings: false,
+        quests: false,
       };
 
       return (
         <MenuButton
           id='social_button'
-          image={kamiIcon}
+          image={socialIcon}
           tooltip='social'
           targetDiv='social'
           hideModals={modalsToHide}

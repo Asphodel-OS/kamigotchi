@@ -10,7 +10,7 @@ interface Props {
   disabled?: boolean;
   fill?: boolean;
   inverted?: boolean;
-  size?: 'small' | 'medium' | 'large' | 'vending' | 'menu';
+  size?: 'small' | 'medium' | 'large' | 'vending' | 'menu' | 'icon-medium';
   pulse?: boolean;
 }
 
@@ -58,6 +58,13 @@ export const ActionButton = (props: Props) => {
       styles.borderRadius = '10px';
       styles.borderWidth = '1px';
       styles.height = '36px';
+    } else if (size === 'icon-medium') {
+      styles.fontSize = '.8vw';
+      styles.margin = '.2vw';
+      styles.padding = '.4vw';
+      styles.borderRadius = '.4vw';
+      styles.borderWidth = '.15vw';
+      styles.height = '2.5vw';
     }
 
     if (props.inverted) {

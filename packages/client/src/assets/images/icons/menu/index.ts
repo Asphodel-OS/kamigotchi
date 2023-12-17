@@ -5,7 +5,7 @@ import kamiIcon from './kami.png';
 import mapIcon from './map.png';
 import questsIcon from './quests.png';
 import settingsIcon from './settings.png';
-
+import socialIcon from './social.png';
 
 export {
   chatIcon,
@@ -14,5 +14,6 @@ export {
   kamiIcon,
   mapIcon,
   questsIcon,
-  settingsIcon
+  settingsIcon,
+  socialIcon,
 };

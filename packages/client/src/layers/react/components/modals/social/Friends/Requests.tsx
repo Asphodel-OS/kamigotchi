@@ -107,7 +107,7 @@ export const Requests = (props: Props) => {
   if (account.friends === undefined || account.friends!.incomingReqs.length === 0) {
     return (
       <EmptyText>
-        No one wants to be your friend :/
+        You have no friend requests :/ add some via search
       </EmptyText>
     );
   }
