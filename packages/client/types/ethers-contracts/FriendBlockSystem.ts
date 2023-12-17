@@ -5,9 +5,12 @@ import type {
   BaseContract,
   BigNumber,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   BigNumberish,
 >>>>>>> 9e95531 (friends system FE)
+=======
+>>>>>>> 344680e (post comment clean ups)
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -34,10 +37,14 @@ export interface FriendBlockSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
 <<<<<<< HEAD
+<<<<<<< HEAD
     "executeTyped(address)": FunctionFragment;
 =======
     "executeTyped(uint256)": FunctionFragment;
 >>>>>>> 9e95531 (friends system FE)
+=======
+    "executeTyped(address)": FunctionFragment;
+>>>>>>> 344680e (post comment clean ups)
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -57,10 +64,14 @@ export interface FriendBlockSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
 <<<<<<< HEAD
+<<<<<<< HEAD
     values: [PromiseOrValue<string>]
 =======
     values: [PromiseOrValue<BigNumberish>]
 >>>>>>> 9e95531 (friends system FE)
+=======
+    values: [PromiseOrValue<string>]
+>>>>>>> 344680e (post comment clean ups)
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -132,10 +143,14 @@ export interface FriendBlockSystem extends BaseContract {
 
     executeTyped(
 <<<<<<< HEAD
+<<<<<<< HEAD
       addr: PromiseOrValue<string>,
 =======
       id: PromiseOrValue<BigNumberish>,
 >>>>>>> 9e95531 (friends system FE)
+=======
+      addr: PromiseOrValue<string>,
+>>>>>>> 344680e (post comment clean ups)
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -154,10 +169,14 @@ export interface FriendBlockSystem extends BaseContract {
 
   executeTyped(
 <<<<<<< HEAD
+<<<<<<< HEAD
     addr: PromiseOrValue<string>,
 =======
     id: PromiseOrValue<BigNumberish>,
 >>>>>>> 9e95531 (friends system FE)
+=======
+    addr: PromiseOrValue<string>,
+>>>>>>> 344680e (post comment clean ups)
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -176,10 +195,14 @@ export interface FriendBlockSystem extends BaseContract {
 
     executeTyped(
 <<<<<<< HEAD
+<<<<<<< HEAD
       addr: PromiseOrValue<string>,
 =======
       id: PromiseOrValue<BigNumberish>,
 >>>>>>> 9e95531 (friends system FE)
+=======
+      addr: PromiseOrValue<string>,
+>>>>>>> 344680e (post comment clean ups)
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -210,10 +233,14 @@ export interface FriendBlockSystem extends BaseContract {
 
     executeTyped(
 <<<<<<< HEAD
+<<<<<<< HEAD
       addr: PromiseOrValue<string>,
 =======
       id: PromiseOrValue<BigNumberish>,
 >>>>>>> 9e95531 (friends system FE)
+=======
+      addr: PromiseOrValue<string>,
+>>>>>>> 344680e (post comment clean ups)
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -233,10 +260,14 @@ export interface FriendBlockSystem extends BaseContract {
 
     executeTyped(
 <<<<<<< HEAD
+<<<<<<< HEAD
       addr: PromiseOrValue<string>,
 =======
       id: PromiseOrValue<BigNumberish>,
 >>>>>>> 9e95531 (friends system FE)
+=======
+      addr: PromiseOrValue<string>,
+>>>>>>> 344680e (post comment clean ups)
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
