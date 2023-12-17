@@ -10,7 +10,10 @@ import { LibFriend } from "libraries/LibFriend.sol";
 
 uint256 constant ID = uint256(keccak256("system.Friend.Block"));
 
-/// @notice a generic system to block other accounts
+/**  @notice
+ * a generic system to block other accounts
+ * if friendship exists, automatically unfriend blockee
+ */
 contract FriendBlockSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -24,19 +27,20 @@ contract FriendBlockSystem is System {
     require(accountID != targetID, "FriendBlock: cannot block self");
 
     // query for exisiting friendship from account to target
-    uint256 accToTar = LibFriend.getFriendship(components, accountID, targetID);
-    if (accToTar != 0) {
+    uint256 accToTarget = LibFriend.getFriendship(components, accountID, targetID);
+    if (accToTarget != 0) {
       require(
-        !LibString.eq(LibFriend.getState(components, accToTar), "BLOCKED"),
+        !LibString.eq(LibFriend.getState(components, accToTarget), "BLOCKED"),
         "FriendBlock: already blocked"
       );
-      LibFriend.remove(components, accToTar);
+      LibFriend.remove(components, accToTarget);
     }
 
     // query for exisiting friendship from target to account
-    uint256 tarToAcc = LibFriend.getFriendship(components, targetID, accountID);
-    if (tarToAcc != 0 && !LibString.eq(LibFriend.getState(components, tarToAcc), "BLOCKED"))
-      LibFriend.remove(components, tarToAcc);
+    uint256 targetToAcc = LibFriend.getFriendship(components, targetID, accountID);
+    if (targetToAcc != 0 && !LibString.eq(LibFriend.getState(components, targetToAcc), "BLOCKED")) {
+      LibFriend.remove(components, targetToAcc);
+    }
 
     // block
     uint256 result = LibFriend.block(world, components, accountID, targetID);

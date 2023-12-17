@@ -24,9 +24,9 @@ contract FriendAcceptSystem is System {
       "FriendAccept: not a request"
     );
 
-    // friendship speicific checks
-    uint256 recivingID = LibFriend.getTarget(components, reqID);
-    require(recivingID == accountID, "FriendAccept: not for you");
+    // friendship specific checks
+    uint256 receivingID = LibFriend.getTarget(components, reqID);
+    require(receivingID == accountID, "FriendAccept: not for you");
 
     // accept request
     uint256 id = LibFriend.accept(world, components, accountID, reqID);

@@ -62,7 +62,7 @@ contract FriendTest is SetupTemplate {
     address recieverAddr = _getOwner(0);
 
     vm.prank(senderAddr);
-    vm.expectRevert("FriendReq: blocked");
+    vm.expectRevert("FriendReq: not request");
     _FriendRequestSystem.executeTyped(recieverAddr);
   }
 
@@ -73,7 +73,7 @@ contract FriendTest is SetupTemplate {
     address recieverAddr = _getOwner(1);
 
     vm.prank(senderAddr);
-    vm.expectRevert("FriendReq: blocked");
+    vm.expectRevert("FriendReq: not request");
     _FriendRequestSystem.executeTyped(recieverAddr);
   }
 
