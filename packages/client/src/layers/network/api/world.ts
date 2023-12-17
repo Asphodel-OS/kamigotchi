@@ -486,6 +486,17 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.requirement(10, "COMPLETE", "QUEST", 0, 3);
     await api.registry.quest.add.objective(10, "Liquidate 1 Kami", "INC_MIN", "LIQUIDATE", 0, 1);
     await api.registry.quest.add.reward(10, "ITEM", 5, 1);
+
+    await api.registry.quest.create(
+      11,
+      "Liquidation 3: Getting used to it/Harden Your Heart",
+      "Liquidate ten more Kamigotchi and take their $MUSU. Kami lacking in spiritual Harmony will be your easiest targets.",
+      0,
+      0
+    );
+    await api.registry.quest.add.requirement(11, "COMPLETE", "QUEST", 0, 10);
+    await api.registry.quest.add.objective(11, "Liquidate 10 Kamis", "INC_MIN", "LIQUIDATE", 0, 10);
+    await api.registry.quest.add.reward(11, "ITEM", 4, 1);
   }
 
 
