@@ -214,7 +214,7 @@ export const List = (props: Props) => {
   }
 
   const getRewardText = (reward: Reward): string => {
-    const value = reward.target.value! * 1;
+    const value = (reward.target.value ?? 0) * 1
     switch (reward.target.type) {
       case 'COIN':
         return `${value} $MUSU`;
