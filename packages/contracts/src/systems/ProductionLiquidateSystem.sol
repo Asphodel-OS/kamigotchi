@@ -50,7 +50,7 @@ contract ProductionLiquidateSystem is System {
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
     LibPet.sync(components, targetPetID);
     require(
-      LibProduction.isLiquidatableBy(components, targetProductionID, petID),
+      LibProduction.isLiquidatableBy(components, targetPetID, petID),
       "Pet: you lack violence"
     );
 
@@ -82,6 +82,14 @@ contract ProductionLiquidateSystem is System {
       accountID,
       LibNode.getIndex(components, nodeID),
       "NODE_LIQUIDATE",
+      1
+    );
+    LibDataEntity.incFor(
+      world,
+      components,
+      LibPet.getAccount(components, targetPetID),
+      0,
+      "BEEN_LIQUIDATEED",
       1
     );
     LibAccount.updateLastBlock(components, accountID);

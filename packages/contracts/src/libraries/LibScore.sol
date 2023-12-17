@@ -85,20 +85,20 @@ library LibScore {
   }
 
   // Increase an score balance by the specified amount
-  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
-    uint256 bal = getBalance(components, id);
+  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    if (comp.has(id)) bal = comp.getValue(id);
     bal += amt;
-    _set(components, id, bal);
-    return bal;
+    comp.set(id, bal);
   }
 
   // Decrease an score balance by the specified amount
-  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
-    uint256 bal = getBalance(components, id);
+  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    if (comp.has(id)) bal = comp.getValue(id);
     require(bal >= amt, "Score: insufficient balance");
     bal -= amt;
-    _set(components, id, bal);
-    return bal;
+    comp.set(id, bal);
   }
 
   function del(IUintComp components, uint256 id) internal {

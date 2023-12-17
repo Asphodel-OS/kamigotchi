@@ -91,18 +91,25 @@ library LibPet {
 
   // Drains HP from a pet. The opposite of heal().
   function drain(IUintComp components, uint256 id, uint256 amt) internal {
-    uint256 health = getLastHealth(components, id);
+    HealthCurrentComponent healthComp = HealthCurrentComponent(
+      getAddressById(components, HealthCurrentCompID)
+    );
+    uint256 health = healthComp.getValue(id);
     health = (health > amt) ? health - amt : 0;
-    setCurrHealth(components, id, health);
+    healthComp.set(id, health);
   }
 
   // heal the pet by a given amount
   function heal(IUintComp components, uint256 id, uint256 amt) internal {
     if (amt == 0) return; // skip if no healing
+
+    HealthCurrentComponent healthComp = HealthCurrentComponent(
+      getAddressById(components, HealthCurrentCompID)
+    );
     uint256 totalHealth = calcTotalHealth(components, id);
-    uint256 health = getLastHealth(components, id) + amt;
+    uint256 health = healthComp.getValue(id) + amt;
     if (health > totalHealth) health = totalHealth;
-    setCurrHealth(components, id, health);
+    healthComp.set(id, health);
   }
 
   // Update a pet's health to 0 and its state to DEAD
@@ -160,8 +167,13 @@ library LibPet {
     uint256 id, // unused atm, but will be used for skill multipliers
     uint256 amt
   ) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
-    uint256 precision = 10 ** LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE_PREC");
+    string[] memory configs = new string[](2);
+    configs[0] = "LIQ_BOUNTY_BASE";
+    configs[1] = "LIQ_BOUNTY_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
+    uint256 base = configVals[0];
+    uint256 precision = 10 ** configVals[1];
     return (amt * base) / precision;
   }
 
@@ -172,8 +184,13 @@ library LibPet {
     uint256 id,
     uint256 amt
   ) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    string[] memory configs = new string[](2);
+    configs[0] = "HEALTH_RATE_DRAIN_BASE";
+    configs[1] = "HEALTH_RATE_DRAIN_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
+    uint256 base = configVals[0];
+    uint256 basePrecision = 10 ** configVals[1];
     uint256 multiplier = calcDrainMultiplier(components, id);
     uint256 totalPrecision = basePrecision * 1000; // 1000 from bonus multiplier
     return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
@@ -200,10 +217,16 @@ library LibPet {
     IUintComp components,
     uint256 id
   ) internal view returns (uint256) {
+    string[] memory configs = new string[](3);
+    configs[0] = "HEALTH_RATE_HEAL_PREC";
+    configs[1] = "HEALTH_RATE_HEAL_BASE";
+    configs[2] = "HEALTH_RATE_HEAL_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
     uint256 totalHarmony = calcTotalHarmony(components, id);
-    uint256 precision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_PREC");
-    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_BASE_PREC");
+    uint256 precision = 10 ** configVals[0];
+    uint256 base = configVals[1];
+    uint256 basePrecision = 10 ** configVals[2];
     return (totalHarmony * base * precision) / (3600 * basePrecision);
   }
 
@@ -228,8 +251,13 @@ library LibPet {
     uint256 sourceID,
     uint256 targetID
   ) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "LIQ_THRESH_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "LIQ_THRESH_BASE_PREC");
+    string[] memory configs = new string[](2);
+    configs[0] = "LIQ_THRESH_BASE";
+    configs[1] = "LIQ_THRESH_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
+    uint256 base = configVals[0];
+    uint256 basePrecision = 10 ** configVals[1];
     uint256 sourceViolence = calcTotalViolence(components, sourceID);
     uint256 targetHarmony = calcTotalHarmony(components, targetID);
     int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
@@ -348,11 +376,18 @@ library LibPet {
 
   // set a pet's stats from its traits
   function setStats(IUintComp components, uint256 id) internal {
-    uint256 health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
-    uint256 power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
-    uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
-    uint256 harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
-    uint256 slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
+    string[] memory configs = new string[](5);
+    configs[0] = "KAMI_BASE_HEALTH";
+    configs[1] = "KAMI_BASE_POWER";
+    configs[2] = "KAMI_BASE_VIOLENCE";
+    configs[3] = "KAMI_BASE_HARMONY";
+    configs[4] = "KAMI_BASE_SLOTS";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+    uint256 health = configVals[0];
+    uint256 power = configVals[1];
+    uint256 violence = configVals[2];
+    uint256 harmony = configVals[3];
+    uint256 slots = configVals[4];
 
     // sum the stats from all traits
     uint256 traitRegistryID;

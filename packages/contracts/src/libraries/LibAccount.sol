@@ -198,7 +198,8 @@ library LibAccount {
     uint256 id,
     uint256 entityID
   ) internal view returns (bool) {
-    return getLocation(components, id) == getLocation(components, entityID);
+    LocationComponent locComp = LocationComponent(getAddressById(components, LocCompID));
+    return locComp.getValue(id) == locComp.getValue(entityID);
   }
 
   /////////////////
