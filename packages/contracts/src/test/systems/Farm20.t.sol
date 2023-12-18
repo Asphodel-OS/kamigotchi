@@ -94,7 +94,6 @@ contract Farm20Test is SetupTemplate {
 
   // tests that correct amounts are deposited
   function testDeposit(uint startBal, uint amt) public {
-    vm.assume(startBal > 0); // Q: do we actually want this constraint?
     vm.assume(startBal < _tokenToGameDP(MAX_INT)); // starting balance is lower than max int
     vm.assume(amt < _tokenToGameDP(MAX_INT)); // deposit amount is lower than max int
     _fundAccount(0, startBal);
@@ -102,9 +101,11 @@ contract Farm20Test is SetupTemplate {
     vm.startPrank(_getOwner(0));
 
     // pull out the full balance of funds
-    uint withdrawID = _Farm20WithdrawSystem.scheduleWithdraw(startBal);
-    _fastForward(minDelay + 1);
-    _Farm20WithdrawSystem.executeWithdraw(withdrawID);
+    if (startBal > 0) {
+      uint withdrawID = _Farm20WithdrawSystem.scheduleWithdraw(startBal);
+      _fastForward(minDelay + 1);
+      _Farm20WithdrawSystem.executeWithdraw(withdrawID);
+    }
 
     // check deposit constraints
     if (amt == 0) {
@@ -350,50 +351,53 @@ contract Farm20Test is SetupTemplate {
 
   function testBridgeRoles() public {
     assertTrue(_Farm20WithdrawSystem.isAdmin(deployer));
-    assertTrue(!_Farm20WithdrawSystem.isAdmin(_getOwner(0)));
 
-    vm.prank(_getOwner(1));
-    uint id = _Farm20WithdrawSystem.scheduleWithdraw(100);
+    // ensure random players cannot update bridge parameters
+    for (uint i; i < _owners.length - 1; i++) {
+      assertTrue(!_Farm20WithdrawSystem.isAdmin(_getOwner(i)));
 
+      vm.startPrank(_getOwner(i));
+      vm.expectRevert();
+      _Farm20WithdrawSystem.updateMinDelay(0);
+      vm.expectRevert();
+      _Farm20WithdrawSystem.blacklist(address(0));
+      vm.expectRevert();
+      _Farm20WithdrawSystem.unblacklist(address(0));
+      vm.expectRevert();
+      _Farm20WithdrawSystem.updateAdmin(address(0), true);
+      vm.stopPrank();
+    }
+
+    // schedule a withdraw with our test account
+    uint amt = 100;
+    _fundAccount(0, amt);
     vm.prank(_getOwner(0));
-    vm.expectRevert("not authorized");
-    _Farm20WithdrawSystem.cancelWithdraw(id);
+    uint id = _Farm20WithdrawSystem.scheduleWithdraw(amt);
 
-    vm.prank(_getOwner(0));
-    vm.expectRevert();
-    _Farm20WithdrawSystem.updateMinDelay(0);
+    // ensure random players cannot cancel their withdraw
+    for (uint i = 1; i < _owners.length - 1; i++) {
+      vm.prank(_getOwner(i));
+      vm.expectRevert("not authorized");
+      _Farm20WithdrawSystem.cancelWithdraw(id);
+    }
 
-    vm.prank(_getOwner(0));
-    vm.expectRevert();
-    _Farm20WithdrawSystem.blacklist(address(0));
-
-    vm.prank(_getOwner(0));
-    vm.expectRevert();
-    _Farm20WithdrawSystem.unblacklist(address(0));
-
-    vm.prank(_getOwner(0));
-    vm.expectRevert();
-    _Farm20WithdrawSystem.updateAdmin(address(0), true);
-
+    // promote player 1 to admin
     vm.prank(deployer);
-    _Farm20WithdrawSystem.updateAdmin(_getOwner(0), true);
-    assertTrue(_Farm20WithdrawSystem.isAdmin(_getOwner(0)));
+    _Farm20WithdrawSystem.updateAdmin(_getOwner(1), true);
+    assertTrue(_Farm20WithdrawSystem.isAdmin(_getOwner(1)));
 
-    vm.startPrank(_getOwner(0));
+    // check that player 1 has admin permissions now
+    vm.startPrank(_getOwner(1));
     _Farm20WithdrawSystem.blacklist(address(0));
     _Farm20WithdrawSystem.unblacklist(address(0));
+    _Farm20WithdrawSystem.cancelWithdraw(id);
+
+    // check that player 1 does not have owner permissions
     vm.expectRevert();
     _Farm20WithdrawSystem.updateAdmin(address(0), true);
     vm.expectRevert();
     _Farm20WithdrawSystem.updateMinDelay(0);
+
     vm.stopPrank();
-
-    vm.prank(_getOwner(1));
-    _Farm20WithdrawSystem.cancelWithdraw(id);
-
-    vm.prank(_getOwner(1));
-    id = _Farm20WithdrawSystem.scheduleWithdraw(id);
-    vm.prank(_getOwner(0));
-    _Farm20WithdrawSystem.cancelWithdraw(id);
   }
 }
