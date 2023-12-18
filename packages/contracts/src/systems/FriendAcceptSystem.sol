@@ -14,29 +14,29 @@ contract FriendAcceptSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 reqID = abi.decode(arguments, (uint256));
+    uint256 requestID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     require(accountID != 0, "FriendAccept: no account");
-    require(LibFriend.isFriendship(components, reqID), "FriendAccept: not a friendship");
+    require(LibFriend.isFriendship(components, requestID), "FriendAccept: not a friendship");
     require(
-      LibString.eq(LibFriend.getState(components, reqID), "REQUEST"),
+      LibString.eq(LibFriend.getState(components, requestID), "REQUEST"),
       "FriendAccept: not a request"
     );
 
     // friendship specific checks
-    uint256 receivingID = LibFriend.getTarget(components, reqID);
+    uint256 receivingID = LibFriend.getTarget(components, requestID);
     require(receivingID == accountID, "FriendAccept: not for you");
 
     // accept request
-    uint256 id = LibFriend.accept(world, components, accountID, reqID);
+    uint256 id = LibFriend.accept(world, components, accountID, requestID);
 
     LibAccount.updateLastBlock(components, accountID);
 
     return abi.encode(id);
   }
 
-  function executeTyped(uint256 reqID) public returns (bytes memory) {
-    return execute(abi.encode(reqID));
+  function executeTyped(uint256 requestID) public returns (bytes memory) {
+    return execute(abi.encode(requestID));
   }
 }
