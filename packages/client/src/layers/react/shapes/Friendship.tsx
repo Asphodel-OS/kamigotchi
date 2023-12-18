@@ -22,7 +22,7 @@ export interface Friendship {
 export const getFriendship = (
   layers: Layers,
   entityIndex: EntityIndex,
-  accountPassthrough?: any
+  accountOptions?: any
 ): Friendship => {
   const {
     network: {
@@ -38,13 +38,13 @@ export const getFriendship = (
   const account = getAccountByID(
     layers,
     getComponentValue(AccountID, entityIndex)?.value as EntityID,
-    accountPassthrough
+    accountOptions
   );
 
   const target = getAccountByID(
     layers,
     getComponentValue(TargetID, entityIndex)?.value as EntityID,
-    accountPassthrough
+    accountOptions
   );
 
   return {
@@ -62,16 +62,16 @@ export const getFriendship = (
 export const getAccFriends = (
   layers: Layers,
   account: Account,
-  accountPassthrough?: any,
+  accountOptions?: any,
 ): Friendship[] => {
   return queryFriendshipX(
     layers,
     { account: account.id, state: "FRIEND" },
-    accountPassthrough
+    accountOptions
   );
 }
 
-export const getAccIncoming = (
+export const getAccIncomingRequests = (
   layers: Layers,
   account: Account,
 ): Friendship[] => {
@@ -81,7 +81,7 @@ export const getAccIncoming = (
   );
 }
 
-export const getAccOutgoing = (
+export const getAccOutgoingRequests = (
   layers: Layers,
   account: Account,
 ): Friendship[] => {
@@ -94,12 +94,12 @@ export const getAccOutgoing = (
 export const getAccBlocked = (
   layers: Layers,
   account: Account,
-  accountPassthrough?: any,
+  accountOptions?: any,
 ): Friendship[] => {
   return queryFriendshipX(
     layers,
     { account: account.id, state: "BLOCKED" },
-    accountPassthrough
+    accountOptions
   );
 }
 
@@ -112,7 +112,7 @@ export interface FriendshipOptions {
 export const queryFriendshipX = (
   layers: Layers,
   options: any,
-  accountPassthrough?: any,
+  accountOptions?: any,
 ): Friendship[] => {
   const {
     network: {
@@ -139,6 +139,6 @@ export const queryFriendshipX = (
   const raw = Array.from(runQuery(toQuery));
 
   return raw.map(
-    (index: EntityIndex) => getFriendship(layers, index, accountPassthrough)
+    (index: EntityIndex) => getFriendship(layers, index, accountOptions)
   );
 }
