@@ -120,11 +120,7 @@ export interface FriendAcceptSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-<<<<<<< HEAD
       requestID: PromiseOrValue<BigNumberish>,
-=======
-      reqID: PromiseOrValue<BigNumberish>,
->>>>>>> 9e95531 (friends system FE)
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -142,11 +138,7 @@ export interface FriendAcceptSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-<<<<<<< HEAD
     requestID: PromiseOrValue<BigNumberish>,
-=======
-    reqID: PromiseOrValue<BigNumberish>,
->>>>>>> 9e95531 (friends system FE)
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -164,11 +156,7 @@ export interface FriendAcceptSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-<<<<<<< HEAD
       requestID: PromiseOrValue<BigNumberish>,
-=======
-      reqID: PromiseOrValue<BigNumberish>,
->>>>>>> 9e95531 (friends system FE)
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -198,11 +186,7 @@ export interface FriendAcceptSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-<<<<<<< HEAD
       requestID: PromiseOrValue<BigNumberish>,
-=======
-      reqID: PromiseOrValue<BigNumberish>,
->>>>>>> 9e95531 (friends system FE)
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -221,11 +205,7 @@ export interface FriendAcceptSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-<<<<<<< HEAD
       requestID: PromiseOrValue<BigNumberish>,
-=======
-      reqID: PromiseOrValue<BigNumberish>,
->>>>>>> 9e95531 (friends system FE)
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

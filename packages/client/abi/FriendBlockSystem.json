@@ -67,21 +67,9 @@
     {
       "inputs": [
         {
-<<<<<<< HEAD
-<<<<<<< HEAD
           "internalType": "address",
           "name": "addr",
           "type": "address"
-=======
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
->>>>>>> 9e95531 (friends system FE)
-=======
-          "internalType": "address",
-          "name": "addr",
-          "type": "address"
->>>>>>> 344680e (post comment clean ups)
         }
       ],
       "name": "executeTyped",
@@ -124,15 +112,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "executeTyped(address)": "240b27e6",
-=======
-    "executeTyped(uint256)": "3e991df3",
->>>>>>> 9e95531 (friends system FE)
-=======
-    "executeTyped(address)": "240b27e6",
->>>>>>> 344680e (post comment clean ups)
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

@@ -68,11 +68,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-<<<<<<< HEAD
           "name": "requestID",
-=======
-          "name": "reqID",
->>>>>>> 9e95531 (friends system FE)
           "type": "uint256"
         }
       ],
