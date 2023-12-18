@@ -18,23 +18,26 @@ contract FriendRequestSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    require(accountID != 0, "FriendReq: no account");
-    require(targetID != 0, "FriendReq: target no account");
-    require(accountID != targetID, "FriendReq: cannot friend self");
+    require(accountID != 0, "FriendRequest: no account");
+    require(targetID != 0, "FriendRequest: target no account");
+    require(accountID != targetID, "FriendRequest: cannot fren self");
 
     // friendship specific checks
     /// @dev FE should not get here; if either alr requested, friends, or blocked, a friendship will exist
     require(
       LibFriend.getFriendship(components, accountID, targetID) == 0,
-      "FriendReq: already exists"
+      "FriendRequest: already exists"
     );
 
     uint256 incomingReq = LibFriend.getFriendship(components, targetID, accountID);
     if (incomingReq != 0) {
-      require(
-        LibString.eq(LibFriend.getState(components, incomingReq), "REQUEST"),
-        "FriendReq: not request"
-      );
+      string memory state = LibFriend.getState(components, incomingReq);
+      require(LibString.eq(state, "REQUEST"), "FriendRequest: not request");
+      if (LibString.eq(state, "FRIEND")) {
+        require(false, "FriendRequest: already friends");
+      } else if (LibString.eq(state, "BLOCKED")) {
+        require(false, "FriendRequest: blocked");
+      }
       return abi.encode(LibFriend.accept(world, components, accountID, incomingReq));
     }
 

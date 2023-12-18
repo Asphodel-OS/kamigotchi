@@ -60,6 +60,7 @@
     "IsEffectComponent",
     "IsEquippedComponent",
     "IsFungibleComponent",
+    "IsFriendshipComponent",
     "IsInventoryComponent",
     "IsKillComponent",
     "IsListingComponent",
@@ -588,6 +589,50 @@
         "ProxyPermissionsFarm20Component",
         "TypeComponent",
         "ValueComponent"
+      ]
+    },
+    {
+      "last deployed": "18 December 2023",
+      "name": "FriendAcceptSystem",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "FriendBlockSystem",
+      "last deployed": "18 December 2023",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "FriendCancelSystem",
+      "last deployed": "18 December 2023",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
+      ]
+    },
+    {
+      "name": "FriendRequestSystem",
+      "last deployed": "18 December 2023",
+      "writeAccess": [
+        "BlockLastComponent",
+        "IdAccountComponent",
+        "IdTargetComponent",
+        "IsFriendshipComponent",
+        "StateComponent"
       ]
     },
     {
