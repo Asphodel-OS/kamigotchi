@@ -134,7 +134,7 @@ export const Search = (props: Props) => {
       const friendship = queries.queryFriendships({ account: account, target: target })[0];
       options.push({
         text: "Unfriend",
-        onClick: () => actions.cancelFriend(friendship, `unfriending ${friendship.target.name}`),
+        onClick: () => actions.cancelFriend(friendship, `friendship over with ${friendship.target.name} !`),
       });
     } else if (status === "INCOMING_REQUEST") {
       const friendship = queries.queryFriendships({ account: target, target: account })[0];
@@ -146,7 +146,7 @@ export const Search = (props: Props) => {
       const friendship = queries.queryFriendships({ account: account, target: target })[0];
       options.push({
         text: "Cancel outgoing request",
-        onClick: () => actions.cancelFriend(friendship, `i don't want to be friends with ${friendship.target.name} anymore!`),
+        onClick: () => actions.cancelFriend(friendship, `don't want ${friendship.target.name} anymore!`),
       });
     }
 

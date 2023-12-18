@@ -54,7 +54,7 @@ export const FrenList = (props: Props) => {
         options={[
           {
             text: "Unfriend",
-            onClick: () => actions.cancelFriend(friendship, `unfriending ${friendship.target.name}`),
+            onClick: () => actions.cancelFriend(friendship, `friendship over with ${friendship.target.name} !`),
           },
           {
             text: "Block",
