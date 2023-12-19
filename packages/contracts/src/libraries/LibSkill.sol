@@ -42,7 +42,7 @@ library LibSkill {
     return id;
   }
 
-  // increase skill points by a specified value
+  // increase skill points of a skill by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
     uint256 curr = getPoints(components, id);
     setPoints(components, id, curr + value);
@@ -55,17 +55,39 @@ library LibSkill {
     setPoints(components, id, curr - value);
   }
 
-  // process the upgrade of a generic skill inc/dec effect
+  // process the upgrade of a skill (can be generic or stat skill)
   function processEffectUpgrade(
+    IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint256 effectID,
-    string memory type_
+    uint256 effectID
   ) internal {
-    uint256 bonusID = LibBonus.get(components, holderID, type_);
+    if (LibString.eq("STAT", LibRegistrySkill.getType(components, effectID))) {
+      processStatEffectUpgrade(world, components, holderID, effectID);
+    } else {
+      processGeneralEffectUpgrade(world, components, holderID, effectID);
+    }
+  }
+
+  // process the upgrade of a generic skill inc/dec effect
+  function processGeneralEffectUpgrade(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 effectID
+  ) internal {
+    string memory type_ = LibRegistrySkill.getType(components, effectID);
+    string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
+    string memory bonusType = LibString.concat(LibString.concat(type_, "_"), subtype);
+    // get the bonus entity or create one if it doesnt exist
+    // default the initial value to 0 if Cooldown type (otherwise 1000 implicitly)
+    uint256 bonusID = LibBonus.get(components, holderID, bonusType);
+    if (bonusID == 0) {
+      bonusID = LibBonus.create(world, components, holderID, bonusType);
+      if (LibString.eq("COOLDOWN", subtype)) LibBonus.setValue(components, bonusID, 0);
+    }
     string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
     uint256 value = LibRegistrySkill.getValue(components, effectID);
-
     if (LibString.eq(logicType, "INC")) LibBonus.inc(components, bonusID, value);
     else if (LibString.eq(logicType, "DEC")) LibBonus.dec(components, bonusID, value);
   }
@@ -73,11 +95,14 @@ library LibSkill {
   // processes the upgrade of a stat increment/decrement effect
   // assume the holder's bonus entity exists
   function processStatEffectUpgrade(
+    IWorld world,
     IUintComp components,
     uint256 holderID,
     uint256 effectID
   ) internal {
     uint256 bonusID = LibBonus.get(components, holderID, "STAT");
+    if (bonusID == 0) bonusID = LibBonus.create(world, components, holderID, "STAT");
+
     string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
     string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
     uint256 value = LibRegistrySkill.getValue(components, effectID);

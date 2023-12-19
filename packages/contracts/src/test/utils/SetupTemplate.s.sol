@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
-
-import { Deploy } from "test/Deploy.sol";
+import "forge-std/console.sol";
+import { LibString } from "solady/utils/LibString.sol";
 import "std-contracts/test/MudTest.t.sol";
 
-import "forge-std/console.sol";
-
-import { LibString } from "solady/utils/LibString.sol";
+import { Deploy } from "test/Deploy.sol";
 import "./TestSetupImports.sol";
 
 abstract contract SetupTemplate is TestSetupImports {

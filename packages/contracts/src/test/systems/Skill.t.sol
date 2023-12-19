@@ -6,30 +6,23 @@ import "test/utils/SetupTemplate.s.sol";
 contract SkillTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
+    _registerAccount(0);
   }
 
+  // test whether skill upgrades are properly gated by skill point availability
   function testSkillBasicAccount() public {
-    // create skill
-    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 0, 1, "test skill description");
-
-    // register the account
-    _registerAccount(0);
     uint256 accountID = _getAccount(0);
+    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 0, 1, "test skill description");
 
     // select skill
     _upgradeSkill(0, accountID, 1);
-
-    // check if skills are added
     assertTrue(LibSkill.get(components, accountID, 1) != 0);
   }
 
-  function testUseSkillPoints() public {
-    // create skill
-    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 1, 1, "test skill description");
-
-    // register the account
-    _registerAccount(0);
+  // test whether skill upgrades are properly gated by skill point availability
+  function testSkillPoints() public {
     uint256 accountID = _getAccount(0);
+    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 1, 1, "test skill description");
 
     // select skill (fail - no points)
     vm.prank(_getOperator(0));
@@ -45,18 +38,12 @@ contract SkillTest is SetupTemplate {
     assertEq(LibSkill.getPoints(components, accountID), 0);
   }
 
+  // test whether skill upgrades are properly gated by skill cap
   function testSkillMax() public {
-    // create skill
+    uint256 accountID = _getAccount(0);
     _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 0, 2, "test skill description");
 
-    // register the account
-    _registerAccount(0);
-    uint256 accountID = _getAccount(0);
-
-    // accept x1
     _upgradeSkill(0, accountID, 1);
-
-    // accept x2
     _upgradeSkill(0, accountID, 1);
 
     // accept x3 (expect fail)
