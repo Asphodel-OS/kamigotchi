@@ -87,7 +87,7 @@ export const getAccount = (
         AccountIndex,
         Coin,
         LastBlock,
-        LastTime,
+        LastActionTime,
         Location,
         Name,
         OperatorAddress,
@@ -118,7 +118,7 @@ export const getAccount = (
       recoveryPeriod: getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
     },
     lastBlock: getComponentValue(LastBlock, entityIndex)?.value as number,
-    lastMoveTs: getComponentValue(LastTime, entityIndex)?.value as number,
+    lastMoveTs: getComponentValue(LastActionTime, entityIndex)?.value as number,
     creationTs: getComponentValue(StartTime, entityIndex)?.value as number,
   };
 
