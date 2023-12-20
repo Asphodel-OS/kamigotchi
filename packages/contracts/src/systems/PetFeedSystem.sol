@@ -51,10 +51,10 @@ contract PetFeedSystem is System {
     LibPet.heal(components, id, LibStat.getHealth(components, registryID));
     LibExperience.inc(components, id, LibExperience.get(components, registryID));
 
-    // updating account info
+    // standard logging and tracking
     LibScore.incBy(world, components, accountID, "FEED", 1);
     LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_USE", 1);
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

@@ -26,7 +26,9 @@ contract TradeCancelSystem is System {
     require(!LibTrade.hasState(components, tradeID, "COMPLETE"), "Trade: already complete");
 
     LibTrade.cancel(world, components, tradeID);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

@@ -39,11 +39,10 @@ contract Farm20DepositSystem is System {
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);
     LibCoin.inc(components, accountID, amount);
 
-    // updating account
+    // standard logging and tracking
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", amount);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_DEPOSIT", amount);
-    LibAccount.updateLastBlock(components, accountID);
-
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

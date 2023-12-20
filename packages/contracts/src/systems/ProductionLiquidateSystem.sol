@@ -72,7 +72,7 @@ contract ProductionLiquidateSystem is System {
     if (bonusID != 0) standardActionTs -= LibBonus.getValue(components, bonusID);
     LibPet.setLastActionTs(components, petID, standardActionTs);
 
-    // logging and tracking
+    // standard logging and tracking
     LibScore.incBy(world, components, accountID, "LIQUIDATE", 1);
     LibDataEntity.incFor(world, components, accountID, 0, "LIQUIDATE", 1);
     LibDataEntity.incFor(
@@ -91,7 +91,7 @@ contract ProductionLiquidateSystem is System {
       "BEEN_LIQUIDATEED",
       1
     );
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

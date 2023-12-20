@@ -31,6 +31,8 @@ contract AccountRegisterSystem is System {
     accountID = LibAccount.create(world, components, msg.sender, operator);
     LibAccount.setName(components, accountID, name);
     LibAccount.setFavoriteFood(components, accountID, food);
+
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(accountID);
   }
 

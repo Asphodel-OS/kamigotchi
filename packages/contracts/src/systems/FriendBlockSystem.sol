@@ -45,8 +45,8 @@ contract FriendBlockSystem is System {
     // block
     uint256 result = LibFriend.block(world, components, accountID, targetID);
 
-    LibAccount.updateLastBlock(components, accountID);
-
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(result);
   }
 

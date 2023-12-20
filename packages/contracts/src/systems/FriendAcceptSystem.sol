@@ -31,8 +31,8 @@ contract FriendAcceptSystem is System {
     // accept request
     uint256 id = LibFriend.accept(world, components, accountID, requestID);
 
-    LibAccount.updateLastBlock(components, accountID);
-
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(id);
   }
 

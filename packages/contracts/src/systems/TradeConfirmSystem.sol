@@ -35,7 +35,8 @@ contract TradeConfirmSystem is System {
       tradeComplete = LibTrade.process(world, components, tradeID);
     }
 
-    LibAccount.updateLastBlock(components, accountID);
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(tradeComplete);
   }
 

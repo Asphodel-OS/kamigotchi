@@ -47,6 +47,8 @@ contract RelationshipAdvanceSystem is System {
 
     LibRelationship.create(world, components, accountID, npcIndex, relIndex);
 
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

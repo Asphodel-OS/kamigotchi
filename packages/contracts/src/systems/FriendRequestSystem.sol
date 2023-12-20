@@ -44,8 +44,8 @@ contract FriendRequestSystem is System {
     // create request
     uint256 requestID = LibFriend.request(world, components, accountID, targetID);
 
-    LibAccount.updateLastBlock(components, accountID);
-
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(requestID);
   }
 

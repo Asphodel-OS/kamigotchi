@@ -33,7 +33,8 @@ contract PetUseItemSystem is System {
       require(false, "ItemUse: unknown item type");
     }
 
-    LibAccount.updateLastBlock(components, accountID);
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

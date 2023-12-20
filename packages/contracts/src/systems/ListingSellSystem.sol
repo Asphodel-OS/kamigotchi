@@ -33,7 +33,7 @@ contract ListingSellSystem is System {
 
     LibListing.sellTo(components, listingID, accountID, amt);
 
-    // updating account info
+    // standard logging and tracking
     LibListing.logIncItemSell(
       world,
       components,
@@ -41,7 +41,7 @@ contract ListingSellSystem is System {
       LibListing.getItemIndex(components, listingID),
       amt
     );
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

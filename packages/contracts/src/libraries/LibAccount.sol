@@ -14,14 +14,14 @@ import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountC
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
-import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
 import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
@@ -53,7 +53,7 @@ library LibAccount {
     uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
     setStamina(components, id, baseStamina);
     setCurrStamina(components, id, baseStamina);
-    updateLastBlock(components, id);
+    updateLastActionTs(components, id);
     updateLastTs(components, id);
     return id;
   }
@@ -75,19 +75,18 @@ library LibAccount {
 
   // syncs the stamina of an account. rounds down, ruthlessly
   function syncStamina(IUintComp components, uint256 id) internal returns (uint256) {
-    uint256 timePassed = block.timestamp - getLastTs(components, id);
+    uint256 timePassed = block.timestamp - getLastActionTs(components, id);
     uint256 recoveryPeriod = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
     uint256 recoveredAmt = timePassed / recoveryPeriod;
-    updateLastTs(components, id);
+    updateLastActionTs(components, id);
     return recover(components, id, recoveredAmt);
   }
 
-  // Update the BlockLast of the account. References the most recent block this Account transacted.
-  function updateLastBlock(IUintComp components, uint256 id) internal {
-    setLastBlock(components, id, block.number);
+  // Update the TimeLastAction of the account. Used to throttle world movement.
+  function updateLastActionTs(IUintComp components, uint256 id) internal {
+    setLastActionTs(components, id, block.timestamp);
   }
 
-  // Update the TimeLastAction of the account. Used to throttle world movement.
   function updateLastTs(IUintComp components, uint256 id) internal {
     setLastTs(components, id, block.timestamp);
   }
@@ -144,12 +143,12 @@ library LibAccount {
     FavoriteFoodComponent(getAddressById(components, FavFoodCompID)).set(id, food);
   }
 
-  function setLastBlock(IUintComp components, uint256 id, uint256 blockNum) internal {
-    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, blockNum);
+  function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, ts);
   }
 
   function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
+    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -205,12 +204,12 @@ library LibAccount {
   /////////////////
   // GETTERS
 
-  function getLastBlock(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BlockLastComponent(getAddressById(components, BlockLastCompID)).getValue(id);
+  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).getValue(id);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   // gets the location of a specified account account

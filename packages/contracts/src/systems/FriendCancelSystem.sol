@@ -52,8 +52,8 @@ contract FriendCancelSystem is System {
 
     LibFriend.remove(components, friendshipID);
 
-    LibAccount.updateLastBlock(components, accountID);
-
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

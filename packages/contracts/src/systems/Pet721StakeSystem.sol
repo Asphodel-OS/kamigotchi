@@ -43,12 +43,12 @@ contract Pet721StakeSystem is System {
     require(LibPet.getAccount(components, petID) == 0, "Pet721Stake: already linked");
     require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
-    LibAccount.logIncPetsStaked(world, components, accountID, 1);
-    LibAccount.updateLastBlock(components, accountID);
-
     LibPet.stake(components, petID, accountID);
     LibPet721.stake(world, msg.sender, tokenID);
 
+    // standard logging and tracking
+    LibAccount.logIncPetsStaked(world, components, accountID, 1);
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

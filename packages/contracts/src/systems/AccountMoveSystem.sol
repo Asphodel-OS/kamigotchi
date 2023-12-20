@@ -21,7 +21,9 @@ contract AccountMoveSystem is System {
     require(LibAccount.canMoveTo(components, accountID, to), "Account: unreachable location");
 
     LibAccount.move(components, accountID, to);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

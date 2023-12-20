@@ -31,7 +31,9 @@ contract TradeAddToSystem is System {
 
     uint256 registerID = LibRegister.get(components, accountID, tradeID);
     LibRegister.addTo(world, components, registerID, itemIndex, amt);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

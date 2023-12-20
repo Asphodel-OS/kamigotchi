@@ -48,7 +48,7 @@ contract ProductionStartSystem is System {
     LibPet.setLastActionTs(components, petID, standardActionTs);
 
     // standard logging and tracking
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(id);
   }
 

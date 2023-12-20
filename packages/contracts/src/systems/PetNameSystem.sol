@@ -31,7 +31,9 @@ contract PetNameSystem is System {
 
     LibPet.setName(components, id, name);
     LibPet.setCanName(components, id, false);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

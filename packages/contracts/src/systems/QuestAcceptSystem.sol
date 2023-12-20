@@ -53,8 +53,8 @@ contract QuestAcceptSystem is System {
       assignedID = LibQuests.assign(world, components, questIndex, accountID);
     }
 
-    LibAccount.updateLastBlock(components, accountID);
-
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(assignedID);
   }
 

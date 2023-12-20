@@ -44,7 +44,8 @@ contract PetLevelSystem is System {
     // signal a metadata update
     LibPet721.updateEvent(world, LibPet.idToIndex(components, id));
 
-    LibAccount.updateLastBlock(components, accountID);
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

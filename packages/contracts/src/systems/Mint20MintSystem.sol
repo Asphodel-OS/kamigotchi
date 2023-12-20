@@ -48,7 +48,8 @@ contract Mint20MintSystem is System {
     LibAccount.setMint20Minted(world, components, accountID, accountMinted + amount);
     LibMint20.mint(world, msg.sender, amount);
 
-    LibAccount.updateLastBlock(components, accountID);
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

@@ -70,7 +70,9 @@ contract SkillUpgradeSystem is System {
     // informs the FE. it's gas inefficient, but it keeps the code sane up there.
     // Can consider wiping once the calculations are mirrored on the FE.
     if (isPet) LibPet.sync(components, holderID);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

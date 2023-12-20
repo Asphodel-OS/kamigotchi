@@ -21,7 +21,9 @@ contract QuestDropSystem is System {
     require(accountID == LibQuests.getAccountId(components, questID), "QuestDrop: not ur quest");
 
     LibQuests.drop(components, questID);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

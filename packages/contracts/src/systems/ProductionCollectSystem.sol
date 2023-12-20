@@ -46,7 +46,7 @@ contract ProductionCollectSystem is System {
     // Update ts for Standard Action Cooldowns
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
-    // logging and tracking
+    // standard logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", output);
     LibDataEntity.incFor(
@@ -57,7 +57,7 @@ contract ProductionCollectSystem is System {
       "NODE_COLLECT",
       output
     );
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
 
     return abi.encode(output);
   }

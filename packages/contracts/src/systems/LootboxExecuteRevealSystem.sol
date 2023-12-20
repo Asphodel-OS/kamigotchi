@@ -28,7 +28,7 @@ contract LootboxExecuteRevealSystem is System {
 
     LibLootbox.executeReveal(world, components, id, accountID);
 
-    // Account data logging
+    // standard logging and tracking
     LibLootbox.logIncOpened(
       world,
       components,
@@ -36,8 +36,7 @@ contract LootboxExecuteRevealSystem is System {
       LibLootbox.getIndex(components, id),
       LibLootbox.getBalance(components, id)
     );
-    LibAccount.updateLastBlock(components, accountID);
-
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

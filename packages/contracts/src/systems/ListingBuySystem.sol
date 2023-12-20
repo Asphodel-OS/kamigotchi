@@ -39,10 +39,10 @@ contract ListingBuySystem is System {
     }
     LibListing.buyFrom(components, listingID, accountID, amt);
 
-    // updating account info
+    // standard logging and tracking
     LibInventory.logIncItemTotal(world, components, accountID, itemIndex, amt);
     LibListing.logIncItemBuy(world, components, accountID, itemIndex, amt);
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

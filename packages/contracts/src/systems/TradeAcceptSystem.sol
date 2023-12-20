@@ -25,8 +25,9 @@ contract TradeAcceptSystem is System {
     require(LibTrade.isRequest(components, tradeID), "Trade: not a request");
     require(LibTrade.getRequestee(components, tradeID) == accountID, "Trade: must be requestee");
 
+    // standard logging and tracking
     LibTrade.accept(world, components, tradeID);
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 
