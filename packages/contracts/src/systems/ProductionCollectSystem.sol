@@ -43,6 +43,9 @@ contract ProductionCollectSystem is System {
     uint256 output = LibProduction.claim(components, id);
     LibExperience.inc(components, petID, output);
 
+    // Update ts for Standard Action Cooldowns
+    LibPet.setLastActionTs(components, petID, block.timestamp);
+
     // logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", output);

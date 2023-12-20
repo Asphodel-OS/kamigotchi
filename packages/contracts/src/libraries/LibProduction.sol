@@ -60,7 +60,7 @@ library LibProduction {
     setState(components, id, "ACTIVE");
     LibCoin._set(components, id, 0);
     setRate(components, id, calcRate(components, id)); // always last
-    setStartTime(components, id, block.timestamp);
+    setStartTs(components, id, block.timestamp);
   }
 
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
@@ -75,7 +75,7 @@ library LibProduction {
       delta = calcOutput(components, id);
       LibCoin.inc(components, id, delta);
       setRate(components, id, calcRate(components, id));
-      setStartTime(components, id, block.timestamp);
+      setStartTs(components, id, block.timestamp);
     }
   }
 
@@ -174,7 +174,7 @@ library LibProduction {
     IUintComp components,
     uint256 targetPetID,
     uint256 sourcePetID
-  ) external view returns (bool) {
+  ) public view returns (bool) {
     uint256 targetHealth = LibPet.getLastHealth(components, targetPetID);
     uint256 targetTotalHealth = LibPet.calcTotalHealth(components, targetPetID);
     uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
@@ -198,7 +198,7 @@ library LibProduction {
     StateComponent(getAddressById(components, StateCompID)).set(id, state);
   }
 
-  function setStartTime(IUintComp components, uint256 id, uint256 timeStart) internal {
+  function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
   }
 

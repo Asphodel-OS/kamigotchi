@@ -52,6 +52,9 @@ contract ProductionStopSystem is System {
     LibProduction.stop(components, id);
     LibPet.setState(components, petID, "RESTING");
 
+    // Update ts for Standard Action Cooldowns
+    LibPet.setLastActionTs(components, petID, block.timestamp);
+
     // logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", output);

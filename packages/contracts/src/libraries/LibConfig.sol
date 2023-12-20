@@ -72,7 +72,7 @@ library LibConfig {
   function getBatchValueOf(
     IUintComp components,
     string[] memory names
-  ) internal view returns (uint256[] memory) {
+  ) public view returns (uint256[] memory) {
     uint256[] memory values = getBatch(components, names);
 
     ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));

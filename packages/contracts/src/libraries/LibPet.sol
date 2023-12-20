@@ -19,7 +19,9 @@ import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/He
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -56,6 +58,7 @@ library LibPet {
     setAccount(components, id, accountID);
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
+    setStartTs(components, id, block.timestamp);
 
     LibExperience.setLevel(components, id, 1);
     LibExperience.set(components, id, 0);
@@ -125,22 +128,21 @@ library LibPet {
 
   // Update the current health of a pet as well as any active production
   function sync(IUintComp components, uint256 id) public {
-    if (isHarvesting(components, id)) {
+    string memory state = getState(components, id);
+
+    if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
-      uint256 drainAmt = calcDrain(components, id, deltaBalance);
-      drain(components, id, drainAmt);
-    } else if (isResting(components, id)) {
-      uint256 healAmt = calcRestingRecovery(components, id);
-      heal(components, id, healAmt);
+      drain(components, id, calcDrain(components, id, deltaBalance));
+    } else if (LibString.eq(state, "RESTING")) {
+      heal(components, id, calcRestingRecovery(components, id));
     }
+
     setLastTs(components, id, block.timestamp);
   }
 
   // transfer ERC721 pet
-  // NOTE: it doesnt seem we actually need IdOwner directly on the pet as it can be
-  // directly accessed through the account entity.
-  // NOTE 2: transfers are disabled in game
+  // NOTE: transfers are disabled in game
   function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = indexToID(components, index);
@@ -320,8 +322,9 @@ library LibPet {
   /////////////////
   // CHECKERS
 
-  function canAct(IUintComp components, uint256 id) public view returns (bool) {
-    uint256 idleTime = block.timestamp - getLastTs(components, id);
+  // Check whether a kami can act based on time passed since its last Standard Action
+  function canAct(IUintComp components, uint256 id) internal view returns (bool) {
+    uint256 idleTime = block.timestamp - getLastActionTs(components, id);
     uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
     return idleTime >= idleRequirement;
   }
@@ -374,6 +377,47 @@ library LibPet {
   /////////////////
   // SETTERS
 
+  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
+    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
+  }
+
+  // add or remove the CanName component
+  function setCanName(IUintComp components, uint256 id, bool can) internal {
+    CanNameComponent canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
+    if (can) canNameComp.set(id);
+    else if (canNameComp.has(id)) canNameComp.remove(id);
+  }
+
+  function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
+    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
+  }
+
+  // Update the TimeLastAction of a pet. to inform cooldown constraints on Standard Actions
+  function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, ts);
+  }
+
+  // Update the TimeLast of a pet. used as anchor point for updating Health
+  function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
+  }
+
+  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
+    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, uri);
+  }
+
+  function setName(IUintComp components, uint256 id, string memory name) internal {
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
+    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
+  }
+
+  function setState(IUintComp components, uint256 id, string memory state) internal {
+    StateComponent(getAddressById(components, StateCompID)).set(id, state);
+  }
+
   // set a pet's stats from its traits
   function setStats(IUintComp components, uint256 id) internal {
     string[] memory configs = new string[](5);
@@ -410,40 +454,6 @@ library LibPet {
     LibStat.setSlots(components, id, slots);
   }
 
-  // add or remove the CanName component
-  function setCanName(IUintComp components, uint256 id, bool can) internal {
-    if (can) {
-      CanNameComponent(getAddressById(components, CanNameCompID)).set(id);
-    } else if (CanNameComponent(getAddressById(components, CanNameCompID)).has(id)) {
-      CanNameComponent(getAddressById(components, CanNameCompID)).remove(id);
-    }
-  }
-
-  function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
-    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
-  }
-
-  // Update the TimeLastAction of a pet. used to expected battery drain on next action
-  function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
-  }
-
-  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, uri);
-  }
-
-  function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-  }
-
-  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
-    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
-  }
-
-  function setState(IUintComp components, uint256 id, string memory state) internal {
-    StateComponent(getAddressById(components, StateCompID)).set(id, state);
-  }
-
   /////////////////
   // GETTERS
 
@@ -457,8 +467,12 @@ library LibPet {
     return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
   }
 
+  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).getValue(id);
+  }
+
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   // Get the implied location of a pet based on its state.
