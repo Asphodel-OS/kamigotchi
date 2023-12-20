@@ -468,7 +468,11 @@ library LibPet {
   }
 
   function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).getValue(id);
+    TimeLastActionComponent comp = TimeLastActionComponent(
+      getAddressById(components, TimeLastActCompID)
+    );
+    if (!comp.has(id)) return 0;
+    return comp.getValue(id);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {

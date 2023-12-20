@@ -29,8 +29,7 @@ contract ProductionStartSystem is System {
     require(LibPet.canAct(components, petID), "Pet: on cooldown");
     require(LibPet.isResting(components, petID), "Pet: must be resting");
 
-    // sync the pet's health with the current state
-    // ensure the Pet is able to harvest on this Node
+    // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
     require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");

@@ -790,6 +790,7 @@
       "writeAccess": [
         "BlockLastComponent",
         "CanNameComponent",
+        "TimeLastComponent",
         "NameComponent"
       ]
     },
@@ -819,7 +820,8 @@
       "writeAccess": [
         "BalanceComponent",
         "BlockLastComponent",
-        "CanNameComponent"
+        "CanNameComponent",
+        "TimeLastComponent"
       ]
     },
     {
