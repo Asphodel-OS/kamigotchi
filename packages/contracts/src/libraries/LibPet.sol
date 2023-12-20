@@ -19,9 +19,9 @@ import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/He
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -475,8 +475,11 @@ library LibPet {
     return comp.getValue(id);
   }
 
+  // NOTE: value should be set on Pet Reveal. check is insurance policy for backwards compatibility
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
+    if (comp.has(id)) return comp.getValue(id);
+    else return 0;
   }
 
   // Get the implied location of a pet based on its state.

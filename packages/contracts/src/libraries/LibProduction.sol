@@ -13,6 +13,7 @@ import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol
 import { IsProductionComponent, ID as IsProdCompID } from "components/IsProductionComponent.sol";
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -56,11 +57,12 @@ library LibProduction {
   }
 
   // Starts an _existing_ production if not already started.
-  function start(IUintComp components, uint256 id) internal {
+  function start(IUintComp components, uint256 id) public {
     setState(components, id, "ACTIVE");
     LibCoin._set(components, id, 0);
     setRate(components, id, calcRate(components, id)); // always last
     setStartTs(components, id, block.timestamp);
+    setLastTs(components, id, block.timestamp);
   }
 
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
@@ -75,7 +77,7 @@ library LibProduction {
       delta = calcOutput(components, id);
       LibCoin.inc(components, id, delta);
       setRate(components, id, calcRate(components, id));
-      setStartTs(components, id, block.timestamp);
+      setLastTs(components, id, block.timestamp);
     }
   }
 
@@ -84,8 +86,7 @@ library LibProduction {
 
   // Calculate the duration since a production last started, measured in seconds.
   function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 startTime = getStartTs(components, id);
-    return block.timestamp - startTime;
+    return block.timestamp - getLastTs(components, id);
   }
 
   // Calculate the accrued output of the production since the pet's last snapshot
@@ -194,6 +195,10 @@ library LibProduction {
     StateComponent(getAddressById(components, StateCompID)).set(id, state);
   }
 
+  function setLastTs(IUintComp components, uint256 id, uint256 timeStart) internal {
+    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, timeStart);
+  }
+
   function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
   }
@@ -203,6 +208,13 @@ library LibProduction {
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibCoin.get(components, id);
+  }
+
+  // NOTE: value should be set on harvest start. the check is insurance for backwards compatibility
+  function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
+    if (comp.has(id)) return comp.getValue(id);
+    else return getStartTs(components, id);
   }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
