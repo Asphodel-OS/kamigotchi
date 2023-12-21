@@ -8,7 +8,7 @@ import { Tooltip } from './Tooltip';
 import {
   Kami,
   isUnrevealed,
-  getCooldown,
+  calcCooldownRemaining,
   calcHealth,
 } from "layers/react/shapes/Kami";
 import { useComponentSettings } from 'layers/react/store/componentSettings';
@@ -72,7 +72,7 @@ export const KamiCard = (props: Props) => {
   };
 
   const CornerContent = (kami: Kami) => {
-    const cooldown = getCooldown(kami);
+    const cooldown = calcCooldownRemaining(kami);
     const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
     const totalHealth = kami.stats.health + kami.bonusStats.health;
     const batteryString = !isUnrevealed(kami)
@@ -83,7 +83,7 @@ export const KamiCard = (props: Props) => {
       <TitleCorner key='corner'>
         {props.cooldown &&
           <Tooltip key='cooldown' text={[cooldownString]}>
-            <Countdown total={kami.cooldown} current={cooldown} />
+            <Countdown total={kami.time.cooldown.requirement} current={cooldown} />
           </Tooltip>
         }
         {props.battery &&

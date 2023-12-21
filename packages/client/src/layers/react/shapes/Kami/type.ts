@@ -31,12 +31,18 @@ export interface Kami {
   health: number;
   healthRate: number;
   state: string;
-  lastUpdated: number;
-  cooldown: number;
   skillPoints: number;
   stats: Stats;
   bonusStats: Stats;
   bonuses: Bonuses;
+  time: {
+    cooldown: {
+      last: number;
+      requirement: number;
+    };
+    last: number;
+    start: number;
+  };
   account?: Account;
   deaths?: Kill[];
   kills?: Kill[];
@@ -85,6 +91,7 @@ export const getKami = (
         IsBonus,
         IsKill,
         IsProduction,
+        LastTime,
         LastActionTime,
         Level,
         MediaURI,
@@ -93,6 +100,7 @@ export const getKami = (
         PetIndex,
         SkillPoint,
         SourceID,
+        StartTime,
         State,
         TargetID,
         TraitIndex,
@@ -117,8 +125,14 @@ export const getKami = (
     healthRate: 0,
     state: getComponentValue(State, index)?.value as string,
     namable: getComponentValue(CanName, index)?.value as boolean,
-    lastUpdated: (getComponentValue(LastActionTime, index)?.value as number) * 1,
-    cooldown: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
+    time: {
+      cooldown: {
+        last: (getComponentValue(LastActionTime, index)?.value as number) * 1,
+        requirement: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
+      },
+      last: (getComponentValue(LastTime, index)?.value as number) * 1,
+      start: (getComponentValue(StartTime, index)?.value as number) * 1,
+    },
     skillPoints: (getComponentValue(SkillPoint, index)?.value ?? 0 as number) * 1,
     stats: getStats(layers, index),
     bonuses: getBonuses(layers, index),

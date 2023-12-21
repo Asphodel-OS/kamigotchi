@@ -14,15 +14,15 @@ import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
 import {
   Kami,
-  onCooldown,
-  getCooldown,
+  calcCooldownRemaining,
   calcHealth,
-  isFull,
-  isStarving,
   calcOutput,
   calcLiqThresholdValue,
-  canMog,
   canLiquidate,
+  canMog,
+  isFull,
+  isStarving,
+  onCooldown,
 } from "layers/react/shapes/Kami";
 import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
 
@@ -106,7 +106,7 @@ export const Kards = (props: Props) => {
   const getDisabledReason = (kami: Kami): string => {
     let reason = '';
     if (onCooldown(kami)) {
-      reason = 'On cooldown (' + getCooldown(kami).toFixed(0) + 's left)';
+      reason = 'On cooldown (' + calcCooldownRemaining(kami).toFixed(0) + 's left)';
     } else if (isStarving(kami)) {
       reason = 'starving :(';
     }

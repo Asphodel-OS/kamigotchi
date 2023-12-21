@@ -45,9 +45,9 @@ export const getLocation = (kami: Kami): number => {
 ////////////////
 // TIME CALCS
 
-// calculate the time a kami has spent idle (in seconds)
-export const calcRestTime = (kami: Kami): number => {
-  return Date.now() / 1000 - kami.lastUpdated;
+// calculate the time a kami has spent idle (in seconds) for the sake of health regen
+export const calcIdleTime = (kami: Kami): number => {
+  return Date.now() / 1000 - kami.time.last;
 };
 
 // calculate the time a production has been active since its last update
@@ -59,13 +59,17 @@ export const calcHarvestTime = (kami: Kami): number => {
   return productionTime;
 }
 
-export const getCooldown = (kami: Kami): number => {
-  return Math.max(0, kami.cooldown - calcRestTime(kami));
+// calculate the cooldown remaining on kami standard actions
+export const calcCooldownRemaining = (kami: Kami): number => {
+  const now = Date.now() / 1000;
+  const lastStandardActionTime = kami.time.cooldown.last;
+  const remainingTime = kami.time.cooldown.requirement + lastStandardActionTime - now;
+  return Math.max(0, remainingTime);
 }
 
 // determine whether the kami is still on cooldown
 export const onCooldown = (kami: Kami): boolean => {
-  return getCooldown(kami) > 0;
+  return calcCooldownRemaining(kami) > 0;
 }
 
 
@@ -76,7 +80,7 @@ export const onCooldown = (kami: Kami): boolean => {
 export const calcHealth = (kami: Kami): number => {
   let duration = 0;
   if (isHarvesting(kami)) duration = calcHarvestTime(kami);
-  else if (isResting(kami)) duration = calcRestTime(kami);
+  else if (isResting(kami)) duration = calcIdleTime(kami);
 
   const totalHealth = kami.stats.health + kami.bonusStats.health;
   let health = 1 * kami.health;
@@ -105,6 +109,14 @@ export const calcOutput = (kami: Kami): number => {
     output += Math.floor(duration * kami.production?.rate);
   }
   return Math.max(output, 0);
+};
+
+
+////////////////
+// HARVEST
+
+export const canHarvest = (kami: Kami): boolean => {
+  return !onCooldown(kami) && isResting(kami);
 };
 
 
@@ -174,6 +186,15 @@ export const calcLiqThresholdValue = (
   return thresholdPercent * victimTotalHealth;
 }
 
+// determine whether a kami can liquidate another kami
+export const canLiquidate = (
+  attacker: Kami,
+  victim: Kami,
+  config: LiquidationConfig
+): boolean => {
+  return !onCooldown(attacker) && !isStarving(attacker) && canMog(attacker, victim, config);
+}
+
 export const canMog = (
   attacker: Kami,
   victim: Kami,
@@ -183,14 +204,5 @@ export const canMog = (
   const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
   const absoluteThreshold = thresholdPercent * victimTotalHealth;
   return calcHealth(victim) < absoluteThreshold;
-}
-
-// determine whether a kami can liquidate another kami
-export const canLiquidate = (
-  attacker: Kami,
-  victim: Kami,
-  config: LiquidationConfig
-): boolean => {
-  return !onCooldown(attacker) && !isStarving(attacker) && canMog(attacker, victim, config);
 }
 
