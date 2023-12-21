@@ -8,7 +8,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { Kami, Options, getKami } from './type';
+import { Kami, Options, getKami } from './types';
 
 // items to query
 interface QueryOptions {
