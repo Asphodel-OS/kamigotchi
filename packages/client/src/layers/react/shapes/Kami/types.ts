@@ -10,13 +10,13 @@ import {
 
 import { Layers } from 'src/types';
 import { Account, getAccount } from '../Account';
+import { Bonuses, getBonuses } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
 import { Stats, getStats } from '../Stats';
 import { Skill, getSkills } from '../Skill';
 import { Traits, TraitIndices, getTraits } from '../Trait';
-import { Bonuses, getBonuses } from '../Bonus';
 
 
 // standardized shape of a Kami Entity
@@ -255,6 +255,7 @@ export const getKami = (
 
   /////////////////
   // ADJUSTMENTS
+  // TODO: move these over to functions.ts now that we've standardized calcs
 
   // experience threshold calculation according to level
   if (kami.level) {

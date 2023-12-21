@@ -5,9 +5,9 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { getConfigFieldValue } from './Config';
-import { Kami, getKami } from './Kami';
-import { Node, getNode } from './Node';
+import { getConfigFieldValue } from '../Config';
+import { Kami, getKami } from '../Kami';
+import { Node, getNode } from '../Node';
 
 // standardized shape of an Production Entity
 export interface Production {
@@ -15,7 +15,10 @@ export interface Production {
   balance: number;
   rate: number;
   state: string;
-  startTime: number;
+  time: {
+    last: number;
+    start: number;
+  };
   kami?: Kami;
   node?: Node;
 }
@@ -39,6 +42,7 @@ export const getProduction = (
         Coin,
         NodeID,
         PetID,
+        LastTime,
         Rate,
         State,
         StartTime,
@@ -51,7 +55,10 @@ export const getProduction = (
     balance: (getComponentValue(Coin, index)?.value as number ?? 0) * 1,
     rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
-    startTime: getComponentValue(StartTime, index)?.value as number,
+    time: {
+      last: getComponentValue(LastTime, index)?.value as number,
+      start: getComponentValue(StartTime, index)?.value as number,
+    },
   };
 
   /////////////////

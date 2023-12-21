@@ -1,6 +1,11 @@
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
 import { Kami } from './types';
 import { LiquidationConfig } from '../LiquidationConfig';
+import {
+  calcIdleTime as calcProductionIdletime,
+  calcOutput as calcProductionOutput,
+  getLocation as getProductionLocation,
+} from '../Production';
 
 
 ////////////////
@@ -34,9 +39,11 @@ export const isOffWorld = (kami: Kami): boolean => {
 // return 0 if the location cannot be determined from information provided
 export const getLocation = (kami: Kami): number => {
   let location = 0;
-  if (!isHarvesting(kami) && kami.account) location = kami.account.location;
-  else if (kami.production && kami.production.node) {
-    location = kami.production.node.location;
+  if (isOffWorld(kami)) location = 0;
+  else if (isHarvesting(kami)) getProductionLocation(kami.production);
+  else {
+    if (!kami.account) location = 0;
+    else location = kami.account.location;
   }
   return location;
 };
@@ -52,11 +59,8 @@ export const calcIdleTime = (kami: Kami): number => {
 
 // calculate the time a production has been active since its last update
 export const calcHarvestTime = (kami: Kami): number => {
-  let productionTime = 0;
-  if (isHarvesting(kami) && kami.production) {
-    productionTime = Date.now() / 1000 - kami.production.startTime;
-  }
-  return productionTime;
+  if (!isHarvesting(kami)) return 0;
+  return calcProductionIdletime(kami.production);
 }
 
 // calculate the cooldown remaining on kami standard actions
@@ -99,16 +103,10 @@ export const isFull = (kami: Kami): boolean => {
   return Math.round(calcHealth(kami)) >= totalHealth;
 };
 
-
 // calculate the expected output from a pet production based on start time
 export const calcOutput = (kami: Kami): number => {
-  let output = 0;
-  if (isHarvesting(kami) && kami.production) {
-    output = kami.production.balance;
-    let duration = calcHarvestTime(kami);
-    output += Math.floor(duration * kami.production?.rate);
-  }
-  return Math.max(output, 0);
+  if (!isHarvesting(kami)) return 0;
+  else return calcProductionOutput(kami.production);
 };
 
 
