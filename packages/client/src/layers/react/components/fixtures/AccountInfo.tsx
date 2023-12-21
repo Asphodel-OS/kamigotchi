@@ -11,8 +11,9 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { calcStamina, calcStaminaPercent } from 'layers/react/shapes/Account';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -99,18 +100,6 @@ export function registerAccountInfoFixture() {
       /////////////////
       // INTERPRETATION
 
-      const calcCurrentStamina = (account: Account) => {
-        const timePassed = lastRefresh / 1000 - account.lastMoveTs;
-        const recovered = Math.floor(timePassed / account.stamina.recoveryPeriod);
-        const current = 1.0 * account.stamina.last + recovered;
-        return Math.min(account.stamina.total, current);
-      }
-
-      const calcStaminaPercent = (account: Account) => {
-        const currentStamina = calcCurrentStamina(account);
-        return Math.round(100.0 * currentStamina / account.stamina.total);
-      }
-
       // calculated the gas gauge level
       const calcGaugeSetting = (gasBalance: FetchBalanceResult | undefined): number => {
         const amt = Number(gasBalance?.formatted);
@@ -128,7 +117,7 @@ export function registerAccountInfoFixture() {
       }
 
       const parseStaminaString = (account: Account) => {
-        const staminaCurr = calcCurrentStamina(account);
+        const staminaCurr = calcStamina(account);
         const staminaTotal = account.stamina.total;
         return `${staminaCurr}/${staminaTotal * 1}`;
       }

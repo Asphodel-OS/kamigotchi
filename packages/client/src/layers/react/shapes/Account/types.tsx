@@ -1,20 +1,17 @@
 import {
   EntityIndex,
   EntityID,
-  Has,
-  HasValue,
   getComponentValue,
-  runQuery,
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
-import { getConfigFieldValue } from './Config';
-import { Kami, queryKamisX } from './Kami';
-import { Inventory, sortInventories, queryInventoryX } from './Inventory';
-import { LootboxLog, queryHolderLogs as queryAccLBLogs } from './Lootbox';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from './Quest';
-import { Skill } from './Skill';
-import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from './Friendship';
+import { getConfigFieldValue } from '../Config';
+import { Kami, queryKamisX } from '../Kami';
+import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
+import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
+import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
+import { Skill } from '../Skill';
+import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from '../Friendship';
 
 
 // standardized shape of an Account Entity
@@ -35,9 +32,11 @@ export interface Account {
     last: number;
     recoveryPeriod: number;
   };
-  lastBlock: number;
-  lastMoveTs: number;
-  creationTs: number;
+  time: {
+    last: number;
+    lastMove: number;
+    creation: number;
+  }
   kamis?: Kami[];
   friends?: {
     friends: Friendship[];
@@ -86,8 +85,8 @@ export const getAccount = (
       components: {
         AccountIndex,
         Coin,
-        LastBlock,
         LastActionTime,
+        LastTime,
         Location,
         Name,
         OperatorAddress,
@@ -113,13 +112,15 @@ export const getAccount = (
     questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || 0) * 1 as number,
     skillPoints: 0, // placeholder
     stamina: {
-      total: getComponentValue(Stamina, entityIndex)?.value as number,
-      last: getComponentValue(StaminaCurrent, entityIndex)?.value as number,
-      recoveryPeriod: getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD'),
+      total: (getComponentValue(Stamina, entityIndex)?.value as number) * 1,
+      last: (getComponentValue(StaminaCurrent, entityIndex)?.value as number) * 1,
+      recoveryPeriod: (getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD')) * 1,
     },
-    lastBlock: getComponentValue(LastBlock, entityIndex)?.value as number,
-    lastMoveTs: getComponentValue(LastActionTime, entityIndex)?.value as number,
-    creationTs: getComponentValue(StartTime, entityIndex)?.value as number,
+    time: {
+      last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
+      lastMove: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
+      creation: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
+    }
   };
 
   // prevent queries account hasnt loaded yet
@@ -139,7 +140,6 @@ export const getAccount = (
     const lootboxes: Inventory[] = [];
     for (let i = 0; i < inventoryResults.length; i++) {
       const inventory = inventoryResults[i];
-
       if (inventory.item.type === 'FOOD') foods.push(inventory);
       if (inventory.item.type === 'REVIVE') revives.push(inventory);
       if (inventory.item.type === 'GEAR') gear.push(inventory);
@@ -204,70 +204,3 @@ export const getAccount = (
   return account;
 };
 
-// get an Account from its entityID
-export const getAccountByID = (
-  layers: Layers,
-  id: EntityID,
-  options?: AccountOptions
-) => {
-  const { network: { world } } = layers;
-  return getAccount(
-    layers,
-    world.entityToIndex.get(id) as EntityIndex,
-    options
-  );
-}
-
-// get an Account from its Username
-export const getAccountByName = (
-  layers: Layers,
-  name: string,
-  options?: AccountOptions
-) => {
-  const { network: { components: { IsAccount, Name } } } = layers;
-  const accountIndex = Array.from(
-    runQuery([
-      Has(IsAccount),
-      HasValue(Name, { value: name }),
-    ])
-  )[0];
-  return getAccount(layers, accountIndex, options);
-}
-
-// get an Account from its Operator address
-export const getAccountByOperator = (
-  layers: Layers,
-  operatorEOA: string,
-  options?: AccountOptions
-) => {
-  const { network: { components: { IsAccount, OperatorAddress } } } = layers;
-  const accountIndex = Array.from(
-    runQuery([
-      Has(IsAccount),
-      HasValue(OperatorAddress, { value: operatorEOA }),
-    ])
-  )[0];
-  return getAccount(layers, accountIndex, options);
-}
-
-// get an Account from its Owner address
-export const getAccountByOwner = (
-  layers: Layers,
-  ownerEOA: string,
-  options?: AccountOptions
-) => {
-  const { network: { components: { IsAccount, OwnerAddress } } } = layers;
-  const accountIndex = Array.from(
-    runQuery([
-      Has(IsAccount),
-      HasValue(OwnerAddress, { value: ownerEOA }),
-    ])
-  )[0];
-  return getAccount(layers, accountIndex, options);
-}
-
-// get an Account, assuming the currently connected burner is the Operator
-export const getAccountFromBurner = (layers: Layers, options?: AccountOptions) => {
-  const { network: { network } } = layers;
-  return getAccountByOperator(layers, network.connectedAddress.get()!, options);
-};
