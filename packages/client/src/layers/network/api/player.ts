@@ -24,6 +24,11 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
+  // upgrade a pet's skill
+  function upgradePetSkill(petID: BigNumberish, skillIndex: number) {
+    return systems["system.Pet.Skill.Upgrade"].executeTyped(petID, skillIndex);
+  }
+
   // use a pet item
   function usePetItem(petID: BigNumberish, invID: BigNumberish) {
     return systems["system.Pet.Use.Item"].executeTyped(petID, invID);
@@ -68,6 +73,10 @@ export function createPlayerAPI(systems: any) {
   // @param operatorAddress   address of the Operator wallet
   function setAccountOperator(operatorAddress: BigNumberish) {
     return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
+  }
+
+  function upgradeAccountSkill(skillIndex: number) {
+    return systems["system.Account.Skill.Upgrade"].executeTyped(skillIndex);
   }
 
   /////////////////
@@ -300,6 +309,7 @@ export function createPlayerAPI(systems: any) {
       name: namePet,
       revive: revivePet,
       use: usePetItem,
+      skill: { upgrade: upgradePetSkill },
     },
     account: {
       fund: fundOperator,
@@ -310,6 +320,7 @@ export function createPlayerAPI(systems: any) {
         name: setAccountName,
         operator: setAccountOperator,
       },
+      skill: { upgrade: upgradeAccountSkill },
     },
     social: {
       friend: {
