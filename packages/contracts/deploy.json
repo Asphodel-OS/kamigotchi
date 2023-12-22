@@ -530,6 +530,20 @@
       ]
     },
     {
+      "name": "AccountUpgradeSkillSystem",
+      "writeAccess": [
+        "IdHolderComponent",
+        "IndexSkillComponent",
+        "IsBonusComponent",
+        "IsSkillComponent",
+        "SkillPointComponent",
+        "TimeLastComponent",
+        "TimeStartComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
       "name": "Farm20ProxySystem",
       "writeAccess": []
     },
@@ -811,6 +825,28 @@
       "writeAccess": [
         "IdAccountComponent",
         "TimeLastComponent"
+      ]
+    },
+    {
+      "name": "PetUpgradeSkillSystem",
+      "writeAccess": [
+        "CoinComponent",
+        "IdHolderComponent",
+        "IndexSkillComponent",
+        "IsBonusComponent",
+        "IsSkillComponent",
+        "HarmonyComponent",
+        "HealthComponent",
+        "HealthCurrentComponent",
+        "PowerComponent",
+        "RateComponent",
+        "SkillPointComponent",
+        "SlotsComponent",
+        "TimeLastComponent",
+        "TimeStartComponent",
+        "TypeComponent",
+        "ValueComponent",
+        "ViolenceComponent"
       ]
     },
     {

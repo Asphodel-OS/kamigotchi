@@ -61,7 +61,7 @@ library LibSkill {
     IUintComp components,
     uint256 holderID,
     uint256 effectID
-  ) internal {
+  ) public {
     if (LibString.eq("STAT", LibRegistrySkill.getType(components, effectID))) {
       processStatEffectUpgrade(world, components, holderID, effectID);
     } else {
@@ -124,7 +124,7 @@ library LibSkill {
     IUintComp components,
     uint256 targetID,
     uint256 registryID // skill registry entity id
-  ) internal view returns (bool) {
+  ) public view returns (bool) {
     uint256 skillIndex = LibRegistrySkill.getSkillIndex(components, registryID);
 
     // check point balance against skill cost
