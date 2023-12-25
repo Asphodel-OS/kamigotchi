@@ -181,4 +181,48 @@ library LibFriend {
     if (results.length == 0) return 0;
     return results[0];
   }
+
+  /// @notice queries all friends for an account
+  function getAccountFriends(
+    IUintComp components,
+    uint256 accID
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsFriendCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdAccountCompID),
+      abi.encode(accID)
+    );
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, StateCompID),
+      abi.encode("FRIEND")
+    );
+
+    return LibQuery.query(fragments);
+  }
+
+  /// @notice queries all incoming requests for an account
+  function getAccountRequests(
+    IUintComp components,
+    uint256 accID
+  ) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsFriendCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdTargetCompID),
+      abi.encode(accID)
+    );
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, StateCompID),
+      abi.encode("REQUEST")
+    );
+
+    return LibQuery.query(fragments);
+  }
 }

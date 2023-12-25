@@ -50,6 +50,10 @@ export function setUpWorldAPI(systems: any) {
     await api.config.set.number('ACCOUNT_STAMINA_BASE', 20);
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
 
+    // Friends
+    await api.config.set.number('FRIENDS_BASE_LIMIT', 10);
+    await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
+
     // Kami Idle Requirement
     await api.config.set.number('KAMI_IDLE_REQ', 180);
 

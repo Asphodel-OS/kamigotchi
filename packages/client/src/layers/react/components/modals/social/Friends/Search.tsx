@@ -16,15 +16,19 @@ interface Props {
     blockFriend: (target: Account) => void;
     cancelFriend: (friendship: Friendship, actionText: string) => void;
   }
+  buttons: {
+    AcceptButton: (friendship: Friendship) => JSX.Element;
+    RequestButton: (target: Account) => JSX.Element;
+  }
   queries: {
-    queryAccountByName: (name: string) => Account;
+    queryAccountByName: (name: string, options?: any) => Account;
     queryAccountByOwner: (owner: string) => Account;
-    queryFriendships: (options: any) => Friendship[];
+    queryFriendships: (options: any, accountOptions?: any) => Friendship[];
   }
 }
 
 export const Search = (props: Props) => {
-  const { actions, account, queries } = props;
+  const { actions, account, buttons, queries } = props;
 
   ////////////////////
   // SEARCH
@@ -33,7 +37,7 @@ export const Search = (props: Props) => {
   const [searchResult, setSearchResult] = useState<Account>();
 
   const searchByName = (name: string) => {
-    const result = queries.queryAccountByName(name);
+    const result = queries.queryAccountByName(name, { friends: true });
     setSearchResult(result);
     setSearchText(name);
   }
@@ -53,8 +57,8 @@ export const Search = (props: Props) => {
 
     if (outStatus === "" && inStatus === "") return "EMPTY";
     else if (outStatus === "FRIENDS" && inStatus === "FRIENDS") return "FRIENDS";
-    else if (outStatus === "REQUESTED") return "OUTGOING_REQUESTED";
-    else if (inStatus === "REQUESTED") return "INCOMING_REQUEST";
+    else if (outStatus === "REQUEST") return "OUTGOING_REQUESTED";
+    else if (inStatus === "REQUEST") return "INCOMING_REQUEST";
     else if (outStatus === "BLOCKED" && inStatus === "BLOCKED") return "DOUBLE_BLOCKED";
     else if (outStatus === "BLOCKED") return "OUTGOING_BLOCKED";
     else if (inStatus === "BLOCKED") return "INCOMING_BLOCKED";
@@ -93,21 +97,18 @@ export const Search = (props: Props) => {
   const MainButton = (target: Account, status: string) => {
     if (status === "EMPTY") {
       // not friends yet, maybe request?
-      return (
-        <ActionButton
-          id={`friendship-send-${target.entityIndex}`}
-          text="Accept"
-          onClick={() => actions.requestFriend(target)}
-        />
-      );
+      return (buttons.RequestButton(target));
     } else if (status === "INCOMING_REQUEST") {
       // incoming request, accept?
-      const fs = queries.queryFriendships({ account: target, target: account });
+      const fs = queries.queryFriendships({ account: target, target: account }, { friends: true });
+      return (buttons.AcceptButton(fs[0]));
+    } else if (status === "OUTGOING_REQUESTED") {
+      const fs = queries.queryFriendships({ account: account, target: target }, { friends: true });
       return (
         <ActionButton
-          id={`friendship-accept-${target.entityIndex}`}
-          text="Accept"
-          onClick={() => actions.acceptFriend(fs[0])}
+          id={`friendship-cancel-${target.entityIndex}`}
+          text="Cancel request"
+          onClick={() => actions.cancelFriend(fs[0], "Cancelling request")}
         />
       );
     } else if (status === "OUTGOING_BLOCKED" || status === "DOUBLE_BLOCKED") {
@@ -139,12 +140,6 @@ export const Search = (props: Props) => {
       options.push({
         text: "Reject friend request",
         onClick: () => actions.cancelFriend(friendship, `rejecting ${friendship.target.name}`),
-      });
-    } else if (status === "OUTGOING_REQUESTED") {
-      const friendship = queries.queryFriendships({ account: account, target: target })[0];
-      options.push({
-        text: "Cancel outgoing request",
-        onClick: () => actions.cancelFriend(friendship, `don't want ${friendship.target.name} anymore!`),
       });
     }
 

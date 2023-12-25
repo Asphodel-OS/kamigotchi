@@ -6,6 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFriend } from "libraries/LibFriend.sol";
 
 uint256 constant ID = uint256(keccak256("system.Friend.Request"));
@@ -23,6 +25,11 @@ contract FriendRequestSystem is System {
     require(accountID != targetID, "FriendRequest: cannot fren self");
 
     // friendship specific checks
+    require(
+      LibFriend.getAccountRequests(components, targetID).length <
+        LibConfig.getValueOf(components, "FRIENDS_REQUEST_LIMIT"),
+      "Max friend requests reached"
+    );
     /// @dev FE should not get here; if either alr requested, friends, or blocked, a friendship will exist
     require(
       LibFriend.getFriendship(components, accountID, targetID) == 0,
@@ -32,13 +39,10 @@ contract FriendRequestSystem is System {
     uint256 incomingReq = LibFriend.getFriendship(components, targetID, accountID);
     if (incomingReq != 0) {
       string memory state = LibFriend.getState(components, incomingReq);
-      require(LibString.eq(state, "REQUEST"), "FriendRequest: not request");
-      if (LibString.eq(state, "FRIEND")) {
-        require(false, "FriendRequest: already friends");
-      } else if (LibString.eq(state, "BLOCKED")) {
-        require(false, "FriendRequest: blocked");
-      }
-      return abi.encode(LibFriend.accept(world, components, accountID, incomingReq));
+      if (LibString.eq(state, "REQUEST")) require(false, "FriendRequest: inbound request exists");
+      if (LibString.eq(state, "FRIENDS")) require(false, "FriendRequest: already friends");
+      if (LibString.eq(state, "BLOCKED")) require(false, "FriendRequest: blocked");
+      revert("FriendRequest: complicated situationship(?)");
     }
 
     // create request

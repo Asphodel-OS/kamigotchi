@@ -651,6 +651,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _initLeaderboardConfigs();
     _initMintConfigs();
     _initLevelingConfigs();
+    _initFriendConfigs();
     _initKamiConfigs();
     _initHealthConfigs();
     _initHarvestConfigs();
@@ -669,6 +670,11 @@ abstract contract SetupTemplate is TestSetupImports {
   function _initAccountConfigs() internal {
     _setConfig("ACCOUNT_STAMINA_BASE", 20);
     _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
+  }
+
+  function _initFriendConfigs() internal {
+    _setConfig("FRIENDS_BASE_LIMIT", 5);
+    _setConfig("FRIENDS_REQUEST_LIMIT", 5);
   }
 
   // Kami Leveling Curve

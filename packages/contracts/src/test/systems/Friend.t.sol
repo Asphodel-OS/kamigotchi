@@ -7,8 +7,9 @@ contract FriendTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _registerAccount(0);
-    _registerAccount(1);
+    for (uint256 i = 0; i < 10; i++) {
+      _registerAccount(i);
+    }
 
     vm.roll(_currBlock++);
   }
@@ -49,35 +50,46 @@ contract FriendTest is SetupTemplate {
     return blockID;
   }
 
-  function testReqBasic() public {
+  function testRequestBasic() public {
     uint256 requestID = _request(0, 1);
 
     _assertFSEntity(requestID, 0, 1, "REQUEST");
   }
 
-  function testReqBlocked() public {
+  function testRequestBlocked() public {
     _block(0, 1);
 
     address senderAddr = _getOperator(1);
     address recieverAddr = _getOwner(0);
 
     vm.prank(senderAddr);
-    vm.expectRevert("FriendRequest: not request");
+    vm.expectRevert("FriendRequest: blocked");
     _FriendRequestSystem.executeTyped(recieverAddr);
   }
 
-  function testReqBlocked2() public {
+  function testRequestBlocked2() public {
     _block(1, 0);
 
     address senderAddr = _getOperator(0);
     address recieverAddr = _getOwner(1);
 
     vm.prank(senderAddr);
-    vm.expectRevert("FriendRequest: not request");
+    vm.expectRevert("FriendRequest: blocked");
     _FriendRequestSystem.executeTyped(recieverAddr);
   }
 
-  function testReqCancel() public {
+  function testRequestLimit() public {
+    uint256 baseLimit = LibConfig.getValueOf(components, "FRIENDS_REQUEST_LIMIT");
+    for (uint256 i = 1; i < baseLimit + 1; i++) {
+      _request(i, 0);
+    }
+
+    vm.prank(_getOperator(baseLimit + 2));
+    vm.expectRevert("Max friend requests reached");
+    _FriendRequestSystem.executeTyped(_getOwner(0));
+  }
+
+  function testRequestCancel() public {
     uint256 requestID = _request(0, 1);
     _assertFSEntity(requestID, 0, 1, "REQUEST");
 
@@ -94,13 +106,16 @@ contract FriendTest is SetupTemplate {
     _assertFriends(0, 1);
   }
 
-  function testAcceptByRequest() public {
-    uint256 requestID = _request(0, 1);
-    uint256 id = _request(1, 0);
+  function testAcceptLimit() public {
+    uint256 baseLimit = LibConfig.getValueOf(components, "FRIENDS_BASE_LIMIT");
+    for (uint256 i = 1; i < baseLimit + 1; i++) {
+      _accept(0, _request(i, 0));
+    }
 
-    _assertFSEntity(id, 1, 0, "FRIEND");
-    _assertFSEntity(requestID, 0, 1, "FRIEND");
-    _assertFriends(0, 1);
+    uint256 requestID = _request(baseLimit + 2, 0);
+    vm.prank(_getOperator(0));
+    vm.expectRevert("Friend limit reached");
+    _FriendAcceptSystem.executeTyped(requestID);
   }
 
   function testFriendCancel() public {

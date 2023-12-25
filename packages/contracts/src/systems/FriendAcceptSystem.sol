@@ -6,6 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFriend } from "libraries/LibFriend.sol";
 
 uint256 constant ID = uint256(keccak256("system.Friend.Accept"));
@@ -25,8 +27,25 @@ contract FriendAcceptSystem is System {
     );
 
     // friendship specific checks
-    uint256 receivingID = LibFriend.getTarget(components, requestID);
-    require(receivingID == accountID, "FriendAccept: not for you");
+    uint256 targetID = LibFriend.getTarget(components, requestID);
+    require(targetID == accountID, "FriendAccept: not for you");
+
+    // check number of friends limit
+    uint256 baseLimit = LibConfig.getValueOf(components, "FRIENDS_BASE_LIMIT");
+    uint256 bonusID = LibBonus.get(components, accountID, "FRIENDS_LIMIT");
+    uint256 frenLimit = baseLimit;
+    if (bonusID != 0) frenLimit += LibBonus.getValue(components, bonusID);
+    require(
+      LibFriend.getAccountFriends(components, accountID).length < frenLimit,
+      "Friend limit reached"
+    );
+    frenLimit = baseLimit;
+    bonusID = LibBonus.get(components, targetID, "FRIENDS_LIMIT");
+    if (bonusID != 0) frenLimit += LibBonus.getValue(components, bonusID);
+    require(
+      LibFriend.getAccountFriends(components, targetID).length < frenLimit,
+      "Friend limit reached"
+    );
 
     // accept request
     uint256 id = LibFriend.accept(world, components, accountID, requestID);

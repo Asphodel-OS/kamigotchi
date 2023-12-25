@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { EntityID } from "@latticexyz/recs";
 import styled from "styled-components";
 
 import { FrenList } from "./FrenList"
@@ -7,6 +8,8 @@ import { Search } from "./Search";
 import { searchIcon } from "assets/images/icons/actions";
 import { ActionButton } from "layers/react/components/library";
 import { IconButton } from "layers/react/components/library/IconButton";
+import { Tooltip } from "layers/react/components/library";
+
 import { Account } from "layers/react/shapes/Account";
 import { Friendship } from "layers/react/shapes/Friendship";
 
@@ -19,6 +22,7 @@ interface Props {
     cancelFriend: (friendship: Friendship, actionText: string) => void;
   }
   queries: {
+    queryAccount(id: EntityID, options?: any): Account;
     queryAccountByName: (name: string) => Account;
     queryAccountByOwner: (owner: string) => Account;
     queryFriendships: (options: any) => Friendship[];
@@ -31,6 +35,59 @@ export const Friends = (props: Props) => {
   const { actions, account, queries } = props;
 
   const [tab, setTab] = useState<TabType>("FRIENDS");
+
+  const AcceptButton = (friendship: Friendship) => {
+    let text = "";
+    let enabled = true;
+
+    const senderLimit = account.friends?.limits.friends || 0;
+    const senderFriends = account.friends?.friends.length || 0;
+    const target = queries.queryAccount(friendship.target.id, { friends: true });
+    const targetLimit = target.friends?.limits.friends || 0;
+    const targetFriends = target.friends?.friends.length || 0;
+    if (senderFriends >= senderLimit) {
+      text = "friend limit reached";
+      enabled = false;
+    } else if (targetFriends >= targetLimit) {
+      text = "recipient friend limit reached";
+      enabled = false;
+    }
+
+    return (
+      <Tooltip text={[text]}>
+        <ActionButton
+          id={`friendship-accept-${friendship.entityIndex}`}
+          text="Accept"
+          onClick={() => actions.acceptFriend(friendship)}
+          disabled={!enabled}
+        />
+      </Tooltip>
+    );
+  }
+
+  const RequestButton = (targetRaw: Account) => {
+    let text = "";
+    let enabled = true;
+
+    const target = queries.queryAccount(targetRaw.id, { friends: true });
+    const targetLimit = target.friends?.limits.requests || 0;
+    const targetRequests = target.friends?.incomingReqs.length || 0;
+    if (targetRequests >= targetLimit) {
+      text = "recipient inbox full";
+      enabled = false;
+    }
+
+    return (
+      <Tooltip text={[text]}>
+        <ActionButton
+          id={`friendship-send-${target.entityIndex}`}
+          text="Request"
+          onClick={() => actions.requestFriend(target)}
+          disabled={!enabled}
+        />
+      </Tooltip>
+    );
+  }
 
   ///////////////////
   // DISPLAY
@@ -48,6 +105,7 @@ export const Friends = (props: Props) => {
         <Requests
           account={account}
           actions={actions}
+          buttons={{ AcceptButton }}
         />
       );
     } else if (tab === "SEARCH") {
@@ -55,6 +113,7 @@ export const Friends = (props: Props) => {
         <Search
           account={account}
           actions={actions}
+          buttons={{ AcceptButton, RequestButton }}
           queries={queries}
         />
       );

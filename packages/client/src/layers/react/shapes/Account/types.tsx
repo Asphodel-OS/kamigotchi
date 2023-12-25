@@ -5,6 +5,7 @@ import {
 } from '@latticexyz/recs';
 
 import { Layers } from 'src/types';
+import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { Kami, queryKamisX } from '../Kami';
 import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
@@ -44,6 +45,10 @@ export interface Account {
     incomingReqs: Friendship[];
     outgoingReqs: Friendship[];
     blocked: Friendship[];
+    limits: {
+      friends: number;
+      requests: number;
+    }
   }
   inventories?: Inventories;
   lootboxLogs?: {
@@ -186,6 +191,11 @@ export const getAccount = (
       incomingReqs: getAccIncomingRequests(layers, account),
       outgoingReqs: getAccOutgoingRequests(layers, account),
       blocked: getAccBlocked(layers, account),
+      limits: {
+        friends: (getConfigFieldValue(layers.network, 'BASE_FRIENDS_LIMIT')) * 1
+          + (getBonusValue(layers, account.id, 'FRIENDS_LIMIT') ?? 0),
+        requests: (getConfigFieldValue(layers.network, 'FRIENDS_REQUEST_LIMIT')) * 1,
+      }
     }
   }
 

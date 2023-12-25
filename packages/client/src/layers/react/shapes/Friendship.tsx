@@ -111,7 +111,7 @@ export interface FriendshipOptions {
 
 export const queryFriendshipX = (
   layers: Layers,
-  options: any,
+  options: FriendshipOptions,
   accountOptions?: any,
 ): Friendship[] => {
   const {

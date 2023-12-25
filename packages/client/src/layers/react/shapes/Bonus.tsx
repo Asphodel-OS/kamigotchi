@@ -52,7 +52,7 @@ export const getBonuses = (layers: Layers, entityIndex: EntityIndex): Bonuses =>
   return bonuses;
 }
 
-const getBonusValue = (layers: Layers, holderID: EntityID, type: string): number | undefined => {
+export const getBonusValue = (layers: Layers, holderID: EntityID, type: string): number | undefined => {
   const {
     network: {
       components: {
@@ -72,7 +72,7 @@ const getBonusValue = (layers: Layers, holderID: EntityID, type: string): number
     ])
   );
 
-  if (results.length > 0) {
-    return getComponentValue(Value, results[0])?.value as number | undefined;
-  }
+  return results.length > 0
+    ? getComponentValue(Value, results[0])?.value as number | undefined
+    : 0;
 }

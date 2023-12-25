@@ -13,10 +13,13 @@ interface Props {
     blockFriend: (target: Account) => void;
     cancelFriend: (friendship: Friendship, actionText: string) => void;
   }
+  buttons: {
+    AcceptButton: (friendship: Friendship) => JSX.Element;
+  }
 }
 
 export const Requests = (props: Props) => {
-  const { actions, account } = props;
+  const { actions, account, buttons } = props;
 
   ////////////////////
   // DISPLAY
@@ -26,7 +29,7 @@ export const Requests = (props: Props) => {
       <BodyContainer>
         {BodyText(friendship)}
         <BoxRow>
-          {AcceptButton(friendship)}
+          {buttons.AcceptButton(friendship)}
           {OptionsButton(friendship)}
         </BoxRow>
       </BodyContainer>
@@ -44,16 +47,6 @@ export const Requests = (props: Props) => {
         </BoxDescription>
       </BoxContainer>
     )
-  }
-
-  const AcceptButton = (friendship: Friendship) => {
-    return (
-      <ActionButton
-        id={`friendship-accept-${friendship.entityIndex}`}
-        text="Accept"
-        onClick={() => actions.acceptFriend(friendship)}
-      />
-    );
   }
 
   const OptionsButton = (friendship: Friendship) => {

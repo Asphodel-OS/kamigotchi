@@ -8,7 +8,7 @@ import { socialIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccountByName, getAccountByOwner, getAccountFromBurner } from 'layers/react/shapes/Account';
+import { Account, getAccountByID, getAccountByName, getAccountByOwner, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Friendship, queryFriendshipX } from 'layers/react/shapes/Friendship';
 import 'layers/react/styles/font.css';
 
@@ -20,7 +20,7 @@ export function registerSocialModal() {
       colStart: 67,
       colEnd: 100,
       rowStart: 8,
-      rowEnd: 99,
+      rowEnd: 55,
     },
 
     // Requirement (Data Manangement)
@@ -30,29 +30,14 @@ export function registerSocialModal() {
           actions,
           api: { player },
           components: {
-            OperatorAddress,
-            OwnerAddress,
-            IsAccount,
             IsBonus,
             IsConfig,
-            IsProduction,
             IsFriendship,
             AccountID,
             HolderID,
-            PetID,
-            ItemIndex,
+            TargetID,
             Balance,
-            Coin,
-            Harmony,
-            Health,
-            HealthCurrent,
-            LastTime,
-            LastActionTime,
-            Location,
-            MediaURI,
             Name,
-            Rate,
-            StartTime,
             State,
             Type,
             Value,
@@ -62,29 +47,14 @@ export function registerSocialModal() {
       } = layers;
 
       return merge(
-        OperatorAddress.update$,
-        OwnerAddress.update$,
-        IsAccount.update$,
         IsBonus.update$,
         IsConfig.update$,
-        IsProduction.update$,
         IsFriendship.update$,
         AccountID.update$,
         HolderID.update$,
-        PetID.update$,
-        ItemIndex.update$,
+        TargetID.update$,
         Balance.update$,
-        Coin.update$,
-        Harmony.update$,
-        HealthCurrent.update$,
-        Health.update$,
-        LastTime.update$,
-        LastActionTime.update$,
-        Location.update$,
-        MediaURI.update$,
         Name.update$,
-        Rate.update$,
-        StartTime.update$,
         State.update$,
         Type.update$,
         Value.update$,
@@ -170,6 +140,17 @@ export function registerSocialModal() {
       /////////////////
       // QUERIES
 
+      const queryAccount = (
+        id: EntityID,
+        options?: any
+      ): Account => {
+        return getAccountByID(
+          layers,
+          id,
+          options,
+        );
+      }
+
       const queryAccountByName = (
         name: string,
         options?: any
@@ -193,11 +174,13 @@ export function registerSocialModal() {
       }
 
       const queryFriendships = (
-        options: any
+        options: any,
+        accountOptions?: any,
       ): Friendship[] => {
         return queryFriendshipX(
           layers,
-          options,
+          { account: options.account?.id, target: options.target?.id, state: options.state },
+          accountOptions
         );
       }
 
@@ -211,7 +194,7 @@ export function registerSocialModal() {
           <Friends
             account={data.account}
             actions={{ acceptFriend, requestFriend, blockFriend, cancelFriend }}
-            queries={{ queryAccountByName, queryAccountByOwner, queryFriendships }}
+            queries={{ queryAccount, queryAccountByName, queryAccountByOwner, queryFriendships }}
           />
         </ModalWrapper>
       );
