@@ -1,8 +1,15 @@
 import { HelpTabs, PageCopy } from "./types";
 import { HelpBanners } from 'assets/images/banners';
 
+
+const WelcomeCopy: PageCopy = {
+  title: "Welcome to Kamigotchi",
+  header: HelpBanners.welcome,
+  body: [""],
+};
+
 const StartingCopy: PageCopy = {
-  title: "Start",
+  title: "Getting Started",
   header: HelpBanners.starting,
   body: [
     "Welcome to Kamigotchi World.",
@@ -17,7 +24,7 @@ const StartingCopy: PageCopy = {
 };
 
 const KamiCopy: PageCopy = {
-  title: "Kami",
+  title: "What's a Kamigotchi?",
   header: HelpBanners.whatKami,
   body: [
     "Kamigotchi are vibrant individuals who exist to provide you with emotional support and value. You can convert their health and well-being into $MUSU by sending them to work at Nodes.",
@@ -39,7 +46,7 @@ const KamiCopy: PageCopy = {
 };
 
 const NodeCopy: PageCopy = {
-  title: "Node",
+  title: "What's a Node?",
   header: HelpBanners.whatNode,
   body: [
     "Nodes are sites of spiritual significance within Kamigotchi World. Kamigotchi, and only Kamigotchi, can generate $MUSU by gathering energy at Nodes. This costs Kamigotchi health, and can leave them vulnerable to attack from other Kamigotchi.",
@@ -49,7 +56,7 @@ const NodeCopy: PageCopy = {
 };
 
 const WorldCopy: PageCopy = {
-  title: "World",
+  title: "Kamigotchi World",
   header: HelpBanners.world,
   body: [
     "Kamigotchi World is an Autonomous World that exists entirely on-chain.",
@@ -58,7 +65,8 @@ const WorldCopy: PageCopy = {
   ],
 };
 
-export const CopyContent = {
+export const CopyInfo = {
+  [HelpTabs.HOME]: WelcomeCopy,
   [HelpTabs.START]: StartingCopy,
   [HelpTabs.KAMIS]: KamiCopy,
   [HelpTabs.NODES]: NodeCopy,
