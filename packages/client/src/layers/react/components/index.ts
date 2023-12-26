@@ -16,8 +16,9 @@ import { registerWalletFixture } from './fixtures/Wallet';
 import { registerNotificationFixture } from './fixtures/Notifications';
 
 import { registerDialogueModal } from './modals/dialogue';
-import { registerKamiModal } from './modals/kami';
+import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
+import { registerKamiModal } from './modals/kami';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerLootboxesModal } from './modals/lootboxes/Lootboxes';
 import { registerMapModal } from './modals/map';
@@ -31,7 +32,6 @@ import { registerSocialModal } from './modals/social/Social';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
-import { registerHelpModal } from './modals/Help';
 import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerKamiMintModal } from './modals/MintKami';
 import { registerOperatorMovementModal } from './modals/OperatorMovement';

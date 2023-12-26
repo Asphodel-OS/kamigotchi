@@ -1,31 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
+import { HelpTabs } from './types';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
 import { triggerIcons } from 'assets/images/icons/triggers';
-import gettingStarted from 'src/assets/images/banners/gettingStarted.png';
-import welcome from 'src/assets/images/banners/welcome.png';
-import whatKami from 'src/assets/images/banners/whatKami.png';
-import whatNode from 'src/assets/images/banners/whatNode.png';
-import world from 'src/assets/images/banners/world.png';
+import { helpIcon } from 'assets/images/icons/menu';
+import { HelpBanners } from 'assets/images/banners';
 
-
-export enum HelpComponentState {
-  HOME,
-  KAMI_INFO,
-  NODES,
-  START,
-  TIPS,
-  WORLD
-}
 
 export function registerHelpModal() {
   registerUIComponent(
-    'Help',
+    'HelpModal',
     {
       colStart: 67,
       colEnd: 100,
@@ -37,47 +27,45 @@ export function registerHelpModal() {
 
     () => {
       let helpContent = null;
-      const [helpState, setHelpState] = useState<HelpComponentState>(HelpComponentState.HOME);
-      function handleLinkClick(state: HelpComponentState) {
-        setHelpState(state);
+      const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
+      function handleLinkClick(tab: HelpTabs) {
+        setTab(tab);
       }
 
-      const scrollableRef = useRef<HTMLDivElement>(null);
-
       const Header = (
-        <div style={{ display: `${helpState == HelpComponentState.HOME ? 'none' : 'flex'}` }}>
-          <Button onClick={() => handleLinkClick(HelpComponentState.HOME)}>
+        <div style={{ display: `${tab == HelpTabs.HOME ? 'none' : 'flex'}` }}>
+          <Button onClick={() => handleLinkClick(HelpTabs.HOME)}>
             <img style={{ height: '100%', width: 'auto' }} src={triggerIcons.home} alt='home_icon' />
           </Button>
         </div>
       )
 
-      switch (helpState) {
-        case HelpComponentState.HOME:
+      switch (tab) {
+        case HelpTabs.HOME:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={welcome} alt='welcome to kamigotchi' />
+              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.welcome} alt='welcome to kamigotchi' />
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px' }}>
-                <Link onClick={() => handleLinkClick(HelpComponentState.START)}>
+                <Link onClick={() => handleLinkClick(HelpTabs.START)}>
                   Getting Started
                 </Link>
-                <Link onClick={() => handleLinkClick(HelpComponentState.KAMI_INFO)}>
+                <Link onClick={() => handleLinkClick(HelpTabs.KAMI_INFO)}>
                   Kamigotchi
                 </Link>
-                <Link onClick={() => handleLinkClick(HelpComponentState.NODES)}>
+                <Link onClick={() => handleLinkClick(HelpTabs.NODES)}>
                   Nodes
                 </Link>
-                <Link onClick={() => handleLinkClick(HelpComponentState.WORLD)}>
+                <Link onClick={() => handleLinkClick(HelpTabs.WORLD)}>
                   The World
                 </Link>
               </div>
             </div>
           );
           break;
-        case HelpComponentState.START:
+        case HelpTabs.START:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={gettingStarted} alt='getting started' />
+              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.starting} alt='getting started' />
               <Description>
                 Welcome to Kamigotchi World.
                 <br />
@@ -95,10 +83,10 @@ export function registerHelpModal() {
             </div>
           );
           break;
-        case HelpComponentState.KAMI_INFO:
+        case HelpTabs.KAMI_INFO:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={whatKami} alt='what kami' />
+              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.whatKami} alt='what kami' />
               <Description>
                 Kamigotchi are vibrant individuals who exist to provide you with
                 emotional support and value. You can convert their health and
@@ -140,10 +128,10 @@ export function registerHelpModal() {
             </div>
           );
           break;
-        case HelpComponentState.NODES:
+        case HelpTabs.NODES:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={whatNode} alt='nodes' />
+              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.whatNode} alt='nodes' />
               <Description>
                 Nodes are sites of spiritual significance within Kamigotchi
                 World. Kamigotchi, and only Kamigotchi, can generate $MUSU
@@ -158,10 +146,10 @@ export function registerHelpModal() {
             </div>
           );
           break;
-        case HelpComponentState.WORLD:
+        case HelpTabs.WORLD:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={world} alt='world' />
+              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.world} alt='world' />
               <Description>
                 Kamigotchi World is an Autonomous World that exists entirely on-chain.
                 <br />
@@ -175,11 +163,14 @@ export function registerHelpModal() {
       }
 
       return (
-        <ModalWrapperFull divName='help' id='help_modal'>
+        <ModalWrapperFull
+          divName='help'
+          id='help_modal'
+          header={<ModalHeader title='Help' icon={helpIcon} />}
+          canExit
+        >
           {Header}
-          <Scrollable ref={scrollableRef}>
-            {helpContent}
-          </Scrollable>
+          {helpContent}
         </ModalWrapperFull>
       );
     }
@@ -219,11 +210,6 @@ const Description = styled.p`
   text-align: left;
   line-height: 110%;
   font-family: Pixel;
-  margin: 5px;
+  padding: 1.5vw;
 `;
 
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
-`;
