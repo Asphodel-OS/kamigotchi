@@ -74,6 +74,7 @@ abstract contract TraitHandler {
   // memoized trait stats. all trait types, offset by number of previous type(s)
   // eg face = 0-10, hand = 11-20, body = 21-30, background = 31-40, color = 41-50
   TraitStats[] private traitStats;
+  uint256 internal offsetsSum; // packed array of sum of offsets
 
   ////////////////////
   // MEMOIZED COMPS //
@@ -100,7 +101,7 @@ abstract contract TraitHandler {
   // TOP LEVEL LOGIC //
   /////////////////////
 
-  /// @notice generates trait stats for 1, returns array of assigned traits
+  /// @notice generates and assigns trait for 1, returns array of assigned traits
   function _setPetTraits(uint256 seed, uint256 id) internal returns (uint256[] memory) {
     uint256[] memory traits = _calcTraits(seed, id, traitWeights);
 
@@ -113,22 +114,38 @@ abstract contract TraitHandler {
     return traits;
   }
 
-  // function _getTraitStat(
-  //   uint256 typeIndex,
-  //   uint256 traitIndex
-  // ) internal view returns (TraitStats memory) {
-  //   return traitStats[typeIndex + traitIndex];
-  // }
+  /// @notice generates and assigns stats for 1
+  function _setPetStats(
+    uint256 id,
+    TraitStats memory base,
+    uint256[] memory traits,
+    uint256[] memory offsets,
+    TraitStats[] memory stats
+  ) internal {
+    TraitStats memory delta = _calcStats(traits, offsets, stats);
+
+    base.health += delta.health;
+    base.power += delta.power;
+    base.violence += delta.violence;
+    base.harmony += delta.harmony;
+    base.slots += delta.slots;
+
+    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, delta.health);
+    LevelComponent(getAddressById(components, LevelCompID)).set(id, 1);
+    ExperienceComponent(getAddressById(components, ExperienceCompID)).set(id, 0);
+    SkillPointComponent(getAddressById(components, SkillPointCompID)).set(id, 1);
+  }
 
   ////////////////////
   // MEMOIZED FUNCS //
   ////////////////////
 
-  /// @dev sets trait weights. only works once; dont want to rug rarities later
+  /// @dev sets trait weights & offset only works once; dont want to rug rarities later
   function _setTraits() internal {
     require(traitWeights[0].keys == 0, "already set"); // assumes all other keys are set
 
     uint256[] memory results = new uint256[](5);
+    uint256[] memory offsets = new uint256[](5);
 
     // scoping is used to save memory while execution
     {
@@ -141,6 +158,7 @@ abstract contract TraitHandler {
         LibRandom.packArray(weights, 8),
         keys.length
       );
+      offsets[4] = keys.length;
     }
     {
       // background
@@ -152,6 +170,7 @@ abstract contract TraitHandler {
         LibRandom.packArray(weights, 8),
         keys.length
       );
+      offsets[3] = keys.length;
     }
     {
       // body
@@ -163,6 +182,7 @@ abstract contract TraitHandler {
         LibRandom.packArray(weights, 8),
         keys.length
       );
+      offsets[2] = keys.length;
     }
     {
       // hand
@@ -174,6 +194,7 @@ abstract contract TraitHandler {
         LibRandom.packArray(weights, 8),
         keys.length
       );
+      offsets[1] = keys.length;
     }
     {
       // face
@@ -185,9 +206,11 @@ abstract contract TraitHandler {
         LibRandom.packArray(weights, 8),
         keys.length
       );
+      offsets[0] = keys.length;
     }
 
     traitWeights = results;
+    offsetsSum = LibRandom.packArray(offsets, 8);
   }
 
   /// @notice set trait stats, in a struct. only works once
@@ -217,6 +240,25 @@ abstract contract TraitHandler {
         randN,
         8
       );
+    }
+  }
+
+  /// @notice calculates stats, returns stats delta to update
+  function _calcStats(
+    uint256[] memory traits,
+    uint256[] memory offsets,
+    TraitStats[] memory stats
+  ) internal returns (TraitStats memory delta) {
+    delta = TraitStats(0, 0, 0, 0, 0);
+    uint256 offset;
+    for (uint256 i; i < 5; i++) {
+      offset += offsets[i];
+      TraitStats memory curr = stats[offsets + traits[i]];
+      delta.health += curr.health;
+      delta.power += curr.power;
+      delta.violence += curr.violence;
+      delta.harmony += curr.harmony;
+      delta.slots += curr.slots;
     }
   }
 }
