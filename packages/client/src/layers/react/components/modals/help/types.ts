@@ -1,9 +1,15 @@
 
 export enum HelpTabs {
   HOME,
-  KAMI_INFO,
+  KAMIS,
   NODES,
   START,
   TIPS,
   WORLD
+}
+
+export interface PageCopy {
+  title: string;
+  header: string;
+  body: string[];
 }

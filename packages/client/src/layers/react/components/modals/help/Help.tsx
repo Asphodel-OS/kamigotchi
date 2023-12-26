@@ -3,14 +3,14 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { HelpTabs } from './types';
+import { CopyContent } from './copy';
+import { HelpBanners } from 'assets/images/banners';
+import { triggerIcons } from 'assets/images/icons/triggers';
+import { helpIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
-
-import { triggerIcons } from 'assets/images/icons/triggers';
-import { helpIcon } from 'assets/images/icons/menu';
-import { HelpBanners } from 'assets/images/banners';
 
 
 export function registerHelpModal() {
@@ -44,12 +44,12 @@ export function registerHelpModal() {
         case HelpTabs.HOME:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.welcome} alt='welcome to kamigotchi' />
+              <Image src={HelpBanners.welcome} alt='welcome to kamigotchi' />
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px' }}>
                 <Link onClick={() => handleLinkClick(HelpTabs.START)}>
                   Getting Started
                 </Link>
-                <Link onClick={() => handleLinkClick(HelpTabs.KAMI_INFO)}>
+                <Link onClick={() => handleLinkClick(HelpTabs.KAMIS)}>
                   Kamigotchi
                 </Link>
                 <Link onClick={() => handleLinkClick(HelpTabs.NODES)}>
@@ -65,65 +65,19 @@ export function registerHelpModal() {
         case HelpTabs.START:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.starting} alt='getting started' />
+              <Image src={CopyContent[tab].header} alt='getting started' />
               <Description>
-                Welcome to Kamigotchi World.
-                <br />
-                You can move using the map.
-                <br />
-                <br />
-                Look for a vending machine and for Nodes scattered throughout the world.
-                <br />
-                <br />
-                You may want to find Kamigotchi if you want to influence this world, but you're welcome to explore either way.
-                <br />
-                <br />
-                It's possible to rename your Kamigotchi somewhere in-game.
+                {CopyContent[tab].body.map((line: string) => { return <>{line}<br /></> })}
               </Description>
             </div>
           );
           break;
-        case HelpTabs.KAMI_INFO:
+        case HelpTabs.KAMIS:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.whatKami} alt='what kami' />
+              <Image src={CopyContent[tab].header} alt='what kami' />
               <Description>
-                Kamigotchi are vibrant individuals who exist to provide you with
-                emotional support and value. You can convert their health and
-                well-being into $MUSU by sending them to work at Nodes.
-                <br />
-                <br />
-                Kamigotchi have several different statistics that determine
-                their abilities. Base statistics are determined by a Kami's Traits.
-                Traits are separated into rarity tiers. Some are extremely uncommon.
-                Rarer traits usually give more stat points.
-                <br />
-                <br />
-                Kamigotchi also have Types, determined by their Arm and Body traits. Kamigotchi
-                can be Normal, Eerie, Scrap, or Insect types, and the Arm and Body can have different
-                Types - leading to a dual-type Kami, for example Normal/Insect.
-                <br />
-                <br />
-                Health determines a Kami's well being. The lower a Kami's health,
-                the easier it is for them to be liquidated by other Kami,
-                which kills them. Dead Kamigotchi must be resurrected using a Ribbon.
-                <br />
-                Health drains slowly when harvesting on a node. As Health drains, Kamigotchi
-                produce $MUSU based on their Power stat. More Power increases both Health drain rate
-                and the level of $MUSU generated.
-                <br />
-                <br />
-                Your Kamigotchi are fiercely
-                independent and will gradually regenerate health if left to
-                their own devices, but can be fed to speed this process.
-                <br />
-                <br />
-                Violence and Harmony determine a Kami's capacity for attack and
-                defense. The Health threshold for liquidating a Kami on a Node is determined
-                by the difference between the attacker's Violence and the defender's Harmony.
-                <br />
-                <br />
-                Slots are mysterious. We'll explain more on them later.
+                {CopyContent[tab].body.map((line: string) => { return <>{line}<br /></> })}
               </Description>
             </div>
           );
@@ -131,17 +85,9 @@ export function registerHelpModal() {
         case HelpTabs.NODES:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.whatNode} alt='nodes' />
+              <Image src={CopyContent[tab].header} alt='nodes' />
               <Description>
-                Nodes are sites of spiritual significance within Kamigotchi
-                World. Kamigotchi, and only Kamigotchi, can generate $MUSU
-                by gathering energy at Nodes. This costs Kamigotchi health,
-                and can leave them vulnerable to attack from other Kamigotchi.
-                <br />
-                <br />
-                Some nodes have a type affinity, such as Eerie or Scrap. You may
-                be able to find more $MUSU by harvesting on these nodes with
-                Kami that share the same affinity.
+                {CopyContent[tab].body.map((line: string) => { return <>{line}<br /></> })}
               </Description>
             </div>
           );
@@ -149,13 +95,9 @@ export function registerHelpModal() {
         case HelpTabs.WORLD:
           helpContent = (
             <div>
-              <img style={{ height: 'auto', width: '100%' }} src={HelpBanners.world} alt='world' />
+              <Image src={CopyContent[tab].header} alt='world' />
               <Description>
-                Kamigotchi World is an Autonomous World that exists entirely on-chain.
-                <br />
-                <br />
-                All actions taken within this world are blockchain transactions. Your Operator -
-                that is, the entity you named on entry - is a representation of you within this world.
+                {CopyContent[tab].body.map((line: string) => { return <>{line}<br /></> })}
               </Description>
             </div>
           );
@@ -204,7 +146,12 @@ const Link = styled.a`
   font-size: 18px;
 `;
 
-const Description = styled.p`
+const Image = styled.img`
+  height: auto;
+  width: 100%;
+`;
+
+const Description = styled.div`
   font-size: 16px;
   color: #333;
   text-align: left;
