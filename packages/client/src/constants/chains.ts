@@ -40,9 +40,9 @@ const mudChain: Chain = {
   testnet: true,
 };
 
-const opGoerli: Chain = {
-  id: 420,
-  name: "opGoerli",
+const opSepolia: Chain = {
+  id: 11155420,
+  name: "opSepolia",
   network: "ethereum",
   nativeCurrency: {
     decimals: 18,
@@ -51,12 +51,11 @@ const opGoerli: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
-      webSocket: ["wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
+      http: ["https://go.getblock.io/ecf00857f13140bb9d75d51597663370"],
+      webSocket: ["wss://go.getblock.io/6af8e0adaac14522928ddf4a002644b0"],
     },
     public: {
-      http: ["https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
-      webSocket: ["wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli"],
+      http: ["https://optimism-sepolia.blockpi.network/v1/rpc/public"],
     },
   },
   testnet: true,
@@ -66,9 +65,9 @@ const opGoerli: Chain = {
 const chainConfigs: Map<string, Chain> = new Map([
   ['', localhost],  // default to localhost when no environment mode provided
   ['DEV', localhost],
-  ['TEST', opGoerli],
+  ['TEST', opSepolia],
   ['PROD', optimism],
-  ['OPGOERLI', opGoerli],
+  ['OPSEP', opSepolia],
 ]);
 
 export const defaultChain = chainConfigs.get(process.env.MODE ?? '')!;
