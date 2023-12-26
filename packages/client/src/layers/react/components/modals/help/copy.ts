@@ -1,5 +1,6 @@
 import { HelpTabs, PageCopy } from "./types";
 import { HelpBanners } from 'assets/images/banners';
+import { HelpMenuIcons } from 'assets/images/icons/help';
 
 
 const WelcomeCopy: PageCopy = {
@@ -10,6 +11,7 @@ const WelcomeCopy: PageCopy = {
 
 const StartingCopy: PageCopy = {
   title: "Getting Started",
+  menuIcon: HelpMenuIcons.starting,
   header: HelpBanners.starting,
   body: [
     "Welcome to Kamigotchi World.",
@@ -25,6 +27,7 @@ const StartingCopy: PageCopy = {
 
 const KamiCopy: PageCopy = {
   title: "What's a Kamigotchi?",
+  menuIcon: HelpMenuIcons.kamis,
   header: HelpBanners.whatKami,
   body: [
     "Kamigotchi are vibrant individuals who exist to provide you with emotional support and value. You can convert their health and well-being into $MUSU by sending them to work at Nodes.",
@@ -47,6 +50,7 @@ const KamiCopy: PageCopy = {
 
 const NodeCopy: PageCopy = {
   title: "What's a Node?",
+  menuIcon: HelpMenuIcons.nodes,
   header: HelpBanners.whatNode,
   body: [
     "Nodes are sites of spiritual significance within Kamigotchi World. Kamigotchi, and only Kamigotchi, can generate $MUSU by gathering energy at Nodes. This costs Kamigotchi health, and can leave them vulnerable to attack from other Kamigotchi.",
@@ -57,6 +61,7 @@ const NodeCopy: PageCopy = {
 
 const WorldCopy: PageCopy = {
   title: "Kamigotchi World",
+  menuIcon: HelpMenuIcons.nodes,
   header: HelpBanners.world,
   body: [
     "Kamigotchi World is an Autonomous World that exists entirely on-chain.",

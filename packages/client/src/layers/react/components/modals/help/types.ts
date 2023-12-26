@@ -9,6 +9,7 @@ export enum HelpTabs {
 
 export interface PageCopy {
   title: string;
+  menuIcon?: string;
   header: string;
   body: string[];
 }
