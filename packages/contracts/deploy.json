@@ -1008,6 +1008,12 @@
         "ValueComponent",
         "ViolenceComponent"
       ]
+    },
+    {
+      "name": "_721BatchMinterSystem",
+      "writeAccess": [
+        "*"
+      ]
     }
   ],
   "libraries": [

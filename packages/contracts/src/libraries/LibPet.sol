@@ -12,12 +12,14 @@ import { Gaussian } from "solstat/Gaussian.sol";
 
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
-import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
+import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { SkillPointComponent, ID as SkillPointCompID } from "components/SkillPointComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
@@ -45,7 +47,7 @@ library LibPet {
   /////////////////
   // INTERACTIONS
 
-  // create a pet entity and set its base fields
+  /// @notice create a pet entity and set its base fields
   function create(
     IWorld world,
     IUintComp components,
@@ -54,7 +56,7 @@ library LibPet {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
-    IndexPetComponent(getAddressById(components, IndexPetComponentID)).set(id, index);
+    IndexPetComponent(getAddressById(components, IndexPetCompID)).set(id, index);
     setAccount(components, id, accountID);
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
@@ -457,6 +459,10 @@ library LibPet {
   /////////////////
   // GETTERS
 
+  function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
+    return IdAccountComponent(getAddressById(components, IdAccCompID)).has(id);
+  }
+
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
@@ -547,7 +553,7 @@ library LibPet {
 
   // get the entity ID of a pet from its index (tokenID)
   function indexToID(IUintComp components, uint256 index) internal view returns (uint256 result) {
-    uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetComponentID))
+    uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetCompID))
       .getEntitiesWithValue(index);
     // assumes only 1 pet per index
     if (results.length > 0) {
@@ -557,7 +563,7 @@ library LibPet {
 
   // get the index of a pet (aka its 721 tokenID) from its entity ID
   function idToIndex(IUintComp components, uint256 entityID) internal view returns (uint256) {
-    return IndexPetComponent(getAddressById(components, IndexPetComponentID)).getValue(entityID);
+    return IndexPetComponent(getAddressById(components, IndexPetCompID)).getValue(entityID);
   }
 
   // retrieves the pet with the specified name

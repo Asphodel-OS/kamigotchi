@@ -46,11 +46,11 @@ library LibRandom {
 
   // select an item from a weighted list of options
 
-  // @notice picks from a weighted random array based on a random input
-  // @param keys     keys, position correspnds to weights
-  // @param weights  the weights for each item
-  // @param randN    the input random number
-  // @return         the selected key
+  /// @notice picks from a weighted random array based on a random input
+  /// @param keys     keys, position correspnds to weights
+  /// @param weights  the weights for each item
+  /// @param randN    the input random number
+  /// @return         the selected key
   function selectFromWeighted(
     uint256[] memory keys,
     uint256[] memory weights,
@@ -64,13 +64,30 @@ library LibRandom {
     return keys[_positionFromWeighted(weights, totalWeight, randN)];
   }
 
-  // @notice picks multiple results from weighted array
-  // @dev returns an array of results, with indices as number of results corresponding to key positions
-  // @dev uses a basic uint256(keccak256(abi.encode(seed, i))) for incrementing seeds
-  // @param weights  the weights for each item
-  // @param randN    the input random number
-  // @param count    the number of rolls
-  // @return         array with indices as number of results corresponding to key positions
+  /// @notice packed version, picks from a weighted random array based on a random input
+  /// @param keys     keys, position correspnds to weights
+  /// @param weights  the weights for each item
+  /// @param randN    the input random number
+  /// @return         the selected key
+  function pSelectFromWeighted(
+    uint256 keys,
+    uint256 weights,
+    uint256 numElements,
+    uint256 randN,
+    uint256 SIZE
+  ) internal pure returns (uint256) {
+    uint256 totalWeight = pTotalWeight(weights, SIZE);
+
+    return keys[_pPositionFromWeighted(weights, numElements, totalWeight, randN, SIZE)];
+  }
+
+  /// @notice picks multiple results from weighted array
+  /// @dev returns an array of results, with indices as number of results corresponding to key positions
+  /// @dev uses a basic uint256(keccak256(abi.encode(seed, i))) for incrementing seeds
+  /// @param weights  the weights for each item
+  /// @param randN    the input random number
+  /// @param count    the number of rolls
+  /// @return         array with indices as number of results corresponding to key positions
   function selectMultipleFromWeighted(
     uint256[] memory weights,
     uint256 randN,
@@ -95,12 +112,12 @@ library LibRandom {
     return results;
   }
 
-  // @notice picks from a weighted random array, returns position and value of result
-  // @dev low level function. not meant to be implemented outside of this lib
-  // @param weights      the weights for each item
-  // @param totalWeight  the total weight of all items
-  // @param randN        the input random number
-  // @return             the position of the result
+  /// @notice picks from a weighted random array, returns position and value of result
+  /// @dev low level function. not meant to be implemented outside of this lib
+  /// @param weights      the weights for each item
+  /// @param totalWeight  the total weight of all items
+  /// @param randN        the input random number
+  /// @return             the position of the result
   function _positionFromWeighted(
     uint256[] memory weights,
     uint256 totalWeight,
@@ -113,6 +130,35 @@ library LibRandom {
     uint256 currentWeight;
     for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
+      if (roll < currentWeight) {
+        return (i);
+      }
+    }
+
+    // should never get here
+    revert("LibRandom: no item found");
+  }
+
+  /// @notice packed version, picks from a weighted random array, returns position and value of result
+  /// @dev low level function. not meant to be implemented outside of this lib
+  /// @param weights      the weights for each item
+  /// @param totalWeight  the total weight of all items
+  /// @param randN        the input random number
+  /// @return             the position of the result
+  function _pPositionFromWeighted(
+    uint256 weights,
+    uint256 totalWeight,
+    uint256 numElements,
+    uint256 randN,
+    uint256 SIZE
+  ) internal pure returns (uint256) {
+    // roll for the constrained random number
+    uint256 roll = randN % totalWeight;
+
+    // iterate to find item
+    uint256 currentWeight;
+    for (uint256 i; i < numElements; i++) {
+      currentWeight += pGetAt(weights, i, numElements, SIZE);
       if (roll < currentWeight) {
         return (i);
       }
@@ -161,12 +207,12 @@ library LibRandom {
   //////////////////
   // BITPACK HELPERS
 
-  // @dev: updates a bitpacked value at a specific position. returns the new packed array
-  // @param newElement: the new value to set
-  // @param position: the position to set
-  // @param maxPos: the number of elements in array
-  // @param SIZE: the size of each element (eg 8 for uint8, which allows for 32 values packed)
-  // @param packed: the original packed value
+  /// @notice updates a bitpacked value at a specific position. returns the new packed array
+  /// @param newElement: the new value to set
+  /// @param position: the position to set
+  /// @param maxPos: the number of elements in array
+  /// @param SIZE: the size of each element (eg 8 for uint8, which allows for 32 values packed)
+  /// @param packed: the original packed value
   function pUpdateElement(
     uint256 newElement,
     uint256 position,
@@ -180,6 +226,27 @@ library LibRandom {
     return
       (packed & ~(((1 << SIZE) - 1) << (SIZE * (maxPos - position)))) |
       (newElement << (SIZE * (maxPos - position)));
+  }
+
+  /// @notice gets a bitpacked value at a specific position
+  function pGetAt(
+    uint256 packed,
+    uint256 position,
+    uint256 maxPos,
+    uint256 SIZE
+  ) internal pure returns (uint256) {
+    return packed & (((1 << SIZE) - 1) << (SIZE * (maxPos - position)));
+  }
+
+  /// @notice calculates total weight of a bitpacked array
+  function pTotalWeight(uint256 packed, uint256 SIZE) internal pure returns (uint256 totalWeight) {
+    uint256 num = 256 / SIZE;
+    for (uint256 i; i < num; i++) {
+      totalWeight += (packed & ((1 << SIZE) - 1));
+      packed = packed >> SIZE;
+    }
+
+    return totalWeight;
   }
 
   // converts a regular array to a bitpacked array

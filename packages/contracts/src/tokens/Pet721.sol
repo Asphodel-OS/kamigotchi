@@ -90,6 +90,11 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
     _mint(to, id);
   }
 
+  /// @notice mints multiple for approved systems
+  function mintBatch(address to, uint256[] calldata ids) external onlyWriter {
+    for (uint256 i; i < ids.length; i++) _mint(to, ids[i]);
+  }
+
   /// @notice bridges NFTs out of game -> in game [stake]
   /// @dev only to be called by system
   function stakeToken(address from, uint256 id) external onlyWriter {

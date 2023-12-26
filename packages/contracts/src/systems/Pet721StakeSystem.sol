@@ -40,7 +40,10 @@ contract Pet721StakeSystem is System {
 
     // checks before action
     require(LibPet721.getEOAOwner(world, tokenID) == msg.sender, "Pet721Stake: not urs");
-    require(LibPet.getAccount(components, petID) == 0, "Pet721Stake: already linked");
+    require(
+      !LibPet.hasAccount(components, petID) || LibPet.getAccount(components, petID) == 0,
+      "Pet721Stake: already linked"
+    );
     require(!LibPet.isInWorld(components, petID), "Pet721Stake: already in world");
 
     LibPet.stake(components, petID, accountID);
