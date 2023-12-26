@@ -2,11 +2,18 @@
 pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { LibString } from "solady/utils/LibString.sol";
 
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
+import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
+import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
+import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
+import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
+import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
@@ -23,7 +30,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { Pet721 } from "tokens/Pet721.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibMint20 } from "libraries/LibMint20.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
@@ -31,31 +38,204 @@ import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.BatchMint"));
 
-/** @notice
- * batch minting system, for sudo pools. only can be called by admin
- * mints out of game (to a specific address)
- */
-/// @dev to be called by account owner
-contract _721BatchMinterSystem is System {
+/// @notice small hopper contract to make trait handling more readable
+abstract contract TraitHandler {
   /////////////
   // STRUCTS //
   /////////////
+
   struct TraitWeights {
     uint256 keys;
     uint256 weights;
     uint256 num;
   }
 
+  struct Stats {
+    uint8 health;
+    uint8 power;
+    uint8 violence;
+    uint8 harmony;
+    uint8 slots;
+  }
+
   ///////////////
   // VARIABLES //
   ///////////////
 
-  bytes32 internal immutable baseSeed;
-  TraitWeights private colorWeights;
-  TraitWeights private backgroundWeights;
-  TraitWeights private bodyWeights;
-  TraitWeights private handWeights;
-  TraitWeights private faceWeights;
+  /** indices
+   * face = 0
+   * hand = 1
+   * body = 2
+   * background = 3
+   * color = 4
+   */
+  TraitWeights[] private traitWeights;
+
+  // memoized trait stats. all trait types, offset by number of previous type(s)
+  // eg face = 0-10, hand = 11-20, body = 21-30, background = 31-40, color = 41-50
+  TraitStats[] private traitStats;
+
+  ////////////////////
+  // MEMOIZED COMPS //
+  ////////////////////
+
+  IndexBodyComponent internal immutable indexBodyComp;
+  IndexBackgroundComponent internal immutable indexBackgroundComp;
+  IndexColorComponent internal immutable indexColorComp;
+  IndexFaceComponent internal immutable indexFaceComp;
+  IndexHandComponent internal immutable indexHandComp;
+
+  constructor(address _components) {
+    IUintComp components = IUintComp(_components);
+    indexBodyComp = IndexBodyComponent(getAddressById(components, IndexBodyCompID));
+    indexBackgroundComp = IndexBackgroundComponent(
+      getAddressById(components, IndexBackgroundCompID)
+    );
+    indexColorComp = IndexColorComponent(getAddressById(components, IndexColorCompID));
+    indexFaceComp = IndexFaceComponent(getAddressById(components, IndexFaceCompID));
+    indexHandComp = IndexHandComponent(getAddressById(components, IndexHandCompID));
+  }
+
+  /////////////////////
+  // TOP LEVEL LOGIC //
+  /////////////////////
+
+  /// @notice generates trait stats for 1, returns array of assigned traits
+  function _setPetTraits(uint256 seed, uint256 id) internal returns (uint256[] memory) {
+    uint256[] memory traits = _calcTraits(seed, id, traitWeights);
+
+    indexFaceComp.set(id, traits[0]);
+    indexHandComp.set(id, traits[1]);
+    indexBodyComp.set(id, traits[2]);
+    indexBackgroundComp.set(id, traits[3]);
+    indexColorComp.set(id, traits[4]);
+
+    return traits;
+  }
+
+  // function _getTraitStat(
+  //   uint256 typeIndex,
+  //   uint256 traitIndex
+  // ) internal view returns (TraitStats memory) {
+  //   return traitStats[typeIndex + traitIndex];
+  // }
+
+  ////////////////////
+  // MEMOIZED FUNCS //
+  ////////////////////
+
+  /// @dev sets trait weights. only works once; dont want to rug rarities later
+  function _setTraits() internal {
+    require(traitWeights[0].keys == 0, "already set"); // assumes all other keys are set
+
+    uint256[] memory results = new uint256[](5);
+
+    // scoping is used to save memory while execution
+    {
+      // color
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
+        components
+      );
+      results[4] = TraitWeights(
+        LibRandom.packArray(keys, 8),
+        LibRandom.packArray(weights, 8),
+        keys.length
+      );
+    }
+    {
+      // background
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
+        components
+      );
+      results[3] = TraitWeights(
+        LibRandom.packArray(keys, 8),
+        LibRandom.packArray(weights, 8),
+        keys.length
+      );
+    }
+    {
+      // body
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
+        components
+      );
+      results[2] = TraitWeights(
+        LibRandom.packArray(keys, 8),
+        LibRandom.packArray(weights, 8),
+        keys.length
+      );
+    }
+    {
+      // hand
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
+        components
+      );
+      results[1] = TraitWeights(
+        LibRandom.packArray(keys, 8),
+        LibRandom.packArray(weights, 8),
+        keys.length
+      );
+    }
+    {
+      // face
+      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
+        components
+      );
+      results[0] = TraitWeights(
+        LibRandom.packArray(keys, 8),
+        LibRandom.packArray(weights, 8),
+        keys.length
+      );
+    }
+
+    traitWeights = results;
+  }
+
+  /// @notice set trait stats, in a struct. only works once
+  /// @dev need to format locally. likely a solidity script
+  function _setStats(TraitStats[] calldata stats) internal {
+    require(traitStats.length == 0, "already set");
+    traitStats = stats;
+  }
+
+  ////////////////////
+  // INTERNAL LOGIC //
+  ////////////////////
+
+  /// @notice calculates traits, returns selected keys
+  function _calcTraits(
+    uint256 seed,
+    uint256 id,
+    TraitWeights[] memory traitWeights
+  ) internal returns (uint256[] memory results) {
+    results = new uint256[](5);
+    for (uint256 i; i < 5; i++) {
+      uint256 randN = uint256(keccak256(abi.encode(seed, id, traitWeights[i].weights)));
+      results[i] = LibRandom.pSelectFromWeighted(
+        traitWeights[i].keys,
+        traitWeights[i].weights,
+        traitWeights[i].num,
+        randN,
+        8
+      );
+    }
+  }
+}
+
+/** @notice
+ * batch minting system, for sudo pools. only can be called by admin
+ * mints out of game (to a specific address)
+ */
+/// @dev to be called by account owner
+contract _721BatchMinterSystem is System, TraitHandler {
+  /////////////
+  // STRUCTS //
+  /////////////
+
+  ///////////////
+  // VARIABLES //
+  ///////////////
+
+  uint256 internal immutable baseSeed;
 
   ////////////////////
   // MEMOIZED COMPS //
@@ -73,8 +253,11 @@ contract _721BatchMinterSystem is System {
   ExperienceComponent internal immutable expComp;
   SkillPointComponent internal immutable skillPointComp;
 
-  constructor(IWorld _world, address _components) System(_world, _components) {
-    baseSeed = keccak256(abi.encode(blockhash(block.number - 1)));
+  constructor(
+    IWorld _world,
+    address _components
+  ) System(_world, _components) TraitHandler(_components) {
+    baseSeed = uint256(keccak256(abi.encode(blockhash(block.number - 1))));
 
     pet721 = LibPet721.getContract(world);
     canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
@@ -91,7 +274,7 @@ contract _721BatchMinterSystem is System {
 
   /// @dev if calling many times, reduce call data by memozing address / bitpacking
   function batchMint(address to, uint256 amount) external onlyOwner {
-    require(colorWeights.keys != 0, "traits not set");
+    // require(colorWeights.keys != 0, "traits not set");
 
     uint256 startIndex = pet721.totalSupply() + 1;
 
@@ -100,68 +283,6 @@ contract _721BatchMinterSystem is System {
     mint721s(to, startIndex, amount);
 
     /// @dev revealing pets
-  }
-
-  /// @dev sets trait weights. only works once; dont want to rug rarities later
-  function setTraits() external onlyOwner {
-    require(colorWeights.keys == 0, "already set"); // assumes all other keys are set
-
-    // scoping is used to save memory while execution
-    {
-      // color
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
-        components
-      );
-      colorWeights = TraitWeights(
-        LibRandom.packArray(keys, 8),
-        LibRandom.packArray(weights, 8),
-        keys.length
-      );
-    }
-    {
-      // background
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
-        components
-      );
-      backgroundWeights = TraitWeights(
-        LibRandom.packArray(keys, 8),
-        LibRandom.packArray(weights, 8),
-        keys.length
-      );
-    }
-    {
-      // body
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
-        components
-      );
-      bodyWeights = TraitWeights(
-        LibRandom.packArray(keys, 8),
-        LibRandom.packArray(weights, 8),
-        keys.length
-      );
-    }
-    {
-      // hand
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
-        components
-      );
-      handWeights = TraitWeights(
-        LibRandom.packArray(keys, 8),
-        LibRandom.packArray(weights, 8),
-        keys.length
-      );
-    }
-    {
-      // face
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
-        components
-      );
-      faceWeights = TraitWeights(
-        LibRandom.packArray(keys, 8),
-        LibRandom.packArray(weights, 8),
-        keys.length
-      );
-    }
   }
 
   /////////////////////
@@ -189,6 +310,30 @@ contract _721BatchMinterSystem is System {
     }
   }
 
+  /// @notice reveal traits
+  function reveal(uint256[] memory ids, uint256 amount) internal {
+    TraitWeights[] memory traitWeights = new TraitWeights[](5); // HERE!
+    uint256 seed = baseSeed;
+    string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
+
+    for (uint256 i; i < amount; i++) {
+      uint256[] memory traits = _setPetTraits(seed, ids[i]);
+
+      // set mediaURI
+      mediaURIComp.set(
+        ids[i],
+        LibString.concat(
+          _baseURI,
+          LibString.concat(LibString.toString(LibRandom.packArray(traits, 8)), ".gif")
+        )
+      );
+    }
+  }
+
+  function setTraits() external onlyOwner {
+    super._setTraits();
+  }
+
   /// @notice batch mint pets, replaces LibPet721
   function mint721s(address to, uint256 startIndex, uint256 amount) internal {
     uint256[] memory indices = new uint256[](amount);
@@ -196,47 +341,11 @@ contract _721BatchMinterSystem is System {
     pet721.mintBatch(to, indices);
   }
 
-  /// @notice overall reveal action
-  function reveal(uint256[] memory ids, uint256 amount) internal {
-    TraitWeights[] memory traitWeights = new TraitWeights[](5);
-    traitWeights[0] = faceWeights;
-    traitWeights[1] = handWeights;
-    traitWeights[2] = bodyWeights;
-    traitWeights[3] = backgroundWeights;
-    traitWeights[4] = colorWeights;
-    uint256 seed = baseSeed;
-
-    for (uint256 i; i < amount; i++) {
-      uint256[] memory traits = _calcTraits(seed, ids[i], traitWeights);
-
-      // assign traits
-    }
-  }
-
   /// @notice set stats after reveal
 
   ////////////////////
   // INTERNAL LOGIC //
   ////////////////////
-
-  /// @notice calculates traits, returns selected keys
-  function _calcTraits(
-    uint256 seed,
-    uint256 id,
-    TraitWeights[] memory traitWeights
-  ) internal returns (uint256[] memory result) {
-    result = new uint256[](5);
-    for (uint256 i; i < 5; i++) {
-      uint256 randN = uint256(keccak256(abi.encode(seed, id, traitWeights[i].weights)));
-      results[i] = LibRandom.pSelectFromWeighted(
-        traitWeights[i].keys,
-        traitWeights[i].weights,
-        traitWeights[i].num,
-        randN,
-        8
-      );
-    }
-  }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     require(false, "not implemented");

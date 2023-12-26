@@ -78,7 +78,13 @@ library LibRandom {
   ) internal pure returns (uint256) {
     uint256 totalWeight = pTotalWeight(weights, SIZE);
 
-    return keys[_pPositionFromWeighted(weights, numElements, totalWeight, randN, SIZE)];
+    return
+      pGetAt(
+        keys,
+        _pPositionFromWeighted(weights, numElements, totalWeight, randN, SIZE),
+        numElements,
+        SIZE
+      );
   }
 
   /// @notice picks multiple results from weighted array
