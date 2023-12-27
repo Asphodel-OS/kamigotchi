@@ -11,7 +11,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { useAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useNetwork } from 'layers/react/store/network';
 
 export function registerERC20BridgeModal() {
   registerUIComponent(
@@ -45,7 +45,7 @@ export function registerERC20BridgeModal() {
 
     ({ account, proxyAddy }) => {
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, networks } = useNetworkSettings();
+      const { selectedAddress, networks } = useNetwork();
 
       const [isDepositState, setIsDepositState] = useState(true);
       const [amount, setAmount] = useState(0);

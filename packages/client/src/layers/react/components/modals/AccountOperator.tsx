@@ -9,7 +9,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { useNetwork } from 'layers/react/store/network'
 import { playScribble, playSuccess } from 'utils/sounds';
 
 import 'layers/react/styles/font.css';
@@ -28,7 +28,7 @@ export function registerAccountOperator() {
     (layers) => {
       const { network: { actions } } = layers;
       const { account: kamiAccount } = useAccount();
-      const { burner, selectedAddress, networks } = useNetworkSettings();
+      const { burner, selectedAddress, networks } = useNetwork();
 
       const [helperText, setHelperText] = useState("");
       const [newAddress, setNewAddress] = useState("");

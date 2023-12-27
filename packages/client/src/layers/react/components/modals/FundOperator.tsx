@@ -10,7 +10,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useNetwork } from 'layers/react/store/network';
 import { playSuccess, playScribble } from 'utils/sounds';
 
 export function registerFundOperatorModal() {
@@ -50,7 +50,7 @@ export function registerFundOperatorModal() {
         },
       } = layers;
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, networks } = useNetworkSettings();
+      const { selectedAddress, networks } = useNetwork();
 
       const [isFundState, setIsFundState] = useState(true);
       const [amount, setAmount] = useState(0.05);

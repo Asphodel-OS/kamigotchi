@@ -17,7 +17,7 @@ import { getData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useNetwork } from 'layers/react/store/network';
 import { playVending } from 'utils/sounds';
 
 
@@ -106,7 +106,7 @@ export function registerKamiMintModal() {
       const { isConnected } = useAccount();
       const { modals, setModals } = useVisibility();
       const { account: kamiAccount } = useKamiAccount();
-      const { selectedAddress, networks } = useNetworkSettings();
+      const { selectedAddress, networks } = useNetwork();
 
       const [amountToMint, setAmountToMint] = useState(1);
       const [triedReveal, setTriedReveal] = useState(false);

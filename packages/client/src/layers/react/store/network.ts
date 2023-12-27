@@ -17,6 +17,8 @@ interface Actions {
   setValidations: (validations: Validations) => void;
 }
 
+// represents the burner EOA(s) detected in localstorage / connected to the network
+// in-game txs originate from 'connected', which is set from the 'detected' one upon load
 interface Burner {
   connected: {
     address: string;
@@ -27,13 +29,14 @@ interface Burner {
   }
 }
 
+// the result of  validations run on network state
 interface Validations {
   isConnected: boolean;
   chainMatches: boolean;
   burnerMatches: boolean;
 }
 
-export const useNetworkSettings = create<State & Actions>((set) => {
+export const useNetwork = create<State & Actions>((set) => {
   const initialState: State = {
     burner: {
       connected: {

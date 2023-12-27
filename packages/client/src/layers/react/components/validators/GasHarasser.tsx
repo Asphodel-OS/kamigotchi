@@ -12,7 +12,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { useNetwork } from 'layers/react/store/network'
 import { playClick, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
 
@@ -30,7 +30,7 @@ export function registerGasHarasser() {
     (layers) => of(layers),
     (layers) => {
       const { network: { actions, world } } = layers;
-      const { selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
+      const { selectedAddress, networks, validations: networkValidations } = useNetwork();
       const { validators, setValidators } = useVisibility();
       const { account, validations, setValidations } = useAccount();
 

@@ -13,7 +13,7 @@ import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { getAccountByOperator } from 'layers/react/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { useNetwork } from 'layers/react/store/network'
 import { generatePrivateKey } from 'utils/address';
 import { playClick, playScribble, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
@@ -33,7 +33,7 @@ export function registerOperatorUpdater() {
     (layers) => {
       const { network: { actions } } = layers;
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { account: kamiAccount, validations, setValidations } = useAccount();

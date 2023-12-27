@@ -2,7 +2,6 @@ import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { create } from 'zustand';
 
 
-
 ////////////////
 // OVERVIEW
 

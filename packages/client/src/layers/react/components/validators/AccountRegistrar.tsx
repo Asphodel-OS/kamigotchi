@@ -22,7 +22,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountByName } from 'layers/react/shapes/Account'
 import { useVisibility } from 'layers/react/store/visibility';
 import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useNetwork } from 'layers/react/store/network';
 import { playScribble } from 'utils/sounds';
 
 
@@ -100,7 +100,7 @@ export function registerAccountRegistrar() {
         OwnerAddress.update$,
       ).pipe(
         map(() => {
-          const { selectedAddress } = useNetworkSettings.getState();
+          const { selectedAddress } = useNetwork.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
           const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
@@ -125,7 +125,7 @@ export function registerAccountRegistrar() {
       getAccountDetails,
     }) => {
       const { network: { actions, world } } = layers;
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { setAccount, validations, setValidations } = useAccount();

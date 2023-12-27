@@ -10,7 +10,7 @@ import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useNetwork as useMUDNetwork } from 'layers/react/store/network';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
@@ -36,8 +36,8 @@ export function registerWalletConnecter() {
 
       const { validators, setValidators } = useVisibility();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
-      const { networks, addNetwork, setSelectedAddress } = useNetworkSettings();
-      const { validations, setValidations } = useNetworkSettings();
+      const { networks, addNetwork, setSelectedAddress } = useMUDNetwork();
+      const { validations, setValidations } = useMUDNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
       const [title, setTitle] = useState('');

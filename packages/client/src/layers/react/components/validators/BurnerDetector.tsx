@@ -7,7 +7,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { useVisibility } from 'layers/react/store/visibility';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { useNetwork } from 'layers/react/store/network'
 import { generatePrivateKey, getAddressFromPrivateKey } from 'utils/address';
 import 'layers/react/styles/font.css';
 
@@ -48,7 +48,7 @@ export function registerBurnerDetector() {
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { validations, setValidations, setBurner } = useNetworkSettings();
+      const { validations, setValidations, setBurner } = useNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
       const [burnerMatches, setBurnerMatches] = useState(false);
