@@ -1,13 +1,13 @@
 import { useVisibility } from 'layers/react/store/visibility';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 export const triggerDialogueModal = (index: number) => {
   const { modals } = useVisibility.getState();
-  const { dialogueIndex } = useSelectedEntities.getState();
+  const { dialogueIndex } = useSelected.getState();
   playClick();
 
-  useSelectedEntities.setState({ dialogueIndex: index });
+  useSelected.setState({ dialogueIndex: index });
   if (!modals.dialogue) {
     useVisibility.setState({
       modals: {

@@ -6,7 +6,7 @@ import crypto from "crypto";
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';
 import { useVisibility } from 'layers/react/store/visibility';
@@ -55,7 +55,7 @@ export function registerBuyModal() {
 
     ({ layers, actions, api }) => {
       const { modals, setModals } = useVisibility();
-      const { listingEntityIndex } = useSelectedEntities();
+      const { listingEntityIndex } = useSelected();
       const [listing, setListing] = useState(getListing(layers, listingEntityIndex));
       const [quantity, setQuantity] = useState(1);
 

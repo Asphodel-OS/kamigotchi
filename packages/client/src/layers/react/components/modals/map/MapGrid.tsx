@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { location, road, coreSprites, water } from 'assets/map';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 
 interface MapProps {
   currentRoom?: number;
@@ -233,7 +233,7 @@ const NEIGHBOR_ROOMS = [
 
 const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   const [isHovered, setHovered] = useState(false);
-  const { setRoom } = useSelectedEntities();
+  const { setRoom } = useSelected();
 
   const location = ROOM_POSITIONS.get(`${rowIndex},${colIndex}`);
   const isCurrentRoom = location === currentRoom;

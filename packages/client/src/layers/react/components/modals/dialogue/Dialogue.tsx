@@ -9,7 +9,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
@@ -53,7 +53,7 @@ export function registerDialogueModal() {
     },
     ({ layers, actions, api }) => {
       const { modals } = useVisibility();
-      const { dialogueIndex } = useSelectedEntities();
+      const { dialogueIndex } = useSelected();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
       const [step, setStep] = React.useState(0);

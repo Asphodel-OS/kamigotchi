@@ -1,10 +1,10 @@
 import { useVisibility } from 'layers/react/store/visibility';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 export const triggerNodeModal = (index: number) => {
   const { modals } = useVisibility.getState();
-  const { setNode } = useSelectedEntities.getState();
+  const { setNode } = useSelected.getState();
 
   if (!modals.node) {
     playClick();

@@ -12,7 +12,7 @@ import { Kami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/react/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -98,7 +98,7 @@ export function registerNodeModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(layers, { kamis: true, inventory: true });
-          const { nodeIndex } = useSelectedEntities.getState();
+          const { nodeIndex } = useSelected.getState();
           const node = getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: account.id });
 
           return {
@@ -119,7 +119,7 @@ export function registerNodeModal() {
     ({ layers, actions, api, data }) => {
       // console.log('NodeM: data', data);
       const [tab, setTab] = useState('allies');
-      const { nodeIndex } = useSelectedEntities();
+      const { nodeIndex } = useSelected();
       const [node, setNode] = useState<Node>(data.node);
 
       // updates from selected Node updates

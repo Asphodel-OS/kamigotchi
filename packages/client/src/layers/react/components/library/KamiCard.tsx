@@ -12,7 +12,7 @@ import {
   calcHealth,
 } from "layers/react/shapes/Kami";
 import { useVisibility } from 'layers/react/store/visibility';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
   const { modals, setModals } = useVisibility();
-  const { kamiEntityIndex, setKami } = useSelectedEntities();
+  const { kamiEntityIndex, setKami } = useSelected();
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());

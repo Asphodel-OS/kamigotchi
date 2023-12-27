@@ -7,7 +7,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { Skill, getRegistrySkills } from 'layers/react/shapes/Skill';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { Banner } from './Banner';
 import { KillLogs } from './KillLogs';
 import { Skills } from './Skills';
@@ -91,7 +91,7 @@ export function registerKamiModal() {
 
     ({ layers, actions, api }) => {
       const [tab, setTab] = useState('traits');
-      const { kamiEntityIndex } = useSelectedEntities();
+      const { kamiEntityIndex } = useSelected();
       const [mode, setMode] = useState('DETAILS');
 
       /////////////////

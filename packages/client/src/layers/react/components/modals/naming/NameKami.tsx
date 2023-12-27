@@ -9,7 +9,7 @@ import { SingleInputTextForm } from 'layers/react/components/library/SingleInput
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
 
 export function registerNameKamiModal() {
@@ -51,7 +51,7 @@ export function registerNameKamiModal() {
 
     ({ layers, actions, api }) => {
       const { modals, setModals } = useVisibility();
-      const { kamiEntityIndex } = useSelectedEntities();
+      const { kamiEntityIndex } = useSelected();
       const kami = getKami(layers, kamiEntityIndex);
 
       // queue the naming action up

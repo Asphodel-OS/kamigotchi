@@ -10,7 +10,7 @@ import {
 
 import { Kill } from 'layers/react/shapes/Kill';
 import { Kami } from 'layers/react/shapes/Kami';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 
 // Rendering of the Kami's Kill/Death Logs
 export const KillLogs = (props: Props) => {
-  const { setKami } = useSelectedEntities();
+  const { setKami } = useSelected();
   const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
   const headerStyle = { ...cellStyle, fontSize: '1vw' };
 
