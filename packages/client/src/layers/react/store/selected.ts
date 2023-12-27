@@ -2,9 +2,9 @@ import { EntityIndex } from '@latticexyz/recs';
 import { create } from 'zustand';
 
 export interface SelectedEntities {
-  accountEntityIndex: EntityIndex;
+  accountIndex: number;
   dialogueIndex: number;
-  kamiEntityIndex: EntityIndex;
+  kamiIndex: number;
   listingEntityIndex: EntityIndex;
   nodeIndex: number;
   npcIndex: number;
@@ -12,9 +12,9 @@ export interface SelectedEntities {
 }
 
 interface Actions {
-  setAccount: (accountEntityIndex: EntityIndex) => void;
+  setAccount: (accountIndex: number) => void;
   setDialogue: (dialogueIndex: number) => void;
-  setKami: (kamiEntityIndex: EntityIndex) => void;
+  setKami: (kamiIndex: number) => void;
   setListing: (listingEntityIndex: EntityIndex) => void;
   setNode: (nodeIndex: number) => void;
   setNpc: (npcIndex: number) => void;
@@ -23,9 +23,9 @@ interface Actions {
 
 export const useSelected = create<SelectedEntities & Actions>((set) => {
   const initialState: SelectedEntities = {
-    accountEntityIndex: 0 as EntityIndex,
+    accountIndex: 0 as number,
     dialogueIndex: 0 as number,
-    kamiEntityIndex: 0 as EntityIndex,
+    kamiIndex: 0 as number,
     listingEntityIndex: 0 as EntityIndex,
     nodeIndex: 0 as number,
     npcIndex: 0 as number,
@@ -34,14 +34,14 @@ export const useSelected = create<SelectedEntities & Actions>((set) => {
 
   return {
     ...initialState,
-    setAccount: (accountEntityIndex: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, accountEntityIndex })
+    setAccount: (accountIndex: number) => set(
+      (state: SelectedEntities) => ({ ...state, accountIndex })
     ),
     setDialogue: (dialogueIndex: number) => set(
       (state: SelectedEntities) => ({ ...state, dialogueIndex })
     ),
-    setKami: (kamiEntityIndex: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, kamiEntityIndex })
+    setKami: (kamiIndex: number) => set(
+      (state: SelectedEntities) => ({ ...state, kamiIndex })
     ),
     setListing: (listingEntityIndex: EntityIndex) => set(
       (state: SelectedEntities) => ({ ...state, listingEntityIndex })

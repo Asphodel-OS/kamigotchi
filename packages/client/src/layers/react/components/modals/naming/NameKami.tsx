@@ -7,7 +7,7 @@ import crypto from "crypto";
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Kami, getKamiByIndex } from 'layers/react/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
@@ -26,8 +26,10 @@ export function registerNameKamiModal() {
         network: {
           api: { player },
           components: {
-            CanName,
             OperatorAddress,
+            PetID,
+            PetIndex,
+            CanName,
             Name
           },
           actions,
@@ -36,6 +38,8 @@ export function registerNameKamiModal() {
 
       return merge(
         OperatorAddress.update$,
+        PetID.update$,
+        PetIndex.update$,
         CanName.update$,
         Name.update$
       ).pipe(
@@ -51,8 +55,8 @@ export function registerNameKamiModal() {
 
     ({ layers, actions, api }) => {
       const { modals, setModals } = useVisibility();
-      const { kamiEntityIndex } = useSelected();
-      const kami = getKami(layers, kamiEntityIndex);
+      const { kamiIndex } = useSelected();
+      const kami = getKamiByIndex(layers, kamiIndex);
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
