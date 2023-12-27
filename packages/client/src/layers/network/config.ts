@@ -138,8 +138,8 @@ function createNetworkConfigOpSepolia(externalProvider?: ExternalProvider): Netw
     snapshotUrl: "https://snapshot.asphodel.io",
 
     chainId: 11155420,
-    worldAddress: "0xF1438084E1c21Ed8fCE029AF9ad99B7BFF847D35",
-    initialBlockNumber: 5898056,
+    worldAddress: "0xcfb6aa5e713cEf37e7688544CdbA50d80cE04EE6",
+    initialBlockNumber: 5913546,
   };
 
   // EOAs and privatekey
