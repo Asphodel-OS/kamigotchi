@@ -11,7 +11,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useAccount } from 'layers/react/store/account';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { playClick, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
@@ -32,7 +32,7 @@ export function registerGasHarasser() {
       const { network: { actions, world } } = layers;
       const { selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
       const { validators, setValidators } = useVisibility();
-      const { account, validations, setValidations } = useKamiAccount();
+      const { account, validations, setValidations } = useAccount();
 
       const [hasGas, setHasGas] = useState(false);
       const [isVisible, setIsVisible] = useState(false);

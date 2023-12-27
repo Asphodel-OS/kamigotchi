@@ -12,7 +12,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccount } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useAccount } from 'layers/react/store/account';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 import 'layers/react/styles/font.css';
@@ -79,7 +79,7 @@ export function registerERC721BridgeModal() {
         }
       } = layers;
 
-      const { account: kamiAccount } = useKamiAccount();
+      const { account: kamiAccount } = useAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);

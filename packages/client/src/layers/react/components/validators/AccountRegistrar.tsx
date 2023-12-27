@@ -21,7 +21,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountByName } from 'layers/react/shapes/Account'
 import { useVisibility } from 'layers/react/store/visibility';
-import { Account, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
+import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playScribble } from 'utils/sounds';
 
@@ -128,7 +128,7 @@ export function registerAccountRegistrar() {
       const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { setAccount, validations, setValidations } = useKamiAccount();
+      const { setAccount, validations, setValidations } = useAccount();
 
       const [isVisible, setIsVisible] = useState(false);
       const [accountExists, setAccountExists] = useState(false);

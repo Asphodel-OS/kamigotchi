@@ -12,7 +12,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { getAccountByOperator } from 'layers/react/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useAccount } from 'layers/react/store/account';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { generatePrivateKey } from 'utils/address';
 import { playClick, playScribble, playSuccess } from 'utils/sounds';
@@ -36,7 +36,7 @@ export function registerOperatorUpdater() {
       const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
       const { toggleButtons, toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { account: kamiAccount, validations, setValidations } = useKamiAccount();
+      const { account: kamiAccount, validations, setValidations } = useAccount();
 
       const [operatorMatches, setOperatorMatches] = useState(false);
       const [operatorTaken, setOperatorTaken] = useState(false);

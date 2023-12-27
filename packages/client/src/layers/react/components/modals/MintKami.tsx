@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -16,7 +16,7 @@ import { getConfigFieldValue } from 'layers/react/shapes/Config';
 import { getData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 import { playVending } from 'utils/sounds';
 

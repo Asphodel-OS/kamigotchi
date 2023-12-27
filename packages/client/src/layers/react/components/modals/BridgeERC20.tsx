@@ -10,7 +10,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
+import { useAccount } from 'layers/react/store/account';
 import { useNetworkSettings } from 'layers/react/store/networkSettings';
 
 export function registerERC20BridgeModal() {
@@ -44,7 +44,7 @@ export function registerERC20BridgeModal() {
     },
 
     ({ account, proxyAddy }) => {
-      const { account: kamiAccount } = useKamiAccount();
+      const { account: kamiAccount } = useAccount();
       const { selectedAddress, networks } = useNetworkSettings();
 
       const [isDepositState, setIsDepositState] = useState(true);
