@@ -14,8 +14,6 @@ export const triggerLeaderboardModal = () => {
         bridgeERC721: false,
         dialogue: false,
         map: false,
-        roomMovement: false,
-        chat: false,
       },
     });
   } else {
