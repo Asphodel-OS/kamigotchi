@@ -6,8 +6,6 @@ import {
   Component
 } from '@latticexyz/recs';
 
-export { closeModalsOnRoomChange } from './closeModalsOnRoomChange';
-
 export const hexToDecimal = (hex: string) => parseInt(hex, 16);
 
 // NOTE: love this function, we should probably move it to the network layer

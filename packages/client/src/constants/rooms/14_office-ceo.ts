@@ -8,7 +8,7 @@ import {
 } from 'assets/images/rooms/14_office-ceo';
 import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
+import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
 
 
 export const room14: Room = {

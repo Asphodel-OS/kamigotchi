@@ -1,8 +1,8 @@
 import { Room } from 'constants/rooms';
-import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
+import { checkDuplicateRooms } from '../utils/rooms';
 import { useSoundSettings } from 'layers/react/store/soundSettings';
 import { backgrounds } from 'assets/images/backgrounds';
-import { triggerDialogueModal } from '../utils/triggerDialogueModal';
+import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
 import { checkModalCoverage } from '../utils/checkModalCoverage';
 
 // an additional field for the Phaser Scene for the GameScene

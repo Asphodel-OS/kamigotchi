@@ -12,8 +12,8 @@ import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
-import { closeModalsOnRoomChange } from 'layers/phaser/utils';
-import { checkDuplicateRooms } from 'layers/phaser/utils/checkDuplicateRooms';
+import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';
+import { useComponentSettings } from 'layers/react/store/componentSettings';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
@@ -63,3 +63,18 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
     system
   );
 }
+
+export const closeModalsOnRoomChange = () => {
+  const { modals } = useComponentSettings.getState();
+
+  useComponentSettings.setState({
+    modals: {
+      ...modals,
+      dialogue: false,
+      merchant: false,
+      kamiMint: false,
+      kami: false,
+      node: false,
+    },
+  });
+};

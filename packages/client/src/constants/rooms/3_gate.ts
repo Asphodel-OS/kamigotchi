@@ -4,7 +4,7 @@ import {
 } from 'assets/images/rooms/3_gate';
 import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
+import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
 
 
 export const room3: Room = {
