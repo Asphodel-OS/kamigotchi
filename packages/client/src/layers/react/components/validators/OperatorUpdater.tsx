@@ -11,7 +11,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
 import { getAccountByOperator } from 'layers/react/shapes/Account';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
 import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { generatePrivateKey } from 'utils/address';
@@ -34,8 +34,8 @@ export function registerOperatorUpdater() {
       const { network: { actions } } = layers;
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
-      const { toggleButtons, toggleModals } = useComponentSettings();
-      const { validators, setValidators } = useComponentSettings();
+      const { toggleButtons, toggleModals } = useVisibility();
+      const { validators, setValidators } = useVisibility();
       const { account: kamiAccount, validations, setValidations } = useKamiAccount();
 
       const [operatorMatches, setOperatorMatches] = useState(false);
@@ -72,7 +72,7 @@ export function registerOperatorUpdater() {
           !validators.accountRegistrar
         );
         if (isVisible != validators.operatorUpdater) {
-          const { validators } = useComponentSettings.getState();
+          const { validators } = useVisibility.getState();
           setValidators({ ...validators, operatorUpdater: isVisible });
         }
       }, [

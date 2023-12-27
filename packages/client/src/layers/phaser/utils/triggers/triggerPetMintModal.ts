@@ -1,12 +1,12 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 export const triggerPetMintModal = () => {
-  const { modals } = useComponentSettings.getState();
+  const { modals } = useVisibility.getState();
   playClick();
 
   if (!modals.kamiMint) {
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         kamiMint: true,
@@ -21,6 +21,6 @@ export const triggerPetMintModal = () => {
       },
     });
   } else {
-    useComponentSettings.setState({ modals: { ...modals, kamiMint: false } });
+    useVisibility.setState({ modals: { ...modals, kamiMint: false } });
   }
 };

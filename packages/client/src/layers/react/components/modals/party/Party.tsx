@@ -11,7 +11,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
 
@@ -110,7 +110,7 @@ export function registerPartyModal() {
     // Render
     ({ layers, actions, api, data, world }) => {
       // console.log('PartyM: data', data);
-      const { modals, setModals } = useComponentSettings();
+      const { modals, setModals } = useVisibility();
       const { setKami } = useSelectedEntities();
 
 

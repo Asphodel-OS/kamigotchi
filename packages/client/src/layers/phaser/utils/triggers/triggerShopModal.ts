@@ -1,15 +1,15 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities'
 import { playClick } from 'utils/sounds';
 
 export const triggerShopModal = (npcIndex: number) => {
-  const { modals } = useComponentSettings.getState();
+  const { modals } = useVisibility.getState();
   const { setNpc } = useSelectedEntities.getState();
   playClick();
 
   if (!modals.merchant) {
     setNpc(npcIndex);
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         merchant: true,
@@ -17,6 +17,6 @@ export const triggerShopModal = (npcIndex: number) => {
       },
     });
   } else {
-    useComponentSettings.setState({ modals: { ...modals, merchant: false } });
+    useVisibility.setState({ modals: { ...modals, merchant: false } });
   }
 }

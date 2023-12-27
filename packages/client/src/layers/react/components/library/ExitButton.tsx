@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 
@@ -12,7 +12,7 @@ interface Props {
 
 // ExitButton is a rendering o fan exit button, which closes the modal it's on
 export const ExitButton = (props: Props) => {
-  const { modals, setModals } = useComponentSettings();
+  const { modals, setModals } = useVisibility();
 
   // closes the modal this exit button is on
   const handleClose = () => {

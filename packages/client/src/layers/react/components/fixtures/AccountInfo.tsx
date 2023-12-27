@@ -13,7 +13,7 @@ import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
 import { calcStamina, calcStaminaPercent } from 'layers/react/shapes/Account';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -61,7 +61,7 @@ export function registerAccountInfoFixture() {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const { account, room } = data;
-      const { fixtures } = useComponentSettings();
+      const { fixtures } = useVisibility();
 
       /////////////////
       // TRACKING

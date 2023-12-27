@@ -1,12 +1,12 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 export const triggerERC721BridgeModal = () => {
-  const { modals } = useComponentSettings.getState();
+  const { modals } = useVisibility.getState();
 
   if (!modals.bridgeERC721 && !modals.node) {
     playClick();
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         bridgeERC721: true,
@@ -22,6 +22,6 @@ export const triggerERC721BridgeModal = () => {
     });
   }
   // else {
-  //   useComponentSettings.setState({ modals: { ...modals, bridgeERC721: false } });
+  //   useVisibility.setState({ modals: { ...modals, bridgeERC721: false } });
   // }
 };

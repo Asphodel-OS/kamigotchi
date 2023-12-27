@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
+import { useVisibility, Modals } from 'layers/react/store/visibility';
 
 export function registerInventoryButton() {
   registerUIComponent(
@@ -17,7 +17,7 @@ export function registerInventoryButton() {
     },
     (layers) => of(layers),
     () => {
-      const { buttons } = useComponentSettings();
+      const { buttons } = useVisibility();
       const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,

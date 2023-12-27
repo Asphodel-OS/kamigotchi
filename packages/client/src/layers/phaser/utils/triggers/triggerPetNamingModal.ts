@@ -1,12 +1,12 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 export const triggerPetNamingModal = () => {
-  const { modals } = useComponentSettings.getState();
+  const { modals } = useVisibility.getState();
   playClick();
 
   if (!modals.emaBoard) {
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         emaBoard: true,
@@ -21,6 +21,6 @@ export const triggerPetNamingModal = () => {
       },
     });
   } else {
-    useComponentSettings.setState({ modals: { ...modals, emaBoard: false } });
+    useVisibility.setState({ modals: { ...modals, emaBoard: false } });
   }
 };

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Logs } from './Logs';
 import { Controls } from './Controls';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { EntityIndex, getComponentEntities } from '@latticexyz/recs';
 
 export function registerActionQueueFixture() {
@@ -29,7 +29,7 @@ export function registerActionQueueFixture() {
 
     ({ layers }) => {
       const ActionComponent = layers.network.actions!.Action;
-      const { fixtures } = useComponentSettings();
+      const { fixtures } = useVisibility();
       const [mode, setMode] = useState<number>(1);
       const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
 

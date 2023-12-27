@@ -1,8 +1,8 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 
 // checks the open modals to see if a click occured over an open modal
 export function checkModalCoverage(e: Phaser.Input.Pointer): boolean {
-  const { modals } = useComponentSettings.getState();
+  const { modals } = useVisibility.getState();
 
   // check whether the input click overlaps with a modal by its element id
   const doesOverlap = (id: string) => {

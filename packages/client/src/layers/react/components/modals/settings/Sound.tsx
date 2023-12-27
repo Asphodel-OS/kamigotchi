@@ -3,7 +3,7 @@ import { useLocalStorage } from "usehooks-ts";
 import styled from "styled-components";
 
 import { triggerIcons } from "assets/images/icons/triggers";
-import { useSoundSettings } from "layers/react/store/soundSettings";
+import { useSound } from "layers/react/store/sound";
 import { playClick } from "utils/sounds";
 
 
@@ -12,7 +12,7 @@ export const Sound = () => {
   const [volumeMusic, setVolumeMusic] = useLocalStorage('volumeMusic', .5);
 
   useEffect(() => {
-    useSoundSettings.setState({ volumeFX, volumeMusic });
+    useSound.setState({ volumeFX, volumeMusic });
   }, [volumeFX, volumeMusic]);
 
   const toggleVolume = (type: string) => {

@@ -8,7 +8,7 @@ import { NetworkLayer } from "layers/network/types";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 
@@ -21,7 +21,7 @@ interface Props {
 export const Controls = (props: Props) => {
   const { mode, setMode } = props;
   const { account: kamiAccount } = useKamiAccount();
-  const { modals, setModals } = useComponentSettings();
+  const { modals, setModals } = useVisibility();
 
   const { data: OperatorBal } = useBalance({
     address: kamiAccount.operatorAddress as `0x${string}`,

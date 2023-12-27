@@ -8,7 +8,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import 'layers/react/styles/font.css';
 
@@ -50,7 +50,7 @@ export function registerNameKamiModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { modals, setModals } = useComponentSettings();
+      const { modals, setModals } = useVisibility();
       const { kamiEntityIndex } = useSelectedEntities();
       const kami = getKami(layers, kamiEntityIndex);
 

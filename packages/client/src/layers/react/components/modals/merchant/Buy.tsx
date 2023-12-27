@@ -9,7 +9,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerBuyModal() {
@@ -54,7 +54,7 @@ export function registerBuyModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { modals, setModals } = useComponentSettings();
+      const { modals, setModals } = useVisibility();
       const { listingEntityIndex } = useSelectedEntities();
       const [listing, setListing] = useState(getListing(layers, listingEntityIndex));
       const [quantity, setQuantity] = useState(1);

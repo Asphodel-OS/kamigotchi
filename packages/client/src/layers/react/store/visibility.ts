@@ -154,7 +154,7 @@ export interface Validators {
 ////////////////
 // WAGMI WAGMI WAGMI WAGMI
 
-export const useComponentSettings = create<State & Actions>((set) => {
+export const useVisibility = create<State & Actions>((set) => {
   const initialState: State = {
     buttons: {
       help: false,

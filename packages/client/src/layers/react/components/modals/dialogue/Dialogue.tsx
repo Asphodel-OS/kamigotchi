@@ -10,7 +10,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
 import { useSelectedEntities } from 'layers/react/store/selectedEntities';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
 
@@ -52,7 +52,7 @@ export function registerDialogueModal() {
       );
     },
     ({ layers, actions, api }) => {
-      const { modals } = useComponentSettings();
+      const { modals } = useVisibility();
       const { dialogueIndex } = useSelectedEntities();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
