@@ -71,50 +71,48 @@ export const getNode = (
 
   // (option) get the kamis on this node
   if (options?.kamis) {
-    // get the productions on this node
-    let nodeKamis: Kami[] = [];
-    let nodeKamisMine: Kami[] = [];
-    let nodeKamisOthers: Kami[] = [];
-    if (node) {
-      // populate the account Kamis
-      const nodeProductionIndices = Array.from(
-        runQuery([
-          Has(IsProduction),
-          HasValue(NodeID, { value: node.id }),
-          HasValue(State, { value: 'ACTIVE' }),
-        ])
-      );
+    let kamis: Kami[] = [];
+    let kamisMine: Kami[] = [];
+    let kamisOthers: Kami[] = [];
 
-      for (let i = 0; i < nodeProductionIndices.length; i++) {
-        const productionIndex = nodeProductionIndices[i];
+    // get list of productions on this node
+    const productionEntityIndices = Array.from(
+      runQuery([
+        Has(IsProduction),
+        HasValue(NodeID, { value: node.id }),
+        HasValue(State, { value: 'ACTIVE' }),
+      ])
+    );
 
-        // kami:production is 1:1, so we're guaranteed to find one here
-        const kamiID = getComponentValue(PetID, productionIndex)?.value as EntityID;
-        const kamiIndex = world.entityToIndex.get(kamiID);
-        nodeKamis.push(getKami(
+    // get list of kamis from list of productions
+    for (let i = 0; i < productionEntityIndices.length; i++) {
+      const kamiID = getComponentValue(PetID, productionEntityIndices[i])?.value as EntityID;
+      const kamiEntityIndex = world.entityToIndex.get(kamiID);
+      if (kamiEntityIndex) {
+        kamis.push(getKami(
           layers,
-          kamiIndex!,
+          kamiEntityIndex,
           { account: true, production: true, traits: true }
         ));
       }
-
-      // split node kamis between mine and others
-      if (nodeKamis && options.accountID) {
-        nodeKamisMine = nodeKamis.filter((kami) => {
-          return kami.account!.id === options.accountID;
-        });
-        nodeKamisOthers = nodeKamis.filter((kami) => {
-          return kami.account!.id !== options.accountID;
-        });
-      } else {
-        nodeKamisOthers = nodeKamis;
-      }
-
-      node.kamis = {
-        allies: nodeKamisMine,
-        enemies: nodeKamisOthers,
-      };
     }
+
+    // split node kamis between mine and others
+    if (kamis && options.accountID) {
+      kamisMine = kamis.filter((kami) => {
+        return kami.account!.id === options.accountID;
+      });
+      kamisOthers = kamis.filter((kami) => {
+        return kami.account!.id !== options.accountID;
+      });
+    } else {
+      kamisOthers = kamis;
+    }
+
+    node.kamis = {
+      allies: kamisMine,
+      enemies: kamisOthers,
+    };
   }
 
   return node;

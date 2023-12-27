@@ -69,8 +69,8 @@ export const getProduction = (
   // populate Kami
   if (options.kami) {
     const kamiID = getComponentValue(PetID, index)?.value as EntityID;
-    const kamiIndex = world.entityToIndex.get(kamiID);
-    if (kamiIndex) production.kami = getKami(layers, kamiIndex, { account: true });
+    const kamiEntityIndex = world.entityToIndex.get(kamiID);
+    if (kamiEntityIndex) production.kami = getKami(layers, kamiEntityIndex, { account: true });
   }
 
   // populate Node

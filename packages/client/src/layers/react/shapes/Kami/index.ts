@@ -1,6 +1,6 @@
 export type { Kami } from './types';
 export { getKami } from './types';
-export { queryKamisX } from './queries';
+export { queryKamisX, getKamiByIndex } from './queries';
 export {
   isDead,
   isHarvesting,

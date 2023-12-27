@@ -5,7 +5,7 @@ import crypto from "crypto";
 
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Kami, getKamiByIndex } from 'layers/react/shapes/Kami';
 import { Skill, getRegistrySkills } from 'layers/react/shapes/Skill';
 import { useSelected } from 'layers/react/store/selected';
 import { Banner } from './Banner';
@@ -34,9 +34,13 @@ export function registerKamiModal() {
             IsPet,
             IsRequirement,
             IsSkill,
+            AccountID,
             HolderID,
+            PetID,
             SourceID,
             TargetID,
+            PetIndex,
+            SkillIndex,
             Balance,
             Experience,
             Harmony,
@@ -44,9 +48,7 @@ export function registerKamiModal() {
             Level,
             MediaURI,
             Name,
-            PetID,
             Power,
-            SkillIndex,
             SkillPoint,
             Slots,
             Type,
@@ -61,9 +63,13 @@ export function registerKamiModal() {
         IsPet.update$,
         IsRequirement.update$,
         IsSkill.update$,
+        AccountID.update$,
         HolderID.update$,
+        PetID.update$,
         SourceID.update$,
         TargetID.update$,
+        PetIndex.update$,
+        SkillIndex.update$,
         Balance.update$,
         Experience.update$,
         Harmony.update$,
@@ -71,9 +77,7 @@ export function registerKamiModal() {
         Level.update$,
         MediaURI.update$,
         Name.update$,
-        PetID.update$,
         Power.update$,
-        SkillIndex.update$,
         SkillPoint.update$,
         Slots.update$,
         Type.update$,
@@ -91,16 +95,16 @@ export function registerKamiModal() {
 
     ({ layers, actions, api }) => {
       const [tab, setTab] = useState('traits');
-      const { kamiEntityIndex } = useSelected();
+      const { kamiIndex } = useSelected();
       const [mode, setMode] = useState('DETAILS');
 
       /////////////////
       // DATA FETCHING
 
       const getSelectedKami = () => {
-        return getKami(
+        return getKamiByIndex(
           layers,
-          kamiEntityIndex,
+          kamiIndex,
           {
             account: true,
             deaths: true,

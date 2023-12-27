@@ -29,7 +29,7 @@ interface Props {
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
   const { modals, setModals } = useVisibility();
-  const { kamiEntityIndex, setKami } = useSelected();
+  const { kamiIndex, setKami } = useSelected();
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
@@ -49,11 +49,10 @@ export const KamiCard = (props: Props) => {
 
   // toggle the kami modal settings depending on its current state
   const kamiOnClick = () => {
-    const modalIsOpen = modals.kami;
-    const sameKami = kamiEntityIndex === props.kami.entityIndex;
-    setKami(props.kami.entityIndex);
+    const sameKami = (kamiIndex === props.kami.index);
+    setKami(props.kami.index);
 
-    if (modalIsOpen && sameKami) setModals({ ...modals, kami: false });
+    if (modals.kami && sameKami) setModals({ ...modals, kami: false });
     else setModals({ ...modals, kami: true });
     playClick();
   }
