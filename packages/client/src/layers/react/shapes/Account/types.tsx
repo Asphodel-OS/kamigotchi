@@ -12,6 +12,7 @@ import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
 import { Skill } from '../Skill';
 import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from '../Friendship';
+import { getData } from '../Data';
 
 
 // standardized shape of an Account Entity
@@ -54,6 +55,10 @@ export interface Account {
     completed: Quest[];
   }
   skills?: Skill[]; // unimplemented for now
+  stats?: {
+    kills: number;
+    coin: number;
+  }
 }
 
 export interface AccountOptions {
@@ -62,6 +67,7 @@ export interface AccountOptions {
   quests?: boolean;
   lootboxLogs?: boolean;
   friends?: boolean;
+  stats?: boolean;
 }
 
 export interface Inventories {
@@ -198,8 +204,17 @@ export const getAccount = (
     }
   }
 
+  // populate Stats
+  if (options?.stats) {
+    account.stats = {
+      kills: getData(layers, account.id, 'LIQUIDATE'),
+      coin: getData(layers, account.id, 'COIN_TOTAL'),
+    }
+  }
+
   // adjustments
   if (isNaN(account.coin)) account.coin = 0;
+
 
   return account;
 };
