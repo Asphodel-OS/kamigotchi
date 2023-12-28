@@ -1,3 +1,4 @@
+import { registerAccountButton } from "./Account";
 import { registerHelpButton } from "./Help";
 import { registerInventoryButton } from "./Inventory";
 import { registerMapButton } from "./Map";
@@ -7,6 +8,7 @@ import { registerSettingsButton } from "./Settings";
 import { registerSocialButton } from "./Social";
 
 export {
+  registerAccountButton,
   registerHelpButton,
   registerInventoryButton,
   registerMapButton,
