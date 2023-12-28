@@ -384,16 +384,16 @@ export function setUpWorldAPI(systems: any) {
     // 1->2->3->4->5--->10
     //        \->6->7-/
     // top and bottom paths are mutually exclusive
-    api.registry.relationship.create(1, 1, 'mina 1', [], []);
-    api.registry.relationship.create(1, 2, 'mina 2', [1], []);
-    api.registry.relationship.create(1, 3, 'mina 3', [2], []);
-    api.registry.relationship.create(1, 4, 'mina 4', [3], []);
-    api.registry.relationship.create(1, 5, 'mina 5', [4], []);
-    api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
-    api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
-    api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
-    api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
-    api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
+    await api.registry.relationship.create(1, 1, 'mina 1', [], []);
+    await api.registry.relationship.create(1, 2, 'mina 2', [1], []);
+    await api.registry.relationship.create(1, 3, 'mina 3', [2], []);
+    await api.registry.relationship.create(1, 4, 'mina 4', [3], []);
+    await api.registry.relationship.create(1, 5, 'mina 5', [4], []);
+    await api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
+    await api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
+    await api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
+    await api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
+    await api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
   ////////////////////
@@ -636,8 +636,8 @@ export function setUpWorldAPI(systems: any) {
   }
 
   function sleepIf() {
-    if (process.env.MODE == 'OPGOERLI') {
-      return new Promise(resolve => setTimeout(resolve, 10000));
+    if (process.env.MODE == 'OPSEP' || process.env.MODE == 'TEST') {
+      return new Promise(resolve => setTimeout(resolve, 5000));
     }
   }
 }
