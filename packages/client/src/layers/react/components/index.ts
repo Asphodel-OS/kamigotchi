@@ -34,7 +34,6 @@ import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from "./modals/FundOperator"
 import { registerKamiMintModal } from './modals/MintKami';
-import { registerOperatorMovementModal } from './modals/OperatorMovement';
 import { registerAccountOperator } from './modals/AccountOperator';
 
 import {
@@ -57,7 +56,6 @@ export function registerUIComponents() {
   registerQuestsButton();
   registerSettingsButton();
   registerSocialButton();
-  // registerChatButton();
 
   // other fixtures
   registerAccountInfoFixture();
@@ -77,6 +75,7 @@ export function registerUIComponents() {
   // game modals
   registerAccountOperator();
   registerBuyModal();
+  registerDialogueModal();
   registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
@@ -85,11 +84,9 @@ export function registerUIComponents() {
   registerKamiModal();
   registerLeaderboardModal();
   registerLootboxesModal();
+  registerMerchantModal();
   registerNameKamiModal();
   registerNodeModal();
-  registerMerchantModal();
-  registerDialogueModal();
-  registerOperatorMovementModal();
 
   // validators
   registerAccountRegistrar();

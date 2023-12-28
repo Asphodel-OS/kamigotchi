@@ -10,9 +10,9 @@ import { defaultChain } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount } from 'layers/react/store/account';
+import { useNetwork } from 'layers/react/store/network'
 import { playClick, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
 
@@ -30,9 +30,9 @@ export function registerGasHarasser() {
     (layers) => of(layers),
     (layers) => {
       const { network: { actions, world } } = layers;
-      const { selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
-      const { validators, setValidators } = useComponentSettings();
-      const { account, validations, setValidations } = useKamiAccount();
+      const { selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const { validators, setValidators } = useVisibility();
+      const { account, validations, setValidations } = useAccount();
 
       const [hasGas, setHasGas] = useState(false);
       const [isVisible, setIsVisible] = useState(false);
@@ -66,7 +66,7 @@ export function registerGasHarasser() {
       // adjust actual visibility of windows based on above determination
       useEffect(() => {
         if (isVisible != validators.gasHarasser) {
-          const { validators } = useComponentSettings.getState();
+          const { validators } = useVisibility.getState();
           setValidators({ ...validators, gasHarasser: isVisible });
         }
       }, [

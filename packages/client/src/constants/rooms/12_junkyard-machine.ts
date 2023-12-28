@@ -7,9 +7,9 @@ import {
 } from 'assets/images/rooms/12_junkyard-machine';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerNodeModal } from 'layers/phaser/utils/triggerNodeModal';
-import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggerERC20BridgeModal';
-import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggerERC721BridgeModal';
+import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
+import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggers/triggerERC20BridgeModal';
+import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggers/triggerERC721BridgeModal';
 
 
 export const room12: Room = {

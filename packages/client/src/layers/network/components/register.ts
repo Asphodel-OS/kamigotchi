@@ -95,13 +95,13 @@ export function createComponents(world: World) {
     NodeIndex: defineNumberEZ("NodeIndex", "component.Index.Node"),
     ObjectiveIndex: defineNumberEZ("ObjectiveIndex", "component.Index.Objective"),
     QuestIndex: defineNumberEZ("QuestIndex", "component.Index.Quest"),
-    PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
+    PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"),
     RelationshipIndex: defineNumberEZ("RelationshipIndex", "component.Index.Relationship"),
-    ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
+    ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"),
     SkillIndex: defineNumberEZ("SkillIndex", "component.Index.Skill"),
-    TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
+    TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"),
 
-    // Values
+    // Attributes
     Affinity: defineStringEZ("Affinity", "component.Affinity"),
     Balance: defineNumberEZ("Balance", "component.Balance"),
     Balances: defineNumberArrayComponent(world, "Balances", "component.Balances"),

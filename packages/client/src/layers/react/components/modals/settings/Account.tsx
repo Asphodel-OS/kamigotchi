@@ -4,8 +4,8 @@ import styled from "styled-components"
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import CopyButton from "layers/react/components/library/CopyButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { useComponentSettings } from "layers/react/store/componentSettings";
-import { useKamiAccount } from "layers/react/store/kamiAccount";
+import { useVisibility } from "layers/react/store/visibility";
+import { useAccount } from "layers/react/store/account";
 
 
 interface Props {
@@ -13,8 +13,8 @@ interface Props {
 }
 
 export const Account = (props: Props) => {
-  const { account: kamiAccount } = useKamiAccount();
-  const { modals, setModals } = useComponentSettings();
+  const { account: kamiAccount } = useAccount();
+  const { modals, setModals } = useVisibility();
 
   const truncateAddress = (address: string) => {
     if (!address) return '';

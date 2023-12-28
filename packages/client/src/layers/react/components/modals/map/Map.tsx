@@ -10,8 +10,8 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
@@ -48,8 +48,8 @@ export function registerMapModal() {
     },
     ({ layers, actions, api, data }) => {
       // console.log('mRoom: ', data)
-      const { room, setRoom } = useSelectedEntities();
-      const { modals } = useComponentSettings();
+      const { room, setRoom } = useSelected();
+      const { modals } = useVisibility();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 

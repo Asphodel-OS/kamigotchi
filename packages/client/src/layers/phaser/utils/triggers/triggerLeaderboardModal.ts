@@ -1,12 +1,12 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 export const triggerLeaderboardModal = () => {
-  const { modals } = useComponentSettings.getState();
+  const { modals } = useVisibility.getState();
   playClick();
 
   if (!modals.leaderboard) {
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         leaderboard: true,
@@ -14,11 +14,9 @@ export const triggerLeaderboardModal = () => {
         bridgeERC721: false,
         dialogue: false,
         map: false,
-        roomMovement: false,
-        chat: false,
       },
     });
   } else {
-    useComponentSettings.setState({ modals: { ...modals, leaderboard: false } });
+    useVisibility.setState({ modals: { ...modals, leaderboard: false } });
   }
 };

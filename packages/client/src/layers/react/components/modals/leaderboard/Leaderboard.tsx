@@ -8,7 +8,7 @@ import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Score, ScoresFilter, getScores } from 'layers/react/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
 export function registerLeaderboardModal() {
@@ -51,7 +51,7 @@ export function registerLeaderboardModal() {
 
     ({ layers, data }) => {
       // console.log('leaderboardM: tableData', tableData);
-      const { modals } = useComponentSettings();
+      const { modals } = useVisibility();
       const [filter, setFilter] = useState<ScoresFilter>({ epoch: 0, type: 'COLLECT' });
       const [tableData, setTableData] = useState<Score[]>([]);
       const [lastRefresh, setLastRefresh] = useState(Date.now());

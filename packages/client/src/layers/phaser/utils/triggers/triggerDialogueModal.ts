@@ -1,15 +1,15 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 export const triggerDialogueModal = (index: number) => {
-  const { modals } = useComponentSettings.getState();
-  const { dialogueIndex } = useSelectedEntities.getState();
+  const { modals } = useVisibility.getState();
+  const { dialogueIndex } = useSelected.getState();
   playClick();
 
-  useSelectedEntities.setState({ dialogueIndex: index });
+  useSelected.setState({ dialogueIndex: index });
   if (!modals.dialogue) {
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         dialogue: true,
@@ -25,6 +25,6 @@ export const triggerDialogueModal = (index: number) => {
       },
     });
   } else if (dialogueIndex === index) {
-    useComponentSettings.setState({ modals: { ...modals, dialogue: false } });
+    useVisibility.setState({ modals: { ...modals, dialogue: false } });
   }
 };

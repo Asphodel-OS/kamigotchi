@@ -6,8 +6,8 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
+import { useVisibility } from 'layers/react/store/visibility';
+import { useNetwork } from 'layers/react/store/network'
 import { generatePrivateKey, getAddressFromPrivateKey } from 'utils/address';
 import 'layers/react/styles/font.css';
 
@@ -46,9 +46,9 @@ export function registerBurnerDetector() {
 
     ({ connectedEOA, network }) => {
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
-      const { validators, setValidators } = useComponentSettings();
-      const { validations, setValidations, setBurner } = useNetworkSettings();
+      const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
+      const { validators, setValidators } = useVisibility();
+      const { validations, setValidations, setBurner } = useNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
       const [burnerMatches, setBurnerMatches] = useState(false);
@@ -103,7 +103,7 @@ export function registerBurnerDetector() {
           toggleFixtures(false);
         }
         if (isVisible != validators.burnerDetector) {
-          const { validators } = useComponentSettings.getState();
+          const { validators } = useVisibility.getState();
           setValidators({ ...validators, burnerDetector: isVisible });
         }
       }, [isVisible, validators.walletConnector]);

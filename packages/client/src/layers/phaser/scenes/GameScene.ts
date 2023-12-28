@@ -1,8 +1,8 @@
 import { Room } from 'constants/rooms';
-import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
-import { useSoundSettings } from 'layers/react/store/soundSettings';
+import { checkDuplicateRooms } from '../utils/rooms';
+import { useSound } from 'layers/react/store/sound';
 import { backgrounds } from 'assets/images/backgrounds';
-import { triggerDialogueModal } from '../utils/triggerDialogueModal';
+import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
 import { checkModalCoverage } from '../utils/checkModalCoverage';
 
 // an additional field for the Phaser Scene for the GameScene
@@ -89,7 +89,7 @@ export class GameScene extends Phaser.Scene implements GameScene {
       }
 
       if (room.music) {
-        const { volumeMusic } = useSoundSettings.getState();
+        const { volumeMusic } = useSound.getState();
         this.currentVolume = volumeMusic;
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
           const bgm = this.sound.add(
@@ -107,8 +107,8 @@ export class GameScene extends Phaser.Scene implements GameScene {
     this.prevRoom = this.currentRoom;
 
     // subscribe to sound settings store to adjust BGM volume
-    useSoundSettings.subscribe(() => {
-      const { volumeMusic } = useSoundSettings.getState();
+    useSound.subscribe(() => {
+      const { volumeMusic } = useSound.getState();
       if (this.gameSound && volumeMusic !== this.currentVolume) {
         this.currentVolume = volumeMusic;
         this.gameSound.setVolume(volumeMusic);

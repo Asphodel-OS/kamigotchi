@@ -6,7 +6,7 @@ import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { getRoomByLocation, Room } from 'layers/react/shapes/Room';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
+import { useVisibility, Modals } from 'layers/react/store/visibility';
 
 export function registerMapButton() {
   registerUIComponent(
@@ -36,7 +36,7 @@ export function registerMapButton() {
     },
     ({ layers, data }) => {
       const [roomObject, setRoomObject] = useState<Room>();
-      const { buttons } = useComponentSettings();
+      const { buttons } = useVisibility();
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {

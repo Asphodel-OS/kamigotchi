@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -15,9 +15,9 @@ import { getAccount } from 'layers/react/shapes/Account';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
 import { getData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount as useKamiAccount } from 'layers/react/store/account';
+import { useNetwork } from 'layers/react/store/network';
 import { playVending } from 'utils/sounds';
 
 
@@ -104,9 +104,9 @@ export function registerKamiMintModal() {
       } = layers;
 
       const { isConnected } = useAccount();
-      const { modals, setModals } = useComponentSettings();
+      const { modals, setModals } = useVisibility();
       const { account: kamiAccount } = useKamiAccount();
-      const { selectedAddress, networks } = useNetworkSettings();
+      const { selectedAddress, networks } = useNetwork();
 
       const [amountToMint, setAmountToMint] = useState(1);
       const [triedReveal, setTriedReveal] = useState(false);

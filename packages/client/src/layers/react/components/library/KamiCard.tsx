@@ -11,8 +11,8 @@ import {
   calcCooldownRemaining,
   calcHealth,
 } from "layers/react/shapes/Kami";
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -28,8 +28,8 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { modals, setModals } = useComponentSettings();
-  const { kamiEntityIndex, setKami } = useSelectedEntities();
+  const { modals, setModals } = useVisibility();
+  const { kamiEntityIndex, setKami } = useSelected();
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());

@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { ItemIcon } from "layers/react/components/library/ItemIcon";
 import { Inventory } from "layers/react/shapes/Inventory";
-import { useComponentSettings } from "layers/react/store/componentSettings";
+import { useVisibility } from "layers/react/store/visibility";
 
 interface Props {
   inventories: Inventory[];
@@ -10,7 +10,7 @@ interface Props {
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
-  const { modals, setModals } = useComponentSettings();
+  const { modals, setModals } = useVisibility();
 
   const openLootbox = () => {
     setModals({ ...modals, lootboxes: true, inventory: false });

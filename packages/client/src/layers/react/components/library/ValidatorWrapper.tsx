@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { useComponentSettings, Validators } from 'layers/react/store/componentSettings';
+import { useVisibility, Validators } from 'layers/react/store/visibility';
 
 interface Props {
   id: string;
@@ -15,7 +15,7 @@ interface Props {
 // ValidatorWrapper is an animated wrapper around all validators.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
-  const { validators } = useComponentSettings();
+  const { validators } = useVisibility();
   const { id, divName, title, subtitle, children, errorPrimary, errorSecondary } = props;
 
   // update modal visibility according to store settings

@@ -10,8 +10,8 @@ import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useNetwork as useMUDNetwork } from 'layers/react/store/network';
+import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
 
@@ -34,10 +34,10 @@ export function registerWalletConnecter() {
       const { openChainModal } = useChainModal();
       const { chain } = useNetwork();
 
-      const { validators, setValidators } = useComponentSettings();
-      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
-      const { networks, addNetwork, setSelectedAddress } = useNetworkSettings();
-      const { validations, setValidations } = useNetworkSettings();
+      const { validators, setValidators } = useVisibility();
+      const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
+      const { networks, addNetwork, setSelectedAddress } = useMUDNetwork();
+      const { validations, setValidations } = useMUDNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
       const [title, setTitle] = useState('');
@@ -84,7 +84,7 @@ export function registerWalletConnecter() {
           toggleFixtures(false);
         }
         if (isVisible != validators.walletConnector) {
-          const { validators } = useComponentSettings.getState();
+          const { validators } = useVisibility.getState();
           setValidators({ ...validators, walletConnector: isVisible });
         }
       }, [isVisible]);

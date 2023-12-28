@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Tooltip } from './Tooltip';
 
-import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
+import { useVisibility, Modals } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 // MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
-  const { modals, setModals } = useComponentSettings();
+  const { modals, setModals } = useVisibility();
   const { id, image, tooltip, targetDiv, hideModals, visible } = props;
 
   // toggles the target modal open and closed

@@ -20,9 +20,9 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountByName } from 'layers/react/shapes/Account'
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { Account, emptyAccountDetails, useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useVisibility } from 'layers/react/store/visibility';
+import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
+import { useNetwork } from 'layers/react/store/network';
 import { playScribble } from 'utils/sounds';
 
 
@@ -100,7 +100,7 @@ export function registerAccountRegistrar() {
         OwnerAddress.update$,
       ).pipe(
         map(() => {
-          const { selectedAddress } = useNetworkSettings.getState();
+          const { selectedAddress } = useNetwork.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
           const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
@@ -125,10 +125,10 @@ export function registerAccountRegistrar() {
       getAccountDetails,
     }) => {
       const { network: { actions, world } } = layers;
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetworkSettings();
-      const { toggleButtons, toggleModals, toggleFixtures } = useComponentSettings();
-      const { validators, setValidators } = useComponentSettings();
-      const { setAccount, validations, setValidations } = useKamiAccount();
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
+      const { validators, setValidators } = useVisibility();
+      const { setAccount, validations, setValidations } = useAccount();
 
       const [isVisible, setIsVisible] = useState(false);
       const [accountExists, setAccountExists] = useState(false);
@@ -168,7 +168,7 @@ export function registerAccountRegistrar() {
         }
         toggleFixtures(!isVisible && !validators.walletConnector && !validators.burnerDetector);
         if (isVisible != validators.accountRegistrar) {
-          const { validators } = useComponentSettings.getState();
+          const { validators } = useVisibility.getState();
           setValidators({ ...validators, accountRegistrar: isVisible });
         }
       }, [isVisible, validators.walletConnector, validators.burnerDetector]);

@@ -4,7 +4,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Modals, useComponentSettings } from 'layers/react/store/componentSettings';
+import { Modals, useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
 export function registerNotificationFixture() {
@@ -36,7 +36,7 @@ export function registerNotificationFixture() {
 
     ({ notifications, list }) => {
 
-      const { modals, setModals } = useComponentSettings();
+      const { modals, setModals } = useVisibility();
 
       const handleClick = (targetModal: string | undefined) => {
         if (targetModal === undefined) return;

@@ -1,15 +1,15 @@
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 export const triggerNodeModal = (index: number) => {
-  const { modals } = useComponentSettings.getState();
-  const { setNode } = useSelectedEntities.getState();
+  const { modals } = useVisibility.getState();
+  const { setNode } = useSelected.getState();
 
   if (!modals.node) {
     playClick();
     setNode(index);
-    useComponentSettings.setState({
+    useVisibility.setState({
       modals: {
         ...modals,
         node: true,
@@ -24,6 +24,6 @@ export const triggerNodeModal = (index: number) => {
     });
   }
   // } else {
-  //   useComponentSettings.setState({ modals: { ...modals, node: false } });
+  //   useVisibility.setState({ modals: { ...modals, node: false } });
   // }
 };

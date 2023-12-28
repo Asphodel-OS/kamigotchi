@@ -6,10 +6,10 @@ import crypto from "crypto";
 import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerBuyModal() {
@@ -54,8 +54,8 @@ export function registerBuyModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { modals, setModals } = useComponentSettings();
-      const { listingEntityIndex } = useSelectedEntities();
+      const { modals, setModals } = useVisibility();
+      const { listingEntityIndex } = useSelected();
       const [listing, setListing] = useState(getListing(layers, listingEntityIndex));
       const [quantity, setQuantity] = useState(1);
 

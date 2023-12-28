@@ -10,7 +10,7 @@ interface SoundActions {
   setVolumeMusic: (volume: number) => void;
 }
 
-export const useSoundSettings = create<SoundSettings & SoundActions>((set) => {
+export const useSound = create<SoundSettings & SoundActions>((set) => {
   const initialState: SoundSettings = {
     volumeFX: 0.5,
     volumeMusic: 0.5,

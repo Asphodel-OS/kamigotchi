@@ -15,7 +15,7 @@ import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
 import { getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
 import { getItemByIndex } from 'layers/react/shapes/Item';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
+import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerLootboxesModal() {
   registerUIComponent(
@@ -75,7 +75,7 @@ export function registerLootboxesModal() {
         },
       } = layers;
 
-      const { modals } = useComponentSettings();
+      const { modals } = useVisibility();
 
       const [state, setState] = useState("OPEN");
       const [amount, setAmount] = useState(0);

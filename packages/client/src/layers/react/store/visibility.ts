@@ -93,7 +93,6 @@ export interface Modals {
   bridgeERC20: boolean;
   bridgeERC721: boolean;
   buy: boolean;
-  chat: boolean;
   dialogue: boolean;
   emaBoard: boolean;
   help: boolean;
@@ -110,7 +109,6 @@ export interface Modals {
   operatorFund: boolean;
   party: boolean;
   quests: boolean;
-  roomMovement: boolean;
   settings: boolean;
   social: boolean;
 }
@@ -120,7 +118,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   bridgeERC20: isOn,
   bridgeERC721: isOn,
   buy: isOn,
-  chat: isOn,
   dialogue: isOn,
   emaBoard: isOn,
   help: isOn,
@@ -137,7 +134,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   operatorFund: isOn,
   party: isOn,
   quests: isOn,
-  roomMovement: isOn,
   settings: isOn,
   social: isOn,
 });
@@ -158,7 +154,7 @@ export interface Validators {
 ////////////////
 // WAGMI WAGMI WAGMI WAGMI
 
-export const useComponentSettings = create<State & Actions>((set) => {
+export const useVisibility = create<State & Actions>((set) => {
   const initialState: State = {
     buttons: {
       help: false,
@@ -179,7 +175,6 @@ export const useComponentSettings = create<State & Actions>((set) => {
       bridgeERC20: false,
       bridgeERC721: false,
       buy: false,
-      chat: false,
       dialogue: false,
       emaBoard: false,
       help: false,
@@ -196,7 +191,6 @@ export const useComponentSettings = create<State & Actions>((set) => {
       operatorFund: false,
       party: false,
       quests: false,
-      roomMovement: false,
       settings: false,
       social: false,
     },

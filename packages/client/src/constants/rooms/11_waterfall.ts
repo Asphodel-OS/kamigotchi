@@ -8,7 +8,7 @@ import {
 } from 'assets/images/rooms/11_waterfall';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerPetNamingModal } from 'layers/phaser/utils/triggerPetNamingModal';
+import { triggerPetNamingModal } from 'layers/phaser/utils/triggers/triggerPetNamingModal';
 
 
 export const room11: Room = {

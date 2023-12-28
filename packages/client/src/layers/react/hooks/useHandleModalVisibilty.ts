@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useComponentSettings, Modals } from 'layers/react/store/componentSettings';
+import { useVisibility, Modals } from 'layers/react/store/visibility';
 
 type UseModalVisibilityParams = {
   divName: keyof Modals;
@@ -10,7 +10,7 @@ export const useModalVisibility = ({
   divName,
   elementId,
 }: UseModalVisibilityParams) => {
-  const { modals, setModals } = useComponentSettings();
+  const { modals, setModals } = useVisibility();
 
   const handleClick = () => {
     setModals({ ...modals, [divName]: !modals[divName] });

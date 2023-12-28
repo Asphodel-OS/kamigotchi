@@ -13,8 +13,8 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
-import { useComponentSettings } from 'layers/react/store/componentSettings';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 
 
 export function registerEMABoardModal() {
@@ -69,8 +69,8 @@ export function registerEMABoardModal() {
 
     // Render
     ({ actions, data, api }) => {
-      const { modals, setModals } = useComponentSettings();
-      const { setKami } = useSelectedEntities();
+      const { modals, setModals } = useVisibility();
+      const { setKami } = useSelected();
 
       const promptRename = (kami: Kami) => {
         setKami(kami.entityIndex);
