@@ -8,7 +8,7 @@ interface Props {
   onClick: Function;
   img: string;
   disabled?: boolean;
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'xl';
   pulse?: boolean;
 }
 
@@ -26,23 +26,33 @@ export const IconButton = (props: Props) => {
 
     const size = props.size || 'medium';
     if (size === 'small') {
-      styles.fontSize = '.6vw';
-      styles.margin = '.15vw';
-      styles.padding = '.3vw';
+      styles.width = '1.5vw';
+      styles.height = '1.5vw';
+      styles.margin = '.1vw';
+      styles.padding = '.1vw';
       styles.borderRadius = '.3vw';
       styles.borderWidth = '.1vw';
     } else if (size === 'medium') {
-      styles.fontSize = '.8vw';
+      styles.width = '2.5vw';
+      styles.height = '2.5vw';
       styles.margin = '.2vw';
-      styles.padding = '.4vw';
+      styles.padding = '.2vw';
       styles.borderRadius = '.4vw';
       styles.borderWidth = '.15vw';
     } else if (size === 'large') {
-      styles.fontSize = '1.4vw';
+      styles.width = '4vw';
+      styles.height = '4vw';
       styles.margin = '.35vw';
       styles.padding = '.7vw';
       styles.borderRadius = '.7vw';
       styles.borderWidth = '.2vw';
+    } else if (size === 'xl') {
+      styles.width = '8vw';
+      styles.height = '8vw';
+      styles.margin = '.5vw';
+      styles.padding = '.5vw';
+      styles.borderRadius = '1vw';
+      styles.borderWidth = '.25vw';
     }
 
     if (props.disabled) styles.backgroundColor = '#b2b2b2';
@@ -70,7 +80,7 @@ export const IconButton = (props: Props) => {
   );
 }
 
-const Button = styled.button`
+const Button = styled.div`
   background-color: #ffffff;
   border: solid black;
 
@@ -79,7 +89,6 @@ const Button = styled.button`
 
   font-family: Pixel;
   text-align: center;
-  text-decoration: none;
 
   cursor: pointer;
   pointer-events: auto;
@@ -92,7 +101,7 @@ const Button = styled.button`
 `;
 
 const Image = styled.img`
-  width: 1.4vw;
+  width: 100%;
 `;
 
 const Pulse = keyframes`

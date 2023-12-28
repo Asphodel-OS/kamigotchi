@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import styled from 'styled-components';
 
 import { Table } from './Table';
