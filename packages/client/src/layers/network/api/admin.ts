@@ -523,8 +523,8 @@ export function createAdminAPI(systems: any) {
   // WAITS
 
   function sleepIf() {
-    if (process.env.MODE == 'OPGOERLI' || process.env.MODE == 'TEST') {
-      return new Promise(resolve => setTimeout(resolve, 8000));
+    if (process.env.MODE == 'OPSEP' || process.env.MODE == 'TEST') {
+      return new Promise(resolve => setTimeout(resolve, 5000));
     }
   }
 

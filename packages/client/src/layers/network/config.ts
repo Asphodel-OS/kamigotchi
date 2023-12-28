@@ -56,10 +56,10 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
       config = createNetworkConfigLocal(externalProvider);
       break;
     case 'TEST':
-      config = createNetworkConfigOpGoerli(externalProvider);
+      config = createNetworkConfigOpSepolia(externalProvider);
       break;
-    case 'OPGOERLI':
-      config = createNetworkConfigOpGoerli(externalProvider);
+    case 'OPSEP':
+      config = createNetworkConfigOpSepolia(externalProvider);
       break;
     default:
       config = createNetworkConfigLocal(externalProvider);
@@ -130,45 +130,16 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
   return config;
 }
 
-// Get the network config of a deployment to Lattice's mudChain testnet
-function createNetworkConfigLattice(externalProvider?: ExternalProvider): NetworkConfig {
-  let config: NetworkConfig = <NetworkConfig>{
-    jsonRpc: "https://follower.testnet-chain.linfra.xyz",
-    wsRpc: "wss://follower.testnet-chain.linfra.xyz",
-    faucetServiceUrl: "https://faucet.testnet-mud-services.linfra.xyz",
-    relayServiceUrl: "https://ecs-relay.testnet-mud-services.linfra.xyz",
-    snapshotUrl: "https://ecs-snapshot.testnet-mud-services.linfra.xyz",
-
-    // checkpointUrl: undefined,
-    chainId: 4242,
-    // last depolyment update: 7 Sep 2023
-    worldAddress: "0xe29DAb7C4d2ade77e99A57FD0aaFd4d03038e4A3",
-    initialBlockNumber: 20740208,
-  };
-
-  // EOAs and privatekey
-  if (externalProvider) {
-    config.externalProvider = externalProvider;
-  } else {
-    // either pull or set up local burner
-    let privateKey = localStorage.getItem("operatorPrivateKey");
-    const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
-    localStorage.setItem("operatorPrivateKey", wallet.privateKey);
-    config.privateKey = wallet.privateKey;
-  }
-  return config;
-}
-
 // Get the network config of a deployment to Optimism testnet
-function createNetworkConfigOpGoerli(externalProvider?: ExternalProvider): NetworkConfig {
+function createNetworkConfigOpSepolia(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
-    jsonRpc: "https://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli",
-    wsRpc: "wss://op.getblock.io/da628c7e-9c2e-4448-b22d-a6e17f408532/goerli/",
+    jsonRpc: "https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7",
+    wsRpc: "wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f",
     snapshotUrl: "https://snapshot.asphodel.io",
 
-    chainId: 420,
-    worldAddress: "0xb5bc82AC41B58421FD73a5949184251866985839",
-    initialBlockNumber: 16183942,
+    chainId: 11155420,
+    worldAddress: "0xcfb6aa5e713cEf37e7688544CdbA50d80cE04EE6",
+    initialBlockNumber: 5913546,
   };
 
   // EOAs and privatekey

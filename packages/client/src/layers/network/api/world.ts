@@ -9,6 +9,8 @@ import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
 import face from 'assets/data/kami/Face.csv';
 import hand from 'assets/data/kami/Hand.csv';
+import rooms from 'assets/data/rooms/Rooms.csv';
+import nodes from 'assets/data/nodes/Nodes.csv';
 
 export function setUpWorldAPI(systems: any) {
   async function initAll() {
@@ -122,116 +124,20 @@ export function setUpWorldAPI(systems: any) {
   // ROOMS
 
   async function initRooms(api: AdminAPI) {
-    await api.room.create(0, 'deadzone', '', [1]); // in case we need this
-    await api.room.create(
-      1,
-      'Misty Riverside',
-      'A dark forest, the sky above blotted out by trees. Blue butterflies flutter around, looking lost.',
-      [2]
-    );
-    await api.room.create(
-      2,
-      'Tunnel of Trees',
-      'The light at the end of the tunnel; a way out of the forest. Also, a blue door made of light hangs in the air - it says “SHOP”.',
-      [1, 3, 13]
-    );
-    await api.room.create(
-      3,
-      'Torii Gate',
-      'This road is overgrown and disappears in the grass before a large wooden gate. Behind it the forest changes, swelling and darkening.\nHills of garbage seem to be growing out of the ground in the distance and mark a horizon against the blue sky.',
-      [2, 4]
-    );
-    await api.room.create(
-      4,
-      'Vending Machine',
-      'Day turns into night here deep in the scrap. The vending machine bleeps happily despite lacking a power cord. A long-tailed comet bravely dives across the sky.',
-      [3, 5, 12]
-    );
-    await api.room.create(
-      5,
-      'Restricted Area',
-      'A paved road lined with cherry trees leads away from the junkyard, toward a large office complex.',
-      [4, 6, 9]
-    );
-    await api.room.create(
-      6,
-      'Labs Entrance',
-      'The office building\'s exterior is in disrepair. A breeze is slowly shifting the air.',
-      [5, 7]
-    );
-    await api.room.create(
-      7,
-      'Lobby',
-      'The doors close around a sparsely decorated lobby. A blue roof and white walls, with blue skirting framing an elevator.',
-      [6, 8, 14]
-    );
-    await api.room.create(
-      8,
-      'Junk Shop',
-      'This electrical room has been converted into a living space and workshop. The walls are covered in panels and buttons. A prickly, burnt smell lingers in the air.',
-      [7]
-    );
-    await api.room.create(
-      9,
-      'Old Growth',
-      'The forest is older here, and untouched, long vines and moss climbing the trees. Giant insects cause a ruckus with their ceaseless buzzing.',
-      [5, 10, 11]
-    );
-    await api.room.create(
-      10,
-      'Insect Node',
-      'A procession of insects is slowly moving towards the great mound here. The buzzing creates an overwhelming cacophony as you approach.',
-      [9]
-    );
-    await api.room.create(
-      11,
-      'Waterfall Shrine',
-      'A large waterfall creates a cool and invigorating mist here. Before the basin stands a whispering shrine.',
-      [9, 15]
-    );
-    await api.room.create(
-      12,
-      'Machine Node',
-      'Deep in the scrapyard a collection of strange objects are vibrating, screeching, pulsating, whispering, cackling, hissing and in general making a disturbance.',
-      [4]
-    );
-    await api.room.create(
-      13,
-      'Convenience Store',
-      'The shop walls are lined with exotically stocked shelves. Behind the counter stands a woman occupied with the snake coiled around her neck.',
-      [2]
-    );
-    await api.room.create(
-      14,
-      "Manager's Office",
-      'A stylish penthouse office with a view. It\'s seen a bit of a commotion.',
-      [7]
-    );
-    await api.room.create(
-      15,
-      'Temple Cave',
-      'A cave behind the waterfall. Friendly statues line a path to the back of the cave away from ancient-looking temple ruins.',
-      [11, 16, 18]
-    );
-    await api.room.create(
-      16,
-      'Techno Temple',
-      'Inside the ruined temple. This place might have been traditional once, but now it sparks and rumbles with technology.',
-      [15]
-    );
-    // await api.room.create(17, "Misty Park", 'You appear to be outside in an urban park. Balls of light dance around a statue of an angel. Fog hangs thick in the air.', [0]);
-    await api.room.create(
-      18,
-      'Cave Crossroads',
-      'Deep in the cave the path branches. The bioluminescent fungi make it nearly as bright as day. You can hear bells in the air.',
-      [15, 19]
-    );
-    await api.room.create(
-      19,
-      'Violence Temple',
-      'Half eroded stone and mossy growth, half gleaming metal and glowing crystal. Whether temple or technology, it unsettles you.',
-      [18]
-    );
+    const allRooms = csvToMap(rooms);
+    for (let i = 0; i < allRooms.length; i++) {
+      await sleepIf();
+      try {
+        if (allRooms[i].get('Enabled') === "Yes") {
+          await api.room.create(
+            Number(allRooms[i].get('Index')),
+            allRooms[i].get('Name'),
+            allRooms[i].get('Description'),
+            allRooms[i].get('Exits').split(',').map((n: string) => n.trim()),
+          );
+        }
+      } catch { }
+    }
   }
 
   ////////////////////
@@ -330,50 +236,20 @@ export function setUpWorldAPI(systems: any) {
   // NODES
 
   async function initNodes(api: AdminAPI) {
-    await api.node.create(
-      1,
-      'HARVEST',
-      3,
-      'Torii Gate',
-      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $MUSU....`,
-      `NORMAL`,
-    );
-
-    await api.node.create(
-      2,
-      'HARVEST',
-      7,
-      'Trash Compactor',
-      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.',
-      'SCRAP',
-    );
-
-    await api.node.create(
-      3,
-      'HARVEST',
-      10,
-      'Termite Mound',
-      'A huge termite mound. Apparently, this is sacred to the local insects.',
-      'INSECT',
-    );
-
-    await api.node.create(
-      4,
-      'HARVEST',
-      14,
-      'Occult Circle',
-      'The energy existing here exudes an eeriness that calls out to EERIE Kamigotchi.',
-      'EERIE',
-    );
-
-    await api.node.create(
-      5,
-      'HARVEST',
-      12,
-      'Monolith',
-      'This huge black monolith seems to draw in energy from the rest of the junkyard.',
-      'SCRAP',
-    );
+    const allNodes = csvToMap(nodes);
+    for (let i = 0; i < allNodes.length; i++) {
+      await sleepIf();
+      try {
+        await api.node.create(
+          Number(allNodes[i].get('Index')),
+          allNodes[i].get('Type'),
+          allNodes[i].get('Location'),
+          allNodes[i].get('Name'),
+          allNodes[i].get('Description'),
+          allNodes[i].get('Affinity')
+        );
+      } catch { }
+    }
   }
 
 
@@ -508,16 +384,16 @@ export function setUpWorldAPI(systems: any) {
     // 1->2->3->4->5--->10
     //        \->6->7-/
     // top and bottom paths are mutually exclusive
-    api.registry.relationship.create(1, 1, 'mina 1', [], []);
-    api.registry.relationship.create(1, 2, 'mina 2', [1], []);
-    api.registry.relationship.create(1, 3, 'mina 3', [2], []);
-    api.registry.relationship.create(1, 4, 'mina 4', [3], []);
-    api.registry.relationship.create(1, 5, 'mina 5', [4], []);
-    api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
-    api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
-    api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
-    api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
-    api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
+    await api.registry.relationship.create(1, 1, 'mina 1', [], []);
+    await api.registry.relationship.create(1, 2, 'mina 2', [1], []);
+    await api.registry.relationship.create(1, 3, 'mina 3', [2], []);
+    await api.registry.relationship.create(1, 4, 'mina 4', [3], []);
+    await api.registry.relationship.create(1, 5, 'mina 5', [4], []);
+    await api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
+    await api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
+    await api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
+    await api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
+    await api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
   ////////////////////
@@ -760,8 +636,8 @@ export function setUpWorldAPI(systems: any) {
   }
 
   function sleepIf() {
-    if (process.env.MODE == 'OPGOERLI') {
-      return new Promise(resolve => setTimeout(resolve, 10000));
+    if (process.env.MODE == 'OPSEP' || process.env.MODE == 'TEST') {
+      return new Promise(resolve => setTimeout(resolve, 5000));
     }
   }
 }

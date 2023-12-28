@@ -117,7 +117,7 @@ export function registerKamiMintModal() {
           if (isConnected && !triedReveal) {
             setTriedReveal(true);
             // wait to give buffer for OP rpc
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             data.account.kamis.unrevealed.forEach((kami) => {
               revealTx(kami);
             });
