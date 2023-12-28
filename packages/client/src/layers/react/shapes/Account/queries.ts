@@ -33,7 +33,7 @@ export const getAccountByIndex = (
   const entityIndex = Array.from(
     runQuery([
       Has(IsAccount),
-      HasValue(AccountIndex, { value: index }),
+      HasValue(AccountIndex, { value: index }), // NOTE: may cause issues if not 0x{hex} formatted
     ])
   )[0];
   return getAccount(layers, entityIndex, options);

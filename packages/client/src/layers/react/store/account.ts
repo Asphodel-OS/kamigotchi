@@ -23,7 +23,8 @@ interface Actions {
 // represents the key meta details of a kami account
 export interface Account {
   id: EntityID;
-  index: EntityIndex;
+  entityIndex: EntityIndex;
+  index: number;
   name: string;
   ownerAddress: string;
   operatorAddress: string;
@@ -31,7 +32,8 @@ export interface Account {
 
 export const emptyAccountDetails = (): Account => ({
   id: '' as EntityID,
-  index: 0 as EntityIndex,
+  entityIndex: 0 as EntityIndex,
+  index: 0,
   name: '',
   ownerAddress: '',
   operatorAddress: '',

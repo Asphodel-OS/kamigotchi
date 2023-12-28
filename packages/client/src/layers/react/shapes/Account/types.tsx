@@ -123,7 +123,7 @@ export const getAccount = (
     }
   };
 
-  // prevent queries account hasnt loaded yet
+  // prevent further queries if account hasnt loaded yet
   if (!account.ownerEOA) return account;
 
   /////////////////
