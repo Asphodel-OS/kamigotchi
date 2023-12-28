@@ -524,7 +524,7 @@ export function createAdminAPI(systems: any) {
 
   function sleepIf() {
     if (process.env.MODE == 'OPSEP' || process.env.MODE == 'TEST') {
-      return new Promise(resolve => setTimeout(resolve, 2000));
+      return new Promise(resolve => setTimeout(resolve, 5000));
     }
   }
 
