@@ -106,14 +106,14 @@ export const getAccount = (
     ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
     operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
-    coin: (getComponentValue(Coin, entityIndex)?.value as number) * 1,
+    coin: (getComponentValue(Coin, entityIndex)?.value || 0 as number) * 1,
     location: (getComponentValue(Location, entityIndex)?.value || 0 as number) * 1,
     level: 0, // placeholder
-    questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || 0) * 1 as number,
+    questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || 0 as number) * 1,
     skillPoints: 0, // placeholder
     stamina: {
-      total: (getComponentValue(Stamina, entityIndex)?.value as number) * 1,
-      last: (getComponentValue(StaminaCurrent, entityIndex)?.value as number) * 1,
+      total: (getComponentValue(Stamina, entityIndex)?.value || 20 as number) * 1,
+      last: (getComponentValue(StaminaCurrent, entityIndex)?.value || 0 as number) * 1,
       recoveryPeriod: (getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD')) * 1,
     },
     time: {
