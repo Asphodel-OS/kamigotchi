@@ -48,7 +48,7 @@ export function registerMapModal() {
     },
     ({ layers, actions, api, data }) => {
       // console.log('mRoom: ', data)
-      const { room, setRoom } = useSelected();
+      const { roomLocation, setRoom } = useSelected();
       const { modals } = useVisibility();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
@@ -64,8 +64,8 @@ export function registerMapModal() {
 
       // update the selected room details
       useEffect(() => {
-        if (room) {
-          const roomObject = getRoomByLocation(layers, room, { players: true });
+        if (roomLocation) {
+          const roomObject = getRoomByLocation(layers, roomLocation, { players: true });
           setSelectedRoom(roomObject);
 
           const exits = (roomObject.exits)
@@ -73,7 +73,7 @@ export function registerMapModal() {
             : [];
           setSelectedExits(exits);
         }
-      }, [room, data.account]);
+      }, [roomLocation, data.account]);
 
 
       ///////////////////
