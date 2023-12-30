@@ -49,6 +49,7 @@ interface Actions {
 // BUTTONS
 
 export interface Buttons {
+  account: boolean;
   help: boolean;
   inventory: boolean;
   map: boolean;
@@ -59,6 +60,7 @@ export interface Buttons {
 }
 
 export const toggleButtons = (isOn: boolean): Buttons => ({
+  account: isOn,
   help: isOn,
   inventory: isOn,
   map: isOn,
@@ -89,6 +91,7 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
 // MODALS
 
 export interface Modals {
+  account: boolean;
   accountOperator: boolean;
   bridgeERC20: boolean;
   bridgeERC721: boolean;
@@ -114,6 +117,7 @@ export interface Modals {
 }
 
 export const toggleModals = (isOn: boolean): Modals => ({
+  account: isOn,
   accountOperator: isOn,
   bridgeERC20: isOn,
   bridgeERC721: isOn,
@@ -157,6 +161,7 @@ export interface Validators {
 export const useVisibility = create<State & Actions>((set) => {
   const initialState: State = {
     buttons: {
+      account: false,
       help: false,
       inventory: false,
       map: false,
@@ -171,6 +176,7 @@ export const useVisibility = create<State & Actions>((set) => {
       notification: true,
     },
     modals: {
+      account: false,
       accountOperator: false,
       bridgeERC20: false,
       bridgeERC721: false,

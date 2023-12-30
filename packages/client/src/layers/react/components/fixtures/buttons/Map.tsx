@@ -13,9 +13,9 @@ export function registerMapButton() {
     'MapButton',
     {
       colStart: 6,
-      colEnd: 30,
+      colEnd: 9,
       rowStart: 3,
-      rowEnd: 10,
+      rowEnd: 6,
     },
     (layers) => {
       const {
@@ -35,7 +35,7 @@ export function registerMapButton() {
       );
     },
     ({ layers, data }) => {
-      const [roomObject, setRoomObject] = useState<Room>();
+      const [_, setRoomObject] = useState<Room>();
       const { buttons } = useVisibility();
 
       // set selected room location to the player's current one when map modal is opened
@@ -44,6 +44,7 @@ export function registerMapButton() {
       }, [data?.account.location]);
 
       const modalsToHide: Partial<Modals> = {
+        account: false,
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,

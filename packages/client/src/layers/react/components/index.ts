@@ -1,6 +1,7 @@
 import { registerLoadingState } from './LoadingState';
 
 import {
+  registerAccountButton,
   registerHelpButton,
   registerInventoryButton,
   registerMapButton,
@@ -15,6 +16,7 @@ import { registerActionQueueFixture } from './fixtures/queue/';
 import { registerWalletFixture } from './fixtures/Wallet';
 import { registerNotificationFixture } from './fixtures/Notifications';
 
+import { registerAccountModal } from './modals/account';
 import { registerDialogueModal } from './modals/dialogue';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
@@ -49,6 +51,7 @@ export function registerUIComponents() {
   registerLoadingState();
 
   // buttons
+  registerAccountButton();
   registerHelpButton();
   registerInventoryButton();
   registerMapButton();
@@ -73,6 +76,7 @@ export function registerUIComponents() {
   registerSocialModal();
 
   // game modals
+  registerAccountModal();
   registerAccountOperator();
   registerBuyModal();
   registerDialogueModal();

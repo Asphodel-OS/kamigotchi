@@ -12,16 +12,19 @@ interface Props {
   targetDiv: keyof Modals;
   visible: boolean;
   hideModals?: Partial<Modals>;
+  onClick?: () => void;
 }
 
 // MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
   const { modals, setModals } = useVisibility();
-  const { id, image, tooltip, targetDiv, hideModals, visible } = props;
+  const { id, image, tooltip, targetDiv, visible, hideModals, onClick } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
     playClick();
+    if (onClick) onClick();
+
     const isModalOpen = modals[targetDiv];
     let nextModals = { ...modals, [targetDiv]: !isModalOpen };
     if (!isModalOpen) nextModals = { ...nextModals, ...hideModals };

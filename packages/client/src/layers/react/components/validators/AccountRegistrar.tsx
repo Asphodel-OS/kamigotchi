@@ -61,6 +61,7 @@ export function registerAccountRegistrar() {
           world,
           components: {
             IsAccount,
+            AccountIndex,
             Name,
             OperatorAddress,
             OwnerAddress,
@@ -70,14 +71,15 @@ export function registerAccountRegistrar() {
       } = layers;
 
       // TODO?: replace this with getAccount shape
-      const getAccountDetails = (index: EntityIndex): Account => {
-        if (!index) return emptyAccountDetails();
+      const getAccountDetails = (entityIndex: EntityIndex): Account => {
+        if (!entityIndex) return emptyAccountDetails();
         return {
-          id: world.entities[index],
-          index: index,
-          ownerAddress: getComponentValue(OwnerAddress, index)?.value as string,
-          operatorAddress: getComponentValue(OperatorAddress, index)?.value as string,
-          name: getComponentValue(Name, index)?.value as string,
+          id: world.entities[entityIndex],
+          entityIndex: entityIndex,
+          index: getComponentValue(AccountIndex, entityIndex)?.value as number,
+          ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
+          operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+          name: getComponentValue(Name, entityIndex)?.value as string,
         };
       }
 

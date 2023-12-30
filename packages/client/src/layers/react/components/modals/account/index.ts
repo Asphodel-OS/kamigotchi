@@ -1,0 +1,1 @@
+export { registerAccountModal } from './Account';
