@@ -104,7 +104,6 @@ export function registerAccountModal() {
 
 
 
-      console.log('account', accountIndex);
       /////////////////
       // INTERACTION
 
