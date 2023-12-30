@@ -8,7 +8,7 @@ import crypto from "crypto";
 import styled from 'styled-components';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccount } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
@@ -265,7 +265,7 @@ export function registerERC721BridgeModal() {
         kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='bridgeERC721'
           divName='bridgeERC721'
           canExit
@@ -286,7 +286,7 @@ export function registerERC721BridgeModal() {
               {KamiCards(EOAKamis)}
             </Scrollable>
           </Grid>
-        </ModalWrapperFull >
+        </ModalWrapper >
       );
     }
   );

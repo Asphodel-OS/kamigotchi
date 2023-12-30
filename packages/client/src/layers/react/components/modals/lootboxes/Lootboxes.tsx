@@ -7,7 +7,7 @@ import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 
 import { Opener } from './Opener';
@@ -240,14 +240,14 @@ export function registerLootboxesModal() {
 
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='lootboxes'
           id='LootboxesModal'
           header={Header()}
           overlay canExit
         >
           {SelectScreen()}
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

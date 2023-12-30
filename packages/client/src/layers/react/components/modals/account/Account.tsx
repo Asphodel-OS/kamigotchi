@@ -6,7 +6,7 @@ import { map, merge } from 'rxjs';
 import { Bio } from './Bio';
 import { Tabs } from './Tabs';
 import xIcon from 'assets/images/icons/placeholder.png';
-import { ModalHeader, ModalWrapperFull } from 'layers/react/components/library';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
@@ -148,7 +148,7 @@ export function registerAccountModal() {
       }
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='account_modal'
           divName='account'
           header={<ModalHeader title='Operator' icon={xIcon} />}
@@ -159,7 +159,7 @@ export function registerAccountModal() {
               account={account}
               actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />
           }
-        </ModalWrapperFull>
+        </ModalWrapper>
 
       );
     }

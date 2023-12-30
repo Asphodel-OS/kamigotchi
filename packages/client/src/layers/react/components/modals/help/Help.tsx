@@ -10,7 +10,7 @@ import { HelpMenuIcons } from 'assets/images/icons/help';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
@@ -79,7 +79,7 @@ export function registerHelpModal() {
       );
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='help'
           id='help_modal'
           header={<ModalHeader title='Help' icon={helpIcon} />}
@@ -91,7 +91,7 @@ export function registerHelpModal() {
             ? <Menu />
             : <SectionContent body={CopyInfo[tab].body} />
           }
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

@@ -3,7 +3,7 @@ import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKamiByIndex } from 'layers/react/shapes/Kami';
 import { Skill, getRegistrySkills } from 'layers/react/shapes/Skill';
@@ -168,7 +168,7 @@ export function registerKamiModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='kami'
           id='kamiModal'
           header={[
@@ -183,7 +183,7 @@ export function registerKamiModal() {
           overlay
         >
           {Content()}
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

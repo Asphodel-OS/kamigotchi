@@ -6,7 +6,7 @@ import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
@@ -182,7 +182,7 @@ export function registerFundOperatorModal() {
       }, [amount, OwnerBal, OperatorBal, isFundState]);
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='operatorFund'
           id='operatorFund'
           canExit
@@ -214,7 +214,7 @@ export function registerFundOperatorModal() {
               {TxButton()}
             </div>
           </Grid>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

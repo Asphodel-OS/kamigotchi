@@ -9,7 +9,7 @@ import crypto from "crypto";
 
 import { abi } from "abi/Pet721ProxySystem.json"
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
@@ -309,14 +309,14 @@ export function registerKamiMintModal() {
       };
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='kamiMint'
           id='kamiMintModal'
           overlay
           canExit
         >
           {PetMachine}
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

@@ -14,11 +14,11 @@ interface Props {
   overlay?: boolean;
 }
 
-// ModalWrapperFull is an animated wrapper around all modals.
+// ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
-export const ModalWrapperFull = (props: Props) => {
-  const { modals } = useVisibility();
+export const ModalWrapper = (props: Props) => {
   const { divName, id, children, header, footer, canExit, overlay } = props;
+  const { modals } = useVisibility();
 
   // update modal visibility according to store settings
   useEffect(() => {

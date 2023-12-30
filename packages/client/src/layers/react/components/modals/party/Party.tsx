@@ -7,7 +7,7 @@ import { map, merge } from 'rxjs';
 import { Kards } from './Kards';
 import { kamiIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
@@ -173,7 +173,7 @@ export function registerPartyModal() {
 
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='party_modal'
           divName='party'
           header={<ModalHeader title='Party' icon={kamiIcon} />}
@@ -184,7 +184,7 @@ export function registerPartyModal() {
             account={data.account}
             actions={{ feed, revive, reveal }}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

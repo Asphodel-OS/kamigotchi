@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Listings } from './Listings';
 import { MusuRow } from './MusuRow';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Merchant, getMerchantByIndex } from 'layers/react/shapes/Merchant';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -90,7 +90,7 @@ export function registerMerchantModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='merchant'
           divName='merchant'
           header={<Title>{`${merchant?.name}'s Shop`}</Title>}
@@ -98,7 +98,7 @@ export function registerMerchantModal() {
           canExit
         >
           <Listings listings={merchant?.listings} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     })
 }

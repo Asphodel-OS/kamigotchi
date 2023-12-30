@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Table } from './Table';
 import { Filters } from './Filters';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Score, ScoresFilter, getScores } from 'layers/react/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -76,7 +76,7 @@ export function registerLeaderboardModal() {
       }, [filter, lastRefresh]);
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='leaderboard'
           id='leaderboard'
           canExit
@@ -93,7 +93,7 @@ export function registerLeaderboardModal() {
             }
           />
           <Table data={tableData} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
