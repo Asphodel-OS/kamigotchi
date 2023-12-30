@@ -6,7 +6,7 @@ import { Sound } from './Sound';
 import { Account } from './Account';
 import { settingsIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
@@ -35,7 +35,7 @@ export function registerSettingsModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='settings'
           id='settings_modal'
           header={<ModalHeader title='Settings' icon={settingsIcon} />}
@@ -45,7 +45,7 @@ export function registerSettingsModal() {
           <Divider />
           <Account setStatus={setStatus} />
           <StatusText>{status}</StatusText>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

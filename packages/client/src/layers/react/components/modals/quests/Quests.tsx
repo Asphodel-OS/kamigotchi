@@ -8,7 +8,7 @@ import { List } from './List';
 import { Tabs } from './Tabs';
 import { questsIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
@@ -140,7 +140,7 @@ export function registerQuestsModal() {
       }
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='quest_modal'
           divName='quests'
           header={[
@@ -165,7 +165,7 @@ export function registerQuestsModal() {
               queryReviveRegistry: (index: number) => queryReviveRegistry(layers, index),
             }}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

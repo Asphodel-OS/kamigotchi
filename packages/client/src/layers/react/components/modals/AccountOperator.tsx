@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network'
@@ -88,7 +88,7 @@ export function registerAccountOperator() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull divName='accountOperator' id='accountOperator' canExit>
+        <ModalWrapper divName='accountOperator' id='accountOperator' canExit>
           <ModalContent style={{ pointerEvents: 'auto' }}>
             <Title>Update Operator</Title>
             <Description style={{ color: '#FF785B' }}>{helperText}</Description>
@@ -115,7 +115,7 @@ export function registerAccountOperator() {
             </Container>
             <ActionButton id={`submit`} text='Submit' onClick={setValues} />
           </ModalContent>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

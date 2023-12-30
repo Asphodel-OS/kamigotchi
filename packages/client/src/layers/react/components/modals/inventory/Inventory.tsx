@@ -5,7 +5,7 @@ import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Inventory } from 'layers/react/shapes/Inventory';
@@ -77,7 +77,7 @@ export function registerInventoryModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='inventory-modal'
           divName='inventory'
           header={<ModalHeader title='Inventory' icon={inventoryIcon} />}
@@ -86,7 +86,7 @@ export function registerInventoryModal() {
           overlay
         >
           <ItemGrid key='grid' inventories={getInventories()} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

@@ -13,7 +13,7 @@ export { ItemIcon } from "./ItemIcon";
 export { KamiCard } from "./KamiCard";
 export { MenuButton } from "./MenuButton";
 export { ModalHeader } from "./ModalHeader";
-export { ModalWrapperFull } from "./ModalWrapper";
+export { ModalWrapper } from "./ModalWrapper";
 export { SingleInputTextForm } from "./SingleInputTextForm";
 export { Tooltip } from "./Tooltip";
 export { ValidatorWrapper } from "./ValidatorWrapper";

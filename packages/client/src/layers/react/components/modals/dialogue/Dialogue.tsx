@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getRoomByLocation } from 'layers/react/shapes/Room';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
@@ -142,7 +142,7 @@ export function registerDialogueModal() {
       }
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='dialogue_modal'
           divName='dialogue'
           canExit
@@ -157,7 +157,7 @@ export function registerDialogueModal() {
             </ButtonRow>
           </Text>
 
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

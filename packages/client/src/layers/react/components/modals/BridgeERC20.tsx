@@ -6,7 +6,7 @@ import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
 import { abi } from "abi/Farm20ProxySystem.json"
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
@@ -170,7 +170,7 @@ export function registerERC20BridgeModal() {
       };
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='bridgeERC20'
           id='bridgeERC20'
           canExit
@@ -202,7 +202,7 @@ export function registerERC20BridgeModal() {
               {TxButton()}
             </div>
           </Grid>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

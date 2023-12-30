@@ -8,7 +8,7 @@ import { useIcon } from "assets/images/icons/actions";
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
@@ -186,14 +186,14 @@ export function registerEMABoardModal() {
       }
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='ema_board_modal'
           divName='emaBoard'
           header={<Title>Ema Board</Title>}
           canExit
         >
           <List>{KamiList(data.account.kamis || [])}</List>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

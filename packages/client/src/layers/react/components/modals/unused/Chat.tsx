@@ -10,7 +10,7 @@ import {
 } from '@latticexyz/recs';
 import * as mqtt from 'mqtt';
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
@@ -163,7 +163,7 @@ export function registerChatModal() {
       }
 
       return (
-        <ModalWrapperFull divName="chat" id="chat_modal">
+        <ModalWrapper divName="chat" id="chat_modal">
           <ChatWrapper>
             <ChatFeed style={{ pointerEvents: 'auto' }}>
               {messageLines}
@@ -177,7 +177,7 @@ export function registerChatModal() {
               onChange={(e) => handleChange(e)}
             />
           </ChatWrapper>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

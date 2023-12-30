@@ -6,7 +6,7 @@ import crypto from "crypto";
 import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
@@ -118,7 +118,7 @@ export function registerMapModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='world_map'
           divName='map'
           header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
@@ -126,7 +126,7 @@ export function registerMapModal() {
           canExit
         >
           <RoomInfo room={selectedRoom} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

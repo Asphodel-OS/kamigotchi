@@ -3,7 +3,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import crypto from "crypto";
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
@@ -123,7 +123,7 @@ export function registerBuyModal() {
       );
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='buy'
           divName='buy'
           header={<Title>Confirm Purchase</Title>}
@@ -153,7 +153,7 @@ export function registerBuyModal() {
             <CancelButton />
             <ConfirmButton />
           </ButtonRow>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     })
 }

@@ -6,7 +6,7 @@ import crypto from "crypto";
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
@@ -214,7 +214,7 @@ export function registerNodeModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='node'
           divName='node'
           header={[
@@ -236,7 +236,7 @@ export function registerNodeModal() {
             battleConfig={data.liquidationConfig}
             tab={tab}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

@@ -6,7 +6,7 @@ import { map, merge } from 'rxjs';
 import { Friends } from './Friends';
 import { socialIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccountByName, getAccountByOwner, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Friendship, queryFriendshipX } from 'layers/react/shapes/Friendship';
@@ -202,7 +202,7 @@ export function registerSocialModal() {
       }
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='social_modal'
           divName='social'
           header={<ModalHeader title='Social' icon={socialIcon} />}
@@ -213,7 +213,7 @@ export function registerSocialModal() {
             actions={{ acceptFriend, requestFriend, blockFriend, cancelFriend }}
             queries={{ queryAccountByName, queryAccountByOwner, queryFriendships }}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

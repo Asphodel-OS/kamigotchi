@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKamiByIndex } from 'layers/react/shapes/Kami';
@@ -82,7 +82,7 @@ export function registerNameKamiModal() {
       };
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='name_kami_modal'
           divName='nameKami'
           canExit
@@ -97,7 +97,7 @@ export function registerNameKamiModal() {
             fullWidth
             hasButton
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
