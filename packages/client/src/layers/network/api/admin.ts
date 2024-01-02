@@ -218,6 +218,11 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Room.Create'].executeTyped(location, name, description, exits);
   }
+  // @dev delete a room based on its indesx (location)
+  async function deleteRoom(location: number) {
+    await sleepIf();
+    return systems['system._Room.Delete'].executeTyped(location);
+  }
 
   async function setRoomDescription(location: number, description: string) {
     await sleepIf();
@@ -602,6 +607,7 @@ export function createAdminAPI(systems: any) {
     },
     room: {
       create: createRoom,
+      delete: deleteRoom,
       set: {
         description: setRoomDescription,
         exits: setRoomExits,

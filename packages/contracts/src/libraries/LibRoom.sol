@@ -32,10 +32,20 @@ library LibRoom {
     return id;
   }
 
+  // delete an Existing room by ID
+  // TODO: include Requirements and Effects here once those are implemented
+  function delete_(IUintComp components, uint256 id) internal {
+    IsRoomComponent(getAddressById(components, IsRoomCompID)).remove(id);
+    LocationComponent(getAddressById(components, LocationCompID)).remove(id);
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
+    ExitsComponent(getAddressById(components, ExitsCompID)).remove(id);
+  }
+
   /////////////////
   // CHECKERS
 
-  // Checks whether a path 'from' a location 'to' a location is a valid one
+  // Check whether a path 'from' a location 'to' a location is a valid one
   function isValidPath(
     IUintComp components,
     uint256 from,

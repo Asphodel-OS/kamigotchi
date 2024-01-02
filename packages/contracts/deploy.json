@@ -457,6 +457,16 @@
       ]
     },
     {
+      "name": "_RoomDeleteSystem",
+      "writeAccess": [
+        "IsRoomComponent",
+        "DescriptionComponent",
+        "ExitsComponent",
+        "LocationComponent",
+        "NameComponent"
+      ]
+    },
+    {
       "name": "_RoomSetDescriptionSystem",
       "writeAccess": [
         "DescriptionComponent"
