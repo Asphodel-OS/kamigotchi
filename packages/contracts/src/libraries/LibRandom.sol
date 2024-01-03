@@ -276,8 +276,8 @@ library LibRandom {
 
     for (uint256 i; i < numElements; i++) {
       // packed order is reversed
-      // result[numElements-1-i] = packed & ((1 << SIZE) - 1);
-      result[i] = packed & ((1 << SIZE) - 1);
+      result[numElements - 1 - i] = packed & ((1 << SIZE) - 1);
+      // result[i] = packed & ((1 << SIZE) - 1);
 
       packed = packed >> SIZE;
     }

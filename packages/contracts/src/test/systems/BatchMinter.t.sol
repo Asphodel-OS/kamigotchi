@@ -71,6 +71,54 @@ contract BatchMinterTest is SetupTemplate {
     registerTrait(4, 0, 0, 0, 1, 0, 5, "SCRAP", "Hands Mythic", "HAND");
   }
 
+  function testTraitStatOne() public {
+    initStockTraits();
+
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
+    vm.stopPrank();
+
+    vm.prank(deployer);
+    uint256 petID = __721BatchMinterSystem.batchMint(address(this), 1)[0];
+
+    uint[] memory stats = _calcStats(petID);
+    assertEq(stats[0], LibStat.getHealth(components, petID));
+    assertEq(stats[1], LibStat.getPower(components, petID));
+    assertEq(stats[2], LibStat.getViolence(components, petID));
+    assertEq(stats[3], LibStat.getHarmony(components, petID));
+    assertEq(stats[4], LibStat.getSlots(components, petID));
+  }
+
+  function testTraitStats() public {
+    initStockTraits();
+
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
+    vm.stopPrank();
+
+    uint numPets = 100;
+    uint[] memory petIDs = new uint[](numPets);
+    for (uint i = 0; i < 10; i++) {
+      vm.prank(deployer);
+      uint[] memory tempIDs = __721BatchMinterSystem.batchMint(address(this), 10);
+      for (uint j = 0; j < 10; j++) {
+        petIDs[i * 10 + j] = tempIDs[j];
+      }
+    }
+
+    for (uint i = 0; i < numPets; i++) {
+      uint petID = petIDs[i];
+      uint[] memory stats = _calcStats(petID);
+      assertEq(stats[0], LibStat.getHealth(components, petID));
+      assertEq(stats[1], LibStat.getPower(components, petID));
+      assertEq(stats[2], LibStat.getViolence(components, petID));
+      assertEq(stats[3], LibStat.getHarmony(components, petID));
+      assertEq(stats[4], LibStat.getSlots(components, petID));
+    }
+  }
+
   ////////////////
   // UNIT TESTS //
   ////////////////
@@ -183,5 +231,38 @@ contract BatchMinterTest is SetupTemplate {
     __721BatchMinterSystem.setTraits();
     __721BatchMinterSystem.setStats(_utils.getAllStats(components));
     vm.stopPrank();
+  }
+
+  //////////////////////
+  // HELPER FUNCTIONS //
+  //////////////////////
+
+  function _calcStats(uint petID) internal view returns (uint[] memory) {
+    uint256 health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
+    uint256 power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
+    uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
+    uint256 harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
+    uint256 slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
+
+    // sum the stats from all traits
+    uint256 traitRegistryID;
+    uint256[] memory traits = LibPet.getTraits(components, petID);
+    for (uint256 i = 0; i < traits.length; i++) {
+      traitRegistryID = traits[i];
+      health += LibStat.getHealth(components, traitRegistryID);
+      power += LibStat.getPower(components, traitRegistryID);
+      violence += LibStat.getViolence(components, traitRegistryID);
+      harmony += LibStat.getHarmony(components, traitRegistryID);
+      slots += LibStat.getSlots(components, traitRegistryID);
+    }
+
+    uint[] memory stats = new uint[](5);
+    stats[0] = health;
+    stats[1] = power;
+    stats[2] = violence;
+    stats[3] = harmony;
+    stats[4] = slots;
+
+    return stats;
   }
 }
