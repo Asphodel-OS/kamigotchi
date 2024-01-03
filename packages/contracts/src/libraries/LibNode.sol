@@ -40,6 +40,19 @@ library LibNode {
     return id;
   }
 
+  function remove(IUintComp components, uint256 id) internal returns (uint256) {
+    IsNodeComponent(getAddressById(components, IsNodeCompID)).remove(id);
+    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).remove(id);
+    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
+    LocationComponent(getAddressById(components, LocCompID)).remove(id);
+    if (hasAffinity(components, id))
+      AffinityComponent(getAddressById(components, AffCompID)).remove(id);
+    if (hasDescription(components, id))
+      DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
+    if (hasName(components, id)) NameComponent(getAddressById(components, NameCompID)).remove(id);
+    return id;
+  }
+
   //////////////
   // SETTERS
 

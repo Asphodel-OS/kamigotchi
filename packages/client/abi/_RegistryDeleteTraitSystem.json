@@ -73,7 +73,7 @@
         },
         {
           "internalType": "string",
-          "name": "affinity",
+          "name": "traitType",
           "type": "string"
         }
       ],

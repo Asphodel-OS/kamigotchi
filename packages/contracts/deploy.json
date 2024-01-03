@@ -164,27 +164,15 @@
       ]
     },
     {
-      "name": "_NodeSetAffinitySystem",
+      "name": "_NodeDeleteSystem",
       "writeAccess": [
-        "AffinityComponent"
-      ]
-    },
-    {
-      "name": "_NodeSetDescriptionSystem",
-      "writeAccess": [
-        "DescriptionComponent"
-      ]
-    },
-    {
-      "name": "_NodeSetLocationSystem",
-      "writeAccess": [
-        "LocationComponent"
-      ]
-    },
-    {
-      "name": "_NodeSetNameSystem",
-      "writeAccess": [
-        "NameComponent"
+        "IsNodeComponent",
+        "AffinityComponent",
+        "DescriptionComponent",
+        "IndexNodeComponent",
+        "LocationComponent",
+        "NameComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -375,7 +363,41 @@
     {
       "name": "_RegistryCreateTraitSystem",
       "writeAccess": [
-        "*"
+        "IndexBodyComponent",
+        "IndexBackgroundComponent",
+        "IndexColorComponent",
+        "IndexFaceComponent",
+        "IndexHandComponent",
+        "IndexTraitComponent",
+        "IsRegistryComponent",
+        "NameComponent",
+        "RarityComponent",
+        "AffinityComponent",
+        "HealthComponent",
+        "HarmonyComponent",
+        "PowerComponent",
+        "SlotsComponent",
+        "ViolenceComponent"
+      ]
+    },
+    {
+      "name": "_RegistryDeleteTraitSystem",
+      "writeAccess": [
+        "IndexBodyComponent",
+        "IndexBackgroundComponent",
+        "IndexColorComponent",
+        "IndexFaceComponent",
+        "IndexHandComponent",
+        "IndexTraitComponent",
+        "IsRegistryComponent",
+        "NameComponent",
+        "RarityComponent",
+        "AffinityComponent",
+        "HealthComponent",
+        "HarmonyComponent",
+        "PowerComponent",
+        "SlotsComponent",
+        "ViolenceComponent"
       ]
     },
     {
@@ -457,20 +479,12 @@
       ]
     },
     {
-      "name": "_RoomSetDescriptionSystem",
+      "name": "_RoomDeleteSystem",
       "writeAccess": [
-        "DescriptionComponent"
-      ]
-    },
-    {
-      "name": "_RoomSetExitsSystem",
-      "writeAccess": [
-        "ExitsComponent"
-      ]
-    },
-    {
-      "name": "_RoomSetNameSystem",
-      "writeAccess": [
+        "IsRoomComponent",
+        "DescriptionComponent",
+        "ExitsComponent",
+        "LocationComponent",
         "NameComponent"
       ]
     },

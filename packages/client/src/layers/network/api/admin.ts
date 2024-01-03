@@ -105,24 +105,10 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  async function setNodeAffinity(index: number, affinity: string) {
+  // @dev deletes node 
+  async function deleteNode(index: number) {
     await sleepIf();
-    return systems['system._Node.Set.Affinity'].executeTyped(index, affinity);
-  }
-
-  async function setNodeDescription(index: number, description: string) {
-    await sleepIf();
-    return systems['system._Node.Set.Description'].executeTyped(index, description);
-  }
-
-  async function setNodeLocation(index: number, location: number) {
-    await sleepIf();
-    return systems['system._Node.Set.Location'].executeTyped(index, location);
-  }
-
-  async function setNodeName(index: number, name: string) {
-    await sleepIf();
-    return systems['system._Node.Set.Name'].executeTyped(index, name);
+    return systems['system._Node.Delete'].executeTyped(index);
   }
 
 
@@ -219,21 +205,10 @@ export function createAdminAPI(systems: any) {
     return systems['system._Room.Create'].executeTyped(location, name, description, exits);
   }
 
-  async function setRoomDescription(location: number, description: string) {
+  async function deleteRoom(location: number) {
     await sleepIf();
-    return systems['system._Room.Set.Description'].executeTyped(location, description);
+    return systems['system._Room.Delete'].executeTyped(location);
   }
-
-  async function setRoomExits(location: number, exits: number[]) {
-    await sleepIf();
-    return systems['system._Room.Set.Exits'].executeTyped(location, exits);
-  }
-
-  async function setRoomName(location: number, name: string) {
-    await sleepIf();
-    return systems['system._Room.Set.Name'].executeTyped(location, name);
-  }
-
 
   /////////////////
   // SKILLS
@@ -473,6 +448,12 @@ export function createAdminAPI(systems: any) {
     );
   }
 
+  // @dev deletes trait
+  async function deleteTrait(index: number, type: string) {
+    await sleepIf();
+    return systems['system._Registry.Trait.Delete'].executeTyped(index, type);
+  }
+
   //////////////////
   // RELATIONSHIPS
 
@@ -544,12 +525,7 @@ export function createAdminAPI(systems: any) {
     },
     node: {
       create: createNode,
-      set: {
-        affinity: setNodeAffinity,
-        description: setNodeDescription,
-        location: setNodeLocation,
-        name: setNodeName,
-      },
+      delete: deleteNode,
     },
     npc: {
       create: createNPC,
@@ -576,6 +552,7 @@ export function createAdminAPI(systems: any) {
       },
       trait: {
         create: registerTrait,
+        delete: deleteTrait,
       },
       quest: {
         create: createQuest,
@@ -602,11 +579,7 @@ export function createAdminAPI(systems: any) {
     },
     room: {
       create: createRoom,
-      set: {
-        description: setRoomDescription,
-        exits: setRoomExits,
-        name: setRoomName,
-      },
+      delete: deleteRoom,
     },
   };
 }

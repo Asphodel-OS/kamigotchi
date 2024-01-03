@@ -11,10 +11,9 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
-import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
-import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
+import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
@@ -410,6 +409,17 @@ library LibRegistryTrait {
     else LibStat.removeAffinity(components, id);
 
     return id;
+  }
+
+  function remove(IUintComp components, uint256 id) internal {
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    LibStat.removeHealth(components, id);
+    LibStat.removePower(components, id);
+    LibStat.removeViolence(components, id);
+    LibStat.removeHarmony(components, id);
+    LibStat.removeSlots(components, id);
+    LibStat.removeRarity(components, id);
+    LibStat.removeAffinity(components, id);
   }
 
   /////////////////

@@ -4,10 +4,7 @@ import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
 import _devGiveTokensSystem from "../abi/_devGiveTokensSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
-import _NodeSetAffinitySystem from "../abi/_NodeSetAffinitySystem.json";
-import _NodeSetDescriptionSystem from "../abi/_NodeSetDescriptionSystem.json";
-import _NodeSetLocationSystem from "../abi/_NodeSetLocationSystem.json";
-import _NodeSetNameSystem from "../abi/_NodeSetNameSystem.json";
+import _NodeDeleteSystem from "../abi/_NodeDeleteSystem.json";
 import _NPCCreateSystem from "../abi/_NPCCreateSystem.json";
 import _NPCSetLocationSystem from "../abi/_NPCSetLocationSystem.json";
 import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
@@ -30,12 +27,11 @@ import _RegistryDeleteItemSystem from "../abi/_RegistryDeleteItemSystem.json";
 import _RegistryDeleteQuestSystem from "../abi/_RegistryDeleteQuestSystem.json";
 import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshipSystem.json";
 import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
+import _RegistryDeleteTraitSystem from "../abi/_RegistryDeleteTraitSystem.json";
 import _RegistryUpdateRelationshipSystem from "../abi/_RegistryUpdateRelationshipSystem.json";
 import _RegistryUpdateTraitSystem from "../abi/_RegistryUpdateTraitSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
-import _RoomSetDescriptionSystem from "../abi/_RoomSetDescriptionSystem.json";
-import _RoomSetExitsSystem from "../abi/_RoomSetExitsSystem.json";
-import _RoomSetNameSystem from "../abi/_RoomSetNameSystem.json";
+import _RoomDeleteSystem from "../abi/_RoomDeleteSystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
@@ -91,10 +87,7 @@ export const SystemAbis = {
   "system._devGiveTokens": _devGiveTokensSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
-  "system._Node.Set.Affinity": _NodeSetAffinitySystem.abi,
-  "system._Node.Set.Description": _NodeSetDescriptionSystem.abi,
-  "system._Node.Set.Location": _NodeSetLocationSystem.abi,
-  "system._Node.Set.Name": _NodeSetNameSystem.abi,
+  "system._Node.Delete": _NodeDeleteSystem.abi,
   "system._NPC.Create": _NPCCreateSystem.abi,
   "system._NPC.Set.Location": _NPCSetLocationSystem.abi,
   "system._NPC.Set.Name": _NPCSetNameSystem.abi,
@@ -117,12 +110,11 @@ export const SystemAbis = {
   "system._Registry.Quest.Delete": _RegistryDeleteQuestSystem.abi,
   "system._Registry.Relationship.Delete": _RegistryDeleteRelationshipSystem.abi,
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
+  "system._Registry.Trait.Delete": _RegistryDeleteTraitSystem.abi,
   "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem.abi,
   "system._Registry.Trait.Update": _RegistryUpdateTraitSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
-  "system._Room.Set.Description": _RoomSetDescriptionSystem.abi,
-  "system._Room.Set.Exits": _RoomSetExitsSystem.abi,
-  "system._Room.Set.Name": _RoomSetNameSystem.abi,
+  "system._Room.Delete": _RoomDeleteSystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Register": AccountRegisterSystem.abi,
