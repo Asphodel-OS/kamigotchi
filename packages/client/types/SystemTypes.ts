@@ -29,7 +29,6 @@ import { _RegistryDeleteRelationshipSystem } from "./ethers-contracts/_RegistryD
 import { _RegistryDeleteSkillSystem } from "./ethers-contracts/_RegistryDeleteSkillSystem";
 import { _RegistryDeleteTraitSystem } from "./ethers-contracts/_RegistryDeleteTraitSystem";
 import { _RegistryUpdateRelationshipSystem } from "./ethers-contracts/_RegistryUpdateRelationshipSystem";
-import { _RegistryUpdateTraitSystem } from "./ethers-contracts/_RegistryUpdateTraitSystem";
 import { _RoomCreateSystem } from "./ethers-contracts/_RoomCreateSystem";
 import { _RoomDeleteSystem } from "./ethers-contracts/_RoomDeleteSystem";
 import { AccountFundSystem } from "./ethers-contracts/AccountFundSystem";
@@ -112,7 +111,6 @@ export type SystemTypes = {
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem;
   "system._Registry.Trait.Delete": _RegistryDeleteTraitSystem;
   "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem;
-  "system._Registry.Trait.Update": _RegistryUpdateTraitSystem;
   "system._Room.Create": _RoomCreateSystem;
   "system._Room.Delete": _RoomDeleteSystem;
   "system.Account.Fund": AccountFundSystem;

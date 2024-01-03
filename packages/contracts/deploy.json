@@ -463,12 +463,6 @@
       ]
     },
     {
-      "name": "_RegistryUpdateTraitSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
       "name": "_RoomCreateSystem",
       "writeAccess": [
         "IsRoomComponent",

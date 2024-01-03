@@ -68,53 +68,8 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "index",
+          "name": "location",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "health",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "power",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "violence",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "harmony",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "slots",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rarity",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "affinity",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "traitType",
-          "type": "string"
         }
       ],
       "name": "executeTyped",
@@ -157,7 +112,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": "68450b7d",
+    "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

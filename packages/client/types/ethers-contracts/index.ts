@@ -199,8 +199,8 @@ export type { _RegistryDeleteRelationshipSystem } from "./_RegistryDeleteRelatio
 export type { _RegistryDeleteSkillSystem } from "./_RegistryDeleteSkillSystem";
 export type { _RegistryDeleteTraitSystem } from "./_RegistryDeleteTraitSystem";
 export type { _RegistryUpdateRelationshipSystem } from "./_RegistryUpdateRelationshipSystem";
-export type { _RegistryUpdateTraitSystem } from "./_RegistryUpdateTraitSystem";
 export type { _RoomCreateSystem } from "./_RoomCreateSystem";
+export type { _RoomDeleteSystem } from "./_RoomDeleteSystem";
 export type { _devGiveTokensSystem } from "./_devGiveTokensSystem";
 export * as factories from "./factories";
 export { AccountFundSystem__factory } from "./factories/AccountFundSystem__factory";
@@ -401,6 +401,6 @@ export { _RegistryDeleteRelationshipSystem__factory } from "./factories/_Registr
 export { _RegistryDeleteSkillSystem__factory } from "./factories/_RegistryDeleteSkillSystem__factory";
 export { _RegistryDeleteTraitSystem__factory } from "./factories/_RegistryDeleteTraitSystem__factory";
 export { _RegistryUpdateRelationshipSystem__factory } from "./factories/_RegistryUpdateRelationshipSystem__factory";
-export { _RegistryUpdateTraitSystem__factory } from "./factories/_RegistryUpdateTraitSystem__factory";
 export { _RoomCreateSystem__factory } from "./factories/_RoomCreateSystem__factory";
+export { _RoomDeleteSystem__factory } from "./factories/_RoomDeleteSystem__factory";
 export { _devGiveTokensSystem__factory } from "./factories/_devGiveTokensSystem__factory";
