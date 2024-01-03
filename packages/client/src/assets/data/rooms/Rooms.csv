@@ -1,14 +1,14 @@
-Index,Exits,Amulet Exits,Name,Tags,Description,Files & media,Enabled
+﻿Index,Exits,Amulet Exits,Name,Tags,Description,Files & media,Enabled
 0,1,,deadzone,,This room is for debugging! You may not enter.,,Yes
 1,2,20,Misty Riverside,Spawn,You have no memory of arriving here. The air is quiet. The trees grow so thick overhead that it would still be dark at noon.,Rooms%204281fd84407147de8d1fe5b14b37327c/1_mistyriver.png,Yes
-2,"1,3,12",,Tunnel of Trees,,"You see the light at the end of the tunnel; a way out of the forest. Also, you see a blue door made of light. It says “SHOP”.",Rooms%204281fd84407147de8d1fe5b14b37327c/2_tunnel_of_trees.png,Yes
+2,"1,3,13",,Tunnel of Trees,,"You see the light at the end of the tunnel; a way out of the forest. Also, you see a blue door made of light. It says “SHOP”.",Rooms%204281fd84407147de8d1fe5b14b37327c/2_tunnel_of_trees.png,Yes
 3,"2, 4",,Torii Gate,Node,The end of the road. This gate seems to mark the transition between the misty forest and the massive scrapyard.,Rooms%204281fd84407147de8d1fe5b14b37327c/3_torii.png,Yes
-4,"3, 5, 11",,Vending Machine,Mint,Deep in the scrap you find a vending machine well stocked and operating. Behind it you see the power cord is cut off.,"Rooms%204281fd84407147de8d1fe5b14b37327c/4_vend_clouds.png, Rooms%204281fd84407147de8d1fe5b14b37327c/4_vend_night.png, Rooms%204281fd84407147de8d1fe5b14b37327c/4_vend_sun.png",Yes
-5,"4, 9, 6",,Restricted Area,,A restricted area. Follow the road lined with cherry trees to reach an office complex. Across from the office is another forest.,Rooms%204281fd84407147de8d1fe5b14b37327c/5_restricted.png,Yes
+4,"3, 5, 12",,Vending Machine,Mint,Deep in the scrap you find a vending machine well stocked and operating. Behind it you see the power cord is cut off.,"Rooms%204281fd84407147de8d1fe5b14b37327c/4_vend_clouds.png, Rooms%204281fd84407147de8d1fe5b14b37327c/4_vend_night.png, Rooms%204281fd84407147de8d1fe5b14b37327c/4_vend_sun.png",Yes
+5,"4, 6, 9",,Restricted Area,,A restricted area. Follow the road lined with cherry trees to reach an office complex. Across from the office is another forest.,Rooms%204281fd84407147de8d1fe5b14b37327c/5_restricted.png,Yes
 6,"5, 7",,Labs Entrance,,This exterior seems designed to resemble a shrine almost as much as it does a corporate office building.,Rooms%204281fd84407147de8d1fe5b14b37327c/6_arawn_offices.png,Yes
-7,"6, 21",,Lobby,Node,"The lobby decor is sparse, with only one uncomfortable chair. The elevator buttons are broken except for “B” and “PH”.",Rooms%204281fd84407147de8d1fe5b14b37327c/7_lobby.png,Yes
+7,"6, 8, 14",,Lobby,Node,"The lobby decor is sparse, with only one uncomfortable chair. The elevator buttons are broken except for “B” and “PH”.",Rooms%204281fd84407147de8d1fe5b14b37327c/7_lobby.png,Yes
 8,7,,Junk Shop,Equip Shop,The electrical room in the basement has been converted into a living space and workshop. Do people live like this?,Rooms%204281fd84407147de8d1fe5b14b37327c/8_junkshop.png,Yes
-9,"5, 10, 12",,Forest: Old Growth,,You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.,Rooms%204281fd84407147de8d1fe5b14b37327c/9_forest_old.png,Yes
+9,"5, 10, 11",,Forest: Old Growth,,You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.,Rooms%204281fd84407147de8d1fe5b14b37327c/9_forest_old.png,Yes
 10,9,,Forest: Insect Node,Node,The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.,Rooms%204281fd84407147de8d1fe5b14b37327c/10_forest_insectnode.png,Yes
 11,"9, 15",24,Temple by the Waterfall,Kami Naming,"By the edge of the waterfall basin, a humble shrine grants this place a peaceful aura.",Rooms%204281fd84407147de8d1fe5b14b37327c/11_waterfall_temple.png,Yes
 12,4,,Machine Node,Node,A collection of strange and hard to identify objects is buried deep in the scrapyard. It feels dangerous just to be near them.,Rooms%204281fd84407147de8d1fe5b14b37327c/12_dump_machine.png,Yes
