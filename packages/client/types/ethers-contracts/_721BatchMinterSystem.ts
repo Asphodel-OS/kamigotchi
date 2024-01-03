@@ -27,11 +27,35 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export type TraitStatsStruct = {
+  health: PromiseOrValue<BigNumberish>;
+  power: PromiseOrValue<BigNumberish>;
+  violence: PromiseOrValue<BigNumberish>;
+  harmony: PromiseOrValue<BigNumberish>;
+  slots: PromiseOrValue<BigNumberish>;
+};
+
+export type TraitStatsStructOutput = [
+  number,
+  number,
+  number,
+  number,
+  number
+] & {
+  health: number;
+  power: number;
+  violence: number;
+  harmony: number;
+  slots: number;
+};
+
 export interface _721BatchMinterSystemInterface extends utils.Interface {
   functions: {
     "batchMint(address,uint256)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
+    "setStats((uint8,uint8,uint8,uint8,uint8)[])": FunctionFragment;
+    "setTraits()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -40,6 +64,8 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
       | "batchMint"
       | "execute"
       | "owner"
+      | "setStats"
+      | "setTraits"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -53,6 +79,11 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "setStats",
+    values: [TraitStatsStruct[]]
+  ): string;
+  encodeFunctionData(functionFragment: "setTraits", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -60,6 +91,8 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setStats", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setTraits", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -124,6 +157,15 @@ export interface _721BatchMinterSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    setStats(
+      stats: TraitStatsStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTraits(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -143,6 +185,15 @@ export interface _721BatchMinterSystem extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  setStats(
+    stats: TraitStatsStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTraits(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -161,6 +212,13 @@ export interface _721BatchMinterSystem extends BaseContract {
     ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    setStats(
+      stats: TraitStatsStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTraits(overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -193,6 +251,15 @@ export interface _721BatchMinterSystem extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setStats(
+      stats: TraitStatsStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTraits(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -212,6 +279,15 @@ export interface _721BatchMinterSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setStats(
+      stats: TraitStatsStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTraits(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

@@ -246,6 +246,8 @@ library LibPet721 {
   function getJsonUtf(IUintComp components, uint256 petIndex) public view returns (string memory) {
     uint256 petID = LibPet.indexToID(components, petIndex);
 
+    /// TODO: add affinities somewhere
+
     return
       string(
         abi.encodePacked(

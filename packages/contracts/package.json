@@ -67,6 +67,7 @@
     "@openzeppelin/contracts": "^4.9.0",
     "@solidstate/contracts": "^0.0.52",
     "dotenv-cli": "^7.2.1",
+    "erc721a": "^4.2.3",
     "solady": "Vectorized/solady",
     "solstat": "https://github.com/primitivefinance/solstat.git#22923658c83d45fa6fe1b53272af84f3cb7664c6"
   }

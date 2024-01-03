@@ -13,7 +13,6 @@ import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "component
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
-import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";

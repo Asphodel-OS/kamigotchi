@@ -98,6 +98,53 @@
     {
       "inputs": [
         {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "health",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "power",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "violence",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "harmony",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "slots",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct TraitStats[]",
+          "name": "stats",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "setStats",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "setTraits",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "account",
           "type": "address"
@@ -113,6 +160,8 @@
     "batchMint(address,uint256)": "43508b05",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
+    "setStats((uint8,uint8,uint8,uint8,uint8)[])": "e88f989d",
+    "setTraits()": "c061a3b5",
     "transferOwnership(address)": "f2fde38b"
   }
 }
