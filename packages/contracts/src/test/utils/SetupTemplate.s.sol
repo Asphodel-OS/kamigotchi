@@ -489,6 +489,57 @@ abstract contract SetupTemplate is TestSetupImports {
     );
   }
 
+  function _initStockTraits() internal {
+    _initCommonTraits();
+    _initUncommonTraits();
+    _initRareTraits();
+    _initEpicTraits();
+    _initMythicTraits();
+  }
+
+  /// @notice empty traits for distribution testing
+  function _initEmptyTraits() internal {
+    // Backgrounds (extra common trait)
+    registerTrait(0, 0, 0, 0, 0, 0, 9, "", "BG Common", "BACKGROUND");
+    registerTrait(1, 0, 0, 0, 0, 0, 8, "", "BG Uncommon", "BACKGROUND");
+    registerTrait(2, 0, 0, 0, 0, 0, 7, "", "BG Rare", "BACKGROUND");
+    registerTrait(3, 0, 0, 0, 0, 0, 6, "", "BG Epic", "BACKGROUND");
+    registerTrait(4, 0, 0, 0, 0, 0, 5, "", "BG Mythic", "BACKGROUND");
+    registerTrait(5, 0, 0, 0, 0, 0, 9, "", "BG Common 2", "BACKGROUND");
+
+    // Bodies (extra uncommon trait)
+    registerTrait(0, 0, 0, 0, 0, 0, 9, "INSECT", "Body Common", "BODY");
+    registerTrait(1, 0, 0, 0, 0, 0, 8, "SCRAP", "Body Uncommon", "BODY");
+    registerTrait(2, 0, 0, 0, 0, 0, 7, "EERIE", "Body Rare", "BODY");
+    registerTrait(3, 0, 0, 0, 0, 0, 6, "NORMAL", "Body Epic", "BODY");
+    registerTrait(4, 0, 0, 0, 0, 0, 5, "SCRAP", "Body Mythic", "BODY");
+    registerTrait(5, 0, 0, 0, 0, 0, 8, "EERIE", "Body Uncommon 2", "BODY");
+
+    // Colors (extra rare trait)
+    registerTrait(0, 0, 0, 0, 0, 0, 9, "", "Color Common", "COLOR");
+    registerTrait(1, 0, 0, 0, 0, 0, 8, "", "Color Uncommon", "COLOR");
+    registerTrait(2, 0, 0, 0, 0, 0, 7, "", "Color Rare", "COLOR");
+    registerTrait(3, 0, 0, 0, 0, 0, 6, "", "Color Epic", "COLOR");
+    registerTrait(4, 0, 0, 0, 0, 0, 5, "", "Color Mythic", "COLOR");
+    registerTrait(5, 0, 0, 0, 0, 0, 7, "", "Color Rare 2", "COLOR");
+
+    // Faces (extra epic trait)
+    registerTrait(0, 0, 0, 0, 0, 0, 9, "", "Face Common", "FACE");
+    registerTrait(1, 0, 0, 0, 0, 0, 8, "", "Face Uncommon", "FACE");
+    registerTrait(2, 0, 0, 0, 0, 0, 7, "", "Face Rare", "FACE");
+    registerTrait(3, 0, 0, 0, 0, 0, 6, "", "Face Epic", "FACE");
+    registerTrait(4, 0, 0, 0, 0, 0, 5, "", "Face Mythic", "FACE");
+    registerTrait(5, 0, 0, 0, 0, 0, 6, "", "Face Epic 2", "FACE");
+
+    // Hands (added Legendary trait)
+    registerTrait(0, 0, 0, 0, 0, 0, 9, "INSECT", "Hands Common", "HAND");
+    registerTrait(1, 0, 0, 0, 0, 0, 8, "SCRAP", "Hands Uncommon", "HAND");
+    registerTrait(2, 0, 0, 0, 0, 0, 7, "EERIE", "Hands Rare", "HAND");
+    registerTrait(3, 0, 0, 0, 0, 0, 6, "NORMAL", "Hands Epic", "HAND");
+    registerTrait(4, 0, 0, 0, 0, 0, 5, "SCRAP", "Hands Mythic", "HAND");
+    registerTrait(5, 0, 0, 0, 0, 0, 4, "NORMAL", "Hands Legendary", "HAND");
+  }
+
   function _initCommonTraits() internal {
     // Backgrounds
     registerTrait(0, 0, 0, 0, 0, 0, 0, "", "Empty BG", "BACKGROUND");
@@ -665,7 +716,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initBaseConfigs() internal {
     _setConfigString("BASE_URI", "https://image.asphodel.io/kami/");
-    _setConfig("MINT_TOTAL_MAX", 4444);
+    _setConfig("MINT_TOTAL_MAX", 33333);
   }
 
   function _initLeaderboardConfigs() internal {

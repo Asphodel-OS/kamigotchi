@@ -22,57 +22,11 @@ contract BatchMinterTest is SetupTemplate {
   }
 
   /////////////////
-  // INIT TRAITS //
+  // Stats //
   /////////////////
 
-  function initStockTraits() internal {
-    _initCommonTraits();
-    _initUncommonTraits();
-    _initRareTraits();
-    _initEpicTraits();
-    _initMythicTraits();
-  }
-
-  /// @notice min amount of traits for distribution testing
-  function initMinTraits() internal {
-    // Backgrounds
-    registerTrait(0, 10, 0, 0, 0, 0, 9, "", "BG Common", "BACKGROUND");
-    registerTrait(1, 0, 1, 0, 0, 0, 8, "", "BG Uncommon", "BACKGROUND");
-    registerTrait(2, 0, 0, 1, 0, 0, 7, "", "BG Rare", "BACKGROUND");
-    registerTrait(3, 0, 0, 0, 1, 0, 6, "", "BG Epic", "BACKGROUND");
-    registerTrait(4, 0, 0, 0, 1, 0, 5, "", "BG Mythic", "BACKGROUND");
-
-    // Bodies
-    registerTrait(0, 0, 0, 0, 0, 0, 9, "INSECT", "Body Common", "BODY");
-    registerTrait(1, 0, 1, 0, 0, 0, 8, "SCRAP", "Body Uncommon", "BODY");
-    registerTrait(2, 0, 0, 1, 0, 0, 7, "EERIE", "Body Rare", "BODY");
-    registerTrait(3, 0, 0, 0, 1, 0, 6, "NORMAL", "Body Epic", "BODY");
-    registerTrait(4, 0, 0, 0, 1, 0, 5, "SCRAP", "Body Mythic", "BODY");
-
-    // Colors
-    registerTrait(0, 10, 0, 0, 0, 0, 9, "", "Color Common", "COLOR");
-    registerTrait(1, 0, 1, 0, 0, 0, 8, "", "Color Uncommon", "COLOR");
-    registerTrait(2, 0, 0, 1, 0, 0, 7, "", "Color Rare", "COLOR");
-    registerTrait(3, 0, 0, 0, 1, 0, 6, "", "Color Epic", "COLOR");
-    registerTrait(4, 0, 0, 0, 1, 0, 5, "", "Color Mythic", "COLOR");
-
-    // Faces
-    registerTrait(0, 0, 0, 0, 0, 0, 9, "", "Face Common", "FACE");
-    registerTrait(1, 0, 1, 0, 0, 0, 8, "", "Face Uncommon", "FACE");
-    registerTrait(2, 0, 0, 1, 0, 0, 7, "", "Face Rare", "FACE");
-    registerTrait(3, 0, 0, 0, 1, 0, 6, "", "Face Epic", "FACE");
-    registerTrait(4, 0, 0, 0, 1, 0, 5, "", "Face Mythic", "FACE");
-
-    // Hands
-    registerTrait(0, 0, 0, 0, 0, 0, 9, "INSECT", "Hands Common", "HAND");
-    registerTrait(1, 0, 1, 0, 0, 0, 8, "SCRAP", "Hands Uncommon", "HAND");
-    registerTrait(2, 0, 0, 1, 0, 0, 7, "EERIE", "Hands Rare", "HAND");
-    registerTrait(3, 0, 0, 0, 1, 0, 6, "NORMAL", "Hands Epic", "HAND");
-    registerTrait(4, 0, 0, 0, 1, 0, 5, "SCRAP", "Hands Mythic", "HAND");
-  }
-
   function testTraitStatOne() public {
-    initStockTraits();
+    _initStockTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
@@ -82,7 +36,7 @@ contract BatchMinterTest is SetupTemplate {
     vm.prank(deployer);
     uint256 petID = __721BatchMinterSystem.batchMint(address(this), 1)[0];
 
-    uint[] memory stats = _calcStats(petID);
+    uint[] memory stats = _calcStatsFromTraits(petID);
     assertEq(stats[0], LibStat.getHealth(components, petID));
     assertEq(stats[1], LibStat.getPower(components, petID));
     assertEq(stats[2], LibStat.getViolence(components, petID));
@@ -91,7 +45,7 @@ contract BatchMinterTest is SetupTemplate {
   }
 
   function testTraitStats() public {
-    initStockTraits();
+    _initStockTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
@@ -110,7 +64,7 @@ contract BatchMinterTest is SetupTemplate {
 
     for (uint i = 0; i < numPets; i++) {
       uint petID = petIDs[i];
-      uint[] memory stats = _calcStats(petID);
+      uint[] memory stats = _calcStatsFromTraits(petID);
       assertEq(stats[0], LibStat.getHealth(components, petID));
       assertEq(stats[1], LibStat.getPower(components, petID));
       assertEq(stats[2], LibStat.getViolence(components, petID));
@@ -124,7 +78,7 @@ contract BatchMinterTest is SetupTemplate {
   ////////////////
 
   function testStart() public {
-    initStockTraits();
+    _initStockTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
@@ -136,7 +90,7 @@ contract BatchMinterTest is SetupTemplate {
   }
 
   function testDistribution() public {
-    initMinTraits();
+    _initEmptyTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
@@ -148,51 +102,40 @@ contract BatchMinterTest is SetupTemplate {
     vm.prank(deployer);
     uint256[] memory petIDs = __721BatchMinterSystem.batchMint(address(this), numPets);
 
-    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);
-    uint[] memory hands = LibRegistryTrait.getAllOfType(components, IndexHandCompID);
-    uint[] memory faces = LibRegistryTrait.getAllOfType(components, IndexFaceCompID);
     uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
+    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);
     uint[] memory colors = LibRegistryTrait.getAllOfType(components, IndexColorCompID);
+    uint[] memory faces = LibRegistryTrait.getAllOfType(components, IndexFaceCompID);
+    uint[] memory hands = LibRegistryTrait.getAllOfType(components, IndexHandCompID);
 
-    uint[] memory bodyCounts = new uint[](bodies.length + 1);
-    uint[] memory handCounts = new uint[](hands.length + 1);
-    uint[] memory faceCounts = new uint[](faces.length + 1);
-    uint[] memory bgCounts = new uint[](backgrounds.length + 1);
-    uint[] memory colorCounts = new uint[](colors.length + 1);
+    uint[] memory bgCounts = new uint[](backgrounds.length);
+    uint[] memory bodyCounts = new uint[](bodies.length);
+    uint[] memory colorCounts = new uint[](colors.length);
+    uint[] memory faceCounts = new uint[](faces.length);
+    uint[] memory handCounts = new uint[](hands.length);
 
     for (uint i = 0; i < numPets; i++) {
-      bodyCounts[LibRegistryTrait.getBodyIndex(components, petIDs[i])]++;
-      handCounts[LibRegistryTrait.getHandIndex(components, petIDs[i])]++;
-      faceCounts[LibRegistryTrait.getFaceIndex(components, petIDs[i])]++;
       bgCounts[LibRegistryTrait.getBackgroundIndex(components, petIDs[i])]++;
+      bodyCounts[LibRegistryTrait.getBodyIndex(components, petIDs[i])]++;
       colorCounts[LibRegistryTrait.getColorIndex(components, petIDs[i])]++;
+      faceCounts[LibRegistryTrait.getFaceIndex(components, petIDs[i])]++;
+      handCounts[LibRegistryTrait.getHandIndex(components, petIDs[i])]++;
     }
+
+    uint[][5] memory traits = [backgrounds, bodies, colors, faces, hands];
+    uint[][5] memory counts = [bgCounts, bodyCounts, colorCounts, faceCounts, handCounts];
 
     // reporting
-    for (uint i = 1; i <= bodies.length; i++) {
-      console.log("%s: %d", LibRegistryTrait.getName(components, bodies[i - 1]), bodyCounts[i]);
+    uint count;
+    string memory name;
+    for (uint i = 0; i < traits.length; i++) {
+      for (uint j = 0; j < traits[i].length; j++) {
+        count = counts[i][j];
+        name = LibRegistryTrait.getName(components, traits[i][j]);
+        console.log("%s: %d", name, count);
+      }
+      console.log("\n");
     }
-    console.log("\n");
-
-    for (uint i = 1; i <= hands.length; i++) {
-      console.log("%s: %d", LibRegistryTrait.getName(components, hands[i - 1]), handCounts[i]);
-    }
-    console.log("\n");
-
-    for (uint i = 1; i <= faces.length; i++) {
-      console.log("%s: %d", LibRegistryTrait.getName(components, faces[i - 1]), faceCounts[i]);
-    }
-    console.log("\n");
-
-    for (uint i = 1; i <= backgrounds.length; i++) {
-      console.log("%s: %d", LibRegistryTrait.getName(components, backgrounds[i - 1]), bgCounts[i]);
-    }
-    console.log("\n");
-
-    for (uint i = 1; i <= colors.length; i++) {
-      console.log("%s: %d", LibRegistryTrait.getName(components, colors[i - 1]), colorCounts[i]);
-    }
-    console.log("\n");
   }
 
   ////////////////
@@ -200,7 +143,7 @@ contract BatchMinterTest is SetupTemplate {
   ////////////////
 
   function testUtils() public {
-    initStockTraits();
+    _initStockTraits();
 
     TraitStats[] memory stats = _utils.getAllStats(components);
     assertEq(stats.length, 70);
@@ -217,7 +160,7 @@ contract BatchMinterTest is SetupTemplate {
   }
 
   function testSetTraits() public {
-    initStockTraits();
+    _initStockTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
@@ -225,7 +168,7 @@ contract BatchMinterTest is SetupTemplate {
   }
 
   function testSetStatsLive() public {
-    initStockTraits();
+    _initStockTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
@@ -237,7 +180,7 @@ contract BatchMinterTest is SetupTemplate {
   // HELPER FUNCTIONS //
   //////////////////////
 
-  function _calcStats(uint petID) internal view returns (uint[] memory) {
+  function _calcStatsFromTraits(uint petID) internal view returns (uint[] memory) {
     uint256 health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
     uint256 power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
     uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");

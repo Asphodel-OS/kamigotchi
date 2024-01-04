@@ -163,6 +163,7 @@ export type { TradeAddToSystem } from "./TradeAddToSystem";
 export type { TradeCancelSystem } from "./TradeCancelSystem";
 export type { TradeConfirmSystem } from "./TradeConfirmSystem";
 export type { TradeInitiateSystem } from "./TradeInitiateSystem";
+export type { TraitHandler } from "./TraitHandler";
 export type { TypeComponent } from "./TypeComponent";
 export type { Uint256ArrayBareComponent } from "./Uint256ArrayBareComponent";
 export type { Uint256BareComponent } from "./Uint256BareComponent";
@@ -371,6 +372,7 @@ export { TradeAddToSystem__factory } from "./factories/TradeAddToSystem__factory
 export { TradeCancelSystem__factory } from "./factories/TradeCancelSystem__factory";
 export { TradeConfirmSystem__factory } from "./factories/TradeConfirmSystem__factory";
 export { TradeInitiateSystem__factory } from "./factories/TradeInitiateSystem__factory";
+export { TraitHandler__factory } from "./factories/TraitHandler__factory";
 export { TypeComponent__factory } from "./factories/TypeComponent__factory";
 export { Uint256ArrayBareComponent__factory } from "./factories/Uint256ArrayBareComponent__factory";
 export { Uint256BareComponent__factory } from "./factories/Uint256BareComponent__factory";

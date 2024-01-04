@@ -59,7 +59,13 @@
         }
       ],
       "name": "batchMint",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -80,6 +86,31 @@
         }
       ],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTraitWeights",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256[]",
+              "name": "keys",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "weights",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct TraitWeights[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -159,6 +190,7 @@
   "methodIdentifiers": {
     "batchMint(address,uint256)": "43508b05",
     "execute(bytes)": "09c5eabe",
+    "getTraitWeights()": "1a8801aa",
     "owner()": "8da5cb5b",
     "setStats((uint8,uint8,uint8,uint8,uint8)[])": "e88f989d",
     "setTraits()": "c061a3b5",

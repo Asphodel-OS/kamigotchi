@@ -27,6 +27,16 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export type TraitWeightsStruct = {
+  keys: PromiseOrValue<BigNumberish>[];
+  weights: PromiseOrValue<BigNumberish>[];
+};
+
+export type TraitWeightsStructOutput = [BigNumber[], BigNumber[]] & {
+  keys: BigNumber[];
+  weights: BigNumber[];
+};
+
 export type TraitStatsStruct = {
   health: PromiseOrValue<BigNumberish>;
   power: PromiseOrValue<BigNumberish>;
@@ -53,6 +63,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
   functions: {
     "batchMint(address,uint256)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
+    "getTraitWeights()": FunctionFragment;
     "owner()": FunctionFragment;
     "setStats((uint8,uint8,uint8,uint8,uint8)[])": FunctionFragment;
     "setTraits()": FunctionFragment;
@@ -63,6 +74,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "batchMint"
       | "execute"
+      | "getTraitWeights"
       | "owner"
       | "setStats"
       | "setTraits"
@@ -77,6 +89,10 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTraitWeights",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setStats",
@@ -90,6 +106,10 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTraitWeights",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setStats", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setTraits", data: BytesLike): Result;
@@ -155,6 +175,10 @@ export interface _721BatchMinterSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getTraitWeights(
+      overrides?: CallOverrides
+    ): Promise<[TraitWeightsStructOutput[]]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     setStats(
@@ -183,6 +207,10 @@ export interface _721BatchMinterSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getTraitWeights(
+    overrides?: CallOverrides
+  ): Promise<TraitWeightsStructOutput[]>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   setStats(
@@ -204,12 +232,16 @@ export interface _721BatchMinterSystem extends BaseContract {
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber[]>;
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getTraitWeights(
+      overrides?: CallOverrides
+    ): Promise<TraitWeightsStructOutput[]>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -249,6 +281,8 @@ export interface _721BatchMinterSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getTraitWeights(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     setStats(
@@ -277,6 +311,8 @@ export interface _721BatchMinterSystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getTraitWeights(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
