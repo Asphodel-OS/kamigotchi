@@ -6,7 +6,9 @@ import "forge-std/console.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { System } from "solecs/System.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
+import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
@@ -18,7 +20,9 @@ import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexCol
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
+import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
+import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
@@ -104,6 +108,7 @@ abstract contract TraitHandler {
   ViolenceComponent internal immutable violenceComp;
   HarmonyComponent internal immutable harmonyComp;
   SlotsComponent internal immutable slotsComp;
+  RarityComponent internal immutable rarityComp;
 
   constructor(address _components) {
     components = IUintComp(_components);
@@ -121,6 +126,7 @@ abstract contract TraitHandler {
     violenceComp = ViolenceComponent(getAddressById(components, ViolenceCompID));
     harmonyComp = HarmonyComponent(getAddressById(components, HarmonyCompID));
     slotsComp = SlotsComponent(getAddressById(components, SlotsCompID));
+    rarityComp = RarityComponent(getAddressById(components, RarityCompID));
   }
 
   /////////////////////
@@ -172,66 +178,40 @@ abstract contract TraitHandler {
   // MEMOIZED FUNCS //
   ////////////////////
 
-  /// @dev sets trait weights & offset only works once; dont want to rug rarities later
+  /// @dev sets trait weights, stats, & offset only works once; dont want to rug rarities later
   function _setTraits() internal {
     require(traitWeights.length == 0, "already set"); // assumes all other keys are set
 
     uint256[] memory offsets = new uint256[](5);
     offsets[0] = 0;
 
-    // scoping is used to save memory while execution
-    {
-      // face
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
-        components
-      );
+    IUintComp[] memory traitComps = new IUintComp[](5);
+    traitComps[0] = indexFaceComp;
+    traitComps[1] = indexHandComp;
+    traitComps[2] = indexBodyComp;
+    traitComps[3] = indexBackgroundComp;
+    traitComps[4] = indexColorComp;
+
+    // get indices, rarities, and stats for each trait type
+    for (uint256 i; i < 5; i++) {
+      uint256[] memory ids = queryTraitsOfType(traitComps[i]);
+      uint256 length = ids.length;
+
+      uint256[] memory keys = new uint256[](length);
+      uint256[] memory weights = new uint256[](length);
+
+      for (uint256 j; j < length; j++) {
+        keys[j] = traitComps[i].getValue(ids[j]);
+        weights[j] = rarityComp.has(ids[j]) ? 3 ** (rarityComp.getValue(ids[j]) - 1) : 0;
+
+        traitStats.push(_getTraitStats(ids[j]));
+      }
+
       traitWeights.push(TraitWeights(keys, weights));
-      offsets[1] = keys.length;
-    }
-    {
-      // hand
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
-        components
-      );
-      traitWeights.push(TraitWeights(keys, weights));
-      offsets[2] = keys.length + offsets[1];
-    }
-    {
-      // body
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
-        components
-      );
-      traitWeights.push(TraitWeights(keys, weights));
-      offsets[3] = keys.length + offsets[2];
-    }
-    {
-      // background
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
-        components
-      );
-      traitWeights.push(TraitWeights(keys, weights));
-      offsets[4] = keys.length + offsets[3];
-    }
-    {
-      // color
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
-        components
-      );
-      traitWeights.push(TraitWeights(keys, weights));
+      if (i < 4) offsets[i + 1] = length + offsets[i];
     }
 
     offsetsSum = LibRandom.packArray(offsets, OFFSET_BIT_SIZE);
-  }
-
-  function getTraitWeights() external view returns (TraitWeights[] memory) {
-    return traitWeights;
-  }
-
-  /// @notice set trait stats, in a struct. only works once
-  /// @dev need to format locally. likely a solidity script
-  function _setStats(TraitStats[] memory stats) internal {
-    require(traitStats.length == 0, "already set");
-    for (uint256 i; i < stats.length; i++) traitStats.push(stats[i]);
   }
 
   ////////////////////
@@ -267,6 +247,27 @@ abstract contract TraitHandler {
       delta.slots += curr.slots;
     }
   }
+
+  function _getTraitStats(uint256 id) public returns (TraitStats memory) {
+    return
+      TraitStats(
+        uint8(healthComp.has(id) ? healthComp.getValue(id) : 0),
+        uint8(powerComp.has(id) ? powerComp.getValue(id) : 0),
+        uint8(violenceComp.has(id) ? violenceComp.getValue(id) : 0),
+        uint8(harmonyComp.has(id) ? harmonyComp.getValue(id) : 0),
+        uint8(slotsComp.has(id) ? slotsComp.getValue(id) : 0)
+      );
+  }
+
+  /// @notice query all traits of a type (ie face) in registry. returns entityIDs
+  function queryTraitsOfType(IUintComp comp) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](3);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
+    fragments[2] = QueryFragment(QueryType.Has, comp, "");
+    uint256[] memory results = LibQuery.query(fragments);
+    return results;
+  }
 }
 
 /** @notice
@@ -290,6 +291,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
   MediaURIComponent internal immutable mediaURIComp;
+  NameComponent internal immutable nameComp;
   StateComponent internal immutable stateComp;
   TimeStartComponent internal immutable timeStartComp;
   TimeLastComponent internal immutable timeLastComp;
@@ -308,6 +310,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
     mediaURIComp = MediaURIComponent(getAddressById(components, MediaURICompID));
+    nameComp = NameComponent(getAddressById(components, NameCompID));
     stateComp = StateComponent(getAddressById(components, StateCompID));
     timeStartComp = TimeStartComponent(getAddressById(components, TimeStartCompID));
     timeLastComp = TimeLastComponent(getAddressById(components, TimeLastCompID));
@@ -334,6 +337,10 @@ contract _721BatchMinterSystem is System, TraitHandler {
     return ids;
   }
 
+  function setTraits() external onlyOwner {
+    super._setTraits();
+  }
+
   /////////////////////
   // TOP LEVEL LOGIC //
   /////////////////////
@@ -348,8 +355,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
       canNameComp.set(id); // normally after reveal
       isPetComp.set(id);
       indexPetComp.set(id, startIndex + i);
-      // mediaURIComp.set(id, UNREVEALED_URI);
-      // stateComp.set(id, string("UNREVEALED"));
+      nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
       stateComp.set(id, string("721_EXTERNAL")); // normally after reveal
       timeStartComp.set(id, block.timestamp);
       timeLastComp.set(id, block.timestamp); // normally after reveal
@@ -384,22 +390,12 @@ contract _721BatchMinterSystem is System, TraitHandler {
     }
   }
 
-  function setTraits() external onlyOwner {
-    super._setTraits();
-  }
-
-  function setStats(TraitStats[] memory stats) external onlyOwner {
-    super._setStats(stats);
-  }
-
   /// @notice batch mint pets, replaces LibPet721
   function mint721s(address to, uint256 startIndex, uint256 amount) internal {
     uint256[] memory indices = new uint256[](amount);
     for (uint256 i; i < amount; i++) indices[i] = startIndex + i;
     pet721.mintBatch(to, indices);
   }
-
-  /// @notice set stats after reveal
 
   ////////////////////
   // INTERNAL LOGIC //

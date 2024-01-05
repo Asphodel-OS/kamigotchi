@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.s.sol";
 
-import { BatchMintUtils } from "utils/BatchMintUtils.sol";
 import { TraitWeights, TraitStats } from "systems/_721BatchMinterSystem.sol";
 import { ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
@@ -12,12 +11,9 @@ import { ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 
 contract BatchMinterTest is SetupTemplate {
-  BatchMintUtils internal _utils;
-
   function setUp() public override {
     super.setUp();
 
-    _utils = new BatchMintUtils(components);
     vm.roll(_currBlock++);
   }
 
@@ -30,7 +26,6 @@ contract BatchMinterTest is SetupTemplate {
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
     vm.stopPrank();
 
     vm.prank(deployer);
@@ -49,7 +44,6 @@ contract BatchMinterTest is SetupTemplate {
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
     vm.stopPrank();
 
     uint numPets = 100;
@@ -82,7 +76,6 @@ contract BatchMinterTest is SetupTemplate {
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
     vm.stopPrank();
 
     vm.prank(deployer);
@@ -94,7 +87,6 @@ contract BatchMinterTest is SetupTemplate {
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
     vm.stopPrank();
 
     uint256 numPets = 1000;
@@ -142,37 +134,11 @@ contract BatchMinterTest is SetupTemplate {
   // UTIL TESTS //
   ////////////////
 
-  function testUtils() public {
-    _initStockTraits();
-
-    TraitStats[] memory stats = _utils.getAllStats(components);
-    assertEq(stats.length, 70);
-  }
-
-  function testSetStats() public {
-    TraitStats[] memory stats = new TraitStats[](2);
-    stats[0] = TraitStats(1, 2, 3, 4, 5);
-    stats[1] = TraitStats(6, 7, 8, 9, 10);
-
-    vm.startPrank(deployer);
-    __721BatchMinterSystem.setStats(stats);
-    vm.stopPrank();
-  }
-
   function testSetTraits() public {
     _initStockTraits();
 
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    vm.stopPrank();
-  }
-
-  function testSetStatsLive() public {
-    _initStockTraits();
-
-    vm.startPrank(deployer);
-    __721BatchMinterSystem.setTraits();
-    __721BatchMinterSystem.setStats(_utils.getAllStats(components));
     vm.stopPrank();
   }
 

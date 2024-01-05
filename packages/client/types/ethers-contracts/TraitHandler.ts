@@ -7,6 +7,8 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -21,30 +23,42 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type TraitWeightsStruct = {
-  keys: PromiseOrValue<BigNumberish>[];
-  weights: PromiseOrValue<BigNumberish>[];
+export type TraitStatsStruct = {
+  health: PromiseOrValue<BigNumberish>;
+  power: PromiseOrValue<BigNumberish>;
+  violence: PromiseOrValue<BigNumberish>;
+  harmony: PromiseOrValue<BigNumberish>;
+  slots: PromiseOrValue<BigNumberish>;
 };
 
-export type TraitWeightsStructOutput = [BigNumber[], BigNumber[]] & {
-  keys: BigNumber[];
-  weights: BigNumber[];
+export type TraitStatsStructOutput = [
+  number,
+  number,
+  number,
+  number,
+  number
+] & {
+  health: number;
+  power: number;
+  violence: number;
+  harmony: number;
+  slots: number;
 };
 
 export interface TraitHandlerInterface extends utils.Interface {
   functions: {
-    "getTraitWeights()": FunctionFragment;
+    "_getTraitStats(uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "getTraitWeights"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "_getTraitStats"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "getTraitWeights",
-    values?: undefined
+    functionFragment: "_getTraitStats",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getTraitWeights",
+    functionFragment: "_getTraitStats",
     data: BytesLike
   ): Result;
 
@@ -78,28 +92,37 @@ export interface TraitHandler extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getTraitWeights(
-      overrides?: CallOverrides
-    ): Promise<[TraitWeightsStructOutput[]]>;
+    _getTraitStats(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  getTraitWeights(
-    overrides?: CallOverrides
-  ): Promise<TraitWeightsStructOutput[]>;
+  _getTraitStats(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    getTraitWeights(
+    _getTraitStats(
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<TraitWeightsStructOutput[]>;
+    ): Promise<TraitStatsStructOutput>;
   };
 
   filters: {};
 
   estimateGas: {
-    getTraitWeights(overrides?: CallOverrides): Promise<BigNumber>;
+    _getTraitStats(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getTraitWeights(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _getTraitStats(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }
