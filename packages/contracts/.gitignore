@@ -17,4 +17,5 @@ broadcast/
 out/
 src/libraries/LibDeploy.sol
 src/test/utils/TestSetupImports.sol
+src/test/Load.t.sol
 types/

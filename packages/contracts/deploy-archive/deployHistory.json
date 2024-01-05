@@ -835,7 +835,7 @@
       ]
     },
     {
-      "last deployed": "26th December 2023",
+      "last deployed": "5th January 2024",
       "name": "Pet721ProxySystem",
       "writeAccess": []
     },
@@ -1133,6 +1133,13 @@
         "TypeComponent",
         "ValueComponent",
         "ViolenceComponent"
+      ]
+    },
+    {
+      "last deployed": "5th January 2024",
+      "name": "_721BatchMinterSystem",
+      "writeAccess": [
+        "*"
       ]
     }
   ],

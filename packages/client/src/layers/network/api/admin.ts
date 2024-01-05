@@ -27,6 +27,19 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
+  // BATCH MINTER
+
+  async function initBatchMinter() {
+    await sleepIf();
+    return systems['system.Pet721.BatchMint'].setTraits();
+  }
+
+  async function batchMint(addr: string, amount: number) {
+    await sleepIf();
+    return systems['system.Pet721.BatchMint'].batchMint(addr, amount);
+  }
+
+  /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
@@ -511,6 +524,10 @@ export function createAdminAPI(systems: any) {
 
   return {
     giveCoins,
+    batchMinter: {
+      init: initBatchMinter,
+      mint: batchMint,
+    },
     bridge: {
       cancel: cancelBridgeTx,
     },

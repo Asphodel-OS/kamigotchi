@@ -25,6 +25,7 @@ export function setUpWorldAPI(systems: any) {
     await initSkills(api);
     await initTraits(api);
     await initRelationships(api);
+    // await initSudoPool(api, '0x000000000000000000000000000000000000dead');
 
     if (!process.env.MODE || process.env.MODE == 'DEV') {
       await initLocalConfig(api);
@@ -35,6 +36,21 @@ export function setUpWorldAPI(systems: any) {
       'load_bearer',
       'fudge',
     );
+  }
+
+  ///////////////////
+  // BATCH MINTER
+
+  async function initSudoPool(api: AdminAPI, addr: string) {
+    await api.batchMinter.init();
+
+    const numToMint = 1111;
+    const intervals = 10;
+    for (let i = 0; i < numToMint; i += intervals) {
+      await sleepIf();
+      await api.batchMinter.mint(addr, intervals);
+    }
+    await api.batchMinter.mint(addr, numToMint % intervals);
   }
 
   ///////////////////
@@ -715,6 +731,9 @@ export function setUpWorldAPI(systems: any) {
     skill: {
       init: () => initSkills(createAdminAPI(systems)),
       deletes: (indices: number[]) => deleteSkills(createAdminAPI(systems), indices),
+    },
+    sudo: {
+      init: (addr: string) => initSudoPool(createAdminAPI(systems), addr),
     },
     traits: {
       init: () => initTraits(createAdminAPI(systems)),
