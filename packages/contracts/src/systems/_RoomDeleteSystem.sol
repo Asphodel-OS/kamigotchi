@@ -17,7 +17,7 @@ contract _RoomDeleteSystem is System {
     uint256 location = abi.decode(arguments, (uint256));
 
     uint256 roomID = LibRoom.get(components, location);
-    require(LibRoom.get(components, location) != 0, "Room: location does not exist");
+    require(roomID != 0, "Room: location does not exist");
 
     LibRoom.remove(components, roomID);
 

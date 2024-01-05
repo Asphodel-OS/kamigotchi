@@ -204,7 +204,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing boody trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setBody(
     IUintComp components,
     uint256 bodyIndex,
@@ -248,7 +248,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing background trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setBackground(
     IUintComp components,
     uint256 backgroundIndex,
@@ -288,7 +288,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing color trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setColor(
     IUintComp components,
     uint256 colorIndex,
@@ -328,7 +328,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing face trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setFace(
     IUintComp components,
     uint256 faceIndex,
@@ -368,7 +368,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing hand trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setHand(
     IUintComp components,
     uint256 handIndex,
@@ -412,7 +412,20 @@ library LibRegistryTrait {
   }
 
   function remove(IUintComp components, uint256 id) internal {
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IndexTraitComponent(getAddressById(components, IndexTraitCompID)).remove(id);
     NameComponent(getAddressById(components, NameCompID)).remove(id);
+    if (isBody(components, id))
+      IndexBodyComponent(getAddressById(components, IndexBodyCompID)).remove(id);
+    if (isBackground(components, id))
+      IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).remove(id);
+    if (isColor(components, id))
+      IndexColorComponent(getAddressById(components, IndexColorCompID)).remove(id);
+    if (isFace(components, id))
+      IndexFaceComponent(getAddressById(components, IndexFaceCompID)).remove(id);
+    if (isHand(components, id))
+      IndexHandComponent(getAddressById(components, IndexHandCompID)).remove(id);
+
     LibStat.removeHealth(components, id);
     LibStat.removePower(components, id);
     LibStat.removeViolence(components, id);
