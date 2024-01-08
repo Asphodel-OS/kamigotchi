@@ -110,7 +110,7 @@ contract FeedingTest is SetupTemplate {
       for (uint j = 0; j < _listingIDs.length; j++) {
         foodIndex = _getListingFoodIndex(_listingIDs[j]);
         for (uint k = 0; k < numPets; k++) {
-          vm.expectRevert("Pet: not urs");
+          vm.expectRevert("PetFeed: pet not urs");
           _PetFeedSystem.executeTyped(petIDs[k], foodIndex);
         }
       }
@@ -168,7 +168,7 @@ contract FeedingTest is SetupTemplate {
     // check we CANNOT revive pets from other accounts
     for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: not urs");
+        vm.expectRevert("PetRevive: pet not urs");
         vm.prank(_getOperator(i));
         _PetReviveSystem.executeTyped(petIDs[j], reviveIndex);
       }
@@ -220,7 +220,7 @@ contract FeedingTest is SetupTemplate {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: must be in same room");
+        vm.expectRevert("PetFeed: pet must be in same room");
         _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
       }
     }
@@ -233,7 +233,7 @@ contract FeedingTest is SetupTemplate {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: must be in same room");
+        vm.expectRevert("PetFeed: pet must be in same room");
         _PetFeedSystem.executeTyped(petIDs[j], foodIndex);
       }
     }
@@ -379,7 +379,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("Pet: must be dead");
+      vm.expectRevert("PetRevive: pet not dead");
       _PetReviveSystem.executeTyped(petIDs[i], reviveIndex);
     }
 
@@ -389,7 +389,7 @@ contract FeedingTest is SetupTemplate {
       productionIDs[i] = _startProduction(petIDs[i], _nodeID);
       _fastForward(_idleRequirement);
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("Pet: must be dead");
+      vm.expectRevert("PetRevive: pet not dead");
       _PetReviveSystem.executeTyped(petIDs[i], reviveIndex);
     }
 
@@ -397,7 +397,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(1 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("Pet: must be dead");
+      vm.expectRevert("PetRevive: pet not dead");
       _PetReviveSystem.executeTyped(petIDs[i], reviveIndex);
     }
 
@@ -405,7 +405,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(100 hours);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("Pet: must be dead");
+      vm.expectRevert("PetRevive: pet not dead");
       _PetReviveSystem.executeTyped(petIDs[i], reviveIndex);
     }
 
@@ -430,7 +430,7 @@ contract FeedingTest is SetupTemplate {
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
       vm.prank(_getOperator(playerIndex));
-      vm.expectRevert("Pet: must be dead");
+      vm.expectRevert("PetRevive: pet not dead");
       _PetReviveSystem.executeTyped(petIDs[i], reviveIndex);
     }
   }
