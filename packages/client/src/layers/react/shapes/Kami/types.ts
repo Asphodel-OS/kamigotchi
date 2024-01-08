@@ -71,7 +71,7 @@ export interface Options {
 // get a Kami from its EnityIndex. includes options for which data to include
 export const getKami = (
   layers: Layers,
-  index: EntityIndex,
+  entityIndex: EntityIndex,
   options?: Options
 ): Kami => {
   const {
@@ -111,31 +111,31 @@ export const getKami = (
 
   // populate the base Kami data
   let kami: Kami = {
-    id: world.entities[index],
-    index: getComponentValue(PetIndex, index)?.value as number,
-    entityIndex: index,
-    name: getComponentValue(Name, index)?.value as string,
-    uri: getComponentValue(MediaURI, index)?.value as string,
-    level: (getComponentValue(Level, index)?.value ?? 1 as number) * 1,
+    id: world.entities[entityIndex],
+    index: getComponentValue(PetIndex, entityIndex)?.value as number,
+    entityIndex,
+    name: getComponentValue(Name, entityIndex)?.value as string,
+    uri: getComponentValue(MediaURI, entityIndex)?.value as string,
+    level: (getComponentValue(Level, entityIndex)?.value ?? 1 as number) * 1,
     experience: {
-      current: (getComponentValue(Experience, index)?.value ?? 0 as number) * 1,
+      current: (getComponentValue(Experience, entityIndex)?.value ?? 0 as number) * 1,
       threshold: 0,
     },
-    health: (getComponentValue(HealthCurrent, index)?.value as number) * 1,
+    health: (getComponentValue(HealthCurrent, entityIndex)?.value as number) * 1,
     healthRate: 0,
-    state: getComponentValue(State, index)?.value as string,
-    namable: getComponentValue(CanName, index)?.value as boolean,
+    state: getComponentValue(State, entityIndex)?.value as string,
+    namable: getComponentValue(CanName, entityIndex)?.value as boolean,
     time: {
       cooldown: {
-        last: (getComponentValue(LastActionTime, index)?.value as number) * 1,
+        last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
         requirement: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
       },
-      last: (getComponentValue(LastTime, index)?.value as number) * 1,
-      start: (getComponentValue(StartTime, index)?.value as number) * 1,
+      last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
+      start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
-    skillPoints: (getComponentValue(SkillPoint, index)?.value ?? 0 as number) * 1,
-    stats: getStats(layers, index),
-    bonuses: getBonuses(layers, index),
+    skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? 0 as number) * 1,
+    stats: getStats(layers, entityIndex),
+    bonuses: getBonuses(layers, entityIndex),
     bonusStats: {
       health: 0,
       harmony: 0,
@@ -162,7 +162,7 @@ export const getKami = (
 
   // populate Account
   if (options?.account) {
-    const accountID = getComponentValue(AccountID, index)?.value as EntityID;
+    const accountID = getComponentValue(AccountID, entityIndex)?.value as EntityID;
     const accountIndex = world.entityToIndex.get(accountID);
     if (accountIndex) kami.account = getAccount(layers, accountIndex);
   }
@@ -221,7 +221,7 @@ export const getKami = (
   if (options?.traits) {
     // gets registry entity for a trait
     const traitPointer = (type: Component) => {
-      const traitIndex = getComponentValue(type, index)?.value as number;
+      const traitIndex = getComponentValue(type, entityIndex)?.value as number;
       return Array.from(
         runQuery([
           Has(TraitIndex),

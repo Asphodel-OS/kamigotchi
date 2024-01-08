@@ -72,7 +72,9 @@ export const getBonusValue = (layers: Layers, holderID: EntityID, type: string):
     ])
   );
 
+  // NOTE: different bonus types have different default values, so we return undefined when missing
+  // the caller must determine what the actual value is when the bonus is missing
   return results.length > 0
     ? getComponentValue(Value, results[0])?.value as number | undefined
-    : 0;
+    : undefined;
 }
