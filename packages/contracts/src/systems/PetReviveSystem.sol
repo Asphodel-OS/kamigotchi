@@ -23,12 +23,12 @@ contract PetReviveSystem is System {
 
     // standard checks (ownership, cooldown, state)
     require(accountID != 0, "PetRevive: no account");
-    require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
-    require(LibPet.isDead(components, id), "Pet: must be dead");
+    require(LibPet.getAccount(components, id) == accountID, "PetRevive: pet not urs");
+    require(LibPet.isDead(components, id), "PetRevive: pet not dead");
 
     // find the registry entry
     uint256 registryID = LibRegistryItem.getByReviveIndex(components, reviveIndex);
-    require(registryID != 0, "RegistryItem: no such revive");
+    require(registryID != 0, "PetRevive: not a revive");
 
     // decrement item from inventory
     uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);

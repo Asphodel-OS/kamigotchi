@@ -26,17 +26,17 @@ contract ProductionCollectSystem is System {
     uint256 petID = LibProduction.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "ProductionCollect: no account");
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.canAct(components, petID), "Pet: on cooldown");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    require(accountID != 0, "FarmCollect: no account");
+    require(LibPet.getAccount(components, petID) == accountID, "FarmCollect: pet not urs");
+    require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
+    require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");
 
     // health check
     LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), "Pet: starving..");
+    require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
     require(
       LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "Node: too far"
+      "FarmCollect: node too far"
     );
 
     // claim balance and increase experience

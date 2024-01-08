@@ -29,19 +29,19 @@ contract ProductionStopSystem is System {
     uint256 petID = LibProduction.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "ProductionStop: no account");
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.canAct(components, petID), "Pet: on cooldown");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    require(accountID != 0, "FarmStop: no account");
+    require(LibPet.getAccount(components, petID) == accountID, "FarmStop: pet not urs");
+    require(LibPet.isHarvesting(components, petID), "FarmStop: pet must be harvesting");
+    require(!LibPet.onCooldown(components, petID), "FarmStop: pet on cooldown");
 
     // health check
     LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), "Pet: starving..");
+    require(LibPet.isHealthy(components, petID), "FarmStop: pet starving..");
 
     // location check
     require(
       LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "Node: too far"
+      "FarmStop: node too far"
     );
 
     // claim balance and increase experience
