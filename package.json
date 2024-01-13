@@ -8,7 +8,7 @@
     "packages/client"
   ],
   "scripts": {
-    "dev": "run-pty % yarn dev:node % yarn dev:client % yarn dev:contracts",
+    "dev": "run-pty % yarn contracts:node % yarn client:dev % yarn contracts:dev",
     "client:build": "yarn workspace client run build",
     "client:dev": "yarn workspace client run dev",
     "client:start": "yarn workspace client run start",
