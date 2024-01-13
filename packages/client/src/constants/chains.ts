@@ -70,4 +70,4 @@ const chainConfigs: Map<string, Chain> = new Map([
   ['OPSEP', opSepolia],
 ]);
 
-export const defaultChain = chainConfigs.get(import.meta.env.MODE ?? '')!;
+export const defaultChain = chainConfigs.get(import.meta.env.MODE) ?? localhost;
