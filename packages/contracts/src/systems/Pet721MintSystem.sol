@@ -51,8 +51,9 @@ contract Pet721MintSystem is System {
       petIDs[i] = petID;
     }
 
+    // standard logging and tracking
     LibAccount.logIncPetsMinted(world, components, accountID, amount);
-
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(petIDs);
   }
 

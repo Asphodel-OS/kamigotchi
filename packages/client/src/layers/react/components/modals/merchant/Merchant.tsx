@@ -3,11 +3,12 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { Listings } from './Listings';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { MusuRow } from './MusuRow';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Merchant, getMerchantByIndex } from 'layers/react/shapes/Merchant';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -20,7 +21,7 @@ export function registerMerchantModal() {
       colStart: 30,
       colEnd: 70,
       rowStart: 20,
-      rowEnd: 60,
+      rowEnd: 70,
     },
 
     // Requirement (Data Manangement)
@@ -29,6 +30,7 @@ export function registerMerchantModal() {
         network: {
           components: {
             AccountID,
+            Coin,
             Description,
             IsListing,
             IsNPC,
@@ -42,6 +44,7 @@ export function registerMerchantModal() {
 
       return merge(
         AccountID.update$,
+        Coin.update$,
         Description.update$,
         IsListing.update$,
         IsNPC.update$,
@@ -52,7 +55,7 @@ export function registerMerchantModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(layers, { inventory: true });
-          const { npcIndex } = useSelectedEntities.getState();
+          const { npcIndex } = useSelected.getState();
           const merchant = getMerchantByIndex(layers, npcIndex);
 
           return {
@@ -69,7 +72,7 @@ export function registerMerchantModal() {
     // Render
     ({ layers, data }) => {
       // console.log('mMerchant: data', data);
-      const { npcIndex } = useSelectedEntities();
+      const { npcIndex } = useSelected();
       const [merchant, setMerchant] = useState<Merchant>(data.merchant);
 
       // updates from component subscription updates
@@ -87,14 +90,15 @@ export function registerMerchantModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='merchant'
           divName='merchant'
           header={<Title>{`${merchant?.name}'s Shop`}</Title>}
+          footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit
         >
           <Listings listings={merchant?.listings} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     })
 }

@@ -29,7 +29,7 @@ import type {
 export interface AccountRegisterSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(address,string)": FunctionFragment;
+    "executeTyped(address,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -48,7 +48,11 @@ export interface AccountRegisterSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -121,6 +125,7 @@ export interface AccountRegisterSystem extends BaseContract {
     executeTyped(
       operator: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      food: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -140,6 +145,7 @@ export interface AccountRegisterSystem extends BaseContract {
   executeTyped(
     operator: PromiseOrValue<string>,
     name: PromiseOrValue<string>,
+    food: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -159,6 +165,7 @@ export interface AccountRegisterSystem extends BaseContract {
     executeTyped(
       operator: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      food: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -190,6 +197,7 @@ export interface AccountRegisterSystem extends BaseContract {
     executeTyped(
       operator: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      food: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -210,6 +218,7 @@ export interface AccountRegisterSystem extends BaseContract {
     executeTyped(
       operator: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      food: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

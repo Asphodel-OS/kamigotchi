@@ -2,50 +2,50 @@ import React from 'react';
 import styled from 'styled-components';
 import { Tooltip } from './Tooltip';
 
-import { dataStore, VisibleModals } from 'layers/react/store/createStore';
+import { useVisibility, Modals } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
-  targetDiv: keyof VisibleModals;
-  children: React.ReactNode;
-  text: string;
+  image: string,
+  tooltip: string;
+  targetDiv: keyof Modals;
   visible: boolean;
-  hideModals?: Partial<VisibleModals>;
+  hideModals?: Partial<Modals>;
+  onClick?: () => void;
 }
 
-// MenuButton renders a button that toggles a target modal. It supports a generic
-// input of children, though this will usually just be text.
+// MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
-  const { id, children, text, hideModals } = props;
+  const { modals, setModals } = useVisibility();
+  const { id, image, tooltip, targetDiv, visible, hideModals, onClick } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
     playClick();
-    const toggleModal = hideModals ? hideModals : {};
-    setVisibleModals({
-      ...visibleModals,
-      ...toggleModal,
-      [props.targetDiv]: !visibleModals[props.targetDiv],
-    });
+    if (onClick) onClick();
+
+    const isModalOpen = modals[targetDiv];
+    let nextModals = { ...modals, [targetDiv]: !isModalOpen };
+    if (!isModalOpen) nextModals = { ...nextModals, ...hideModals };
+    setModals(nextModals);
   };
 
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
     event.stopPropagation();
   };
-  const element = document.getElementById(props.id);
+  const element = document.getElementById(id);
   element?.addEventListener('mousedown', handleClicks);
 
   return (
-    <Tooltip text={[text]}>
+    <Tooltip text={[tooltip]}>
       <div id={id}>
         <Button
-          style={{ display: props.visible ? 'flex' : 'none' }}
+          style={{ display: visible ? 'flex' : 'none' }}
           onClick={handleToggle}
         >
-          {children}
+          <Image src={image} alt={id} />
         </Button>
       </div>
     </Tooltip>
@@ -61,4 +61,9 @@ const Button = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
+`;
+
+const Image = styled.img`
+  height: 100%; 
+  width: auto;
 `;

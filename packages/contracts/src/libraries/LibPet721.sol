@@ -70,6 +70,26 @@ library LibPet721 {
     token.mint(to, index);
   }
 
+  /// @notice mints multiple pets in game
+  function mintInGameBatch(IWorld world, uint256 startIndex, uint256 amt) internal {
+    uint256[] memory ids = new uint256[](amt);
+    for (uint256 i; i < amt; i++) {
+      ids[i] = startIndex + i;
+    }
+    Pet721 token = getContract(world);
+    token.mintBatch(address(token), ids);
+  }
+
+  /// @notice mints multiple pets out of game
+  function mintOutGameBatch(IWorld world, address to, uint256 startIndex, uint256 amt) internal {
+    uint256[] memory ids = new uint256[](amt);
+    for (uint256 i; i < amt; i++) {
+      ids[i] = startIndex + i;
+    }
+    Pet721 token = getContract(world);
+    token.mintBatch(to, ids);
+  }
+
   /// @notice  stakes a kami, out of game -> in game ('bridging in')
   /// @dev     checks are performed in system
   /// @param   world     world contract
@@ -225,6 +245,8 @@ library LibPet721 {
   /// @return  string      json in UTF-8 format
   function getJsonUtf(IUintComp components, uint256 petIndex) public view returns (string memory) {
     uint256 petID = LibPet.indexToID(components, petIndex);
+
+    /// TODO: add affinities somewhere
 
     return
       string(

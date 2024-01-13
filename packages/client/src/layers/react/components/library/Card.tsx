@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface Props {
-  image: string;
+  image?: string;
   content: React.ReactNode;
   imageOnClick?: () => void;
   titleBarContent?: React.ReactNode;

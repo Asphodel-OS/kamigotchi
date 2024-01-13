@@ -47,8 +47,8 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     _schedule(msg.sender, value, block.timestamp);
     id = LibTimelock.create(world, components, accountID, msg.sender, value, block.timestamp);
 
-    // updating account
-    LibAccount.updateLastBlock(components, accountID);
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
   }
 
   /// @notice executes the withdraw process
@@ -65,9 +65,9 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.withdraw((target), value);
 
-    // updating account
+    // standard logging and tracking
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_WITHDRAW", value);
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
   }
 
   /// @notice cancels a transaction, either by Admin (if tx is suspicious) or by user

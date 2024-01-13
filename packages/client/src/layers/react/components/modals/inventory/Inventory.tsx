@@ -1,13 +1,14 @@
 import React from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ItemGrid } from './ItemGrid';
+import { MusuRow } from './MusuRow';
+import { inventoryIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { ItemGrid } from './ItemGrid';
 import { Inventory } from 'layers/react/shapes/Inventory';
-import { MusuRow } from './MusuRow';
 
 
 export function registerInventoryModal() {
@@ -16,14 +17,12 @@ export function registerInventoryModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 10,
+      rowStart: 8,
       rowEnd: 75,
     },
     (layers) => {
       const {
         network: {
-          actions,
-          api: { player },
           components: {
             AccountID,
             Balance,
@@ -51,9 +50,6 @@ export function registerInventoryModal() {
       ).pipe(
         map(() => {
           return {
-            layers,
-            actions: layers.network.actions,
-            api: layers.network.api.player,
             data: {
               account: getAccountFromBurner(layers, { inventory: true }),
             }
@@ -62,8 +58,7 @@ export function registerInventoryModal() {
       );
     },
 
-    ({ layers, actions, api, data }) => {
-      // console.log('mInventory', data);
+    ({ data }) => {
       const getInventories = () => {
         let accInv = data.account.inventories;
         let inventories: Inventory[] = [];
@@ -72,6 +67,7 @@ export function registerInventoryModal() {
         if (accInv?.revives) inventories = inventories.concat(accInv.revives);
         if (accInv?.mods) inventories = inventories.concat(accInv.mods);
         if (accInv?.gear) inventories = inventories.concat(accInv.gear);
+        if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
         if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
 
         return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
@@ -81,26 +77,17 @@ export function registerInventoryModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='inventory-modal'
           divName='inventory'
-          header={<Header key='header'>Inventory</Header>}
+          header={<ModalHeader title='Inventory' icon={inventoryIcon} />}
           footer={<MusuRow key='musu' balance={data.account.coin} />}
           canExit
           overlay
         >
           <ItemGrid key='grid' inventories={getInventories()} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
 }
-
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;

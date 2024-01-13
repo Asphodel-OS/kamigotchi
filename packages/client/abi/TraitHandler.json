@@ -1,0 +1,32 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getTraitWeights",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256[]",
+              "name": "keys",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "weights",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct TraitWeights[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "methodIdentifiers": {
+    "getTraitWeights()": "1a8801aa"
+  }
+}

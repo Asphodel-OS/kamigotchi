@@ -21,6 +21,9 @@ contract AccountSetOperatorSystem is System {
     require(accountID != 0, "Account: does not exist");
 
     LibAccount.setOperator(components, accountID, operator);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(accountID);
   }
 

@@ -24,6 +24,15 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Pet.Revive"].executeTyped(petID, reviveIndex);
   }
 
+  // upgrade a pet's skill
+  function upgradePetSkill(petID: BigNumberish, skillIndex: number) {
+    return systems["system.Pet.Skill.Upgrade"].executeTyped(petID, skillIndex);
+  }
+
+  // use a pet item
+  function usePetItem(petID: BigNumberish, invID: BigNumberish) {
+    return systems["system.Pet.Use.Item"].executeTyped(petID, invID);
+  }
 
   /////////////////
   //   ACCOUNT
@@ -49,8 +58,9 @@ export function createPlayerAPI(systems: any) {
   // @dev registers an account. should be called by Owner wallet
   // @param operatorAddress   address of the Operator wallet
   // @param name              name of the account
-  function registerAccount(operatorAddress: BigNumberish, name: string) {
-    return systems["system.Account.Register"].executeTyped(operatorAddress, name);
+  // @param food              player's reported favorite food 
+  function registerAccount(operatorAddress: BigNumberish, name: string, food: string) {
+    return systems["system.Account.Register"].executeTyped(operatorAddress, name, food);
   }
 
   // @dev renames account. should be called by Owner EOA
@@ -65,6 +75,36 @@ export function createPlayerAPI(systems: any) {
     return systems["system.Account.Set.Operator"].executeTyped(operatorAddress);
   }
 
+  function upgradeAccountSkill(skillIndex: number) {
+    return systems["system.Account.Skill.Upgrade"].executeTyped(skillIndex);
+  }
+
+  /////////////////
+  //  FRIENDS
+
+  // @dev send a friend request 
+  // @param targetAddr owner address of the target account
+  function sendFriendRequest(targetAddr: string) {
+    return systems["system.Friend.Request"].executeTyped(targetAddr);
+  }
+
+  // @dev accept a friend request
+  // @param reqID entityID of the friend request
+  function acceptFriendRequest(reqID: BigNumberish) {
+    return systems["system.Friend.Accept"].executeTyped(reqID);
+  }
+
+  // @dev cancel a friend request, an existing friend, or a block
+  // @param entityID entityID of the friendship entity
+  function cancelFriendship(entityID: BigNumberish) {
+    return systems["system.Friend.Cancel"].executeTyped(entityID);
+  }
+
+  // @dev block an account
+  // @param targetAddr owner address of the target account
+  function blockAccount(targetAddr: string) {
+    return systems["system.Friend.Block"].executeTyped(targetAddr);
+  }
 
   /////////////////
   //   LISTINGS
@@ -82,7 +122,6 @@ export function createPlayerAPI(systems: any) {
   function sellToListing(listingID: BigNumberish, amt: number) {
     return systems["system.Listing.Sell"].executeTyped(listingID, amt);
   }
-
 
   /////////////////
   //   LOOTBOX
@@ -269,6 +308,8 @@ export function createPlayerAPI(systems: any) {
       level: levelPet,
       name: namePet,
       revive: revivePet,
+      use: usePetItem,
+      skill: { upgrade: upgradePetSkill },
     },
     account: {
       fund: fundOperator,
@@ -278,6 +319,15 @@ export function createPlayerAPI(systems: any) {
       set: {
         name: setAccountName,
         operator: setAccountOperator,
+      },
+      skill: { upgrade: upgradeAccountSkill },
+    },
+    social: {
+      friend: {
+        accept: acceptFriendRequest,
+        block: blockAccount,
+        cancel: cancelFriendship,
+        request: sendFriendRequest,
       },
     },
     listing: {

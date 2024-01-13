@@ -8,6 +8,7 @@ import {
 import {
   defineLoadingStateComponent,
   defineNumberArrayComponent,
+  defineTimelockComponent,
 } from "./definitions";
 
 
@@ -34,11 +35,13 @@ export function createComponents(world: World) {
     IsAccount: defineBoolEZ("IsAccount", "component.Is.Account"),
     IsBonus: defineBoolEZ("IsBonus", "component.Is.Bonus"),
     IsConfig: defineBoolEZ("IsConfig", "component.Is.Config"),
+    IsConsumable: defineBoolEZ("IsConsumable", "component.Is.Consumable"),
     IsComplete: defineBoolEZ("IsComplete", "component.Is.Complete"),
     IsData: defineBoolEZ("IsData", "component.Is.Data"),
     IsEffect: defineBoolEZ("IsEffect", "component.Is.Effect"),
     IsEquipped: defineBoolEZ("IsEquipped", "component.Is.Equipped"),
     IsFungible: defineBoolEZ("IsFungible", "component.Is.Fungible"),
+    IsFriendship: defineBoolEZ("IsFriendship", "component.Is.Friendship"),
     IsInventory: defineBoolEZ("IsInventory", "component.Is.Inventory"),
     IsKill: defineBoolEZ("IsKill", "component.Is.Kill"),
     IsListing: defineBoolEZ("IsListing", "component.Is.Listing"),
@@ -78,6 +81,7 @@ export function createComponents(world: World) {
 
     // Indices
     Index: defineNumberEZ("Index", "component.Index"), // generic index
+    AccountIndex: defineNumberEZ("AccountIndex", "component.Index.Account"),
     BackgroundIndex: defineNumberEZ("BackgroundIndex", "component.Index.Background"),
     BodyIndex: defineNumberEZ("BodyIndex", "component.Index.Body"),
     ColorIndex: defineNumberEZ("ColorIndex", "component.Index.Color"),
@@ -91,13 +95,13 @@ export function createComponents(world: World) {
     NodeIndex: defineNumberEZ("NodeIndex", "component.Index.Node"),
     ObjectiveIndex: defineNumberEZ("ObjectiveIndex", "component.Index.Objective"),
     QuestIndex: defineNumberEZ("QuestIndex", "component.Index.Quest"),
-    PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"), // this should be updated to be a number component
+    PetIndex: defineNumberEZ("PetIndex", "component.Index.Pet"),
     RelationshipIndex: defineNumberEZ("RelationshipIndex", "component.Index.Relationship"),
-    ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"), // this should be updated to be a number component
+    ReviveIndex: defineNumberEZ("ReviveIndex", "component.Index.Revive"),
     SkillIndex: defineNumberEZ("SkillIndex", "component.Index.Skill"),
-    TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"), // this should be updated to be a number component
+    TraitIndex: defineNumberEZ("PetIndex", "component.Index.Trait"),
 
-    // Values
+    // Attributes
     Affinity: defineStringEZ("Affinity", "component.Affinity"),
     Balance: defineNumberEZ("Balance", "component.Balance"),
     Balances: defineNumberArrayComponent(world, "Balances", "component.Balances"),
@@ -119,6 +123,7 @@ export function createComponents(world: World) {
     LogicType: defineStringEZ("LogicType", "component.LogicType"),
     Max: defineNumberEZ("Max", "component.Max"),
     Name: defineStringEZ("Name", "component.Name"),
+    QuestPoint: defineNumberEZ("QuestPoint", "component.QuestPoint"),
     Power: defineNumberEZ("Power", "component.Power"),
     PriceBuy: defineNumberEZ("PriceBuy", "component.PriceBuy"),
     PriceSell: defineNumberEZ("PriceSell", "component.PriceSell"),
@@ -142,16 +147,18 @@ export function createComponents(world: World) {
     // Time/Block Tracking
     LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),
     RevealBlock: defineNumberEZ("BlockReveal", "component.Block.Reveal"),
-    LastTime: defineNumberEZ("LastTime", "component.Time.LastAction"),
+    LastActionTime: defineNumberEZ("LastActionTime", "component.Time.LastAction"),
+    LastTime: defineNumberEZ("LastTime", "component.Time.Last"),
     StartTime: defineNumberEZ("StartTime", "component.Time.Start"),
     Time: defineNumberEZ("Time", "component.Time"),
+    Timelock: defineTimelockComponent(world),
 
     // speeeeecial
     CanName: defineBoolEZ("CanName", "component.Can.Name"),
+    FavoriteFood: defineStringEZ("FavoriteFood", "component.Favorite.Food"),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
     OperatorAddress: defineStringEZ("OperatorAddress", "component.Address.Operator"),
     OwnerAddress: defineStringEZ("OwnerAddress", "component.Address.Owner"),
-
   }
 }

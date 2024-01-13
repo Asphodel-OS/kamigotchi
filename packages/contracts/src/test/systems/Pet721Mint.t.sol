@@ -4,9 +4,8 @@ pragma solidity ^0.8.0;
 import "test/utils/SetupTemplate.s.sol";
 
 // Things we want to test for Mint (probably through a dedicated test)
-// - whitelist minting (only one allowed)
-// - single paid minting (multiple times over)
-// - batch paid minting (multiple times over)
+// - Minting through KAMI (Mint20)
+// - (separate test) batch minting to sudo pool
 //
 // For each of the above cases we want to test
 // - proper account allocation of kami

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { useContractRead, useBalance } from 'wagmi';
+import { FetchBalanceResult } from '@wagmi/core';
 import styled from 'styled-components';
-import { GasConstants } from 'constants/gas';
 
 import { abi as Pet721ProxySystemABI } from "abi/Pet721ProxySystem.json"
+import { GasConstants } from 'constants/gas';
 import { Account, getAccountFromBurner } from 'layers/react/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
-import { dataStore } from 'layers/react/store/createStore';
+import { calcStamina, calcStaminaPercent } from 'layers/react/shapes/Account';
+import { getRoomByLocation } from 'layers/react/shapes/Room';
+import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerAccountInfoFixture() {
   registerUIComponent(
@@ -26,22 +29,30 @@ export function registerAccountInfoFixture() {
         network: {
           components: {
             Coin,
+            Location,
             Name,
+            OperatorAddress,
             StaminaCurrent,
             Stamina,
           },
         },
       } = layers;
       return merge(
-        Name.update$,
         Coin.update$,
+        Location.update$,
+        Name.update$,
+        OperatorAddress.update$,
         Stamina.update$,
         StaminaCurrent.update$,
       ).pipe(
         map(() => {
+          const account = getAccountFromBurner(layers);
           return {
             layers,
-            data: { account: getAccountFromBurner(layers) },
+            data: {
+              account,
+              room: getRoomByLocation(layers, account.location)
+            },
           };
         })
       );
@@ -49,8 +60,8 @@ export function registerAccountInfoFixture() {
     ({ layers, data }) => {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const [operatorBal, setOperatorBal] = useState(0);
-      const { visibleButtons } = dataStore();
+      const { account, room } = data;
+      const { fixtures } = useVisibility();
 
       /////////////////
       // TRACKING
@@ -67,16 +78,10 @@ export function registerAccountInfoFixture() {
       }, []);
 
       // Operator Balance
-
-      const { data: rawOperatorBal } = useBalance({
-        address: data.account.operatorEOA as `0x${string}`,
+      const { data: operatorGas } = useBalance({
+        address: account.operatorEOA as `0x${string}`,
         watch: true
       });
-
-      useEffect(() => {
-        const bal = Number(rawOperatorBal?.formatted).toFixed(4);
-        setOperatorBal(Number(bal));
-      }, [rawOperatorBal]);
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
@@ -85,57 +90,99 @@ export function registerAccountInfoFixture() {
         functionName: 'getTokenAddy'
       });
 
-      const { data: accountMint20Bal } = useBalance({
-        address: data.account.ownerEOA as `0x${string}`,
+      const { data: ownerKAMI } = useBalance({
+        address: account.ownerEOA as `0x${string}`,
         token: mint20Addy as `0x${string}`,
         watch: true
       });
 
 
+      /////////////////
+      // INTERPRETATION
+
+      // calculated the gas gauge level
+      const calcGaugeSetting = (gasBalance: FetchBalanceResult | undefined): number => {
+        const amt = Number(gasBalance?.formatted);
+        if (amt >= GasConstants.Full) return 100;
+        if (amt <= GasConstants.Low) return 0;
+        return amt / GasConstants.Full * 100;
+      }
+
+      // parses a wagmi FetchBalanceResult 
+      const parseBalanceResult = (
+        bal: FetchBalanceResult | undefined,
+        precision: number = 4
+      ) => {
+        return Number(bal?.formatted ?? 0).toFixed(precision);
+      }
+
+      const parseStaminaString = (account: Account) => {
+        const staminaCurr = calcStamina(account);
+        const staminaTotal = account.stamina.total;
+        return `${staminaCurr}/${staminaTotal * 1}`;
+      }
+
 
       /////////////////
-      // CALCULATIONS
+      // CONTENT
 
-      const calcOperatorGauge = (): number => {
-        if (Number(rawOperatorBal?.formatted) >= GasConstants.Full) return 100;
-        if (Number(rawOperatorBal?.formatted) <= GasConstants.Low) return 0;
-        return Number(rawOperatorBal?.formatted) / GasConstants.Full * 100;
+      const getStaminaTooltip = (account: Account) => {
+        const staminaString = parseStaminaString(account);
+        const recoveryPeriod = account.stamina.recoveryPeriod;
+        return [
+          `Account Stamina (${staminaString})`,
+          '',
+          `Determines how far your Operator can travel. Recovers every ${recoveryPeriod}s`
+        ];
+      }
+
+      const getKAMITooltip = () => {
+        return [`$KAMI Balance`, '', `Use this to mint your party of Kamigotchi.`];
+      }
+
+      const getGasTooltip = () => {
+        return [
+          `Operator Gas`,
+          '',
+          `Your Operator won't function without this. Make sure to stay topped up for the journey!`
+        ];
       }
 
 
-      const calcCurrentStamina = (account: Account) => {
-        const timePassed = lastRefresh / 1000 - account.lastMoveTs;
-        const recovered = Math.floor(timePassed / account.stamina.recoveryPeriod);
-        const current = 1.0 * account.stamina.last + recovered;
-        return Math.min(account.stamina.total, current);
-      }
-
-      const calcStaminaPercent = (account: Account) => {
-        const currentStamina = calcCurrentStamina(account);
-        return Math.round(100.0 * currentStamina / account.stamina.total);
-      }
-
-      return (data.account &&
+      const borderLeftStyle = { borderLeft: '.1vw solid black' };
+      return (account &&
         <Container
           id='accountInfo'
-          style={{ display: visibleButtons.accountInfo ? 'block' : 'none' }}
+          style={{ display: fixtures.accountInfo ? 'block' : 'none' }}
         >
           <Row>
-            <NameCell>{data.account.name}</NameCell>
+            <TextBox>{account.name} - {room.name}</TextBox>
           </Row>
           <Line />
           <Row>
-            <BatteryCell>
-              {`${calcStaminaPercent(data.account)}%`}
-              <Tooltip text={[calcStaminaPercent(data.account).toString()]}>
-                <Battery level={calcStaminaPercent(data.account)} />
+            <Cell>
+              <Tooltip text={getStaminaTooltip(account)}>
+                <TextBox>
+                  {`${calcStaminaPercent(account)}%`}
+                  <Battery level={calcStaminaPercent(account)} />
+                </TextBox>
               </Tooltip>
-            </BatteryCell>
-            <WordCell>$KAMI: {Number(accountMint20Bal?.formatted ?? 0) ?? '???'}</WordCell>
-            <GaugeCell>
-              <Text>Gas: {operatorBal}Ξ</Text>
-              <Gauge level={calcOperatorGauge()} />
-            </GaugeCell>
+            </Cell>
+            <Cell style={borderLeftStyle}>
+              <Tooltip text={getKAMITooltip()}>
+                <TextBox>
+                  $KAMI: {parseBalanceResult(ownerKAMI, 1)}
+                </TextBox>
+              </Tooltip>
+            </Cell>
+            <Cell style={borderLeftStyle}>
+              <Tooltip text={getGasTooltip()}>
+                <TextBox>
+                  Gas: {parseBalanceResult(operatorGas)}Ξ
+                  <Gauge level={calcGaugeSetting(operatorGas)} />
+                </TextBox>
+              </Tooltip>
+            </Cell>
           </Row>
         </Container>
       );
@@ -144,7 +191,7 @@ export function registerAccountInfoFixture() {
 }
 
 const Container = styled.div`
-  cursor: pointer;
+  pointer-events: auto;
   border-color: black;
   border-width: 2px;
   border-radius: 10px;
@@ -164,10 +211,22 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  padding: 0.6vw 0vw;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-around;
+  justify-content: space-evenly;
+`;
+
+const Cell = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+  width: 33%;
+
+  color: black;
+  font-family: Pixel;
+  font-size: 0.8vw;
 `;
 
 const Line = styled.div`
@@ -176,57 +235,13 @@ const Line = styled.div`
   height: 1px;
 `;
 
-const Text = styled.p`
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-
-  padding: 0 0.5vw 0 0 ;
-`;
-
-const BatteryCell = styled.div`
+const TextBox = styled.div`
   display: flex;
-  flex-grow: 1;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-`;
-
-const NameCell = styled.div`
-  display: flex;
-  flex-grow: 3;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-`;
-
-const GaugeCell = styled.div`
-  display: flex;
-  flex-grow: 1;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
-  border-left: 0.1vw solid black;
-`;
-
-const WordCell = styled.div`
-  border-left: 0.1vw solid black;
-  
-  display: flex;
-  flex-grow: 1;
-  justify-content: center;
-  align-items: center;
+  padding: 0.8vw 0vw;
+  gap: 0.5vw;
 
   color: black;
   font-family: Pixel;

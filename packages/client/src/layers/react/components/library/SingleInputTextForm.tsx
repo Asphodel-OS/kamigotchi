@@ -56,7 +56,6 @@ export const SingleInputTextForm = (props: Props) => {
 
 const Container = styled.div`
   width: 50%;
-  margin: 20px 5px;
   display: flex;
   flex-direction: column;
   align-items: center;

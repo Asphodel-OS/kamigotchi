@@ -1,14 +1,8 @@
 import styled from 'styled-components';
 
-import {
-  healthIcon,
-  powerIcon,
-  violenceIcon,
-  harmonyIcon,
-} from "assets/images/icons/stats";
-import placeholderIcon from "assets/images/icons/exit_native.png";
+import { statIcons } from "assets/images/icons/stats";
+import { Tooltip } from "layers/react/components/library/Tooltip";
 import { Kami } from "layers/react/shapes/Kami";
-import { Tooltip } from "../../library/Tooltip";
 import { Trait } from "layers/react/shapes/Trait";
 
 interface Props {
@@ -19,23 +13,23 @@ export const Traits = (props: Props) => {
   const statsDetails = new Map(Object.entries({
     'health': {
       description: 'Health defines how resilient a Kami is to accumulated damage',
-      image: healthIcon,
+      image: statIcons.health,
     },
     'power': {
       description: 'Power determines the potential rate at which $MUSU can be farmed',
-      image: powerIcon,
+      image: statIcons.power,
     },
     'violence': {
       description: 'Violence dictates the threshold at which a Kami can liquidate others',
-      image: violenceIcon,
+      image: statIcons.violence,
     },
     'harmony': {
       description: 'Harmony divines resting recovery rate and defends against violence',
-      image: harmonyIcon,
+      image: statIcons.harmony,
     },
     'slots': {
       description: 'Slots are room for upgrades ^_^',
-      image: placeholderIcon,
+      image: statIcons.slots,
     },
   }));
 
@@ -100,7 +94,6 @@ const Content = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
-
 
 const InfoBox = styled.div`
   border: solid black .12vw;

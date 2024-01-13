@@ -12,14 +12,18 @@ import { Gaussian } from "solstat/Gaussian.sol";
 
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
-import { IndexPetComponent, ID as IndexPetComponentID } from "components/IndexPetComponent.sol";
+import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { SkillPointComponent, ID as SkillPointCompID } from "components/SkillPointComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -31,6 +35,7 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // placeholders for config values
@@ -42,7 +47,7 @@ library LibPet {
   /////////////////
   // INTERACTIONS
 
-  // create a pet entity and set its base fields
+  /// @notice create a pet entity and set its base fields
   function create(
     IWorld world,
     IUintComp components,
@@ -51,13 +56,15 @@ library LibPet {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
-    IndexPetComponent(getAddressById(components, IndexPetComponentID)).set(id, index);
+    IndexPetComponent(getAddressById(components, IndexPetCompID)).set(id, index);
     setAccount(components, id, accountID);
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
+    setStartTs(components, id, block.timestamp);
 
     LibExperience.setLevel(components, id, 1);
     LibExperience.set(components, id, 0);
+    LibSkill.setPoints(components, id, 1);
 
     string memory name = LibString.concat("kamigotchi ", LibString.toString(index));
     setName(components, id, name);
@@ -89,32 +96,25 @@ library LibPet {
 
   // Drains HP from a pet. The opposite of heal().
   function drain(IUintComp components, uint256 id, uint256 amt) internal {
-    uint256 health = getLastHealth(components, id);
+    HealthCurrentComponent healthComp = HealthCurrentComponent(
+      getAddressById(components, HealthCurrentCompID)
+    );
+    uint256 health = healthComp.getValue(id);
     health = (health > amt) ? health - amt : 0;
-    setCurrHealth(components, id, health);
-  }
-
-  // feed the pet with a food item
-  // NOTE: assumes the pet health is synced prior to this call
-  function feed(
-    IUintComp components,
-    uint256 id,
-    uint256 foodIndex
-  ) internal returns (bool success) {
-    uint256 foodRegistryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    if (foodRegistryID != 0) {
-      success = true;
-      uint256 healAmt = LibStat.getHealth(components, foodRegistryID);
-      heal(components, id, healAmt);
-    }
+    healthComp.set(id, health);
   }
 
   // heal the pet by a given amount
   function heal(IUintComp components, uint256 id, uint256 amt) internal {
+    if (amt == 0) return; // skip if no healing
+
+    HealthCurrentComponent healthComp = HealthCurrentComponent(
+      getAddressById(components, HealthCurrentCompID)
+    );
     uint256 totalHealth = calcTotalHealth(components, id);
-    uint256 health = getLastHealth(components, id) + amt;
+    uint256 health = healthComp.getValue(id) + amt;
     if (health > totalHealth) health = totalHealth;
-    setCurrHealth(components, id, health);
+    healthComp.set(id, health);
   }
 
   // Update a pet's health to 0 and its state to DEAD
@@ -130,22 +130,21 @@ library LibPet {
 
   // Update the current health of a pet as well as any active production
   function sync(IUintComp components, uint256 id) public {
-    if (isHarvesting(components, id)) {
+    string memory state = getState(components, id);
+
+    if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
-      uint256 drainAmt = calcDrain(components, id, deltaBalance);
-      drain(components, id, drainAmt);
-    } else if (isResting(components, id)) {
-      uint256 healAmt = calcRestingRecovery(components, id);
-      heal(components, id, healAmt);
+      drain(components, id, calcDrain(components, id, deltaBalance));
+    } else if (LibString.eq(state, "RESTING")) {
+      heal(components, id, calcRestingRecovery(components, id));
     }
+
     setLastTs(components, id, block.timestamp);
   }
 
   // transfer ERC721 pet
-  // NOTE: it doesnt seem we actually need IdOwner directly on the pet as it can be
-  // directly accessed through the account entity.
-  // NOTE 2: transfers are disabled in game
+  // NOTE: transfers are disabled in game
   function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = indexToID(components, index);
@@ -172,8 +171,13 @@ library LibPet {
     uint256 id, // unused atm, but will be used for skill multipliers
     uint256 amt
   ) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE");
-    uint256 precision = 10 ** LibConfig.getValueOf(components, "LIQ_BOUNTY_BASE_PREC");
+    string[] memory configs = new string[](2);
+    configs[0] = "LIQ_BOUNTY_BASE";
+    configs[1] = "LIQ_BOUNTY_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
+    uint256 base = configVals[0];
+    uint256 precision = 10 ** configVals[1];
     return (amt * base) / precision;
   }
 
@@ -184,8 +188,13 @@ library LibPet {
     uint256 id,
     uint256 amt
   ) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    string[] memory configs = new string[](2);
+    configs[0] = "HEALTH_RATE_DRAIN_BASE";
+    configs[1] = "HEALTH_RATE_DRAIN_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
+    uint256 base = configVals[0];
+    uint256 basePrecision = 10 ** configVals[1];
     uint256 multiplier = calcDrainMultiplier(components, id);
     uint256 totalPrecision = basePrecision * 1000; // 1000 from bonus multiplier
     return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
@@ -212,10 +221,16 @@ library LibPet {
     IUintComp components,
     uint256 id
   ) internal view returns (uint256) {
+    string[] memory configs = new string[](3);
+    configs[0] = "HEALTH_RATE_HEAL_PREC";
+    configs[1] = "HEALTH_RATE_HEAL_BASE";
+    configs[2] = "HEALTH_RATE_HEAL_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
     uint256 totalHarmony = calcTotalHarmony(components, id);
-    uint256 precision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_PREC");
-    uint256 base = LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_HEAL_BASE_PREC");
+    uint256 precision = 10 ** configVals[0];
+    uint256 base = configVals[1];
+    uint256 basePrecision = 10 ** configVals[2];
     return (totalHarmony * base * precision) / (3600 * basePrecision);
   }
 
@@ -240,8 +255,13 @@ library LibPet {
     uint256 sourceID,
     uint256 targetID
   ) internal view returns (uint256) {
-    uint256 base = LibConfig.getValueOf(components, "LIQ_THRESH_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "LIQ_THRESH_BASE_PREC");
+    string[] memory configs = new string[](2);
+    configs[0] = "LIQ_THRESH_BASE";
+    configs[1] = "LIQ_THRESH_BASE_PREC";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+
+    uint256 base = configVals[0];
+    uint256 basePrecision = 10 ** configVals[1];
     uint256 sourceViolence = calcTotalViolence(components, sourceID);
     uint256 targetHarmony = calcTotalHarmony(components, targetID);
     int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
@@ -304,8 +324,9 @@ library LibPet {
   /////////////////
   // CHECKERS
 
-  function canAct(IUintComp components, uint256 id) public view returns (bool) {
-    uint256 idleTime = block.timestamp - getLastTs(components, id);
+  // Check whether a kami can act based on time passed since its last Standard Action
+  function canAct(IUintComp components, uint256 id) internal view returns (bool) {
+    uint256 idleTime = block.timestamp - getLastActionTs(components, id);
     uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
     return idleTime >= idleRequirement;
   }
@@ -358,13 +379,61 @@ library LibPet {
   /////////////////
   // SETTERS
 
+  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
+    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
+  }
+
+  // add or remove the CanName component
+  function setCanName(IUintComp components, uint256 id, bool can) internal {
+    CanNameComponent canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
+    if (can) canNameComp.set(id);
+    else if (canNameComp.has(id)) canNameComp.remove(id);
+  }
+
+  function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
+    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
+  }
+
+  // Update the TimeLastAction of a pet. to inform cooldown constraints on Standard Actions
+  function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, ts);
+  }
+
+  // Update the TimeLast of a pet. used as anchor point for updating Health
+  function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
+  }
+
+  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
+    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, uri);
+  }
+
+  function setName(IUintComp components, uint256 id, string memory name) internal {
+    NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
+    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
+  }
+
+  function setState(IUintComp components, uint256 id, string memory state) internal {
+    StateComponent(getAddressById(components, StateCompID)).set(id, state);
+  }
+
   // set a pet's stats from its traits
   function setStats(IUintComp components, uint256 id) internal {
-    uint256 health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
-    uint256 power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
-    uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
-    uint256 harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
-    uint256 slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
+    string[] memory configs = new string[](5);
+    configs[0] = "KAMI_BASE_HEALTH";
+    configs[1] = "KAMI_BASE_POWER";
+    configs[2] = "KAMI_BASE_VIOLENCE";
+    configs[3] = "KAMI_BASE_HARMONY";
+    configs[4] = "KAMI_BASE_SLOTS";
+    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+    uint256 health = configVals[0];
+    uint256 power = configVals[1];
+    uint256 violence = configVals[2];
+    uint256 harmony = configVals[3];
+    uint256 slots = configVals[4];
 
     // sum the stats from all traits
     uint256 traitRegistryID;
@@ -387,42 +456,12 @@ library LibPet {
     LibStat.setSlots(components, id, slots);
   }
 
-  // add or remove the CanName component
-  function setCanName(IUintComp components, uint256 id, bool can) internal {
-    if (can) {
-      CanNameComponent(getAddressById(components, CanNameCompID)).set(id);
-    } else if (CanNameComponent(getAddressById(components, CanNameCompID)).has(id)) {
-      CanNameComponent(getAddressById(components, CanNameCompID)).remove(id);
-    }
-  }
-
-  function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
-    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
-  }
-
-  // Update the TimeLastAction of a pet. used to expected battery drain on next action
-  function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
-  }
-
-  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
-    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, uri);
-  }
-
-  function setName(IUintComp components, uint256 id, string memory name) internal {
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-  }
-
-  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
-    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
-  }
-
-  function setState(IUintComp components, uint256 id, string memory state) internal {
-    StateComponent(getAddressById(components, StateCompID)).set(id, state);
-  }
-
   /////////////////
   // GETTERS
+
+  function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
+    return IdAccountComponent(getAddressById(components, IdAccCompID)).has(id);
+  }
 
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -434,8 +473,19 @@ library LibPet {
     return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
   }
 
+  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    TimeLastActionComponent comp = TimeLastActionComponent(
+      getAddressById(components, TimeLastActCompID)
+    );
+    if (!comp.has(id)) return 0;
+    return comp.getValue(id);
+  }
+
+  // NOTE: value should be set on Pet Reveal. check is insurance policy for backwards compatibility
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
+    if (comp.has(id)) return comp.getValue(id);
+    else return 0;
   }
 
   // Get the implied location of a pet based on its state.
@@ -503,7 +553,7 @@ library LibPet {
 
   // get the entity ID of a pet from its index (tokenID)
   function indexToID(IUintComp components, uint256 index) internal view returns (uint256 result) {
-    uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetComponentID))
+    uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetCompID))
       .getEntitiesWithValue(index);
     // assumes only 1 pet per index
     if (results.length > 0) {
@@ -513,7 +563,7 @@ library LibPet {
 
   // get the index of a pet (aka its 721 tokenID) from its entity ID
   function idToIndex(IUintComp components, uint256 entityID) internal view returns (uint256) {
-    return IndexPetComponent(getAddressById(components, IndexPetComponentID)).getValue(entityID);
+    return IndexPetComponent(getAddressById(components, IndexPetCompID)).getValue(entityID);
   }
 
   // retrieves the pet with the specified name

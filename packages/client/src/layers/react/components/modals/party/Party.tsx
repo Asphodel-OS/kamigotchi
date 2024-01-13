@@ -1,16 +1,18 @@
-import React from 'react';
-import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
+import crypto from "crypto";
+import React from 'react';
+import { map, merge } from 'rxjs';
 
 import { Kards } from './Kards';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { kamiIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
 
 
@@ -20,7 +22,7 @@ export function registerPartyModal() {
     {
       colStart: 2,
       colEnd: 33,
-      rowStart: 3,
+      rowStart: 8,
       rowEnd: 99,
     },
 
@@ -31,24 +33,30 @@ export function registerPartyModal() {
           actions,
           api: { player },
           components: {
+            OperatorAddress,
+            OwnerAddress,
+            IsAccount,
+            IsBonus,
+            IsConfig,
+            IsProduction,
             AccountID,
+            HolderID,
+            PetID,
+            ItemIndex,
+            PetIndex,
+            LastTime,
+            LastActionTime,
+            StartTime,
             Balance,
             Coin,
             Harmony,
             Health,
             HealthCurrent,
-            HolderID,
-            IsBonus,
-            IsConfig,
-            LastTime,
             Location,
             MediaURI,
             Name,
-            OwnerAddress,
-            Power,
             Rate,
             State,
-            StartTime,
             Type,
             Value,
           },
@@ -57,23 +65,29 @@ export function registerPartyModal() {
       } = layers;
 
       return merge(
+        OperatorAddress.update$,
+        OwnerAddress.update$,
+        IsAccount.update$,
+        IsBonus.update$,
+        IsConfig.update$,
+        IsProduction.update$,
         AccountID.update$,
+        HolderID.update$,
+        PetID.update$,
+        ItemIndex.update$,
+        PetIndex.update$,
+        LastTime.update$,
+        LastActionTime.update$,
+        StartTime.update$,
         Balance.update$,
         Coin.update$,
         Harmony.update$,
         HealthCurrent.update$,
         Health.update$,
-        HolderID.update$,
-        IsBonus.update$,
-        IsConfig.update$,
-        LastTime.update$,
         Location.update$,
         MediaURI.update$,
         Name.update$,
-        OwnerAddress.update$,
-        Power.update$,
         Rate.update$,
-        StartTime.update$,
         State.update$,
         Type.update$,
         Value.update$,
@@ -98,8 +112,8 @@ export function registerPartyModal() {
     // Render
     ({ layers, actions, api, data, world }) => {
       // console.log('PartyM: data', data);
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { setKami } = useSelectedEntities();
+      const { modals, setModals } = useVisibility();
+      const { setKami } = useSelected();
 
 
       /////////////////
@@ -107,12 +121,12 @@ export function registerPartyModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiFeed',
+          params: [kami.id, foodIndex],
+          description: `Feeding ${kami.name}`,
           execute: async () => {
             return api.pet.feed(kami.id, foodIndex);
           },
@@ -121,12 +135,12 @@ export function registerPartyModal() {
 
       // revive a kami using a revive item
       const revive = (kami: Kami, reviveIndex: number) => {
-        const actionID = `Reviving ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiRevive',
+          params: [kami.id, reviveIndex],
+          description: `Reviving ${kami.name}`,
           execute: async () => {
             return api.pet.revive(kami.id, reviveIndex);
           },
@@ -135,12 +149,12 @@ export function registerPartyModal() {
 
       // reveal kami
       const reveal = async (kami: Kami) => {
-        const actionID = `Revealing ${kami.name}` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiReveal',
+          params: [kami.index],
+          description: `Inspecting ${kami.name}`,
           execute: async () => {
             return api.ERC721.reveal(kami.index);
           },
@@ -154,32 +168,24 @@ export function registerPartyModal() {
 
       const openKamiModal = (entityIndex: EntityIndex) => {
         setKami(entityIndex);
-        setVisibleModals({ ...visibleModals, kami: true });
+        setModals({ ...modals, kami: true });
       };
 
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='party_modal'
           divName='party'
-          header={<Header key='header'>Party</Header>}
+          header={<ModalHeader title='Party' icon={kamiIcon} />}
           canExit
         >
           <Kards
-            kamis={data.account.kamis!}
+            kamis={data.account.kamis ? data.account.kamis : []}
             account={data.account}
             actions={{ feed, revive, reveal }}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
 }
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;

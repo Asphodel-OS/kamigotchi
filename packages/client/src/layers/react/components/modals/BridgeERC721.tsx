@@ -4,16 +4,16 @@ import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { EntityID } from '@latticexyz/recs';
 import { BigNumberish } from 'ethers';
 import { useContractRead } from 'wagmi';
+import crypto from "crypto";
 import styled from 'styled-components';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccount } from 'layers/react/shapes/Account';
 import { Kami, getKami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useAccount } from 'layers/react/store/account';
+import { useNetwork } from 'layers/react/store/network';
 
 import 'layers/react/styles/font.css';
 
@@ -79,9 +79,8 @@ export function registerERC721BridgeModal() {
         }
       } = layers;
 
-      const { details: accountDetails } = useKamiAccount();
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { selectedAddress, networks } = useNetworkSettings();
+      const { account: kamiAccount } = useAccount();
+      const { selectedAddress, networks } = useNetwork();
 
       const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
 
@@ -94,12 +93,12 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Staking Kami` as EntityID;
-        actions.add({
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiDeposit',
+          params: [tokenID],
+          description: `Staking Kami ${tokenID}`,
           execute: async () => {
             return api.ERC721.deposit(tokenID);
           },
@@ -112,12 +111,12 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = `Unstaking Kami` as EntityID;
-        actions.add({
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiWithdraw',
+          params: [tokenID],
+          description: `Unstaking Kami ${tokenID}`,
           execute: async () => {
             return api.ERC721.withdraw(tokenID);
           },
@@ -174,7 +173,7 @@ export function registerERC721BridgeModal() {
             "type": "function"
           }],
         functionName: 'getAllTokens',
-        args: [accountDetails.ownerAddress as `0x${string}`],
+        args: [kamiAccount.ownerAddress as `0x${string}`],
         watch: true,
       });
 
@@ -266,7 +265,7 @@ export function registerERC721BridgeModal() {
         kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='bridgeERC721'
           divName='bridgeERC721'
           canExit
@@ -287,7 +286,7 @@ export function registerERC721BridgeModal() {
               {KamiCards(EOAKamis)}
             </Scrollable>
           </Grid>
-        </ModalWrapperFull >
+        </ModalWrapper >
       );
     }
   );

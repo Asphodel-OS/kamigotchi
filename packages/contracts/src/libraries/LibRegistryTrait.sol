@@ -11,10 +11,9 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
-import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
-import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
+import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
@@ -205,7 +204,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing boody trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setBody(
     IUintComp components,
     uint256 bodyIndex,
@@ -249,7 +248,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing background trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setBackground(
     IUintComp components,
     uint256 backgroundIndex,
@@ -289,7 +288,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing color trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setColor(
     IUintComp components,
     uint256 colorIndex,
@@ -329,7 +328,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing face trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setFace(
     IUintComp components,
     uint256 faceIndex,
@@ -369,7 +368,7 @@ library LibRegistryTrait {
   }
 
   // Set the field values of an existing hand trait registry entry
-  // NOTE: 0 values mean the component should be unset
+  // TODO: remove set pattern
   function setHand(
     IUintComp components,
     uint256 handIndex,
@@ -410,6 +409,30 @@ library LibRegistryTrait {
     else LibStat.removeAffinity(components, id);
 
     return id;
+  }
+
+  function remove(IUintComp components, uint256 id) internal {
+    IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
+    IndexTraitComponent(getAddressById(components, IndexTraitCompID)).remove(id);
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    if (isBody(components, id))
+      IndexBodyComponent(getAddressById(components, IndexBodyCompID)).remove(id);
+    if (isBackground(components, id))
+      IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).remove(id);
+    if (isColor(components, id))
+      IndexColorComponent(getAddressById(components, IndexColorCompID)).remove(id);
+    if (isFace(components, id))
+      IndexFaceComponent(getAddressById(components, IndexFaceCompID)).remove(id);
+    if (isHand(components, id))
+      IndexHandComponent(getAddressById(components, IndexHandCompID)).remove(id);
+
+    LibStat.removeHealth(components, id);
+    LibStat.removePower(components, id);
+    LibStat.removeViolence(components, id);
+    LibStat.removeHarmony(components, id);
+    LibStat.removeSlots(components, id);
+    LibStat.removeRarity(components, id);
+    LibStat.removeAffinity(components, id);
   }
 
   /////////////////

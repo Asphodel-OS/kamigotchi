@@ -79,8 +79,9 @@ library LibBonus {
   // default value of bonus multipliers is 1000
   // this represents for 100.0% for percentage based bonuses
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (!hasValue(components, id)) return 1000;
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    if (!comp.has(id)) return 1000;
+    return comp.getValue(id);
   }
 
   /////////////////

@@ -4,7 +4,7 @@ import { questsIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { VisibleModals, dataStore } from 'layers/react/store/createStore';
+import { Modals, useVisibility } from 'layers/react/store/visibility';
 
 export function registerQuestsButton() {
   registerUIComponent(
@@ -17,8 +17,8 @@ export function registerQuestsButton() {
     },
     (layers) => of(layers),
     () => {
-      const { visibleButtons } = dataStore();
-      const modalsToHide: Partial<VisibleModals> = {
+      const { buttons } = useVisibility();
+      const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,
@@ -29,19 +29,19 @@ export function registerQuestsButton() {
         leaderboard: false,
         nameKami: false,
         settings: false,
+        social: false,
       };
 
 
       return (
         <MenuButton
           id='quests_button'
+          image={questsIcon}
+          tooltip='Quests'
           targetDiv='quests'
-          text='Quests'
           hideModals={modalsToHide}
-          visible={visibleButtons.quests}
-        >
-          <img style={{ height: '100%', width: 'auto' }} src={questsIcon} alt='chat_icon' />
-        </MenuButton>
+          visible={buttons.quests}
+        />
       );
     }
   );

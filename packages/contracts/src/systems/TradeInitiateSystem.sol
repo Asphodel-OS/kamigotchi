@@ -24,7 +24,9 @@ contract TradeInitiateSystem is System {
     require(LibTrade.getRequest(components, accountID, toID) == 0, "Trade: request exists");
 
     uint256 tradeID = LibTrade.create(world, components, accountID, toID);
-    LibAccount.updateLastBlock(components, accountID);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(tradeID);
   }
 

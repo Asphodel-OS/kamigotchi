@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
-
-import 'layers/react/styles/font.css';
 import { Sound } from './Sound';
 import { Account } from './Account';
+import { settingsIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import 'layers/react/styles/font.css';
+
 
 export function registerSettingsModal() {
   registerUIComponent(
@@ -15,7 +17,7 @@ export function registerSettingsModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 10,
+      rowStart: 8,
       rowEnd: 75,
     },
 
@@ -33,30 +35,21 @@ export function registerSettingsModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='settings'
           id='settings_modal'
-          header={<Header>Settings</Header>}
+          header={<ModalHeader title='Settings' icon={settingsIcon} />}
           canExit
         >
           <Sound />
           <Divider />
           <Account setStatus={setStatus} />
           <StatusText>{status}</StatusText>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
 }
-
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;
 
 const Divider = styled.hr`
   color: #333;

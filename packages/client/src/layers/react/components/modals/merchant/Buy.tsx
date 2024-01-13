@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import crypto from "crypto";
 
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Listing, getListing } from 'layers/react/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 import { EntityID } from '@latticexyz/recs';
 import { ActionButton } from '../../library/ActionButton';
-import { dataStore } from 'layers/react/store/createStore';
+import { useVisibility } from 'layers/react/store/visibility';
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerBuyModal() {
@@ -53,8 +54,8 @@ export function registerBuyModal() {
     },
 
     ({ layers, actions, api }) => {
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { listingEntityIndex } = useSelectedEntities();
+      const { modals, setModals } = useVisibility();
+      const { listingEntityIndex } = useSelected();
       const [listing, setListing] = useState(getListing(layers, listingEntityIndex));
       const [quantity, setQuantity] = useState(1);
 
@@ -70,12 +71,12 @@ export function registerBuyModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = `Buying ${amt} ${listing.item!.name}` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ListingBuy',
+          params: [listing.id, amt],
+          description: `Buying ${amt} of ${listing.item!.name}`,
           execute: async () => {
             return api.listing.buy(listing.id, amt);
           },
@@ -97,7 +98,7 @@ export function registerBuyModal() {
       };
 
       const closeModal = () => {
-        setVisibleModals({ ...visibleModals, buy: false });
+        setModals({ ...modals, buy: false });
         setQuantity(1);
       }
 
@@ -122,16 +123,16 @@ export function registerBuyModal() {
       );
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='buy'
           divName='buy'
           header={<Title>Confirm Purchase</Title>}
           overlay
         >
           <Content>
-            <Image src={listing.item!.uri} />
+            <Image src={listing.item.image.default} />
             <InfoSection>
-              <Name>{listing.item!.name}</Name>
+              <Name>{listing.item.name}</Name>
               <Description>{`lorem ipsum, description will go here`}</Description>
               <Description>{`unit price: $${listing.buyPrice}`}</Description>
               <InputRow>
@@ -152,7 +153,7 @@ export function registerBuyModal() {
             <CancelButton />
             <ConfirmButton />
           </ButtonRow>
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     })
 }

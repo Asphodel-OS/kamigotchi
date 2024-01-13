@@ -1,8 +1,8 @@
-import { Room } from 'constants/phaser/rooms';
-import { checkDuplicateRooms } from '../utils/checkDuplicateRooms';
-import { useSoundSettings } from 'layers/react/store/soundSettings';
-import { kamiPattern } from 'assets/images/backgrounds';
-import { triggerDialogueModal } from '../utils/triggerDialogueModal';
+import { Room } from 'constants/rooms';
+import { checkDuplicateRooms } from '../utils/rooms';
+import { useSound } from 'layers/react/store/sound';
+import { backgrounds } from 'assets/images/backgrounds';
+import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
 import { checkModalCoverage } from '../utils/checkModalCoverage';
 
 // an additional field for the Phaser Scene for the GameScene
@@ -28,9 +28,10 @@ export class GameScene extends Phaser.Scene implements GameScene {
   }
 
   preload() {
+    this.load.image('wallpaper', backgrounds.kamiPatternWide);
+
     if (this.room) {
       const room = this.room;
-      this.load.image('wallpaper', kamiPattern);
       if (room.background) this.load.image(room.background.key, room.background.path);
       if (room.objects) room.objects.map((obj) => this.load.image(obj.key, obj.path));
       if (room.music) this.load.audio(room.music.key, room.music.path);
@@ -40,14 +41,16 @@ export class GameScene extends Phaser.Scene implements GameScene {
   create() {
     const { width: gameWidth, height: gameHeight } = this.sys.game.canvas;
     this.game.scene.scenes[0].sound.pauseOnBlur = false;
+
+    // set the wallpaper behind the game
+    let wallpaper = this.add.image(gameWidth / 2, gameHeight / 2, 'wallpaper');
+    let wpHeightScale = (1 * gameHeight) / wallpaper.height;
+    let wpWidthScale = (1 * gameWidth) / wallpaper.width;
+    wallpaper.setScale(Math.max(wpHeightScale, wpWidthScale));
+
     if (this.room) {
       const room = this.room;
       let scale = 1; // scale of image assets
-
-      // set the wallpaper behind the game
-      let wallpaper = this.add.image(gameWidth / 2, gameHeight / 2, 'wallpaper');
-      scale = (1 * gameHeight) / wallpaper.height;
-      wallpaper.setScale(scale);
 
       // set the room image
       if (room.background) {
@@ -85,12 +88,12 @@ export class GameScene extends Phaser.Scene implements GameScene {
         });
       }
 
-      if (this.room.music) {
-        const { volumeMusic } = useSoundSettings.getState();
+      if (room.music) {
+        const { volumeMusic } = useSound.getState();
         this.currentVolume = volumeMusic;
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
           const bgm = this.sound.add(
-            this.room.music.key,
+            room.music.key,
             { volume: volumeMusic }
           ) as Phaser.Sound.HTML5AudioSound;
 
@@ -104,8 +107,8 @@ export class GameScene extends Phaser.Scene implements GameScene {
     this.prevRoom = this.currentRoom;
 
     // subscribe to sound settings store to adjust BGM volume
-    useSoundSettings.subscribe(() => {
-      const { volumeMusic } = useSoundSettings.getState();
+    useSound.subscribe(() => {
+      const { volumeMusic } = useSound.getState();
       if (this.gameSound && volumeMusic !== this.currentVolume) {
         this.currentVolume = volumeMusic;
         this.gameSound.setVolume(volumeMusic);

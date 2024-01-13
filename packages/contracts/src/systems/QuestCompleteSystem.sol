@@ -27,9 +27,9 @@ contract QuestCompleteSystem is System {
 
     LibQuests.complete(world, components, questID, accountID);
 
-    LibAccount.updateLastBlock(components, accountID);
+    // standard logging and tracking
     LibDataEntity.incFor(world, components, accountID, 0, "QUEST_COMPLETE", 1);
-
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

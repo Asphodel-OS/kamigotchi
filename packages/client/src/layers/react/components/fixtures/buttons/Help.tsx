@@ -4,7 +4,7 @@ import { helpIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { VisibleModals, dataStore } from 'layers/react/store/createStore';
+import { Modals, useVisibility } from 'layers/react/store/visibility';
 
 export function registerHelpButton() {
   registerUIComponent(
@@ -17,8 +17,8 @@ export function registerHelpButton() {
     },
     (layers) => of(layers),
     () => {
-      const { visibleButtons } = dataStore();
-      const modalsToHide: Partial<VisibleModals> = {
+      const { buttons } = useVisibility();
+      const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,
@@ -29,18 +29,18 @@ export function registerHelpButton() {
         nameKami: false,
         quests: false,
         settings: false,
+        social: false,
       }
 
       return (
         <MenuButton
           id='help_button'
+          image={helpIcon}
+          tooltip='Help'
           targetDiv='help'
-          text='Help'
           hideModals={modalsToHide}
-          visible={visibleButtons.help}
-        >
-          <img style={{ height: '100%', width: 'auto' }} src={helpIcon} alt='help_icon' />
-        </MenuButton>
+          visible={buttons.help}
+        />
       );
     }
   );

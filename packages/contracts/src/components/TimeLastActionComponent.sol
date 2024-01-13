@@ -5,7 +5,8 @@ import "std-contracts/components/Uint256BareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.Time.LastAction"));
 
-// the timestamp of the last action taken
+// the timestamp of the last Standard Action taken
+// Standard Actions are actions intentionally throttled by time or energy
 contract TimeLastActionComponent is Uint256BareComponent {
   constructor(address world) Uint256BareComponent(world, ID) {}
 }

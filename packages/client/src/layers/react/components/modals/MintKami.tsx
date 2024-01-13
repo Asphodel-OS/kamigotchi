@@ -1,22 +1,23 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
+import crypto from "crypto";
 
 import { abi } from "abi/Pet721ProxySystem.json"
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
 import { getData } from 'layers/react/shapes/Data';
 import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useNetworkSettings } from 'layers/react/store/networkSettings';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount as useKamiAccount } from 'layers/react/store/account';
+import { useNetwork } from 'layers/react/store/network';
 import { playVending } from 'utils/sounds';
 
 
@@ -103,9 +104,9 @@ export function registerKamiMintModal() {
       } = layers;
 
       const { isConnected } = useAccount();
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { details: accountDetails } = useKamiAccount();
-      const { selectedAddress, networks } = useNetworkSettings();
+      const { modals, setModals } = useVisibility();
+      const { account: kamiAccount } = useKamiAccount();
+      const { selectedAddress, networks } = useNetwork();
 
       const [amountToMint, setAmountToMint] = useState(1);
       const [triedReveal, setTriedReveal] = useState(false);
@@ -116,13 +117,13 @@ export function registerKamiMintModal() {
           if (isConnected && !triedReveal) {
             setTriedReveal(true);
             // wait to give buffer for OP rpc
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             data.account.kamis.unrevealed.forEach((kami) => {
               revealTx(kami);
             });
             if (waitingToReveal) {
               setWaitingToReveal(false);
-              setVisibleModals({ ...visibleModals, kamiMint: false, party: true });
+              setModals({ ...modals, kamiMint: false, party: true });
             }
           }
         }
@@ -142,7 +143,7 @@ export function registerKamiMintModal() {
       });
 
       const { data: accountMint20Bal } = useBalance({
-        address: accountDetails.ownerAddress as `0x${string}`,
+        address: kamiAccount.ownerAddress as `0x${string}`,
         token: mint20Addy as `0x${string}`,
         watch: true
       });
@@ -177,12 +178,12 @@ export function registerKamiMintModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = (amount == 1 ? `Minting Kami` : `Minting Kamis`) as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiMind',
+          params: [amount],
+          description: `Minting ${amount} Kami`,
           execute: async () => {
             return api.mint.mintPet(amount);
           },
@@ -192,12 +193,12 @@ export function registerKamiMintModal() {
 
       // transaction to roll/reveal the kami's metadata 
       const revealTx = async (kami: Kami) => {
-        const actionID = (`Revealing Kami ` + BigInt(kami.index).toString(10)) as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiReveal',
+          params: [kami.index],
+          description: `Inspecting Kami ${kami.index * 1}`,
           execute: async () => {
             return player.ERC721.reveal(kami.index);
           },
@@ -308,14 +309,14 @@ export function registerKamiMintModal() {
       };
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='kamiMint'
           id='kamiMintModal'
           overlay
           canExit
         >
           {PetMachine}
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

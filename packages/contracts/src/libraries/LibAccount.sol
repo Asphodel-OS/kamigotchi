@@ -8,17 +8,21 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
-import { IsAccountComponent, ID as IsAccountCompID } from "components/IsAccountComponent.sol";
+import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
-import { BlockLastComponent, ID as BlockLastCompID } from "components/BlockLastComponent.sol";
+import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
+import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -39,15 +43,17 @@ library LibAccount {
     address operatorAddr
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsAccountComponent(getAddressById(components, IsAccountCompID)).set(id);
+    IsAccountComponent(getAddressById(components, IsAccCompID)).set(id);
+    IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(id, getTotal(components));
     AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
+    TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
 
     uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
     setStamina(components, id, baseStamina);
     setCurrStamina(components, id, baseStamina);
-    updateLastBlock(components, id);
+    updateLastActionTs(components, id);
     updateLastTs(components, id);
     return id;
   }
@@ -69,19 +75,18 @@ library LibAccount {
 
   // syncs the stamina of an account. rounds down, ruthlessly
   function syncStamina(IUintComp components, uint256 id) internal returns (uint256) {
-    uint256 timePassed = block.timestamp - getLastTs(components, id);
+    uint256 timePassed = block.timestamp - getLastActionTs(components, id);
     uint256 recoveryPeriod = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
     uint256 recoveredAmt = timePassed / recoveryPeriod;
-    updateLastTs(components, id);
+    updateLastActionTs(components, id);
     return recover(components, id, recoveredAmt);
   }
 
-  // Update the BlockLast of the account. References the most recent block this Account transacted.
-  function updateLastBlock(IUintComp components, uint256 id) internal {
-    setLastBlock(components, id, block.number);
+  // Update the TimeLastAction of the account. Used to throttle world movement.
+  function updateLastActionTs(IUintComp components, uint256 id) internal {
+    setLastActionTs(components, id, block.timestamp);
   }
 
-  // Update the TimeLastAction of the account. Used to throttle world movement.
   function updateLastTs(IUintComp components, uint256 id) internal {
     setLastTs(components, id, block.timestamp);
   }
@@ -101,14 +106,6 @@ library LibAccount {
       if (inventoryID == 0) inventoryID = LibInventory.create(world, components, id, index);
       LibInventory.inc(components, inventoryID, amount);
       LibInventory.logIncItemTotal(world, components, id, index, amount);
-    } else if (LibString.eq(_type, "FOOD")) {
-      inventoryID = LibInventory.getFood(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.createFood(world, components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
-    } else if (LibString.eq(_type, "REVIVE")) {
-      inventoryID = LibInventory.getRevive(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.createRevive(world, components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
     } else if (LibString.eq(_type, "MOD")) {
       inventoryID = LibInventory.getMod(components, id, index);
       if (inventoryID == 0) inventoryID = LibInventory.createMod(world, components, id, index);
@@ -128,6 +125,8 @@ library LibAccount {
       address to = getOwner(components, id);
       setMint20Minted(world, components, id, accountMinted + amount);
       LibMint20.mint(world, to, amount);
+    } else if (LibString.eq(_type, "QUEST_POINTS")) {
+      setQuestPoints(components, id, getQuestPoints(components, id) + amount);
     } else {
       require(false, "LibAccount: unknown type");
     }
@@ -140,12 +139,16 @@ library LibAccount {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
   }
 
-  function setLastBlock(IUintComp components, uint256 id, uint256 blockNum) internal {
-    BlockLastComponent(getAddressById(components, BlockLastCompID)).set(id, blockNum);
+  function setFavoriteFood(IUintComp components, uint256 id, string memory food) internal {
+    FavoriteFoodComponent(getAddressById(components, FavFoodCompID)).set(id, food);
+  }
+
+  function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
+    TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, ts);
   }
 
   function setLastTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
+    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, ts);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -158,6 +161,10 @@ library LibAccount {
 
   function setCurrStamina(IUintComp components, uint256 id, uint256 amt) internal {
     StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, amt);
+  }
+
+  function setQuestPoints(IUintComp components, uint256 id, uint256 amt) internal {
+    QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, amt);
   }
 
   function setMint20Minted(
@@ -173,7 +180,7 @@ library LibAccount {
   // CHECKS
 
   function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsAccountComponent(getAddressById(components, IsAccountCompID)).has(id);
+    return IsAccountComponent(getAddressById(components, IsAccCompID)).has(id);
   }
 
   // Check whether an Account can move to a Location from where they currently are.
@@ -190,18 +197,19 @@ library LibAccount {
     uint256 id,
     uint256 entityID
   ) internal view returns (bool) {
-    return getLocation(components, id) == getLocation(components, entityID);
+    LocationComponent locComp = LocationComponent(getAddressById(components, LocCompID));
+    return locComp.getValue(id) == locComp.getValue(entityID);
   }
 
   /////////////////
   // GETTERS
 
-  function getLastBlock(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BlockLastComponent(getAddressById(components, BlockLastCompID)).getValue(id);
+  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).getValue(id);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   // gets the location of a specified account account
@@ -231,6 +239,12 @@ library LibAccount {
     return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
   }
 
+  function getQuestPoints(IUintComp components, uint256 id) internal view returns (uint256) {
+    QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
+    if (comp.has(id)) return comp.getValue(id);
+    else return 0;
+  }
+
   function getPetsMinted(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibDataEntity.get(components, id, 0, "PET721_MINT");
   }
@@ -248,11 +262,8 @@ library LibAccount {
   ) public view returns (uint256 balance) {
     uint256 inventoryID;
 
-    if (LibString.eq(_type, "FOOD")) {
-      inventoryID = LibInventory.getFood(components, id, index);
-      balance = LibInventory.getBalance(components, inventoryID);
-    } else if (LibString.eq(_type, "REVIVE")) {
-      inventoryID = LibInventory.getRevive(components, id, index);
+    if (LibString.eq(_type, "ITEM")) {
+      inventoryID = LibInventory.get(components, id, index);
       balance = LibInventory.getBalance(components, inventoryID);
     } else if (LibString.eq(_type, "MOD")) {
       inventoryID = LibInventory.getMod(components, id, index);
@@ -274,10 +285,15 @@ library LibAccount {
   /////////////////
   // QUERIES
 
+  // Get the total number of accounts
+  function getTotal(IUintComp components) internal view returns (uint256) {
+    return getAll(components).length;
+  }
+
   // retrieves the pet with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, NameCompID),
@@ -291,7 +307,7 @@ library LibAccount {
   // Get an account entity by Wallet address. Assume only 1.
   function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, AddrOperatorCompID),
@@ -305,7 +321,7 @@ library LibAccount {
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccountCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, AddrOwnerCompID),
@@ -333,6 +349,13 @@ library LibAccount {
     return results;
   }
 
+  // Get all accounts
+  function getAll(IUintComp components) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](1);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
+    return LibQuery.query(fragments);
+  }
+
   //////////////////
   // DATA LOGGING
 
@@ -351,6 +374,6 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", 1);
+    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", count);
   }
 }

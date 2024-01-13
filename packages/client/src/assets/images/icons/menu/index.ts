@@ -1,9 +1,19 @@
 import chatIcon from './chat.png';
 import helpIcon from './help.png';
+import inventoryIcon from './inventory.png';
 import kamiIcon from './kami.png';
 import mapIcon from './map.png';
 import questsIcon from './quests.png';
 import settingsIcon from './settings.png';
+import socialIcon from './social.png';
 
-
-export { chatIcon, helpIcon, mapIcon, kamiIcon, questsIcon, settingsIcon };
+export {
+  chatIcon,
+  helpIcon,
+  inventoryIcon,
+  kamiIcon,
+  mapIcon,
+  questsIcon,
+  settingsIcon,
+  socialIcon,
+};

@@ -52,7 +52,10 @@ contract ProductionStopSystem is System {
     LibProduction.stop(components, id);
     LibPet.setState(components, petID, "RESTING");
 
-    // logging and tracking
+    // Update ts for Standard Action Cooldowns
+    LibPet.setLastActionTs(components, petID, block.timestamp);
+
+    // standard logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", output);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", output);
     LibDataEntity.incFor(
@@ -63,7 +66,7 @@ contract ProductionStopSystem is System {
       "NODE_COLLECT",
       output
     );
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(output);
   }
 

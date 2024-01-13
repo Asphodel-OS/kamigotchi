@@ -40,6 +40,10 @@ export const parseQuestsStatus = (layers: Layers, account: Account, quests: Ques
   });
 }
 
+export const getQuestByIndex = (layers: Layers, index: number): Quest | undefined => {
+  return queryQuestsX(layers, { index: index, registry: true })[0];
+}
+
 
 /////////////////
 // SHAPES
@@ -426,22 +430,20 @@ export const checkObjective = (
   if (quest.complete) {
     return { completable: true }
   }
-  switch (objective.logic) {
-    case 'AT':
-      return checkCurrent(layers, objective.target, account, 'EQUAL');
-    case 'BUY':
-      return checkIncrease(layers, objective, quest, account, 'MIN');
-    case 'HAVE':
-      return checkCurrent(layers, objective.target, account, 'MIN');
-    case 'GATHER':
-      return checkIncrease(layers, objective, quest, account, 'MIN');
-    case 'MINT':
-      return checkIncrease(layers, objective, quest, account, 'MIN');
-    case 'USE':
-      return checkDecrease(layers, objective, quest, account, 'MIN');
-    default:
-      return { completable: false }; // should not get here
-  }
+
+  const subLogics = objective.logic.split('_');
+  const deltaType = subLogics[0];
+  const operator = subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
+  if (deltaType === 'CURR')
+    return checkCurrent(layers, objective.target, account, operator);
+  else if (deltaType === 'INC')
+    return checkIncrease(layers, objective, quest, account, operator);
+  else if (deltaType === 'DEC')
+    return checkDecrease(layers, objective, quest, account, operator);
+  else if (deltaType === 'BOOL')
+    return checkBoolean(layers, objective.target, account, operator);
+  else
+    return { completable: false }; // should not get here
 }
 
 

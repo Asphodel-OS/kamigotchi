@@ -1,13 +1,7 @@
 import { Kami } from "layers/react/shapes/Kami";
 import styled from "styled-components";
 
-import {
-  healthIcon,
-  powerIcon,
-  violenceIcon,
-  harmonyIcon,
-} from "assets/images/icons/stats";
-import placeholderIcon from "assets/images/icons/exit_native.png";
+import { statIcons } from "assets/images/icons/stats";
 import { ExperienceBar } from "layers/react/components/library/ExperienceBar";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 
@@ -25,31 +19,31 @@ export const Banner = (props: Props) => {
   const statsDetails = new Map(Object.entries({
     'health': {
       description: 'Health defines how resilient a Kami is to accumulated damage',
-      image: healthIcon,
+      image: statIcons.health,
       base: props.kami.stats.health,
       bonus: props.kami.bonusStats.health,
     },
     'power': {
       description: 'Power determines the potential rate at which $MUSU can be farmed',
-      image: powerIcon,
+      image: statIcons.power,
       base: props.kami.stats.power,
       bonus: props.kami.bonusStats.power,
     },
     'violence': {
       description: 'Violence dictates the threshold at which a Kami can liquidate others',
-      image: violenceIcon,
+      image: statIcons.violence,
       base: props.kami.stats.violence,
       bonus: props.kami.bonusStats.violence,
     },
     'harmony': {
       description: 'Harmony divines resting recovery rate and defends against violence',
-      image: harmonyIcon,
+      image: statIcons.harmony,
       base: props.kami.stats.harmony,
       bonus: props.kami.bonusStats.harmony,
     },
     'slots': {
       description: 'Slots are room for upgrades ^_^',
-      image: placeholderIcon,
+      image: statIcons.slots,
       base: props.kami.stats.slots,
       bonus: props.kami.bonusStats.slots,
     },

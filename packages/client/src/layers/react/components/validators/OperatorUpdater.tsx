@@ -1,20 +1,23 @@
+import { EntityID, EntityIndex } from '@latticexyz/recs';
+import { waitForActionCompletion } from '@latticexyz/std-client';
+import crypto from "crypto";
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
 
-import { defaultChainConfig } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
-import { useKamiAccount } from 'layers/react/store/kamiAccount';
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
-import { playScribble, playSuccess } from 'utils/sounds';
-
+import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
+import { getAccountByOperator } from 'layers/react/shapes/Account';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount } from 'layers/react/store/account';
+import { useNetwork } from 'layers/react/store/network'
+import { generatePrivateKey } from 'utils/address';
+import { playClick, playScribble, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
+
 
 // TODO: check for whether an account with the burner address already exists
 export function registerOperatorUpdater() {
@@ -29,56 +32,77 @@ export function registerOperatorUpdater() {
     (layers) => of(layers),
     (layers) => {
       const { network: { actions } } = layers;
-      const { isConnected } = useAccount();
-      const { chain } = useNetwork();
-      const { details: accountDetails } = useKamiAccount();
-      const { burnerInfo, selectedAddress, networks } = useNetworkSettings();
-      const { visibleModals, setVisibleModals } = dataStore();
-      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
+      const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const { toggleButtons, toggleModals } = useVisibility();
+      const { validators, setValidators } = useVisibility();
+      const { account: kamiAccount, validations, setValidations } = useAccount();
 
-      const [isMismatched, setIsMismatched] = useState(false);
-      const [helperText, setHelperText] = useState("");
-      const [newAddress, setNewAddress] = useState("");
-      const [newPrivKey, setNewPrivKey] = useState("");
+      const [operatorMatches, setOperatorMatches] = useState(false);
+      const [operatorTaken, setOperatorTaken] = useState(false);
+      const [isVisible, setIsVisible] = useState(false);
+      const [mode, setMode] = useState('key');
+      const [value, setValue] = useState('');
 
-      // toggle visibility based on many things
+      // run the primary check(s) for this validator, track in store for easy access 
       useEffect(() => {
-        const burnersMatch = burnerInfo.connected === burnerInfo.detected;
-        const networksMatch = chain?.id === defaultChainConfig.id;
-        const hasAccount = !!accountDetails.id;
-        const meetsPreconditions = isConnected && networksMatch && burnersMatch && hasAccount;
+        const operatorMatches = (kamiAccount.operatorAddress === burner.connected.address);
+        setOperatorMatches(operatorMatches);
+        setValidations({ ...validations, operatorMatches });
+      }, [burner.connected.address, kamiAccount.operatorAddress]);
 
-        const operatorMatch = accountDetails.operatorAddress === burnerInfo.connected;
-        const isVisible = (meetsPreconditions && !operatorMatch);
-        setVisibleModals({ ...visibleModals, operatorUpdater: isVisible });
-        setHelperText(operatorMatch ? "" : "Connected Burner does not match Account Operator");
-        setIsMismatched(!operatorMatch);
+      // determine visibility based on above/prev checks
+      useEffect(() => {
+        setIsVisible(
+          networkValidations.isConnected &&
+          networkValidations.chainMatches &&
+          networkValidations.burnerMatches &&
+          validations.accountExists &&
+          !operatorMatches
+        );
+      }, [networkValidations, validations, operatorMatches]);
 
-        // awkward place to put this trigger, but this is the last validator to be checked
-        if (meetsPreconditions && operatorMatch) toggleVisibleButtons(true);
-      }, [isConnected, burnerInfo, accountDetails]);
+      // adjust actual visibility of windows based on above determination
+      useEffect(() => {
+        if (isVisible) toggleModals(false);
+        toggleButtons(
+          !isVisible &&
+          !validators.walletConnector &&
+          !validators.burnerDetector &&
+          !validators.accountRegistrar
+        );
+        if (isVisible != validators.operatorUpdater) {
+          const { validators } = useVisibility.getState();
+          setValidators({ ...validators, operatorUpdater: isVisible });
+        }
+      }, [
+        isVisible,
+        validators.walletConnector,
+        validators.burnerDetector,
+        validators.accountRegistrar,
+      ]);
+
+      // check if the connected burner is already taken by an account
+      useEffect(() => {
+        const account = getAccountByOperator(layers, burner.connected.address)
+        setOperatorTaken(!!account.id);
+      }, [mode, burner.connected.address]);
 
 
       /////////////////
       // ACTIONS
-
-      const setOperatorWithFx = async (address: string) => {
-        playScribble();
-        await setOperator(address);
-        playSuccess();
-      }
 
       const setOperator = async (address: string) => {
         const network = networks.get(selectedAddress);
         const world = network!.world;
         const api = network!.api.player;
 
-        const actionID = `Setting Operator` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountSetOperator',
+          params: [address],
+          description: `Setting Account Avatar to ${address}`,
           execute: async () => {
             return api.account.set.operator(address);
           },
@@ -87,82 +111,153 @@ export function registerOperatorUpdater() {
         await waitForActionCompletion(actions?.Action!, actionIndex);
       }
 
+      const setOperatorWithFx = async (address: string) => {
+        playScribble();
+        await setOperator(address);
+        playSuccess();
+      }
+
       const setPrivKey = (privKey: string) => {
+        playScribble();
         if (privKey.length > 0) {
-          localStorage.setItem('operatorPrivateKey', privKey);
-          setHelperText("Operator updated, please refresh!");
+          setDetectedPrivateKey(privKey);
         }
       }
 
-      const setValues = () => {
-        if (newAddress != '') setOperatorWithFx(newAddress);
-        if (newPrivKey != '') setPrivKey(newPrivKey);
+
+      /////////////////
+      // FORM HANDLING
+
+      const handleSetMode = (newMode: string) => {
+        playClick();
+        setMode(newMode);
+        setValue('');
       }
 
-      const handleChangePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNewAddress(event.target.value);
+      const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(event.target.value);
       };
 
-      const handleChangePrivate = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNewPrivKey(event.target.value);
-      };
+      const submit = () => {
+        if (mode === 'key') setPrivKey(value);
+        else setOperatorWithFx(value);
+      }
+
+      const getLabel = () => {
+        return (mode === 'key')
+          ? `Private Key of ${kamiAccount.operatorAddress}`
+          : "Address of New Avatar for Account";
+      }
+
+      const getPlaceholder = () => {
+        return (mode === 'key')
+          ? "0x..."
+          : "Any ol' Avatar will do...";
+      }
+
+
+      /////////////////
+      // RENDERING
+
+      const SupportButton = () => {
+        let button = (
+          <Tooltip text={[`you're ngmi..`]}>
+            <ActionButton
+              id={`generate`}
+              text={`I'm feeling Lucky`}
+              onClick={() => setValue(generatePrivateKey())}
+              size='vending'
+            />
+          </Tooltip>
+        );
+
+        if (mode === 'address') {
+          button = (
+            <ActionButton
+              id={`copy`}
+              text='Use connected one'
+              onClick={() => setValue(burner.connected.address)}
+              disabled={operatorTaken}
+              size='vending'
+            />
+          );
+          if (operatorTaken) {
+            button = (
+              <Tooltip text={['This Avatar is taken by another account']}>
+                {button}
+              </Tooltip>
+            );
+          }
+        }
+
+        return button;
+      }
 
 
       /////////////////
       // DISPLAY
 
       return (
-        <ModalWrapperFull divName='operatorUpdater' id='operatorUpdater' canExit={!isMismatched}>
-          <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Update Operator</Title>
-            <Description style={{ color: '#FF785B' }}>{helperText}</Description>
-            <br />
-            <Description>Current Operator: {accountDetails.operatorAddress}</Description>
-            <Description>Connected Burner: {burnerInfo.connected}</Description>
-            <Container id='new-operator'>
-              <Label>new address (optional)</Label>
-              <Input
-                type='text'
-                placeholder='update account operator address'
-                value={newAddress}
-                onChange={(e) => handleChangePublic(e)}
-              />
-            </Container>
-            <Container id='new-operator-priv'>
-              <Label>new private key (optional)</Label>
-              <Input
-                type='text'
-                placeholder='update connected operator private key'
-                value={newPrivKey}
-                onChange={(e) => handleChangePrivate(e)}
-              />
-            </Container>
-            <ActionButton id={`submit`} text='Submit' onClick={setValues} />
-          </ModalContent>
-        </ModalWrapperFull>
+        <ValidatorWrapper
+          id='operator-updater'
+          divName='operatorUpdater'
+          title='Update Avatar'
+          errorPrimary='Connected Burner != Account Avatar'
+        >
+          <Description>Account Avatar: {kamiAccount.operatorAddress}</Description>
+          <Description>Connected Burner: {burner.connected.address}</Description>
+          <br />
+          <WarningOption onClick={() => handleSetMode('key')}>
+            {(mode === 'key') ? '→ ' : ''}Please, find your keys {kamiAccount.name}
+          </WarningOption>
+          <WarningOption onClick={() => handleSetMode('address')}>
+            {(mode !== 'key') ? '→ ' : ''}or replace your current Avatar
+          </WarningOption>
+          <br />
+          <InputContainer id='new-operator'>
+            <Label>{getLabel()}</Label>
+            <Input
+              type='text'
+              placeholder={getPlaceholder()}
+              value={value}
+              onChange={(e) => handleInputChange(e)}
+            />
+          </InputContainer>
+          <Row>
+            <SupportButton />
+            <ActionButton id={`submit`} text='Submit' onClick={submit} size='vending' />
+          </Row>
+        </ValidatorWrapper>
       );
     }
   );
 }
 
 
-const ModalContent = styled.div`
-  display: grid;
-  justify-content: center;
-  background-color: white;
-  padding: 20px;
-  width: 99%;
-`;
-
-const Title = styled.p`
-  font-size: 18px;
+const Description = styled.div`
+  font-size: 12px;
   color: #333;
   text-align: center;
   font-family: Pixel;
   padding: 5px 0px;
 `;
 
-const Container = styled.div`
+
+const WarningOption = styled.div`
+  font-size: 12px;
+  color: #FF785B;
+  text-align: center;
+  font-family: Pixel;
+  padding: 5px 0px;
+
+  cursor: pointer;
+  &:hover {
+    color: #FF785B;
+    text-decoration: underline;
+  }
+`;
+
+const InputContainer = styled.div`
   width: 100%;
   margin: 20px 5px;
   display: flex;
@@ -171,31 +266,22 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const Description = styled.p`
-  font-size: 12px;
-  color: #333;
-  text-align: center;
-  font-family: Pixel;
-  padding: 5px 0px;
-`;
-
 const Input = styled.input`
   background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
+  border: solid black 2px;
+  border-radius: 5px;
   padding: 15px 12px;
   margin: 5px 0px;
+  
+  display: inline-block;
+  justify-content: center;
+  cursor: pointer;
+  color: black;
 
+  font-family: Pixel;
+  font-size: 12px;
   text-align: left;
   text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  justify-content: center;
-  font-family: Pixel;
 `;
 
 const Label = styled.label`
@@ -205,21 +291,9 @@ const Label = styled.label`
   margin: 0px 5px;
 `;
 
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;

@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/react/shapes/Listing';
-import { dataStore } from 'layers/react/store/createStore';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
+import { Tooltip } from '../../library/Tooltip';
 
 
 export interface Props {
@@ -11,17 +12,17 @@ export interface Props {
 
 // TODO: support multiple buys
 export const ItemRow = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
-  const { setListing } = useSelectedEntities();
+  const { modals, setModals } = useVisibility();
+  const { setListing } = useSelected();
 
   const openBuyModal = () => {
     setListing(props.listing.entityIndex);
-    setVisibleModals({ ...visibleModals, buy: true });
+    setModals({ ...modals, buy: true });
   }
 
   const BuyButton = (listing: Listing) => (
     <ActionButton
-      id={`button-buy-${listing.item!.index}`}
+      id={`button-buy-${listing.item.index}`}
       onClick={openBuyModal}
       text='Buy'
     />
@@ -29,7 +30,9 @@ export const ItemRow = (props: Props) => {
 
   return (
     <Row key={props.listing.item!.index}>
-      <Image src={props.listing.item!.uri} />
+      <Tooltip text={[props.listing.item!.description]}>
+        <Image src={props.listing.item!.image.default} />
+      </Tooltip>
       <Name>{props.listing.item!.name}</Name>
       <Price>{props.listing!.buyPrice}</Price>
       <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>
@@ -48,7 +51,7 @@ const Row = styled.div`
 
 const Image = styled.img`
   border-right: .15vw solid black;
-  width: 3vw;
+  width: 3.5vw;
   padding: .3vw;
   font-family: Pixel;
 `;

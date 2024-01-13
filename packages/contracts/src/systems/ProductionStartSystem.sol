@@ -7,7 +7,6 @@ import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
-import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 
@@ -30,30 +29,26 @@ contract ProductionStartSystem is System {
     require(LibPet.canAct(components, petID), "Pet: on cooldown");
     require(LibPet.isResting(components, petID), "Pet: must be resting");
 
-    // sync the pet's health with the current state
+    // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "Pet: starving..");
-
-    // ensure the Pet is able to harvest on this Node
     require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");
-    require(LibNode.isHarvestingType(components, nodeID), "Node: not a Harvesting Node");
 
     // start the production, create if none exists
     uint256 id = LibProduction.getForPet(components, petID);
     if (id == 0) id = LibProduction.create(world, components, nodeID, petID);
     else LibProduction.setNode(components, id, nodeID);
     LibProduction.start(components, id);
-
-    // bump the cooldown by the value of the bonus
-    uint256 bonusID = LibBonus.get(components, petID, "HARVEST_COOLDOWN");
-    if (bonusID != 0) {
-      uint256 cooldownDiscount = LibBonus.getValue(components, bonusID);
-      LibPet.setLastTs(components, petID, block.timestamp - cooldownDiscount);
-    }
-
-    // update the pet's state account info
     LibPet.setState(components, petID, "HARVESTING");
-    LibAccount.updateLastBlock(components, accountID);
+
+    // Update ts for Standard Action Cooldowns
+    uint256 standardActionTs = block.timestamp;
+    uint256 bonusID = LibBonus.get(components, petID, "HARVEST_COOLDOWN");
+    if (bonusID != 0) standardActionTs -= LibBonus.getValue(components, bonusID);
+    LibPet.setLastActionTs(components, petID, standardActionTs);
+
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(id);
   }
 

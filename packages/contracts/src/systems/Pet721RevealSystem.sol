@@ -37,6 +37,8 @@ contract Pet721RevealSystem is System {
     uint256 seed = LibRandom.getSeedBlockhash(LibRandom.getRevealBlock(components, petID));
     LibRandom.removeRevealBlock(components, petID);
 
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     LibPet721.updateEvent(world, petIndex);
     return reveal(petID, seed);
   }

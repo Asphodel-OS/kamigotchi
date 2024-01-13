@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
-import styled from 'styled-components';
+import crypto from "crypto";
 
 import { RoomInfo } from './RoomInfo';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { mapIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
-import { dataStore } from 'layers/react/store/createStore';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
+import styled from 'styled-components';
+import { playClick } from 'utils/sounds';
 
 
 export function registerMapModal() {
   registerUIComponent(
     'WorldMap',
     {
-      colStart: 3,
+      colStart: 2,
       colEnd: 33,
-      rowStart: 3,
+      rowStart: 8,
       rowEnd: 50,
     },
     (layers) => {
@@ -44,8 +48,8 @@ export function registerMapModal() {
     },
     ({ layers, actions, api, data }) => {
       // console.log('mRoom: ', data)
-      const { room, setRoom } = useSelectedEntities();
-      const { visibleModals } = dataStore();
+      const { roomLocation, setRoom } = useSelected();
+      const { modals } = useVisibility();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 
@@ -55,13 +59,13 @@ export function registerMapModal() {
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
-        if (visibleModals.map) setRoom(data.account.location)
-      }, [visibleModals.map]);
+        if (modals.map) setRoom(data.account.location)
+      }, [modals.map]);
 
       // update the selected room details
       useEffect(() => {
-        if (room) {
-          const roomObject = getRoomByLocation(layers, room, { players: true });
+        if (roomLocation) {
+          const roomObject = getRoomByLocation(layers, roomLocation, { players: true });
           setSelectedRoom(roomObject);
 
           const exits = (roomObject.exits)
@@ -69,7 +73,7 @@ export function registerMapModal() {
             : [];
           setSelectedExits(exits);
         }
-      }, [room, data.account]);
+      }, [roomLocation, data.account]);
 
 
       ///////////////////
@@ -77,40 +81,88 @@ export function registerMapModal() {
 
       const move = (location: number) => {
         const room = getRoomByLocation(layers, location);
-        const actionID = `Moving to ${room.name}` as EntityID;
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'AccountMove',
+          params: [location],
+          description: `Moving to ${room.name}`,
           execute: async () => {
             return api.account.move(location);
           },
         });
       };
 
+      const handleClick = (location: number) => {
+        playClick();
+        move(location);
+      }
+
+      const ExitsDisplay = () => {
+        return (
+          <Section>
+            <Title>Go To..</Title>
+            {selectedExits.map((exit) => {
+              return (
+                <ClickableDescription key={exit.location} onClick={() => handleClick(exit.location)}>
+                  → {exit.name}
+                </ClickableDescription>
+              );
+            })}
+          </Section>
+        );
+      }
+
 
       ///////////////////
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='world_map'
           divName='map'
-          header={<Header key='header'>{selectedRoom?.name}</Header>}
+          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
+          footer={<ExitsDisplay />}
           canExit
         >
-          <RoomInfo room={selectedRoom} exits={selectedExits} move={move} />
-        </ModalWrapperFull>
+          <RoomInfo room={selectedRoom} />
+        </ModalWrapper>
       );
     }
   );
 }
 
-const Header = styled.div`
-  font-size: 1.5vw;
+
+const Section = styled.div`
+  margin: 1.2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
+
+
+const Title = styled.p`
   color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
+  padding-bottom: .5vw;
+
   font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
+`;
+
+// TODO: merge this with Description using props
+const ClickableDescription = styled.div`
+  color: #333;
+  cursor: pointer;
+  padding: .3vw;
+  
+  font-size: .8vw;
+  font-family: Pixel;
+  text-align: left;
+  &:hover {
+    background-color: #ddd;
+  }
+  &:active {
+    background-color: #bbb;
+  }
 `;

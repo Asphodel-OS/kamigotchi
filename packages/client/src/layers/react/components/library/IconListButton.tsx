@@ -14,6 +14,7 @@ interface Props {
 export interface Option {
   text: string;
   onClick: Function;
+  disabled?: boolean;
 }
 
 export function IconListButton(props: Props) {
@@ -45,6 +46,21 @@ export function IconListButton(props: Props) {
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
+  const element = (option: Option, i: number) => {
+    if (option.disabled)
+      return (
+        <Item key={i} style={{ backgroundColor: "#ccc" }}>
+          {option.text}
+        </Item>
+      );
+    else
+      return (
+        <Item key={i} onClick={() => onSelect(option)}>
+          {option.text}
+        </Item>
+      );
+  };
+
   return (
     <div>
       <Button
@@ -53,6 +69,7 @@ export function IconListButton(props: Props) {
         onClick={handleClick}
         style={setStyles()}
       >
+        <Corner />
         <Image src={props.img} />
       </Button>
       <Popover
@@ -63,11 +80,7 @@ export function IconListButton(props: Props) {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         <Menu>
-          {props.options.map((option, i) => (
-            <Item key={i} onClick={() => onSelect(option)}>
-              {option.text}
-            </Item>
-          ))}
+          {props.options.map((option, i) => element(option, i))}
         </Menu>
       </Popover>
     </div>
@@ -75,8 +88,9 @@ export function IconListButton(props: Props) {
 }
 
 const Button = styled.button`
+  position: relative;
   background-color: #fff;
-  border: solid black .12vw;
+  border: solid black .15vw;
   border-radius: .4vw;
   color: black;
   
@@ -98,6 +112,16 @@ const Button = styled.button`
   &:active {
     background-color: #bbb;
   }
+`;
+
+const Corner = styled.div`
+  position: absolute;
+  border: solid black .3vw;
+  border-color: transparent black black transparent;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
 `;
 
 const Image = styled.img`

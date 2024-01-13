@@ -8,13 +8,13 @@ import {
 } from '@latticexyz/recs';
 import { merge } from 'rxjs';
 
-import { rooms } from 'constants/phaser/rooms';
+import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
-import { closeModalsOnRoomChange } from 'layers/phaser/utils';
-import { checkDuplicateRooms } from 'layers/phaser/utils/checkDuplicateRooms';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
@@ -33,7 +33,7 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const GameSceneInstance = Game as GameScene;
 
   const system = async (update: any) => {
-    const { setRoom } = useSelectedEntities.getState();
+    const { setRoom } = useSelected.getState();
 
     // TODO: update this (and everything) to operate off of the selected Connector address
     const accountIndex = Array.from(
@@ -59,7 +59,22 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
   defineRxSystem(
     world,
-    merge(defineQuery([Has(OwnerAddress), Has(Location)]).update$, Network.update$).pipe(),
+    merge(defineQuery([Has(Location), Has(OperatorAddress), Has(OwnerAddress)]).update$, Network.update$).pipe(),
     system
   );
 }
+
+export const closeModalsOnRoomChange = () => {
+  const { modals } = useVisibility.getState();
+
+  useVisibility.setState({
+    modals: {
+      ...modals,
+      dialogue: false,
+      merchant: false,
+      kamiMint: false,
+      kami: false,
+      node: false,
+    },
+  });
+};

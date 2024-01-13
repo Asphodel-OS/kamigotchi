@@ -5,7 +5,7 @@ import { NodeImages } from 'constants/nodes';
 import { IconListButton } from "layers/react/components/library/IconListButton";
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Node } from 'layers/react/shapes/Node';
-import { Kami } from 'layers/react/shapes/Kami';
+import { Kami, canHarvest, isResting, onCooldown } from 'layers/react/shapes/Kami';
 import { harvestIcon } from 'assets/images/icons/actions';
 
 
@@ -18,7 +18,7 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [_, setLastRefresh] = useState(Date.now());
 
 
   /////////////////
@@ -38,24 +38,6 @@ export const Banner = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
-
-  // calculate the time a kami has spent idle (in seconds)
-  const calcIdleTime = (kami: Kami): number => {
-    return lastRefresh / 1000 - kami.lastUpdated;
-  };
-
-  // determine whether the kami is still on cooldown
-  const onCooldown = (kami: Kami): boolean => {
-    return calcIdleTime(kami) < kami.cooldown;
-  };
-
-  const isResting = (kami: Kami): boolean => {
-    return kami.state === 'RESTING';
-  };
-
-  const canHarvest = (kami: Kami): boolean => {
-    return !onCooldown(kami) && isResting(kami);
-  };
 
   // evaluate tooltip for allied kami Stop button
   const getAddTooltip = (kamis: Kami[]): string => {

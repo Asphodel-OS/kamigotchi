@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Battery } from './Battery';
+import { Card } from './Card';
 import { Countdown } from './Countdown';
 import { Tooltip } from './Tooltip';
-import { Card } from 'layers/react/components/library/Card';
-import { Kami } from 'layers/react/shapes/Kami';
-import { dataStore } from 'layers/react/store/createStore';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import {
+  Kami,
+  isUnrevealed,
+  calcCooldownRemaining,
+  calcHealth,
+} from "layers/react/shapes/Kami";
+import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -23,12 +28,11 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { visibleModals, setVisibleModals } = dataStore();
-  const { kamiEntityIndex, setKami } = useSelectedEntities();
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-
+  const { modals, setModals } = useVisibility();
+  const { kamiIndex, setKami } = useSelected();
 
   // ticking
+  const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
     const refreshClock = () => {
       setLastRefresh(Date.now());
@@ -45,36 +49,13 @@ export const KamiCard = (props: Props) => {
 
   // toggle the kami modal settings depending on its current state
   const kamiOnClick = () => {
-    const modalIsOpen = visibleModals.kami;
-    const sameKami = kamiEntityIndex === props.kami.entityIndex;
-    setKami(props.kami.entityIndex);
+    const sameKami = (kamiIndex === props.kami.index);
+    setKami(props.kami.index);
 
-    if (modalIsOpen && sameKami) setVisibleModals({ ...visibleModals, kami: false });
-    else setVisibleModals({ ...visibleModals, kami: true });
+    if (modals.kami && sameKami) setModals({ ...modals, kami: false });
+    else setModals({ ...modals, kami: true });
     playClick();
   }
-
-  /////////////////
-  // INTERPRETATION
-
-  // calculate the time a kami has spent idle (in seconds)
-  const calcIdleTime = (kami: Kami): number => {
-    return lastRefresh / 1000 - kami.lastUpdated;
-  };
-
-  // calculate health based on the drain against last confirmed health
-  const calcHealth = (kami: Kami): number => {
-    let health = 1 * kami.health;
-    let duration = calcIdleTime(kami);
-    health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), kami.stats.health);
-    return health;
-  };
-
-  // check whether the kami is revealed
-  const isUnrevealed = (kami: Kami): boolean => {
-    return kami.state === 'UNREVEALED';
-  };
 
 
   /////////////////
@@ -90,22 +71,23 @@ export const KamiCard = (props: Props) => {
   };
 
   const CornerContent = (kami: Kami) => {
-    const healthString = !isUnrevealed(kami)
-      ? `Health: ${calcHealth(kami).toFixed()}/${kami.stats.health * 1}`
+    const cooldown = calcCooldownRemaining(kami);
+    const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
+    const totalHealth = kami.stats.health + kami.bonusStats.health;
+    const batteryString = !isUnrevealed(kami)
+      ? `Health: ${calcHealth(kami).toFixed()}/${totalHealth}`
       : '';
 
-    const cooldown = Math.round(Math.max(kami.cooldown - calcIdleTime(kami), 0));
-    const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
     return (
       <TitleCorner key='corner'>
         {props.cooldown &&
           <Tooltip key='cooldown' text={[cooldownString]}>
-            <Countdown total={kami.cooldown} current={cooldown} />
+            <Countdown total={kami.time.cooldown.requirement} current={cooldown} />
           </Tooltip>
         }
         {props.battery &&
-          <Tooltip key='battery' text={[healthString]}>
-            <Battery level={100 * calcHealth(kami) / kami.stats.health} />
+          <Tooltip key='battery' text={[batteryString]}>
+            <Battery level={100 * calcHealth(kami) / totalHealth} />
           </Tooltip>
         }
       </TitleCorner>

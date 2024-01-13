@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled, { keyframes } from 'styled-components';
-import { useAccount } from 'wagmi';
+import styled from 'styled-components';
 
-import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
-import { useNetworkSettings } from 'layers/react/store/networkSettings'
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
-import { generatePrivateKey, getAddressFromPrivateKey } from 'src/utils/address';
-
+import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
+import { useVisibility } from 'layers/react/store/visibility';
+import { useNetwork } from 'layers/react/store/network'
+import { generatePrivateKey, getAddressFromPrivateKey } from 'utils/address';
 import 'layers/react/styles/font.css';
+
 
 export function registerBurnerDetector() {
   registerUIComponent(
@@ -45,48 +45,72 @@ export function registerBurnerDetector() {
     },
 
     ({ connectedEOA, network }) => {
-      const { isConnected } = useAccount(); // refers to Connector
-      const { setBurnerInfo } = useNetworkSettings();
-      const { toggleVisibleButtons, toggleVisibleModals } = dataStore();
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const [detectedAddress, setDetectedAddress] = useState('');
-      const [isMismatched, setIsMismatched] = useState(false);
-      const [input, setInput] = useState('');
+      const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
+      const { validators, setValidators } = useVisibility();
+      const { validations, setValidations, setBurner } = useNetwork();
 
-      // set the detectedEOA upon detectedPrivateKey change and determine mismatch
+      const [isVisible, setIsVisible] = useState(false);
+      const [burnerMatches, setBurnerMatches] = useState(false);
+      const [detectedAddress, setDetectedAddress] = useState('');
+      const [input, setInput] = useState('');
+      const [errorPrimary, setErrorPrimary] = useState('');
+      const [errorSecondary, setErrorSecondary] = useState('');
+
+      // listen on changes to the detectedEOA to determine mismatch
       useEffect(() => {
         const detectedEOA = getAddressFromPrivateKey(detectedPrivateKey);
         setDetectedAddress(detectedEOA);
-        setBurnerInfo({
-          connected: connectedEOA ?? '',
-          detected: detectedEOA,
-          detectedPrivateKey,
+
+        const burnerMatches = (connectedEOA === detectedEOA);
+        setBurnerMatches(burnerMatches);
+
+        if (!detectedPrivateKey) {
+          setErrorPrimary('No Burner Detected');
+          setErrorSecondary('Please enter a private key.');
+        } else if (!detectedEOA) {
+          setErrorPrimary('Invalid Burner Detected');
+          setErrorSecondary('Please enter a private key.');
+        } else if (!burnerMatches) {
+          setErrorPrimary('Mismatch Detected');
+          setErrorSecondary('Please Refresh or enter the correct private key.');
+        }
+
+        setBurner({
+          connected: { address: connectedEOA ?? '' },
+          detected: {
+            address: detectedEOA,
+            key: detectedPrivateKey,
+          }
         });
-        setIsMismatched(connectedEOA !== detectedEOA);
+        setValidations({ ...validations, burnerMatches })
       }, [detectedPrivateKey, connectedEOA]);
 
-      // catch clicks on modal, prevents duplicate Phaser3 triggers
-      const handleClicks = (event: any) => {
-        event.stopPropagation();
-      };
-      const element = document.getElementById('burner-detector');
-      element?.addEventListener('mousedown', handleClicks);
-
-      // modal and button toggles
+      // determining visibility based on above/prev checks
       useEffect(() => {
-        if (isMismatched) {
-          toggleVisibleModals(false);
-          toggleVisibleButtons(false);
+        setIsVisible(
+          validations.isConnected &&
+          validations.chainMatches &&
+          !burnerMatches
+        );
+      }, [validations, burnerMatches]);
+
+      // adjust visibility of windows based on above determination
+      useEffect(() => {
+        if (isVisible) {
+          toggleModals(false);
+          toggleButtons(false);
+          toggleFixtures(false);
         }
-      }, [isMismatched]);
+        if (isVisible != validators.burnerDetector) {
+          const { validators } = useVisibility.getState();
+          setValidators({ ...validators, burnerDetector: isVisible });
+        }
+      }, [isVisible, validators.walletConnector]);
+
 
       /////////////////
       // STATE
-
-      // how to render the modal
-      const modalDisplay = () => (
-        (isConnected && isMismatched) ? 'block' : 'none'
-      );
 
       const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value);
@@ -98,6 +122,7 @@ export function registerBurnerDetector() {
         }
       };
 
+
       /////////////////
       // DISPLAY
 
@@ -106,6 +131,7 @@ export function registerBurnerDetector() {
           id={`generate-burner`}
           onClick={() => setInput(generatePrivateKey())}
           text='Generate'
+          size='vending'
         />
       );
 
@@ -114,6 +140,7 @@ export function registerBurnerDetector() {
           id={`set-burner`}
           onClick={() => setDetectedPrivateKey(input)}
           text='Submit'
+          size='vending'
         />
       )
 
@@ -127,64 +154,30 @@ export function registerBurnerDetector() {
         />
       );
 
-      const ErrorMessage = () => {
-        let title = '', message = '';
-
-        if (!detectedPrivateKey) {
-          title = 'No Burner Detected';
-          message = 'Please enter a private key.';
-        } else if (!detectedAddress) {
-          title = 'Invalid Burner Detected';
-          message = 'Please enter a private key.';
-        } else if (isMismatched) {
-          title = 'Mismatch Detected';
-          message = 'Please refresh or enter the correct private key.';
-        }
-
-        return (
-          <>
-            <ErrorTitle>{title}</ErrorTitle>
-            <ErrorText>{message}</ErrorText>
-          </>
-        )
-      };
-
-
       return (
-        <ModalWrapper id='burner-detector' style={{ display: modalDisplay() }}>
-          <ModalContent style={{ pointerEvents: 'auto' }}>
-            <Title>Burner Address Detector</Title>
-            <br />
-            <Description>Connected: {network.connectedAddress.get()}</Description>
-            <br />
-            <Description>Detected: {detectedAddress}</Description>
-            <br />
-            <br />
-            {ErrorMessage()}
-            {PrivateKeyInput()}
-            <ActionWrapper>
-              {GenerateButton()}
-              {SubmitButton()}
-            </ActionWrapper>
-          </ModalContent>
-        </ModalWrapper>
+        <ValidatorWrapper
+          id='burner-detector'
+          divName='burnerDetector'
+          title='Burner Address Detector'
+          errorPrimary={errorPrimary}
+          errorSecondary={errorSecondary}
+        >
+          <Description>Connected: {network.connectedAddress.get()}</Description>
+          <Description>Detected: {detectedAddress}</Description>
+          <br />
+          {PrivateKeyInput()}
+          <ActionWrapper>
+            {GenerateButton()}
+            {SubmitButton()}
+          </ActionWrapper>
+        </ValidatorWrapper>
       );
     }
   );
 }
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
 
 const Input = styled.input`
-  width: 80%;
-
   background-color: #ffffff;
   border-style: solid;
   border-width: 2px;
@@ -203,57 +196,12 @@ const Input = styled.input`
   font-family: Pixel;
 `;
 
-const ModalWrapper = styled.div`
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 1.3s ease-in-out;
-`;
-
-const ModalContent = styled.div`
-  width: 99%;    
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-
-  background-color: white;
-  padding: 30px 20px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-
-const Title = styled.p`
-  font-size: 18px;
-  color: #333;
-  padding: 15px;
-  text-align: center;
-  font-family: Pixel;
-`;
-
-const Description = styled.p`
+const Description = styled.div`
   font-size: 12px;
   color: #333;
   text-align: center;
   font-family: Pixel;
-`;
-
-const ErrorTitle = styled.div`
-  font-size: 14px;
-  color: #922;
-  padding: 10px;
-  text-align: center;
-  font-family: Pixel;
-`
-
-const ErrorText = styled.p`
-  font-size: 12px;
-  color: #922;
-  text-align: center;
-  font-family: Pixel;
+  padding: 5px 0px;
 `;
 
 const ActionWrapper = styled.div`

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import cdf from '@stdlib/stats-base-dists-normal-cdf';
 
 import {
   collectIcon,
@@ -13,7 +12,18 @@ import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
 import { Account } from "layers/react/shapes/Account";
 import { Inventory } from "layers/react/shapes/Inventory";
-import { Kami } from "layers/react/shapes/Kami";
+import {
+  Kami,
+  calcCooldownRemaining,
+  calcHealth,
+  calcOutput,
+  calcLiqThresholdValue,
+  canLiquidate,
+  canMog,
+  isFull,
+  isStarving,
+  onCooldown,
+} from "layers/react/shapes/Kami";
 import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
 
 
@@ -27,13 +37,15 @@ interface Props {
   };
   allies: Kami[];
   enemies: Kami[];
-  liquidationConfig: LiquidationConfig;
+  battleConfig: LiquidationConfig;
   tab: string;
 }
 
 export const Kards = (props: Props) => {
+  const { actions, account, battleConfig } = props;
+
   // ticking
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
     const refreshClock = () => {
       setLastRefresh(Date.now());
@@ -48,85 +60,11 @@ export const Kards = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // calculate health based on the drain against last confirmed health
-  const calcHealth = (kami: Kami): number => {
-    let health = 1 * kami.health;
-    let duration = calcIdleTime(kami);
-    health += kami.healthRate * duration;
-    health = Math.min(Math.max(health, 0), kami.stats.health);
-    return health;
-  };
+  const hasFood = (account: Account): boolean => {
+    let inventories = account.inventories;
+    if (!inventories || !inventories.food) return false;
 
-  // calculate the time a kami has spent idle (in seconds)
-  const calcIdleTime = (kami: Kami): number => {
-    return lastRefresh / 1000 - kami.lastUpdated;
-  };
-
-  // calculate the expected output from a pet production based on starttime
-  const calcOutput = (kami: Kami): number => {
-    let output = 0;
-    if (isHarvesting(kami) && kami.production) {
-      output = kami.production.balance * 1;
-      let duration = lastRefresh / 1000 - kami.lastUpdated;
-      output += Math.floor(duration * kami.production?.rate);
-    }
-    return Math.max(output, 0);
-  };
-
-  // calculate the affinity multiplier for liquidation threshold
-  const calcLiquidationAffinityMultiplier = (attacker: Kami, victim: Kami): number => {
-    const multiplierBase = props.liquidationConfig.multipliers.affinity.base;
-    const multiplierUp = props.liquidationConfig.multipliers.affinity.up;
-    const multiplierDown = props.liquidationConfig.multipliers.affinity.down;
-
-    let multiplier = multiplierBase;
-    if (attacker.traits && victim.traits) {
-      const attackerAffinity = attacker.traits.hand.affinity;
-      const victimAffinity = victim.traits.body.affinity;
-      if (attackerAffinity === 'EERIE') {
-        if (victimAffinity === 'SCRAP') multiplier = multiplierUp;
-        else if (victimAffinity === 'INSECT') multiplier = multiplierDown;
-      } else if (attackerAffinity === 'SCRAP') {
-        if (victimAffinity === 'INSECT') multiplier = multiplierUp;
-        else if (victimAffinity === 'EERIE') multiplier = multiplierDown;
-      } else if (attackerAffinity === 'INSECT') {
-        if (victimAffinity === 'EERIE') multiplier = multiplierUp;
-        else if (victimAffinity === 'SCRAP') multiplier = multiplierDown;
-      }
-    }
-    return multiplier;
-  };
-
-  // calculate the base liquidation threshold b/w two kamis as a %
-  const calcLiquidationThresholdBase = (attacker: Kami, victim: Kami): number => {
-    const attackerTotalViolence = attacker.stats.violence + attacker.bonusStats.violence;
-    const victimTotalHarmony = victim.stats.harmony + victim.bonusStats.harmony;
-    const ratio = attackerTotalViolence / victimTotalHarmony;
-    const weight = cdf(Math.log(ratio), 0, 1);
-    const peakBaseThreshold = props.liquidationConfig.threshold;
-    return weight * peakBaseThreshold;
-  };
-
-  // calculate the liquidation threshold b/w two kamis as a %
-  const calcLiquidationThreshold = (attacker: Kami, victim: Kami): number => {
-    const base = calcLiquidationThresholdBase(attacker, victim);
-    const multiplier = calcLiquidationAffinityMultiplier(attacker, victim);
-    return base * multiplier;
-  };
-
-  const calcLiquidationThresholdValue = (attacker: Kami, victim: Kami): number => {
-    const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
-    const thresholdPercent = calcLiquidationThreshold(attacker, victim);
-    return thresholdPercent * victimTotalHealth;
-  }
-
-
-  const isFull = (kami: Kami): boolean => {
-    return Math.round(calcHealth(kami)) >= kami.stats.health;
-  };
-
-  const hasFood = (): boolean => {
-    const total = props.account.inventories!.food!.reduce(
+    const total = inventories.food.reduce(
       (tot: number, inv: Inventory) => tot + (inv.balance || 0),
       0
     );
@@ -134,13 +72,13 @@ export const Kards = (props: Props) => {
   };
 
   // get the reason why a kami can't feed. assume the kami is either resting or harvesting
-  const whyCantFeed = (kami: Kami): string => {
+  const whyCantFeed = (kami: Kami, account: Account): string => {
     let reason = '';
-    if (kami.production?.node?.location != props.account.location) {
+    if (kami.production?.node?.location != account.location) {
       reason = `not at your location`;
     } else if (isFull(kami)) {
       reason = `already full`;
-    } else if (!hasFood()) {
+    } else if (!hasFood(account)) {
       reason = `buy food, poore`;
     } else if (onCooldown(kami)) {
       reason = `can't eat, on cooldown`;
@@ -148,39 +86,8 @@ export const Kards = (props: Props) => {
     return reason;
   };
 
-  const canFeed = (kami: Kami): boolean => {
-    return !whyCantFeed(kami);
-  };
-
-  const canMog = (attacker: Kami, victim: Kami): boolean => {
-    const thresholdPercent = calcLiquidationThreshold(attacker, victim);
-    const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
-    const absoluteThreshold = thresholdPercent * victimTotalHealth;
-    return calcHealth(victim) < absoluteThreshold;
-  }
-  // determine whether a kami can liquidate another kami
-  const canLiquidate = (attacker: Kami, victim: Kami): boolean => {
-    return !onCooldown(attacker) && isHealthy(attacker) && canMog(attacker, victim);
-  }
-
-  // check whether the kami is currently harvesting
-  // TODO: replace this with a general state check
-  const isHarvesting = (kami: Kami): boolean => {
-    let result = false;
-    if (kami.production) {
-      result = kami.production.state === 'ACTIVE';
-    }
-    return result;
-  };
-
-  // determine if pet is healthy (currHealth > 0)
-  const isHealthy = (kami: Kami): boolean => {
-    return calcHealth(kami) > 0;
-  };
-
-  // determine whether the kami is still on cooldown
-  const onCooldown = (kami: Kami): boolean => {
-    return calcIdleTime(kami) < kami.cooldown;
+  const canFeed = (kami: Kami, account: Account): boolean => {
+    return !whyCantFeed(kami, account);
   };
 
   // get the description on the card
@@ -193,6 +100,17 @@ export const Kards = (props: Props) => {
       `Violence: ${kami.stats.violence + kami.bonusStats.violence}`,
     ];
     return description;
+  }
+
+  // derive general disabled reason for allied kami
+  const getDisabledReason = (kami: Kami): string => {
+    let reason = '';
+    if (onCooldown(kami)) {
+      reason = 'On cooldown (' + calcCooldownRemaining(kami).toFixed(0) + 's left)';
+    } else if (isStarving(kami)) {
+      reason = 'starving :(';
+    }
+    return reason;
   }
 
   // evaluate tooltip for allied kami Collect button
@@ -209,18 +127,6 @@ export const Kards = (props: Props) => {
     return text;
   }
 
-  // derive general disabled reason for allied kami
-  const getDisabledReason = (kami: Kami): string => {
-    let reason = '';
-    if (onCooldown(kami)) {
-      const cooldown = kami.cooldown - calcIdleTime(kami)
-      reason = 'On cooldown (' + cooldown.toFixed(0) + 's left)';
-    } else if (!isHealthy(kami)) {
-      reason = 'starving :(';
-    }
-    return reason;
-  }
-
   const getLiquidateTooltip = (target: Kami, allies: Kami[]): string => {
     let reason = '';
     let available = [...allies];
@@ -228,7 +134,7 @@ export const Kards = (props: Props) => {
       reason = 'your kamis aren\'t on this node';
     }
 
-    available = available.filter((kami) => isHealthy(kami));
+    available = available.filter((kami) => !isStarving(kami));
     if (available.length == 0 && reason === '') {
       reason = 'your kamis are starving';
     }
@@ -239,10 +145,10 @@ export const Kards = (props: Props) => {
     }
 
     // check what the liquidation threshold is for any kamis that have made it to 
-    const valid = available.filter((kami) => canMog(kami, target));
+    const valid = available.filter((kami) => canMog(kami, target, battleConfig));
     if (valid.length == 0 && reason === '') {
       // get the details of the highest cap liquidation
-      const thresholds = available.map((ally) => calcLiquidationThresholdValue(ally, target));
+      const thresholds = available.map((ally) => calcLiqThresholdValue(ally, target, battleConfig));
       const [threshold, index] = thresholds.reduce(
         (a, b, i) => a[0] < b ? [b, i] : a,
         [Number.MIN_VALUE, -1]
@@ -259,14 +165,13 @@ export const Kards = (props: Props) => {
   ///////////////////
   // DISPLAY (buttons)
 
-
   // button for collecting on production
   const CollectButton = (kami: Kami) => {
     return (
       <Tooltip key='collect-tooltip' text={[getCollectTooltip(kami)]}>
         <IconButton
           id={`harvest-collect-${kami.index}`}
-          onClick={() => props.actions.collect(kami)}
+          onClick={() => actions.collect(kami)}
           img={collectIcon}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
         />
@@ -274,30 +179,31 @@ export const Kards = (props: Props) => {
     );
   }
 
-  const FeedButton = (kami: Kami) => {
-    const canFeedKami = canFeed(kami);
-    const tooltipText = whyCantFeed(kami);
+  const FeedButton = (kami: Kami, account: Account) => {
+    const canFeedKami = canFeed(kami, account);
+    const tooltipText = whyCantFeed(kami, account);
 
-    const stockedInventory = props.account.inventories?.food?.filter(
+    const stockedInventory = account.inventories?.food?.filter(
       (inv: Inventory) => inv.balance && inv.balance > 0
     ) ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
         text: inv.item.name!,
-        onClick: () => props.actions.feed(kami, inv.item.familyIndex || 1),
+        onClick: () => actions.feed(kami, inv.item.familyIndex || 1),
       };
     });
 
     let returnVal = (
-      <IconListButton
-        id={`feed-button-${kami.index}`}
-        img={feedIcon}
-        disabled={!canFeedKami}
-        options={feedOptions}
-      />
+      <Tooltip key={`feed-tooltip`} text={[tooltipText]}>
+        <IconListButton
+          id={`feed-button-${kami.index}`}
+          img={feedIcon}
+          disabled={!canFeedKami}
+          options={feedOptions}
+        />
+      </Tooltip>
     );
-    if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
 
     return returnVal;
   };
@@ -309,7 +215,7 @@ export const Kards = (props: Props) => {
         <IconButton
           id={`harvest-stop-${kami.index}`}
           img={stopIcon}
-          onClick={() => props.actions.stop(kami)}
+          onClick={() => actions.stop(kami)}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
         />
       </Tooltip >
@@ -318,11 +224,11 @@ export const Kards = (props: Props) => {
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options = allies.filter((ally) => canLiquidate(ally, target));
+    const options = allies.filter((ally) => canLiquidate(ally, target, battleConfig));
     const actionOptions = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
-        onClick: () => props.actions.liquidate(myKami, target)
+        onClick: () => actions.liquidate(myKami, target)
       };
     });
 
@@ -354,7 +260,7 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        action={[FeedButton(kami), CollectButton(kami), StopButton(kami)]}
+        action={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
         battery
         cooldown
       />

@@ -9,6 +9,8 @@ import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
 import face from 'assets/data/kami/Face.csv';
 import hand from 'assets/data/kami/Hand.csv';
+import rooms from 'assets/data/rooms/Rooms.csv';
+import nodes from 'assets/data/nodes/Nodes.csv';
 
 export function setUpWorldAPI(systems: any) {
   async function initAll() {
@@ -30,10 +32,10 @@ export function setUpWorldAPI(systems: any) {
 
     createPlayerAPI(systems).account.register(
       '0x000000000000000000000000000000000000dead',
-      'load_bearer'
+      'load_bearer',
+      'fudge',
     );
   }
-
 
   ///////////////////
   // CONFIG
@@ -47,6 +49,10 @@ export function setUpWorldAPI(systems: any) {
     // Account Stamina
     await api.config.set.number('ACCOUNT_STAMINA_BASE', 20);
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 300);
+
+    // Friends
+    await api.config.set.number('FRIENDS_BASE_LIMIT', 10);
+    await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 
     // Kami Idle Requirement
     await api.config.set.number('KAMI_IDLE_REQ', 180);
@@ -88,10 +94,10 @@ export function setUpWorldAPI(systems: any) {
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
     // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
-    await api.config.set.number('HEALTH_RATE_DRAIN_BASE', 40); // in respect to harvest rate
+    await api.config.set.number('HEALTH_RATE_DRAIN_BASE', 20); // in respect to harvest rate
     await api.config.set.number('HEALTH_RATE_DRAIN_BASE_PREC', 2); // i.e. x/100
     await api.config.set.number('HEALTH_RATE_HEAL_PREC', 9); // ignore this, for consistent math on SC
-    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 150); // in respect to harmony
+    await api.config.set.number('HEALTH_RATE_HEAL_BASE', 120); // in respect to harmony
     await api.config.set.number('HEALTH_RATE_HEAL_BASE_PREC', 2); // i.e. x/100
 
 
@@ -112,7 +118,7 @@ export function setUpWorldAPI(systems: any) {
   async function initLocalConfig(api: AdminAPI) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
-    await api.config.set.number('KAMI_LVL_REQ_BASE', 10); // experience required for level 1->2
+    await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
     await api.config.set.number('HARVEST_RATE_BASE', 10000); // in respect to power
     await api.config.set.number('HEALTH_RATE_HEAL_BASE', 10000); // in respect to harmony
   }
@@ -122,116 +128,31 @@ export function setUpWorldAPI(systems: any) {
   // ROOMS
 
   async function initRooms(api: AdminAPI) {
-    await api.room.create(0, 'deadzone', '', [1]); // in case we need this
-    await api.room.create(
-      1,
-      'Misty Riverside',
-      'A dark forest, the sky above blotted out by trees. Blue butterflies flutter around, looking lost.',
-      [2]
-    );
-    await api.room.create(
-      2,
-      'Tunnel of Trees',
-      'The light at the end of the tunnel; a way out of the forest. Also, a blue door made of light hangs in the air - it says “SHOP”.',
-      [1, 3, 13]
-    );
-    await api.room.create(
-      3,
-      'Torii Gate',
-      'This road is overgrown and disappears in the grass before a large wooden gate. Behind it the forest changes, swelling and darkening.\nHills of garbage seem to be growing out of the ground in the distance and mark a horizon against the blue sky.',
-      [2, 4]
-    );
-    await api.room.create(
-      4,
-      'Vending Machine',
-      'Day turns into night here deep in the scrap. The vending machine bleeps happily despite lacking a power cord. A long-tailed comet bravely dives across the sky.',
-      [3, 5, 12]
-    );
-    await api.room.create(
-      5,
-      'Restricted Area',
-      'A paved road lined with cherry trees leads away from the junkyard, toward a large office complex.',
-      [4, 6, 9]
-    );
-    await api.room.create(
-      6,
-      'Labs Entrance',
-      'The office building\'s exterior is in disrepair.A breeze is slowly shifting the air.',
-      [5, 7]
-    );
-    await api.room.create(
-      7,
-      'Lobby',
-      'The doors close around a sparsely decorated lobby. A blue roof and white walls, with blue skirting framing an elevator.',
-      [6, 8, 14]
-    );
-    await api.room.create(
-      8,
-      'Junk Shop',
-      'This electrical room has been converted into a living space and workshop. The walls are covered in panels and buttons. A prickly, burnt smell lingers in the air.',
-      [7]
-    );
-    await api.room.create(
-      9,
-      'Old Growth',
-      'The forest is older here, and untouched, long vines and moss climbing the trees. Giant insects cause a ruckus with their ceaseless buzzing.',
-      [5, 10, 11]
-    );
-    await api.room.create(
-      10,
-      'Insect Node',
-      'A procession of insects is slowly moving towards the great mound here. The buzzing creates an overwhelming cacophony as you approach.',
-      [9]
-    );
-    await api.room.create(
-      11,
-      'Waterfall Shrine',
-      'A large waterfall creates a cool and invigorating mist here. Before the basin stands a whispering shrine.',
-      [9, 15]
-    );
-    await api.room.create(
-      12,
-      'Machine Node',
-      'Deep in the scrapyard a collection of strange objects are vibrating, screeching, pulsating, whispering, cackling, hissing and in general making a disturbance.',
-      [4]
-    );
-    await api.room.create(
-      13,
-      'Convenience Store',
-      'The shop walls are lined with exotically stocked shelves. Behind the counter stands a woman occupied with the snake coiled around her neck.',
-      [2]
-    );
-    await api.room.create(
-      14,
-      "Manager's Office",
-      'A stylish penthouse office with a view. It\'s seen a bit of a commotion.',
-      [7]
-    );
-    await api.room.create(
-      15,
-      'Temple Cave',
-      'A cave behind the waterfall. Friendly statues line a path to the back of the cave away from ancient-looking temple ruins.',
-      [11, 16, 18]
-    );
-    await api.room.create(
-      16,
-      'Techno Temple',
-      'Inside the ruined temple. This place might have been traditional once, but now it sparks and rumbles with technology.',
-      [15]
-    );
-    // await api.room.create(17, "Misty Park", 'You appear to be outside in an urban park. Balls of light dance around a statue of an angel. Fog hangs thick in the air.', [0]);
-    await api.room.create(
-      18,
-      'Cave Crossroads',
-      'Deep in the cave the path branches. The bioluminescent fungi make it nearly as bright as day. You can hear bells in the air.',
-      [15, 19]
-    );
-    await api.room.create(
-      19,
-      'Violence Temple',
-      'Half eroded stone and mossy growth, half gleaming metal and glowing crystal. Whether temple or technology, it unsettles you.',
-      [18]
-    );
+    const allRooms = csvToMap(rooms);
+    for (let i = 0; i < allRooms.length; i++) {
+      await sleepIf();
+      try {
+        if (allRooms[i].get('Enabled') === "Yes") {
+          await api.room.create(
+            Number(allRooms[i].get('Index')),
+            allRooms[i].get('Name'),
+            allRooms[i].get('Description'),
+            allRooms[i].get('Exits').split(',').map((n: string) => n.trim()),
+          );
+        }
+      } catch { }
+    }
+  }
+
+  async function deleteRooms(api: AdminAPI, locations: number[]) {
+    for (let i = 0; i < locations.length; i++) {
+      await sleepIf();
+      try {
+        await api.room.delete(locations[i]);
+      } catch {
+        console.error("Could not delete room at location " + locations[i]);
+      }
+    }
   }
 
   ////////////////////
@@ -251,6 +172,9 @@ export function setUpWorldAPI(systems: any) {
           case "REVIVE":
             await setRevive(api, allItems[i]);
             break;
+          case "MISC":
+            await setMisc(api, allItems[i]);
+            break;
           case "LOOTBOX":
             await setLootbox(api, allItems[i], allDroptables);
             break;
@@ -261,6 +185,17 @@ export function setUpWorldAPI(systems: any) {
     }
   }
 
+  async function deleteItems(api: AdminAPI, indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await sleepIf();
+      try {
+        await api.registry.item.delete(indices[i]);
+      } catch {
+        console.error("Could not delete item " + indices[i]);
+      }
+    }
+  }
+
   async function setFood(api: AdminAPI, item: any) {
     await api.registry.item.create.food(
       item.get('Index'),
@@ -268,6 +203,7 @@ export function setUpWorldAPI(systems: any) {
       item.get('Name'),
       item.get('Description'),
       item.get('Health'),
+      item.get('XP'),
       item.get('MediaURI')
     );
   }
@@ -283,13 +219,23 @@ export function setUpWorldAPI(systems: any) {
     );
   }
 
+  async function setMisc(api: AdminAPI, item: any) {
+    await api.registry.item.create.consumable(
+      item.get('Index'),
+      item.get('Name'),
+      item.get('Description'),
+      item.get('miscCategory'),
+      item.get('MediaURI')
+    );
+  }
+
   async function setLootbox(api: AdminAPI, item: any, droptables: any) {
     await api.registry.item.create.lootbox(
       item.get('Index'),
       item.get('Name'),
       item.get('Description'),
-      droptables[Number(item.get('Droptable'))].get('Key'),
-      droptables[Number(item.get('Droptable'))].get('Tier'),
+      droptables[Number(item.get('Droptable')) - 1].get('Key'),
+      droptables[Number(item.get('Droptable')) - 1].get('Tier'),
       item.get('MediaURI')
     );
   }
@@ -305,9 +251,9 @@ export function setUpWorldAPI(systems: any) {
     // create our hottie merchant ugajin. names are unique
     await api.npc.create(1, 'Mina', 13);
 
-    await api.listing.set(1, 1, 25, 0); // merchant index, item index, buy price, sell price
-    await api.listing.set(1, 2, 90, 0);
-    await api.listing.set(1, 3, 150, 0);
+    await api.listing.set(1, 1, 50, 0); // merchant index, item index, buy price, sell price
+    await api.listing.set(1, 2, 180, 0);
+    await api.listing.set(1, 3, 320, 0);
     await api.listing.set(1, 1001, 500, 0);
   }
 
@@ -316,50 +262,31 @@ export function setUpWorldAPI(systems: any) {
   // NODES
 
   async function initNodes(api: AdminAPI) {
-    await api.node.create(
-      1,
-      'HARVEST',
-      3,
-      'Torii Gate',
-      `These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $MUSU....`,
-      `NORMAL`,
-    );
+    const allNodes = csvToMap(nodes);
+    for (let i = 0; i < allNodes.length; i++) {
+      await sleepIf();
+      try {
+        await api.node.create(
+          Number(allNodes[i].get('Index')),
+          allNodes[i].get('Type'),
+          allNodes[i].get('Location'),
+          allNodes[i].get('Name'),
+          allNodes[i].get('Description'),
+          allNodes[i].get('Affinity')
+        );
+      } catch { }
+    }
+  }
 
-    await api.node.create(
-      2,
-      'HARVEST',
-      7,
-      'Trash Compactor',
-      'Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.',
-      'SCRAP',
-    );
-
-    await api.node.create(
-      3,
-      'HARVEST',
-      10,
-      'Termite Mound',
-      'A huge termite mound. Apparently, this is sacred to the local insects.',
-      'INSECT',
-    );
-
-    await api.node.create(
-      4,
-      'HARVEST',
-      14,
-      'Occult Circle',
-      'The energy existing here exudes an eeriness that calls out to EERIE Kamigotchi.',
-      'EERIE',
-    );
-
-    await api.node.create(
-      5,
-      'HARVEST',
-      12,
-      'Monolith',
-      'This huge black monolith seems to draw in energy from the rest of the junkyard.',
-      'SCRAP',
-    );
+  async function deleteNodes(api: AdminAPI, indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await sleepIf();
+      try {
+        await api.node.delete(indices[i]);
+      } catch {
+        console.error("Could not delete node " + indices[i]);
+      }
+    }
   }
 
 
@@ -377,8 +304,9 @@ export function setUpWorldAPI(systems: any) {
       1,
       0
     );
-    await api.registry.quest.add.objective(1, "Move to room 4", "AT", "ROOM", 0, 4);
+    await api.registry.quest.add.objective(1, "Find the vending machine", "CURR_EQUAL", "ROOM", 0, 4);
     await api.registry.quest.add.reward(1, "MINT20", 0, 5);
+    await api.registry.quest.add.reward(1, "QUEST_POINTS", 0, 1);
 
     // quest 2
     await api.registry.quest.create(
@@ -389,8 +317,9 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(2, "COMPLETE", "QUEST", 0, 1);
-    await api.registry.quest.add.objective(2, "Mint a Kami", "MINT", "PET721_MINT", 0, 1);
-    await api.registry.quest.add.reward(2, "FOOD", 2, 1);
+    await api.registry.quest.add.objective(2, "Mint a Kami", "CURR_MIN", "KAMI", 0, 1);
+    await api.registry.quest.add.reward(2, "ITEM", 2, 1);
+    await api.registry.quest.add.reward(2, "QUEST_POINTS", 0, 2);
 
     // quest 3
     await api.registry.quest.create(
@@ -401,8 +330,9 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(3, "COMPLETE", "QUEST", 0, 2);
-    await api.registry.quest.add.objective(3, "Harvest from a Node", "GATHER", "COIN_TOTAL", 0, 1);
-    await api.registry.quest.add.reward(3, "REVIVE", 1, 1);
+    await api.registry.quest.add.objective(3, "Harvest from a Node", "INC_MIN", "COIN_TOTAL", 0, 1);
+    await api.registry.quest.add.reward(3, "ITEM", 1001, 1);
+    await api.registry.quest.add.reward(3, "QUEST_POINTS", 0, 2);
 
     // quest 4
     await api.registry.quest.create(
@@ -413,8 +343,9 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(4, "COMPLETE", "QUEST", 0, 3);
-    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "GATHER", "COIN_TOTAL", 0, 100);
-    await api.registry.quest.add.reward(4, "REVIVE", 1, 3);
+    await api.registry.quest.add.objective(4, "Harvest 100 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 100);
+    await api.registry.quest.add.reward(4, "ITEM", 1001, 3);
+    await api.registry.quest.add.reward(4, "QUEST_POINTS", 0, 3);
 
     // quest 5
     await api.registry.quest.create(
@@ -425,8 +356,9 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(5, "COMPLETE", "QUEST", 0, 4);
-    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "GATHER", "COIN_TOTAL", 0, 1000);
-    await api.registry.quest.add.reward(5, "REVIVE", 1, 5);
+    await api.registry.quest.add.objective(5, "Harvest 1000 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 1000);
+    await api.registry.quest.add.reward(5, "ITEM", 1001, 5);
+    await api.registry.quest.add.reward(5, "QUEST_POINTS", 0, 4);
 
     // quest 6
     await api.registry.quest.create(
@@ -437,8 +369,9 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(6, "COMPLETE", "QUEST", 0, 5);
-    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "GATHER", "COIN_TOTAL", 0, 5000);
-    await api.registry.quest.add.reward(6, "REVIVE", 1, 10);
+    await api.registry.quest.add.objective(6, "Harvest 5000 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 5000);
+    await api.registry.quest.add.reward(6, "ITEM", 1001, 10);
+    await api.registry.quest.add.reward(6, "QUEST_POINTS", 0, 8);
 
     // quest 7
     await api.registry.quest.create(
@@ -448,18 +381,46 @@ export function setUpWorldAPI(systems: any) {
       0,
       64800
     );
-    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "GATHER", "COIN_TOTAL", 0, 200);
-    await api.registry.quest.add.reward(7, "ITEM", 10001, 1); // temp lootbox handler
+    await api.registry.quest.add.objective(7, "Harvest 200 $MUSU", "INC_MIN", "COIN_TOTAL", 0, 200);
+    await api.registry.quest.add.reward(7, "ITEM", 10001, 1);
 
-    // temp lootbox quest for testing
+    // quest 8 and 9 have previously been repeatable quests for testing
+    // can't use for new non-repeatable quests for backwards compatibility
+
     await api.registry.quest.create(
-      8,
-      "Lootbox testing",
-      "Get a free lootbox!",
+      10,
+      "Liquidation 1: An Unforgiving World/You're Not Alone ",
+      "Your Kamigotchi has had enough of farming for now. Why don't you take it exploring? Remember to stock up on supplies and watch out. This is a Kami-eat-Kami world.\
+      \n\nIf Kamigotchi are reduced to 0 Health on a Node and get tired, the other Kamigotchi may see them as just another resource to be claimed.\
+      \n\nTry it out.If you have a Kamigotchi with a Violent nature, let it indulge.Liquidating exhausted Kami is another way to gain $MUSU.",
       0,
-      10
+      0
     );
-    await api.registry.quest.add.reward(8, "ITEM", 10001, 1); // temp lootbox handler
+    await api.registry.quest.add.requirement(10, "COMPLETE", "QUEST", 0, 3);
+    await api.registry.quest.add.objective(10, "Liquidate 1 Kami", "INC_MIN", "LIQUIDATE", 0, 1);
+    await api.registry.quest.add.reward(10, "ITEM", 5, 1);
+
+    await api.registry.quest.create(
+      11,
+      "Liquidation 3: Getting used to it/Harden Your Heart",
+      "Liquidate ten more Kamigotchi and take their $MUSU. Kami lacking in spiritual Harmony will be your easiest targets.",
+      0,
+      0
+    );
+    await api.registry.quest.add.requirement(11, "COMPLETE", "QUEST", 0, 10);
+    await api.registry.quest.add.objective(11, "Liquidate 10 Kamis", "INC_MIN", "LIQUIDATE", 0, 10);
+    await api.registry.quest.add.reward(11, "ITEM", 4, 1);
+  }
+
+  async function deleteQuests(api: AdminAPI, indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await sleepIf();
+      try {
+        await api.registry.quest.delete(indices[i]);
+      } catch {
+        console.error("Could not delete quest " + indices[i]);
+      }
+    }
   }
 
 
@@ -471,16 +432,27 @@ export function setUpWorldAPI(systems: any) {
     // 1->2->3->4->5--->10
     //        \->6->7-/
     // top and bottom paths are mutually exclusive
-    api.registry.relationship.create(1, 1, 'mina 1', [], []);
-    api.registry.relationship.create(1, 2, 'mina 2', [1], []);
-    api.registry.relationship.create(1, 3, 'mina 3', [2], []);
-    api.registry.relationship.create(1, 4, 'mina 4', [3], []);
-    api.registry.relationship.create(1, 5, 'mina 5', [4], []);
-    api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
-    api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
-    api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
-    api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
-    api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
+    await api.registry.relationship.create(1, 1, 'mina 1', [], []);
+    await api.registry.relationship.create(1, 2, 'mina 2', [1], []);
+    await api.registry.relationship.create(1, 3, 'mina 3', [2], []);
+    await api.registry.relationship.create(1, 4, 'mina 4', [3], []);
+    await api.registry.relationship.create(1, 5, 'mina 5', [4], []);
+    await api.registry.relationship.create(1, 6, 'mina 6', [3], [8]);
+    await api.registry.relationship.create(1, 7, 'mina 7', [6], [8]);
+    await api.registry.relationship.create(1, 8, 'mina 8', [3], [6]);
+    await api.registry.relationship.create(1, 9, 'mina 9', [8], [6]);
+    await api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
+  }
+
+  async function deleteRelationships(api: AdminAPI, npcs: number[], indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await sleepIf();
+      try {
+        await api.registry.relationship.delete(npcs[i], indices[i]);
+      } catch {
+        console.error("Could not delete relationship " + indices[i] + " for npc " + npcs[i]);
+      }
+    }
   }
 
   ////////////////////
@@ -561,6 +533,17 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.skill.add.requirement(401, "SKILL", 4, 3);
   }
 
+  async function deleteSkills(api: AdminAPI, indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await sleepIf();
+      try {
+        await api.registry.skill.delete(indices[i]);
+      } catch {
+        console.error("Could not delete skill " + indices[i]);
+      }
+    }
+  }
+
 
   ////////////////////
   // TRAITS
@@ -630,6 +613,17 @@ export function setUpWorldAPI(systems: any) {
     await initSingle(hand, "HAND");
   }
 
+  async function deleteTraits(api: AdminAPI, indices: number[], types: string[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await sleepIf();
+      try {
+        await api.registry.trait.delete(indices[i], types[i]);
+      } catch {
+        console.error("Could not delete trait " + indices[i]);
+      }
+    }
+  }
+
   //////////////////////
   // UTILS
 
@@ -697,33 +691,40 @@ export function setUpWorldAPI(systems: any) {
     },
     items: {
       init: () => initItems(createAdminAPI(systems)),
+      deletes: (indices: number[]) => deleteItems(createAdminAPI(systems), indices),
     },
     npcs: {
       init: () => initNpcs(createAdminAPI(systems)),
     },
     nodes: {
       init: () => initNodes(createAdminAPI(systems)),
+      deletes: (indices: number[]) => deleteNodes(createAdminAPI(systems), indices),
     },
     quests: {
       init: () => initQuests(createAdminAPI(systems)),
+      deletes: (indices: number[]) => deleteQuests(createAdminAPI(systems), indices),
     },
     relationships: {
       init: () => initRelationships(createAdminAPI(systems)),
+      deletes: (npcs: number[], indices: number[]) => deleteRelationships(createAdminAPI(systems), indices, npcs),
     },
     rooms: {
       init: () => initRooms(createAdminAPI(systems)),
+      deletes: (indices: number[]) => deleteRooms(createAdminAPI(systems), indices),
     },
     skill: {
       init: () => initSkills(createAdminAPI(systems)),
+      deletes: (indices: number[]) => deleteSkills(createAdminAPI(systems), indices),
     },
     traits: {
       init: () => initTraits(createAdminAPI(systems)),
       tryInit: () => initTraitsWithFail(createAdminAPI(systems)),
+      deletes: (indices: number[], types: string[]) => deleteTraits(createAdminAPI(systems), indices, types),
     },
   }
 
   function sleepIf() {
-    if (import.meta.env.MODE == 'OPGOERLI') {
+    if (import.meta.env.MODE == 'OPSEP' || import.meta.env.MODE == 'TEST') {
       return new Promise(resolve => setTimeout(resolve, 10000));
     }
   }

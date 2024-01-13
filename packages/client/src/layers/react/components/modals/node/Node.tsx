@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
+import crypto from "crypto";
 
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Kami } from 'layers/react/shapes/Kami';
 import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/react/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelectedEntities } from 'layers/react/store/selectedEntities';
+import { useSelected } from 'layers/react/store/selected';
 
 
 // merchant window with listings. assumes at most 1 merchant per room
@@ -23,7 +24,7 @@ export function registerNodeModal() {
     {
       colStart: 33,
       colEnd: 67,
-      rowStart: 13,
+      rowStart: 14,
       rowEnd: 99,
     },
 
@@ -35,16 +36,32 @@ export function registerNodeModal() {
           api: { player },
           components: {
             OperatorAddress,
+            IsAccount,
+            IsBonus,
+            IsConfig,
+            IsInventory,
+            IsProduction,
             IsNode,
             AccountID,
+            HolderID,
+            PetID,
+            ItemIndex,
+            PetIndex,
+            LastTime,
+            LastActionTime,
+            StartTime,
             Balance,
+            Coin,
             Harmony,
             Health,
             HealthCurrent,
             Location,
+            MediaURI,
+            Name,
             Rate,
-            StartTime,
             State,
+            Type,
+            Value,
             Violence,
           },
         },
@@ -52,22 +69,38 @@ export function registerNodeModal() {
 
       // TODO: update this to support node input as props
       return merge(
-        IsNode.update$,
         OperatorAddress.update$,
+        IsAccount.update$,
+        IsBonus.update$,
+        IsConfig.update$,
+        IsInventory.update$,
+        IsNode.update$,
+        IsProduction.update$,
         AccountID.update$,
+        HolderID.update$,
+        PetID.update$,
+        ItemIndex.update$,
+        PetIndex.update$,
+        LastTime.update$,
+        LastActionTime.update$,
+        StartTime.update$,
         Balance.update$,
+        Coin.update$,
         Harmony.update$,
         Health.update$,
         HealthCurrent.update$,
         Location.update$,
+        MediaURI.update$,
+        Name.update$,
         Rate.update$,
-        StartTime.update$,
         State.update$,
+        Type.update$,
+        Value.update$,
         Violence.update$,
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(layers, { kamis: true, inventory: true });
-          const { nodeIndex } = useSelectedEntities.getState();
+          const { nodeIndex } = useSelected.getState();
           const node = getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: account.id });
 
           return {
@@ -88,7 +121,7 @@ export function registerNodeModal() {
     ({ layers, actions, api, data }) => {
       // console.log('NodeM: data', data);
       const [tab, setTab] = useState('allies');
-      const { nodeIndex } = useSelectedEntities();
+      const { nodeIndex } = useSelected();
       const [node, setNode] = useState<Node>(data.node);
 
       // updates from selected Node updates
@@ -107,12 +140,12 @@ export function registerNodeModal() {
 
       // collects on an existing production
       const collect = (kami: Kami) => {
-        const actionID = `Collecting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionCollect',
+          params: [kami.id],
+          description: `Collecting ${kami.name}'s Harvest`,
           execute: async () => {
             return api.production.collect(kami.production!.id);
           },
@@ -121,12 +154,12 @@ export function registerNodeModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = `Feeding ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'KamiFeed',
+          params: [kami.id, foodIndex],
+          description: `Feeding ${kami.name}`,
           execute: async () => {
             return api.pet.feed(kami.id, foodIndex);
           },
@@ -136,12 +169,12 @@ export function registerNodeModal() {
       // liquidate a production
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
-        const actionID = `Liquidating ${enemyKami.name}` as EntityID; // itemIndex should be replaced with the item's name
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionLiquidate',
+          params: [enemyKami.production!.id, myKami.id],
+          description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
             return api.production.liquidate(enemyKami.production!.id, myKami.id);
           },
@@ -150,12 +183,12 @@ export function registerNodeModal() {
 
       // starts a production for the given pet and node
       const start = (kami: Kami, node: Node) => {
-        const actionID = `Starting Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionStart',
+          params: [kami.id, node.id],
+          description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
             return api.production.start(kami.id, node.id);
           },
@@ -164,12 +197,12 @@ export function registerNodeModal() {
 
       // stops a production
       const stop = (kami: Kami) => {
-        const actionID = `Stopping Harvest for ${kami.name}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'ProductionStop',
+          params: [kami.production!.id],
+          description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
           execute: async () => {
             return api.production.stop(kami.production!.id);
           },
@@ -181,7 +214,7 @@ export function registerNodeModal() {
       // DISPLAY
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='node'
           divName='node'
           header={[
@@ -200,10 +233,10 @@ export function registerNodeModal() {
             allies={node.kamis?.allies!}
             enemies={node.kamis?.enemies!}
             actions={{ collect, feed, liquidate, stop }}
-            liquidationConfig={data.liquidationConfig}
+            battleConfig={data.liquidationConfig}
             tab={tab}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );

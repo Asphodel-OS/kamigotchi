@@ -13,6 +13,7 @@ import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol
 import { IsProductionComponent, ID as IsProdCompID } from "components/IsProductionComponent.sol";
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -26,7 +27,7 @@ import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
  */
 library LibProduction {
-  /////////////////////
+  /////////////////
   // INTERACTIONS
 
   // Creates a production for a pet at a deposit. Assumes one doesn't already exist.
@@ -51,21 +52,17 @@ library LibProduction {
 
     uint256 balance = getBalance(components, id);
     LibCoin.inc(components, accountID, balance);
-    setBalance(components, id, 0);
+    LibCoin._set(components, id, 0);
     return balance;
   }
 
-  // increases the Coin balance of the production by a specific amount
-  function inc(IUintComp components, uint256 id, uint256 amt) internal {
-    uint256 balance = getBalance(components, id);
-    setBalance(components, id, balance + amt);
-  }
-
   // Starts an _existing_ production if not already started.
-  function start(IUintComp components, uint256 id) internal {
+  function start(IUintComp components, uint256 id) public {
     setState(components, id, "ACTIVE");
-    setBalance(components, id, 0);
+    LibCoin._set(components, id, 0);
     setRate(components, id, calcRate(components, id)); // always last
+    setStartTs(components, id, block.timestamp);
+    setLastTs(components, id, block.timestamp);
   }
 
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
@@ -78,8 +75,9 @@ library LibProduction {
   function sync(IUintComp components, uint256 id) internal returns (uint256 delta) {
     if (isActive(components, id)) {
       delta = calcOutput(components, id);
-      inc(components, id, delta);
+      LibCoin.inc(components, id, delta);
       setRate(components, id, calcRate(components, id));
+      setLastTs(components, id, block.timestamp);
     }
   }
 
@@ -88,8 +86,7 @@ library LibProduction {
 
   // Calculate the duration since a production last started, measured in seconds.
   function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 petID = getPet(components, id);
-    return block.timestamp - LibPet.getLastTs(components, petID);
+    return block.timestamp - getLastTs(components, id);
   }
 
   // Calculate the accrued output of the production since the pet's last snapshot
@@ -104,13 +101,21 @@ library LibProduction {
   function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
 
+    string[] memory configs = new string[](4);
+    configs[0] = "HARVEST_RATE_PREC";
+    configs[1] = "HARVEST_RATE_BASE";
+    configs[2] = "HARVEST_RATE_BASE_PREC";
+    configs[3] = "HARVEST_RATE_MULT_PREC";
+
+    uint256[] memory values = LibConfig.getBatchValueOf(components, configs);
+
     uint256 petID = getPet(components, id);
     uint256 power = LibPet.calcTotalPower(components, petID);
-    uint256 precision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
-    uint256 base = LibConfig.getValueOf(components, "HARVEST_RATE_BASE");
-    uint256 basePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_BASE_PREC");
+    uint256 precision = 10 ** values[0];
+    uint256 base = values[1];
+    uint256 basePrecision = 10 ** values[2];
     uint256 mult = calcRateMultiplier(components, id);
-    uint256 multPrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_MULT_PREC");
+    uint256 multPrecision = 10 ** values[3];
 
     return (precision * base * power * mult) / (3600 * basePrecision * multPrecision);
   }
@@ -164,10 +169,9 @@ library LibProduction {
   // this block and that the source can attack the target.
   function isLiquidatableBy(
     IUintComp components,
-    uint256 id,
+    uint256 targetPetID,
     uint256 sourcePetID
-  ) external view returns (bool) {
-    uint256 targetPetID = getPet(components, id);
+  ) public view returns (bool) {
     uint256 targetHealth = LibPet.getLastHealth(components, targetPetID);
     uint256 targetTotalHealth = LibPet.calcTotalHealth(components, targetPetID);
     uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
@@ -177,16 +181,10 @@ library LibProduction {
   /////////////////
   // SETTERS
 
-  // set the accrued balance of a production
-  function setBalance(IUintComp components, uint256 id, uint256 balance) internal {
-    LibCoin._set(components, id, balance);
-  }
-
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
-    if (getNode(components, id) != nodeID) {
-      IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
-    }
+    IdNodeComponent comp = IdNodeComponent(getAddressById(components, IdNodeCompID));
+    if (comp.getValue(id) != nodeID) comp.set(id, nodeID);
   }
 
   function setRate(IUintComp components, uint256 id, uint256 rate) internal {
@@ -197,7 +195,11 @@ library LibProduction {
     StateComponent(getAddressById(components, StateCompID)).set(id, state);
   }
 
-  function setTimeStart(IUintComp components, uint256 id, uint256 timeStart) internal {
+  function setLastTs(IUintComp components, uint256 id, uint256 timeStart) internal {
+    TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, timeStart);
+  }
+
+  function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
   }
 
@@ -206,6 +208,13 @@ library LibProduction {
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
     return LibCoin.get(components, id);
+  }
+
+  // NOTE: value should be set on harvest start. the check is insurance for backwards compatibility
+  function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
+    if (comp.has(id)) return comp.getValue(id);
+    else return getStartTs(components, id);
   }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -224,7 +233,7 @@ library LibProduction {
     return StateComponent(getAddressById(components, StateCompID)).getValue(id);
   }
 
-  function getStartTime(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getStartTs(IUintComp components, uint256 id) internal view returns (uint256) {
     return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
   }
 

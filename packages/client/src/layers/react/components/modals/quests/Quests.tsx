@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import styled from 'styled-components';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
+import crypto from "crypto";
 
+import { Footer } from './Footer';
 import { List } from './List';
 import { Tabs } from './Tabs';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { questsIcon } from 'assets/images/icons/menu';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Quest, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
+import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
 import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
-import 'layers/react/styles/font.css';
+import { getRoomByLocation } from 'layers/react/shapes/Room';
+
 
 export function registerQuestsModal() {
   registerUIComponent(
@@ -18,8 +22,8 @@ export function registerQuestsModal() {
     {
       colStart: 67,
       colEnd: 100,
-      rowStart: 25,
-      rowEnd: 99,
+      rowStart: 8,
+      rowEnd: 75,
     },
 
     (layers) => {
@@ -37,8 +41,10 @@ export function registerQuestsModal() {
             IsReward,
             Location,
             QuestIndex,
+            QuestPoint,
             Value,
           },
+          notifications
         },
       } = layers;
 
@@ -53,6 +59,7 @@ export function registerQuestsModal() {
         IsObjective.update$,
         Location.update$,
         QuestIndex.update$,
+        QuestPoint.update$,
         Value.update$,
       ).pipe(
         map(() => {
@@ -64,6 +71,7 @@ export function registerQuestsModal() {
           return {
             layers,
             actions,
+            notifications,
             api: player,
             data: {
               account,
@@ -74,21 +82,44 @@ export function registerQuestsModal() {
       );
     },
 
-    ({ layers, actions, api, data }) => {
-      // console.log('mQuest:', data);
-      const [tab, setTab] = useState<TabType>('ONGOING');
+    ({ layers, actions, notifications, api, data }) => {
+      const [tab, setTab] = useState<TabType>('AVAILABLE');
+      const [numAvail, setNumAvail] = useState(0);
 
+      useEffect(() => {
+        const id = "Available Quests";
+        if (notifications.has(id as EntityID)) {
+          if (numAvail == 0)
+            notifications.remove(id as EntityID);
+          notifications.update(
+            id as EntityID,
+            {
+              description:
+                `There ${numAvail == 1 ? 'is' : 'are'} ${numAvail} quest${numAvail == 1 ? '' : 's'} you can accept.`
+            });
+        } else {
+          if (numAvail > 0)
+            notifications.add({
+              id: id as EntityID,
+              title: `Available Quest${numAvail == 1 ? '' : 's'}!`,
+              description:
+                `There ${numAvail == 1 ? 'is' : 'are'} ${numAvail} quest${numAvail == 1 ? '' : 's'} you can accept.`,
+              time: Date.now().toString(),
+              modal: "quests",
+            });
+        }
+      }, [numAvail]);
 
       ///////////////////
       // INTERACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        const actionID = `Accepting Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'QuestAccept',
+          params: [quest.index * 1],
+          description: `Accepting Quest ${quest.index * 1}`,
           execute: async () => {
             return api.quests.accept(quest.index);
           },
@@ -96,12 +127,12 @@ export function registerQuestsModal() {
       }
 
       const completeQuest = async (quest: Quest) => {
-        const actionID = `Completing Quest ${quest.index * 1}` as EntityID; // Date.now to have the actions ordered in the component browser
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          components: {},
-          requirement: () => true,
-          updates: () => [],
+          action: 'QuestComplete',
+          params: [quest.id],
+          description: `Completing Quest ${quest.index * 1}`,
           execute: async () => {
             return api.quests.complete(quest.id);
           },
@@ -109,13 +140,14 @@ export function registerQuestsModal() {
       }
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           id='quest_modal'
           divName='quests'
           header={[
-            <Header key='header'>Quests</Header>,
+            <ModalHeader key='header' title='Quests' icon={questsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
+          footer={<Footer balance={data.account.questPoints} />}
           canExit
         >
           <List
@@ -124,22 +156,17 @@ export function registerQuestsModal() {
             mode={tab}
             actions={{ acceptQuest, completeQuest }}
             utils={{
+              setNumAvail: (num: number) => setNumAvail(num),
               getItem: (index: EntityIndex) => getItem(layers, index),
+              getRoom: (location: number) => getRoomByLocation(layers, location),
+              getQuestByIndex: (index: number) => getQuestByIndex(layers, index),
               queryItemRegistry: (index: number) => getItemByIndex(layers, index).entityIndex,
               queryFoodRegistry: (index: number) => queryFoodRegistry(layers, index),
               queryReviveRegistry: (index: number) => queryReviveRegistry(layers, index),
             }}
           />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
 }
-
-const Header = styled.div`
-  font-size: 1.5vw;
-  color: #333;
-  text-align: left;
-  padding: 1.2vw 1.8vw;
-  font-family: Pixel;
-`;

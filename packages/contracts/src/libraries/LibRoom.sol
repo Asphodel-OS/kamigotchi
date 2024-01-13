@@ -32,6 +32,16 @@ library LibRoom {
     return id;
   }
 
+  // Remove a room at a given location.
+  function remove(IUintComp components, uint256 id) internal returns (uint256) {
+    IsRoomComponent(getAddressById(components, IsRoomCompID)).remove(id);
+    LocationComponent(getAddressById(components, LocationCompID)).remove(id);
+    NameComponent(getAddressById(components, NameCompID)).remove(id);
+    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
+    ExitsComponent(getAddressById(components, ExitsCompID)).remove(id);
+    return id;
+  }
+
   /////////////////
   // CHECKERS
 

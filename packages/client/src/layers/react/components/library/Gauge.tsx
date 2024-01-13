@@ -10,8 +10,7 @@ const GaugeContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  
-  padding: 0 0.875vw 0 0;
+  margin-bottom: 0.4vw;
 `;
 
 const GaugeOutline = styled.div` 
@@ -23,16 +22,12 @@ const GaugeOutline = styled.div`
   height: 0.875vw;
 
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: flex-start;
 `;
 
 const GaugeArrow = styled.div`
+  position: absolute;
   border: .05vw solid #444;
   height: 0.5vw;
-  margin: 0.125vw 0 0 -0.875vw ;
-
   transform-origin: bottom center;
 `;
 

@@ -24,16 +24,18 @@ library LibCoin {
 
   // increases the coin balance of an entity by amt
   function inc(IUintComp components, uint256 entityID, uint256 amt) internal {
-    uint256 balance = get(components, entityID);
-    _set(components, entityID, balance + amt);
+    CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
+    if (!comp.has(entityID)) comp.set(entityID, amt);
+    else comp.set(entityID, comp.getValue(entityID) + amt);
   }
 
   // decreases the coin balance of an entity by amt
   function dec(IUintComp components, uint256 entityID, uint256 amt) internal {
-    uint256 balance = get(components, entityID);
+    CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
+    uint256 balance = comp.has(entityID) ? comp.getValue(entityID) : 0;
     require(balance >= amt, "Coin: insufficient balance");
     unchecked {
-      _set(components, entityID, balance - amt);
+      comp.set(entityID, balance - amt);
     }
   }
 

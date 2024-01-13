@@ -24,7 +24,7 @@ contract AccountFundSystem is System {
     // update gas funded
     LibScore.incBy(world, components, accountID, "OPERATOR_GAS", msg.value);
     LibDataEntity.incFor(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
 
     address operator = LibAccount.getOperator(components, accountID);
     transfer(operator, msg.value);
@@ -40,11 +40,12 @@ contract AccountFundSystem is System {
     // update gas funded
     LibScore.decBy(world, components, accountID, "OPERATOR_GAS", msg.value);
     LibDataEntity.decFor(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
-    LibAccount.updateLastBlock(components, accountID);
 
     address owner = LibAccount.getOwner(components, accountID);
     transfer(owner, msg.value);
 
+    // standard logging and tracking
+    LibAccount.updateLastTs(components, accountID);
     return "";
   }
 

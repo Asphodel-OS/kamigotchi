@@ -21,12 +21,8 @@ export const Listings = (props: Props) => {
 
 const List = styled.div`
   flex-grow: 1;
-
-  border-color: black;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: .15vw .15vw 0px .15vw;
-
+  overflow-y: scroll;
+  border: .15vw solid black;
   display: flex;
   flex-flow: column nowrap;
 `;

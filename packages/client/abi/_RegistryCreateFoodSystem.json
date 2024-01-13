@@ -92,6 +92,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "experience",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
           "name": "media",
           "type": "string"
@@ -137,7 +142,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,string,uint256,string)": "c03c5cd9",
+    "executeTyped(uint256,uint256,string,string,uint256,uint256,string)": "2b595bd2",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

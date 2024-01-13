@@ -2,10 +2,10 @@ import styled from "styled-components"
 
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
+import CopyButton from "layers/react/components/library/CopyButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { dataStore } from "layers/react/store/createStore";
-import { useKamiAccount } from "layers/react/store/kamiAccount";
-import CopyButton from "../../library/CopyButton";
+import { useVisibility } from "layers/react/store/visibility";
+import { useAccount } from "layers/react/store/account";
 
 
 interface Props {
@@ -13,10 +13,11 @@ interface Props {
 }
 
 export const Account = (props: Props) => {
-  const { details: accountDetails } = useKamiAccount();
-  const { visibleModals, setVisibleModals } = dataStore();
+  const { account: kamiAccount } = useAccount();
+  const { modals, setModals } = useVisibility();
 
   const truncateAddress = (address: string) => {
+    if (!address) return '';
     return address.slice(0, 6) + '...' + address.slice(-4);
   };
 
@@ -44,12 +45,12 @@ export const Account = (props: Props) => {
 
   return (
     <Container>
-      <Header>Account ({accountDetails.name})</Header>
+      <Header>Account ({kamiAccount.name})</Header>
       <Section key='owner'>
         <SubHeaderRow>
           <SubHeader>Owner</SubHeader>
         </SubHeaderRow>
-        {FieldRow('Address', accountDetails.ownerAddress)}
+        {FieldRow('Address', kamiAccount.ownerAddress)}
       </Section>
       <Section key='operator'>
         <SubHeaderRow>
@@ -58,7 +59,7 @@ export const Account = (props: Props) => {
             <ActionButton
               id='update-button'
               text='update'
-              onClick={() => setVisibleModals({ ...visibleModals, operatorUpdater: true })}
+              onClick={() => setModals({ ...modals, accountOperator: true })}
               size='small'
             />
           </Tooltip>
@@ -66,12 +67,12 @@ export const Account = (props: Props) => {
             <ActionButton
               id='fund-button'
               text='fund'
-              onClick={() => setVisibleModals({ ...visibleModals, operatorFund: true })}
+              onClick={() => setModals({ ...modals, operatorFund: true })}
               size='small'
             />
           </Tooltip>
         </SubHeaderRow>
-        {FieldRow('Address', accountDetails.operatorAddress)}
+        {FieldRow('Address', kamiAccount.operatorAddress)}
         {FieldRow('Private Key', localStorage.getItem("operatorPrivateKey") || '')}
       </Section>
     </Container>

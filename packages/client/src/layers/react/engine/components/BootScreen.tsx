@@ -54,7 +54,7 @@ const Image = styled.img`
 const Status = styled.div`
   color: #fff;
   position: absolute;
-  bottom: 30vh;
+  bottom: 35vh;
   width: 100%;
 
   text-align: center;

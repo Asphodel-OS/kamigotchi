@@ -51,7 +51,7 @@ contract NodeCollectSystem is System {
       totalOutput += output;
     }
 
-    // balance updates, score logging, action tracking
+    // standard logging and tracking
     LibScore.incBy(world, components, accountID, "COLLECT", totalOutput);
     LibDataEntity.incFor(world, components, accountID, 0, "COIN_TOTAL", totalOutput);
     LibDataEntity.incFor(
@@ -62,7 +62,7 @@ contract NodeCollectSystem is System {
       "NODE_COLLECT",
       totalOutput
     );
-    LibAccount.updateLastBlock(components, accountID);
+    LibAccount.updateLastTs(components, accountID);
     return abi.encode(totalOutput);
   }
 

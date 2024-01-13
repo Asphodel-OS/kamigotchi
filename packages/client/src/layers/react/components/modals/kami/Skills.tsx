@@ -66,7 +66,7 @@ export const Skills = (props: Props) => {
 
   const triggerUpgrade = (skill: Skill) => {
     playClick();
-    actions.upgrade(kami, skill.index);
+    actions.upgrade(kami, skill);
   }
 
 

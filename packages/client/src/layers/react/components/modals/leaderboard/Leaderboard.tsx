@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import styled from 'styled-components';
 
 import { Table } from './Table';
 import { Filters } from './Filters';
-import { ModalWrapperFull } from 'layers/react/components/library/ModalWrapper';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { getAccountFromBurner } from 'layers/react/shapes/Account';
 import { Score, ScoresFilter, getScores } from 'layers/react/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { dataStore } from 'layers/react/store/createStore';
+import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
 export function registerLeaderboardModal() {
@@ -52,7 +51,7 @@ export function registerLeaderboardModal() {
 
     ({ layers, data }) => {
       // console.log('leaderboardM: tableData', tableData);
-      const { visibleModals } = dataStore();
+      const { modals } = useVisibility();
       const [filter, setFilter] = useState<ScoresFilter>({ epoch: 0, type: 'COLLECT' });
       const [tableData, setTableData] = useState<Score[]>([]);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
@@ -70,14 +69,14 @@ export function registerLeaderboardModal() {
 
       // table data update
       useEffect(() => {
-        if (visibleModals.leaderboard) {
+        if (modals.leaderboard) {
           const tableData = getScores(layers, filter);
           setTableData(tableData);
         }
       }, [filter, lastRefresh]);
 
       return (
-        <ModalWrapperFull
+        <ModalWrapper
           divName='leaderboard'
           id='leaderboard'
           canExit
@@ -94,7 +93,7 @@ export function registerLeaderboardModal() {
             }
           />
           <Table data={tableData} />
-        </ModalWrapperFull>
+        </ModalWrapper>
       );
     }
   );
