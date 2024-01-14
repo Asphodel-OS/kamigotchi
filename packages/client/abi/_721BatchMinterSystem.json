@@ -94,11 +94,6 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
@@ -170,7 +165,7 @@
   ],
   "methodIdentifiers": {
     "_getTraitStats(uint256)": "c4908186",
-    "batchMint(address,uint256)": "43508b05",
+    "batchMint(uint256)": "8467be0d",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "setTraits()": "c061a3b5",

@@ -70,7 +70,7 @@ struct TraitStats {
   uint8 slots;
 }
 
-/// @notice small hopper contract to make trait handling more readable
+/// @notice small contract to make trait handling more readable
 abstract contract TraitHandler {
   ///////////////
   // VARIABLES //
@@ -271,8 +271,8 @@ abstract contract TraitHandler {
 }
 
 /** @notice
- * batch minting system, for sudo pools. only can be called by admin
- * mints out of game (to a specific address)
+ * batch minting and reveal system, to seed initial gacha pool.
+ * mints in game
  */
 /// @dev to be called by account owner
 contract _721BatchMinterSystem is System, TraitHandler {
@@ -320,7 +320,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   }
 
   /// @dev if calling many times, reduce call data by memozing address / bitpacking
-  function batchMint(address to, uint256 amount) external onlyOwner returns (uint256[] memory) {
+  function batchMint(uint256 amount) external onlyOwner returns (uint256[] memory) {
     // require(colorWeights.keys != 0, "traits not set");
 
     uint256 startIndex = pet721.totalSupply() + 1;
@@ -332,7 +332,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     revealPets(ids, amount);
 
     /// @dev minting 721s
-    mint721s(to, startIndex, amount);
+    mint721s(startIndex, amount);
 
     return ids;
   }
@@ -356,7 +356,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
       isPetComp.set(id);
       indexPetComp.set(id, startIndex + i);
       nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
-      stateComp.set(id, string("721_EXTERNAL")); // normally after reveal
+      stateComp.set(id, string("GACHA")); // seed in gacha
       timeStartComp.set(id, block.timestamp);
       timeLastComp.set(id, block.timestamp); // normally after reveal
       levelComp.set(id, 1);
@@ -391,10 +391,10 @@ contract _721BatchMinterSystem is System, TraitHandler {
   }
 
   /// @notice batch mint pets, replaces LibPet721
-  function mint721s(address to, uint256 startIndex, uint256 amount) internal {
+  function mint721s(uint256 startIndex, uint256 amount) internal {
     uint256[] memory indices = new uint256[](amount);
     for (uint256 i; i < amount; i++) indices[i] = startIndex + i;
-    pet721.mintBatch(to, indices);
+    pet721.mintBatch(address(pet721), indices);
   }
 
   ////////////////////
