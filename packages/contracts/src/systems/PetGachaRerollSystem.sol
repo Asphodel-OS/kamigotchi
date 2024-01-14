@@ -14,7 +14,7 @@ uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Reroll"));
 contract PetGachaRerollSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {
     // init increment if not already
-    LibGacha.initIncrement(components);
+    // LibGacha.initIncrement(components);
   }
 
   function reroll(uint256 petID) external payable {
@@ -43,5 +43,9 @@ contract PetGachaRerollSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     require(false, "not implemented");
     return "";
+  }
+
+  function init(bytes memory arguments) external onlyOwner {
+    LibGacha.initIncrement(components);
   }
 }

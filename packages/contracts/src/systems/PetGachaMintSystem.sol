@@ -13,10 +13,7 @@ uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Mint"));
 /// @notice commits to get a random pet from gacha using a Mint20 token
 /// @dev this acts as a replacement for a traditional reveal
 contract PetGachaMintSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {
-    // init increment if not already
-    LibGacha.initIncrement(components);
-  }
+  constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
@@ -38,5 +35,9 @@ contract PetGachaMintSystem is System {
 
   function executeTyped(uint256 amount) public returns (bytes memory) {
     return execute(abi.encode(amount));
+  }
+
+  function init(bytes memory arugments) external onlyOwner {
+    LibGacha.initIncrement(components);
   }
 }

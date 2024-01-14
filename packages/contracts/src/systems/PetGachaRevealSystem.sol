@@ -16,10 +16,11 @@ contract PetGachaRevealSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function reveal(uint256[] memory rawCommitIDs) external returns (uint256[] memory) {
+    require(rawCommitIDs.length > 0, "need commits to reveal");
+    _checkTypes(rawCommitIDs);
+
     // sorts commits by cronological order via increment
     uint256[] memory commitIDs = LibGacha.sortCommits(components, rawCommitIDs);
-
-    _checkTypes(commitIDs);
 
     uint256[] memory seeds = LibGacha.calcSeeds(components, commitIDs);
     uint256[] memory petIDs = LibGacha.selectPets(components, seeds);
@@ -30,6 +31,7 @@ contract PetGachaRevealSystem is System {
 
   /// @notice admin reveal if user misses 256 block window
   function forceReveal(uint256[] memory commitIDs) external onlyOwner returns (uint256[] memory) {
+    require(commitIDs.length > 0, "need commits to reveal");
     _checkTypes(commitIDs);
 
     // checks if blockhash is not available
