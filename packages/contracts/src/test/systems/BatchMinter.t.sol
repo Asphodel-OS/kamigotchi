@@ -29,7 +29,7 @@ contract BatchMinterTest is SetupTemplate {
     vm.stopPrank();
 
     vm.prank(deployer);
-    uint256 petID = __721BatchMinterSystem.batchMint(address(this), 1)[0];
+    uint256 petID = __721BatchMinterSystem.batchMint(1)[0];
 
     uint[] memory stats = _calcStatsFromTraits(petID);
     assertEq(stats[0], LibStat.getHealth(components, petID));
@@ -50,7 +50,7 @@ contract BatchMinterTest is SetupTemplate {
     uint[] memory petIDs = new uint[](numPets);
     for (uint i = 0; i < 10; i++) {
       vm.prank(deployer);
-      uint[] memory tempIDs = __721BatchMinterSystem.batchMint(address(this), 10);
+      uint[] memory tempIDs = __721BatchMinterSystem.batchMint(10);
       for (uint j = 0; j < 10; j++) {
         petIDs[i * 10 + j] = tempIDs[j];
       }
@@ -79,7 +79,7 @@ contract BatchMinterTest is SetupTemplate {
     vm.stopPrank();
 
     vm.prank(deployer);
-    __721BatchMinterSystem.batchMint(address(this), 100);
+    __721BatchMinterSystem.batchMint(100);
   }
 
   function testDistribution() public {
@@ -92,7 +92,7 @@ contract BatchMinterTest is SetupTemplate {
     uint256 numPets = 1000;
 
     vm.prank(deployer);
-    uint256[] memory petIDs = __721BatchMinterSystem.batchMint(address(this), numPets);
+    uint256[] memory petIDs = __721BatchMinterSystem.batchMint(numPets);
 
     uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
     uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);
