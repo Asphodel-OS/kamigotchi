@@ -60,6 +60,9 @@ import Pet721RevealSystem from "../abi/Pet721RevealSystem.json";
 import Pet721StakeSystem from "../abi/Pet721StakeSystem.json";
 import Pet721UnstakeSystem from "../abi/Pet721UnstakeSystem.json";
 import PetFeedSystem from "../abi/PetFeedSystem.json";
+import PetGachaMintSystem from "../abi/PetGachaMintSystem.json";
+import PetGachaRerollSystem from "../abi/PetGachaRerollSystem.json";
+import PetGachaRevealSystem from "../abi/PetGachaRevealSystem.json";
 import PetLevelSystem from "../abi/PetLevelSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetReviveSystem from "../abi/PetReviveSystem.json";
@@ -143,6 +146,9 @@ export const SystemAbis = {
   "system.Pet721.Stake": Pet721StakeSystem.abi,
   "system.Pet721.Unstake": Pet721UnstakeSystem.abi,
   "system.Pet.Feed": PetFeedSystem.abi,
+  "system.Pet.Gacha.Mint": PetGachaMintSystem.abi,
+  "system.Pet.Gacha.Reroll": PetGachaRerollSystem.abi,
+  "system.Pet.Gacha.Reveal": PetGachaRevealSystem.abi,
   "system.Pet.Level": PetLevelSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,
