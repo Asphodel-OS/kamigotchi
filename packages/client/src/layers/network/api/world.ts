@@ -26,7 +26,7 @@ export function setUpWorldAPI(systems: any) {
     await initTraits(api);
     await initRelationships(api);
 
-    if (!import.meta.env.MODE || import.meta.env.MODE == 'DEV') {
+    if (!import.meta.env.MODE || import.meta.env.MODE === 'development') {
       await initLocalConfig(api);
     }
 

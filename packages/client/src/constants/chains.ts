@@ -64,9 +64,9 @@ const opSepolia: Chain = {
 // object mapping between environment MODEs and chain configs
 const chainConfigs: Map<string, Chain> = new Map([
   ['', localhost],  // default to localhost when no environment mode provided
-  ['DEV', localhost],
+  ['development', localhost],
   ['TEST', opSepolia],
-  ['PROD', optimism],
+  ['production', optimism],
   ['OPSEP', opSepolia],
 ]);
 
