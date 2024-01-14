@@ -20,6 +20,9 @@ abstract contract SetupTemplate is TestSetupImports {
     _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
     _initAllConfigs();
     _currTime = 5 minutes;
+
+    vm.prank(deployer);
+    _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
   }
 
   function _fastForward(uint timeDelta) internal {
@@ -88,6 +91,11 @@ abstract contract SetupTemplate is TestSetupImports {
     // string memory name = LibString.slice(LibString.toHexString(owner), 0, 15); // maxlen 16
     _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex), "strawberry");
     vm.stopPrank();
+  }
+
+  // registers n accounts, starting from 0
+  function _registerAccounts(uint n) internal {
+    for (uint i = 0; i < n; i++) _registerAccount(i);
   }
 
   /////////////////
@@ -744,6 +752,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("MINT_ACCOUNT_MAX", 500);
     _setConfig("MINT_INITIAL_MAX", 1111);
     _setConfig("MINT_PRICE", 0);
+    _setConfig("GACHA_REROLL_PRICE", 0);
   }
 
   function _initKamiConfigs() internal {

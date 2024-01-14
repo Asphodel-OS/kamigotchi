@@ -133,14 +133,15 @@ library LibGacha {
     for (uint256 i = 1; i < length; i++) {
       uint256 key = indices[i];
       uint256 keyID = ids[i];
-      uint256 j = i - 1;
-      while (j >= 0 && indices[j] > key) {
-        indices[j + 1] = indices[j];
-        ids[j + 1] = ids[j];
+      int256 j = int(i) - 1;
+      while (j >= 0 && indices[uint256(j)] > key) {
+        uint256 uj = uint256(j);
+        indices[uj + 1] = indices[uj];
+        ids[uj + 1] = ids[uj];
         j--;
       }
-      indices[j + 1] = key;
-      ids[j + 1] = keyID;
+      indices[uint256(j + 1)] = key;
+      ids[uint256(j + 1)] = keyID;
     }
 
     return ids;
