@@ -96,6 +96,7 @@
     "QuestPointComponent",
     "RarityComponent",
     "RateComponent",
+    "RerollComponent",
     "SkillPointComponent",
     "SlotsComponent",
     "StaminaComponent",
@@ -792,6 +793,41 @@
       ]
     },
     {
+      "name": "PetGachaMintSystem",
+      "writeAccess": [
+        "BlockRevealComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "RerollComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "PetGachaRerollSystem",
+      "writeAccess": [
+        "BlockRevealComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "RerollComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "PetGachaRevealSystem",
+      "writeAccess": [
+        "BlockRevealComponent",
+        "IdAccountComponent",
+        "RerollComponent",
+        "StateComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
       "name": "PetLevelSystem",
       "writeAccess": [
         "CoinComponent",
@@ -1031,6 +1067,7 @@
     "LibDataEntity",
     "LibExperience",
     "LibFriend",
+    "LibGacha",
     "LibInventory",
     "LibKill",
     "LibListing",

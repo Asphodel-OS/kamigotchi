@@ -20,6 +20,7 @@ uint256 constant ID = uint256(keccak256("system.Pet721.Reveal"));
  * Requires the blockhash to be available (256 blocks after minting)
  * It is expected that the front end handles this automatically
  */
+/// @dev depreciated by gacha reveal system
 contract Pet721RevealSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
