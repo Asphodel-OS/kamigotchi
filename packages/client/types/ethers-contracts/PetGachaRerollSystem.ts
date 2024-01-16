@@ -180,7 +180,7 @@ export interface PetGachaRerollSystem extends BaseContract {
     reroll(
       petID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

@@ -800,7 +800,9 @@
         "IdHolderComponent",
         "IsDataComponent",
         "RerollComponent",
+        "TimeLastComponent",
         "TypeComponent",
+        "ProxyPermissionsMint20Component",
         "ValueComponent"
       ]
     },
@@ -812,7 +814,9 @@
         "IdHolderComponent",
         "IsDataComponent",
         "RerollComponent",
+        "TimeLastComponent",
         "TypeComponent",
+        "StateComponent",
         "ValueComponent"
       ]
     },

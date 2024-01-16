@@ -15,6 +15,9 @@ abstract contract SetupTemplate is TestSetupImports {
 
   constructor() MudTest(new Deploy()) {}
 
+  //////////////////
+  // SETUP
+
   function setUp() public virtual override {
     super.setUp();
     _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
@@ -23,6 +26,15 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.prank(deployer);
     _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
+  }
+
+  // sets up a default dependencies for mint. Meant for tests not related to minting
+  function setUpDefaultMint() public virtual {
+    _initStockTraits();
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    __721BatchMinterSystem.batchMint(100);
+    vm.stopPrank();
   }
 
   function _fastForward(uint timeDelta) internal {
@@ -131,6 +143,34 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
 
     _moveAccount(playerIndex, initialLoc);
+  }
+
+  // requires at least amt kami to be in gacha before
+  // to replace above mint functions later
+  function _mintPetsGacha(uint playerIndex, uint amt) internal virtual returns (uint[] memory id) {
+    address owner = _owners[playerIndex];
+
+    vm.roll(++_currBlock);
+    _giveMint20(playerIndex, amt);
+    vm.prank(owner);
+    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(amt), (uint256[]));
+
+    vm.roll(++_currBlock);
+    return _PetGachaRevealSystem.reveal(commits);
+  }
+
+  // requires at least amt kami to be in gacha before
+  // to replace above mint functions later
+  function _mintPetGacha(uint playerIndex) internal virtual returns (uint) {
+    address owner = _owners[playerIndex];
+
+    vm.roll(++_currBlock);
+    _giveMint20(playerIndex, 1);
+    vm.prank(owner);
+    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
+
+    vm.roll(++_currBlock);
+    return _PetGachaRevealSystem.reveal(commits)[0];
   }
 
   /////////////////
