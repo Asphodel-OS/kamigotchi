@@ -25,22 +25,23 @@ contract PetFeedSystem is System {
 
     // standard checks (ownership, state, location)
     require(accountID != 0, "PetFeed: no account");
-    require(LibPet.isPet(components, id), "Pet: not a pet");
-    require(LibPet.getAccount(components, id) == accountID, "Pet: not urs");
+    require(LibPet.isPet(components, id), "PetFeed: not a pet");
+    require(LibPet.getAccount(components, id) == accountID, "PetFeed: pet not urs");
+    require(!LibPet.onCooldown(components, id), "PetFeed: pet on cooldown");
     require(
       LibPet.isResting(components, id) || LibPet.isHarvesting(components, id),
-      "Pet: must be resting|harvesting"
+      "PetFeed: pet must be resting|harvesting"
     );
     require(
       LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
-      "Pet: must be in same room"
+      "PetFeed: pet must be in same room"
     );
 
     LibPet.sync(components, id);
 
     // get food registry entry
     uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    require(registryID != 0, "RegistryItem: no such food");
+    require(registryID != 0, "PetFeed: not food");
 
     // decrement item from inventory
     uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);

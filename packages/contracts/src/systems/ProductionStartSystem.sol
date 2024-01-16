@@ -24,15 +24,15 @@ contract ProductionStartSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "ProductionStart: no account");
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.canAct(components, petID), "Pet: on cooldown");
-    require(LibPet.isResting(components, petID), "Pet: must be resting");
+    require(accountID != 0, "FarmStart: no account");
+    require(LibPet.getAccount(components, petID) == accountID, "FarmStart: pet not urs");
+    require(LibPet.isResting(components, petID), "FarmStart: pet must be resting");
+    require(!LibPet.onCooldown(components, petID), "FarmStart: pet on cooldown");
 
     // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), "Pet: starving..");
-    require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");
+    require(LibPet.isHealthy(components, petID), "FarmStart: pet starving..");
+    require(LibAccount.sharesLocation(components, accountID, nodeID), "FarmStart: node too far");
 
     // start the production, create if none exists
     uint256 id = LibProduction.getForPet(components, petID);

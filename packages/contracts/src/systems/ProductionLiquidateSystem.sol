@@ -27,24 +27,30 @@ contract ProductionLiquidateSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "ProductionLiquidate: no account");
-    require(LibPet.getAccount(components, petID) == accountID, "Pet: not urs");
-    require(LibPet.canAct(components, petID), "Pet: on cooldown");
-    require(LibPet.isHarvesting(components, petID), "Pet: must be harvesting");
+    require(accountID != 0, "FarmLiquidate: no account");
+    require(LibPet.getAccount(components, petID) == accountID, "FarmLiquidate: pet not urs");
+    require(LibPet.isHarvesting(components, petID), "FarmLiquidate: pet must be harvesting");
 
     // basic requirements (state and idle time)
-    require(LibProduction.isActive(components, targetProductionID), "Production: not active");
+    require(!LibPet.onCooldown(components, petID), "FarmLiquidate: pet on cooldown");
+    require(
+      LibProduction.isActive(components, targetProductionID),
+      "FarmLiquidate: Harvest inactive"
+    );
 
     // health check
     LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), "Pet: starving..");
+    require(LibPet.isHealthy(components, petID), "FarmLiquidate: pet starving..");
 
     // check that the two kamis share the same node
     uint256 productionID = LibPet.getProduction(components, petID);
     uint256 nodeID = LibProduction.getNode(components, productionID);
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
-    require(nodeID == targetNodeID, "Production: must be on same node as target");
-    require(LibAccount.sharesLocation(components, accountID, nodeID), "Node: too far");
+    require(nodeID == targetNodeID, "FarmLiquidate: target too far");
+    require(
+      LibAccount.sharesLocation(components, accountID, nodeID),
+      "FarmLiquidate: node too far"
+    );
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);

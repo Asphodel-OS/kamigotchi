@@ -140,10 +140,10 @@ contract HarvestTest is SetupTemplate {
     for (uint i = 1; i < 10; i++) {
       vm.startPrank(_getOperator(i));
       for (uint j = 0; j < numKamis; j++) {
-        vm.expectRevert("Pet: not urs");
+        vm.expectRevert("FarmCollect: pet not urs");
         _ProductionCollectSystem.executeTyped(productionIDs[j]);
 
-        vm.expectRevert("Pet: not urs");
+        vm.expectRevert("FarmStop: pet not urs");
         _ProductionStopSystem.executeTyped(productionIDs[j]);
       }
       vm.stopPrank();
@@ -161,7 +161,7 @@ contract HarvestTest is SetupTemplate {
     for (uint i = 1; i < 10; i++) {
       vm.startPrank(_getOperator(i));
       for (uint j = 0; j < numKamis; j++) {
-        vm.expectRevert("Pet: not urs");
+        vm.expectRevert("FarmStart: pet not urs");
         _ProductionStartSystem.executeTyped(kamiIDs[j], nodeID);
       }
       vm.stopPrank();
@@ -188,11 +188,11 @@ contract HarvestTest is SetupTemplate {
     // test that pets can only start a production on node in current room, save productionIDs
     uint[] memory productionIDs = new uint[](numKamis);
     for (uint i = 0; i < numKamis; i++) {
-      vm.expectRevert("Node: too far");
+      vm.expectRevert("FarmStart: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionStartSystem.executeTyped(kamiIDs[i], nodeIDs[2]);
 
-      vm.expectRevert("Node: too far");
+      vm.expectRevert("FarmStart: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionStartSystem.executeTyped(kamiIDs[i], nodeIDs[1]);
 
@@ -210,11 +210,11 @@ contract HarvestTest is SetupTemplate {
     // move rooms and check that production cannot be collected from or stopped
     _moveAccount(playerIndex, 2);
     for (uint i = 0; i < productionIDs.length; i++) {
-      vm.expectRevert("Node: too far");
+      vm.expectRevert("FarmCollect: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionCollectSystem.executeTyped(productionIDs[i]);
 
-      vm.expectRevert("Node: too far");
+      vm.expectRevert("FarmStop: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionStopSystem.executeTyped(productionIDs[i]);
     }
@@ -242,7 +242,7 @@ contract HarvestTest is SetupTemplate {
 
     // attempt to start production again on current node
     vm.prank(_getOperator(playerIndex));
-    vm.expectRevert("Pet: must be resting");
+    vm.expectRevert("FarmStart: pet must be resting");
     _ProductionStartSystem.executeTyped(kamiID, nodeID);
 
     // stop production..
@@ -251,12 +251,12 @@ contract HarvestTest is SetupTemplate {
 
     // attempt to stop it again
     vm.prank(_getOperator(playerIndex));
-    vm.expectRevert("Pet: must be harvesting");
+    vm.expectRevert("FarmStop: pet must be harvesting");
     _ProductionStopSystem.executeTyped(productionID);
 
     // attempt to collect on stopped production
     vm.prank(_getOperator(playerIndex));
-    vm.expectRevert("Pet: must be harvesting");
+    vm.expectRevert("FarmCollect: pet must be harvesting");
     _ProductionCollectSystem.executeTyped(productionID);
 
     // loop through start|collect|stop a few times to make sure it still works
@@ -308,7 +308,7 @@ contract HarvestTest is SetupTemplate {
 
         if (kamiHealths[j] <= drain) {
           vm.prank(_getOperator(0));
-          vm.expectRevert("Pet: starving..");
+          vm.expectRevert("FarmCollect: pet starving..");
           _ProductionCollectSystem.executeTyped(productionIDs[j]);
           _isStarved[j] = true;
         } else {

@@ -136,7 +136,7 @@ contract MurderTest is SetupTemplate {
     // check that we CANNOT liquidate the starved kamis from the wrong account
     for (uint i = 1; i < numAccounts; i++) {
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: not urs");
+        vm.expectRevert("FarmLiquidate: pet not urs");
         vm.prank(_getOperator(i));
         _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[0][j]);
       }
@@ -170,7 +170,7 @@ contract MurderTest is SetupTemplate {
     // check that we CANNOT liquidate
     _moveAccount(playerIndex, 2);
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("Node: too far");
+      vm.expectRevert("FarmLiquidate: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[playerIndex][i]);
     }
@@ -179,7 +179,7 @@ contract MurderTest is SetupTemplate {
     // check that we CANNOT liquidate
     _moveAccount(playerIndex, 3);
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("Node: too far");
+      vm.expectRevert("FarmLiquidate: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionLiquidateSystem.executeTyped(productionIDs[i], _petIDs[playerIndex][i]);
     }
@@ -221,7 +221,7 @@ contract MurderTest is SetupTemplate {
 
       // attempt to liquidate, then stop production
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Production: must be on same node as target");
+        vm.expectRevert("FarmLiquidate: target too far");
         vm.prank(_getOperator(playerIndex));
         _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[playerIndex][j]);
         _stopProduction(playerProductionIDs[j]);
@@ -272,7 +272,7 @@ contract MurderTest is SetupTemplate {
       _fastForward(_idleRequirement / numIncrements);
 
       for (uint j = 0; j < numPets; j++) {
-        vm.expectRevert("Pet: on cooldown");
+        vm.expectRevert("FarmLiquidate: pet on cooldown");
         vm.prank(_getOperator(playerIndex));
         _ProductionLiquidateSystem.executeTyped(victimProductionIDs[j], _petIDs[playerIndex][j]);
       }
@@ -316,7 +316,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when RESTING
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("Pet: must be harvesting");
+      vm.expectRevert("FarmLiquidate: pet must be harvesting");
       vm.prank(_getOperator(playerIndex));
       _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
     }
@@ -329,7 +329,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when Starving
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("Pet: starving..");
+      vm.expectRevert("FarmLiquidate: pet starving..");
       vm.prank(_getOperator(playerIndex));
       _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
     }
@@ -347,7 +347,7 @@ contract MurderTest is SetupTemplate {
 
     // check that pets CANNOT liquidate when DEAD
     for (uint i = 0; i < numPets; i++) {
-      vm.expectRevert("Pet: must be harvesting");
+      vm.expectRevert("FarmLiquidate: pet must be harvesting");
       vm.prank(_getOperator(playerIndex));
       _ProductionLiquidateSystem.executeTyped(victimProductionIDs[i], _petIDs[playerIndex][i]);
     }

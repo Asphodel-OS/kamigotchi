@@ -324,13 +324,6 @@ library LibPet {
   /////////////////
   // CHECKERS
 
-  // Check whether a kami can act based on time passed since its last Standard Action
-  function canAct(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
-    return idleTime >= idleRequirement;
-  }
-
   // Check wether a pet can be named
   function canName(IUintComp components, uint256 id) internal view returns (bool) {
     return CanNameComponent(getAddressById(components, CanNameCompID)).has(id);
@@ -374,6 +367,13 @@ library LibPet {
   // Check whether a pet is revealed
   function isUnrevealed(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getState(components, id), "UNREVEALED");
+  }
+
+  // Check whether a pet is on cooldown after its last Standard Action
+  function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
+    uint256 idleTime = block.timestamp - getLastActionTs(components, id);
+    uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
+    return idleTime < idleRequirement;
   }
 
   /////////////////

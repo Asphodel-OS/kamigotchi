@@ -48,6 +48,52 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "_getTraitStats",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "health",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "power",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "violence",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "harmony",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "slots",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct TraitStats",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "to",
           "type": "address"
@@ -90,31 +136,6 @@
     },
     {
       "inputs": [],
-      "name": "getTraitWeights",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256[]",
-              "name": "keys",
-              "type": "uint256[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "weights",
-              "type": "uint256[]"
-            }
-          ],
-          "internalType": "struct TraitWeights[]",
-          "name": "",
-          "type": "tuple[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "owner",
       "outputs": [
         {
@@ -124,46 +145,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint8",
-              "name": "health",
-              "type": "uint8"
-            },
-            {
-              "internalType": "uint8",
-              "name": "power",
-              "type": "uint8"
-            },
-            {
-              "internalType": "uint8",
-              "name": "violence",
-              "type": "uint8"
-            },
-            {
-              "internalType": "uint8",
-              "name": "harmony",
-              "type": "uint8"
-            },
-            {
-              "internalType": "uint8",
-              "name": "slots",
-              "type": "uint8"
-            }
-          ],
-          "internalType": "struct TraitStats[]",
-          "name": "stats",
-          "type": "tuple[]"
-        }
-      ],
-      "name": "setStats",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -188,11 +169,10 @@
     }
   ],
   "methodIdentifiers": {
+    "_getTraitStats(uint256)": "c4908186",
     "batchMint(address,uint256)": "43508b05",
     "execute(bytes)": "09c5eabe",
-    "getTraitWeights()": "1a8801aa",
     "owner()": "8da5cb5b",
-    "setStats((uint8,uint8,uint8,uint8,uint8)[])": "e88f989d",
     "setTraits()": "c061a3b5",
     "transferOwnership(address)": "f2fde38b"
   }
