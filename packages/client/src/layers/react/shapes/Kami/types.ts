@@ -127,7 +127,7 @@ export const getKami = (
     namable: getComponentValue(CanName, entityIndex)?.value as boolean,
     time: {
       cooldown: {
-        last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
+        last: (getComponentValue(LastActionTime, entityIndex)?.value ?? 0 as number) * 1,
         requirement: getConfigFieldValue(layers.network, 'KAMI_IDLE_REQ'),
       },
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
