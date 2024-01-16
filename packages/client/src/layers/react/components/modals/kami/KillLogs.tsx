@@ -34,11 +34,23 @@ export const KillLogs = (props: Props) => {
     }
   }
 
+  const Head = () => (
+    <TableHead>
+      <TableRow key='header'>
+        <TableCell sx={headerStyle}>Time</TableCell>
+        <TableCell sx={headerStyle}>Place</TableCell>
+        <TableCell sx={headerStyle}>Adversary</TableCell>
+        <TableCell sx={headerStyle}>Outcome</TableCell>
+        <TableCell sx={headerStyle}>PnL ($MUSU)</TableCell>
+      </TableRow>
+    </TableHead>
+  );
+
   const Row = (log: Kill, index: number) => {
     const killStyle = { ...cellStyle, color: 'green' };
     const deathStyle = { ...cellStyle, color: 'red' };
-    const type = log.source?.index === undefined ? 'kill' : 'death';
-    const subject = log.source?.index === undefined ? log.target : log.source;
+    const type = (log.source?.index === undefined) ? 'kill' : 'death';
+    const adversary = (log.source?.index === undefined) ? log.target : log.source;
     const date = new Date(log.time * 1000);
     const dateString = date.toLocaleString(
       'default',
@@ -55,10 +67,10 @@ export const KillLogs = (props: Props) => {
         <TableCell sx={cellStyle}>{dateString}</TableCell>
         <TableCell sx={cellStyle}>{log.node.name}</TableCell>
         <TableCell
-          sx={{ ...cellStyle, cursor: 'pointer' }}
-          onClick={() => setKami(subject?.entityIndex!)}
+          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
+          onClick={() => setKami(adversary?.index!)}
         >
-          {subject?.name}
+          {adversary?.name}
         </TableCell>
         <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>{type}</TableCell>
         <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>
@@ -72,15 +84,7 @@ export const KillLogs = (props: Props) => {
     <Container style={{ overflowY: 'scroll' }}>
       <TableContainer>
         <Table>
-          <TableHead>
-            <TableRow key='header'>
-              <TableCell sx={headerStyle}>Time</TableCell>
-              <TableCell sx={headerStyle}>Place</TableCell>
-              <TableCell sx={headerStyle}>Adversary</TableCell>
-              <TableCell sx={headerStyle}>Outcome</TableCell>
-              <TableCell sx={headerStyle}>PnL ($MUSU)</TableCell>
-            </TableRow>
-          </TableHead>
+          <Head />
           {logs.map((log, index) => Row(log, index))}
         </Table>
       </TableContainer>
