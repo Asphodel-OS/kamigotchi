@@ -11,6 +11,8 @@ import {
 import { Kill } from 'layers/react/shapes/Kill';
 import { Kami } from 'layers/react/shapes/Kami';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
+import { playClick } from 'utils/sounds';
 
 
 interface Props {
@@ -19,14 +21,15 @@ interface Props {
 
 // Rendering of the Kami's Kill/Death Logs
 export const KillLogs = (props: Props) => {
-  const { setKami } = useSelected();
+  const { setKami, setNode } = useSelected();
+  const { modals, setModals } = useVisibility();
   const cellStyle = { fontFamily: 'Pixel', fontSize: '.8vw', border: 0 };
   const headerStyle = { ...cellStyle, fontSize: '1vw' };
 
   let logs = props.kami.kills!.concat(props.kami.deaths!);
   logs = logs.sort((a, b) => b.time - a.time);
 
-  const getMonetaryOutcomeString = (log: Kill): string => {
+  const getPnLString = (log: Kill): string => {
     if (log.target?.index) {
       return `+${log.bounty}`;
     } else {
@@ -65,16 +68,28 @@ export const KillLogs = (props: Props) => {
     return (
       <TableRow key={index}>
         <TableCell sx={cellStyle}>{dateString}</TableCell>
-        <TableCell sx={cellStyle}>{log.node.name}</TableCell>
         <TableCell
           sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
-          onClick={() => setKami(adversary?.index!)}
+          onClick={() => {
+            setNode(log.node.index);
+            setModals({ ...modals, kami: false, node: true });
+            playClick();
+          }}
+        >
+          {log.node.name}
+        </TableCell>
+        <TableCell
+          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
+          onClick={() => {
+            setKami(adversary?.index!);
+            playClick();
+          }}
         >
           {adversary?.name}
         </TableCell>
         <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>{type}</TableCell>
         <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>
-          {getMonetaryOutcomeString(log)}
+          {getPnLString(log)}
         </TableCell>
       </TableRow>
     );

@@ -220,6 +220,7 @@ export function registerNodeModal() {
           header={[
             <Banner
               key='banner'
+              account={data.account}
               node={node}
               kamis={data.account.kamis || []}
               addKami={(kami) => start(kami, node)}

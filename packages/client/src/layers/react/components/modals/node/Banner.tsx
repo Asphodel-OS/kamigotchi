@@ -7,9 +7,11 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Node } from 'layers/react/shapes/Node';
 import { Kami, canHarvest, isResting, onCooldown } from 'layers/react/shapes/Kami';
 import { harvestIcon } from 'assets/images/icons/actions';
+import { Account } from 'layers/react/shapes/Account';
 
 
 interface Props {
+  account: Account;
   node: Node;
   kamis: Kami[];
   addKami: (kami: Kami) => void;
@@ -19,6 +21,7 @@ interface Props {
 // information ranging from current production or death as well as support common actions.
 export const Banner = (props: Props) => {
   const [_, setLastRefresh] = useState(Date.now());
+  const { account, node, kamis } = props;
 
 
   /////////////////
@@ -84,24 +87,24 @@ export const Banner = (props: Props) => {
           key={`harvest-add`}
           img={harvestIcon}
           options={actionOptions}
-          disabled={options.length == 0}
+          disabled={options.length == 0 || account.location !== node.location}
         />
       </Tooltip>
     );
   };
 
   return (
-    <Container key={props.node.name}>
-      <Image src={NodeImages[props.node.index]} />
+    <Container key={node.name}>
+      <Image src={NodeImages[node.index]} />
       <Content>
         <ContentTop>
           <TitleRow>
-            <TitleText>{props.node.name}</TitleText>
-            <AffinityText>{props.node.affinity}</AffinityText>
+            <TitleText>{node.name}</TitleText>
+            <AffinityText>{node.affinity}</AffinityText>
           </TitleRow>
-          <DescriptionText>{props.node.description}</DescriptionText>
+          <DescriptionText>{node.description}</DescriptionText>
         </ContentTop>
-        <ButtonRow>{AddButton(props.kamis)}</ButtonRow>
+        <ButtonRow>{AddButton(kamis)}</ButtonRow>
       </Content>
     </Container>
   );
