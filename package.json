@@ -13,14 +13,17 @@
     "client:dev": "yarn workspace client run dev",
     "client:start": "yarn workspace client run start",
     "contracts:node": "yarn workspace contracts run devnode",
-    "contracts:dev": "yarn workspace contracts run dev"
+    "contracts:dev": "yarn workspace contracts run dev",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "buffer": "^5.5.0",
     "crypto-browserify": "^3.12.0",
     "events": "^3.1.0",
     "npm-run-all": "^4.1.5",
+    "patch-package": "^8.0.0",
     "path-browserify": "^1.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "punycode": "^1.4.1",
     "querystring-es3": "^0.2.1",
     "run-pty": "^4.0.3",
