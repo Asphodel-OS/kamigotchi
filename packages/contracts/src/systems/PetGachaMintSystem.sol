@@ -25,12 +25,18 @@ contract PetGachaMintSystem is System {
     LibMint20.burn(world, msg.sender, amount);
 
     // commits random seed for gacha roll
-    LibGacha.commitBatch(world, components, amount, accountID, block.number);
+    uint256[] memory results = LibGacha.commitBatch(
+      world,
+      components,
+      amount,
+      accountID,
+      block.number
+    );
 
     // standard logging and tracking
     LibAccount.logIncPetsMinted(world, components, accountID, amount);
     LibAccount.updateLastTs(components, accountID);
-    return "";
+    return abi.encode(results);
   }
 
   function executeTyped(uint256 amount) public returns (bytes memory) {
