@@ -2,25 +2,13 @@ import { useEffect } from "react";
 import moment from 'moment';
 import styled from "styled-components";
 import { EntityIndex, getComponentValueStrict } from "@latticexyz/recs";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
-import ErrorIcon from '@mui/icons-material/Error';
-import CancelIcon from '@mui/icons-material/Cancel';
 
+import { IndicatorIcons } from "assets/images/icons/indicators";
 import { NetworkLayer } from "layers/network/types";
 import { ActionStateString, ActionState } from 'layers/network/LocalSystems/ActionSystem/constants';
 import { Tooltip } from "layers/react/components/library/Tooltip";
 
-
-// Color coded icon mapping of action queue
-type ColorMapping = { [key: string]: any };
-const statusIcons: ColorMapping = {
-  "executing": <PendingIcon style={{ color: 'yellow' }} />,
-  "pending": <PendingIcon style={{ color: 'orange' }} />,
-  "complete": <CheckCircleIcon style={{ color: 'green' }} />,
-  "failed": <ErrorIcon style={{ color: 'red' }} />,
-  "cancelled": <CancelIcon style={{ color: 'red' }} />,
-}
 
 interface Props {
   network: NetworkLayer;
@@ -141,9 +129,24 @@ const RowSection2 = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: .7vw;
+  font-size: .6vw;
   color: #333;
   text-align: left;
   padding: .2vw;
   font-family: Pixel;
 `;
+
+const Icon = styled.img`
+  width: 70%;
+  align-self: center;
+`;
+
+// Color coded icon mapping of action queue
+type ColorMapping = { [key: string]: any };
+const statusIcons: ColorMapping = {
+  "executing": <PendingIcon style={{ color: 'yellow' }} />,
+  "pending": <PendingIcon style={{ color: 'orange' }} />,
+  "complete": <Icon src={IndicatorIcons.success} />,
+  "failed": <Icon src={IndicatorIcons.failure} />,
+  "cancelled": <Icon src={IndicatorIcons.failure} />,
+}
