@@ -4,6 +4,9 @@ import styled from "styled-components";
 import { statIcons } from "assets/images/icons/stats";
 import { ExperienceBar } from "layers/react/components/library/ExperienceBar";
 import { Tooltip } from "layers/react/components/library/Tooltip";
+import { useSelected } from "layers/react/store/selected";
+import { useVisibility } from "layers/react/store/visibility";
+import { playClick } from "utils/sounds";
 
 interface Props {
   kami: Kami;
@@ -14,6 +17,8 @@ interface Props {
 }
 
 export const Banner = (props: Props) => {
+  const { setAccount } = useSelected();
+  const { modals, setModals } = useVisibility();
   const statsArray = Object.entries(props.kami.stats);
   const affinities = props.kami.affinities?.join(' | ');
   const statsDetails = new Map(Object.entries({
@@ -82,7 +87,18 @@ export const Banner = (props: Props) => {
             );
           })}
         </ContentMiddle>
-        <Footer>{props.kami.account?.name}</Footer>
+        <Footer>
+          <FooterText
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              setAccount(props.kami.account?.index || 0);
+              setModals({ ...modals, account: !modals.account, kami: false, party: false, map: false });
+              playClick();
+            }}
+          >
+            {props.kami.account?.name}
+          </FooterText>
+        </Footer>
       </Content>
     </Container>
   );
@@ -183,9 +199,18 @@ const Footer = styled.div`
   left: 0;
   width: 100%;
   padding: .7vw;
-  
+
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const FooterText = styled.div`
   font-family: Pixel;
   font-size: .6vw;
   text-align: right;
   color: #666;
+
+  &:hover {
+    color: #ccc;
+  }
 `;

@@ -101,7 +101,7 @@ export const Bio = (props: Props) => {
 
   return (
     <Container key={account.name}>
-      <Image src='https://dl.openseauserdata.com/cache/originImage/files/43cf679bf9d46594f9d78717886abea6.png' />
+      <Image src='https://images.blur.io/_blur-prod/0x5af0d9827e0c53e4799bb226655a1de152a425a5/833-07dc63fc2ea1b5a5?w=1000' />
       <Content>
         <Identifiers>
           <Title>{account.name}</Title>
