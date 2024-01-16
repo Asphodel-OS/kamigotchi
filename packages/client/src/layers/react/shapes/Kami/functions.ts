@@ -17,8 +17,9 @@ export const isDead = (kami: Kami): boolean => {
 };
 
 // check whether the kami is harvesting
-export const isHarvesting = (kami: Kami): boolean =>
-  kami.state === 'HARVESTING';
+export const isHarvesting = (kami: Kami): boolean => {
+  return kami.state === 'HARVESTING';
+}
 
 // check whether the kami is resting
 export const isResting = (kami: Kami): boolean => {

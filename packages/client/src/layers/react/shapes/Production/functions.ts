@@ -19,7 +19,7 @@ export const calcOutput = (production?: Production): number => {
   let output = production.balance;
   let duration = calcIdleTime(production);
   output += Math.floor(duration * production?.rate);
-  return output;
+  return Math.max(0, output);
 }
 
 // interpret the location of a production
