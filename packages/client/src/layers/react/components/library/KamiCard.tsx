@@ -19,15 +19,15 @@ interface Props {
   kami: Kami;
   description: string[];
   subtext?: string;
-  action?: React.ReactNode;
-  cornerContent?: React.ReactNode;
-  battery?: boolean;
-  cooldown?: boolean;
+  actions?: React.ReactNode;
+  showBattery?: boolean;
+  showCooldown?: boolean;
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
+  const { kami, description, subtext, actions, showBattery, showCooldown } = props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 
@@ -49,8 +49,8 @@ export const KamiCard = (props: Props) => {
 
   // toggle the kami modal settings depending on its current state
   const kamiOnClick = () => {
-    const sameKami = (kamiIndex === props.kami.index);
-    setKami(props.kami.index);
+    const sameKami = (kamiIndex === kami.index);
+    setKami(kami.index);
 
     if (modals.kami && sameKami) setModals({ ...modals, kami: false });
     else setModals({ ...modals, kami: true });
@@ -63,11 +63,11 @@ export const KamiCard = (props: Props) => {
 
   // generate the styled text divs for the description
   const Description = () => {
-    const header = [<TextBig key='header'>{props.description[0]}</TextBig>];
-    const details = props.description
+    const header = [<TextBig key='header'>{description[0]}</TextBig>];
+    const details = description
       .slice(1)
       .map((line, index) => <TextMedium key={`description-${index}`}>{line}</TextMedium>);
-    return [...header, ...details];
+    return <>{[...header, ...details]}</>;
   };
 
   const CornerContent = (kami: Kami) => {
@@ -80,12 +80,12 @@ export const KamiCard = (props: Props) => {
 
     return (
       <TitleCorner key='corner'>
-        {props.cooldown &&
+        {showCooldown &&
           <Tooltip key='cooldown' text={[cooldownString]}>
             <Countdown total={kami.time.cooldown.requirement} current={cooldown} />
           </Tooltip>
         }
-        {props.battery &&
+        {showBattery &&
           <Tooltip key='battery' text={[batteryString]}>
             <Battery level={100 * calcHealth(kami) / totalHealth} />
           </Tooltip>
@@ -96,17 +96,19 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card
-      image={props.kami.uri}
+      image={kami.uri}
       imageOnClick={() => kamiOnClick()}
       titleBarContent={[
-        <TitleText key='title' onClick={() => kamiOnClick()}>{props.kami.name}</TitleText>,
-        CornerContent(props.kami)
+        <TitleText key='title' onClick={() => kamiOnClick()}>{kami.name}</TitleText>,
+        CornerContent(kami)
       ]}
       content={[
-        <ContentColumn key='column-1'>{Description()}</ContentColumn>,
+        <ContentColumn key='column-1'>
+          <Description />
+        </ContentColumn>,
         <ContentColumn key='column-2'>
-          <ContentSubtext>{props.subtext}</ContentSubtext>
-          <ContentActions>{props.action}</ContentActions>
+          <ContentSubtext>{subtext}</ContentSubtext>
+          <ContentActions>{actions}</ContentActions>
         </ContentColumn>
       ]}
     />

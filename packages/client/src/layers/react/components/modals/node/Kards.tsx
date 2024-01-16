@@ -260,9 +260,9 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        action={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
-        battery
-        cooldown
+        actions={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
+        showBattery
+        showCooldown
       />
     );
   };
@@ -274,10 +274,10 @@ export const Kards = (props: Props) => {
         key={kami.entityIndex}
         kami={kami}
         subtext={`${kami.account!.name} (\$${calcOutput(kami)})`}
-        action={LiquidateButton(kami, myKamis)}
+        actions={LiquidateButton(kami, myKamis)}
         description={getDescription(kami)}
-        battery
-        cooldown
+        showBattery
+        showCooldown
       />
     );
   };

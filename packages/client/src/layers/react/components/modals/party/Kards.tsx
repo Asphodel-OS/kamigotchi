@@ -22,6 +22,7 @@ import {
   calcOutput,
 } from "layers/react/shapes/Kami";
 import { getRateDisplay } from 'utils/rates';
+import { playClick } from "utils/sounds";
 
 interface Props {
   account: Account;
@@ -209,9 +210,9 @@ export const Kards = (props: Props) => {
           kami={kami}
           description={getDescription(kami)}
           subtext={`${calcOutput(kami)} $MUSU`}
-          action={DisplayedAction(kami, account)}
-          battery
-          cooldown
+          actions={DisplayedAction(kami, account)}
+          showBattery
+          showCooldown
         />
       );
     })}
