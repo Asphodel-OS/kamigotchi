@@ -1,26 +1,23 @@
-import bubble from 'assets/sound/fx/bubble_success.mp3';
-import click from 'assets/sound/fx/mouseclick.wav';
-import scribble from 'assets/sound/fx/scribbling.mp3';
-import vending from 'assets/sound/fx/vending_machine.mp3';
+import { InteractionFX } from 'assets/sound/fx/interaction';
 import { useSound } from 'layers/react/store/sound';
 
 export const playClick = () => {
-  const fx = new Audio(click);
+  const fx = new Audio(InteractionFX.click);
   playSound(fx);
 }
 
 export const playScribble = () => {
-  const fx = new Audio(scribble);
+  const fx = new Audio(InteractionFX.scribble);
   playSound(fx);
 }
 
 export const playSuccess = () => {
-  const fx = new Audio(bubble);
+  const fx = new Audio(InteractionFX.success);
   playSound(fx);
 }
 
 export const playVending = () => {
-  const fx = new Audio(vending);
+  const fx = new Audio(InteractionFX.vend);
   playSound(fx);
 }
 
