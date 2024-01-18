@@ -92,7 +92,7 @@ export const Banner = (props: Props) => {
             style={{ cursor: 'pointer' }}
             onClick={() => {
               setAccount(props.kami.account?.index || 0);
-              setModals({ ...modals, account: !modals.account, kami: false, party: false, map: false });
+              setModals({ ...modals, account: true, kami: false, party: false, map: false });
               playClick();
             }}
           >
