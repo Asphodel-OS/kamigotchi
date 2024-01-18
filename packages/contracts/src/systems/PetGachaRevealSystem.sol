@@ -65,9 +65,9 @@ contract PetGachaRevealSystem is System {
   }
 
   function _transferPets(uint256[] memory commitIDs, uint256[] memory petIDs) internal {
-    uint256[] memory accounts = LibGacha.extractAccountBatch(components, commitIDs);
-    uint256[] memory rerolls = LibGacha.extractRerollBatch(components, commitIDs);
+    uint256[] memory accountIDs = LibGacha.extractAccountBatch(components, commitIDs);
+    uint256[] memory rerollCounts = LibGacha.extractRerollBatch(components, commitIDs);
 
-    LibGacha.withdrawPets(components, petIDs, accounts, rerolls);
+    LibGacha.withdrawPets(components, petIDs, accountIDs, rerollCounts);
   }
 }
