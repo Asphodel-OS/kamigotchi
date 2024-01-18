@@ -59,6 +59,24 @@ export function createAdminAPI(systems: any) {
     return systems['system._NPC.Set.Name'].executeTyped(index, name);
   }
 
+  /////////////////
+  // MINT 
+
+  async function initBatchMinter() {
+    await sleepIf();
+    return systems['system.Pet721.BatchMint'].setTraits();
+  }
+
+  async function batchMint(amount: number) {
+    await sleepIf();
+    return systems['system.Pet721.BatchMint'].batchMint(amount);
+  }
+
+  async function initGachaIncrement() {
+    await sleepIf();
+    return systems['system.Pet.Gacha.Mint'].init(0);
+  }
+
   // sets the prices for the merchant at the specified location
   async function setListing(
     merchantIndex: number,
@@ -532,6 +550,15 @@ export function createAdminAPI(systems: any) {
       set: {
         location: setNPCLocation,
         name: setNPCName,
+      },
+    },
+    mint: {
+      batchMinter: {
+        init: initBatchMinter,
+        mint: batchMint,
+      },
+      gacha: {
+        init: initGachaIncrement,
       },
     },
     forceReveal: {
