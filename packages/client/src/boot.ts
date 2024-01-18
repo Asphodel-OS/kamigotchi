@@ -5,12 +5,22 @@ import {
   setComponent,
 } from '@latticexyz/recs';
 
+import { Layers } from './types';
 import { createNetworkConfig } from 'layers/network/config';
 import { createNetworkLayer } from 'layers/network/createNetworkLayer';
 import { createPhaserLayer } from 'layers/phaser/createPhaserLayer';
 import { mountReact, setLayers, boot as bootReact } from 'layers/react/boot';
-import { Layers } from './types';
-import { Time } from './utils/time';
+import { getKamiByIndex } from 'layers/react/shapes/Kami';
+import { getAccountByIndex } from 'layers/react/shapes/Account';
+import { getItemByIndex } from 'layers/react/shapes/Item';
+import { getNodeByIndex } from 'layers/react/shapes/Node';
+import { getQuestByIndex } from 'layers/react/shapes/Quest';
+import { getRoomByLocation } from 'layers/react/shapes/Room';
+import { getSkillByIndex } from 'layers/react/shapes/Skill';
+import { getTraitByIndex } from 'layers/react/shapes/Trait';
+import { numberToHex } from 'utils/hex';
+import { Time } from 'utils/time';
+
 
 // boot the whole thing
 export async function boot() {
@@ -54,6 +64,35 @@ async function rebootGame(initialBoot: boolean): Promise<Layers> {
   // Populate the layers
   if (!layers.network) layers.network = await createNetworkLayer(networkConfig);
   if (!layers.phaser) layers.phaser = await createPhaserLayer(layers.network);
+
+  // set the entity explorer on the network layer
+  if (layers.network) {
+    let explorer = layers.network.explorer;
+    explorer.getAccount = (index: number, options?: {}) => {
+      return getAccountByIndex(layers as Layers, numberToHex(index), options);
+    }
+    explorer.getItem = (index: number, options?: {}) => {
+      return getItemByIndex(layers as Layers, numberToHex(index));
+    }
+    explorer.getKami = (index: number, options?: {}) => {
+      return getKamiByIndex(layers as Layers, numberToHex(index), options);
+    }
+    explorer.getNode = (index: number, options?: {}) => {
+      return getNodeByIndex(layers as Layers, index, options);
+    }
+    explorer.getQuest = (index: number, options?: {}) => {
+      return getQuestByIndex(layers as Layers, numberToHex(index));
+    }
+    explorer.getRoom = (location: number, options?: {}) => {
+      return getRoomByLocation(layers as Layers, location);
+    }
+    explorer.getSkill = (index: number, options?: {}) => {
+      return getSkillByIndex(layers as Layers, numberToHex(index));
+    }
+    explorer.getTrait = (index: number, options?: {}) => {
+      return getTraitByIndex(layers as Layers, numberToHex(index));
+    }
+  }
 
   // Set phaser game tick
   if (layers.phaser) {

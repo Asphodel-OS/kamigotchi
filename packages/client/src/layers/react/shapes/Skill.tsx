@@ -106,6 +106,28 @@ const getSkill = (layers: Layers, entityIndex: EntityIndex): Skill => {
   };
 }
 
+export const getSkillByIndex = (
+  layers: Layers,
+  index: number, // skill index of the registry instance
+): Skill => {
+  const {
+    network: {
+      components: {
+        IsRegistry,
+        SkillIndex,
+      },
+    },
+  } = layers;
+
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsRegistry),
+      HasValue(SkillIndex, { value: index })
+    ])
+  );
+  return getSkill(layers, entityIndices[0]);
+}
+
 // Get a Effect Registry object
 const getEffect = (layers: Layers, entityIndex: EntityIndex): Effect => {
   const {

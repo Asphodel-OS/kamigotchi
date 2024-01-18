@@ -130,7 +130,18 @@ export async function createNetworkLayer(config: SetupContractConfig) {
         UpdateNetwork,
       }
     },
-    getEntity,
+    explorer: {
+      getEntity,
+      getAccount: (index: number, options?: {}) => { console.log("not implemented") },
+      getItem: (index: number, options?: {}) => { console.log("not implemented") },
+      getKami: (index: number, options?: {}) => { console.log("not implemented") },
+      getNode: (index: number, options?: {}) => { console.log("not implemented") },
+      getNPC: (index: number, options?: {}) => { console.log("not implemented") },
+      getQuest: (index: number, options?: {}) => { console.log("not implemented") },
+      getRoom: (location: number, options?: {}) => { console.log("not implemented") },
+      getSkill: (index: number, options?: {}) => { console.log("not implemented") },
+      getTrait: (index: number, options?: {}) => { console.log("not implemented") },
+    },
     faucet,
   };
 
