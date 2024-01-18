@@ -14,6 +14,8 @@ import { BalanceComponent, ID as BalanceCompID } from "components/BalanceCompone
 import { CoinComponent, ID as CoinCompID } from "components/CoinComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 
+import { LibNode } from "libraries/LibNode.sol";
+
 // a Kill Entity is an event log tracking where, when and with whom a killing took place
 library LibKill {
   // creates a kill log. pretty sure we don't need to do anything with the library aside from this
