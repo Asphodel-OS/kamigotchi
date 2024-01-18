@@ -8,6 +8,7 @@ import { Layers } from 'src/types';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { Kami, queryKamisX } from '../Kami';
+import { GachaCommit, queryAccCommits } from '../Gacha';
 import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
@@ -50,6 +51,9 @@ export interface Account {
       requests: number;
     }
   }
+  gacha?: {
+    commits: GachaCommit[];
+  }
   inventories?: Inventories;
   lootboxLogs?: {
     unrevealed: LootboxLog[];
@@ -68,10 +72,11 @@ export interface Account {
 
 export interface AccountOptions {
   kamis?: boolean;
+  friends?: boolean;
+  gacha?: boolean;
   inventory?: boolean;
   quests?: boolean;
   lootboxLogs?: boolean;
-  friends?: boolean;
   stats?: boolean;
 }
 
@@ -197,6 +202,11 @@ export const getAccount = (
         requests: (getConfigFieldValue(layers.network, 'FRIENDS_REQUEST_LIMIT')) * 1,
       }
     }
+  }
+
+  // populate Gacha
+  if (options?.gacha) {
+    account.gacha = { commits: queryAccCommits(layers, account.id) };
   }
 
   // populate Quests
