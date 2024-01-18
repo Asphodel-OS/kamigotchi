@@ -57,16 +57,16 @@ library LibGacha {
     );
     TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
     ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 currIncrement = valueComp.getValue(GACHA_INCREMENT_ID);
+    uint256 currInc = valueComp.getValue(GACHA_INCREMENT_ID) + 1;
     for (uint256 i; i < amount; i++) {
       uint256 id = world.getUniqueEntityId();
       accComp.set(id, accountID);
       revealComp.set(id, revealBlock);
       typeComp.set(id, string("GACHA_COMMIT"));
-      valueComp.set(id, currIncrement + i + 1);
+      valueComp.set(id, currInc + i);
       ids[i] = id;
     }
-    valueComp.set(GACHA_INCREMENT_ID, currIncrement + amount);
+    valueComp.set(GACHA_INCREMENT_ID, currInc + amount);
   }
 
   /// @notice transfers multiple pets from gacha to accounts
@@ -92,9 +92,12 @@ library LibGacha {
 
   /// @notice calculates the cost of a gacha roll
   /// @dev assuming flat scaling - may change
-  function calcRerollCost(IUintComp components, uint256 count) internal view returns (uint256) {
+  function calcRerollCost(
+    IUintComp components,
+    uint256 rerollCount
+  ) internal view returns (uint256) {
     uint256 baseCost = LibConfig.getValueOf(components, "GACHA_REROLL_PRICE");
-    return baseCost * (count + 1);
+    return baseCost * (rerollCount + 1);
   }
 
   /// @notice calculates and extracts the seed from gacha commits
