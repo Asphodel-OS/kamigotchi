@@ -12,15 +12,7 @@ contract MurderTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _initCommonTraits();
-    _initItems();
-
     _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
-
-    _createRoom("testRoom1", 1, 2, 3, 4);
-    _createRoom("testRoom2", 2, 1, 3, 4);
-    _createRoom("testRoom3", 3, 1, 2, 4);
-    _createRoom("testRoom4", 4, 1, 2, 3);
 
     _createNPC(1, 1, "Test NPC");
     _createFoodListings(1);

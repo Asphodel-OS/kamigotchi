@@ -17,6 +17,10 @@ contract BatchMinterTest is SetupTemplate {
     vm.roll(_currBlock++);
   }
 
+  function setUpMint() public override {
+    return;
+  }
+
   /////////////////
   // Stats //
   /////////////////

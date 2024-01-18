@@ -12,16 +12,18 @@ contract Farm20Test is SetupTemplate {
     super.setUp();
     token = _Farm20ProxySystem.getToken();
 
-    _createRoom("testRoom1", 1, 4, 12, 0);
-    _createRoom("testRoom4", 4, 1, 12, 0);
-    _createRoom("testRoom12", 12, 1, 4, 0);
-
     _registerAccount(0);
     _registerAccount(1);
     _moveAccount(0, 12); // bridging restricted to room 12
     _moveAccount(1, 12); // bridging restricted to room 12
 
     minDelay = _Farm20WithdrawSystem.getMinDelay();
+  }
+
+  function setUpRooms() public override {
+    _createRoom("testRoom1", 1, 4, 12, 0);
+    _createRoom("testRoom4", 4, 1, 12, 0);
+    _createRoom("testRoom12", 12, 1, 4, 0);
   }
 
   /////////////////

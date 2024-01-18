@@ -11,9 +11,11 @@ contract GachaTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _registerAccounts(10);
-
     _initStockTraits();
+  }
+
+  function setUpMint() public override {
+    return;
   }
 
   /////////////////

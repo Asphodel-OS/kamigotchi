@@ -7,14 +7,14 @@ contract Pet721StakeTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _initCommonTraits();
+    _registerAccount(0);
+    _registerAccount(1);
+  }
 
+  function setUpRooms() public override {
     _createRoom("testRoom1", 1, 4, 12, 0);
     _createRoom("testRoom4", 4, 1, 12, 0);
     _createRoom("testRoom4", 12, 1, 4, 0);
-
-    _registerAccount(0);
-    _registerAccount(1);
   }
 
   function _assertOwnerInGame(uint256 tokenID, address addr) internal {

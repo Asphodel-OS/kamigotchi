@@ -19,11 +19,6 @@ contract TraitsTest is SetupTemplate {
 
     _setConfig("MINT_ACCOUNT_MAX", 1e9);
     _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
-
-    _createRoom("testRoom1", 1, 4, 0, 0);
-    _createRoom("testRoom4", 4, 1, 0, 0);
-
-    _registerAccount(0);
   }
 
   /////////////////

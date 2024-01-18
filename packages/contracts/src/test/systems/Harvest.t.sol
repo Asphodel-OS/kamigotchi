@@ -22,14 +22,6 @@ contract HarvestTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    // create rooms
-    _createRoom("testRoom1", 1, 2, 3, 4);
-    _createRoom("testRoom2", 2, 1, 3, 4);
-    _createRoom("testRoom3", 3, 1, 2, 4);
-    _createRoom("testRoom3", 4, 1, 2, 3);
-
-    _initCommonTraits();
-
     _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
   }
 

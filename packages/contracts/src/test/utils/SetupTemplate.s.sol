@@ -20,21 +20,45 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUp() public virtual override {
     super.setUp();
-    _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
+
+    setUpAccounts();
     _initAllConfigs();
     _currTime = 5 minutes;
 
     vm.prank(deployer);
     _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
+
+    setUpMint();
+    setUpItems();
+    setUpRooms();
   }
 
-  // sets up a default dependencies for mint. Meant for tests not related to minting
-  function setUpDefaultMint() public virtual {
-    _initStockTraits();
+  // sets up some default accounts. override to change/remove behaviour if needed
+  function setUpAccounts() public virtual {
+    _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
+    _registerAccounts(10);
+  }
+
+  // sets up mint to a default state. override to change/remove behaviour if needed
+  function setUpMint() public virtual {
+    _initCommonTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
     __721BatchMinterSystem.batchMint(100);
     vm.stopPrank();
+  }
+
+  // sets up items to a default state. override to change/remove behaviour if needed
+  function setUpItems() public virtual {
+    _initItems();
+  }
+
+  // sets up rooms to a default state. override to change/remove behaviour if needed
+  function setUpRooms() public virtual {
+    _createRoom("testRoom1", 1, 2, 3, 4);
+    _createRoom("testRoom2", 2, 1, 3, 4);
+    _createRoom("testRoom3", 3, 1, 2, 4);
+    _createRoom("testRoom4", 4, 1, 2, 3);
   }
 
   function _fastForward(uint timeDelta) internal {

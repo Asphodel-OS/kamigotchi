@@ -10,12 +10,14 @@ contract LootboxTest is SetupTemplate {
 
     _registerAccount(0);
 
+    vm.roll(_currBlock++);
+  }
+
+  function setUpItems() public override {
     _createGenericItem(1);
     _createGenericItem(2);
     _createGenericItem(3);
     _createGenericItem(4);
-
-    vm.roll(_currBlock++);
   }
 
   function testLootboxSingleDT(uint256 startAmt, uint256 useAmt) public {
