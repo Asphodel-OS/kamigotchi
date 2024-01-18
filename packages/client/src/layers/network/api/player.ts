@@ -248,13 +248,19 @@ export function createPlayerAPI(systems: any) {
   // @dev mint a pet with a mint20 token
   // @param amount  number of pets to mint
   function mintPet(amount: BigNumberish) {
-    return systems["system.Pet721.Mint"].executeTyped(amount);
+    return systems["system.Pet.Gacha.Mint"].executeTyped(amount);
   }
 
   // @dev reveal a minted pet
-  // @param tokenID  ERC721 petID, not MUD entity ID
-  function revealPet(tokenID: BigNumberish) {
-    return systems["system.Pet721.Reveal"].executeTyped(tokenID);
+  // @param commitIDs array of commitIDs
+  function revealPet(commitIDs: BigNumberish[]) {
+    return systems["system.Pet.Gacha.Reveal"].reveal(commitIDs);
+  }
+
+  // @dev reroll a pet
+  // @param petID  PetID
+  function rerollPet(petID: BigNumberish) {
+    return systems["system.Pet.Gacha.Reroll"].reroll(petID);
   }
 
   // @dev mint mint20 tokens with eth
@@ -345,6 +351,7 @@ export function createPlayerAPI(systems: any) {
       mintPet: mintPet,
       mintToken: mintToken,
       reveal: revealPet,
+      reroll: rerollPet,
     },
     production: {
       collect: collectProduction,
@@ -371,7 +378,6 @@ export function createPlayerAPI(systems: any) {
     },
     ERC721: {
       deposit: depositERC721,
-      reveal: revealPet,
       withdraw: withdrawERC721,
     },
     ERC20: {

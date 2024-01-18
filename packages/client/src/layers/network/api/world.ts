@@ -25,6 +25,7 @@ export function setUpWorldAPI(systems: any) {
     await initSkills(api);
     await initTraits(api);
     await initRelationships(api);
+    await initGachaPool(api);
 
     if (!process.env.MODE || process.env.MODE == 'DEV') {
       await initLocalConfig(api);
@@ -288,6 +289,23 @@ export function setUpWorldAPI(systems: any) {
       }
     }
   }
+
+  ///////////////////
+  // MINT FLOW
+
+  async function initGachaPool(api: AdminAPI) {
+    await api.mint.gacha.init();
+    await api.mint.batchMinter.init();
+
+    const numToMint = 3333;
+    const intervals = 8;
+    for (let i = 0; i < numToMint; i += intervals) {
+      await sleepIf();
+      await api.mint.batchMinter.mint(intervals);
+    }
+    await api.mint.batchMinter.mint(numToMint % intervals);
+  }
+
 
 
   ////////////////////
@@ -699,6 +717,9 @@ export function setUpWorldAPI(systems: any) {
     nodes: {
       init: () => initNodes(createAdminAPI(systems)),
       deletes: (indices: number[]) => deleteNodes(createAdminAPI(systems), indices),
+    },
+    mint: {
+      init: () => initGachaPool(createAdminAPI(systems)),
     },
     quests: {
       init: () => initQuests(createAdminAPI(systems)),

@@ -14,7 +14,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { getAccount } from 'layers/react/shapes/Account';
 import { getConfigFieldValue } from 'layers/react/shapes/Config';
 import { getData } from 'layers/react/shapes/Data';
-import { Kami, queryKamisX } from 'layers/react/shapes/Kami';
+import { GachaCommit, isGachaAvailable } from 'layers/react/shapes/Gacha';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
@@ -38,14 +38,14 @@ export function registerKamiMintModal() {
             IsPet,
             IsAccount,
             OperatorAddress,
+            RevealBlock,
             State,
             Value,
           },
-          systems,
         },
       } = layers;
 
-      return merge(IsPet.update$, Value.update$, State.update$).pipe(
+      return merge(IsPet.update$, RevealBlock.update$, Value.update$, State.update$).pipe(
         map(() => {
           // get the account through the account entity of the controlling wallet
           const accountIndex = Array.from(
@@ -57,35 +57,20 @@ export function registerKamiMintModal() {
             ])
           )[0];
 
-          const account = getAccount(layers, accountIndex, { kamis: true });
-          const numMinted = getData(layers, account.id, "MINT20_MINT");
-          const unrevealedKamis = queryKamisX(
-            layers,
-            { account: account.id, state: 'UNREVEALED' }
-          ).reverse();
+          const account = getAccount(layers, accountIndex, { kamis: true, gacha: true });
 
+          const commits = [...account.gacha ? account.gacha.commits : []].reverse();
 
           return {
             layers,
             data: {
               account: {
                 mint20: {
-                  balance: 0, // TODO?: seems this is supported by wagmi hook
                   minted: getData(layers, account.id, "MINT20_MINT"),
                   limit: getConfigFieldValue(layers.network, "MINT_ACCOUNT_MAX"),
                 },
-                kamis: {
-                  unrevealed: unrevealedKamis,
-                }
+                commits: commits,
               },
-              mint20: {
-                proxyAddress: systems["system.Farm20.Proxy"].address,
-                cost: getConfigFieldValue(layers.network, "MINT_PRICE"),
-                redeemed: 0, // TODO?: seems this is supported by wagmi hook
-                supply: 0, // TODO?: seems this is supported by wagmi hook
-                limit: getConfigFieldValue(layers.network, "MINT_INITIAL_MAX"),
-              },
-              numMinted,
             }
           };
         })
@@ -109,8 +94,17 @@ export function registerKamiMintModal() {
       const { selectedAddress, networks } = useNetwork();
 
       const [amountToMint, setAmountToMint] = useState(1);
-      const [triedReveal, setTriedReveal] = useState(false);
+      const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
+      const [blockNumber, setBlockNumber] = useState(0);
+
+      useEffect(() => {
+        const sub = blockNumber$.subscribe((block) => {
+          setBlockNumber(block);
+        });
+
+        return () => sub.unsubscribe();
+      }, []);
 
       useEffect(() => {
         const tx = async () => {
@@ -118,9 +112,10 @@ export function registerKamiMintModal() {
             setTriedReveal(true);
             // wait to give buffer for OP rpc
             await new Promise((resolve) => setTimeout(resolve, 500));
-            data.account.kamis.unrevealed.forEach((kami) => {
-              revealTx(kami);
+            const filtered = data.account.commits.filter((n) => {
+              return isGachaAvailable(n, blockNumber);
             });
+            revealTx(filtered);
             if (waitingToReveal) {
               setWaitingToReveal(false);
               setModals({ ...modals, kamiMint: false, party: true });
@@ -129,8 +124,7 @@ export function registerKamiMintModal() {
         }
         tx();
 
-        // settriedReveal(false);
-      }, [data.account.kamis.unrevealed]);
+      }, [data.account.commits]);
 
 
       ///////////////
@@ -148,28 +142,6 @@ export function registerKamiMintModal() {
         watch: true
       });
 
-      // // not used anymore, may be useful later
-      // const { data: mint20Supply } = useContractRead({
-      //   address: mint20Addy as `0x${string}`,
-      //   abi:
-      //     [{
-      //       "inputs": [],
-      //       "name": "getTotalMinted",
-      //       "outputs": [
-      //         {
-      //           "internalType": "uint256",
-      //           "name": "",
-      //           "type": "uint256"
-      //         }
-      //       ],
-      //       "stateMutability": "view",
-      //       "type": "function"
-      //     },],
-      //   functionName: 'getTotalMinted',
-      //   watch: true,
-      // });
-
-
       /////////////////
       // ACTIONS
 
@@ -181,7 +153,7 @@ export function registerKamiMintModal() {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
           id: actionID,
-          action: 'KamiMind',
+          action: 'KamiMint',
           params: [amount],
           description: `Minting ${amount} Kami`,
           execute: async () => {
@@ -191,18 +163,20 @@ export function registerKamiMintModal() {
         return actionID;
       };
 
-      // transaction to roll/reveal the kami's metadata 
-      const revealTx = async (kami: Kami) => {
+      // transaction to reveal a gacha result
+      const revealTx = async (commits: GachaCommit[]) => {
+        const toReveal = commits.map((n) => n.id);
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiReveal',
-          params: [kami.index],
-          description: `Inspecting Kami ${kami.index * 1}`,
+          params: [commits.length],
+          description: `Revealing ${commits.length} Gacha rolls`,
           execute: async () => {
-            return player.ERC721.reveal(kami.index);
+            return player.mint.reveal(toReveal);
           },
         });
+
         await waitForActionCompletion(
           actions!.Action,
           world.entityToIndex.get(actionID) as EntityIndex

@@ -30,6 +30,7 @@ export interface Kami {
   experience: KamiExperience;
   health: number;
   healthRate: number;
+  rerolls: number;
   state: string;
   skillPoints: number;
   stats: Stats;
@@ -98,6 +99,7 @@ export const getKami = (
         Name,
         PetID,
         PetIndex,
+        Reroll,
         SkillPoint,
         SourceID,
         StartTime,
@@ -133,6 +135,7 @@ export const getKami = (
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
+    rerolls: (getComponentValue(Reroll, entityIndex)?.value ?? 0 as number) * 1,
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? 0 as number) * 1,
     stats: getStats(layers, entityIndex),
     bonuses: getBonuses(layers, entityIndex),

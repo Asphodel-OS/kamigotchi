@@ -129,6 +129,7 @@ export function createComponents(world: World) {
     PriceSell: defineNumberEZ("PriceSell", "component.PriceSell"),
     Prototype: defineNumberEZ("Prototype", "component.Prototype"),
     Rarity: defineNumberEZ("Rarity", "component.Rarity"),
+    Reroll: defineNumberEZ("Rerolls", "component.Reroll"),
     Rate: defineNumberEZ("Rate", "component.Rate"),
     SkillPoint: defineNumberEZ("SkillPoint", "component.SkillPoint"),
     Slots: defineNumberEZ("Slots", "component.Slots"),
@@ -155,6 +156,7 @@ export function createComponents(world: World) {
 
     // speeeeecial
     CanName: defineBoolEZ("CanName", "component.Can.Name"),
+    GachaOrder: defineBoolEZ("CanName", "component.Gacha.Order"),
     FavoriteFood: defineStringEZ("FavoriteFood", "component.Favorite.Food"),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ("MediaURI", "component.MediaURI"),
