@@ -42,40 +42,36 @@ export function registerHelpModal() {
       );
 
       const Menu = () => (
-        <Body>
+        <MenuBody>
+          <MenuText>Here are valuable resources that can help you navigate Kamigotchi World.</MenuText>
           <Tooltip text={['Getting Started']} >
+            <Label>Book 1</Label>
             <IconButton
               id='starting'
               img={HelpMenuIcons.starting}
               onClick={() => setTab(HelpTabs.START)}
-              size='xl'
+              size='book'
             />
           </Tooltip>
           <Tooltip text={["What's a Kamigotchi?"]} >
+            <Label>Book 2</Label>
             <IconButton
               id='kamigotchi'
               img={HelpMenuIcons.kamis}
               onClick={() => setTab(HelpTabs.KAMIS)}
-              size='xl'
+              size='book'
             />
           </Tooltip>
           <Tooltip text={["What's a Node?"]} >
+            <Label>Book 3</Label>
             <IconButton
               id='nodes'
               img={HelpMenuIcons.nodes}
               onClick={() => setTab(HelpTabs.NODES)}
-              size='xl'
+              size='book'
             />
           </Tooltip>
-          <Tooltip text={["Kamigotchi World"]} >
-            <IconButton
-              id='world'
-              img={HelpMenuIcons.starting}
-              onClick={() => setTab(HelpTabs.WORLD)}
-              size='xl'
-            />
-          </Tooltip>
-        </Body>
+        </MenuBody>
       );
 
       return (
@@ -97,19 +93,6 @@ export function registerHelpModal() {
   );
 }
 
-const Banner = styled.img`
-  height: auto;
-  width: 100%;
-`;
-
-const Body = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5vw;
-`;
-
 const ButtonRow = styled.div`
   position: absolute;
   
@@ -117,4 +100,44 @@ const ButtonRow = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-self: flex-start;
+`;
+
+const Banner = styled.img`
+  height: auto;
+  width: 100%;
+  padding: 2vw;
+  padding-bottom: 1vw;
+  align-self: center;
+`;
+
+const Label = styled.div`
+  padding: .4vw;
+  align-self: center;
+  
+  color: black;
+  font-family: Pixel;
+  font-size: 1vw;
+  line-height: .8vw;
+  text-align: center;
+  text-shadow: 0 0 .4vw rgba(0, 0, 0, 0.5);
+`;
+
+const MenuBody = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5vw;
+`;
+
+const MenuText = styled.div`
+  padding-bottom: 3vw;
+  align-self: center;
+  
+  color: black;
+  font-family: Pixel;
+  font-size: 1vw;
+  line-height: 1.6vw;
+  text-align: center;
+  word-spacing: 1vw;
 `;

@@ -8,7 +8,7 @@ interface Props {
   onClick: Function;
   img: string;
   disabled?: boolean;
-  size?: 'small' | 'medium' | 'large' | 'xl';
+  size?: 'small' | 'medium' | 'large' | 'book';
   pulse?: boolean;
 }
 
@@ -46,13 +46,15 @@ export const IconButton = (props: Props) => {
       styles.padding = '.7vw';
       styles.borderRadius = '.7vw';
       styles.borderWidth = '.2vw';
-    } else if (size === 'xl') {
+    } else if (size === 'book') {
+      // this is tweeked specfically for the help menu
       styles.width = '8vw';
-      styles.height = '8vw';
+      styles.height = '10vw';
       styles.margin = '.5vw';
       styles.padding = '.5vw';
       styles.borderRadius = '1vw';
       styles.borderWidth = '.25vw';
+      styles.boxShadow = '0 0 1vw 0 rgba(0, 0, 0, 0.5)';
     }
 
     if (props.disabled) styles.backgroundColor = '#b2b2b2';
