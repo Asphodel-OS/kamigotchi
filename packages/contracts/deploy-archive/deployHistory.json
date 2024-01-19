@@ -995,7 +995,7 @@
       ]
     },
     {
-      "last deployed": "16th Jan 2023",
+      "last deployed": "19th Jan 2023",
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
         "BalanceComponent",
@@ -1006,9 +1006,10 @@
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
+        "IndexComponent",
+        "IndexNodeComponent",
         "IsDataComponent",
         "IsKillComponent",
-        "IndexComponent",
         "IsScoreComponent",
         "RateComponent",
         "StateComponent",
@@ -1021,7 +1022,7 @@
       ]
     },
     {
-      "last deployed": "16th Jan 2023",
+      "last deployed": "19th Jan 2023",
       "name": "ProductionStartSystem",
       "writeAccess": [
         "IsProductionComponent",
@@ -1029,6 +1030,7 @@
         "HealthCurrentComponent",
         "IdNodeComponent",
         "IdPetComponent",
+        "IndexNodeComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
