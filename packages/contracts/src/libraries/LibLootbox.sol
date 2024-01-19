@@ -47,7 +47,7 @@ library LibLootbox {
     setBalance(components, id, count);
     setHolder(components, id, LibInventory.getHolder(components, invID));
     setIndex(components, id, LibInventory.getItemIndex(components, invID));
-    LibRandom.setRevealBlock(components, id, block.number);
+    LibRandom.setRevealBlock(components, id, block.number + 1);
   }
 
   /** @notice

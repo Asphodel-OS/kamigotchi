@@ -30,7 +30,7 @@ contract PetGachaMintSystem is System {
       components,
       amount,
       accountID,
-      block.number
+      block.number + 1
     );
 
     // standard logging and tracking

@@ -32,7 +32,7 @@ contract PetGachaRerollSystem is System {
     LibPet.toGacha(components, petID);
 
     // commits random seed for gacha roll
-    uint256 commitID = LibGacha.commit(world, components, accountID, block.number);
+    uint256 commitID = LibGacha.commit(world, components, accountID, block.number + 1);
     LibGacha.setReroll(components, commitID, prevRerolls);
 
     // standard logging and tracking
