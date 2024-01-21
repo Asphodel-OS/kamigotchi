@@ -1,18 +1,13 @@
 import styled from "styled-components"
 
-
 import { ActionButton } from "layers/react/components/library/ActionButton";
-import CopyButton from "layers/react/components/library/CopyButton";
+import { CopyButton } from "layers/react/components/library/CopyButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { useVisibility } from "layers/react/store/visibility";
 import { useAccount } from "layers/react/store/account";
 
 
-interface Props {
-  setStatus: (text: string) => void;
-}
-
-export const Account = (props: Props) => {
+export const Account = () => {
   const { account: kamiAccount } = useAccount();
   const { modals, setModals } = useVisibility();
 
@@ -23,7 +18,6 @@ export const Account = (props: Props) => {
 
   const copyText = (text: string) => {
     navigator.clipboard.writeText(text);
-    props.setStatus('Copied to clipboard!');
   };
 
   const FieldRow = (label: string, value: string) => {

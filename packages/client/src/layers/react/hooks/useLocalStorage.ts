@@ -19,7 +19,7 @@ type SetValue<T> = Dispatch<SetStateAction<T>>
 export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
   // Get from local storage then
   // parse stored json or return initialValue
-  const readValue = useCallback((): T => {
+  const getValue = useCallback((): T => {
     // Prevent build error "window is undefined" but keeps working
     if (typeof window === 'undefined') {
       return initialValue
@@ -36,7 +36,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
 
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState<T>(readValue)
+  const [storedValue, setStoredValue] = useState<T>(getValue)
 
   // Return a wrapped version of useState's setter function that ...
   // ... persists the new value to localStorage.
@@ -66,8 +66,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
   })
 
   useEffect(() => {
-    setStoredValue(readValue())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setStoredValue(getValue())
   }, [])
 
   const handleStorageChange = useCallback(
@@ -75,9 +74,9 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
       if ((event as StorageEvent)?.key && (event as StorageEvent).key !== key) {
         return
       }
-      setStoredValue(readValue())
+      setStoredValue(getValue())
     },
-    [key, readValue],
+    [key, getValue],
   )
 
   // this only works for other documents, not the current one

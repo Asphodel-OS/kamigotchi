@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import { Sound } from './Sound';
 import { Account } from './Account';
+import { Volume } from './Volume';
 import { settingsIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
@@ -23,16 +23,6 @@ export function registerSettingsModal() {
 
     (layers) => of(layers),
     () => {
-      const [status, setStatus] = useState('');
-
-      // remove status text after N seconds
-      useEffect(() => {
-        setTimeout(() => setStatus(''), 2000);
-      }, [status]);
-
-
-      ///////////////////
-      // DISPLAY
 
       return (
         <ModalWrapper
@@ -41,10 +31,9 @@ export function registerSettingsModal() {
           header={<ModalHeader title='Settings' icon={settingsIcon} />}
           canExit
         >
-          <Sound />
+          <Volume />
           <Divider />
-          <Account setStatus={setStatus} />
-          <StatusText>{status}</StatusText>
+          <Account />
         </ModalWrapper>
       );
     }
@@ -55,18 +44,4 @@ const Divider = styled.hr`
   color: #333;
   width: 90%;
   align-self: center;
-`;
-
-const StatusText = styled.div`
-  color: #FF785B;
-  
-  position: absolute;
-  bottom: 1vw;
-  width: 100%;
-  text-align: center;
-
-  font-family: Pixel;
-  font-size: .4vw;
-
-  cursor: pointer;
 `;

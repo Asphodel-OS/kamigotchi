@@ -1,5 +1,4 @@
 import { InteractionFX } from 'assets/sound/fx/interaction';
-import { useSound } from 'layers/react/store/sound';
 
 export const playClick = () => {
   const fx = new Audio(InteractionFX.click);
@@ -22,6 +21,8 @@ export const playVending = () => {
 }
 
 const playSound = (sound: HTMLAudioElement) => {
-  sound.volume = .6 * useSound.getState().volumeFX;
+  const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+  const volume = settings.volume?.fx ?? 0.5;
+  sound.volume = .6 * volume;
   sound.play();
 }
