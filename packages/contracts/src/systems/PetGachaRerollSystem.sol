@@ -29,7 +29,7 @@ contract PetGachaRerollSystem is System {
     require(msg.value >= price, "not enough ETH");
 
     // send pet into pool
-    LibPet.toGacha(components, petID);
+    LibGacha.depositPet(components, petID);
 
     // commits random seed for gacha roll
     uint256 commitID = LibGacha.commit(world, components, accountID, block.number);
@@ -52,5 +52,6 @@ contract PetGachaRerollSystem is System {
 
   function init(bytes memory arguments) external onlyOwner {
     LibGacha.initIncrement(components);
+    LibGacha.initNumInGacha(components);
   }
 }

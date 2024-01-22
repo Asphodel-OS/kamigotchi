@@ -38,6 +38,13 @@ contract GachaTest is SetupTemplate {
     assertEq(ogPet, newPet);
   }
 
+  function testGachaQuantity() public {
+    uint256 numInGacha = 5000;
+    _batchMint(numInGacha);
+
+    _mintPetGacha(0);
+  }
+
   function testSingleReroll() public {
     uint256[] memory ogPool = _batchMint(2);
 
@@ -123,6 +130,41 @@ contract GachaTest is SetupTemplate {
     for (uint256 i = mint1 + mint2; i < mint1 + mint2 + mint3; i++) {
       assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(3));
     }
+  }
+
+  function testGachaOrder() public {
+    uint256 total = 100;
+    uint256[] memory ogPool = _batchMint(total);
+    address owner = _owners[0];
+
+    // mint 1
+    uint256 mintedPetID = _mintPetGacha(0);
+    assertTrue(!_GachaOrderComponent.has(mintedPetID));
+
+    // check order of pets in pool
+    _assertGachaOrder(LibPet.getAllInGacha(components));
+
+    // reroll
+    uint256 numInGacha = LibGacha.getNumInGacha(components);
+    uint256 cost = _getRerollCost(1);
+    vm.deal(owner, cost);
+    vm.prank(owner);
+    uint256 rerollCommit = _PetGachaRerollSystem.reroll{ value: cost }(mintedPetID);
+    assertTrue(_GachaOrderComponent.has(mintedPetID));
+    assertEq(_GachaOrderComponent.getValue(mintedPetID), numInGacha);
+    assertEq(numInGacha + 1, LibGacha.getNumInGacha(components));
+
+    // check order of pets in pool
+    _assertGachaOrder(LibPet.getAllInGacha(components));
+
+    // reveal
+    vm.roll(++_currBlock);
+    uint256[] memory toReveal = new uint256[](1);
+    toReveal[0] = rerollCommit;
+    uint256[] memory results = _PetGachaRevealSystem.reveal(toReveal);
+
+    // check order of pets in pool
+    _assertGachaOrder(LibPet.getAllInGacha(components));
   }
 
   function testDistribution() public {
@@ -248,5 +290,12 @@ contract GachaTest is SetupTemplate {
     assertEq(_IdAccountComponent.getValue(id), account);
     assertEq(_BlockRevealComponent.getValue(id), revealBlock);
     assertEq(_TypeComponent.getValue(id), "GACHA_COMMIT");
+  }
+
+  /// @notice
+  function _assertGachaOrder(uint256[] memory pool) internal {
+    uint256[] memory occurances = new uint256[](pool.length);
+    for (uint256 i = 0; i < pool.length; i++) occurances[_GachaOrderComponent.getValue(pool[i])]++;
+    for (uint256 i = 0; i < pool.length; i++) assertEq(occurances[i], 1);
   }
 }

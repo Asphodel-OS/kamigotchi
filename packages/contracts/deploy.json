@@ -16,6 +16,7 @@
     "ExperienceComponent",
     "FavoriteFoodComponent",
     "ForComponent",
+    "GachaOrderComponent",
     "GenusComponent",
     "HarmonyComponent",
     "HealthComponent",
@@ -810,6 +811,7 @@
       "name": "PetGachaRerollSystem",
       "writeAccess": [
         "BlockRevealComponent",
+        "GachaOrderComponent",
         "IdAccountComponent",
         "IdHolderComponent",
         "IsDataComponent",
@@ -824,6 +826,7 @@
       "name": "PetGachaRevealSystem",
       "writeAccess": [
         "BlockRevealComponent",
+        "GachaOrderComponent",
         "IdAccountComponent",
         "RerollComponent",
         "StateComponent",

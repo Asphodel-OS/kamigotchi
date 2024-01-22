@@ -33,6 +33,7 @@ export type { FriendAcceptSystem } from "./FriendAcceptSystem";
 export type { FriendBlockSystem } from "./FriendBlockSystem";
 export type { FriendCancelSystem } from "./FriendCancelSystem";
 export type { FriendRequestSystem } from "./FriendRequestSystem";
+export type { GachaOrderComponent } from "./GachaOrderComponent";
 export type { HarmonyComponent } from "./HarmonyComponent";
 export type { HealthComponent } from "./HealthComponent";
 export type { HealthCurrentComponent } from "./HealthCurrentComponent";
@@ -241,6 +242,7 @@ export { FriendAcceptSystem__factory } from "./factories/FriendAcceptSystem__fac
 export { FriendBlockSystem__factory } from "./factories/FriendBlockSystem__factory";
 export { FriendCancelSystem__factory } from "./factories/FriendCancelSystem__factory";
 export { FriendRequestSystem__factory } from "./factories/FriendRequestSystem__factory";
+export { GachaOrderComponent__factory } from "./factories/GachaOrderComponent__factory";
 export { HarmonyComponent__factory } from "./factories/HarmonyComponent__factory";
 export { HealthComponent__factory } from "./factories/HealthComponent__factory";
 export { HealthCurrentComponent__factory } from "./factories/HealthCurrentComponent__factory";

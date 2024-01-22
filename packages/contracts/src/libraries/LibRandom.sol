@@ -44,6 +44,60 @@ library LibRandom {
   //////////////////
   // UNWEIGHTED
 
+  /// @notice gets a random number from a seed via modulo
+  function getRandom(uint256 randN, uint256 max) internal pure returns (uint256) {
+    return randN % max;
+  }
+
+  /// @notice gets a batch of random numbers from a seed via modulo, with replacement
+  function getRandomBatch(
+    uint256 randN,
+    uint256 max,
+    uint256 count
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](count);
+
+    for (uint256 i; i < count; i++) {
+      randN = uint256(keccak256(abi.encode(randN, i)));
+      results[i] = randN % max;
+    }
+
+    return results;
+  }
+
+  /// @notice gets a batch of random numbers from a seed via modulo, without replacement
+  function getRandomBatchNoReplacement(
+    uint256 randN,
+    uint256 max,
+    uint256 count
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](count);
+
+    for (uint256 i; i < count; i++) {
+      randN = uint256(keccak256(abi.encode(randN, i)));
+      results[i] = randN % max;
+      max--;
+    }
+
+    return results;
+  }
+
+  /// @notice gets a batch of random numbers from a seed via modulo, without replacement
+  function getRandomBatchNoReplacement(
+    uint256[] memory randNs,
+    uint256 max
+  ) internal pure returns (uint256[] memory) {
+    uint256 count = randNs.length;
+    uint256[] memory results = new uint256[](count);
+
+    for (uint256 i; i < count; i++) {
+      results[i] = randNs[i] % max;
+      max--;
+    }
+
+    return results;
+  }
+
   /// @notice picks an item from unweighted array
   function selectFrom(uint256[] memory keys, uint256 randN) internal pure returns (uint256) {
     return keys[randN % keys.length];

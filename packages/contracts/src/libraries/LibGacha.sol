@@ -8,7 +8,9 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
+import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -21,6 +23,7 @@ import { LibStat } from "libraries/LibStat.sol";
 
 // stores an increment to add entropy and prevent ordering attacks
 uint256 constant GACHA_INCREMENT_ID = uint256(keccak256("gacha.increment.id"));
+uint256 constant GACHA_NUM_PETS_ID = uint256(keccak256("gacha.num.pets.id"));
 
 library LibGacha {
   /// @notice Creates a commit for a gacha roll
@@ -69,7 +72,17 @@ library LibGacha {
     valueComp.set(GACHA_INCREMENT_ID, currInc + amount);
   }
 
+  /// @notice deposits a pet into the gacha pool
+  function depositPet(IUintComp components, uint256 petID) internal {
+    LibPet.toGacha(components, petID);
+
+    uint256 numInGacha = getNumInGacha(components);
+    GachaOrderComponent(getAddressById(components, GachaOrderCompID)).set(petID, numInGacha);
+    setNumInGacha(components, numInGacha + 1);
+  }
+
   /// @notice transfers multiple pets from gacha to accounts
+  /// @dev doesnt use LibPet for batch efficiency. GachaOrder removed during selection
   function withdrawPets(
     IUintComp components,
     uint256[] memory petIDs,
@@ -158,9 +171,49 @@ library LibGacha {
     IUintComp components,
     uint256[] memory seeds
   ) internal returns (uint256[] memory) {
-    uint256[] memory inGacha = LibPet.getAllInGacha(components);
+    // selects pets via their order in the gacha pool
+    uint256 max = getNumInGacha(components);
+    uint256[] memory selectedIndex = LibRandom.getRandomBatchNoReplacement(seeds, max);
 
-    return LibRandom.selectMultipleFromNoReplacement(inGacha, seeds);
+    uint256[] memory results = _extractPets(components, selectedIndex, max);
+
+    // updating max in gacha
+    setNumInGacha(components, max - selectedIndex.length);
+
+    return results;
+  }
+
+  /// @notice remove pets from gacha pool order using a swap pop pattern
+  function _extractPets(
+    IUintComp components,
+    uint256[] memory indices,
+    uint256 max
+  ) internal returns (uint256[] memory) {
+    uint256 count = indices.length;
+    uint256[] memory results = new uint256[](count);
+
+    IsPetComponent isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
+    GachaOrderComponent orderComp = GachaOrderComponent(
+      getAddressById(components, GachaOrderCompID)
+    );
+
+    for (uint256 i; i < count; i++) {
+      uint256 selectedID = orderComp.getEntitiesWithValue(indices[i])[0]; // only 1 of each index
+      require(isPetComp.has(selectedID), "not a pet");
+      if (indices[i] < max - 1) {
+        // swap pop
+        uint256 lastID = orderComp.getEntitiesWithValue(max - 1)[0];
+        require(isPetComp.has(lastID), "not a pet");
+        orderComp.set(lastID, indices[i]);
+      }
+
+      orderComp.remove(selectedID);
+      results[i] = selectedID;
+
+      max--;
+    }
+
+    return results;
   }
 
   /////////////////
@@ -172,6 +225,10 @@ library LibGacha {
 
   function getIncrement(IUintComp components) internal view returns (uint256) {
     return ValueComponent(getAddressById(components, ValueCompID)).getValue(GACHA_INCREMENT_ID);
+  }
+
+  function getNumInGacha(IUintComp components) internal view returns (uint256) {
+    return ValueComponent(getAddressById(components, ValueCompID)).getValue(GACHA_NUM_PETS_ID);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -239,8 +296,17 @@ library LibGacha {
     if (!comp.has(GACHA_INCREMENT_ID)) comp.set(GACHA_INCREMENT_ID, 0);
   }
 
+  function initNumInGacha(IUintComp components) internal {
+    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+    if (!comp.has(GACHA_NUM_PETS_ID)) comp.set(GACHA_NUM_PETS_ID, 0);
+  }
+
   function setIncrement(IUintComp components, uint256 increment) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(GACHA_INCREMENT_ID, increment);
+  }
+
+  function setNumInGacha(IUintComp components, uint256 num) internal {
+    ValueComponent(getAddressById(components, ValueCompID)).set(GACHA_NUM_PETS_ID, num);
   }
 
   function setReroll(IUintComp components, uint256 id, uint256 reroll) internal {
