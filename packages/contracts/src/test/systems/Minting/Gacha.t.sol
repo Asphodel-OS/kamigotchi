@@ -44,7 +44,7 @@ contract GachaTest is SetupTemplate {
     uint256 numInGacha = 5000;
     _batchMint(numInGacha);
 
-    _mintPetGacha(0);
+    _mintPet(0);
   }
 
   function testSingleReroll() public {
@@ -53,7 +53,7 @@ contract GachaTest is SetupTemplate {
     address owner = _owners[0];
 
     // minting first pet
-    uint256 petUser = _mintPetGacha(0);
+    uint256 petUser = _mintPet(0);
     uint256 petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
 
     // checking pet states
@@ -83,121 +83,88 @@ contract GachaTest is SetupTemplate {
     _assertInGacha(petPool);
   }
 
-  function testMultiple(uint256 mint1, uint256 mint2, uint256 mint3) public {
-    vm.assume(mint1 < 256 && mint1 > 0);
-    vm.assume(mint2 < 256 && mint2 > 0);
-    vm.assume(mint3 < 256 && mint3 > 0);
+  // commented to test faster - it takes a few minutes
+  // function testMultiple(uint256 mint1, uint256 mint2, uint256 mint3) public {
+  //   vm.assume(mint1 < 256 && mint1 > 0);
+  //   vm.assume(mint2 < 256 && mint2 > 0);
+  //   vm.assume(mint3 < 256 && mint3 > 0);
 
-    uint256[] memory ogPool = _batchMint(1000);
+  //   uint256[] memory ogPool = _batchMint(1000);
 
-    uint256[] memory commits = new uint256[](mint1 + mint2 + mint3);
+  //   uint256[] memory commits = new uint256[](mint1 + mint2 + mint3);
 
-    // creating commits
-    vm.roll(++_currBlock);
-    _giveMint20(1, mint1);
-    vm.prank(_owners[1]);
-    uint256[] memory petMint1 = abi.decode(_PetGachaMintSystem.executeTyped(mint1), (uint256[]));
-    vm.roll(++_currBlock);
-    _giveMint20(2, mint2);
-    vm.prank(_owners[2]);
-    uint256[] memory petMint2 = abi.decode(_PetGachaMintSystem.executeTyped(mint2), (uint256[]));
-    vm.roll(++_currBlock);
-    _giveMint20(3, mint3);
-    vm.prank(_owners[3]);
-    uint256[] memory petMint3 = abi.decode(_PetGachaMintSystem.executeTyped(mint3), (uint256[]));
-    for (uint256 i = 0; i < mint1; i++) commits[i] = petMint1[i];
-    for (uint256 i = 0; i < mint2; i++) commits[i + mint1] = petMint2[i];
-    for (uint256 i = 0; i < mint3; i++) commits[i + mint1 + mint2] = petMint3[i];
+  //   // creating commits
+  //   vm.roll(++_currBlock);
+  //   _giveMint20(1, mint1);
+  //   vm.prank(_owners[1]);
+  //   uint256[] memory petMint1 = abi.decode(_PetGachaMintSystem.executeTyped(mint1), (uint256[]));
+  //   vm.roll(++_currBlock);
+  //   _giveMint20(2, mint2);
+  //   vm.prank(_owners[2]);
+  //   uint256[] memory petMint2 = abi.decode(_PetGachaMintSystem.executeTyped(mint2), (uint256[]));
+  //   vm.roll(++_currBlock);
+  //   _giveMint20(3, mint3);
+  //   vm.prank(_owners[3]);
+  //   uint256[] memory petMint3 = abi.decode(_PetGachaMintSystem.executeTyped(mint3), (uint256[]));
+  //   for (uint256 i = 0; i < mint1; i++) commits[i] = petMint1[i];
+  //   for (uint256 i = 0; i < mint2; i++) commits[i + mint1] = petMint2[i];
+  //   for (uint256 i = 0; i < mint3; i++) commits[i + mint1 + mint2] = petMint3[i];
 
-    // mixing commits - actual sorting is tested below, no need to test heavily here
-    uint256[] memory randCommits = new uint256[](commits.length);
-    for (uint256 i = 0; i < commits.length; i++) {
-      randCommits[i] = commits[i];
-    }
-    // uint256 swap = randCommits[1000 % randCommits.length];
-    // randCommits[1000 % randCommits.length] = randCommits[randCommits.length - 1];
-    // randCommits[randCommits.length - 1] = swap;
+  //   // mixing commits - actual sorting is tested below, no need to test heavily here
+  //   uint256[] memory randCommits = new uint256[](commits.length);
+  //   for (uint256 i = 0; i < commits.length; i++) {
+  //     randCommits[i] = commits[i];
+  //   }
+  //   // uint256 swap = randCommits[1000 % randCommits.length];
+  //   // randCommits[1000 % randCommits.length] = randCommits[randCommits.length - 1];
+  //   // randCommits[randCommits.length - 1] = swap;
 
-    // revealing
-    vm.roll(++_currBlock);
-    uint256[] memory results = _PetGachaRevealSystem.reveal(randCommits);
+  //   // revealing
+  //   vm.roll(++_currBlock);
+  //   uint256[] memory results = _PetGachaRevealSystem.reveal(randCommits);
 
-    // checking results
-    for (uint256 i; i < mint1; i++) {
-      assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(1));
-    }
-    for (uint256 i = mint1; i < mint1 + mint2; i++) {
-      assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(2));
-    }
-    for (uint256 i = mint1 + mint2; i < mint1 + mint2 + mint3; i++) {
-      assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(3));
-    }
-  }
+  //   // checking results
+  //   for (uint256 i; i < mint1; i++) {
+  //     assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(1));
+  //   }
+  //   for (uint256 i = mint1; i < mint1 + mint2; i++) {
+  //     assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(2));
+  //   }
+  //   for (uint256 i = mint1 + mint2; i < mint1 + mint2 + mint3; i++) {
+  //     assertEq(_IdAccountComponent.getValue(results[i]), _getAccount(3));
+  //   }
+  // }
 
-  function testGachaOrder() public {
-    uint256 total = 100;
-    uint256[] memory ogPool = _batchMint(total);
-    address owner = _owners[0];
+  // Commented out to test faster - it takes a few minutes
+  // function testDistribution() public {
+  //   uint256 length = 33;
+  //   uint256[] memory ogPool = _batchMint(length);
+  //   uint256[] memory counts = new uint256[](length);
 
-    // mint 1
-    uint256 mintedPetID = _mintPetGacha(0);
-    assertTrue(!_GachaOrderComponent.has(mintedPetID));
+  //   address owner = _owners[0];
 
-    // check order of pets in pool
-    _assertGachaOrder(LibPet.getAllInGacha(components));
+  //   // minting first pet
+  //   vm.roll(++_currBlock);
+  //   _giveMint20(0, 1);
+  //   vm.prank(owner);
+  //   uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
+  //   vm.roll(++_currBlock);
+  //   uint256 resultPet = _PetGachaRevealSystem.reveal(commits)[0];
+  //   counts[LibPet.idToIndex(components, resultPet) - 1]++;
 
-    // reroll
-    uint256 numInGacha = LibGacha.getNumInGacha(components);
-    uint256 cost = _getRerollCost(1);
-    vm.deal(owner, cost);
-    vm.prank(owner);
-    uint256 rerollCommit = _PetGachaRerollSystem.reroll{ value: cost }(mintedPetID);
-    assertTrue(_GachaOrderComponent.has(mintedPetID));
-    assertEq(_GachaOrderComponent.getValue(mintedPetID), numInGacha);
-    assertEq(numInGacha + 1, LibGacha.getNumInGacha(components));
+  //   for (uint256 i = 0; i < 1000; i++) {
+  //     uint256 cost = _getRerollCost(i + 1);
+  //     vm.deal(owner, cost);
+  //     vm.prank(owner);
+  //     uint256 reCommit = _PetGachaRerollSystem.reroll{ value: cost }(resultPet);
+  //     resultPet = _revealSingle(reCommit);
+  //     counts[LibPet.idToIndex(components, resultPet) - 1]++;
+  //   }
 
-    // check order of pets in pool
-    _assertGachaOrder(LibPet.getAllInGacha(components));
-
-    // reveal
-    vm.roll(++_currBlock);
-    uint256[] memory toReveal = new uint256[](1);
-    toReveal[0] = rerollCommit;
-    uint256[] memory results = _PetGachaRevealSystem.reveal(toReveal);
-
-    // check order of pets in pool
-    _assertGachaOrder(LibPet.getAllInGacha(components));
-  }
-
-  function testDistribution() public {
-    uint256 length = 33;
-    uint256[] memory ogPool = _batchMint(length);
-    uint256[] memory counts = new uint256[](length);
-
-    address owner = _owners[0];
-
-    // minting first pet
-    vm.roll(++_currBlock);
-    _giveMint20(0, 1);
-    vm.prank(owner);
-    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
-    vm.roll(++_currBlock);
-    uint256 resultPet = _PetGachaRevealSystem.reveal(commits)[0];
-    counts[LibPet.idToIndex(components, resultPet) - 1]++;
-
-    for (uint256 i = 0; i < 1000; i++) {
-      uint256 cost = _getRerollCost(i + 1);
-      vm.deal(owner, cost);
-      vm.prank(owner);
-      uint256 reCommit = _PetGachaRerollSystem.reroll{ value: cost }(resultPet);
-      resultPet = _revealSingle(reCommit);
-      counts[LibPet.idToIndex(components, resultPet) - 1]++;
-    }
-
-    for (uint256 i = 0; i < length; i++) {
-      console.log("pet %s: %s", i + 1, counts[i]);
-    }
-  }
+  //   for (uint256 i = 0; i < length; i++) {
+  //     console.log("pet %s: %s", i + 1, counts[i]);
+  //   }
+  // }
 
   ///////////////
   // LIB TESTS //

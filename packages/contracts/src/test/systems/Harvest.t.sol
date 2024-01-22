@@ -85,7 +85,6 @@ contract HarvestTest is SetupTemplate {
   function testProductionCreation() public {
     // setup
     uint playerIndex = 0;
-    _registerAccount(0);
     uint kamiID = _mintPet(playerIndex);
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
@@ -111,11 +110,6 @@ contract HarvestTest is SetupTemplate {
     uint numKamis = 5;
     uint playerIndex = 0; // the player we're playing with
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
-
-    // register player accounts (all start in room 1)
-    for (uint i = 0; i < 10; i++) {
-      _registerAccount(i);
-    }
 
     // mint some kamis for our player
     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
@@ -173,7 +167,6 @@ contract HarvestTest is SetupTemplate {
     }
 
     // register our player account and mint it some kamis
-    _registerAccount(playerIndex);
     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
     _fastForward(_idleRequirement);
 
@@ -223,7 +216,6 @@ contract HarvestTest is SetupTemplate {
   function testProductionStateConstraints() public {
     // setup
     uint playerIndex = 0;
-    _registerAccount(playerIndex);
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
 
     uint kamiID = _mintPet(playerIndex);
@@ -267,7 +259,6 @@ contract HarvestTest is SetupTemplate {
   // assume that rate calculations are correct
   function testProductionValues(uint seed) public {
     // setup
-    _registerAccount(0);
     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
     uint numKamis = (seed % 5) + 1;
     uint[] memory kamiIDs = _mintPets(0, numKamis);

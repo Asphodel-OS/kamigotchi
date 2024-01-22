@@ -7,10 +7,6 @@ contract FriendTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    for (uint256 i = 0; i < 10; i++) {
-      _registerAccount(i);
-    }
-
     vm.roll(_currBlock++);
   }
 

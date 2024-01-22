@@ -12,12 +12,15 @@ contract Farm20Test is SetupTemplate {
     super.setUp();
     token = _Farm20ProxySystem.getToken();
 
-    _registerAccount(0);
-    _registerAccount(1);
     _moveAccount(0, 12); // bridging restricted to room 12
     _moveAccount(1, 12); // bridging restricted to room 12
 
     minDelay = _Farm20WithdrawSystem.getMinDelay();
+  }
+
+  function setUpAccounts() public override {
+    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
+    _registerAccounts(10);
   }
 
   function setUpRooms() public override {
@@ -151,10 +154,10 @@ contract Farm20Test is SetupTemplate {
 
     // transfer to an address without an account
     vm.prank(_getOwner(0));
-    token.transfer(_getOwner(2), _gameToTokenDP(amt));
+    token.transfer(_getOwner(11), _gameToTokenDP(amt));
 
     // attempt to deposit funds
-    vm.prank(_getOwner(2));
+    vm.prank(_getOwner(11));
     vm.expectRevert("Farm20Deposit: no account detected");
     _Farm20DepositSystem.executeTyped(amt);
   }

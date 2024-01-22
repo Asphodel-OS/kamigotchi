@@ -8,8 +8,6 @@ contract LootboxTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _registerAccount(0);
-
     vm.roll(_currBlock++);
   }
 

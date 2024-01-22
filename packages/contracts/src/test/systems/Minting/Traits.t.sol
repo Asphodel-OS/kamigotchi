@@ -19,6 +19,18 @@ contract TraitsTest is SetupTemplate {
 
     _setConfig("MINT_ACCOUNT_MAX", 1e9);
     _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
+
+    // accounts must be created after new config set
+    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
+    _registerAccounts(10);
+  }
+
+  function setUpMint() public override {
+    return;
+  }
+
+  function setUpAccounts() public override {
+    return;
   }
 
   /////////////////
@@ -65,6 +77,10 @@ contract TraitsTest is SetupTemplate {
   // test that a kami's stats align with its traits upon creation
   function testTraitStats() public {
     _initStockTraits();
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    __721BatchMinterSystem.batchMint(150);
+    vm.stopPrank();
 
     uint numPets = 100;
     uint[] memory petIDs = _mintPets(0, numPets);
@@ -85,67 +101,13 @@ contract TraitsTest is SetupTemplate {
   // test that the distributions are as expected
   // TODO: confirm distributions fall within 99.9 percentile statistical deviation
   function testTraitDistribution() public {
-    _initEmptyTraits();
-
-    uint numPets = 300;
-    uint[] memory petIDs = _mintPets(0, numPets);
-
-    uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
-    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);
-    uint[] memory colors = LibRegistryTrait.getAllOfType(components, IndexColorCompID);
-    uint[] memory faces = LibRegistryTrait.getAllOfType(components, IndexFaceCompID);
-    uint[] memory hands = LibRegistryTrait.getAllOfType(components, IndexHandCompID);
-
-    uint[] memory bgCounts = new uint[](backgrounds.length);
-    uint[] memory bodyCounts = new uint[](bodies.length);
-    uint[] memory colorCounts = new uint[](colors.length);
-    uint[] memory faceCounts = new uint[](faces.length);
-    uint[] memory handCounts = new uint[](hands.length);
-
-    for (uint i = 0; i < numPets; i++) {
-      bgCounts[LibRegistryTrait.getBackgroundIndex(components, petIDs[i])]++;
-      bodyCounts[LibRegistryTrait.getBodyIndex(components, petIDs[i])]++;
-      colorCounts[LibRegistryTrait.getColorIndex(components, petIDs[i])]++;
-      faceCounts[LibRegistryTrait.getFaceIndex(components, petIDs[i])]++;
-      handCounts[LibRegistryTrait.getHandIndex(components, petIDs[i])]++;
-    }
-
-    uint[][5] memory traits = [backgrounds, bodies, colors, faces, hands];
-    uint[][5] memory counts = [bgCounts, bodyCounts, colorCounts, faceCounts, handCounts];
-
-    // reporting
-    uint count;
-    string memory name;
-    for (uint i = 0; i < traits.length; i++) {
-      for (uint j = 0; j < traits[i].length; j++) {
-        count = counts[i][j];
-        name = LibRegistryTrait.getName(components, traits[i][j]);
-        console.log("%s: %d", name, count);
-      }
-      console.log("\n");
-    }
-  }
-
-  function testTraitDistributionBlockless() public {
-    _initEmptyTraits();
-
     uint numPets = 300;
 
-    // mint flow
-    uint playerIndex = 0;
-    _moveAccount(playerIndex, 4);
-
-    vm.roll(_currBlock++);
-    _giveMint20(playerIndex, numPets);
-    vm.startPrank(_getOwner(playerIndex));
-    uint[] memory petIDs = abi.decode(_Pet721MintSystem.executeTyped(numPets), (uint[]));
+    _initEmptyTraits();
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    uint[] memory petIDs = __721BatchMinterSystem.batchMint(300);
     vm.stopPrank();
-
-    vm.roll(_currBlock++);
-    vm.startPrank(_getOperator(playerIndex));
-    for (uint i = 0; i < petIDs.length; i++) {
-      _Pet721RevealSystem.executeTyped(LibPet.idToIndex(components, petIDs[i]));
-    }
 
     uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
     uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);

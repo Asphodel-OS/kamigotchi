@@ -6,7 +6,6 @@ import "test/utils/SetupTemplate.s.sol";
 contract SkillTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
-    _registerAccount(0);
   }
 
   // test whether skill upgrades are properly gated by skill point availability

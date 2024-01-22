@@ -21,13 +21,13 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUp() public virtual override {
     super.setUp();
 
-    setUpAccounts();
     _initAllConfigs();
     _currTime = 5 minutes;
 
     vm.prank(deployer);
     _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
 
+    setUpAccounts();
     setUpMint();
     setUpItems();
     setUpRooms();
@@ -35,7 +35,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // sets up some default accounts. override to change/remove behaviour if needed
   function setUpAccounts() public virtual {
-    _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
+    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
     _registerAccounts(10);
   }
 
@@ -138,40 +138,7 @@ abstract contract SetupTemplate is TestSetupImports {
   // OWNER ACTIONS
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint playerIndex, uint n) internal virtual returns (uint[] memory) {
-    uint[] memory ids = new uint[](n);
-    for (uint i = 0; i < n; i++) {
-      ids[i] = _mintPet(playerIndex);
-    }
-    return ids;
-  }
-
-  // (public) mint and reveal a single pet to a specified address
-  function _mintPet(uint playerIndex) internal virtual returns (uint id) {
-    address owner = _owners[playerIndex];
-    address operator = _operators[owner];
-
-    // move the player to room 4
-    uint initialLoc = LibAccount.getLocation(components, _getAccount(playerIndex));
-    _moveAccount(playerIndex, 4);
-
-    vm.roll(_currBlock++);
-    _giveMint20(playerIndex, 1);
-    vm.startPrank(owner);
-    id = abi.decode(_Pet721MintSystem.executeTyped(1), (uint[]))[0];
-    vm.stopPrank();
-
-    vm.roll(_currBlock++);
-    vm.startPrank(operator);
-    _Pet721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
-    vm.stopPrank();
-
-    _moveAccount(playerIndex, initialLoc);
-  }
-
-  // requires at least amt kami to be in gacha before
-  // to replace above mint functions later
-  function _mintPetsGacha(uint playerIndex, uint amt) internal virtual returns (uint[] memory id) {
+  function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory id) {
     address owner = _owners[playerIndex];
 
     vm.roll(++_currBlock);
@@ -183,9 +150,8 @@ abstract contract SetupTemplate is TestSetupImports {
     return _PetGachaRevealSystem.reveal(commits);
   }
 
-  // requires at least amt kami to be in gacha before
-  // to replace above mint functions later
-  function _mintPetGacha(uint playerIndex) internal virtual returns (uint) {
+  // (public) mint and reveal a single pet to a specified address
+  function _mintPet(uint playerIndex) internal virtual returns (uint) {
     address owner = _owners[playerIndex];
 
     vm.roll(++_currBlock);

@@ -25,7 +25,6 @@ contract QuestsTest is SetupTemplate {
     _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // accept quest
@@ -49,7 +48,6 @@ contract QuestsTest is SetupTemplate {
     _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 1000);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // accept quest - first time
@@ -80,7 +78,6 @@ contract QuestsTest is SetupTemplate {
     _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // accept quest
@@ -100,7 +97,6 @@ contract QuestsTest is SetupTemplate {
     _createQuestReward(1, "COIN", 0, 1);
 
     // register the account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // check quest cant be accepted when failing requirements
@@ -139,7 +135,6 @@ contract QuestsTest is SetupTemplate {
     _createQuestReward(1, "COIN", 0, 1);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // give the account the required coin, check if quest assigned
@@ -169,19 +164,12 @@ contract QuestsTest is SetupTemplate {
   }
 
   function testQuestLocation() public {
-    // create relavent rooms
-    _createRoom("Room 1", 1, 2, 3, 4);
-    _createRoom("Room 2", 2, 1, 3, 4);
-    _createRoom("Room 3", 3, 1, 2, 4);
-    _createRoom("Room 4", 4, 1, 2, 3);
-
     // create quest
     _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 3);
     _createQuestObjective(1, "NAME", "CURR_EQUAL", "ROOM", 0, 4);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // check that quest cant be accepted in wrong room
@@ -210,20 +198,12 @@ contract QuestsTest is SetupTemplate {
   }
 
   function testMintKami() public {
-    // setup for kami mint
-    _createRoom("Room 1", 1, 2, 3, 4);
-    _createRoom("Room 2", 2, 1, 3, 4);
-    _createRoom("Room 3", 3, 1, 2, 4);
-    _createRoom("Room 4", 4, 1, 2, 3);
-    _initCommonTraits();
-
     // create quest
     _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 1);
     _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // accept quest
@@ -252,7 +232,6 @@ contract QuestsTest is SetupTemplate {
     _createQuestRequirement(2, "COMPLETE", "QUEST", 0, 1);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // check that quest cant be accepted without requirements
@@ -277,7 +256,6 @@ contract QuestsTest is SetupTemplate {
     _createQuestReward(1, "MINT20", 0, 2);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // accept quest
@@ -294,7 +272,6 @@ contract QuestsTest is SetupTemplate {
     _createQuestReward(1, "QUEST_POINTS", 0, 2);
 
     // register account
-    _registerAccount(0);
     address operator = _getOperator(0);
 
     // accept quest

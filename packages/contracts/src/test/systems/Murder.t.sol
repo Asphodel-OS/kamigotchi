@@ -88,7 +88,6 @@ contract MurderTest is SetupTemplate {
     uint numPets,
     uint nodeID
   ) internal returns (uint[] memory) {
-    _registerAccount(playerIndex);
     _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
@@ -112,7 +111,6 @@ contract MurderTest is SetupTemplate {
 
     // create and stock a bunch of accounts with revives and kamis
     for (uint i = 0; i < numAccounts; i++) {
-      _registerAccount(i);
       _petIDs[i] = _mintPets(i, numPets);
     }
     _fastForward(_idleRequirement);
@@ -148,7 +146,6 @@ contract MurderTest is SetupTemplate {
     uint[] memory productionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
     // create acting account and mint its kamis
-    _registerAccount(playerIndex);
     _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
@@ -191,7 +188,6 @@ contract MurderTest is SetupTemplate {
     uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, _nodeIDs[0]);
 
     // create acting account and mint its kamis
-    _registerAccount(playerIndex);
     _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
@@ -248,7 +244,6 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // create acting account and mint its kamis
-    _registerAccount(playerIndex);
     _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
     _fastForward(_idleRequirement);
 
@@ -286,7 +281,6 @@ contract MurderTest is SetupTemplate {
     uint[] memory victimProductionIDs = _setupDrainedProductions(9, numPets, nodeID);
 
     // create acting account and mint its pets
-    _registerAccount(playerIndex);
     _stockAccount(playerIndex);
     _petIDs[playerIndex] = _mintPets(playerIndex, numPets);
     _fastForward(_idleRequirement);
@@ -301,7 +295,6 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // create a supporting account
-    _registerAccount(supportPlayerIndex);
     _stockAccount(supportPlayerIndex);
     _petIDs[supportPlayerIndex] = _mintPets(supportPlayerIndex, numPets);
     _fastForward(_idleRequirement);
@@ -376,7 +369,6 @@ contract MurderTest is SetupTemplate {
 
   //   // create, fund and stock our accounts
   //   for (uint i = 0; i < numPlayers; i++) {
-  //     _registerAccount(i);
   //     _stockAccount(i);
   //     _petIDs[i] = _mintPets(i, numPets);
   //   }

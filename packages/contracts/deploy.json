@@ -726,18 +726,6 @@
       "writeAccess": []
     },
     {
-      "name": "Pet721MintSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "Pet721RevealSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
       "name": "Pet721ProxySystem",
       "writeAccess": []
     },

@@ -30,6 +30,10 @@ contract NPCTest is SetupTemplate {
     _createRoom("testRoom3", 3, 1, 2, 0);
   }
 
+  function setUpAccounts() public override {
+    _createOwnerOperatorPairs(25);
+  }
+
   /////////////////
   // TESTS
 
