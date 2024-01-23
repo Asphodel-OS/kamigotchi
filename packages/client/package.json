@@ -76,11 +76,6 @@
     "wagmi": "^1.4.5",
     "zustand": "^4.3.1"
   },
-  "pnpm": {
-    "patchedDependencies": {
-      "threads@1.7.0": "patches/threads@1.7.0.patch"
-    }
-  },
   "staticFiles": {
     "staticPath": "src/public"
   },
