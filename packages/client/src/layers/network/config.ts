@@ -19,8 +19,8 @@ export type NetworkConfig = {
   snapshotUrl?: string;
 };
 
-// shapes a flat NetworkConfig struct into lattice's SetupContractConfig struct
-export const shapeNetworkConfig: (networkConfig: NetworkConfig) => SetupContractConfig = (config) => ({
+// shape a flat NetworkConfig struct into lattice's SetupContractConfig struct
+const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) => ({
   clock: {
     period: 1000,
     initialTime: 0,
@@ -48,21 +48,21 @@ export const shapeNetworkConfig: (networkConfig: NetworkConfig) => SetupContract
 
 
 // Populate the network config based on url params
-export function createNetworkConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
+export function createConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
   switch (process.env.MODE) {
     case 'DEV':
-      config = createNetworkConfigLocal(externalProvider);
+      config = createConfigRawLocal(externalProvider);
       break;
     case 'TEST':
-      config = createNetworkConfigOpSepolia(externalProvider);
+      config = createConfigRawOPSepolia(externalProvider);
       break;
     case 'OPSEP':
-      config = createNetworkConfigOpSepolia(externalProvider);
+      config = createConfigRawOPSepolia(externalProvider);
       break;
     default:
-      config = createNetworkConfigLocal(externalProvider);
+      config = createConfigRawLocal(externalProvider);
   }
 
   if (
@@ -71,12 +71,12 @@ export function createNetworkConfig(externalProvider?: ExternalProvider): SetupC
     && config.chainId
     && (config.privateKey || config.externalProvider)
   ) {
-    return shapeNetworkConfig(config);
+    return shape(config);
   }
 }
 
 // Get the network config of a local deployment based on url params
-export function createNetworkConfigLocal(externalProvider?: ExternalProvider): NetworkConfig {
+function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfig {
   const params = new URLSearchParams(window.location.search);
 
   let config: NetworkConfig = <NetworkConfig>{};
@@ -84,9 +84,8 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
   config.devMode = true;
 
   // EOAs and privatekey
-  if (externalProvider) {
-    config.externalProvider = externalProvider;
-  } else {
+  if (externalProvider) config.externalProvider = externalProvider;
+  else {
     let wallet;
     if (params.get('admin') !== 'false') {
       wallet = new Wallet(
@@ -131,7 +130,7 @@ export function createNetworkConfigLocal(externalProvider?: ExternalProvider): N
 }
 
 // Get the network config of a deployment to Optimism testnet
-function createNetworkConfigOpSepolia(externalProvider?: ExternalProvider): NetworkConfig {
+function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: "https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7",
     wsRpc: "wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f",
