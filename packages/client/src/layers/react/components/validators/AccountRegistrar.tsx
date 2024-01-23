@@ -19,7 +19,7 @@ import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountByName } from 'layers/react/shapes/Account'
+import { getAccountByName } from 'layers/network/shapes/Account'
 import { useVisibility } from 'layers/react/store/visibility';
 import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
@@ -177,7 +177,7 @@ export function registerAccountRegistrar() {
 
       // validation for username input
       useEffect(() => {
-        const account = getAccountByName(layers, name);
+        const account = getAccountByName(layers.network, name);
         setNameTaken(!!account.id);
       }, [name]);
 

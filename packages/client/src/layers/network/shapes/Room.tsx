@@ -8,9 +8,10 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Account, getAccount } from './Account';
 import { numberToHex } from 'utils/hex';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized Object shape of a Room Entity
 export interface Room {
@@ -31,23 +32,21 @@ export interface RoomOptions {
 
 // get a Room object from its EnityIndex
 export const getRoom = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex,
   options?: RoomOptions
 ): Room => {
   const {
-    network: {
-      components: {
-        IsAccount,
-        AccountID,
-        Description,
-        Exits,
-        Location,
-        Name,
-      },
-      world,
+    world,
+    components: {
+      IsAccount,
+      AccountID,
+      Description,
+      Exits,
+      Location,
+      Name,
     },
-  } = layers;
+  } = network;
 
   let room: Room = {
     id: world.entities[index],
@@ -62,7 +61,7 @@ export const getRoom = (
   if (options?.owner && hasComponent(AccountID, index)) {
     const accountID = getComponentValue(AccountID, index)?.value as EntityID;
     const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
-    room.owner = getAccount(layers, accountEntityIndex);
+    room.owner = getAccount(network, accountEntityIndex);
   }
 
   // pull players currently in room
@@ -75,7 +74,7 @@ export const getRoom = (
     );
 
     room.players = accountResults.map((accountEntityIndex) => {
-      return getAccount(layers, accountEntityIndex);
+      return getAccount(network, accountEntityIndex);
     });
   }
 
@@ -87,30 +86,26 @@ export const getRoom = (
 
 // gets a Room Object by its location
 export const getRoomByLocation = (
-  layers: Layers,
+  network: NetworkLayer,
   location: number,
   options?: RoomOptions
 ): Room => {
-  const roomEntityIndex = getRoomEntityIndexByLocation(layers, location);
-  return getRoom(layers, roomEntityIndex, options);
+  const roomEntityIndex = getRoomEntityIndexByLocation(network, location);
+  return getRoom(network, roomEntityIndex, options);
 };
 
 // gets a Room EntityIndex by its location
-export const getRoomEntityIndexByLocation = (layers: Layers, location: number,): EntityIndex => {
-  const {
-    network: {
-      components: {
-        IsRoom,
-        Location
-      },
-    },
-  } = layers;
-
+export const getRoomEntityIndexByLocation = (
+  network: NetworkLayer,
+  location: number,
+): EntityIndex => {
+  const { IsRoom, Location } = network.components;
   let hexLocation = numberToHex(location);
-
   const roomEntityIndex = Array.from(
-    runQuery([Has(IsRoom), HasValue(Location, { value: hexLocation })])
+    runQuery([
+      Has(IsRoom),
+      HasValue(Location, { value: hexLocation })
+    ])
   )[0];
-
   return roomEntityIndex;
 }

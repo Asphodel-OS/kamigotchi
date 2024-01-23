@@ -10,7 +10,7 @@ import {
 
 import { getConfigFieldValue } from './Config';
 import { Kami, queryKamisX } from './Kami';
-import { NetworkLayer } from 'layers/network';
+import { NetworkLayer } from 'layers/network/types';
 
 // standardized shape of a gacha commit
 export interface GachaCommit {

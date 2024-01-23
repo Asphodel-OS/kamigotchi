@@ -10,10 +10,11 @@ import {
   isUnrevealed,
   calcCooldownRemaining,
   calcHealth,
-} from "layers/react/shapes/Kami";
+} from "layers/network/shapes/Kami";
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
+
 
 interface Props {
   kami: Kami;

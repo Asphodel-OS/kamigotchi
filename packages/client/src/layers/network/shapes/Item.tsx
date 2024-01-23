@@ -8,11 +8,11 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Stats, getStats } from './Stats';
+import { baseURI } from "src/constants/media";
+import { NetworkLayer } from 'layers/network/types';
 import { numberToHex } from 'utils/hex';
 
-import { baseURI } from "src/constants/media";
 
 // The standard shape of a FE Item Entity
 export interface Item {
@@ -36,25 +36,23 @@ export interface Item {
  * Supplements additional data for FE consumption if available
  */
 export const getItem = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex, // entity index of the registry instance
 ): Item => {
   const {
-    network: {
-      world,
-      components: {
-        Description,
-        FoodIndex,
-        ReviveIndex,
-        ItemIndex,
-        IsConsumable,
-        IsLootbox,
-        MediaURI,
-        Name,
-        IsFungible,
-      },
+    world,
+    components: {
+      Description,
+      FoodIndex,
+      ReviveIndex,
+      ItemIndex,
+      IsConsumable,
+      IsLootbox,
+      MediaURI,
+      Name,
+      IsFungible,
     },
-  } = layers;
+  } = network;
 
   let Item: Item = {
     id: world.entities[index],
@@ -68,7 +66,7 @@ export const getItem = (
       x4: `${baseURI}${(getComponentValue(MediaURI, index)?.value as string).slice(0, -4)}_x4.png`,
     },
     description: getComponentValue(Description, index)?.value as string,
-    stats: getStats(layers, index),
+    stats: getStats(network, index),
   }
 
   // determine the type of the item based on the presence of indices
@@ -88,17 +86,10 @@ export const getItem = (
 }
 
 export const getItemByIndex = (
-  layers: Layers,
+  network: NetworkLayer,
   index: number, // item index of the registry instance
 ): Item => {
-  const {
-    network: {
-      components: {
-        IsRegistry,
-        ItemIndex,
-      },
-    },
-  } = layers;
+  const { components: { IsRegistry, ItemIndex } } = network;
 
   const entityIndices = Array.from(
     runQuery([
@@ -106,17 +97,13 @@ export const getItemByIndex = (
       HasValue(ItemIndex, { value: numberToHex(index) })
     ])
   );
-  return getItem(layers, entityIndices[0]);
+  return getItem(network, entityIndices[0]);
 }
 
 
 // Query for a Food Registry entry by its FoodIndex
-export const queryFoodRegistry = (layers: Layers, index: number): EntityIndex => {
-  const {
-    network: {
-      components: { FoodIndex, IsRegistry },
-    },
-  } = layers;
+export const queryFoodRegistry = (network: NetworkLayer, index: number): EntityIndex => {
+  const { components: { FoodIndex, IsRegistry } } = network;
 
   const entityIndices = Array.from(
     runQuery([
@@ -128,12 +115,8 @@ export const queryFoodRegistry = (layers: Layers, index: number): EntityIndex =>
 }
 
 // Query for a Revive Registry entry by its ReviveIndex
-export const queryReviveRegistry = (layers: Layers, index: number): EntityIndex => {
-  const {
-    network: {
-      components: { ReviveIndex, IsRegistry },
-    },
-  } = layers;
+export const queryReviveRegistry = (network: NetworkLayer, index: number): EntityIndex => {
+  const { components: { ReviveIndex, IsRegistry } } = network;
 
   const entityIndices = Array.from(
     runQuery([

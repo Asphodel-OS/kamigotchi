@@ -21,9 +21,7 @@ export interface AffinityMultiplers {
 }
 
 // get the Liquidation relevant fields from the world config
-export const getLiquidationConfig = (
-  network: NetworkLayer,
-): LiquidationConfig => {
+export const getLiquidationConfig = (network: NetworkLayer): LiquidationConfig => {
   const affinityMultiplierPrecision = 10 ** getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_PREC');
   const affinityMultiplierUp = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_UP');
   const affinityMultiplierDown = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_DOWN');

@@ -4,9 +4,10 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized Object shape of a Kill Entity
 export interface Kill {
@@ -27,28 +28,26 @@ interface Options {
 
 // get a Kill object from its EnityIndex
 export const getKill = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex,
   options?: Options,
 ): Kill => {
   const {
-    network: {
-      components: {
-        NodeID,
-        SourceID,
-        TargetID,
-        Balance,
-        Coin,
-        Time,
-      },
-      world,
+    components: {
+      NodeID,
+      SourceID,
+      TargetID,
+      Balance,
+      Coin,
+      Time,
     },
-  } = layers;
+    world,
+  } = network;
 
   // populate the Node
   const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
   const nodeEntityIndex = world.entityToIndex.get(nodeID) as EntityIndex;
-  const node = getNode(layers, nodeEntityIndex);
+  const node = getNode(network, nodeEntityIndex);
 
   const killLog: Kill = {
     id: world.entities[index],
@@ -66,14 +65,14 @@ export const getKill = (
   if (options?.source) {
     const sourceID = getComponentValue(SourceID, index)?.value as EntityID;
     const sourceEntityIndex = world.entityToIndex.get(sourceID) as EntityIndex;
-    killLog.source = getKami(layers, sourceEntityIndex);
+    killLog.source = getKami(network, sourceEntityIndex);
   }
 
   // populate the target kami
   if (options?.target) {
     const targetID = getComponentValue(TargetID, index)?.value as EntityID;
     const targetEntityIndex = world.entityToIndex.get(targetID) as EntityIndex;
-    killLog.target = getKami(layers, targetEntityIndex);
+    killLog.target = getKami(network, targetEntityIndex);
   }
 
   return killLog;

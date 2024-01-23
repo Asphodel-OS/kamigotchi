@@ -7,8 +7,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Item, getItem } from './Item';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized shape of a FE Listing Entity
 export interface Listing {
@@ -20,19 +21,17 @@ export interface Listing {
 
 // get an Listing from its EntityIndex
 export const getListing = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex,
 ): Listing => {
   const {
-    network: {
-      world,
-      components: {
-        IsRegistry,
-        ItemIndex,
-        PriceBuy,
-      },
+    world,
+    components: {
+      IsRegistry,
+      ItemIndex,
+      PriceBuy,
     },
-  } = layers;
+  } = network;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
@@ -42,7 +41,7 @@ export const getListing = (
       HasValue(ItemIndex, { value: itemIndex }),
     ])
   )[0];
-  const item = getItem(layers, registryEntityIndex);
+  const item = getItem(network, registryEntityIndex);
 
   let listing: Listing = {
     id: world.entities[index],

@@ -8,13 +8,13 @@ import crypto from "crypto";
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
 
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
-import { getLootboxByIndex, getLootboxLog } from 'layers/react/shapes/Lootbox';
-import { getItemByIndex } from 'layers/react/shapes/Item';
+import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
+import { getItemByIndex } from 'layers/network/shapes/Item';
 import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerLootboxesModal() {
@@ -27,19 +27,16 @@ export function registerLootboxesModal() {
       rowEnd: 75,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          components: {
-            AccountID,
-            Balance,
-            Balances,
-            RevealBlock,
-            HolderID,
-            ItemIndex,
-            MediaURI,
-          },
-        },
-      } = layers;
+        AccountID,
+        Balance,
+        Balances,
+        RevealBlock,
+        HolderID,
+        ItemIndex,
+        MediaURI,
+      } = network.components;
 
       return merge(
         AccountID.update$,
@@ -52,31 +49,26 @@ export function registerLootboxesModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(
-            layers,
+            network,
             { lootboxLogs: true, inventory: true },
           );
 
           return {
-            layers,
-            account,
-            selectedBox: getLootboxByIndex(layers, 10001),
+            network,
+            data: {
+              account,
+              selectedBox: getLootboxByIndex(network, 10001),
+            }
           };
         })
       );
     },
 
-    ({ layers, account, selectedBox }) => {
-      const {
-        network: {
-          actions,
-          api: { player },
-          world,
-          network: { blockNumber$ }
-        },
-      } = layers;
+    ({ network, data }) => {
+      const { account, selectedBox } = data;
+      const { actions, api, world } = network;
 
       const { modals } = useVisibility();
-
       const [state, setState] = useState("OPEN");
       const [amount, setAmount] = useState(0);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
@@ -134,7 +126,7 @@ export function registerLootboxesModal() {
           params: [index, amount],
           description: `Opening ${amount} of lootbox ${index}`,
           execute: async () => {
-            return player.lootbox.startReveal(index, amount);
+            return api.player.lootbox.startReveal(index, amount);
           },
         });
         await waitForActionCompletion(
@@ -152,7 +144,7 @@ export function registerLootboxesModal() {
           params: [id],
           description: `Inspecting lootbox contents`,
           execute: async () => {
-            return player.lootbox.executeReveal(id);
+            return api.player.lootbox.executeReveal(id);
           },
         });
         await waitForActionCompletion(
@@ -166,11 +158,11 @@ export function registerLootboxesModal() {
       // UTILS
 
       const getLog = (index: EntityIndex) => {
-        return getLootboxLog(layers, index);
+        return getLootboxLog(network, index);
       }
 
       const getItem = (index: number) => {
-        return getItemByIndex(layers, index);
+        return getItemByIndex(network, index);
       }
 
       ///////////////

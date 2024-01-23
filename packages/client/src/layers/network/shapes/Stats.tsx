@@ -3,7 +3,8 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized shape of Stats on an Entity
 export interface Stats {
@@ -16,18 +17,14 @@ export interface Stats {
 
 // get the stats of an entity
 // get the Stats from the EnityIndex of a Kami
-export const getStats = (layers: Layers, index: EntityIndex): Stats => {
+export const getStats = (network: NetworkLayer, index: EntityIndex): Stats => {
   const {
-    network: {
-      components: {
-        Harmony,
-        Health,
-        Power,
-        Slots,
-        Violence,
-      },
-    },
-  } = layers;
+    Harmony,
+    Health,
+    Power,
+    Slots,
+    Violence,
+  } = network.components;
 
   return {
     health: (getComponentValue(Health, index)?.value || 0 as number) * 1,

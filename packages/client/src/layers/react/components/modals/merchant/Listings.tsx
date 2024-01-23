@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Listing } from 'layers/react/shapes/Listing';
+import { Listing } from 'layers/network/shapes/Listing';
 import { ItemRow } from './ItemRow';
 
 

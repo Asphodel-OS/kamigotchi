@@ -5,7 +5,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { Account } from "layers/react/shapes/Account";
+import { Account } from "layers/network/shapes/Account";
 import { Tooltip } from "../../library";
 import { playClick } from "utils/sounds";
 

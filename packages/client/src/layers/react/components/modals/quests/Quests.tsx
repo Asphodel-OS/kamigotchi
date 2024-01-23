@@ -10,10 +10,10 @@ import { questsIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'layers/react/shapes/Quest';
-import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/react/shapes/Item';
-import { getRoomByLocation } from 'layers/react/shapes/Room';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Quest, getQuestByIndex, getRegistryQuests, parseQuestsStatus } from 'layers/network/shapes/Quest';
+import { getItem, getItemByIndex, queryFoodRegistry, queryReviveRegistry } from 'layers/network/shapes/Item';
+import { getRoomByLocation } from 'layers/network/shapes/Room';
 
 
 export function registerQuestsModal() {
@@ -27,26 +27,20 @@ export function registerQuestsModal() {
     },
 
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          api: { player },
-          components: {
-            AccountID,
-            Coin,
-            IsComplete,
-            IsObjective,
-            IsQuest,
-            IsRequirement,
-            IsReward,
-            Location,
-            QuestIndex,
-            QuestPoint,
-            Value,
-          },
-          notifications
-        },
-      } = layers;
+        AccountID,
+        Coin,
+        IsComplete,
+        IsObjective,
+        IsQuest,
+        IsRequirement,
+        IsReward,
+        Location,
+        QuestIndex,
+        QuestPoint,
+        Value,
+      } = network.components;
 
       return merge(
         AccountID.update$,
@@ -64,25 +58,23 @@ export function registerQuestsModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(
-            layers,
+            network,
             { quests: true, kamis: true, inventory: true },
           );
 
           return {
-            layers,
-            actions,
-            notifications,
-            api: player,
+            network,
             data: {
               account,
-              quests: parseQuestsStatus(layers, account, getRegistryQuests(layers)),
+              quests: parseQuestsStatus(network, account, getRegistryQuests(network)),
             },
           };
         })
       );
     },
 
-    ({ layers, actions, notifications, api, data }) => {
+    ({ network, data }) => {
+      const { actions, api, notifications } = network;
       const [tab, setTab] = useState<TabType>('AVAILABLE');
       const [numAvail, setNumAvail] = useState(0);
 
@@ -121,7 +113,7 @@ export function registerQuestsModal() {
           params: [quest.index * 1],
           description: `Accepting Quest ${quest.index * 1}`,
           execute: async () => {
-            return api.quests.accept(quest.index);
+            return api.player.quests.accept(quest.index);
           },
         });
       }
@@ -134,7 +126,7 @@ export function registerQuestsModal() {
           params: [quest.id],
           description: `Completing Quest ${quest.index * 1}`,
           execute: async () => {
-            return api.quests.complete(quest.id);
+            return api.player.quests.complete(quest.id);
           },
         });
       }
@@ -157,12 +149,12 @@ export function registerQuestsModal() {
             actions={{ acceptQuest, completeQuest }}
             utils={{
               setNumAvail: (num: number) => setNumAvail(num),
-              getItem: (index: EntityIndex) => getItem(layers, index),
-              getRoom: (location: number) => getRoomByLocation(layers, location),
-              getQuestByIndex: (index: number) => getQuestByIndex(layers, index),
-              queryItemRegistry: (index: number) => getItemByIndex(layers, index).entityIndex,
-              queryFoodRegistry: (index: number) => queryFoodRegistry(layers, index),
-              queryReviveRegistry: (index: number) => queryReviveRegistry(layers, index),
+              getItem: (index: EntityIndex) => getItem(network, index),
+              getRoom: (location: number) => getRoomByLocation(network, location),
+              getQuestByIndex: (index: number) => getQuestByIndex(network, index),
+              queryItemRegistry: (index: number) => getItemByIndex(network, index).entityIndex,
+              queryFoodRegistry: (index: number) => queryFoodRegistry(network, index),
+              queryReviveRegistry: (index: number) => queryReviveRegistry(network, index),
             }}
           />
         </ModalWrapper>

@@ -6,13 +6,13 @@ import styled from 'styled-components';
 
 import { abi as Pet721ProxySystemABI } from "abi/Pet721ProxySystem.json"
 import { GasConstants } from 'constants/gas';
-import { Account, getAccountFromBurner } from 'layers/react/shapes/Account';
+import { Account, getAccountFromBurner } from 'layers/network/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
-import { calcStamina, calcStaminaPercent } from 'layers/react/shapes/Account';
-import { getRoomByLocation } from 'layers/react/shapes/Room';
+import { calcStamina, calcStaminaPercent } from 'layers/network/shapes/Account';
+import { getRoomByLocation } from 'layers/network/shapes/Room';
 import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerAccountInfoFixture() {
@@ -25,18 +25,16 @@ export function registerAccountInfoFixture() {
       rowEnd: 30,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          components: {
-            Coin,
-            Location,
-            Name,
-            OperatorAddress,
-            StaminaCurrent,
-            Stamina,
-          },
-        },
-      } = layers;
+        Coin,
+        Location,
+        Name,
+        OperatorAddress,
+        StaminaCurrent,
+        Stamina,
+      } = network.components;
+
       return merge(
         Coin.update$,
         Location.update$,
@@ -46,18 +44,18 @@ export function registerAccountInfoFixture() {
         StaminaCurrent.update$,
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers);
+          const account = getAccountFromBurner(network);
           return {
-            layers,
+            network,
             data: {
               account,
-              room: getRoomByLocation(layers, account.location)
+              room: getRoomByLocation(network, account.location)
             },
           };
         })
       );
     },
-    ({ layers, data }) => {
+    ({ network, data }) => {
       // console.log('mAccountInfo:', data);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
       const { account, room } = data;
@@ -85,7 +83,7 @@ export function registerAccountInfoFixture() {
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
-        address: layers.network.systems["system.Mint20.Proxy"].address as `0x${string}`,
+        address: network.systems["system.Mint20.Proxy"].address as `0x${string}`,
         abi: Pet721ProxySystemABI,
         functionName: 'getTokenAddy'
       });

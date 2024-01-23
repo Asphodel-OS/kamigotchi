@@ -7,8 +7,8 @@ import { inventoryIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Inventory } from 'layers/react/shapes/Inventory';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Inventory } from 'layers/network/shapes/Inventory';
 
 
 export function registerInventoryModal() {
@@ -21,21 +21,18 @@ export function registerInventoryModal() {
       rowEnd: 75,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          components: {
-            AccountID,
-            Balance,
-            Coin,
-            Description,
-            HolderID,
-            ItemIndex,
-            MediaURI,
-            Name,
-            OwnerAddress,
-          },
-        },
-      } = layers;
+        AccountID,
+        Balance,
+        Coin,
+        Description,
+        HolderID,
+        ItemIndex,
+        MediaURI,
+        Name,
+        OwnerAddress,
+      } = network.components;
 
       return merge(
         AccountID.update$,
@@ -51,7 +48,7 @@ export function registerInventoryModal() {
         map(() => {
           return {
             data: {
-              account: getAccountFromBurner(layers, { inventory: true }),
+              account: getAccountFromBurner(network, { inventory: true }),
             }
           };
         })

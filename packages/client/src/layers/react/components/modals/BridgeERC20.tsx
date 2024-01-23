@@ -9,7 +9,7 @@ import { abi } from "abi/Farm20ProxySystem.json"
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 
@@ -32,7 +32,7 @@ export function registerERC20BridgeModal() {
 
       return merge(Coin.update$).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers);
+          const account = getAccountFromBurner(layers.network);
           const { coin } = account;
 
           return {

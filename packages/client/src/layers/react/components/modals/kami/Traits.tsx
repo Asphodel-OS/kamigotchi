@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 import { StatIcons } from "assets/images/icons/stats";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Kami } from "layers/react/shapes/Kami";
-import { Trait } from "layers/react/shapes/Trait";
+import { Kami } from "layers/network/shapes/Kami";
+import { Trait } from "layers/network/shapes/Trait";
 
 interface Props {
   kami: Kami;

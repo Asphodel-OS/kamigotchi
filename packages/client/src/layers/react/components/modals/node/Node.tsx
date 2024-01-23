@@ -7,10 +7,10 @@ import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami } from 'layers/react/shapes/Kami';
-import { getLiquidationConfig } from 'layers/react/shapes/LiquidationConfig';
-import { Node, getNodeByIndex } from 'layers/react/shapes/Node';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Kami } from 'layers/network/shapes/Kami';
+import { getLiquidationConfig } from 'layers/network/shapes/LiquidationConfig';
+import { Node, getNodeByIndex } from 'layers/network/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 
@@ -30,42 +30,37 @@ export function registerNodeModal() {
 
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          api: { player },
-          components: {
-            OperatorAddress,
-            IsAccount,
-            IsBonus,
-            IsConfig,
-            IsInventory,
-            IsProduction,
-            IsNode,
-            AccountID,
-            HolderID,
-            PetID,
-            ItemIndex,
-            PetIndex,
-            LastTime,
-            LastActionTime,
-            StartTime,
-            Balance,
-            Coin,
-            Harmony,
-            Health,
-            HealthCurrent,
-            Location,
-            MediaURI,
-            Name,
-            Rate,
-            State,
-            Type,
-            Value,
-            Violence,
-          },
-        },
-      } = layers;
+        OperatorAddress,
+        IsAccount,
+        IsBonus,
+        IsConfig,
+        IsInventory,
+        IsProduction,
+        IsNode,
+        AccountID,
+        HolderID,
+        PetID,
+        ItemIndex,
+        PetIndex,
+        LastTime,
+        LastActionTime,
+        StartTime,
+        Balance,
+        Coin,
+        Harmony,
+        Health,
+        HealthCurrent,
+        Location,
+        MediaURI,
+        Name,
+        Rate,
+        State,
+        Type,
+        Value,
+        Violence,
+      } = network.components;
 
       // TODO: update this to support node input as props
       return merge(
@@ -99,18 +94,16 @@ export function registerNodeModal() {
         Violence.update$,
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers, { kamis: true, inventory: true });
+          const account = getAccountFromBurner(network, { kamis: true, inventory: true });
           const { nodeIndex } = useSelected.getState();
-          const node = getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: account.id });
+          const node = getNodeByIndex(network, nodeIndex, { kamis: true, accountID: account.id });
 
           return {
-            layers,
-            actions,
-            api: player,
+            network,
             data: {
               account,
               node,
-              liquidationConfig: getLiquidationConfig(layers.network),
+              liquidationConfig: getLiquidationConfig(network),
             },
           };
         })
@@ -118,15 +111,17 @@ export function registerNodeModal() {
     },
 
     // Render
-    ({ layers, actions, api, data }) => {
+    ({ network, data }) => {
       // console.log('NodeM: data', data);
+      const { actions, api } = network;
       const [tab, setTab] = useState('allies');
       const { nodeIndex } = useSelected();
       const [node, setNode] = useState<Node>(data.node);
 
       // updates from selected Node updates
       useEffect(() => {
-        setNode(getNodeByIndex(layers, nodeIndex, { kamis: true, accountID: data.account.id }));
+        const nodeOptions = { kamis: true, accountID: data.account.id };
+        setNode(getNodeByIndex(network, nodeIndex, nodeOptions));
       }, [nodeIndex]);
 
       // updates from component subscription updates
@@ -147,7 +142,7 @@ export function registerNodeModal() {
           params: [kami.id],
           description: `Collecting ${kami.name}'s Harvest`,
           execute: async () => {
-            return api.production.collect(kami.production!.id);
+            return api.player.production.collect(kami.production!.id);
           },
         });
       };
@@ -161,7 +156,7 @@ export function registerNodeModal() {
           params: [kami.id, foodIndex],
           description: `Feeding ${kami.name}`,
           execute: async () => {
-            return api.pet.feed(kami.id, foodIndex);
+            return api.player.pet.feed(kami.id, foodIndex);
           },
         });
       };
@@ -176,7 +171,7 @@ export function registerNodeModal() {
           params: [enemyKami.production!.id, myKami.id],
           description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
-            return api.production.liquidate(enemyKami.production!.id, myKami.id);
+            return api.player.production.liquidate(enemyKami.production!.id, myKami.id);
           },
         });
       };
@@ -190,7 +185,7 @@ export function registerNodeModal() {
           params: [kami.id, node.id],
           description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
-            return api.production.start(kami.id, node.id);
+            return api.player.production.start(kami.id, node.id);
           },
         });
       };
@@ -204,7 +199,7 @@ export function registerNodeModal() {
           params: [kami.production!.id],
           description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
           execute: async () => {
-            return api.production.stop(kami.production!.id);
+            return api.player.production.stop(kami.production!.id);
           },
         });
       };

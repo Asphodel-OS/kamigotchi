@@ -10,8 +10,8 @@ import styled from 'styled-components';
 import { abi } from 'abi/Pet721ProxySystem.json';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccount } from 'layers/react/shapes/Account';
-import { Kami, getKami } from 'layers/react/shapes/Kami';
+import { Account, getAccount } from 'layers/network/shapes/Account';
+import { Kami, getKami } from 'layers/network/shapes/Kami';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 
@@ -55,7 +55,7 @@ export function registerERC721BridgeModal() {
           )[0];
 
           const account =
-            accountIndex !== undefined ? getAccount(layers, accountIndex, { kamis: true }) : ({} as Account);
+            accountIndex !== undefined ? getAccount(layers.network, accountIndex, { kamis: true }) : ({} as Account);
 
           return {
             layers: layers,
@@ -198,7 +198,7 @@ export function registerERC721BridgeModal() {
                 ])
               )[0];
 
-              kamis.push(getKami(layers, entityID, { deaths: true, production: true, traits: true }));
+              kamis.push(getKami(layers.network, entityID, { deaths: true, production: true, traits: true }));
             }
 
             return kamis;

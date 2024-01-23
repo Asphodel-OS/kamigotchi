@@ -1,4 +1,4 @@
-import { Room } from "layers/react/shapes/Room";
+import { Room } from "layers/network/shapes/Room";
 import styled from "styled-components";
 
 interface Props {

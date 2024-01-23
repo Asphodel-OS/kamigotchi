@@ -7,9 +7,10 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Kami, getKami } from './Kami';
 import { numberToHex } from 'utils/hex';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized shape of a Node Entity
 export interface Node {
@@ -36,27 +37,25 @@ interface Options {
 
 // get a Node from its EntityIndex
 export const getNode = (
-  layers: Layers,
+  network: NetworkLayer,
   entityIndex: EntityIndex,
   options?: Options,
 ): Node => {
   const {
-    network: {
-      world,
-      components: {
-        Affinity,
-        Description,
-        IsProduction,
-        Location,
-        Name,
-        NodeID,
-        NodeIndex,
-        PetID,
-        State,
-        Type,
-      },
+    world,
+    components: {
+      Affinity,
+      Description,
+      IsProduction,
+      Location,
+      Name,
+      NodeID,
+      NodeIndex,
+      PetID,
+      State,
+      Type,
     },
-  } = layers;
+  } = network;
 
   let node: Node = {
     id: world.entities[entityIndex],
@@ -90,7 +89,7 @@ export const getNode = (
       const kamiEntityIndex = world.entityToIndex.get(kamiID);
       if (kamiEntityIndex) {
         kamis.push(getKami(
-          layers,
+          network,
           kamiEntityIndex,
           { account: true, production: true, traits: true }
         ));
@@ -119,11 +118,11 @@ export const getNode = (
 }
 
 export const getNodeByIndex = (
-  layers: Layers,
+  network: NetworkLayer,
   index: number,
   options?: Options,
 ): Node => {
-  const { network: { components: { IsNode, NodeIndex } } } = layers;
+  const { components: { IsNode, NodeIndex } } = network;
   const entityIndex = Array.from(
     runQuery([
       Has(IsNode),
@@ -131,6 +130,6 @@ export const getNodeByIndex = (
     ])
   )[0];
 
-  return getNode(layers, entityIndex, options);
+  return getNode(network, entityIndex, options);
 }
 

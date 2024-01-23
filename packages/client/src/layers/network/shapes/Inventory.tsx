@@ -9,9 +9,10 @@ import {
   QueryFragment,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Item, getItem } from './Item';
 import { getStats } from './Stats';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized shape of a FE Inventory Entity
 export interface Inventory {
@@ -23,27 +24,25 @@ export interface Inventory {
 
 // get an Inventory from its EntityIndex
 export const getInventory = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex,
 ): Inventory => {
-  return getTypedInventory(layers, index, getItem);
+  return getTypedInventory(network, index, getItem);
 }
 
 export const getTypedInventory = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex,
-  getTypedItem: (layers: Layers, index: EntityIndex) => Item,
+  getTypedItem: (network: NetworkLayer, index: EntityIndex) => Item,
 ): Inventory => {
   const {
-    network: {
-      world,
-      components: {
-        Balance,
-        IsRegistry,
-        ItemIndex,
-      },
+    world,
+    components: {
+      Balance,
+      IsRegistry,
+      ItemIndex,
     },
-  } = layers;
+  } = network;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
@@ -53,7 +52,7 @@ export const getTypedInventory = (
       HasValue(ItemIndex, { value: itemIndex }),
     ])
   )[0];
-  const item = getTypedItem(layers, registryEntityIndex);
+  const item = getTypedItem(network, registryEntityIndex);
 
   let inventory: Inventory = {
     id: world.entities[index],
@@ -67,7 +66,7 @@ export const getTypedInventory = (
     inventory.balance = getComponentValue(Balance, index)?.value as number;
     inventory.balance = inventory.balance * 1;
   } else {
-    inventory.item.stats = getStats(layers, index);
+    inventory.item.stats = getStats(network, index);
   }
 
   return inventory;
@@ -115,20 +114,17 @@ export interface QueryOptions {
 }
 
 export const queryInventoryX = (
-  layers: Layers,
+  network: NetworkLayer,
   options: QueryOptions
 ): Inventory[] => {
   const {
-    network: {
-      components: {
-        HolderID,
-        IsInventory,
-        IsRegistry,
-        ItemIndex,
-
-      },
+    components: {
+      HolderID,
+      IsInventory,
+      IsRegistry,
+      ItemIndex,
     },
-  } = layers;
+  } = network;
 
   const toQuery: QueryFragment[] = [Has(IsInventory)];
 
@@ -146,6 +142,6 @@ export const queryInventoryX = (
   const raw = Array.from(runQuery(toQuery));
 
   return raw.map(
-    (index): Inventory => getInventory(layers, index)
+    (index): Inventory => getInventory(network, index)
   );
 }

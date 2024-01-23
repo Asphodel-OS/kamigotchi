@@ -8,8 +8,8 @@ import { mapIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Room, getRoomByLocation } from 'layers/react/shapes/Room';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Room, getRoomByLocation } from 'layers/network/shapes/Room';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import styled from 'styled-components';
@@ -26,27 +26,26 @@ export function registerMapModal() {
       rowEnd: 50,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          api: { player },
-          components: { Location, OperatorAddress },
-          actions,
-        },
-      } = layers;
+        api: { player },
+        components: { Location, OperatorAddress },
+        actions,
+      } = network;
 
       return merge(Location.update$, OperatorAddress.update$).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers);
+          const account = getAccountFromBurner(network);
           return {
-            layers,
-            actions,
-            api: player,
+            network,
             data: { account }
           };
         })
       );
     },
-    ({ layers, actions, api, data }) => {
+    ({ network, data }) => {
+      const { actions, api } = network;
+
       // console.log('mRoom: ', data)
       const { roomLocation, setRoom } = useSelected();
       const { modals } = useVisibility();
@@ -65,11 +64,11 @@ export function registerMapModal() {
       // update the selected room details
       useEffect(() => {
         if (roomLocation) {
-          const roomObject = getRoomByLocation(layers, roomLocation, { players: true });
+          const roomObject = getRoomByLocation(network, roomLocation, { players: true });
           setSelectedRoom(roomObject);
 
           const exits = (roomObject.exits)
-            ? roomObject.exits.map((exit) => getRoomByLocation(layers, exit))
+            ? roomObject.exits.map((exit) => getRoomByLocation(network, exit))
             : [];
           setSelectedExits(exits);
         }
@@ -80,7 +79,7 @@ export function registerMapModal() {
       // ACTIONS
 
       const move = (location: number) => {
-        const room = getRoomByLocation(layers, location);
+        const room = getRoomByLocation(network, location);
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
@@ -88,7 +87,7 @@ export function registerMapModal() {
           params: [location],
           description: `Moving to ${room.name}`,
           execute: async () => {
-            return api.account.move(location);
+            return api.player.account.move(location);
           },
         });
       };

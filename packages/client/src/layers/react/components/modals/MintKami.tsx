@@ -8,16 +8,16 @@ import { useAccount, useContractRead, useBalance } from 'wagmi';
 import crypto from "crypto";
 
 import { abi } from "abi/Pet721ProxySystem.json"
+import { getAccount } from 'layers/network/shapes/Account';
+import { getConfigFieldValue } from 'layers/network/shapes/Config';
+import { getData } from 'layers/network/shapes/Data';
+import { GachaCommit, isGachaAvailable } from 'layers/network/shapes/Gacha';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { getAccount } from 'layers/react/shapes/Account';
-import { getConfigFieldValue } from 'layers/react/shapes/Config';
-import { getData } from 'layers/react/shapes/Data';
-import { GachaCommit, isGachaAvailable } from 'layers/react/shapes/Gacha';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playVending } from 'utils/sounds';
 
 
@@ -31,19 +31,17 @@ export function registerKamiMintModal() {
       rowEnd: 75,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          network,
-          components: {
-            IsPet,
-            IsAccount,
-            OperatorAddress,
-            RevealBlock,
-            State,
-            Value,
-          },
+        components: {
+          IsPet,
+          IsAccount,
+          OperatorAddress,
+          RevealBlock,
+          State,
+          Value,
         },
-      } = layers;
+      } = network;
 
       return merge(IsPet.update$, RevealBlock.update$, Value.update$, State.update$).pipe(
         map(() => {
@@ -52,22 +50,22 @@ export function registerKamiMintModal() {
             runQuery([
               Has(IsAccount),
               HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
+                value: network.network.connectedAddress.get(),
               }),
             ])
           )[0];
 
-          const account = getAccount(layers, accountIndex, { kamis: true, gacha: true });
+          const account = getAccount(network, accountIndex, { kamis: true, gacha: true });
 
           const commits = [...account.gacha ? account.gacha.commits : []].reverse();
 
           return {
-            layers,
+            network,
             data: {
               account: {
                 mint20: {
-                  minted: getData(layers, account.id, "MINT20_MINT"),
-                  limit: getConfigFieldValue(layers.network, "MINT_ACCOUNT_MAX"),
+                  minted: getData(network, account.id, "MINT20_MINT"),
+                  limit: getConfigFieldValue(network, "MINT_ACCOUNT_MAX"),
                 },
                 commits: commits,
               },
@@ -77,16 +75,8 @@ export function registerKamiMintModal() {
       );
     },
 
-    ({ layers, data }) => {
-      const {
-        network: {
-          actions,
-          api: { player },
-          systems,
-          world,
-          network: { blockNumber$ }
-        },
-      } = layers;
+    ({ network, data }) => {
+      const { actions, api, network: { blockNumber$ }, systems, world } = network;
 
       const { isConnected } = useAccount();
       const { modals, setModals } = useVisibility();
@@ -173,7 +163,7 @@ export function registerKamiMintModal() {
           params: [commits.length],
           description: `Revealing ${commits.length} Gacha rolls`,
           execute: async () => {
-            return player.mint.reveal(toReveal);
+            return api.player.mint.reveal(toReveal);
           },
         });
 

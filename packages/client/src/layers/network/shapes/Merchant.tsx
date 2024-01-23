@@ -7,9 +7,10 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Listing, getListing } from './Listing';
 import { numberToHex } from 'utils/hex';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized shape of a FE Merchant Entity
 export interface Merchant {
@@ -23,20 +24,18 @@ export interface Merchant {
 
 // get an Merchant from its EntityIndex
 export const getMerchant = (
-  layers: Layers,
+  network: NetworkLayer,
   entityIndex: EntityIndex,
 ): Merchant => {
   const {
-    network: {
-      world,
-      components: {
-        IsListing,
-        Location,
-        NPCIndex,
-        Name,
-      },
+    world,
+    components: {
+      IsListing,
+      Location,
+      NPCIndex,
+      Name,
     },
-  } = layers;
+  } = network;
 
   let merchant: Merchant = {
     id: world.entities[entityIndex],
@@ -55,15 +54,15 @@ export const getMerchant = (
     ])
   );
 
-  let listings = listingResults.map((entityIndex) => getListing(layers, entityIndex));
+  let listings = listingResults.map((entityIndex) => getListing(network, entityIndex));
   merchant.listings = listings.sort((a, b) => a.buyPrice - b.buyPrice);
 
   return merchant;
 }
 
 // the Merchant Index here is actually an NPCIndex
-export const getMerchantByIndex = (layers: Layers, index: number) => {
-  const { network: { components: { IsNPC, NPCIndex } } } = layers;
+export const getMerchantByIndex = (network: NetworkLayer, index: number) => {
+  const { components: { IsNPC, NPCIndex } } = network;
   const entityIndex = Array.from(
     runQuery([
       Has(IsNPC),
@@ -71,5 +70,5 @@ export const getMerchantByIndex = (layers: Layers, index: number) => {
     ])
   )[0];
 
-  return getMerchant(layers, entityIndex);
+  return getMerchant(network, entityIndex);
 }

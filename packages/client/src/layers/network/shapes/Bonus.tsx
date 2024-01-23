@@ -1,4 +1,6 @@
 import { EntityID, EntityIndex, Has, HasValue, Layers, getComponentValue, runQuery } from "@latticexyz/recs";
+import { NetworkLayer } from 'layers/network/types';
+
 
 export interface Bonuses {
   attack: AttackBonus;
@@ -26,8 +28,8 @@ interface DefenseBonus {
 }
 
 // gets the bonuses based on the entity index of a kami
-export const getBonuses = (layers: Layers, entityIndex: EntityIndex): Bonuses => {
-  const { network: { world } } = layers;
+export const getBonuses = (network: NetworkLayer, entityIndex: EntityIndex): Bonuses => {
+  const { world } = network;
   const holderID = world.entities[entityIndex];
 
   const bonuses = {
@@ -43,8 +45,8 @@ export const getBonuses = (layers: Layers, entityIndex: EntityIndex): Bonuses =>
       multiplier: 100,
     },
     harvest: {
-      output: (getBonusValue(layers, holderID, 'HARVEST_OUTPUT') ?? 1000) * 1,
-      drain: (getBonusValue(layers, holderID, 'HARVEST_DRAIN') ?? 1000) * 1,
+      output: (getBonusValue(network, holderID, 'HARVEST_OUTPUT') ?? 1000) * 1,
+      drain: (getBonusValue(network, holderID, 'HARVEST_DRAIN') ?? 1000) * 1,
       cooldown: 0,
     },
   };
@@ -52,17 +54,15 @@ export const getBonuses = (layers: Layers, entityIndex: EntityIndex): Bonuses =>
   return bonuses;
 }
 
-export const getBonusValue = (layers: Layers, holderID: EntityID, type: string): number | undefined => {
+export const getBonusValue = (network: NetworkLayer, holderID: EntityID, type: string): number | undefined => {
   const {
-    network: {
-      components: {
-        IsBonus,
-        HolderID,
-        Type,
-        Value,
-      },
+    components: {
+      IsBonus,
+      HolderID,
+      Type,
+      Value,
     },
-  } = layers;
+  } = network;
 
   const results = Array.from(
     runQuery([

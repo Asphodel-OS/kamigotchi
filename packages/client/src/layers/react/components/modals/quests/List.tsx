@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/react/shapes/Account";
-import { Item } from "layers/react/shapes/Item";
-import { Objective, Quest, Requirement, Reward } from "layers/react/shapes/Quest";
-import { Room } from "layers/react/shapes/Room";
+import { Account } from "layers/network/shapes/Account";
+import { Item } from "layers/network/shapes/Item";
+import { Objective, Quest, Requirement, Reward } from "layers/network/shapes/Quest";
+import { Room } from "layers/network/shapes/Room";
 
 
 interface Props {

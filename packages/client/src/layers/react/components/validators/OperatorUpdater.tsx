@@ -10,7 +10,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
-import { getAccountByOperator } from 'layers/react/shapes/Account';
+import { getAccountByOperator } from 'layers/network/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network'
@@ -84,7 +84,7 @@ export function registerOperatorUpdater() {
 
       // check if the connected burner is already taken by an account
       useEffect(() => {
-        const account = getAccountByOperator(layers, burner.connected.address)
+        const account = getAccountByOperator(layers.network, burner.connected.address)
         setOperatorTaken(!!account.id);
       }, [mode, burner.connected.address]);
 

@@ -5,7 +5,7 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { NetworkLayer } from 'src/layers/network/types';
+import { NetworkLayer } from 'layers/network/types';
 
 // get an Config from its EntityIndex
 export const getConfigFieldValue = (

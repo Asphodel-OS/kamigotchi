@@ -7,7 +7,7 @@ import crypto from "crypto";
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Kami, getKamiByIndex } from 'layers/react/shapes/Kami';
+import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
@@ -22,19 +22,14 @@ export function registerNameKamiModal() {
       rowEnd: 57,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          api: { player },
-          components: {
-            OperatorAddress,
-            PetID,
-            PetIndex,
-            CanName,
-            Name
-          },
-          actions,
-        },
-      } = layers;
+        OperatorAddress,
+        PetID,
+        PetIndex,
+        CanName,
+        Name
+      } = network.components;
 
       return merge(
         OperatorAddress.update$,
@@ -44,19 +39,16 @@ export function registerNameKamiModal() {
         Name.update$
       ).pipe(
         map(() => {
-          return {
-            layers,
-            actions,
-            api: player,
-          };
+          return { network };
         })
       );
     },
 
-    ({ layers, actions, api }) => {
+    ({ network }) => {
+      const { actions, api } = network;
       const { modals, setModals } = useVisibility();
       const { kamiIndex } = useSelected();
-      const kami = getKamiByIndex(layers, kamiIndex);
+      const kami = getKamiByIndex(network, kamiIndex);
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
@@ -67,7 +59,7 @@ export function registerNameKamiModal() {
           params: [kami.id, name],
           description: `Renaming ${kami.name}`,
           execute: async () => {
-            return api.pet.name(kami.id, name);
+            return api.player.pet.name(kami.id, name);
           },
         });
         return actionID;

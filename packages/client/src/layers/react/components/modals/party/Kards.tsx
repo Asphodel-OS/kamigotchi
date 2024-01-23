@@ -7,8 +7,8 @@ import { IconButton } from "layers/react/components/library/IconButton";
 import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/react/shapes/Account";
-import { Inventory } from "layers/react/shapes/Inventory";
+import { Account } from "layers/network/shapes/Account";
+import { Inventory } from "layers/network/shapes/Inventory";
 import {
   Kami,
   isDead,
@@ -20,7 +20,7 @@ import {
   calcHealth,
   isFull,
   calcOutput,
-} from "layers/react/shapes/Kami";
+} from "layers/network/shapes/Kami";
 import { getRateDisplay } from 'utils/rates';
 import { playClick } from "utils/sounds";
 

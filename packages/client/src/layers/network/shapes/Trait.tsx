@@ -6,8 +6,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Stats, getStats } from './Stats';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized shape of Traits on an Entity
 export interface Trait {
@@ -35,34 +36,19 @@ export interface TraitIndices {
 
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
-export const getTrait = (layers: Layers, entityIndex: EntityIndex): Trait => {
-  const {
-    network: {
-      components: {
-        Affinity,
-        Name,
-        Rarity,
-      },
-    },
-  } = layers;
+export const getTrait = (network: NetworkLayer, entityIndex: EntityIndex): Trait => {
+  const { Affinity, Name, Rarity } = network.components;
 
   return {
     name: getComponentValue(Name, entityIndex)?.value || '' as string,
     affinity: getComponentValue(Affinity, entityIndex)?.value || '' as string,
     rarity: getComponentValue(Rarity, entityIndex)?.value || 0 as number,
-    stats: getStats(layers, entityIndex),
+    stats: getStats(network, entityIndex),
   };
 }
 
-export const getTraitByIndex = (layers: Layers, index: number): Trait => {
-  const {
-    network: {
-      components: {
-        IsRegistry,
-        TraitIndex,
-      },
-    },
-  } = layers;
+export const getTraitByIndex = (network: NetworkLayer, index: number): Trait => {
+  const { IsRegistry, TraitIndex } = network.components;
 
   const entityIndices = Array.from(
     runQuery([
@@ -70,15 +56,15 @@ export const getTraitByIndex = (layers: Layers, index: number): Trait => {
       HasValue(TraitIndex, { value: index })
     ])
   );
-  return getTrait(layers, entityIndices[0]);
+  return getTrait(network, entityIndices[0]);
 }
 
-export const getTraits = (layers: Layers, indices: TraitIndices): Traits => {
+export const getTraits = (network: NetworkLayer, indices: TraitIndices): Traits => {
   return {
-    background: getTrait(layers, indices.backgroundIndex),
-    body: getTrait(layers, indices.bodyIndex),
-    color: getTrait(layers, indices.colorIndex),
-    face: getTrait(layers, indices.faceIndex),
-    hand: getTrait(layers, indices.handIndex),
+    background: getTrait(network, indices.backgroundIndex),
+    body: getTrait(network, indices.bodyIndex),
+    color: getTrait(network, indices.colorIndex),
+    face: getTrait(network, indices.faceIndex),
+    hand: getTrait(network, indices.handIndex),
   };
 }

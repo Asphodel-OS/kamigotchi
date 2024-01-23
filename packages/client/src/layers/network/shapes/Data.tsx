@@ -6,26 +6,24 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
+import { NetworkLayer } from 'layers/network/types';
 
 // get a DataEntity for an account 
 export const getData = (
-  layers: Layers,
+  network: NetworkLayer,
   id: EntityID,
   type: string,
   index?: number,
 ): number => {
   const {
-    network: {
-      components: {
-        HolderID,
-        IsData,
-        Index,
-        Type,
-        Value,
-      },
+    components: {
+      HolderID,
+      IsData,
+      Index,
+      Type,
+      Value,
     }
-  } = layers;
+  } = network;
 
   let configEntityIndex;
   if (index && index > 0) {

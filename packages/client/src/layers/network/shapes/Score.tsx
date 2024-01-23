@@ -8,8 +8,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { Account, getAccount } from './Account';
+import { NetworkLayer } from 'layers/network/types';
+
 
 // standardized Object shape of a Score Entity
 export interface Score {
@@ -25,23 +26,21 @@ export interface ScoresFilter {
 }
 
 // get a Score object from its EnityIndex
-export const getScore = (layers: Layers, index: EntityIndex): Score => {
+export const getScore = (network: NetworkLayer, index: EntityIndex): Score => {
   const {
-    network: {
-      components: {
-        Balance,
-        Epoch,
-        HolderID,
-        Type,
-      },
-      world,
+    world,
+    components: {
+      Balance,
+      Epoch,
+      HolderID,
+      Type,
     },
-  } = layers;
+  } = network;
 
   // populate the holder
   const accountID = getComponentValue(HolderID, index)?.value as EntityID;
   const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
-  const account = getAccount(layers, accountEntityIndex);
+  const account = getAccount(network, accountEntityIndex);
 
   return {
     account,
@@ -51,16 +50,8 @@ export const getScore = (layers: Layers, index: EntityIndex): Score => {
   };
 }
 
-export const getScores = (layers: Layers, filter: ScoresFilter): Score[] => {
-  const {
-    network: {
-      components: {
-        Epoch,
-        IsScore,
-        Type,
-      },
-    },
-  } = layers;
+export const getScores = (network: NetworkLayer, filter: ScoresFilter): Score[] => {
+  const { IsScore, Epoch, Type } = network.components;
 
   // set filters
   const queryFragments = [Has(IsScore)] as QueryFragment[];
@@ -69,7 +60,7 @@ export const getScores = (layers: Layers, filter: ScoresFilter): Score[] => {
 
   // retrieve the relevant entities and their shapes
   const scoreEntityIndices = Array.from(runQuery(queryFragments));
-  const scores = scoreEntityIndices.map((index) => getScore(layers, index));
+  const scores = scoreEntityIndices.map((index) => getScore(network, index));
 
   return scores.sort((a, b) => b.score - a.score);
 }

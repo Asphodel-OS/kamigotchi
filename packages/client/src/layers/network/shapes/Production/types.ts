@@ -4,10 +4,10 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { getConfigFieldValue } from '../Config';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
+import { NetworkLayer } from 'layers/network/types';
 
 // standardized shape of an Production Entity
 export interface Production {
@@ -31,24 +31,22 @@ export interface ProductionOptions {
 
 // get an Production from its EnityIndex
 export const getProduction = (
-  layers: Layers,
+  network: NetworkLayer,
   index: EntityIndex,
   options?: ProductionOptions
 ): Production => {
   const {
-    network: {
-      world,
-      components: {
-        Coin,
-        NodeID,
-        PetID,
-        LastTime,
-        Rate,
-        State,
-        StartTime,
-      },
+    world,
+    components: {
+      Coin,
+      NodeID,
+      PetID,
+      LastTime,
+      Rate,
+      State,
+      StartTime,
     },
-  } = layers;
+  } = network;
 
   let production: Production = {
     id: world.entities[index],
@@ -70,20 +68,20 @@ export const getProduction = (
   if (options.kami) {
     const kamiID = getComponentValue(PetID, index)?.value as EntityID;
     const kamiEntityIndex = world.entityToIndex.get(kamiID);
-    if (kamiEntityIndex) production.kami = getKami(layers, kamiEntityIndex, { account: true });
+    if (kamiEntityIndex) production.kami = getKami(network, kamiEntityIndex, { account: true });
   }
 
   // populate Node
   if (options.node) {
     const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
     const nodeIndex = world.entityToIndex.get(nodeID);
-    if (nodeIndex) production.node = getNode(layers, nodeIndex);
+    if (nodeIndex) production.node = getNode(network, nodeIndex);
   }
 
   /////////////////
   // ADJUSTMENTS
 
-  const ratePrecision = 10 ** getConfigFieldValue(layers.network, 'HARVEST_RATE_PREC');
+  const ratePrecision = 10 ** getConfigFieldValue(network, 'HARVEST_RATE_PREC');
   production.rate /= ratePrecision;
 
   return production;

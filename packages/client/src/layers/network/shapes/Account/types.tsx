@@ -4,7 +4,6 @@ import {
   getComponentValue,
 } from '@latticexyz/recs';
 
-import { Layers } from 'src/types';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { Kami, queryKamisX } from '../Kami';
@@ -15,6 +14,7 @@ import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '
 import { Skill } from '../Skill';
 import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from '../Friendship';
 import { getData } from '../Data';
+import { NetworkLayer } from 'layers/network/types';
 
 
 // standardized shape of an Account Entity
@@ -91,29 +91,27 @@ export interface Inventories {
 
 // get an Account from its EnityIndex
 export const getAccount = (
-  layers: Layers,
+  network: NetworkLayer,
   entityIndex: EntityIndex,
   options?: AccountOptions
 ): Account => {
   const {
-    network: {
-      world,
-      components: {
-        AccountIndex,
-        Coin,
-        LastActionTime,
-        LastTime,
-        Location,
-        Name,
-        OperatorAddress,
-        OwnerAddress,
-        QuestPoint,
-        Stamina,
-        StaminaCurrent,
-        StartTime,
-      },
+    world,
+    components: {
+      AccountIndex,
+      Coin,
+      LastActionTime,
+      LastTime,
+      Location,
+      Name,
+      OperatorAddress,
+      OwnerAddress,
+      QuestPoint,
+      Stamina,
+      StaminaCurrent,
+      StartTime,
     },
-  } = layers;
+  } = network;
 
   let account: Account = {
     entityIndex,
@@ -130,7 +128,7 @@ export const getAccount = (
     stamina: {
       total: (getComponentValue(Stamina, entityIndex)?.value || 20 as number) * 1,
       last: (getComponentValue(StaminaCurrent, entityIndex)?.value || 0 as number) * 1,
-      recoveryPeriod: (getConfigFieldValue(layers.network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD')) * 1,
+      recoveryPeriod: (getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD')) * 1,
     },
     time: {
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
@@ -147,7 +145,7 @@ export const getAccount = (
 
   // populate inventories
   if (options?.inventory) {
-    const inventoryResults = queryInventoryX(layers, { owner: account.id });
+    const inventoryResults = queryInventoryX(network, { owner: account.id });
     const foods: Inventory[] = [];
     const revives: Inventory[] = [];
     const gear: Inventory[] = [];
@@ -183,7 +181,7 @@ export const getAccount = (
   // populate Kamis
   if (options?.kamis) {
     account.kamis = queryKamisX(
-      layers,
+      network,
       { account: account.id },
       { deaths: true, production: true, traits: true }
     );
@@ -192,14 +190,14 @@ export const getAccount = (
   // populate Friends
   if (options?.friends) {
     account.friends = {
-      friends: getAccFriends(layers, account),
-      incomingReqs: getAccIncomingRequests(layers, account),
-      outgoingReqs: getAccOutgoingRequests(layers, account),
-      blocked: getAccBlocked(layers, account),
+      friends: getAccFriends(network, account),
+      incomingReqs: getAccIncomingRequests(network, account),
+      outgoingReqs: getAccOutgoingRequests(network, account),
+      blocked: getAccBlocked(network, account),
       limits: {
-        friends: (getConfigFieldValue(layers.network, 'BASE_FRIENDS_LIMIT')) * 1
-          + (getBonusValue(layers, account.id, 'FRIENDS_LIMIT') ?? 0),
-        requests: (getConfigFieldValue(layers.network, 'FRIENDS_REQUEST_LIMIT')) * 1,
+        friends: (getConfigFieldValue(network, 'BASE_FRIENDS_LIMIT')) * 1
+          + (getBonusValue(network, account.id, 'FRIENDS_LIMIT') ?? 0),
+        requests: (getConfigFieldValue(network, 'FRIENDS_REQUEST_LIMIT')) * 1,
       }
     }
   }
@@ -212,23 +210,23 @@ export const getAccount = (
   // populate Quests
   if (options?.quests) {
     account.quests = {
-      ongoing: parseQuestsStatus(layers, account, getOngoingQuests(layers, account.id)),
-      completed: parseQuestsStatus(layers, account, getCompletedQuests(layers, account.id)),
+      ongoing: parseQuestsStatus(network, account, getOngoingQuests(network, account.id)),
+      completed: parseQuestsStatus(network, account, getCompletedQuests(network, account.id)),
     }
   }
 
   if (options?.lootboxLogs) {
     account.lootboxLogs = {
-      unrevealed: queryAccLBLogs(layers, account.id, false),
-      revealed: queryAccLBLogs(layers, account.id, true)
+      unrevealed: queryAccLBLogs(network, account.id, false),
+      revealed: queryAccLBLogs(network, account.id, true)
     }
   }
 
   // populate Stats
   if (options?.stats) {
     account.stats = {
-      kills: getData(layers, account.id, 'LIQUIDATE'),
-      coin: getData(layers, account.id, 'COIN_TOTAL'),
+      kills: getData(network, account.id, 'LIQUIDATE'),
+      coin: getData(network, account.id, 'COIN_TOTAL'),
     }
   }
 

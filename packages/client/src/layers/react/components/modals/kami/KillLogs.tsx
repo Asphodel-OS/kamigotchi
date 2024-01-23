@@ -8,8 +8,8 @@ import {
   TableRow,
 } from '@mui/material';
 
-import { Kill } from 'layers/react/shapes/Kill';
-import { Kami } from 'layers/react/shapes/Kami';
+import { Kill } from 'layers/network/shapes/Kill';
+import { Kami } from 'layers/network/shapes/Kami';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
