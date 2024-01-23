@@ -22,10 +22,5 @@
     "querystring-es3": "^0.2.1",
     "run-pty": "^4.0.3",
     "url": "^0.11.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "threads@1.7.0": "patches/threads@1.7.0.patch"
-    }
   }
 }
