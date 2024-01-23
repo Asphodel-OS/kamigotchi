@@ -1,5 +1,5 @@
 {
-  "last deployed": "26th December 2023",
+  "last deployed": "23th Jan 2024",
   "undeployed": [],
   "components": [
     "AddressOperatorComponent",
@@ -18,6 +18,7 @@
     "ExperienceComponent",
     "FavoriteFoodComponent",
     "ForComponent",
+    "GachaOrderComponent",
     "GenusComponent",
     "HarmonyComponent",
     "HealthComponent",
@@ -98,6 +99,7 @@
     "QuestPointComponent",
     "RarityComponent",
     "RateComponent",
+    "RerollComponent",
     "SkillPointComponent",
     "SlotsComponent",
     "StaminaComponent",
@@ -875,7 +877,7 @@
       ]
     },
     {
-      "last deployed": "16th Jan 2023",
+      "last deployed": "16th Jan 2024",
       "name": "PetFeedSystem",
       "writeAccess": [
         "BalanceComponent",
@@ -890,6 +892,53 @@
         "RateComponent",
         "TimeLastComponent",
         "TimeStartComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "last deployed": "23rd Jan 2024",
+      "name": "PetGachaMintSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockRevealComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "RerollComponent",
+        "TimeLastComponent",
+        "TypeComponent",
+        "ProxyPermissionsMint20Component",
+        "ValueComponent"
+      ]
+    },
+    {
+      "last deployed": "23rd Jan 2024",
+      "name": "PetGachaRerollSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockRevealComponent",
+        "GachaOrderComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "RerollComponent",
+        "TimeLastComponent",
+        "TypeComponent",
+        "StateComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "last deployed": "23rd Jan 2024",
+      "name": "PetGachaRevealSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockRevealComponent",
+        "GachaOrderComponent",
+        "IdAccountComponent",
+        "RerollComponent",
+        "StateComponent",
         "TypeComponent",
         "ValueComponent"
       ]
