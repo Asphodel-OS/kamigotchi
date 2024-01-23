@@ -784,6 +784,7 @@
     {
       "name": "PetGachaMintSystem",
       "writeAccess": [
+        "BalanceComponent",
         "BlockRevealComponent",
         "IdAccountComponent",
         "IdHolderComponent",
@@ -798,6 +799,7 @@
     {
       "name": "PetGachaRerollSystem",
       "writeAccess": [
+        "BalanceComponent",
         "BlockRevealComponent",
         "GachaOrderComponent",
         "IdAccountComponent",
@@ -813,6 +815,7 @@
     {
       "name": "PetGachaRevealSystem",
       "writeAccess": [
+        "BalanceComponent",
         "BlockRevealComponent",
         "GachaOrderComponent",
         "IdAccountComponent",

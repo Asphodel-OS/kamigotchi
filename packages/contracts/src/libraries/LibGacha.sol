@@ -7,6 +7,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
@@ -22,8 +23,7 @@ import { LibRandom } from "libraries/LibRandom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // stores an increment to add entropy and prevent ordering attacks
-uint256 constant GACHA_INCREMENT_ID = uint256(keccak256("gacha.increment.id"));
-uint256 constant GACHA_NUM_PETS_ID = uint256(keccak256("gacha.num.pets.id"));
+uint256 constant GACHA_DATA_ID = uint256(keccak256("gacha.data.id"));
 
 library LibGacha {
   /// @notice Creates a commit for a gacha roll
@@ -40,9 +40,9 @@ library LibGacha {
 
     // setting increment on commit, increasing increment
     ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 curr = valComp.getValue(GACHA_INCREMENT_ID);
+    uint256 curr = valComp.getValue(GACHA_DATA_ID);
     valComp.set(id, curr + 1);
-    valComp.set(GACHA_INCREMENT_ID, curr + 1);
+    valComp.set(GACHA_DATA_ID, curr + 1);
   }
 
   /// @notice Creates a commit for multiple gacha rolls (same account)
@@ -60,7 +60,7 @@ library LibGacha {
     );
     TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
     ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 currInc = valueComp.getValue(GACHA_INCREMENT_ID) + 1;
+    uint256 currInc = valueComp.getValue(GACHA_DATA_ID) + 1;
     for (uint256 i; i < amount; i++) {
       uint256 id = world.getUniqueEntityId();
       accComp.set(id, accountID);
@@ -69,7 +69,7 @@ library LibGacha {
       valueComp.set(id, currInc + i);
       ids[i] = id;
     }
-    valueComp.set(GACHA_INCREMENT_ID, currInc + amount);
+    valueComp.set(GACHA_DATA_ID, currInc + amount);
   }
 
   /// @notice deposits a pet into the gacha pool
@@ -224,11 +224,11 @@ library LibGacha {
   }
 
   function getIncrement(IUintComp components) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(GACHA_INCREMENT_ID);
+    return ValueComponent(getAddressById(components, ValueCompID)).getValue(GACHA_DATA_ID);
   }
 
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(GACHA_NUM_PETS_ID);
+    return BalanceComponent(getAddressById(components, BalanceCompID)).getValue(GACHA_DATA_ID);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -293,20 +293,20 @@ library LibGacha {
 
   function initIncrement(IUintComp components) internal {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    if (!comp.has(GACHA_INCREMENT_ID)) comp.set(GACHA_INCREMENT_ID, 0);
+    if (!comp.has(GACHA_DATA_ID)) comp.set(GACHA_DATA_ID, 0);
   }
 
   function initNumInGacha(IUintComp components) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    if (!comp.has(GACHA_NUM_PETS_ID)) comp.set(GACHA_NUM_PETS_ID, 0);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    if (!comp.has(GACHA_DATA_ID)) comp.set(GACHA_DATA_ID, 0);
   }
 
   function setIncrement(IUintComp components, uint256 increment) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(GACHA_INCREMENT_ID, increment);
+    ValueComponent(getAddressById(components, ValueCompID)).set(GACHA_DATA_ID, increment);
   }
 
   function setNumInGacha(IUintComp components, uint256 num) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(GACHA_NUM_PETS_ID, num);
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(GACHA_DATA_ID, num);
   }
 
   function setReroll(IUintComp components, uint256 id, uint256 reroll) internal {
