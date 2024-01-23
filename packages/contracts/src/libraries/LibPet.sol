@@ -340,9 +340,23 @@ library LibPet {
   /////////////////
   // CHECKERS
 
+  // check if the pet's account matches with target
+  function assertAccount(
+    IUintComp components,
+    uint256 id,
+    uint256 accountID
+  ) internal view returns (bool) {
+    return getAccount(components, id) == accountID;
+  }
+
   // Check wether a pet can be named
   function canName(IUintComp components, uint256 id) internal view returns (bool) {
     return CanNameComponent(getAddressById(components, CanNameCompID)).has(id);
+  }
+
+  // Check whether a pet is attached to an account
+  function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
+    return IdAccountComponent(getAddressById(components, IdAccCompID)).has(id);
   }
 
   // Check whether a pet is dead.
@@ -390,6 +404,26 @@ library LibPet {
     uint256 idleTime = block.timestamp - getLastActionTs(components, id);
     uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
     return idleTime < idleRequirement;
+  }
+
+  function assertAccountBatch(
+    IUintComp components,
+    uint256[] memory ids,
+    uint256 accountID
+  ) internal view returns (bool) {
+    uint256[] memory accounts = getAccountBatch(components, ids);
+    for (uint256 i = 0; i < ids.length; i++) {
+      if (accounts[i] != accountID) return false;
+    }
+    return true;
+  }
+
+  function isPetBatch(IUintComp components, uint256[] memory ids) internal view returns (bool) {
+    IsPetComponent comp = IsPetComponent(getAddressById(components, IsPetCompID));
+    for (uint256 i = 0; i < ids.length; i++) {
+      if (!comp.has(ids[i])) return false;
+    }
+    return true;
   }
 
   /////////////////
@@ -475,10 +509,6 @@ library LibPet {
   /////////////////
   // GETTERS
 
-  function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IdAccountComponent(getAddressById(components, IdAccCompID)).has(id);
-  }
-
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
@@ -562,6 +592,18 @@ library LibPet {
     affinities[0] = LibStat.getAffinity(components, bodyRegistryID);
     affinities[1] = LibStat.getAffinity(components, handRegistryID);
     return affinities;
+  }
+
+  function getAccountBatch(
+    IUintComp components,
+    uint256[] memory ids
+  ) internal view returns (uint256[] memory) {
+    IdAccountComponent comp = IdAccountComponent(getAddressById(components, IdAccCompID));
+    uint256[] memory results = new uint256[](ids.length);
+    for (uint256 i = 0; i < ids.length; i++) {
+      results[i] = comp.getValue(ids[i]);
+    }
+    return results;
   }
 
   /////////////////

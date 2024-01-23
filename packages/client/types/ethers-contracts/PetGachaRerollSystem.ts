@@ -33,7 +33,7 @@ export interface PetGachaRerollSystemInterface extends utils.Interface {
     "execute(bytes)": FunctionFragment;
     "init(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "reroll(uint256)": FunctionFragment;
+    "reroll(uint256[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -57,7 +57,7 @@ export interface PetGachaRerollSystemInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "reroll",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -132,7 +132,7 @@ export interface PetGachaRerollSystem extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     reroll(
-      petID: PromiseOrValue<BigNumberish>,
+      petIDs: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -155,7 +155,7 @@ export interface PetGachaRerollSystem extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   reroll(
-    petID: PromiseOrValue<BigNumberish>,
+    petIDs: PromiseOrValue<BigNumberish>[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -178,9 +178,9 @@ export interface PetGachaRerollSystem extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     reroll(
-      petID: PromiseOrValue<BigNumberish>,
+      petIDs: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<BigNumber[]>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -213,7 +213,7 @@ export interface PetGachaRerollSystem extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     reroll(
-      petID: PromiseOrValue<BigNumberish>,
+      petIDs: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -237,7 +237,7 @@ export interface PetGachaRerollSystem extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     reroll(
-      petID: PromiseOrValue<BigNumberish>,
+      petIDs: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

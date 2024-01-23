@@ -11,35 +11,42 @@ import { LibPet } from "libraries/LibPet.sol";
 uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Reroll"));
 
 /// @notice commits to get a random pet from gacha via rerolling + cost
+/// @dev only meant to be called for a single account
 contract PetGachaRerollSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function reroll(uint256 petID) external payable returns (uint256) {
+  function reroll(uint256[] memory petIDs) external payable returns (uint256[] memory) {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "no account detected");
-    require(LibPet.isPet(components, petID), "not a pet");
-    require(LibPet.getAccount(components, petID) == accountID, "not urs");
+    require(LibPet.isPetBatch(components, petIDs), "not a pet");
+    require(LibPet.assertAccountBatch(components, petIDs, accountID), "not urs");
 
     // get and check price (in wei)
-    uint256 prevRerolls = LibGacha.extractReroll(components, petID);
-    uint256 price = LibGacha.calcRerollCost(components, prevRerolls);
+    uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, petIDs);
+    uint256 price = LibGacha.calcRerollsCost(components, prevRerolls);
     require(msg.value >= price, "not enough ETH");
 
     // send pet into pool
-    LibGacha.depositPet(components, petID);
+    LibGacha.depositPets(components, petIDs);
 
     // commits random seed for gacha roll
-    uint256 commitID = LibGacha.commit(world, components, accountID, block.number);
-    LibGacha.setReroll(components, commitID, prevRerolls);
+    uint256[] memory commitIDs = LibGacha.commitBatch(
+      world,
+      components,
+      petIDs.length,
+      accountID,
+      block.number
+    );
+    LibGacha.setRerollBatch(components, commitIDs, prevRerolls);
 
     // standard logging and tracking
-    LibAccount.logIncPetsRerolled(world, components, accountID, 1);
+    LibAccount.logIncPetsRerolled(world, components, accountID, petIDs.length);
     LibAccount.updateLastTs(components, accountID);
 
     // sending eth to owner
     payable(owner()).transfer(address(this).balance);
 
-    return commitID;
+    return commitIDs;
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

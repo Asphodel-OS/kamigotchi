@@ -12,6 +12,8 @@ contract GachaTest is SetupTemplate {
     super.setUp();
 
     _initStockTraits();
+
+    _setConfig("GACHA_REROLL_PRICE", 1);
   }
 
   function setUpMint() public override {
@@ -62,25 +64,62 @@ contract GachaTest is SetupTemplate {
 
     // rerolling
     uint256 cost = _getRerollCost(1);
-    vm.deal(owner, cost);
-    vm.prank(owner);
-    uint256 reCommit = _PetGachaRerollSystem.reroll{ value: cost }(petUser);
-    _assertCommit(reCommit, 0, _currBlock, 1);
-    petUser = _revealSingle(reCommit);
+    uint256[] memory petUserArr = new uint256[](1);
+    petUserArr[0] = petUser;
+    uint256[] memory reCommits = _reroll(0, cost, petUserArr);
+    _assertCommit(reCommits[0], 0, _currBlock, 1);
+    vm.roll(++_currBlock);
+    petUser = _PetGachaRevealSystem.reveal(reCommits)[0];
     petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
     _assertOutGacha(petUser, 0, 2);
     _assertInGacha(petPool);
 
     // rerolling again
     cost = _getRerollCost(2);
-    vm.deal(owner, cost);
-    vm.prank(owner);
-    reCommit = _PetGachaRerollSystem.reroll{ value: cost }(petUser);
-    _assertCommit(reCommit, 0, _currBlock, 2);
-    petUser = _revealSingle(reCommit);
+    petUserArr[0] = petUser;
+    reCommits = _reroll(0, cost, petUserArr);
+    _assertCommit(reCommits[0], 0, _currBlock, 2);
+    vm.roll(++_currBlock);
+    petUser = _PetGachaRevealSystem.reveal(reCommits)[0];
     petPool = ogPool[0] == petUser ? ogPool[1] : ogPool[0];
     _assertOutGacha(petUser, 0, 3);
     _assertInGacha(petPool);
+  }
+
+  function testMultipleReroll() public {
+    uint256[] memory ogPool = _batchMint(10);
+
+    address owner = _owners[0];
+
+    // minting first pet
+    uint256[] memory userPets = _mintPets(0, 3);
+
+    // reroll the first pet, replace it with result
+    uint256 cost = _getRerollCost(1);
+    uint256[] memory petUserArr = new uint256[](1);
+    petUserArr[0] = userPets[0];
+    uint256[] memory reCommits = _reroll(0, cost, petUserArr);
+    vm.roll(++_currBlock);
+    userPets[0] = _PetGachaRevealSystem.reveal(reCommits)[0];
+    _assertOutGacha(userPets[0], 0, 2);
+
+    // reroll first two pets, but fail pricing
+    uint256[] memory petUserArr2 = new uint256[](2);
+    petUserArr2[0] = userPets[0];
+    petUserArr2[1] = userPets[1];
+    vm.roll(++_currBlock);
+    vm.deal(owner, cost);
+    vm.prank(owner);
+    vm.expectRevert("not enough ETH");
+    _PetGachaRerollSystem.reroll{ value: cost }(petUserArr2);
+
+    // reroll first two pets, but correct pricing
+    cost = _getRerollCost(1) + _getRerollCost(2);
+    uint256[] memory reCommits2 = _reroll(0, cost, petUserArr2);
+    vm.roll(++_currBlock);
+    uint256[] memory outputs = _PetGachaRevealSystem.reveal(reCommits2);
+    _assertOutGacha(outputs[0], 0, 3);
+    _assertOutGacha(outputs[1], 0, 2);
   }
 
   // commented to test faster - it takes a few minutes
@@ -136,35 +175,34 @@ contract GachaTest is SetupTemplate {
   // }
 
   // Commented out to test faster - it takes a few minutes
-  // function testDistribution() public {
-  //   uint256 length = 33;
-  //   uint256[] memory ogPool = _batchMint(length);
-  //   uint256[] memory counts = new uint256[](length);
+  function testDistribution() public {
+    uint256 length = 33;
+    uint256[] memory ogPool = _batchMint(length);
+    uint256[] memory counts = new uint256[](length);
 
-  //   address owner = _owners[0];
+    address owner = _owners[0];
 
-  //   // minting first pet
-  //   vm.roll(++_currBlock);
-  //   _giveMint20(0, 1);
-  //   vm.prank(owner);
-  //   uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
-  //   vm.roll(++_currBlock);
-  //   uint256 resultPet = _PetGachaRevealSystem.reveal(commits)[0];
-  //   counts[LibPet.idToIndex(components, resultPet) - 1]++;
+    // minting first pet
+    vm.roll(++_currBlock);
+    _giveMint20(0, 1);
+    vm.prank(owner);
+    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
+    vm.roll(++_currBlock);
+    uint256[] memory resultPets = _PetGachaRevealSystem.reveal(commits);
+    counts[LibPet.idToIndex(components, resultPets[0]) - 1]++;
 
-  //   for (uint256 i = 0; i < 1000; i++) {
-  //     uint256 cost = _getRerollCost(i + 1);
-  //     vm.deal(owner, cost);
-  //     vm.prank(owner);
-  //     uint256 reCommit = _PetGachaRerollSystem.reroll{ value: cost }(resultPet);
-  //     resultPet = _revealSingle(reCommit);
-  //     counts[LibPet.idToIndex(components, resultPet) - 1]++;
-  //   }
+    for (uint256 i = 0; i < 1000; i++) {
+      uint256 cost = _getRerollCost(i + 1);
+      uint256[] memory reCommits = _reroll(0, cost, resultPets);
+      vm.roll(++_currBlock);
+      resultPets[0] = _PetGachaRevealSystem.reveal(reCommits)[0];
+      counts[LibPet.idToIndex(components, resultPets[0]) - 1]++;
+    }
 
-  //   for (uint256 i = 0; i < length; i++) {
-  //     console.log("pet %s: %s", i + 1, counts[i]);
-  //   }
-  // }
+    for (uint256 i = 0; i < length; i++) {
+      console.log("pet %s: %s", i + 1, counts[i]);
+    }
+  }
 
   ///////////////
   // LIB TESTS //
@@ -210,13 +248,15 @@ contract GachaTest is SetupTemplate {
     vm.stopPrank();
   }
 
-  function _rerollPet(uint256 petID, uint256 accountIndex) internal returns (uint256) {
-    address owner = _owners[accountIndex];
-
-    uint256 cost = _getRerollCost(_RerollComponent.getValue(petID));
-    vm.deal(owner, cost);
-    vm.prank(owner);
-    uint256 reCommit = _PetGachaRerollSystem.reroll{ value: cost }(petID);
+  function _reroll(
+    uint256 accountIndex,
+    uint256 cost,
+    uint256[] memory petIDs
+  ) internal returns (uint256[] memory results) {
+    vm.roll(++_currBlock);
+    vm.deal(_owners[accountIndex], cost);
+    vm.prank(_owners[accountIndex]);
+    results = _PetGachaRerollSystem.reroll{ value: cost }(petIDs);
   }
 
   function _revealSingle(uint256 commitID) internal returns (uint256) {

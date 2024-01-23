@@ -72,13 +72,27 @@ library LibGacha {
     valueComp.set(GACHA_DATA_ID, currInc + amount);
   }
 
-  /// @notice deposits a pet into the gacha pool
-  function depositPet(IUintComp components, uint256 petID) internal {
-    LibPet.toGacha(components, petID);
+  /// @notice deposits pets into the gacha pool
+  /// @dev doesnt use LibPet for batch efficiency
+  function depositPets(IUintComp components, uint256[] memory petIDs) internal {
+    GachaOrderComponent orderComp = GachaOrderComponent(
+      getAddressById(components, GachaOrderCompID)
+    );
+    IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
+    RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
+    StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
 
     uint256 numInGacha = getNumInGacha(components);
-    GachaOrderComponent(getAddressById(components, GachaOrderCompID)).set(petID, numInGacha);
-    setNumInGacha(components, numInGacha + 1);
+
+    for (uint256 i; i < petIDs.length; i++) {
+      stateComp.set(petIDs[i], string("GACHA"));
+      orderComp.set(petIDs[i], numInGacha + i);
+
+      accComp.remove(petIDs[i]);
+      if (rerollComp.has(petIDs[i])) rerollComp.remove(petIDs[i]);
+    }
+
+    setNumInGacha(components, numInGacha + petIDs.length);
   }
 
   /// @notice transfers multiple pets from gacha to accounts
@@ -111,6 +125,19 @@ library LibGacha {
   ) internal view returns (uint256) {
     uint256 baseCost = LibConfig.getValueOf(components, "GACHA_REROLL_PRICE");
     return baseCost * (rerollCount + 1);
+  }
+
+  function calcRerollsCost(
+    IUintComp components,
+    uint256[] memory rerollCounts
+  ) internal view returns (uint256) {
+    uint256 baseCost = LibConfig.getValueOf(components, "GACHA_REROLL_PRICE");
+
+    uint256 total;
+    for (uint256 i; i < rerollCounts.length; i++) {
+      total += baseCost * (rerollCounts[i] + 1);
+    }
+    return total;
   }
 
   /// @notice calculates and extracts the seed from gacha commits
