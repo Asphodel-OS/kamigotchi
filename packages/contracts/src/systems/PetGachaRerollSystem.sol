@@ -12,10 +12,7 @@ uint256 constant ID = uint256(keccak256("system.Pet.Gacha.Reroll"));
 
 /// @notice commits to get a random pet from gacha via rerolling + cost
 contract PetGachaRerollSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {
-    // init increment if not already
-    // LibGacha.initIncrement(components);
-  }
+  constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function reroll(uint256 petID) external payable returns (uint256) {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
