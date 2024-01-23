@@ -32,8 +32,7 @@ const wagmiConfig = createConfig({
 export const Engine: React.FC<{
   setLayers: { current: (layers: Layers) => void };
   mountReact: { current: (mount: boolean) => void };
-  customBootScreen?: React.ReactElement;
-}> = observer(({ mountReact, setLayers, customBootScreen }) => {
+}> = observer(({ mountReact, setLayers }) => {
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
 
@@ -44,7 +43,7 @@ export const Engine: React.FC<{
     console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE (chain ${defaultChain.id})`);
   }, []);
 
-  if (!mounted || !layers) return customBootScreen || <BootScreen />;
+  if (!mounted || !layers) return <BootScreen />;
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider

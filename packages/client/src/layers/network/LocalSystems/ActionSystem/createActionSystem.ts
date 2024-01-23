@@ -24,7 +24,6 @@ import { Provider } from "@ethersproject/providers";
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 
 export function createActionSystem<M = undefined>(world: World, txReduced$: Observable<string>, provider: Provider) {
-  // Action component
   const Action = defineActionComponent<M>(world);
 
   // Components that scheduled actions depend on including pending updates
@@ -40,6 +39,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
   world.registerDisposer(() => {
     for (const { dispose } of disposer.values()) dispose();
   });
+
 
   /**
    * Maps all components in a given components map to the respective components including pending updates
@@ -59,6 +59,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     // Typescript can't know that the optimistic component with this id has the same type as C
     return optimisticComponent as OverridableComponent<S, M, T>;
   }
+
 
   /**
    * Schedules an action. The action will be executed once its requirement is fulfilled.
@@ -192,14 +193,13 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
       handleError(e, action);
     }
 
-    // After the action is done executing (failed or completed), remove its actionData and remove the Action component
+    // we want to persist for the sake of populating a history transaction log
     // remove(action.id);
   }
 
   // Set the action's state to ActionState.Failed
   function handleError(error: any, action: ActionData) {
-    updateComponent(Action, action.entityIndex, { metadata: error.reason });
-    updateComponent(Action, action.entityIndex, { state: ActionState.Failed });
+    updateComponent(Action, action.entityIndex, { state: ActionState.Failed, metadata: error.reason });
     // remove(action.id);
   }
 
@@ -210,8 +210,12 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    */
   function cancel(actionId: EntityID): boolean {
     const action = actionData.get(actionId);
-    if (!action || getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) {
-      console.warn(`Action ${actionId} was not found or is not in the "Requested" state.`);
+    if (!action) {
+      console.warn(`Trying to cancel Action ${actionId} that does not exist.`);
+      return false;
+    }
+    if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) {
+      console.warn(`Action ${actionId} is not in the "Requested" state.`);
       return false;
     }
     updateComponent(Action, action.entityIndex, { state: ActionState.Cancelled });
@@ -252,5 +256,11 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     actionIndex != null && setTimeout(() => removeComponent(Action, actionIndex), 5000);
   }
 
-  return { add, cancel, withOptimisticUpdates, Action };
+  return {
+    Action,
+    add,
+    cancel,
+    remove,
+    withOptimisticUpdates,
+  };
 }
