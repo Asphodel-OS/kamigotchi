@@ -13,7 +13,7 @@
     "deploy": "pnpm deploy:local",
     "dev": "pnpm dev:local",
     "devnode": "mud devnode",
-    "prepare": "mud types",
+    "prepare": "pnpm types",
     "start": "pnpm start:local",
     "test": "mud test && pnpm abi:clean",
     "types": "mud types",
