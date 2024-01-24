@@ -13,9 +13,9 @@ import rooms from 'assets/data/rooms/Rooms.csv';
 import nodes from 'assets/data/nodes/Nodes.csv';
 
 export function setUpWorldAPI(systems: any) {
-  async function initAll() {
-    const api = createAdminAPI(systems);
+  const api = createAdminAPI(systems);
 
+  async function initAll() {
     await initConfig(api);
     await initRooms(api);
     await initNodes(api);
@@ -25,10 +25,13 @@ export function setUpWorldAPI(systems: any) {
     await initSkills(api);
     await initTraits(api);
     await initRelationships(api);
-    await initGachaPool(api);
 
     if (!process.env.MODE || process.env.MODE == 'DEV') {
       await initLocalConfig(api);
+      await initGachaPool(api, 333);
+
+    } else {
+      await initGachaPool(api, 3333);
     }
 
     createPlayerAPI(systems).account.register(
@@ -293,11 +296,10 @@ export function setUpWorldAPI(systems: any) {
   ///////////////////
   // MINT FLOW
 
-  async function initGachaPool(api: AdminAPI) {
+  async function initGachaPool(api: AdminAPI, numToMint: number) {
     await api.mint.gacha.init();
     await api.mint.batchMinter.init();
 
-    const numToMint = 3333;
     const intervals = 8;
     for (let i = 0; i < numToMint; i += intervals) {
       await sleepIf();
@@ -705,42 +707,42 @@ export function setUpWorldAPI(systems: any) {
   return {
     init: initAll,
     config: {
-      init: () => initConfig(createAdminAPI(systems)),
+      init: () => initConfig(api),
     },
     items: {
-      init: () => initItems(createAdminAPI(systems)),
-      deletes: (indices: number[]) => deleteItems(createAdminAPI(systems), indices),
+      init: () => initItems(api),
+      delete: (indices: number[]) => deleteItems(api, indices),
     },
     npcs: {
-      init: () => initNpcs(createAdminAPI(systems)),
+      init: () => initNpcs(api),
     },
     nodes: {
-      init: () => initNodes(createAdminAPI(systems)),
-      deletes: (indices: number[]) => deleteNodes(createAdminAPI(systems), indices),
+      init: () => initNodes(api),
+      delete: (indices: number[]) => deleteNodes(api, indices),
     },
     mint: {
-      init: () => initGachaPool(createAdminAPI(systems)),
+      init: (n: number) => initGachaPool(api, n),
     },
     quests: {
-      init: () => initQuests(createAdminAPI(systems)),
-      deletes: (indices: number[]) => deleteQuests(createAdminAPI(systems), indices),
+      init: () => initQuests(api),
+      delete: (indices: number[]) => deleteQuests(api, indices),
     },
     relationships: {
-      init: () => initRelationships(createAdminAPI(systems)),
-      deletes: (npcs: number[], indices: number[]) => deleteRelationships(createAdminAPI(systems), indices, npcs),
+      init: () => initRelationships(api),
+      delete: (npcs: number[], indices: number[]) => deleteRelationships(api, indices, npcs),
     },
     rooms: {
-      init: () => initRooms(createAdminAPI(systems)),
-      deletes: (indices: number[]) => deleteRooms(createAdminAPI(systems), indices),
+      init: () => initRooms(api),
+      delete: (indices: number[]) => deleteRooms(api, indices),
     },
     skill: {
-      init: () => initSkills(createAdminAPI(systems)),
-      deletes: (indices: number[]) => deleteSkills(createAdminAPI(systems), indices),
+      init: () => initSkills(api),
+      delete: (indices: number[]) => deleteSkills(api, indices),
     },
     traits: {
-      init: () => initTraits(createAdminAPI(systems)),
-      tryInit: () => initTraitsWithFail(createAdminAPI(systems)),
-      deletes: (indices: number[], types: string[]) => deleteTraits(createAdminAPI(systems), indices, types),
+      init: () => initTraits(api),
+      tryInit: () => initTraitsWithFail(api),
+      delete: (indices: number[], types: string[]) => deleteTraits(api, indices, types),
     },
   }
 
