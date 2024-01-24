@@ -65,7 +65,7 @@ export const getItem = (
     name: getComponentValue(Name, index)?.value as string ?? 'Unknown Item',
     image: {
       default: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
-      x4: `${baseURI}${(getComponentValue(MediaURI, index)?.value as string).slice(0, -4)}_x4.png`,
+      x4: `${baseURI}${(getComponentValue(MediaURI, index)?.value as string)?.slice(0, -4)}_x4.png`,
     },
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(layers, index),
