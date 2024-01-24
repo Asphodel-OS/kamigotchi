@@ -1,7 +1,7 @@
 import { EntityIndex } from '@latticexyz/recs';
 import { create } from 'zustand';
 
-export interface SelectedEntities {
+export interface State {
   accountIndex: number;
   dialogueIndex: number;
   kamiIndex: number;
@@ -21,8 +21,8 @@ interface Actions {
   setRoom: (roomLocation: number) => void;
 }
 
-export const useSelected = create<SelectedEntities & Actions>((set) => {
-  const initialState: SelectedEntities = {
+export const useSelected = create<State & Actions>((set) => {
+  const initialState: State = {
     accountIndex: 0 as number,
     dialogueIndex: 0 as number,
     kamiIndex: 0 as number,
@@ -35,25 +35,25 @@ export const useSelected = create<SelectedEntities & Actions>((set) => {
   return {
     ...initialState,
     setAccount: (accountIndex: number) => set(
-      (state: SelectedEntities) => ({ ...state, accountIndex })
+      (state: State) => ({ ...state, accountIndex })
     ),
     setDialogue: (dialogueIndex: number) => set(
-      (state: SelectedEntities) => ({ ...state, dialogueIndex })
+      (state: State) => ({ ...state, dialogueIndex })
     ),
     setKami: (kamiIndex: number) => set(
-      (state: SelectedEntities) => ({ ...state, kamiIndex })
+      (state: State) => ({ ...state, kamiIndex })
     ),
     setListing: (listingEntityIndex: EntityIndex) => set(
-      (state: SelectedEntities) => ({ ...state, listingEntityIndex })
+      (state: State) => ({ ...state, listingEntityIndex })
     ),
     setNode: (nodeIndex: number) => set(
-      (state: SelectedEntities) => ({ ...state, nodeIndex })
+      (state: State) => ({ ...state, nodeIndex })
     ),
     setNpc: (npcIndex: number) => set(
-      (state: SelectedEntities) => ({ ...state, npcIndex })
+      (state: State) => ({ ...state, npcIndex })
     ),
     setRoom: (roomLocation: number) => set(
-      (state: SelectedEntities) => ({ ...state, roomLocation })
+      (state: State) => ({ ...state, roomLocation })
     ),
   };
 });

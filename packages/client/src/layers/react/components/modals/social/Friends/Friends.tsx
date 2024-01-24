@@ -10,8 +10,8 @@ import { ActionButton } from "layers/react/components/library";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { Tooltip } from "layers/react/components/library";
 
-import { Account } from "layers/react/shapes/Account";
-import { Friendship } from "layers/react/shapes/Friendship";
+import { Account } from "layers/network/shapes/Account";
+import { Friendship } from "layers/network/shapes/Friendship";
 
 interface Props {
   account: Account;

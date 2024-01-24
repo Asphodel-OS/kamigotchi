@@ -12,7 +12,12 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
+import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
+import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
+import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
+import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
+import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
@@ -24,9 +29,6 @@ import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTra
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
-import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
-import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
-import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -44,6 +46,7 @@ import { Pet721 } from "tokens/Pet721.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { GACHA_DATA_ID } from "libraries/LibGacha.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
@@ -70,7 +73,7 @@ struct TraitStats {
   uint8 slots;
 }
 
-/// @notice small hopper contract to make trait handling more readable
+/// @notice small contract to make trait handling more readable
 abstract contract TraitHandler {
   ///////////////
   // VARIABLES //
@@ -271,8 +274,8 @@ abstract contract TraitHandler {
 }
 
 /** @notice
- * batch minting system, for sudo pools. only can be called by admin
- * mints out of game (to a specific address)
+ * batch minting and reveal system, to seed initial gacha pool.
+ * mints in game
  */
 /// @dev to be called by account owner
 contract _721BatchMinterSystem is System, TraitHandler {
@@ -288,6 +291,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
   Pet721 internal immutable pet721;
   CanNameComponent internal immutable canNameComp;
+  GachaOrderComponent internal immutable gachaOrderComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
   MediaURIComponent internal immutable mediaURIComp;
@@ -298,6 +302,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   LevelComponent internal immutable levelComp;
   ExperienceComponent internal immutable expComp;
   SkillPointComponent internal immutable skillPointComp;
+  BalanceComponent internal immutable balanceComp;
 
   constructor(
     IWorld _world,
@@ -307,6 +312,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
     pet721 = LibPet721.getContract(world);
     canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
+    gachaOrderComp = GachaOrderComponent(getAddressById(components, GachaOrderCompID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
     mediaURIComp = MediaURIComponent(getAddressById(components, MediaURICompID));
@@ -317,22 +323,27 @@ contract _721BatchMinterSystem is System, TraitHandler {
     levelComp = LevelComponent(getAddressById(components, LevelCompID));
     expComp = ExperienceComponent(getAddressById(components, ExperienceCompID));
     skillPointComp = SkillPointComponent(getAddressById(components, SkillPointCompID));
+    balanceComp = BalanceComponent(getAddressById(components, BalanceCompID));
   }
 
   /// @dev if calling many times, reduce call data by memozing address / bitpacking
-  function batchMint(address to, uint256 amount) external onlyOwner returns (uint256[] memory) {
+  function batchMint(uint256 amount) external onlyOwner returns (uint256[] memory) {
     // require(colorWeights.keys != 0, "traits not set");
 
-    uint256 startIndex = pet721.totalSupply() + 1;
+    uint256 startIndex = pet721.totalSupply() + 1; // starts from 1
+    uint256 startGacha = balanceComp.getValue(GACHA_DATA_ID); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
-    uint256[] memory ids = createPets(startIndex, amount);
+    uint256[] memory ids = createPets(startIndex, startGacha, amount);
 
     /// @dev revealing pets
     revealPets(ids, amount);
 
     /// @dev minting 721s
-    mint721s(to, startIndex, amount);
+    mint721s(startIndex, amount);
+
+    // update gacha total
+    balanceComp.set(GACHA_DATA_ID, startGacha + amount);
 
     return ids;
   }
@@ -346,17 +357,22 @@ contract _721BatchMinterSystem is System, TraitHandler {
   /////////////////////
 
   /// @notice create pet, replaces LibPet.create
-  function createPets(uint256 startIndex, uint256 amount) internal returns (uint256[] memory ids) {
+  function createPets(
+    uint256 startIndex,
+    uint256 startGacha,
+    uint256 amount
+  ) internal returns (uint256[] memory ids) {
     ids = new uint256[](amount);
     for (uint256 i; i < amount; i++) {
       uint256 id = world.getUniqueEntityId();
       ids[i] = id;
 
       canNameComp.set(id); // normally after reveal
+      gachaOrderComp.set(id, startGacha + i);
       isPetComp.set(id);
       indexPetComp.set(id, startIndex + i);
       nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
-      stateComp.set(id, string("721_EXTERNAL")); // normally after reveal
+      stateComp.set(id, string("GACHA")); // seed in gacha
       timeStartComp.set(id, block.timestamp);
       timeLastComp.set(id, block.timestamp); // normally after reveal
       levelComp.set(id, 1);
@@ -391,10 +407,10 @@ contract _721BatchMinterSystem is System, TraitHandler {
   }
 
   /// @notice batch mint pets, replaces LibPet721
-  function mint721s(address to, uint256 startIndex, uint256 amount) internal {
+  function mint721s(uint256 startIndex, uint256 amount) internal {
     uint256[] memory indices = new uint256[](amount);
     for (uint256 i; i < amount; i++) indices[i] = startIndex + i;
-    pet721.mintBatch(to, indices);
+    pet721.mintBatch(address(pet721), indices);
   }
 
   ////////////////////

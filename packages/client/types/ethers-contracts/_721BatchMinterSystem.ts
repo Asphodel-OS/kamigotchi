@@ -52,7 +52,7 @@ export type TraitStatsStructOutput = [
 export interface _721BatchMinterSystemInterface extends utils.Interface {
   functions: {
     "_getTraitStats(uint256)": FunctionFragment;
-    "batchMint(address,uint256)": FunctionFragment;
+    "batchMint(uint256)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "setTraits()": FunctionFragment;
@@ -75,7 +75,7 @@ export interface _721BatchMinterSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "batchMint",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
@@ -153,7 +153,6 @@ export interface _721BatchMinterSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     batchMint(
-      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -181,7 +180,6 @@ export interface _721BatchMinterSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   batchMint(
-    to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -209,7 +207,6 @@ export interface _721BatchMinterSystem extends BaseContract {
     ): Promise<TraitStatsStructOutput>;
 
     batchMint(
-      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
@@ -247,7 +244,6 @@ export interface _721BatchMinterSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     batchMint(
-      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -276,7 +272,6 @@ export interface _721BatchMinterSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     batchMint(
-      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

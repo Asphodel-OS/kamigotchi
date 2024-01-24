@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/react/shapes/Account";
-import { Item } from "layers/react/shapes/Item";
-import { Objective, Quest, Requirement, Reward } from "layers/react/shapes/Quest";
-import { Room } from "layers/react/shapes/Room";
+import { Account } from "layers/network/shapes/Account";
+import { Item } from "layers/network/shapes/Item";
+import { Objective, Quest, Requirement, Reward } from "layers/network/shapes/Quest";
+import { Room } from "layers/network/shapes/Room";
 
 
 interface Props {
@@ -30,7 +30,8 @@ interface Props {
 }
 
 export const List = (props: Props) => {
-  // ticking
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
   // ticking
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   useEffect(() => {
@@ -43,7 +44,6 @@ export const List = (props: Props) => {
     };
   }, []);
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
 
   ///////////////////
   // LOGIC
@@ -264,6 +264,10 @@ export const List = (props: Props) => {
     });
 
     const quests = repeats.concat(oneTimes);
+
+    // calling a setState during a render is a no-no, even if indirect/nested.
+    // we should consider when specifically we'd like update this value, rather
+    // than calling it here.
     props.utils.setNumAvail(quests.length);
 
     return quests;

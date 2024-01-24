@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { Listing } from 'layers/react/shapes/Listing';
+import { Listing } from 'layers/network/shapes/Listing';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { Tooltip } from '../../library/Tooltip';

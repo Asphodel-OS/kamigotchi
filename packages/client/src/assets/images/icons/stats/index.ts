@@ -4,7 +4,7 @@ import powerIcon from './power.png';
 import slotsIcon from './slots.png';
 import violenceIcon from './violence.png';
 
-export const statIcons = {
+export const StatIcons = {
   health: healthIcon,
   power: powerIcon,
   violence: violenceIcon,

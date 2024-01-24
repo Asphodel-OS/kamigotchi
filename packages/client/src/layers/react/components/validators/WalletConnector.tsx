@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { useAccount, useNetwork, Connector } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
-import { createNetworkConfig } from 'layers/network/config';
-import { createNetworkLayer } from 'layers/network/createNetworkLayer';
+import { createNetworkConfig, createNetworkLayer } from 'layers/network';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';

@@ -10,6 +10,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdNodeComponent, ID as IdNodeCompID } from "components/IdNodeComponent.sol";
 import { IdPetComponent, ID as IdPetCompID } from "components/IdPetComponent.sol";
+import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { IsProductionComponent, ID as IsProdCompID } from "components/IsProductionComponent.sol";
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
@@ -41,6 +42,10 @@ library LibProduction {
     IsProductionComponent(getAddressById(components, IsProdCompID)).set(id);
     IdPetComponent(getAddressById(components, IdPetCompID)).set(id, petID);
     IdNodeComponent(getAddressById(components, IdNodeCompID)).set(id, nodeID);
+    IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
+      id,
+      LibNode.getIndex(components, nodeID)
+    );
     return id;
   }
 
@@ -184,7 +189,13 @@ library LibProduction {
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
     IdNodeComponent comp = IdNodeComponent(getAddressById(components, IdNodeCompID));
-    if (comp.getValue(id) != nodeID) comp.set(id, nodeID);
+    if (comp.getValue(id) != nodeID) {
+      comp.set(id, nodeID);
+      IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
+        id,
+        LibNode.getIndex(components, nodeID)
+      );
+    }
   }
 
   function setRate(IUintComp components, uint256 id, uint256 rate) internal {

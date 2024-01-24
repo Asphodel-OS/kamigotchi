@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import crypto from "crypto";
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { Listing, getListing } from 'layers/react/shapes/Listing';
+import { Listing, getListing } from 'layers/network/shapes/Listing';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 import { EntityID } from '@latticexyz/recs';
@@ -22,19 +22,14 @@ export function registerBuyModal() {
       rowEnd: 58,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          api: { player },
-          components: {
-            FoodIndex,
-            ReviveIndex,
-            ItemIndex,
-            Description,
-            Name,
-          },
-          actions,
-        },
-      } = layers;
+        FoodIndex,
+        ReviveIndex,
+        ItemIndex,
+        Description,
+        Name,
+      } = network.components;
 
       return merge(
         FoodIndex.update$,
@@ -44,25 +39,22 @@ export function registerBuyModal() {
         Name.update$,
       ).pipe(
         map(() => {
-          return {
-            layers,
-            actions,
-            api: player,
-          };
+          return { network };
         })
       );
     },
 
-    ({ layers, actions, api }) => {
+    ({ network }) => {
+      const { api, actions } = network;
       const { modals, setModals } = useVisibility();
       const { listingEntityIndex } = useSelected();
-      const [listing, setListing] = useState(getListing(layers, listingEntityIndex));
+      const [listing, setListing] = useState(getListing(network, listingEntityIndex));
       const [quantity, setQuantity] = useState(1);
 
       // update current item based on selection
       // NOTE: may need to subscribe to component updates too, to resolve edge cases
       useEffect(() => {
-        setListing(getListing(layers, listingEntityIndex));
+        setListing(getListing(network, listingEntityIndex));
         setQuantity(1);
       }, [listingEntityIndex]);
 
@@ -78,7 +70,7 @@ export function registerBuyModal() {
           params: [listing.id, amt],
           description: `Buying ${amt} of ${listing.item!.name}`,
           execute: async () => {
-            return api.listing.buy(listing.id, amt);
+            return api.player.listing.buy(listing.id, amt);
           },
         });
         closeModal();

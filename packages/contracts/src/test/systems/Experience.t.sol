@@ -14,19 +14,10 @@ contract ExperienceTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _initCommonTraits();
-    _initItems();
-
-    _createRoom("testRoom1", 1, 2, 3, 4);
-    _createRoom("testRoom2", 2, 1, 3, 4);
-    _createRoom("testRoom3", 3, 1, 2, 4);
-    _createRoom("testRoom4", 4, 1, 2, 3);
-
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
 
     _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
 
-    _registerAccount(0);
     _numPets = 5;
     _petIDs = _mintPets(0, _numPets);
     _experienceLast = new uint[](_numPets);

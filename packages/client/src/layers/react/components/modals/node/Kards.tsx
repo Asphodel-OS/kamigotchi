@@ -10,8 +10,8 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
-import { Account } from "layers/react/shapes/Account";
-import { Inventory } from "layers/react/shapes/Inventory";
+import { Account } from "layers/network/shapes/Account";
+import { Inventory } from "layers/network/shapes/Inventory";
 import {
   Kami,
   calcCooldownRemaining,
@@ -23,8 +23,8 @@ import {
   isFull,
   isStarving,
   onCooldown,
-} from "layers/react/shapes/Kami";
-import { LiquidationConfig } from "layers/react/shapes/LiquidationConfig";
+} from "layers/network/shapes/Kami";
+import { LiquidationConfig } from "layers/network/shapes/LiquidationConfig";
 
 
 interface Props {
@@ -260,9 +260,9 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        action={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
-        battery
-        cooldown
+        actions={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
+        showBattery
+        showCooldown
       />
     );
   };
@@ -274,10 +274,10 @@ export const Kards = (props: Props) => {
         key={kami.entityIndex}
         kami={kami}
         subtext={`${kami.account!.name} (\$${calcOutput(kami)})`}
-        action={LiquidateButton(kami, myKamis)}
+        actions={LiquidateButton(kami, myKamis)}
         description={getDescription(kami)}
-        battery
-        cooldown
+        showBattery
+        showCooldown
       />
     );
   };

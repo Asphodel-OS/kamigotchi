@@ -9,8 +9,8 @@ import { kamiIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami } from 'layers/react/shapes/Kami';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Kami } from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
@@ -28,41 +28,35 @@ export function registerPartyModal() {
 
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          api: { player },
-          components: {
-            OperatorAddress,
-            OwnerAddress,
-            IsAccount,
-            IsBonus,
-            IsConfig,
-            IsProduction,
-            AccountID,
-            HolderID,
-            PetID,
-            ItemIndex,
-            PetIndex,
-            LastTime,
-            LastActionTime,
-            StartTime,
-            Balance,
-            Coin,
-            Harmony,
-            Health,
-            HealthCurrent,
-            Location,
-            MediaURI,
-            Name,
-            Rate,
-            State,
-            Type,
-            Value,
-          },
-          world,
-        },
-      } = layers;
+        OperatorAddress,
+        OwnerAddress,
+        IsAccount,
+        IsBonus,
+        IsConfig,
+        IsProduction,
+        AccountID,
+        HolderID,
+        PetID,
+        ItemIndex,
+        PetIndex,
+        LastTime,
+        LastActionTime,
+        StartTime,
+        Balance,
+        Coin,
+        Harmony,
+        Health,
+        HealthCurrent,
+        Location,
+        MediaURI,
+        Name,
+        Rate,
+        State,
+        Type,
+        Value,
+      } = network.components;
 
       return merge(
         OperatorAddress.update$,
@@ -94,24 +88,22 @@ export function registerPartyModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(
-            layers,
+            network,
             { inventory: true, kamis: true },
           );
 
           return {
-            layers,
-            actions,
-            api: player,
+            network,
             data: { account },
-            world,
           };
         })
       );
     },
 
     // Render
-    ({ layers, actions, api, data, world }) => {
+    ({ network, data }) => {
       // console.log('PartyM: data', data);
+      const { actions, api, world } = network;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
 
@@ -128,7 +120,7 @@ export function registerPartyModal() {
           params: [kami.id, foodIndex],
           description: `Feeding ${kami.name}`,
           execute: async () => {
-            return api.pet.feed(kami.id, foodIndex);
+            return api.player.pet.feed(kami.id, foodIndex);
           },
         });
       };
@@ -142,7 +134,7 @@ export function registerPartyModal() {
           params: [kami.id, reviveIndex],
           description: `Reviving ${kami.name}`,
           execute: async () => {
-            return api.pet.revive(kami.id, reviveIndex);
+            return api.player.pet.revive(kami.id, reviveIndex);
           },
         });
       };
@@ -156,7 +148,7 @@ export function registerPartyModal() {
           params: [kami.index],
           description: `Inspecting ${kami.name}`,
           execute: async () => {
-            return api.ERC721.reveal(kami.index);
+            return api.player.ERC721.reveal(kami.index);
           },
         });
         await waitForActionCompletion(

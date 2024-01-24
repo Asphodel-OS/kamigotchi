@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { Table } from './Table';
 import { Filters } from './Filters';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Score, ScoresFilter, getScores } from 'layers/react/shapes/Score';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Score, ScoresFilter, getScores } from 'layers/network/shapes/Score';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
@@ -22,16 +22,13 @@ export function registerLeaderboardModal() {
     },
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          components: {
-            IsScore,
-            Location,
-            Name,
-            OperatorAddress,
-          },
-        },
-      } = layers;
+        IsScore,
+        Location,
+        Name,
+        OperatorAddress,
+      } = network.components;
 
       return merge(
         IsScore.update$,
@@ -40,16 +37,16 @@ export function registerLeaderboardModal() {
         OperatorAddress.update$,
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers);
+          const account = getAccountFromBurner(network);
           return {
-            layers,
+            network,
             data: { account },
           };
         })
       );
     },
 
-    ({ layers, data }) => {
+    ({ network, data }) => {
       // console.log('leaderboardM: tableData', tableData);
       const { modals } = useVisibility();
       const [filter, setFilter] = useState<ScoresFilter>({ epoch: 0, type: 'COLLECT' });
@@ -70,7 +67,7 @@ export function registerLeaderboardModal() {
       // table data update
       useEffect(() => {
         if (modals.leaderboard) {
-          const tableData = getScores(layers, filter);
+          const tableData = getScores(network, filter);
           setTableData(tableData);
         }
       }, [filter, lastRefresh]);
@@ -88,7 +85,7 @@ export function registerLeaderboardModal() {
             setFilter={setFilter}
             epochOptions={
               Array.from(
-                new Set(layers.network.components.Epoch.values.value.values())
+                new Set(network.components.Epoch.values.value.values())
               )
             }
           />

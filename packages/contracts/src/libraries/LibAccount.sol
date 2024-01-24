@@ -60,7 +60,10 @@ library LibAccount {
 
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint256 to) internal {
-    setCurrStamina(components, id, getCurrStamina(components, id) - 1);
+    StaminaCurrentComponent currStaminaComp = StaminaCurrentComponent(
+      getAddressById(components, StaminaCurrCompID)
+    );
+    currStaminaComp.set(id, currStaminaComp.getValue(id) - 1);
     LocationComponent(getAddressById(components, LocCompID)).set(id, to);
   }
 
@@ -366,6 +369,15 @@ library LibAccount {
     uint256 count
   ) internal {
     LibDataEntity.incFor(world, components, accountID, 0, "PET721_MINT", count);
+  }
+
+  function logIncPetsRerolled(
+    IWorld world,
+    IUintComp components,
+    uint256 accountID,
+    uint256 count
+  ) internal {
+    LibDataEntity.incFor(world, components, accountID, 0, "PET_REROLL", count);
   }
 
   function logIncPetsStaked(

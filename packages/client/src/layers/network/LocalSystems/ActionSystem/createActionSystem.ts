@@ -24,14 +24,13 @@ import { Provider } from "@ethersproject/providers";
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 
 export function createActionSystem<M = undefined>(world: World, txReduced$: Observable<string>, provider: Provider) {
-  // Action component
   const Action = defineActionComponent<M>(world);
 
   // Components that scheduled actions depend on including pending updates
-  const componentsWithOptimisticUpdates: { [id: string]: OverridableComponent<Schema> } = {};
+  const pendingComponents: { [id: string]: OverridableComponent<Schema> } = {};
 
   // ActionData contains requirements and execute logic of scheduled actions.
-  // We also store the relevant subset of all componentsWithOptimisticUpdates in the action data,
+  // We also store the relevant subset of all pendingComponents in the action data,
   // to recheck requirements only if relevant components updated.
   const actionData = new Map<string, ActionData>();
 
@@ -41,6 +40,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     for (const { dispose } of disposer.values()) dispose();
   });
 
+
   /**
    * Maps all components in a given components map to the respective components including pending updates
    * @param component Component to be mapped to components including pending updates
@@ -49,16 +49,17 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
   function withOptimisticUpdates<S extends Schema, M extends Metadata, T>(
     component: Component<S, M, T>
   ): OverridableComponent<S, M, T> {
-    const optimisticComponent = componentsWithOptimisticUpdates[component.id] || overridableComponent(component);
+    const optimisticComponent = pendingComponents[component.id] || overridableComponent(component);
 
     // If the component is not tracked yet, add it to the map of overridable components
-    if (!componentsWithOptimisticUpdates[component.id]) {
-      componentsWithOptimisticUpdates[component.id] = optimisticComponent;
+    if (!pendingComponents[component.id]) {
+      pendingComponents[component.id] = optimisticComponent;
     }
 
     // Typescript can't know that the optimistic component with this id has the same type as C
     return optimisticComponent as OverridableComponent<S, M, T>;
   }
+
 
   /**
    * Schedules an action. The action will be executed once its requirement is fulfilled.
@@ -97,21 +98,21 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     // Add components that are not tracked yet to internal overridable component map.
     // Pending updates will be applied to internal overridable components.
     for (const [key, component] of Object.entries(actionRequest.components)) {
-      if (!componentsWithOptimisticUpdates[key]) componentsWithOptimisticUpdates[key] = overridableComponent(component);
+      if (!pendingComponents[key]) pendingComponents[key] = overridableComponent(component);
     }
 
     // Store relevant components with pending updates along the action's requirement and execution logic
     const action = {
       ...actionRequest,
       entityIndex,
-      componentsWithOptimisticUpdates: mapObject(actionRequest.components, (c) => withOptimisticUpdates(c)),
+      pendingComponents: mapObject(actionRequest.components, (c) => withOptimisticUpdates(c)),
     } as unknown as ActionData;
     actionData.set(action.id, action);
 
     // This subscriotion makes sure the action requirement is checked again every time
     // one of the referenced components changes or the pending updates map changes
     const subscription = merge(
-      ...Object.values(action.componentsWithOptimisticUpdates).map((c) => c.update$)
+      ...Object.values(action.pendingComponents).map((c) => c.update$)
     ).subscribe(() => checkRequirement(action));
     checkRequirement(action);
     disposer.set(action.id, { dispose: () => subscription?.unsubscribe() });
@@ -131,7 +132,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) return;
 
     // Check requirement on components including pending updates
-    const requirementResult = action.requirement(action.componentsWithOptimisticUpdates);
+    const requirementResult = action.requirement(action.pendingComponents);
 
     // Execute the action if the requirements are met
     if (requirementResult) executeAction(action, requirementResult);
@@ -153,7 +154,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     // Compute overrides
     if (!action.updates) action.updates = () => [];
     const overrides = action
-      .updates(action.componentsWithOptimisticUpdates, requirementResult)
+      .updates(action.pendingComponents, requirementResult)
       .map((o) => ({ ...o, id: uuid() }));
 
     // Store overrides on Action component to be able to remove when action is done
@@ -161,7 +162,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
 
     // Set all pending updates of this action
     for (const { component, value, entity, id } of overrides) {
-      componentsWithOptimisticUpdates[component as string].addOverride(id, { entity, value });
+      pendingComponents[component as string].addOverride(id, { entity, value });
     }
 
     try {
@@ -192,14 +193,13 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
       handleError(e, action);
     }
 
-    // After the action is done executing (failed or completed), remove its actionData and remove the Action component
+    // we want to persist for the sake of populating a history transaction log
     // remove(action.id);
   }
 
   // Set the action's state to ActionState.Failed
   function handleError(error: any, action: ActionData) {
-    updateComponent(Action, action.entityIndex, { metadata: error.reason });
-    updateComponent(Action, action.entityIndex, { state: ActionState.Failed });
+    updateComponent(Action, action.entityIndex, { state: ActionState.Failed, metadata: error.reason });
     // remove(action.id);
   }
 
@@ -210,8 +210,12 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    */
   function cancel(actionId: EntityID): boolean {
     const action = actionData.get(actionId);
-    if (!action || getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) {
-      console.warn(`Action ${actionId} was not found or is not in the "Requested" state.`);
+    if (!action) {
+      console.warn(`Trying to cancel Action ${actionId} that does not exist.`);
+      return false;
+    }
+    if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) {
+      console.warn(`Action ${actionId} is not in the "Requested" state.`);
       return false;
     }
     updateComponent(Action, action.entityIndex, { state: ActionState.Cancelled });
@@ -234,7 +238,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     const overrides = (actionEntityIndex != null && getComponentValue(Action, actionEntityIndex)?.overrides) || [];
     for (const override of overrides) {
       const [id, componentKey] = override.split("/");
-      const component = componentsWithOptimisticUpdates[componentKey];
+      const component = pendingComponents[componentKey];
       component.removeOverride(id);
     }
 
@@ -252,5 +256,11 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     actionIndex != null && setTimeout(() => removeComponent(Action, actionIndex), 5000);
   }
 
-  return { add, cancel, withOptimisticUpdates, Action };
+  return {
+    Action,
+    add,
+    cancel,
+    remove,
+    withOptimisticUpdates,
+  };
 }

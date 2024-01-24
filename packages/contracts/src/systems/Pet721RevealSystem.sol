@@ -20,11 +20,17 @@ uint256 constant ID = uint256(keccak256("system.Pet721.Reveal"));
  * Requires the blockhash to be available (256 blocks after minting)
  * It is expected that the front end handles this automatically
  */
+/// @dev not in use, but can be enabled by admin. system is not deployed by default
 contract Pet721RevealSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   /// @notice reveals a player's pet, called by operator
   function execute(bytes memory arguments) public returns (bytes memory) {
+    require(
+      LibConfig.getValueOf(components, "MINT_LEGACY_ENABLED") != 0,
+      "721 user mint: not enabled"
+    );
+
     uint256 petIndex = abi.decode(arguments, (uint256));
     uint256 petID = LibPet.indexToID(components, petIndex);
 

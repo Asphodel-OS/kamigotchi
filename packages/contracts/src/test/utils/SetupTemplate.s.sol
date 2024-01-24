@@ -15,11 +15,50 @@ abstract contract SetupTemplate is TestSetupImports {
 
   constructor() MudTest(new Deploy()) {}
 
+  //////////////////
+  // SETUP
+
   function setUp() public virtual override {
     super.setUp();
-    _createOwnerOperatorPairs(10); // create 10 pairs of Owners/Operators
+
     _initAllConfigs();
     _currTime = 5 minutes;
+
+    vm.prank(deployer);
+    _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
+
+    setUpAccounts();
+    setUpMint();
+    setUpItems();
+    setUpRooms();
+  }
+
+  // sets up some default accounts. override to change/remove behaviour if needed
+  function setUpAccounts() public virtual {
+    _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
+    _registerAccounts(10);
+  }
+
+  // sets up mint to a default state. override to change/remove behaviour if needed
+  function setUpMint() public virtual {
+    _initCommonTraits();
+    vm.startPrank(deployer);
+    __721BatchMinterSystem.setTraits();
+    __721BatchMinterSystem.batchMint(100);
+    vm.stopPrank();
+  }
+
+  // sets up items to a default state. override to change/remove behaviour if needed
+  function setUpItems() public virtual {
+    _initItems();
+  }
+
+  // sets up rooms to a default state. override to change/remove behaviour if needed
+  function setUpRooms() public virtual {
+    _createRoom("testRoom1", 1, 2, 3, 4);
+    _createRoom("testRoom2", 2, 1, 3, 4);
+    _createRoom("testRoom3", 3, 1, 2, 4);
+    _createRoom("testRoom4", 4, 1, 2, 3);
   }
 
   function _fastForward(uint timeDelta) internal {
@@ -90,39 +129,38 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
+  // registers n accounts, starting from 0
+  function _registerAccounts(uint n) internal {
+    for (uint i = 0; i < n; i++) _registerAccount(i);
+  }
+
   /////////////////
   // OWNER ACTIONS
 
   // (public) mint and reveal multiple pets for a calling address
-  function _mintPets(uint playerIndex, uint n) internal virtual returns (uint[] memory) {
-    uint[] memory ids = new uint[](n);
-    for (uint i = 0; i < n; i++) {
-      ids[i] = _mintPet(playerIndex);
-    }
-    return ids;
+  function _mintPets(uint playerIndex, uint amt) internal virtual returns (uint[] memory id) {
+    address owner = _owners[playerIndex];
+
+    vm.roll(++_currBlock);
+    _giveMint20(playerIndex, amt);
+    vm.prank(owner);
+    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(amt), (uint256[]));
+
+    vm.roll(++_currBlock);
+    return _PetGachaRevealSystem.reveal(commits);
   }
 
   // (public) mint and reveal a single pet to a specified address
-  function _mintPet(uint playerIndex) internal virtual returns (uint id) {
+  function _mintPet(uint playerIndex) internal virtual returns (uint) {
     address owner = _owners[playerIndex];
-    address operator = _operators[owner];
 
-    // move the player to room 4
-    uint initialLoc = LibAccount.getLocation(components, _getAccount(playerIndex));
-    _moveAccount(playerIndex, 4);
-
-    vm.roll(_currBlock++);
+    vm.roll(++_currBlock);
     _giveMint20(playerIndex, 1);
-    vm.startPrank(owner);
-    id = abi.decode(_Pet721MintSystem.executeTyped(1), (uint[]))[0];
-    vm.stopPrank();
+    vm.prank(owner);
+    uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
 
-    vm.roll(_currBlock++);
-    vm.startPrank(operator);
-    _Pet721RevealSystem.executeTyped(LibPet.idToIndex(components, id));
-    vm.stopPrank();
-
-    _moveAccount(playerIndex, initialLoc);
+    vm.roll(++_currBlock);
+    return _PetGachaRevealSystem.reveal(commits)[0];
   }
 
   /////////////////
@@ -744,6 +782,8 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("MINT_ACCOUNT_MAX", 500);
     _setConfig("MINT_INITIAL_MAX", 1111);
     _setConfig("MINT_PRICE", 0);
+    _setConfig("GACHA_REROLL_PRICE", 0);
+    _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
   function _initKamiConfigs() internal {

@@ -16,6 +16,7 @@
     "ExperienceComponent",
     "FavoriteFoodComponent",
     "ForComponent",
+    "GachaOrderComponent",
     "GenusComponent",
     "HarmonyComponent",
     "HealthComponent",
@@ -96,6 +97,7 @@
     "QuestPointComponent",
     "RarityComponent",
     "RateComponent",
+    "RerollComponent",
     "SkillPointComponent",
     "SlotsComponent",
     "StaminaComponent",
@@ -724,18 +726,6 @@
       "writeAccess": []
     },
     {
-      "name": "Pet721MintSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
-      "name": "Pet721RevealSystem",
-      "writeAccess": [
-        "*"
-      ]
-    },
-    {
       "name": "Pet721ProxySystem",
       "writeAccess": []
     },
@@ -787,6 +777,50 @@
         "RateComponent",
         "TimeLastComponent",
         "TimeStartComponent",
+        "TypeComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "PetGachaMintSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockRevealComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "RerollComponent",
+        "TimeLastComponent",
+        "TypeComponent",
+        "ProxyPermissionsMint20Component",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "PetGachaRerollSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockRevealComponent",
+        "GachaOrderComponent",
+        "IdAccountComponent",
+        "IdHolderComponent",
+        "IsDataComponent",
+        "RerollComponent",
+        "TimeLastComponent",
+        "TypeComponent",
+        "StateComponent",
+        "ValueComponent"
+      ]
+    },
+    {
+      "name": "PetGachaRevealSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BlockRevealComponent",
+        "GachaOrderComponent",
+        "IdAccountComponent",
+        "RerollComponent",
+        "StateComponent",
         "TypeComponent",
         "ValueComponent"
       ]
@@ -887,18 +921,19 @@
     {
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
-        "BalanceComponent",
-        "CoinComponent",
-        "EpochComponent",
-        "HealthCurrentComponent",
         "IdHolderComponent",
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
+        "IndexComponent",
+        "IndexNodeComponent",
         "IsDataComponent",
         "IsKillComponent",
-        "IndexComponent",
         "IsScoreComponent",
+        "BalanceComponent",
+        "CoinComponent",
+        "EpochComponent",
+        "HealthCurrentComponent",
         "RateComponent",
         "StateComponent",
         "TimeComponent",
@@ -917,6 +952,7 @@
         "HealthCurrentComponent",
         "IdNodeComponent",
         "IdPetComponent",
+        "IndexNodeComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
@@ -1031,6 +1067,7 @@
     "LibDataEntity",
     "LibExperience",
     "LibFriend",
+    "LibGacha",
     "LibInventory",
     "LibKill",
     "LibListing",

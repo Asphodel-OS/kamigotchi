@@ -6,6 +6,7 @@ import { System } from "solecs/System.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
@@ -23,10 +24,16 @@ uint256 constant ROOM = 4;
  */
 /// @dev only can be minted in room 4 (vending machine room)
 /// @dev to be called by account owner
+/// @dev not in use, but can be enabled by admin. system is not deployed by default
 contract Pet721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
+    require(
+      LibConfig.getValueOf(components, "MINT_LEGACY_ENABLED") != 0,
+      "721 user mint: not enabled"
+    );
+
     uint256 amount = abi.decode(arguments, (uint256));
     require(amount > 0, "Pet721Mint: must be > 0");
 

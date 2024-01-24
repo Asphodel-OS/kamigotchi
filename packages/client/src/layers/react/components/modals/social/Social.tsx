@@ -8,8 +8,8 @@ import { socialIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccountByID, getAccountByName, getAccountByOwner, getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Friendship, queryFriendshipX } from 'layers/react/shapes/Friendship';
+import { Account, getAccountByID, getAccountByName, getAccountByOwner, getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Friendship, queryFriendshipX } from 'layers/network/shapes/Friendship';
 import 'layers/react/styles/font.css';
 
 
@@ -25,26 +25,20 @@ export function registerSocialModal() {
 
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          api: { player },
-          components: {
-            IsBonus,
-            IsConfig,
-            IsFriendship,
-            AccountID,
-            HolderID,
-            TargetID,
-            Balance,
-            Name,
-            State,
-            Type,
-            Value,
-          },
-          world,
-        },
-      } = layers;
+        IsBonus,
+        IsConfig,
+        IsFriendship,
+        AccountID,
+        HolderID,
+        TargetID,
+        Balance,
+        Name,
+        State,
+        Type,
+        Value,
+      } = network.components;
 
       return merge(
         IsBonus.update$,
@@ -61,23 +55,22 @@ export function registerSocialModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(
-            layers,
+            network,
             { friends: true },
           );
 
           return {
-            layers,
-            actions,
-            api: player,
+            network,
             data: { account },
-            world,
           };
         })
       );
     },
 
     // Render
-    ({ layers, actions, api, data, world }) => {
+    ({ network, data }) => {
+      const { actions, api, world } = network;
+
       /////////////////
       // ACTIONS
 
@@ -90,7 +83,7 @@ export function registerSocialModal() {
           params: [friendship.id],
           description: `Accepting friend request from ${friendship.target.name}`,
           execute: async () => {
-            return api.social.friend.accept(friendship.id);
+            return api.player.social.friend.accept(friendship.id);
           },
         });
       };
@@ -104,7 +97,7 @@ export function registerSocialModal() {
           params: [target.ownerEOA],
           description: `Sending friend request to ${target.name}`,
           execute: async () => {
-            return api.social.friend.request(target.ownerEOA);
+            return api.player.social.friend.request(target.ownerEOA);
           },
         });
       };
@@ -118,7 +111,7 @@ export function registerSocialModal() {
           params: [target.ownerEOA],
           description: `Blocking ${target.name}`,
           execute: async () => {
-            return api.social.friend.block(target.ownerEOA);
+            return api.player.social.friend.block(target.ownerEOA);
           },
         });
       };
@@ -132,7 +125,7 @@ export function registerSocialModal() {
           params: [friendship.id],
           description: actionText,
           execute: async () => {
-            return api.social.friend.cancel(friendship.id);
+            return api.player.social.friend.cancel(friendship.id);
           },
         });
       };
@@ -145,7 +138,7 @@ export function registerSocialModal() {
         options?: any
       ): Account => {
         return getAccountByID(
-          layers,
+          network,
           id,
           options,
         );
@@ -156,7 +149,7 @@ export function registerSocialModal() {
         options?: any
       ): Account => {
         return getAccountByName(
-          layers,
+          network,
           name,
           options
         );
@@ -167,7 +160,7 @@ export function registerSocialModal() {
         options?: any
       ): Account => {
         return getAccountByOwner(
-          layers,
+          network,
           ownerEOA,
           options
         );
@@ -178,7 +171,7 @@ export function registerSocialModal() {
         accountOptions?: any,
       ): Friendship[] => {
         return queryFriendshipX(
-          layers,
+          network,
           { account: options.account?.id, target: options.target?.id, state: options.state },
           accountOptions
         );

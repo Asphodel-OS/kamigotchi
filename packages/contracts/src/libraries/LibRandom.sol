@@ -42,6 +42,128 @@ library LibRandom {
   }
 
   //////////////////
+  // UNWEIGHTED
+
+  /// @notice gets a random number from a seed via modulo
+  function getRandom(uint256 randN, uint256 max) internal pure returns (uint256) {
+    return randN % max;
+  }
+
+  /// @notice gets a batch of random numbers from a seed via modulo, with replacement
+  function getRandomBatch(
+    uint256 randN,
+    uint256 max,
+    uint256 count
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](count);
+
+    for (uint256 i; i < count; i++) {
+      randN = uint256(keccak256(abi.encode(randN, i)));
+      results[i] = randN % max;
+    }
+
+    return results;
+  }
+
+  /// @notice gets a batch of random numbers from a seed via modulo, without replacement
+  function getRandomBatchNoReplacement(
+    uint256 randN,
+    uint256 max,
+    uint256 count
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](count);
+
+    for (uint256 i; i < count; i++) {
+      randN = uint256(keccak256(abi.encode(randN, i)));
+      results[i] = randN % max;
+      max--;
+    }
+
+    return results;
+  }
+
+  /// @notice gets a batch of random numbers from a seed via modulo, without replacement
+  function getRandomBatchNoReplacement(
+    uint256[] memory randNs,
+    uint256 max
+  ) internal pure returns (uint256[] memory) {
+    uint256 count = randNs.length;
+    uint256[] memory results = new uint256[](count);
+
+    for (uint256 i; i < count; i++) {
+      results[i] = randNs[i] % max;
+      max--;
+    }
+
+    return results;
+  }
+
+  /// @notice picks an item from unweighted array
+  function selectFrom(uint256[] memory keys, uint256 randN) internal pure returns (uint256) {
+    return keys[randN % keys.length];
+  }
+
+  /// @notice picks multiple results from unweighted array, with replacement
+  function selectMultipleFrom(
+    uint256[] memory keys,
+    uint256 randN,
+    uint256 count
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](count);
+    uint256 max = keys.length;
+
+    for (uint256 i; i < count; i++) {
+      randN = uint256(keccak256(abi.encode(randN, i)));
+      results[i] = keys[randN % max];
+    }
+
+    return results;
+  }
+
+  /// @notice picks multiple results from unweighted array, without replacement
+  function selectMultipleFromNoReplacement(
+    uint256[] memory keys,
+    uint256 randN,
+    uint256 count
+  ) internal pure returns (uint256[] memory) {
+    uint256[] memory results = new uint256[](count);
+    uint256 max = keys.length;
+
+    require(count <= max, "LibRandom: not enough keys");
+
+    for (uint256 i; i < count; i++) {
+      randN = uint256(keccak256(abi.encode(randN, i)));
+      uint256 pos = randN % max;
+      results[i] = keys[pos];
+      keys[pos] = keys[max - 1];
+      max--;
+    }
+
+    return results;
+  }
+
+  /// @notice picks multiple results from unweighted array, without replacement
+  function selectMultipleFromNoReplacement(
+    uint256[] memory keys,
+    uint256[] memory randNs
+  ) internal pure returns (uint256[] memory) {
+    uint256 max = keys.length;
+    uint256 count = randNs.length;
+
+    require(count <= max, "LibRandom: not enough keys");
+
+    uint256[] memory results = new uint256[](count);
+    for (uint256 i; i < count; i++) {
+      uint256 pos = randNs[i] % max;
+      results[i] = keys[pos];
+      keys[pos] = keys[max - 1];
+      max--;
+    }
+
+    return results;
+  }
+
+  //////////////////
   // WEIGHTED
 
   // select an item from a weighted list of options
@@ -87,7 +209,7 @@ library LibRandom {
       );
   }
 
-  /// @notice picks multiple results from weighted array
+  /// @notice picks multiple results from weighted array, with replacement
   /// @dev returns an array of results, with indices as number of results corresponding to key positions
   /// @dev uses a basic uint256(keccak256(abi.encode(seed, i))) for incrementing seeds
   /// @param weights  the weights for each item

@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 
 import { ActionButton } from "layers/react/components/library/ActionButton";
 import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/react/shapes/Account";
-import { Inventory } from "layers/react/shapes/Inventory";
-import { Lootbox } from "layers/react/shapes/Lootbox";
+import { Account } from "layers/network/shapes/Account";
+import { Inventory } from "layers/network/shapes/Inventory";
+import { Lootbox } from "layers/network/shapes/Lootbox";
 import { ItemIcon } from "layers/react/components/library/ItemIcon";
 
 interface Props {

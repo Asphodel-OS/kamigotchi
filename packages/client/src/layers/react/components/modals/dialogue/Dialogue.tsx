@@ -8,7 +8,7 @@ import { DialogueNode, dialogues } from 'constants/dialogue';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getRoomByLocation } from 'layers/react/shapes/Room';
+import { getRoomByLocation } from 'layers/network/shapes/Room';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
@@ -24,17 +24,13 @@ export function registerDialogueModal() {
       rowEnd: 100,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          components: {
-            IsRoom,
-            Exits,
-            Location,
-            Name,
-          },
-        },
-      } = layers;
+        IsRoom,
+        Exits,
+        Location,
+        Name,
+      } = network.components;
 
       return merge(
         IsRoom.update$,
@@ -43,15 +39,11 @@ export function registerDialogueModal() {
         Name.update$,
       ).pipe(
         map(() => {
-          return {
-            layers,
-            actions,
-            api: layers.network.api.player,
-          };
+          return { network };
         })
       );
     },
-    ({ layers, actions, api }) => {
+    ({ network }) => {
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
       const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
@@ -73,16 +65,16 @@ export function registerDialogueModal() {
       // ACTIONS
 
       const move = (location: number) => {
-        const room = getRoomByLocation(layers, location);
+        const room = getRoomByLocation(network, location);
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
 
-        actions?.add({
+        network.actions?.add({
           id: actionID,
           action: 'AccountMove',
           params: [location],
           description: `Moving to ${room.name}`,
           execute: async () => {
-            const roomMovment = await api.account.move(location);
+            const roomMovment = await network.api.player.account.move(location);
             return roomMovment;
           },
         });

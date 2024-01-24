@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Score } from "layers/react/shapes/Score"
+import { Score } from "layers/network/shapes/Score"
 import 'layers/react/styles/font.css';
 
 

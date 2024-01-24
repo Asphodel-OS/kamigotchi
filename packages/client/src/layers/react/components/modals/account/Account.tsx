@@ -8,7 +8,7 @@ import { Tabs } from './Tabs';
 import xIcon from 'assets/images/icons/placeholder.png';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/react/shapes/Account';
+import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/network/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
@@ -26,33 +26,32 @@ export function registerAccountModal() {
 
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          api: { player },
-          components: {
-            OperatorAddress,
-            OwnerAddress,
-            IsAccount,
-            IsPet,
-            AccountID,
-            HolderID,
-            PetID,
-            AccountIndex,
-            ItemIndex,
-            LastActionTime,
-            LastTime,
-            StartTime,
-            Coin,
-            Level,
-            Location,
-            MediaURI,
-            Name,
-            State,
-          },
-          world,
+        actions,
+        api: { player },
+        components: {
+          OperatorAddress,
+          OwnerAddress,
+          IsAccount,
+          IsPet,
+          AccountID,
+          HolderID,
+          PetID,
+          AccountIndex,
+          ItemIndex,
+          LastActionTime,
+          LastTime,
+          StartTime,
+          Coin,
+          Level,
+          Location,
+          MediaURI,
+          Name,
+          State,
         },
-      } = layers;
+        world,
+      } = network;
 
       return merge(
         OperatorAddress.update$,
@@ -76,30 +75,29 @@ export function registerAccountModal() {
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(
-            layers,
+            network,
             { inventory: true, kamis: true },
           );
 
           return {
-            layers,
+            network,
             actions,
             api: player,
             data: { account },
-            world,
           };
         })
       );
     },
 
-    ({ layers, actions, api }) => {
+    ({ network, actions, api, data }) => {
       // console.log('AccountM: data', data);
       const { modals, setModals } = useVisibility();
       const { accountIndex } = useSelected();
-      const [account, setAccount] = useState<Account | null>(getAccountByIndex(layers, accountIndex));
+      const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
       const [tab, setTab] = useState('party'); // party | friends | activity
 
       useEffect(() => {
-        setAccount(getAccountByIndex(layers, accountIndex));
+        setAccount(getAccountByIndex(network, accountIndex));
       }, [accountIndex]);
 
 

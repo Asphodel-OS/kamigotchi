@@ -1,9 +1,12 @@
-import { Kami } from "layers/react/shapes/Kami";
+import { Kami } from "layers/network/shapes/Kami";
 import styled from "styled-components";
 
-import { statIcons } from "assets/images/icons/stats";
+import { StatIcons } from "assets/images/icons/stats";
 import { ExperienceBar } from "layers/react/components/library/ExperienceBar";
 import { Tooltip } from "layers/react/components/library/Tooltip";
+import { useSelected } from "layers/react/store/selected";
+import { useVisibility } from "layers/react/store/visibility";
+import { playClick } from "utils/sounds";
 
 interface Props {
   kami: Kami;
@@ -14,36 +17,38 @@ interface Props {
 }
 
 export const Banner = (props: Props) => {
+  const { setAccount } = useSelected();
+  const { modals, setModals } = useVisibility();
   const statsArray = Object.entries(props.kami.stats);
   const affinities = props.kami.affinities?.join(' | ');
   const statsDetails = new Map(Object.entries({
     'health': {
       description: 'Health defines how resilient a Kami is to accumulated damage',
-      image: statIcons.health,
+      image: StatIcons.health,
       base: props.kami.stats.health,
       bonus: props.kami.bonusStats.health,
     },
     'power': {
       description: 'Power determines the potential rate at which $MUSU can be farmed',
-      image: statIcons.power,
+      image: StatIcons.power,
       base: props.kami.stats.power,
       bonus: props.kami.bonusStats.power,
     },
     'violence': {
       description: 'Violence dictates the threshold at which a Kami can liquidate others',
-      image: statIcons.violence,
+      image: StatIcons.violence,
       base: props.kami.stats.violence,
       bonus: props.kami.bonusStats.violence,
     },
     'harmony': {
       description: 'Harmony divines resting recovery rate and defends against violence',
-      image: statIcons.harmony,
+      image: StatIcons.harmony,
       base: props.kami.stats.harmony,
       bonus: props.kami.bonusStats.harmony,
     },
     'slots': {
       description: 'Slots are room for upgrades ^_^',
-      image: statIcons.slots,
+      image: StatIcons.slots,
       base: props.kami.stats.slots,
       bonus: props.kami.bonusStats.slots,
     },
@@ -82,7 +87,18 @@ export const Banner = (props: Props) => {
             );
           })}
         </ContentMiddle>
-        <Footer>{props.kami.account?.name}</Footer>
+        <Footer>
+          <FooterText
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              setAccount(props.kami.account?.index || 0);
+              setModals({ ...modals, account: true, kami: false, party: false, map: false });
+              playClick();
+            }}
+          >
+            {props.kami.account?.name}
+          </FooterText>
+        </Footer>
       </Content>
     </Container>
   );
@@ -183,9 +199,18 @@ const Footer = styled.div`
   left: 0;
   width: 100%;
   padding: .7vw;
-  
+
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const FooterText = styled.div`
   font-family: Pixel;
   font-size: .6vw;
   text-align: right;
   color: #666;
+
+  &:hover {
+    color: #ccc;
+  }
 `;

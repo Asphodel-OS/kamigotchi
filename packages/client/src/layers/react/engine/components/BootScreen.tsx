@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+
 import { loadingScreens } from "assets/images/loading";
 
 export const BootScreen: React.FC<{}> = ({ children }) => {

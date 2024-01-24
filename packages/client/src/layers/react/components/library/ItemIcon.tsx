@@ -1,10 +1,9 @@
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import React from 'react';
 import styled from 'styled-components';
 
+import { Item } from 'layers/network/shapes/Item';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { playClick } from 'utils/sounds';
-
-import { Item } from 'layers/react/shapes/Item';
 
 interface Props {
   id: string;

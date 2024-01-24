@@ -31,17 +31,25 @@ export function registerLoadingState() {
 
     ({ LoadingState, world }) => {
       const GodEntityIndex = world.entityToIndex.get(GodID);
+      const loadingState = (GodEntityIndex == null)
+        ? null
+        : getComponentValue(LoadingState, GodEntityIndex);
 
-      const loadingState = GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
-      if (loadingState == null) {
-        return <BootScreen>Connecting</BootScreen>;
+      // percentage display when loading blocks from RPC 
+      const getProgressString = () => {
+        if (loadingState == null) return;
+        if (loadingState.percentage == 100 || loadingState.percentage == 0) return;
+        return `  (${loadingState.percentage.toFixed(1)}%)`
       }
 
-      if (loadingState.state !== SyncState.LIVE) {
-        return <BootScreen>{loadingState.msg}</BootScreen>;
-      }
+      if (loadingState == null) return <BootScreen>Connecting</BootScreen>;
+      if (loadingState.state === SyncState.LIVE) return null;
+      return (
+        <BootScreen>
+          {loadingState.msg} {getProgressString()}
+        </BootScreen>
+      );
 
-      return null;
     }
   );
 }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Kami } from "layers/react/shapes/Kami";
+import { Kami } from "layers/network/shapes/Kami";
 import {
   Skill,
   Requirement,
@@ -8,7 +8,7 @@ import {
   checkCost,
   checkMaxxed,
   checkRequirement
-} from "layers/react/shapes/Skill";
+} from "layers/network/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { playClick } from 'utils/sounds';
 

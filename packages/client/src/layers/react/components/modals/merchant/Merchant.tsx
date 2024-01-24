@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { Listings } from './Listings';
 import { MusuRow } from './MusuRow';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Merchant, getMerchantByIndex } from 'layers/react/shapes/Merchant';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Merchant, getMerchantByIndex } from 'layers/network/shapes/Merchant';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 
@@ -26,21 +26,18 @@ export function registerMerchantModal() {
 
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          components: {
-            AccountID,
-            Coin,
-            Description,
-            IsListing,
-            IsNPC,
-            ItemIndex,
-            NPCIndex,
-            Location,
-            Name,
-          },
-        },
-      } = layers;
+        AccountID,
+        Coin,
+        Description,
+        IsListing,
+        IsNPC,
+        ItemIndex,
+        NPCIndex,
+        Location,
+        Name,
+      } = network.components;
 
       return merge(
         AccountID.update$,
@@ -54,12 +51,12 @@ export function registerMerchantModal() {
         Name.update$,
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers, { inventory: true });
+          const account = getAccountFromBurner(network, { inventory: true });
           const { npcIndex } = useSelected.getState();
-          const merchant = getMerchantByIndex(layers, npcIndex);
+          const merchant = getMerchantByIndex(network, npcIndex);
 
           return {
-            layers,
+            network,
             data: {
               account,
               merchant,
@@ -70,7 +67,7 @@ export function registerMerchantModal() {
     },
 
     // Render
-    ({ layers, data }) => {
+    ({ network, data }) => {
       // console.log('mMerchant: data', data);
       const { npcIndex } = useSelected();
       const [merchant, setMerchant] = useState<Merchant>(data.merchant);
@@ -82,7 +79,7 @@ export function registerMerchantModal() {
 
       // updates from selected Merchant updates
       useEffect(() => {
-        setMerchant(getMerchantByIndex(layers, npcIndex));
+        setMerchant(getMerchantByIndex(network, npcIndex));
       }, [npcIndex]);
 
 

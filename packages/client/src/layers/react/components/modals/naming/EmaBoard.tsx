@@ -11,8 +11,8 @@ import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/react/shapes/Account';
-import { Kami } from 'layers/react/shapes/Kami';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Kami } from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 
@@ -29,22 +29,17 @@ export function registerEMABoardModal() {
 
     // Requirement (Data Manangement)
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          actions,
-          components: {
-            AccountID,
-            Balance,
-            CanName,
-            IsPet,
-            Location,
-            MediaURI,
-            Name,
-            State,
-          },
-          api: { player },
-        },
-      } = layers;
+        AccountID,
+        Balance,
+        CanName,
+        IsPet,
+        Location,
+        MediaURI,
+        Name,
+        State,
+      } = network.components;
 
       return merge(
         AccountID.update$,
@@ -57,18 +52,18 @@ export function registerEMABoardModal() {
         MediaURI.update$
       ).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers, { kamis: true, inventory: true });
+          const account = getAccountFromBurner(network, { kamis: true, inventory: true });
           return {
-            actions,
+            network,
             data: { account },
-            api: player,
           };
         })
       );
     },
 
     // Render
-    ({ actions, data, api }) => {
+    ({ network, data }) => {
+      const { actions, api } = network;
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
 
@@ -88,7 +83,7 @@ export function registerEMABoardModal() {
           params: [kami.id, inv.id],
           description: `Using holy dust on ${kami.name}`,
           execute: async () => {
-            return api.pet.use(kami.id, inv.id);
+            return api.player.pet.use(kami.id, inv.id);
           },
         });
       }
@@ -175,7 +170,7 @@ export function registerEMABoardModal() {
           <KamiCard
             key={kami.index}
             kami={kami}
-            action={CombinedButton(kami)}
+            actions={CombinedButton(kami)}
             description={description}
           />
         );

@@ -1,24 +1,20 @@
 /* eslint-disable prefer-const */
-import {
-  getComponentValue,
-  removeComponent,
-  setComponent,
-} from '@latticexyz/recs';
+import { getComponentValue, removeComponent, setComponent } from '@latticexyz/recs';
 
-import { createNetworkConfig } from 'layers/network/config';
-import { createNetworkLayer } from 'layers/network/createNetworkLayer';
+import { Layers } from './types';
+import { createNetworkConfig, createNetworkLayer } from 'layers/network';
 import { createPhaserLayer } from 'layers/phaser/createPhaserLayer';
 import { mountReact, setLayers, boot as bootReact } from 'layers/react/boot';
-import { Layers } from './types';
-import { Time } from './utils/time';
+import { Time } from 'utils/time';
+
 
 // boot the whole thing
 export async function boot() {
   bootReact();
   mountReact.current(false);
-  const game = await bootGame();
+  const layers = await bootGame();
   mountReact.current(true);
-  setLayers.current(game.layers as Layers);
+  setLayers.current(layers as Layers);
 }
 
 // boot the game (phaser and network layers)
@@ -27,19 +23,18 @@ async function bootGame() {
   let initialBoot = true;
 
   const layers = await rebootGame(initialBoot);
+  (window as any).network = layers.network;
+  (window as any).phaser = layers.phaser;
 
   const ecs = {
     setComponent,
     removeComponent,
     getComponentValue,
   };
-
-  (window as any).layers = layers;
   (window as any).ecs = ecs;
-  (window as any).time = Time.time;
 
   console.log('BOOTED');
-  return { layers, ecs };
+  return layers;
 }
 
 // Reboot the game 

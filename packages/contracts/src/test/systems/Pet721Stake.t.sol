@@ -6,15 +6,71 @@ import "test/utils/SetupTemplate.s.sol";
 contract Pet721StakeTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
+  }
 
-    _initCommonTraits();
-
+  function setUpRooms() public override {
     _createRoom("testRoom1", 1, 4, 12, 0);
     _createRoom("testRoom4", 4, 1, 12, 0);
-    _createRoom("testRoom4", 12, 1, 4, 0);
+    _createRoom("testRoom12", 12, 1, 4, 0);
+  }
 
-    _registerAccount(0);
-    _registerAccount(1);
+  ////////////
+  //  TESTS //
+  ////////////
+
+  function testStates() public {
+    // minting
+    uint256 petID = _mintPet(0);
+    uint256 petIndex = LibPet.idToIndex(components, petID);
+    _assertPetState(petID, "RESTING");
+
+    _moveAccount(0, 12); // bridging restricted to room 12
+
+    // bridging out
+    vm.prank(_getOwner(0));
+    _Pet721UnstakeSystem.executeTyped(petIndex);
+    _assertPetState(petID, "721_EXTERNAL");
+
+    // bridging in
+    vm.prank(_getOwner(0));
+    _Pet721StakeSystem.executeTyped(petIndex);
+    _assertPetState(petID, "RESTING");
+  }
+
+  function testTransferOutOfGame() public {
+    uint256 petID = _mintPet(0);
+    uint256 petIndex = LibPet.idToIndex(components, petID);
+    _moveAccount(0, 12); // bridging restricted to room 12
+
+    vm.prank(_getOwner(0));
+    _Pet721UnstakeSystem.executeTyped(petIndex);
+
+    vm.prank(_getOwner(0));
+    _Pet721.transferFrom(_getOwner(0), _getOwner(1), petIndex);
+    _assertOwnerOutGame(petIndex, _getOwner(1));
+  }
+
+  // does not actually check if metadata is accurate, only if syntax is valid
+  function testMetadata() public {
+    _mintPet(0);
+
+    // console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
+  }
+
+  // only prints mediaURI, does not check if it is accurate
+  function testMediaURI() public {
+    _mintPet(0);
+
+    console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
+  }
+
+  ////////////////
+  // ASSERTIONS //
+  ////////////////
+
+  // assert a pet's state by its (Entity) ID
+  function _assertPetState(uint256 id, string memory state) internal {
+    assertEq(LibPet.getState(components, id), state);
   }
 
   function _assertOwnerInGame(uint256 tokenID, address addr) internal {
@@ -42,96 +98,5 @@ contract Pet721StakeTest is SetupTemplate {
     assertEq(_Pet721.ownerOf(tokenID), addr);
     assertEq(LibPet.getAccount(components, entityID), 0);
     assertTrue(!LibPet.isInWorld(components, entityID));
-  }
-
-  // assert a pet's state by its (Entity) ID
-  function _assertPetState(uint256 id, string memory state) internal {
-    assertEq(LibPet.getState(components, id), state);
-  }
-
-  function testStates() public {
-    _moveAccount(0, 4); // minting restricted to room 4
-
-    // minting
-    _giveMint20(0, 1);
-    vm.prank(_getOwner(0));
-    uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
-    _assertPetState(petID, "UNREVEALED");
-
-    uint256 petIndex = LibPet.idToIndex(components, petID);
-    vm.roll(block.number + 1);
-
-    // revealing
-    vm.prank(_getOperator(0));
-    _Pet721RevealSystem.executeTyped(petIndex);
-    _assertPetState(petID, "RESTING");
-
-    _moveAccount(0, 12); // bridging restricted to room 12
-
-    // bridging out
-    vm.prank(_getOwner(0));
-    _Pet721UnstakeSystem.executeTyped(petIndex);
-    _assertPetState(petID, "721_EXTERNAL");
-
-    // bridging in
-    vm.prank(_getOwner(0));
-    _Pet721StakeSystem.executeTyped(petIndex);
-    _assertPetState(petID, "RESTING");
-  }
-
-  function testFailTransferInGame() public {
-    _mintPet(0);
-
-    vm.prank(_getOwner(0));
-    _Pet721.transferFrom(_getOwner(0), _getOwner(1), 1);
-  }
-
-  function testTransferOutOfGame() public {
-    _mintPet(0);
-    _moveAccount(0, 12); // bridging restricted to room 12
-
-    vm.prank(_getOwner(0));
-    _Pet721UnstakeSystem.executeTyped(1);
-
-    vm.prank(_getOwner(0));
-    _Pet721.transferFrom(_getOwner(0), _getOwner(1), 1);
-    _assertOwnerOutGame(1, _getOwner(1));
-  }
-
-  function testForceReveal() public {
-    _moveAccount(0, 4); // minting restricted to room 4
-
-    _giveMint20(0, 1);
-    vm.prank(_getOwner(0));
-    uint256 petID = abi.decode(_Pet721MintSystem.executeTyped(1), (uint256[]))[0];
-
-    vm.roll(block.number + 256);
-    _assertPetState(petID, "UNREVEALED");
-
-    // do something to mine the block
-    _giveMint20(0, 1);
-    // vm.prank(_getOwner(0));
-    // _Pet721MintSystem.executeTyped(1);
-
-    vm.roll(block.number + 1);
-    vm.startPrank(deployer);
-    _Pet721RevealSystem.forceReveal(LibPet.idToIndex(components, petID));
-    vm.stopPrank();
-
-    _assertPetState(petID, "RESTING");
-  }
-
-  // does not actually check if metadata is accurate, only if syntax is valid
-  function testMetadata() public {
-    _mintPet(0);
-
-    // console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
-  }
-
-  // only prints mediaURI, does not check if it is accurate
-  function testMediaURI() public {
-    _mintPet(0);
-
-    console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
   }
 }

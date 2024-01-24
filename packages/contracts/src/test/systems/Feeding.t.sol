@@ -13,14 +13,6 @@ contract FeedingTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _initCommonTraits();
-    _initItems();
-
-    _createRoom("testRoom1", 1, 2, 3, 4);
-    _createRoom("testRoom2", 2, 1, 3, 4);
-    _createRoom("testRoom3", 3, 1, 2, 4);
-    _createRoom("testRoom4", 4, 1, 2, 3);
-
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
     _npcID = _createNPC(1, 1, "Test NPC");
 
@@ -84,7 +76,6 @@ contract FeedingTest is SetupTemplate {
     // register some new accounts and buy some items through them
     uint numAccounts = 4;
     for (uint i = 0; i < numAccounts; i++) {
-      _registerAccount(i);
       _fundAccount(i, 1e6);
       for (uint j = 0; j < _listingIDs.length; j++) {
         _buyFromListing(i, _listingIDs[j], 10);
@@ -140,7 +131,6 @@ contract FeedingTest is SetupTemplate {
     // register some new accounts and buy some items through them
     uint numAccounts = 4;
     for (uint i = 0; i < numAccounts; i++) {
-      _registerAccount(i);
       _fundAccount(i, 1e6);
       _buyFromListing(i, listingID, 10);
     }
@@ -190,7 +180,6 @@ contract FeedingTest is SetupTemplate {
 
     // register, fund and stock account
     uint playerIndex = 0;
-    _registerAccount(playerIndex);
     _fundAccount(playerIndex, 1e6);
     for (uint j = 0; j < _listingIDs.length; j++) {
       _buyFromListing(playerIndex, _listingIDs[j], 10);
@@ -258,7 +247,6 @@ contract FeedingTest is SetupTemplate {
 
     // register, fund and stock account
     uint playerIndex = 0;
-    _registerAccount(playerIndex);
     _fundAccount(playerIndex, 1e9);
     for (uint j = 0; j < _listingIDs.length; j++) {
       _buyFromListing(playerIndex, _listingIDs[j], 100);
@@ -327,7 +315,6 @@ contract FeedingTest is SetupTemplate {
 
     // // spawn some other kamis on a new account
     // uint playerIndex2 = 1;
-    // _registerAccount(playerIndex2);
     // uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
 
     // // start production for and starve our original kamis
@@ -370,7 +357,6 @@ contract FeedingTest is SetupTemplate {
 
     // register, fund and stock account
     uint playerIndex = 0;
-    _registerAccount(playerIndex);
     _fundAccount(playerIndex, 1e9);
     _buyFromListing(playerIndex, listingID, 100);
     uint[] memory petIDs = _mintPets(playerIndex, numPets);
@@ -411,7 +397,6 @@ contract FeedingTest is SetupTemplate {
 
     // start production for our enemy kamis and kill off the originals
     uint playerIndex2 = 1;
-    _registerAccount(playerIndex2);
     uint[] memory petIDs2 = _mintPets(playerIndex2, numPets);
     _fastForward(_idleRequirement);
     for (uint i = 0; i < numPets; i++) {
@@ -441,7 +426,6 @@ contract FeedingTest is SetupTemplate {
 
     // register, fund and stock account
     uint playerIndex = 0;
-    _registerAccount(playerIndex);
     _fundAccount(playerIndex, 1e9);
     for (uint j = 0; j < _listingIDs.length; j++) {
       _buyFromListing(playerIndex, _listingIDs[j], 100);

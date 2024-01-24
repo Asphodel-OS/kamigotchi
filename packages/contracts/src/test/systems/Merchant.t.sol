@@ -14,17 +14,24 @@ contract NPCTest is SetupTemplate {
 
   function setUp() public override {
     super.setUp();
+  }
 
-    // create rooms
-    _createRoom("testRoom1", 1, 2, 3, 0);
-    _createRoom("testRoom2", 2, 1, 3, 0);
-    _createRoom("testRoom3", 3, 1, 2, 0);
-
-    // create empty items
+  function setUpItems() public override {
     _createGenericItem(1);
     _createGenericItem(2);
     _createGenericItem(3);
     _createGenericItem(4);
+  }
+
+  function setUpRooms() public override {
+    // create rooms
+    _createRoom("testRoom1", 1, 2, 3, 0);
+    _createRoom("testRoom2", 2, 1, 3, 0);
+    _createRoom("testRoom3", 3, 1, 2, 0);
+  }
+
+  function setUpAccounts() public override {
+    _createOwnerOperatorPairs(25);
   }
 
   /////////////////

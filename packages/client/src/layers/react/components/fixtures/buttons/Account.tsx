@@ -1,7 +1,7 @@
 import React from 'react';
 import { of } from 'rxjs';
 
-import xIcon from 'assets/images/icons/placeholder.png';
+import { operatorIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility, Modals } from 'layers/react/store/visibility';
@@ -38,7 +38,7 @@ export function registerAccountButton() {
       return (
         <MenuButton
           id='account_button'
-          image={xIcon}
+          image={operatorIcon}
           tooltip={`Account`}
           targetDiv='account'
           visible={buttons.account}

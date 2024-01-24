@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { ActionButton } from "layers/react/components/library";
 import { ActionListButton } from "layers/react/components/library/ActionListButton";
 import { Card } from "layers/react/components/library/Card";
-import { Account } from "layers/react/shapes/Account";
-import { Friendship } from "layers/react/shapes/Friendship";
+import { Account } from "layers/network/shapes/Account";
+import { Friendship } from "layers/network/shapes/Friendship";
 
 interface Props {
   account: Account;

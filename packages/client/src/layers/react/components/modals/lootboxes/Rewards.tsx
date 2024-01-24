@@ -3,9 +3,9 @@ import { EntityIndex } from "@latticexyz/recs";
 import { getRarities } from "constants/rarities";
 import { ItemIcon } from "layers/react/components/library/ItemIcon";
 
-import { LootboxLog } from "layers/react/shapes/Lootbox";
-import { Item } from "layers/react/shapes/Item";
-import { Account } from "layers/react/shapes/Account";
+import { LootboxLog } from "layers/network/shapes/Lootbox";
+import { Item } from "layers/network/shapes/Item";
+import { Account } from "layers/network/shapes/Account";
 
 interface Props {
   account: Account;

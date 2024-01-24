@@ -28,6 +28,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
@@ -44,8 +45,8 @@ string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces
 library LibPet {
   using LibFPMath for int256;
 
-  /////////////////
-  // INTERACTIONS
+  ///////////////////////
+  // ENTITY INTERACTIONS
 
   /// @notice create a pet entity and set its base fields
   function create(
@@ -71,9 +72,9 @@ library LibPet {
     return id;
   }
 
-  // called when a pet is revealed
-  // NOTE: most of the reveal logic (generation) is in the Pet721RevealSystem itself
-  //       this function is for components saved directly on the Pet Entity
+  /// @notice called when a pet is revealed
+  /// @dev most of the reveal logic (generation) is in the Pet721RevealSystem itself
+  ///       this function is for components saved directly on the Pet Entity
   function reveal(IUintComp components, uint256 id, string memory uri) internal {
     setCanName(components, id, true);
     revive(components, id);
@@ -82,17 +83,32 @@ library LibPet {
     setLastTs(components, id, block.timestamp);
   }
 
-  // bridging a pet Outside => MUD. Does not handle account details
+  /// @notice bridging a pet Outside => MUD. Does not handle account details
   function stake(IUintComp components, uint256 id, uint256 accountID) internal {
     setState(components, id, "RESTING");
     setAccount(components, id, accountID);
   }
 
-  // bridging a pet MUD => Outside. Does not handle account details
+  /// @notice bridging a pet MUD => Outside. Does not handle account details
   function unstake(IUintComp components, uint256 id) internal {
     setState(components, id, "721_EXTERNAL");
     setAccount(components, id, 0);
   }
+
+  /// @notice put pet in gacha pool
+  function toGacha(IUintComp components, uint256 id) internal {
+    setState(components, id, "GACHA");
+    IdAccountComponent(getAddressById(components, IdAccCompID)).remove(id);
+  }
+
+  /// @notice take pet out of gacha pool
+  function fromGacha(IUintComp components, uint256 id, uint256 accountID) internal {
+    setState(components, id, "RESTING");
+    setAccount(components, id, accountID);
+  }
+
+  ///////////////////////
+  // STATS INTERACTIONS
 
   // Drains HP from a pet. The opposite of heal().
   function drain(IUintComp components, uint256 id, uint256 amt) internal {
@@ -566,7 +582,7 @@ library LibPet {
     return IndexPetComponent(getAddressById(components, IndexPetCompID)).getValue(entityID);
   }
 
-  // retrieves the pet with the specified name
+  /// @notice retrieves the pet with the specified name
   function getByName(
     IUintComp components,
     string memory name
@@ -583,7 +599,7 @@ library LibPet {
     if (results.length > 0) result = results[0];
   }
 
-  // gets all the pets owned by an account
+  /// @notice gets all the pets owned by an account
   function getAllForAccount(
     IUintComp components,
     uint256 accountID
@@ -594,6 +610,19 @@ library LibPet {
       QueryType.HasValue,
       getComponentById(components, IdAccCompID),
       abi.encode(accountID)
+    );
+
+    return LibQuery.query(fragments);
+  }
+
+  /// @notice get all pets in the gacha pool
+  function getAllInGacha(IUintComp components) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, StateCompID),
+      abi.encode("GACHA")
     );
 
     return LibQuery.query(fragments);

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ActionListButton } from '../../library/ActionListButton';
-import { ScoresFilter } from 'layers/react/shapes/Score';
+import { ScoresFilter } from 'layers/network/shapes/Score';
 
 
 interface Props {

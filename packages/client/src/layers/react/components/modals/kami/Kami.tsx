@@ -5,8 +5,8 @@ import crypto from "crypto";
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Kami, getKamiByIndex } from 'layers/react/shapes/Kami';
-import { Skill, getRegistrySkills } from 'layers/react/shapes/Skill';
+import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { Skill, getRegistrySkills } from 'layers/network/shapes/Skill';
 import { useSelected } from 'layers/react/store/selected';
 import { Banner } from './Banner';
 import { KillLogs } from './KillLogs';
@@ -25,37 +25,35 @@ export function registerKamiModal() {
       rowEnd: 99,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          components: {
-            IsBonus,
-            IsEffect,
-            IsKill,
-            IsPet,
-            IsRequirement,
-            IsSkill,
-            AccountID,
-            HolderID,
-            PetID,
-            SourceID,
-            TargetID,
-            PetIndex,
-            SkillIndex,
-            Balance,
-            Experience,
-            Harmony,
-            Health,
-            Level,
-            MediaURI,
-            Name,
-            Power,
-            SkillPoint,
-            Slots,
-            Type,
-            Violence,
-          },
-        },
-      } = layers;
+        IsBonus,
+        IsEffect,
+        IsKill,
+        IsPet,
+        IsRequirement,
+        IsSkill,
+        AccountID,
+        HolderID,
+        PetID,
+        SourceID,
+        TargetID,
+        PetIndex,
+        SkillIndex,
+        Balance,
+        Experience,
+        Harmony,
+        Health,
+        Level,
+        MediaURI,
+        Name,
+        Power,
+        SkillPoint,
+        Slots,
+        Type,
+        Violence,
+      } = network.components;
+
       return merge(
         IsBonus.update$,
         IsEffect.update$,
@@ -84,16 +82,12 @@ export function registerKamiModal() {
         Violence.update$,
       ).pipe(
         map(() => {
-          return {
-            layers,
-            actions: layers.network.actions,
-            api: layers.network.api.player,
-          };
+          return { network };
         })
       );
     },
 
-    ({ layers, actions, api }) => {
+    ({ network }) => {
       const [tab, setTab] = useState('traits');
       const { kamiIndex } = useSelected();
       const [mode, setMode] = useState('DETAILS');
@@ -103,7 +97,7 @@ export function registerKamiModal() {
 
       const getSelectedKami = () => {
         return getKamiByIndex(
-          layers,
+          network,
           kamiIndex,
           {
             account: true,
@@ -120,26 +114,26 @@ export function registerKamiModal() {
 
       const levelUp = (kami: Kami) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        actions?.add({
+        network.actions?.add({
           id: actionID,
           action: 'KamiLevel',
           params: [kami.id],
           description: `Leveling up ${kami.name}`,
           execute: async () => {
-            return api.pet.level(kami.id);
+            return network.api.player.pet.level(kami.id);
           },
         })
       }
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        actions?.add({
+        network.actions?.add({
           id: actionID,
           action: 'SkillUpgrade',
           params: [kami.id, skill.index],
           description: `Upgrading ${skill.name} for ${kami.name}`,
           execute: async () => {
-            return api.skill.upgrade(kami.id, skill.index);
+            return network.api.player.skill.upgrade(kami.id, skill.index);
           },
         })
       }
@@ -154,7 +148,7 @@ export function registerKamiModal() {
         } else if (tab === 'skills') {
           return (
             <Skills
-              skills={getRegistrySkills(layers)}
+              skills={getRegistrySkills(network)}
               kami={getSelectedKami()}
               actions={{ upgrade: upgradeSkill }}
             />
