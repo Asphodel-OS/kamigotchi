@@ -35,7 +35,7 @@ export function registerBurnerDetector() {
         OwnerAddress.update$
       ).pipe(
         map(() => {
-          const connectedEOA = network.connectedAddress.get();
+          const connectedEOA = network.connectedAddress.get() ?? '';
           return {
             connectedEOA,
             network: layers.network.network,
@@ -62,7 +62,7 @@ export function registerBurnerDetector() {
         const detectedEOA = getAddressFromPrivateKey(detectedPrivateKey);
         setDetectedAddress(detectedEOA);
 
-        const burnerMatches = (connectedEOA === detectedEOA);
+        const burnerMatches = (parseInt(connectedEOA, 16) === parseInt(detectedEOA, 16));
         setBurnerMatches(burnerMatches);
 
         if (!detectedPrivateKey) {
@@ -77,7 +77,7 @@ export function registerBurnerDetector() {
         }
 
         setBurner({
-          connected: { address: connectedEOA ?? '' },
+          connected: { address: connectedEOA },
           detected: {
             address: detectedEOA,
             key: detectedPrivateKey,
