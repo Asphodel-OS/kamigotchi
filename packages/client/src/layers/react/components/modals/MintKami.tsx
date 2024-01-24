@@ -56,7 +56,6 @@ export function registerKamiMintModal() {
           )[0];
 
           const account = getAccount(network, accountIndex, { kamis: true, gacha: true });
-
           const commits = [...account.gacha ? account.gacha.commits : []].reverse();
 
           return {

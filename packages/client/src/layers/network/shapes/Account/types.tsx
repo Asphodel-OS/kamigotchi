@@ -204,7 +204,7 @@ export const getAccount = (
 
   // populate Gacha
   if (options?.gacha) {
-    account.gacha = { commits: queryAccCommits(layers, account.id) };
+    account.gacha = { commits: queryAccCommits(network, account.id) };
   }
 
   // populate Quests
