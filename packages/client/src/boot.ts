@@ -1,9 +1,5 @@
 /* eslint-disable prefer-const */
-import {
-  getComponentValue,
-  removeComponent,
-  setComponent
-} from "@latticexyz/recs";
+import { getComponentValue, removeComponent, setComponent } from '@latticexyz/recs';
 
 import { Layers } from './types';
 import { createNetworkConfig, createNetworkLayer } from 'layers/network';

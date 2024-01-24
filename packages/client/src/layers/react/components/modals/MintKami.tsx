@@ -136,9 +136,9 @@ export function registerKamiMintModal() {
       // ACTIONS
 
       // transaction to mint the Kami NFT (with Mint ERC20)
+      // NOTE: triggered by Owner EOA, not Operator EOA
       const mintPetTx = (amount: number) => {
-        const network = networks.get(selectedAddress);
-        const api = network!.api.player;
+        const api = networks.get(selectedAddress)!.api.player;
 
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions!.add({
