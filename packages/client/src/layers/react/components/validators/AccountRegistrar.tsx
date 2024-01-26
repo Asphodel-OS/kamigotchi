@@ -9,7 +9,7 @@ import {
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -214,7 +214,7 @@ export function registerAccountRegistrar() {
         const connectedBurner = burner.connected.address;
 
         console.log('CREATING ACCOUNT:', selectedAddress);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountCreate',

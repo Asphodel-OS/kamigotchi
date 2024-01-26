@@ -1,5 +1,5 @@
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import React, { useEffect } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -66,7 +66,7 @@ export function registerDialogueModal() {
 
       const move = (location: number) => {
         const room = getRoomByLocation(network, location);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
 
         network.actions?.add({
           id: actionID,

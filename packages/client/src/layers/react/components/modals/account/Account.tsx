@@ -1,5 +1,5 @@
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 
@@ -107,7 +107,7 @@ export function registerAccountModal() {
 
       // feed a kami
       const requestFren = (account: Account) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'FriendRequest',
@@ -122,7 +122,7 @@ export function registerAccountModal() {
       // NOTE: does not work, params wrong
       // TODO: update this to take the requestID as input?
       const acceptFren = (account: Account) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'FriendRequest',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 import { Footer } from './Footer';
 import { List } from './List';
@@ -106,7 +106,7 @@ export function registerQuestsModal() {
       // INTERACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'QuestAccept',
@@ -119,7 +119,7 @@ export function registerQuestsModal() {
       }
 
       const completeQuest = async (quest: Quest) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'QuestComplete',

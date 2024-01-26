@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
 import { map, merge } from 'rxjs';
 
@@ -113,7 +113,7 @@ export function registerPartyModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',
@@ -127,7 +127,7 @@ export function registerPartyModal() {
 
       // revive a kami using a revive item
       const revive = (kami: Kami, reviveIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiRevive',
@@ -141,7 +141,7 @@ export function registerPartyModal() {
 
       // reveal kami
       const reveal = async (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiReveal',

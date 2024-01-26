@@ -1,5 +1,5 @@
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
 import { map, merge } from 'rxjs';
 
@@ -76,7 +76,7 @@ export function registerSocialModal() {
 
       // accept a friend request
       const acceptFriend = (friendship: Friendship) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'AcceptFriend',
@@ -90,7 +90,7 @@ export function registerSocialModal() {
 
       // send a friend request
       const requestFriend = (target: Account) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'RequestFriend',
@@ -104,7 +104,7 @@ export function registerSocialModal() {
 
       // block an account
       const blockFriend = (target: Account) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'BlockFriend',
@@ -118,7 +118,7 @@ export function registerSocialModal() {
 
       // cancel a friendship - a request, block, or friend
       const cancelFriend = (friendship: Friendship, actionText: string) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'CancelFriend',

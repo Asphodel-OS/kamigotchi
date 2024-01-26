@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
@@ -80,7 +80,7 @@ export function registerMapModal() {
 
       const move = (location: number) => {
         const room = getRoomByLocation(network, location);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountMove',

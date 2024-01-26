@@ -5,7 +5,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 import { abi } from "abi/Pet721ProxySystem.json"
 import { getAccount } from 'layers/network/shapes/Account';
@@ -139,7 +139,7 @@ export function registerKamiMintModal() {
       const mintPetTx = (amount: number) => {
         const api = networks.get(selectedAddress)!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiMint',
@@ -155,7 +155,7 @@ export function registerKamiMintModal() {
       // transaction to reveal a gacha result
       const revealTx = async (commits: GachaCommit[]) => {
         const toReveal = commits.map((n) => n.id);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiReveal',

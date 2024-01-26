@@ -2,7 +2,7 @@ import { EntityID } from '@latticexyz/recs';
 import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 import { useIcon } from "assets/images/icons/actions";
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -76,7 +76,7 @@ export function registerEMABoardModal() {
         const inv = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001);
         if (!inv) return;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',

@@ -2,7 +2,7 @@ import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
@@ -52,7 +52,7 @@ export function registerNameKamiModal() {
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiName',

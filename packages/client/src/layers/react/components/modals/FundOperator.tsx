@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useBalance } from 'wagmi';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -78,7 +78,7 @@ export function registerFundOperatorModal() {
         const network = networks.get(selectedAddress);
         const account = network!.api.player.account;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountFund',
@@ -93,7 +93,7 @@ export function registerFundOperatorModal() {
       };
 
       const refundTx = async () => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = uuidv4() as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountRefund',
