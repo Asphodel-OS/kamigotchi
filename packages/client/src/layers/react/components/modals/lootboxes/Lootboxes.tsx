@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
@@ -26,44 +26,22 @@ export function registerLootboxesModal() {
       rowStart: 30,
       rowEnd: 75,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        AccountID,
-        Balance,
-        Balances,
-        RevealBlock,
-        HolderID,
-        ItemIndex,
-        MediaURI,
-      } = network.components;
 
-      return merge(
-        AccountID.update$,
-        Balance.update$,
-        Balances.update$,
-        RevealBlock.update$,
-        HolderID.update$,
-        ItemIndex.update$,
-        MediaURI.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(
-            network,
-            { lootboxLogs: true, inventory: true },
-          );
-
-          return {
-            network,
-            data: {
-              account,
-              selectedBox: getLootboxByIndex(network, 10001),
-            }
-          };
-        })
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      const account = getAccountFromBurner(
+        layers.network,
+        { lootboxLogs: true, inventory: true },
       );
-    },
+      const selectedBox = getLootboxByIndex(layers.network, 10001);
 
+      return {
+        network: layers.network,
+        data: { account, selectedBox }
+      };
+    })),
+
+    // Render
     ({ network, data }) => {
       const { account, selectedBox } = data;
       const { actions, api, world } = network;

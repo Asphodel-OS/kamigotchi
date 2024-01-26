@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import crypto from "crypto";
 
@@ -21,29 +21,13 @@ export function registerBuyModal() {
       rowStart: 22,
       rowEnd: 58,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        FoodIndex,
-        ReviveIndex,
-        ItemIndex,
-        Description,
-        Name,
-      } = network.components;
 
-      return merge(
-        FoodIndex.update$,
-        ReviveIndex.update$,
-        ItemIndex.update$,
-        Description.update$,
-        Name.update$,
-      ).pipe(
-        map(() => {
-          return { network };
-        })
-      );
-    },
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      return { network: layers.network };
+    })),
 
+    // Render
     ({ network }) => {
       const { api, actions } = network;
       const { modals, setModals } = useVisibility();

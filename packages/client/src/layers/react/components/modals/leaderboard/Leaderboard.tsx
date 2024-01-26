@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Table } from './Table';
@@ -20,32 +20,19 @@ export function registerLeaderboardModal() {
       rowStart: 20,
       rowEnd: 78,
     },
-    // Requirement (Data Manangement)
-    (layers) => {
-      const { network } = layers;
-      const {
-        IsScore,
-        Location,
-        Name,
-        OperatorAddress,
-      } = network.components;
 
-      return merge(
-        IsScore.update$,
-        Location.update$,
-        Name.update$,
-        OperatorAddress.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(network);
-          return {
-            network,
-            data: { account },
-          };
-        })
-      );
+    // Requirement
+    (layers) => {
+      return interval(1000).pipe(map(() => {
+        const account = getAccountFromBurner(layers.network);
+        return {
+          network: layers.network,
+          data: { account },
+        };
+      }));
     },
 
+    // Render
     ({ network, data }) => {
       // console.log('leaderboardM: tableData', tableData);
       const { modals } = useVisibility();

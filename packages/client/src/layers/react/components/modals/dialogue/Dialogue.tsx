@@ -1,7 +1,7 @@
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 import React, { useEffect } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { DialogueNode, dialogues } from 'constants/dialogue';
@@ -23,26 +23,13 @@ export function registerDialogueModal() {
       rowStart: 75,
       rowEnd: 100,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        IsRoom,
-        Exits,
-        Location,
-        Name,
-      } = network.components;
 
-      return merge(
-        IsRoom.update$,
-        Exits.update$,
-        Location.update$,
-        Name.update$,
-      ).pipe(
-        map(() => {
-          return { network };
-        })
-      );
-    },
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      return { network: layers.network };
+    })),
+
+    // Render
     ({ network }) => {
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();

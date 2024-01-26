@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
@@ -25,24 +25,17 @@ export function registerMapModal() {
       rowStart: 8,
       rowEnd: 50,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        api: { player },
-        components: { Location, OperatorAddress },
-        actions,
-      } = network;
 
-      return merge(Location.update$, OperatorAddress.update$).pipe(
-        map(() => {
-          const account = getAccountFromBurner(network);
-          return {
-            network,
-            data: { account }
-          };
-        })
-      );
-    },
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      const account = getAccountFromBurner(layers.network);
+      return {
+        network: layers.network,
+        data: { account }
+      };
+    })),
+
+    // Render
     ({ network, data }) => {
       const { actions, api } = network;
 

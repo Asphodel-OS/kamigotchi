@@ -2,7 +2,7 @@ import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from "crypto";
 import React from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 
 import { Kards } from './Kards';
 import { kamiIcon } from 'assets/images/icons/menu';
@@ -26,87 +26,26 @@ export function registerPartyModal() {
       rowEnd: 99,
     },
 
-    // Requirement (Data Manangement)
-    (layers) => {
-      const { network } = layers;
-      const {
-        OperatorAddress,
-        OwnerAddress,
-        IsAccount,
-        IsBonus,
-        IsConfig,
-        IsProduction,
-        AccountID,
-        HolderID,
-        PetID,
-        ItemIndex,
-        PetIndex,
-        LastTime,
-        LastActionTime,
-        StartTime,
-        Balance,
-        Coin,
-        Harmony,
-        Health,
-        HealthCurrent,
-        Location,
-        MediaURI,
-        Name,
-        Rate,
-        State,
-        Type,
-        Value,
-      } = network.components;
-
-      return merge(
-        OperatorAddress.update$,
-        OwnerAddress.update$,
-        IsAccount.update$,
-        IsBonus.update$,
-        IsConfig.update$,
-        IsProduction.update$,
-        AccountID.update$,
-        HolderID.update$,
-        PetID.update$,
-        ItemIndex.update$,
-        PetIndex.update$,
-        LastTime.update$,
-        LastActionTime.update$,
-        StartTime.update$,
-        Balance.update$,
-        Coin.update$,
-        Harmony.update$,
-        HealthCurrent.update$,
-        Health.update$,
-        Location.update$,
-        MediaURI.update$,
-        Name.update$,
-        Rate.update$,
-        State.update$,
-        Type.update$,
-        Value.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(
-            network,
-            { inventory: true, kamis: true },
-          );
-
-          return {
-            network,
-            data: { account },
-          };
-        })
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      const account = getAccountFromBurner(
+        layers.network,
+        { inventory: true, kamis: true },
       );
-    },
+
+      return {
+        network: layers.network,
+        data: { account },
+      };
+    })),
 
     // Render
     ({ network, data }) => {
       // console.log('PartyM: data', data);
       const { actions, api, world } = network;
+
       const { modals, setModals } = useVisibility();
       const { setKami } = useSelected();
-
 
       /////////////////
       // INTERACTION

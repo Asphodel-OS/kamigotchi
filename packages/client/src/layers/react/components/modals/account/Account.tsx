@@ -1,7 +1,7 @@
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 
 import { Bio } from './Bio';
 import { Tabs } from './Tabs';
@@ -9,7 +9,6 @@ import xIcon from 'assets/images/icons/placeholder.png';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/network/shapes/Account';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
 
@@ -24,74 +23,23 @@ export function registerAccountModal() {
       rowEnd: 50,
     },
 
-    // Requirement (Data Manangement)
-    (layers) => {
-      const { network } = layers;
-      const {
-        actions,
-        api: { player },
-        components: {
-          OperatorAddress,
-          OwnerAddress,
-          IsAccount,
-          IsPet,
-          AccountID,
-          HolderID,
-          PetID,
-          AccountIndex,
-          ItemIndex,
-          LastActionTime,
-          LastTime,
-          StartTime,
-          Coin,
-          Level,
-          Location,
-          MediaURI,
-          Name,
-          State,
-        },
-        world,
-      } = network;
-
-      return merge(
-        OperatorAddress.update$,
-        OwnerAddress.update$,
-        IsAccount.update$,
-        IsPet.update$,
-        AccountID.update$,
-        HolderID.update$,
-        PetID.update$,
-        AccountIndex.update$,
-        ItemIndex.update$,
-        LastTime.update$,
-        LastActionTime.update$,
-        StartTime.update$,
-        Coin.update$,
-        Level.update$,
-        Location.update$,
-        MediaURI.update$,
-        Name.update$,
-        State.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(
-            network,
-            { inventory: true, kamis: true },
-          );
-
-          return {
-            network,
-            actions,
-            api: player,
-            data: { account },
-          };
-        })
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      const account = getAccountFromBurner(
+        layers.network,
+        { inventory: true, kamis: true },
       );
-    },
 
-    ({ network, actions, api, data }) => {
+      return {
+        network: layers.network,
+        data: { account },
+      };
+    })),
+
+    // Render
+    ({ network, data }) => {
       // console.log('AccountM: data', data);
-      const { modals, setModals } = useVisibility();
+      const { actions, api } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
       const [tab, setTab] = useState('party'); // party | friends | activity
@@ -114,7 +62,7 @@ export function registerAccountModal() {
           params: [account.ownerEOA],
           description: `Sending ${account.name} Friend Request`,
           execute: async () => {
-            return api.social.friend.request(account.ownerEOA);
+            return api.player.social.friend.request(account.ownerEOA);
           },
         });
       };
@@ -129,7 +77,7 @@ export function registerAccountModal() {
           params: [account.ownerEOA],
           description: `Accepting ${account.name} Friend Request`,
           execute: async () => {
-            return api.social.friend.accept(account.ownerEOA);
+            return api.player.social.friend.accept(account.ownerEOA);
           },
         });
       };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Listings } from './Listings';
@@ -24,47 +24,18 @@ export function registerMerchantModal() {
       rowEnd: 70,
     },
 
-    // Requirement (Data Manangement)
-    (layers) => {
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
       const { network } = layers;
-      const {
-        AccountID,
-        Coin,
-        Description,
-        IsListing,
-        IsNPC,
-        ItemIndex,
-        NPCIndex,
-        Location,
-        Name,
-      } = network.components;
+      const { npcIndex } = useSelected.getState();
+      const account = getAccountFromBurner(network, { inventory: true });
+      const merchant = getMerchantByIndex(network, npcIndex);
 
-      return merge(
-        AccountID.update$,
-        Coin.update$,
-        Description.update$,
-        IsListing.update$,
-        IsNPC.update$,
-        ItemIndex.update$,
-        NPCIndex.update$,
-        Location.update$,
-        Name.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(network, { inventory: true });
-          const { npcIndex } = useSelected.getState();
-          const merchant = getMerchantByIndex(network, npcIndex);
-
-          return {
-            network,
-            data: {
-              account,
-              merchant,
-            } as any,
-          };
-        })
-      );
-    },
+      return {
+        network,
+        data: { account, merchant },
+      };
+    })),
 
     // Render
     ({ network, data }) => {

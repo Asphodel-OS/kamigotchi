@@ -1,5 +1,5 @@
 import React from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -20,41 +20,14 @@ export function registerInventoryModal() {
       rowStart: 8,
       rowEnd: 75,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        AccountID,
-        Balance,
-        Coin,
-        Description,
-        HolderID,
-        ItemIndex,
-        MediaURI,
-        Name,
-        OwnerAddress,
-      } = network.components;
 
-      return merge(
-        AccountID.update$,
-        Balance.update$,
-        Coin.update$,
-        Description.update$,
-        HolderID.update$,
-        ItemIndex.update$,
-        MediaURI.update$,
-        Name.update$,
-        OwnerAddress.update$,
-      ).pipe(
-        map(() => {
-          return {
-            data: {
-              account: getAccountFromBurner(network, { inventory: true }),
-            }
-          };
-        })
-      );
-    },
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      const account = getAccountFromBurner(layers.network, { inventory: true });
+      return { data: { account } };
+    })),
 
+    // Render
     ({ data }) => {
       const getInventories = () => {
         let accInv = data.account.inventories;

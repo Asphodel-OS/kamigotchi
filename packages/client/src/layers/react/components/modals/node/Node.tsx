@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
@@ -28,87 +28,20 @@ export function registerNodeModal() {
       rowEnd: 99,
     },
 
-    // Requirement (Data Manangement)
-    (layers) => {
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
       const { network } = layers;
-      const {
-        OperatorAddress,
-        IsAccount,
-        IsBonus,
-        IsConfig,
-        IsInventory,
-        IsProduction,
-        IsNode,
-        AccountID,
-        HolderID,
-        PetID,
-        ItemIndex,
-        PetIndex,
-        LastTime,
-        LastActionTime,
-        StartTime,
-        Balance,
-        Coin,
-        Harmony,
-        Health,
-        HealthCurrent,
-        Location,
-        MediaURI,
-        Name,
-        Rate,
-        State,
-        Type,
-        Value,
-        Violence,
-      } = network.components;
+      const { nodeIndex } = useSelected.getState();
 
-      // TODO: update this to support node input as props
-      return merge(
-        OperatorAddress.update$,
-        IsAccount.update$,
-        IsBonus.update$,
-        IsConfig.update$,
-        IsInventory.update$,
-        IsNode.update$,
-        IsProduction.update$,
-        AccountID.update$,
-        HolderID.update$,
-        PetID.update$,
-        ItemIndex.update$,
-        PetIndex.update$,
-        LastTime.update$,
-        LastActionTime.update$,
-        StartTime.update$,
-        Balance.update$,
-        Coin.update$,
-        Harmony.update$,
-        Health.update$,
-        HealthCurrent.update$,
-        Location.update$,
-        MediaURI.update$,
-        Name.update$,
-        Rate.update$,
-        State.update$,
-        Type.update$,
-        Value.update$,
-        Violence.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-          const { nodeIndex } = useSelected.getState();
-          const node = getNodeByIndex(network, nodeIndex, { kamis: true, accountID: account.id });
+      const account = getAccountFromBurner(network, { kamis: true, inventory: true });
+      const node = getNodeByIndex(network, nodeIndex, { kamis: true, accountID: account.id });
+      const liquidationConfig = getLiquidationConfig(network);
 
-          return {
-            network,
-            data: {
-              account,
-              node,
-              liquidationConfig: getLiquidationConfig(network),
-            },
-          };
-        })
-      );
-    },
+      return {
+        network,
+        data: { account, node, liquidationConfig },
+      };
+    })),
 
     // Render
     ({ network, data }) => {

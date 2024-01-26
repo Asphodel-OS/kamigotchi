@@ -1,5 +1,5 @@
 import React from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
@@ -21,29 +21,13 @@ export function registerNameKamiModal() {
       rowStart: 30,
       rowEnd: 57,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        OperatorAddress,
-        PetID,
-        PetIndex,
-        CanName,
-        Name
-      } = network.components;
 
-      return merge(
-        OperatorAddress.update$,
-        PetID.update$,
-        PetIndex.update$,
-        CanName.update$,
-        Name.update$
-      ).pipe(
-        map(() => {
-          return { network };
-        })
-      );
-    },
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      return { network: layers.network };
+    })),
 
+    // Render
     ({ network }) => {
       const { actions, api } = network;
       const { modals, setModals } = useVisibility();

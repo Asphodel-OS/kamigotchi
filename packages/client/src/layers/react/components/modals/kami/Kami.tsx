@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
@@ -24,70 +24,15 @@ export function registerKamiModal() {
       rowStart: 3,
       rowEnd: 99,
     },
-    (layers) => {
-      const { network } = layers;
-      const {
-        IsBonus,
-        IsEffect,
-        IsKill,
-        IsPet,
-        IsRequirement,
-        IsSkill,
-        AccountID,
-        HolderID,
-        PetID,
-        SourceID,
-        TargetID,
-        PetIndex,
-        SkillIndex,
-        Balance,
-        Experience,
-        Harmony,
-        Health,
-        Level,
-        MediaURI,
-        Name,
-        Power,
-        SkillPoint,
-        Slots,
-        Type,
-        Violence,
-      } = network.components;
 
-      return merge(
-        IsBonus.update$,
-        IsEffect.update$,
-        IsKill.update$,
-        IsPet.update$,
-        IsRequirement.update$,
-        IsSkill.update$,
-        AccountID.update$,
-        HolderID.update$,
-        PetID.update$,
-        SourceID.update$,
-        TargetID.update$,
-        PetIndex.update$,
-        SkillIndex.update$,
-        Balance.update$,
-        Experience.update$,
-        Harmony.update$,
-        Health.update$,
-        Level.update$,
-        MediaURI.update$,
-        Name.update$,
-        Power.update$,
-        SkillPoint.update$,
-        Slots.update$,
-        Type.update$,
-        Violence.update$,
-      ).pipe(
-        map(() => {
-          return { network };
-        })
-      );
-    },
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      return { network: layers.network };
+    })),
 
+    // Render
     ({ network }) => {
+      const { actions, api } = network;
       const [tab, setTab] = useState('traits');
       const { kamiIndex } = useSelected();
       const [mode, setMode] = useState('DETAILS');
@@ -114,26 +59,26 @@ export function registerKamiModal() {
 
       const levelUp = (kami: Kami) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        network.actions?.add({
+        actions?.add({
           id: actionID,
           action: 'KamiLevel',
           params: [kami.id],
           description: `Leveling up ${kami.name}`,
           execute: async () => {
-            return network.api.player.pet.level(kami.id);
+            return api.player.pet.level(kami.id);
           },
         })
       }
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        network.actions?.add({
+        actions?.add({
           id: actionID,
           action: 'SkillUpgrade',
           params: [kami.id, skill.index],
           description: `Upgrading ${skill.name} for ${kami.name}`,
           execute: async () => {
-            return network.api.player.skill.upgrade(kami.id, skill.index);
+            return api.player.skill.upgrade(kami.id, skill.index);
           },
         })
       }

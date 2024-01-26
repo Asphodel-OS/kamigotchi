@@ -1,7 +1,7 @@
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 import React from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 
 import { Friends } from './Friends';
 import { socialIcon } from 'assets/images/icons/menu';
@@ -23,49 +23,16 @@ export function registerSocialModal() {
       rowEnd: 55,
     },
 
-    // Requirement (Data Manangement)
-    (layers) => {
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
       const { network } = layers;
-      const {
-        IsBonus,
-        IsConfig,
-        IsFriendship,
-        AccountID,
-        HolderID,
-        TargetID,
-        Balance,
-        Name,
-        State,
-        Type,
-        Value,
-      } = network.components;
+      const account = getAccountFromBurner(network, { friends: true });
 
-      return merge(
-        IsBonus.update$,
-        IsConfig.update$,
-        IsFriendship.update$,
-        AccountID.update$,
-        HolderID.update$,
-        TargetID.update$,
-        Balance.update$,
-        Name.update$,
-        State.update$,
-        Type.update$,
-        Value.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(
-            network,
-            { friends: true },
-          );
-
-          return {
-            network,
-            data: { account },
-          };
-        })
-      );
-    },
+      return {
+        network,
+        data: { account },
+      };
+    })),
 
     // Render
     ({ network, data }) => {

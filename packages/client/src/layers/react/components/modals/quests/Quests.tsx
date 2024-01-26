@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import crypto from "crypto";
 
@@ -26,52 +26,23 @@ export function registerQuestsModal() {
       rowEnd: 75,
     },
 
-    (layers) => {
+    (layers) => interval(1000).pipe(map(() => {
       const { network } = layers;
-      const {
-        AccountID,
-        Coin,
-        IsComplete,
-        IsObjective,
-        IsQuest,
-        IsRequirement,
-        IsReward,
-        Location,
-        QuestIndex,
-        QuestPoint,
-        Value,
-      } = network.components;
-
-      return merge(
-        AccountID.update$,
-        Coin.update$,
-        IsComplete.update$,
-        IsObjective.update$,
-        IsQuest.update$,
-        IsRequirement.update$,
-        IsReward.update$,
-        IsObjective.update$,
-        Location.update$,
-        QuestIndex.update$,
-        QuestPoint.update$,
-        Value.update$,
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(
-            network,
-            { quests: true, kamis: true, inventory: true },
-          );
-
-          return {
-            network,
-            data: {
-              account,
-              quests: parseQuestsStatus(network, account, getRegistryQuests(network)),
-            },
-          };
-        })
+      const account = getAccountFromBurner(
+        network,
+        { quests: true, kamis: true, inventory: true },
       );
-    },
+      const quests = parseQuestsStatus(
+        network,
+        account,
+        getRegistryQuests(network)
+      );
+
+      return {
+        network,
+        data: { account, quests },
+      };
+    })),
 
     ({ network, data }) => {
       const { actions, api, notifications } = network;

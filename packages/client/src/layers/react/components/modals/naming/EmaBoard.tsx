@@ -1,6 +1,6 @@
 import { EntityID } from '@latticexyz/recs';
 import React from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import crypto from "crypto";
 
@@ -27,39 +27,18 @@ export function registerEMABoardModal() {
       rowEnd: 99,
     },
 
-    // Requirement (Data Manangement)
-    (layers) => {
-      const { network } = layers;
-      const {
-        AccountID,
-        Balance,
-        CanName,
-        IsPet,
-        Location,
-        MediaURI,
-        Name,
-        State,
-      } = network.components;
-
-      return merge(
-        AccountID.update$,
-        Balance.update$,
-        CanName.update$,
-        IsPet.update$,
-        Location.update$,
-        Name.update$,
-        State.update$,
-        MediaURI.update$
-      ).pipe(
-        map(() => {
-          const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-          return {
-            network,
-            data: { account },
-          };
-        })
+    // Requirement
+    (layers) => interval(1000).pipe(map(() => {
+      const account = getAccountFromBurner(
+        layers.network,
+        { inventory: true, kamis: true },
       );
-    },
+
+      return {
+        network: layers.network,
+        data: { account },
+      };
+    })),
 
     // Render
     ({ network, data }) => {
