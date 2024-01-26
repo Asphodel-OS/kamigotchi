@@ -52,6 +52,13 @@ export const queryKamisX = (
   );;
 };
 
+export const getAllKamis = (
+  network: NetworkLayer,
+  options?: Options
+) => {
+  return queryKamisX(network, {}, options);
+}
+
 // get a kami by its index (token ID)
 export const getKamiByIndex = (
   network: NetworkLayer,

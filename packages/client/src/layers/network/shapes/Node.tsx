@@ -133,3 +133,19 @@ export const getNodeByIndex = (
   return getNode(network, entityIndex, options);
 }
 
+export const getAllNodes = (
+  network: NetworkLayer,
+  options?: Options,
+): Node[] => {
+  const { components: { IsNode } } = network;
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsNode),
+    ])
+  );
+
+  return entityIndices.map((entityIndex) => {
+    return getNode(network, entityIndex, options);
+  });
+}
+

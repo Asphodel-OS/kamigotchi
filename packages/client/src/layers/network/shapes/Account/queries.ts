@@ -9,6 +9,16 @@ import {
 import { getAccount, AccountOptions } from "./types";
 import { NetworkLayer } from 'layers/network/types';
 
+
+export const getAllAccounts = (network: NetworkLayer, options?: AccountOptions) => {
+  const { components: { IsAccount } } = network;
+  return Array.from(
+    runQuery([
+      Has(IsAccount),
+    ])
+  ).map((entityIndex) => getAccount(network, entityIndex, options));
+}
+
 // get an Account by its entityID
 export const getAccountByID = (
   network: NetworkLayer,
@@ -94,3 +104,4 @@ export const getAccountFromBurner = (network: NetworkLayer, options?: AccountOpt
   const connectedBurner = network.network.connectedAddress.get();
   return getAccountByOperator(network, connectedBurner!, options);
 };
+

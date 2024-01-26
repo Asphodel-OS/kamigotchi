@@ -94,6 +94,21 @@ export const getRoomByLocation = (
   return getRoom(network, roomEntityIndex, options);
 };
 
+export const getAllRooms = (
+  network: NetworkLayer,
+  options?: RoomOptions
+): Room[] => {
+  const { IsRoom } = network.components;
+  const roomEntityIndices = Array.from(
+    runQuery([
+      Has(IsRoom),
+    ])
+  );
+  return roomEntityIndices.map((roomEntityIndex) => {
+    return getRoom(network, roomEntityIndex, options);
+  });
+}
+
 // gets a Room EntityIndex by its location
 export const getRoomEntityIndexByLocation = (
   network: NetworkLayer,

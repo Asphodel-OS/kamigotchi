@@ -72,3 +72,14 @@ export const getMerchantByIndex = (network: NetworkLayer, index: number) => {
 
   return getMerchant(network, entityIndex);
 }
+
+export const getAllMerchants = (network: NetworkLayer) => {
+  const { components: { IsNPC } } = network;
+  const entityIndices = Array.from(
+    runQuery([
+      Has(IsNPC),
+    ])
+  );
+
+  return entityIndices.map((entityIndex) => getMerchant(network, entityIndex));
+}
