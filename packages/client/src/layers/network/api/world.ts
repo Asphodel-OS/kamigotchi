@@ -29,7 +29,6 @@ export function setUpWorldAPI(systems: any) {
     if (!process.env.MODE || process.env.MODE == 'DEV') {
       await initLocalConfig(api);
       await initGachaPool(api, 333);
-
     } else {
       await initGachaPool(api, 3333);
     }
@@ -300,12 +299,13 @@ export function setUpWorldAPI(systems: any) {
     await api.mint.gacha.init();
     await api.mint.batchMinter.init();
 
-    const intervals = 8;
-    for (let i = 0; i < numToMint; i += intervals) {
+    const batchSize = 8;
+    const numLoops = Math.floor(numToMint / batchSize);
+    for (let i = 0; i < numLoops; i++) {
       await sleepIf();
-      await api.mint.batchMinter.mint(intervals);
+      await api.mint.batchMinter.mint(batchSize);
     }
-    await api.mint.batchMinter.mint(numToMint % intervals);
+    await api.mint.batchMinter.mint(numToMint % batchSize);
   }
 
 
