@@ -10,7 +10,8 @@
     "client:dev": "pnpm --filter=client dev",
     "client:start": "pnpm --filter=client dev",
     "contracts:node": "pnpm --filter=contracts devnode",
-    "contracts:dev": "pnpm --filter=contracts dev"
+    "contracts:dev": "pnpm --filter=contracts dev",
+    "nuke": "rimraf node_modules contracts/node_modules client/node_modules pnpm-lock* yarn.lock"
   },
   "devDependencies": {
     "buffer": "^5.5.0",
@@ -20,7 +21,9 @@
     "path-browserify": "^1.0.0",
     "punycode": "^1.4.1",
     "querystring-es3": "^0.2.1",
+    "rimraf": "^5.0.5",
     "run-pty": "^4.0.3",
+    "threads": "^1.7.0",
     "url": "^0.11.0"
   },
   "pnpm": {

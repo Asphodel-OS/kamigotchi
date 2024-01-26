@@ -25,7 +25,6 @@
     "parcel-reporter-static-files-copy": "^1.4.0",
     "parcel-transformer-csv": "^0.0.3",
     "prettier": "^2.5.1",
-    "threads": "^1.7.0",
     "tspath": "^2.6.8",
     "typedoc": "^0.23.0",
     "typescript": "^5.0",
