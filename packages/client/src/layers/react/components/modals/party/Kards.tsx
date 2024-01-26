@@ -202,7 +202,7 @@ export const Kards = (props: Props) => {
   // Rendering of Individual Kami Cards in the Party Modal
   // TODO: consider ideal ordering here
   const KamiCards = (kamis: Kami[]) => {
-    let myKamis = [...kamis] ?? [];
+    let myKamis = [...kamis];
     return <>{myKamis.reverse().map((kami) => {
       return (
         <KamiCard

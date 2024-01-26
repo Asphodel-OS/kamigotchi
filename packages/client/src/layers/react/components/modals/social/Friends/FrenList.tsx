@@ -63,7 +63,7 @@ export const FrenList = (props: Props) => {
   }
 
   const FriendCards = (frens: Friendship[]) => {
-    let myFrens = [...frens] ?? [];
+    let myFrens = [...frens];
     return <>{myFrens.reverse().map((fren) => {
       return (
         <Card

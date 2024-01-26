@@ -69,8 +69,8 @@ export const Requests = (props: Props) => {
   }
 
   const FriendCards = (incoming: Friendship[], outgoing: Friendship[]) => {
-    let inReqs = [...incoming] ?? [];
-    let outReqs = [...outgoing] ?? [];
+    let inReqs = [...incoming];
+    let outReqs = [...outgoing];
     return (<>
       {inReqs.reverse().map((req) => {
         return (
