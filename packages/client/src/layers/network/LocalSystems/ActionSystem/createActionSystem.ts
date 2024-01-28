@@ -1,63 +1,33 @@
+import { Provider } from "@ethersproject/providers";
 import {
-  Components,
   World,
   createEntity,
   getComponentValue,
-  OverridableComponent,
-  Schema,
-  overridableComponent,
   updateComponent,
   EntityID,
   EntityIndex,
-  Component,
   removeComponent,
   setComponent,
-  Metadata,
 } from "@latticexyz/recs";
-import { mapObject, awaitStreamValue, uuid } from "@latticexyz/utils";
+import { awaitStreamValue } from "@latticexyz/utils";
+import { Observable } from "rxjs";
+
 import { ActionState } from "./constants";
-import { ActionData, ActionRequest } from "./types";
+import { ActionRequest } from "./types";
 import { defineActionComponent } from "./ActionComponent";
-import { merge, Observable } from "rxjs";
-import { Provider } from "@ethersproject/providers";
+
 
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 
 export function createActionSystem<M = undefined>(world: World, txReduced$: Observable<string>, provider: Provider) {
   const Action = defineActionComponent<M>(world);
-
-  // Components that scheduled actions depend on including pending updates
-  const pendingComponents: { [id: string]: OverridableComponent<Schema> } = {};
-
-  // ActionData contains requirements and execute logic of scheduled actions.
-  // We also store the relevant subset of all pendingComponents in the action data,
-  // to recheck requirements only if relevant components updated.
-  const actionData = new Map<string, ActionData>();
-
-  // Disposers of requirement check autoruns for all pending actions
-  const disposer = new Map<string, { dispose: () => void }>();
-  world.registerDisposer(() => {
-    for (const { dispose } of disposer.values()) dispose();
-  });
+  const requests = new Map<string, ActionRequest>();
 
 
-  /**
-   * Maps all components in a given components map to the respective components including pending updates
-   * @param component Component to be mapped to components including pending updates
-   * @returns Components including pending updates
-   */
-  function withOptimisticUpdates<S extends Schema, M extends Metadata, T>(
-    component: Component<S, M, T>
-  ): OverridableComponent<S, M, T> {
-    const optimisticComponent = pendingComponents[component.id] || overridableComponent(component);
-
-    // If the component is not tracked yet, add it to the map of overridable components
-    if (!pendingComponents[component.id]) {
-      pendingComponents[component.id] = optimisticComponent;
-    }
-
-    // Typescript can't know that the optimistic component with this id has the same type as C
-    return optimisticComponent as OverridableComponent<S, M, T>;
+  // Set the action's state to ActionState.Failed
+  function handleError(error: any, action: ActionRequest) {
+    if (!action.index) return;
+    updateComponent(Action, action.index, { state: ActionState.Failed, metadata: error.reason });
   }
 
 
@@ -68,9 +38,7 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    * @param actionRequest Action to be scheduled
    * @returns index of the entity created for the action
    */
-  function add<C extends Components, T>(actionRequest: ActionRequest<C, T, M>): EntityIndex {
-    if (!actionRequest.components) actionRequest.components = {} as C;
-
+  function add(actionRequest: ActionRequest): EntityIndex {
     // Prevent the same actions from being scheduled multiple times
     const existingAction = world.entityToIndex.get(actionRequest.id);
     if (existingAction != null) {
@@ -79,64 +47,27 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     }
 
     // Set the action component
-    const entityIndex = createEntity(world, undefined, {
-      id: actionRequest.id,
-    });
-
+    const entityIndex = createEntity(world, undefined, { id: actionRequest.id });
     setComponent(Action, entityIndex, {
-      action: actionRequest.action,
       description: actionRequest.description,
+      action: actionRequest.action,
       params: actionRequest.params ?? [],
-      metadata: actionRequest.metadata,
-      on: actionRequest.on ? world.entities[actionRequest.on] : undefined,
-      overrides: undefined,
       state: ActionState.Requested,
       time: Date.now(),
+      on: undefined,
+      overrides: undefined,
+      metadata: undefined,
       txHash: undefined,
     });
 
-    // Add components that are not tracked yet to internal overridable component map.
-    // Pending updates will be applied to internal overridable components.
-    for (const [key, component] of Object.entries(actionRequest.components)) {
-      if (!pendingComponents[key]) pendingComponents[key] = overridableComponent(component);
-    }
+    // Store the request with the Action System
+    actionRequest.index = entityIndex;
+    requests.set(actionRequest.id, actionRequest);
 
-    // Store relevant components with pending updates along the action's requirement and execution logic
-    const action = {
-      ...actionRequest,
-      entityIndex,
-      pendingComponents: mapObject(actionRequest.components, (c) => withOptimisticUpdates(c)),
-    } as unknown as ActionData;
-    actionData.set(action.id, action);
-
-    // This subscriotion makes sure the action requirement is checked again every time
-    // one of the referenced components changes or the pending updates map changes
-    const subscription = merge(
-      ...Object.values(action.pendingComponents).map((c) => c.update$)
-    ).subscribe(() => checkRequirement(action));
-    checkRequirement(action);
-    disposer.set(action.id, { dispose: () => subscription?.unsubscribe() });
-
+    execute(actionRequest);
     return entityIndex;
   }
 
-  /**
-   * Checks the requirement of a given action and executes the action if the requirement is fulfilled
-   * @param action Action to check the requirement of
-   * @returns void
-   */
-  function checkRequirement(action: ActionData) {
-    if (!action.requirement) action.requirement = () => true;
-
-    // Only check requirements of requested actions
-    if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) return;
-
-    // Check requirement on components including pending updates
-    const requirementResult = action.requirement(action.pendingComponents);
-
-    // Execute the action if the requirements are met
-    if (requirementResult) executeAction(action, requirementResult);
-  }
 
   /**
    * Executes the given action and sets the corresponding Action component
@@ -144,33 +75,21 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    * @param requirementResult Result of the action's requirement function
    * @returns void
    */
-  async function executeAction<T>(action: ActionData, requirementResult: T) {
+  async function execute(action: ActionRequest) {
+    if (!action.index) return;
+
     // Only execute actions that were requested before
-    if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) return;
+    if (getComponentValue(Action, action.index)?.state !== ActionState.Requested) return;
 
     // Update the action state
-    updateComponent(Action, action.entityIndex, { state: ActionState.Executing });
-
-    // Compute overrides
-    if (!action.updates) action.updates = () => [];
-    const overrides = action
-      .updates(action.pendingComponents, requirementResult)
-      .map((o) => ({ ...o, id: uuid() }));
-
-    // Store overrides on Action component to be able to remove when action is done
-    updateComponent(Action, action.entityIndex, { overrides: overrides.map((o) => `${o.id}/${o.component}`) });
-
-    // Set all pending updates of this action
-    for (const { component, value, entity, id } of overrides) {
-      pendingComponents[component as string].addOverride(id, { entity, value });
-    }
+    updateComponent(Action, action.index, { state: ActionState.Executing });
 
     try {
       // Execute the action
-      const tx = await action.execute(requirementResult);
+      const tx = await action.execute();
       if (tx) {
         // Wait for all tx events to be reduced
-        updateComponent(Action, action.entityIndex, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });
+        updateComponent(Action, action.index, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });
         // console.log(tx);
         async function waitFor(tx: any) {
           // perform regular wait 
@@ -184,24 +103,15 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
         // const txConfirmed = provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
         const txConfirmed = waitFor(tx);
         await awaitStreamValue(txReduced$, (v) => v === tx.hash);
-        updateComponent(Action, action.entityIndex, { state: ActionState.TxReduced });
+        updateComponent(Action, action.index, { state: ActionState.TxReduced });
         if (action.awaitConfirmation) await txConfirmed;
       }
-
-      updateComponent(Action, action.entityIndex, { state: ActionState.Complete });
+      updateComponent(Action, action.index, { state: ActionState.Complete });
     } catch (e) {
       handleError(e, action);
     }
-
-    // we want to persist for the sake of populating a history transaction log
-    // remove(action.id);
   }
 
-  // Set the action's state to ActionState.Failed
-  function handleError(error: any, action: ActionData) {
-    updateComponent(Action, action.entityIndex, { state: ActionState.Failed, metadata: error.reason });
-    // remove(action.id);
-  }
 
   /**
    * Cancels the action with the given ID if it is in the "Requested" state.
@@ -209,51 +119,46 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
    * @returns void
    */
   function cancel(actionId: EntityID): boolean {
-    const action = actionData.get(actionId);
-    if (!action) {
-      console.warn(`Trying to cancel Action ${actionId} that does not exist.`);
+    const request = requests.get(actionId);
+    if (!request) {
+      console.warn(`Trying to cancel Action Request ${actionId} that does not exist.`);
       return false;
     }
-    if (getComponentValue(Action, action.entityIndex)?.state !== ActionState.Requested) {
-      console.warn(`Action ${actionId} is not in the "Requested" state.`);
+    if (!request.index) {
+      console.warn(`Trying to cancel Action Request ${actionId} that has not been indexed.`);
       return false;
     }
-    updateComponent(Action, action.entityIndex, { state: ActionState.Cancelled });
+    const state = getComponentValue(Action, request.index)?.state;
+    if (state !== ActionState.Requested) {
+      console.warn(`Trying to cancel Action Request ${actionId} not in the "Requested" state.`);
+      return false;
+    }
+
     // remove(actionId);
+    updateComponent(Action, request.index, { state: ActionState.Cancelled });
     return true;
   }
 
+
   /**
-   * Removes actionData disposer of the action with the given ID and removes its pending updates.
+   * Removes actions disposer of the action with the given ID and removes its pending updates.
    * @param actionId ID of the action to be removed
+   * @param timeout Timeout in ms after which the action entry should be removed
    */
-  function remove(actionId: EntityID) {
-    const action = actionData.get(actionId);
-    if (!action) {
+  function remove(actionId: EntityID, timeout = 5000) {
+    if (!requests.get(actionId)) {
       console.warn(`Trying to remove action ${actionId} that does not exist.`);
-      return;
-    }
-    // Remove this action's pending updates
-    const actionEntityIndex = world.entityToIndex.get(actionId);
-    const overrides = (actionEntityIndex != null && getComponentValue(Action, actionEntityIndex)?.overrides) || [];
-    for (const override of overrides) {
-      const [id, componentKey] = override.split("/");
-      const component = pendingComponents[componentKey];
-      component.removeOverride(id);
+      return false;
     }
 
-    // Remove this action's autorun and corresponding disposer
-    disposer.get(actionId)?.dispose();
-    disposer.delete(actionId);
-
-    // Remove the action data
-    actionData.delete(actionId);
-
-    // Remove the action entity after some time
+    // Remove the action entity from the world and the value from the Action component map
     const actionIndex = world.entityToIndex.get(actionId);
-    world.entityToIndex.delete(actionId);
+    if (actionIndex != null) {
+      world.entityToIndex.delete(actionId);
+      setTimeout(() => removeComponent(Action, actionIndex), timeout);
+    }
 
-    actionIndex != null && setTimeout(() => removeComponent(Action, actionIndex), 5000);
+    requests.delete(actionId);  // Remove the request from the ActionSystem
   }
 
   return {
@@ -261,6 +166,5 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     add,
     cancel,
     remove,
-    withOptimisticUpdates,
   };
 }
