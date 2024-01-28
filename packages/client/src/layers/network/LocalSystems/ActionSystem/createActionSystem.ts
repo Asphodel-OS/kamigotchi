@@ -19,39 +19,32 @@ import { defineActionComponent } from "./ActionComponent";
 
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 
+// TODO(ja): set the action ID within the add function instead of passing it in with the ActionRequest.
+//  the above is best done After the vite migration is done to avoid an absurd number of merge conflicts.
 export function createActionSystem<M = undefined>(world: World, txReduced$: Observable<string>, provider: Provider) {
   const Action = defineActionComponent<M>(world);
-  const requests = new Map<string, ActionRequest>();
-
-
-  // Set the action's state to ActionState.Failed
-  function handleError(error: any, action: ActionRequest) {
-    if (!action.index) return;
-    updateComponent(Action, action.index, { state: ActionState.Failed, metadata: error.reason });
-  }
+  const requests = new Map<EntityIndex, ActionRequest>();
 
 
   /**
-   * Schedules an action. The action will be executed once its requirement is fulfilled.
-   * Note: the requirement will only be rechecked automatically if the requirement is based on components
-   * (or other mobx-observable values).
-   * @param actionRequest Action to be scheduled
-   * @returns index of the entity created for the action
+   * Schedules an Action from an ActionRequest and schedules it for execution.
+   * @param request ActionRequest to be scheduled
+   * @returns EntityIndex of the entity created for the action
    */
-  function add(actionRequest: ActionRequest): EntityIndex {
+  function add(request: ActionRequest): EntityIndex {
     // Prevent the same actions from being scheduled multiple times
-    const existingAction = world.entityToIndex.get(actionRequest.id);
+    const existingAction = world.entityToIndex.get(request.id);
     if (existingAction != null) {
-      console.warn(`Action with id ${actionRequest.id} is already requested.`);
+      console.warn(`Action with id ${request.id} is already requested.`);
       return existingAction;
     }
 
     // Set the action component
-    const entityIndex = createEntity(world, undefined, { id: actionRequest.id });
+    const entityIndex = createEntity(world, undefined, { id: request.id });
     setComponent(Action, entityIndex, {
-      description: actionRequest.description,
-      action: actionRequest.action,
-      params: actionRequest.params ?? [],
+      description: request.description,
+      action: request.action,
+      params: request.params ?? [],
       state: ActionState.Requested,
       time: Date.now(),
       on: undefined,
@@ -61,104 +54,111 @@ export function createActionSystem<M = undefined>(world: World, txReduced$: Obse
     });
 
     // Store the request with the Action System
-    actionRequest.index = entityIndex;
-    requests.set(actionRequest.id, actionRequest);
+    request.index = entityIndex;
+    requests.set(entityIndex, request);
 
-    execute(actionRequest);
+    execute(entityIndex);
     return entityIndex;
   }
 
 
   /**
-   * Executes the given action and sets the corresponding Action component
-   * @param action ActionData of the action to be executed
-   * @param requirementResult Result of the action's requirement function
+   * Executes the given Action and sets the corresponding fields accordingly.
+   * @param index EntityIndex of the Action to be executed
    * @returns void
    */
-  async function execute(action: ActionRequest) {
-    if (!action.index) return;
-
-    // Only execute actions that were requested before
-    if (getComponentValue(Action, action.index)?.state !== ActionState.Requested) return;
+  async function execute(index: EntityIndex) {
+    const request = requests.get(index);
+    if (!request || !request.index) return;
+    if (getComponentValue(Action, request.index)?.state !== ActionState.Requested) return;
+    const updateAction = (updates: any) => updateComponent(Action, request.index!, updates);
 
     // Update the action state
-    updateComponent(Action, action.index, { state: ActionState.Executing });
+    updateAction({ state: ActionState.Executing });
 
     try {
       // Execute the action
-      const tx = await action.execute();
+      const tx = await request.execute();
+
       if (tx) {
         // Wait for all tx events to be reduced
-        updateComponent(Action, action.index, { state: ActionState.WaitingForTxEvents, txHash: tx.hash });
-        // console.log(tx);
+        updateAction({ state: ActionState.WaitingForTxEvents, txHash: tx.hash });
+
+        // NOTE: this logic should be baked into the network layer and we should be better handling the
+        // other confirmation statuses
         async function waitFor(tx: any) {
           // perform regular wait 
-          const txConfirmed = await provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
+          const txConfirmed = await provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, request!));
           if (txConfirmed?.status === 0) {
             // if tx did not complete, initiate tx.wait() to throw regular error
-            await tx.wait().catch((e: any) => handleError(e, action));
+            await tx.wait().catch((e: any) => handleError(e, request!));
           }
           return txConfirmed;
         }
-        // const txConfirmed = provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
+
+        // const txConfirmed = await tx.wait().catch((e: any) => handleError(e, request));
+        // const txConfirmed = await provider.waitForTransaction(tx.hash, 1, 8000).catch((e) => handleError(e, action));
         const txConfirmed = waitFor(tx);
         await awaitStreamValue(txReduced$, (v) => v === tx.hash);
-        updateComponent(Action, action.index, { state: ActionState.TxReduced });
-        if (action.awaitConfirmation) await txConfirmed;
+        updateAction({ state: ActionState.TxReduced });
+        if (request.awaitConfirmation) await txConfirmed;
       }
-      updateComponent(Action, action.index, { state: ActionState.Complete });
+      updateAction({ state: ActionState.Complete });
     } catch (e) {
-      handleError(e, action);
+      handleError(e, request);
     }
   }
 
 
   /**
    * Cancels the action with the given ID if it is in the "Requested" state.
-   * @param actionId ID of the action to be cancelled
-   * @returns void
+   * @param index EntityIndex of the ActionRequest to be canceled
+   * @returns boolean indicating whether the action was successfully canceled
    */
-  function cancel(actionId: EntityID): boolean {
-    const request = requests.get(actionId);
+  function cancel(index: EntityIndex): boolean {
+    const request = requests.get(index);
     if (!request) {
-      console.warn(`Trying to cancel Action Request ${actionId} that does not exist.`);
+      console.warn(`Trying to cancel Action Request that does not exist.`);
       return false;
     }
-    if (!request.index) {
-      console.warn(`Trying to cancel Action Request ${actionId} that has not been indexed.`);
-      return false;
-    }
-    const state = getComponentValue(Action, request.index)?.state;
-    if (state !== ActionState.Requested) {
-      console.warn(`Trying to cancel Action Request ${actionId} not in the "Requested" state.`);
+    if (getComponentValue(Action, index)?.state !== ActionState.Requested) {
+      console.warn(`Trying to cancel Action Request ${request.id} not in the "Requested" state.`);
       return false;
     }
 
-    // remove(actionId);
-    updateComponent(Action, request.index, { state: ActionState.Cancelled });
+    updateComponent(Action, index, { state: ActionState.Cancelled });
+    // remove(index);
     return true;
   }
 
 
   /**
    * Removes actions disposer of the action with the given ID and removes its pending updates.
-   * @param actionId ID of the action to be removed
-   * @param timeout Timeout in ms after which the action entry should be removed
+   * @param index EntityIndex of the ActionRequest to be removed
+   * @param delay delay (ms) after which the action entry should be removed
    */
-  function remove(actionId: EntityID, timeout = 5000) {
-    if (!requests.get(actionId)) {
-      console.warn(`Trying to remove action ${actionId} that does not exist.`);
+  function remove(index: EntityIndex, delay = 5000) {
+    const request = requests.get(index);
+    if (!request) {
+      console.warn(`Trying to remove action that does not exist.`);
       return false;
     }
 
-    // Remove the action entity from the world and the value from the Action component map
-    const actionIndex = world.entityToIndex.get(actionId);
-    if (actionIndex != null) {
-      world.entityToIndex.delete(actionId);
-      setTimeout(() => removeComponent(Action, actionIndex), timeout);
-    }
+    world.entityToIndex.delete(request.id);
+    setTimeout(() => removeComponent(Action, index), delay);
+    requests.delete(index);  // Remove the request from the ActionSystem
+  }
 
-    requests.delete(actionId);  // Remove the request from the ActionSystem
+  // Set the action's state to ActionState.Failed
+  function handleError(error: any, action: ActionRequest) {
+    console.error('handleError() error: ', error);
+    console.error('handleError() action: ', action)
+    if (!action.index) return;
+
+    let metadata = error;
+    if (metadata.reason) metadata = metadata.reason;
+    if (metadata.message) metadata = metadata.message;
+    updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
   }
 
   return {
