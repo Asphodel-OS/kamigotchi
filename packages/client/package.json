@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "nuke": "rimraf node_modules/ dist/"
   },
   "devDependencies": {
     "@types/react": "^17.0.43",
@@ -39,7 +40,6 @@
     "@latticexyz/network": "1.34.0",
     "@latticexyz/phaserx": "1.34.0",
     "@latticexyz/recs": "1.34.0",
-    "@latticexyz/services": "1.34.0",
     "@latticexyz/std-client": "1.34.0",
     "@latticexyz/utils": "1.34.0",
     "@mui/icons-material": "^5.14.0",

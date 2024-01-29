@@ -6,12 +6,14 @@
   "packageManager": "pnpm@8.14.1",
   "scripts": {
     "dev": "run-pty % pnpm contracts:node % pnpm client:dev % pnpm contracts:dev",
+    "nuke": "pnpm nuke:client && pnpm nuke:contracts && rimraf node_modules pnpm-lock* yarn.lock",
     "client:build": "pnpm --filter=client build",
     "client:dev": "pnpm --filter=client dev",
-    "client:start": "pnpm --filter=client dev",
-    "contracts:node": "pnpm --filter=contracts devnode",
+    "client:nuke": "pnpm --filter=client nuke",
+    "contracts:build": "pnpm --filter=contracts build",
     "contracts:dev": "pnpm --filter=contracts dev",
-    "nuke": "rimraf node_modules contracts/node_modules client/node_modules pnpm-lock* yarn.lock"
+    "contracts:node": "pnpm --filter=contracts devnode",
+    "contracts:nuke": "pnpm --filter=contracts nuke"
   },
   "devDependencies": {
     "buffer": "^5.5.0",

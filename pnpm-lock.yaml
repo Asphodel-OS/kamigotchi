@@ -63,16 +63,13 @@ importers:
         version: 0.15.0(google-protobuf@3.21.2)
       '@latticexyz/network':
         specifier: 1.34.0
-        version: 1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.34.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
+        version: 1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
       '@latticexyz/phaserx':
         specifier: 1.34.0
         version: 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(phaser@3.60.0-beta.4)(rxjs@7.8.1)
       '@latticexyz/recs':
         specifier: 1.34.0
         version: 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
-      '@latticexyz/services':
-        specifier: 1.34.0
-        version: 1.34.0
       '@latticexyz/std-client':
         specifier: 1.34.0
         version: 1.34.0(@latticexyz/network@1.34.0)(@latticexyz/recs@1.34.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(ethers@5.7.2)(lodash@4.17.21)(mobx@6.12.0)(phaser@3.60.0-beta.4)(react-collapse@5.1.1)(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)
@@ -102,7 +99,7 @@ importers:
         version: 2.4.1(react-dom@18.2.0)(react@18.2.0)
       antd:
         specifier: ^5.4.3
-        version: 5.13.2(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0)
+        version: 5.13.3(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0)
       async-mutex:
         specifier: ^0.3.2
         version: 0.3.2
@@ -256,7 +253,7 @@ importers:
         version: 4.2.3
       solady:
         specifier: Vectorized/solady
-        version: github.com/Vectorized/solady/eab9b2e216880a9c29c89c897679173db6d10011
+        version: github.com/Vectorized/solady/5fb6c905cb2ebb73226b81dd4c9369d8e1ba3d0b
       solstat:
         specifier: https://github.com/primitivefinance/solstat.git#22923658c83d45fa6fe1b53272af84f3cb7664c6
         version: github.com/primitivefinance/solstat/22923658c83d45fa6fe1b53272af84f3cb7664c6(@ethersproject/bignumber@5.7.0)
@@ -439,7 +436,7 @@ packages:
     dependencies:
       '@babel/compat-data': 7.23.5
       '@babel/helper-validator-option': 7.23.5
-      browserslist: 4.22.2
+      browserslist: 4.22.3
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -1318,20 +1315,20 @@ packages:
       '@floating-ui/utils': 0.2.1
     dev: false
 
-  /@floating-ui/dom@1.6.0:
-    resolution: {integrity: sha512-SZ0BEXzsaaS6THZfZJUcAobbZTD+MvfGM42bxgeg0Tnkp4/an/avqwAXiVLsFtIBZtfsx3Ymvwx0+KnnhdA/9g==}
+  /@floating-ui/dom@1.6.1:
+    resolution: {integrity: sha512-iA8qE43/H5iGozC3W0YSnVSW42Vh522yyM1gj+BqRwVsTNOyr231PsXDaV04yT39PsO0QL2QpbI/M0ZaLUQgRQ==}
     dependencies:
       '@floating-ui/core': 1.6.0
       '@floating-ui/utils': 0.2.1
     dev: false
 
-  /@floating-ui/react-dom@2.0.7(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-B5GJxKUyPcGsvE1vua+Abvw0t6zVMyTbtG+Jk7BoI4hfc5Ahv50dstRIAn0nS0274kR9gnKwxIXyGA8EzBZJrA==}
+  /@floating-ui/react-dom@2.0.8(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-HOdqOt3R3OGeTKidaLvJKcgg75S6tibQ3Tif4eyd91QnIJWr0NLvoXFpJA/j8HqkFSL68GDca9AuyWEHlhyClw==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@floating-ui/dom': 1.6.0
+      '@floating-ui/dom': 1.6.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -1446,7 +1443,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@latticexyz/network@1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.34.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0):
+  /@latticexyz/network@1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0):
     resolution: {integrity: sha512-I87MCRku/YBOVsF6KJHaEEriAi4Ict6llmuHf+kXvQX/FfGLEC7wmlFe7kTtleaG5S3L2sM6JPGfJxDRQkuiBA==}
     engines: {node: '>=16'}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
@@ -1469,7 +1466,7 @@ packages:
       '@ethersproject/providers': 5.7.2
       '@improbable-eng/grpc-web': 0.15.0(google-protobuf@3.21.2)
       '@latticexyz/recs': 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
-      '@latticexyz/services': 1.34.0
+      '@latticexyz/services': 1.43.0
       '@latticexyz/solecs': 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
       '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
       '@protobuf-ts/grpcweb-transport': 2.9.3
@@ -1514,8 +1511,12 @@ packages:
       type-fest: 2.19.0
     dev: false
 
-  /@latticexyz/services@1.34.0:
-    resolution: {integrity: sha512-0oqk9ys1JxnlKIbzp+zsdQ59p0CLWm4zRZsx83GjJKb/9XiiCo26/GDrV00ALHAEtRU4dCrP9mbmaY8zrCOc5w==}
+  /@latticexyz/services@1.43.0:
+    resolution: {integrity: sha512-BvaulOq4xA1Lu0bNNwdK/Sy6ONq2XxJVdfW0K+kIPEAz17eCgmYrnlLo+xkfZ0Lnwz1iujjNwM14wnxVl/JYpg==}
+    dependencies:
+      long: 5.2.3
+      nice-grpc-common: 2.0.2
+      protobufjs: 7.2.6
     dev: false
 
   /@latticexyz/solecs@1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0):
@@ -1569,7 +1570,7 @@ packages:
       react-dom: ^18.2.0
       rxjs: ^7.5.5
     dependencies:
-      '@latticexyz/network': 1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.34.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
+      '@latticexyz/network': 1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
       '@latticexyz/recs': 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
       '@latticexyz/solecs': 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
       '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
@@ -1726,7 +1727,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.23.9
-      '@floating-ui/react-dom': 2.0.7(react-dom@18.2.0)(react@18.2.0)
+      '@floating-ui/react-dom': 2.0.8(react-dom@18.2.0)(react@18.2.0)
       '@mui/types': 7.2.13(@types/react@17.0.75)
       '@mui/utils': 5.15.6(@types/react@17.0.75)(react@18.2.0)
       '@popperjs/core': 2.11.8
@@ -1935,7 +1936,7 @@ packages:
     engines: {node: '>= 8'}
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
-      fastq: 1.16.0
+      fastq: 1.17.0
     dev: true
 
   /@openzeppelin/contracts@4.9.5:
@@ -2023,8 +2024,8 @@ packages:
     dev: false
     optional: true
 
-  /@parcel/watcher-wasm@2.3.0:
-    resolution: {integrity: sha512-ejBAX8H0ZGsD8lSICDNyMbSEtPMWgDL0WFCt/0z7hyf5v8Imz4rAM8xY379mBsECkq/Wdqa5WEDLqtjZ+6NxfA==}
+  /@parcel/watcher-wasm@2.4.0:
+    resolution: {integrity: sha512-MNgQ4WCbBybqQ97KwR/hqJGYTg3+s8qHpgIyFWB2qJOBvoJWbXuJGmm4ZkPLq2bMaANqCZqrXwmKYagZTkMKZA==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       is-glob: 4.0.3
@@ -5113,8 +5114,8 @@ packages:
       ansi-wrap: 0.1.0
     dev: true
 
-  /antd@5.13.2(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-P+N8gc0NOPy2WqJj/57Ey3dZUmb7nEUwAM+CIJaR5SOEjZnhEtMGRJSt+3lnhJ3MNRR39aR6NYkRVp2mYfphiA==}
+  /antd@5.13.3(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-phQJa4ezs6e2AnWRxbKVan9fvmURwntAfI+wDRRSP7spPY6t3afjvWfAcVp0Ekb1EPzvF/jUr64j3RMQQYWHVw==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -5407,15 +5408,15 @@ packages:
     resolution: {integrity: sha512-CA9hsySZVo9371qEHjHZtYxV2cFtVj5Wj/ZHi8ooEsrtm4vOnl9Y9HmyYWk9q+05d7K3rdoAE0j3MVEFVvtQtg==}
     dev: false
 
-  /browserslist@4.22.2:
-    resolution: {integrity: sha512-0UgcrvQmBDvZHFGdYUehrCNIazki7/lUP3kkoi/r3YB2amZbFM9J43ZRkJTXBUZK4gmx56+Sqk9+Vs9mwZx9+A==}
+  /browserslist@4.22.3:
+    resolution: {integrity: sha512-UAp55yfwNv0klWNapjs/ktHoguxuQNGnOzxYmfnXIS+8AsRDZkSDxg7R1AX3GKzn078SBI5dzwzj/Yx0Or0e3A==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001580
-      electron-to-chromium: 1.4.647
+      caniuse-lite: 1.0.30001581
+      electron-to-chromium: 1.4.648
       node-releases: 2.0.14
-      update-browserslist-db: 1.0.13(browserslist@4.22.2)
+      update-browserslist-db: 1.0.13(browserslist@4.22.3)
 
   /bs58@4.0.1:
     resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
@@ -5473,8 +5474,8 @@ packages:
     resolution: {integrity: sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==}
     dev: false
 
-  /caniuse-lite@1.0.30001580:
-    resolution: {integrity: sha512-mtj5ur2FFPZcCEpXFy8ADXbDACuNFXg6mxVDqp7tqooX6l3zwm+d8EPoeOSIFRDvHs8qu7/SLFOGniULkcH2iA==}
+  /caniuse-lite@1.0.30001581:
+    resolution: {integrity: sha512-whlTkwhqV2tUmP3oYhtNfaWGYHDdS3JYFQBKXxcUR9qqPWsRhFHhoISO2Xnl/g0xyKzht9mI1LZpiNWfMzHixQ==}
 
   /chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -5837,6 +5838,10 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
 
+  /crossws@0.1.0:
+    resolution: {integrity: sha512-k/CMEn83hK9xflL4RD4puf+qOgTjTsA8svK+u/fkbKCrVzthkWAhiXpXc49Ju5V+aa3TqM3EW+0ROixh1MclzA==}
+    dev: false
+
   /css-color-keywords@1.0.0:
     resolution: {integrity: sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg==}
     engines: {node: '>=4'}
@@ -6088,8 +6093,8 @@ packages:
     dependencies:
       jake: 10.8.7
 
-  /electron-to-chromium@1.4.647:
-    resolution: {integrity: sha512-Z/fTNGwc45WrYQhPaEcz5tAJuZZ8G7S/DBnhS6Kgp4BxnS40Z/HqlJ0hHg3Z79IGVzuVartIlTcjw/cQbPLgOw==}
+  /electron-to-chromium@1.4.648:
+    resolution: {integrity: sha512-EmFMarXeqJp9cUKu/QEciEApn0S/xRcpZWuAm32U7NgoZCimjsilKXHRO9saeEW55eHZagIDg6XTUOv32w9pjg==}
 
   /elliptic@6.5.4:
     resolution: {integrity: sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==}
@@ -6603,8 +6608,8 @@ packages:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
     dev: false
 
-  /fastq@1.16.0:
-    resolution: {integrity: sha512-ifCoaXsDrsdkWTtiNJX5uzHDsrck5TzfKKDcuFFTIrrc/BS076qgEIfoIy1VeZqViznfKiysPYTh/QeHtnIsYA==}
+  /fastq@1.17.0:
+    resolution: {integrity: sha512-zGygtijUMT7jnk3h26kUms3BkSDp4IfIKjmnqI2tvx6nuBfiF1UqOxbnLfzdv+apBy+53oaImsKtMw/xYbW+1w==}
     dependencies:
       reusify: 1.0.4
     dev: true
@@ -7747,15 +7752,16 @@ packages:
   /lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  /listhen@1.5.6:
-    resolution: {integrity: sha512-gTpEJhT5L85L0bFgmu+Boqu5rP4DwDtEb4Exq5gdQUxWRwx4jbzdInZkmyLONo5EwIcQB0k7ZpWlpCDPdL77EQ==}
+  /listhen@1.6.0:
+    resolution: {integrity: sha512-z0RcEXVX5oTpY1bO02SKoTU/kmZSrFSngNNzHRM6KICR17PTq7ANush6AE6ztGJwJD4RLpBrVHd9GnV51J7s3w==}
     hasBin: true
     dependencies:
       '@parcel/watcher': 2.4.0
-      '@parcel/watcher-wasm': 2.3.0
+      '@parcel/watcher-wasm': 2.4.0
       citty: 0.1.5
       clipboardy: 4.0.0
       consola: 3.2.3
+      crossws: 0.1.0
       defu: 6.1.4
       get-port-please: 3.1.2
       h3: 1.10.1
@@ -10873,7 +10879,7 @@ packages:
       h3: 1.10.1
       idb-keyval: 6.2.1
       ioredis: 5.3.2
-      listhen: 1.5.6
+      listhen: 1.6.0
       lru-cache: 10.2.0
       mri: 1.2.0
       node-fetch-native: 1.6.1
@@ -10892,13 +10898,13 @@ packages:
       pathe: 1.1.2
     dev: false
 
-  /update-browserslist-db@1.0.13(browserslist@4.22.2):
+  /update-browserslist-db@1.0.13(browserslist@4.22.3):
     resolution: {integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==}
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
     dependencies:
-      browserslist: 4.22.2
+      browserslist: 4.22.3
       escalade: 3.1.1
       picocolors: 1.0.0
 
@@ -11480,7 +11486,7 @@ packages:
     version: 1.34.0-patch
     hasBin: true
     dependencies:
-      '@latticexyz/services': 1.34.0
+      '@latticexyz/services': 1.43.0
       '@latticexyz/solecs': 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test@1.0.0)(forge-std@0.1.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
       '@latticexyz/std-contracts': 1.34.0
       '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.25.7)(web3-utils@1.10.3)
@@ -11528,8 +11534,8 @@ packages:
       - web3-utils
     dev: false
 
-  github.com/Vectorized/solady/eab9b2e216880a9c29c89c897679173db6d10011:
-    resolution: {tarball: https://codeload.github.com/Vectorized/solady/tar.gz/eab9b2e216880a9c29c89c897679173db6d10011}
+  github.com/Vectorized/solady/5fb6c905cb2ebb73226b81dd4c9369d8e1ba3d0b:
+    resolution: {tarball: https://codeload.github.com/Vectorized/solady/tar.gz/5fb6c905cb2ebb73226b81dd4c9369d8e1ba3d0b}
     name: solady
     version: 0.0.166
     dev: false
