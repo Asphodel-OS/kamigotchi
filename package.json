@@ -6,7 +6,7 @@
   "packageManager": "pnpm@8.14.1",
   "scripts": {
     "dev": "run-pty % pnpm contracts:node % pnpm client:dev % pnpm contracts:dev",
-    "nuke": "pnpm nuke:client && pnpm nuke:contracts && rimraf node_modules pnpm-lock* yarn.lock",
+    "nuke": "pnpm client:nuke && pnpm contracts:nuke && rimraf node_modules pnpm-lock* yarn.lock",
     "client:build": "pnpm --filter=client build",
     "client:dev": "pnpm --filter=client dev",
     "client:nuke": "pnpm --filter=client nuke",

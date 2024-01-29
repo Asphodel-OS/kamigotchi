@@ -62,20 +62,20 @@ importers:
         specifier: ^0.15.0
         version: 0.15.0(google-protobuf@3.21.2)
       '@latticexyz/network':
-        specifier: 1.34.0
-        version: 1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
+        specifier: 1.35.0
+        version: 1.35.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.35.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.35.0)(@latticexyz/utils@1.35.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
       '@latticexyz/phaserx':
-        specifier: 1.34.0
-        version: 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(phaser@3.60.0-beta.4)(rxjs@7.8.1)
+        specifier: 1.35.0
+        version: 1.35.0(@latticexyz/utils@1.35.0)(mobx@6.12.0)(phaser@3.60.0-beta.4)(rxjs@7.8.1)
       '@latticexyz/recs':
-        specifier: 1.34.0
-        version: 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
+        specifier: 1.35.0
+        version: 1.35.0(@latticexyz/utils@1.35.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
       '@latticexyz/std-client':
-        specifier: 1.34.0
-        version: 1.34.0(@latticexyz/network@1.34.0)(@latticexyz/recs@1.34.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(ethers@5.7.2)(lodash@4.17.21)(mobx@6.12.0)(phaser@3.60.0-beta.4)(react-collapse@5.1.1)(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)
+        specifier: 1.35.0
+        version: 1.35.0(@latticexyz/network@1.35.0)(@latticexyz/recs@1.35.0)(@latticexyz/solecs@1.35.0)(@latticexyz/utils@1.35.0)(ethers@5.7.2)(lodash@4.17.21)(mobx@6.12.0)(react-collapse@5.1.1)(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)
       '@latticexyz/utils':
-        specifier: 1.34.0
-        version: 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
+        specifier: 1.35.0
+        version: 1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
       '@mui/icons-material':
         specifier: ^5.14.0
         version: 5.15.6(@mui/material@5.15.6)(@types/react@17.0.75)(react@18.2.0)
@@ -234,11 +234,11 @@ importers:
         specifier: https://github.com/Asphodel-OS/mud-classic/raw/2bd95f0f31b47a0e7c3d55d8fdd765421cbb9085/packages/cli/latticexyz-cli-1.34.0-patch.tgz
         version: '@github.com/Asphodel-OS/mud-classic/raw/2bd95f0f31b47a0e7c3d55d8fdd765421cbb9085/packages/cli/latticexyz-cli-1.34.0-patch.tgz(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(google-protobuf@3.21.2)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.25.7)(typescript@4.9.5)(web3-utils@1.10.3)'
       '@latticexyz/solecs':
-        specifier: 1.34.0
-        version: 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
+        specifier: 1.35.0
+        version: 1.35.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
       '@latticexyz/std-contracts':
-        specifier: 1.34.0
-        version: 1.34.0
+        specifier: 1.35.0
+        version: 1.35.0
       '@openzeppelin/contracts':
         specifier: ^4.9.0
         version: 4.9.5
@@ -1443,8 +1443,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@latticexyz/network@1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0):
-    resolution: {integrity: sha512-I87MCRku/YBOVsF6KJHaEEriAi4Ict6llmuHf+kXvQX/FfGLEC7wmlFe7kTtleaG5S3L2sM6JPGfJxDRQkuiBA==}
+  /@latticexyz/network@1.35.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.35.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.35.0)(@latticexyz/utils@1.35.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0):
+    resolution: {integrity: sha512-6FrRXOf9dLdndzYc04g+jxnwkf9JH3ShtiUoSAffywWmAycrZRe0wa9pMn3qW3rc1hIn8TRw+3fzFN+PBULakQ==}
     engines: {node: '>=16'}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
@@ -1465,10 +1465,10 @@ packages:
     dependencies:
       '@ethersproject/providers': 5.7.2
       '@improbable-eng/grpc-web': 0.15.0(google-protobuf@3.21.2)
-      '@latticexyz/recs': 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
+      '@latticexyz/recs': 1.35.0(@latticexyz/utils@1.35.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
       '@latticexyz/services': 1.43.0
-      '@latticexyz/solecs': 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
-      '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
+      '@latticexyz/solecs': 1.35.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
+      '@latticexyz/utils': 1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
       '@protobuf-ts/grpcweb-transport': 2.9.3
       async-mutex: 0.3.2
       debug: 4.3.4(supports-color@5.5.0)
@@ -1482,30 +1482,30 @@ packages:
       - supports-color
     dev: false
 
-  /@latticexyz/phaserx@1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(phaser@3.60.0-beta.4)(rxjs@7.8.1):
-    resolution: {integrity: sha512-1JsZUkHgXAQdVlmpJ1AS3eZV/E5qkQw7AycEcMleB+BBrBHXzSLgZ8fOxgZBm5tvWCOOBTpxNA8Gms8ZxA8wjQ==}
+  /@latticexyz/phaserx@1.35.0(@latticexyz/utils@1.35.0)(mobx@6.12.0)(phaser@3.60.0-beta.4)(rxjs@7.8.1):
+    resolution: {integrity: sha512-rdxuudmCCccHEKBuNnQUktPXAqgWctQwNvM1Eqyd55bTbNFaDgUOztXpkAD2Bw00HyQETBHA9mSz/hkx6CIHcA==}
     peerDependencies:
       '@latticexyz/utils': ^1.28.1
       mobx: ^6.5.0
       phaser: 3.60.0-beta.14
       rxjs: ^7.5.5
     dependencies:
-      '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
+      '@latticexyz/utils': 1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
       '@use-gesture/vanilla': 10.2.9
       mobx: 6.12.0
       phaser: 3.60.0-beta.4
       rxjs: 7.8.1
     dev: false
 
-  /@latticexyz/recs@1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0):
-    resolution: {integrity: sha512-Eekp6ZlSotQ0kGIIIn87bpVtkGblXhKFNa6NvViG1EzlYfcwJgDjg4visT2pscfxpHr0jWs69Oq4S7pyIPuDOA==}
+  /@latticexyz/recs@1.35.0(@latticexyz/utils@1.35.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0):
+    resolution: {integrity: sha512-zZdzleSOhn357GorV+HSAZxvXQKNJ6fVPLltjK/OFalZVrtzSJ9DmNeS6xM+tUnGQAmhDfSJEa2IT+57RvNqFA==}
     peerDependencies:
       '@latticexyz/utils': ^1
       mobx: ^6.4.2
       rxjs: ^7.5.5
       type-fest: ^2.14.0
     dependencies:
-      '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
+      '@latticexyz/utils': 1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
       mobx: 6.12.0
       rxjs: 7.8.1
       type-fest: 2.19.0
@@ -1519,14 +1519,14 @@ packages:
       protobufjs: 7.2.6
     dev: false
 
-  /@latticexyz/solecs@1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0):
-    resolution: {integrity: sha512-tgUyHJWjs03PeOiqxzc+P98NUv2GcH+Ml87puhb/7RFv8WLrus7QOjkiwUcHHRO6+UZCBwr34ySaCY3AzJ4nUg==}
+  /@latticexyz/solecs@1.35.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0):
+    resolution: {integrity: sha512-ekvz8GgMImjIN5UI2I3kRzSEj5ki3RWOYGC6ElX3dmQnAANPBCj7GoKCkWF6qNrDAoJabhDD4NME9quKfYKTVw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       '@rari-capital/solmate': https://github.com/Rari-Capital/solmate.git#b6ae78e6ff490f8fec7695c7b65d06e5614f1b65
       '@solidstate/contracts': ^0.0.52
       ds-test: https://github.com/dapphub/ds-test.git#c9ce3f25bde29fc5eb9901842bf02850dfd2d084
-      forge-std: https://github.com/foundry-rs/forge-std.git#f36dab24d63d1c1945a05ed375ce341d3c1a49ed
+      forge-std: https://github.com/foundry-rs/forge-std.git#b4f121555729b3afb3c5ffccb62ff4b6e2818fd3
       memmove: https://github.com/dk1a/memmove.git#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27
     dependencies:
       '@rari-capital/solmate': github.com/transmissions11/solmate/ed67feda67b24fdeff8ad1032360f0ee6047ba0a
@@ -1536,14 +1536,14 @@ packages:
       memmove: github.com/brockelmore/memmove/d577ecd1bc43656f4032edf4daa9797f756a8ad2
     dev: false
 
-  /@latticexyz/solecs@1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test@1.0.0)(forge-std@0.1.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0):
-    resolution: {integrity: sha512-tgUyHJWjs03PeOiqxzc+P98NUv2GcH+Ml87puhb/7RFv8WLrus7QOjkiwUcHHRO6+UZCBwr34ySaCY3AzJ4nUg==}
+  /@latticexyz/solecs@1.35.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test@1.0.0)(forge-std@0.1.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0):
+    resolution: {integrity: sha512-ekvz8GgMImjIN5UI2I3kRzSEj5ki3RWOYGC6ElX3dmQnAANPBCj7GoKCkWF6qNrDAoJabhDD4NME9quKfYKTVw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       '@rari-capital/solmate': https://github.com/Rari-Capital/solmate.git#b6ae78e6ff490f8fec7695c7b65d06e5614f1b65
       '@solidstate/contracts': ^0.0.52
       ds-test: https://github.com/dapphub/ds-test.git#c9ce3f25bde29fc5eb9901842bf02850dfd2d084
-      forge-std: https://github.com/foundry-rs/forge-std.git#f36dab24d63d1c1945a05ed375ce341d3c1a49ed
+      forge-std: https://github.com/foundry-rs/forge-std.git#b4f121555729b3afb3c5ffccb62ff4b6e2818fd3
       memmove: https://github.com/dk1a/memmove.git#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27
     dependencies:
       '@rari-capital/solmate': github.com/transmissions11/solmate/ed67feda67b24fdeff8ad1032360f0ee6047ba0a
@@ -1553,8 +1553,8 @@ packages:
       memmove: github.com/brockelmore/memmove/d577ecd1bc43656f4032edf4daa9797f756a8ad2
     dev: false
 
-  /@latticexyz/std-client@1.34.0(@latticexyz/network@1.34.0)(@latticexyz/recs@1.34.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(ethers@5.7.2)(lodash@4.17.21)(mobx@6.12.0)(phaser@3.60.0-beta.4)(react-collapse@5.1.1)(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-x4xuTmv/Ddmoo1gLT6kAgq0k7NTlgMAuiOVe9gIv8D3QKmVIpcmHQT6yI/sfB5rHlnZmJe3cmPyLGFUEwgkvXw==}
+  /@latticexyz/std-client@1.35.0(@latticexyz/network@1.35.0)(@latticexyz/recs@1.35.0)(@latticexyz/solecs@1.35.0)(@latticexyz/utils@1.35.0)(ethers@5.7.2)(lodash@4.17.21)(mobx@6.12.0)(react-collapse@5.1.1)(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-ZtsoQYCGHuQSdab1lDJyvd52QuYEdFSsilmYly9nPi8KUGTWU7H2JEPOiBVFgOCAUJF1Y47e7eR5Czhjjh0JXw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       '@latticexyz/network': ^1.28.1
@@ -1564,33 +1564,31 @@ packages:
       ethers: ^5.6.6
       lodash: ^4.17.21
       mobx: ^6.4.2
-      phaser: 3.60.0-beta.14
       react: ^18.2.0
       react-collapse: ^5.1.1
       react-dom: ^18.2.0
       rxjs: ^7.5.5
     dependencies:
-      '@latticexyz/network': 1.34.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.34.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.34.0)(@latticexyz/utils@1.34.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
-      '@latticexyz/recs': 1.34.0(@latticexyz/utils@1.34.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
-      '@latticexyz/solecs': 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
-      '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
+      '@latticexyz/network': 1.35.0(@ethersproject/providers@5.7.2)(@improbable-eng/grpc-web@0.15.0)(@latticexyz/recs@1.35.0)(@latticexyz/services@1.43.0)(@latticexyz/solecs@1.35.0)(@latticexyz/utils@1.35.0)(@protobuf-ts/grpcweb-transport@2.9.3)(async-mutex@0.3.2)(ethers@5.7.2)(mobx@6.12.0)(nice-grpc-web@2.0.2)(observable-webworker@4.0.1)(rxjs@7.8.1)(threads@1.7.0)
+      '@latticexyz/recs': 1.35.0(@latticexyz/utils@1.35.0)(mobx@6.12.0)(rxjs@7.8.1)(type-fest@2.19.0)
+      '@latticexyz/solecs': 1.35.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f@0.0.0)(forge-std.git#4d36e3f7e2168c8155c641eb0f80e85cd584bd1c@0.0.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
+      '@latticexyz/utils': 1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3)
       ethers: 5.7.2
       lodash: 4.17.21
       mobx: 6.12.0
-      phaser: 3.60.0-beta.4
       react: 18.2.0
       react-collapse: 5.1.1(react@18.2.0)
       react-dom: 18.2.0(react@18.2.0)
       rxjs: 7.8.1
     dev: false
 
-  /@latticexyz/std-contracts@1.34.0:
-    resolution: {integrity: sha512-eLX6qLQV+wQoJpkcO9OFFYB/uJq1ih+hZ1Ufg1n5NzOGzf3kWqJTwQwtSaYWDwUe9bszw2FtreivyqmwfYwubw==}
+  /@latticexyz/std-contracts@1.35.0:
+    resolution: {integrity: sha512-jzz9UbwiJGbwcS6+KS4qrLtIvT3YVJBKFLF0DGmKbVwvU8nWJv/ndfSR5Uo6jyGv9FshtInZ5fDP4a5PTy9ygw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     dev: false
 
-  /@latticexyz/utils@1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3):
-    resolution: {integrity: sha512-tr/LV4QfhV0XYjtrY8DHLYEI2EPHzVQXmK1JtjupstLvK31WpE9xvgIqMYTawxupC9xw2c5q6zxEs/JZtiUmSQ==}
+  /@latticexyz/utils@1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.23.28)(web3-utils@1.10.3):
+    resolution: {integrity: sha512-2DC59nNMOJtcI8OPsTRBzsgiIx4EfeMg5B9C+v1pQ18HlgTykkFJAWOlxSyoRHtbPGn+APmQL/1lJ3u7OORGEQ==}
     peerDependencies:
       ethers: ^5.6.6
       mobx: ^6.5.0
@@ -1608,8 +1606,8 @@ packages:
       - typedoc
     dev: false
 
-  /@latticexyz/utils@1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.25.7)(web3-utils@1.10.3):
-    resolution: {integrity: sha512-tr/LV4QfhV0XYjtrY8DHLYEI2EPHzVQXmK1JtjupstLvK31WpE9xvgIqMYTawxupC9xw2c5q6zxEs/JZtiUmSQ==}
+  /@latticexyz/utils@1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.25.7)(web3-utils@1.10.3):
+    resolution: {integrity: sha512-2DC59nNMOJtcI8OPsTRBzsgiIx4EfeMg5B9C+v1pQ18HlgTykkFJAWOlxSyoRHtbPGn+APmQL/1lJ3u7OORGEQ==}
     peerDependencies:
       ethers: ^5.6.6
       mobx: ^6.5.0
@@ -5161,7 +5159,7 @@ packages:
       rc-tabs: 14.0.0(react-dom@18.2.0)(react@18.2.0)
       rc-textarea: 1.6.3(react-dom@18.2.0)(react@18.2.0)
       rc-tooltip: 6.1.3(react-dom@18.2.0)(react@18.2.0)
-      rc-tree: 5.8.2(react-dom@18.2.0)(react@18.2.0)
+      rc-tree: 5.8.3(react-dom@18.2.0)(react@18.2.0)
       rc-tree-select: 5.17.0(react-dom@18.2.0)(react@18.2.0)
       rc-upload: 4.5.2(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
@@ -9045,7 +9043,7 @@ packages:
       array-tree-filter: 2.1.0
       classnames: 2.5.1
       rc-select: 14.11.0(react-dom@18.2.0)(react@18.2.0)
-      rc-tree: 5.8.2(react-dom@18.2.0)(react@18.2.0)
+      rc-tree: 5.8.3(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -9484,14 +9482,14 @@ packages:
       '@babel/runtime': 7.23.9
       classnames: 2.5.1
       rc-select: 14.11.0(react-dom@18.2.0)(react@18.2.0)
-      rc-tree: 5.8.2(react-dom@18.2.0)(react@18.2.0)
+      rc-tree: 5.8.3(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /rc-tree@5.8.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-xH/fcgLHWTLmrSuNphU8XAqV7CdaOQgm4KywlLGNoTMhDAcNR3GVNP6cZzb0GrKmIZ9yae+QLot/cAgUdPRMzg==}
+  /rc-tree@5.8.3(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Gr0Ewxyp2ZdvRva8hOR2Of7nUxpPCN257kVMpEOrbmdjLAyY2UGYvyRb+3JocyLBk4Av3UYF2i4jXHZOObxLvw==}
     engines: {node: '>=10.x'}
     peerDependencies:
       react: '*'
@@ -11487,9 +11485,9 @@ packages:
     hasBin: true
     dependencies:
       '@latticexyz/services': 1.43.0
-      '@latticexyz/solecs': 1.34.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test@1.0.0)(forge-std@0.1.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
-      '@latticexyz/std-contracts': 1.34.0
-      '@latticexyz/utils': 1.34.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.25.7)(web3-utils@1.10.3)
+      '@latticexyz/solecs': 1.35.0(@rari-capital/solmate@7.0.0-alpha.3)(@solidstate/contracts@0.0.52)(ds-test@1.0.0)(forge-std@0.1.0)(memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@0.0.0)
+      '@latticexyz/std-contracts': 1.35.0
+      '@latticexyz/utils': 1.35.0(ethers@5.7.2)(mobx@6.12.0)(proxy-deep@3.1.1)(rxjs@7.8.1)(typedoc@0.25.7)(web3-utils@1.10.3)
       '@typechain/ethers-v5': 10.2.1(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.3.2)(typescript@4.9.5)
       chalk: 5.3.0
       chokidar: 3.5.3
