@@ -66,6 +66,7 @@ export function setUpWorldAPI(systems: any) {
     await api.config.set.number('MINT_INITIAL_MAX', 1111);
     await api.config.set.number('MINT_TOTAL_MAX', 4444);
     await api.config.set.number('MINT_PRICE', utils.parseEther('0.0'));
+    await api.config.set.wei("GACHA_REROLL_PRICE", utils.parseEther('0.0001'));
 
     // Kami Base Stats
     await api.config.set.number('KAMI_BASE_HEALTH', 50);

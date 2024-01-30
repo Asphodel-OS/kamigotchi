@@ -115,6 +115,7 @@
     "UpgradesComponent",
     "ValueComponent",
     "ViolenceComponent",
+    "WeiComponent",
     "WeightsComponent",
     "WhitelistComponent"
   ],
@@ -146,6 +147,14 @@
         "IsConfigComponent",
         "NameComponent",
         "ValueComponent"
+      ]
+    },
+    {
+      "name": "_ConfigSetWeiSystem",
+      "writeAccess": [
+        "IsConfigComponent",
+        "NameComponent",
+        "WeiComponent"
       ]
     },
     {

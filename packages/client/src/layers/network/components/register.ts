@@ -144,6 +144,7 @@ export function createComponents(world: World) {
     Violence: defineNumberEZ("Violence", "component.Violence"),
     Weights: defineNumberArrayComponent(world, "Weights", "component.Weights"),
     Whitelist: defineNumberArrayComponent(world, "Whitelist", "component.Whitelist"),
+    Wei: defineStringEZ("Wei", "component.Wei"),
 
     // Time/Block Tracking
     LastBlock: defineNumberEZ("BlockLast", "component.Block.Last"),

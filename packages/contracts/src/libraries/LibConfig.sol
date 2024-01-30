@@ -12,6 +12,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IsConfigComponent, ID as IsConfigCompID } from "components/IsConfigComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { WeiComponent, ID as WeiCompID } from "components/WeiComponent.sol";
 
 // a config entity is a global config of field values, identified by its NameComponent
 library LibConfig {
@@ -42,6 +43,11 @@ library LibConfig {
     setValue(components, id, uint256(LibString.packOne(value)));
   }
 
+  // Set Wei value for a config entity
+  function setWei(IUintComp components, uint256 id, uint256 value) internal {
+    WeiComponent(getAddressById(components, WeiCompID)).set(id, value);
+  }
+
   // set the value of a global config entity by its name
   function setValueOf(IUintComp components, string memory name, uint256 value) internal {
     uint256 id = get(components, name);
@@ -56,6 +62,10 @@ library LibConfig {
     return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
   }
 
+  function getWei(IUintComp components, uint256 id) internal view returns (uint256) {
+    return WeiComponent(getAddressById(components, WeiCompID)).getValue(id);
+  }
+
   // Retrieve the value of a global config field entity by name. Assume it exists.
   function getValueOf(IUintComp components, string memory name) internal view returns (uint256) {
     uint256 id = get(components, name);
@@ -67,6 +77,11 @@ library LibConfig {
     string memory name
   ) internal view returns (string memory) {
     return _uintToString(getValueOf(components, name));
+  }
+
+  function getWeiValueOf(IUintComp components, string memory name) internal view returns (uint256) {
+    uint256 id = get(components, name);
+    return getWei(components, id);
   }
 
   function getBatchValueOf(

@@ -123,7 +123,7 @@ library LibGacha {
     IUintComp components,
     uint256 rerollCount
   ) internal view returns (uint256) {
-    uint256 baseCost = LibConfig.getValueOf(components, "GACHA_REROLL_PRICE");
+    uint256 baseCost = getBaseRerollCost(components);
     return baseCost * (rerollCount + 1);
   }
 
@@ -131,7 +131,7 @@ library LibGacha {
     IUintComp components,
     uint256[] memory rerollCounts
   ) internal view returns (uint256) {
-    uint256 baseCost = LibConfig.getValueOf(components, "GACHA_REROLL_PRICE");
+    uint256 baseCost = getBaseRerollCost(components);
 
     uint256 total;
     for (uint256 i; i < rerollCounts.length; i++) {
@@ -248,6 +248,10 @@ library LibGacha {
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccountCompID)).getValue(id);
+  }
+
+  function getBaseRerollCost(IUintComp components) internal view returns (uint256) {
+    return LibConfig.getWeiValueOf(components, "GACHA_REROLL_PRICE");
   }
 
   function getIncrement(IUintComp components) internal view returns (uint256) {

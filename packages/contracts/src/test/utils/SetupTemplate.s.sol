@@ -739,6 +739,11 @@ abstract contract SetupTemplate is TestSetupImports {
     __ConfigSetStringSystem.executeTyped(key, value);
   }
 
+  function _setConfigWei(string memory key, uint value) internal {
+    vm.prank(deployer);
+    __ConfigSetWeiSystem.executeTyped(key, value);
+  }
+
   function _initAllConfigs() internal {
     _initAccountConfigs();
     _initBaseConfigs();
@@ -782,7 +787,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _setConfig("MINT_ACCOUNT_MAX", 500);
     _setConfig("MINT_INITIAL_MAX", 1111);
     _setConfig("MINT_PRICE", 0);
-    _setConfig("GACHA_REROLL_PRICE", 0);
+    _setConfigWei("GACHA_REROLL_PRICE", 0);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 

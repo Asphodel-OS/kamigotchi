@@ -40,6 +40,11 @@ export function createAdminAPI(systems: any) {
     return systems['system._Config.Set.String'].executeTyped(field, value);
   }
 
+  async function setConfigWei(field: string, value: BigNumberish) {
+    await sleepIf();
+    return systems['system._Config.Set.Wei'].executeTyped(field, value);
+  }
+
   /////////////////
   //  NPCs
 
@@ -536,6 +541,7 @@ export function createAdminAPI(systems: any) {
       set: {
         number: setConfig,
         string: setConfigString,
+        wei: setConfigWei,
       },
     },
     listing: {
