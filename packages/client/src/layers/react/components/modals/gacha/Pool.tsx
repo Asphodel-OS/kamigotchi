@@ -74,7 +74,7 @@ export const Pool = (props: Props) => {
         onClick={props.actions.handleMint(mintAmt)}
         text='Mint'
         size="large"
-        disabled={mintAmt === 0}
+        disabled={mintAmt === 0 || mintAmt > props.data.account.balance}
         fill
       />
     </Footer>
@@ -84,16 +84,16 @@ export const Pool = (props: Props) => {
     <OuterBox>
       <BalanceBar
         balance={props.data.account.balance.toFixed(2)}
-        price={mintPrice.toString()}
+        price={mintPrice.toFixed(2)}
         name="Mint price"
         icon={musuIcon}
       />
       <InnerBox>
         {props.display.Tab}
-        <AmountText>Kamigochis in pool: {props.data.pool.kamis.length}</AmountText>
+        <AmountText>Kamigotchis in pool: {props.data.pool.kamis.length}</AmountText>
         <KamiGrid
           kamis={props.data.pool.kamis}
-          kamiText={getKamiText}
+          getKamiText={getKamiText}
         />
       </InnerBox>
       {FooterButton}

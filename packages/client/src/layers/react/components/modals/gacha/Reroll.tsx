@@ -7,39 +7,44 @@ import { BalanceBar } from './BalanceBar';
 import { KamiGrid } from './KamiGrid';
 
 import { playClick } from 'utils/sounds';
-import musuIcon from "assets/images/icons/musu.png";
+import ethIcon from "assets/images/icons/Ethereum.png";
 import { Kami } from 'layers/network/shapes/Kami';
 
 
 interface Props {
   actions: {
-    handleReroll: (kamis: Kami[]) => () => Promise<void>;
+    handleReroll: (kamis: Kami[], price: bigint) => () => Promise<void>;
   }
   data: {
     kamis: Kami[];
-    balance: number;
+    balance: bigint;
   }
   display: {
     Tab: JSX.Element;
   }
   utils: {
-    getRerollCost: (kami: Kami) => number;
+    getRerollCost: (kami: Kami) => bigint;
   }
 }
 
 export const Reroll = (props: Props) => {
 
   const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
-  const [rerollPrice, setRerollPrice] = useState<number>(0);
+  const [rerollPrice, setRerollPrice] = useState<bigint>(BigInt(0));
 
   //////////////////
   // LOGIC
 
   useEffect(() => {
-    let price = 0;
+    let price = BigInt(0);
     selectedKamis.forEach(kami => price += props.utils.getRerollCost(kami));
     setRerollPrice(price);
   }, [selectedKamis]);
+
+  const handleReroll = () => {
+    props.actions.handleReroll(selectedKamis, rerollPrice)();
+    setSelectedKamis([]);
+  }
 
   //////////////////
   // DISPLAY
@@ -58,39 +63,59 @@ export const Reroll = (props: Props) => {
     return text;
   }
 
+  const formatWei = (wei: bigint): string => {
+    return Number(utils.formatEther(wei)).toFixed(4);
+  }
+
   const FooterButton = (
     <Footer>
       <div style={{ width: '73%' }}></div>
       <ActionButton
         id="mint-button"
-        onClick={props.actions.handleReroll(selectedKamis)}
+        onClick={handleReroll}
         text='Re-roll'
         size="large"
-        disabled={selectedKamis.length === 0}
+        disabled={
+          selectedKamis.length === 0
+          || rerollPrice > props.data.balance}
         fill
       />
     </Footer>
   );
 
+  const Grid = (
+    props.data.kamis.length > 0
+      ? <KamiGrid
+        kamis={props.data.kamis}
+        getKamiText={getKamiText}
+        select={{
+          arr: selectedKamis,
+          set: setSelectedKamis
+        }}
+      />
+      : (<div style={{
+        height: '60%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}>
+        <EmptyText>No kamigotchis to re-roll!</EmptyText>
+        <EmptyText>(Only happy and healthy kamis can be re-rolled)</EmptyText>
+      </div>)
+  )
+
   return (
     <OuterBox>
       <BalanceBar
-        balance={props.data.balance.toFixed(2)}
-        price={rerollPrice.toString()}
+        balance={formatWei(props.data.balance)}
+        price={formatWei(rerollPrice)}
         name="Total re-roll price"
-        icon={musuIcon}
+        icon={ethIcon}
       />
       <InnerBox>
         {props.display.Tab}
-        <AmountText>Kamigochis re-rollable: {props.data.kamis.length}</AmountText>
-        <KamiGrid
-          kamis={props.data.kamis}
-          kamiText={getKamiText}
-          select={{
-            arr: selectedKamis,
-            set: setSelectedKamis
-          }}
-        />
+        <AmountText>Kamigotchis re-rollable: {props.data.kamis.length}</AmountText>
+        {Grid}
       </InnerBox>
       {FooterButton}
     </OuterBox>
@@ -136,4 +161,14 @@ const AmountText = styled.p`
   font-size: 1.6vw;
   text-align: start;
   color: #444;
+`;
+
+const EmptyText = styled.div`
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: center;
+  color: #333;
+  padding: 0.7vh 0vw;
+
+  width: 100%;
 `;

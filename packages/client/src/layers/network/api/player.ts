@@ -259,8 +259,8 @@ export function createPlayerAPI(systems: any) {
 
   // @dev reroll a pet
   // @param petID  PetID
-  function rerollPet(petIDs: BigNumberish[]) {
-    return systems["system.Pet.Gacha.Reroll"].reroll(petIDs);
+  function rerollPet(petIDs: BigNumberish[], totalCost: BigNumberish) {
+    return systems["system.Pet.Gacha.Reroll"].reroll(petIDs, { value: totalCost });
   }
 
   // @dev mint mint20 tokens with eth

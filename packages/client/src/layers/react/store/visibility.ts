@@ -103,7 +103,6 @@ export interface Modals {
   inventory: boolean;
   kami: boolean;
   kamiSkills: boolean;
-  kamiMint: boolean; // deprecated?
   leaderboard: boolean;
   lootboxes: boolean;
   nameKami: boolean;
@@ -130,7 +129,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   inventory: isOn,
   kami: isOn,
   kamiSkills: isOn,
-  kamiMint: isOn,
   leaderboard: isOn,
   lootboxes: isOn,
   nameKami: isOn,
@@ -190,7 +188,6 @@ export const useVisibility = create<State & Actions>((set) => {
       inventory: false,
       kami: false,
       kamiSkills: false,
-      kamiMint: false,
       leaderboard: false,
       lootboxes: false,
       map: false,

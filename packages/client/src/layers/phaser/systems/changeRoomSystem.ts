@@ -72,7 +72,7 @@ export const closeModalsOnRoomChange = () => {
       ...modals,
       dialogue: false,
       merchant: false,
-      kamiMint: false,
+      gacha: false,
       kami: false,
       node: false,
     },

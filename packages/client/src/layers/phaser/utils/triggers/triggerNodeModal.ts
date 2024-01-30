@@ -17,7 +17,7 @@ export const triggerNodeModal = (index: number) => {
         bridgeERC721: false,
         dialogue: false,
         kami: false,
-        kamiMint: false,
+        gacha: false,
         emaBoard: false,
         nameKami: false,
       },

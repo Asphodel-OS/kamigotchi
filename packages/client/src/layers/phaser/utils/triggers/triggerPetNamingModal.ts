@@ -14,7 +14,7 @@ export const triggerPetNamingModal = () => {
         bridgeERC721: false,
         dialogue: false,
         kami: false,
-        kamiMint: false,
+        gacha: false,
         map: false,
         nameKami: false,
         node: false,

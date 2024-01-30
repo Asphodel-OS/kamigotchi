@@ -27,7 +27,6 @@ import { playClick } from "utils/sounds";
 interface Props {
   account: Account;
   actions: {
-    reveal: (kami: Kami) => void;
     feed: (kami: Kami, foodIndex: number) => void;
     revive: (kami: Kami, reviveIndex: number) => void;
   }
@@ -164,15 +163,6 @@ export const Kards = (props: Props) => {
     return returnVal;
   };
 
-  // Reveal Button display evaluation
-  const RevealButton = (kami: Kami) => (
-    <ActionButton
-      id={`reveal-kami`}
-      text='Reveal'
-      onClick={() => actions.reveal(kami)}
-    />
-  );
-
   // Revive Button display evaluation
   const ReviveButton = (kami: Kami, account: Account) => {
     let tooltipText = 'Revive your Kami';
@@ -193,7 +183,6 @@ export const Kards = (props: Props) => {
 
   // Choose and return the action button to display
   const DisplayedAction = (kami: Kami, account: Account) => {
-    if (isUnrevealed(kami)) return RevealButton(kami);
     if (isResting(kami)) return FeedButton(kami, account);
     if (isHarvesting(kami)) return FeedButton(kami, account);
     if (isDead(kami)) return ReviveButton(kami, account);

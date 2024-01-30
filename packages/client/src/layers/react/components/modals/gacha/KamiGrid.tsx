@@ -10,12 +10,17 @@ import { Kami } from 'layers/network/shapes/Kami';
 
 interface Props {
   kamis: Kami[];
-  kamiText?: (kami: Kami) => string[];
+  getKamiText?: (kami: Kami) => string[];
   select?: {
     arr: Kami[];
     set: (arr: Kami[]) => void;
   }
 }
+
+const selectedStyle: any = {
+  border: 'solid .15vw #FFF',
+  backgroundColor: '#3498DB',
+};
 
 export const KamiGrid = (props: Props) => {
 
@@ -23,21 +28,22 @@ export const KamiGrid = (props: Props) => {
   const { kamiIndex, setKami } = useSelected();
 
   const Cell = (kami: Kami) => {
-    let selectedIndex = props.select
+    let selectedIndex = props.select && props.select.arr.length > 0
       ? (props.select.arr.findIndex(k => k.id === kami.id))
       : -1;
     let isSelected = selectedIndex !== -1;
 
     const selectFunc = () => {
-      // if (!props.select) return;
+      if (!props.select) return;
 
-      // if (isSelected) {
-      //   const newArr = [...props.select.arr].splice(selectedIndex, 1);
-      //   props.select.set(newArr);
-      // } else {
-      //   const newArr = [...props.select.arr, kami];
-      //   props.select.set(newArr);
-      // }
+      if (isSelected) {
+        const newArr = [...props.select.arr]
+        newArr.splice(selectedIndex, 1);
+        props.select.set(newArr);
+      } else {
+        const newArr = [...props.select.arr, kami];
+        props.select.set(newArr);
+      }
     }
 
     const imageOnClick = () => {
@@ -50,29 +56,24 @@ export const KamiGrid = (props: Props) => {
     }
 
     return (
-      <Tooltip text={props.kamiText ? props.kamiText(kami) : []}>
+      <Tooltip text={props.getKamiText ? props.getKamiText(kami) : []}>
         <CellContainer id={`grid-${kami.id}`}>
           <Image onClick={() => imageOnClick()} src={kami.uri} />
           {props.select &&
-            <SelectButton onClick={selectFunc}>
-              Select
-            </SelectButton>
+            <SelectButton
+              onClick={selectFunc}
+              // type="checkbox"
+              style={isSelected ? selectedStyle : {}} />
           }
-          <p>
-            {props.select && (isSelected ? 'Selected' : '')}
-          </p>
-
         </CellContainer>
       </Tooltip>
     );
   }
 
 
-
-
   return (
     <Container key='grid'>
-      {props.kamis.map((inv) => Cell(inv))}
+      {props.kamis.map((kami) => Cell(kami))}
     </Container>
   );
 }
@@ -109,4 +110,14 @@ const SelectButton = styled.button`
   position: absolute;
   bottom: 0.5vw;
   right: 0.5vw;
+  width: 2vw;
+  height: 2vw;
+
+  border: solid .15vw #333;
+  border-radius: .4vw;
+  opacity: 0.90;
+
+  &:hover {
+    background-color: #AAA;
+  }
 `;

@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
-import styled from 'styled-components';
+import { interval, map } from 'rxjs';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
 import crypto from "crypto";
 
 import { abi } from "abi/Pet721ProxySystem.json"
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { getAccount, getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { getConfigFieldValue } from 'layers/network/shapes/Config';
 import { getData } from 'layers/network/shapes/Data';
 import { GachaCommit, isGachaAvailable, queryGachaKamis, calcRerollCost } from 'layers/network/shapes/Gacha';
@@ -25,10 +22,11 @@ import { Kami } from 'layers/network/shapes/Kami';
 import { Tabs } from './Tabs';
 import { Pool } from './Pool';
 import { Reroll } from './Reroll';
+import { Commits } from './Commits';
 
 export function registerGachaModal() {
   registerUIComponent(
-    'KamiMint',
+    'Gacha',
     {
       colStart: 20,
       colEnd: 80,
@@ -37,14 +35,8 @@ export function registerGachaModal() {
     },
     (layers) => {
       const { network } = layers;
-      const {
-        AccountID,
-        IsPet,
-        RevealBlock,
-        State,
-      } = network.components;
 
-      return merge(AccountID.update$, IsPet.update$, RevealBlock.update$, State.update$).pipe(
+      return interval(1000).pipe(
         map(() => {
           const account = getAccountFromBurner(
             network,
@@ -56,14 +48,8 @@ export function registerGachaModal() {
           return {
             network,
             data: {
-              account: {
-                kamis: account.kamis,
-                mint20: {
-                  minted: getData(network, account.id, "MINT20_MINT"),
-                  limit: getConfigFieldValue(network, "MINT_ACCOUNT_MAX"),
-                },
-                commits: commits,
-              },
+              kamis: account.kamis,
+              commits: commits,
             }
           };
         })
@@ -109,19 +95,19 @@ export function registerGachaModal() {
             setTriedReveal(true);
             // wait to give buffer for OP rpc
             await new Promise((resolve) => setTimeout(resolve, 500));
-            const filtered = data.account.commits.filter((n) => {
+            const filtered = data.commits.filter((n) => {
               return isGachaAvailable(n, blockNumber);
             });
             revealTx(filtered);
             if (waitingToReveal) {
               setWaitingToReveal(false);
-              setModals({ ...modals, kamiMint: false, party: true });
+              setModals({ ...modals, party: true });
             }
           }
         }
         tx();
 
-      }, [data.account.commits]);
+      }, [data.commits]);
 
 
       //////////////////
@@ -135,7 +121,7 @@ export function registerGachaModal() {
       // COUNTER
 
       const { data: mint20Addy } = useContractRead({
-        address: systems["system.Mint20.Proxy"].address as `0x${string}`,
+        address: systems["system.Mint20.Proxy"]?.address as `0x${string}`,
         abi: abi,
         functionName: 'getTokenAddy'
       });
@@ -146,7 +132,10 @@ export function registerGachaModal() {
         watch: true
       });
 
-
+      const { data: ethBal } = useBalance({
+        address: kamiAccount.ownerAddress as `0x${string}`,
+        watch: true
+      });
 
 
       /////////////////
@@ -163,15 +152,15 @@ export function registerGachaModal() {
           setTriedReveal(false);
           playVending();
         } catch (e) {
-          console.log('KamiMint.tsx: handleMint() mint failed', e);
+          console.log('Gacha.tsx: handleMint() mint failed', e);
         }
       };
 
-      const handleReroll = (kamis: Kami[]) => async () => {
+      const handleReroll = (kamis: Kami[], price: bigint) => async () => {
         if (kamis.length === 0) return;
         try {
           setWaitingToReveal(true);
-          const mintActionID = rerollTx(kamis);
+          const mintActionID = rerollTx(kamis, price);
           await waitForActionCompletion(
             actions!.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex
@@ -202,7 +191,7 @@ export function registerGachaModal() {
       };
 
       // reroll a pet with eth payment
-      const rerollTx = (kamis: Kami[]) => {
+      const rerollTx = (kamis: Kami[], price: bigint) => {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
@@ -213,7 +202,7 @@ export function registerGachaModal() {
           params: [kamis.map((n) => n.name)],
           description: `Rerolling ${kamis.length} Kami`,
           execute: async () => {
-            return api.mint.reroll(kamis.map((n) => n.id));
+            return api.mint.reroll(kamis.map((n) => n.id), price);
           },
         });
         return actionID;
@@ -248,7 +237,11 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const TabsBar = (<Tabs tab={tab} setTab={setTab} />);
+      const TabsBar = (<Tabs
+        tab={tab}
+        setTab={setTab}
+        commits={data.commits.length}
+      />);
 
       const MainDisplay = () => {
         if (tab === 'MINT') return (
@@ -265,11 +258,21 @@ export function registerGachaModal() {
           <Reroll
             actions={{ handleReroll }}
             data={{
-              kamis: data.account.kamis || [],
-              balance: Number(mint20Bal?.formatted || '0')
+              kamis: data.kamis || [],
+              balance: ethBal?.value || 0n  // bigint used for dealing with wei
             }}
             display={{ Tab: TabsBar }}
             utils={{ getRerollCost }}
+          />
+        );
+        else if (tab === 'COMMITS') return (
+          <Commits
+            actions={{ revealTx }}
+            data={{
+              commits: data.commits || [],
+              blockNum: blockNumber
+            }}
+            display={{ Tab: TabsBar }}
           />
         );
         else return <div />;
@@ -288,95 +291,3 @@ export function registerGachaModal() {
     }
   );
 }
-
-const Grid = styled.div`
-  display: grid;
-  grid-row-gap: 6px;
-  grid-column-gap: 12px;
-  justify-items: center;
-  justify-content: center;
-
-  padding: 24px 6px;
-  margin: 0px 6px;
-`;
-
-const Input = styled.input`
-  width: 50%;
-
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  justify-content: center;
-  font-family: Pixel;
-
-  border-width: 0px;
-  padding: 6px;
-
-  &:focus {
-    outline: none;
-  }
-
-  ::-webkit-inner-spin-button{
-    -webkit-appearance: none; 
-    margin: 0; 
-  }
-  ::-webkit-outer-spin-button{
-    -webkit-appearance: none; 
-    margin: 0; 
-  }  
-`;
-
-const KamiImage = styled.img`
-  border-style: solid;
-  border-width: 0px;
-  border-color: black;
-  height: 90px;
-  margin: 0px;
-  padding: 0px;
-`;
-
-const ProductBox = styled.div`
-  border-color: black;
-  border-radius: 2px;
-  border-style: solid;
-  border-width: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 5px;
-  max-width: 75%;
-`;
-
-const SubHeader = styled.p`
-  color: #333;
-
-  padding: 1.5vw;
-  font-family: Pixel;
-  font-size: 1.5vw;
-  text-align: center;
-`;
-
-const SubText = styled.div`
-  font-size: 12px;
-  color: #000;
-  text-align: center;
-  padding: 4px 6px 0px 6px;
-  font-family: Pixel;
-`;
-
-const QuantityStepper = styled.button`
-  font-size: 16px;
-  color: #777;
-  text-align: center;
-  font-family: Pixel;
-
-  border-style: none;
-  background-color: transparent;
-
-  &:hover {
-    color: #000;  
-  }
-`;

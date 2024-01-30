@@ -20,6 +20,7 @@ export const InputSingleTextForm = (props: Props) => {
   const [value, setValue] = useState(props.initialValue || '');
   let styleOverride = {};
   if (props.fullWidth) styleOverride = { width: '100%' };
+  props.buttonText = props.buttonText || 'Submit';
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -52,7 +53,7 @@ export const InputSingleTextForm = (props: Props) => {
       </InputGroup>
       {props.hasButton && <ActionButton
         id={`submit`}
-        text={props.buttonText || 'Submit'}
+        text={props.buttonText}
         onClick={() => handleSubmit()}
       />}
     </ Container>

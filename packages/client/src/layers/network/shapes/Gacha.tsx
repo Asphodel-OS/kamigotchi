@@ -8,7 +8,7 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { getConfigFieldValue } from './Config';
+import { getConfigFieldValueWei } from './Config';
 import { Kami, queryKamisX, Options as KamiOptions } from './Kami';
 import { NetworkLayer } from 'layers/network/types';
 
@@ -63,11 +63,11 @@ export const queryGachaKamis = (network: NetworkLayer, kamiOptions?: KamiOptions
   return queryKamisX(network, { state: "GACHA" }, kamiOptions);
 }
 
-export const calcRerollCost = (network: NetworkLayer, kami: Kami): number => {
-  const baseCost = getConfigFieldValue(network, 'GACHA_REROLL_PRICE');
+export const calcRerollCost = (network: NetworkLayer, kami: Kami): bigint => {
+  const baseCost = getConfigFieldValueWei(network, 'GACHA_REROLL_PRICE');
 
   // placeholder linear function
-  return baseCost * (kami.rerolls + 1);
+  return baseCost * BigInt(kami.rerolls + 1);
 }
 
 export const isGachaAvailable = (commit: GachaCommit, currBlock: number): boolean => {

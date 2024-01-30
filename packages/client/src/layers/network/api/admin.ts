@@ -1,4 +1,4 @@
-import { BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
@@ -12,8 +12,8 @@ export function createAdminAPI(systems: any) {
 
   // @dev admin reveal for pet if blockhash has lapsed. only called by admin
   // @param tokenId     ERC721 tokenId of the pet
-  async function petForceReveal(tokenId: number) {
-    return systems['system.Pet721.Reveal'].forceReveal(tokenId);
+  async function petForceReveal(commitIDs: BigNumberish[]) {
+    return systems['system.Pet.Gacha.Reveal'].forceReveal(commitIDs);
   }
 
   // @dev admin reveal for lootbox if blockhash has lapsed

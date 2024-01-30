@@ -78,25 +78,6 @@ export function registerPartyModal() {
         });
       };
 
-      // reveal kami
-      const reveal = async (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        actions?.add({
-          id: actionID,
-          action: 'KamiReveal',
-          params: [kami.index],
-          description: `Inspecting ${kami.name}`,
-          execute: async () => {
-            return api.player.ERC721.reveal(kami.index);
-          },
-        });
-        await waitForActionCompletion(
-          actions?.Action!,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-        openKamiModal(kami.entityIndex);
-      };
-
       const openKamiModal = (entityIndex: EntityIndex) => {
         setKami(entityIndex);
         setModals({ ...modals, kami: true });
@@ -113,7 +94,7 @@ export function registerPartyModal() {
           <Kards
             kamis={data.account.kamis ? data.account.kamis : []}
             account={data.account}
-            actions={{ feed, revive, reveal }}
+            actions={{ feed, revive }}
           />
         </ModalWrapper>
       );
