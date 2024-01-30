@@ -2,6 +2,7 @@
 import { _721BatchMinterSystem } from "./ethers-contracts/_721BatchMinterSystem";
 import { _ConfigSetStringSystem } from "./ethers-contracts/_ConfigSetStringSystem";
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
+import { _ConfigSetWeiSystem } from "./ethers-contracts/_ConfigSetWeiSystem";
 import { _devGiveTokensSystem } from "./ethers-contracts/_devGiveTokensSystem";
 import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
 import { _NodeCreateSystem } from "./ethers-contracts/_NodeCreateSystem";
@@ -88,6 +89,7 @@ export type SystemTypes = {
   "system.Pet721.BatchMint": _721BatchMinterSystem;
   "system._Config.Set.String": _ConfigSetStringSystem;
   "system._Config.Set": _ConfigSetSystem;
+  "system._Config.Set.Wei": _ConfigSetWeiSystem;
   "system._devGiveTokens": _devGiveTokensSystem;
   "system._Listing.Set": _ListingSetSystem;
   "system._Node.Create": _NodeCreateSystem;

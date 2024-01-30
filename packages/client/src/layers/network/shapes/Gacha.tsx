@@ -9,7 +9,7 @@ import {
 } from '@latticexyz/recs';
 
 import { getConfigFieldValue } from './Config';
-import { Kami, queryKamisX } from './Kami';
+import { Kami, queryKamisX, Options as KamiOptions } from './Kami';
 import { NetworkLayer } from 'layers/network/types';
 
 // standardized shape of a gacha commit
@@ -59,8 +59,8 @@ export const queryAccCommits = (network: NetworkLayer, accountID: EntityID): Gac
   );
 }
 
-export const queryGachaKamis = (network: NetworkLayer): Kami[] => {
-  return queryKamisX(network, { state: "GACHA" });
+export const queryGachaKamis = (network: NetworkLayer, kamiOptions?: KamiOptions): Kami[] => {
+  return queryKamisX(network, { state: "GACHA" }, kamiOptions);
 }
 
 export const calcRerollCost = (network: NetworkLayer, kami: Kami): number => {

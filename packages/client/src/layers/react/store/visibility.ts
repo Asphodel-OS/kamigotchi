@@ -98,11 +98,12 @@ export interface Modals {
   buy: boolean;
   dialogue: boolean;
   emaBoard: boolean;
+  gacha: boolean;
   help: boolean;
   inventory: boolean;
   kami: boolean;
   kamiSkills: boolean;
-  kamiMint: boolean;
+  kamiMint: boolean; // deprecated?
   leaderboard: boolean;
   lootboxes: boolean;
   nameKami: boolean;
@@ -124,6 +125,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   buy: isOn,
   dialogue: isOn,
   emaBoard: isOn,
+  gacha: isOn,
   help: isOn,
   inventory: isOn,
   kami: isOn,
@@ -183,6 +185,7 @@ export const useVisibility = create<State & Actions>((set) => {
       buy: false,
       dialogue: false,
       emaBoard: false,
+      gacha: false,
       help: false,
       inventory: false,
       kami: false,

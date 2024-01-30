@@ -1,4 +1,4 @@
-export type { Kami } from './types';
+export type { Kami, Options } from './types';
 export { getKami } from './types';
 export { queryKamisX, getKamiByIndex, getAllKamis } from './queries';
 export {

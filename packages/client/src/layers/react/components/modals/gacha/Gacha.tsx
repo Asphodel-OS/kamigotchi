@@ -10,63 +10,57 @@ import crypto from "crypto";
 import { abi } from "abi/Pet721ProxySystem.json"
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { getAccount } from 'layers/react/shapes/Account';
-import { getConfigFieldValue } from 'layers/react/shapes/Config';
-import { getData } from 'layers/react/shapes/Data';
-import { GachaCommit, isGachaAvailable } from 'layers/react/shapes/Gacha';
+import { getAccount, getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getConfigFieldValue } from 'layers/network/shapes/Config';
+import { getData } from 'layers/network/shapes/Data';
+import { GachaCommit, isGachaAvailable, queryGachaKamis, calcRerollCost } from 'layers/network/shapes/Gacha';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 import { playVending } from 'utils/sounds';
+import { Kami } from 'layers/network/shapes/Kami';
 
+import { Tabs } from './Tabs';
+import { Pool } from './Pool';
+import { Reroll } from './Reroll';
 
-export function registerKamiMintModal() {
+export function registerGachaModal() {
   registerUIComponent(
     'KamiMint',
     {
-      colStart: 30,
-      colEnd: 70,
-      rowStart: 30,
-      rowEnd: 75,
+      colStart: 20,
+      colEnd: 80,
+      rowStart: 20,
+      rowEnd: 90,
     },
     (layers) => {
+      const { network } = layers;
       const {
-        network: {
-          network,
-          components: {
-            IsPet,
-            IsAccount,
-            OperatorAddress,
-            RevealBlock,
-            State,
-          },
-        },
-      } = layers;
+        AccountID,
+        IsPet,
+        RevealBlock,
+        State,
+      } = network.components;
 
-      return merge(IsPet.update$, RevealBlock.update$, State.update$).pipe(
+      return merge(AccountID.update$, IsPet.update$, RevealBlock.update$, State.update$).pipe(
         map(() => {
-          // get the account through the account entity of the controlling wallet
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account = getAccount(layers, accountIndex, { kamis: true, gacha: true });
+          const account = getAccountFromBurner(
+            network,
+            { gacha: true, kamis: true },
+          );
 
           const commits = [...account.gacha ? account.gacha.commits : []].reverse();
 
           return {
-            layers,
+            network,
             data: {
               account: {
+                kamis: account.kamis,
                 mint20: {
-                  minted: getData(layers, account.id, "MINT20_MINT"),
-                  limit: getConfigFieldValue(layers.network, "MINT_ACCOUNT_MAX"),
+                  minted: getData(network, account.id, "MINT20_MINT"),
+                  limit: getConfigFieldValue(network, "MINT_ACCOUNT_MAX"),
                 },
                 commits: commits,
               },
@@ -76,24 +70,19 @@ export function registerKamiMintModal() {
       );
     },
 
-    ({ layers, data }) => {
+    ({ network, data }) => {
       const {
-        network: {
-          actions,
-          api: { player },
-          systems,
-          world,
-          network: { blockNumber$ }
-        },
-      } = layers;
+        actions,
+        api: { player },
+        systems,
+        world,
+        network: { blockNumber$ }
+      } = network;
 
       const { isConnected } = useAccount();
       const { modals, setModals } = useVisibility();
       const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, networks } = useNetwork();
-
-      // vars
-      const [amountToMint, setAmountToMint] = useState(1);
 
       // revealing
       const [triedReveal, setTriedReveal] = useState(true);
@@ -102,7 +91,6 @@ export function registerKamiMintModal() {
 
       // modal management
       const [tab, setTab] = useState('MINT');
-
 
       //////////////
       // HOOKS 
@@ -136,6 +124,13 @@ export function registerKamiMintModal() {
       }, [data.account.commits]);
 
 
+      //////////////////
+      // CALCULATIONS
+
+      const getRerollCost = (kami: Kami) => {
+        return calcRerollCost(network, kami);
+      }
+
       ///////////////
       // COUNTER
 
@@ -145,11 +140,14 @@ export function registerKamiMintModal() {
         functionName: 'getTokenAddy'
       });
 
-      const { data: accountMint20Bal } = useBalance({
+      const { data: mint20Bal } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
         token: mint20Addy as `0x${string}`,
         watch: true
       });
+
+
+
 
       /////////////////
       // ACTIONS
@@ -166,6 +164,22 @@ export function registerKamiMintModal() {
           playVending();
         } catch (e) {
           console.log('KamiMint.tsx: handleMint() mint failed', e);
+        }
+      };
+
+      const handleReroll = (kamis: Kami[]) => async () => {
+        if (kamis.length === 0) return;
+        try {
+          setWaitingToReveal(true);
+          const mintActionID = rerollTx(kamis);
+          await waitForActionCompletion(
+            actions!.Action,
+            world.entityToIndex.get(mintActionID) as EntityIndex
+          );
+          setTriedReveal(false);
+          playVending();
+        } catch (e) {
+          console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
         }
       };
 
@@ -188,7 +202,22 @@ export function registerKamiMintModal() {
       };
 
       // reroll a pet with eth payment
+      const rerollTx = (kamis: Kami[]) => {
+        const network = networks.get(selectedAddress);
+        const api = network!.api.player;
 
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'KamiReroll',
+          params: [kamis.map((n) => n.name)],
+          description: `Rerolling ${kamis.length} Kami`,
+          execute: async () => {
+            return api.mint.reroll(kamis.map((n) => n.id));
+          },
+        });
+        return actionID;
+      }
 
       // reveal gacha result(s)
       const revealTx = async (commits: GachaCommit[]) => {
@@ -211,99 +240,49 @@ export function registerKamiMintModal() {
       };
 
 
+      ///////////////
+      // QUERIES
 
+      const getAllPoolKamis = () => { return queryGachaKamis(network, { traits: true }) };
 
       ///////////////
       // DISPLAY
 
-      const QuantityButton = (delta: number) => {
-        return (
-          <QuantityStepper onClick={() => amountToMint + delta > 0 ? setAmountToMint(amountToMint + delta) : 0}>
-            {delta > 0 ? '+' : '-'}
-          </QuantityStepper>
+      const TabsBar = (<Tabs tab={tab} setTab={setTab} />);
+
+      const MainDisplay = () => {
+        if (tab === 'MINT') return (
+          <Pool
+            actions={{ handleMint }}
+            data={{
+              account: { balance: Number(mint20Bal?.formatted || '0') },
+              pool: { kamis: queryGachaKamis(network, { traits: true }) }
+            }}
+            display={{ Tab: TabsBar }}
+          />
         );
+        else if (tab === 'REROLL') return (
+          <Reroll
+            actions={{ handleReroll }}
+            data={{
+              kamis: data.account.kamis || [],
+              balance: Number(mint20Bal?.formatted || '0')
+            }}
+            display={{ Tab: TabsBar }}
+            utils={{ getRerollCost }}
+          />
+        );
+        else return <div />;
       }
-
-      const MintPetButton = () => {
-        if (waitingToReveal) {
-          return (<div></div>)
-        } else {
-          const enabled = (amountToMint <= Number(accountMint20Bal?.formatted));
-          const warnText = enabled ? '' : 'Insufficient $KAMI';
-          return (
-            <Tooltip text={[warnText]}>
-              <ActionButton id='button-mint' onClick={handleMint(amountToMint)} size='vending' text="Mint" inverted disabled={!enabled} />
-            </Tooltip>
-          );
-        }
-      }
-
-      const PetQuantityBox = () => {
-        if (waitingToReveal) {
-          return (<SubText>Revealing... don't leave this page!</SubText>);
-        } else {
-          return (
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0px 0px 0px' }}>
-              <div style={{ width: '50%' }}>
-                <SubText style={{ color: '#555', padding: '2px' }}>Qty</SubText>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  {QuantityButton(-1)}
-                  <Input
-                    style={{ pointerEvents: 'auto' }}
-                    type='number'
-                    onKeyDown={(e) => catchKeys(e)}
-                    placeholder='0'
-                    onChange={(e) => handleChange(e)}
-                    value={amountToMint}
-                  />
-                  {QuantityButton(1)}
-                </div>
-              </div>
-              <div style={{ width: '50%' }}>
-                <SubText style={{ color: '#555', padding: '2px' }}>Cost</SubText>
-                <SubText>{amountToMint} $KAMI</SubText>
-              </div>
-            </div>
-          );
-        }
-      }
-
-      const PetMachine = (
-        <Grid>
-          <SubHeader style={{ gridRow: 1 }}>
-            Mint Kamigotchi
-          </SubHeader>
-          <div style={{ gridRow: 2 }}>
-            <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
-          </div>
-          <ProductBox style={{ gridRow: 3 }}>
-            {PetQuantityBox()}
-            {MintPetButton()}
-          </ProductBox>
-          <SubText style={{ gridRow: 4 }}>
-            You have: {Number(accountMint20Bal?.formatted)} $KAMI
-          </SubText>
-        </Grid>
-      );
-
-      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-          handleMint(amountToMint);
-        }
-      };
-
-      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (Number(event.target.value) > 0) setAmountToMint(Number(event.target.value));
-      };
 
       return (
         <ModalWrapper
-          divName='kamiMint'
-          id='kamiMintModal'
-          overlay
+          divName='gacha'
+          id='gacha'
+          header={<ModalHeader title='Gacha' icon={'https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif'} />}
           canExit
         >
-          {PetMachine}
+          {MainDisplay()}
         </ModalWrapper>
       );
     }

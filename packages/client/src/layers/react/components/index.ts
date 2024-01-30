@@ -18,6 +18,7 @@ import { registerNotificationFixture } from './fixtures/Notifications';
 
 import { registerAccountModal } from './modals/account';
 import { registerDialogueModal } from './modals/dialogue';
+import { registerGachaModal } from './modals/gacha';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
 import { registerKamiModal } from './modals/kami';
@@ -35,7 +36,6 @@ import { registerSocialModal } from './modals/social/Social';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from "./modals/FundOperator"
-import { registerKamiMintModal } from './modals/MintKami';
 import { registerAccountOperator } from './modals/AccountOperator';
 
 import {
@@ -84,7 +84,7 @@ export function registerUIComponents() {
   registerERC721BridgeModal();
   registerEMABoardModal();
   registerFundOperatorModal();
-  registerKamiMintModal();
+  registerGachaModal();
   registerKamiModal();
   registerLeaderboardModal();
   registerLootboxesModal();

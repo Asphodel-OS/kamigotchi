@@ -6,16 +6,17 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
+  buttonText?: string;
+  fullWidth?: boolean;
+  hasButton?: boolean;
+  initialValue?: string;
   label?: string;
   placeholder?: string;
   onSubmit?: Function;
-  hasButton?: boolean;
-  initialValue?: string;
-  fullWidth?: boolean;
 }
 
-// SingleInputTextForm is a styled input field with some additional frills
-export const SingleInputTextForm = (props: Props) => {
+// InputSingleTextForm is a styled input field with some additional frills
+export const InputSingleTextForm = (props: Props) => {
   const [value, setValue] = useState(props.initialValue || '');
   let styleOverride = {};
   if (props.fullWidth) styleOverride = { width: '100%' };
@@ -49,7 +50,11 @@ export const SingleInputTextForm = (props: Props) => {
           onChange={(e) => handleChange(e)}
         />
       </InputGroup>
-      {props.hasButton && <ActionButton id={`submit`} text='Submit' onClick={() => handleSubmit()} />}
+      {props.hasButton && <ActionButton
+        id={`submit`}
+        text={props.buttonText || 'Submit'}
+        onClick={() => handleSubmit()}
+      />}
     </ Container>
   );
 }

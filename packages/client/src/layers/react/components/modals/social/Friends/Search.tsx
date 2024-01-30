@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { ActionButton } from "layers/react/components/library";
 import { ActionListButton } from "layers/react/components/library/ActionListButton";
 import { Card } from "layers/react/components/library/Card";
-import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
+import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
 import { Account } from "layers/network/shapes/Account";
 import { Friendship } from "layers/network/shapes/Friendship";
 
@@ -186,7 +186,7 @@ export const Search = (props: Props) => {
         display: "flex",
         alignContent: "center",
       }}>
-        <SingleInputTextForm
+        <InputSingleTextForm
           id={`kami-name`}
           placeholder={searchText}
           onSubmit={(v: string) => searchByName(v)}

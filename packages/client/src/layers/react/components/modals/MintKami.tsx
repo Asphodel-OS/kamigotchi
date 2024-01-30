@@ -19,6 +19,7 @@ import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playVending } from 'utils/sounds';
+import { InputSingleNumberForm } from '../library';
 
 
 export function registerKamiMintModal() {
@@ -252,8 +253,16 @@ export function registerKamiMintModal() {
             <KamiImage src='https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif' />
           </div>
           <ProductBox style={{ gridRow: 3 }}>
-            {PetQuantityBox()}
-            {MintPetButton()}
+            <InputSingleNumberForm
+              id='mint-quantity'
+              label=''
+              placeholder='1'
+              bounds={{}}
+              initialValue={amountToMint}
+              onSubmit={(n: number) => handlePetMinting(n)}
+              hasButton
+              stepper
+            />
           </ProductBox>
           <SubText style={{ gridRow: 4 }}>
             You have: {Number(accountMint20Bal?.formatted)} $KAMI
@@ -279,6 +288,16 @@ export function registerKamiMintModal() {
           canExit
         >
           {PetMachine}
+          <InputSingleNumberForm
+            id='mint-quantity'
+            label=''
+            placeholder='1'
+            bounds={{}}
+            initialValue={amountToMint}
+            onSubmit={(n: number) => handlePetMinting(n)}
+            hasButton
+            stepper
+          />
         </ModalWrapper>
       );
     }

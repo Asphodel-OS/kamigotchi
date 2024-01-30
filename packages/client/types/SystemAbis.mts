@@ -2,6 +2,7 @@
 import _721BatchMinterSystem from "../abi/_721BatchMinterSystem.json";
 import _ConfigSetStringSystem from "../abi/_ConfigSetStringSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
+import _ConfigSetWeiSystem from "../abi/_ConfigSetWeiSystem.json";
 import _devGiveTokensSystem from "../abi/_devGiveTokensSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
@@ -88,6 +89,7 @@ export const SystemAbis = {
   "system.Pet721.BatchMint": _721BatchMinterSystem.abi,
   "system._Config.Set.String": _ConfigSetStringSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
+  "system._Config.Set.Wei": _ConfigSetWeiSystem.abi,
   "system._devGiveTokens": _devGiveTokensSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,

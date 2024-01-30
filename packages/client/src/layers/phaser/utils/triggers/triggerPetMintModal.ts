@@ -9,7 +9,7 @@ export const triggerPetMintModal = () => {
     useVisibility.setState({
       modals: {
         ...modals,
-        kamiMint: true,
+        gacha: true,
         bridgeERC20: false,
         bridgeERC721: false,
         dialogue: false,

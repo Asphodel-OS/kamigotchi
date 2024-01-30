@@ -5,7 +5,7 @@ import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { SingleInputTextForm } from 'layers/react/components/library/SingleInputTextForm';
+import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
@@ -65,7 +65,7 @@ export function registerNameKamiModal() {
         >
           <Title>Name your Kami</Title>
           <Description>A Kami can only be named once. Choose wisely.</Description>
-          <SingleInputTextForm
+          <InputSingleTextForm
             id={`kami-name`}
             label='new name'
             placeholder={kami.name}
