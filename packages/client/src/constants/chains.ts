@@ -70,4 +70,25 @@ const chainConfigs: Map<string, Chain> = new Map([
   ['OPSEP', opSepolia],
 ]);
 
-export const defaultChain = chainConfigs.get(process.env.MODE ?? '')!;
+
+// overrides the chosen chain config if the url param is set
+const getDefaultChainConfig = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  if (!mode) return chainConfigs.get(process.env.MODE ?? '');
+
+  if (chainConfigs.has(mode)) {
+    console.log(`Environment mode override ${mode} detected.`);
+    return chainConfigs.get(mode);
+  } else {
+    console.warn(
+      `No chain config found for mode '${mode}'.\n`,
+      `Must be one of [${Array.from(chainConfigs.keys()).join(' | ')}].\n`,
+      `Defaulting to DEV (localhost).`
+    );
+  }
+  return localhost;
+}
+
+// export const defaultChain = chainConfigs.get(process.env.MODE ?? '')!;
+export const defaultChain = getDefaultChainConfig()!;
