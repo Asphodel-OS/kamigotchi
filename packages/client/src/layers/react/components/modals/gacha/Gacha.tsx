@@ -10,19 +10,19 @@ import { abi } from "abi/Pet721ProxySystem.json"
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { getConfigFieldValue } from 'layers/network/shapes/Config';
-import { getData } from 'layers/network/shapes/Data';
-import { GachaCommit, isGachaAvailable, queryGachaKamis, calcRerollCost } from 'layers/network/shapes/Gacha';
+import { GachaCommit, isGachaAvailable, calcRerollCost } from 'layers/network/shapes/Gacha';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 import { playVending } from 'utils/sounds';
 import { Kami } from 'layers/network/shapes/Kami';
 
-import { Tabs } from './Tabs';
+import { Tabs } from './components/Tabs';
 import { Pool } from './Pool';
 import { Reroll } from './Reroll';
 import { Commits } from './Commits';
+
+import { getLazyKamis } from './utils/queries';
 
 export function registerGachaModal() {
   registerUIComponent(
@@ -228,12 +228,6 @@ export function registerGachaModal() {
         );
       };
 
-
-      ///////////////
-      // QUERIES
-
-      const getAllPoolKamis = () => { return queryGachaKamis(network, { traits: true }) };
-
       ///////////////
       // DISPLAY
 
@@ -249,9 +243,9 @@ export function registerGachaModal() {
             actions={{ handleMint }}
             data={{
               account: { balance: Number(mint20Bal?.formatted || '0') },
-              pool: { kamis: queryGachaKamis(network, { traits: true }) }
             }}
             display={{ Tab: TabsBar }}
+            query={{ getLazyKamis: getLazyKamis(network) }}
           />
         );
         else if (tab === 'REROLL') return (

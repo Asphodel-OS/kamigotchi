@@ -5,13 +5,14 @@ import {
   HasValue,
   runQuery,
   QueryFragment,
+  EntityIndex,
 } from '@latticexyz/recs';
 
 import { Kami, Options, getKami } from './types';
 import { NetworkLayer } from 'layers/network/types';
 
 // fields to filter by (only supports an AND of all fields)
-interface QueryOptions {
+export type QueryOptions = {
   account?: EntityID;
   state?: string;
 }
@@ -21,6 +22,22 @@ export const queryKamisX = (
   options: QueryOptions,
   kamiOptions?: Options // pass through options for what's included on kami shape
 ): Kami[] => {
+  const kamiIDs = queryKamiEntitiesX(network, options);
+
+  return kamiIDs.map(
+    (index): Kami => getKami(
+      network,
+      index,
+      kamiOptions
+    )
+  );;
+};
+
+// returns raw entity indices
+export const queryKamiEntitiesX = (
+  network: NetworkLayer,
+  options: QueryOptions,
+): EntityIndex[] => {
   const {
     components: {
       AccountID,
@@ -39,17 +56,7 @@ export const queryKamisX = (
     toQuery.push(HasValue(State, { value: options.state }));
   }
 
-  const kamiIDs = Array.from(
-    runQuery(toQuery)
-  );
-
-  return kamiIDs.map(
-    (index): Kami => getKami(
-      network,
-      index,
-      kamiOptions
-    )
-  );;
+  return Array.from(runQuery(toQuery));
 };
 
 export const getAllKamis = (

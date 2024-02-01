@@ -10,6 +10,9 @@ import { Kami } from 'layers/network/shapes/Kami';
 
 interface Props {
   kamis: Kami[];
+  amtShown: number;
+  grossShowable: number;
+  incAmtShown: () => void;
   getKamiText?: (kami: Kami) => string[];
   select?: {
     arr: Kami[];
@@ -62,7 +65,6 @@ export const KamiGrid = (props: Props) => {
           {props.select &&
             <SelectButton
               onClick={selectFunc}
-              // type="checkbox"
               style={isSelected ? selectedStyle : {}} />
           }
         </CellContainer>
@@ -70,18 +72,36 @@ export const KamiGrid = (props: Props) => {
     );
   }
 
+  const ShowMoreIcon = (
+    (props.amtShown < props.grossShowable) &&
+    <ShowMoreButton onClick={props.incAmtShown}>
+      See more
+    </ShowMoreButton>
+  );
+
+  // finish the list with null items to justify elements in grid
+  // because of vw units, always 5 items per row
+  const NullItems = () => {
+    // total items, add 1 if show more is displayed
+    const gross = props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
+    const remainder = (gross % 5) == 0 ? 0 : 5 - (gross % 5);
+
+    return Array(remainder).fill(<EmptyEntry />);
+  }
+
 
   return (
     <Container key='grid'>
       {props.kamis.map((kami) => Cell(kami))}
+      {ShowMoreIcon}
+      {NullItems()}
     </Container>
   );
 }
 
 const Container = styled.div`
-  background-color: white;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: wrap;
   justify-content: center;
   align-items: flex-start;
 
@@ -96,6 +116,12 @@ const CellContainer = styled.div`
   position: relative;
 `;
 
+const EmptyEntry = styled.div`
+  height: 9vw;
+  width: 9.4vw;
+  margin: 0.3vh 0.4vw;
+`;
+
 const Image = styled.img`
   border-radius: .1vw;
   height: 9vw;
@@ -103,6 +129,26 @@ const Image = styled.img`
 
   &:hover {
     opacity: 0.75;
+  }
+`;
+
+const ShowMoreButton = styled.button`
+  background-color: transparent;
+  border: dashed .15vw #333;
+  border-radius: .25vw;
+  align-self: center;
+
+  margin: 0.3vh 0.4vw;
+  padding: 0.3vh 1vw;
+  height: 9vw;
+  width: 9vw;
+
+  font-family: Pixel;
+  font-size: 1.2vw;
+  color: black;
+
+  &:hover {
+    background-color: #DDD;
   }
 `;
 

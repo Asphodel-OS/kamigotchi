@@ -69,6 +69,12 @@ export interface Options {
   traits?: boolean;
 }
 
+// fields to filter by (only supports an AND of all fields)
+export interface QueryOptions {
+  account?: EntityID;
+  state?: string;
+}
+
 // get a Kami from its EnityIndex. includes options for which data to include
 export const getKami = (
   network: NetworkLayer,

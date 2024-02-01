@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 
 import { ActionButton } from 'layers/react/components/library';
 import { InputSingleNumberForm } from 'layers/react/components/library';
-import { BalanceBar } from './BalanceBar';
-import { KamiGrid } from './KamiGrid';
+import { BalanceBar } from './components/BalanceBar';
+import { KamiGrid } from './components/KamiGrid';
 
 import { playClick } from 'utils/sounds';
 import musuIcon from "assets/images/icons/musu.png";
-import { Kami } from 'layers/network/shapes/Kami';
+import { Kami, QueryOptions, Options } from 'layers/network/shapes/Kami';
 
 
 interface Props {
@@ -19,46 +19,55 @@ interface Props {
     account: {
       balance: number;
     }
-    pool: {
-      kamis: Kami[];
-    }
   }
   display: {
     Tab: JSX.Element;
   }
-
+  query: {
+    getLazyKamis: (queryOpts: QueryOptions, options?: Options) => Array<() => Kami>;
+  }
 }
 
 export const Pool = (props: Props) => {
-
   const [mintAmt, setMintAmt] = useState<number>(0);
+  const [numShown, setNumShown] = useState<number>(49);
 
   const mintPrice = 1;
 
   //////////////////
-  // DISPLAY
+  // LOGIC
 
   const getKamiText = (kami: Kami): string[] => {
-    const text = [];
-
-    // traits
-    text.push(
+    const traitString = (
       (kami.traits?.body.name || '') + ' | ' +
       (kami.traits?.hand.name || '') + ' | ' +
       (kami.traits?.face.name || '') + ' | ' +
       (kami.traits?.color.name || '') + ' | ' +
       (kami.traits?.background.name || '')
     );
-    text.push('');
 
-    // stats
-    text.push(`Health: ${kami.stats.health}`);
-    text.push(`Power: ${kami.stats.power}`);
-    text.push(`Violence: ${kami.stats.violence}`);
-    text.push(`Harmony: ${kami.stats.harmony}`);
-
-    return text;
+    return [
+      traitString,
+      '',
+      `Health: ${kami.stats.health}`,
+      `Power: ${kami.stats.power}`,
+      `Violence: ${kami.stats.violence}`,
+      `Harmony: ${kami.stats.harmony}`,
+      `Slots: ${kami.stats.slots}`
+    ];
   }
+
+  const lazyKamis = props.query.getLazyKamis({ state: "GACHA" }, { traits: true });
+
+  const getTruncatedKamis = () => {
+    const amt = numShown < lazyKamis.length ? numShown : lazyKamis.length;
+    const shortLazies = [...lazyKamis].splice(0, amt);
+
+    return shortLazies.map((lazyKami) => lazyKami());
+  }
+
+  ///////////////////
+  // DISPLAY
 
   const FooterButton = (
     <Footer>
@@ -90,9 +99,12 @@ export const Pool = (props: Props) => {
       />
       <InnerBox>
         {props.display.Tab}
-        <AmountText>Kamigotchis in pool: {props.data.pool.kamis.length}</AmountText>
+        <AmountText>Kamigotchis in pool: {lazyKamis.length}</AmountText>
         <KamiGrid
-          kamis={props.data.pool.kamis}
+          kamis={getTruncatedKamis()}
+          amtShown={numShown}
+          grossShowable={lazyKamis.length}
+          incAmtShown={() => setNumShown(numShown + 25)}
           getKamiText={getKamiText}
         />
       </InnerBox>
@@ -115,7 +127,6 @@ const InnerBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-start;
 
   flex: 1;
   border: solid .15vw black;

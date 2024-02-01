@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { utils } from 'ethers';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { BalanceBar } from './BalanceBar';
-import { KamiGrid } from './KamiGrid';
+import { BalanceBar } from './components/BalanceBar';
+import { KamiGrid } from './components/KamiGrid';
 
 import { playClick } from 'utils/sounds';
 import ethIcon from "assets/images/icons/Ethereum.png";
@@ -88,6 +88,9 @@ export const Reroll = (props: Props) => {
       ? <KamiGrid
         kamis={props.data.kamis}
         getKamiText={getKamiText}
+        amtShown={props.data.kamis.length} // here if truncation makes sense later
+        grossShowable={props.data.kamis.length}
+        incAmtShown={() => { }}
         select={{
           arr: selectedKamis,
           set: setSelectedKamis
