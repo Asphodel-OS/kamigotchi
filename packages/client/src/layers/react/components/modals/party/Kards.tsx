@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { feedIcon, reviveIcon } from "assets/images/icons/actions";
-import { ActionButton } from "layers/react/components/library/ActionButton";
 import { IconButton } from "layers/react/components/library/IconButton";
 import { IconListButton } from "layers/react/components/library/IconListButton";
 import { KamiCard } from "layers/react/components/library/KamiCard";
@@ -23,6 +22,9 @@ import {
 } from "layers/network/shapes/Kami";
 import { getRateDisplay } from 'utils/rates';
 import { playClick } from "utils/sounds";
+import { useSelected } from "layers/react/store/selected";
+import { useVisibility } from "layers/react/store/visibility";
+
 
 interface Props {
   account: Account;
@@ -35,6 +37,8 @@ interface Props {
 
 export const Kards = (props: Props) => {
   const { actions, account, kamis } = props;
+  const { modals, setModals } = useVisibility();
+  const { nodeIndex, setNode } = useSelected();
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
@@ -130,6 +134,21 @@ export const Kards = (props: Props) => {
 
 
   /////////////////
+  // INTERACTION
+
+  // toggle the node modal to the selected one
+  const selectNode = (index: number) => {
+    if (!modals.node) setModals({ ...modals, node: true });
+    if (nodeIndex !== index) setNode(index);
+    playClick();
+  };
+
+  // returns the onClick function for the description
+  const getDescriptionOnClick = (kami: Kami) => {
+    if (isHarvesting(kami)) return () => selectNode(kami.production?.node?.index!);
+  };
+
+  /////////////////
   // DISPLAY
 
   // Feed Button display evaluation
@@ -198,6 +217,7 @@ export const Kards = (props: Props) => {
           key={kami.entityIndex}
           kami={kami}
           description={getDescription(kami)}
+          descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={`${calcOutput(kami)} $MUSU`}
           actions={DisplayedAction(kami, account)}
           showBattery

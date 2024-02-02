@@ -19,6 +19,7 @@ import { playClick } from 'utils/sounds';
 interface Props {
   kami: Kami;
   description: string[];
+  descriptionOnClick?: () => void;
   subtext?: string;
   actions?: React.ReactNode;
   showBattery?: boolean;
@@ -64,11 +65,17 @@ export const KamiCard = (props: Props) => {
 
   // generate the styled text divs for the description
   const Description = () => {
-    const header = [<TextBig key='header'>{description[0]}</TextBig>];
-    const details = description
-      .slice(1)
-      .map((line, index) => <TextMedium key={`description-${index}`}>{line}</TextMedium>);
-    return <>{[...header, ...details]}</>;
+    const header = (
+      <TextBig key='header' onClick={props.descriptionOnClick}>
+        {description[0]}
+      </TextBig>
+    );
+
+    const details = description.slice(1).map(
+      (text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>
+    );
+
+    return <>{[header, ...details]}</>;
   };
 
   const CornerContent = (kami: Kami) => {
@@ -168,6 +175,13 @@ const TextBig = styled.p`
   font-size: 0.9vw;
   font-family: Pixel;
   text-align: left;
+
+  ${({ onClick }) => onClick && `
+    &:hover {
+      opacity: 0.6;
+      cursor: pointer;
+    }
+  `}
 `;
 
 const TextMedium = styled.p`

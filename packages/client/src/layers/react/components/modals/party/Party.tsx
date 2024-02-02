@@ -1,5 +1,4 @@
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
+import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 import React from 'react';
 import { interval, map } from 'rxjs';
@@ -11,8 +10,6 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
-import { useVisibility } from 'layers/react/store/visibility';
-import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
 
 
@@ -42,10 +39,7 @@ export function registerPartyModal() {
     // Render
     ({ network, data }) => {
       // console.log('PartyM: data', data);
-      const { actions, api, world } = network;
-
-      const { modals, setModals } = useVisibility();
-      const { setKami } = useSelected();
+      const { actions, api } = network;
 
       /////////////////
       // INTERACTION
@@ -77,12 +71,6 @@ export function registerPartyModal() {
           },
         });
       };
-
-      const openKamiModal = (entityIndex: EntityIndex) => {
-        setKami(entityIndex);
-        setModals({ ...modals, kami: true });
-      };
-
 
       return (
         <ModalWrapper

@@ -52,18 +52,23 @@ export const Banner = (props: Props) => {
   const getDisabledReason = (kamis: Kami[]): string => {
     let reason = '';
     let available = [...kamis];
+
+    if (account.location !== node.location) {
+      reason = 'node too far!';
+    }
+
     if (available.length == 0) {
-      reason = 'you have no kamis';
+      reason = 'you have no kamis!';
     }
 
     available = available.filter((kami) => isResting(kami));
     if (available.length == 0 && reason === '') {
-      reason = 'you have no resting kami';
+      reason = 'you have no resting kami!';
     }
 
     available = available.filter((kami) => !onCooldown(kami));
     if (available.length == 0 && reason === '') {
-      reason = 'your kami are on cooldown';
+      reason = 'your kami are on cooldown!';
     }
 
     return reason;
