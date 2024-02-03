@@ -22,6 +22,8 @@ interface Props {
   stepper?: boolean;
 }
 
+const disabledStepperStyle = { backgroundColor: '#c4c4c4', pointerEvents: 'none' };
+
 // InputSingleNumberForm is a styled number input field with buttons to increase or decrease
 export const InputSingleNumberForm = (props: Props) => {
   const [value, setValue] = useState<number>(props.initialValue || 0);
@@ -51,21 +53,31 @@ export const InputSingleNumberForm = (props: Props) => {
     }
   };
 
-  const Stepper = (
-    <StepperGroup>
-      <StepperButton onClick={
-        () => (props.bounds.max && value + step > props.bounds.max)
-          ? 0
-          : updateValue(value + step)
-      }> + </StepperButton>
-      <hr style={{ width: "100%", height: "0px", border: "0.08vw solid black" }} />
-      <StepperButton onClick={
-        () => value - step > (props.bounds.min || 0)
-          ? updateValue(value - step)
-          : 0
-      }> - </StepperButton>
-    </StepperGroup>
-  );
+  const Stepper = () => {
+    const atMax = props.bounds.max != undefined && value + step > props.bounds.max;
+    const atMin = value - step <= (props.bounds.min || 0);
+    return (
+      <StepperGroup>
+        <StepperButtonTop
+          style={atMax ? disabledStepperStyle : {}}
+          onClick={
+            () => atMax
+              ? 0
+              : updateValue(value + step)
+          }
+        > + </StepperButtonTop>
+        <hr style={{ width: "100%", height: "0px", border: "0.08vw solid black" }} />
+        <StepperButtonBottom
+          style={atMin ? disabledStepperStyle : {}}
+          onClick={
+            () => atMin
+              ? 0
+              : updateValue(value - step)
+          }
+        > - </StepperButtonBottom>
+      </StepperGroup >
+    );
+  };
 
   return (
     <Container id={props.id} style={styleOverride}>
@@ -79,7 +91,7 @@ export const InputSingleNumberForm = (props: Props) => {
           onChange={(e) => handleChange(e)}
           step="1"
         />
-        {props.stepper && Stepper}
+        {props.stepper && Stepper()}
       </InputGroup>
       {
         props.hasButton
@@ -139,9 +151,34 @@ const Input = styled.input`
   align-items: center;
 `;
 
-const StepperButton = styled.button`
+const StepperButtonTop = styled.button`
   border: none;
-  border-radius: 0.2vw;
+  border-radius: 0 0.2vw 0 0;
+  
+  background-color: transparent;
+  color: black;
+  justify-content: center;
+
+  font-family: Pixel;
+  text-align: center;
+  text-decoration: none;
+
+  cursor: pointer;
+  pointer-events: auto;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+  &:active {
+    background-color: #c4c4c4;
+  }
+
+  font-size: 1vw;
+  padding: 0.325vw 0.8vw
+`;
+
+const StepperButtonBottom = styled.button`
+  border: none;
+  border-radius: 0 0 0.2vw 0;
   
   background-color: transparent;
   color: black;
