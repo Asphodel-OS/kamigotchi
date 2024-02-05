@@ -99,10 +99,10 @@ export const getNode = (
     // split node kamis between mine and others
     if (kamis && options.accountID) {
       kamisMine = kamis.filter((kami) => {
-        return kami.account!.id === options.accountID;
+        return kami.account?.id === options.accountID;
       });
       kamisOthers = kamis.filter((kami) => {
-        return kami.account!.id !== options.accountID;
+        return kami.account?.id !== options.accountID;
       });
     } else {
       kamisOthers = kamis;

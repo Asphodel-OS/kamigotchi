@@ -273,7 +273,7 @@ export const Kards = (props: Props) => {
       <KamiCard
         key={kami.entityIndex}
         kami={kami}
-        subtext={`${kami.account!.name} (\$${calcOutput(kami)})`}
+        subtext={`${kami.account?.name} (\$${calcOutput(kami)})`}
         actions={LiquidateButton(kami, myKamis)}
         description={getDescription(kami)}
         showBattery
