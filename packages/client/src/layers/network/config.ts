@@ -1,6 +1,7 @@
 import { Wallet } from 'ethers';
 import { SetupContractConfig } from "@latticexyz/std-client";
 import { ExternalProvider } from "@ethersproject/providers";
+import { chainConfigs } from 'constants/chains';
 
 // flat network configuration struct
 // TODO: replace this with Lattice's version in "@latticexyz/network/dist/types"
@@ -51,7 +52,19 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) =>
 export function createConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
-  switch (process.env.MODE) {
+  // get the determined environment mode
+  let mode = process.env.MODE;
+  if (mode) console.warn(`Environment mode ${mode} detected.\n`);
+  else {
+    console.warn(`No environment mode detected. Defaulting to 'DEV'\n`);
+    mode = 'DEV';
+  }
+
+  // override the environment mode if the url param is set
+  mode = getModeOverride() ?? mode;
+
+  // resolve the network config based on the environment mode
+  switch (mode) {
     case 'DEV':
       config = createConfigRawLocal(externalProvider);
       break;
@@ -152,4 +165,24 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
     config.privateKey = wallet.privateKey;
   }
   return config;
+}
+
+// gets the environment mode override from the url params
+const getModeOverride = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const modeOverride = urlParams.get('mode');
+  if (modeOverride) console.warn(`Environment mode override ${modeOverride} detected.`);
+  else return;
+
+  // return the mode override if it is a valid one
+  if (chainConfigs.has(modeOverride)) {
+    console.warn(`Overriding environment mode..`);
+    return modeOverride;
+  } else {
+    console.warn(
+      `No chain config found for override mode '${modeOverride}'.\n`,
+      `Must be one of [${Array.from(chainConfigs.keys()).join(' | ')}].\n`,
+      `Defaulting to environment mode.`
+    );
+  }
 }

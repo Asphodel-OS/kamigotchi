@@ -62,7 +62,7 @@ const opSepolia: Chain = {
 };
 
 // object mapping between environment MODEs and chain configs
-const chainConfigs: Map<string, Chain> = new Map([
+export const chainConfigs: Map<string, Chain> = new Map([
   ['', localhost],  // default to localhost when no environment mode provided
   ['DEV', localhost],
   ['TEST', opSepolia],
@@ -76,17 +76,7 @@ const getDefaultChainConfig = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const mode = urlParams.get('mode');
   if (!mode) return chainConfigs.get(process.env.MODE ?? '');
-
-  if (chainConfigs.has(mode)) {
-    console.log(`Environment mode override ${mode} detected.`);
-    return chainConfigs.get(mode);
-  } else {
-    console.warn(
-      `No chain config found for mode '${mode}'.\n`,
-      `Must be one of [${Array.from(chainConfigs.keys()).join(' | ')}].\n`,
-      `Defaulting to DEV (localhost).`
-    );
-  }
+  if (chainConfigs.has(mode)) return chainConfigs.get(mode);
   return localhost;
 }
 

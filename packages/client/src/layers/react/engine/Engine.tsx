@@ -40,7 +40,7 @@ export const Engine: React.FC<{
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(`LOADED IN ${process.env.MODE ?? "DEV"} MODE (chain ${defaultChain.id})`);
+    console.log(`LOADING (chain ${defaultChain.id})`);
   }, []);
 
   if (!mounted || !layers) return <BootScreen />;
