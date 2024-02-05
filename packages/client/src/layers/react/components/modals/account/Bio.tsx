@@ -18,11 +18,9 @@ interface Props {
   }
 }
 
-// KamiCard is a card that displays information about a Kami. It is designed to display
-// information ranging from current production or death as well as support common actions.
 export const Bio = (props: Props) => {
   const { actions, account } = props;
-  const [_, setLastRefresh] = useState(Date.now());
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
 
   /////////////////
@@ -44,6 +42,13 @@ export const Bio = (props: Props) => {
     navigator.clipboard.writeText(text);
   };
 
+
+  /////////////////
+  // INTERPRETATION
+
+  const getLastSeenString = () => {
+    return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`
+  }
 
 
   /////////////////
@@ -91,17 +96,8 @@ export const Bio = (props: Props) => {
     );
   }
 
-  const LastSeenRow = () => {
-    return (
-      <DetailRow>
-        <Description>Last Seen: {moment(1000 * account.time.last).fromNow()}</Description>
-      </DetailRow>
-    );
-  }
-
   return (
     <Container key={account.name}>
-      <Image src='https://images.blur.io/_blur-prod/0x5af0d9827e0c53e4799bb226655a1de152a425a5/833-07dc63fc2ea1b5a5?w=1000' />
       <Content>
         <Identifiers>
           <Title>{account.name}</Title>
@@ -110,8 +106,13 @@ export const Bio = (props: Props) => {
         <BirthdayRow />
         <KillsRow />
         <CoinRow />
-        <LastSeenRow />
       </Content>
+      <PfpContainer>
+        <Tooltip text={[getLastSeenString()]}>
+          <PfpStatus timeDelta={lastRefresh - 1000 * account.time.last} />
+          <PfpImage src='https://images.blur.io/_blur-prod/0x5af0d9827e0c53e4799bb226655a1de152a425a5/833-07dc63fc2ea1b5a5?w=1000' />
+        </Tooltip>
+      </PfpContainer>
     </Container>
   );
 };
@@ -119,18 +120,9 @@ export const Bio = (props: Props) => {
 
 const Container = styled.div`
   color: black;
-  padding: .7vw;
+  padding: 1.2vw;
   display: flex;
   flex-flow: row nowrap;
-`;
-
-const Image = styled.img`
-  border: solid black .15vw;
-  border-radius: 10vw;
-  width: 10vw;
-  height: 10vw;
-  object-fit: cover;
-  object-position: 100% 0;
 `;
 
 const Content = styled.div`
@@ -143,7 +135,7 @@ const Content = styled.div`
 `;
 
 const Identifiers = styled.div`
-  padding-bottom: .2vw;
+  padding-bottom: .6vw;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
@@ -166,7 +158,7 @@ const Subtitle = styled.div`
 `;
 
 const DetailRow = styled.div`
-  padding: .1vw .25vw;
+  padding: .3vw 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -181,4 +173,34 @@ const Description = styled.div`
   padding-top: .2vw;
 `;
 
+const PfpContainer = styled.div`
+  position: relative;
+  width: 10vw;
+  height: 10vw;
+`;
 
+const PfpStatus = styled.div<{ timeDelta: number }>`
+  border: solid .18vw white;
+  position: absolute;
+  bottom: .9vw;
+  right: .9vw;
+  width: 1.2vw;
+  height: 1.2vw;
+  border-radius: 3vw;
+
+
+  background-color: ${props => {
+    if (props.timeDelta < 60000) return '#6f0';
+    else if (props.timeDelta < 600000) return '#fd0';
+    else return '#f33';
+  }};
+`;
+
+const PfpImage = styled.img`
+  border: solid black .15vw;
+  border-radius: 10vw;
+  width: 10vw;
+  height: 10vw;
+  object-fit: cover;
+  object-position: 100% 0;
+`;
