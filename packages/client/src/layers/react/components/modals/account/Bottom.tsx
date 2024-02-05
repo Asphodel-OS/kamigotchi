@@ -7,10 +7,7 @@ import styled from "styled-components";
 
 interface Props {
   tab: string;
-  data: {
-    account: Account;
-    kamis: Kami[];
-  }
+  data: { account: Account; }
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
@@ -22,7 +19,9 @@ export const Bottom = (props: Props) => {
 
 
   const RenderedTab = () => {
-    if (tab === 'party') return <KamiGrid kamis={data.kamis} />
+    if (tab === 'party') return <KamiGrid kamis={data.account.kamis ?? []} />
+    if (tab === 'frens') return <KamiGrid kamis={data.account.kamis ?? []} />
+    if (tab === 'activity') return <KamiGrid kamis={data.account.kamis ?? []} />
     else return <div>Not implemented yet</div>
   }
 
@@ -34,15 +33,17 @@ export const Bottom = (props: Props) => {
 }
 
 const Container = styled.div`
+  border: solid .15vw black;
+  border-radius: 0 0 .3vw .3vw;
   width: 100%;
   height: 100%;
   background-color: white;
+  padding: 1vw;
+
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: center;
+  
   overflow-y: scroll;
-  padding: 1vw;
-  box-sizing: border-box;
-  border: solid .15vw black;
 `;

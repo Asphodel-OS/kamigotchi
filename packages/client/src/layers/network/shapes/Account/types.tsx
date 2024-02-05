@@ -41,16 +41,7 @@ export interface Account {
     creation: number;
   }
   kamis?: Kami[];
-  friends?: {
-    friends: Friendship[];
-    incomingReqs: Friendship[];
-    outgoingReqs: Friendship[];
-    blocked: Friendship[];
-    limits: {
-      friends: number;
-      requests: number;
-    }
-  }
+  friends?: Friends;
   gacha?: {
     commits: GachaCommit[];
   }
@@ -87,6 +78,17 @@ export interface Inventories {
   mods: Inventory[];
   consumables: Inventory[];
   lootboxes: Inventory[];
+}
+
+export interface Friends {
+  friends: Friendship[];
+  incomingReqs: Friendship[];
+  outgoingReqs: Friendship[];
+  blocked: Friendship[];
+  limits: {
+    friends: number;
+    requests: number;
+  }
 }
 
 // get an Account from its EnityIndex

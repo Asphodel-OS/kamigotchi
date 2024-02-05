@@ -4,14 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { Bio } from './Bio';
+import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
 import { operatorIcon } from 'assets/images/icons/menu';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/network/shapes/Account';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
-import 'layers/react/styles/font.css';
-import { Bottom } from './Bottom';
 
 
 export function registerAccountModal() {
@@ -25,7 +24,7 @@ export function registerAccountModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
+    (layers) => interval(3333).pipe(map(() => {
       const account = getAccountFromBurner(
         layers.network,
         { friends: true, inventory: true, kamis: true, stats: true },
@@ -43,7 +42,7 @@ export function registerAccountModal() {
       const { actions, api } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
-      const [tab, setTab] = useState('party'); // party | friends | activity
+      const [tab, setTab] = useState('party'); // party | frens | activity
 
       useEffect(() => {
         const accountOptions = { friends: true, inventory: true, kamis: true, stats: true };
@@ -100,7 +99,7 @@ export function registerAccountModal() {
           <Tabs tab={tab} setTab={setTab} />
           <Bottom
             tab={tab}
-            data={{ account, kamis: account.kamis ?? [] }}
+            data={{ account }}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
           />
         </ModalWrapper>

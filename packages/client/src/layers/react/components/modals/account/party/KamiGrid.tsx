@@ -1,16 +1,14 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Kami } from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
-import { Kami } from 'layers/network/shapes/Kami';
-
 
 interface Props {
   kamis: Kami[];
-  getKamiText?: (kami: Kami) => string[];
 }
 
 
@@ -30,7 +28,7 @@ export const KamiGrid = (props: Props) => {
     }
 
     return (
-      <Tooltip text={props.getKamiText ? props.getKamiText(kami) : []}>
+      <Tooltip text={[kami.name]}>
         <CellContainer id={`grid-${kami.id}`}>
           <Image onClick={() => imageOnClick()} src={kami.uri} />
         </CellContainer>
@@ -63,7 +61,7 @@ const CellContainer = styled.div`
 
 const Image = styled.img`
   border-radius: .1vw;
-  height: 6vw;
+  height: 8vw;
   cursor: pointer;
 
   &:hover {

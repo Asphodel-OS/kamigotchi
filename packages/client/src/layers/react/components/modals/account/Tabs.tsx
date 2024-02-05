@@ -25,8 +25,8 @@ export const Tabs = (props: Props) => {
         Party
       </Button>
       <Button
-        onClick={() => setTab('friends')}
-        disabled={props.tab === 'friends'}
+        onClick={() => setTab('frens')}
+        disabled={props.tab === 'frens'}
         style={{ borderRight: 'solid black .15vw' }}
       >
         Friends
