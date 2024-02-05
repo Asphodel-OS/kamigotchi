@@ -25,6 +25,9 @@ import {
   onCooldown,
 } from "layers/network/shapes/Kami";
 import { LiquidationConfig } from "layers/network/shapes/LiquidationConfig";
+import { useSelected } from "layers/react/store/selected";
+import { useVisibility } from "layers/react/store/visibility";
+import { playClick } from "utils/sounds";
 
 
 interface Props {
@@ -43,6 +46,9 @@ interface Props {
 
 export const Kards = (props: Props) => {
   const { actions, account, battleConfig } = props;
+  const { modals, setModals } = useVisibility();
+  const { accountIndex, setAccount } = useSelected();
+
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
@@ -162,6 +168,22 @@ export const Kards = (props: Props) => {
   }
 
 
+  /////////////////
+  // INTERACTION
+
+  // toggle the node modal to the selected one
+  const selectAccount = (index: number) => {
+    if (!modals.account) setModals({ ...modals, account: true });
+    if (accountIndex !== index) setAccount(index);
+    playClick();
+  };
+
+  // returns the onClick function for the description
+  const getSubtextOnClick = (kami: Kami) => {
+    return () => selectAccount(kami.account?.index ?? accountIndex);
+  };
+
+
   ///////////////////
   // DISPLAY (buttons)
 
@@ -274,6 +296,7 @@ export const Kards = (props: Props) => {
         key={kami.entityIndex}
         kami={kami}
         subtext={`${kami.account?.name} (\$${calcOutput(kami)})`}
+        subtextOnClick={getSubtextOnClick(kami)}
         actions={LiquidateButton(kami, myKamis)}
         description={getDescription(kami)}
         showBattery

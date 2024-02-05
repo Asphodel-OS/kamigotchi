@@ -21,6 +21,7 @@ interface Props {
   description: string[];
   descriptionOnClick?: () => void;
   subtext?: string;
+  subtextOnClick?: () => void;
   actions?: React.ReactNode;
   showBattery?: boolean;
   showCooldown?: boolean;
@@ -115,7 +116,7 @@ export const KamiCard = (props: Props) => {
           <Description />
         </ContentColumn>,
         <ContentColumn key='column-2'>
-          <ContentSubtext>{subtext}</ContentSubtext>
+          <ContentSubtext onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>
         </ContentColumn>
       ]}
@@ -161,6 +162,14 @@ const ContentSubtext = styled.div`
   font-family: Pixel;
   text-align: right;
   font-size: 0.7vw;
+
+  ${({ onClick }) => onClick && `
+    &:hover {
+      opacity: 0.6;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  `}
 `;
 
 const ContentActions = styled.div`
