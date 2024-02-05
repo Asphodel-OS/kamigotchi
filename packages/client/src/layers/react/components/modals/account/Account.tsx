@@ -5,12 +5,13 @@ import { interval, map } from 'rxjs';
 
 import { Bio } from './Bio';
 import { Tabs } from './Tabs';
-import xIcon from 'assets/images/icons/placeholder.png';
+import { operatorIcon } from 'assets/images/icons/menu';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/network/shapes/Account';
 import { useSelected } from 'layers/react/store/selected';
 import 'layers/react/styles/font.css';
+import { Bottom } from './Bottom';
 
 
 export function registerAccountModal() {
@@ -20,14 +21,14 @@ export function registerAccountModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 50,
+      rowEnd: 75,
     },
 
     // Requirement
     (layers) => interval(1000).pipe(map(() => {
       const account = getAccountFromBurner(
         layers.network,
-        { inventory: true, kamis: true },
+        { friends: true, inventory: true, kamis: true, stats: true },
       );
 
       return {
@@ -38,15 +39,16 @@ export function registerAccountModal() {
 
     // Render
     ({ network, data }) => {
-      // console.log('AccountM: data', data);
+      console.log('AccountM: data', data);
       const { actions, api } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
       const [tab, setTab] = useState('party'); // party | friends | activity
 
       useEffect(() => {
-        setAccount(getAccountByIndex(network, accountIndex));
-      }, [accountIndex]);
+        const accountOptions = { friends: true, inventory: true, kamis: true, stats: true };
+        setAccount(getAccountByIndex(network, accountIndex, accountOptions));
+      }, [accountIndex, data.account]);
 
 
 
@@ -82,29 +84,25 @@ export function registerAccountModal() {
         });
       };
 
-      // NOTE: unused atm, may use if modal layout changes
-      const Header = () => {
-        if (!account) return <div />;
-        return ([
-          <Bio
-            account={account}
-            actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />,
-          < Tabs tab={tab} setTab={setTab} />
-        ]);
-      }
+      // this is just a placeholder until data loads
+      if (!account) return <div />;
 
       return (
         <ModalWrapper
           id='account_modal'
           divName='account'
-          header={<ModalHeader title='Operator' icon={xIcon} />}
+          header={<ModalHeader title='Operator' icon={operatorIcon} />}
           canExit
         >
-          {account &&
-            <Bio
-              account={account}
-              actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />
-          }
+          <Bio
+            account={account}
+            actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />
+          <Tabs tab={tab} setTab={setTab} />
+          <Bottom
+            tab={tab}
+            data={{ account, kamis: account.kamis ?? [] }}
+            actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
+          />
         </ModalWrapper>
 
       );
