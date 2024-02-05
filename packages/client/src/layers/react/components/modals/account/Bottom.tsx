@@ -1,21 +1,33 @@
 import styled from "styled-components";
 
-import { Kamis } from "./party/Kamis";
-import { Account } from "layers/network/shapes/Account";
-import { Kami } from "layers/network/shapes/Kami";
 import { Friends } from "./friends/Friends";
+import { Kamis } from "./party/Kamis";
+import { Requests } from "./requests/Requests";
+import { Account } from "layers/network/shapes/Account";
 import { Friendship } from "layers/network/shapes/Friendship";
-
 
 
 interface Props {
   tab: string;
-  data: { account: Account; }
+  data: {
+    account: Account;
+    accounts: Account[];
+  }
   actions: {
-    acceptFren: (account: Account) => void;
+    acceptFren: (friendship: Friendship) => void;
     blockFren: (account: Account) => void;
     cancelFren: (friendship: Friendship) => void;
     requestFren: (account: Account) => void;
+  }
+
+  // this is extremely retarded, but we must pass any state down from the parent
+  mode: {
+    mode: string;
+    setMode: (mode: string) => void;
+  }
+  search: {
+    search: string;
+    setSearch: (search: string) => void;
   }
 }
 
@@ -33,8 +45,24 @@ export const Bottom = (props: Props) => {
         }}
       />
     );
-    if (tab === 'activity') return <Kamis kamis={data.account.kamis ?? []} />
-    else return <div style={{ color: 'black' }}>Not implemented yet</div>
+    if (tab === 'requests') return (
+      <Requests
+        accounts={data.accounts}
+        requests={{
+          inbound: data.account.friends?.incomingReqs ?? [],
+          outbound: data.account.friends?.outgoingReqs ?? [],
+        }}
+        actions={{
+          acceptFren: actions.acceptFren,
+          blockFren: actions.blockFren,
+          cancelFren: actions.cancelFren,
+          requestFren: actions.requestFren,
+        }}
+        mode={props.mode}
+        search={props.search}
+      />
+    );
+    else return <EmptyText>Not yet implemented</EmptyText>
   }
 
   return (
@@ -58,4 +86,12 @@ const Container = styled.div`
   align-items: center;
   
   overflow-y: scroll;
+`;
+
+const EmptyText = styled.div`
+  color: black;
+  margin: 1vw;
+
+  font-size: .9vw;
+  font-family: Pixel;
 `;

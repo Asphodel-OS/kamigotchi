@@ -8,7 +8,12 @@ import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
 import { operatorIcon } from 'assets/images/icons/menu';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
-import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/network/shapes/Account';
+import {
+  Account,
+  getAccountByIndex,
+  getAccountFromBurner,
+  getAllAccounts
+} from 'layers/network/shapes/Account';
 import { Friendship } from 'layers/network/shapes/Friendship';
 import { useSelected } from 'layers/react/store/selected';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -43,7 +48,9 @@ export function registerAccountModal() {
       const { actions, api } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
-      const [tab, setTab] = useState('party'); // party | frens | activity
+      const [tab, setTab] = useState('party'); // party | frens | activity | requests | blocked
+      const [mode, setMode] = useState('inbound');
+      const [search, setSearch] = useState('');
 
       useEffect(() => {
         const accountOptions = { friends: true, inventory: true, kamis: true, stats: true };
@@ -55,29 +62,29 @@ export function registerAccountModal() {
       /////////////////
       // INTERACTION
 
-      const acceptFren = (account: Account) => {
+      const acceptFren = (friendship: Friendship) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'AcceptFriend',
-          params: [account.ownerEOA],
-          description: `Accepting ${account.name} Friend Request`,
+          params: [friendship.id],
+          description: `Accepting ${friendship.account.name} Friend Request`,
           execute: async () => {
-            return api.player.social.friend.accept(account.ownerEOA);
+            return api.player.social.friend.accept(friendship.id);
           },
         });
       };
 
       // block an account
-      const blockFren = (target: Account) => {
+      const blockFren = (account: Account) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
           action: 'BlockFriend',
-          params: [target.ownerEOA],
-          description: `Blocking ${target.name}`,
+          params: [account.ownerEOA],
+          description: `Blocking ${account.name}`,
           execute: async () => {
-            return api.player.social.friend.block(target.ownerEOA);
+            return api.player.social.friend.block(account.ownerEOA);
           },
         });
       };
@@ -130,8 +137,13 @@ export function registerAccountModal() {
           <Tabs tab={tab} setTab={setTab} isSelf={data.account.index === account.index} />
           <Bottom
             tab={tab}
-            data={{ account }}
+            data={{
+              account,
+              accounts: getAllAccounts(network),
+            }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
+            mode={{ mode, setMode }}
+            search={{ search, setSearch }}
           />
         </ModalWrapper>
 

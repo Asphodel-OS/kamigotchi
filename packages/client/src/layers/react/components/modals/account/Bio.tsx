@@ -179,6 +179,15 @@ const PfpContainer = styled.div`
   height: 10vw;
 `;
 
+const PfpImage = styled.img`
+  border: solid black .15vw;
+  border-radius: 10vw;
+  width: 10vw;
+  height: 10vw;
+  object-fit: cover;
+  object-position: 100% 0;
+`;
+
 const PfpStatus = styled.div<{ timeDelta: number }>`
   border: solid .18vw white;
   position: absolute;
@@ -188,7 +197,6 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
   height: 1.2vw;
   border-radius: 3vw;
 
-
   background-color: ${props => {
     if (props.timeDelta < 60000) return '#6f0';
     else if (props.timeDelta < 600000) return '#fd0';
@@ -196,11 +204,4 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
   }};
 `;
 
-const PfpImage = styled.img`
-  border: solid black .15vw;
-  border-radius: 10vw;
-  width: 10vw;
-  height: 10vw;
-  object-fit: cover;
-  object-position: 100% 0;
-`;
+

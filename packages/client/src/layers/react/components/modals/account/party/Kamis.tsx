@@ -34,11 +34,17 @@ export const Kamis = (props: Props) => {
     );
   }
 
-  return (
-    <Container key='grid'>
-      {props.kamis.map((kami) => Cell(kami))}
-    </Container>
-  );
+  const KamiGrid = () => {
+    if (props.kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
+    return (
+      <Container key='grid'>
+        {props.kamis.map((kami) => Cell(kami))}
+      </Container>
+    );
+  }
+
+
+  return <KamiGrid />;
 }
 
 const Container = styled.div`
@@ -65,4 +71,12 @@ const Image = styled.img`
   &:hover {
     opacity: 0.75;
   }
+`;
+
+const EmptyText = styled.div`
+  color: black;
+  margin: 1vw;
+
+  font-size: 1.2vw;
+  font-family: Pixel;
 `;

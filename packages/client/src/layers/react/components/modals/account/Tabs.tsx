@@ -16,36 +16,63 @@ export const Tabs = (props: Props) => {
     props.setTab(tab);
   }
 
-  return (
-    <Container>
-      <Button
-        onClick={() => setTab('party')}
-        disabled={props.tab === 'party'}
-        style={{ borderRight: 'solid black .15vw' }}
-      >
-        Party
-      </Button>
-      <Button
-        onClick={() => setTab('frens')}
-        disabled={props.tab === 'frens'}
-        style={{ borderRight: 'solid black .15vw' }}
-      >
-        Friends
-      </Button>
-      {(props.isSelf)
-        ? <Button
+  const selfTabs = () => {
+    return (
+      <>
+        <Button
+          onClick={() => setTab('frens')}
+          disabled={props.tab === 'frens'}
+          style={{ borderRight: 'solid black .15vw' }}
+        >
+          Friends
+        </Button>
+        <Button
           onClick={() => setTab('requests')}
           disabled={props.tab === 'requests'}
+          style={{ borderRight: 'solid black .15vw' }}
         >
           Requests
         </Button>
-        : <Button
+        <Button
+          onClick={() => setTab('blocked')}
+          disabled={props.tab === 'blocked'}
+        >
+          Blocked
+        </Button>
+      </>
+    );
+  }
+
+  const otherTabs = () => {
+    return (
+      <>
+        <Button
+          onClick={() => setTab('party')}
+          disabled={props.tab === 'party'}
+          style={{ borderRight: 'solid black .15vw' }}
+        >
+          Party
+        </Button>
+        <Button
+          onClick={() => setTab('frens')}
+          disabled={props.tab === 'frens'}
+          style={{ borderRight: 'solid black .15vw' }}
+        >
+          Friends
+        </Button>
+        <Button
           onClick={() => setTab('activity')}
           disabled={props.tab === 'activity'}
         >
           Activity
         </Button>
-      }
+      </>
+    );
+  }
+
+  return (
+    <Container>
+      {(props.isSelf) ? selfTabs() : otherTabs()}
     </Container>
   );
 }
