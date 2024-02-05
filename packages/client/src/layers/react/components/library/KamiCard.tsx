@@ -180,6 +180,7 @@ const TextBig = styled.p`
     &:hover {
       opacity: 0.6;
       cursor: pointer;
+      text-decoration: underline;
     }
   `}
 `;

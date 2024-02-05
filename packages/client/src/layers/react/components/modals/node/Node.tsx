@@ -34,7 +34,7 @@ export function registerNodeModal() {
       const { nodeIndex } = useSelected.getState();
 
       const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-      const node = getNodeByIndex(network, nodeIndex, { kamis: true, accountID: account.id });
+      const node = getNodeByIndex(network, nodeIndex, { kamis: true, accountID: account?.id });
       const liquidationConfig = getLiquidationConfig(network);
 
       return {
