@@ -11,9 +11,7 @@ interface Props {
   kamis: Kami[];
 }
 
-
-export const KamiGrid = (props: Props) => {
-
+export const Kamis = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 

@@ -9,8 +9,9 @@ import { Tabs } from './Tabs';
 import { operatorIcon } from 'assets/images/icons/menu';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { Account, getAccountByIndex, getAccountFromBurner } from 'layers/network/shapes/Account';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { Friendship } from 'layers/network/shapes/Friendship';
 import { useSelected } from 'layers/react/store/selected';
+import { registerUIComponent } from 'layers/react/engine/store';
 
 
 export function registerAccountModal() {
@@ -54,12 +55,53 @@ export function registerAccountModal() {
       /////////////////
       // INTERACTION
 
-      // feed a kami
+      const acceptFren = (account: Account) => {
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions?.add({
+          id: actionID,
+          action: 'AcceptFriend',
+          params: [account.ownerEOA],
+          description: `Accepting ${account.name} Friend Request`,
+          execute: async () => {
+            return api.player.social.friend.accept(account.ownerEOA);
+          },
+        });
+      };
+
+      // block an account
+      const blockFren = (target: Account) => {
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions?.add({
+          id: actionID,
+          action: 'BlockFriend',
+          params: [target.ownerEOA],
+          description: `Blocking ${target.name}`,
+          execute: async () => {
+            return api.player.social.friend.block(target.ownerEOA);
+          },
+        });
+      };
+
+      // cancel a friendship - a request, block, or existing friendship
+      const cancelFren = (friendship: Friendship) => {
+        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        actions?.add({
+          id: actionID,
+          action: 'CancelFriend',
+          params: [friendship.id],
+          description: `Cancelling ${friendship.target.name} Friendship`,
+          execute: async () => {
+            return api.player.social.friend.cancel(friendship.id);
+          },
+        });
+      };
+
+      // send a friend request
       const requestFren = (account: Account) => {
         const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
         actions?.add({
           id: actionID,
-          action: 'FriendRequest',
+          action: 'RequestFriend',
           params: [account.ownerEOA],
           description: `Sending ${account.name} Friend Request`,
           execute: async () => {
@@ -68,20 +110,9 @@ export function registerAccountModal() {
         });
       };
 
-      // NOTE: does not work, params wrong
-      // TODO: update this to take the requestID as input?
-      const acceptFren = (account: Account) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
-        actions?.add({
-          id: actionID,
-          action: 'FriendRequest',
-          params: [account.ownerEOA],
-          description: `Accepting ${account.name} Friend Request`,
-          execute: async () => {
-            return api.player.social.friend.accept(account.ownerEOA);
-          },
-        });
-      };
+
+      /////////////////
+      // RENDERING
 
       // this is just a placeholder until data loads
       if (!account) return <div />;
@@ -96,11 +127,11 @@ export function registerAccountModal() {
           <Bio
             account={account}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />
-          <Tabs tab={tab} setTab={setTab} />
+          <Tabs tab={tab} setTab={setTab} isSelf={data.account.index === account.index} />
           <Bottom
             tab={tab}
             data={{ account }}
-            actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
+            actions={{ acceptFren, blockFren, cancelFren, requestFren }}
           />
         </ModalWrapper>
 

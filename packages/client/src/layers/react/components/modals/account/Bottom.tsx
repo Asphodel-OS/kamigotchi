@@ -1,7 +1,10 @@
-import { Account } from "layers/network/shapes/Account";
-import { KamiGrid } from "./party/KamiGrid";
-import { Kami } from "layers/network/shapes/Kami";
 import styled from "styled-components";
+
+import { Kamis } from "./party/Kamis";
+import { Account } from "layers/network/shapes/Account";
+import { Kami } from "layers/network/shapes/Kami";
+import { Friends } from "./friends/Friends";
+import { Friendship } from "layers/network/shapes/Friendship";
 
 
 
@@ -9,20 +12,29 @@ interface Props {
   tab: string;
   data: { account: Account; }
   actions: {
-    sendRequest: (account: Account) => void;
-    acceptRequest: (request: any) => void;
+    acceptFren: (account: Account) => void;
+    blockFren: (account: Account) => void;
+    cancelFren: (friendship: Friendship) => void;
+    requestFren: (account: Account) => void;
   }
 }
 
 export const Bottom = (props: Props) => {
   const { tab, data, actions } = props;
 
-
   const RenderedTab = () => {
-    if (tab === 'party') return <KamiGrid kamis={data.account.kamis ?? []} />
-    if (tab === 'frens') return <KamiGrid kamis={data.account.kamis ?? []} />
-    if (tab === 'activity') return <KamiGrid kamis={data.account.kamis ?? []} />
-    else return <div>Not implemented yet</div>
+    if (tab === 'party') return <Kamis kamis={data.account.kamis ?? []} />
+    if (tab === 'frens') return (
+      <Friends
+        friendships={data.account.friends?.friends ?? []}
+        actions={{
+          blockFren: actions.blockFren,
+          removeFren: actions.cancelFren,
+        }}
+      />
+    );
+    if (tab === 'activity') return <Kamis kamis={data.account.kamis ?? []} />
+    else return <div style={{ color: 'black' }}>Not implemented yet</div>
   }
 
   return (

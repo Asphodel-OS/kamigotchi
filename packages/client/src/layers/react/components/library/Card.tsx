@@ -6,6 +6,8 @@ interface Props {
   content: React.ReactNode;
   imageOnClick?: () => void;
   titleBarContent?: React.ReactNode;
+  fullWidth?: boolean;
+  size?: 'small' | 'medium' | 'large';
 }
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
@@ -20,8 +22,8 @@ export const Card = (props: Props) => {
   }
 
   return (
-    <Container key={props.image}>
-      <Image onClick={() => imageOnClick()} src={props.image} />
+    <Container key={props.image} fullWidth={props.fullWidth}>
+      <Image onClick={() => imageOnClick()} src={props.image} size={props.size} />
       <ContentContainer>
         {props.titleBarContent ? <TitleBar>{props.titleBarContent}</TitleBar> : null}
         <Content>{props.content}</Content>
@@ -30,7 +32,7 @@ export const Card = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
   border: .15vw solid black;
   border-radius: .35vw;
@@ -39,19 +41,34 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: row nowrap;
+
+  width: ${({ fullWidth }) => fullWidth ? '100%' : 'auto'};
 `;
 
-const Image = styled.img`
+const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
   border-style: solid;
   border-width: 0vw .15vw 0vw 0vw;
   border-color: black;
   border-radius: .15vw 0vw 0vw .15vw;
-  height: 9vw;
+  object-fit: cover;
+  object-position: 100% 0;
+  
   cursor: pointer;
-
   &:hover {
     opacity: 0.75;
   }
+
+  height: ${props => {
+    if (props.size === 'small') return '7vw';
+    else if (props.size === 'large') return '12vw';
+    else return '9vw';
+  }};
+
+  width: ${props => {
+    if (props.size === 'small') return '7vw';
+    else if (props.size === 'large') return '12vw';
+    else return '9vw';
+  }};
 `;
 
 const ContentContainer = styled.div`

@@ -45,13 +45,13 @@ export const Friends = (props: Props) => {
     const target = queries.queryAccount(friendship.target.id, { friends: true });
     const targetLimit = target.friends?.limits.friends || 0;
     const targetFriends = target.friends?.friends.length || 0;
-    if (senderFriends >= senderLimit) {
-      text = "friend limit reached";
-      enabled = false;
-    } else if (targetFriends >= targetLimit) {
-      text = "recipient friend limit reached";
-      enabled = false;
-    }
+    // if (senderFriends >= senderLimit) {
+    //   text = "friend limit reached";
+    //   enabled = false;
+    // } else if (targetFriends >= targetLimit) {
+    //   text = "recipient friend limit reached";
+    //   enabled = false;
+    // }
 
     return (
       <Tooltip text={[text]}>

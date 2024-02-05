@@ -4,6 +4,7 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   tab: string;
+  isSelf: boolean;
   setTab: (tab: string) => void;
 }
 
@@ -31,12 +32,20 @@ export const Tabs = (props: Props) => {
       >
         Friends
       </Button>
-      <Button
-        onClick={() => setTab('activity')}
-        disabled={props.tab === 'activity'}
-      >
-        Activity
-      </Button>
+      {(props.isSelf)
+        ? <Button
+          onClick={() => setTab('requests')}
+          disabled={props.tab === 'requests'}
+        >
+          Requests
+        </Button>
+        : <Button
+          onClick={() => setTab('activity')}
+          disabled={props.tab === 'activity'}
+        >
+          Activity
+        </Button>
+      }
     </Container>
   );
 }
