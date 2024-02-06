@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { Location, LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create"));
 
@@ -17,14 +17,14 @@ contract _RegistryCreateQuestSystem is System {
       uint256 index,
       string memory name,
       string memory description,
-      uint256 location,
+      Location memory location,
       uint256 duration
-    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256));
+    ) = abi.decode(arguments, (uint256, string, string, Location, uint256));
 
     uint256 regID = LibRegistryQuests.createQuest(world, components, index, name, description);
 
     // set location (if any)
-    if (location != 0) {
+    if (location.x != 0 && location.y != 0) {
       LibRegistryQuests.setLocation(components, regID, location);
     }
 
@@ -40,7 +40,7 @@ contract _RegistryCreateQuestSystem is System {
     uint256 index,
     string memory name,
     string memory description,
-    uint256 location,
+    Location memory location,
     uint256 duration
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index, name, description, location, duration));

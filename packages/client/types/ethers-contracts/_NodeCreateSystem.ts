@@ -27,10 +27,22 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export type LocationStruct = {
+  x: PromiseOrValue<BigNumberish>;
+  y: PromiseOrValue<BigNumberish>;
+  z: PromiseOrValue<BigNumberish>;
+};
+
+export type LocationStructOutput = [number, number, number] & {
+  x: number;
+  y: number;
+  z: number;
+};
+
 export interface _NodeCreateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,uint256,string,string,string)": FunctionFragment;
+    "executeTyped(uint256,string,(int32,int32,int32),string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,7 +64,7 @@ export interface _NodeCreateSystemInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
+      LocationStruct,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>
@@ -129,7 +141,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
@@ -152,7 +164,7 @@ export interface _NodeCreateSystem extends BaseContract {
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
     nodeType: PromiseOrValue<string>,
-    location: PromiseOrValue<BigNumberish>,
+    location: LocationStruct,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
     affinity: PromiseOrValue<string>,
@@ -175,7 +187,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
@@ -210,7 +222,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
@@ -234,7 +246,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,

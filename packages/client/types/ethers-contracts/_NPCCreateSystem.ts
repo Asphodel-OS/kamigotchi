@@ -27,10 +27,22 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export type LocationStruct = {
+  x: PromiseOrValue<BigNumberish>;
+  y: PromiseOrValue<BigNumberish>;
+  z: PromiseOrValue<BigNumberish>;
+};
+
+export type LocationStructOutput = [number, number, number] & {
+  x: number;
+  y: number;
+  z: number;
+};
+
 export interface _NPCCreateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,uint256)": FunctionFragment;
+    "executeTyped(uint256,string,(int32,int32,int32))": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -52,7 +64,7 @@ export interface _NPCCreateSystemInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      LocationStruct
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -126,7 +138,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -146,7 +158,7 @@ export interface _NPCCreateSystem extends BaseContract {
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
-    location: PromiseOrValue<BigNumberish>,
+    location: LocationStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -166,7 +178,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -198,7 +210,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -219,7 +231,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      location: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

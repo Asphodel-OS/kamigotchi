@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
+import { Strings } from "utils/Strings.sol";
 
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdRequesteeComponent, ID as IdReqeeCompID } from "components/IdRequesteeComponent.sol";
@@ -13,9 +14,10 @@ import { IdRequesterComponent, ID as IdReqerCompID } from "components/IdRequeste
 import { IsRequestComponent, ID as IsRequestCompID } from "components/IsRequestComponent.sol";
 import { IsTradeComponent, ID as IsTradeCompID } from "components/IsTradeComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
-import { Strings } from "utils/Strings.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
 
 // @dev State = [ INITIATED | ACCEPTED | CONFIRMED | CANCELED ]
 library LibTrade {
@@ -86,7 +88,7 @@ library LibTrade {
 
   // Check whether two parties can interact in a trade with one another
   function canTrade(IUintComp components, uint256 aID, uint256 bID) internal view returns (bool) {
-    return LibAccount.getLocation(components, aID) == LibAccount.getLocation(components, bID);
+    return LibRoom.inSameLocation(components, aID, bID);
   }
 
   // Check whether an account is the requester or requestee in a trade.

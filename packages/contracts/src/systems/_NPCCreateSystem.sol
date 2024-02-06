@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibNPC } from "libraries/LibNPC.sol";
+import { Location, LibNPC } from "libraries/LibNPC.sol";
 
 uint256 constant ID = uint256(keccak256("system._NPC.Create"));
 
@@ -13,9 +13,9 @@ contract _NPCCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name, uint256 location) = abi.decode(
+    (uint256 index, string memory name, Location memory location) = abi.decode(
       arguments,
-      (uint256, string, uint256)
+      (uint256, string, Location)
     );
     uint256 id = LibNPC.getByIndex(components, index);
 
@@ -28,7 +28,7 @@ contract _NPCCreateSystem is System {
   function executeTyped(
     uint256 index,
     string memory name,
-    uint256 location
+    Location memory location
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index, name, location));
   }

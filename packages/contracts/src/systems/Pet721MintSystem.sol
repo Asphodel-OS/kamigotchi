@@ -39,10 +39,7 @@ contract Pet721MintSystem is System {
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Pet721Mint: no account");
-    require(
-      LibAccount.getLocation(components, accountID) == ROOM,
-      "Pet721Mint: must be in room 4 "
-    );
+    require(LibAccount.getRoom(components, accountID) == ROOM, "Pet721Mint: must be in room 4 ");
 
     // burn required Mint20, implicitly checks balance
     LibMint20.burn(world, msg.sender, amount);

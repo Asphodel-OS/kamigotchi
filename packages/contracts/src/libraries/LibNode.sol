@@ -12,7 +12,7 @@ import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
+import { Location, LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
@@ -30,7 +30,7 @@ library LibNode {
     IUintComp components,
     uint256 index,
     string memory nodeType,
-    uint256 location
+    Location memory location
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
@@ -64,7 +64,7 @@ library LibNode {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+  function setLocation(IUintComp components, uint256 id, Location memory location) internal {
     LocationComponent(getAddressById(components, LocCompID)).set(id, location);
   }
 
@@ -117,7 +117,7 @@ library LibNode {
     return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).getValue(id);
   }
 
-  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getLocation(IUintComp components, uint256 id) internal view returns (Location memory) {
     return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
   }
 

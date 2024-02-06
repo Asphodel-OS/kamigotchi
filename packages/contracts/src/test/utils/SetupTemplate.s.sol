@@ -769,6 +769,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _initAccountConfigs() internal {
     _setConfig("ACCOUNT_STAMINA_BASE", 20);
     _setConfig("ACCOUNT_STAMINA_RECOVERY_PERIOD", 300);
+    _setConfig("ACCOUNT_START_LOC", LibRoom.locationToUint256(Location(0, 0, 0)));
   }
 
   function _initFriendConfigs() internal {

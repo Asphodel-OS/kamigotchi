@@ -27,10 +27,22 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export type LocationStruct = {
+  x: PromiseOrValue<BigNumberish>;
+  y: PromiseOrValue<BigNumberish>;
+  z: PromiseOrValue<BigNumberish>;
+};
+
+export type LocationStructOutput = [number, number, number] & {
+  x: number;
+  y: number;
+  z: number;
+};
+
 export interface AccountMoveSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256)": FunctionFragment;
+    "executeTyped((int32,int32,int32))": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -49,7 +61,7 @@ export interface AccountMoveSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [LocationStruct]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -120,7 +132,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      to: PromiseOrValue<BigNumberish>,
+      toLoc: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -138,7 +150,7 @@ export interface AccountMoveSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    to: PromiseOrValue<BigNumberish>,
+    toLoc: LocationStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -156,7 +168,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      to: PromiseOrValue<BigNumberish>,
+      toLoc: LocationStruct,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -186,7 +198,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      to: PromiseOrValue<BigNumberish>,
+      toLoc: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -205,7 +217,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      to: PromiseOrValue<BigNumberish>,
+      toLoc: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

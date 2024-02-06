@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRoom } from "libraries/LibRoom.sol";
+import { Location, LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system._Room.Create"));
 
@@ -14,21 +14,27 @@ contract _RoomCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 location, string memory name, string memory description, uint256[] memory exits) = abi
-      .decode(arguments, (uint256, string, string, uint256[]));
+    (
+      Location memory location,
+      uint256 index,
+      string memory name,
+      string memory description,
+      Location[] memory exits
+    ) = abi.decode(arguments, (Location, uint256, string, string, Location[]));
 
-    require(LibRoom.get(components, location) == 0, "Room: already exists at location");
+    require(LibRoom.queryByLoc(components, location) == 0, "Room: already exists at location");
     require(bytes(name).length > 0, "Room: name cannot be empty");
 
-    return abi.encode(LibRoom.create(world, components, location, name, description, exits));
+    return abi.encode(LibRoom.create(world, components, location, index, name, description, exits));
   }
 
   function executeTyped(
-    uint256 location,
+    Location memory location,
+    uint256 index,
     string memory name,
     string memory description,
-    uint256[] memory exits
+    Location[] memory exits
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(location, name, description, exits));
+    return execute(abi.encode(location, index, name, description, exits));
   }
 }

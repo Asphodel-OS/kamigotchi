@@ -32,10 +32,7 @@ contract PetFeedSystem is System {
       LibPet.isResting(components, id) || LibPet.isHarvesting(components, id),
       "PetFeed: pet must be resting|harvesting"
     );
-    require(
-      LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
-      "PetFeed: pet must be in same room"
-    );
+    require(LibPet.isWithAccount(components, id, accountID), "PetFeed: pet must be in same room");
 
     LibPet.sync(components, id);
 

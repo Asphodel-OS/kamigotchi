@@ -18,7 +18,7 @@ import { IsRequirementComponent, ID as IsRequirementCompID } from "components/Is
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
+import { Location, LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
@@ -226,7 +226,7 @@ library LibRegistryQuests {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+  function setLocation(IUintComp components, uint256 id, Location memory location) internal {
     LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
   }
 

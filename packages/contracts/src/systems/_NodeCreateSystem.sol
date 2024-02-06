@@ -6,6 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { Location } from "libraries/LibRoom.sol";
 import { LibNode } from "libraries/LibNode.sol";
 
 uint256 constant ID = uint256(keccak256("system._Node.Create"));
@@ -18,11 +19,11 @@ contract _NodeCreateSystem is System {
     (
       uint256 index,
       string memory nodeType,
-      uint256 location,
+      Location memory location,
       string memory name,
       string memory description,
       string memory affinity
-    ) = abi.decode(arguments, (uint256, string, uint256, string, string, string));
+    ) = abi.decode(arguments, (uint256, string, Location, string, string, string));
     uint256 id = LibNode.getByIndex(components, index);
 
     require(id == 0, "Node: already exists");
@@ -39,7 +40,7 @@ contract _NodeCreateSystem is System {
   function executeTyped(
     uint256 index,
     string memory nodeType,
-    uint256 location,
+    Location memory location,
     string memory name,
     string memory description,
     string memory affinity

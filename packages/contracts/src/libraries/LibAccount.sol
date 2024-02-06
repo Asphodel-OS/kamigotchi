@@ -29,7 +29,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
-import { LibRoom } from "libraries/LibRoom.sol";
+import { Location, LibRoom } from "libraries/LibRoom.sol";
 
 library LibAccount {
   /////////////////
@@ -47,7 +47,10 @@ library LibAccount {
     IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(id, getTotal(components));
     AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
-    LocationComponent(getAddressById(components, LocCompID)).set(id, 1);
+    LocationComponent(getAddressById(components, LocCompID)).set(
+      id,
+      LibRoom.getDefaultStartLoc(components)
+    );
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
 
     uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
@@ -59,7 +62,7 @@ library LibAccount {
   }
 
   // Move the Account to a room
-  function move(IUintComp components, uint256 id, uint256 to) internal {
+  function move(IUintComp components, uint256 id, Location memory to) internal {
     StaminaCurrentComponent currStaminaComp = StaminaCurrentComponent(
       getAddressById(components, StaminaCurrCompID)
     );
@@ -186,22 +189,13 @@ library LibAccount {
     return IsAccountComponent(getAddressById(components, IsAccCompID)).has(id);
   }
 
-  // Check whether an Account can move to a Location from where they currently are.
-  // This function assumes that the id provided belongs to an Account.
-  // NOTE(ja): This function can include any other checks we want moving forward.
-  function canMoveTo(IUintComp components, uint256 id, uint256 to) internal view returns (bool) {
-    uint256 from = getLocation(components, id);
-    return LibRoom.isValidPath(components, from, to);
-  }
-
   // Check whether an Account shares Location with another entity.
   function sharesLocation(
     IUintComp components,
     uint256 id,
     uint256 entityID
   ) internal view returns (bool) {
-    LocationComponent locComp = LocationComponent(getAddressById(components, LocCompID));
-    return locComp.getValue(id) == locComp.getValue(entityID);
+    return LibRoom.inSameLocation(components, id, entityID);
   }
 
   /////////////////
@@ -216,7 +210,7 @@ library LibAccount {
   }
 
   // gets the location of a specified account account
-  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getLocation(IUintComp components, uint256 id) internal view returns (Location memory) {
     return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
   }
 
@@ -240,6 +234,11 @@ library LibAccount {
 
   function getCurrStamina(IUintComp components, uint256 id) internal view returns (uint256) {
     return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
+  }
+
+  function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
+    Location memory loc = LocationComponent(getAddressById(components, LocCompID)).getValue(id);
+    return LibRoom.getIndexByLoc(components, loc);
   }
 
   function getQuestPoints(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -279,7 +278,7 @@ library LibAccount {
     } else if (LibString.eq(_type, "KAMI")) {
       balance = getPetsOwned(components, id).length;
     } else if (LibString.eq(_type, "ROOM")) {
-      balance = getLocation(components, id);
+      balance = getRoom(components, id);
     } else {
       require(false, "LibAccount: unknown type");
     }

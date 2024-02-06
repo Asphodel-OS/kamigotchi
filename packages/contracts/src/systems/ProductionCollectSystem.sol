@@ -34,10 +34,7 @@ contract ProductionCollectSystem is System {
     // health check
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
-    require(
-      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "FarmCollect: node too far"
-    );
+    require(LibPet.isWithAccount(components, id, accountID), "FarmCollect: node too far");
 
     // claim balance and increase experience
     uint256 output = LibProduction.claim(components, id);

@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRoom } from "libraries/LibRoom.sol";
+import { Location, LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system._Room.Delete"));
 
@@ -14,9 +14,9 @@ contract _RoomDeleteSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    uint256 location = abi.decode(arguments, (uint256));
+    Location memory location = abi.decode(arguments, (Location));
 
-    uint256 roomID = LibRoom.get(components, location);
+    uint256 roomID = LibRoom.queryByLoc(components, location);
     require(roomID != 0, "Room: location does not exist");
 
     LibRoom.remove(components, roomID);
@@ -24,7 +24,7 @@ contract _RoomDeleteSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 location) public onlyOwner returns (bytes memory) {
+  function executeTyped(Location memory location) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(location));
   }
 }

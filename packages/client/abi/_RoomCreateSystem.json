@@ -67,8 +67,30 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "components": [
+            {
+              "internalType": "int32",
+              "name": "x",
+              "type": "int32"
+            },
+            {
+              "internalType": "int32",
+              "name": "y",
+              "type": "int32"
+            },
+            {
+              "internalType": "int32",
+              "name": "z",
+              "type": "int32"
+            }
+          ],
+          "internalType": "struct Location",
           "name": "location",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
           "type": "uint256"
         },
         {
@@ -82,9 +104,26 @@
           "type": "string"
         },
         {
-          "internalType": "uint256[]",
+          "components": [
+            {
+              "internalType": "int32",
+              "name": "x",
+              "type": "int32"
+            },
+            {
+              "internalType": "int32",
+              "name": "y",
+              "type": "int32"
+            },
+            {
+              "internalType": "int32",
+              "name": "z",
+              "type": "int32"
+            }
+          ],
+          "internalType": "struct Location[]",
           "name": "exits",
-          "type": "uint256[]"
+          "type": "tuple[]"
         }
       ],
       "name": "executeTyped",
@@ -127,7 +166,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,string,uint256[])": "9b185777",
+    "executeTyped((int32,int32,int32),uint256,string,string,(int32,int32,int32)[])": "06640c28",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

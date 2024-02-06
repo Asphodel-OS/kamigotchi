@@ -12,6 +12,7 @@ import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Node.Collect"));
@@ -25,10 +26,7 @@ contract NodeCollectSystem is System {
     uint256 nodeID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "NodeCollectSystem: no account");
-    require(
-      LibAccount.getLocation(components, accountID) == LibNode.getLocation(components, nodeID),
-      "Node: too far"
-    );
+    require(LibRoom.inSameLocation(components, accountID, nodeID), "Node: too far");
 
     // scan the list of productions of pets owned by the account
     uint256 petID;

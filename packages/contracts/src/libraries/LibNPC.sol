@@ -9,7 +9,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsNPCComponent, ID as IsNPCCompID } from "components/IsNPCComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
-import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
+import { Location, LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { Strings } from "utils/Strings.sol";
 
@@ -23,7 +23,7 @@ library LibNPC {
     IUintComp components,
     uint256 index,
     string memory name,
-    uint256 location
+    Location memory location
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id);
@@ -43,14 +43,17 @@ library LibNPC {
     uint256 id,
     uint256 accountID
   ) internal view returns (bool) {
-    uint256 location = getLocation(components, id);
-    return location == 0 || location == getLocation(components, accountID);
+    bytes32 locHash = keccak256(abi.encode(getLocation(components, id)));
+
+    return
+      locHash == keccak256(abi.encode(Location(0, 0, 0))) ||
+      locHash == keccak256(abi.encode(getLocation(components, accountID)));
   }
 
   /////////////////
   // SETTERS
 
-  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+  function setLocation(IUintComp components, uint256 id, Location memory location) internal {
     LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
   }
 
@@ -65,7 +68,7 @@ library LibNPC {
     return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).getValue(id);
   }
 
-  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getLocation(IUintComp components, uint256 id) internal view returns (Location memory) {
     return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
   }
 

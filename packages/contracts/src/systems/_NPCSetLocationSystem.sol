@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibNPC } from "libraries/LibNPC.sol";
+import { Location, LibNPC } from "libraries/LibNPC.sol";
 
 uint256 constant ID = uint256(keccak256("system._NPC.Set.Location"));
 
@@ -14,7 +14,7 @@ contract _NPCSetLocationSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, uint256 location) = abi.decode(arguments, (uint256, uint256));
+    (uint256 index, Location memory location) = abi.decode(arguments, (uint256, Location));
     uint256 id = LibNPC.getByIndex(components, index);
 
     require(id != 0, "NPC: does not exist");
@@ -23,7 +23,10 @@ contract _NPCSetLocationSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 index, uint256 location) public onlyOwner returns (bytes memory) {
+  function executeTyped(
+    uint256 index,
+    Location memory location
+  ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index, location));
   }
 }

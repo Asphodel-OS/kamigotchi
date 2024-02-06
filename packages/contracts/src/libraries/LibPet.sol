@@ -36,6 +36,7 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibRoom, Location } from "libraries/LibRoom.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -349,6 +350,19 @@ library LibPet {
     return getAccount(components, id) == accountID;
   }
 
+  function isWithAccount(IUintComp components, uint256 id) internal view returns (bool) {
+    return isWithAccount(components, id, getAccount(components, id));
+  }
+
+  function isWithAccount(
+    IUintComp components,
+    uint256 id,
+    uint256 accountID
+  ) internal view returns (bool) {
+    Location memory accountLoc = LibAccount.getLocation(components, accountID);
+    return LibRoom.isSameLocation(_getLocation(components, id, accountLoc), accountLoc);
+  }
+
   // Check wether a pet can be named
   function canName(IUintComp components, uint256 id) internal view returns (bool) {
     return CanNameComponent(getAddressById(components, CanNameCompID)).has(id);
@@ -535,7 +549,10 @@ library LibPet {
   }
 
   // Get the implied location of a pet based on its state.
-  function getLocation(IUintComp components, uint256 id) public view returns (uint256 location) {
+  function getLocation(
+    IUintComp components,
+    uint256 id
+  ) public view returns (Location memory location) {
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {
@@ -543,10 +560,29 @@ library LibPet {
       uint256 nodeID = LibProduction.getNode(components, productionID);
       location = LibNode.getLocation(components, nodeID);
     } else if (LibString.eq(state, "721_EXTERNAL")) {
-      location = 0;
+      location = Location(0, 0, 0);
     } else {
       uint256 accountID = getAccount(components, id);
       location = LibAccount.getLocation(components, accountID);
+    }
+  }
+
+  // Get the implied location of a pet based on its state. Account location preloaded to save a call
+  function _getLocation(
+    IUintComp components,
+    uint256 id,
+    Location memory accountLoc
+  ) public view returns (Location memory location) {
+    string memory state = getState(components, id);
+
+    if (LibString.eq(state, "HARVESTING")) {
+      uint256 productionID = getProduction(components, id);
+      uint256 nodeID = LibProduction.getNode(components, productionID);
+      location = LibNode.getLocation(components, nodeID);
+    } else if (LibString.eq(state, "721_EXTERNAL")) {
+      location = Location(0, 0, 0);
+    } else {
+      location = accountLoc;
     }
   }
 
@@ -556,6 +592,10 @@ library LibPet {
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
     return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+  }
+
+  function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LibRoom.getIndexByLoc(components, getLocation(components, id));
   }
 
   // get the entity ID of the pet owner

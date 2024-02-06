@@ -24,10 +24,7 @@ contract PetLevelSystem is System {
     require(accountID != 0, "PetLevel: no account");
     require(LibPet.isPet(components, id), "PetLevel: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "PetLevel: not urs");
-    require(
-      LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
-      "PetLevel: must be in same room"
-    );
+    require(LibPet.isWithAccount(components, id, accountID), "PetLevel: must be in same room");
 
     // check that the pet meets the experience requirement
     uint256 levelCost = LibExperience.calcLevelCost(components, id);

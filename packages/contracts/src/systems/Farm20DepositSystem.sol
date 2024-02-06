@@ -30,10 +30,7 @@ contract Farm20DepositSystem is System {
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Deposit: no account detected");
-    require(
-      LibAccount.getLocation(components, accountID) == ROOM,
-      "Farm20Deposit: must be in room 12"
-    );
+    require(LibAccount.getRoom(components, accountID) == ROOM, "Farm20Deposit: must be in room 12");
 
     Farm20 token = Farm20ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
     token.deposit(address(uint160(LibAccount.getOwner(components, accountID))), amount);

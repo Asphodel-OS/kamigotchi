@@ -33,10 +33,7 @@ contract Pet721StakeSystem is System {
 
     // account checks
     require(accountID != 0, "Pet721Stake: no account detected");
-    require(
-      LibAccount.getLocation(components, accountID) == ROOM,
-      "Pet721Stake: must be in room 12"
-    );
+    require(LibAccount.getRoom(components, accountID) == ROOM, "Pet721Stake: must be in room 12");
 
     // checks before action
     require(LibPet721.getEOAOwner(world, tokenID) == msg.sender, "Pet721Stake: not urs");

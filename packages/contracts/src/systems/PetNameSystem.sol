@@ -24,7 +24,7 @@ contract PetNameSystem is System {
     require(LibPet.isPet(components, id), "PetName: not a pet");
     require(LibPet.canName(components, id), "PetName: cannot named");
     require(LibPet.getAccount(components, id) == accountID, "PetName: not urs");
-    require(LibPet.getLocation(components, id) == ROOM, "PetName: must be in room 11");
+    require(LibPet.getRoom(components, id) == ROOM, "PetName: must be in room 11");
     require(bytes(name).length > 0, "PetName: name cannot be empty");
     require(bytes(name).length <= 16, "PetName: name can be at most 16 characters");
     require(LibPet.getByName(components, name) == 0, "PetName: name taken");

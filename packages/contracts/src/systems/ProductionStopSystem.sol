@@ -39,10 +39,7 @@ contract ProductionStopSystem is System {
     require(LibPet.isHealthy(components, petID), "FarmStop: pet starving..");
 
     // location check
-    require(
-      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
-      "FarmStop: node too far"
-    );
+    require(LibPet.isWithAccount(components, id, accountID), "FarmStop: node too far");
 
     // claim balance and increase experience
     uint256 output = LibProduction.claim(components, id);
