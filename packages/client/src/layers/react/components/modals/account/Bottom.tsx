@@ -6,6 +6,7 @@ import { Kamis } from "./party/Kamis";
 import { Requests } from "./requests/Requests";
 import { Account } from "layers/network/shapes/Account";
 import { Friendship } from "layers/network/shapes/Friendship";
+import { Blocked } from "./blocked/Blocked";
 
 
 interface Props {
@@ -53,7 +54,13 @@ export const Bottom = (props: Props) => {
           requestFren: actions.requestFren,
         }}
       />}
-      {(tab === 'blocked') && <EmptyText>not yet implemented</EmptyText>}
+      {(tab === 'blocked') && <Blocked
+        key='blocked'
+        blocked={data.account.friends?.blocked ?? []}
+        actions={{
+          cancelFren: actions.cancelFren,
+        }}
+      />}
       {(tab === 'activity') && <EmptyText>not yet implemented</EmptyText>}
     </Container>
   );

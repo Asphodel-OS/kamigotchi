@@ -26,11 +26,11 @@ export function registerAccountModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 75,
+      rowEnd: 81,
     },
 
     // Requirement
-    (layers) => interval(3333).pipe(map(() => {
+    (layers) => interval(1000).pipe(map(() => {
       const account = getAccountFromBurner(
         layers.network,
         { friends: true, inventory: true, kamis: true, stats: true },

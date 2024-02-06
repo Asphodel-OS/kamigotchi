@@ -31,24 +31,36 @@ export const Requests = (props: Props) => {
   const [searchResults, setSearchResults] = useState([] as Account[]);
   const [knownAccIndices, setKnownAccIndices] = useState([] as number[]);
 
-  // keep track of which accounts are already in requests
+
+  // keep track of which accounts are already friends, requested or blocked
   useEffect(() => {
     const inboundIndices = requests.inbound.map((req) => req.account.index);
     const outboundIndices = requests.outbound.map((req) => req.target.index);
-    setKnownAccIndices([...inboundIndices, ...outboundIndices, account.index]);
+    const friendIndices = account.friends?.friends.map((fren) => fren.target.index) ?? [];
+    const blockedIndices = account.friends?.blocked.map((fren) => fren.target.index) ?? [];
+    setKnownAccIndices([
+      account.index,
+      ...blockedIndices,
+      ...friendIndices,
+      ...inboundIndices,
+      ...outboundIndices,
+    ]);
   }, [requests.inbound, requests.outbound, account]);
 
   // update search results according to updated search string
   useEffect(() => {
     if (search !== '') setMode('search');
     setSearchResults(filterAccounts(search));
-  }, [search]);
+  }, [search, knownAccIndices]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearch(value);
   };
 
+
+  //////////////////
+  // INTERPRETATION
 
   // filters the list of accounts by whether their name/ownerEOA contains a substring
   const filterAccounts = (value: string) => {
@@ -66,67 +78,34 @@ export const Requests = (props: Props) => {
     );
   }
 
+
   //////////////////
   // DISPLAY
 
-  // list of account cards to display
-  const List = () => {
-    if (mode === 'inbound') return (
-      <Inbound
-        requests={requests.inbound}
-        actions={{
-          acceptFren: actions.acceptFren,
-          blockFren: actions.blockFren,
-          cancelFren: actions.cancelFren,
-        }}
-      />
+  const ModeButton = (props: { mode: string, label: string }) => {
+    return (
+      <Tooltip text={[props.mode]} >
+        <ActionButton
+          id={props.mode}
+          text={props.label}
+          onClick={() => setMode(props.mode)}
+          disabled={mode === props.mode}
+        />
+      </Tooltip>
     );
-    if (mode === 'outbound') return (
-      <Outbound
-        requests={requests.outbound}
-        actions={{ cancelFren: actions.cancelFren }}
-      />
-    );
-    if (mode === 'search') return (
-      <Searched
-        accounts={searchResults}
-        actions={{
-          blockFren: actions.blockFren,
-          requestFren: actions.requestFren,
-        }}
-      />
-    );
-    return <EmptyText>no pending requests</EmptyText>;
   }
+
+
+  //////////////////
+  // RENDER
 
   return (
     <Container>
       <ActionRow>
         <ModeButtons>
-          <Tooltip text={['inbound']} >
-            <ActionButton
-              id='inbound'
-              text='↙'
-              onClick={() => setMode('inbound')}
-              disabled={mode === 'inbound'}
-            />
-          </Tooltip>
-          <Tooltip text={['outbound']} >
-            <ActionButton
-              id='outbound'
-              text='↗'
-              onClick={() => setMode('outbound')}
-              disabled={mode === 'outbound'}
-            />
-          </Tooltip>
-          <Tooltip text={['search']} >
-            <ActionButton
-              id='search'
-              text='🔍'
-              onClick={() => setMode('search')}
-              disabled={mode === 'search'}
-            />
-          </Tooltip>
+          <ModeButton mode='inbound' label='↙' />
+          <ModeButton mode='outbound' label='↗' />
+          <ModeButton mode='search' label='🔍' />
         </ModeButtons>
         <Input
           key='search'
@@ -136,7 +115,26 @@ export const Requests = (props: Props) => {
           onChange={(e) => handleSearch(e)}
         />
       </ActionRow>
-      <List />
+
+      {(mode === 'inbound') && <Inbound
+        requests={requests.inbound}
+        actions={{
+          acceptFren: actions.acceptFren,
+          blockFren: actions.blockFren,
+          cancelFren: actions.cancelFren,
+        }}
+      />}
+      {(mode === 'outbound') && <Outbound
+        requests={requests.outbound}
+        actions={{ cancelFren: actions.cancelFren }}
+      />}
+      {(mode === 'search') && <Searched
+        accounts={searchResults}
+        actions={{
+          blockFren: actions.blockFren,
+          requestFren: actions.requestFren,
+        }}
+      />}
     </Container>
   );
 }
@@ -149,14 +147,6 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const ModeButtons = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: .1vw;
-`;
-
 const ActionRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
@@ -164,6 +154,14 @@ const ActionRow = styled.div`
   align-items: center;
 
   margin-bottom: 1vw;
+`;
+
+const ModeButtons = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: .1vw;
 `;
 
 const Input = styled.input`
@@ -185,12 +183,4 @@ const Input = styled.input`
   text-decoration: none;
   justify-content: center;
   align-items: center;
-`;
-
-const EmptyText = styled.div`
-  color: black;
-  margin: 1vw;
-
-  font-size: .9vw;
-  font-family: Pixel;
 `;

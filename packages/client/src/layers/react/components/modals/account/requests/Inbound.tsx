@@ -1,8 +1,9 @@
+import styled from "styled-components";
+
 import { Account } from "layers/network/shapes/Account";
 import { Friendship } from "layers/network/shapes/Friendship";
 import { ActionListButton } from "layers/react/components/library";
 import { AccountCard } from "layers/react/components/library/AccountCard";
-import styled from "styled-components";
 
 
 interface Props {
@@ -32,9 +33,8 @@ export const Inbound = (props: Props) => {
     );
   }
 
-  // inbound list of pending friend requests
-  if (requests.length === 0) return <EmptyText>no inbound requests</EmptyText>;
 
+  if (requests.length === 0) return <EmptyText>no inbound requests</EmptyText>;
   return (
     <Container>
       {requests.map((friendship) => (
@@ -49,6 +49,7 @@ export const Inbound = (props: Props) => {
   );
 }
 
+
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -56,7 +57,6 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
 
 const EmptyText = styled.div`
   color: black;

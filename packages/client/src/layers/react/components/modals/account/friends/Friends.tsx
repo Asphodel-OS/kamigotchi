@@ -53,7 +53,19 @@ export const Friends = (props: Props) => {
 
   return (
     <Container>
-      <FriendList />
+      {(friendships.length > 0)
+        ? friendships.map((friendship) => (
+          <AccountCard
+            account={friendship.target}
+            description={['hi']}
+            actions={Actions(friendship)}
+          />
+        ))
+        : <>
+          <EmptyText>you have no friends</EmptyText>
+          <EmptyText>go touch some grass</EmptyText>
+        </>
+      }
     </Container>
   );
 }
@@ -69,6 +81,7 @@ const Container = styled.div`
 const EmptyText = styled.div`
   color: black;
   margin: 1vw;
+  padding-top: 1vw;
 
   font-size: 1.2vw;
   font-family: Pixel;
