@@ -16,7 +16,7 @@ export const Tabs = (props: Props) => {
     props.setTab(tab);
   }
 
-  const selfTabs = () => {
+  const SelfTabs = () => {
     return (
       <>
         <Button
@@ -43,7 +43,7 @@ export const Tabs = (props: Props) => {
     );
   }
 
-  const otherTabs = () => {
+  const OtherTabs = () => {
     return (
       <>
         <Button
@@ -72,7 +72,7 @@ export const Tabs = (props: Props) => {
 
   return (
     <Container>
-      {(props.isSelf) ? selfTabs() : otherTabs()}
+      {(props.isSelf) ? SelfTabs() : OtherTabs()}
     </Container>
   );
 }

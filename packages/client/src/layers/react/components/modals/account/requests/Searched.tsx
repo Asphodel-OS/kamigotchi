@@ -1,43 +1,45 @@
 import { Account } from "layers/network/shapes/Account";
-import { Friendship } from "layers/network/shapes/Friendship";
 import { ActionListButton } from "layers/react/components/library";
 import { AccountCard } from "layers/react/components/library/AccountCard";
 import styled from "styled-components";
 
 
 interface Props {
-  requests: Friendship[];
+  accounts: Account[];
   actions: {
-    cancelFren: (friendship: Friendship) => void;
+    blockFren: (account: Account) => void;
+    requestFren: (account: Account) => void;
   }
 }
 
-export const Outbound = (props: Props) => {
-  const { requests, actions } = props;
+export const Searched = (props: Props) => {
+  const { accounts, actions } = props;
 
-  const Actions = (friendship: Friendship) => {
+
+  const Actions = (account: Account) => {
     return (
       <ActionListButton
-        id={`friendship-options-${friendship.entityIndex}`}
+        id={`options-${account.entityIndex}`}
         text=''
         options={[
-          { text: 'Cancel', onClick: () => actions.cancelFren(friendship) },
+          { text: 'Add', onClick: () => actions.requestFren(account) },
+          { text: 'Block', onClick: () => actions.blockFren(account) },
         ]}
       />
     );
   }
 
   // inbound list of pending friend requests
-  if (requests.length === 0) return <EmptyText>no outbound requests</EmptyText>;
+  if (accounts.length === 0) return <EmptyText>no matching results</EmptyText>;
 
   return (
     <Container>
-      {requests.map((friendship) => (
+      {accounts.map((account) => (
         <AccountCard
-          key={friendship.target.index}
-          account={friendship.target}
-          description={['outbound friend request']}
-          actions={Actions(friendship)}
+          key={account.index}
+          account={account}
+          description={[`free agent ${account.index * 1}`]}
+          actions={Actions(account)}
         />
       ))}
     </Container>

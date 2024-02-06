@@ -39,6 +39,7 @@ export const Inbound = (props: Props) => {
     <Container>
       {requests.map((friendship) => (
         <AccountCard
+          key={friendship.account.index}
           account={friendship.account}
           description={['inbound friend request']}
           actions={Actions(friendship)}

@@ -44,19 +44,16 @@ export function registerAccountModal() {
 
     // Render
     ({ network, data }) => {
-      console.log('AccountM: data', data);
+      // console.log('AccountM: data', data);
       const { actions, api } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
       const [tab, setTab] = useState('party'); // party | frens | activity | requests | blocked
-      const [mode, setMode] = useState('inbound');
-      const [search, setSearch] = useState('');
 
       useEffect(() => {
         const accountOptions = { friends: true, inventory: true, kamis: true, stats: true };
         setAccount(getAccountByIndex(network, accountIndex, accountOptions));
       }, [accountIndex, data.account]);
-
 
 
       /////////////////
@@ -126,24 +123,25 @@ export function registerAccountModal() {
 
       return (
         <ModalWrapper
+          key='modal-wrapper'
           id='account_modal'
           divName='account'
-          header={<ModalHeader title='Operator' icon={operatorIcon} />}
+          header={<ModalHeader key='header' title='Operator' icon={operatorIcon} />}
           canExit
         >
           <Bio
+            key='bio'
             account={account}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />
           <Tabs tab={tab} setTab={setTab} isSelf={data.account.index === account.index} />
           <Bottom
+            key='bottom'
             tab={tab}
             data={{
               account,
               accounts: getAllAccounts(network),
             }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
-            mode={{ mode, setMode }}
-            search={{ search, setSearch }}
           />
         </ModalWrapper>
 

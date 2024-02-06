@@ -78,14 +78,14 @@ export const AccountCard = (props: Props) => {
     <Card
       image="https://miladymaker.net/milady/9248.png"
       imageOnClick={() => accountOnClick()}
-      titleBarContent={[<Title />]}
+      titleBarContent={[<Title key='title' />]}
       content={[
-        <ContentColumn key='column-1'>
+        <ContentColumn key='col-1'>
           <Description />
         </ContentColumn>,
-        <ContentColumn key='column-2'>
-          <ContentSubtext onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
-          <ContentActions>{actions}</ContentActions>
+        <ContentColumn key='col-2'>
+          <ContentSubtext key='subtext' onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
+          <ContentActions key='actions'>{actions}</ContentActions>
         </ContentColumn>
       ]}
       fullWidth

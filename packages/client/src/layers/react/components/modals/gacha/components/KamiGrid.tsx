@@ -59,7 +59,7 @@ export const KamiGrid = (props: Props) => {
     }
 
     return (
-      <Tooltip text={props.getKamiText ? props.getKamiText(kami) : []}>
+      <Tooltip key={kami.index} text={props.getKamiText ? props.getKamiText(kami) : []}>
         <CellContainer id={`grid-${kami.id}`}>
           <Image onClick={() => imageOnClick()} src={kami.uri} />
           {props.select &&
@@ -86,7 +86,7 @@ export const KamiGrid = (props: Props) => {
     const gross = props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
     const remainder = (gross % 5) == 0 ? 0 : 5 - (gross % 5);
 
-    return Array(remainder).fill(<EmptyEntry />);
+    return Array(remainder).fill(<EmptyEntry key={'empty'} />);
   }
 
 

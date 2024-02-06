@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 
 import { Friends } from "./friends/Friends";
@@ -19,34 +20,27 @@ interface Props {
     cancelFren: (friendship: Friendship) => void;
     requestFren: (account: Account) => void;
   }
-
-  // this is extremely retarded, but we must pass any state down from the parent
-  mode: {
-    mode: string;
-    setMode: (mode: string) => void;
-  }
-  search: {
-    search: string;
-    setSearch: (search: string) => void;
-  }
 }
 
 export const Bottom = (props: Props) => {
   const { tab, data, actions } = props;
 
-  const RenderedTab = () => {
-    if (tab === 'party') return <Kamis kamis={data.account.kamis ?? []} />
-    if (tab === 'frens') return (
-      <Friends
+  // NOTE: any child components that maintain their own state need to be inlined below, to 
+  // re-render and persist their state, rather than remounting
+  return (
+    <Container>
+      {(tab === 'party') && <Kamis kamis={data.account.kamis ?? []} />}
+      {(tab === 'frens') && <Friends
+        key='friends'
         friendships={data.account.friends?.friends ?? []}
         actions={{
           blockFren: actions.blockFren,
           removeFren: actions.cancelFren,
         }}
-      />
-    );
-    if (tab === 'requests') return (
-      <Requests
+      />}
+      {(tab === 'requests') && <Requests
+        key='requests'
+        account={data.account}
         accounts={data.accounts}
         requests={{
           inbound: data.account.friends?.incomingReqs ?? [],
@@ -58,16 +52,9 @@ export const Bottom = (props: Props) => {
           cancelFren: actions.cancelFren,
           requestFren: actions.requestFren,
         }}
-        mode={props.mode}
-        search={props.search}
-      />
-    );
-    else return <EmptyText>Not yet implemented</EmptyText>
-  }
-
-  return (
-    <Container>
-      <RenderedTab />
+      />}
+      {(tab === 'blocked') && <EmptyText>not yet implemented</EmptyText>}
+      {(tab === 'activity') && <EmptyText>not yet implemented</EmptyText>}
     </Container>
   );
 }
@@ -78,7 +65,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   background-color: white;
-  padding: 1vw;
+  padding: .3vw;
 
   display: flex;
   flex-flow: column nowrap;
