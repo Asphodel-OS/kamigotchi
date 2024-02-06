@@ -14,15 +14,25 @@ contract MurderTest is SetupTemplate {
 
     _setConfig("ACCOUNT_STAMINA_BASE", 1e9);
 
-    _createNPC(1, 1, "Test NPC");
+    _createNPC(1, Location(1, 1, 0), "Test NPC");
     _createFoodListings(1);
     _createReviveListings(1);
 
-    _nodeIDs.push(_createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL"));
-    _nodeIDs.push(_createHarvestingNode(2, 1, "Test Node", "this is a node", "SCRAP"));
-    _nodeIDs.push(_createHarvestingNode(3, 2, "Test Node", "this is a node", "EERIE"));
-    _nodeIDs.push(_createHarvestingNode(4, 2, "Test Node", "this is a node", "INSECT"));
-    _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
+    _nodeIDs.push(
+      _createHarvestingNode(1, Location(1, 1, 0), "Test Node", "this is a node", "NORMAL")
+    );
+    _nodeIDs.push(
+      _createHarvestingNode(2, Location(1, 1, 0), "Test Node", "this is a node", "SCRAP")
+    );
+    _nodeIDs.push(
+      _createHarvestingNode(3, Location(2, 1, 0), "Test Node", "this is a node", "EERIE")
+    );
+    _nodeIDs.push(
+      _createHarvestingNode(4, Location(2, 1, 0), "Test Node", "this is a node", "INSECT")
+    );
+    _nodeIDs.push(
+      _createHarvestingNode(5, Location(1, 2, 0), "Test Node", "this is a node", "NORMAL")
+    );
 
     // starting states
     _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
@@ -192,12 +202,15 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // confirm we CANNOT liquidate from the wrong nodes
-    uint location;
+    Location memory location;
     uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 1; i < _nodeIDs.length; i++) {
       // move to the room where the Node is
       location = LibNode.getLocation(components, _nodeIDs[i]);
-      if (LibAccount.getLocation(components, _getAccount(playerIndex)) != location) {
+      if (
+        keccak256(abi.encode(LibAccount.getLocation(components, _getAccount(playerIndex)))) !=
+        keccak256(abi.encode(location))
+      ) {
         _moveAccount(playerIndex, location);
       }
 
@@ -219,7 +232,10 @@ contract MurderTest is SetupTemplate {
 
     // move to the room where Node1 is
     location = LibNode.getLocation(components, _nodeIDs[0]);
-    if (LibAccount.getLocation(components, _getAccount(playerIndex)) != location) {
+    if (
+      keccak256(abi.encode(LibAccount.getLocation(components, _getAccount(playerIndex)))) !=
+      keccak256(abi.encode(location))
+    ) {
       _moveAccount(playerIndex, location);
     }
 

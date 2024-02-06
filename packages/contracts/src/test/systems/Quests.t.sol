@@ -22,7 +22,7 @@ contract QuestsTest is SetupTemplate {
 
   function testAcceptQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", Location(0, 0, 0), 0);
 
     // register account
     address operator = _getOperator(0);
@@ -45,7 +45,7 @@ contract QuestsTest is SetupTemplate {
 
   function testRepeatableQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 1000);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", Location(0, 0, 0), 1000);
 
     // register account
     address operator = _getOperator(0);
@@ -75,7 +75,7 @@ contract QuestsTest is SetupTemplate {
 
   function testDropQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", Location(0, 0, 0), 0);
 
     // register account
     address operator = _getOperator(0);
@@ -91,7 +91,7 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestCoinHave() public {
     // create quest
-    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
     _createQuestObjective(1, "Quest 1", "CURR_MIN", "COIN", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
@@ -129,7 +129,7 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestCoinGather() public {
     // create quest
-    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
     _createQuestObjective(1, "NAME", "INC_MIN", "COIN_TOTAL", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
@@ -165,7 +165,7 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestLocation() public {
     // create quest
-    _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "BasicLocationQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 3);
     _createQuestObjective(1, "NAME", "CURR_EQUAL", "ROOM", 0, 4);
 
@@ -178,7 +178,7 @@ contract QuestsTest is SetupTemplate {
     _QuestAcceptSystem.executeTyped(1);
 
     // move to correct room, accept quest
-    _moveAccount(0, 3);
+    _moveAccount(0, Location(1, 2, 0)); // room 3 at (1,2,0)
     uint256 questID = _acceptQuest(0, 1);
     _assertQuestAccount(_getAccount(0), questID);
 
@@ -186,20 +186,20 @@ contract QuestsTest is SetupTemplate {
     vm.prank(operator);
     vm.expectRevert("QuestComplete: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
-    _moveAccount(0, 2);
+    _moveAccount(0, Location(1, 1, 0));
     vm.prank(operator);
     vm.expectRevert("QuestComplete: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
-    _moveAccount(0, 4);
+    _moveAccount(0, Location(2, 2, 0)); // room 4 at (2,2,0)
     _completeQuest(0, questID);
     assertTrue(LibQuests.isCompleted(components, questID));
   }
 
   function testMintKami() public {
     // create quest
-    _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "MintKamiQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 1);
     _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
 
@@ -227,8 +227,8 @@ contract QuestsTest is SetupTemplate {
 
   function testCompleteQuest() public {
     // create quest(s)
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
-    _createQuest(2, "BasicQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", Location(0, 0, 0), 0);
+    _createQuest(2, "BasicQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestRequirement(2, "COMPLETE", "QUEST", 0, 1);
 
     // register account
@@ -252,7 +252,7 @@ contract QuestsTest is SetupTemplate {
 
   function testRewardMint20() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestReward(1, "MINT20", 0, 2);
 
     // register account
@@ -268,7 +268,7 @@ contract QuestsTest is SetupTemplate {
 
   function testRewardPoints() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "EmptyQuest", "DESCRIPTION", Location(0, 0, 0), 0);
     _createQuestReward(1, "QUEST_POINTS", 0, 2);
 
     // register account

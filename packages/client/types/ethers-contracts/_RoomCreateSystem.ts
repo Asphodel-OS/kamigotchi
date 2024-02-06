@@ -42,7 +42,7 @@ export type LocationStructOutput = [number, number, number] & {
 export interface _RoomCreateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped((int32,int32,int32),uint256,string,string,(int32,int32,int32)[])": FunctionFragment;
+    "executeTyped((int32,int32,int32),uint256,string,string,uint256[])": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -66,7 +66,7 @@ export interface _RoomCreateSystemInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      LocationStruct[]
+      PromiseOrValue<BigNumberish>[]
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -142,7 +142,7 @@ export interface _RoomCreateSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      exits: LocationStruct[],
+      exits: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -164,7 +164,7 @@ export interface _RoomCreateSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
-    exits: LocationStruct[],
+    exits: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -186,7 +186,7 @@ export interface _RoomCreateSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      exits: LocationStruct[],
+      exits: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -220,7 +220,7 @@ export interface _RoomCreateSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      exits: LocationStruct[],
+      exits: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -243,7 +243,7 @@ export interface _RoomCreateSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      exits: LocationStruct[],
+      exits: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

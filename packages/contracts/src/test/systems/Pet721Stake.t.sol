@@ -9,9 +9,9 @@ contract Pet721StakeTest is SetupTemplate {
   }
 
   function setUpRooms() public override {
-    _createRoom("testRoom1", 1, 4, 12, 0);
-    _createRoom("testRoom4", 4, 1, 12, 0);
-    _createRoom("testRoom12", 12, 1, 4, 0);
+    _createRoom("testRoom1", Location(1, 1, 0), 1, 12);
+    _createRoom("testRoom4", Location(1, 2, 0), 2);
+    _createRoom("testRoom12", Location(2, 2, 0), 12, 1);
   }
 
   ////////////
@@ -24,7 +24,7 @@ contract Pet721StakeTest is SetupTemplate {
     uint256 petIndex = LibPet.idToIndex(components, petID);
     _assertPetState(petID, "RESTING");
 
-    _moveAccount(0, 12); // bridging restricted to room 12
+    _moveAccount(0, Location(2, 2, 0)); // bridging restricted to room 12
 
     // bridging out
     vm.prank(_getOwner(0));
@@ -40,7 +40,7 @@ contract Pet721StakeTest is SetupTemplate {
   function testTransferOutOfGame() public {
     uint256 petID = _mintPet(0);
     uint256 petIndex = LibPet.idToIndex(components, petID);
-    _moveAccount(0, 12); // bridging restricted to room 12
+    _moveAccount(0, Location(2, 2, 0)); // bridging restricted to room 12
 
     vm.prank(_getOwner(0));
     _Pet721UnstakeSystem.executeTyped(petIndex);

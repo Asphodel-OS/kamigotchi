@@ -52,21 +52,35 @@ contract HarvestTest is SetupTemplate {
     for (uint i = 0; i < 10; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
-      __NodeCreateSystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
+      __NodeCreateSystem.executeTyped(
+        i,
+        "HARVESTING",
+        Location(int32(int(i)), 0, 0),
+        "testNode",
+        "",
+        ""
+      );
 
       vm.prank(_getOperator(0));
       vm.expectRevert();
-      __NodeCreateSystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
+      __NodeCreateSystem.executeTyped(
+        i,
+        "HARVESTING",
+        Location(int32(int(i)), 0, 0),
+        "testNode",
+        "",
+        ""
+      );
     }
 
     // test that a node created by the deployer has the expected fields
     uint nodeID;
-    uint location;
+    Location memory location;
     string memory name;
     string memory description;
     string memory affinity;
     for (uint i = 0; i < 10; i++) {
-      location = (i % 3) + 1;
+      location = Location((int32(int(i)) % 3) + 1, 0, 0);
       name = LibString.concat("testNode", LibString.toString(i));
       description = LibString.concat("this is a description of the node ", LibString.toString(i));
       affinity = (i % 2 == 0) ? "INSECT" : "EERIE";
@@ -76,7 +90,10 @@ contract HarvestTest is SetupTemplate {
       assertEq(LibNode.getAffinity(components, nodeID), affinity);
       assertEq(LibNode.getDescription(components, nodeID), description);
       assertEq(LibNode.getIndex(components, nodeID), i);
-      assertEq(LibNode.getLocation(components, nodeID), location);
+      assertEq(
+        keccak256(abi.encode(LibNode.getLocation(components, nodeID))),
+        keccak256(abi.encode(location))
+      );
       assertEq(LibNode.getName(components, nodeID), name);
       assertEq(LibNode.getType(components, nodeID), "HARVEST");
     }
@@ -86,7 +103,7 @@ contract HarvestTest is SetupTemplate {
     // setup
     uint playerIndex = 0;
     uint kamiID = _mintPet(playerIndex);
-    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    uint nodeID = _createHarvestingNode(1, Location(1, 1, 0), "testNode", "", "NORMAL");
 
     // create the production
     _fastForward(_idleRequirement);
@@ -109,7 +126,7 @@ contract HarvestTest is SetupTemplate {
   function testProductionAccountConstraints() public {
     uint numKamis = 5;
     uint playerIndex = 0; // the player we're playing with
-    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    uint nodeID = _createHarvestingNode(1, Location(1, 1, 0), "testNode", "", "NORMAL");
 
     // mint some kamis for our player
     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
@@ -162,9 +179,9 @@ contract HarvestTest is SetupTemplate {
 
     // create nodes
     uint[] memory nodeIDs = new uint[](3);
-    for (uint i = 0; i < numNodes; i++) {
-      nodeIDs[i] = _createHarvestingNode(i + 1, i + 1, "testNode", "", "NORMAL");
-    }
+    nodeIDs[0] = _createHarvestingNode(1, Location(1, 1, 0), "testNode", "", "NORMAL");
+    nodeIDs[1] = _createHarvestingNode(2, Location(2, 1, 0), "testNode", "", "NORMAL");
+    nodeIDs[2] = _createHarvestingNode(3, Location(1, 2, 0), "testNode", "", "NORMAL");
 
     // register our player account and mint it some kamis
     uint[] memory kamiIDs = _mintPets(playerIndex, numKamis);
@@ -193,12 +210,11 @@ contract HarvestTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // move rooms and check that production cannot be collected from or stopped
-    _moveAccount(playerIndex, 2);
+    _moveAccount(playerIndex, 4);
     for (uint i = 0; i < productionIDs.length; i++) {
       vm.expectRevert("FarmCollect: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionCollectSystem.executeTyped(productionIDs[i]);
-
       vm.expectRevert("FarmStop: node too far");
       vm.prank(_getOperator(playerIndex));
       _ProductionStopSystem.executeTyped(productionIDs[i]);
@@ -216,7 +232,7 @@ contract HarvestTest is SetupTemplate {
   function testProductionStateConstraints() public {
     // setup
     uint playerIndex = 0;
-    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    uint nodeID = _createHarvestingNode(1, Location(1, 1, 0), "testNode", "", "NORMAL");
 
     uint kamiID = _mintPet(playerIndex);
     _fastForward(_idleRequirement);
@@ -259,7 +275,7 @@ contract HarvestTest is SetupTemplate {
   // assume that rate calculations are correct
   function testProductionValues(uint seed) public {
     // setup
-    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", "NORMAL");
+    uint nodeID = _createHarvestingNode(1, Location(1, 1, 0), "testNode", "", "NORMAL");
     uint numKamis = (seed % 5) + 1;
     uint[] memory kamiIDs = _mintPets(0, numKamis);
     _fastForward(_idleRequirement);

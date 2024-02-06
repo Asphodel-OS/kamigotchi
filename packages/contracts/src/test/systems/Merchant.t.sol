@@ -23,13 +23,6 @@ contract NPCTest is SetupTemplate {
     _createGenericItem(4);
   }
 
-  function setUpRooms() public override {
-    // create rooms
-    _createRoom("testRoom1", 1, 2, 3, 0);
-    _createRoom("testRoom2", 2, 1, 3, 0);
-    _createRoom("testRoom3", 3, 1, 2, 0);
-  }
-
   function setUpAccounts() public override {
     _createOwnerOperatorPairs(25);
   }
@@ -43,16 +36,16 @@ contract NPCTest is SetupTemplate {
     for (uint i = 0; i < 5; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
-      __NPCCreateSystem.executeTyped(1, "testNPC", 2);
+      __NPCCreateSystem.executeTyped(1, "testNPC", Location(2, 0, 0));
 
       vm.prank(_getOperator(0));
       vm.expectRevert();
-      __NPCCreateSystem.executeTyped(2, "testNPC", 1);
+      __NPCCreateSystem.executeTyped(2, "testNPC", Location(2, 0, 0));
     }
 
     // create a npc and ensure its fields are correct
     uint npcIndex1 = 1;
-    uint npcLocation1 = 3;
+    Location memory npcLocation1 = Location(3, 1, 0);
     string memory npcName1 = "testNPC";
     uint npcID1 = _createNPC(npcIndex1, npcLocation1, npcName1);
     assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
@@ -62,11 +55,11 @@ contract NPCTest is SetupTemplate {
     // test that we can't create a npc with the same index
     vm.expectRevert("NPC: already exists");
     vm.prank(deployer);
-    __NPCCreateSystem.executeTyped(1, "testNPC", 3); // index, name, location
+    __NPCCreateSystem.executeTyped(1, "testNPC", Location(1, 0, 0)); // index, name, location
 
     // but that we CAN create npc with the same name and location
     uint npcIndex2 = 2;
-    uint npcLocation2 = 3;
+    Location memory npcLocation2 = npcLocation1;
     string memory npcName2 = "testNPC";
     uint npcID2 = _createNPC(npcIndex2, npcLocation2, npcName2);
     assertEq(npcIndex2, LibNPC.getIndex(components, npcID2));
@@ -77,7 +70,7 @@ contract NPCTest is SetupTemplate {
     // NOTE: we now have two npcs, named 'testNPC' at location 3
 
     // update fields on npc2 and check that both are correct
-    uint newNPCLocation = 2;
+    Location memory newNPCLocation = Location(2, 1, 0);
     string memory newNPCName = "newNPCName";
     vm.prank(deployer);
     __NPCSetLocationSystem.executeTyped(2, newNPCLocation);
@@ -128,8 +121,8 @@ contract NPCTest is SetupTemplate {
   // - whether a listing is created or updated is autodetected based on its existence
   function testListingSetting() public {
     // create two npcs
-    _createNPC(1, 1, "npc1");
-    _createNPC(2, 2, "npc2");
+    _createNPC(1, Location(1, 1, 0), "npc1");
+    _createNPC(2, Location(2, 1, 0), "npc2");
 
     // check that non deployer cannot create a listing
     for (uint i = 0; i < 5; i++) {
@@ -238,8 +231,8 @@ contract NPCTest is SetupTemplate {
 
   function testListingInteractionConstraints() public {
     // create two npcs
-    _createNPC(1, 1, "npc1");
-    _createNPC(2, 2, "npc2");
+    _createNPC(1, Location(1, 1, 0), "npc1");
+    _createNPC(2, Location(2, 1, 0), "npc2");
 
     // create listings for both npcs
     uint numListings = 4;
@@ -357,7 +350,7 @@ contract NPCTest is SetupTemplate {
     // create the npc and its listings
     uint[] memory listingIDs = new uint[](testData.numNPCs * testData.numItems);
     for (uint i = 0; i < testData.numNPCs; i++) {
-      _createNPC(i, 1, "npc");
+      _createNPC(i, Location(1, 1, 0), "npc");
 
       for (uint j = 0; j < testData.numItems; j++) {
         testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc

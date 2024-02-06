@@ -98,6 +98,7 @@ export type { IsRepeatableComponent } from "./IsRepeatableComponent";
 export type { IsRequestComponent } from "./IsRequestComponent";
 export type { IsRequirementComponent } from "./IsRequirementComponent";
 export type { IsRewardComponent } from "./IsRewardComponent";
+export type { IsRoomComponent } from "./IsRoomComponent";
 export type { IsScoreComponent } from "./IsScoreComponent";
 export type { IsSkillComponent } from "./IsSkillComponent";
 export type { IsTradeComponent } from "./IsTradeComponent";
@@ -310,6 +311,7 @@ export { IsRepeatableComponent__factory } from "./factories/IsRepeatableComponen
 export { IsRequestComponent__factory } from "./factories/IsRequestComponent__factory";
 export { IsRequirementComponent__factory } from "./factories/IsRequirementComponent__factory";
 export { IsRewardComponent__factory } from "./factories/IsRewardComponent__factory";
+export { IsRoomComponent__factory } from "./factories/IsRoomComponent__factory";
 export { IsScoreComponent__factory } from "./factories/IsScoreComponent__factory";
 export { IsSkillComponent__factory } from "./factories/IsSkillComponent__factory";
 export { IsTradeComponent__factory } from "./factories/IsTradeComponent__factory";

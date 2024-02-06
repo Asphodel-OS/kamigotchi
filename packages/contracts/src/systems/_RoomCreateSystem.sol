@@ -19,10 +19,11 @@ contract _RoomCreateSystem is System {
       uint256 index,
       string memory name,
       string memory description,
-      Location[] memory exits
-    ) = abi.decode(arguments, (Location, uint256, string, string, Location[]));
+      uint256[] memory exits
+    ) = abi.decode(arguments, (Location, uint256, string, string, uint256[]));
 
     require(LibRoom.queryByLoc(components, location) == 0, "Room: already exists at location");
+    require(LibRoom.queryByIndex(components, index) == 0, "Room: already exists at index");
     require(bytes(name).length > 0, "Room: name cannot be empty");
 
     return abi.encode(LibRoom.create(world, components, location, index, name, description, exits));
@@ -33,7 +34,7 @@ contract _RoomCreateSystem is System {
     uint256 index,
     string memory name,
     string memory description,
-    Location[] memory exits
+    uint256[] memory exits
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(location, index, name, description, exits));
   }

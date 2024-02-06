@@ -12,6 +12,7 @@ contract Farm20Test is SetupTemplate {
     super.setUp();
     token = _Farm20ProxySystem.getToken();
 
+    Location memory room12Loc = Location(2, 2, 0);
     _moveAccount(0, 12); // bridging restricted to room 12
     _moveAccount(1, 12); // bridging restricted to room 12
 
@@ -24,9 +25,9 @@ contract Farm20Test is SetupTemplate {
   }
 
   function setUpRooms() public override {
-    _createRoom("testRoom1", 1, 4, 12, 0);
-    _createRoom("testRoom4", 4, 1, 12, 0);
-    _createRoom("testRoom12", 12, 1, 4, 0);
+    _createRoom("testRoom1", Location(1, 1, 0), 1, 12);
+    _createRoom("testRoom4", Location(1, 2, 0), 2);
+    _createRoom("testRoom12", Location(2, 2, 0), 12, 1);
   }
 
   /////////////////

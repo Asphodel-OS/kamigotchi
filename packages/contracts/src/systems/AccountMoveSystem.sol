@@ -16,14 +16,19 @@ contract AccountMoveSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "AccMove: no account");
-
-    Location memory currLoc = LibAccount.getLocation(components, accountID);
-    Location memory toLoc = abi.decode(arguments, (Location));
-    (uint256 currRoomID, uint256 toRoomID) = LibRoom.queryByLocPair(components, currLoc, toLoc);
-
     require(LibAccount.syncStamina(components, accountID) != 0, "AccMove: out of stamina");
+
+    uint256 toIndex = abi.decode(arguments, (uint256));
+    Location memory currLoc = LibAccount.getLocation(components, accountID);
+    (uint256 currRoomID, uint256 toRoomID) = LibRoom.queryTupleByLocAndIndex(
+      components,
+      currLoc,
+      toIndex
+    );
+    Location memory toLoc = LibRoom.getLocation(components, toRoomID);
+
     require(
-      LibRoom.isReachable(components, currRoomID, currLoc, toLoc),
+      LibRoom.isReachable(components, currRoomID, toIndex, currLoc, toLoc),
       "AccMove: unreachable location"
     );
 
@@ -34,7 +39,7 @@ contract AccountMoveSystem is System {
     return "";
   }
 
-  function executeTyped(Location memory toLoc) public returns (bytes memory) {
-    return execute(abi.encode(toLoc));
+  function executeTyped(uint256 toIndex) public returns (bytes memory) {
+    return execute(abi.encode(toIndex));
   }
 }

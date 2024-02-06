@@ -14,7 +14,7 @@ contract ExperienceTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
+    _nodeID = _createHarvestingNode(1, Location(1, 1, 0), "Test Node", "this is a node", "NORMAL");
 
     _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
 
