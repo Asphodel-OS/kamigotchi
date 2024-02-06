@@ -70,6 +70,7 @@ export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsBonusComponent } from "./IsBonusComponent";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
+export type { IsConditionComponent } from "./IsConditionComponent";
 export type { IsConfigComponent } from "./IsConfigComponent";
 export type { IsConsumableComponent } from "./IsConsumableComponent";
 export type { IsDataComponent } from "./IsDataComponent";
@@ -281,6 +282,7 @@ export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__f
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
 export { IsBonusComponent__factory } from "./factories/IsBonusComponent__factory";
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
+export { IsConditionComponent__factory } from "./factories/IsConditionComponent__factory";
 export { IsConfigComponent__factory } from "./factories/IsConfigComponent__factory";
 export { IsConsumableComponent__factory } from "./factories/IsConsumableComponent__factory";
 export { IsDataComponent__factory } from "./factories/IsDataComponent__factory";

@@ -52,6 +52,7 @@
     "IsAccountComponent",
     "IsBonusComponent",
     "IsCompleteComponent",
+    "IsConditionComponent",
     "IsConfigComponent",
     "IsConsumableComponent",
     "IsDataComponent",
@@ -1071,6 +1072,7 @@
   ],
   "libraries": [
     "LibAccount",
+    "LibBoolean",
     "LibCoin",
     "LibConfig",
     "LibDataEntity",

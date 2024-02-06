@@ -30,21 +30,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
-
-enum LOGIC {
-  MIN,
-  MAX,
-  EQUAL,
-  IS,
-  NOT
-}
-
-enum HANDLER {
-  CURRENT,
-  INCREASE,
-  DECREASE,
-  BOOLEAN
-}
+import { LOGIC, HANDLER, LibBoolean } from "libraries/LibBoolean.sol";
 
 /*
  * LibQuests handles quests!
@@ -340,10 +326,7 @@ library LibQuests {
     uint256 index = getIndex(components, conditionID);
     uint256 expected = getValue(components, conditionID);
 
-    // check account
-    uint256 accountValue = LibAccount.getBalanceOf(components, accountID, _type, index);
-
-    return checkLogicOperator(accountValue, expected, logic);
+    return LibBoolean.checkCurr(components, accountID, index, expected, 0, _type, logic);
   }
 
   function checkUseCurrent(
@@ -362,7 +345,7 @@ library LibQuests {
 
     // TODO: implement use logic
 
-    return checkLogicOperator(accountValue, expected, logic);
+    return LibBoolean._checkLogicOperator(accountValue, expected, logic);
   }
 
   function checkIncrease(
@@ -386,7 +369,7 @@ library LibQuests {
     }
 
     uint256 delta = getValue(components, conditionID);
-    return checkLogicOperator(currValue - prevValue, delta, logic);
+    return LibBoolean._checkLogicOperator(currValue - prevValue, delta, logic);
   }
 
   function checkDecrease(
@@ -410,7 +393,7 @@ library LibQuests {
     }
 
     uint256 delta = getValue(components, conditionID);
-    return checkLogicOperator(prevValue - currValue, delta, logic);
+    return LibBoolean._checkLogicOperator(prevValue - currValue, delta, logic);
   }
 
   function checkBoolean(
@@ -468,18 +451,6 @@ library LibQuests {
 
   function isCompleted(IUintComp components, uint256 id) internal view returns (bool) {
     return IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(id);
-  }
-
-  function checkLogicOperator(uint256 a, uint256 b, LOGIC logic) internal pure returns (bool) {
-    if (logic == LOGIC.MIN) {
-      return a >= b;
-    } else if (logic == LOGIC.MAX) {
-      return a <= b;
-    } else if (logic == LOGIC.EQUAL) {
-      return a == b;
-    } else {
-      require(false, "Unknown logic operator");
-    }
   }
 
   /////////////////
@@ -613,11 +584,9 @@ library LibQuests {
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (hasIndex(components, id)) {
+    if (hasIndex(components, id))
       return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
-    } else {
-      return 0;
-    }
+    else return 0;
   }
 
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -625,27 +594,11 @@ library LibQuests {
   }
 
   ////////////////
-  // UTILITIES
+  // UTILS
 
   // determins objective logic handler and operator
   function parseObjectiveLogic(string memory _type) internal pure returns (HANDLER, LOGIC) {
-    HANDLER handler;
-    LOGIC operator;
-
-    if (LibString.startsWith(_type, "CURR")) handler = HANDLER.CURRENT;
-    else if (LibString.startsWith(_type, "INC")) handler = HANDLER.INCREASE;
-    else if (LibString.startsWith(_type, "DEC")) handler = HANDLER.DECREASE;
-    else if (LibString.startsWith(_type, "BOOL")) handler = HANDLER.BOOLEAN;
-    else require(false, "Unknown condition handler");
-
-    if (LibString.endsWith(_type, "MIN")) operator = LOGIC.MIN;
-    else if (LibString.endsWith(_type, "MAX")) operator = LOGIC.MAX;
-    else if (LibString.endsWith(_type, "EQUAL")) operator = LOGIC.EQUAL;
-    else if (LibString.endsWith(_type, "IS")) operator = LOGIC.IS;
-    else if (LibString.endsWith(_type, "NOT")) operator = LOGIC.NOT;
-    else require(false, "Unknown condition operator");
-
-    return (handler, operator);
+    return LibBoolean._parseLogic(_type);
   }
 
   function getSnapshotObjective(
