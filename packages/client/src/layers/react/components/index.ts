@@ -8,7 +8,6 @@ import {
   registerPartyButton,
   registerQuestsButton,
   registerSettingsButton,
-  registerSocialButton,
 } from './fixtures/buttons';
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
@@ -31,7 +30,6 @@ import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
-import { registerSocialModal } from './modals/social/Social';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
@@ -58,7 +56,6 @@ export function registerUIComponents() {
   registerPartyButton();
   registerQuestsButton();
   registerSettingsButton();
-  registerSocialButton();
 
   // other fixtures
   registerAccountInfoFixture();
@@ -67,16 +64,15 @@ export function registerUIComponents() {
   registerNotificationFixture();
 
   // menu modals
+  registerAccountModal();
   registerHelpModal();
   registerInventoryModal();
   registerMapModal();
   registerPartyModal();
   registerQuestsModal();
   registerSettingsModal();
-  registerSocialModal();
 
   // game modals
-  registerAccountModal();
   registerAccountOperator();
   registerBuyModal();
   registerDialogueModal();

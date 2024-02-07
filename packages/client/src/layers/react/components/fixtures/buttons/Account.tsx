@@ -12,8 +12,8 @@ export function registerAccountButton() {
   registerUIComponent(
     'AccountButton',
     {
-      colStart: 9,
-      colEnd: 12,
+      colStart: 3,
+      colEnd: 6,
       rowStart: 3,
       rowEnd: 6,
     },

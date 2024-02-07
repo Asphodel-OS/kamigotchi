@@ -12,8 +12,8 @@ export function registerMapButton() {
   registerUIComponent(
     'MapButton',
     {
-      colStart: 6,
-      colEnd: 9,
+      colStart: 9,
+      colEnd: 12,
       rowStart: 3,
       rowEnd: 6,
     },

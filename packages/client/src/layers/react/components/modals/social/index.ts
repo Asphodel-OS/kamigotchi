@@ -1,1 +1,0 @@
-export { registerSocialModal } from "./Social";

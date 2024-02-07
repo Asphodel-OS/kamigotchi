@@ -29,7 +29,6 @@ export function registerQuestsButton() {
         leaderboard: false,
         nameKami: false,
         settings: false,
-        social: false,
       };
 
 

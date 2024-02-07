@@ -29,7 +29,6 @@ export function registerSettingsButton() {
         leaderboard: false,
         nameKami: false,
         quests: false,
-        social: false,
       };
 
 

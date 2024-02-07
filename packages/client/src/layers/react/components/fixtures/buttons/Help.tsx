@@ -29,7 +29,6 @@ export function registerHelpButton() {
         nameKami: false,
         quests: false,
         settings: false,
-        social: false,
       }
 
       return (
