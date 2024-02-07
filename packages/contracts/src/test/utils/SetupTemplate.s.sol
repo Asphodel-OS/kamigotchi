@@ -33,6 +33,11 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpMint();
     setUpItems();
     setUpRooms();
+
+    // placeholder: init components that may not be alr init
+    // LibQuery bugs out when querying an empty component set
+    vm.prank(deployer);
+    _IndexSourceComponent.set(0, 0);
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed
