@@ -26,11 +26,11 @@ export function registerAccountModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 81,
+      rowEnd: 75,
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
+    (layers) => interval(3333).pipe(map(() => {
       const account = getAccountFromBurner(
         layers.network,
         { friends: true, inventory: true, kamis: true, stats: true },
@@ -48,12 +48,23 @@ export function registerAccountModal() {
       const { actions, api } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(getAccountByIndex(network, accountIndex));
-      const [tab, setTab] = useState('party'); // party | frens | activity | requests | blocked
+      const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
 
+      // update data of the selected account when account index or data changes
       useEffect(() => {
         const accountOptions = { friends: true, inventory: true, kamis: true, stats: true };
         setAccount(getAccountByIndex(network, accountIndex, accountOptions));
       }, [accountIndex, data.account]);
+
+      // set the default tab when account index switches
+      useEffect(() => {
+        if (isSelf()) setTab('frens');
+        else setTab('party');
+      }, [accountIndex]);
+
+      const isSelf = () => {
+        return data.account.index === accountIndex;
+      };
 
 
       /////////////////
@@ -133,7 +144,7 @@ export function registerAccountModal() {
             key='bio'
             account={account}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }} />
-          <Tabs tab={tab} setTab={setTab} isSelf={data.account.index === account.index} />
+          <Tabs tab={tab} setTab={setTab} isSelf={isSelf()} />
           <Bottom
             key='bottom'
             tab={tab}

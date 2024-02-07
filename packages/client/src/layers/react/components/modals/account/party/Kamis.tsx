@@ -15,36 +15,27 @@ export const Kamis = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 
-  const Cell = (kami: Kami) => {
-    const imageOnClick = () => {
-      const sameKami = (kamiIndex === kami.index);
-      setKami(kami.index);
+  const kamiOnClick = (kami: Kami) => {
+    const sameKami = (kamiIndex === kami.index);
+    setKami(kami.index);
 
-      if (modals.kami && sameKami) setModals({ ...modals, kami: false });
-      else setModals({ ...modals, kami: true });
-      playClick();
-    }
-
-    return (
-      <Tooltip text={[kami.name]}>
-        <CellContainer id={`grid-${kami.id}`}>
-          <Image onClick={() => imageOnClick()} src={kami.uri} />
-        </CellContainer>
-      </Tooltip>
-    );
+    if (modals.kami && sameKami) setModals({ ...modals, kami: false });
+    else setModals({ ...modals, kami: true });
+    playClick();
   }
 
-  const KamiGrid = () => {
-    if (props.kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
-    return (
-      <Container key='grid'>
-        {props.kamis.map((kami) => Cell(kami))}
-      </Container>
-    );
-  }
-
-
-  return <KamiGrid />;
+  if (props.kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
+  return (
+    <Container key='grid'>
+      {props.kamis.map((kami) => (
+        <Tooltip key={kami.index} text={[kami.name]}>
+          <CellContainer id={`grid-${kami.id}`}>
+            <Image onClick={() => kamiOnClick(kami)} src={kami.uri} />
+          </CellContainer>
+        </Tooltip>
+      ))}
+    </Container>
+  );
 }
 
 const Container = styled.div`

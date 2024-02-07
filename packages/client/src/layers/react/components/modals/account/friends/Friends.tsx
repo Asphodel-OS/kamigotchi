@@ -30,32 +30,13 @@ export const Friends = (props: Props) => {
     );
   }
 
-  const FriendList = () => {
-    if (friendships.length === 0) return (
-      <>
-        <EmptyText>you have no friends</EmptyText>
-        <EmptyText>go touch some grass</EmptyText>
-      </>
-    );
-
-    return (
-      <Container>
-        {friendships.map((friendship) => (
-          <AccountCard
-            account={friendship.target}
-            description={['hi']}
-            actions={Actions(friendship)}
-          />
-        ))}
-      </Container>
-    );
-  }
 
   return (
     <Container>
       {(friendships.length > 0)
         ? friendships.map((friendship) => (
           <AccountCard
+            key={friendship.entityIndex}
             account={friendship.target}
             description={['hi']}
             actions={Actions(friendship)}
