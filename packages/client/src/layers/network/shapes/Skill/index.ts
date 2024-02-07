@@ -2,7 +2,6 @@ export type {
   Skill,
   Effect,
   Requirement,
-  Status,
 } from './types';
 export { getSkill, getEffect, getRequirement } from './types';
 export {
@@ -14,4 +13,5 @@ export {
   isMaxxed as isSkillMaxxed,
   meetsCost as meetsSkillCost,
   meetsRequirement as meetsSkillRequirement,
+  parseRequirementText,
 } from './functions';

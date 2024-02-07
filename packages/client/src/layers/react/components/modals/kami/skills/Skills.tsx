@@ -26,12 +26,12 @@ export const Skills = (props: Props) => {
     actions.upgrade(kami, skill);
   }
 
-  const skill = skills[3];
+  const skill = skills[13];
   return (
     <Wrapper>
       <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
       <Details
-        data={{ kami, skill }}
+        data={{ kami, index: skill.index, registry: skills }}
         actions={{ upgrade: () => triggerUpgrade(skill) }} />
       <Matrix
         kami={kami}
@@ -44,6 +44,7 @@ export const Skills = (props: Props) => {
 
 const Wrapper = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;

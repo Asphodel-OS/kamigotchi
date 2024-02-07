@@ -7,6 +7,7 @@ import {
   getSkill,
   getEffect,
   getRequirement,
+  Options,
 } from "./types";
 
 
@@ -15,9 +16,8 @@ import {
 
 // get all the skills in the registry
 export const getRegistrySkills = (network: NetworkLayer): Skill[] => {
-  return querySkillsX(network, { registry: true });
+  return querySkillsX(network, { registry: true }, { requirements: true, effects: true });
 };
-
 
 export const getHolderSkills = (network: NetworkLayer, holder: EntityID): Skill[] => {
   return querySkillsX(network, { holder: holder });
@@ -38,14 +38,14 @@ export const getSkillByIndex = (network: NetworkLayer, index: number): Skill => 
 /////////////////
 // BASE QUERIES
 
-export interface QueryOptions {
+export interface Filters {
   holder?: EntityID;
   index?: number;
   registry?: boolean;
 }
 
 // Query for a set of skill with an AND filter
-const querySkillsX = (network: NetworkLayer, options: QueryOptions): Skill[] => {
+const querySkillsX = (network: NetworkLayer, filters: Filters, options?: Options): Skill[] => {
   const {
     HolderID,
     IsRegistry,
@@ -54,12 +54,12 @@ const querySkillsX = (network: NetworkLayer, options: QueryOptions): Skill[] => 
   } = network.components;
 
   const toQuery: QueryFragment[] = [Has(IsSkill)];
-  if (options?.registry) toQuery.push(Has(IsRegistry));
-  if (options?.holder) toQuery.push(HasValue(HolderID, { value: options.holder }));
-  if (options?.index) toQuery.push(HasValue(SkillIndex, { value: options.index }));
+  if (filters?.registry) toQuery.push(Has(IsRegistry));
+  if (filters?.holder) toQuery.push(HasValue(HolderID, { value: filters.holder }));
+  if (filters?.index) toQuery.push(HasValue(SkillIndex, { value: filters.index }));
 
   return Array.from(runQuery(toQuery)).map(
-    (index): Skill => getSkill(network, index)
+    (entityIndex): Skill => getSkill(network, entityIndex, options)
   );
 }
 

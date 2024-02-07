@@ -20,19 +20,23 @@ export interface Skill {
   index: number;
   name: string;
   description: string;
-  cost: number;
-  level: number;
-  max: number;
-  effects: Effect[];
-  requirements: Requirement[];
   uri: string;
+  cost: number;
+  points: {
+    current?: number;
+    max: number;
+  }
+  effects?: Effect[];
+  requirements?: Requirement[];
 }
 
 export interface Effect {
   id: EntityID;
   type: string;
+  subtype: string;
+  logicType: string;
+  value: number;
   index?: number;
-  value?: number;
 }
 
 export interface Requirement {
@@ -41,18 +45,20 @@ export interface Requirement {
   type: string;
   index?: number;
   value?: number;
-  status?: Status;
 }
 
-export interface Status {
-  target?: number;
-  current?: number;
-  completable: boolean;
+export interface Options {
+  requirements?: boolean;
+  effects?: boolean;
 }
 
 
 // Get a Skill Registry object with effect and requirements
-export const getSkill = (network: NetworkLayer, entityIndex: EntityIndex): Skill => {
+export const getSkill = (
+  network: NetworkLayer,
+  entityIndex: EntityIndex,
+  options?: Options,
+): Skill => {
   const {
     world,
     components: {
@@ -77,18 +83,22 @@ export const getSkill = (network: NetworkLayer, entityIndex: EntityIndex): Skill
     ])
   )[0];
 
-  return {
+  let skill: Skill = {
     id: world.entities[entityIndex],
     index: skillIndex,
-    cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
-    level: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),
-    max: Number(getComponentValue(Max, registryIndex)?.value || 0),
     name: getComponentValue(Name, registryIndex)?.value || '' as string,
     description: getComponentValue(Description, registryIndex)?.value || '' as string,
-    effects: querySkillEffects(network, skillIndex),
-    requirements: querySkillRequirements(network, skillIndex),
     uri: `${baseURI}${getComponentValue(MediaURI, registryIndex)?.value || '' as string}`,
+    cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
+    points: {
+      current: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),
+      max: Number(getComponentValue(Max, registryIndex)?.value || 0),
+    },
   };
+
+  if (options?.effects) skill.effects = querySkillEffects(network, skill.index);
+  if (options?.requirements) skill.requirements = querySkillRequirements(network, skill.index);
+  return skill;
 }
 
 
@@ -98,6 +108,8 @@ export const getEffect = (network: NetworkLayer, entityIndex: EntityIndex): Effe
     world,
     components: {
       Index,
+      Subtype,
+      LogicType,
       Type,
       Value,
     },
@@ -106,14 +118,12 @@ export const getEffect = (network: NetworkLayer, entityIndex: EntityIndex): Effe
   let effect: Effect = {
     id: world.entities[entityIndex],
     type: getComponentValue(Type, entityIndex)?.value || '' as string,
+    subtype: getComponentValue(Subtype, entityIndex)?.value || '' as string,
+    logicType: getComponentValue(LogicType, entityIndex)?.value || '' as string,
+    value: getComponentValue(Value, entityIndex)?.value || 0 as number,
   }
 
-  const index = getComponentValue(Index, entityIndex)?.value;
-  if (index) effect.index = index;
-
-  const value = getComponentValue(Value, entityIndex)?.value
-  if (value) effect.value = value;
-
+  effect.index = getComponentValue(Index, entityIndex)?.value;
   return effect;
 }
 
@@ -136,12 +146,8 @@ export const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex):
     type: getComponentValue(Type, entityIndex)?.value || '' as string,
   }
 
-  const index = getComponentValue(Index, entityIndex)?.value;
-  if (index) requirement.index = index;
-
-  const value = getComponentValue(Value, entityIndex)?.value
-  if (value) requirement.value = value;
-
+  requirement.index = getComponentValue(Index, entityIndex)?.value;
+  requirement.value = getComponentValue(Value, entityIndex)?.value;
   return requirement;
 }
 
