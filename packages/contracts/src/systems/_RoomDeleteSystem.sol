@@ -20,6 +20,8 @@ contract _RoomDeleteSystem is System {
     require(roomID != 0, "Room: does not exist");
 
     LibRoom.remove(components, roomID);
+    uint256[] memory gates = LibRoom.queryAllGates(components, room);
+    for (uint256 i = 0; i < gates.length; i++) LibRoom.remove(components, gates[i]);
 
     return "";
   }
