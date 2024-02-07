@@ -3,16 +3,17 @@ import { interval, map } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from "crypto";
 
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
-import { Skill, getRegistrySkills } from 'layers/network/shapes/Skill';
-import { useSelected } from 'layers/react/store/selected';
 import { Banner } from './Banner';
 import { KillLogs } from './KillLogs';
-import { Skills } from './Skills';
 import { Tabs } from './Tabs';
 import { Traits } from './Traits';
+import { Skills } from './skills/Skills';
+import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { Skill, getRegistrySkills } from 'layers/network/shapes/Skill';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { useSelected } from 'layers/react/store/selected';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
 
 
 export function registerKamiModal() {
@@ -22,20 +23,29 @@ export function registerKamiModal() {
       colStart: 23,
       colEnd: 81,
       rowStart: 3,
-      rowEnd: 99,
+      rowEnd: 100,
     },
 
     // Requirement
     (layers) => interval(1000).pipe(map(() => {
-      return { network: layers.network };
+      const account = getAccountFromBurner(
+        layers.network,
+        { inventory: true, kamis: true },
+      );
+
+      return {
+        network: layers.network,
+        data: { account },
+      };
     })),
 
     // Render
-    ({ network }) => {
+    ({ data, network }) => {
+      const { account } = data;
       const { actions, api } = network;
-      const [tab, setTab] = useState('traits');
       const { kamiIndex } = useSelected();
-      const [mode, setMode] = useState('DETAILS');
+      const [tab, setTab] = useState('traits');
+
 
       /////////////////
       // DATA FETCHING
@@ -53,6 +63,7 @@ export function registerKamiModal() {
           }
         );
       }
+
 
       /////////////////
       // ACTIONS
@@ -83,25 +94,6 @@ export function registerKamiModal() {
         })
       }
 
-      const toggleSkills = () => {
-        setMode(mode === 'DETAILS' ? 'SKILLS' : 'DETAILS');
-      }
-
-      const Content = () => {
-        if (tab === 'traits') {
-          return <Traits kami={getSelectedKami()} />
-        } else if (tab === 'skills') {
-          return (
-            <Skills
-              skills={getRegistrySkills(network)}
-              kami={getSelectedKami()}
-              actions={{ upgrade: upgradeSkill }}
-            />
-          );
-        } else if (tab === 'battles') {
-          return <KillLogs kami={getSelectedKami()} />
-        }
-      }
 
       /////////////////
       // DISPLAY
@@ -113,15 +105,21 @@ export function registerKamiModal() {
           header={[
             <Banner
               key='banner'
-              kami={getSelectedKami()}
-              actions={{ levelUp, toggleSkills }}
+              data={{ account, kami: getSelectedKami() }}
+              actions={{ levelUp }}
             />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />
           ]}
           canExit
           overlay
         >
-          {Content()}
+          {(tab === 'battles') && <KillLogs kami={getSelectedKami()} />}
+          {(tab === 'traits') && <Traits kami={getSelectedKami()} />}
+          {(tab === 'skills') && <Skills
+            kami={getSelectedKami()}
+            skills={getRegistrySkills(network)}
+            actions={{ upgrade: upgradeSkill }}
+          />}
         </ModalWrapper>
       );
     }

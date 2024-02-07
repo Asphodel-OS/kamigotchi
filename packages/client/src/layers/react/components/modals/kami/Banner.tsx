@@ -7,68 +7,86 @@ import { Tooltip } from "layers/react/components/library/Tooltip";
 import { useSelected } from "layers/react/store/selected";
 import { useVisibility } from "layers/react/store/visibility";
 import { playClick } from "utils/sounds";
+import { Account } from "layers/network/shapes/Account";
 
 interface Props {
-  kami: Kami;
+  data: {
+    account: Account;
+    kami: Kami;
+  }
   actions: {
-    levelUp: (kami: Kami) => void,
-    toggleSkills: () => void,
+    levelUp: (kami: Kami) => void
   }
 }
 
+// TODO: disable level-up when kami is too far or not urs
 export const Banner = (props: Props) => {
+  const { account, kami } = props.data;
+
   const { setAccount } = useSelected();
   const { modals, setModals } = useVisibility();
-  const statsArray = Object.entries(props.kami.stats);
-  const affinities = props.kami.affinities?.join(' | ');
+  const statsArray = Object.entries(kami.stats);
+  const affinities = kami.affinities?.join(' | ');
   const statsDetails = new Map(Object.entries({
     'health': {
       description: 'Health defines how resilient a Kami is to accumulated damage',
       image: StatIcons.health,
-      base: props.kami.stats.health,
-      bonus: props.kami.bonusStats.health,
+      base: kami.stats.health,
+      bonus: kami.bonusStats.health,
     },
     'power': {
       description: 'Power determines the potential rate at which $MUSU can be farmed',
       image: StatIcons.power,
-      base: props.kami.stats.power,
-      bonus: props.kami.bonusStats.power,
+      base: kami.stats.power,
+      bonus: kami.bonusStats.power,
     },
     'violence': {
       description: 'Violence dictates the threshold at which a Kami can liquidate others',
       image: StatIcons.violence,
-      base: props.kami.stats.violence,
-      bonus: props.kami.bonusStats.violence,
+      base: kami.stats.violence,
+      bonus: kami.bonusStats.violence,
     },
     'harmony': {
       description: 'Harmony divines resting recovery rate and defends against violence',
       image: StatIcons.harmony,
-      base: props.kami.stats.harmony,
-      bonus: props.kami.bonusStats.harmony,
+      base: kami.stats.harmony,
+      bonus: kami.bonusStats.harmony,
     },
     'slots': {
       description: 'Slots are room for upgrades ^_^',
       image: StatIcons.slots,
-      base: props.kami.stats.slots,
-      bonus: props.kami.bonusStats.slots,
+      base: kami.stats.slots,
+      bonus: kami.bonusStats.slots,
     },
   }));
 
+  const isMine = (kami: Kami) => {
+    return kami.account?.index === account.index;
+  }
+
+  const handleAccountClick = () => {
+    if (!isMine(kami)) return () => {
+      setAccount(kami.account?.index || 0);
+      setModals({ ...modals, account: true, kami: false, party: false, map: false });
+      playClick();
+    }
+  }
+
   return (
     <Container>
-      <Image src={props.kami.uri} />
+      <Image src={kami.uri} />
       <Content>
         <ContentTop>
           <TitleRow>
-            <Title>{props.kami.name}</Title>
+            <Title>{kami.name}</Title>
             <Subtext>{affinities}</Subtext>
           </TitleRow>
           <TitleRow>
             <ExperienceBar
-              level={props.kami.level}
-              current={props.kami.experience.current}
-              total={props.kami.experience.threshold}
-              triggerLevelUp={() => props.actions.levelUp(props.kami)}
+              level={kami.level}
+              current={kami.experience.current}
+              total={kami.experience.threshold}
+              triggerLevelUp={() => props.actions.levelUp(kami)}
             />
           </TitleRow>
         </ContentTop>
@@ -88,15 +106,8 @@ export const Banner = (props: Props) => {
           })}
         </ContentMiddle>
         <Footer>
-          <FooterText
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              setAccount(props.kami.account?.index || 0);
-              setModals({ ...modals, account: true, kami: false, party: false, map: false });
-              playClick();
-            }}
-          >
-            {props.kami.account?.name}
+          <FooterText onClick={handleAccountClick()}>
+            {(isMine(kami)) ? "yours" : kami.account?.name}
           </FooterText>
         </Footer>
       </Content>
@@ -210,7 +221,11 @@ const FooterText = styled.div`
   text-align: right;
   color: #666;
 
-  &:hover {
-    color: #ccc;
-  }
+  ${({ onClick }) => onClick && `
+    &:hover {
+      opacity: 0.6;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  `}
 `;
