@@ -28,7 +28,11 @@ contract AccountMoveSystem is System {
 
     require(
       LibRoom.isReachable(components, toIndex, currRoomID, toRoomID),
-      "AccMove: unreachable location"
+      "AccMove: unreachable room"
+    );
+    require(
+      LibRoom.isAccessible(components, currIndex, toIndex, accountID),
+      "AccMove: inaccessible room"
     );
 
     LibAccount.move(components, accountID, toIndex);

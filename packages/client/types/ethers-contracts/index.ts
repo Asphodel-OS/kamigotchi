@@ -67,6 +67,7 @@ export type { IndexRelationshipComponent } from "./IndexRelationshipComponent";
 export type { IndexReviveComponent } from "./IndexReviveComponent";
 export type { IndexRoomComponent } from "./IndexRoomComponent";
 export type { IndexSkillComponent } from "./IndexSkillComponent";
+export type { IndexSourceComponent } from "./IndexSourceComponent";
 export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsBonusComponent } from "./IsBonusComponent";
@@ -210,6 +211,7 @@ export type { _RegistryDeleteRelationshipSystem } from "./_RegistryDeleteRelatio
 export type { _RegistryDeleteSkillSystem } from "./_RegistryDeleteSkillSystem";
 export type { _RegistryDeleteTraitSystem } from "./_RegistryDeleteTraitSystem";
 export type { _RegistryUpdateRelationshipSystem } from "./_RegistryUpdateRelationshipSystem";
+export type { _RoomCreateGateSystem } from "./_RoomCreateGateSystem";
 export type { _RoomCreateSystem } from "./_RoomCreateSystem";
 export type { _RoomDeleteSystem } from "./_RoomDeleteSystem";
 export type { _devGiveTokensSystem } from "./_devGiveTokensSystem";
@@ -280,6 +282,7 @@ export { IndexRelationshipComponent__factory } from "./factories/IndexRelationsh
 export { IndexReviveComponent__factory } from "./factories/IndexReviveComponent__factory";
 export { IndexRoomComponent__factory } from "./factories/IndexRoomComponent__factory";
 export { IndexSkillComponent__factory } from "./factories/IndexSkillComponent__factory";
+export { IndexSourceComponent__factory } from "./factories/IndexSourceComponent__factory";
 export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
 export { IsBonusComponent__factory } from "./factories/IsBonusComponent__factory";
@@ -423,6 +426,7 @@ export { _RegistryDeleteRelationshipSystem__factory } from "./factories/_Registr
 export { _RegistryDeleteSkillSystem__factory } from "./factories/_RegistryDeleteSkillSystem__factory";
 export { _RegistryDeleteTraitSystem__factory } from "./factories/_RegistryDeleteTraitSystem__factory";
 export { _RegistryUpdateRelationshipSystem__factory } from "./factories/_RegistryUpdateRelationshipSystem__factory";
+export { _RoomCreateGateSystem__factory } from "./factories/_RoomCreateGateSystem__factory";
 export { _RoomCreateSystem__factory } from "./factories/_RoomCreateSystem__factory";
 export { _RoomDeleteSystem__factory } from "./factories/_RoomDeleteSystem__factory";
 export { _devGiveTokensSystem__factory } from "./factories/_devGiveTokensSystem__factory";
