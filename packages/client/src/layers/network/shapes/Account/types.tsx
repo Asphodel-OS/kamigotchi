@@ -11,7 +11,7 @@ import { GachaCommit, queryAccCommits } from '../Gacha';
 import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
-import { Skill } from '../Skill';
+import { Skill } from '../Skill/types';
 import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from '../Friendship';
 import { getData } from '../Data';
 import { NetworkLayer } from 'layers/network/types';

@@ -5,9 +5,9 @@ import {
   Skill,
   Requirement,
   Status,
-  checkCost,
-  checkMaxxed,
-  checkRequirement
+  meetsSkillCost,
+  isSkillMaxxed,
+  meetsSkillRequirement
 } from "layers/network/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { playClick } from 'utils/sounds';
@@ -31,20 +31,20 @@ export const SkillNode = (props: Props) => {
   // LOGIC
 
   const checkPrereqs = (skill: Skill): TextBool => {
-    if (!checkMaxxed(skill, kami).completable)
+    if (!isSkillMaxxed(skill, kami).completable)
       return {
         text: `Max level reached!`,
         bool: false
       }
 
-    if (!checkCost(skill, kami))
+    if (!meetsSkillCost(skill, kami))
       return {
         text: `Insufficient skill points`,
         bool: false
       }
 
     for (const requirement of skill.requirements) {
-      const status = checkRequirement(requirement, kami);
+      const status = meetsSkillRequirement(requirement, kami);
       if (!status.completable) {
         return {
           text: 'Requirements not met',
@@ -82,7 +82,7 @@ export const SkillNode = (props: Props) => {
   }
 
   const getReqs = (reqs: Requirement[]): string[] => {
-    return reqs.map((req) => parseReqText(req, checkRequirement(req, kami)));
+    return reqs.map((req) => parseReqText(req, meetsSkillRequirement(req, kami)));
   }
 
   const getTooltipText = (skill: Skill): string[] => {

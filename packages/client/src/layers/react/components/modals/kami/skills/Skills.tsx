@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { Details } from "./Details";
 import { Matrix } from "./Matrix";
-import { SkillNode } from "./SkillNode";
 import { Kami } from "layers/network/shapes/Kami";
 import { Skill } from "layers/network/shapes/Skill";
 import { playClick } from 'utils/sounds';

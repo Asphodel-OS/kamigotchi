@@ -14,7 +14,7 @@ import { getConfigFieldValue } from '../Config';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
 import { Stats, getStats } from '../Stats';
-import { Skill, getSkills } from '../Skill';
+import { Skill, getHolderSkills } from '../Skill';
 import { Traits, TraitIndices, getTraits } from '../Trait';
 import { NetworkLayer } from 'layers/network/types';
 
@@ -67,12 +67,6 @@ export interface Options {
   production?: boolean;
   skills?: boolean;
   traits?: boolean;
-}
-
-// fields to filter by (only supports an AND of all fields)
-export interface QueryOptions {
-  account?: EntityID;
-  state?: string;
 }
 
 // get a Kami from its EnityIndex. includes options for which data to include
@@ -221,7 +215,7 @@ export const getKami = (
 
   // populate Skills
   if (options?.skills) {
-    kami.skills = getSkills(network, kami.id);
+    kami.skills = getHolderSkills(network, kami.id);
   }
 
   // populate Traits

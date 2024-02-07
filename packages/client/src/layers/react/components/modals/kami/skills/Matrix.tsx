@@ -28,6 +28,6 @@ export const Matrix = (props: Props) => {
 const Container = styled.div`
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;
+  justify-content: center;
 `;
 
