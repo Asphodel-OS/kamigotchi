@@ -12,12 +12,13 @@ interface Props {
   footer?: React.ReactNode;
   canExit?: boolean;
   overlay?: boolean;
+  noPadding?: boolean;
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { divName, id, children, header, footer, canExit, overlay } = props;
+  const { divName, id, children, header, footer, canExit, overlay, noPadding } = props;
   const { modals } = useVisibility();
 
   // update modal visibility according to store settings
@@ -53,7 +54,7 @@ export const ModalWrapper = (props: Props) => {
           </ButtonRow>
         }
         {header && <Header>{header}</Header>}
-        <Children>{children}</Children>
+        <Children noPadding={noPadding}>{children}</Children>
         {footer && <Footer>{footer}</Footer>}
       </Content>
     </Wrapper>
@@ -112,8 +113,7 @@ const Footer = styled.div`
   flex-flow: column nowrap;
 `;
 
-const Children = styled.div`
-  padding: .4vw;
+const Children = styled.div<{ noPadding?: boolean }>`
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
@@ -121,6 +121,8 @@ const Children = styled.div`
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
+
+  ${({ noPadding }) => noPadding ? `padding: 0;` : `padding: .4vw;`}
 `;
 
 const fadeIn = keyframes`

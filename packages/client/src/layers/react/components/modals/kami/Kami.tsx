@@ -112,6 +112,7 @@ export function registerKamiModal() {
           ]}
           canExit
           overlay
+          noPadding
         >
           {(tab === 'battles') && <KillLogs kami={getSelectedKami()} />}
           {(tab === 'traits') && <Traits kami={getSelectedKami()} />}

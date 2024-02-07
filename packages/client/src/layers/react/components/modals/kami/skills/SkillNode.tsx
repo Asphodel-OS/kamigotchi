@@ -14,11 +14,8 @@ import { playClick } from 'utils/sounds';
 
 
 interface Props {
-  skills: Skill[];
+  skill: Skill;
   kami: Kami;
-  actions: {
-    upgrade: Function;
-  }
 }
 
 interface TextBool {
@@ -26,8 +23,8 @@ interface TextBool {
   bool: boolean;
 }
 
-export const Skills = (props: Props) => {
-  const { skills, kami, actions } = props;
+export const SkillNode = (props: Props) => {
+  const { skill, kami } = props;
 
 
   ///////////////////
@@ -60,13 +57,12 @@ export const Skills = (props: Props) => {
   }
 
 
-
   /////////////////
   // ACTIONS
 
   const triggerUpgrade = (skill: Skill) => {
     playClick();
-    actions.upgrade(kami, skill);
+    // actions.upgrade(kami, skill);
   }
 
 
@@ -77,9 +73,9 @@ export const Skills = (props: Props) => {
     switch (req.type) {
       case 'LEVEL':
         return `• Kami Level ${status.target}`;
-      case 'SKILL':
-        const skillName = skills.find((n) => n.index === req.index)?.name;
-        return `• ${skillName} Level ${status.target} [${status.current}/${status.target}]`;
+      // case 'SKILL':
+      //   const skillName = skills.find((n) => n.index === req.index)?.name;
+      //   return `• ${skillName} Level ${status.target} [${status.current}/${status.target}]`;
       default:
         return ' ???';
     }
@@ -107,61 +103,35 @@ export const Skills = (props: Props) => {
     return tooltipText;
   }
 
-  const SkillCard = (skill: Skill) => {
-    const status = checkPrereqs(skill);
-    const curSkill = kami.skills?.find((n) => n.index === skill.index);
-    const curLevel = Number(curSkill?.level || 0);
 
-    return (
-      <Tooltip text={getTooltipText(skill)} key={skill.index}>
-        <SkillContainer
-          key={skill.index}
-          onClick={() => { status.bool ? triggerUpgrade(skill) : () => { } }}
-          disabled={!status.bool}
-        >
-          <Image src={skill.uri} />
-          <SkillName>{skill.name}</SkillName>
-          <SkillName>{`[${curLevel}/${skill.max}]`}</SkillName>
-        </SkillContainer>
-      </Tooltip>
-    );
-  }
+
+  const status = checkPrereqs(skill);
+  const curSkill = kami.skills?.find((n) => n.index === skill.index);
+  const curLevel = Number(curSkill?.level || 0);
+
 
   return (
-    <>
-      <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
-      <Wrapper>
-        {skills.sort((a, b) => a.index - b.index)
-          .map((skill) => SkillCard(skill))}
-      </Wrapper>
-    </>
+    <Tooltip text={getTooltipText(skill)} key={skill.index}>
+      <Container
+        key={skill.index}
+        onClick={() => { status.bool ? triggerUpgrade(skill) : () => { } }}
+        disabled={!status.bool}
+      >
+        <Image src={skill.uri} />
+      </Container>
+      <Name>{skill.name}</Name>
+      <Name>{`[${curLevel}/${skill.max}]`}</Name>
+    </Tooltip>
   );
 }
 
-const Wrapper = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0.5vw;
-`;
 
 const Image = styled.img`
   border-radius: 1.5vw;
-  width: 7vw;
+  width: 6vw;
 `;
 
-const Text = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
-  font-weight: bold;
-  text-align: left;
-  justify-content: flex-start;
-  color: #333;
-  padding: 1vh 0vw;
-`;
-
-const SkillContainer = styled.button`
+const Container = styled.button`
   border: solid black  .14vw;
   border-radius: 1vw;
 
@@ -172,8 +142,8 @@ const SkillContainer = styled.button`
 
   margin: 0.8vw;
   padding: 0.5vw;
-  width: 11vw;
-  height: 11vw;
+  width: 6vw;
+  height: 6vw;
 
   background-color: #fff;
   pointer-events: auto;
@@ -194,7 +164,7 @@ const SkillContainer = styled.button`
   }
 `;
 
-const SkillName = styled.div`
+const Name = styled.div`
   font-family: Pixel;
   font-size: .7vw;
   text-align: center;
