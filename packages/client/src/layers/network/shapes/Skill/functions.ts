@@ -3,6 +3,38 @@ import { Account } from "../Account";
 import { Kami } from "../Kami";
 
 
+// get the reason why a player cannot upgrade a skill
+// checking (in order) location/status, maxxed out, requirements unmet, not enough points
+// TODO: actually check for location instead of being lazy
+export const getUpgradeError = (index: number, kami: Kami, registry: Skill[]) => {
+  // status/location check
+  if (kami.state !== 'RESTING') return [`${kami.name} must be Resting`];
+
+  // registry check
+  const rSkill = registry.find((s) => s.index * 1 === index);
+  if (!rSkill) return ['Skill not found'];
+
+  // maxxed out check
+  const maxPoints = rSkill.points.max;
+  const kSkill = kami.skills?.find((s) => s.index === rSkill.index);
+  if ((kSkill?.points.current ?? 0) >= maxPoints) return [`Maxxed Out (${maxPoints}/${maxPoints})`];
+
+  // requirements check
+  for (let req of rSkill.requirements ?? []) {
+    if (!meetsRequirement(req, kami)) return [
+      `Unmet Requirement:`,
+      `${parseRequirementText(req, registry)}`,
+    ];
+  }
+
+  // skill cost
+  if (rSkill.cost > kami.skillPoints) return [
+    `Insufficient Skill Points.`,
+    `Need ${rSkill.cost}. Have ${kami.skillPoints}.`
+  ];
+}
+
+// parse the description of a skill requirement from its components
 export const parseRequirementText = (requirement: Requirement, registry: Skill[]): string => {
   switch (requirement.type) {
     case 'LEVEL':
@@ -15,6 +47,7 @@ export const parseRequirementText = (requirement: Requirement, registry: Skill[]
   }
 }
 
+// parse the description of a skill effect from its components
 // +10% Harvest Output Per Level
 // [+]         [10 | 1.0]           [s | %]   [Harvest] [Output]  [Per Level]
 // [logictype] [value/type/subtype] [subtype] [type]    [subtype] [constant]

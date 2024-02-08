@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Kami } from 'layers/network/shapes/Kami';
-import { Skill, parseEffectText, parseRequirementText } from 'layers/network/shapes/Skill';
+import {
+  Skill,
+  parseEffectText,
+  parseRequirementText,
+  getSkillUpgradeError
+} from 'layers/network/shapes/Skill';
 import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
-import { meetsRequirement } from 'layers/network/shapes/Skill/functions';
 
 
 interface Props {
@@ -18,18 +22,19 @@ interface Props {
   }
 }
 
-
-// TODO: button disabling / tooltip
+// The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
   const { actions, data } = props;
-  const [rSkill, setRSkill] = React.useState<Skill | undefined>(undefined);
-  const [kSkill, setKSkill] = React.useState<Skill | undefined>(undefined);
+  const [rSkill, setRSkill] = useState<Skill | undefined>(undefined);
+  const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
+  const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
 
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
     setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
     setRSkill(data.registry.find((s) => s.index * 1 === data.index)); // registry skill instance
+    setDisabledReason(getSkillUpgradeError(data.index, data.kami, data.registry));
   }, [data.index, data.kami]);
 
 
@@ -38,7 +43,6 @@ export const Details = (props: Props) => {
 
   // get the tooltip text for the upgrade button
   const getUpgradeButtonTooltip = () => {
-    const disabledReason = getReasonForDisabled();
     if (disabledReason) return disabledReason;
 
     const cost = rSkill?.cost ?? 1;
@@ -50,33 +54,6 @@ export const Details = (props: Props) => {
     ];
 
     return tooltipText;
-  }
-
-
-  // get the reason why a player cannot upgrade a skill
-  // checking (in order) location/status, maxxed out, requirements unmet, not enough points
-  // TODO: actually check for location instead of being lazy
-  const getReasonForDisabled = () => {
-    const kami = data.kami;
-    if (kami.state !== 'RESTING') return [`${kami.name} must be Resting`];
-
-    if (!rSkill) return [`Something went wrong.`, `Skill not found in registry`];
-
-    const maxPoints = rSkill.points.max;
-    if ((kSkill?.points.current ?? 0) >= maxPoints) return [`Maxxed Out (${maxPoints}/${maxPoints})`];
-
-    // requirements
-    for (let req of rSkill.requirements ?? []) {
-      if (!meetsRequirement(req, kami)) return [
-        `Unmet Requirement:`,
-        `${parseRequirementText(req, data.registry)}`,
-      ];
-    }
-
-    if (rSkill.cost > kami.skillPoints) return [
-      `Insufficient Skill Points.`,
-      `Need ${rSkill.cost}. Have ${kami.skillPoints}.`
-    ];
   }
 
 
@@ -109,7 +86,7 @@ export const Details = (props: Props) => {
               id='upgrade'
               text={'Upgrade'}
               onClick={() => actions.upgrade(rSkill)}
-              disabled={!!getReasonForDisabled()}
+              disabled={!!disabledReason}
             />
           </Tooltip>
         </div>

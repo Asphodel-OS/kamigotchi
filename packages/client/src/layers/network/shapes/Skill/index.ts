@@ -13,6 +13,7 @@ export {
   isMaxxed as isSkillMaxxed,
   meetsCost as meetsSkillCost,
   meetsRequirement as meetsSkillRequirement,
+  getUpgradeError as getSkillUpgradeError,
   parseEffectText,
   parseRequirementText,
 } from './functions';
