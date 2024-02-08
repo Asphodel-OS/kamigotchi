@@ -18,9 +18,19 @@ interface Props {
 
 export const Skills = (props: Props) => {
   const { skills, kami, actions } = props;
+  const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [displayed, setDisplayed] = useState(0);
+
+  // keep a hashmap of Skill indices to Skill objects for easy lookup
+  useEffect(() => {
+    const result = skills.reduce((map: Map<number, Skill>, skill) => {
+      map.set(skill.index * 1, skill);
+      return map;
+    }, new Map<number, Skill>());
+    setSkillMap(result);
+  }, [skills.length]);
 
   // set index of the displayed skill, based on the hovered and selected
   useEffect(() => {
@@ -29,10 +39,19 @@ export const Skills = (props: Props) => {
     else setDisplayed(1);
   }, [selected, hovered]);
 
+
+  ////////////////////
+  // INTERACTIONS 
+
+  // trigger an upgrade of the skill
   const triggerUpgrade = (skill: Skill) => {
     playClick();
     actions.upgrade(kami, skill);
   }
+
+
+  ////////////////////
+  // RENDER
 
   return (
     <Wrapper>
@@ -42,7 +61,7 @@ export const Skills = (props: Props) => {
       />
       <Matrix
         kami={kami}
-        skills={skills}
+        skills={skillMap}
         setHovered={(skillIndex) => setHovered(skillIndex)}
         setSelected={(skillIndex) => setSelected(skillIndex)}
       />

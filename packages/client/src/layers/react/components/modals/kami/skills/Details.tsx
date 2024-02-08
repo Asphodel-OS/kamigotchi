@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill, parseEffectText, parseRequirementText } from 'layers/network/shapes/Skill';
 import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
+import { meetsRequirement } from 'layers/network/shapes/Skill/functions';
 
 
 interface Props {
@@ -29,7 +30,7 @@ export const Details = (props: Props) => {
   useEffect(() => {
     setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
     setRSkill(data.registry.find((s) => s.index * 1 === data.index)); // registry skill instance
-  }, [data.index]);
+  }, [data.index, data.kami]);
 
 
   ////////////////////
@@ -37,13 +38,45 @@ export const Details = (props: Props) => {
 
   // get the tooltip text for the upgrade button
   const getUpgradeButtonTooltip = () => {
-    const currentLevel = kSkill?.points.current ?? 0;
+    const disabledReason = getReasonForDisabled();
+    if (disabledReason) return disabledReason;
+
+    const cost = rSkill?.cost ?? 1;
+    const currLevel = kSkill?.points.current ?? 0;
     const tooltipText = [
-      'Upgrade Skill',
+      `Upgrade Skill (${cost}pt${cost > 1 ? 's' : ''})`,
       '',
-      `Level ${currentLevel} => ${(currentLevel ?? 0) + 1}`
+      `Level: ${currLevel} => ${(currLevel) + 1}`,
     ];
+
     return tooltipText;
+  }
+
+
+  // get the reason why a player cannot upgrade a skill
+  // checking (in order) location/status, maxxed out, requirements unmet, not enough points
+  // TODO: actually check for location instead of being lazy
+  const getReasonForDisabled = () => {
+    const kami = data.kami;
+    if (kami.state !== 'RESTING') return [`${kami.name} must be Resting`];
+
+    if (!rSkill) return [`Something went wrong.`, `Skill not found in registry`];
+
+    const maxPoints = rSkill.points.max;
+    if ((kSkill?.points.current ?? 0) >= maxPoints) return [`Maxxed Out (${maxPoints}/${maxPoints})`];
+
+    // requirements
+    for (let req of rSkill.requirements ?? []) {
+      if (!meetsRequirement(req, kami)) return [
+        `Unmet Requirement:`,
+        `${parseRequirementText(req, data.registry)}`,
+      ];
+    }
+
+    if (rSkill.cost > kami.skillPoints) return [
+      `Insufficient Skill Points.`,
+      `Need ${rSkill.cost}. Have ${kami.skillPoints}.`
+    ];
   }
 
 
@@ -76,7 +109,7 @@ export const Details = (props: Props) => {
               id='upgrade'
               text={'Upgrade'}
               onClick={() => actions.upgrade(rSkill)}
-              disabled={false}
+              disabled={!!getReasonForDisabled()}
             />
           </Tooltip>
         </div>

@@ -27,6 +27,7 @@ export const SkillNode = (props: Props) => {
     setSelected(skill.index * 1);
   }
 
+  if (!skill) return <> </>;
   return (
     <Container key={skill.index}>
       <Tooltip text={[`${skill.name}`]} key={skill.index}>

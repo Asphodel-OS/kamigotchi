@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SkillNode } from './SkillNode';
@@ -10,7 +10,7 @@ import { ActionButton, Tooltip } from 'layers/react/components/library';
 
 interface Props {
   kami: Kami;
-  skills: Skill[];
+  skills: Map<number, Skill>;
   setHovered: (skillIndex: number) => void;
   setSelected: (skillIndex: number) => void;
 }
@@ -18,6 +18,11 @@ interface Props {
 export const Matrix = (props: Props) => {
   const { kami, skills, setHovered, setSelected } = props;
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
+
+  useEffect(() => {
+    setSelected(SkillTrees.get(mode)![0][0]);
+  }, [mode]);
+
 
   return (
     <Container>
@@ -39,18 +44,15 @@ export const Matrix = (props: Props) => {
       <NodeMatrix>
         {SkillTrees.get(mode)!.map((row, i) => (
           <NodeRow key={i}>
-            {row.map((index) => {
-              const skill = skills.find((s) => s.index * 1 === index);
-              return (
-                <SkillNode
-                  key={index}
-                  kami={kami}
-                  skill={skill!}
-                  setHovered={setHovered}
-                  setSelected={setSelected}
-                />
-              );
-            })}
+            {row.map((index) => (
+              <SkillNode
+                key={index}
+                kami={kami}
+                skill={skills.get(index)!}
+                setHovered={setHovered}
+                setSelected={setSelected}
+              />
+            ))}
           </NodeRow>
         ))}
       </NodeMatrix>
