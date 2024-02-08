@@ -13,7 +13,7 @@ interface Props {
     registry: Skill[]; // list of skills in the registry
   }
   actions: {
-    upgrade: () => void
+    upgrade: (skill: Skill) => void
   }
 }
 
@@ -75,7 +75,7 @@ export const Details = (props: Props) => {
             <ActionButton
               id='upgrade'
               text={'Upgrade'}
-              onClick={() => actions.upgrade()}
+              onClick={() => actions.upgrade(rSkill)}
               disabled={false}
             />
           </Tooltip>
@@ -151,6 +151,7 @@ const NameSection = styled.div`
 const Name = styled.div`
   color: #333;
   width: 100%;
+  padding: 0vw 1.2vw;
 
   display: flex;
   flex-flow: row wrap;
@@ -158,6 +159,7 @@ const Name = styled.div`
   
   font-family: Pixel;
   font-size: 1.2vw;
+  line-height: 1.5vw;
 `;
 
 const Description = styled.div`

@@ -29,7 +29,7 @@ export const SkillNode = (props: Props) => {
 
   return (
     <Container key={skill.index}>
-      <Tooltip text={[skill.name]} key={skill.index}>
+      <Tooltip text={[`${skill.name}`]} key={skill.index}>
         <Image src={skill.uri}
           onClick={handleClick}
           onMouseEnter={() => setHovered(skill.index * 1)}
@@ -42,10 +42,9 @@ export const SkillNode = (props: Props) => {
 
 
 const Image = styled.img`
-  border: solid black  .15vw;
+  border: solid black .15vw;
   border-radius: 1.5vw;
-  width: 5vw;
-
+  width: 6vw;
   &:hover {
     opacity: 0.6;
   }
