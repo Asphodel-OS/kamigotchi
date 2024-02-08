@@ -7,6 +7,7 @@ export { Countdown } from "./Countdown";
 export { AccountButton } from "./CustomRainbowButton";
 export { ExitButton } from "./ExitButton";
 export { Gauge } from "./Gauge";
+export { HelpIcon } from "./HelpIcon";
 export { IconButton } from "./IconButton";
 export { IconListButton } from "./IconListButton";
 export { ItemIcon } from "./ItemIcon";

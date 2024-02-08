@@ -19,7 +19,6 @@ export const parseRequirementText = (requirement: Requirement, registry: Skill[]
 // [+]         [10 | 1.0]           [s | %]   [Harvest] [Output]  [Per Level]
 // [logictype] [value/type/subtype] [subtype] [type]    [subtype] [constant]
 export const parseEffectText = (effect: Effect): string => {
-  console.log(effect);
   let text = '';
 
   // positive or negative
