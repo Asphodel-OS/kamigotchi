@@ -15,6 +15,8 @@ import { playClick } from 'utils/sounds';
 interface Props {
   skill: Skill;
   kami: Kami;
+  setHovered: (skillIndex: number) => void;
+  setSelected: (skillIndex: number) => void;
 }
 
 interface TextBool {
@@ -23,101 +25,22 @@ interface TextBool {
 }
 
 export const SkillNode = (props: Props) => {
-  const { skill, kami } = props;
+  const { skill, kami, setHovered, setSelected } = props;
 
-
-  // ///////////////////
-  // // LOGIC
-
-  // const checkPrereqs = (skill: Skill): TextBool => {
-  //   if (!isSkillMaxxed(skill, kami).isMet)
-  //     return {
-  //       text: `Max level reached!`,
-  //       bool: false
-  //     }
-
-  //   if (!meetsSkillCost(skill, kami))
-  //     return {
-  //       text: `Insufficient skill points`,
-  //       bool: false
-  //     }
-
-  //   for (const requirement of skill.requirements) {
-  //     const status = meetsSkillRequirement(requirement, kami);
-  //     if (!status.isMet) {
-  //       return {
-  //         text: 'Requirements not met',
-  //         bool: false
-  //       }
-  //     }
-  //   }
-
-  //   return { text: '', bool: true };
-  // }
-
-
-  // /////////////////
-  // // ACTIONS
-
-  // const triggerUpgrade = (skill: Skill) => {
-  //   playClick();
-  //   // actions.upgrade(kami, skill);
-  // }
-
-
-  // /////////////////
-  // // DISPLAY
-
-  // const parseReqText = (req: Requirement, status: Status): string => {
-  //   switch (req.type) {
-  //     case 'LEVEL':
-  //       return `• Kami Level ${status.target}`;
-  //     // case 'SKILL':
-  //     //   const skillName = skills.find((n) => n.index === req.index)?.name;
-  //     //   return `• ${skillName} Level ${status.target} [${status.current}/${status.target}]`;
-  //     default:
-  //       return ' ???';
-  //   }
-  // }
-
-  // const getReqs = (reqs: Requirement[]): string[] => {
-  //   return reqs.map((req) => parseReqText(req, meetsSkillRequirement(req, kami)));
-  // }
-
-  // const getTooltipText = (skill: Skill): string[] => {
-  //   const status = checkPrereqs(skill);
-
-  //   let tooltipText = [skill.description, ''];
-  //   tooltipText.push(`Cost: ${skill.cost} ${skill.cost > 1 ? "points" : "point"}`);
-
-  //   const reqs = getReqs(skill.requirements);
-  //   if (reqs.length > 0) {
-  //     tooltipText.push('Requirements:');
-  //     tooltipText.push(...reqs);
-  //   }
-  //   if (!status.bool) {
-  //     tooltipText.push('');
-  //     tooltipText.push(status.text);
-  //   }
-  //   return tooltipText;
-  // }
-
-
-
-  const curSkill = kami.skills?.find((n) => n.index === skill.index);
-  const curLevel = Number(curSkill?.points.current || 0);
-
+  const handleClick = () => {
+    playClick();
+    setSelected(skill.index * 1);
+  }
 
   return (
     <Tooltip text={[skill.name]} key={skill.index}>
-      <Container
-        key={skill.index}
-        onClick={() => { () => { } }}
-      >
-        <Image src={skill.uri} />
+      <Container key={skill.index}>
+        <Image src={skill.uri}
+          onClick={handleClick}
+          onMouseEnter={() => setHovered(skill.index * 1)}
+          onMouseLeave={() => setHovered(0)}
+        />
       </Container>
-      <Name>{skill.name}</Name>
-      <Name>{`[${curLevel}/${skill.points.max}]`}</Name>
     </Tooltip>
   );
 }

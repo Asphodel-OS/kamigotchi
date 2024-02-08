@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { Details } from "./Details";
@@ -18,7 +18,26 @@ interface Props {
 
 export const Skills = (props: Props) => {
   const { skills, kami, actions } = props;
-  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
+  const [skillMap, setSkillMap] = useState<Map<number, Skill>>();
+  const [selected, setSelected] = useState(0);
+  const [hovered, setHovered] = useState(0);
+  const [displayed, setDisplayed] = useState(0);
+
+  // keep a hashmap of Skill indices to Skill objects
+  useEffect(() => {
+    const result = skills.reduce((map: any, obj) => {
+      map[obj.index * 1] = obj;
+      return map;
+    }, {});
+    setSkillMap(result);
+  }, [skills.length]);
+
+  // set index of the displayed skill, based on the hovered and selected
+  useEffect(() => {
+    if (hovered !== 0) setDisplayed(hovered);
+    else if (selected !== 0) setDisplayed(selected);
+    else setDisplayed(1);
+  }, [selected, hovered]);
 
 
   const triggerUpgrade = (skill: Skill) => {
@@ -26,18 +45,19 @@ export const Skills = (props: Props) => {
     actions.upgrade(kami, skill);
   }
 
-  const skill = skills[13];
   return (
     <Wrapper>
       <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
       <Details
-        data={{ kami, index: skill.index, registry: skills }}
-        actions={{ upgrade: () => triggerUpgrade(skill) }} />
+        data={{ kami, index: displayed, registry: skills }}
+        actions={{ upgrade: () => triggerUpgrade(skillMap?.get(displayed)!) }}
+      />
       <Matrix
         kami={kami}
         skills={skills}
-        setHovered={() => { }}
-        setSelected={() => { }} />
+        setHovered={(skillIndex) => setHovered(skillIndex)}
+        setSelected={(skillIndex) => setSelected(skillIndex)}
+      />
     </Wrapper>
   );
 }

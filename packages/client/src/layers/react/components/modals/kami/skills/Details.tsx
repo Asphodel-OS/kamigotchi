@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { Kami } from 'layers/network/shapes/Kami';
-import { Skill, parseRequirementText } from 'layers/network/shapes/Skill';
-import { ActionButton, Tooltip } from 'layers/react/components/library';
-import { parseEffectText } from 'layers/network/shapes/Skill/functions';
+import { Skill, parseEffectText, parseRequirementText } from 'layers/network/shapes/Skill';
+import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
+
 
 interface Props {
   data: {
@@ -18,17 +18,22 @@ interface Props {
 }
 
 
-
 // TODO: button disabling / tooltip
-// TODO: info icon for max and cost details 
 export const Details = (props: Props) => {
-  const { kami, index, registry } = props.data;
-  const kSkill = kami.skills?.find((s) => s.index === index); // kami skill instance
-  const rSkill = registry.find((s) => s.index === index); // registry skill instance
-  const currentLevel = kSkill?.points.current ?? 0;
+  const { actions, data } = props;
+  const [rSkill, setRSkill] = React.useState<Skill | undefined>(undefined);
+  const [kSkill, setKSkill] = React.useState<Skill | undefined>(undefined);
 
 
+  // update registry/kami skill instances when index changes
+  useEffect(() => {
+    setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
+    setRSkill(data.registry.find((s) => s.index * 1 === data.index)); // registry skill instance
+  }, [data.index]);
+
+  // get the tooltip text for the upgrade button
   const getUpgradeButtonTooltip = () => {
+    const currentLevel = kSkill?.points.current ?? 0;
     const tooltipText = [
       'Upgrade Skill',
       '',
@@ -37,7 +42,7 @@ export const Details = (props: Props) => {
     return tooltipText;
   }
 
-
+  // render a list of values with a label (for Effects/Requirements)
   const LabeledList = (props: { label: string, values?: string[] }) => {
     if (!props.values || props.values.length <= 0) return <></>;
     return (
@@ -52,34 +57,37 @@ export const Details = (props: Props) => {
   if (!rSkill) return <></>;
   return (
     <Container>
-      <ImageContainer>
+      <ImageSection>
         <Image src={rSkill.uri} />
         <div style={{ position: 'absolute', bottom: '.6vw', right: '.6vw' }}>
           <Tooltip text={getUpgradeButtonTooltip()}>
             <ActionButton
               id='upgrade'
               text={'Upgrade'}
-              onClick={() => props.actions.upgrade()}
+              onClick={() => actions.upgrade()}
               disabled={false}
             />
           </Tooltip>
         </div>
-      </ImageContainer>
+      </ImageSection>
 
-      <Name>{rSkill.name}</Name>
+      <NameSection>
+        <Name>{rSkill.name}</Name>
+        <HelpIcon tooltip={[`Cost: ${rSkill.cost} Skill Points`, `Max Level: ${rSkill.points.max}`]} />
+      </NameSection>
       <Description>
         {rSkill.description} blah blah blah this is a fuller description lorem ipsum falalala
       </Description>
       <LabeledList
-        label='Requirements'
-        values={(rSkill.requirements ?? []).map(
-          (req) => parseRequirementText(req, registry)
-        )}
-      />
-      <LabeledList
         label='Effects'
         values={(rSkill.effects ?? []).map(
           (eff) => parseEffectText(eff)
+        )}
+      />
+      <LabeledList
+        label='Requirements'
+        values={(rSkill.requirements ?? []).map(
+          (req) => parseRequirementText(req, data.registry)
         )}
       />
     </Container>
@@ -94,14 +102,11 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
+  flex-grow: 1;
   overflow-y: scroll;
 `;
 
-const Image = styled.img`
-  width: 100%;
-`;
-
-const ImageContainer = styled.div`
+const ImageSection = styled.div`
   border-bottom: .15vw solid #333;
   position: relative;
   width: 18.75vw;
@@ -111,10 +116,20 @@ const ImageContainer = styled.div`
   justify-content: center;
 `;
 
+const Image = styled.img`
+  width: 100%;
+`;
+
+const NameSection = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  padding: 1vw;
+`;
+
 const Name = styled.div`
   color: #333;
   width: 100%;
-  padding: 1vw;
 
   display: flex;
   justify-content: center;

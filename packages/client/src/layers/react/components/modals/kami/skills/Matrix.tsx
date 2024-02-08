@@ -18,7 +18,15 @@ export const Matrix = (props: Props) => {
   return (
     <Container>
       {skills.sort((a, b) => a.index - b.index)
-        .map((skill) => <SkillNode key={skill.index} kami={kami} skill={skill} />)
+        .map((skill) => (
+          <SkillNode
+            key={skill.index}
+            kami={kami}
+            skill={skill}
+            setHovered={setHovered}
+            setSelected={setSelected}
+          />
+        ))
       }
     </Container>
   );
@@ -26,6 +34,8 @@ export const Matrix = (props: Props) => {
 
 
 const Container = styled.div`
+  padding-top: 3vw;
+
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
