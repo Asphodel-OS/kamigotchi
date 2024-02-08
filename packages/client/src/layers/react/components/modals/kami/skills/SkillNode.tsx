@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { Kami } from "layers/network/shapes/Kami";
@@ -15,21 +16,29 @@ import { playClick } from 'utils/sounds';
 interface Props {
   skill: Skill;
   kami: Kami;
+  nodeRects: Map<number, DOMRect>;
   setHovered: (skillIndex: number) => void;
   setSelected: (skillIndex: number) => void;
 }
 
 export const SkillNode = (props: Props) => {
-  const { skill, kami, setHovered, setSelected } = props;
+  const { skill, kami, nodeRects, setHovered, setSelected } = props;
+  const myRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (myRef.current) {
+      nodeRects.set(skill.index * 1, myRef.current.getBoundingClientRect());
+    }
+  }, []);
 
   const handleClick = () => {
     playClick();
     setSelected(skill.index * 1);
   }
 
-  if (!skill) return <> </>;
+  if (!skill) return <></>;
   return (
-    <Container key={skill.index}>
+    <Container key={skill.index} ref={myRef}>
       <Tooltip text={[`${skill.name}`]} key={skill.index}>
         <Image src={skill.uri}
           onClick={handleClick}

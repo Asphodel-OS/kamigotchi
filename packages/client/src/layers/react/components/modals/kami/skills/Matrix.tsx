@@ -18,6 +18,7 @@ interface Props {
 export const Matrix = (props: Props) => {
   const { kami, skills, setHovered, setSelected } = props;
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
+  const [nodeRects, setNodeRects] = useState(new Map<number, DOMRect>());
 
   useEffect(() => {
     setSelected(SkillTrees.get(mode)![0][0]);
@@ -49,6 +50,7 @@ export const Matrix = (props: Props) => {
                 key={index}
                 kami={kami}
                 skill={skills.get(index)!}
+                nodeRects={nodeRects}
                 setHovered={setHovered}
                 setSelected={setSelected}
               />
