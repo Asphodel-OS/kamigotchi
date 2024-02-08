@@ -31,6 +31,10 @@ export const Details = (props: Props) => {
     setRSkill(data.registry.find((s) => s.index * 1 === data.index)); // registry skill instance
   }, [data.index]);
 
+
+  ////////////////////
+  // INTERPRETATION
+
   // get the tooltip text for the upgrade button
   const getUpgradeButtonTooltip = () => {
     const currentLevel = kSkill?.points.current ?? 0;
@@ -41,6 +45,10 @@ export const Details = (props: Props) => {
     ];
     return tooltipText;
   }
+
+
+  ////////////////////
+  // DISPLAY
 
   // render a list of values with a label (for Effects/Requirements)
   const LabeledList = (props: { label: string, values?: string[] }) => {
@@ -53,6 +61,9 @@ export const Details = (props: Props) => {
     );
   }
 
+
+  ////////////////////
+  // RENDER
 
   if (!rSkill) return <></>;
   return (
@@ -69,12 +80,21 @@ export const Details = (props: Props) => {
             />
           </Tooltip>
         </div>
+        <div style={{ position: 'absolute', top: '.6vw', right: '.6vw' }}>
+          <HelpIcon
+            tooltip={[
+              `Skill Index: ${data.index}`,
+              `Cost: ${rSkill.cost} Skill Point(s)`,
+              `Max: Level ${rSkill.points.max}`,
+            ]}
+          />
+        </div>
       </ImageSection>
 
       <NameSection>
         <Name>{rSkill.name}</Name>
-        <HelpIcon tooltip={[`Cost: ${rSkill.cost} Skill Points`, `Max Level: ${rSkill.points.max}`]} />
       </NameSection>
+
       <Description>
         {rSkill.description} blah blah blah this is a fuller description lorem ipsum falalala
       </Description>
@@ -98,19 +118,18 @@ export const Details = (props: Props) => {
 const Container = styled.div`
   border-right: .15vw solid #333;
   padding-bottom: 3vw;
+  max-width: 18.9vw;
+  min-width: 18.9vw;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  flex-grow: 1;
   overflow-y: scroll;
 `;
 
 const ImageSection = styled.div`
   border-bottom: .15vw solid #333;
   position: relative;
-  width: 18.75vw;
-  height: 18.75vw;
 
   display: flex;
   justify-content: center;
@@ -121,10 +140,12 @@ const Image = styled.img`
 `;
 
 const NameSection = styled.div`
+  border-bottom: .15vw solid #333;
+  padding: 1vw .3vw;
+
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
-  padding: 1vw;
 `;
 
 const Name = styled.div`
@@ -132,6 +153,7 @@ const Name = styled.div`
   width: 100%;
 
   display: flex;
+  flex-flow: row wrap;
   justify-content: center;
   
   font-family: Pixel;

@@ -47,7 +47,6 @@ export const Skills = (props: Props) => {
 
   return (
     <Wrapper>
-      <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
       <Details
         data={{ kami, index: displayed, registry: skills }}
         actions={{ upgrade: () => triggerUpgrade(skillMap?.get(displayed)!) }}
@@ -62,6 +61,7 @@ export const Skills = (props: Props) => {
   );
 }
 
+
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -70,14 +70,3 @@ const Wrapper = styled.div`
   justify-content: flex-start;
 `;
 
-const Text = styled.div`
-  position: absolute;
-  width: 100%;
-  justify-self: flex-end;
-  padding: 1vw 1vw;
-
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: right;
-  color: #333;
-`;

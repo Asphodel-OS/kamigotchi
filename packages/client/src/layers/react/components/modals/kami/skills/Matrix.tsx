@@ -17,6 +17,7 @@ export const Matrix = (props: Props) => {
 
   return (
     <Container>
+      <Text>{`Skill Points: ${props.kami.skillPoints}`}</Text>
       {skills.sort((a, b) => a.index - b.index)
         .map((skill) => (
           <SkillNode
@@ -34,7 +35,7 @@ export const Matrix = (props: Props) => {
 
 
 const Container = styled.div`
-  padding-top: 3vw;
+  position: relative;
 
   display: flex;
   flex-flow: row wrap;
@@ -42,3 +43,13 @@ const Container = styled.div`
   overflow-y: scroll;
 `;
 
+const Text = styled.div`
+  position: absolute;
+  width: 100%;
+  padding: 1vw 1vw;
+
+  color: #333;
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
+`;
