@@ -21,6 +21,7 @@ export const Matrix = (props: Props) => {
   const { kami, skills, setHovered, setSelected } = props;
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
   const [nodeRects, setNodeRects] = useState(new Map<number, DOMRect>());
+  const [baseRect, setBaseRect] = useState<DOMRect>();
   const [edges, setEdges] = useState<number[][]>([]);
 
 
@@ -29,22 +30,17 @@ export const Matrix = (props: Props) => {
     const updateRect = () => {
       if (contentRef.current) {
         const newRect = contentRef.current.getBoundingClientRect();
-        setNodeRects(new Map(nodeRects.set(0, newRect)));
+        setBaseRect(newRect);
       }
     };
-
-    // call it once startup
-    updateRect();
 
     // Set up a resize observer to update the rectangle when the window resizes
     const resizeObserver = new ResizeObserver(updateRect);
     if (contentRef.current) resizeObserver.observe(contentRef.current);
-
-    // Clean up the observer when the component unmounts
     return () => {
       if (contentRef.current) resizeObserver.unobserve(contentRef.current);
     };
-  }, []); // Empty dependency array means this effect runs once after mount
+  }, []);
 
   // whenever the tree mode changes
   // - assign the root node of the tree as the selected Display skill
@@ -94,8 +90,8 @@ export const Matrix = (props: Props) => {
           ))}
         </TreeButtons>
       </TopRow>
-      <Content ref={contentRef}>
-        {SkillTrees.get(mode)!.map((row, i) => (
+      <Content ref={contentRef} >
+        {(skills.size > 0) && SkillTrees.get(mode)!.map((row, i) => (
           <NodeRow key={i}>
             {row.map((index) => (
               <Node
@@ -115,6 +111,7 @@ export const Matrix = (props: Props) => {
             key={i}
             from={edge[0]}
             to={edge[1]}
+            baseRect={baseRect!}
             nodeRects={nodeRects}
           />
         ))}
@@ -122,6 +119,7 @@ export const Matrix = (props: Props) => {
     </Container>
   );
 }
+
 
 const Container = styled.div`
   position: relative;

@@ -2,16 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 import { Kami } from "layers/network/shapes/Kami";
-import {
-  Skill,
-  Requirement,
-  meetsSkillCost,
-  isSkillMaxxed,
-  meetsSkillRequirement
-} from "layers/network/shapes/Skill";
+import { Skill } from "layers/network/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { playClick } from 'utils/sounds';
-import { useRect } from "./useRect";
 
 
 interface Props {
@@ -27,28 +20,23 @@ export const Node = (props: Props) => {
   const { skill, nodeRects, setNodeRects, setHovered, setSelected } = props;
   const myRef = useRef<HTMLDivElement>(null);
 
+
   useEffect(() => {
     // Function to update the bounding rectangle
     const updateRect = () => {
       if (myRef.current) {
         const newRect = myRef.current.getBoundingClientRect();
-        console.log(`Node${skill.index} Rect: `, newRect);
         setNodeRects(new Map(nodeRects.set(skill.index * 1, newRect)));
       }
     };
 
-    // call it once on startup after mounting
-    updateRect();
-
     // Set up a resize observer to update the rectangle when the window resizes
     const resizeObserver = new ResizeObserver(updateRect);
     if (myRef.current) resizeObserver.observe(myRef.current);
-
-    // Clean up the observer when the component unmounts
     return () => {
       if (myRef.current) resizeObserver.unobserve(myRef.current);
     };
-  }, []); // Empty dependency array means this effect runs once after mount
+  }, []);
 
 
   const handleClick = () => {

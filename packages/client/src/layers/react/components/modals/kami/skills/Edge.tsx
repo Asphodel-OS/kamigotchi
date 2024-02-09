@@ -4,11 +4,12 @@ import styled from 'styled-components';
 interface Props {
   from: number;
   to: number;
+  baseRect: DOMRect;
   nodeRects: Map<number, DOMRect>;
 }
 
 export const Edge = (props: Props) => {
-  const { from, to, nodeRects } = props;
+  const { from, to, baseRect, nodeRects } = props;
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [len, setLen] = useState(0);
@@ -16,19 +17,15 @@ export const Edge = (props: Props) => {
 
 
   useEffect(() => {
-    const rectBase = nodeRects.get(0);
     const rect1 = nodeRects.get(from);
     const rect2 = nodeRects.get(to);
-    console.log('rectBase:', rectBase);
-    console.log('rect1:', rect1);
-    console.log('rect2:', rect2);
-    if (!rectBase || !rect1 || !rect2) return
+    if (!baseRect || !rect1 || !rect2) return
 
     // get the relative coordinates of our nodes
-    const x1 = rect1.x + rect1.width / 2 - rectBase.x;
-    const y1 = rect1.y + rect1.height / 2 - rectBase.y;
-    const x2 = rect2.x + rect2.width / 2 - rectBase.x;
-    const y2 = rect2.y + rect2.height / 2 - rectBase.y;
+    const x1 = rect1.x + rect1.width / 2 - baseRect.x;
+    const y1 = rect1.y + rect1.height / 2 - baseRect.y;
+    const x2 = rect2.x + rect2.width / 2 - baseRect.x;
+    const y2 = rect2.y + rect2.height / 2 - baseRect.y;
 
     // set our origin, len and angle
     setX(x1);
