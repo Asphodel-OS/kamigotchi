@@ -26,7 +26,7 @@ export const getUpgradeError = (index: number, kami: Kami, registry: Map<number,
   for (let req of rSkill.requirements ?? []) {
     if (!meetsRequirement(req, kami)) return [
       `Unmet Requirement:`,
-      `${parseRequirementText(req, registry)}`,
+      `- ${parseRequirementText(req, registry)}`,
     ];
   }
 
