@@ -3,14 +3,16 @@ import styled from "styled-components";
 
 import { Details } from "./Details";
 import { Matrix } from "./Matrix";
+import { Account } from "layers/network/shapes/Account";
 import { Kami } from "layers/network/shapes/Kami";
 import { Skill } from "layers/network/shapes/Skill";
 import { playClick } from 'utils/sounds';
 
 
 interface Props {
+  account: Account;
   kami: Kami;
-  skills: Skill[];
+  skills: Skill[]; // registry skills
   actions: {
     upgrade: Function;
   }
@@ -18,7 +20,7 @@ interface Props {
 
 export const Skills = (props: Props) => {
   // console.log('mSkill:', props.kami);
-  const { skills, kami, actions } = props;
+  const { account, kami, skills, actions } = props;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(0);
@@ -57,7 +59,7 @@ export const Skills = (props: Props) => {
   return (
     <Wrapper>
       <Details
-        data={{ kami, index: displayed, registry: skills }}
+        data={{ account, kami, index: displayed, registry: skills }}
         actions={{ upgrade: (skill: Skill) => triggerUpgrade(skill) }}
       />
       <Matrix

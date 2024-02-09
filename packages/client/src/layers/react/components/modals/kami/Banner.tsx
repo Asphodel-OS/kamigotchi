@@ -9,6 +9,7 @@ import { useVisibility } from "layers/react/store/visibility";
 import { playClick } from "utils/sounds";
 import { Account } from "layers/network/shapes/Account";
 
+
 interface Props {
   data: {
     account: Account;
@@ -64,6 +65,10 @@ export const Banner = (props: Props) => {
     return kami.account?.index === account.index;
   }
 
+  const getLevelUpDisabledReason = () => {
+    if (!isMine(kami)) return 'not ur kami';
+  }
+
   const handleAccountClick = () => {
     if (!isMine(kami)) return () => {
       setAccount(kami.account?.index || 0);
@@ -87,6 +92,8 @@ export const Banner = (props: Props) => {
               current={kami.experience.current}
               total={kami.experience.threshold}
               triggerLevelUp={() => props.actions.levelUp(kami)}
+              disabled={!isMine(kami)}
+              disabledReason={getLevelUpDisabledReason()}
             />
           </TitleRow>
         </ContentTop>

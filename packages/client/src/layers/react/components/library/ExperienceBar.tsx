@@ -3,17 +3,27 @@ import styled from 'styled-components';
 import { ActionButton } from './ActionButton';
 import { Tooltip } from './Tooltip';
 
-interface ExperienceBarProps {
+interface Props {
   level: number;
   current: number;
   total: number;
+  disabled?: boolean; // external override to disable level up button
+  disabledReason?: string; // reason for external override
   triggerLevelUp: Function;
 }
 
-export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, total, triggerLevelUp }) => {
-
+export const ExperienceBar = (props: Props) => {
+  const { level, current, total, triggerLevelUp, disabled, disabledReason } = props;
   const percentage = Math.round((current / total) * 1000) / 10;
-  const canLevelUp = current >= total;
+  const canLevelUp = (!disabled) && (current >= total);
+
+
+  const getLevelUpTooltip = () => {
+    if (disabledReason) return [disabledReason];
+    if (!canLevelUp) return [`Not enough exprience points.`];
+    return [`Level Up`];
+  }
+
 
   return (
     <Wrapper>
@@ -24,7 +34,7 @@ export const ExperienceBar: React.FC<ExperienceBarProps> = ({ level, current, to
           <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
         </BarContainer>
       </Tooltip>
-      <Tooltip text={['Level Up']}>
+      <Tooltip text={getLevelUpTooltip()}>
         <ActionButton
           id={`level-button`}
           onClick={() => triggerLevelUp()}

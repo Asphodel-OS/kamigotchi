@@ -118,6 +118,7 @@ export function registerKamiModal() {
           {(tab === 'battles') && <KillLogs kami={getSelectedKami()} />}
           {(tab === 'traits') && <Traits kami={getSelectedKami()} />}
           {(tab === 'skills') && <Skills
+            account={account}
             kami={getSelectedKami()}
             skills={getRegistrySkills(network)}
             actions={{ upgrade: upgradeSkill }}

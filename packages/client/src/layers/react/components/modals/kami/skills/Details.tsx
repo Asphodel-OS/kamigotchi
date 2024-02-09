@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { Account } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import {
   Skill,
@@ -13,6 +14,7 @@ import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library
 
 interface Props {
   data: {
+    account: Account;
     kami: Kami;
     index: number; // index of the skill
     registry: Skill[]; // list of skills in the registry
@@ -34,7 +36,10 @@ export const Details = (props: Props) => {
   useEffect(() => {
     setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
     setRSkill(data.registry.find((s) => s.index * 1 === data.index)); // registry skill instance
-    setDisabledReason(getSkillUpgradeError(data.index, data.kami, data.registry));
+    setDisabledReason((data.kami.account?.index !== data.account.index)
+      ? ['not ur kami']
+      : getSkillUpgradeError(data.index, data.kami, data.registry)
+    );
   }, [data.index, data.kami]);
 
 
