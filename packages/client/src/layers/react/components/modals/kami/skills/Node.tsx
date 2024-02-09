@@ -21,15 +21,16 @@ interface Props {
   setSelected: (skillIndex: number) => void;
 }
 
-export const SkillNode = (props: Props) => {
+export const Node = (props: Props) => {
   const { skill, kami, nodeRects, setHovered, setSelected } = props;
-  const myRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (myRef.current) {
-      nodeRects.set(skill.index * 1, myRef.current.getBoundingClientRect());
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      nodeRects.set(skill.index * 1, rect);
     }
-  }, []);
+  }, [ref.current]);
 
   const handleClick = () => {
     playClick();
@@ -38,7 +39,7 @@ export const SkillNode = (props: Props) => {
 
   if (!skill) return <></>;
   return (
-    <Container key={skill.index} ref={myRef}>
+    <Container key={skill.index} ref={ref}>
       <Tooltip text={[`${skill.name}`]} key={skill.index}>
         <Image src={skill.uri}
           onClick={handleClick}
@@ -62,7 +63,7 @@ const Image = styled.img`
 
 const Container = styled.div`
   margin: 1vw;
-
+  z-index: 1;
   pointer-events: auto;
   &:disabled {
     background-color: #b2b2b2;

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { SkillNode } from './SkillNode';
+import { Node } from './Node';
+import { Edge } from './Edge';
 import { SkillTrees } from 'constants/skills/trees';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
@@ -19,6 +20,15 @@ export const Matrix = (props: Props) => {
   const { kami, skills, setHovered, setSelected } = props;
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
   const [nodeRects, setNodeRects] = useState(new Map<number, DOMRect>());
+  const [contentRect, setContentRect] = useState<DOMRect | undefined>(undefined);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // 
+  useEffect(() => {
+    const currRef = contentRef.current;
+    if (currRef) setContentRect(currRef.getBoundingClientRect());
+    console.log('contentRect:', currRef, contentRect);
+  }, [contentRef.current]);
 
   // select the root node of each tree whenever view mode changes
   useEffect(() => {
@@ -43,11 +53,11 @@ export const Matrix = (props: Props) => {
           ))}
         </TreeButtons>
       </TopRow>
-      <Content>
+      <Content ref={contentRef}>
         {SkillTrees.get(mode)!.map((row, i) => (
           <NodeRow key={i}>
             {row.map((index) => (
-              <SkillNode
+              <Node
                 key={index}
                 kami={kami}
                 skill={skills.get(index)!}
@@ -58,11 +68,12 @@ export const Matrix = (props: Props) => {
             ))}
           </NodeRow>
         ))}
+        <Edge from={1} to={5} baseRect={contentRect} nodeRects={nodeRects} />
+        <Edge from={1} to={110} baseRect={contentRect} nodeRects={nodeRects} />
       </Content>
     </Container>
   );
 }
-
 
 const Container = styled.div`
   position: relative;
