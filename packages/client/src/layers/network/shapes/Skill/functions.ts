@@ -44,7 +44,7 @@ export const parseRequirementText = (requirement: Requirement, registry: Skill[]
       return `Kami Lvl${requirement.value}`;
     case 'SKILL':
       const skillName = registry.find((entry) => entry.index === requirement.index)?.name;
-      return `${skillName} Lvl${(requirement.value ?? 0) * 1}`;
+      return `Lvl${(requirement.value ?? 0) * 1} ${skillName}`;
     default:
       return ' ???';
   }
@@ -110,18 +110,4 @@ export const meetsRequirement = (requirement: Requirement, holder: Account | Kam
       console.warn('Unknown requirement type', requirement.type);
       return false;
   }
-}
-
-// check whether a holder meets the required level of a skill
-const meetsRequiredLevel = (requirement: Requirement, holder: Account | Kami) => {
-  const target = requirement.value as number || 0;
-  const current = holder.level;
-  return current >= target;
-}
-
-// check whether a holder meets the required skill level of a skill
-const meetsRequiredSkill = (requirement: Requirement, holder: Account | Kami) => {
-  const target = requirement.value as number || 0;
-  const current = holder.skills?.find((n) => n.index === requirement.index)?.points.current || 0;
-  return current >= target;
 }
