@@ -1,34 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
   from: number;
   to: number;
-  baseRect: DOMRect | undefined;
   nodeRects: Map<number, DOMRect>;
 }
 
 export const Edge = (props: Props) => {
-  const { from, to, baseRect, nodeRects } = props;
-  const rect1 = nodeRects.get(from);
-  const rect2 = nodeRects.get(to);
+  const { from, to, nodeRects } = props;
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [len, setLen] = useState(0);
+  const [angle, setAngle] = useState(0);
 
-  if (!baseRect || !rect1 || !rect2) return <></>;
 
-  // get the relative coordinates of node1
-  const x1 = rect1.x + rect1.width / 2 - baseRect.x;
-  const y1 = rect1.y + rect1.height / 2 - baseRect.y;
+  useEffect(() => {
+    const rectBase = nodeRects.get(0);
+    const rect1 = nodeRects.get(from);
+    const rect2 = nodeRects.get(to);
+    console.log('rectBase:', rectBase);
+    console.log('rect1:', rect1);
+    console.log('rect2:', rect2);
+    if (!rectBase || !rect1 || !rect2) return
 
-  // get the relative coordinates of node2
-  const x2 = rect2.x + rect2.width / 2 - baseRect.x;
-  const y2 = rect2.y + rect2.height / 2 - baseRect.y;
+    // get the relative coordinates of our nodes
+    const x1 = rect1.x + rect1.width / 2 - rectBase.x;
+    const y1 = rect1.y + rect1.height / 2 - rectBase.y;
+    const x2 = rect2.x + rect2.width / 2 - rectBase.x;
+    const y2 = rect2.y + rect2.height / 2 - rectBase.y;
 
-  // calculate the length and angle of the line
-  const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-  const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+    // set our origin, len and angle
+    setX(x1);
+    setY(y1);
+    setLen(Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2));
+    setAngle(Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI));
+  }, [nodeRects]);
 
-  return <Line x={x1} y={y1} len={len} angle={angle} />;
+
+  return <Line x={x} y={y} len={len} angle={angle} />;
 }
+
 
 const Line = styled.div<{ x: number, y: number, len: number, angle: number }>`
   position: absolute;

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 import { Kami } from "layers/network/shapes/Kami";
@@ -11,26 +11,45 @@ import {
 } from "layers/network/shapes/Skill";
 import { Tooltip } from "layers/react/components/library/Tooltip";
 import { playClick } from 'utils/sounds';
+import { useRect } from "./useRect";
 
 
 interface Props {
   skill: Skill;
   kami: Kami;
   nodeRects: Map<number, DOMRect>;
+  setNodeRects: (nodeRects: Map<number, DOMRect>) => void;
   setHovered: (skillIndex: number) => void;
   setSelected: (skillIndex: number) => void;
 }
 
 export const Node = (props: Props) => {
-  const { skill, kami, nodeRects, setHovered, setSelected } = props;
-  const ref = useRef<HTMLDivElement>(null);
+  const { skill, nodeRects, setNodeRects, setHovered, setSelected } = props;
+  const myRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      nodeRects.set(skill.index * 1, rect);
-    }
-  }, [ref.current]);
+    // Function to update the bounding rectangle
+    const updateRect = () => {
+      if (myRef.current) {
+        const newRect = myRef.current.getBoundingClientRect();
+        console.log(`Node${skill.index} Rect: `, newRect);
+        setNodeRects(new Map(nodeRects.set(skill.index * 1, newRect)));
+      }
+    };
+
+    // call it once on startup after mounting
+    updateRect();
+
+    // Set up a resize observer to update the rectangle when the window resizes
+    const resizeObserver = new ResizeObserver(updateRect);
+    if (myRef.current) resizeObserver.observe(myRef.current);
+
+    // Clean up the observer when the component unmounts
+    return () => {
+      if (myRef.current) resizeObserver.unobserve(myRef.current);
+    };
+  }, []); // Empty dependency array means this effect runs once after mount
+
 
   const handleClick = () => {
     playClick();
@@ -39,9 +58,10 @@ export const Node = (props: Props) => {
 
   if (!skill) return <></>;
   return (
-    <Container key={skill.index} ref={ref}>
+    <Container key={skill.index} ref={myRef}>
       <Tooltip text={[`${skill.name}`]} key={skill.index}>
-        <Image src={skill.uri}
+        <Image
+          src={skill.uri}
           onClick={handleClick}
           onMouseEnter={() => setHovered(skill.index * 1)}
           onMouseLeave={() => setHovered(0)}
@@ -53,8 +73,8 @@ export const Node = (props: Props) => {
 
 
 const Image = styled.img`
-  border: solid black .15vw;
   border-radius: 1.5vw;
+  
   width: 6vw;
   &:hover {
     opacity: 0.6;
@@ -62,12 +82,11 @@ const Image = styled.img`
 `;
 
 const Container = styled.div`
+  border: solid black .15vw;
+  border-radius: 1.5vw;
   margin: 1vw;
+  
+  background-color: black;
   z-index: 1;
   pointer-events: auto;
-  &:disabled {
-    background-color: #b2b2b2;
-    cursor: default;
-    pointer-events: none;
-  }
 `;
