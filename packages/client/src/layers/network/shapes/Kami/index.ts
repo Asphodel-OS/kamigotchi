@@ -12,6 +12,7 @@ export {
   isResting,
   isUnrevealed,
   isOffWorld,
+  isWithAccount,
   getLocation,
   calcIdleTime,
   calcHarvestTime,

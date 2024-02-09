@@ -36,12 +36,28 @@ export const isOffWorld = (kami: Kami): boolean => {
   return kami.state === '721_EXTERNAL';
 };
 
+// checks whether a kami is with its owner
+export const isWithAccount = (kami: Kami): boolean => {
+  if (isDead(kami) || isResting(kami) || isUnrevealed(kami)) return true;
+  if (isOffWorld(kami)) return false;
+  if (isHarvesting(kami)) {
+    const accLoc = kami.account?.location ?? 0;
+    const kamiLoc = kami.production?.node?.location ?? 0;
+    if (accLoc == 0 || kamiLoc == 0) console.warn(
+      `Invalid Location for kami ${kami.index * 1}\n\tProduction: ${kamiLoc} \n\tAccount: ${accLoc}`
+    );
+    return accLoc === kamiLoc;
+  }
+  console.warn(`Invalid State ${kami.state} for kami ${kami.index * 1}`)
+  return false
+}
+
 // interpret the location of the kami based on the kami's state (using Account and Production Node)
 // return 0 if the location cannot be determined from information provided
 export const getLocation = (kami: Kami): number => {
   let location = 0;
   if (isOffWorld(kami)) location = 0;
-  else if (isHarvesting(kami)) getProductionLocation(kami.production);
+  else if (isHarvesting(kami)) return getProductionLocation(kami.production);
   else {
     if (!kami.account) location = 0;
     else location = kami.account.location;

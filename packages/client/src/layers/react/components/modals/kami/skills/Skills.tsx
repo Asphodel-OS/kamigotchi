@@ -17,6 +17,7 @@ interface Props {
 }
 
 export const Skills = (props: Props) => {
+  // console.log('mSkill:', props.kami);
   const { skills, kami, actions } = props;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
   const [selected, setSelected] = useState(0);

@@ -1,14 +1,17 @@
 import { Effect, Requirement, Skill } from "./types";
 import { Account } from "../Account";
-import { Kami } from "../Kami";
+import { Kami, isStarving, isDead, isOffWorld, isWithAccount } from "../Kami";
 
 
 // get the reason why a player cannot upgrade a skill
 // checking (in order) location/status, maxxed out, requirements unmet, not enough points
-// TODO: actually check for location instead of being lazy
+// NOTE: assumes Account, Skills and Production are attached to the input Kami
 export const getUpgradeError = (index: number, kami: Kami, registry: Skill[]) => {
   // status/location check
-  if (kami.state !== 'RESTING') return [`${kami.name} must be Resting`];
+  if (isDead(kami)) return [`${kami.name} is Dead`];
+  if (isOffWorld(kami)) return [`${kami.name} is Off World`];
+  if (isStarving(kami)) return [`${kami.name} is Starving`];
+  if (!isWithAccount(kami)) return [`${kami.name} is too far away.`];
 
   // registry check
   const rSkill = registry.find((s) => s.index * 1 === index);
