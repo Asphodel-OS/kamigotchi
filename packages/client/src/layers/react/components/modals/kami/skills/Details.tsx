@@ -16,8 +16,8 @@ interface Props {
   data: {
     account: Account;
     kami: Kami;
-    index: number; // index of the skill
-    registry: Skill[]; // list of skills in the registry
+    skills: Map<number, Skill>; // Map of Skills in the registry (by index)
+    index: number; // index of the displayed skill
   }
   actions: {
     upgrade: (skill: Skill) => void
@@ -34,11 +34,11 @@ export const Details = (props: Props) => {
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
+    setRSkill(data.skills.get(data.index)); // registry skill instance
     setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
-    setRSkill(data.registry.find((s) => s.index * 1 === data.index)); // registry skill instance
     setDisabledReason((data.kami.account?.index !== data.account.index)
       ? ['not ur kami']
-      : getSkillUpgradeError(data.index, data.kami, data.registry)
+      : getSkillUpgradeError(data.index, data.kami, data.skills)
     );
   }, [data.index, data.kami]);
 
@@ -122,7 +122,7 @@ export const Details = (props: Props) => {
       <LabeledList
         label='Requirements'
         values={(rSkill.requirements ?? []).map(
-          (req) => parseRequirementText(req, data.registry)
+          (req) => parseRequirementText(req, data.skills)
         )}
       />
     </Container>

@@ -20,6 +20,7 @@ export const Matrix = (props: Props) => {
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
   const [nodeRects, setNodeRects] = useState(new Map<number, DOMRect>());
 
+  // select the root node of each tree whenever view mode changes
   useEffect(() => {
     setSelected(SkillTrees.get(mode)![0][0]);
   }, [mode]);
@@ -42,7 +43,7 @@ export const Matrix = (props: Props) => {
           ))}
         </TreeButtons>
       </TopRow>
-      <NodeMatrix>
+      <Content>
         {SkillTrees.get(mode)!.map((row, i) => (
           <NodeRow key={i}>
             {row.map((index) => (
@@ -57,7 +58,7 @@ export const Matrix = (props: Props) => {
             ))}
           </NodeRow>
         ))}
-      </NodeMatrix>
+      </Content>
     </Container>
   );
 }
@@ -78,7 +79,7 @@ const TopRow = styled.div`
   padding: 1vw .6vw;
   height: 3vw;
   background-color: #999;
-  opacity: .6;
+  opacity: .9;
   position: absolute;
 
   display: flex;
@@ -88,11 +89,15 @@ const TopRow = styled.div`
 `;
 
 const PointsText = styled.div`
-  padding: 1vw 1vw;
+  border: solid black .15vw;
+  border-radius: .6vw;
+  background-color: #ffffff;
+  padding: .6vw;
+  opacity: 1;
 
   color: black;
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: .9vw;
   text-align: left;
 `;
 
@@ -107,7 +112,7 @@ const TreeButtons = styled.div`
   gap: .6vw;
 `;
 
-const NodeMatrix = styled.div`
+const Content = styled.div`
   padding-top: 3vw;
   display: flex;
   flex-flow: column nowrap;

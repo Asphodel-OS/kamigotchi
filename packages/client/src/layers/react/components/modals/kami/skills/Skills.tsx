@@ -22,16 +22,17 @@ export const Skills = (props: Props) => {
   // console.log('mSkill:', props.kami);
   const { account, kami, skills, actions } = props;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
-  const [selected, setSelected] = useState(0);
-  const [hovered, setHovered] = useState(0);
-  const [displayed, setDisplayed] = useState(0);
+  const [selected, setSelected] = useState(0);   // index of selected (anchored) skill
+  const [hovered, setHovered] = useState(0);     // index of hovered skill
+  const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
-  // keep a hashmap of Skill indices to Skill objects for easy lookup
+
+  // keep a hashmap for easy lookup of Skill Indices => Skill Objects
   useEffect(() => {
-    const result = skills.reduce((map: Map<number, Skill>, skill) => {
-      map.set(skill.index * 1, skill);
-      return map;
-    }, new Map<number, Skill>());
+    const result = skills.reduce(
+      (map, skill) => map.set(skill.index * 1, skill),
+      new Map<number, Skill>()
+    );
     setSkillMap(result);
   }, [skills.length]);
 
@@ -59,7 +60,7 @@ export const Skills = (props: Props) => {
   return (
     <Wrapper>
       <Details
-        data={{ account, kami, index: displayed, registry: skills }}
+        data={{ account, kami, index: displayed, skills: skillMap }}
         actions={{ upgrade: (skill: Skill) => triggerUpgrade(skill) }}
       />
       <Matrix

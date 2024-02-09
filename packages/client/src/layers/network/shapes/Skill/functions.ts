@@ -6,7 +6,7 @@ import { Kami, isStarving, isDead, isOffWorld, isWithAccount } from "../Kami";
 // get the reason why a player cannot upgrade a skill
 // checking (in order) location/status, maxxed out, requirements unmet, not enough points
 // NOTE: assumes Account, Skills and Production are attached to the input Kami
-export const getUpgradeError = (index: number, kami: Kami, registry: Skill[]) => {
+export const getUpgradeError = (index: number, kami: Kami, registry: Map<number, Skill>) => {
   // status/location check
   if (isDead(kami)) return [`${kami.name} is Dead`];
   if (isOffWorld(kami)) return [`${kami.name} is Off World`];
@@ -14,7 +14,7 @@ export const getUpgradeError = (index: number, kami: Kami, registry: Skill[]) =>
   if (!isWithAccount(kami)) return [`${kami.name} is too far away.`];
 
   // registry check
-  const rSkill = registry.find((s) => s.index * 1 === index);
+  const rSkill = registry.get(index);
   if (!rSkill) return ['Skill not found'];
 
   // maxxed out check
@@ -38,12 +38,14 @@ export const getUpgradeError = (index: number, kami: Kami, registry: Skill[]) =>
 }
 
 // parse the description of a skill requirement from its components
-export const parseRequirementText = (requirement: Requirement, registry: Skill[]): string => {
+export const parseRequirementText = (requirement: Requirement, registry: Map<number, Skill>): string => {
+  const index = (requirement.index ?? 0) * 1;
+
   switch (requirement.type) {
     case 'LEVEL':
       return `Kami Lvl${requirement.value}`;
     case 'SKILL':
-      const skillName = registry.find((entry) => entry.index === requirement.index)?.name;
+      const skillName = registry.get(index!)?.name;
       return `Lvl${(requirement.value ?? 0) * 1} ${skillName}`;
     default:
       return ' ???';
