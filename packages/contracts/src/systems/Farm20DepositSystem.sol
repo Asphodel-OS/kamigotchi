@@ -31,7 +31,7 @@ contract Farm20DepositSystem is System {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Deposit: no account detected");
     require(
-      LibAccount.getLocation(components, accountID) == ROOM,
+      LibAccount.getRoom(components, accountID) == ROOM,
       "Farm20Deposit: must be in room 12"
     );
 

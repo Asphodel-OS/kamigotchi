@@ -40,7 +40,7 @@ contract Pet721MintSystem is System {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Pet721Mint: no account");
     require(
-      LibAccount.getLocation(components, accountID) == ROOM,
+      LibAccount.getRoom(components, accountID) == ROOM,
       "Pet721Mint: must be in room 4 "
     );
 

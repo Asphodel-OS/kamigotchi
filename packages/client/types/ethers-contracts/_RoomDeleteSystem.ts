@@ -120,7 +120,7 @@ export interface _RoomDeleteSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      room: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -138,7 +138,7 @@ export interface _RoomDeleteSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    location: PromiseOrValue<BigNumberish>,
+    room: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -156,7 +156,7 @@ export interface _RoomDeleteSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      room: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -186,7 +186,7 @@ export interface _RoomDeleteSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      room: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -205,7 +205,7 @@ export interface _RoomDeleteSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      location: PromiseOrValue<BigNumberish>,
+      room: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

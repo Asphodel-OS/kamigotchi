@@ -172,8 +172,8 @@ contract FeedingTest is SetupTemplate {
     }
   }
 
-  // test that feeding is restricted by pet location in respect to account
-  function testFeedLocationConstraints() public {
+  // test that feeding is restricted by pet roomIndex in respect to account
+  function testFeedRoomIndexConstraints() public {
     uint foodIndex;
     uint npcIndex = LibNPC.getIndex(components, _npcID);
     _createFoodListings(npcIndex);
@@ -193,7 +193,7 @@ contract FeedingTest is SetupTemplate {
       _startProduction(petIDs[i], _nodeID);
     }
 
-    // test that we Can feed pets at the current location
+    // test that we Can feed pets at the current roomIndex
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);

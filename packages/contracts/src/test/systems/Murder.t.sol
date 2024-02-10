@@ -139,7 +139,7 @@ contract MurderTest is SetupTemplate {
   }
 
   // test that the player must be in the same room to command liquidations
-  function testMurderAccountLocationConstraints() public {
+  function testMurderAccountRoomIndexConstraints() public {
     uint numPets = 5; // number of kamis per account
     uint playerIndex = 0; // the player we're playing with
     uint nodeID = _nodeIDs[0];
@@ -192,13 +192,13 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // confirm we CANNOT liquidate from the wrong nodes
-    uint location;
+    uint roomIndex;
     uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 1; i < _nodeIDs.length; i++) {
       // move to the room where the Node is
-      location = LibNode.getLocation(components, _nodeIDs[i]);
-      if (LibAccount.getLocation(components, _getAccount(playerIndex)) != location) {
-        _moveAccount(playerIndex, location);
+      roomIndex = LibNode.getRoom(components, _nodeIDs[i]);
+      if (LibAccount.getRoom(components, _getAccount(playerIndex)) != roomIndex) {
+        _moveAccount(playerIndex, roomIndex);
       }
 
       // start productions for all pets
@@ -218,9 +218,9 @@ contract MurderTest is SetupTemplate {
     }
 
     // move to the room where Node1 is
-    location = LibNode.getLocation(components, _nodeIDs[0]);
-    if (LibAccount.getLocation(components, _getAccount(playerIndex)) != location) {
-      _moveAccount(playerIndex, location);
+    roomIndex = LibNode.getRoom(components, _nodeIDs[0]);
+    if (LibAccount.getRoom(components, _getAccount(playerIndex)) != roomIndex) {
+      _moveAccount(playerIndex, roomIndex);
     }
 
     // start harvest on right Node for second account's kamis
@@ -379,7 +379,7 @@ contract MurderTest is SetupTemplate {
   //   for (uint i = 0; i < numPlayers; i++) {
   //     for (uint j = 0; j < numPets; j++) {
   //       nodeID = _nodeIDs[uint(keccak256(abi.encodePacked(i, j))) % _nodeIDs.length];
-  //       _moveAccount(i, LibNode.getLocation(components, nodeID));
+  //       _moveAccount(i, LibNode.getRoom(components, nodeID));
   //       _startProduction(_petIDs[i][j], nodeID);
   //     }
   //   }
@@ -411,7 +411,7 @@ contract MurderTest is SetupTemplate {
   //     _fastForward((rand % 1 hours) + 15 minutes);
 
   //     // get the player and pet ready
-  //     _moveAccount(playerIndex, LibNode.getLocation(components, nodeID));
+  //     _moveAccount(playerIndex, LibNode.getRoom(components, nodeID));
   //     _feedPet(attackerID, 1);
 
   //     // fast forward by idle requirement
@@ -433,7 +433,7 @@ contract MurderTest is SetupTemplate {
 
   //       // put them on new node
   //       nodeID = _nodeIDs[rand % _nodeIDs.length];
-  //       _moveAccount(_getOwnerPlayerIndex(victimID), LibNode.getLocation(components, nodeID));
+  //       _moveAccount(_getOwnerPlayerIndex(victimID), LibNode.getRoom(components, nodeID));
   //       _startProduction(victimID, nodeID);
   //     }
   //   }

@@ -18,7 +18,7 @@ contract _NodeCreateSystem is System {
     (
       uint256 index,
       string memory nodeType,
-      uint256 location,
+      uint256 roomIndex,
       string memory name,
       string memory description,
       string memory affinity
@@ -27,7 +27,7 @@ contract _NodeCreateSystem is System {
 
     require(id == 0, "Node: already exists");
 
-    id = LibNode.create(world, components, index, nodeType, location);
+    id = LibNode.create(world, components, index, nodeType, roomIndex);
     LibNode.setName(components, id, name);
     LibNode.setDescription(components, id, description);
     if (!LibString.eq(affinity, "")) {
@@ -39,11 +39,11 @@ contract _NodeCreateSystem is System {
   function executeTyped(
     uint256 index,
     string memory nodeType,
-    uint256 location,
+    uint256 roomIndex,
     string memory name,
     string memory description,
     string memory affinity
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, nodeType, location, name, description, affinity));
+    return execute(abi.encode(index, nodeType, roomIndex, name, description, affinity));
   }
 }

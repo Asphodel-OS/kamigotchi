@@ -48,7 +48,7 @@ contract ProductionLiquidateSystem is System {
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "FarmLiquidate: target too far");
     require(
-      LibAccount.sharesLocation(components, accountID, nodeID),
+      LibAccount.sharesRoom(components, accountID, nodeID),
       "FarmLiquidate: node too far"
     );
 

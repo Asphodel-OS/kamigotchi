@@ -8,8 +8,8 @@ import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
 import _NodeDeleteSystem from "../abi/_NodeDeleteSystem.json";
 import _NPCCreateSystem from "../abi/_NPCCreateSystem.json";
-import _NPCSetLocationSystem from "../abi/_NPCSetLocationSystem.json";
 import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
+import _NPCSetRoomSystem from "../abi/_NPCSetRoomSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateItemConsumableSystem from "../abi/_RegistryCreateItemConsumableSystem.json";
@@ -95,8 +95,8 @@ export const SystemAbis = {
   "system._Node.Create": _NodeCreateSystem.abi,
   "system._Node.Delete": _NodeDeleteSystem.abi,
   "system._NPC.Create": _NPCCreateSystem.abi,
-  "system._NPC.Set.Location": _NPCSetLocationSystem.abi,
   "system._NPC.Set.Name": _NPCSetNameSystem.abi,
+  "system._NPC.Set.Room": _NPCSetRoomSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem.abi,

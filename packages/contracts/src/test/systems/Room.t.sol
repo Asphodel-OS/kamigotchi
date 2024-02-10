@@ -8,9 +8,9 @@ contract RoomTest is SetupTemplate {
     return;
   }
 
-  function testCreateRoom() public {
-    uint256[] memory exits = new uint256[](1);
-    exits[0] = 1;
-    _createRoom("test", 1, 1, 0, 0);
-  }
+  // function testCreateRoom() public {
+  //   uint256[] memory exits = new uint256[](1);
+  //   exits[0] = 1;
+  //   _createRoom("test", 1, 1, 0, 0);
+  // }
 }

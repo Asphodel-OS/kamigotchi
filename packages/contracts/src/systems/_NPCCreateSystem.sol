@@ -13,7 +13,7 @@ contract _NPCCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name, uint256 location) = abi.decode(
+    (uint256 index, string memory name, uint256 roomIndex) = abi.decode(
       arguments,
       (uint256, string, uint256)
     );
@@ -21,15 +21,15 @@ contract _NPCCreateSystem is System {
 
     require(id == 0, "NPC: already exists");
 
-    id = LibNPC.create(world, components, index, name, location);
+    id = LibNPC.create(world, components, index, name, roomIndex);
     return abi.encode(id);
   }
 
   function executeTyped(
     uint256 index,
     string memory name,
-    uint256 location
+    uint256 roomIndex
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, name, location));
+    return execute(abi.encode(index, name, roomIndex));
   }
 }

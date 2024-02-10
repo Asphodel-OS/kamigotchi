@@ -73,7 +73,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "location",
+          "name": "roomIndex",
           "type": "uint256"
         }
       ],

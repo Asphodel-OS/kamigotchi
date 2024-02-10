@@ -7,6 +7,8 @@ import "std-contracts/test/MudTest.t.sol";
 import { Deploy } from "test/Deploy.sol";
 import "./TestSetupImports.sol";
 
+import { Location } from "libraries/LibRoom.sol";
+
 abstract contract SetupTemplate is TestSetupImports {
   uint _currTime;
   address[] internal _owners;
@@ -54,11 +56,12 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   // sets up rooms to a default state. override to change/remove behaviour if needed
+  // is a big square with every room connected to each other
   function setUpRooms() public virtual {
-    _createRoom("testRoom1", 1, 2, 3, 4);
-    _createRoom("testRoom2", 2, 1, 3, 4);
-    _createRoom("testRoom3", 3, 1, 2, 4);
-    _createRoom("testRoom4", 4, 1, 2, 3);
+    _createRoom("testRoom1", Location(1, 1, 0), 1, 4);
+    _createRoom("testRoom2", Location(2, 1, 0), 2, 3);
+    _createRoom("testRoom3", Location(1, 2, 0), 3, 2);
+    _createRoom("testRoom4", Location(2, 2, 0), 4, 1);
   }
 
   function _fastForward(uint timeDelta) internal {
@@ -167,12 +170,20 @@ abstract contract SetupTemplate is TestSetupImports {
   // OPERATOR ACTIONS
 
   // attempt to move an account if it's not already there
-  function _moveAccount(uint playerIndex, uint location) internal {
-    if (location != LibAccount.getLocation(components, _getAccount(playerIndex))) {
+  function _moveAccount(uint playerIndex, uint256 room) internal {
+    if (
+        room !=
+        LibAccount.getRoom(components, _getAccount(playerIndex))
+    ) {
       address operator = _operators[_owners[playerIndex]];
       vm.prank(operator);
-      _AccountMoveSystem.executeTyped(location);
+      _AccountMoveSystem.executeTyped(room);
     }
+  }
+
+  function _moveAccount(uint playerIndex, Location memory location) internal {
+    uint256 roomID = LibRoom.queryByLocation(components, location);
+    return _moveAccount(playerIndex, LibRoom.getIndex(components, roomID));
   }
 
   function _buyFromListing(uint playerIndex, uint listingID, uint amount) internal {
@@ -315,32 +326,38 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // WORLD POPULATION
 
-  // create a room with up to three exits
-  // 0s represent empty inputs
+  function _createRoom(string memory name, Location memory location, uint index) internal {
+    uint256[] memory exits = new uint256[](0);
+    vm.prank(deployer);
+    __RoomCreateSystem.executeTyped(location, index, name, "", exits);
+  }
+
   function _createRoom(
     string memory name,
-    uint location,
-    uint exit1,
-    uint exit2,
-    uint exit3
+    Location memory location,
+    uint index,
+    uint256 exit1
   ) internal {
-    uint numExits = 3;
-    if (exit1 == 0) numExits--;
-    if (exit2 == 0) numExits--;
-    if (exit3 == 0) numExits--;
-
-    uint[] memory exits = new uint[](numExits);
-    if (numExits > 0) exits[0] = exit1;
-    if (numExits > 1) exits[1] = exit2;
-    if (numExits > 2) exits[2] = exit3;
+    uint256[] memory exits = new uint256[](1);
+    exits[0] = exit1;
 
     vm.prank(deployer);
-    __RoomCreateSystem.executeTyped(location, name, "", exits);
+    __RoomCreateSystem.executeTyped(location, index, name, "", exits);
+  }
+
+  function _createRoom(
+    string memory name,
+    Location memory location,
+    uint index,
+    uint256[] memory exits
+  ) internal {
+    vm.prank(deployer);
+    __RoomCreateSystem.executeTyped(location, index, name, "", exits);
   }
 
   function _createHarvestingNode(
     uint index,
-    uint location,
+    uint roomIndex,
     string memory name,
     string memory description,
     string memory affinity
@@ -349,7 +366,7 @@ abstract contract SetupTemplate is TestSetupImports {
     bytes memory nodeID = __NodeCreateSystem.executeTyped(
       index,
       "HARVEST",
-      location,
+      roomIndex,
       name,
       description,
       affinity
@@ -357,9 +374,9 @@ abstract contract SetupTemplate is TestSetupImports {
     return abi.decode(nodeID, (uint));
   }
 
-  function _createNPC(uint index, uint location, string memory name) public returns (uint) {
+  function _createNPC(uint index, uint roomIndex, string memory name) public returns (uint) {
     vm.prank(deployer);
-    bytes memory merchantID = __NPCCreateSystem.executeTyped(index, name, location);
+    bytes memory merchantID = __NPCCreateSystem.executeTyped(index, name, roomIndex);
     return abi.decode(merchantID, (uint));
   }
 
@@ -407,11 +424,11 @@ abstract contract SetupTemplate is TestSetupImports {
     uint index,
     string memory name,
     string memory description,
-    uint location,
+    uint room,
     uint duration
   ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name, description, location, duration);
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, room, duration);
   }
 
   function _createQuestObjective(
@@ -838,5 +855,12 @@ abstract contract SetupTemplate is TestSetupImports {
     // Liquidation Bounty
     _setConfig("LIQ_BOUNTY_BASE", 50);
     _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
+  }
+
+  ///////////////////////
+  // UTILS
+
+  function assertEq(Location memory a, Location memory b) public {
+    assertTrue(a.x == b.x && a.y == b.y && a.z == b.z);
   }
 }
