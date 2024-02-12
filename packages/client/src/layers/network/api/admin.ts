@@ -48,15 +48,15 @@ export function createAdminAPI(systems: any) {
   /////////////////
   //  NPCs
 
-  // (creates an NPC with the name at the specified location
-  async function createNPC(index: number, name: string, location: number) {
+  // (creates an NPC with the name at the specified roomIndex
+  async function createNPC(index: number, name: string, roomIndex: number) {
     await sleepIf();
-    return systems['system._NPC.Create'].executeTyped(index, name, location);
+    return systems['system._NPC.Create'].executeTyped(index, name, roomIndex);
   }
 
-  async function setNPCLocation(index: number, location: number) {
+  async function setNPCRoom(index: number, roomIndex: number) {
     await sleepIf();
-    return systems['system._NPC.Set.Location'].executeTyped(index, location);
+    return systems['system._NPC.Set.Room'].executeTyped(index, roomIndex);
   }
 
   async function setNPCName(index: number, name: string) {
@@ -82,7 +82,7 @@ export function createAdminAPI(systems: any) {
     return systems['system.Pet.Gacha.Mint'].init(0);
   }
 
-  // sets the prices for the merchant at the specified location
+  // sets the prices for the merchant at the specified roomIndex
   async function setListing(
     merchantIndex: number,
     itemIndex: number,
@@ -101,17 +101,17 @@ export function createAdminAPI(systems: any) {
   /////////////////
   //  NODES
 
-  // @dev creates an emission node at the specified location
+  // @dev creates an emission node at the specified roomIndex
   // @param index       the human-readable index of the node
   // @param type        type of the node (e.g. HARVEST, HEAL, ARENA)
-  // @param location    index of the room location
+  // @param roomIndex    index of the room roomIndex
   // @param name        name of the node
   // @param description description of the node, exposed on the UI
   // @param affinity    affinity of the node [ NORMAL | EERIE | INSECT | SCRAP ]
   async function createNode(
     index: number,
     type: string,
-    location: number,
+    roomIndex: number,
     name: string,
     description: string,
     affinity: string
@@ -120,7 +120,7 @@ export function createAdminAPI(systems: any) {
     return systems['system._Node.Create'].executeTyped(
       index,
       type,
-      location,
+      roomIndex,
       name,
       description,
       affinity
@@ -143,7 +143,7 @@ export function createAdminAPI(systems: any) {
     index: number,
     name: string,
     description: string,
-    location: number,
+    roomIndex: number,
     repeatTime: number
   ) {
     await sleepIf();
@@ -151,7 +151,7 @@ export function createAdminAPI(systems: any) {
       index,
       name,
       description,
-      location,
+      roomIndex,
       repeatTime
     );
   }
@@ -214,15 +214,46 @@ export function createAdminAPI(systems: any) {
   /////////////////
   //  ROOMS
 
-  // @dev creates a room with name, location and exits. cannot overwrite room at location
-  async function createRoom(location: number, name: string, description: string, exits: number[]) {
+  // @dev creates a room with name, roomIndex and exits. cannot overwrite room at roomIndex
+  async function createRoom(
+    location: { x: number; y: number; z: number },
+    roomIndex: number,
+    name: string,
+    description: string,
+    exits: number[]
+  ) {
     await sleepIf();
-    return systems['system._Room.Create'].executeTyped(location, name, description, exits);
+    return systems['system._Room.Create'].executeTyped(
+      location,
+      roomIndex,
+      name,
+      description,
+      exits.length == 0 ? [] : exits
+    );
   }
 
-  async function deleteRoom(location: number) {
+  async function createRoomGate(
+    roomIndex: number,
+    sourceIndex: number,
+    conditionIndex: number,
+    conditionValue: number,
+    logicType: string,
+    type: string
+  ) {
     await sleepIf();
-    return systems['system._Room.Delete'].executeTyped(location);
+    return systems['system._Room.Create.Gate'].executeTyped(
+      roomIndex,
+      sourceIndex,
+      conditionIndex,
+      conditionValue,
+      logicType,
+      type
+    );
+  }
+
+  async function deleteRoom(roomIndex: number) {
+    await sleepIf();
+    return systems['system._Room.Delete'].executeTyped(roomIndex);
   }
 
   /////////////////
@@ -544,7 +575,7 @@ export function createAdminAPI(systems: any) {
     npc: {
       create: createNPC,
       set: {
-        location: setNPCLocation,
+        room: setNPCRoom,
         name: setNPCName,
       },
     },
@@ -602,6 +633,7 @@ export function createAdminAPI(systems: any) {
     },
     room: {
       create: createRoom,
+      createGate: createRoomGate,
       delete: deleteRoom,
     },
   };

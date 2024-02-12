@@ -36,8 +36,8 @@ abstract contract SetupTemplate is TestSetupImports {
 
     // placeholder: init components that may not be alr init
     // LibQuery bugs out when querying an empty component set
-    vm.prank(deployer);
-    _IndexSourceComponent.set(0, 0);
+    // vm.prank(deployer);
+    // _IndexSourceComponent.set(0, 0);
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed
@@ -181,10 +181,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // attempt to move an account if it's not already there
   function _moveAccount(uint playerIndex, uint256 room) internal {
-    if (
-        room !=
-        LibAccount.getRoom(components, _getAccount(playerIndex))
-    ) {
+    if (room != LibAccount.getRoom(components, _getAccount(playerIndex))) {
       address operator = _operators[_owners[playerIndex]];
       vm.prank(operator);
       _AccountMoveSystem.executeTyped(room);

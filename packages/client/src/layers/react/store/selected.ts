@@ -8,7 +8,7 @@ export interface State {
   listingEntityIndex: EntityIndex;
   nodeIndex: number;
   npcIndex: number;
-  roomLocation: number;
+  roomIndex: number;
 }
 
 interface Actions {
@@ -18,7 +18,7 @@ interface Actions {
   setListing: (listingEntityIndex: EntityIndex) => void;
   setNode: (nodeIndex: number) => void;
   setNpc: (npcIndex: number) => void;
-  setRoom: (roomLocation: number) => void;
+  setRoom: (roomIndex: number) => void;
 }
 
 export const useSelected = create<State & Actions>((set) => {
@@ -29,18 +29,24 @@ export const useSelected = create<State & Actions>((set) => {
     listingEntityIndex: 0 as EntityIndex,
     nodeIndex: 0 as number,
     npcIndex: 0 as number,
-    roomLocation: 0 as number,
+    roomIndex: 0 as number,
   };
 
   return {
     ...initialState,
-    setAccount: (accountIndex: number) => set((state: State) => ({ ...state, accountIndex })),
-    setDialogue: (dialogueIndex: number) => set((state: State) => ({ ...state, dialogueIndex })),
-    setKami: (kamiIndex: number) => set((state: State) => ({ ...state, kamiIndex })),
+    setAccount: (accountIndex: number) =>
+      set((state: State) => ({ ...state, accountIndex })),
+    setDialogue: (dialogueIndex: number) =>
+      set((state: State) => ({ ...state, dialogueIndex })),
+    setKami: (kamiIndex: number) =>
+      set((state: State) => ({ ...state, kamiIndex })),
     setListing: (listingEntityIndex: EntityIndex) =>
       set((state: State) => ({ ...state, listingEntityIndex })),
-    setNode: (nodeIndex: number) => set((state: State) => ({ ...state, nodeIndex })),
-    setNpc: (npcIndex: number) => set((state: State) => ({ ...state, npcIndex })),
-    setRoom: (roomLocation: number) => set((state: State) => ({ ...state, roomLocation })),
+    setNode: (nodeIndex: number) =>
+      set((state: State) => ({ ...state, nodeIndex })),
+    setNpc: (npcIndex: number) =>
+      set((state: State) => ({ ...state, npcIndex })),
+    setRoom: (roomIndex: number) =>
+      set((state: State) => ({ ...state, roomIndex })),
   };
 });

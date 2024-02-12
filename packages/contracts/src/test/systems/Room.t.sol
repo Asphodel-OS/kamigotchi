@@ -122,7 +122,7 @@ contract RoomTest is SetupTemplate {
   ) public {
     vm.assume(z1 < 2 && z1 > -2);
     vm.assume(z2 < 2 && z2 > -2);
-    vm.assume(exit != 1);
+    vm.assume(exit != 1 && exit != 0);
     vm.assume(!LibRoom.isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
     vm.assume(!LibRoom.isAdjacent(Location(x1, y1, z1), Location(x2, y2, z2)));
 

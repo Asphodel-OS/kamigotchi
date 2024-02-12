@@ -13,7 +13,7 @@ import Sprite12 from './Sprite-0012.png';
 import Sprite13 from './Sprite-0013.png';
 import Sprite14 from './Sprite-0014.png';
 
-export const location = {
+export const rooms = {
   Sprite1,
   Sprite2,
   Sprite3,

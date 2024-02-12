@@ -12,7 +12,7 @@ import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggers/triggerER
 import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
 
 export const room12: Room = {
-  location: 12,
+  roomIndex: 12,
   background: {
     key: 'bg_room012',
     path: backgroundDefault,

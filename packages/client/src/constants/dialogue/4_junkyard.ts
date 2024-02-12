@@ -9,7 +9,7 @@ export default [];
 // };
 //
 // export const room4: Room = {
-//   location: 4,
+//   roomIndex: 4,
 //   background: {
 //     key: 'bg_room004',
 //     path: backgroundNight,

@@ -3,7 +3,7 @@ import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room1: Room = {
-  location: 1,
+  roomIndex: 1,
   background: {
     key: 'bg_room001',
     path: backgroundSign,
