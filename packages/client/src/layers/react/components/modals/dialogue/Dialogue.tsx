@@ -5,10 +5,10 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { DialogueNode, dialogues } from 'constants/dialogue';
-import { getRoomByLocation } from 'layers/network/shapes/Room';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { getRoomByIndex } from 'layers/network/shapes/Room';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
@@ -54,17 +54,17 @@ export function registerDialogueModal() {
       //////////////////
       // ACTIONS
 
-      const move = (location: number) => {
-        const room = getRoomByLocation(network, location);
+      const move = (roomIndex: number) => {
+        const room = getRoomByIndex(network, roomIndex);
         const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
 
         network.actions?.add({
           id: actionID,
           action: 'AccountMove',
-          params: [location],
+          params: [roomIndex],
           description: `Moving to ${room.name}`,
           execute: async () => {
-            const roomMovment = await network.api.player.account.move(location);
+            const roomMovment = await network.api.player.account.move(roomIndex);
             return roomMovment;
           },
         });

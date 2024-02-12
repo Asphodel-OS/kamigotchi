@@ -112,6 +112,8 @@ library LibRoom {
 
     uint256[] memory exits = getSpecialExits(components, fromID);
     for (uint256 i; i < exits.length; i++) if (exits[i] == toIndex) return true;
+
+    return false;
   }
 
   /// @notice checks if accessability conditions to a room are met
@@ -283,10 +285,6 @@ library LibRoom {
     IUintComp components,
     uint256 toIndex
   ) internal view returns (uint256[] memory) {
-    IndexSourceComponent sourceComp = IndexSourceComponent(
-      getAddressById(components, IndexSourceCompID)
-    );
-
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.Has,

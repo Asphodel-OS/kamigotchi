@@ -1,24 +1,29 @@
-export {
-  calcCooldownRemaining,
-  calcHarvestTime,
-  calcHealth,
-  calcIdleTime,
-  calcLiqThresholdValue,
-  calcOutput,
-  canHarvest,
-  canLiquidate,
-  canMog,
-  getLocation,
-  isDead,
-  isFull,
-  isHarvesting,
-  isOffWorld,
-  isResting,
-  isStarving,
-  isUnrevealed,
-  isWithAccount,
-  onCooldown,
-} from './functions';
-export { getAllKamis, getKamiByIndex, queryKamiEntitiesX, queryKamisX } from './queries';
-export { getKami } from './types';
 export type { Kami, Options } from './types';
+export { getKami } from './types';
+export {
+  queryKamisX,
+  queryKamiEntitiesX,
+  getKamiByIndex,
+  getAllKamis,
+} from './queries';
+export {
+  isDead,
+  isHarvesting,
+  isResting,
+  isUnrevealed,
+  isOffWorld,
+  isWithAccount,
+  getRoomIndex,
+  calcIdleTime,
+  calcHarvestTime,
+  calcCooldownRemaining,
+  onCooldown,
+  calcHealth,
+  isFull,
+  isStarving,
+  calcOutput,
+  calcLiqThresholdValue,
+  canHarvest,
+  canMog,
+  canLiquidate,
+} from './functions';

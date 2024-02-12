@@ -10,7 +10,7 @@ import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room9: Room = {
-  location: 9,
+  roomIndex: 9,
   background: {
     key: 'bg_room009',
     path: backgroundDefault,

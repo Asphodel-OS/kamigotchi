@@ -1,22 +1,27 @@
-import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
+import { EntityIndex, EntityID, getComponentValue } from '@latticexyz/recs';
 
-import { NetworkLayer } from 'layers/network/types';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
-import { getData } from '../Data';
+import { Kami, queryKamisX } from '../Kami';
+import { GachaCommit, queryAccCommits } from '../Gacha';
+import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
+import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
+import {
+  Quest,
+  getCompletedQuests,
+  getOngoingQuests,
+  parseQuestsStatus,
+} from '../Quest';
+import { Skill } from '../Skill/types';
 import {
   Friendship,
-  getAccBlocked,
   getAccFriends,
   getAccIncomingRequests,
   getAccOutgoingRequests,
+  getAccBlocked,
 } from '../Friendship';
-import { GachaCommit, queryAccCommits } from '../Gacha';
-import { Inventory, queryInventoryX, sortInventories } from '../Inventory';
-import { Kami, queryKamisX } from '../Kami';
-import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
-import { Skill } from '../Skill/types';
+import { getData } from '../Data';
+import { NetworkLayer } from 'layers/network/types';
 
 // standardized shape of an Account Entity
 export interface Account {
@@ -27,7 +32,7 @@ export interface Account {
   operatorEOA: string;
   name: string;
   coin: number;
-  location: number;
+  roomIndex: number;
   level: number;
   questPoints: number;
   skillPoints: number;
@@ -105,7 +110,7 @@ export const getAccount = (
       Coin,
       LastActionTime,
       LastTime,
-      Location,
+      RoomIndex,
       Name,
       OperatorAddress,
       OwnerAddress,
@@ -121,22 +126,31 @@ export const getAccount = (
     id: world.entities[entityIndex],
     index: getComponentValue(AccountIndex, entityIndex)?.value as number,
     ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
-    operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+    operatorEOA: getComponentValue(OperatorAddress, entityIndex)
+      ?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
     coin: (getComponentValue(Coin, entityIndex)?.value || (0 as number)) * 1,
-    location: (getComponentValue(Location, entityIndex)?.value || (0 as number)) * 1,
+    roomIndex:
+      (getComponentValue(RoomIndex, entityIndex)?.value || (0 as number)) * 1,
     level: 0, // placeholder
-    questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
+    questPoints:
+      (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
     skillPoints: 0, // placeholder
     stamina: {
-      total: (getComponentValue(Stamina, entityIndex)?.value || (20 as number)) * 1,
-      last: (getComponentValue(StaminaCurrent, entityIndex)?.value || (0 as number)) * 1,
-      recoveryPeriod: getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') * 1,
+      total:
+        (getComponentValue(Stamina, entityIndex)?.value || (20 as number)) * 1,
+      last:
+        (getComponentValue(StaminaCurrent, entityIndex)?.value ||
+          (0 as number)) * 1,
+      recoveryPeriod:
+        getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') * 1,
     },
     time: {
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
-      lastMove: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
-      creation: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
+      lastMove:
+        (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
+      creation:
+        (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
   };
 
@@ -214,8 +228,16 @@ export const getAccount = (
   // populate Quests
   if (options?.quests) {
     account.quests = {
-      ongoing: parseQuestsStatus(network, account, getOngoingQuests(network, account.id)),
-      completed: parseQuestsStatus(network, account, getCompletedQuests(network, account.id)),
+      ongoing: parseQuestsStatus(
+        network,
+        account,
+        getOngoingQuests(network, account.id)
+      ),
+      completed: parseQuestsStatus(
+        network,
+        account,
+        getCompletedQuests(network, account.id)
+      ),
     };
   }
 

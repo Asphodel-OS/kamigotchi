@@ -26,7 +26,7 @@ const waterfall: DialogueNode = {
 export default [stonelantern, smallshrine, waterfall];
 
 // export const room11: Room = {
-//   location: 11,
+//   roomIndex: 11,
 //   background: {
 //     key: 'bg_room011',
 //     path: backgroundDefault,

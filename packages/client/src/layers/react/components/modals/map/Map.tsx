@@ -1,19 +1,19 @@
+import React, { useEffect, useState } from 'react';
+import { interval, map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 
+import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Room, getRoomByLocation } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelected } from 'layers/react/store/selected';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Room, queryRoomsX } from 'layers/network/shapes/Room';
 import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected } from 'layers/react/store/selected';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
-import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -42,7 +42,7 @@ export function registerMapModal() {
       const { actions, api } = network;
 
       // console.log('mRoom: ', data)
-      const { roomLocation, setRoom } = useSelected();
+      const { roomIndex, setRoom } = useSelected();
       const { modals } = useVisibility();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
@@ -50,46 +50,52 @@ export function registerMapModal() {
       /////////////////
       // DATA FETCHING
 
-      // set selected room location to the player's current one when map modal is opened
+      // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
-        if (modals.map) setRoom(data.account.location);
+        if (modals.map) setRoom(data.account.roomIndex);
       }, [modals.map]);
 
       // update the selected room details
       useEffect(() => {
-        if (roomLocation) {
-          const roomObject = getRoomByLocation(network, roomLocation, {
-            players: true,
-          });
+        if (roomIndex) {
+          const roomArr = queryRoomsX(
+            network,
+            { index: roomIndex },
+            { exits: true, players: true }
+          );
+          if (roomArr.length == 0) {
+            console.warn('no room found');
+            return;
+          }
+
+          const roomObject = roomArr[0];
           setSelectedRoom(roomObject);
 
-          const exits = roomObject.exits
-            ? roomObject.exits.map((exit) => getRoomByLocation(network, exit))
-            : [];
+          const exits = roomObject.exits ? roomObject.exits : [];
           setSelectedExits(exits);
         }
-      }, [roomLocation, data.account]);
+      }, [roomIndex, data.account]);
 
       ///////////////////
       // ACTIONS
 
-      const move = (location: number) => {
-        const room = getRoomByLocation(network, location);
+      const move = (targetRoom: number) => {
+        const room = queryRoomsX(network, { index: targetRoom })[0];
         const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountMove',
-          params: [location],
+          params: [targetRoom],
           description: `Moving to ${room.name}`,
           execute: async () => {
-            return api.player.account.move(location);
+            return api.player.account.move(targetRoom);
           },
         });
       };
 
-      const handleClick = (location: number) => {
+      const handleClick = (targetRoom: number) => {
         playClick();
-        move(location);
+        move(targetRoom);
       };
 
       const ExitsDisplay = () => {
@@ -99,8 +105,8 @@ export function registerMapModal() {
             {selectedExits.map((exit) => {
               return (
                 <ClickableDescription
-                  key={exit.location}
-                  onClick={() => handleClick(exit.location)}
+                  key={exit.index}
+                  onClick={() => handleClick(exit.index)}
                 >
                   → {exit.name}
                 </ClickableDescription>
@@ -117,7 +123,9 @@ export function registerMapModal() {
         <ModalWrapper
           id='world_map'
           divName='map'
-          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
+          header={
+            <ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />
+          }
           footer={<ExitsDisplay />}
           canExit
         >
