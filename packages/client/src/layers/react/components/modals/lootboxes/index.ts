@@ -1,3 +1,3 @@
-import { registerLootboxesModal } from "./Lootboxes";
+import { registerLootboxesModal } from './Lootboxes';
 
 export { registerLootboxesModal };

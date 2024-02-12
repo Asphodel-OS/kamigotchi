@@ -1,6 +1,6 @@
 import { Wallet } from 'ethers';
-import { SetupContractConfig } from "@latticexyz/std-client";
-import { ExternalProvider } from "@ethersproject/providers";
+import { SetupContractConfig } from '@latticexyz/std-client';
+import { ExternalProvider } from '@ethersproject/providers';
 import { chainConfigs } from 'constants/chains';
 
 // flat network configuration struct
@@ -21,7 +21,9 @@ export type NetworkConfig = {
 };
 
 // shape a flat NetworkConfig struct into lattice's SetupContractConfig struct
-const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) => ({
+const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (
+  config
+) => ({
   clock: {
     period: 1000,
     initialTime: 0,
@@ -47,9 +49,10 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) =>
   snapshotServiceUrl: config.snapshotUrl,
 });
 
-
 // Populate the network config based on url params
-export function createConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
+export function createConfig(
+  externalProvider?: ExternalProvider
+): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
   // get the determined environment mode
@@ -79,17 +82,19 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
   }
 
   if (
-    config.worldAddress
-    && config.jsonRpc
-    && config.chainId
-    && (config.privateKey || config.externalProvider)
+    config.worldAddress &&
+    config.jsonRpc &&
+    config.chainId &&
+    (config.privateKey || config.externalProvider)
   ) {
     return shape(config);
   }
 }
 
 // Get the network config of a local deployment based on url params
-function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfig {
+function createConfigRawLocal(
+  externalProvider?: ExternalProvider
+): NetworkConfig {
   const params = new URLSearchParams(window.location.search);
 
   let config: NetworkConfig = <NetworkConfig>{};
@@ -106,7 +111,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
       );
     } else {
       const detectedPrivateKey = localStorage.getItem('operatorPrivateKey');
-      wallet = (detectedPrivateKey)
+      wallet = detectedPrivateKey
         ? new Wallet(detectedPrivateKey)
         : Wallet.createRandom();
 
@@ -116,8 +121,9 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   }
 
   // RPCs
-  const jsonRpc = params.get('rpc') || "http://localhost:8545";
-  const wsRpc = params.get('wsRpc') || (jsonRpc && jsonRpc.replace("http", "ws"));
+  const jsonRpc = params.get('rpc') || 'http://localhost:8545';
+  const wsRpc =
+    params.get('wsRpc') || (jsonRpc && jsonRpc.replace('http', 'ws'));
   config.jsonRpc = jsonRpc;
   config.wsRpc = wsRpc;
 
@@ -138,19 +144,20 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   let initialBlockNumberString = params.get('initialBlockNumber') || '0';
   config.initialBlockNumber = parseInt(initialBlockNumberString);
 
-
   return config;
 }
 
 // Get the network config of a deployment to Optimism testnet
-function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkConfig {
+function createConfigRawOPSepolia(
+  externalProvider?: ExternalProvider
+): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
-    jsonRpc: "https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7",
-    wsRpc: "wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f",
-    snapshotUrl: "https://snapshot.asphodel.io",
+    jsonRpc: 'https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7',
+    wsRpc: 'wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f',
+    snapshotUrl: 'https://snapshot.asphodel.io',
 
     chainId: 11155420,
-    worldAddress: "0xcfb6aa5e713cEf37e7688544CdbA50d80cE04EE6",
+    worldAddress: '0xcfb6aa5e713cEf37e7688544CdbA50d80cE04EE6',
     initialBlockNumber: 5913546,
   };
 
@@ -159,9 +166,9 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
     config.externalProvider = externalProvider;
   } else {
     // either pull or set up local burner
-    let privateKey = localStorage.getItem("operatorPrivateKey");
+    let privateKey = localStorage.getItem('operatorPrivateKey');
     const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
-    localStorage.setItem("operatorPrivateKey", wallet.privateKey);
+    localStorage.setItem('operatorPrivateKey', wallet.privateKey);
     config.privateKey = wallet.privateKey;
   }
   return config;
@@ -171,7 +178,8 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
 const getModeOverride = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const modeOverride = urlParams.get('mode');
-  if (modeOverride) console.warn(`Environment mode override ${modeOverride} detected.`);
+  if (modeOverride)
+    console.warn(`Environment mode override ${modeOverride} detected.`);
   else return;
 
   // return the mode override if it is a valid one
@@ -185,4 +193,4 @@ const getModeOverride = () => {
       `Defaulting to environment mode.`
     );
   }
-}
+};

@@ -11,7 +11,6 @@ import { Listing, getListing } from './Listing';
 import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
 
-
 // standardized shape of a FE Merchant Entity
 export interface Merchant {
   id: EntityID;
@@ -25,16 +24,11 @@ export interface Merchant {
 // get an Merchant from its EntityIndex
 export const getMerchant = (
   network: NetworkLayer,
-  entityIndex: EntityIndex,
+  entityIndex: EntityIndex
 ): Merchant => {
   const {
     world,
-    components: {
-      IsListing,
-      Location,
-      NPCIndex,
-      Name,
-    },
+    components: { IsListing, Location, NPCIndex, Name },
   } = network;
 
   let merchant: Merchant = {
@@ -44,42 +38,38 @@ export const getMerchant = (
     name: getComponentValue(Name, entityIndex)?.value as string,
     location: getComponentValue(Location, entityIndex)?.value as number,
     listings: [],
-  }
+  };
 
   // retrieve item details based on the registry
   const listingResults = Array.from(
-    runQuery([
-      Has(IsListing),
-      HasValue(NPCIndex, { value: merchant.index }),
-    ])
+    runQuery([Has(IsListing), HasValue(NPCIndex, { value: merchant.index })])
   );
 
-  let listings = listingResults.map((entityIndex) => getListing(network, entityIndex));
+  let listings = listingResults.map((entityIndex) =>
+    getListing(network, entityIndex)
+  );
   merchant.listings = listings.sort((a, b) => a.buyPrice - b.buyPrice);
 
   return merchant;
-}
+};
 
 // the Merchant Index here is actually an NPCIndex
 export const getMerchantByIndex = (network: NetworkLayer, index: number) => {
-  const { components: { IsNPC, NPCIndex } } = network;
+  const {
+    components: { IsNPC, NPCIndex },
+  } = network;
   const entityIndex = Array.from(
-    runQuery([
-      Has(IsNPC),
-      HasValue(NPCIndex, { value: numberToHex(index) }),
-    ])
+    runQuery([Has(IsNPC), HasValue(NPCIndex, { value: numberToHex(index) })])
   )[0];
 
   return getMerchant(network, entityIndex);
-}
+};
 
 export const getAllMerchants = (network: NetworkLayer) => {
-  const { components: { IsNPC } } = network;
-  const entityIndices = Array.from(
-    runQuery([
-      Has(IsNPC),
-    ])
-  );
+  const {
+    components: { IsNPC },
+  } = network;
+  const entityIndices = Array.from(runQuery([Has(IsNPC)]));
 
   return entityIndices.map((entityIndex) => getMerchant(network, entityIndex));
-}
+};

@@ -14,7 +14,6 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
-
 const mqttServerUrl = 'wss://chatserver.asphodel.io:8083/mqtt';
 const mqttTopic = 'kamigotchi';
 
@@ -75,7 +74,7 @@ export function registerChatModal() {
       const options = {
         connectTimeout: 300000,
         reconnectPeriod: 10000,
-      }
+      };
 
       const relay: mqtt.MqttClient = mqtt.connect(mqttServerUrl, options);
 
@@ -108,7 +107,7 @@ export function registerChatModal() {
 
         return () => {
           if (chatName) postMessage('<['.concat(chatName, '] went offline>'));
-          sub.unsubscribe(mqttTopic, function (err: any) { });
+          sub.unsubscribe(mqttTopic, function (err: any) {});
         };
       }, [chatName]);
 
@@ -139,7 +138,11 @@ export function registerChatModal() {
 
       const messageLines = messages.map((message) => (
         <li
-          style={{ fontFamily: 'Pixel', fontSize: '12px', listStyleType: 'none' }}
+          style={{
+            fontFamily: 'Pixel',
+            fontSize: '12px',
+            listStyleType: 'none',
+          }}
           key={message.seenAt}
         >
           {`${message.message}`}
@@ -151,7 +154,7 @@ export function registerChatModal() {
 
       // array of blocked domains
       const hasURL = (string: string) => {
-        const blockedDomains = [".com", ".co", ".xyz", ".net", ".io", ".org"];
+        const blockedDomains = ['.com', '.co', '.xyz', '.net', '.io', '.org'];
         // checks if string is a url
         let has = false;
         for (let i = 0; i < blockedDomains.length; i++) {
@@ -160,18 +163,18 @@ export function registerChatModal() {
           }
         }
         return has;
-      }
+      };
 
       return (
-        <ModalWrapper divName="chat" id="chat_modal">
+        <ModalWrapper divName='chat' id='chat_modal'>
           <ChatWrapper>
             <ChatFeed style={{ pointerEvents: 'auto' }}>
               {messageLines}
-              <div id="botElement"> </div>
+              <div id='botElement'> </div>
             </ChatFeed>
             <ChatInput
               style={{ pointerEvents: 'auto' }}
-              type="text"
+              type='text'
               onKeyDown={(e) => catchKeys(e)}
               value={chatInput}
               onChange={(e) => handleChange(e)}
@@ -203,7 +206,7 @@ const ChatWrapper = styled.div`
 const ChatFeed = styled.div`
   overflow: scroll;
   padding: 10px 12px 25px 12px;
-  
+
   flex-grow: 1;
   color: black;
   font-family: Pixel;

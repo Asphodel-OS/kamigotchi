@@ -1,5 +1,5 @@
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 import React, { useEffect } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
@@ -13,7 +13,6 @@ import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
-
 export function registerDialogueModal() {
   registerUIComponent(
     'DialogueModal',
@@ -25,15 +24,20 @@ export function registerDialogueModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      return { network: layers.network };
-    })),
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          return { network: layers.network };
+        })
+      ),
 
     // Render
     ({ network }) => {
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
-      const [dialogueNode, setDialogueNode] = React.useState({ text: [''] } as DialogueNode);
+      const [dialogueNode, setDialogueNode] = React.useState({
+        text: [''],
+      } as DialogueNode);
       const [dialogueLength, setDialogueLength] = React.useState(0);
       const [step, setStep] = React.useState(0);
 
@@ -47,13 +51,12 @@ export function registerDialogueModal() {
         setDialogueLength(dialogues[dialogueIndex].text.length);
       }, [dialogueIndex]);
 
-
       //////////////////
       // ACTIONS
 
       const move = (location: number) => {
         const room = getRoomByLocation(network, location);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
 
         network.actions?.add({
           id: actionID,
@@ -67,12 +70,11 @@ export function registerDialogueModal() {
         });
       };
 
-
       //////////////////
       // DISPLAY
 
       const BackButton = () => {
-        const disabled = (step === 0);
+        const disabled = step === 0;
         return (
           <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
             <ActionButton
@@ -83,14 +85,16 @@ export function registerDialogueModal() {
             />
           </div>
         );
-      }
+      };
 
       const NextButton = () => {
-        const disabled = (step === dialogueLength - 1);
+        const disabled = step === dialogueLength - 1;
         return (
-          <div style={{
-            visibility: disabled ? 'hidden' : 'visible',
-          }}>
+          <div
+            style={{
+              visibility: disabled ? 'hidden' : 'visible',
+            }}
+          >
             <ActionButton
               id='next'
               text='→'
@@ -99,17 +103,19 @@ export function registerDialogueModal() {
             />
           </div>
         );
-      }
+      };
 
       const MiddleButton = () => {
-        if (!dialogueNode.action) return (<div />);
+        if (!dialogueNode.action) return <div />;
         const action = dialogueNode.action;
-        const disabled = (step !== dialogueLength - 1) && !!action;
+        const disabled = step !== dialogueLength - 1 && !!action;
 
         return (
-          <div style={{
-            visibility: disabled ? 'hidden' : 'visible',
-          }}>
+          <div
+            style={{
+              visibility: disabled ? 'hidden' : 'visible',
+            }}
+          >
             <ActionButton
               id='middle'
               text={action.label}
@@ -118,15 +124,10 @@ export function registerDialogueModal() {
             />
           </div>
         );
-      }
+      };
 
       return (
-        <ModalWrapper
-          id='dialogue_modal'
-          divName='dialogue'
-          canExit
-          overlay
-        >
+        <ModalWrapper id='dialogue_modal' divName='dialogue' canExit overlay>
           <Text>
             {dialogueNode.text[step]}
             <ButtonRow>
@@ -135,7 +136,6 @@ export function registerDialogueModal() {
               <NextButton />
             </ButtonRow>
           </Text>
-
         </ModalWrapper>
       );
     }
@@ -166,7 +166,7 @@ const ButtonRow = styled.div`
   align-self: center;
   width: 100%;
   bottom: 0;
-  padding: .7vw;
+  padding: 0.7vw;
 
   display: flex;
   flex-flow: row nowrap;

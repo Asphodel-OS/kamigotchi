@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 interface Props {
   total: number;
@@ -12,7 +12,7 @@ const CountdownWrapper = styled.div`
   height: 1.1vw;
 `;
 
-const CountdownCircle = styled.div<{ percent: number, color: string }>`
+const CountdownCircle = styled.div<{ percent: number; color: string }>`
   position: absolute;
   top: 0;
   left: 0;

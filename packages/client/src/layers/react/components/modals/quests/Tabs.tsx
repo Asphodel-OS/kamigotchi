@@ -2,19 +2,17 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
-
 interface Props {
   tab: TabType;
   setTab: (tab: TabType) => void;
 }
 
 export const Tabs = (props: Props) => {
-
   // layer on a sound effect
   const setTab = async (tab: TabType) => {
     playClick();
     props.setTab(tab);
-  }
+  };
 
   return (
     <Container>
@@ -33,11 +31,11 @@ export const Tabs = (props: Props) => {
       </Button>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;
-  border-top: solid black .15vw;
+  border-top: solid black 0.15vw;
   background-color: white;
   display: flex;
   flex-flow: row nowrap;
@@ -46,7 +44,7 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: .5vw;
+  padding: 0.5vw;
   flex-grow: 1;
   color: black;
   justify-content: center;

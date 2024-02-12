@@ -1,8 +1,4 @@
-import {
-  EntityIndex,
-  EntityID,
-  getComponentValue,
-} from '@latticexyz/recs';
+import { EntityIndex, EntityID, getComponentValue } from '@latticexyz/recs';
 
 import { getConfigFieldValue } from '../Config';
 import { Kami, getKami } from '../Kami';
@@ -37,20 +33,12 @@ export const getProduction = (
 ): Production => {
   const {
     world,
-    components: {
-      Coin,
-      NodeID,
-      PetID,
-      LastTime,
-      Rate,
-      State,
-      StartTime,
-    },
+    components: { Coin, NodeID, PetID, LastTime, Rate, State, StartTime },
   } = network;
 
   let production: Production = {
     id: world.entities[index],
-    balance: (getComponentValue(Coin, index)?.value as number ?? 0) * 1,
+    balance: ((getComponentValue(Coin, index)?.value as number) ?? 0) * 1,
     rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
     time: {
@@ -68,7 +56,8 @@ export const getProduction = (
   if (options.kami) {
     const kamiID = getComponentValue(PetID, index)?.value as EntityID;
     const kamiEntityIndex = world.entityToIndex.get(kamiID);
-    if (kamiEntityIndex) production.kami = getKami(network, kamiEntityIndex, { account: true });
+    if (kamiEntityIndex)
+      production.kami = getKami(network, kamiEntityIndex, { account: true });
   }
 
   // populate Node
@@ -85,4 +74,4 @@ export const getProduction = (
   production.rate /= ratePrecision;
 
   return production;
-}
+};

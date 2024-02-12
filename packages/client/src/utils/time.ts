@@ -1,4 +1,4 @@
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction } from 'mobx';
 
 /**
  * A static time class that allows us to play time in the speed we want to.
@@ -35,7 +35,9 @@ export class Time {
    * Makes sure only the last call to setPacemaker actually sets the time.
    * @param pacemaker Callback with a reference to setTimestamp
    */
-  public setPacemaker(pacemaker: (setTimestamp: (timestamp: number) => void) => void) {
+  public setPacemaker(
+    pacemaker: (setTimestamp: (timestamp: number) => void) => void
+  ) {
     this.nonce++;
     const currentNonce = this.nonce;
     pacemaker((timestamp: number) => {
@@ -74,7 +76,7 @@ export class Time {
    * @returns Disposer to stop the interval
    */
   public setInterval(callback: () => unknown, interval: number) {
-    if (interval === 0) throw new Error("Interval must be greater than 0");
+    if (interval === 0) throw new Error('Interval must be greater than 0');
 
     let lastInvocation = this.timestamp;
 

@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { NodeImages } from 'constants/nodes';
-import { IconListButton } from "layers/react/components/library/IconListButton";
+import { IconListButton } from 'layers/react/components/library/IconListButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Node } from 'layers/network/shapes/Node';
-import { Kami, canHarvest, isResting, onCooldown } from 'layers/network/shapes/Kami';
+import {
+  Kami,
+  canHarvest,
+  isResting,
+  onCooldown,
+} from 'layers/network/shapes/Kami';
 import { harvestIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
-
 
 interface Props {
   account: Account;
@@ -22,7 +26,6 @@ interface Props {
 export const Banner = (props: Props) => {
   const [_, setLastRefresh] = useState(Date.now());
   const { account, node, kamis } = props;
-
 
   /////////////////
   // TRACKING
@@ -38,7 +41,6 @@ export const Banner = (props: Props) => {
     };
   }, []);
 
-
   /////////////////
   // INTERPRETATION
 
@@ -47,7 +49,7 @@ export const Banner = (props: Props) => {
     let text = getDisabledReason(kamis);
     if (text === '') text = 'Add Kami to Node';
     return text;
-  }
+  };
 
   const getDisabledReason = (kamis: Kami[]): string => {
     let reason = '';
@@ -72,8 +74,7 @@ export const Banner = (props: Props) => {
     }
 
     return reason;
-  }
-
+  };
 
   /////////////////
   // RENDERING
@@ -116,7 +117,7 @@ export const Banner = (props: Props) => {
 };
 
 const Container = styled.div`
-  border-bottom: solid black .15vw;
+  border-bottom: solid black 0.15vw;
   color: black;
 
   display: flex;
@@ -125,13 +126,13 @@ const Container = styled.div`
 
 const Image = styled.img`
   border-radius: 8px 0px 0px 0px;
-  border-right: solid black .15vw;
+  border-right: solid black 0.15vw;
   height: 11vw;
 `;
 
 const Content = styled.div`
   flex-grow: 1;
-  padding: 1.4vw .7vw .7vw .7vw;
+  padding: 1.4vw 0.7vw 0.7vw 0.7vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -151,7 +152,7 @@ const ButtonRow = styled.div`
 `;
 
 const TitleRow = styled.div`
-  padding: .3vw 0vw;
+  padding: 0.3vw 0vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -165,7 +166,7 @@ const TitleText = styled.p`
 
 const AffinityText = styled.div`
   color: #777;
-  padding-left: .5vw;
+  padding-left: 0.5vw;
   flex-grow: 1;
 
   font-family: Pixel;
@@ -175,10 +176,8 @@ const AffinityText = styled.div`
 const DescriptionText = styled.p`
   font-size: 0.7vw;
   font-family: Pixel;
-  line-height: .9vw;
+  line-height: 0.9vw;
   text-align: left;
-  padding-top: .4vw;
-  padding-left: .2vw;
+  padding-top: 0.4vw;
+  padding-left: 0.2vw;
 `;
-
-

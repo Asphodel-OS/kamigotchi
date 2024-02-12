@@ -10,7 +10,6 @@ import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerShopModal } from 'layers/phaser/utils/triggers/triggerShopModal';
 
-
 export const room13: Room = {
   location: 13,
   background: {

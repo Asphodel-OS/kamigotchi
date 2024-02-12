@@ -11,7 +11,6 @@ import { Kami, getKami } from './Kami';
 import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
 
-
 // standardized shape of a Node Entity
 export interface Node {
   id: EntityID;
@@ -39,7 +38,7 @@ interface Options {
 export const getNode = (
   network: NetworkLayer,
   entityIndex: EntityIndex,
-  options?: Options,
+  options?: Options
 ): Node => {
   const {
     world,
@@ -59,14 +58,14 @@ export const getNode = (
 
   let node: Node = {
     id: world.entities[entityIndex],
-    index: getComponentValue(NodeIndex, entityIndex)?.value as number * 1,
+    index: (getComponentValue(NodeIndex, entityIndex)?.value as number) * 1,
     entityIndex,
     type: getComponentValue(Type, entityIndex)?.value as string,
-    location: getComponentValue(Location, entityIndex)?.value as number * 1,
+    location: (getComponentValue(Location, entityIndex)?.value as number) * 1,
     name: getComponentValue(Name, entityIndex)?.value as string,
     description: getComponentValue(Description, entityIndex)?.value as string,
     affinity: getComponentValue(Affinity, entityIndex)?.value as string, // does this break if there's no affinity?
-  }
+  };
 
   // (option) get the kamis on this node
   if (options?.kamis) {
@@ -85,14 +84,17 @@ export const getNode = (
 
     // get list of kamis from list of productions
     for (let i = 0; i < productionEntityIndices.length; i++) {
-      const kamiID = getComponentValue(PetID, productionEntityIndices[i])?.value as EntityID;
+      const kamiID = getComponentValue(PetID, productionEntityIndices[i])
+        ?.value as EntityID;
       const kamiEntityIndex = world.entityToIndex.get(kamiID);
       if (kamiEntityIndex) {
-        kamis.push(getKami(
-          network,
-          kamiEntityIndex,
-          { account: true, production: true, traits: true }
-        ));
+        kamis.push(
+          getKami(network, kamiEntityIndex, {
+            account: true,
+            production: true,
+            traits: true,
+          })
+        );
       }
     }
 
@@ -115,37 +117,33 @@ export const getNode = (
   }
 
   return node;
-}
+};
 
 export const getNodeByIndex = (
   network: NetworkLayer,
   index: number,
-  options?: Options,
+  options?: Options
 ): Node => {
-  const { components: { IsNode, NodeIndex } } = network;
+  const {
+    components: { IsNode, NodeIndex },
+  } = network;
   const entityIndex = Array.from(
-    runQuery([
-      Has(IsNode),
-      HasValue(NodeIndex, { value: numberToHex(index) }),
-    ])
+    runQuery([Has(IsNode), HasValue(NodeIndex, { value: numberToHex(index) })])
   )[0];
 
   return getNode(network, entityIndex, options);
-}
+};
 
 export const getAllNodes = (
   network: NetworkLayer,
-  options?: Options,
+  options?: Options
 ): Node[] => {
-  const { components: { IsNode } } = network;
-  const entityIndices = Array.from(
-    runQuery([
-      Has(IsNode),
-    ])
-  );
+  const {
+    components: { IsNode },
+  } = network;
+  const entityIndices = Array.from(runQuery([Has(IsNode)]));
 
   return entityIndices.map((entityIndex) => {
     return getNode(network, entityIndex, options);
   });
-}
-
+};

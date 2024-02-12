@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import crypto from 'crypto';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -12,10 +12,9 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network'
+import { useNetwork } from 'layers/react/store/network';
 import { playClick, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
-
 
 // TODO: check for whether an account with the burner address already exists
 export function registerGasHarasser() {
@@ -29,21 +28,27 @@ export function registerGasHarasser() {
     },
     (layers) => of(layers),
     (layers) => {
-      const { network: { actions, world } } = layers;
-      const { selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const {
+        network: { actions, world },
+      } = layers;
+      const {
+        selectedAddress,
+        networks,
+        validations: networkValidations,
+      } = useNetwork();
       const { validators, setValidators } = useVisibility();
       const { account, validations, setValidations } = useAccount();
 
       const [hasGas, setHasGas] = useState(false);
       const [isVisible, setIsVisible] = useState(false);
-      const [value, setValue] = useState(.05);
+      const [value, setValue] = useState(0.05);
 
       const { data: OperatorBal } = useBalance({
         address: account.operatorAddress as `0x${string}`,
-        watch: true
+        watch: true,
       });
 
-      // run the primary check(s) for this validator, track in store for easy access 
+      // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
         const hasGas = Number(OperatorBal?.formatted) > 0;
         setHasGas(hasGas);
@@ -54,12 +59,12 @@ export function registerGasHarasser() {
       useEffect(() => {
         setIsVisible(
           defaultChain.id !== 31337 &&
-          networkValidations.isConnected &&
-          networkValidations.chainMatches &&
-          networkValidations.burnerMatches &&
-          validations.accountExists &&
-          validations.operatorMatches &&
-          !hasGas
+            networkValidations.isConnected &&
+            networkValidations.chainMatches &&
+            networkValidations.burnerMatches &&
+            validations.accountExists &&
+            validations.operatorMatches &&
+            !hasGas
         );
       }, [networkValidations, validations, hasGas]);
 
@@ -77,7 +82,6 @@ export function registerGasHarasser() {
         validators.operatorUpdater,
       ]);
 
-
       /////////////////
       // ACTIONS
 
@@ -85,7 +89,7 @@ export function registerGasHarasser() {
         const network = networks.get(selectedAddress);
         const account = network!.api.player.account;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountFund',
@@ -98,7 +102,6 @@ export function registerGasHarasser() {
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
         await waitForActionCompletion(actions!.Action, actionIndex);
       };
-
 
       /////////////////
       // FORM HANDLING
@@ -120,8 +123,7 @@ export function registerGasHarasser() {
         playClick();
         await fundTx();
         playSuccess();
-      }
-
+      };
 
       /////////////////
       // DISPLAY
@@ -145,7 +147,12 @@ export function registerGasHarasser() {
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
-            <ActionButton id={`feed`} text='Feed' onClick={feed} size='vending' />
+            <ActionButton
+              id={`feed`}
+              text='Feed'
+              onClick={feed}
+              size='vending'
+            />
           </Row>
         </ValidatorWrapper>
       );

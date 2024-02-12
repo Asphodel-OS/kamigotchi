@@ -35,7 +35,7 @@ export function IconListButton(props: Props) {
     playClick();
     option.onClick();
     handleClose();
-  }
+  };
 
   const setStyles = () => {
     var styles: any = {};
@@ -49,7 +49,7 @@ export function IconListButton(props: Props) {
   const element = (option: Option, i: number) => {
     if (option.disabled)
       return (
-        <Item key={i} style={{ backgroundColor: "#ccc" }}>
+        <Item key={i} style={{ backgroundColor: '#ccc' }}>
           {option.text}
         </Item>
       );
@@ -79,9 +79,7 @@ export function IconListButton(props: Props) {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Menu>
-          {props.options.map((option, i) => element(option, i))}
-        </Menu>
+        <Menu>{props.options.map((option, i) => element(option, i))}</Menu>
       </Popover>
     </div>
   );
@@ -90,16 +88,16 @@ export function IconListButton(props: Props) {
 const Button = styled.button`
   position: relative;
   background-color: #fff;
-  border: solid black .15vw;
-  border-radius: .4vw;
+  border: solid black 0.15vw;
+  border-radius: 0.4vw;
   color: black;
-  
-  margin: .2vw;
-  padding: .4vw;
-  
+
+  margin: 0.2vw;
+  padding: 0.4vw;
+
   display: flex;
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
   justify-content: center;
   text-align: center;
   text-decoration: none;
@@ -116,7 +114,7 @@ const Button = styled.button`
 
 const Corner = styled.div`
   position: absolute;
-  border: solid black .3vw;
+  border: solid black 0.3vw;
   border-color: transparent black black transparent;
   right: 0;
   bottom: 0;
@@ -129,19 +127,19 @@ const Image = styled.img`
 `;
 
 const Menu = styled.div`
-  border: solid black .15vw;
-  border-radius: .4vw;
+  border: solid black 0.15vw;
+  border-radius: 0.4vw;
   color: black;
   min-width: 7vw;
 `;
 
 const Item = styled.div`
-  border-radius: .4vw;
-  padding: .6vw;
+  border-radius: 0.4vw;
+  padding: 0.6vw;
   justify-content: left;
 
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
 
   cursor: pointer;
   pointer-events: auto;

@@ -1,4 +1,8 @@
-import { EntityIndex, getComponentValue, getComponentEntities } from '@latticexyz/recs';
+import {
+  EntityIndex,
+  getComponentValue,
+  getComponentEntities,
+} from '@latticexyz/recs';
 import React from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -18,14 +22,14 @@ export function registerNotificationFixture() {
     },
     (layers) => {
       const {
-        network: {
-          notifications,
-        },
+        network: { notifications },
       } = layers;
 
       return merge(notifications.Notification.update$).pipe(
         map(() => {
-          const list = Array.from(getComponentEntities(notifications.Notification));
+          const list = Array.from(
+            getComponentEntities(notifications.Notification)
+          );
           return {
             notifications: notifications,
             list: list,
@@ -35,7 +39,6 @@ export function registerNotificationFixture() {
     },
 
     ({ notifications, list }) => {
-
       const { modals, setModals } = useVisibility();
 
       const handleClick = (targetModal: string | undefined) => {
@@ -43,7 +46,7 @@ export function registerNotificationFixture() {
 
         const target = targetModal as keyof Modals;
         setModals({ ...modals, [target]: true });
-      }
+      };
 
       const SingleNotif = (id: EntityIndex) => {
         const notification = getComponentValue(notifications.Notification, id);
@@ -58,14 +61,12 @@ export function registerNotificationFixture() {
             <Description>{notification.description}</Description>
           </Card>
         );
-      }
+      };
 
       return (
         <Wrapper>
-          <Scrollable>
-            {list.map((id) => (SingleNotif(id)))}
-          </Scrollable>
-        </Wrapper >
+          <Scrollable>{list.map((id) => SingleNotif(id))}</Scrollable>
+        </Wrapper>
       );
     }
   );

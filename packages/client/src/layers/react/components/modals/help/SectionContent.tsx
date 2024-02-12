@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-
 interface Props {
   body: string[];
 }
@@ -10,10 +9,17 @@ export const SectionContent = (props: Props) => {
   const { body } = props;
   return (
     <Body>
-      {body.map((line: string) => { return <>{line}<br /></> })}
+      {body.map((line: string) => {
+        return (
+          <>
+            {line}
+            <br />
+          </>
+        );
+      })}
     </Body>
   );
-}
+};
 
 const Body = styled.div`
   font-size: 1vw;
@@ -23,4 +29,3 @@ const Body = styled.div`
   font-family: Pixel;
   padding: 1.5vw;
 `;
-

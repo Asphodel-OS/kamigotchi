@@ -18,7 +18,6 @@ import { Skill, getHolderSkills } from '../Skill';
 import { Traits, TraitIndices, getTraits } from '../Trait';
 import { NetworkLayer } from 'layers/network/types';
 
-
 // standardized shape of a Kami Entity
 export interface Kami {
   id: EntityID;
@@ -116,25 +115,32 @@ export const getKami = (
     entityIndex,
     name: getComponentValue(Name, entityIndex)?.value as string,
     uri: getComponentValue(MediaURI, entityIndex)?.value as string,
-    level: (getComponentValue(Level, entityIndex)?.value ?? 1 as number) * 1,
+    level: (getComponentValue(Level, entityIndex)?.value ?? (1 as number)) * 1,
     experience: {
-      current: (getComponentValue(Experience, entityIndex)?.value ?? 0 as number) * 1,
+      current:
+        (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) *
+        1,
       threshold: 0,
     },
-    health: (getComponentValue(HealthCurrent, entityIndex)?.value as number) * 1,
+    health:
+      (getComponentValue(HealthCurrent, entityIndex)?.value as number) * 1,
     healthRate: 0,
     state: getComponentValue(State, entityIndex)?.value as string,
     namable: getComponentValue(CanName, entityIndex)?.value as boolean,
     time: {
       cooldown: {
-        last: (getComponentValue(LastActionTime, entityIndex)?.value ?? 0 as number) * 1,
+        last:
+          (getComponentValue(LastActionTime, entityIndex)?.value ??
+            (0 as number)) * 1,
         requirement: getConfigFieldValue(network, 'KAMI_IDLE_REQ'),
       },
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
     },
-    rerolls: (getComponentValue(Reroll, entityIndex)?.value ?? 0 as number) * 1,
-    skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? 0 as number) * 1,
+    rerolls:
+      (getComponentValue(Reroll, entityIndex)?.value ?? (0 as number)) * 1,
+    skillPoints:
+      (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
     stats: getStats(network, entityIndex),
     bonuses: getBonuses(network, entityIndex),
     bonusStats: {
@@ -143,7 +149,7 @@ export const getKami = (
       violence: 0,
       power: 0,
       slots: 0,
-    }
+    },
   };
 
   // bonus stats
@@ -163,7 +169,8 @@ export const getKami = (
 
   // populate Account
   if (options?.account) {
-    const accountID = getComponentValue(AccountID, entityIndex)?.value as EntityID;
+    const accountID = getComponentValue(AccountID, entityIndex)
+      ?.value as EntityID;
     const accountIndex = world.entityToIndex.get(accountID);
     if (accountIndex) kami.account = getAccount(network, accountIndex);
   }
@@ -172,10 +179,7 @@ export const getKami = (
   if (options?.deaths) {
     const deaths: Kill[] = [];
     const killEntityIndices = Array.from(
-      runQuery([
-        Has(IsKill),
-        HasValue(TargetID, { value: kami.id }),
-      ])
+      runQuery([Has(IsKill), HasValue(TargetID, { value: kami.id })])
     );
 
     for (let i = 0; i < killEntityIndices.length; i++) {
@@ -190,10 +194,7 @@ export const getKami = (
   if (options?.kills) {
     const kills: Kill[] = [];
     const killEntityIndices = Array.from(
-      runQuery([
-        Has(IsKill),
-        HasValue(SourceID, { value: kami.id }),
-      ])
+      runQuery([Has(IsKill), HasValue(SourceID, { value: kami.id })])
     );
 
     for (let i = 0; i < killEntityIndices.length; i++) {
@@ -224,12 +225,9 @@ export const getKami = (
     const traitPointer = (type: Component) => {
       const traitIndex = getComponentValue(type, entityIndex)?.value as number;
       return Array.from(
-        runQuery([
-          Has(TraitIndex),
-          HasValue(type, { value: traitIndex }),
-        ])
+        runQuery([Has(TraitIndex), HasValue(type, { value: traitIndex })])
       )[0];
-    }
+    };
 
     // adding traits
     const backgroundIndex = traitPointer(BackgroundIndex);
@@ -244,14 +242,11 @@ export const getKami = (
       colorIndex,
       faceIndex,
       handIndex,
-    }
+    };
     kami.traits = getTraits(network, traitIndices);
 
     // adding affinities
-    kami.affinities = [
-      kami.traits.body.affinity,
-      kami.traits.hand.affinity,
-    ]
+    kami.affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
   }
 
   /////////////////
@@ -261,9 +256,16 @@ export const getKami = (
   // experience threshold calculation according to level
   if (kami.level) {
     const experienceBase = getConfigFieldValue(network, 'KAMI_LVL_REQ_BASE');
-    const experienceExponent = getConfigFieldValue(network, 'KAMI_LVL_REQ_MULT_BASE');
-    const exponentPrecision = 10 ** getConfigFieldValue(network, 'KAMI_LVL_REQ_MULT_BASE_PREC');
-    kami.experience.threshold = Math.floor(experienceBase * ((1.0 * experienceExponent / exponentPrecision) ** (kami.level - 1)));
+    const experienceExponent = getConfigFieldValue(
+      network,
+      'KAMI_LVL_REQ_MULT_BASE'
+    );
+    const exponentPrecision =
+      10 ** getConfigFieldValue(network, 'KAMI_LVL_REQ_MULT_BASE_PREC');
+    kami.experience.threshold = Math.floor(
+      experienceBase *
+        ((1.0 * experienceExponent) / exponentPrecision) ** (kami.level - 1)
+    );
   }
 
   // health change rate for harvesting/resting kami
@@ -272,14 +274,18 @@ export const getKami = (
     let productionRate = 0;
     if (kami.production) productionRate = kami.production.rate;
     const drainBase = getConfigFieldValue(network, 'HEALTH_RATE_DRAIN_BASE');
-    const drainBasePrecision = 10 ** getConfigFieldValue(network, 'HEALTH_RATE_DRAIN_BASE_PREC');
+    const drainBasePrecision =
+      10 ** getConfigFieldValue(network, 'HEALTH_RATE_DRAIN_BASE_PREC');
     const multiplier = kami.bonuses.harvest.drain;
-    healthRate = -1 * productionRate * drainBase * multiplier / (1000 * drainBasePrecision);
+    healthRate =
+      (-1 * productionRate * drainBase * multiplier) /
+      (1000 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
     const harmony = kami.stats.harmony + kami.bonusStats.harmony;
     const healBase = getConfigFieldValue(network, 'HEALTH_RATE_HEAL_BASE');
-    const healBasePrecision = 10 ** getConfigFieldValue(network, 'HEALTH_RATE_HEAL_BASE_PREC');
-    healthRate = harmony * healBase / (3600 * healBasePrecision)
+    const healBasePrecision =
+      10 ** getConfigFieldValue(network, 'HEALTH_RATE_HEAL_BASE_PREC');
+    healthRate = (harmony * healBase) / (3600 * healBasePrecision);
   }
   kami.healthRate = healthRate;
 

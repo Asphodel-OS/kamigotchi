@@ -11,7 +11,6 @@ import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal'
 import { triggerERC20BridgeModal } from 'layers/phaser/utils/triggers/triggerERC20BridgeModal';
 import { triggerERC721BridgeModal } from 'layers/phaser/utils/triggers/triggerERC721BridgeModal';
 
-
 export const room12: Room = {
   location: 12,
   background: {

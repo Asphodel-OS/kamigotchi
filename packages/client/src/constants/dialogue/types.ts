@@ -7,4 +7,4 @@ export interface DialogueNode {
     input: number;
   };
   next?: Map<string, number>; // points to more dialogue nodes
-};
+}

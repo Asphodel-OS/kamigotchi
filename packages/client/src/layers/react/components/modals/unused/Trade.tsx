@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { map, merge } from "rxjs";
-import { BigNumber } from "ethers";
-import { EntityIndex, Has, HasValue, NotValue, getComponentValue, runQuery, } from "@latticexyz/recs";
+import React, { useState, useEffect } from 'react';
+import { map, merge } from 'rxjs';
+import { BigNumber } from 'ethers';
+import {
+  EntityIndex,
+  Has,
+  HasValue,
+  NotValue,
+  getComponentValue,
+  runQuery,
+} from '@latticexyz/recs';
 
-import { registerUIComponent } from "layers/react/engine/store";
+import { registerUIComponent } from 'layers/react/engine/store';
 
 // NOTE(ja): potentially may want to split this up into two components (main window + registers)
 export function registerTradeModal() {
   registerUIComponent(
-    "TradeWindow",
+    'TradeWindow',
 
     // Grid Config
     {
@@ -40,7 +47,7 @@ export function registerTradeModal() {
             OperatorAddress,
             RequesterID,
             RequesteeID,
-            State
+            State,
           },
           actions,
         },
@@ -53,38 +60,47 @@ export function registerTradeModal() {
         const activeRequesteeTrades = runQuery([
           Has(IsTrade),
           HasValue(RequesteeID, { value: world.entities[accountIndex] }),
-          HasValue(State, { value: "ACCEPTED" }),
+          HasValue(State, { value: 'ACCEPTED' }),
         ]);
 
         // get the active trades for this player on the requester side
         const activeRequesterTrades = runQuery([
           Has(IsTrade),
           HasValue(RequesterID, { value: world.entities[accountIndex] }),
-          HasValue(State, { value: "ACCEPTED" }),
+          HasValue(State, { value: 'ACCEPTED' }),
         ]);
 
-        const activeTrades = new Set([...activeRequesteeTrades, ...activeRequesterTrades]);
+        const activeTrades = new Set([
+          ...activeRequesteeTrades,
+          ...activeRequesterTrades,
+        ]);
         if (activeTrades.size > 0) {
           index = Array.from(activeTrades)[0];
         }
         return index;
-      }
+      };
 
       // gets the contents of a register by index
       const getRegister = (index: EntityIndex) => {
         const id = world.entities[index];
 
-        const inventoryIndices = Array.from(runQuery([
-          Has(IsInventory),
-          HasValue(HolderID, { value: world.entities[index] }),
-        ]));
+        const inventoryIndices = Array.from(
+          runQuery([
+            Has(IsInventory),
+            HasValue(HolderID, { value: world.entities[index] }),
+          ])
+        );
 
         // reorganize inventory into lists
-        let itemTypes: number[] = [], itemType: number;
-        let balances: number[] = [], balance: number;
+        let itemTypes: number[] = [],
+          itemType: number;
+        let balances: number[] = [],
+          balance: number;
         for (let i = 0; i < inventoryIndices.length; i++) {
-          itemType = getComponentValue(ItemIndex, inventoryIndices[i])?.value as number;
-          balance = getComponentValue(Balance, inventoryIndices[i])?.value as number;
+          itemType = getComponentValue(ItemIndex, inventoryIndices[i])
+            ?.value as number;
+          balance = getComponentValue(Balance, inventoryIndices[i])
+            ?.value as number;
           itemTypes.push(itemType);
           balances.push(balance);
         }
@@ -97,17 +113,26 @@ export function registerTradeModal() {
             balances,
           },
           coin: getComponentValue(Coin, index)?.value as Number, // this might not be set. would it fail?
-        }
-      }
+        };
+      };
 
       // NOTE: we really want precise data subscriptions for this one, a nightmare without
-      return merge(AccountID.update$, State.update$, DelegateeID.update$, IsInventory.update$).pipe(
+      return merge(
+        AccountID.update$,
+        State.update$,
+        DelegateeID.update$,
+        IsInventory.update$
+      ).pipe(
         map(() => {
           // get the account entity of the controlling wallet
-          const accountIndex = Array.from(runQuery([
-            Has(IsAccount),
-            HasValue(OperatorAddress, { value: network.connectedAddress.get() })
-          ]))[0];
+          const accountIndex = Array.from(
+            runQuery([
+              Has(IsAccount),
+              HasValue(OperatorAddress, {
+                value: network.connectedAddress.get(),
+              }),
+            ])
+          )[0];
           const accountID = world.entities[accountIndex];
 
           const tradeIndex = getActiveTradeIndex(accountIndex);
@@ -116,18 +141,22 @@ export function registerTradeModal() {
 
           // get the register indices. at this point we can guarantee they exist for the trade
           if (tradeIndex != 0) {
-            myRegisterIndex = Array.from(runQuery([
-              Has(IsRegister),
-              HasValue(DelegateeID, { value: world.entities[tradeIndex] }),
-              HasValue(DelegatorID, { value: world.entities[accountIndex] }),
-              HasValue(State, { value: "ACTIVE" }), // this filter not actually necessary
-            ]))[0] as EntityIndex;
-            yourRegisterIndex = Array.from(runQuery([
-              Has(IsRegister),
-              HasValue(DelegateeID, { value: world.entities[tradeIndex] }),
-              NotValue(DelegatorID, { value: world.entities[accountIndex] }),
-              HasValue(State, { value: "ACTIVE" }), // this filter not actually necessary
-            ]))[0] as EntityIndex;
+            myRegisterIndex = Array.from(
+              runQuery([
+                Has(IsRegister),
+                HasValue(DelegateeID, { value: world.entities[tradeIndex] }),
+                HasValue(DelegatorID, { value: world.entities[accountIndex] }),
+                HasValue(State, { value: 'ACTIVE' }), // this filter not actually necessary
+              ])
+            )[0] as EntityIndex;
+            yourRegisterIndex = Array.from(
+              runQuery([
+                Has(IsRegister),
+                HasValue(DelegateeID, { value: world.entities[tradeIndex] }),
+                NotValue(DelegatorID, { value: world.entities[accountIndex] }),
+                HasValue(State, { value: 'ACTIVE' }), // this filter not actually necessary
+              ])
+            )[0] as EntityIndex;
             myRegister = getRegister(myRegisterIndex);
             yourRegister = getRegister(yourRegisterIndex);
           }
@@ -145,7 +174,7 @@ export function registerTradeModal() {
                 registers: {
                   mine: myRegister,
                   yours: yourRegister,
-                }
+                },
               },
             } as any,
           };
@@ -161,7 +190,7 @@ export function registerTradeModal() {
       // AddToTrade (ideally drag and drop in the future)
       // CancelTrade
       // ConfirmTrade
-      return (<div></div>);
+      return <div></div>;
     }
   );
 }

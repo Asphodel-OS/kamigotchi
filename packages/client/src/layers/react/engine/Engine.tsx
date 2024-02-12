@@ -1,13 +1,17 @@
 // src/layers/react/engine/Engine.tsx:
-import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
+import React, { useEffect, useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 
-import { BootScreen, MainWindow } from "./components";
-import { EngineContext, LayerContext } from "./context";
-import { EngineStore } from "./store";
+import { BootScreen, MainWindow } from './components';
+import { EngineContext, LayerContext } from './context';
+import { EngineStore } from './store';
 import { defaultChain } from 'constants/chains';
 import { Layers } from 'src/types';
 
@@ -50,7 +54,7 @@ export const Engine: React.FC<{
         theme={lightTheme({
           accentColor: '#ffffff',
           accentColorForeground: '#000000',
-          fontStack: 'system'
+          fontStack: 'system',
         })}
         chains={chains}
         initialChain={defaultChain} // technically this is unnecessary, defaults to 1st chain

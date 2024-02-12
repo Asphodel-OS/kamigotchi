@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 
-import { Kami } from "layers/network/shapes/Kami";
-import { Skill } from "layers/network/shapes/Skill";
-import { Tooltip } from "layers/react/components/library/Tooltip";
+import { Kami } from 'layers/network/shapes/Kami';
+import { Skill } from 'layers/network/shapes/Skill';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { playClick } from 'utils/sounds';
-
 
 interface Props {
   skill: Skill;
@@ -19,7 +18,6 @@ interface Props {
 export const Node = (props: Props) => {
   const { skill, nodeRects, setNodeRects, setHovered, setSelected } = props;
   const myRef = useRef<HTMLDivElement>(null);
-
 
   useEffect(() => {
     // Function to update the bounding rectangle
@@ -38,11 +36,10 @@ export const Node = (props: Props) => {
     };
   }, []);
 
-
   const handleClick = () => {
     playClick();
     setSelected(skill.index * 1);
-  }
+  };
 
   if (!skill) return <></>;
   return (
@@ -57,12 +54,11 @@ export const Node = (props: Props) => {
       </Tooltip>
     </Container>
   );
-}
-
+};
 
 const Image = styled.img`
   border-radius: 1.5vw;
-  
+
   width: 6vw;
   &:hover {
     opacity: 0.6;
@@ -70,10 +66,10 @@ const Image = styled.img`
 `;
 
 const Container = styled.div`
-  border: solid black .15vw;
+  border: solid black 0.15vw;
   border-radius: 1.5vw;
   margin: 1vw;
-  
+
   background-color: black;
   z-index: 1;
   pointer-events: auto;

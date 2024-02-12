@@ -3,8 +3,8 @@ import { DialogueNode } from '.';
 const templegrass: DialogueNode = {
   index: 151,
   text: [
-    "The grass is overgrown here. A heavy energy hangs in the air.",
-    "It might not be safe. Should we go back?"
+    'The grass is overgrown here. A heavy energy hangs in the air.',
+    'It might not be safe. Should we go back?',
   ],
   action: {
     type: 'move',
@@ -29,8 +29,8 @@ const templedoor: DialogueNode = {
 const templecave: DialogueNode = {
   index: 153,
   text: [
-    "The cave ahead looks dark and damp.",
-    "The air is heavy with the smell of rot.",
+    'The cave ahead looks dark and damp.',
+    'The air is heavy with the smell of rot.',
   ],
   action: {
     type: 'move',

@@ -25,7 +25,7 @@ export const phaserConfig: PhaserConfig = {
     default: 'arcade',
     arcade: {
       debug: false,
-      gravity: { y: 0 }
+      gravity: { y: 0 },
     },
   },
   scene: [GameScene],

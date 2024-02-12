@@ -7,25 +7,27 @@ import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
 import { playClick } from 'utils/sounds';
-import musuIcon from "assets/images/icons/musu.png";
+import musuIcon from 'assets/images/icons/musu.png';
 import { Kami, QueryOptions, Options } from 'layers/network/shapes/Kami';
-
 
 interface Props {
   actions: {
     handleMint: (amt: number) => () => Promise<void>;
-  }
+  };
   data: {
     account: {
       balance: number;
-    }
-  }
+    };
+  };
   display: {
     Tab: JSX.Element;
-  }
+  };
   query: {
-    getLazyKamis: (queryOpts: QueryOptions, options?: Options) => Array<() => Kami>;
-  }
+    getLazyKamis: (
+      queryOpts: QueryOptions,
+      options?: Options
+    ) => Array<() => Kami>;
+  };
 }
 
 export const Pool = (props: Props) => {
@@ -38,13 +40,16 @@ export const Pool = (props: Props) => {
   // LOGIC
 
   const getKamiText = (kami: Kami): string[] => {
-    const traitString = (
-      (kami.traits?.body.name || '') + ' | ' +
-      (kami.traits?.hand.name || '') + ' | ' +
-      (kami.traits?.face.name || '') + ' | ' +
-      (kami.traits?.color.name || '') + ' | ' +
-      (kami.traits?.background.name || '')
-    );
+    const traitString =
+      (kami.traits?.body.name || '') +
+      ' | ' +
+      (kami.traits?.hand.name || '') +
+      ' | ' +
+      (kami.traits?.face.name || '') +
+      ' | ' +
+      (kami.traits?.color.name || '') +
+      ' | ' +
+      (kami.traits?.background.name || '');
 
     return [
       traitString,
@@ -53,18 +58,21 @@ export const Pool = (props: Props) => {
       `Power: ${kami.stats.power}`,
       `Violence: ${kami.stats.violence}`,
       `Harmony: ${kami.stats.harmony}`,
-      `Slots: ${kami.stats.slots}`
+      `Slots: ${kami.stats.slots}`,
     ];
-  }
+  };
 
-  const lazyKamis = props.query.getLazyKamis({ state: "GACHA" }, { traits: true });
+  const lazyKamis = props.query.getLazyKamis(
+    { state: 'GACHA' },
+    { traits: true }
+  );
 
   const getTruncatedKamis = () => {
     const amt = numShown < lazyKamis.length ? numShown : lazyKamis.length;
     const shortLazies = [...lazyKamis].splice(0, amt);
 
     return shortLazies.map((lazyKami) => lazyKami());
-  }
+  };
 
   ///////////////////
   // DISPLAY
@@ -73,16 +81,16 @@ export const Pool = (props: Props) => {
     <Footer>
       <div style={{ width: '60%' }}></div>
       <InputSingleNumberForm
-        id="mint-stepper"
+        id='mint-stepper'
         bounds={{ min: 0, max: props.data.account.balance, step: 1 }}
         watch={setMintAmt}
         stepper
       />
       <ActionButton
-        id="mint-button"
+        id='mint-button'
         onClick={props.actions.handleMint(mintAmt)}
         text='Mint'
-        size="large"
+        size='large'
         disabled={mintAmt === 0 || mintAmt > props.data.account.balance}
         fill
       />
@@ -94,7 +102,7 @@ export const Pool = (props: Props) => {
       <BalanceBar
         balance={props.data.account.balance.toFixed(2)}
         price={mintPrice.toFixed(2)}
-        name="Mint price"
+        name='Mint price'
         icon={musuIcon}
       />
       <InnerBox>
@@ -111,7 +119,7 @@ export const Pool = (props: Props) => {
       {FooterButton}
     </OuterBox>
   );
-}
+};
 
 const Footer = styled.div`
   display: flex;
@@ -129,8 +137,8 @@ const InnerBox = styled.div`
   align-items: stretch;
 
   flex: 1;
-  border: solid .15vw black;
-  border-radius: .75vw;
+  border: solid 0.15vw black;
+  border-radius: 0.75vw;
   height: 60%;
   padding: 1vw;
   margin: 1vw;

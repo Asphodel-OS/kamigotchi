@@ -13,17 +13,16 @@ interface Props {
 }
 
 export const ExperienceBar = (props: Props) => {
-  const { level, current, total, triggerLevelUp, disabled, disabledReason } = props;
+  const { level, current, total, triggerLevelUp, disabled, disabledReason } =
+    props;
   const percentage = Math.round((current / total) * 1000) / 10;
-  const canLevelUp = (!disabled) && (current >= total);
-
+  const canLevelUp = !disabled && current >= total;
 
   const getLevelUpTooltip = () => {
     if (disabledReason) return [disabledReason];
     if (!canLevelUp) return [`Not enough exprience points.`];
     return [`Level Up`];
-  }
-
+  };
 
   return (
     <Wrapper>
@@ -57,12 +56,12 @@ const Wrapper = styled.div`
 `;
 
 const BarContainer = styled.div`
-  border: solid black .1vw;
+  border: solid black 0.1vw;
   border-radius: 1vw;
   background-color: #bbb;
   height: 1.2vw;
   min-width: 12vw;
-  margin: 0px .7vw;
+  margin: 0px 0.7vw;
 
   position: relative;
   display: flex;
@@ -74,7 +73,7 @@ const FilledBar = styled.div<{ percentage: number }>`
   background-color: #11ee11;
   border-radius: 1vw;
   height: 100%;
-  width: ${props => props.percentage}%;
+  width: ${(props) => props.percentage}%;
 `;
 
 const Percentage = styled.div`
@@ -82,7 +81,7 @@ const Percentage = styled.div`
   color: black;
   position: absolute;
   font-family: Pixel;
-  font-size: .6vw;
+  font-size: 0.6vw;
   text-align: center;
 `;
 

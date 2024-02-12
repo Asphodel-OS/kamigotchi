@@ -16,7 +16,15 @@ interface Props {
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
   const { validators } = useVisibility();
-  const { id, divName, title, subtitle, children, errorPrimary, errorSecondary } = props;
+  const {
+    id,
+    divName,
+    title,
+    subtitle,
+    children,
+    errorPrimary,
+    errorSecondary,
+  } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
@@ -30,15 +38,12 @@ export const ValidatorWrapper = (props: Props) => {
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
     event.stopPropagation();
-  }
+  };
   const element = document.getElementById(id);
   element?.addEventListener('mousedown', handleClicks);
 
   return (
-    <Wrapper
-      id={id}
-      isOpen={validators[divName]}
-    >
+    <Wrapper id={id} isOpen={validators[divName]}>
       <Content>
         <Header>
           <Title>{title}</Title>
@@ -52,9 +57,10 @@ export const ValidatorWrapper = (props: Props) => {
   );
 };
 
-
 // Wrapper is an invisible animated wrapper around all validators sans frills.
-interface Wrapper { isOpen: boolean };
+interface Wrapper {
+  isOpen: boolean;
+}
 const Wrapper = styled.div<Wrapper>`
   display: none;
   justify-content: center;
@@ -76,7 +82,7 @@ const Content = styled.div`
   max-width: 100%;
   max-height: 100%;
   padding: 3vh 5vw;
-  
+
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -126,11 +132,11 @@ const ErrorSecondary = styled.div`
 `;
 
 const Children = styled.div`
-  padding: .4vw;
+  padding: 0.4vw;
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
-  
+
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;

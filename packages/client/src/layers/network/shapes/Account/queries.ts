@@ -6,18 +6,20 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { getAccount, AccountOptions } from "./types";
+import { getAccount, AccountOptions } from './types';
 import { NetworkLayer } from 'layers/network/types';
 
-
-export const getAllAccounts = (network: NetworkLayer, options?: AccountOptions) => {
-  const { components: { IsAccount } } = network;
-  return Array.from(
-    runQuery([
-      Has(IsAccount),
-    ])
-  ).map((entityIndex) => getAccount(network, entityIndex, options));
-}
+export const getAllAccounts = (
+  network: NetworkLayer,
+  options?: AccountOptions
+) => {
+  const {
+    components: { IsAccount },
+  } = network;
+  return Array.from(runQuery([Has(IsAccount)])).map((entityIndex) =>
+    getAccount(network, entityIndex, options)
+  );
+};
 
 // get an Account by its entityID
 export const getAccountByID = (
@@ -31,7 +33,7 @@ export const getAccountByID = (
     world.entityToIndex.get(id) as EntityIndex,
     options
   );
-}
+};
 
 // get an Account by its AccountIndex
 export const getAccountByIndex = (
@@ -39,7 +41,9 @@ export const getAccountByIndex = (
   index: number,
   options?: AccountOptions
 ) => {
-  const { components: { IsAccount, AccountIndex } } = network;
+  const {
+    components: { IsAccount, AccountIndex },
+  } = network;
   const entityIndex = Array.from(
     runQuery([
       Has(IsAccount),
@@ -47,7 +51,7 @@ export const getAccountByIndex = (
     ])
   )[0];
   return getAccount(network, entityIndex, options);
-}
+};
 
 // get an Account by its Username
 export const getAccountByName = (
@@ -56,15 +60,14 @@ export const getAccountByName = (
   name: string,
   options?: AccountOptions
 ) => {
-  const { components: { IsAccount, Name } } = network;
+  const {
+    components: { IsAccount, Name },
+  } = network;
   const entityIndex = Array.from(
-    runQuery([
-      Has(IsAccount),
-      HasValue(Name, { value: name }),
-    ])
+    runQuery([Has(IsAccount), HasValue(Name, { value: name })])
   )[0];
   return getAccount(network, entityIndex, options);
-}
+};
 
 // get an Account by its Operator EOA
 export const getAccountByOperator = (
@@ -73,7 +76,9 @@ export const getAccountByOperator = (
   operatorEOA: string,
   options?: AccountOptions
 ) => {
-  const { components: { IsAccount, OperatorAddress } } = network;
+  const {
+    components: { IsAccount, OperatorAddress },
+  } = network;
   const entityIndex = Array.from(
     runQuery([
       Has(IsAccount),
@@ -81,7 +86,7 @@ export const getAccountByOperator = (
     ])
   )[0];
   return getAccount(network, entityIndex, options);
-}
+};
 
 // get an Account by its Owner EOA
 export const getAccountByOwner = (
@@ -89,19 +94,20 @@ export const getAccountByOwner = (
   ownerEOA: string,
   options?: AccountOptions
 ) => {
-  const { components: { IsAccount, OwnerAddress } } = network;
+  const {
+    components: { IsAccount, OwnerAddress },
+  } = network;
   const entityIndex = Array.from(
-    runQuery([
-      Has(IsAccount),
-      HasValue(OwnerAddress, { value: ownerEOA }),
-    ])
+    runQuery([Has(IsAccount), HasValue(OwnerAddress, { value: ownerEOA })])
   )[0];
   return getAccount(network, entityIndex, options);
-}
+};
 
 // get an Account, assuming the currently connected burner is the Operator
-export const getAccountFromBurner = (network: NetworkLayer, options?: AccountOptions) => {
+export const getAccountFromBurner = (
+  network: NetworkLayer,
+  options?: AccountOptions
+) => {
   const connectedBurner = network.network.connectedAddress.get();
   return getAccountByOperator(network, connectedBurner!, options);
 };
-

@@ -23,11 +23,15 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
     network: { connectedAddress },
     updates: {
       components: { Network },
-    }
+    },
   } = network;
 
   const {
-    game: { scene: { keys: { Game } } },
+    game: {
+      scene: {
+        keys: { Game },
+      },
+    },
   } = phaser;
 
   const GameSceneInstance = Game as GameScene;
@@ -44,7 +48,8 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
     )[0];
 
     if (accountIndex == update.entity || 0 == update.entity) {
-      const currentRoom = getComponentValue(Location, accountIndex)?.value as number * 1;
+      const currentRoom =
+        (getComponentValue(Location, accountIndex)?.value as number) * 1;
       setRoom(currentRoom);
 
       GameSceneInstance.room = rooms[currentRoom];
@@ -59,7 +64,11 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
   defineRxSystem(
     world,
-    merge(defineQuery([Has(Location), Has(OperatorAddress), Has(OwnerAddress)]).update$, Network.update$).pipe(),
+    merge(
+      defineQuery([Has(Location), Has(OperatorAddress), Has(OwnerAddress)])
+        .update$,
+      Network.update$
+    ).pipe(),
     system
   );
 }

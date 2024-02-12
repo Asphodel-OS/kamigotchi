@@ -1,11 +1,8 @@
 import { DialogueNode } from '.';
 
-
 const beetle1: DialogueNode = {
   index: 91,
-  text: [
-    'The first of a number of local beetles. Quiet and contemplative.',
-  ],
+  text: ['The first of a number of local beetles. Quiet and contemplative.'],
 };
 
 const beetle2: DialogueNode = {
@@ -17,23 +14,17 @@ const beetle2: DialogueNode = {
 
 const beetle3: DialogueNode = {
   index: 93,
-  text: [
-    'Beetle number three. More private than the others.'
-  ],
+  text: ['Beetle number three. More private than the others.'],
 };
 
 const beetle4: DialogueNode = {
   index: 94,
-  text: [
-    'Beetle number four. A bit of a loner.'
-  ],
+  text: ['Beetle number four. A bit of a loner.'],
 };
 
 const smallmushrooms: DialogueNode = {
   index: 95,
-  text: [
-    "You haven't seen Mushrooms like this anywhere else in this forest.",
-  ],
+  text: ["You haven't seen Mushrooms like this anywhere else in this forest."],
 };
 
 export default [beetle1, beetle2, beetle3, beetle4, smallmushrooms];

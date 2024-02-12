@@ -1,14 +1,18 @@
-import { EntityIndex } from "@latticexyz/recs";
-import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { EntityIndex } from '@latticexyz/recs';
+import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
-import { ActionButton } from "layers/react/components/library/ActionButton";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/network/shapes/Account";
-import { Item } from "layers/network/shapes/Item";
-import { Objective, Quest, Requirement, Reward } from "layers/network/shapes/Quest";
-import { Room } from "layers/network/shapes/Room";
-
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Account } from 'layers/network/shapes/Account';
+import { Item } from 'layers/network/shapes/Item';
+import {
+  Objective,
+  Quest,
+  Requirement,
+  Reward,
+} from 'layers/network/shapes/Quest';
+import { Room } from 'layers/network/shapes/Room';
 
 interface Props {
   account: Account;
@@ -44,7 +48,6 @@ export const List = (props: Props) => {
     };
   }, []);
 
-
   ///////////////////
   // LOGIC
 
@@ -54,19 +57,28 @@ export const List = (props: Props) => {
       if (q.index === questIndex) complete = true;
     });
     return complete;
-  }
+  };
 
   const isOngoing = (account: Account, questIndex: number): boolean => {
-    return account.quests?.ongoing.some((q: Quest) => q.index === questIndex) ?? false;
-  }
+    return (
+      account.quests?.ongoing.some((q: Quest) => q.index === questIndex) ??
+      false
+    );
+  };
 
   const meetsMax = (account: Account, quest: Quest): boolean => {
-    return (isOngoing(account, quest.index) ? 1 : 0) + getNumCompleted(account, quest.index) < 1;
-  }
+    return (
+      (isOngoing(account, quest.index) ? 1 : 0) +
+        getNumCompleted(account, quest.index) <
+      1
+    );
+  };
 
   const meetsRepeat = (quest: Quest): boolean => {
-    const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
-    const curr = allQuests?.find((x) => (x.index == quest.index));
+    const allQuests = props.account.quests?.ongoing.concat(
+      props.account.quests?.completed
+    );
+    const curr = allQuests?.find((x) => x.index == quest.index);
 
     // has not accepted repeatable before
     if (curr === undefined) return true;
@@ -77,12 +89,10 @@ export const List = (props: Props) => {
     // must be completed
     if (!curr.complete) return false;
 
-
     const now = lastRefresh / 1000;
     const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
     return Number(curr.startTime) + Number(wait) <= Number(now);
-  }
-
+  };
 
   // TODO: convert to TextBool
   const meetsRequirements = (quest: Quest): boolean => {
@@ -93,7 +103,7 @@ export const List = (props: Props) => {
     }
 
     return true;
-  }
+  };
 
   // TODO: convert to TextBool
   const meetsObjectives = (quest: Quest): boolean => {
@@ -104,18 +114,17 @@ export const List = (props: Props) => {
     }
 
     return true;
-  }
+  };
 
   const canAccept = (quest: Quest): boolean => {
     if (quest.repeatable) return meetsRepeat(quest) && meetsRequirements(quest);
     if (!meetsMax(props.account, quest)) return false;
     return meetsRequirements(quest);
-  }
+  };
 
   const canComplete = (quest: Quest): boolean => {
     return meetsObjectives(quest);
-  }
-
+  };
 
   /////////////////
   // INTERPRETATION
@@ -126,23 +135,25 @@ export const List = (props: Props) => {
       if (q.index === questIndex) ongoing++;
     });
     return ongoing;
-  }
+  };
 
   const getItemName = (itemIndex: number): string => {
     let entityIndex = props.utils.queryItemRegistry(Number(itemIndex));
     let registryObject = props.utils.getItem(entityIndex);
     return registryObject.name ? registryObject.name : `Item ${itemIndex}`;
-  }
+  };
 
   const getFoodName = (foodIndex: number): string => {
     let entityIndex = props.utils.queryItemRegistry(foodIndex);
     let registryObject = props.utils.getItem(entityIndex);
     return registryObject.name ? registryObject.name : `Food ${foodIndex}`;
-  }
+  };
 
   const getRepeatText = (quest: Quest): string => {
-    const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
-    const curr = allQuests?.find((x) => (x.index == quest.index));
+    const allQuests = props.account.quests?.ongoing.concat(
+      props.account.quests?.completed
+    );
+    const curr = allQuests?.find((x) => x.index == quest.index);
 
     // has not accepted repeatable before
     if (curr === undefined) return '';
@@ -172,9 +183,12 @@ export const List = (props: Props) => {
     } else {
       return '';
     }
-  }
+  };
 
-  const getRequirementText = (requirement: Requirement, status: boolean): string => {
+  const getRequirementText = (
+    requirement: Requirement,
+    status: boolean
+  ): string => {
     let text = '';
     switch (requirement.target.type) {
       case 'COIN':
@@ -184,13 +198,16 @@ export const List = (props: Props) => {
         text = `Level ${requirement.target.value! * 1}`;
         break;
       case 'FOOD':
-        text = `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
+        text = `${requirement.target.value! * 1} ${getFoodName(
+          requirement.target.index!
+        )}`;
         break;
       case 'QUEST':
-        text = `Complete Quest [${props.utils.getQuestByIndex(requirement.target.value!)
-          ? props.utils.getQuestByIndex(requirement.target.value!)?.name
-          : requirement.target.value! * 1
-          }]`;
+        text = `Complete Quest [${
+          props.utils.getQuestByIndex(requirement.target.value!)
+            ? props.utils.getQuestByIndex(requirement.target.value!)?.name
+            : requirement.target.value! * 1
+        }]`;
         break;
       default:
         text = '???';
@@ -200,15 +217,19 @@ export const List = (props: Props) => {
       if (requirement.status?.completable) {
         text = text + ' ✅';
       } else {
-        text = text + ` [${Number(requirement.status?.current)}/${Number(requirement.status?.target)}]`;
+        text =
+          text +
+          ` [${Number(requirement.status?.current)}/${Number(
+            requirement.status?.target
+          )}]`;
       }
     }
 
     return text;
-  }
+  };
 
   const getRewardText = (reward: Reward): string => {
-    const value = (reward.target.value ?? 0) * 1
+    const value = (reward.target.value ?? 0) * 1;
     switch (reward.target.type) {
       case 'COIN':
         return `${value} $MUSU`;
@@ -223,9 +244,12 @@ export const List = (props: Props) => {
       default:
         return '???';
     }
-  }
+  };
 
-  const getObjectiveText = (objective: Objective, showTracking: boolean): string => {
+  const getObjectiveText = (
+    objective: Objective,
+    showTracking: boolean
+  ): string => {
     let text = objective.name;
 
     if (showTracking) {
@@ -233,13 +257,15 @@ export const List = (props: Props) => {
       if (objective.status?.completable) {
         tracking = ' ✅';
       } else {
-        tracking = ` [${objective.status?.current ?? 0}/${Number(objective.status?.target)}]`;
+        tracking = ` [${objective.status?.current ?? 0}/${Number(
+          objective.status?.target
+        )}]`;
       }
       text += tracking;
     }
 
     return text;
-  }
+  };
 
   ///////////////////
   // DISPLAY
@@ -248,19 +274,13 @@ export const List = (props: Props) => {
     // get available, non-repeatable quests from registry
     const oneTimes = props.registryQuests.filter((q: Quest) => {
       return (
-        meetsRequirements(q)
-        && meetsMax(props.account, q)
-        && !q.repeatable
+        meetsRequirements(q) && meetsMax(props.account, q) && !q.repeatable
       );
     });
 
     // get available, repeatable quests from registry
     const repeats = props.registryQuests.filter((q: Quest) => {
-      return (
-        meetsRequirements(q)
-        && q.repeatable
-        && meetsRepeat(q)
-      );
+      return meetsRequirements(q) && q.repeatable && meetsRepeat(q);
     });
 
     const quests = repeats.concat(oneTimes);
@@ -271,7 +291,7 @@ export const List = (props: Props) => {
     props.utils.setNumAvail(quests.length);
 
     return quests;
-  }
+  };
 
   const AcceptButton = (quest: Quest) => {
     let tooltipText = '';
@@ -288,7 +308,9 @@ export const List = (props: Props) => {
     }
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}
+      >
         <Tooltip text={[tooltipText]}>
           <ActionButton
             id={`complete-quest`}
@@ -296,9 +318,9 @@ export const List = (props: Props) => {
             text='Accept'
             disabled={!canAccept(quest)}
           />
-        </Tooltip >
+        </Tooltip>
       </div>
-    )
+    );
   };
 
   const CompleteButton = (quest: Quest) => {
@@ -308,7 +330,9 @@ export const List = (props: Props) => {
     }
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}
+      >
         <Tooltip text={[tooltipText]}>
           <ActionButton
             id={`complete-quest`}
@@ -316,9 +340,9 @@ export const List = (props: Props) => {
             text='Complete'
             disabled={!canComplete(quest)}
           />
-        </Tooltip >
+        </Tooltip>
       </div>
-    )
+    );
   };
 
   const RequirementDisplay = (requirements: Requirement[]) => {
@@ -332,8 +356,8 @@ export const List = (props: Props) => {
           </ConditionDescription>
         ))}
       </ConditionContainer>
-    )
-  }
+    );
+  };
 
   const ObjectiveDisplay = (objectives: Objective[], showTracking: boolean) => {
     if (objectives.length == 0) return <div />;
@@ -346,15 +370,17 @@ export const List = (props: Props) => {
           </ConditionDescription>
         ))}
       </ConditionContainer>
-    )
-  }
+    );
+  };
 
   const RewardDisplay = (rewards: Reward[]) => {
     if (rewards.length == 0) return <div />;
 
     // sort rewards so Quest Points are always first
-    const first = "QUEST_POINTS";
-    rewards.sort((x, y) => { return x.target.type == first ? -1 : y.target.type == first ? 1 : 0; });
+    const first = 'QUEST_POINTS';
+    rewards.sort((x, y) => {
+      return x.target.type == first ? -1 : y.target.type == first ? 1 : 0;
+    });
     return (
       <ConditionContainer key='rewards'>
         <ConditionName>Rewards</ConditionName>
@@ -364,8 +390,8 @@ export const List = (props: Props) => {
           </ConditionDescription>
         ))}
       </ConditionContainer>
-    )
-  }
+    );
+  };
 
   const AvailableQuests = () => {
     const quests = getAvailableQuests();
@@ -382,21 +408,20 @@ export const List = (props: Props) => {
         {RewardDisplay(q.rewards)}
         {AcceptButton(q)}
       </QuestContainer>
-    ))
-  }
+    ));
+  };
 
   const CompletedQuests = () => {
-    let quests = [...props.account.quests?.completed ?? []];
+    let quests = [...(props.account.quests?.completed ?? [])];
 
-    const line = (quests.length > 0) ? (
-      <CollapseText
-        onClick={() => setIsCollapsed(!isCollapsed)}
-      >
-        {isCollapsed ? '- Completed (collapsed) -' : '- Completed -'}
-      </CollapseText>
-    ) : (
-      <div />
-    );
+    const line =
+      quests.length > 0 ? (
+        <CollapseText onClick={() => setIsCollapsed(!isCollapsed)}>
+          {isCollapsed ? '- Completed (collapsed) -' : '- Completed -'}
+        </CollapseText>
+      ) : (
+        <div />
+      );
 
     const dones = quests.map((q: Quest) => (
       <DoneContainer key={q.id}>
@@ -407,16 +432,17 @@ export const List = (props: Props) => {
       </DoneContainer>
     ));
 
-    return <div>
-      {line}
-      {isCollapsed ? <div /> : dones}
-    </div>
-
-  }
+    return (
+      <div>
+        {line}
+        {isCollapsed ? <div /> : dones}
+      </div>
+    );
+  };
 
   const OngoingQuests = () => {
     getAvailableQuests(); // update numAvail
-    const rawQuests = [...props.account.quests?.ongoing ?? []];
+    const rawQuests = [...(props.account.quests?.ongoing ?? [])];
 
     if (rawQuests.length == 0)
       return <EmptyText>No ongoing quests. Get a job?</EmptyText>;
@@ -431,28 +457,27 @@ export const List = (props: Props) => {
     });
     const quests = completable.concat(uncompletable);
 
-    return (<div>
-      {quests.map((q: Quest) => (
-        <QuestContainer key={q.id}>
-          <QuestName>{q.name}</QuestName>
-          <QuestDescription>{q.description}</QuestDescription>
-          {ObjectiveDisplay(q.objectives, true)}
-          {RewardDisplay(q.rewards)}
-          {CompleteButton(q)}
-        </QuestContainer>
-      ))}
-      {CompletedQuests()}
-    </div>);
-  }
+    return (
+      <div>
+        {quests.map((q: Quest) => (
+          <QuestContainer key={q.id}>
+            <QuestName>{q.name}</QuestName>
+            <QuestDescription>{q.description}</QuestDescription>
+            {ObjectiveDisplay(q.objectives, true)}
+            {RewardDisplay(q.rewards)}
+            {CompleteButton(q)}
+          </QuestContainer>
+        ))}
+        {CompletedQuests()}
+      </div>
+    );
+  };
 
   const QuestsDisplay = () => {
-    if (props.mode == 'AVAILABLE')
-      return AvailableQuests();
-    else if (props.mode == 'ONGOING')
-      return OngoingQuests();
-    else
-      return <div />;
-  }
+    if (props.mode == 'AVAILABLE') return AvailableQuests();
+    else if (props.mode == 'ONGOING') return OngoingQuests();
+    else return <div />;
+  };
 
   return <Container>{QuestsDisplay()}</Container>;
 };
@@ -479,10 +504,10 @@ const CollapseText = styled.button`
   background-color: transparent;
 
   width: 100%;
-  textAlign: center;
+  textalign: center;
   padding: 0.5vw;
 
-  color: #BBB;
+  color: #bbb;
   font-family: Pixel;
   font-size: 0.85vw;
   text-align: center;
@@ -491,7 +516,7 @@ const CollapseText = styled.button`
     color: #666;
     cursor: pointer;
   }
-`
+`;
 const QuestContainer = styled.div`
   border-color: black;
   border-radius: 10px;
@@ -549,5 +574,5 @@ const ConditionDescription = styled.div`
 const DoneContainer = styled(QuestContainer)`
   border-color: #999;
   border-width: 1.5px;
-  color: #BBB;
+  color: #bbb;
 `;

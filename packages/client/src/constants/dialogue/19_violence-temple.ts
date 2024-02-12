@@ -1,6 +1,5 @@
 import { DialogueNode } from '.';
 
-
 const violenceFloor: DialogueNode = {
   index: 191,
   text: [

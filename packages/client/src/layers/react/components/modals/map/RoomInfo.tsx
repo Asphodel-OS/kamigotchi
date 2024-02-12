@@ -1,5 +1,5 @@
-import { Room } from "layers/network/shapes/Room";
-import styled from "styled-components";
+import { Room } from 'layers/network/shapes/Room';
+import styled from 'styled-components';
 
 interface Props {
   room: Room | undefined;
@@ -17,12 +17,13 @@ export const RoomInfo = (props: Props) => {
       </Section>
       <Section>
         <Title>Players</Title>
-        <Description>{room.players?.map((player) => (player.name)).join(', ')}</Description>
+        <Description>
+          {room.players?.map((player) => player.name).join(', ')}
+        </Description>
       </Section>
-    </ Container>
+    </Container>
   );
 };
-
 
 const Container = styled.div`
   display: flex;
@@ -43,7 +44,7 @@ const Section = styled.div`
 
 const Title = styled.p`
   color: #333;
-  padding-bottom: .5vw;
+  padding-bottom: 0.5vw;
 
   font-family: Pixel;
   font-size: 1vw;
@@ -52,10 +53,10 @@ const Title = styled.p`
 
 const Description = styled.p`
   color: #333;
-  padding: .3vw;
-  
+  padding: 0.3vw;
+
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
   text-align: left;
   line-height: 1.2vw;
 `;

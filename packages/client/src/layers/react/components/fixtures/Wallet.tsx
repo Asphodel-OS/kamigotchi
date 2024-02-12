@@ -2,7 +2,7 @@
 import React from 'react';
 import { of } from 'rxjs';
 import { AccountButton } from 'layers/react/components/library/CustomRainbowButton';
-import "@rainbow-me/rainbowkit/styles.css";
+import '@rainbow-me/rainbowkit/styles.css';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 
@@ -17,9 +17,7 @@ export function registerWalletFixture() {
     },
     (layers) => of(layers),
     () => {
-      return (
-        <AccountButton size='menu' />
-      );
-    },
+      return <AccountButton size='menu' />;
+    }
   );
 }

@@ -19,7 +19,9 @@ export function registerActionQueueFixture() {
     },
 
     (layers) => {
-      const { network: { actions } } = layers;
+      const {
+        network: { actions },
+      } = layers;
       return actions!.Action.update$.pipe(
         map(() => {
           return { layers };
@@ -36,20 +38,16 @@ export function registerActionQueueFixture() {
       // track the full list of Actions by their Entity Index
       useEffect(() => {
         setActionIndices([...getComponentEntities(ActionComponent)]);
-      }, [([...getComponentEntities(ActionComponent)]).length]);
+      }, [[...getComponentEntities(ActionComponent)].length]);
 
       const sizes = ['none', '23vh', '90vh'];
       return (
-        <Wrapper
-          style={{ display: fixtures.actionQueue ? 'block' : 'none' }}
-        >
+        <Wrapper style={{ display: fixtures.actionQueue ? 'block' : 'none' }}>
           <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
-            {(mode !== 0) && <Logs actionIndices={actionIndices} network={layers.network} />}
-            <Controls
-              mode={mode}
-              setMode={setMode}
-              network={layers.network}
-            />
+            {mode !== 0 && (
+              <Logs actionIndices={actionIndices} network={layers.network} />
+            )}
+            <Controls mode={mode} setMode={setMode} network={layers.network} />
           </Content>
         </Wrapper>
       );
@@ -65,8 +63,8 @@ const Wrapper = styled.div`
 // cancer. just absolute cancer
 const Content = styled.div`
   position: absolute;
-  padding: .2vw;
-  
+  padding: 0.2vw;
+
   right: 1.33vw;
   width: 32.66vw;
   max-width: 32.66vw;
@@ -77,7 +75,7 @@ const Content = styled.div`
   border: solid black 2px;
   border-radius: 10px;
 
-  background-color: white;  
+  background-color: white;
   display: flex;
   flex-flow: column nowrap;
 `;

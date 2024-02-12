@@ -1,16 +1,14 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-interface Props { }
+interface Props {}
 
 export const Revealing = (props: Props) => {
   return (
     <Bound>
-      <SubText>
-        Revealing... please don't leave this page!
-      </SubText>
+      <SubText>Revealing... please don't leave this page!</SubText>
     </Bound>
   );
-}
+};
 
 const Bound = styled.div`
   display: flex;

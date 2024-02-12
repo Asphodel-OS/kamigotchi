@@ -1,12 +1,12 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { ItemIcon } from "layers/react/components/library/ItemIcon";
-import { Inventory } from "layers/network/shapes/Inventory";
-import { useVisibility } from "layers/react/store/visibility";
+import { ItemIcon } from 'layers/react/components/library/ItemIcon';
+import { Inventory } from 'layers/network/shapes/Inventory';
+import { useVisibility } from 'layers/react/store/visibility';
 
 interface Props {
   inventories: Inventory[];
-};
+}
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
@@ -14,14 +14,10 @@ export const ItemGrid = (props: Props) => {
 
   const openLootbox = () => {
     setModals({ ...modals, lootboxes: true, inventory: false });
-  }
+  };
 
   if (props.inventories.length === 0) {
-    return (
-      <EmptyText>
-        Inventory is empty. Go get something.
-      </EmptyText>
-    );
+    return <EmptyText>Inventory is empty. Go get something.</EmptyText>;
   }
 
   const Cell = (inventory: Inventory) => {
@@ -32,11 +28,11 @@ export const ItemGrid = (props: Props) => {
         item={inventory.item}
         size='fixed'
         balance={inventory.balance}
-        onClick={inventory.item.type === "LOOTBOX" ? openLootbox : undefined}
+        onClick={inventory.item.type === 'LOOTBOX' ? openLootbox : undefined}
         description
       />
     );
-  }
+  };
 
   return (
     <Container key='grid'>
@@ -44,7 +40,6 @@ export const ItemGrid = (props: Props) => {
     </Container>
   );
 };
-
 
 const Container = styled.div`
   display: flex;

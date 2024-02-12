@@ -7,7 +7,6 @@ import { playClick } from 'utils/sounds';
 
 import { Kami } from 'layers/network/shapes/Kami';
 
-
 interface Props {
   kamis: Kami[];
   amtShown: number;
@@ -17,7 +16,7 @@ interface Props {
   select?: {
     arr: Kami[];
     set: (arr: Kami[]) => void;
-  }
+  };
 }
 
 const selectedStyle: any = {
@@ -26,69 +25,70 @@ const selectedStyle: any = {
 };
 
 export const KamiGrid = (props: Props) => {
-
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 
   const Cell = (kami: Kami) => {
-    let selectedIndex = props.select && props.select.arr.length > 0
-      ? (props.select.arr.findIndex(k => k.id === kami.id))
-      : -1;
+    let selectedIndex =
+      props.select && props.select.arr.length > 0
+        ? props.select.arr.findIndex((k) => k.id === kami.id)
+        : -1;
     let isSelected = selectedIndex !== -1;
 
     const selectFunc = () => {
       if (!props.select) return;
 
       if (isSelected) {
-        const newArr = [...props.select.arr]
+        const newArr = [...props.select.arr];
         newArr.splice(selectedIndex, 1);
         props.select.set(newArr);
       } else {
         const newArr = [...props.select.arr, kami];
         props.select.set(newArr);
       }
-    }
+    };
 
     const imageOnClick = () => {
-      const sameKami = (kamiIndex === kami.index);
+      const sameKami = kamiIndex === kami.index;
       setKami(kami.index);
 
       if (modals.kami && sameKami) setModals({ ...modals, kami: false });
       else setModals({ ...modals, kami: true });
       playClick();
-    }
+    };
 
     return (
-      <Tooltip key={kami.index} text={props.getKamiText ? props.getKamiText(kami) : []}>
+      <Tooltip
+        key={kami.index}
+        text={props.getKamiText ? props.getKamiText(kami) : []}
+      >
         <CellContainer id={`grid-${kami.id}`}>
           <Image onClick={() => imageOnClick()} src={kami.uri} />
-          {props.select &&
+          {props.select && (
             <SelectButton
               onClick={selectFunc}
-              style={isSelected ? selectedStyle : {}} />
-          }
+              style={isSelected ? selectedStyle : {}}
+            />
+          )}
         </CellContainer>
       </Tooltip>
     );
-  }
+  };
 
-  const ShowMoreIcon = (
-    (props.amtShown < props.grossShowable) &&
-    <ShowMoreButton onClick={props.incAmtShown}>
-      See more
-    </ShowMoreButton>
+  const ShowMoreIcon = props.amtShown < props.grossShowable && (
+    <ShowMoreButton onClick={props.incAmtShown}>See more</ShowMoreButton>
   );
 
   // finish the list with null items to justify elements in grid
   // because of vw units, always 5 items per row
   const NullItems = () => {
     // total items, add 1 if show more is displayed
-    const gross = props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
-    const remainder = (gross % 5) == 0 ? 0 : 5 - (gross % 5);
+    const gross =
+      props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
+    const remainder = gross % 5 == 0 ? 0 : 5 - (gross % 5);
 
     return Array(remainder).fill(<EmptyEntry key={'empty'} />);
-  }
-
+  };
 
   return (
     <Container key='grid'>
@@ -97,7 +97,7 @@ export const KamiGrid = (props: Props) => {
       {NullItems()}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
@@ -109,8 +109,8 @@ const Container = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid .15vw black;
-  border-radius: .25vw;
+  border: solid 0.15vw black;
+  border-radius: 0.25vw;
 
   margin: 0.3vh 0.4vw;
   position: relative;
@@ -123,7 +123,7 @@ const EmptyEntry = styled.div`
 `;
 
 const Image = styled.img`
-  border-radius: .1vw;
+  border-radius: 0.1vw;
   height: 9vw;
   cursor: pointer;
 
@@ -134,8 +134,8 @@ const Image = styled.img`
 
 const ShowMoreButton = styled.button`
   background-color: transparent;
-  border: dashed .15vw #333;
-  border-radius: .25vw;
+  border: dashed 0.15vw #333;
+  border-radius: 0.25vw;
   align-self: center;
 
   margin: 0.3vh 0.4vw;
@@ -148,7 +148,7 @@ const ShowMoreButton = styled.button`
   color: black;
 
   &:hover {
-    background-color: #DDD;
+    background-color: #ddd;
   }
 `;
 
@@ -159,11 +159,11 @@ const SelectButton = styled.button`
   width: 2vw;
   height: 2vw;
 
-  border: solid .15vw #333;
-  border-radius: .4vw;
-  opacity: 0.90;
+  border: solid 0.15vw #333;
+  border-radius: 0.4vw;
+  opacity: 0.9;
 
   &:hover {
-    background-color: #AAA;
+    background-color: #aaa;
   }
 `;

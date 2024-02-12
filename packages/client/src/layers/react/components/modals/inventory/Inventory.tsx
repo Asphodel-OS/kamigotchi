@@ -10,7 +10,6 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';
 
-
 export function registerInventoryModal() {
   registerUIComponent(
     'Inventory',
@@ -22,10 +21,15 @@ export function registerInventoryModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const account = getAccountFromBurner(layers.network, { inventory: true });
-      return { data: { account } };
-    })),
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network, {
+            inventory: true,
+          });
+          return { data: { account } };
+        })
+      ),
 
     // Render
     ({ data }) => {
@@ -37,11 +41,15 @@ export function registerInventoryModal() {
         if (accInv?.revives) inventories = inventories.concat(accInv.revives);
         if (accInv?.mods) inventories = inventories.concat(accInv.mods);
         if (accInv?.gear) inventories = inventories.concat(accInv.gear);
-        if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
-        if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
+        if (accInv?.consumables)
+          inventories = inventories.concat(accInv.consumables);
+        if (accInv?.lootboxes)
+          inventories = inventories.concat(accInv.lootboxes);
 
-        return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
-      }
+        return inventories.filter(
+          (inv) => !inv.item.isFungible || inv.balance! > 0
+        );
+      };
 
       /////////////////
       // DISPLAY

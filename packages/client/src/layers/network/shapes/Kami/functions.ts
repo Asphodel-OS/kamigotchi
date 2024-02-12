@@ -7,7 +7,6 @@ import {
   getLocation as getProductionLocation,
 } from '../Production';
 
-
 ////////////////
 // STATE CHECKS
 
@@ -19,7 +18,7 @@ export const isDead = (kami: Kami): boolean => {
 // check whether the kami is harvesting
 export const isHarvesting = (kami: Kami): boolean => {
   return kami.state === 'HARVESTING';
-}
+};
 
 // check whether the kami is resting
 export const isResting = (kami: Kami): boolean => {
@@ -43,14 +42,17 @@ export const isWithAccount = (kami: Kami): boolean => {
   if (isHarvesting(kami)) {
     const accLoc = kami.account?.location ?? 0;
     const kamiLoc = kami.production?.node?.location ?? 0;
-    if (accLoc == 0 || kamiLoc == 0) console.warn(
-      `Invalid Location for kami ${kami.index * 1}\n\tProduction: ${kamiLoc} \n\tAccount: ${accLoc}`
-    );
+    if (accLoc == 0 || kamiLoc == 0)
+      console.warn(
+        `Invalid Location for kami ${
+          kami.index * 1
+        }\n\tProduction: ${kamiLoc} \n\tAccount: ${accLoc}`
+      );
     return accLoc === kamiLoc;
   }
-  console.warn(`Invalid State ${kami.state} for kami ${kami.index * 1}`)
-  return false
-}
+  console.warn(`Invalid State ${kami.state} for kami ${kami.index * 1}`);
+  return false;
+};
 
 // interpret the location of the kami based on the kami's state (using Account and Production Node)
 // return 0 if the location cannot be determined from information provided
@@ -65,7 +67,6 @@ export const getLocation = (kami: Kami): number => {
   return location;
 };
 
-
 ////////////////
 // TIME CALCS
 
@@ -78,21 +79,21 @@ export const calcIdleTime = (kami: Kami): number => {
 export const calcHarvestTime = (kami: Kami): number => {
   if (!isHarvesting(kami)) return 0;
   return calcProductionIdletime(kami.production);
-}
+};
 
 // calculate the cooldown remaining on kami standard actions
 export const calcCooldownRemaining = (kami: Kami): number => {
   const now = Date.now() / 1000;
   const lastStandardActionTime = kami.time.cooldown.last;
-  const remainingTime = kami.time.cooldown.requirement + lastStandardActionTime - now;
+  const remainingTime =
+    kami.time.cooldown.requirement + lastStandardActionTime - now;
   return Math.max(0, remainingTime);
-}
+};
 
 // determine whether the kami is still on cooldown
 export const onCooldown = (kami: Kami): boolean => {
   return calcCooldownRemaining(kami) > 0;
-}
-
+};
 
 ////////////////
 // HEALTH CALCS
@@ -112,7 +113,7 @@ export const calcHealth = (kami: Kami): number => {
 
 export const isStarving = (kami: Kami): boolean => {
   return calcHealth(kami) === 0;
-}
+};
 
 // check whether the kami is full
 export const isFull = (kami: Kami): boolean => {
@@ -126,14 +127,12 @@ export const calcOutput = (kami: Kami): number => {
   else return calcProductionOutput(kami.production);
 };
 
-
 ////////////////
 // HARVEST
 
 export const canHarvest = (kami: Kami): boolean => {
   return !onCooldown(kami) && isResting(kami);
 };
-
 
 ////////////////
 // LIQUIDATION
@@ -172,7 +171,8 @@ const calcLiqThresholdBase = (
   victim: Kami,
   config: LiquidationConfig
 ): number => {
-  const attackerTotalViolence = attacker.stats.violence + attacker.bonusStats.violence;
+  const attackerTotalViolence =
+    attacker.stats.violence + attacker.bonusStats.violence;
   const victimTotalHarmony = victim.stats.harmony + victim.bonusStats.harmony;
   const ratio = attackerTotalViolence / victimTotalHarmony;
   const weight = cdf(Math.log(ratio), 0, 1);
@@ -199,7 +199,7 @@ export const calcLiqThresholdValue = (
   const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
   const thresholdPercent = calcLiqThresholdPercent(attacker, victim, config);
   return thresholdPercent * victimTotalHealth;
-}
+};
 
 // determine whether a kami can liquidate another kami
 export const canLiquidate = (
@@ -207,8 +207,12 @@ export const canLiquidate = (
   victim: Kami,
   config: LiquidationConfig
 ): boolean => {
-  return !onCooldown(attacker) && !isStarving(attacker) && canMog(attacker, victim, config);
-}
+  return (
+    !onCooldown(attacker) &&
+    !isStarving(attacker) &&
+    canMog(attacker, victim, config)
+  );
+};
 
 export const canMog = (
   attacker: Kami,
@@ -219,5 +223,4 @@ export const canMog = (
   const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
   const absoluteThreshold = thresholdPercent * victimTotalHealth;
   return calcHealth(victim) < absoluteThreshold;
-}
-
+};

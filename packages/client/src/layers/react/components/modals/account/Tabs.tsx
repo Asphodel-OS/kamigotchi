@@ -9,12 +9,11 @@ interface Props {
 }
 
 export const Tabs = (props: Props) => {
-
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
     props.setTab(tab);
-  }
+  };
 
   const SelfTabs = () => {
     return (
@@ -41,7 +40,7 @@ export const Tabs = (props: Props) => {
         </Button>
       </>
     );
-  }
+  };
 
   const OtherTabs = () => {
     return (
@@ -68,18 +67,14 @@ export const Tabs = (props: Props) => {
         </Button>
       </>
     );
-  }
+  };
 
-  return (
-    <Container>
-      {(props.isSelf) ? SelfTabs() : OtherTabs()}
-    </Container>
-  );
-}
+  return <Container>{props.isSelf ? SelfTabs() : OtherTabs()}</Container>;
+};
 
 const Container = styled.div`
-  border: solid .15vw black;
-  border-radius: .3vw .3vw 0 0;
+  border: solid 0.15vw black;
+  border-radius: 0.3vw 0.3vw 0 0;
   border-bottom: none;
 
   width: 100%;
@@ -91,7 +86,7 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: .5vw;
+  padding: 0.5vw;
   flex-grow: 1;
   color: black;
   justify-content: center;

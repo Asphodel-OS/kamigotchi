@@ -26,7 +26,7 @@ export function registerMapButton() {
           const account = getAccountFromBurner(network);
           return {
             network,
-            data: { account }
+            data: { account },
           };
         })
       );

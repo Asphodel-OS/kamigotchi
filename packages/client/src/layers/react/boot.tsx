@@ -28,4 +28,3 @@ export function boot() {
   renderEngine();
   registerUIComponents();
 }
-

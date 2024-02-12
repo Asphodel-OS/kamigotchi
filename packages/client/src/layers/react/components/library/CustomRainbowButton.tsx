@@ -1,11 +1,10 @@
-
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 /*
-  * Modifies rainbowkit's ConnectButton to be use ActionButton instead
-  * copies some props from action button to allow pass through
-*/
+ * Modifies rainbowkit's ConnectButton to be use ActionButton instead
+ * copies some props from action button to allow pass through
+ */
 
 interface Props {
   size: 'small' | 'medium' | 'large' | 'vending' | 'menu';
@@ -31,14 +30,13 @@ export const AccountButton = (props: Props) => {
           ready &&
           account &&
           chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated');
+          (!authenticationStatus || authenticationStatus === 'authenticated');
 
         return (
           <div
             {...(!ready && {
               'aria-hidden': true,
-              'style': {
+              style: {
                 opacity: 0,
                 pointerEvents: 'none',
                 userSelect: 'none',
@@ -65,7 +63,7 @@ export const AccountButton = (props: Props) => {
                   <ActionButton
                     id='unsupported-chain-button'
                     onClick={openChainModal}
-                    text="Wrong Chain"
+                    text='Wrong Chain'
                     size={props.size}
                     disabled={props.disabled}
                     fill={props.fill}
@@ -79,7 +77,11 @@ export const AccountButton = (props: Props) => {
                   <ActionButton
                     id='chain-button'
                     onClick={openAccountModal}
-                    text={account.address.substring(0, 4) + '...' + account.address.substring(38, 42)}
+                    text={
+                      account.address.substring(0, 4) +
+                      '...' +
+                      account.address.substring(38, 42)
+                    }
                     size={props.size}
                     disabled={props.disabled}
                     fill={props.fill}

@@ -1,16 +1,15 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { Account } from "layers/network/shapes/Account";
-import { Friendship } from "layers/network/shapes/Friendship";
-import { ActionListButton } from "layers/react/components/library";
-import { AccountCard } from "layers/react/components/library/AccountCard";
-
+import { Account } from 'layers/network/shapes/Account';
+import { Friendship } from 'layers/network/shapes/Friendship';
+import { ActionListButton } from 'layers/react/components/library';
+import { AccountCard } from 'layers/react/components/library/AccountCard';
 
 interface Props {
   requests: Friendship[];
   actions: {
     cancelFren: (friendship: Friendship) => void;
-  }
+  };
 }
 
 export const Outbound = (props: Props) => {
@@ -26,8 +25,7 @@ export const Outbound = (props: Props) => {
         ]}
       />
     );
-  }
-
+  };
 
   if (requests.length === 0) return <EmptyText>no outbound requests</EmptyText>;
   return (
@@ -42,8 +40,7 @@ export const Outbound = (props: Props) => {
       ))}
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
   width: 100%;
@@ -61,6 +58,6 @@ const EmptyText = styled.div`
   justify-content: center;
   align-items: center;
 
-  font-size: .9vw;
+  font-size: 0.9vw;
   font-family: Pixel;
 `;

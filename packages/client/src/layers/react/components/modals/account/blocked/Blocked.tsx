@@ -1,15 +1,14 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { Friendship } from "layers/network/shapes/Friendship";
-import { ActionListButton } from "layers/react/components/library";
-import { AccountCard } from "layers/react/components/library/AccountCard";
-
+import { Friendship } from 'layers/network/shapes/Friendship';
+import { ActionListButton } from 'layers/react/components/library';
+import { AccountCard } from 'layers/react/components/library/AccountCard';
 
 interface Props {
   blocked: Friendship[];
   actions: {
     cancelFren: (friendship: Friendship) => void;
-  }
+  };
 }
 
 export const Blocked = (props: Props) => {
@@ -28,7 +27,10 @@ export const Blocked = (props: Props) => {
               id={`friendship-options-${friendship.entityIndex}`}
               text=''
               options={[
-                { text: 'Unblock', onClick: () => actions.cancelFren(friendship) },
+                {
+                  text: 'Unblock',
+                  onClick: () => actions.cancelFren(friendship),
+                },
               ]}
             />
           }
@@ -36,8 +38,7 @@ export const Blocked = (props: Props) => {
       ))}
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
   width: 100%;
@@ -47,7 +48,6 @@ const Container = styled.div`
   align-items: center;
 `;
 
-
 const EmptyText = styled.div`
   color: black;
   margin: 1vw;
@@ -56,6 +56,6 @@ const EmptyText = styled.div`
   justify-content: center;
   align-items: center;
 
-  font-size: .9vw;
+  font-size: 0.9vw;
   font-family: Pixel;
 `;

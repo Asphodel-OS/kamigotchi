@@ -14,7 +14,6 @@ import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
-
 interface Props {
   kami: Kami;
 }
@@ -35,7 +34,7 @@ export const KillLogs = (props: Props) => {
     } else {
       return `-${log.balance}`;
     }
-  }
+  };
 
   const Head = () => (
     <TableHead>
@@ -52,18 +51,15 @@ export const KillLogs = (props: Props) => {
   const Row = (log: Kill, index: number) => {
     const killStyle = { ...cellStyle, color: 'green' };
     const deathStyle = { ...cellStyle, color: 'red' };
-    const type = (log.source?.index === undefined) ? 'kill' : 'death';
-    const adversary = (log.source?.index === undefined) ? log.target : log.source;
+    const type = log.source?.index === undefined ? 'kill' : 'death';
+    const adversary = log.source?.index === undefined ? log.target : log.source;
     const date = new Date(log.time * 1000);
-    const dateString = date.toLocaleString(
-      'default',
-      {
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      }
-    );
+    const dateString = date.toLocaleString('default', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    });
 
     return (
       <TableRow key={index}>
@@ -87,8 +83,10 @@ export const KillLogs = (props: Props) => {
         >
           {adversary?.name}
         </TableCell>
-        <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>{type}</TableCell>
-        <TableCell sx={(type === 'kill') ? killStyle : deathStyle}>
+        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>
+          {type}
+        </TableCell>
+        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>
           {getPnLString(log)}
         </TableCell>
       </TableRow>
@@ -105,20 +103,20 @@ export const KillLogs = (props: Props) => {
       </TableContainer>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
-  border: solid black .15vw;
-  border-radius: .5vw;
-  margin: .7vw;
-  padding: .7vw;
+  border: solid black 0.15vw;
+  border-radius: 0.5vw;
+  margin: 0.7vw;
+  padding: 0.7vw;
 
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Title = styled.div`
-  padding: .5vw;  
+  padding: 0.5vw;
   color: black;
   font-family: Pixel;
   font-size: 2vw;

@@ -5,23 +5,20 @@ import { ActionButton } from 'layers/react/components/library';
 
 import { GachaCommit, isGachaAvailable } from 'layers/network/shapes/Gacha';
 
-
 interface Props {
   actions: {
     revealTx: (commits: GachaCommit[]) => Promise<void>;
-  }
+  };
   data: {
     commits: GachaCommit[];
     blockNum: number;
-  }
+  };
   display: {
     Tab: JSX.Element;
-  }
-
+  };
 }
 
 export const Commits = (props: Props) => {
-
   /////////////////
   // LOGIC
 
@@ -40,7 +37,7 @@ export const Commits = (props: Props) => {
       const minutes = Math.floor(secDelta / 60);
       return `${minutes} minutes  ago`;
     }
-  }
+  };
 
   /////////////////
   // DISPLAY
@@ -48,8 +45,8 @@ export const Commits = (props: Props) => {
   const Cell = (commit: GachaCommit) => {
     return isGachaAvailable(commit, props.data.blockNum)
       ? ActiveCell(commit)
-      : ExpiredCell(commit)
-  }
+      : ExpiredCell(commit);
+  };
 
   const ActiveCell = (commit: GachaCommit) => {
     return (
@@ -64,33 +61,37 @@ export const Commits = (props: Props) => {
         </Row>
       </CellContainer>
     );
-  }
+  };
 
   const ExpiredCell = (commit: GachaCommit) => {
     return (
       <CellContainer id={`grid-${commit.id}`}>
         <ExpiredName>Expired Commit, {getCommitTimeFrom(commit)}</ExpiredName>
         <Description>Your kami is stuck, but can be retrieved.</Description>
-        <Description> Please send this commit's ID to support on discord.</Description>
-        <Row><ActionButton
-          id={`reveal-${commit.id}`}
-          onClick={() => { navigator.clipboard.writeText(commit.id) }}
-          text='Copy ID'
-        />
+        <Description>
+          {' '}
+          Please send this commit's ID to support on discord.
+        </Description>
+        <Row>
+          <ActionButton
+            id={`reveal-${commit.id}`}
+            onClick={() => {
+              navigator.clipboard.writeText(commit.id);
+            }}
+            text='Copy ID'
+          />
         </Row>
       </CellContainer>
     );
-  }
+  };
 
   return (
     <OuterBox key='grid'>
       {props.display.Tab}
-      <InnerBox>
-        {props.data.commits.map((commit) => Cell(commit))}
-      </InnerBox>
+      <InnerBox>{props.data.commits.map((commit) => Cell(commit))}</InnerBox>
     </OuterBox>
   );
-}
+};
 
 const OuterBox = styled.div`
   width: 100%;
@@ -108,8 +109,8 @@ const InnerBox = styled.div`
   justify-content: flex-start;
 
   flex: 1;
-  border: solid .15vw black;
-  border-radius: .75vw;
+  border: solid 0.15vw black;
+  border-radius: 0.75vw;
   height: 80%;
   padding: 1vw;
   margin: 1vw;
@@ -119,11 +120,11 @@ const InnerBox = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid .15vw black;
+  border: solid 0.15vw black;
   border-radius: 1vw;
 
   margin: 0.3vh 0.4vw;
-  padding: 1.4vh 0.8vw; 
+  padding: 1.4vh 0.8vw;
   position: relative;
 `;
 

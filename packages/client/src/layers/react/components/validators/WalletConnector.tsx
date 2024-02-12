@@ -13,7 +13,6 @@ import { useNetwork as useMUDNetwork } from 'layers/react/store/network';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
-
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
 export function registerWalletConnecter() {
@@ -44,15 +43,14 @@ export function registerWalletConnecter() {
       const [warning, setWarning] = useState('');
       const [buttonLabel, setButtonLabel] = useState('');
 
-
       // update the network settings whenever the connector/address changes
       // determine whether/with what content this Validator should be populated
       useEffect(() => {
         let isVisible = true;
         console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
 
-        const chainMatches = (chain?.id === defaultChain.id);
-        setValidations({ ...validations, chainMatches, isConnected })
+        const chainMatches = chain?.id === defaultChain.id;
+        setValidations({ ...validations, chainMatches, isConnected });
 
         // populate validator or initialize network depending on network validity
         if (!connector || !isConnected || !address) {
@@ -63,7 +61,9 @@ export function registerWalletConnecter() {
           setButtonLabel('Connect');
         } else if (!chainMatches) {
           setTitle('Wrong Network');
-          setWarning(`You're currently connected to the ${chain?.name} network`);
+          setWarning(
+            `You're currently connected to the ${chain?.name} network`
+          );
           setDescription(`Please connect to ${defaultChain.name} network.`);
           setButtonLabel('Change Networks');
         } else {
@@ -88,7 +88,6 @@ export function registerWalletConnecter() {
         }
       }, [isVisible]);
 
-
       /////////////////
       // ACTIONS
 
@@ -101,7 +100,7 @@ export function registerWalletConnecter() {
           console.log(`CREATING NETWORK FOR..`, connectorAddressLowerCase);
 
           // create network config and the new network layer
-          const provider = await connector!.getProvider()
+          const provider = await connector!.getProvider();
           const networkConfig = createNetworkConfig(provider);
           if (!networkConfig) throw new Error('Invalid config');
           const networkLayer = await createNetworkLayer(networkConfig);
@@ -117,8 +116,7 @@ export function registerWalletConnecter() {
         if (chain?.id !== defaultChain.id) {
           return openChainModal;
         }
-      }
-
+      };
 
       /////////////////
       // RENDER
@@ -133,7 +131,7 @@ export function registerWalletConnecter() {
           <Description>{description}</Description>
           <ActionButton
             id='connect-button'
-            onClick={getButtonAction() ?? (() => { })}
+            onClick={getButtonAction() ?? (() => {})}
             text={buttonLabel}
             size='vending'
           />

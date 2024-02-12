@@ -1,4 +1,4 @@
-import { registerBuyModal } from "./Buy";
-import { registerMerchantModal } from "./Merchant";
+import { registerBuyModal } from './Buy';
+import { registerMerchantModal } from './Merchant';
 
 export { registerBuyModal, registerMerchantModal };

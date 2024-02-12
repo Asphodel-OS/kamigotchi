@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
-import { observer } from "mobx-react-lite";
-import { useLayers, useEngineStore } from "layers/react/engine/hooks";
-import { filterNullishValues } from "@latticexyz/utils";
-import { Cell } from "./Cell";
-import styled from "styled-components";
-import { GridConfiguration, UIComponent } from "../types";
-import { useStream } from "@latticexyz/std-client";
-import { Layers } from "../../../../types";
+import React, { useMemo } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useLayers, useEngineStore } from 'layers/react/engine/hooks';
+import { filterNullishValues } from '@latticexyz/utils';
+import { Cell } from './Cell';
+import styled from 'styled-components';
+import { GridConfiguration, UIComponent } from '../types';
+import { useStream } from '@latticexyz/std-client';
+import { Layers } from '../../../../types';
 
 const UIGrid = styled.div`
   display: grid;
@@ -21,24 +21,29 @@ const UIGrid = styled.div`
   z-index: 100;
 `;
 
-const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.memo(({ children, gridConfig }) => {
-  const { colStart, colEnd, rowStart, rowEnd } = gridConfig;
+const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> =
+  React.memo(({ children, gridConfig }) => {
+    const { colStart, colEnd, rowStart, rowEnd } = gridConfig;
 
-  return (
-    <Cell
-      style={{
-        gridRowStart: rowStart,
-        gridRowEnd: rowEnd,
-        gridColumnStart: colStart,
-        gridColumnEnd: colEnd,
-      }}
-    >
-      {children}
-    </Cell>
-  );
-});
+    return (
+      <Cell
+        style={{
+          gridRowStart: rowStart,
+          gridRowEnd: rowEnd,
+          gridColumnStart: colStart,
+          gridColumnEnd: colEnd,
+        }}
+      >
+        {children}
+      </Cell>
+    );
+  });
 
-export const UIComponentRenderer: React.FC<{ layers: Layers; id: string; uiComponent: UIComponent }> = React.memo(
+export const UIComponentRenderer: React.FC<{
+  layers: Layers;
+  id: string;
+  uiComponent: UIComponent;
+}> = React.memo(
   ({ layers, id, uiComponent: { requirement, Render, gridConfig } }) => {
     const req = useMemo(() => requirement(layers), [requirement, layers]);
     const state = useStream(req);
@@ -64,7 +69,12 @@ export const ComponentRenderer: React.FC = observer(() => {
         // and return those whose requirements are fulfilled
         [...UIComponents.entries()].map(([id, uiComponent]) => {
           return (
-            <UIComponentRenderer layers={layers} id={id} key={`componentRenderer-${id}`} uiComponent={uiComponent} />
+            <UIComponentRenderer
+              layers={layers}
+              id={id}
+              key={`componentRenderer-${id}`}
+              uiComponent={uiComponent}
+            />
           );
         })
       )}

@@ -31,8 +31,10 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
     if (this.room) {
       const room = this.room;
-      if (room.background) this.load.image(room.background.key, room.background.path);
-      if (room.objects) room.objects.map((obj) => this.load.image(obj.key, obj.path));
+      if (room.background)
+        this.load.image(room.background.key, room.background.path);
+      if (room.objects)
+        room.objects.map((obj) => this.load.image(obj.key, obj.path));
       if (room.music) this.load.audio(room.music.key, room.music.path);
     }
   }
@@ -53,7 +55,11 @@ export class GameScene extends Phaser.Scene implements GameScene {
 
       // set the room image
       if (room.background) {
-        let bg = this.add.image(gameWidth / 2, gameHeight / 2, room.background.key);
+        let bg = this.add.image(
+          gameWidth / 2,
+          gameHeight / 2,
+          room.background.key
+        );
         scale = (1 * gameHeight) / bg.height;
         bg.setScale(scale);
       }
@@ -92,7 +98,9 @@ export class GameScene extends Phaser.Scene implements GameScene {
         const volume = settings.volume.bgm ?? 0.5;
         this.currentVolume = volume;
         if (!checkDuplicateRooms(this.currentRoom, this.prevRoom)) {
-          const bgm = this.sound.add(room.music.key, { volume }) as Phaser.Sound.HTML5AudioSound;
+          const bgm = this.sound.add(room.music.key, {
+            volume,
+          }) as Phaser.Sound.HTML5AudioSound;
           bgm.loop = true;
           bgm.play();
           this.gameSound = bgm;
@@ -113,5 +121,5 @@ export class GameScene extends Phaser.Scene implements GameScene {
     });
   }
 
-  update() { }
+  update() {}
 }

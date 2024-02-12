@@ -8,12 +8,11 @@ interface Props {
 }
 
 export const Tabs = (props: Props) => {
-
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
     props.setTab(tab);
-  }
+  };
 
   return (
     <Container>
@@ -39,7 +38,7 @@ export const Tabs = (props: Props) => {
       </Button>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;
@@ -51,7 +50,7 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: .5vw;
+  padding: 0.5vw;
   flex-grow: 1;
   color: black;
   justify-content: center;

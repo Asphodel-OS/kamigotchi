@@ -246,11 +246,11 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   const hoveredStyle = isNeighbor
     ? { border: '.15vw solid green', opacity: '0.7' }
     : { border: '.15vw solid red', opacity: '0.7' };
-  const currentRoomStyle = (isCurrentRoom)
+  const currentRoomStyle = isCurrentRoom
     ? { border: '.15vw solid transparent', opacity: '0.7' }
     : {};
-  const cornerStyle = (isTopLeft) ? { borderRadius: '8px 0px 0px 0px' } : {};
-  const cornerStyle2 = (isTopRight) ? { borderRadius: '0px 8px 0px 0px' } : {};
+  const cornerStyle = isTopLeft ? { borderRadius: '8px 0px 0px 0px' } : {};
+  const cornerStyle2 = isTopRight ? { borderRadius: '0px 8px 0px 0px' } : {};
 
   const handleMouseEnter = () => {
     if (isClickable) {
@@ -285,7 +285,6 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   );
 };
 
-
 export const MapGrid = ({ currentRoom, move }: MapProps) => {
   return (
     <GridContainer>
@@ -306,7 +305,6 @@ export const MapGrid = ({ currentRoom, move }: MapProps) => {
     </GridContainer>
   );
 };
-
 
 const GridContainer = styled.div`
   border-radius: 8px 8px 0px 0px;

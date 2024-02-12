@@ -1,27 +1,25 @@
 import CakeIcon from '@mui/icons-material/Cake';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import TollIcon from '@mui/icons-material/Toll';
-import moment from "moment";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { Account } from "layers/network/shapes/Account";
-import { Tooltip } from "../../library";
-import { playClick } from "utils/sounds";
-
+import { Account } from 'layers/network/shapes/Account';
+import { Tooltip } from '../../library';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
-  }
+  };
 }
 
 export const Bio = (props: Props) => {
   const { actions, account } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-
 
   /////////////////
   // TRACKING
@@ -42,14 +40,12 @@ export const Bio = (props: Props) => {
     navigator.clipboard.writeText(text);
   };
 
-
   /////////////////
   // INTERPRETATION
 
   const getLastSeenString = () => {
-    return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`
-  }
-
+    return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`;
+  };
 
   /////////////////
   // RENDERING
@@ -61,22 +57,24 @@ export const Bio = (props: Props) => {
     const addrSuffix = address.slice(-4);
     return (
       <Tooltip text={[address]}>
-        <Subtitle onClick={() => copyText(address)} >
+        <Subtitle onClick={() => copyText(address)}>
           {addrPrefix}...{addrSuffix}
         </Subtitle>
       </Tooltip>
     );
-  }
+  };
 
   const BirthdayRow = () => {
     if (!account.time.creation) return null;
     return (
       <DetailRow>
         <CakeIcon style={{ height: '1vw', width: '1vw' }} />
-        <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
+        <Description>
+          {moment(1000 * account.time.creation).format('MMM DD, YYYY')}
+        </Description>
       </DetailRow>
     );
-  }
+  };
 
   const KillsRow = () => {
     return (
@@ -85,7 +83,7 @@ export const Bio = (props: Props) => {
         <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
       </DetailRow>
     );
-  }
+  };
 
   const CoinRow = () => {
     return (
@@ -94,7 +92,7 @@ export const Bio = (props: Props) => {
         <Description>{account.stats?.coin ?? 0} $MUSU Collected</Description>
       </DetailRow>
     );
-  }
+  };
 
   return (
     <Container key={account.name}>
@@ -117,7 +115,6 @@ export const Bio = (props: Props) => {
   );
 };
 
-
 const Container = styled.div`
   color: black;
   padding: 1.2vw;
@@ -127,7 +124,7 @@ const Container = styled.div`
 
 const Content = styled.div`
   flex-grow: 1;
-  padding: .5vw;
+  padding: 0.5vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -135,7 +132,7 @@ const Content = styled.div`
 `;
 
 const Identifiers = styled.div`
-  padding-bottom: .6vw;
+  padding-bottom: 0.6vw;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
@@ -148,7 +145,7 @@ const Title = styled.div`
 
 const Subtitle = styled.div`
   color: #777;
-  padding: .5vw;
+  padding: 0.5vw;
   flex-grow: 1;
 
   font-family: Pixel;
@@ -158,19 +155,19 @@ const Subtitle = styled.div`
 `;
 
 const DetailRow = styled.div`
-  padding: .3vw 0;
+  padding: 0.3vw 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: .3vw;
+  gap: 0.3vw;
 `;
 
 const Description = styled.div`
   font-size: 0.7vw;
   font-family: Pixel;
-  line-height: .9vw;
+  line-height: 0.9vw;
   text-align: left;
-  padding-top: .2vw;
+  padding-top: 0.2vw;
 `;
 
 const PfpContainer = styled.div`
@@ -180,7 +177,7 @@ const PfpContainer = styled.div`
 `;
 
 const PfpImage = styled.img`
-  border: solid black .15vw;
+  border: solid black 0.15vw;
   border-radius: 10vw;
   width: 10vw;
   height: 10vw;
@@ -189,19 +186,17 @@ const PfpImage = styled.img`
 `;
 
 const PfpStatus = styled.div<{ timeDelta: number }>`
-  border: solid .18vw white;
+  border: solid 0.18vw white;
   position: absolute;
-  bottom: .9vw;
-  right: .9vw;
+  bottom: 0.9vw;
+  right: 0.9vw;
   width: 1.2vw;
   height: 1.2vw;
   border-radius: 3vw;
 
-  background-color: ${props => {
+  background-color: ${(props) => {
     if (props.timeDelta < 60000) return '#6f0';
     else if (props.timeDelta < 600000) return '#fd0';
     else return '#f33';
   }};
 `;
-
-

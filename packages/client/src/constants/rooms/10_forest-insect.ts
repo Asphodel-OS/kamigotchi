@@ -9,7 +9,6 @@ import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
 
-
 export const room10: Room = {
   location: 10,
   background: {

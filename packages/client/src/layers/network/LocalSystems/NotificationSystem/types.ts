@@ -1,11 +1,17 @@
-import { EntityID, EntityIndex, Components, SchemaOf, Override } from "@latticexyz/recs";
-import { ValueOf } from "@latticexyz/utils";
+import {
+  EntityID,
+  EntityIndex,
+  Components,
+  SchemaOf,
+  Override,
+} from '@latticexyz/recs';
+import { ValueOf } from '@latticexyz/utils';
 
 export type ComponentUpdate<C extends Components> = ValueOf<{
   [key in keyof C]: {
     component: key;
     entity: EntityIndex;
-    value: Override<SchemaOf<C[key]>>["value"];
+    value: Override<SchemaOf<C[key]>>['value'];
   };
 }>;
 
@@ -15,4 +21,4 @@ export type NotificationData = {
   description: string;
   time: string;
   modal?: string;
-}
+};

@@ -3,8 +3,4 @@ import backgroundSign from './backgrounds/sign.png';
 
 import objectMooringPost from './objects/mooring-post.png';
 
-export {
-  backgroundEmpty,
-  backgroundSign,
-  objectMooringPost,
-};
+export { backgroundEmpty, backgroundSign, objectMooringPost };

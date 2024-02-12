@@ -1,6 +1,13 @@
-import { EntityID, EntityIndex, Has, HasValue, Layers, getComponentValue, runQuery } from "@latticexyz/recs";
+import {
+  EntityID,
+  EntityIndex,
+  Has,
+  HasValue,
+  Layers,
+  getComponentValue,
+  runQuery,
+} from '@latticexyz/recs';
 import { NetworkLayer } from 'layers/network/types';
-
 
 export interface Bonuses {
   attack: AttackBonus;
@@ -28,7 +35,10 @@ interface DefenseBonus {
 }
 
 // gets the bonuses based on the entity index of a kami
-export const getBonuses = (network: NetworkLayer, entityIndex: EntityIndex): Bonuses => {
+export const getBonuses = (
+  network: NetworkLayer,
+  entityIndex: EntityIndex
+): Bonuses => {
   const { world } = network;
   const holderID = world.entities[entityIndex];
 
@@ -52,16 +62,15 @@ export const getBonuses = (network: NetworkLayer, entityIndex: EntityIndex): Bon
   };
 
   return bonuses;
-}
+};
 
-export const getBonusValue = (network: NetworkLayer, holderID: EntityID, type: string): number | undefined => {
+export const getBonusValue = (
+  network: NetworkLayer,
+  holderID: EntityID,
+  type: string
+): number | undefined => {
   const {
-    components: {
-      IsBonus,
-      HolderID,
-      Type,
-      Value,
-    },
+    components: { IsBonus, HolderID, Type, Value },
   } = network;
 
   const results = Array.from(
@@ -75,6 +84,6 @@ export const getBonusValue = (network: NetworkLayer, holderID: EntityID, type: s
   // NOTE: different bonus types have different default values, so we return undefined when missing
   // the caller must determine what the actual value is when the bonus is missing
   return results.length > 0
-    ? getComponentValue(Value, results[0])?.value as number | undefined
+    ? (getComponentValue(Value, results[0])?.value as number | undefined)
     : undefined;
-}
+};

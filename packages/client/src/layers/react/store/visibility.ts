@@ -20,7 +20,6 @@ interface Actions {
   toggleFixtures: (isOn: boolean) => void;
 }
 
-
 ////////////////
 // BUTTONS
 
@@ -43,7 +42,6 @@ interface Actions {
   toggleModals: (isOn: boolean) => void;
   toggleFixtures: (isOn: boolean) => void;
 }
-
 
 ////////////////
 // BUTTONS
@@ -68,13 +66,12 @@ export const toggleButtons = (isOn: boolean): Buttons => ({
   settings: isOn,
 });
 
-
 ////////////////
 // FIXTURES
 
 export interface Fixtures {
-  accountInfo: boolean,
-  actionQueue: boolean,
+  accountInfo: boolean;
+  actionQueue: boolean;
   notification: boolean;
 }
 
@@ -83,7 +80,6 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
   actionQueue: isOn,
   notification: isOn,
 });
-
 
 ////////////////
 // MODALS
@@ -138,7 +134,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   settings: isOn,
 });
 
-
 ////////////////
 // VALIDATORS
 
@@ -149,7 +144,6 @@ export interface Validators {
   operatorUpdater: boolean;
   walletConnector: boolean;
 }
-
 
 ////////////////
 // WAGMI WAGMI WAGMI WAGMI
@@ -200,31 +194,24 @@ export const useVisibility = create<State & Actions>((set) => {
       gasHarasser: false,
       operatorUpdater: false,
       walletConnector: false,
-    }
+    },
   };
 
   return {
     ...initialState,
-    setButtons: (data: Buttons) => set(
-      (state: State) => ({ ...state, buttons: data })
-    ),
-    setFixtures: (data: Fixtures) => set(
-      (state: State) => ({ ...state, fixtures: data })
-    ),
-    setModals: (data: Modals) => set(
-      (state: State) => ({ ...state, modals: data })
-    ),
-    setValidators: (data: Validators) => set(
-      (state: State) => ({ ...state, validators: data })
-    ),
-    toggleButtons: (isOn: boolean) => set(
-      (state: State) => ({ ...state, buttons: toggleButtons(isOn) })
-    ),
-    toggleFixtures: (isOn: boolean) => set(
-      (state: State) => ({ ...state, fixtures: toggleFixtures(isOn) })
-    ),
-    toggleModals: (isOn: boolean) => set(
-      (state: State) => ({ ...state, modals: toggleModals(isOn) })
-    ),
+    setButtons: (data: Buttons) =>
+      set((state: State) => ({ ...state, buttons: data })),
+    setFixtures: (data: Fixtures) =>
+      set((state: State) => ({ ...state, fixtures: data })),
+    setModals: (data: Modals) =>
+      set((state: State) => ({ ...state, modals: data })),
+    setValidators: (data: Validators) =>
+      set((state: State) => ({ ...state, validators: data })),
+    toggleButtons: (isOn: boolean) =>
+      set((state: State) => ({ ...state, buttons: toggleButtons(isOn) })),
+    toggleFixtures: (isOn: boolean) =>
+      set((state: State) => ({ ...state, fixtures: toggleFixtures(isOn) })),
+    toggleModals: (isOn: boolean) =>
+      set((state: State) => ({ ...state, modals: toggleModals(isOn) })),
   };
 });

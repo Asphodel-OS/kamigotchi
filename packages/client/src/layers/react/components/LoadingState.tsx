@@ -1,14 +1,14 @@
-import React from "react";
-import { concat, map } from "rxjs";
-import { getComponentValue } from "@latticexyz/recs";
-import { GodID, SyncState } from "@latticexyz/network";
+import React from 'react';
+import { concat, map } from 'rxjs';
+import { getComponentValue } from '@latticexyz/recs';
+import { GodID, SyncState } from '@latticexyz/network';
 
-import { BootScreen } from "layers/react/engine/components";
-import { registerUIComponent } from "layers/react/engine/store";
+import { BootScreen } from 'layers/react/engine/components';
+import { registerUIComponent } from 'layers/react/engine/store';
 
 export function registerLoadingState() {
   registerUIComponent(
-    "LoadingState",
+    'LoadingState',
     {
       rowStart: 1,
       rowEnd: 13,
@@ -31,16 +31,18 @@ export function registerLoadingState() {
 
     ({ LoadingState, world }) => {
       const GodEntityIndex = world.entityToIndex.get(GodID);
-      const loadingState = (GodEntityIndex == null)
-        ? null
-        : getComponentValue(LoadingState, GodEntityIndex);
+      const loadingState =
+        GodEntityIndex == null
+          ? null
+          : getComponentValue(LoadingState, GodEntityIndex);
 
-      // percentage display when loading blocks from RPC 
+      // percentage display when loading blocks from RPC
       const getProgressString = () => {
         if (loadingState == null) return;
-        if (loadingState.percentage == 100 || loadingState.percentage == 0) return;
-        return `  (${loadingState.percentage.toFixed(1)}%)`
-      }
+        if (loadingState.percentage == 100 || loadingState.percentage == 0)
+          return;
+        return `  (${loadingState.percentage.toFixed(1)}%)`;
+      };
 
       if (loadingState == null) return <BootScreen>Connecting</BootScreen>;
       if (loadingState.state === SyncState.LIVE) return null;
@@ -49,7 +51,6 @@ export function registerLoadingState() {
           {loadingState.msg} {getProgressString()}
         </BootScreen>
       );
-
     }
   );
 }

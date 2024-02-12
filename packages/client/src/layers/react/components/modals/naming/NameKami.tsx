@@ -2,7 +2,7 @@ import React from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
@@ -23,9 +23,12 @@ export function registerNameKamiModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      return { network: layers.network };
-    })),
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          return { network: layers.network };
+        })
+      ),
 
     // Render
     ({ network }) => {
@@ -36,7 +39,7 @@ export function registerNameKamiModal() {
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiName',
@@ -54,17 +57,15 @@ export function registerNameKamiModal() {
         try {
           nameKami(kami, name);
           setModals({ ...modals, nameKami: false });
-        } catch (e) { }
+        } catch (e) {}
       };
 
       return (
-        <ModalWrapper
-          id='name_kami_modal'
-          divName='nameKami'
-          canExit
-        >
+        <ModalWrapper id='name_kami_modal' divName='nameKami' canExit>
           <Title>Name your Kami</Title>
-          <Description>A Kami can only be named once. Choose wisely.</Description>
+          <Description>
+            A Kami can only be named once. Choose wisely.
+          </Description>
           <InputSingleTextForm
             id={`kami-name`}
             label='new name'
@@ -91,6 +92,6 @@ const Title = styled.div`
 const Description = styled.div`
   color: #333;
   font-family: Pixel;
-  font-size: .7vw;
+  font-size: 0.7vw;
   text-align: center;
 `;

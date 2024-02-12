@@ -1,3 +1,3 @@
-import { registerQuestsModal } from "./Quests";
+import { registerQuestsModal } from './Quests';
 
 export { registerQuestsModal };

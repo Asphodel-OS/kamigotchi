@@ -1,1 +1,1 @@
-export const ReloadEvent = new Event("reload:react");
+export const ReloadEvent = new Event('reload:react');

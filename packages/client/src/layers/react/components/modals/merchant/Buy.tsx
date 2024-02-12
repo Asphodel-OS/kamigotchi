@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Listing, getListing } from 'layers/network/shapes/Listing';
@@ -23,16 +23,21 @@ export function registerBuyModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      return { network: layers.network };
-    })),
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          return { network: layers.network };
+        })
+      ),
 
     // Render
     ({ network }) => {
       const { api, actions } = network;
       const { modals, setModals } = useVisibility();
       const { listingEntityIndex } = useSelected();
-      const [listing, setListing] = useState(getListing(network, listingEntityIndex));
+      const [listing, setListing] = useState(
+        getListing(network, listingEntityIndex)
+      );
       const [quantity, setQuantity] = useState(1);
 
       // update current item based on selection
@@ -47,7 +52,7 @@ export function registerBuyModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'ListingBuy',
@@ -76,8 +81,7 @@ export function registerBuyModal() {
       const closeModal = () => {
         setModals({ ...modals, buy: false });
         setQuantity(1);
-      }
-
+      };
 
       /////////////////
       // RENDER
@@ -115,13 +119,15 @@ export function registerBuyModal() {
                 <Description>{`Quantity:  `}</Description>
                 <Input
                   type='number'
-                  min="1"
-                  max="99"
+                  min='1'
+                  max='99'
                   value={quantity}
                   onKeyDown={(e) => catchKeys(e)}
                   onChange={(e) => handleChange(e)}
                 />
-                <Description>{` ($${quantity * listing.buyPrice})`}</Description>
+                <Description>{` ($${
+                  quantity * listing.buyPrice
+                })`}</Description>
               </InputRow>
             </InfoSection>
           </Content>
@@ -131,9 +137,9 @@ export function registerBuyModal() {
           </ButtonRow>
         </ModalWrapper>
       );
-    })
+    }
+  );
 }
-
 
 const Title = styled.div`
   width: 100%;
@@ -169,7 +175,7 @@ const InfoSection = styled.div`
   font-family: Pixel;
   font-size: 1.5vw;
   text-align: center;
-  padding-left: .5vw;
+  padding-left: 0.5vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -179,16 +185,16 @@ const InfoSection = styled.div`
 const Name = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: .9vw;
+  font-size: 0.9vw;
   text-align: left;
 `;
 
 const Description = styled.div`
-  padding-left: .2vw;
+  padding-left: 0.2vw;
   color: black;
   font-family: Pixel;
-  font-size: .7vw;
-  text-align: left
+  font-size: 0.7vw;
+  text-align: left;
 `;
 
 const InputRow = styled.div`
@@ -199,15 +205,15 @@ const InputRow = styled.div`
 `;
 
 const Input = styled.input`
-  border: .1vw solid black;
-  border-radius: .5vw;
+  border: 0.1vw solid black;
+  border-radius: 0.5vw;
   width: 3vw;
-  padding: .3vw;
+  padding: 0.3vw;
   cursor: pointer;
-  
+
   color: black;
   font-family: Pixel;
-  font-size: .7vw;
+  font-size: 0.7vw;
   text-align: left;
 
   justify-content: center;

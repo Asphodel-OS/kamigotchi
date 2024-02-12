@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { loadingScreens } from "assets/images/loading";
+import { loadingScreens } from 'assets/images/loading';
 
 export const BootScreen: React.FC<{}> = ({ children }) => {
   const [rand, setRand] = useState(0); // index of randomly selected banner
@@ -59,7 +59,7 @@ const Status = styled.div`
   width: 100%;
 
   text-align: center;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 3vh;
 `;
 
@@ -71,6 +71,6 @@ const Tag = styled.div`
   width: 100%;
 
   text-align: left;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2vh;
 `;

@@ -9,7 +9,6 @@ import {
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
-
 export const room9: Room = {
   location: 9,
   background: {

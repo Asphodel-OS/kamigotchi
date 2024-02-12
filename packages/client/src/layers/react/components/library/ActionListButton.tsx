@@ -33,7 +33,7 @@ export function ActionListButton(props: Props) {
     playClick();
     option.onClick();
     handleClose();
-  }
+  };
 
   const setStyles = () => {
     var styles: any = {};
@@ -75,15 +75,15 @@ export function ActionListButton(props: Props) {
 
 const Button = styled.button`
   background-color: #fff;
-  border: solid black .15vw;
-  border-radius: .4vw;
+  border: solid black 0.15vw;
+  border-radius: 0.4vw;
   color: black;
   display: flex;
 
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
   justify-content: center;
-  padding: .35vw .7vw;
+  padding: 0.35vw 0.7vw;
   text-align: center;
   text-decoration: none;
 
@@ -98,19 +98,19 @@ const Button = styled.button`
 `;
 
 const Menu = styled.div`
-  border: solid black .15vw;
-  border-radius: .4vw;
+  border: solid black 0.15vw;
+  border-radius: 0.4vw;
   color: black;
   min-width: 7vw;
 `;
 
 const Item = styled.div`
-  border-radius: .4vw;
-  padding: .6vw;
+  border-radius: 0.4vw;
+  padding: 0.6vw;
   justify-content: left;
 
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
 
   cursor: pointer;
   pointer-events: auto;

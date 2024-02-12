@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useBalance } from 'wagmi';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -25,10 +25,7 @@ export function registerFundOperatorModal() {
     (layers) => {
       const {
         network: {
-          components: {
-            IsAccount,
-            OperatorAddress
-          },
+          components: { IsAccount, OperatorAddress },
         },
       } = layers;
 
@@ -43,7 +40,7 @@ export function registerFundOperatorModal() {
       const {
         network: {
           api: {
-            player: { account }
+            player: { account },
           },
           actions,
           world,
@@ -54,21 +51,20 @@ export function registerFundOperatorModal() {
 
       const [isFundState, setIsFundState] = useState(true);
       const [amount, setAmount] = useState(0.05);
-      const [statusText, setStatusText] = useState("");
-      const [statusColor, setStatusColor] = useState("grey");
-
+      const [statusText, setStatusText] = useState('');
+      const [statusColor, setStatusColor] = useState('grey');
 
       /////////////////
       // BALANCES
 
       const { data: OwnerBal } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
-        watch: true
+        watch: true,
       });
 
       const { data: OperatorBal } = useBalance({
         address: kamiAccount.operatorAddress as `0x${string}`,
-        watch: true
+        watch: true,
       });
 
       /////////////////
@@ -78,7 +74,7 @@ export function registerFundOperatorModal() {
         const network = networks.get(selectedAddress);
         const account = network!.api.player.account;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountFund',
@@ -93,7 +89,7 @@ export function registerFundOperatorModal() {
       };
 
       const refundTx = async () => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountRefund',
@@ -107,7 +103,6 @@ export function registerFundOperatorModal() {
         await waitForActionCompletion(actions!.Action, actionIndex);
       };
 
-
       /////////////////
       // DISPLAY LOGIC
 
@@ -119,7 +114,7 @@ export function registerFundOperatorModal() {
           await refundTx();
         }
         playSuccess();
-      }
+      };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -135,59 +130,74 @@ export function registerFundOperatorModal() {
         setAmount(Number(event.target.value));
       };
 
-
       ///////////////
       // COMPONENTS
 
       const TxButton = () => {
-        const text = isFundState! ? "Fund Operator" : "Send to Owner";
+        const text = isFundState! ? 'Fund Operator' : 'Send to Owner';
         return (
-          <ActionButton id='button-deposit' onClick={() => chooseTx()} size='large' text={text} />
+          <ActionButton
+            id='button-deposit'
+            onClick={() => chooseTx()}
+            size='large'
+            text={text}
+          />
         );
       };
 
       const StateBox = (fundState: boolean) => {
-        const text = fundState ? "Owner" : "Operator";
-        const balance = fundState ? Number(OwnerBal?.formatted).toFixed(4) : Number(OperatorBal?.formatted).toFixed(4);
-        const color = (fundState == isFundState) ? "grey" : "white";
-        const textColor = (fundState == isFundState) ? "white" : "black";
+        const text = fundState ? 'Owner' : 'Operator';
+        const balance = fundState
+          ? Number(OwnerBal?.formatted).toFixed(4)
+          : Number(OperatorBal?.formatted).toFixed(4);
+        const color = fundState == isFundState ? 'grey' : 'white';
+        const textColor = fundState == isFundState ? 'white' : 'black';
         return (
-          <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFundState(fundState)}>
-            <Description style={{ color: textColor }}> {balance} ETH </Description>
-            <SubDescription style={{ color: textColor }}> {text} </SubDescription>
+          <BoxButton
+            style={{ backgroundColor: color }}
+            onClick={() => setIsFundState(fundState)}
+          >
+            <Description style={{ color: textColor }}>
+              {' '}
+              {balance} ETH{' '}
+            </Description>
+            <SubDescription style={{ color: textColor }}>
+              {' '}
+              {text}{' '}
+            </SubDescription>
           </BoxButton>
         );
       };
 
       useEffect(() => {
-        const curBal = isFundState ? Number(OwnerBal?.formatted) : Number(OperatorBal?.formatted);
+        const curBal = isFundState
+          ? Number(OwnerBal?.formatted)
+          : Number(OperatorBal?.formatted);
 
         if (amount > curBal) {
-          setStatusText("Insufficient balance");
-          setStatusColor("#FF785B");
-        }
-        else if (amount == curBal) {
-          setStatusText("Leave a little for gas!");
-          setStatusColor("#FF785B");
-        }
-        else {
-          setStatusColor("grey");
+          setStatusText('Insufficient balance');
+          setStatusColor('#FF785B');
+        } else if (amount == curBal) {
+          setStatusText('Leave a little for gas!');
+          setStatusColor('#FF785B');
+        } else {
+          setStatusColor('grey');
           // placeholder gas estimation
-          if (isFundState) setStatusText("This should last you for approximately 1000 transactions")
+          if (isFundState)
+            setStatusText(
+              'This should last you for approximately 1000 transactions'
+            );
           else {
             const remainBal = curBal - amount;
-            setStatusText("You'd have " + remainBal.toFixed(4).toString() + " ETH left");
-          };
+            setStatusText(
+              "You'd have " + remainBal.toFixed(4).toString() + ' ETH left'
+            );
+          }
         }
       }, [amount, OwnerBal, OperatorBal, isFundState]);
 
       return (
-        <ModalWrapper
-          divName='operatorFund'
-          id='operatorFund'
-          canExit
-          overlay
-        >
+        <ModalWrapper divName='operatorFund' id='operatorFund' canExit overlay>
           <Header>Operator gas</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>
@@ -196,10 +206,22 @@ export function registerFundOperatorModal() {
             <div style={{ width: '100%', gridRow: 1, gridColumn: 2 }}>
               {StateBox(false)}
             </div>
-            <Description style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}>
-              Fund operator. You need gas to function. Better description to follow.
+            <Description
+              style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}
+            >
+              Fund operator. You need gas to function. Better description to
+              follow.
             </Description>
-            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                gridRow: 4,
+                gridColumnStart: 1,
+                gridColumnEnd: 3,
+              }}
+            >
               <Input
                 style={{ pointerEvents: 'auto' }}
                 type='number'
@@ -225,13 +247,13 @@ const BoxButton = styled.button`
   flex-direction: column;
   width: 100%;
 
-  background-color: #FFF;
+  background-color: #fff;
   border-style: solid;
   border-width: 2px;
   border-color: black;
   color: black;
 
-  pointerEvents: 'auto';
+  pointerevents: 'auto';
 `;
 
 const Header = styled.p`
@@ -312,11 +334,11 @@ const TopButton = styled.button`
 
 const WarnText = styled.div`
   font-size: 12px;
-  color: #FF785B;
+  color: #ff785b;
   text-align: center;
   padding: 4px;
   font-family: Pixel;
-  
+
   cursor: pointer;
   border-width: 0px;
   background-color: #ffffff;

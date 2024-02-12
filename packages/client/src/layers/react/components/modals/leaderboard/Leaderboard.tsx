@@ -23,20 +23,25 @@ export function registerLeaderboardModal() {
 
     // Requirement
     (layers) => {
-      return interval(1000).pipe(map(() => {
-        const account = getAccountFromBurner(layers.network);
-        return {
-          network: layers.network,
-          data: { account },
-        };
-      }));
+      return interval(1000).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network);
+          return {
+            network: layers.network,
+            data: { account },
+          };
+        })
+      );
     },
 
     // Render
     ({ network, data }) => {
       // console.log('leaderboardM: tableData', tableData);
       const { modals } = useVisibility();
-      const [filter, setFilter] = useState<ScoresFilter>({ epoch: 0, type: 'COLLECT' });
+      const [filter, setFilter] = useState<ScoresFilter>({
+        epoch: 0,
+        type: 'COLLECT',
+      });
       const [tableData, setTableData] = useState<Score[]>([]);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
@@ -60,21 +65,14 @@ export function registerLeaderboardModal() {
       }, [filter, lastRefresh]);
 
       return (
-        <ModalWrapper
-          divName='leaderboard'
-          id='leaderboard'
-          canExit
-          overlay
-        >
+        <ModalWrapper divName='leaderboard' id='leaderboard' canExit overlay>
           <Header>Leaderboards</Header>
           <Filters
             filter={filter}
             setFilter={setFilter}
-            epochOptions={
-              Array.from(
-                new Set(network.components.Epoch.values.value.values())
-              )
-            }
+            epochOptions={Array.from(
+              new Set(network.components.Epoch.values.value.values())
+            )}
           />
           <Table data={tableData} />
         </ModalWrapper>
@@ -89,5 +87,5 @@ const Header = styled.div`
   text-align: center;
   color: black;
   margin: 10px;
-  padding-top: 1.5vw; 
+  padding-top: 1.5vw;
 `;

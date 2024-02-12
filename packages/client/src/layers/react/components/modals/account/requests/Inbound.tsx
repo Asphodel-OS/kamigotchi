@@ -1,10 +1,9 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { Account } from "layers/network/shapes/Account";
-import { Friendship } from "layers/network/shapes/Friendship";
-import { ActionListButton } from "layers/react/components/library";
-import { AccountCard } from "layers/react/components/library/AccountCard";
-
+import { Account } from 'layers/network/shapes/Account';
+import { Friendship } from 'layers/network/shapes/Friendship';
+import { ActionListButton } from 'layers/react/components/library';
+import { AccountCard } from 'layers/react/components/library/AccountCard';
 
 interface Props {
   requests: Friendship[];
@@ -12,12 +11,11 @@ interface Props {
     acceptFren: (friendship: Friendship) => void;
     blockFren: (account: Account) => void;
     cancelFren: (friendship: Friendship) => void;
-  }
+  };
 }
 
 export const Inbound = (props: Props) => {
   const { requests, actions } = props;
-
 
   const Actions = (friendship: Friendship) => {
     return (
@@ -26,13 +24,15 @@ export const Inbound = (props: Props) => {
         text=''
         options={[
           { text: 'Accept', onClick: () => actions.acceptFren(friendship) },
-          { text: 'Block', onClick: () => actions.blockFren(friendship.account) },
+          {
+            text: 'Block',
+            onClick: () => actions.blockFren(friendship.account),
+          },
           { text: 'Decline', onClick: () => actions.cancelFren(friendship) },
         ]}
       />
     );
-  }
-
+  };
 
   if (requests.length === 0) return <EmptyText>no inbound requests</EmptyText>;
   return (
@@ -47,8 +47,7 @@ export const Inbound = (props: Props) => {
       ))}
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
   width: 100%;
@@ -66,6 +65,6 @@ const EmptyText = styled.div`
   justify-content: center;
   align-items: center;
 
-  font-size: .9vw;
+  font-size: 0.9vw;
   font-family: Pixel;
 `;

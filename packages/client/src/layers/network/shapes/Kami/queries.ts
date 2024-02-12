@@ -1,4 +1,3 @@
-
 import {
   EntityID,
   Has,
@@ -15,7 +14,7 @@ import { NetworkLayer } from 'layers/network/types';
 export type QueryOptions = {
   account?: EntityID;
   state?: string;
-}
+};
 
 export const queryKamisX = (
   network: NetworkLayer,
@@ -24,26 +23,16 @@ export const queryKamisX = (
 ): Kami[] => {
   const kamiIDs = queryKamiEntitiesX(network, options);
 
-  return kamiIDs.map(
-    (index): Kami => getKami(
-      network,
-      index,
-      kamiOptions
-    )
-  );;
+  return kamiIDs.map((index): Kami => getKami(network, index, kamiOptions));
 };
 
 // returns raw entity indices
 export const queryKamiEntitiesX = (
   network: NetworkLayer,
-  options: QueryOptions,
+  options: QueryOptions
 ): EntityIndex[] => {
   const {
-    components: {
-      AccountID,
-      IsPet,
-      State,
-    },
+    components: { AccountID, IsPet, State },
   } = network;
 
   const toQuery: QueryFragment[] = [Has(IsPet)];
@@ -59,12 +48,9 @@ export const queryKamiEntitiesX = (
   return Array.from(runQuery(toQuery));
 };
 
-export const getAllKamis = (
-  network: NetworkLayer,
-  options?: Options
-) => {
+export const getAllKamis = (network: NetworkLayer, options?: Options) => {
   return queryKamisX(network, {}, options);
-}
+};
 
 // get a kami by its index (token ID)
 export const getKamiByIndex = (
@@ -72,12 +58,11 @@ export const getKamiByIndex = (
   index: number,
   options?: Options
 ) => {
-  const { components: { IsPet, PetIndex } } = network;
+  const {
+    components: { IsPet, PetIndex },
+  } = network;
   const kamiEntityIndex = Array.from(
-    runQuery([
-      Has(IsPet),
-      HasValue(PetIndex, { value: index }),
-    ])
+    runQuery([Has(IsPet), HasValue(PetIndex, { value: index })])
   )[0];
   return getKami(network, kamiEntityIndex, options);
-}
+};

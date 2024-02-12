@@ -13,4 +13,4 @@ export {
   getAccountByOperator,
   getAccountByOwner,
   getAccountFromBurner,
-} from './queries'; 
+} from './queries';

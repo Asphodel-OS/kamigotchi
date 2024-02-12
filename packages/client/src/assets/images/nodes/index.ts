@@ -3,9 +3,4 @@ import MoundNodeImage from './3_mound.png';
 import CircleNodeImage from './4_circle.png';
 import MonolithNodeImage from './5_monolith.png';
 
-export {
-  ToriiNodeImage,
-  MoundNodeImage,
-  CircleNodeImage,
-  MonolithNodeImage,
-};
+export { ToriiNodeImage, MoundNodeImage, CircleNodeImage, MonolithNodeImage };

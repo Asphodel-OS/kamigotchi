@@ -7,7 +7,6 @@ import opnpc from './opnpc_black.png';
 import qko from './qko_black.png';
 import simsrichard from './simsrichard_black.png';
 
-
 export const loadingScreens = {
   jackkahunalaguna,
   killyou,
@@ -16,5 +15,5 @@ export const loadingScreens = {
   netorarecrypto,
   opnpc,
   qko,
-  simsrichard
+  simsrichard,
 };

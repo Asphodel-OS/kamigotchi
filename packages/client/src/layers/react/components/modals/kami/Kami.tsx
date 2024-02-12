@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { interval, map } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { KillLogs } from './battles/KillLogs';
 import { Banner } from './header/Banner';
@@ -15,7 +15,6 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 
-
 export function registerKamiModal() {
   registerUIComponent(
     'KamiDetails',
@@ -27,17 +26,20 @@ export function registerKamiModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const account = getAccountFromBurner(
-        layers.network,
-        { inventory: true, kamis: true },
-      );
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network, {
+            inventory: true,
+            kamis: true,
+          });
 
-      return {
-        network: layers.network,
-        data: { account },
-      };
-    })),
+          return {
+            network: layers.network,
+            data: { account },
+          };
+        })
+      ),
 
     // Render
     ({ data, network }) => {
@@ -46,31 +48,25 @@ export function registerKamiModal() {
       const { kamiIndex } = useSelected();
       const [tab, setTab] = useState('traits');
 
-
       /////////////////
       // DATA FETCHING
 
       const getSelectedKami = () => {
-        return getKamiByIndex(
-          network,
-          kamiIndex,
-          {
-            account: true,
-            deaths: true,
-            kills: true,
-            production: true,
-            skills: true,
-            traits: true,
-          }
-        );
-      }
-
+        return getKamiByIndex(network, kamiIndex, {
+          account: true,
+          deaths: true,
+          kills: true,
+          production: true,
+          skills: true,
+          traits: true,
+        });
+      };
 
       /////////////////
       // ACTIONS
 
       const levelUp = (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiLevel',
@@ -79,11 +75,11 @@ export function registerKamiModal() {
           execute: async () => {
             return api.player.pet.level(kami.id);
           },
-        })
-      }
+        });
+      };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'SkillUpgrade',
@@ -92,9 +88,8 @@ export function registerKamiModal() {
           execute: async () => {
             return api.player.skill.upgrade(kami.id, skill.index);
           },
-        })
-      }
-
+        });
+      };
 
       /////////////////
       // DISPLAY
@@ -109,20 +104,22 @@ export function registerKamiModal() {
               data={{ account, kami: getSelectedKami() }}
               actions={{ levelUp }}
             />,
-            <Tabs key='tabs' tab={tab} setTab={setTab} />
+            <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
           overlay
           noPadding
         >
-          {(tab === 'battles') && <KillLogs kami={getSelectedKami()} />}
-          {(tab === 'traits') && <Traits kami={getSelectedKami()} />}
-          {(tab === 'skills') && <Skills
-            account={account}
-            kami={getSelectedKami()}
-            skills={getRegistrySkills(network)}
-            actions={{ upgrade: upgradeSkill }}
-          />}
+          {tab === 'battles' && <KillLogs kami={getSelectedKami()} />}
+          {tab === 'traits' && <Traits kami={getSelectedKami()} />}
+          {tab === 'skills' && (
+            <Skills
+              account={account}
+              kami={getSelectedKami()}
+              skills={getRegistrySkills(network)}
+              actions={{ upgrade: upgradeSkill }}
+            />
+          )}
         </ModalWrapper>
       );
     }

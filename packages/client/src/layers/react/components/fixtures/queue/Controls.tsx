@@ -1,16 +1,15 @@
-import styled from "styled-components";
-import { useBalance } from "wagmi";
+import styled from 'styled-components';
+import { useBalance } from 'wagmi';
 import ErrorIcon from '@mui/icons-material/Error';
 
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';
-import { NetworkLayer } from "layers/network/types";
-import { IconButton } from "layers/react/components/library/IconButton";
+import { NetworkLayer } from 'layers/network/types';
+import { IconButton } from 'layers/react/components/library/IconButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { useAccount } from 'layers/react/store/account';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
-
 
 interface Props {
   mode: number;
@@ -25,21 +24,20 @@ export const Controls = (props: Props) => {
 
   const { data: OperatorBal } = useBalance({
     address: kamiAccount.operatorAddress as `0x${string}`,
-    watch: true
+    watch: true,
   });
 
   const toggleMode = () => {
     setMode((mode + 1) % 3);
-  }
+  };
 
   const clickGasIcon = () => {
     playClick();
     setModals({
       ...modals,
-      operatorFund: !modals.operatorFund
+      operatorFund: !modals.operatorFund,
     });
-  }
-
+  };
 
   //////////////////
   // RENDERINGS
@@ -50,16 +48,17 @@ export const Controls = (props: Props) => {
     let color = '';
     if (Number(OperatorBal?.formatted) < GasConstants.Low) {
       color = 'red';
-      warning = "Your Operator is STARVING. Click to top up NOW.";
+      warning = 'Your Operator is STARVING. Click to top up NOW.';
     } else if (Number(OperatorBal?.formatted) < GasConstants.Quarter) {
       color = 'orange';
-      warning = 'Your Operator is Hungry. Please feed it.'
+      warning = 'Your Operator is Hungry. Please feed it.';
     } else if (Number(OperatorBal?.formatted) < GasConstants.Half) {
       color = 'db9';
-      warning = 'Your Operator could eat. Consider topping up on gas soon.'
+      warning = 'Your Operator could eat. Consider topping up on gas soon.';
     } else if (Number(OperatorBal?.formatted) < GasConstants.Full) {
       color = 'ddd';
-      warning = 'Your Operator is chugging along happily. Nothing to see here ^.^'
+      warning =
+        'Your Operator is chugging along happily. Nothing to see here ^.^';
     }
 
     return (
@@ -70,8 +69,8 @@ export const Controls = (props: Props) => {
           onClick={() => clickGasIcon()}
         />
       </Tooltip>
-    )
-  }
+    );
+  };
 
   // button to toggle the modal between difference sizes
   const ToggleButton = () => {
@@ -88,7 +87,7 @@ export const Controls = (props: Props) => {
         img={iconMapping[mode]}
       />
     );
-  }
+  };
 
   return (
     <Row>
@@ -99,11 +98,11 @@ export const Controls = (props: Props) => {
       <ToggleButton />
     </Row>
   );
-}
+};
 
 const Row = styled.div`
-  padding: .5vw;
-  gap: .7vw;
+  padding: 0.5vw;
+  gap: 0.7vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -115,7 +114,7 @@ const RowPrefix = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: .5vw;
+  gap: 0.5vw;
 `;
 
 const Text = styled.div`

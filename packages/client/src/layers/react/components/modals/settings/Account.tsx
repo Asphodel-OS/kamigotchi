@@ -1,11 +1,10 @@
-import styled from "styled-components"
+import styled from 'styled-components';
 
-import { ActionButton } from "layers/react/components/library/ActionButton";
-import { CopyButton } from "layers/react/components/library/CopyButton";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { useVisibility } from "layers/react/store/visibility";
-import { useAccount } from "layers/react/store/account";
-
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { CopyButton } from 'layers/react/components/library/CopyButton';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount } from 'layers/react/store/account';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();
@@ -31,7 +30,6 @@ export const Account = () => {
           <Tooltip text={['copy']}>
             <CopyButton onClick={() => copyText(value)}></CopyButton>
           </Tooltip>
-
         </RowContent>
       </Row>
     );
@@ -67,17 +65,19 @@ export const Account = () => {
           </Tooltip>
         </SubHeaderRow>
         {FieldRow('Address', kamiAccount.operatorAddress)}
-        {FieldRow('Private Key', localStorage.getItem("operatorPrivateKey") || '')}
+        {FieldRow(
+          'Private Key',
+          localStorage.getItem('operatorPrivateKey') || ''
+        )}
       </Section>
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: .6vw;
+  padding: 0.6vw;
 `;
 
 const Header = styled.div`
@@ -85,13 +85,13 @@ const Header = styled.div`
   color: #333;
   text-align: left;
   font-family: Pixel;
-  margin: .6vw 0vw;
+  margin: 0.6vw 0vw;
 `;
 
 const Section = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  margin: .4vw;
+  margin: 0.4vw;
 `;
 
 const SubHeaderRow = styled.div`
@@ -102,15 +102,15 @@ const SubHeaderRow = styled.div`
 `;
 
 const SubHeader = styled.div`
-  font-size: .8vw;
+  font-size: 0.8vw;
   color: #333;
-  padding: 0vw .2vw;
+  padding: 0vw 0.2vw;
   text-align: left;
   font-family: Pixel;
 `;
 
 const Row = styled.div`
-  padding: .3vw 0vw .3vw .4vw;
+  padding: 0.3vw 0vw 0.3vw 0.4vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -123,12 +123,12 @@ const RowContent = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: .5vw;
+  gap: 0.5vw;
 `;
 
 const Text = styled.p`
   color: #333;
   font-family: Pixel;
-  font-size: .6vw;
+  font-size: 0.6vw;
   text-align: left;
 `;

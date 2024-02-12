@@ -10,7 +10,7 @@ interface Props {
     min?: number;
     max?: number;
     step?: number;
-  }
+  };
   buttonText?: string;
   fullWidth?: boolean;
   hasButton?: boolean;
@@ -22,7 +22,10 @@ interface Props {
   stepper?: boolean;
 }
 
-const disabledStepperStyle = { backgroundColor: '#c4c4c4', pointerEvents: 'none' };
+const disabledStepperStyle = {
+  backgroundColor: '#c4c4c4',
+  pointerEvents: 'none',
+};
 
 // InputSingleNumberForm is a styled number input field with buttons to increase or decrease
 export const InputSingleNumberForm = (props: Props) => {
@@ -34,10 +37,10 @@ export const InputSingleNumberForm = (props: Props) => {
   const updateValue = (newValue: number) => {
     setValue(newValue);
     if (props.watch) props.watch(newValue);
-  }
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateValue(parseInt(event.target.value) || (props.initialValue || 0));
+    updateValue(parseInt(event.target.value) || props.initialValue || 0);
   };
 
   const handleSubmit = () => {
@@ -54,28 +57,29 @@ export const InputSingleNumberForm = (props: Props) => {
   };
 
   const Stepper = () => {
-    const atMax = props.bounds.max != undefined && value + step > props.bounds.max;
+    const atMax =
+      props.bounds.max != undefined && value + step > props.bounds.max;
     const atMin = value - step <= (props.bounds.min || 0);
     return (
       <StepperGroup>
         <StepperButtonTop
           style={atMax ? disabledStepperStyle : {}}
-          onClick={
-            () => atMax
-              ? 0
-              : updateValue(value + step)
-          }
-        > + </StepperButtonTop>
-        <hr style={{ width: "100%", height: "0px", border: "0.08vw solid black" }} />
+          onClick={() => (atMax ? 0 : updateValue(value + step))}
+        >
+          {' '}
+          +{' '}
+        </StepperButtonTop>
+        <hr
+          style={{ width: '100%', height: '0px', border: '0.08vw solid black' }}
+        />
         <StepperButtonBottom
           style={atMin ? disabledStepperStyle : {}}
-          onClick={
-            () => atMin
-              ? 0
-              : updateValue(value - step)
-          }
-        > - </StepperButtonBottom>
-      </StepperGroup >
+          onClick={() => (atMin ? 0 : updateValue(value - step))}
+        >
+          {' '}
+          -{' '}
+        </StepperButtonBottom>
+      </StepperGroup>
     );
   };
 
@@ -89,22 +93,22 @@ export const InputSingleNumberForm = (props: Props) => {
           value={value}
           onKeyDown={(e) => catchKeys(e)}
           onChange={(e) => handleChange(e)}
-          step="1"
+          step='1'
         />
         {props.stepper && Stepper()}
       </InputGroup>
-      {
-        props.hasButton
-          ? <ActionButton
-            id={`submit`}
-            text={props.buttonText || 'Submit'}
-            onClick={() => handleSubmit()}
-          />
-          : <div />
-      }
-    </ Container>
+      {props.hasButton ? (
+        <ActionButton
+          id={`submit`}
+          text={props.buttonText || 'Submit'}
+          onClick={() => handleSubmit()}
+        />
+      ) : (
+        <div />
+      )}
+    </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
@@ -140,8 +144,8 @@ const Input = styled.input`
   border: none;
 
   margin: 0.4vw 0;
-  
-  padding: 0.8vw 0 0.8vw  0.8vw;
+
+  padding: 0.8vw 0 0.8vw 0.8vw;
   cursor: pointer;
   font-family: Pixel;
   font-size: 1vw;
@@ -154,7 +158,7 @@ const Input = styled.input`
 const StepperButtonTop = styled.button`
   border: none;
   border-radius: 0 0.2vw 0 0;
-  
+
   background-color: transparent;
   color: black;
   justify-content: center;
@@ -173,13 +177,13 @@ const StepperButtonTop = styled.button`
   }
 
   font-size: 1vw;
-  padding: 0.325vw 0.8vw
+  padding: 0.325vw 0.8vw;
 `;
 
 const StepperButtonBottom = styled.button`
   border: none;
   border-radius: 0 0 0.2vw 0;
-  
+
   background-color: transparent;
   color: black;
   justify-content: center;
@@ -198,7 +202,7 @@ const StepperButtonBottom = styled.button`
   }
 
   font-size: 1vw;
-  padding: 0.325vw 0.8vw
+  padding: 0.325vw 0.8vw;
 `;
 
 const StepperGroup = styled.div`
@@ -206,6 +210,6 @@ const StepperGroup = styled.div`
   flex-direction: column;
   justify-content: space-around;
 
-  border-left: solid black .16vw;
+  border-left: solid black 0.16vw;
   height: 100%;
 `;

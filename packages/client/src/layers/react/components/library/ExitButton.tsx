@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
-
 interface Props {
   divName: string;
   position?: string;
@@ -20,25 +19,23 @@ export const ExitButton = (props: Props) => {
     setModals({ ...modals, [props.divName]: false });
   };
 
-  return <Button onClick={handleClose}>
-    X
-  </Button>
-}
+  return <Button onClick={handleClose}>X</Button>;
+};
 
 const Button = styled.button`
   background-color: #ffffff;
-  border-radius: .4vw;
-  border: .15vw solid black;
+  border-radius: 0.4vw;
+  border: 0.15vw solid black;
 
   color: black;
   justify-self: right;
-  padding: .3vw .4vw;
-  margin: .7vw;
+  padding: 0.3vw 0.4vw;
+  margin: 0.7vw;
   z-index: 1;
-  
+
   font-family: Pixel;
-  font-size: .9vw;
-  
+  font-size: 0.9vw;
+
   cursor: pointer;
   pointer-events: auto;
 

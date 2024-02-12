@@ -2,11 +2,10 @@ import {
   backgroundDefault,
   path11,
   path16,
-  path18
+  path18,
 } from 'assets/images/rooms/15_temple-cave';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-
 
 export const room15: Room = {
   location: 15,

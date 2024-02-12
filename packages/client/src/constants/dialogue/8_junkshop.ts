@@ -1,6 +1,5 @@
 import { DialogueNode } from '.';
 
-
 const junkmonitors: DialogueNode = {
   index: 81,
   text: [
@@ -17,9 +16,7 @@ const junkvendingwall: DialogueNode = {
 
 const poster: DialogueNode = {
   index: 83,
-  text: [
-    "A poster of no particular importance. Possibly too much.",
-  ],
+  text: ['A poster of no particular importance. Possibly too much.'],
 };
 
 export default [junkmonitors, junkvendingwall, poster];

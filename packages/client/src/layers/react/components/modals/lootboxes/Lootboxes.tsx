@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
@@ -13,7 +13,10 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
-import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
+import {
+  getLootboxByIndex,
+  getLootboxLog,
+} from 'layers/network/shapes/Lootbox';
 import { getItemByIndex } from 'layers/network/shapes/Item';
 import { useVisibility } from 'layers/react/store/visibility';
 
@@ -28,18 +31,21 @@ export function registerLootboxesModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const account = getAccountFromBurner(
-        layers.network,
-        { lootboxLogs: true, inventory: true },
-      );
-      const selectedBox = getLootboxByIndex(layers.network, 10001);
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network, {
+            lootboxLogs: true,
+            inventory: true,
+          });
+          const selectedBox = getLootboxByIndex(layers.network, 10001);
 
-      return {
-        network: layers.network,
-        data: { account, selectedBox }
-      };
-    })),
+          return {
+            network: layers.network,
+            data: { account, selectedBox },
+          };
+        })
+      ),
 
     // Render
     ({ network, data }) => {
@@ -47,14 +53,14 @@ export function registerLootboxesModal() {
       const { actions, api, world } = network;
 
       const { modals } = useVisibility();
-      const [state, setState] = useState("OPEN");
+      const [state, setState] = useState('OPEN');
       const [amount, setAmount] = useState(0);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
 
       // Refresh modal upon closure
       useEffect(() => {
         if (!modals.lootboxes) {
-          setState("OPEN");
+          setState('OPEN');
         }
       }, [modals.lootboxes]);
 
@@ -73,31 +79,33 @@ export function registerLootboxesModal() {
               try {
                 await revealTx(LootboxLog.id);
                 setWaitingToReveal(false);
-                setState("REWARDS");
+                setState('REWARDS');
+              } catch (e) {
+                console.log(e);
               }
-              catch (e) { console.log(e); }
             });
           }
-        }
+        };
         tx();
       }, [account.lootboxLogs?.unrevealed, waitingToReveal]);
 
       // COMMIT REVEAL selected box
       useEffect(() => {
         const tx = async () => {
-          if (!waitingToReveal && state === "REVEALING") {
+          if (!waitingToReveal && state === 'REVEALING') {
             try {
               setWaitingToReveal(true);
               await openTx(selectedBox?.index!, amount);
+            } catch (e) {
+              console.log(e);
             }
-            catch (e) { console.log(e); }
           }
-        }
+        };
         tx();
       }, [waitingToReveal, amount, state]);
 
       const openTx = async (index: number, amount: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'LootboxCommit',
@@ -115,7 +123,7 @@ export function registerLootboxesModal() {
       };
 
       const revealTx = async (id: EntityID) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'LootboxReveal',
@@ -137,24 +145,24 @@ export function registerLootboxesModal() {
 
       const getLog = (index: EntityIndex) => {
         return getLootboxLog(network, index);
-      }
+      };
 
       const getItem = (index: number) => {
         return getItemByIndex(network, index);
-      }
+      };
 
       ///////////////
       // DISPLAY
 
       const BackButton = () => {
-        if (state === "OPEN") return (<div></div>);
+        if (state === 'OPEN') return <div></div>;
         return (
           <ActionButton
             key='button-back'
             id='button-back'
             text='<'
             size='medium'
-            onClick={() => setState("OPEN")}
+            onClick={() => setState('OPEN')}
           />
         );
       };
@@ -162,16 +170,16 @@ export function registerLootboxesModal() {
       const Header = () => {
         return (
           <Container>
-            <div style={{ position: "absolute" }}>{BackButton()}</div>
+            <div style={{ position: 'absolute' }}>{BackButton()}</div>
 
-            <SubHeader style={{ width: "100%" }}>Open Lootboxes</SubHeader>
+            <SubHeader style={{ width: '100%' }}>Open Lootboxes</SubHeader>
           </Container>
         );
       };
 
       const SelectScreen = () => {
         switch (state) {
-          case "OPEN":
+          case 'OPEN':
             return (
               <Opener
                 account={account}
@@ -181,18 +189,11 @@ export function registerLootboxesModal() {
               />
             );
             break;
-          case "REVEALING":
-            return (
-              <Revealing />
-            );
+          case 'REVEALING':
+            return <Revealing />;
             break;
-          case "REWARDS":
-            return (
-              <Rewards
-                account={account}
-                utils={{ getItem, getLog }}
-              />
-            );
+          case 'REWARDS':
+            return <Rewards account={account} utils={{ getItem, getLog }} />;
             break;
           default:
             return (
@@ -205,16 +206,15 @@ export function registerLootboxesModal() {
             );
             break;
         }
-      }
-
-
+      };
 
       return (
         <ModalWrapper
           divName='lootboxes'
           id='LootboxesModal'
           header={Header()}
-          overlay canExit
+          overlay
+          canExit
         >
           {SelectScreen()}
         </ModalWrapper>
@@ -228,7 +228,7 @@ const Container = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: .4vh 1.2vw;
+  padding: 0.4vh 1.2vw;
 `;
 
 const SubHeader = styled.p`

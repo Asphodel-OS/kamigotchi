@@ -1,21 +1,27 @@
-import { EntityID, EntityIndex, Components, SchemaOf, Override } from "@latticexyz/recs";
-import { ValueOf } from "@latticexyz/utils";
-import { ContractTransaction } from "ethers";
+import {
+  EntityID,
+  EntityIndex,
+  Components,
+  SchemaOf,
+  Override,
+} from '@latticexyz/recs';
+import { ValueOf } from '@latticexyz/utils';
+import { ContractTransaction } from 'ethers';
 
 export type ComponentUpdate<C extends Components> = ValueOf<{
   [key in keyof C]: {
     component: key;
     entity: EntityIndex;
-    value: Override<SchemaOf<C[key]>>["value"];
+    value: Override<SchemaOf<C[key]>>['value'];
   };
 }>;
 
 export type ActionRequest = {
-  id: EntityID;         // Identifier of this action (entity ID, locally)
-  index?: EntityIndex;  // Index of the entity created for this action (locally)
-  description: string;  // Human readable description of the action
-  action: string;       // Action (name of system called)
-  params: any[];        // Parameters to be passed to the execute function
+  id: EntityID; // Identifier of this action (entity ID, locally)
+  index?: EntityIndex; // Index of the entity created for this action (locally)
+  description: string; // Human readable description of the action
+  action: string; // Action (name of system called)
+  params: any[]; // Parameters to be passed to the execute function
   execute: () =>
     | Promise<ContractTransaction>
     | Promise<void>

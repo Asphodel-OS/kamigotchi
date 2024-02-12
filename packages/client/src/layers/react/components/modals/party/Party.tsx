@@ -1,5 +1,5 @@
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 import React from 'react';
 import { interval, map } from 'rxjs';
 
@@ -12,7 +12,6 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import 'layers/react/styles/font.css';
 
-
 export function registerPartyModal() {
   registerUIComponent(
     'PartyList',
@@ -24,17 +23,20 @@ export function registerPartyModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const account = getAccountFromBurner(
-        layers.network,
-        { inventory: true, kamis: true },
-      );
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network, {
+            inventory: true,
+            kamis: true,
+          });
 
-      return {
-        network: layers.network,
-        data: { account },
-      };
-    })),
+          return {
+            network: layers.network,
+            data: { account },
+          };
+        })
+      ),
 
     // Render
     ({ network, data }) => {
@@ -46,7 +48,7 @@ export function registerPartyModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',
@@ -60,7 +62,7 @@ export function registerPartyModal() {
 
       // revive a kami using a revive item
       const revive = (kami: Kami, reviveIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiRevive',

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 
 import { NetworkLayer } from 'src/layers/network/types';
 
-
 export interface State {
   burner: Burner;
   selectedAddress: string;
@@ -26,7 +25,7 @@ interface Burner {
   detected: {
     address: string;
     key: string;
-  }
+  };
 }
 
 // the result of  validations run on network state
@@ -53,25 +52,21 @@ export const useNetwork = create<State & Actions>((set) => {
       isConnected: false,
       chainMatches: false,
       burnerMatches: false,
-    }
+    },
   };
 
   return {
     ...initialState,
-    setBurner: (burner: Burner) => set(
-      (state: State) => ({ ...state, burner })
-    ),
-    setSelectedAddress: (selectedAddress: string) => set(
-      (state: State) => ({ ...state, selectedAddress })
-    ),
-    setValidations: (validations: Validations) => set(
-      (state: State) => ({ ...state, validations })
-    ),
-    addNetwork: (address: string, network: NetworkLayer) => set(
-      (state: State) => ({
+    setBurner: (burner: Burner) =>
+      set((state: State) => ({ ...state, burner })),
+    setSelectedAddress: (selectedAddress: string) =>
+      set((state: State) => ({ ...state, selectedAddress })),
+    setValidations: (validations: Validations) =>
+      set((state: State) => ({ ...state, validations })),
+    addNetwork: (address: string, network: NetworkLayer) =>
+      set((state: State) => ({
         ...state,
         networks: new Map(state.networks).set(address, network),
-      })
-    ),
+      })),
   };
 });

@@ -1,3 +1,3 @@
-import { registerGachaModal } from "./Gacha";
+import { registerGachaModal } from './Gacha';
 
 export { registerGachaModal };

@@ -7,10 +7,13 @@ import {
   Skill,
   parseEffectText,
   parseRequirementText,
-  getSkillUpgradeError
+  getSkillUpgradeError,
 } from 'layers/network/shapes/Skill';
-import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
-
+import {
+  ActionButton,
+  HelpIcon,
+  Tooltip,
+} from 'layers/react/components/library';
 
 interface Props {
   data: {
@@ -18,10 +21,10 @@ interface Props {
     kami: Kami;
     skills: Map<number, Skill>; // Map of Skills in the registry (by index)
     index: number; // index of the displayed skill
-  }
+  };
   actions: {
-    upgrade: (skill: Skill) => void
-  }
+    upgrade: (skill: Skill) => void;
+  };
 }
 
 // The leftside details panel of the Skills tab of the Kami Modal
@@ -29,19 +32,20 @@ export const Details = (props: Props) => {
   const { actions, data } = props;
   const [rSkill, setRSkill] = useState<Skill | undefined>(undefined);
   const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
-  const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
-
+  const [disabledReason, setDisabledReason] = useState<string[] | undefined>(
+    undefined
+  );
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
     setRSkill(data.skills.get(data.index)); // registry skill instance
     setKSkill(data.kami.skills?.find((s) => s.index * 1 === data.index)); // kami skill instance
-    setDisabledReason((data.kami.account?.index !== data.account.index)
-      ? ['not ur kami']
-      : getSkillUpgradeError(data.index, data.kami, data.skills)
+    setDisabledReason(
+      data.kami.account?.index !== data.account.index
+        ? ['not ur kami']
+        : getSkillUpgradeError(data.index, data.kami, data.skills)
     );
   }, [data.index, data.kami]);
-
 
   ////////////////////
   // INTERPRETATION
@@ -55,27 +59,27 @@ export const Details = (props: Props) => {
     const tooltipText = [
       `Upgrade Skill (${cost}pt${cost > 1 ? 's' : ''})`,
       '',
-      `Level: ${currLevel} => ${(currLevel) + 1}`,
+      `Level: ${currLevel} => ${currLevel + 1}`,
     ];
 
     return tooltipText;
-  }
-
+  };
 
   ////////////////////
   // DISPLAY
 
   // render a list of values with a label (for Effects/Requirements)
-  const LabeledList = (props: { label: string, values?: string[] }) => {
+  const LabeledList = (props: { label: string; values?: string[] }) => {
     if (!props.values || props.values.length <= 0) return <></>;
     return (
       <DetailSection>
         <DetailLabel>{props.label}:</DetailLabel>
-        {props.values.map((value, i) => <DetailDescription key={i}>• {value}</DetailDescription>)}
+        {props.values.map((value, i) => (
+          <DetailDescription key={i}>• {value}</DetailDescription>
+        ))}
       </DetailSection>
     );
-  }
-
+  };
 
   ////////////////////
   // RENDER
@@ -111,27 +115,25 @@ export const Details = (props: Props) => {
       </NameSection>
 
       <Description>
-        {rSkill.description} blah blah blah this is a fuller description lorem ipsum falalala
+        {rSkill.description} blah blah blah this is a fuller description lorem
+        ipsum falalala
       </Description>
       <LabeledList
         label='Effects'
-        values={(rSkill.effects ?? []).map(
-          (eff) => parseEffectText(eff)
-        )}
+        values={(rSkill.effects ?? []).map((eff) => parseEffectText(eff))}
       />
       <LabeledList
         label='Requirements'
-        values={(rSkill.requirements ?? []).map(
-          (req) => parseRequirementText(req, data.skills)
+        values={(rSkill.requirements ?? []).map((req) =>
+          parseRequirementText(req, data.skills)
         )}
       />
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
-  border-right: .15vw solid #333;
+  border-right: 0.15vw solid #333;
   padding-bottom: 3vw;
   max-width: 18.9vw;
   min-width: 18.9vw;
@@ -143,7 +145,7 @@ const Container = styled.div`
 `;
 
 const ImageSection = styled.div`
-  border-bottom: .15vw solid #333;
+  border-bottom: 0.15vw solid #333;
   position: relative;
 
   display: flex;
@@ -155,8 +157,8 @@ const Image = styled.img`
 `;
 
 const NameSection = styled.div`
-  border-bottom: .15vw solid #333;
-  padding: 1vw .3vw;
+  border-bottom: 0.15vw solid #333;
+  padding: 1vw 0.3vw;
 
   display: flex;
   flex-flow: row wrap;
@@ -171,7 +173,7 @@ const Name = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  
+
   font-family: Pixel;
   font-size: 1.2vw;
   line-height: 1.5vw;
@@ -184,27 +186,27 @@ const Description = styled.div`
   display: flex;
   justify-content: center;
   line-height: 1.2vw;
-  
+
   font-family: Pixel;
-  font-size: .9vw;
+  font-size: 0.9vw;
 `;
 
 const DetailSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: .6vw 1vw;
+  padding: 0.6vw 1vw;
 `;
 
 const DetailLabel = styled.div`
   color: #333;
   font-family: Pixel;
-  font-size: .9vw;
+  font-size: 0.9vw;
 `;
 
 const DetailDescription = styled.div`
   color: #999;
   font-family: Pixel;
-  font-size: .6vw;
+  font-size: 0.6vw;
   line-height: 1.5vw;
-  padding-left: .3vw;
+  padding-left: 0.3vw;
 `;

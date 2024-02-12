@@ -33,7 +33,7 @@ import { registerSettingsModal } from './modals/settings';
 
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
-import { registerFundOperatorModal } from "./modals/FundOperator"
+import { registerFundOperatorModal } from './modals/FundOperator';
 import { registerAccountOperator } from './modals/AccountOperator';
 
 import {
@@ -43,7 +43,6 @@ import {
   registerOperatorUpdater,
   registerGasHarasser,
 } from './validators';
-
 
 export function registerUIComponents() {
   registerLoadingState();

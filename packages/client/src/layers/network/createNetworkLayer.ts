@@ -1,4 +1,4 @@
-import { GodID } from "@latticexyz/network";
+import { GodID } from '@latticexyz/network';
 import {
   Component,
   EntityIndex,
@@ -6,39 +6,34 @@ import {
   createWorld,
   defineComponent,
   getComponentValue,
-  setComponent
-} from "@latticexyz/recs";
-import { SetupContractConfig, setupMUDNetwork } from "@latticexyz/std-client";
+  setComponent,
+} from '@latticexyz/recs';
+import { SetupContractConfig, setupMUDNetwork } from '@latticexyz/std-client';
 
-import { createAdminAPI } from "./api/admin";
-import { createPlayerAPI } from "./api/player";
-import { setUpWorldAPI } from "./api/world";
-import { createComponents } from "./components/register";
-import { initExplorer } from "./explorer";
-import { createActionSystem } from "./LocalSystems/ActionSystem/createActionSystem";
-import { createNotificationSystem } from "./LocalSystems/NotificationSystem/createNotificationSystem";
-import { SystemTypes } from "types/SystemTypes";
-import { SystemAbis } from "types/SystemAbis.mjs";
+import { createAdminAPI } from './api/admin';
+import { createPlayerAPI } from './api/player';
+import { setUpWorldAPI } from './api/world';
+import { createComponents } from './components/register';
+import { initExplorer } from './explorer';
+import { createActionSystem } from './LocalSystems/ActionSystem/createActionSystem';
+import { createNotificationSystem } from './LocalSystems/NotificationSystem/createNotificationSystem';
+import { SystemTypes } from 'types/SystemTypes';
+import { SystemAbis } from 'types/SystemAbis.mjs';
 
 export async function createNetworkLayer(config: SetupContractConfig) {
   const world = createWorld();
   const components = createComponents(world);
 
-  const {
-    txQueue,
-    systems,
-    txReduced$,
-    network,
-    startSync,
-  } = await setupMUDNetwork<typeof components, SystemTypes>(
-    config,
-    world,
-    components,
-    SystemAbis,
-    {
-      fetchSystemCalls: true,
-    },
-  );
+  const { txQueue, systems, txReduced$, network, startSync } =
+    await setupMUDNetwork<typeof components, SystemTypes>(
+      config,
+      world,
+      components,
+      SystemAbis,
+      {
+        fetchSystemCalls: true,
+      }
+    );
 
   let actions;
   const provider = network.providers.get().json;
@@ -55,12 +50,8 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     if (getComponentValue(NetworkUpdater, godEntityIndex)?.value != undefined) {
       nextVal = !getComponentValue(NetworkUpdater, godEntityIndex)?.value;
     }
-    setComponent(
-      NetworkUpdater,
-      godEntityIndex,
-      { value: nextVal }
-    );
-  }
+    setComponent(NetworkUpdater, godEntityIndex, { value: nextVal });
+  };
 
   let networkLayer = {
     world,
@@ -83,7 +74,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
       },
       functions: {
         UpdateNetwork,
-      }
+      },
     },
     explorer: {} as any,
   };
@@ -91,4 +82,3 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   initExplorer(networkLayer);
   return networkLayer;
 }
-

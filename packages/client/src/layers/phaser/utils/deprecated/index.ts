@@ -3,7 +3,7 @@ import {
   getComponentValue,
   Schema,
   Metadata,
-  Component
+  Component,
 } from '@latticexyz/recs';
 
 export const hexToDecimal = (hex: string) => parseInt(hex, 16);

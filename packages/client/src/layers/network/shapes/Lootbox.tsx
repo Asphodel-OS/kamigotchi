@@ -15,7 +15,6 @@ import { Item, getItem } from './Item';
 import { Inventory, getTypedInventory } from './Inventory';
 import { NetworkLayer } from 'layers/network/types';
 
-
 export interface Droptable {
   keys: number[];
   weights: number[];
@@ -40,59 +39,53 @@ export interface LootboxLog {
 // get lootbox as an item with extra stuff
 export const getLootbox = (
   network: NetworkLayer,
-  index: EntityIndex,
+  index: EntityIndex
 ): Lootbox => {
   const {
-    components: {
-      Keys,
-      Weights,
-    },
+    components: { Keys, Weights },
   } = network;
   const item: Item = getItem(network, index);
   const droptable: Droptable = {
     keys: getComponentValue(Keys, index)?.value as number[],
     weights: getComponentValue(Weights, index)?.value as number[],
-  }
+  };
 
   const lootbox: Lootbox = {
     ...item,
     droptable,
-  }
+  };
   return lootbox;
-}
+};
 
 export const getLootboxByIndex = (
   network: NetworkLayer,
-  index: number, // item index of the registry instance
+  index: number // item index of the registry instance
 ): Lootbox => {
   const {
-    components: {
-      IsRegistry,
-      ItemIndex,
-    },
+    components: { IsRegistry, ItemIndex },
   } = network;
 
   const entityIndices = Array.from(
     runQuery([
       Has(IsRegistry),
-      HasValue(ItemIndex, { value: numberToHex(index) })
+      HasValue(ItemIndex, { value: numberToHex(index) }),
     ])
   );
   return getLootbox(network, entityIndices[0]);
-}
+};
 
-// Gets a lootbox in inventory form 
+// Gets a lootbox in inventory form
 export const getLootboxes = (
   network: NetworkLayer,
-  index: EntityIndex, // entity index of the registry instance
+  index: EntityIndex // entity index of the registry instance
 ): Inventory => {
   return getTypedInventory(network, index, getLootbox);
-}
+};
 
 // gets a lootbox log entity
 export const getLootboxLog = (
   network: NetworkLayer,
-  index: EntityIndex,
+  index: EntityIndex
 ): LootboxLog => {
   const {
     world,
@@ -105,15 +98,12 @@ export const getLootboxLog = (
       Keys,
       Time,
       Weights,
-      Name
+      Name,
     },
   } = network;
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
   const regID = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      HasValue(ItemIndex, { value: itemIndex })
-    ])
+    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
   )[0];
 
   const log: LootboxLog = {
@@ -126,36 +116,35 @@ export const getLootboxLog = (
     droptable: {
       keys: getComponentValue(Keys, regID)?.value as number[],
       weights: getComponentValue(Weights, regID)?.value as number[],
-    }
+    },
   };
 
   if (!log.isRevealed) {
     log.revealBlock = getComponentValue(RevealBlock, index)?.value as number;
   } else {
-    log.droptable.results = getComponentValue(Balances, index)?.value as number[];
+    log.droptable.results = getComponentValue(Balances, index)
+      ?.value as number[];
   }
 
   return log;
-}
-
+};
 
 ////////////////////
 // QUERIES
 
-export const queryHolderLogs = (network: NetworkLayer, holderID: EntityID, revealed: boolean): LootboxLog[] => {
+export const queryHolderLogs = (
+  network: NetworkLayer,
+  holderID: EntityID,
+  revealed: boolean
+): LootboxLog[] => {
   const {
-    components: {
-      IsLootbox,
-      IsLog,
-      HolderID,
-      RevealBlock,
-    },
+    components: { IsLootbox, IsLog, HolderID, RevealBlock },
   } = network;
 
   const toQuery: QueryFragment[] = [
     Has(IsLootbox),
     Has(IsLog),
-    HasValue(HolderID, { value: holderID })
+    HasValue(HolderID, { value: holderID }),
   ];
 
   if (revealed) toQuery.push(Not(RevealBlock));
@@ -163,5 +152,5 @@ export const queryHolderLogs = (network: NetworkLayer, holderID: EntityID, revea
 
   const entityIndices = Array.from(runQuery(toQuery));
 
-  return entityIndices.map(index => getLootboxLog(network, index));
-}
+  return entityIndices.map((index) => getLootboxLog(network, index));
+};

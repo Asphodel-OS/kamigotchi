@@ -1,6 +1,5 @@
 import { DialogueNode } from '.';
 
-
 const buildinglogo: DialogueNode = {
   index: 61,
   text: [

@@ -5,7 +5,6 @@ import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { Tooltip } from '../../library/Tooltip';
 
-
 export interface Props {
   listing: Listing;
 }
@@ -18,7 +17,7 @@ export const ItemRow = (props: Props) => {
   const openBuyModal = () => {
     setListing(props.listing.entityIndex);
     setModals({ ...modals, buy: true });
-  }
+  };
 
   const BuyButton = (listing: Listing) => (
     <ActionButton
@@ -38,10 +37,10 @@ export const ItemRow = (props: Props) => {
       <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>
     </Row>
   );
-}
+};
 
 const Row = styled.div`
-  border-bottom: .15vw solid black;
+  border-bottom: 0.15vw solid black;
 
   display: flex;
   flex-direction: row nowrap;
@@ -50,9 +49,9 @@ const Row = styled.div`
 `;
 
 const Image = styled.img`
-  border-right: .15vw solid black;
+  border-right: 0.15vw solid black;
   width: 3.5vw;
-  padding: .3vw;
+  padding: 0.3vw;
   font-family: Pixel;
 `;
 
@@ -61,21 +60,21 @@ const Name = styled.div`
 
   color: black;
   font-family: Pixel;
-  font-size: .9vw;
-  
+  font-size: 0.9vw;
+
   text-align: left;
   flex-grow: 1;
 `;
 
 const Price = styled.div`
-  padding-right: .5vw;
+  padding-right: 0.5vw;
 
   color: black;
   font-family: Pixel;
-  font-size: .9vw;
+  font-size: 0.9vw;
 `;
 
 const ButtonWrapper = styled.div`
-  padding: .5vw;
+  padding: 0.5vw;
   display: flex;
 `;

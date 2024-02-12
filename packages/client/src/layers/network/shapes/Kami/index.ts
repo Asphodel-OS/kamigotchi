@@ -27,4 +27,3 @@ export {
   canMog,
   canLiquidate,
 } from './functions';
-

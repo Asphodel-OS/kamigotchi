@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import { useEffect, useState } from "react";
+import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
-import { ActionButton } from "layers/react/components/library/ActionButton";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/network/shapes/Account";
-import { Inventory } from "layers/network/shapes/Inventory";
-import { Lootbox } from "layers/network/shapes/Lootbox";
-import { ItemIcon } from "layers/react/components/library/ItemIcon";
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Account } from 'layers/network/shapes/Account';
+import { Inventory } from 'layers/network/shapes/Inventory';
+import { Lootbox } from 'layers/network/shapes/Lootbox';
+import { ItemIcon } from 'layers/react/components/library/ItemIcon';
 
 interface Props {
   account: Account;
@@ -15,7 +15,7 @@ interface Props {
   utils: {
     setState: (state: string) => void;
     setAmount: (amount: number) => void;
-  }
+  };
 }
 
 export const Opener = (props: Props) => {
@@ -27,15 +27,15 @@ export const Opener = (props: Props) => {
 
   const startReveal = async (amount: number) => {
     props.utils.setAmount(amount);
-    props.utils.setState("REVEALING");
+    props.utils.setState('REVEALING');
     return;
-  }
+  };
 
   ///////////////
   // DISPLAY
 
   const OpenButton = (amount: number) => {
-    const enabled = (amount <= (curBal));
+    const enabled = amount <= curBal;
     const warnText = enabled ? '' : 'Insufficient boxes';
     return (
       <Tooltip text={[warnText]}>
@@ -48,7 +48,7 @@ export const Opener = (props: Props) => {
         />
       </Tooltip>
     );
-  }
+  };
 
   return (
     <Container>
@@ -64,7 +64,7 @@ export const Opener = (props: Props) => {
       </ButtonBox>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
@@ -75,7 +75,7 @@ const Container = styled.div`
   height: 90%;
 `;
 
-const ButtonBox = styled.div`  
+const ButtonBox = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;

@@ -23,7 +23,7 @@ export function createAdminAPI(systems: any) {
 
   // @dev cancels outgoing bridge tx
   async function cancelBridgeTx(id: string) {
-    return systems["system.Farm20.Withdraw"].cancelWithdraw(id);
+    return systems['system.Farm20.Withdraw'].cancelWithdraw(id);
   }
 
   /////////////////
@@ -65,7 +65,7 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
-  // MINT 
+  // MINT
 
   async function initBatchMinter() {
     await sleepIf();
@@ -98,7 +98,6 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-
   /////////////////
   //  NODES
 
@@ -128,12 +127,11 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  // @dev deletes node 
+  // @dev deletes node
   async function deleteNode(index: number) {
     await sleepIf();
     return systems['system._Node.Delete'].executeTyped(index);
   }
-
 
   /////////////////
   // QUESTS
@@ -218,14 +216,23 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-
   /////////////////
   //  ROOMS
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
-  async function createRoom(location: number, name: string, description: string, exits: number[]) {
+  async function createRoom(
+    location: number,
+    name: string,
+    description: string,
+    exits: number[]
+  ) {
     await sleepIf();
-    return systems['system._Room.Create'].executeTyped(location, name, description, exits);
+    return systems['system._Room.Create'].executeTyped(
+      location,
+      name,
+      description,
+      exits
+    );
   }
 
   async function deleteRoom(location: number) {
@@ -270,7 +277,7 @@ export function createAdminAPI(systems: any) {
     subtype: string,
     logicType: string,
     index: number,
-    value: number,
+    value: number
   ) {
     await sleepIf();
     return systems['system._Registry.Skill.Create.Effect'].executeTyped(
@@ -279,7 +286,7 @@ export function createAdminAPI(systems: any) {
       subtype,
       logicType,
       index,
-      value,
+      value
     );
   }
 
@@ -297,7 +304,6 @@ export function createAdminAPI(systems: any) {
       value
     );
   }
-
 
   /////////////////
   //  ITEMS
@@ -514,7 +520,10 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  async function deleteRelationship(indexNPC: number, indexRelationship: number) {
+  async function deleteRelationship(
+    indexNPC: number,
+    indexRelationship: number
+  ) {
     await sleepIf();
     return systems['system._Registry.Relationship.Delete'].executeTyped(
       indexNPC,
@@ -522,13 +531,12 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-
   //////////////////
   // WAITS
 
   function sleepIf() {
     if (process.env.MODE == 'OPSEP' || process.env.MODE == 'TEST') {
-      return new Promise(resolve => setTimeout(resolve, 5000));
+      return new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
 
@@ -594,7 +602,7 @@ export function createAdminAPI(systems: any) {
           objective: addQuestObjective,
           requirement: addQuestRequirement,
           reward: addQuestReward,
-        }
+        },
       },
       relationship: {
         create: registerRelationship,
@@ -607,7 +615,7 @@ export function createAdminAPI(systems: any) {
         add: {
           effect: addSkillEffect,
           requirement: addSkillRequirement,
-        }
+        },
       },
     },
     room: {

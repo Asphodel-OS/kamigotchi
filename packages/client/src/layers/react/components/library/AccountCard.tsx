@@ -8,7 +8,6 @@ import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
-
 interface Props {
   account: Account;
   description: string[];
@@ -36,7 +35,6 @@ export const AccountCard = (props: Props) => {
     };
   }, []);
 
-
   /////////////////
   // INTERACTION
 
@@ -45,8 +43,7 @@ export const AccountCard = (props: Props) => {
     setAccount(account.index);
     if (!modals.account) setModals({ ...modals, account: true });
     playClick();
-  }
-
+  };
 
   /////////////////
   // DISPLAY
@@ -59,9 +56,9 @@ export const AccountCard = (props: Props) => {
       </TextBig>
     );
 
-    const details = description.slice(1).map(
-      (text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>
-    );
+    const details = description
+      .slice(1)
+      .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
 
     return <>{[header, ...details]}</>;
   };
@@ -69,14 +66,16 @@ export const AccountCard = (props: Props) => {
   const Title = () => {
     return (
       <Tooltip text={[account.ownerEOA]}>
-        <TitleText key='title' onClick={() => accountOnClick()}>{account.name}</TitleText>
+        <TitleText key='title' onClick={() => accountOnClick()}>
+          {account.name}
+        </TitleText>
       </Tooltip>
     );
-  }
+  };
 
   return (
     <Card
-      image="https://miladymaker.net/milady/9248.png"
+      image='https://miladymaker.net/milady/9248.png'
       imageOnClick={() => accountOnClick()}
       titleBarContent={[<Title key='title' />]}
       content={[
@@ -84,9 +83,11 @@ export const AccountCard = (props: Props) => {
           <Description />
         </ContentColumn>,
         <ContentColumn key='col-2'>
-          <ContentSubtext key='subtext' onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
+          <ContentSubtext key='subtext' onClick={props.subtextOnClick}>
+            {subtext}
+          </ContentSubtext>
           <ContentActions key='actions'>{actions}</ContentActions>
-        </ContentColumn>
+        </ContentColumn>,
       ]}
       fullWidth
       size='small'
@@ -120,7 +121,9 @@ const ContentSubtext = styled.div`
   text-align: right;
   font-size: 0.7vw;
 
-  ${({ onClick }) => onClick && `
+  ${({ onClick }) =>
+    onClick &&
+    `
     &:hover {
       opacity: 0.6;
       cursor: pointer;
@@ -136,13 +139,15 @@ const ContentActions = styled.div`
 `;
 
 const TextBig = styled.p`
-  padding-bottom: .05vw;
+  padding-bottom: 0.05vw;
 
   font-size: 0.9vw;
   font-family: Pixel;
   text-align: left;
 
-  ${({ onClick }) => onClick && `
+  ${({ onClick }) =>
+    onClick &&
+    `
     &:hover {
       opacity: 0.6;
       cursor: pointer;
@@ -155,6 +160,6 @@ const TextMedium = styled.p`
   font-size: 0.7vw;
   font-family: Pixel;
   text-align: left;
-  padding-top: .4vw;
-  padding-left: .2vw;
+  padding-top: 0.4vw;
+  padding-left: 0.2vw;
 `;

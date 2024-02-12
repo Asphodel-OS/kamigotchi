@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Score } from "layers/network/shapes/Score"
+import { Score } from 'layers/network/shapes/Score';
 import 'layers/react/styles/font.css';
-
 
 interface Props {
   data: Score[];
-};
+}
 
 // the table rendering of the leaderboard modal
 export const Table = (props: Props) => {
@@ -25,17 +24,19 @@ export const Table = (props: Props) => {
     <GridContainer>
       <GridCell isBold>rank</GridCell>
       <GridCell isBold>player</GridCell>
-      <GridCell isLast isBold>score</GridCell>
+      <GridCell isLast isBold>
+        score
+      </GridCell>
       {Rows()}
     </GridContainer>
   );
-}
+};
 
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-row-gap: 5px;
-  margin: 0 1vw
+  margin: 0 1vw;
 `;
 
 interface GridCellProps {
@@ -52,4 +53,3 @@ const GridCell = styled.div<GridCellProps>`
   border-right: ${({ isLast }) => (isLast ? '1px solid #000' : 'none')};
   font-weight: ${({ isBold }) => (isBold ? 'bold' : 'normal')};
 `;
-

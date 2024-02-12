@@ -1,10 +1,9 @@
-
 export enum HelpTabs {
   HOME,
   KAMIS,
   NODES,
   START,
-  WORLD
+  WORLD,
 }
 
 export interface PageCopy {

@@ -1,4 +1,11 @@
-import { defineComponent, World, Type, Component, Metadata, SchemaOf } from "@latticexyz/recs";
+import {
+  defineComponent,
+  World,
+  Type,
+  Component,
+  Metadata,
+  SchemaOf,
+} from '@latticexyz/recs';
 
 export function defineActionComponent<T = undefined>(world: World) {
   const Action = defineComponent(
@@ -14,7 +21,7 @@ export function defineActionComponent<T = undefined>(world: World) {
       time: Type.Number,
       txHash: Type.OptionalString,
     },
-    { id: "Action" }
+    { id: 'Action' }
   );
   return Action as Component<SchemaOf<typeof Action>, Metadata, T>;
 }

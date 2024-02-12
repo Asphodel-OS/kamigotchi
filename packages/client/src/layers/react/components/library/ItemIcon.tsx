@@ -23,7 +23,7 @@ export const ItemIcon = (props: Props) => {
       playClick();
       await props.onClick();
     }
-  }
+  };
 
   const setStyles = () => {
     let styles: any = {};
@@ -33,85 +33,79 @@ export const ItemIcon = (props: Props) => {
     }
 
     return styles;
-  }
+  };
 
   const balance = () => {
     if (props.balance) {
       if (props.size == 'small')
-        return (
-          <SmallBalance>{props.balance}</SmallBalance>
-        );
+        return <SmallBalance>{props.balance}</SmallBalance>;
       else if (props.size == 'large')
-        return (
-          <LargeBalance>{props.balance}</LargeBalance>
-        );
-
+        return <LargeBalance>{props.balance}</LargeBalance>;
       else if (props.size == 'fixed')
-        return (
-          <FixedBalance>{props.balance}</FixedBalance>
-        );
+        return <FixedBalance>{props.balance}</FixedBalance>;
+    } else {
+      return <></>;
     }
-    else {
-      return (<></>);
-    }
-  }
+  };
 
   const base = () => {
     if (props.size == 'small')
       return (
         <SmallBox style={setStyles()}>
-          {props.onClick
-            ? <ButtonWrapper onClick={handleClick}>
+          {props.onClick ? (
+            <ButtonWrapper onClick={handleClick}>
               <SmallIcon src={props.item.image.default} />
             </ButtonWrapper>
-            : <SmallIcon src={props.item.image.default} />
-          }
+          ) : (
+            <SmallIcon src={props.item.image.default} />
+          )}
           {balance()}
         </SmallBox>
       );
-
     else if (props.size == 'large')
       return (
         <LargeBox style={setStyles()}>
-          {props.onClick
-            ? <ButtonWrapper onClick={handleClick}>
+          {props.onClick ? (
+            <ButtonWrapper onClick={handleClick}>
               <LargeIcon src={props.item.image.x4} />
             </ButtonWrapper>
-            : <LargeIcon src={props.item.image.x4} />
-          }
+          ) : (
+            <LargeIcon src={props.item.image.x4} />
+          )}
           {balance()}
         </LargeBox>
       );
-    else (props.size == 'fixed')
+    else props.size == 'fixed';
     return (
       <FixedBox style={setStyles()}>
-        {props.onClick
-          ? <ButtonWrapper onClick={handleClick}>
+        {props.onClick ? (
+          <ButtonWrapper onClick={handleClick}>
             <FixedIcon src={props.item.image.default} />
           </ButtonWrapper>
-          : <FixedIcon src={props.item.image.default} />
-        }
+        ) : (
+          <FixedIcon src={props.item.image.default} />
+        )}
         {balance()}
       </FixedBox>
     );
-  }
+  };
 
   let result = base();
 
   if (props.description) {
     result = (
-      <Tooltip text={[props.item.name, "", props.item.description]}>
+      <Tooltip text={[props.item.name, '', props.item.description]}>
         {result}
       </Tooltip>
     );
   }
 
   return result;
-}
+};
 
 const LargeBox = styled.div`
   position: relative;
-  border: solid black .2vw;
+  border: solid black 0.2vw;
   border-radius: 1vw;
 
   width: 10vw;
@@ -129,17 +123,17 @@ const LargeIcon = styled.img`
   padding: 1vw;
 `;
 
-const LargeBalance = styled.div` 
-  border-top: solid black .2vw;
-  border-left: solid black .2vw;
+const LargeBalance = styled.div`
+  border-top: solid black 0.2vw;
+  border-left: solid black 0.2vw;
   border-radius: 0.5vw 0 0 0;
-  background-color: #FFF;
+  background-color: #fff;
 
   position: absolute;
   color: black;
   right: 0;
   bottom: 0;
-  padding: .4vh .4vw;
+  padding: 0.4vh 0.4vw;
 
   font-family: Pixel;
   font-size: 1vw;
@@ -147,12 +141,12 @@ const LargeBalance = styled.div`
 
 const SmallBox = styled.div`
   position: relative;
-  border: solid black .15vw;
-  border-radius: .5vw;
+  border: solid black 0.15vw;
+  border-radius: 0.5vw;
 
   width: 5vw;
   height: 5vw;
-  margin: .7vw;
+  margin: 0.7vw;
 
   align-items: center;
   justify-content: center;
@@ -162,23 +156,23 @@ const SmallBox = styled.div`
 const SmallIcon = styled.img`
   height: 100%;
   width: 100%;
-  padding: .5vw;
+  padding: 0.5vw;
 `;
 
-const SmallBalance = styled.div` 
-  border-top: solid black .15vw;
-  border-left: solid black .15vw;
-  border-radius: .3vw 0 0 0;
-  background-color: #FFF;
+const SmallBalance = styled.div`
+  border-top: solid black 0.15vw;
+  border-left: solid black 0.15vw;
+  border-radius: 0.3vw 0 0 0;
+  background-color: #fff;
 
   position: absolute;
   color: black;
   right: 0;
   bottom: 0;
-  padding: .2vw;
+  padding: 0.2vw;
 
   font-family: Pixel;
-  font-size: .5vw;
+  font-size: 0.5vw;
 `;
 
 const FixedBox = styled.div`
@@ -199,11 +193,11 @@ const FixedIcon = styled.img`
   padding: 5px;
 `;
 
-const FixedBalance = styled.div` 
+const FixedBalance = styled.div`
   border-top: solid black 1.25px;
   border-left: solid black 1.25px;
   border-radius: 2.5px 0 0 0;
-  background-color: #FFF;
+  background-color: #fff;
 
   position: absolute;
   color: black;
@@ -216,7 +210,7 @@ const FixedBalance = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-    &:hover {
-    background-color: #BBB;
+  &:hover {
+    background-color: #bbb;
   }
 `;

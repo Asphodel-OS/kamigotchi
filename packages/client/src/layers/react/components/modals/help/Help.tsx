@@ -15,7 +15,6 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
-
 export function registerHelpModal() {
   registerUIComponent(
     'HelpModal',
@@ -32,7 +31,11 @@ export function registerHelpModal() {
       const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
 
       const BackButton = () => (
-        <ButtonRow style={{ display: `${tab == HelpTabs.HOME ? 'none' : 'inline-flex'}` }}>
+        <ButtonRow
+          style={{
+            display: `${tab == HelpTabs.HOME ? 'none' : 'inline-flex'}`,
+          }}
+        >
           <ActionButton
             id='help_back_button'
             onClick={() => setTab(HelpTabs.HOME)}
@@ -43,8 +46,11 @@ export function registerHelpModal() {
 
       const Menu = () => (
         <MenuBody>
-          <MenuText>Here are valuable resources that can help you navigate Kamigotchi World.</MenuText>
-          <Tooltip text={['Getting Started']} >
+          <MenuText>
+            Here are valuable resources that can help you navigate Kamigotchi
+            World.
+          </MenuText>
+          <Tooltip text={['Getting Started']}>
             <Label>Book 1</Label>
             <IconButton
               id='starting'
@@ -53,7 +59,7 @@ export function registerHelpModal() {
               size='book'
             />
           </Tooltip>
-          <Tooltip text={["What's a Kamigotchi?"]} >
+          <Tooltip text={["What's a Kamigotchi?"]}>
             <Label>Book 2</Label>
             <IconButton
               id='kamigotchi'
@@ -62,7 +68,7 @@ export function registerHelpModal() {
               size='book'
             />
           </Tooltip>
-          <Tooltip text={["What's a Node?"]} >
+          <Tooltip text={["What's a Node?"]}>
             <Label>Book 3</Label>
             <IconButton
               id='nodes'
@@ -83,10 +89,11 @@ export function registerHelpModal() {
         >
           <BackButton />
           <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
-          {(tab === HelpTabs.HOME)
-            ? <Menu />
-            : <SectionContent body={CopyInfo[tab].body} />
-          }
+          {tab === HelpTabs.HOME ? (
+            <Menu />
+          ) : (
+            <SectionContent body={CopyInfo[tab].body} />
+          )}
         </ModalWrapper>
       );
     }
@@ -95,7 +102,7 @@ export function registerHelpModal() {
 
 const ButtonRow = styled.div`
   position: absolute;
-  
+
   display: inline-flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -111,15 +118,15 @@ const Banner = styled.img`
 `;
 
 const Label = styled.div`
-  padding: .4vw;
+  padding: 0.4vw;
   align-self: center;
-  
+
   color: black;
   font-family: Pixel;
   font-size: 1vw;
-  line-height: .8vw;
+  line-height: 0.8vw;
   text-align: center;
-  text-shadow: 0 0 .4vw rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 0.4vw rgba(0, 0, 0, 0.5);
 `;
 
 const MenuBody = styled.div`
@@ -133,7 +140,7 @@ const MenuBody = styled.div`
 const MenuText = styled.div`
   padding-bottom: 3vw;
   align-self: center;
-  
+
   color: black;
   font-family: Pixel;
   font-size: 1vw;

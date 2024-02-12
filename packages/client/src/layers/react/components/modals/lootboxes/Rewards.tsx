@@ -1,22 +1,21 @@
-import styled from "styled-components";
-import { EntityIndex } from "@latticexyz/recs";
-import { getRarities } from "constants/rarities";
-import { ItemIcon } from "layers/react/components/library/ItemIcon";
+import styled from 'styled-components';
+import { EntityIndex } from '@latticexyz/recs';
+import { getRarities } from 'constants/rarities';
+import { ItemIcon } from 'layers/react/components/library/ItemIcon';
 
-import { LootboxLog } from "layers/network/shapes/Lootbox";
-import { Item } from "layers/network/shapes/Item";
-import { Account } from "layers/network/shapes/Account";
+import { LootboxLog } from 'layers/network/shapes/Lootbox';
+import { Item } from 'layers/network/shapes/Item';
+import { Account } from 'layers/network/shapes/Account';
 
 interface Props {
   account: Account;
   utils: {
     getItem: (index: number) => Item;
     getLog: (index: EntityIndex) => LootboxLog;
-  }
+  };
 }
 
 export const Rewards = (props: Props) => {
-
   ///////////////
   // DISPLAY
 
@@ -33,9 +32,8 @@ export const Rewards = (props: Props) => {
         />
         <ItemText>x{Number(amount)}</ItemText>
       </ItemBox>
-
-    )
-  }
+    );
+  };
 
   const ItemsList = () => {
     let list = [];
@@ -49,26 +47,21 @@ export const Rewards = (props: Props) => {
       const amounts = log.droptable.results!;
 
       for (let i = 0; i < items.length; i++) {
-        if (amounts[i] > 0) list.push(parseItem(items[i], rarities[i], amounts[i]));
+        if (amounts[i] > 0)
+          list.push(parseItem(items[i], rarities[i], amounts[i]));
       }
     }
 
-    return (
-      <ResultBox>
-        {list}
-      </ResultBox>
-    )
-  }
+    return <ResultBox>{list}</ResultBox>;
+  };
 
   return (
     <Bound>
-      <SubText>
-        You received:
-      </SubText>
+      <SubText>You received:</SubText>
       {ItemsList()}
     </Bound>
   );
-}
+};
 
 const Bound = styled.div`
   display: flex;
@@ -87,7 +80,7 @@ const SubText = styled.div`
   font-family: Pixel;
 `;
 
-const ResultBox = styled.div`  
+const ResultBox = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;

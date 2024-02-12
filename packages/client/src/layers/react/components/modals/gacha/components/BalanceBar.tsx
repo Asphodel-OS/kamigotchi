@@ -8,7 +8,6 @@ interface Props {
 }
 
 export const BalanceBar = (props: Props) => {
-
   return (
     <Container>
       <Column>
@@ -18,7 +17,7 @@ export const BalanceBar = (props: Props) => {
           <NumberText>{props.price}</NumberText>
         </Row>
       </Column>
-      <Column style={{ alignItems: "flex-end" }}>
+      <Column style={{ alignItems: 'flex-end' }}>
         <TitleText>Balance</TitleText>
         <Row>
           <Icon src={props.icon} />
@@ -27,7 +26,7 @@ export const BalanceBar = (props: Props) => {
       </Column>
     </Container>
   );
-}
+};
 
 const Column = styled.div`
   display: flex;

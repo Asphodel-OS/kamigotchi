@@ -10,11 +10,10 @@ import {
   isUnrevealed,
   calcCooldownRemaining,
   calcHealth,
-} from "layers/network/shapes/Kami";
+} from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
-
 
 interface Props {
   kami: Kami;
@@ -30,7 +29,8 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, description, subtext, actions, showBattery, showCooldown } = props;
+  const { kami, description, subtext, actions, showBattery, showCooldown } =
+    props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 
@@ -46,20 +46,18 @@ export const KamiCard = (props: Props) => {
     };
   }, []);
 
-
   /////////////////
   // INTERACTION
 
   // toggle the kami modal settings depending on its current state
   const kamiOnClick = () => {
-    const sameKami = (kamiIndex === kami.index);
+    const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
     if (modals.kami && sameKami) setModals({ ...modals, kami: false });
     else setModals({ ...modals, kami: true });
     playClick();
-  }
-
+  };
 
   /////////////////
   // DISPLAY
@@ -72,9 +70,9 @@ export const KamiCard = (props: Props) => {
       </TextBig>
     );
 
-    const details = description.slice(1).map(
-      (text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>
-    );
+    const details = description
+      .slice(1)
+      .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
 
     return <>{[header, ...details]}</>;
   };
@@ -89,16 +87,19 @@ export const KamiCard = (props: Props) => {
 
     return (
       <TitleCorner key='corner'>
-        {showCooldown &&
+        {showCooldown && (
           <Tooltip key='cooldown' text={[cooldownString]}>
-            <Countdown total={kami.time.cooldown.requirement} current={cooldown} />
+            <Countdown
+              total={kami.time.cooldown.requirement}
+              current={cooldown}
+            />
           </Tooltip>
-        }
-        {showBattery &&
+        )}
+        {showBattery && (
           <Tooltip key='battery' text={[batteryString]}>
-            <Battery level={100 * calcHealth(kami) / totalHealth} />
+            <Battery level={(100 * calcHealth(kami)) / totalHealth} />
           </Tooltip>
-        }
+        )}
       </TitleCorner>
     );
   };
@@ -108,17 +109,21 @@ export const KamiCard = (props: Props) => {
       image={kami.uri}
       imageOnClick={() => kamiOnClick()}
       titleBarContent={[
-        <TitleText key='title' onClick={() => kamiOnClick()}>{kami.name}</TitleText>,
-        CornerContent(kami)
+        <TitleText key='title' onClick={() => kamiOnClick()}>
+          {kami.name}
+        </TitleText>,
+        CornerContent(kami),
       ]}
       content={[
         <ContentColumn key='column-1'>
           <Description />
         </ContentColumn>,
         <ContentColumn key='column-2'>
-          <ContentSubtext onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
+          <ContentSubtext onClick={props.subtextOnClick}>
+            {subtext}
+          </ContentSubtext>
           <ContentActions>{actions}</ContentActions>
-        </ContentColumn>
+        </ContentColumn>,
       ]}
     />
   );
@@ -163,7 +168,9 @@ const ContentSubtext = styled.div`
   text-align: right;
   font-size: 0.7vw;
 
-  ${({ onClick }) => onClick && `
+  ${({ onClick }) =>
+    onClick &&
+    `
     &:hover {
       opacity: 0.6;
       cursor: pointer;
@@ -179,13 +186,15 @@ const ContentActions = styled.div`
 `;
 
 const TextBig = styled.p`
-  padding-bottom: .05vw;
+  padding-bottom: 0.05vw;
 
   font-size: 0.9vw;
   font-family: Pixel;
   text-align: left;
 
-  ${({ onClick }) => onClick && `
+  ${({ onClick }) =>
+    onClick &&
+    `
     &:hover {
       opacity: 0.6;
       cursor: pointer;
@@ -198,6 +207,6 @@ const TextMedium = styled.p`
   font-size: 0.7vw;
   font-family: Pixel;
   text-align: left;
-  padding-top: .4vw;
-  padding-left: .2vw;
+  padding-top: 0.4vw;
+  padding-left: 0.2vw;
 `;

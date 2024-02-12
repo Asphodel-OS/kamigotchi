@@ -1,11 +1,8 @@
 import { DialogueNode } from '.';
 
-
 const caveFloor: DialogueNode = {
   index: 181,
-  text: [
-    "The floor is squishy here. It makes you uncomfortable.",
-  ],
+  text: ['The floor is squishy here. It makes you uncomfortable.'],
   action: {
     type: 'move',
     label: 'Leave',
@@ -14,9 +11,7 @@ const caveFloor: DialogueNode = {
 };
 const pathLeft: DialogueNode = {
   index: 182,
-  text: [
-    "Something shines in the distance.",
-  ],
+  text: ['Something shines in the distance.'],
   action: {
     type: 'move',
     label: 'Explore',
@@ -25,9 +20,7 @@ const pathLeft: DialogueNode = {
 };
 const pathRight: DialogueNode = {
   index: 183,
-  text: [
-    "This path feels familiar.",
-  ],
+  text: ['This path feels familiar.'],
   action: {
     type: 'move',
     label: 'Explore',

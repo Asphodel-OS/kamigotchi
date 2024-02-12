@@ -1,41 +1,48 @@
 import styled from 'styled-components';
 
-import { StatIcons } from "assets/images/icons/stats";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Kami } from "layers/network/shapes/Kami";
-import { Trait } from "layers/network/shapes/Trait";
+import { StatIcons } from 'assets/images/icons/stats';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Kami } from 'layers/network/shapes/Kami';
+import { Trait } from 'layers/network/shapes/Trait';
 
 interface Props {
   kami: Kami;
 }
 
 export const Traits = (props: Props) => {
-  const statsDetails = new Map(Object.entries({
-    'health': {
-      description: 'Health defines how resilient a Kami is to accumulated damage',
-      image: StatIcons.health,
-    },
-    'power': {
-      description: 'Power determines the potential rate at which $MUSU can be farmed',
-      image: StatIcons.power,
-    },
-    'violence': {
-      description: 'Violence dictates the threshold at which a Kami can liquidate others',
-      image: StatIcons.violence,
-    },
-    'harmony': {
-      description: 'Harmony divines resting recovery rate and defends against violence',
-      image: StatIcons.harmony,
-    },
-    'slots': {
-      description: 'Slots are room for upgrades ^_^',
-      image: StatIcons.slots,
-    },
-  }));
-
+  const statsDetails = new Map(
+    Object.entries({
+      health: {
+        description:
+          'Health defines how resilient a Kami is to accumulated damage',
+        image: StatIcons.health,
+      },
+      power: {
+        description:
+          'Power determines the potential rate at which $MUSU can be farmed',
+        image: StatIcons.power,
+      },
+      violence: {
+        description:
+          'Violence dictates the threshold at which a Kami can liquidate others',
+        image: StatIcons.violence,
+      },
+      harmony: {
+        description:
+          'Harmony divines resting recovery rate and defends against violence',
+        image: StatIcons.harmony,
+      },
+      slots: {
+        description: 'Slots are room for upgrades ^_^',
+        image: StatIcons.slots,
+      },
+    })
+  );
 
   const TraitBox = (type: string, trait: Trait) => {
-    const statArray = Object.entries(trait.stats).filter(([_, value]) => value > 0);
+    const statArray = Object.entries(trait.stats).filter(
+      ([_, value]) => value > 0
+    );
     return (
       <Container>
         <Title>{`${type}: ${trait.name}`}</Title>
@@ -54,8 +61,8 @@ export const Traits = (props: Props) => {
           })}
         </Content>
       </Container>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -66,13 +73,13 @@ export const Traits = (props: Props) => {
       {TraitBox('Background', props.kami.traits?.background!)}
     </>
   );
-}
+};
 
 const Container = styled.div`
-  border: solid black .15vw;
-  border-radius: .5vw;
-  margin: .7vw;
-  padding: .5vw;
+  border: solid black 0.15vw;
+  border-radius: 0.5vw;
+  margin: 0.7vw;
+  padding: 0.5vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -80,14 +87,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  padding: .5vw;  
+  padding: 0.5vw;
   color: black;
   font-family: Pixel;
   font-size: 1.5vw;
 `;
 
 const Content = styled.div`
-  padding: .7vw;
+  padding: 0.7vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -96,12 +103,12 @@ const Content = styled.div`
 `;
 
 const InfoBox = styled.div`
-  border: solid black .12vw;
+  border: solid black 0.12vw;
   border-radius: 5px;
-  margin: .3vw;
-  padding: .5vw 1vw;
-  gap: .5vw;
-  
+  margin: 0.3vw;
+  padding: 0.5vw 1vw;
+  gap: 0.5vw;
+
   display: flex;
   flex-direction: row nowrap;
   justify-content: space-between;
@@ -115,7 +122,6 @@ const InfoIcon = styled.img`
   height: 2vw;
   align-self: center;
 `;
-
 
 const InfoNumber = styled.div`
   color: black;

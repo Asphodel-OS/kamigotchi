@@ -3,6 +3,7 @@
   "editor.formatOnSave": true,
   "editor.inlineSuggest.enabled": true,
   "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "html.format.templating": true,
   "solidity.remappings": [
     "components/=./packages/contracts/src/components",

@@ -1,11 +1,8 @@
 import { DialogueNode } from '.';
 
-
 export const glassbox: DialogueNode = {
   index: 121,
-  text: [
-    'This device will allow you to view information about balances.',
-  ],
+  text: ['This device will allow you to view information about balances.'],
 };
 
 export default [glassbox];

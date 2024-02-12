@@ -1,5 +1,5 @@
 import { useVisibility } from 'layers/react/store/visibility';
-import { useSelected } from 'layers/react/store/selected'
+import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
 export const triggerShopModal = (npcIndex: number) => {
@@ -19,4 +19,4 @@ export const triggerShopModal = (npcIndex: number) => {
   } else {
     useVisibility.setState({ modals: { ...modals, merchant: false } });
   }
-}
+};

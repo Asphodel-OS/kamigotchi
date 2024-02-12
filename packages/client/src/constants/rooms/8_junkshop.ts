@@ -8,7 +8,6 @@ import {
 import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
-
 export const room8: Room = {
   location: 8,
   background: {

@@ -4,7 +4,7 @@ import { Has, HasValue, runQuery } from '@latticexyz/recs';
 import { EntityID } from '@latticexyz/recs';
 import { BigNumberish } from 'ethers';
 import { useContractRead } from 'wagmi';
-import crypto from "crypto";
+import crypto from 'crypto';
 import styled from 'styled-components';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
@@ -30,20 +30,12 @@ export function registerERC721BridgeModal() {
       const {
         network: {
           network,
-          components: {
-            AccountID,
-            IsAccount,
-            OperatorAddress,
-            State,
-          },
+          components: { AccountID, IsAccount, OperatorAddress, State },
           systems,
         },
       } = layers;
 
-      return merge(
-        AccountID.update$,
-        State.update$
-      ).pipe(
+      return merge(AccountID.update$, State.update$).pipe(
         map(() => {
           const accountIndex = Array.from(
             runQuery([
@@ -55,28 +47,26 @@ export function registerERC721BridgeModal() {
           )[0];
 
           const account =
-            accountIndex !== undefined ? getAccount(layers.network, accountIndex, { kamis: true }) : ({} as Account);
+            accountIndex !== undefined
+              ? getAccount(layers.network, accountIndex, { kamis: true })
+              : ({} as Account);
 
           return {
             layers: layers,
             data: {
               account: { ...account },
             } as any,
-            proxyAddy: systems["system.Pet721.Proxy"].address,
+            proxyAddy: systems['system.Pet721.Proxy'].address,
           };
         })
       );
     },
 
     ({ layers, data, proxyAddy }) => {
-
       const {
         network: {
-          components: {
-            IsPet,
-            PetIndex
-          }
-        }
+          components: { IsPet, PetIndex },
+        },
       } = layers;
 
       const { account: kamiAccount } = useAccount();
@@ -93,7 +83,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiDeposit',
@@ -111,7 +101,7 @@ export function registerERC721BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiWithdraw',
@@ -130,48 +120,55 @@ export function registerERC721BridgeModal() {
       // for use in mud
       const buttonSelect = (props: any) => {
         if (isExportable(props.kami)) {
-          return (<Button onClick={() => withdrawTx(props.kami.index)}>Unstake</Button>);
+          return (
+            <Button onClick={() => withdrawTx(props.kami.index)}>
+              Unstake
+            </Button>
+          );
         } else if (isImportable(props.kami)) {
-          return (<Button onClick={() => depositTx(props.kami.index)}>Stake</Button>);
+          return (
+            <Button onClick={() => depositTx(props.kami.index)}>Stake</Button>
+          );
         }
-        // specific conditions that disable bridging 
+        // specific conditions that disable bridging
         else if (isHarvesting(props.kami)) {
-          return (<NotButton>Harvesting...</NotButton>);
+          return <NotButton>Harvesting...</NotButton>;
         } else if (isDead(props.kami)) {
-          return (<NotButton>Dead!</NotButton>);
+          return <NotButton>Dead!</NotButton>;
         } else {
-          return (<NotButton>cannot be bridged</NotButton>);
+          return <NotButton>cannot be bridged</NotButton>;
         }
-      }
+      };
 
       // External Kamis
       const { data: erc721 } = useContractRead({
         address: proxyAddy as `0x${string}`,
         abi: abi,
-        functionName: 'getTokenAddy'
+        functionName: 'getTokenAddy',
       });
       const { data: erc721List } = useContractRead({
         address: erc721 as `0x${string}`,
-        abi:
-          [{
-            "inputs": [
+        abi: [
+          {
+            inputs: [
               {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'owner',
+                type: 'address',
+              },
             ],
-            "name": "getAllTokens",
-            "outputs": [
+            name: 'getAllTokens',
+            outputs: [
               {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-              }
+                internalType: 'uint256[]',
+                name: '',
+                type: 'uint256[]',
+              },
             ],
-            "stateMutability": "view",
-            "type": "function"
-          }],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
         functionName: 'getAllTokens',
         args: [kamiAccount.ownerAddress as `0x${string}`],
         watch: true,
@@ -183,30 +180,34 @@ export function registerERC721BridgeModal() {
           // get indices of external kamis
           const getIndices = (): bigint[] => {
             return erc721List ? [...erc721List] : [];
-          }
+          };
 
           // get kamis from index
           const getKamis = (indices: bigint[]): Kami[] => {
             let kamis: Kami[] = [];
             let petIndex;
             for (let i = 0; i < indices.length; i++) {
-              petIndex = ('0x' + indices[i].toString(16).padStart(2, '0')) as unknown as number;
+              petIndex = ('0x' +
+                indices[i].toString(16).padStart(2, '0')) as unknown as number;
               const entityID = Array.from(
-                runQuery([
-                  Has(IsPet),
-                  HasValue(PetIndex, { value: petIndex })
-                ])
+                runQuery([Has(IsPet), HasValue(PetIndex, { value: petIndex })])
               )[0];
 
-              kamis.push(getKami(layers.network, entityID, { deaths: true, production: true, traits: true }));
+              kamis.push(
+                getKami(layers.network, entityID, {
+                  deaths: true,
+                  production: true,
+                  traits: true,
+                })
+              );
             }
 
             return kamis;
-          }
+          };
 
           const indices = getIndices();
           return getKamis(indices);
-        }
+        };
 
         setEOAKamis(getEOAKamis());
       }, [erc721List, data]);
@@ -239,38 +240,30 @@ export function registerERC721BridgeModal() {
         });
       };
 
-
       /////////////////
-      //  KAMI LOGIC 
+      //  KAMI LOGIC
 
       const isImportable = (kami: Kami): boolean => {
         return isOutOfWorld(kami);
-      }
+      };
 
       const isExportable = (kami: Kami): boolean => {
         return isResting(kami);
-      }
+      };
 
       // naive check right now, needs to be updated with murder check as well
-      const isDead = (kami: Kami): boolean =>
-        kami.state === 'DEAD';
+      const isDead = (kami: Kami): boolean => kami.state === 'DEAD';
 
       const isHarvesting = (kami: Kami): boolean =>
         kami.state === 'HARVESTING' && kami.production != undefined;
 
-      const isResting = (kami: Kami): boolean =>
-        kami.state === 'RESTING';
+      const isResting = (kami: Kami): boolean => kami.state === 'RESTING';
 
       const isOutOfWorld = (kami: Kami): boolean =>
         kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapper
-          id='bridgeERC721'
-          divName='bridgeERC721'
-          canExit
-          overlay
-        >
+        <ModalWrapper id='bridgeERC721' divName='bridgeERC721' canExit overlay>
           <Title>Stake/Unstake Kamis</Title>
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>
@@ -286,7 +279,7 @@ export function registerERC721BridgeModal() {
               {KamiCards(EOAKamis)}
             </Scrollable>
           </Grid>
-        </ModalWrapper >
+        </ModalWrapper>
       );
     }
   );

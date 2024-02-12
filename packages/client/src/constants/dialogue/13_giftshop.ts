@@ -1,11 +1,8 @@
 import { DialogueNode } from '.';
 
-
 export const clock: DialogueNode = {
   index: 131,
-  text: [
-    '*tik tok*',
-  ],
+  text: ['*tik tok*'],
 };
 
 export const mina: DialogueNode = {

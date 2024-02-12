@@ -3,9 +3,9 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { useBalance, useContractRead } from 'wagmi';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 
-import { abi } from "abi/Farm20ProxySystem.json"
+import { abi } from 'abi/Farm20ProxySystem.json';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -37,7 +37,7 @@ export function registerERC20BridgeModal() {
 
           return {
             account,
-            proxyAddy: systems["system.Farm20.Proxy"].address
+            proxyAddy: systems['system.Farm20.Proxy'].address,
           };
         })
       );
@@ -49,19 +49,19 @@ export function registerERC20BridgeModal() {
 
       const [isDepositState, setIsDepositState] = useState(true);
       const [amount, setAmount] = useState(0);
-      const [statusText, setStatusText] = useState("");
+      const [statusText, setStatusText] = useState('');
       const [enableButton, setEnableButton] = useState(true);
 
-      // get token balance of controlling account 
+      // get token balance of controlling account
       const { data: erc20Addy } = useContractRead({
         address: proxyAddy as `0x${string}`,
         abi: abi,
-        functionName: 'getTokenAddy'
+        functionName: 'getTokenAddy',
       });
       const { data: EOABal } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
         token: erc20Addy as `0x${string}`,
-        watch: true
+        watch: true,
       });
 
       /////////////////
@@ -72,7 +72,7 @@ export function registerERC20BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'MUSUDeposit',
@@ -90,7 +90,7 @@ export function registerERC20BridgeModal() {
         const actions = network!.actions;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'MUSUWithdraw',
@@ -104,7 +104,6 @@ export function registerERC20BridgeModal() {
         return actionID;
       };
 
-
       ///////////////
       // DISPLAY LOGIC
 
@@ -114,7 +113,7 @@ export function registerERC20BridgeModal() {
         } else {
           return withdrawTx();
         }
-      }
+      };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -129,22 +128,22 @@ export function registerERC20BridgeModal() {
       useEffect(() => {
         if (amount == 0) {
           setEnableButton(false);
-          setStatusText("");
-        }
-        else if (isDepositState ? amount > Number(EOABal?.formatted) : amount > Number(account.coin ?? 0)) {
+          setStatusText('');
+        } else if (
+          isDepositState
+            ? amount > Number(EOABal?.formatted)
+            : amount > Number(account.coin ?? 0)
+        ) {
           setEnableButton(false);
-          setStatusText("Insufficient Balance");
-        }
-        else if (!Number.isInteger(amount)) {
+          setStatusText('Insufficient Balance');
+        } else if (!Number.isInteger(amount)) {
           setEnableButton(false);
-          setStatusText("Invalid amount (whole numbers only)");
-        }
-        else {
+          setStatusText('Invalid amount (whole numbers only)');
+        } else {
           setEnableButton(true);
-          setStatusText("");
+          setStatusText('');
         }
       }, [amount, isDepositState, EOABal, account.coin]);
-
 
       ///////////////
       // COMPONENTS
@@ -152,30 +151,42 @@ export function registerERC20BridgeModal() {
       const TxButton = () => {
         const text = isDepositState ? 'Deposit' : 'Withdraw';
         return (
-          <ActionButton id='button-deposit' onClick={chooseTx} size='large' text={text} disabled={!enableButton} />
-        )
+          <ActionButton
+            id='button-deposit'
+            onClick={chooseTx}
+            size='large'
+            text={text}
+            disabled={!enableButton}
+          />
+        );
       };
 
       const StateBox = (fundState: boolean) => {
-        const text = fundState ? "Wallet" : "Game";
-        const balance = fundState ? Math.floor(Number(EOABal?.formatted)) : Number(account.coin ?? 0);
-        const color = (fundState == isDepositState) ? "grey" : "white";
-        const textColor = (fundState == isDepositState) ? "white" : "black";
+        const text = fundState ? 'Wallet' : 'Game';
+        const balance = fundState
+          ? Math.floor(Number(EOABal?.formatted))
+          : Number(account.coin ?? 0);
+        const color = fundState == isDepositState ? 'grey' : 'white';
+        const textColor = fundState == isDepositState ? 'white' : 'black';
         return (
-          <BoxButton style={{ backgroundColor: color }} onClick={() => setIsDepositState(fundState)}>
-            <Description style={{ color: textColor }}> {balance} $MUSU </Description>
-            <SubDescription style={{ color: textColor }}> {text} </SubDescription>
+          <BoxButton
+            style={{ backgroundColor: color }}
+            onClick={() => setIsDepositState(fundState)}
+          >
+            <Description style={{ color: textColor }}>
+              {' '}
+              {balance} $MUSU{' '}
+            </Description>
+            <SubDescription style={{ color: textColor }}>
+              {' '}
+              {text}{' '}
+            </SubDescription>
           </BoxButton>
         );
       };
 
       return (
-        <ModalWrapper
-          divName='bridgeERC20'
-          id='bridgeERC20'
-          canExit
-          overlay
-        >
+        <ModalWrapper divName='bridgeERC20' id='bridgeERC20' canExit overlay>
           <Header>Bridge $MUSU</Header>
           <Grid>
             <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>
@@ -184,10 +195,21 @@ export function registerERC20BridgeModal() {
             <div style={{ width: '100%', gridRow: 1, gridColumn: 2 }}>
               {StateBox(false)}
             </div>
-            <Description style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}>
+            <Description
+              style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}
+            >
               Bridge $MUSU between your wallet (ERC20) and the game world.
             </Description>
-            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gridRow: 4, gridColumnStart: 1, gridColumnEnd: 3 }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                gridRow: 4,
+                gridColumnStart: 1,
+                gridColumnEnd: 3,
+              }}
+            >
               <Input
                 style={{ pointerEvents: 'auto' }}
                 type='number'
@@ -213,19 +235,19 @@ const BoxButton = styled.button`
   flex-direction: column;
   width: 100%;
 
-  background-color: #FFF;
+  background-color: #fff;
   border-style: solid;
   border-width: 2px;
   border-color: black;
   color: black;
 
-  pointerEvents: 'auto';
+  pointerevents: 'auto';
 `;
 
 const Header = styled.p`
   color: black;
   padding: 1.5vw;
-  
+
   font-family: Pixel;
   font-size: 1.5vw;
   text-align: center;
@@ -281,11 +303,11 @@ const SubDescription = styled.p`
 
 const SubText = styled.div`
   font-size: 12px;
-  color: #FF785B;
+  color: #ff785b;
   text-align: center;
   padding: 4px;
   font-family: Pixel;
-  
+
   cursor: pointer;
   border-width: 0px;
   background-color: #ffffff;

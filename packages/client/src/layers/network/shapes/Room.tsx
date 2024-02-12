@@ -12,7 +12,6 @@ import { Account, getAccount } from './Account';
 import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
 
-
 // standardized Object shape of a Room Entity
 export interface Room {
   id: EntityID;
@@ -38,14 +37,7 @@ export const getRoom = (
 ): Room => {
   const {
     world,
-    components: {
-      IsAccount,
-      AccountID,
-      Description,
-      Exits,
-      Location,
-      Name,
-    },
+    components: { IsAccount, AccountID, Description, Exits, Location, Name },
   } = network;
 
   let room: Room = {
@@ -53,14 +45,16 @@ export const getRoom = (
     entityIndex: index,
     name: getComponentValue(Name, index)?.value as string,
     description: getComponentValue(Description, index)?.value as string,
-    location: (getComponentValue(Location, index)?.value || 0 as number) * 1,
+    location: (getComponentValue(Location, index)?.value || (0 as number)) * 1,
     exits: getComponentValue(Exits, index)?.value as number[],
   };
 
   // if the room has an owner, include their name
   if (options?.owner && hasComponent(AccountID, index)) {
     const accountID = getComponentValue(AccountID, index)?.value as EntityID;
-    const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
+    const accountEntityIndex = world.entityToIndex.get(
+      accountID
+    ) as EntityIndex;
     room.owner = getAccount(network, accountEntityIndex);
   }
 
@@ -69,7 +63,7 @@ export const getRoom = (
     const accountResults = Array.from(
       runQuery([
         Has(IsAccount),
-        HasValue(Location, { value: numberToHex(room.location) })
+        HasValue(Location, { value: numberToHex(room.location) }),
       ])
     );
 
@@ -99,28 +93,21 @@ export const getAllRooms = (
   options?: RoomOptions
 ): Room[] => {
   const { IsRoom } = network.components;
-  const roomEntityIndices = Array.from(
-    runQuery([
-      Has(IsRoom),
-    ])
-  );
+  const roomEntityIndices = Array.from(runQuery([Has(IsRoom)]));
   return roomEntityIndices.map((roomEntityIndex) => {
     return getRoom(network, roomEntityIndex, options);
   });
-}
+};
 
 // gets a Room EntityIndex by its location
 export const getRoomEntityIndexByLocation = (
   network: NetworkLayer,
-  location: number,
+  location: number
 ): EntityIndex => {
   const { IsRoom, Location } = network.components;
   let hexLocation = numberToHex(location);
   const roomEntityIndex = Array.from(
-    runQuery([
-      Has(IsRoom),
-      HasValue(Location, { value: hexLocation })
-    ])
+    runQuery([Has(IsRoom), HasValue(Location, { value: hexLocation })])
   )[0];
   return roomEntityIndex;
-}
+};

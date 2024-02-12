@@ -1,3 +1,3 @@
-import { registerLeaderboardModal } from "./Leaderboard";
+import { registerLeaderboardModal } from './Leaderboard';
 
 export { registerLeaderboardModal };

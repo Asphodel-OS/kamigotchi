@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   title: string;
-  icon?: string,
+  icon?: string;
 }
 
 // ModalHeader renders a standard modal header with Title and optional icon.
@@ -19,7 +19,7 @@ export const ModalHeader = (props: Props) => {
 };
 
 const Wrapper = styled.div`
-  padding: .8vw 1vw;
+  padding: 0.8vw 1vw;
   gap: 0.7vw;
 
   display: flex;
@@ -36,6 +36,6 @@ const Title = styled.div`
 `;
 
 const Image = styled.img`
-  height: 2vw; 
+  height: 2vw;
   width: auto;
 `;

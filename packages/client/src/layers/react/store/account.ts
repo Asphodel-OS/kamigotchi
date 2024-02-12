@@ -1,11 +1,10 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { create } from 'zustand';
 
-
 ////////////////
 // OVERVIEW
 
-// as well as the validations run on 
+// as well as the validations run on
 interface State {
   account: Account;
   validations: Validations;
@@ -15,7 +14,6 @@ interface Actions {
   setAccount: (data: Account) => void;
   setValidations: (data: Validations) => void;
 }
-
 
 ////////////////
 // ACCOUNT
@@ -39,7 +37,6 @@ export const emptyAccountDetails = (): Account => ({
   operatorAddress: '',
 });
 
-
 ////////////////
 // VALIDATIONS
 
@@ -49,7 +46,6 @@ interface Validations {
   operatorMatches: boolean;
   operatorHasGas: boolean;
 }
-
 
 ////////////////
 // SYNTHESIS
@@ -65,11 +61,9 @@ export const useAccount = create<State & Actions>((set) => {
   };
   return {
     ...initialState,
-    setAccount: (data: Account) => set(
-      (state: State) => ({ ...state, account: data })
-    ),
-    setValidations: (data: Validations) => set(
-      (state: State) => ({ ...state, validations: data })
-    ),
+    setAccount: (data: Account) =>
+      set((state: State) => ({ ...state, account: data })),
+    setValidations: (data: Validations) =>
+      set((state: State) => ({ ...state, validations: data })),
   };
 });

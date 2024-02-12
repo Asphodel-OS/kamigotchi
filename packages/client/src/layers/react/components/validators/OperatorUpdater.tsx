@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import crypto from 'crypto';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -9,15 +9,14 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useLocalStorage } from 'layers/react/hooks/useLocalStorage'
+import { useLocalStorage } from 'layers/react/hooks/useLocalStorage';
 import { getAccountByOperator } from 'layers/network/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network'
+import { useNetwork } from 'layers/react/store/network';
 import { generatePrivateKey } from 'utils/address';
 import { playClick, playScribble, playSuccess } from 'utils/sounds';
 import 'layers/react/styles/font.css';
-
 
 // TODO: check for whether an account with the burner address already exists
 export function registerOperatorUpdater() {
@@ -31,12 +30,26 @@ export function registerOperatorUpdater() {
     },
     (layers) => of(layers),
     (layers) => {
-      const { network: { actions } } = layers;
-      const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const {
+        network: { actions },
+      } = layers;
+      const [_, setDetectedPrivateKey] = useLocalStorage(
+        'operatorPrivateKey',
+        ''
+      );
+      const {
+        burner,
+        selectedAddress,
+        networks,
+        validations: networkValidations,
+      } = useNetwork();
       const { toggleButtons, toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { account: kamiAccount, validations, setValidations } = useAccount();
+      const {
+        account: kamiAccount,
+        validations,
+        setValidations,
+      } = useAccount();
 
       const [operatorMatches, setOperatorMatches] = useState(false);
       const [operatorTaken, setOperatorTaken] = useState(false);
@@ -44,9 +57,10 @@ export function registerOperatorUpdater() {
       const [mode, setMode] = useState('key');
       const [value, setValue] = useState('');
 
-      // run the primary check(s) for this validator, track in store for easy access 
+      // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
-        const operatorMatches = (kamiAccount.operatorAddress === burner.connected.address);
+        const operatorMatches =
+          kamiAccount.operatorAddress === burner.connected.address;
         setOperatorMatches(operatorMatches);
         setValidations({ ...validations, operatorMatches });
       }, [burner.connected.address, kamiAccount.operatorAddress]);
@@ -55,10 +69,10 @@ export function registerOperatorUpdater() {
       useEffect(() => {
         setIsVisible(
           networkValidations.isConnected &&
-          networkValidations.chainMatches &&
-          networkValidations.burnerMatches &&
-          validations.accountExists &&
-          !operatorMatches
+            networkValidations.chainMatches &&
+            networkValidations.burnerMatches &&
+            validations.accountExists &&
+            !operatorMatches
         );
       }, [networkValidations, validations, operatorMatches]);
 
@@ -67,9 +81,9 @@ export function registerOperatorUpdater() {
         if (isVisible) toggleModals(false);
         toggleButtons(
           !isVisible &&
-          !validators.walletConnector &&
-          !validators.burnerDetector &&
-          !validators.accountRegistrar
+            !validators.walletConnector &&
+            !validators.burnerDetector &&
+            !validators.accountRegistrar
         );
         if (isVisible != validators.operatorUpdater) {
           const { validators } = useVisibility.getState();
@@ -84,10 +98,12 @@ export function registerOperatorUpdater() {
 
       // check if the connected burner is already taken by an account
       useEffect(() => {
-        const account = getAccountByOperator(layers.network, burner.connected.address)
+        const account = getAccountByOperator(
+          layers.network,
+          burner.connected.address
+        );
         setOperatorTaken(!!account.id);
       }, [mode, burner.connected.address]);
-
 
       /////////////////
       // ACTIONS
@@ -97,7 +113,7 @@ export function registerOperatorUpdater() {
         const world = network!.world;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountSetOperator',
@@ -109,21 +125,20 @@ export function registerOperatorUpdater() {
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
         await waitForActionCompletion(actions?.Action!, actionIndex);
-      }
+      };
 
       const setOperatorWithFx = async (address: string) => {
         playScribble();
         await setOperator(address);
         playSuccess();
-      }
+      };
 
       const setPrivKey = (privKey: string) => {
         playScribble();
         if (privKey.length > 0) {
           setDetectedPrivateKey(privKey);
         }
-      }
-
+      };
 
       /////////////////
       // FORM HANDLING
@@ -132,29 +147,28 @@ export function registerOperatorUpdater() {
         playClick();
         setMode(newMode);
         setValue('');
-      }
+      };
 
-      const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const handleInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+      ) => {
         setValue(event.target.value);
       };
 
       const submit = () => {
         if (mode === 'key') setPrivKey(value);
         else setOperatorWithFx(value);
-      }
+      };
 
       const getLabel = () => {
-        return (mode === 'key')
+        return mode === 'key'
           ? `Private Key of ${kamiAccount.operatorAddress}`
-          : "Address of New Avatar for Account";
-      }
+          : 'Address of New Avatar for Account';
+      };
 
       const getPlaceholder = () => {
-        return (mode === 'key')
-          ? "0x..."
-          : "Any ol' Avatar will do...";
-      }
-
+        return mode === 'key' ? '0x...' : "Any ol' Avatar will do...";
+      };
 
       /////////////////
       // RENDERING
@@ -191,8 +205,7 @@ export function registerOperatorUpdater() {
         }
 
         return button;
-      }
-
+      };
 
       /////////////////
       // DISPLAY
@@ -204,14 +217,19 @@ export function registerOperatorUpdater() {
           title='Update Avatar'
           errorPrimary='Connected Burner != Account Avatar'
         >
-          <Description>Account Avatar: {kamiAccount.operatorAddress}</Description>
-          <Description>Connected Burner: {burner.connected.address}</Description>
+          <Description>
+            Account Avatar: {kamiAccount.operatorAddress}
+          </Description>
+          <Description>
+            Connected Burner: {burner.connected.address}
+          </Description>
           <br />
           <WarningOption onClick={() => handleSetMode('key')}>
-            {(mode === 'key') ? '→ ' : ''}Please, find your keys {kamiAccount.name}
+            {mode === 'key' ? '→ ' : ''}Please, find your keys{' '}
+            {kamiAccount.name}
           </WarningOption>
           <WarningOption onClick={() => handleSetMode('address')}>
-            {(mode !== 'key') ? '→ ' : ''}or replace your current Avatar
+            {mode !== 'key' ? '→ ' : ''}or replace your current Avatar
           </WarningOption>
           <br />
           <InputContainer id='new-operator'>
@@ -225,14 +243,18 @@ export function registerOperatorUpdater() {
           </InputContainer>
           <Row>
             <SupportButton />
-            <ActionButton id={`submit`} text='Submit' onClick={submit} size='vending' />
+            <ActionButton
+              id={`submit`}
+              text='Submit'
+              onClick={submit}
+              size='vending'
+            />
           </Row>
         </ValidatorWrapper>
       );
     }
   );
 }
-
 
 const Description = styled.div`
   font-size: 12px;
@@ -242,17 +264,16 @@ const Description = styled.div`
   padding: 5px 0px;
 `;
 
-
 const WarningOption = styled.div`
   font-size: 12px;
-  color: #FF785B;
+  color: #ff785b;
   text-align: center;
   font-family: Pixel;
   padding: 5px 0px;
 
   cursor: pointer;
   &:hover {
-    color: #FF785B;
+    color: #ff785b;
     text-decoration: underline;
   }
 `;
@@ -272,7 +293,7 @@ const Input = styled.input`
   border-radius: 5px;
   padding: 15px 12px;
   margin: 5px 0px;
-  
+
   display: inline-block;
   justify-content: center;
   cursor: pointer;

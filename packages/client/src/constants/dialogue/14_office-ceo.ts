@@ -1,6 +1,5 @@
 import { DialogueNode } from '.';
 
-
 export const appleimac: DialogueNode = {
   index: 141,
   text: [
@@ -10,20 +9,15 @@ export const appleimac: DialogueNode = {
 
 export const businesspaperwork: DialogueNode = {
   index: 142,
-  text: [
-    'A pile of documents. The writing is unreadable scrawl.'
-  ],
+  text: ['A pile of documents. The writing is unreadable scrawl.'],
 };
 
 export const smallwaterfall: DialogueNode = {
   index: 143,
-  text: [
-    'A waterfall in the distance.'
-  ],
+  text: ['A waterfall in the distance.'],
 };
 
 export default [appleimac, businesspaperwork, smallwaterfall];
-
 
 // export const sallwaterfall: Room = {
 //   location: 14,

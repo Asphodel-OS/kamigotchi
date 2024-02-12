@@ -6,7 +6,6 @@ import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
 
-
 interface Props {
   kamis: Kami[];
 }
@@ -16,13 +15,13 @@ export const Kamis = (props: Props) => {
   const { kamiIndex, setKami } = useSelected();
 
   const kamiOnClick = (kami: Kami) => {
-    const sameKami = (kamiIndex === kami.index);
+    const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
     if (modals.kami && sameKami) setModals({ ...modals, kami: false });
     else setModals({ ...modals, kami: true });
     playClick();
-  }
+  };
 
   if (props.kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
   return (
@@ -36,7 +35,7 @@ export const Kamis = (props: Props) => {
       ))}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
@@ -46,16 +45,15 @@ const Container = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid .15vw black;
-  border-radius: .25vw;
+  border: solid 0.15vw black;
+  border-radius: 0.25vw;
 
   margin: 0.3vh 0.4vw;
   position: relative;
 `;
 
-
 const Image = styled.img`
-  border-radius: .1vw;
+  border-radius: 0.1vw;
   height: 8vw;
   cursor: pointer;
 

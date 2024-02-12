@@ -1,3 +1,3 @@
-import { registerKamiModal } from "./Kami";
+import { registerKamiModal } from './Kami';
 
 export { registerKamiModal };

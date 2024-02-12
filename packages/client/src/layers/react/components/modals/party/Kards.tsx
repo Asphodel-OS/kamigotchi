@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { feedIcon, reviveIcon } from "assets/images/icons/actions";
-import { IconButton } from "layers/react/components/library/IconButton";
-import { IconListButton } from "layers/react/components/library/IconListButton";
-import { KamiCard } from "layers/react/components/library/KamiCard";
-import { Tooltip } from "layers/react/components/library/Tooltip";
-import { Account } from "layers/network/shapes/Account";
-import { Inventory } from "layers/network/shapes/Inventory";
+import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
+import { IconButton } from 'layers/react/components/library/IconButton';
+import { IconListButton } from 'layers/react/components/library/IconListButton';
+import { KamiCard } from 'layers/react/components/library/KamiCard';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Account } from 'layers/network/shapes/Account';
+import { Inventory } from 'layers/network/shapes/Inventory';
 import {
   Kami,
   isDead,
@@ -19,19 +19,18 @@ import {
   calcHealth,
   isFull,
   calcOutput,
-} from "layers/network/shapes/Kami";
+} from 'layers/network/shapes/Kami';
 import { getRateDisplay } from 'utils/rates';
-import { playClick } from "utils/sounds";
-import { useSelected } from "layers/react/store/selected";
-import { useVisibility } from "layers/react/store/visibility";
-
+import { playClick } from 'utils/sounds';
+import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 
 interface Props {
   account: Account;
   actions: {
     feed: (kami: Kami, foodIndex: number) => void;
     revive: (kami: Kami, reviveIndex: number) => void;
-  }
+  };
   kamis: Kami[];
 }
 
@@ -51,7 +50,6 @@ export const Kards = (props: Props) => {
       clearInterval(timerId);
     };
   }, []);
-
 
   /////////////////
   // INTERPRETATION
@@ -82,7 +80,10 @@ export const Kards = (props: Props) => {
   // assume the kami is either resting or harvesting
   const whyCantFeed = (kami: Kami, account: Account): string => {
     let reason = '';
-    if (isHarvesting(kami) && kami.production?.node?.location != account.location) {
+    if (
+      isHarvesting(kami) &&
+      kami.production?.node?.location != account.location
+    ) {
       reason = `not at your location`;
     } else if (isFull(kami)) {
       reason = `can't eat, full`;
@@ -132,7 +133,6 @@ export const Kards = (props: Props) => {
     return description;
   };
 
-
   /////////////////
   // INTERACTION
 
@@ -145,7 +145,8 @@ export const Kards = (props: Props) => {
 
   // returns the onClick function for the description
   const getDescriptionOnClick = (kami: Kami) => {
-    if (isHarvesting(kami)) return () => selectNode(kami.production?.node?.index!);
+    if (isHarvesting(kami))
+      return () => selectNode(kami.production?.node?.index!);
   };
 
   /////////////////
@@ -155,17 +156,19 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     const canFeedKami = canFeed(kami, account);
     const tooltipText = whyCantFeed(kami, account);
-    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health! == 0;
+    const canHeal = (inv: Inventory) =>
+      !isFull(kami) || inv.item.stats?.health! == 0;
 
-    const stockedInventory = account.inventories?.food?.filter(
-      (inv: Inventory) => inv.balance && inv.balance > 0
-    ) ?? [];
+    const stockedInventory =
+      account.inventories?.food?.filter(
+        (inv: Inventory) => inv.balance && inv.balance > 0
+      ) ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
         text: `${inv.item.name!} ${!canHeal(inv) ? ' [Kami full]' : ''}`,
         onClick: () => actions.feed(kami, inv.item.familyIndex || 1),
-        disabled: !canHeal(inv)
+        disabled: !canHeal(inv),
       };
     });
 
@@ -177,7 +180,8 @@ export const Kards = (props: Props) => {
         options={feedOptions}
       />
     );
-    if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
+    if (!canFeedKami)
+      returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
 
     return returnVal;
   };
@@ -211,36 +215,35 @@ export const Kards = (props: Props) => {
   // TODO: consider ideal ordering here
   const KamiCards = (kamis: Kami[]) => {
     let myKamis = [...kamis] ?? [];
-    return <>{myKamis.reverse().map((kami) => {
-      return (
-        <KamiCard
-          key={kami.entityIndex}
-          kami={kami}
-          description={getDescription(kami)}
-          descriptionOnClick={getDescriptionOnClick(kami)}
-          subtext={`${calcOutput(kami)} $MUSU`}
-          actions={DisplayedAction(kami, account)}
-          showBattery
-          showCooldown
-        />
-      );
-    })}
-    </>;
+    return (
+      <>
+        {myKamis.reverse().map((kami) => {
+          return (
+            <KamiCard
+              key={kami.entityIndex}
+              kami={kami}
+              description={getDescription(kami)}
+              descriptionOnClick={getDescriptionOnClick(kami)}
+              subtext={`${calcOutput(kami)} $MUSU`}
+              actions={DisplayedAction(kami, account)}
+              showBattery
+              showCooldown
+            />
+          );
+        })}
+      </>
+    );
   };
 
   ///////////////////
   // EMPTY TEXT
 
   if (kamis.length === 0) {
-    return (
-      <EmptyText>
-        You have no kamis. Get some.
-      </EmptyText>
-    );
+    return <EmptyText>You have no kamis. Get some.</EmptyText>;
   }
 
   return KamiCards(kamis);
-}
+};
 
 const EmptyText = styled.div`
   font-family: Pixel;

@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { Inbound } from "./Inbound";
-import { Outbound } from "./Outbound";
-import { Account } from "layers/network/shapes/Account";
-import { Friendship } from "layers/network/shapes/Friendship";
-import { ActionButton, Tooltip } from "layers/react/components/library";
-import { Searched } from "./Searched";
-
+import { Inbound } from './Inbound';
+import { Outbound } from './Outbound';
+import { Account } from 'layers/network/shapes/Account';
+import { Friendship } from 'layers/network/shapes/Friendship';
+import { ActionButton, Tooltip } from 'layers/react/components/library';
+import { Searched } from './Searched';
 
 interface Props {
   account: Account;
@@ -15,13 +14,13 @@ interface Props {
   requests: {
     inbound: Friendship[];
     outbound: Friendship[];
-  }
+  };
   actions: {
     acceptFren: (friendship: Friendship) => void;
     blockFren: (account: Account) => void;
     cancelFren: (friendship: Friendship) => void;
     requestFren: (account: Account) => void;
-  }
+  };
 }
 
 export const Requests = (props: Props) => {
@@ -31,13 +30,14 @@ export const Requests = (props: Props) => {
   const [searchResults, setSearchResults] = useState([] as Account[]);
   const [knownAccIndices, setKnownAccIndices] = useState([] as number[]);
 
-
   // keep track of which accounts are already friends, requested or blocked
   useEffect(() => {
     const inboundIndices = requests.inbound.map((req) => req.account.index);
     const outboundIndices = requests.outbound.map((req) => req.target.index);
-    const friendIndices = account.friends?.friends.map((fren) => fren.target.index) ?? [];
-    const blockedIndices = account.friends?.blocked.map((fren) => fren.target.index) ?? [];
+    const friendIndices =
+      account.friends?.friends.map((fren) => fren.target.index) ?? [];
+    const blockedIndices =
+      account.friends?.blocked.map((fren) => fren.target.index) ?? [];
     setKnownAccIndices([
       account.index,
       ...blockedIndices,
@@ -58,7 +58,6 @@ export const Requests = (props: Props) => {
     setSearch(value);
   };
 
-
   //////////////////
   // INTERPRETATION
 
@@ -71,20 +70,18 @@ export const Requests = (props: Props) => {
     if (value.length < 2) return accounts;
 
     return accounts.filter(
-      (account) => (
-        account.name.toLowerCase().includes(value.toLowerCase())
-        || account.ownerEOA.toLowerCase().includes(value.toLowerCase())
-      )
+      (account) =>
+        account.name.toLowerCase().includes(value.toLowerCase()) ||
+        account.ownerEOA.toLowerCase().includes(value.toLowerCase())
     );
-  }
-
+  };
 
   //////////////////
   // DISPLAY
 
-  const ModeButton = (props: { mode: string, label: string }) => {
+  const ModeButton = (props: { mode: string; label: string }) => {
     return (
-      <Tooltip text={[props.mode]} >
+      <Tooltip text={[props.mode]}>
         <ActionButton
           id={props.mode}
           text={props.label}
@@ -93,8 +90,7 @@ export const Requests = (props: Props) => {
         />
       </Tooltip>
     );
-  }
-
+  };
 
   //////////////////
   // RENDER
@@ -116,29 +112,34 @@ export const Requests = (props: Props) => {
         />
       </ActionRow>
 
-      {(mode === 'inbound') && <Inbound
-        requests={requests.inbound}
-        actions={{
-          acceptFren: actions.acceptFren,
-          blockFren: actions.blockFren,
-          cancelFren: actions.cancelFren,
-        }}
-      />}
-      {(mode === 'outbound') && <Outbound
-        requests={requests.outbound}
-        actions={{ cancelFren: actions.cancelFren }}
-      />}
-      {(mode === 'search') && <Searched
-        accounts={searchResults}
-        actions={{
-          blockFren: actions.blockFren,
-          requestFren: actions.requestFren,
-        }}
-      />}
+      {mode === 'inbound' && (
+        <Inbound
+          requests={requests.inbound}
+          actions={{
+            acceptFren: actions.acceptFren,
+            blockFren: actions.blockFren,
+            cancelFren: actions.cancelFren,
+          }}
+        />
+      )}
+      {mode === 'outbound' && (
+        <Outbound
+          requests={requests.outbound}
+          actions={{ cancelFren: actions.cancelFren }}
+        />
+      )}
+      {mode === 'search' && (
+        <Searched
+          accounts={searchResults}
+          actions={{
+            blockFren: actions.blockFren,
+            requestFren: actions.requestFren,
+          }}
+        />
+      )}
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
   width: 100%;
@@ -161,24 +162,24 @@ const ModeButtons = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  gap: .1vw;
+  gap: 0.1vw;
 `;
 
 const Input = styled.input`
   width: 100%;
   background-color: #ffffff;
   border-color: black;
-  border-radius: .5vw;
+  border-radius: 0.5vw;
   border-style: solid;
-  border-width: .15vw;
+  border-width: 0.15vw;
   color: black;
   width: 50%;
-  margin: .3vw;
-  
-  padding: .6vw;
+  margin: 0.3vw;
+
+  padding: 0.6vw;
   cursor: pointer;
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
   text-align: left;
   text-decoration: none;
   justify-content: center;

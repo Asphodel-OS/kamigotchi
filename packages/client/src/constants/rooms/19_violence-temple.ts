@@ -7,7 +7,6 @@ import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerLeaderboardModal } from 'layers/phaser/utils/triggers/triggerLeaderboardModal';
 
-
 export const room19: Room = {
   location: 19,
   background: {

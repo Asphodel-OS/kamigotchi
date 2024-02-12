@@ -7,9 +7,9 @@ import {
   EntityIndex,
   removeComponent,
   setComponent,
-} from "@latticexyz/recs";
-import { NotificationData } from "./types";
-import { defineNotificationComponent } from "./NotificationComponent";
+} from '@latticexyz/recs';
+import { NotificationData } from './types';
+import { defineNotificationComponent } from './NotificationComponent';
 
 export type NotificationSystem = ReturnType<typeof createNotificationSystem>;
 
@@ -18,7 +18,7 @@ export function createNotificationSystem<M = undefined>(world: World) {
   const Notification = defineNotificationComponent<M>(world);
 
   /**
-   * Adds a notification 
+   * Adds a notification
    * @param notification notification to be added
    * @returns index of the entity created for the action
    */
@@ -45,7 +45,10 @@ export function createNotificationSystem<M = undefined>(world: World) {
    */
   function remove(id: EntityID): boolean {
     const index = world.entityToIndex.get(id);
-    if (index == undefined || getComponentValue(Notification, index) == undefined) {
+    if (
+      index == undefined ||
+      getComponentValue(Notification, index) == undefined
+    ) {
       console.warn(`Notification ${id} was not found`);
       return false;
     }
@@ -60,7 +63,10 @@ export function createNotificationSystem<M = undefined>(world: World) {
    */
   function update(id: EntityID, toUpdate: Partial<NotificationData>) {
     const index = world.entityToIndex.get(id);
-    if (index == undefined || getComponentValue(Notification, index) == undefined) {
+    if (
+      index == undefined ||
+      getComponentValue(Notification, index) == undefined
+    ) {
       console.warn(`Notification ${id} was not found`);
       return;
     }

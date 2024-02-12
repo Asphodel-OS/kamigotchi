@@ -1,12 +1,12 @@
-import { Snackbar, IconButton } from '@mui/material'
+import { Snackbar, IconButton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { useState } from 'react'
+import { useState } from 'react';
 
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  onClick: Function
-};
+  onClick: Function;
+}
 
 // CopyButton provides visual and audio feedback to match common copy-button affordances.
 // Unfortunately, it assumes any copied values are controlled by the parent component so
@@ -19,7 +19,7 @@ export const CopyButton = (props: Props) => {
     props.onClick();
     setOpen(true);
     // navigator.clipboard.writeText(window.location.toString())
-  }
+  };
 
   return (
     <>
@@ -30,14 +30,14 @@ export const CopyButton = (props: Props) => {
         open={open}
         onClose={() => setOpen(false)}
         autoHideDuration={2000}
-        message="Copied to clipboard"
+        message='Copied to clipboard'
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right"
+          vertical: 'bottom',
+          horizontal: 'right',
         }}
       />
     </>
-  )
-}
+  );
+};
 
-export default CopyButton
+export default CopyButton;

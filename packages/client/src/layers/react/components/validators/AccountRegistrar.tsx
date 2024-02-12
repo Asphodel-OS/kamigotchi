@@ -9,7 +9,7 @@ import {
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import crypto from "crypto";
+import crypto from 'crypto';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -19,28 +19,31 @@ import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountByName } from 'layers/network/shapes/Account'
+import { getAccountByName } from 'layers/network/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
-import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
+import {
+  Account,
+  emptyAccountDetails,
+  useAccount,
+} from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 import { playScribble } from 'utils/sounds';
 
-
-/** 
+/**
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
  * based on the connected wallet address. Unfortunately, this means listening to both changes
  * in the Connector's address through State hooks, as well as to subscribed world components
  * on the Requirement step that may result in the creation of an account in-world.
- * 
+ *
  * The requirement step determines the Account's EntityIndex using a mirrored address saved on the
  * zustand store as wagmi's useAccount() is unavailable outside of React components. It is also
  * necessary to properly update the modal whenever the page is refreshed, causing a repopulation of
  * the world client-side.
- * 
+ *
  * The modal component then takes this index as a prop and simply listens to it. Nothing more. It
  * instead relies on a hook to the Same zustand store item for the Same connected account because
  * it's possible either side may be stale.
- * 
+ *
  * Let's not fool ourselves into thinking this is an elegant solution by any measure. It is an
  * abomination birthed out of necessity and should be treated as such.
  */
@@ -66,7 +69,7 @@ export function registerAccountRegistrar() {
             OperatorAddress,
             OwnerAddress,
           },
-          actions
+          actions,
         },
       } = layers;
 
@@ -77,11 +80,13 @@ export function registerAccountRegistrar() {
           id: world.entities[entityIndex],
           entityIndex: entityIndex,
           index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-          ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
-          operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+          ownerAddress: getComponentValue(OwnerAddress, entityIndex)
+            ?.value as string,
+          operatorAddress: getComponentValue(OperatorAddress, entityIndex)
+            ?.value as string,
           name: getComponentValue(Name, entityIndex)?.value as string,
         };
-      }
+      };
 
       const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
         const accountIndex = Array.from(
@@ -99,13 +104,18 @@ export function registerAccountRegistrar() {
         IsAccount.update$,
         Name.update$,
         OperatorAddress.update$,
-        OwnerAddress.update$,
+        OwnerAddress.update$
       ).pipe(
         map(() => {
           const { selectedAddress } = useNetwork.getState();
-          const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
-          const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
-          const operatorAddresses = new Set(OperatorAddress.values.value.values());
+          const accountIndexUpdatedByWorld =
+            getAccountIndexFromOwner(selectedAddress);
+          const kamiAccountFromWorldUpdate = getAccountDetails(
+            accountIndexUpdatedByWorld
+          );
+          const operatorAddresses = new Set(
+            OperatorAddress.values.value.values()
+          );
           return {
             layers,
             actions,
@@ -126,8 +136,15 @@ export function registerAccountRegistrar() {
       getAccountIndexFromOwner,
       getAccountDetails,
     }) => {
-      const { network: { actions, world } } = layers;
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const {
+        network: { actions, world },
+      } = layers;
+      const {
+        burner,
+        selectedAddress,
+        networks,
+        validations: networkValidations,
+      } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { setAccount, validations, setValidations } = useAccount();
@@ -145,7 +162,7 @@ export function registerAccountRegistrar() {
         const accountIndex = getAccountIndexFromOwner(selectedAddress);
         const accountExists = !!accountIndex; // locally overloaded variable yes
         setValidations({ ...validations, accountExists });
-        setAccountExists(accountExists)
+        setAccountExists(accountExists);
         if (accountExists) {
           const kamiAccount = getAccountDetails(accountIndex);
           setAccount(kamiAccount);
@@ -156,9 +173,9 @@ export function registerAccountRegistrar() {
       useEffect(() => {
         setIsVisible(
           networkValidations.isConnected &&
-          networkValidations.chainMatches &&
-          networkValidations.burnerMatches &&
-          !accountExists
+            networkValidations.chainMatches &&
+            networkValidations.burnerMatches &&
+            !accountExists
         );
       }, [networkValidations, selectedAddress, accountExists]);
 
@@ -168,7 +185,11 @@ export function registerAccountRegistrar() {
           toggleModals(false);
           toggleButtons(false);
         }
-        toggleFixtures(!isVisible && !validators.walletConnector && !validators.burnerDetector);
+        toggleFixtures(
+          !isVisible &&
+            !validators.walletConnector &&
+            !validators.burnerDetector
+        );
         if (isVisible != validators.accountRegistrar) {
           const { validators } = useVisibility.getState();
           setValidators({ ...validators, accountRegistrar: isVisible });
@@ -181,17 +202,16 @@ export function registerAccountRegistrar() {
         setNameTaken(!!account.id);
       }, [name]);
 
-
       /////////////////
       // ACTIONS
 
       const copyBurnerAddress = () => {
         navigator.clipboard.writeText(burner.connected.address);
-      }
+      };
 
       const copyBurnerPrivateKey = () => {
         navigator.clipboard.writeText(burner.detected.key);
-      }
+      };
 
       const handleAccountCreation = async (username: string, food: string) => {
         playScribble();
@@ -205,8 +225,7 @@ export function registerAccountRegistrar() {
         } catch (e) {
           console.log('ERROR CREATING ACCOUNT:', e);
         }
-      }
-
+      };
 
       const createAccount = (username: string, food: string) => {
         const network = networks.get(selectedAddress);
@@ -214,7 +233,7 @@ export function registerAccountRegistrar() {
         const connectedBurner = burner.connected.address;
 
         console.log('CREATING ACCOUNT:', selectedAddress);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountCreate',
@@ -225,7 +244,7 @@ export function registerAccountRegistrar() {
           },
         });
         return actionID;
-      }
+      };
 
       const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -234,7 +253,6 @@ export function registerAccountRegistrar() {
       const handleChangeFood = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFood(event.target.value);
       };
-
 
       /////////////////
       // RENDERING
@@ -283,7 +301,7 @@ export function registerAccountRegistrar() {
             </Tooltip>
           </AddressRow>
         );
-      }
+      };
 
       const OwnerDisplay = () => {
         const addrPrefix = selectedAddress.slice(0, 6);
@@ -292,9 +310,9 @@ export function registerAccountRegistrar() {
         return (
           <AddressRow>
             <Description>Owner: {`${addrPrefix}...${addrSuffix}`}</Description>
-          </ AddressRow>
+          </AddressRow>
         );
-      }
+      };
 
       const NextButton = () => (
         <ActionButton
@@ -327,7 +345,7 @@ export function registerAccountRegistrar() {
             </Row>
           </>
         );
-      }
+      };
       const IntroStep2 = () => {
         return (
           <>
@@ -341,7 +359,7 @@ export function registerAccountRegistrar() {
             </Row>
           </>
         );
-      }
+      };
 
       const UsernameStep = () => {
         const addressTaken = operatorAddresses.has(burner.connected.address);
@@ -358,13 +376,20 @@ export function registerAccountRegistrar() {
           );
 
           let tooltip: string[] = [];
-          if (addressTaken) tooltip = ['Unfortunately, that Avatar is already taken.']
-          else if (nameTaken) tooltip = ['Unfortunately, that Name is already taken.']
-          else if (name === '') tooltip = [`It's dangerous to go alone.`, `One needs to take an Avatar.`]
-          if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>
+          if (addressTaken)
+            tooltip = ['Unfortunately, that Avatar is already taken.'];
+          else if (nameTaken)
+            tooltip = ['Unfortunately, that Name is already taken.'];
+          else if (name === '')
+            tooltip = [
+              `It's dangerous to go alone.`,
+              `One needs to take an Avatar.`,
+            ];
+          if (tooltip.length > 0)
+            button = <Tooltip text={tooltip}>{button}</Tooltip>;
 
           return button;
-        }
+        };
 
         return (
           <>
@@ -386,7 +411,7 @@ export function registerAccountRegistrar() {
             </Row>
           </>
         );
-      }
+      };
 
       const FoodStep = () => {
         return (
@@ -403,7 +428,7 @@ export function registerAccountRegistrar() {
             />
             <Row>
               <BackButton />
-              <Tooltip text={(food === '') ? ['You shouldn\'t skip lunch..'] : []}>
+              <Tooltip text={food === '' ? ["You shouldn't skip lunch.."] : []}>
                 <ActionButton
                   id='submit'
                   text='Submit'
@@ -415,12 +440,11 @@ export function registerAccountRegistrar() {
             </Row>
           </>
         );
-      }
+      };
 
       const GetSteps = () => {
         return [IntroStep1(), IntroStep2(), UsernameStep(), FoodStep()];
-      }
-
+      };
 
       /////////////////
       // DISPLAY
@@ -439,13 +463,12 @@ export function registerAccountRegistrar() {
   );
 }
 
-
 const AddressRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const Row = styled.div`
   display: flex;

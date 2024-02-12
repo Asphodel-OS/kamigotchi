@@ -1,7 +1,7 @@
-import { observable, action } from "mobx";
-import { Observable } from "rxjs";
-import { Layers } from "../../../types";
-import { GridConfiguration, UIComponent } from "./types";
+import { observable, action } from 'mobx';
+import { Observable } from 'rxjs';
+import { Layers } from '../../../types';
+import { GridConfiguration, UIComponent } from './types';
 
 export const EngineStore = observable({
   UIComponents: new Map<string, UIComponent>(),
@@ -14,6 +14,10 @@ export const registerUIComponent = action(
     requirement: (layers: Layers) => Observable<T>,
     Render: React.FC<NonNullable<T>>
   ) => {
-    EngineStore.UIComponents.set(id, { requirement, Render: Render as React.FC, gridConfig });
+    EngineStore.UIComponents.set(id, {
+      requirement,
+      Render: Render as React.FC,
+      gridConfig,
+    });
   }
 );

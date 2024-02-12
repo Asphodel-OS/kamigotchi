@@ -1,12 +1,15 @@
 /* eslint-disable prefer-const */
-import { getComponentValue, removeComponent, setComponent } from '@latticexyz/recs';
+import {
+  getComponentValue,
+  removeComponent,
+  setComponent,
+} from '@latticexyz/recs';
 
 import { Layers } from './types';
 import { createNetworkConfig, createNetworkLayer } from 'layers/network';
 import { createPhaserLayer } from 'layers/phaser/createPhaserLayer';
 import { mountReact, setLayers, boot as bootReact } from 'layers/react/boot';
 import { Time } from 'utils/time';
-
 
 // boot the whole thing
 export async function boot() {
@@ -37,14 +40,14 @@ async function bootGame() {
   return layers;
 }
 
-// Reboot the game 
+// Reboot the game
 async function rebootGame(initialBoot: boolean): Promise<Layers> {
   const layers: Partial<Layers> = {};
 
   // Set the game config
   const networkConfig = createNetworkConfig();
   if (!networkConfig) throw new Error('Invalid config');
-  console.log("Booted burner network config", networkConfig);
+  console.log('Booted burner network config', networkConfig);
 
   // Populate the layers
   if (!layers.network) layers.network = await createNetworkLayer(networkConfig);

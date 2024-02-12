@@ -20,7 +20,7 @@ export const ActionButton = (props: Props) => {
   const handleClick = async () => {
     playClick();
     await props.onClick();
-  }
+  };
 
   // override styles for sizes and disabling
   const setStyles = () => {
@@ -81,25 +81,27 @@ export const ActionButton = (props: Props) => {
     return styles;
   };
 
-  if (props.pulse) return (
-    <PulseButton
-      id={props.id}
-      onClick={!props.disabled ? handleClick : () => { }}
-      style={setStyles()}
-    >
-      {props.text}
-    </PulseButton>
-  );
-  else return (
-    <Button
-      id={props.id}
-      onClick={!props.disabled ? handleClick : () => { }}
-      style={setStyles()}
-    >
-      {props.text}
-    </Button>
-  );
-}
+  if (props.pulse)
+    return (
+      <PulseButton
+        id={props.id}
+        onClick={!props.disabled ? handleClick : () => {}}
+        style={setStyles()}
+      >
+        {props.text}
+      </PulseButton>
+    );
+  else
+    return (
+      <Button
+        id={props.id}
+        onClick={!props.disabled ? handleClick : () => {}}
+        style={setStyles()}
+      >
+        {props.text}
+      </Button>
+    );
+};
 
 const Button = styled.button`
   background-color: #ffffff;
@@ -129,7 +131,7 @@ const Pulse = keyframes`
   85%, 95% {
     background-color: #e8e8e8;
   }
-`
+`;
 
 const PulseButton = styled(Button)`
   animation: ${Pulse} 3s ease-in-out infinite;

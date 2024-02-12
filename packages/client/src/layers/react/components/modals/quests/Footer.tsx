@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 interface Props {
   balance: number;
-};
+}
 
 export const Footer = (props: Props) => {
   return (
@@ -14,7 +14,7 @@ export const Footer = (props: Props) => {
 };
 
 const Container = styled.div`
-  padding: .7vh 0.8vw;  
+  padding: 0.7vh 0.8vw;
 
   display: flex;
   flex-flow: column no-wrap;
@@ -30,14 +30,14 @@ const Text = styled.p`
 `;
 
 const Balance = styled.div`
-  border: solid #666 .15vw;
-  border-radius: .3vw;
-  padding: .5vw;
+  border: solid #666 0.15vw;
+  border-radius: 0.3vw;
+  padding: 0.5vw;
   width: 50%;
 
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-end;  
+  justify-content: flex-end;
 
   color: black;
   font-family: Pixel;

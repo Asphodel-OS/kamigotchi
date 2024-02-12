@@ -1,4 +1,4 @@
-import { defineComponent, World, Type } from "@latticexyz/recs";
+import { defineComponent, World, Type } from '@latticexyz/recs';
 
 export function defineTimelockComponent(world: World) {
   return defineComponent(
@@ -9,9 +9,9 @@ export function defineTimelockComponent(world: World) {
       salt: Type.Number,
     },
     {
-      id: "Timelock",
+      id: 'Timelock',
       metadata: {
-        contractId: "component.Timelock",
+        contractId: 'component.Timelock',
       },
     }
   );

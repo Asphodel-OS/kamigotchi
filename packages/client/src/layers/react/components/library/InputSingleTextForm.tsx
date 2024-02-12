@@ -51,14 +51,16 @@ export const InputSingleTextForm = (props: Props) => {
           onChange={(e) => handleChange(e)}
         />
       </InputGroup>
-      {props.hasButton && <ActionButton
-        id={`submit`}
-        text={props.buttonText}
-        onClick={() => handleSubmit()}
-      />}
-    </ Container>
+      {props.hasButton && (
+        <ActionButton
+          id={`submit`}
+          text={props.buttonText}
+          onClick={() => handleSubmit()}
+        />
+      )}
+    </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 50%;
@@ -95,7 +97,7 @@ const Input = styled.input`
   border-width: 2px;
   color: black;
   margin: 5px 0px;
-  
+
   padding: 15px 12px;
   cursor: pointer;
   font-family: Pixel;

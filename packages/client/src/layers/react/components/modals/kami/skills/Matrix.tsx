@@ -8,7 +8,6 @@ import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
 
-
 interface Props {
   kami: Kami;
   skills: Map<number, Skill>;
@@ -23,7 +22,6 @@ export const Matrix = (props: Props) => {
   const [nodeRects, setNodeRects] = useState(new Map<number, DOMRect>());
   const [baseRect, setBaseRect] = useState<DOMRect>();
   const [edges, setEdges] = useState<number[][]>([]);
-
 
   useEffect(() => {
     // Function to update the bounding rectangle
@@ -62,7 +60,6 @@ export const Matrix = (props: Props) => {
     setEdges(edges);
   }, [mode, skills.size]);
 
-
   ////////////////////
   // INTERPRETATION
 
@@ -71,7 +68,7 @@ export const Matrix = (props: Props) => {
     if (!skill.requirements) return [];
     const skillReqs = skill.requirements.filter((req) => req.type === 'SKILL');
     return skillReqs.map((req) => req.index! * 1);
-  }
+  };
 
   return (
     <Container>
@@ -90,22 +87,23 @@ export const Matrix = (props: Props) => {
           ))}
         </TreeButtons>
       </TopRow>
-      <Content ref={contentRef} >
-        {(skills.size > 0) && SkillTrees.get(mode)!.map((row, i) => (
-          <NodeRow key={i}>
-            {row.map((index) => (
-              <Node
-                key={index}
-                kami={kami}
-                skill={skills.get(index)!}
-                nodeRects={nodeRects}
-                setNodeRects={setNodeRects}
-                setHovered={setHovered}
-                setSelected={setSelected}
-              />
-            ))}
-          </NodeRow>
-        ))}
+      <Content ref={contentRef}>
+        {skills.size > 0 &&
+          SkillTrees.get(mode)!.map((row, i) => (
+            <NodeRow key={i}>
+              {row.map((index) => (
+                <Node
+                  key={index}
+                  kami={kami}
+                  skill={skills.get(index)!}
+                  nodeRects={nodeRects}
+                  setNodeRects={setNodeRects}
+                  setHovered={setHovered}
+                  setSelected={setSelected}
+                />
+              ))}
+            </NodeRow>
+          ))}
         {edges.map((edge, i) => (
           <Edge
             key={i}
@@ -118,8 +116,7 @@ export const Matrix = (props: Props) => {
       </Content>
     </Container>
   );
-}
-
+};
 
 const Container = styled.div`
   position: relative;
@@ -133,10 +130,10 @@ const Container = styled.div`
 
 const TopRow = styled.div`
   width: 100%;
-  padding: 1vw .6vw;
+  padding: 1vw 0.6vw;
   height: 3vw;
   background-color: #999;
-  opacity: .9;
+  opacity: 0.9;
   position: absolute;
 
   display: flex;
@@ -146,27 +143,27 @@ const TopRow = styled.div`
 `;
 
 const PointsText = styled.div`
-  border: solid black .15vw;
-  border-radius: .6vw;
+  border: solid black 0.15vw;
+  border-radius: 0.6vw;
   background-color: #ffffff;
-  padding: .6vw;
+  padding: 0.6vw;
   opacity: 1;
 
   color: black;
   font-family: Pixel;
-  font-size: .9vw;
+  font-size: 0.9vw;
   text-align: left;
 `;
 
 const TreeButtons = styled.div`
-  padding: 1vw .6vw;
+  padding: 1vw 0.6vw;
   height: 3vw;
   color: black;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: .6vw;
+  gap: 0.6vw;
 `;
 
 const Content = styled.div`

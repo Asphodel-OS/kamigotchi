@@ -1,14 +1,16 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import moment from 'moment';
-import styled from "styled-components";
-import { EntityIndex, getComponentValueStrict } from "@latticexyz/recs";
+import styled from 'styled-components';
+import { EntityIndex, getComponentValueStrict } from '@latticexyz/recs';
 import PendingIcon from '@mui/icons-material/Pending';
 
-import { IndicatorIcons } from "assets/images/icons/indicators";
-import { NetworkLayer } from "layers/network/types";
-import { ActionStateString, ActionState } from 'layers/network/LocalSystems/ActionSystem/constants';
-import { Tooltip } from "layers/react/components/library/Tooltip";
-
+import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { NetworkLayer } from 'layers/network/types';
+import {
+  ActionStateString,
+  ActionState,
+} from 'layers/network/LocalSystems/ActionSystem/constants';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 
 interface Props {
   network: NetworkLayer;
@@ -16,7 +18,10 @@ interface Props {
 }
 
 export const Logs = (props: Props) => {
-  const { network: { actions }, actionIndices } = props;
+  const {
+    network: { actions },
+    actionIndices,
+  } = props;
   const ActionComponent = actions!.Action;
 
   // scroll to bottom when tx added
@@ -24,7 +29,6 @@ export const Logs = (props: Props) => {
     const logs = document.getElementById('tx-logs');
     if (logs) logs.scrollTop = logs.scrollHeight + 100;
   }, [actionIndices]);
-
 
   //////////////////
   // RENDERINGS
@@ -35,26 +39,26 @@ export const Logs = (props: Props) => {
 
     let tooltip = [status];
     if (/\S/.test(metadata)) {
-      const event = metadata.substring(0, metadata.indexOf(":"));
-      const reason = metadata.substring(metadata.indexOf(":") + 1);
-      tooltip = [`${status} (${event})`, '', `${reason}`]
+      const event = metadata.substring(0, metadata.indexOf(':'));
+      const reason = metadata.substring(metadata.indexOf(':') + 1);
+      tooltip = [`${status} (${event})`, '', `${reason}`];
     }
 
-    return (<Tooltip text={tooltip}>{icon}</Tooltip>);
-  }
+    return <Tooltip text={tooltip}>{icon}</Tooltip>;
+  };
 
   // render the human readable description and detailed tooltip of a given action
   const Description = (action: any) => {
     const tooltip = [
       `Action: ${action.action}`,
-      `Input(s): ${action.params.join(", ")}`,
-    ]
+      `Input(s): ${action.params.join(', ')}`,
+    ];
     return (
       <Tooltip text={tooltip}>
         <Text>{action.description}</Text>
       </Tooltip>
     );
-  }
+  };
 
   const Time = (time: number) => {
     return (
@@ -62,7 +66,7 @@ export const Logs = (props: Props) => {
         <Text>{moment(time).fromNow()}</Text>
       </Tooltip>
     );
-  }
+  };
 
   const Log = (entityIndex: EntityIndex) => {
     const actionData = getComponentValueStrict(ActionComponent, entityIndex);
@@ -74,26 +78,24 @@ export const Logs = (props: Props) => {
           {Status(state, metadata)}
           {Description(actionData)}
         </RowSection1>
-        <RowSection2>
-          {Time(actionData.time)}
-        </RowSection2>
+        <RowSection2>{Time(actionData.time)}</RowSection2>
       </Row>
     );
-  }
+  };
 
   return (
     <Content id='tx-logs'>
       {actionIndices.map((entityIndex) => Log(entityIndex))}
     </Content>
   );
-}
+};
 
 const Content = styled.div`
-  border: solid grey .14vw;
+  border: solid grey 0.14vw;
   border-radius: 10px;
 
   background-color: #ddd;
-  padding: .2vw;
+  padding: 0.2vw;
   overflow-y: scroll;
 
   display: flex;
@@ -102,7 +104,7 @@ const Content = styled.div`
 `;
 
 const Row = styled.div`
-  padding: .2vw;
+  padding: 0.2vw;
   height: 100%;
 
   display: flex;
@@ -111,7 +113,7 @@ const Row = styled.div`
   justify-content: space-between;
 
   font-family: Pixel;
-  font-size: .7vw;
+  font-size: 0.7vw;
   text-align: left;
 `;
 
@@ -119,7 +121,7 @@ const RowSection1 = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: .2vw;
+  gap: 0.2vw;
 `;
 
 const RowSection2 = styled.div`
@@ -129,10 +131,10 @@ const RowSection2 = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: .6vw;
+  font-size: 0.6vw;
   color: #333;
   text-align: left;
-  padding: .2vw;
+  padding: 0.2vw;
   font-family: Pixel;
 `;
 
@@ -144,9 +146,9 @@ const Icon = styled.img`
 // Color coded icon mapping of action queue
 type ColorMapping = { [key: string]: any };
 const statusIcons: ColorMapping = {
-  "executing": <PendingIcon style={{ color: 'yellow' }} />,
-  "pending": <PendingIcon style={{ color: 'orange' }} />,
-  "complete": <Icon src={IndicatorIcons.success} />,
-  "failed": <Icon src={IndicatorIcons.failure} />,
-  "cancelled": <Icon src={IndicatorIcons.failure} />,
-}
+  executing: <PendingIcon style={{ color: 'yellow' }} />,
+  pending: <PendingIcon style={{ color: 'orange' }} />,
+  complete: <Icon src={IndicatorIcons.success} />,
+  failed: <Icon src={IndicatorIcons.failure} />,
+  cancelled: <Icon src={IndicatorIcons.failure} />,
+};

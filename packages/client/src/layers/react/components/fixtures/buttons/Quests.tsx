@@ -31,7 +31,6 @@ export function registerQuestsButton() {
         settings: false,
       };
 
-
       return (
         <MenuButton
           id='quests_button'

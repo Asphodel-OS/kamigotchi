@@ -10,7 +10,6 @@ import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
 
-
 export const room14: Room = {
   location: 14,
   background: {

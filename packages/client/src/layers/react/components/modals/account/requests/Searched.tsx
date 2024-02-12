@@ -1,20 +1,18 @@
-import { Account } from "layers/network/shapes/Account";
-import { ActionListButton } from "layers/react/components/library";
-import { AccountCard } from "layers/react/components/library/AccountCard";
-import styled from "styled-components";
-
+import { Account } from 'layers/network/shapes/Account';
+import { ActionListButton } from 'layers/react/components/library';
+import { AccountCard } from 'layers/react/components/library/AccountCard';
+import styled from 'styled-components';
 
 interface Props {
   accounts: Account[];
   actions: {
     blockFren: (account: Account) => void;
     requestFren: (account: Account) => void;
-  }
+  };
 }
 
 export const Searched = (props: Props) => {
   const { accounts, actions } = props;
-
 
   const Actions = (account: Account) => {
     return (
@@ -27,7 +25,7 @@ export const Searched = (props: Props) => {
         ]}
       />
     );
-  }
+  };
 
   // inbound list of pending friend requests
   if (accounts.length === 0) return <EmptyText>no matching results</EmptyText>;
@@ -44,7 +42,7 @@ export const Searched = (props: Props) => {
       ))}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;
@@ -54,7 +52,6 @@ const Container = styled.div`
   align-items: center;
 `;
 
-
 const EmptyText = styled.div`
   color: black;
   margin: 1vw;
@@ -63,6 +60,6 @@ const EmptyText = styled.div`
   justify-content: center;
   align-items: center;
 
-  font-size: .9vw;
+  font-size: 0.9vw;
   font-family: Pixel;
 `;

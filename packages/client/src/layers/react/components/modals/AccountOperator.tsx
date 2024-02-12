@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from "crypto";
+import crypto from 'crypto';
 import React, { useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network'
+import { useNetwork } from 'layers/react/store/network';
 import { playScribble, playSuccess } from 'utils/sounds';
 
 import 'layers/react/styles/font.css';
@@ -26,14 +26,15 @@ export function registerAccountOperator() {
     },
     (layers) => of(layers),
     (layers) => {
-      const { network: { actions } } = layers;
+      const {
+        network: { actions },
+      } = layers;
       const { account: kamiAccount } = useAccount();
       const { burner, selectedAddress, networks } = useNetwork();
 
-      const [helperText, setHelperText] = useState("");
-      const [newAddress, setNewAddress] = useState("");
-      const [newPrivKey, setNewPrivKey] = useState("");
-
+      const [helperText, setHelperText] = useState('');
+      const [newAddress, setNewAddress] = useState('');
+      const [newPrivKey, setNewPrivKey] = useState('');
 
       /////////////////
       // ACTIONS
@@ -42,14 +43,14 @@ export function registerAccountOperator() {
         playScribble();
         await setOperator(address);
         playSuccess();
-      }
+      };
 
       const setOperator = async (address: string) => {
         const network = networks.get(selectedAddress);
         const world = network!.world;
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountSetOperator',
@@ -61,28 +62,31 @@ export function registerAccountOperator() {
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
         await waitForActionCompletion(actions?.Action!, actionIndex);
-      }
+      };
 
       const setPrivKey = (privKey: string) => {
         if (privKey.length > 0) {
           localStorage.setItem('operatorPrivateKey', privKey);
-          setHelperText("Operator updated, please refresh!");
+          setHelperText('Operator updated, please refresh!');
         }
-      }
+      };
 
       const setValues = () => {
         if (newAddress != '') setOperatorWithFx(newAddress);
         if (newPrivKey != '') setPrivKey(newPrivKey);
-      }
+      };
 
-      const handleChangePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const handleChangePublic = (
+        event: React.ChangeEvent<HTMLInputElement>
+      ) => {
         setNewAddress(event.target.value);
       };
 
-      const handleChangePrivate = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const handleChangePrivate = (
+        event: React.ChangeEvent<HTMLInputElement>
+      ) => {
         setNewPrivKey(event.target.value);
       };
-
 
       /////////////////
       // DISPLAY
@@ -93,8 +97,12 @@ export function registerAccountOperator() {
             <Title>Update Operator</Title>
             <Description style={{ color: '#FF785B' }}>{helperText}</Description>
             <br />
-            <Description>Current Operator: {kamiAccount.operatorAddress}</Description>
-            <Description>Connected Burner: {burner.connected.address}</Description>
+            <Description>
+              Current Operator: {kamiAccount.operatorAddress}
+            </Description>
+            <Description>
+              Connected Burner: {burner.connected.address}
+            </Description>
             <Container id='new-operator'>
               <Label>new address (optional)</Label>
               <Input
@@ -120,7 +128,6 @@ export function registerAccountOperator() {
     }
   );
 }
-
 
 const ModalContent = styled.div`
   display: grid;

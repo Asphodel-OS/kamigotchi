@@ -10,7 +10,6 @@ import { Merchant, getMerchantByIndex } from 'layers/network/shapes/Merchant';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 
-
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerMerchantModal() {
   registerUIComponent(
@@ -25,17 +24,20 @@ export function registerMerchantModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const { network } = layers;
-      const { npcIndex } = useSelected.getState();
-      const account = getAccountFromBurner(network, { inventory: true });
-      const merchant = getMerchantByIndex(network, npcIndex);
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const { network } = layers;
+          const { npcIndex } = useSelected.getState();
+          const account = getAccountFromBurner(network, { inventory: true });
+          const merchant = getMerchantByIndex(network, npcIndex);
 
-      return {
-        network,
-        data: { account, merchant },
-      };
-    })),
+          return {
+            network,
+            data: { account, merchant },
+          };
+        })
+      ),
 
     // Render
     ({ network, data }) => {
@@ -53,7 +55,6 @@ export function registerMerchantModal() {
         setMerchant(getMerchantByIndex(network, npcIndex));
       }, [npcIndex]);
 
-
       /////////////////
       // DISPLAY
 
@@ -68,9 +69,9 @@ export function registerMerchantModal() {
           <Listings listings={merchant?.listings} />
         </ModalWrapper>
       );
-    })
+    }
+  );
 }
-
 
 const Title = styled.div`
   width: 100%;

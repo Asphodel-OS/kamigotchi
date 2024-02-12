@@ -3,8 +3,7 @@ import {
   MoundNodeImage,
   CircleNodeImage,
   MonolithNodeImage,
-} from "assets/images/nodes";
-
+} from 'assets/images/nodes';
 
 export const NodeImages = [
   '',

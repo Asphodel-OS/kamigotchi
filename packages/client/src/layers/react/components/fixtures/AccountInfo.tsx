@@ -4,7 +4,7 @@ import { useContractRead, useBalance } from 'wagmi';
 import { FetchBalanceResult } from '@wagmi/core';
 import styled from 'styled-components';
 
-import { abi as Pet721ProxySystemABI } from "abi/Pet721ProxySystem.json"
+import { abi as Pet721ProxySystemABI } from 'abi/Pet721ProxySystem.json';
 import { GasConstants } from 'constants/gas';
 import { Account, getAccountFromBurner } from 'layers/network/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -26,14 +26,8 @@ export function registerAccountInfoFixture() {
     },
     (layers) => {
       const { network } = layers;
-      const {
-        Coin,
-        Location,
-        Name,
-        OperatorAddress,
-        StaminaCurrent,
-        Stamina,
-      } = network.components;
+      const { Coin, Location, Name, OperatorAddress, StaminaCurrent, Stamina } =
+        network.components;
 
       return merge(
         Coin.update$,
@@ -41,7 +35,7 @@ export function registerAccountInfoFixture() {
         Name.update$,
         OperatorAddress.update$,
         Stamina.update$,
-        StaminaCurrent.update$,
+        StaminaCurrent.update$
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(network);
@@ -49,7 +43,7 @@ export function registerAccountInfoFixture() {
             network,
             data: {
               account,
-              room: getRoomByLocation(network, account.location)
+              room: getRoomByLocation(network, account.location),
             },
           };
         })
@@ -78,48 +72,49 @@ export function registerAccountInfoFixture() {
       // Operator Balance
       const { data: operatorGas } = useBalance({
         address: account.operatorEOA as `0x${string}`,
-        watch: true
+        watch: true,
       });
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
-        address: network.systems["system.Mint20.Proxy"].address as `0x${string}`,
+        address: network.systems['system.Mint20.Proxy']
+          .address as `0x${string}`,
         abi: Pet721ProxySystemABI,
-        functionName: 'getTokenAddy'
+        functionName: 'getTokenAddy',
       });
 
       const { data: ownerKAMI } = useBalance({
         address: account.ownerEOA as `0x${string}`,
         token: mint20Addy as `0x${string}`,
-        watch: true
+        watch: true,
       });
-
 
       /////////////////
       // INTERPRETATION
 
       // calculated the gas gauge level
-      const calcGaugeSetting = (gasBalance: FetchBalanceResult | undefined): number => {
+      const calcGaugeSetting = (
+        gasBalance: FetchBalanceResult | undefined
+      ): number => {
         const amt = Number(gasBalance?.formatted);
         if (amt >= GasConstants.Full) return 100;
         if (amt <= GasConstants.Low) return 0;
-        return amt / GasConstants.Full * 100;
-      }
+        return (amt / GasConstants.Full) * 100;
+      };
 
-      // parses a wagmi FetchBalanceResult 
+      // parses a wagmi FetchBalanceResult
       const parseBalanceResult = (
         bal: FetchBalanceResult | undefined,
         precision: number = 4
       ) => {
         return Number(bal?.formatted ?? 0).toFixed(precision);
-      }
+      };
 
       const parseStaminaString = (account: Account) => {
         const staminaCurr = calcStamina(account);
         const staminaTotal = account.stamina.total;
         return `${staminaCurr}/${staminaTotal * 1}`;
-      }
-
+      };
 
       /////////////////
       // CONTENT
@@ -130,59 +125,64 @@ export function registerAccountInfoFixture() {
         return [
           `Account Stamina (${staminaString})`,
           '',
-          `Determines how far your Operator can travel. Recovers every ${recoveryPeriod}s`
+          `Determines how far your Operator can travel. Recovers every ${recoveryPeriod}s`,
         ];
-      }
+      };
 
       const getKAMITooltip = () => {
-        return [`$KAMI Balance`, '', `Use this to mint your party of Kamigotchi.`];
-      }
+        return [
+          `$KAMI Balance`,
+          '',
+          `Use this to mint your party of Kamigotchi.`,
+        ];
+      };
 
       const getGasTooltip = () => {
         return [
           `Operator Gas`,
           '',
-          `Your Operator won't function without this. Make sure to stay topped up for the journey!`
+          `Your Operator won't function without this. Make sure to stay topped up for the journey!`,
         ];
-      }
-
+      };
 
       const borderLeftStyle = { borderLeft: '.1vw solid black' };
-      return (account &&
-        <Container
-          id='accountInfo'
-          style={{ display: fixtures.accountInfo ? 'block' : 'none' }}
-        >
-          <Row>
-            <TextBox>{account.name} - {room.name}</TextBox>
-          </Row>
-          <Line />
-          <Row>
-            <Cell>
-              <Tooltip text={getStaminaTooltip(account)}>
-                <TextBox>
-                  {`${calcStaminaPercent(account)}%`}
-                  <Battery level={calcStaminaPercent(account)} />
-                </TextBox>
-              </Tooltip>
-            </Cell>
-            <Cell style={borderLeftStyle}>
-              <Tooltip text={getKAMITooltip()}>
-                <TextBox>
-                  $KAMI: {parseBalanceResult(ownerKAMI, 1)}
-                </TextBox>
-              </Tooltip>
-            </Cell>
-            <Cell style={borderLeftStyle}>
-              <Tooltip text={getGasTooltip()}>
-                <TextBox>
-                  Gas: {parseBalanceResult(operatorGas)}Ξ
-                  <Gauge level={calcGaugeSetting(operatorGas)} />
-                </TextBox>
-              </Tooltip>
-            </Cell>
-          </Row>
-        </Container>
+      return (
+        account && (
+          <Container
+            id='accountInfo'
+            style={{ display: fixtures.accountInfo ? 'block' : 'none' }}
+          >
+            <Row>
+              <TextBox>
+                {account.name} - {room.name}
+              </TextBox>
+            </Row>
+            <Line />
+            <Row>
+              <Cell>
+                <Tooltip text={getStaminaTooltip(account)}>
+                  <TextBox>
+                    {`${calcStaminaPercent(account)}%`}
+                    <Battery level={calcStaminaPercent(account)} />
+                  </TextBox>
+                </Tooltip>
+              </Cell>
+              <Cell style={borderLeftStyle}>
+                <Tooltip text={getKAMITooltip()}>
+                  <TextBox>$KAMI: {parseBalanceResult(ownerKAMI, 1)}</TextBox>
+                </Tooltip>
+              </Cell>
+              <Cell style={borderLeftStyle}>
+                <Tooltip text={getGasTooltip()}>
+                  <TextBox>
+                    Gas: {parseBalanceResult(operatorGas)}Ξ
+                    <Gauge level={calcGaugeSetting(operatorGas)} />
+                  </TextBox>
+                </Tooltip>
+              </Cell>
+            </Row>
+          </Container>
+        )
       );
     }
   );
@@ -228,7 +228,7 @@ const Cell = styled.div`
 `;
 
 const Line = styled.div`
-  border-top: .1vw solid black;
+  border-top: 0.1vw solid black;
   width: 100%;
   height: 1px;
 `;

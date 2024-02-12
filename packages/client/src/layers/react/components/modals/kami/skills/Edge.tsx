@@ -15,11 +15,10 @@ export const Edge = (props: Props) => {
   const [len, setLen] = useState(0);
   const [angle, setAngle] = useState(0);
 
-
   useEffect(() => {
     const rect1 = nodeRects.get(from);
     const rect2 = nodeRects.get(to);
-    if (!baseRect || !rect1 || !rect2) return
+    if (!baseRect || !rect1 || !rect2) return;
 
     // get the relative coordinates of our nodes
     const x1 = rect1.x + rect1.width / 2 - baseRect.x;
@@ -34,15 +33,13 @@ export const Edge = (props: Props) => {
     setAngle(Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI));
   }, [nodeRects]);
 
-
   return <Line x={x} y={y} len={len} angle={angle} />;
-}
+};
 
-
-const Line = styled.div<{ x: number, y: number, len: number, angle: number }>`
+const Line = styled.div<{ x: number; y: number; len: number; angle: number }>`
   position: absolute;
   border-radius: 1vw;
-  border: solid gray .15vw;
+  border: solid gray 0.15vw;
   background: black;
   height: 10px;
 

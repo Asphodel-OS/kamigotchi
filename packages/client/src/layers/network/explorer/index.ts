@@ -1,13 +1,12 @@
-import {
-  Component,
-  EntityIndex,
-  getComponentValue,
-} from "@latticexyz/recs";
+import { Component, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
-import { NetworkLayer } from "../types";
-import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
+import { NetworkLayer } from '../types';
+import {
+  getAccountByIndex,
+  getAllAccounts,
+} from 'layers/network/shapes/Account';
 import { getKamiByIndex, getAllKamis } from 'layers/network/shapes/Kami';
-import { getAllMerchants, getMerchantByIndex } from "../shapes/Merchant";
+import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
 import { getNodeByIndex, getAllNodes } from 'layers/network/shapes/Node';
 import { getRoomByLocation, getAllRooms } from 'layers/network/shapes/Room';
 import { numberToHex } from 'utils/hex';
@@ -72,7 +71,7 @@ export const initExplorer = (network: NetworkLayer) => {
       if (type === 0) return v; // boolean
       if (type === 3) return v; // string
       if (type === 1) return parseInt(v, 16); // number
-      if (type === 5) return v.map((s: string) => parseInt(s, 16)); // number[] 
+      if (type === 5) return v.map((s: string) => parseInt(s, 16)); // number[]
       return v;
     }
 
@@ -85,4 +84,4 @@ export const initExplorer = (network: NetworkLayer) => {
     });
     return entity;
   };
-}
+};

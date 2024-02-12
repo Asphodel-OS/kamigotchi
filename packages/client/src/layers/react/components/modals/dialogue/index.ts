@@ -1,3 +1,3 @@
-import { registerDialogueModal } from "./Dialogue";
+import { registerDialogueModal } from './Dialogue';
 
 export { registerDialogueModal };

@@ -7,7 +7,6 @@ import {
 import { amusement } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
-
 export const room5: Room = {
   location: 5,
   background: {

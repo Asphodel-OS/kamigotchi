@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { Details } from "./Details";
-import { Matrix } from "./Matrix";
-import { Account } from "layers/network/shapes/Account";
-import { Kami } from "layers/network/shapes/Kami";
-import { Skill } from "layers/network/shapes/Skill";
+import { Details } from './Details';
+import { Matrix } from './Matrix';
+import { Account } from 'layers/network/shapes/Account';
+import { Kami } from 'layers/network/shapes/Kami';
+import { Skill } from 'layers/network/shapes/Skill';
 import { playClick } from 'utils/sounds';
-
 
 interface Props {
   account: Account;
@@ -15,17 +14,16 @@ interface Props {
   skills: Skill[]; // registry skills
   actions: {
     upgrade: Function;
-  }
+  };
 }
 
 export const Skills = (props: Props) => {
   // console.log('mSkill:', props.kami);
   const { account, kami, skills, actions } = props;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
-  const [selected, setSelected] = useState(0);   // index of selected (anchored) skill
-  const [hovered, setHovered] = useState(0);     // index of hovered skill
+  const [selected, setSelected] = useState(0); // index of selected (anchored) skill
+  const [hovered, setHovered] = useState(0); // index of hovered skill
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
-
 
   // keep a hashmap for easy lookup of Skill Indices => Skill Objects
   useEffect(() => {
@@ -43,16 +41,14 @@ export const Skills = (props: Props) => {
     else setDisplayed(1);
   }, [selected, hovered]);
 
-
   ////////////////////
-  // INTERACTIONS 
+  // INTERACTIONS
 
   // trigger an upgrade of the skill
   const triggerUpgrade = (skill: Skill) => {
     playClick();
     actions.upgrade(kami, skill);
-  }
-
+  };
 
   ////////////////////
   // RENDER
@@ -71,8 +67,7 @@ export const Skills = (props: Props) => {
       />
     </Wrapper>
   );
-}
-
+};
 
 const Wrapper = styled.div`
   width: 100%;
@@ -81,4 +76,3 @@ const Wrapper = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
 `;
-

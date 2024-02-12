@@ -4,23 +4,26 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import { useAccount, useContractRead, useBalance } from 'wagmi';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { Pool } from './Pool';
 import { Reroll } from './Reroll';
 import { Commits } from './Commits';
 import { Tabs } from './components/Tabs';
 import { getLazyKamis } from './utils/queries';
-import { abi } from "abi/Pet721ProxySystem.json"
+import { abi } from 'abi/Pet721ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { GachaCommit, isGachaAvailable, calcRerollCost } from 'layers/network/shapes/Gacha';
+import {
+  GachaCommit,
+  isGachaAvailable,
+  calcRerollCost,
+} from 'layers/network/shapes/Gacha';
 import { Kami } from 'layers/network/shapes/Kami';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useNetwork } from 'layers/react/store/network';
 import { playVending } from 'utils/sounds';
-
 
 export function registerGachaModal() {
   registerUIComponent(
@@ -36,19 +39,21 @@ export function registerGachaModal() {
 
       return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(
-            network,
-            { gacha: true, kamis: true },
-          );
+          const account = getAccountFromBurner(network, {
+            gacha: true,
+            kamis: true,
+          });
 
-          const commits = [...account.gacha ? account.gacha.commits : []].reverse();
+          const commits = [
+            ...(account.gacha ? account.gacha.commits : []),
+          ].reverse();
 
           return {
             network,
             data: {
               kamis: account.kamis,
               commits: commits,
-            }
+            },
           };
         })
       );
@@ -60,7 +65,7 @@ export function registerGachaModal() {
         api: { player },
         systems,
         world,
-        network: { blockNumber$ }
+        network: { blockNumber$ },
       } = network;
 
       const { isConnected } = useAccount();
@@ -77,7 +82,7 @@ export function registerGachaModal() {
       const [tab, setTab] = useState('MINT');
 
       //////////////
-      // HOOKS 
+      // HOOKS
 
       useEffect(() => {
         const sub = blockNumber$.subscribe((block) => {
@@ -102,39 +107,36 @@ export function registerGachaModal() {
               setModals({ ...modals, party: true });
             }
           }
-        }
+        };
         tx();
-
       }, [data.commits]);
-
 
       //////////////////
       // CALCULATIONS
 
       const getRerollCost = (kami: Kami) => {
         return calcRerollCost(network, kami);
-      }
+      };
 
       ///////////////
       // COUNTER
 
       const { data: mint20Addy } = useContractRead({
-        address: systems["system.Mint20.Proxy"]?.address as `0x${string}`,
+        address: systems['system.Mint20.Proxy']?.address as `0x${string}`,
         abi: abi,
-        functionName: 'getTokenAddy'
+        functionName: 'getTokenAddy',
       });
 
       const { data: mint20Bal } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
         token: mint20Addy as `0x${string}`,
-        watch: true
+        watch: true,
       });
 
       const { data: ethBal } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
-        watch: true
+        watch: true,
       });
-
 
       /////////////////
       // ACTIONS
@@ -175,7 +177,7 @@ export function registerGachaModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiMint',
@@ -193,23 +195,26 @@ export function registerGachaModal() {
         const network = networks.get(selectedAddress);
         const api = network!.api.player;
 
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiReroll',
           params: [kamis.map((n) => n.name)],
           description: `Rerolling ${kamis.length} Kami`,
           execute: async () => {
-            return api.mint.reroll(kamis.map((n) => n.id), price);
+            return api.mint.reroll(
+              kamis.map((n) => n.id),
+              price
+            );
           },
         });
         return actionID;
-      }
+      };
 
       // reveal gacha result(s)
       const revealTx = async (commits: GachaCommit[]) => {
         const toReveal = commits.map((n) => n.id);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions!.add({
           id: actionID,
           action: 'KamiReveal',
@@ -229,52 +234,60 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const TabsBar = (<Tabs
-        tab={tab}
-        setTab={setTab}
-        commits={data.commits.length}
-      />);
+      const TabsBar = (
+        <Tabs tab={tab} setTab={setTab} commits={data.commits.length} />
+      );
 
       const MainDisplay = () => {
-        if (tab === 'MINT') return (
-          <Pool
-            actions={{ handleMint }}
-            data={{
-              account: { balance: Number(mint20Bal?.formatted || '0') },
-            }}
-            display={{ Tab: TabsBar }}
-            query={{ getLazyKamis: getLazyKamis(network) }}
-          />
-        );
-        else if (tab === 'REROLL') return (
-          <Reroll
-            actions={{ handleReroll }}
-            data={{
-              kamis: data.kamis || [],
-              balance: ethBal?.value || 0n  // bigint used for dealing with wei
-            }}
-            display={{ Tab: TabsBar }}
-            utils={{ getRerollCost }}
-          />
-        );
-        else if (tab === 'COMMITS') return (
-          <Commits
-            actions={{ revealTx }}
-            data={{
-              commits: data.commits || [],
-              blockNum: blockNumber
-            }}
-            display={{ Tab: TabsBar }}
-          />
-        );
+        if (tab === 'MINT')
+          return (
+            <Pool
+              actions={{ handleMint }}
+              data={{
+                account: { balance: Number(mint20Bal?.formatted || '0') },
+              }}
+              display={{ Tab: TabsBar }}
+              query={{ getLazyKamis: getLazyKamis(network) }}
+            />
+          );
+        else if (tab === 'REROLL')
+          return (
+            <Reroll
+              actions={{ handleReroll }}
+              data={{
+                kamis: data.kamis || [],
+                balance: ethBal?.value || 0n, // bigint used for dealing with wei
+              }}
+              display={{ Tab: TabsBar }}
+              utils={{ getRerollCost }}
+            />
+          );
+        else if (tab === 'COMMITS')
+          return (
+            <Commits
+              actions={{ revealTx }}
+              data={{
+                commits: data.commits || [],
+                blockNum: blockNumber,
+              }}
+              display={{ Tab: TabsBar }}
+            />
+          );
         else return <div />;
-      }
+      };
 
       return (
         <ModalWrapper
           divName='gacha'
           id='gacha'
-          header={<ModalHeader title='Gacha' icon={'https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif'} />}
+          header={
+            <ModalHeader
+              title='Gacha'
+              icon={
+                'https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif'
+              }
+            />
+          }
           canExit
         >
           {MainDisplay()}

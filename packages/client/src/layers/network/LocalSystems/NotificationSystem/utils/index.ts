@@ -1,1 +1,1 @@
-export { waitForActionCompletion } from "./waitForActionCompletion";
+export { waitForActionCompletion } from './waitForActionCompletion';

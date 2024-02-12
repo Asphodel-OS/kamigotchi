@@ -18,7 +18,8 @@ interface Props {
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { divName, id, children, header, footer, canExit, overlay, noPadding } = props;
+  const { divName, id, children, header, footer, canExit, overlay, noPadding } =
+    props;
   const { modals } = useVisibility();
 
   // update modal visibility according to store settings
@@ -33,26 +34,21 @@ export const ModalWrapper = (props: Props) => {
   // catch clicks on modal, prevents duplicate Phaser3 triggers
   const handleClicks = (event: any) => {
     event.stopPropagation();
-  }
+  };
   const element = document.getElementById(id);
   element?.addEventListener('mousedown', handleClicks);
 
   // conditional stlying for modals overlayed on top
   const zindex = overlay ? { position: 'relative', zIndex: '2' } : {};
 
-
   return (
-    <Wrapper
-      id={id}
-      isOpen={modals[divName]}
-      style={{ ...zindex }}
-    >
+    <Wrapper id={id} isOpen={modals[divName]} style={{ ...zindex }}>
       <Content>
-        {canExit &&
+        {canExit && (
           <ButtonRow>
             <ExitButton divName={divName} />
           </ButtonRow>
-        }
+        )}
         {header && <Header>{header}</Header>}
         <Children noPadding={noPadding}>{children}</Children>
         {footer && <Footer>{footer}</Footer>}
@@ -84,7 +80,7 @@ const Content = styled.div`
   background-color: white;
   width: 99%;
   height: 99%;
-  
+
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
@@ -92,7 +88,7 @@ const Content = styled.div`
 
 const ButtonRow = styled.div`
   position: absolute;
-  
+
   display: inline-flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
@@ -101,14 +97,14 @@ const ButtonRow = styled.div`
 
 const Header = styled.div`
   border-radius: 10px 10px 0px 0px;
-  border-bottom: solid black .15vw;
+  border-bottom: solid black 0.15vw;
   display: flex;
   flex-flow: column nowrap;
 `;
 
-const Footer = styled.div`  
+const Footer = styled.div`
   border-radius: 0px 0px 10px 10px;
-  border-top: solid black .15vw;
+  border-top: solid black 0.15vw;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -117,12 +113,12 @@ const Children = styled.div<{ noPadding?: boolean }>`
   overflow-y: scroll;
   max-height: 100%;
   height: 100%;
-  
+
   display: flex;
   flex-flow: column nowrap;
   font-family: Pixel;
 
-  ${({ noPadding }) => noPadding ? `padding: 0;` : `padding: .4vw;`}
+  ${({ noPadding }) => (noPadding ? `padding: 0;` : `padding: .4vw;`)}
 `;
 
 const fadeIn = keyframes`

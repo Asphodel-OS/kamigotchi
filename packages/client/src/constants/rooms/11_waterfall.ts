@@ -10,7 +10,6 @@ import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggers/triggerPetNamingModal';
 
-
 export const room11: Room = {
   location: 11,
   background: {

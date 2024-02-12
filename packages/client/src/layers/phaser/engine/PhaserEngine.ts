@@ -1,5 +1,5 @@
-import Phaser from "phaser";
-import { deferred, filterNullish } from "@latticexyz/utils";
+import Phaser from 'phaser';
+import { deferred, filterNullish } from '@latticexyz/utils';
 
 import {
   Subject,
@@ -12,9 +12,8 @@ import {
   bufferCount,
   pairwise,
   distinctUntilChanged,
-} from "rxjs";
-import { PhaserConfig } from "../config";
-
+} from 'rxjs';
+import { PhaserConfig } from '../config';
 
 export default async function CreatePhaserEngine(options: PhaserConfig) {
   const game = new Phaser.Game(options);
@@ -64,31 +63,42 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     inputPlugin.setDefaultCursor(cursor);
   }
   const keyboard$ = new Subject();
-  const pointermove$ = fromEvent(document, "mousemove").pipe(
+  const pointermove$ = fromEvent(document, 'mousemove').pipe(
     filter(() => enabled.current),
     map(() => {
       let _a;
-      return { pointer: (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer };
+      return {
+        pointer:
+          (_a = inputPlugin.manager) === null || _a === void 0
+            ? void 0
+            : _a.activePointer,
+      };
     }),
     filterNullish()
   );
-  const pointerdown$ = fromEvent(document, "mousedown").pipe(
+  const pointerdown$ = fromEvent(document, 'mousedown').pipe(
     filter(() => enabled.current),
     map((event) => {
       let _a;
       return {
-        pointer: (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer,
+        pointer:
+          (_a = inputPlugin.manager) === null || _a === void 0
+            ? void 0
+            : _a.activePointer,
         event: event,
       };
     }),
     filterNullish()
   );
-  const pointerup$ = fromEvent(document, "mouseup").pipe(
+  const pointerup$ = fromEvent(document, 'mouseup').pipe(
     filter(() => enabled.current),
     map((event) => {
       let _a;
       return {
-        pointer: (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer,
+        pointer:
+          (_a = inputPlugin.manager) === null || _a === void 0
+            ? void 0
+            : _a.activePointer,
         event: event,
       };
     }),
@@ -97,12 +107,17 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
   // Click stream
   const click$ = merge(pointerdown$, pointerup$).pipe(
     filter(() => enabled.current),
-    map(({ event }) => [event.type === "mousedown" && event.button === 0, Date.now()]), // Map events to whether the left button is down and the current timestamp
+    map(({ event }) => [
+      event.type === 'mousedown' && event.button === 0,
+      Date.now(),
+    ]), // Map events to whether the left button is down and the current timestamp
     bufferCount(2, 1), // Store the last two timestamps
     filter(([prev, now]) => prev[0] && !now[0] && now[1] - prev[1] < 250), // Only care if button was pressed before and is not anymore and it happened within 500ms
     map(() => {
       let _a;
-      return (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer;
+      return (_a = inputPlugin.manager) === null || _a === void 0
+        ? void 0
+        : _a.activePointer;
     }), // Return the current pointer
     filterNullish()
   );
@@ -115,7 +130,9 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     throttleTime(500), // A third click within 500ms is not counted as another double click
     map(() => {
       let _a;
-      return (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer;
+      return (_a = inputPlugin.manager) === null || _a === void 0
+        ? void 0
+        : _a.activePointer;
     }), // Return the current pointer
     filterNullish()
   );
@@ -124,7 +141,9 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     filter(({ pointer }) => enabled.current && pointer!.rightButtonDown()),
     map(() => {
       let _a;
-      return (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer;
+      return (_a = inputPlugin.manager) === null || _a === void 0
+        ? void 0
+        : _a.activePointer;
     }), // Return the current pointer
     filterNullish()
   );
@@ -137,13 +156,20 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
         (acc, [{ pointer: prev }, { pointer: curr }]) =>
           curr?.leftButtonDown() // If the left butten is pressed...
             ? prev?.leftButtonDown() && acc // If the previous event wasn't mouseup and if the drag already started...
-              ? { ...acc, width: curr.worldX - acc.x, height: curr.worldY - acc.y } // Update the width/height
+              ? {
+                  ...acc,
+                  width: curr.worldX - acc.x,
+                  height: curr.worldY - acc.y,
+                } // Update the width/height
               : { x: curr.worldX, y: curr.worldY, width: 0, height: 0 } // Else start the drag
             : undefined,
         undefined
       ),
       filterNullish(),
-      filter((area: { width: number; height: number }) => Math.abs(area.width) > 10 && Math.abs(area.height) > 10) // Prevent clicking to be mistaken as a drag
+      filter(
+        (area: { width: number; height: number }) =>
+          Math.abs(area.width) > 10 && Math.abs(area.height) > 10
+      ) // Prevent clicking to be mistaken as a drag
     )
   ).pipe(
     filter(() => enabled.current),
@@ -173,5 +199,3 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     // onKeyPress,
   };
 }
-
-

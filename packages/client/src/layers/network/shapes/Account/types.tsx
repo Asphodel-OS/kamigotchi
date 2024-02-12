@@ -1,8 +1,4 @@
-import {
-  EntityIndex,
-  EntityID,
-  getComponentValue,
-} from '@latticexyz/recs';
+import { EntityIndex, EntityID, getComponentValue } from '@latticexyz/recs';
 
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
@@ -10,12 +6,22 @@ import { Kami, queryKamisX } from '../Kami';
 import { GachaCommit, queryAccCommits } from '../Gacha';
 import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
+import {
+  Quest,
+  getCompletedQuests,
+  getOngoingQuests,
+  parseQuestsStatus,
+} from '../Quest';
 import { Skill } from '../Skill/types';
-import { Friendship, getAccFriends, getAccIncomingRequests, getAccOutgoingRequests, getAccBlocked } from '../Friendship';
+import {
+  Friendship,
+  getAccFriends,
+  getAccIncomingRequests,
+  getAccOutgoingRequests,
+  getAccBlocked,
+} from '../Friendship';
 import { getData } from '../Data';
 import { NetworkLayer } from 'layers/network/types';
-
 
 // standardized shape of an Account Entity
 export interface Account {
@@ -39,26 +45,26 @@ export interface Account {
     last: number;
     lastMove: number;
     creation: number;
-  }
+  };
   kamis?: Kami[];
   friends?: Friends;
   gacha?: {
     commits: GachaCommit[];
-  }
+  };
   inventories?: Inventories;
   lootboxLogs?: {
     unrevealed: LootboxLog[];
     revealed: LootboxLog[];
-  }
+  };
   quests?: {
     ongoing: Quest[];
     completed: Quest[];
-  }
+  };
   skills?: Skill[]; // unimplemented for now
   stats?: {
     kills: number;
     coin: number;
-  }
+  };
 }
 
 export interface AccountOptions {
@@ -88,7 +94,7 @@ export interface Friends {
   limits: {
     friends: number;
     requests: number;
-  }
+  };
 }
 
 // get an Account from its EnityIndex
@@ -120,23 +126,32 @@ export const getAccount = (
     id: world.entities[entityIndex],
     index: getComponentValue(AccountIndex, entityIndex)?.value as number,
     ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
-    operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+    operatorEOA: getComponentValue(OperatorAddress, entityIndex)
+      ?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
-    coin: (getComponentValue(Coin, entityIndex)?.value || 0 as number) * 1,
-    location: (getComponentValue(Location, entityIndex)?.value || 0 as number) * 1,
+    coin: (getComponentValue(Coin, entityIndex)?.value || (0 as number)) * 1,
+    location:
+      (getComponentValue(Location, entityIndex)?.value || (0 as number)) * 1,
     level: 0, // placeholder
-    questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || 0 as number) * 1,
+    questPoints:
+      (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
     skillPoints: 0, // placeholder
     stamina: {
-      total: (getComponentValue(Stamina, entityIndex)?.value || 20 as number) * 1,
-      last: (getComponentValue(StaminaCurrent, entityIndex)?.value || 0 as number) * 1,
-      recoveryPeriod: (getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD')) * 1,
+      total:
+        (getComponentValue(Stamina, entityIndex)?.value || (20 as number)) * 1,
+      last:
+        (getComponentValue(StaminaCurrent, entityIndex)?.value ||
+          (0 as number)) * 1,
+      recoveryPeriod:
+        getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') * 1,
     },
     time: {
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
-      lastMove: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
-      creation: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
-    }
+      lastMove:
+        (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
+      creation:
+        (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
+    },
   };
 
   // prevent further queries if account hasnt loaded yet
@@ -177,7 +192,7 @@ export const getAccount = (
       mods: mods,
       consumables: consumables,
       lootboxes: lootboxes,
-    }
+    };
   }
 
   // populate Kamis
@@ -197,11 +212,12 @@ export const getAccount = (
       outgoingReqs: getAccOutgoingRequests(network, account),
       blocked: getAccBlocked(network, account),
       limits: {
-        friends: (getConfigFieldValue(network, 'BASE_FRIENDS_LIMIT')) * 1
-          + (getBonusValue(network, account.id, 'FRIENDS_LIMIT') ?? 0),
-        requests: (getConfigFieldValue(network, 'FRIENDS_REQUEST_LIMIT')) * 1,
-      }
-    }
+        friends:
+          getConfigFieldValue(network, 'BASE_FRIENDS_LIMIT') * 1 +
+          (getBonusValue(network, account.id, 'FRIENDS_LIMIT') ?? 0),
+        requests: getConfigFieldValue(network, 'FRIENDS_REQUEST_LIMIT') * 1,
+      },
+    };
   }
 
   // populate Gacha
@@ -212,16 +228,24 @@ export const getAccount = (
   // populate Quests
   if (options?.quests) {
     account.quests = {
-      ongoing: parseQuestsStatus(network, account, getOngoingQuests(network, account.id)),
-      completed: parseQuestsStatus(network, account, getCompletedQuests(network, account.id)),
-    }
+      ongoing: parseQuestsStatus(
+        network,
+        account,
+        getOngoingQuests(network, account.id)
+      ),
+      completed: parseQuestsStatus(
+        network,
+        account,
+        getCompletedQuests(network, account.id)
+      ),
+    };
   }
 
   if (options?.lootboxLogs) {
     account.lootboxLogs = {
       unrevealed: queryAccLBLogs(network, account.id, false),
-      revealed: queryAccLBLogs(network, account.id, true)
-    }
+      revealed: queryAccLBLogs(network, account.id, true),
+    };
   }
 
   // populate Stats
@@ -229,13 +253,11 @@ export const getAccount = (
     account.stats = {
       kills: getData(network, account.id, 'LIQUIDATE'),
       coin: getData(network, account.id, 'COIN_TOTAL'),
-    }
+    };
   }
 
   // adjustments
   if (isNaN(account.coin)) account.coin = 0;
 
-
   return account;
 };
-

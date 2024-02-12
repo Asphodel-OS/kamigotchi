@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { interval, map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
@@ -15,7 +15,6 @@ import { useSelected } from 'layers/react/store/selected';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
-
 export function registerMapModal() {
   registerUIComponent(
     'WorldMap',
@@ -27,13 +26,16 @@ export function registerMapModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const account = getAccountFromBurner(layers.network);
-      return {
-        network: layers.network,
-        data: { account }
-      };
-    })),
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network);
+          return {
+            network: layers.network,
+            data: { account },
+          };
+        })
+      ),
 
     // Render
     ({ network, data }) => {
@@ -45,35 +47,35 @@ export function registerMapModal() {
       const [selectedRoom, setSelectedRoom] = useState<Room>();
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 
-
       /////////////////
       // DATA FETCHING
 
       // set selected room location to the player's current one when map modal is opened
       useEffect(() => {
-        if (modals.map) setRoom(data.account.location)
+        if (modals.map) setRoom(data.account.location);
       }, [modals.map]);
 
       // update the selected room details
       useEffect(() => {
         if (roomLocation) {
-          const roomObject = getRoomByLocation(network, roomLocation, { players: true });
+          const roomObject = getRoomByLocation(network, roomLocation, {
+            players: true,
+          });
           setSelectedRoom(roomObject);
 
-          const exits = (roomObject.exits)
+          const exits = roomObject.exits
             ? roomObject.exits.map((exit) => getRoomByLocation(network, exit))
             : [];
           setSelectedExits(exits);
         }
       }, [roomLocation, data.account]);
 
-
       ///////////////////
       // ACTIONS
 
       const move = (location: number) => {
         const room = getRoomByLocation(network, location);
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountMove',
@@ -88,7 +90,7 @@ export function registerMapModal() {
       const handleClick = (location: number) => {
         playClick();
         move(location);
-      }
+      };
 
       const ExitsDisplay = () => {
         return (
@@ -96,15 +98,17 @@ export function registerMapModal() {
             <Title>Go To..</Title>
             {selectedExits.map((exit) => {
               return (
-                <ClickableDescription key={exit.location} onClick={() => handleClick(exit.location)}>
+                <ClickableDescription
+                  key={exit.location}
+                  onClick={() => handleClick(exit.location)}
+                >
                   → {exit.name}
                 </ClickableDescription>
               );
             })}
           </Section>
         );
-      }
-
+      };
 
       ///////////////////
       // DISPLAY
@@ -113,7 +117,9 @@ export function registerMapModal() {
         <ModalWrapper
           id='world_map'
           divName='map'
-          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
+          header={
+            <ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />
+          }
           footer={<ExitsDisplay />}
           canExit
         >
@@ -124,7 +130,6 @@ export function registerMapModal() {
   );
 }
 
-
 const Section = styled.div`
   margin: 1.2vw;
   display: flex;
@@ -132,10 +137,9 @@ const Section = styled.div`
   justify-content: flex-start;
 `;
 
-
 const Title = styled.p`
   color: #333;
-  padding-bottom: .5vw;
+  padding-bottom: 0.5vw;
 
   font-family: Pixel;
   font-size: 1vw;
@@ -146,9 +150,9 @@ const Title = styled.p`
 const ClickableDescription = styled.div`
   color: #333;
   cursor: pointer;
-  padding: .3vw;
-  
-  font-size: .8vw;
+  padding: 0.3vw;
+
+  font-size: 0.8vw;
   font-family: Pixel;
   text-align: left;
   &:hover {

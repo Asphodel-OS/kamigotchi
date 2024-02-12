@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 import { Banner } from './Banner';
 import { Kards } from './Kards';
@@ -13,7 +13,6 @@ import { getLiquidationConfig } from 'layers/network/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/network/shapes/Node';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
-
 
 // merchant window with listings. assumes at most 1 merchant per room
 export function registerNodeModal() {
@@ -29,19 +28,28 @@ export function registerNodeModal() {
     },
 
     // Requirement
-    (layers) => interval(1000).pipe(map(() => {
-      const { network } = layers;
-      const { nodeIndex } = useSelected.getState();
+    (layers) =>
+      interval(1000).pipe(
+        map(() => {
+          const { network } = layers;
+          const { nodeIndex } = useSelected.getState();
 
-      const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-      const node = getNodeByIndex(network, nodeIndex, { kamis: true, accountID: account?.id });
-      const liquidationConfig = getLiquidationConfig(network);
+          const account = getAccountFromBurner(network, {
+            kamis: true,
+            inventory: true,
+          });
+          const node = getNodeByIndex(network, nodeIndex, {
+            kamis: true,
+            accountID: account?.id,
+          });
+          const liquidationConfig = getLiquidationConfig(network);
 
-      return {
-        network,
-        data: { account, node, liquidationConfig },
-      };
-    })),
+          return {
+            network,
+            data: { account, node, liquidationConfig },
+          };
+        })
+      ),
 
     // Render
     ({ network, data }) => {
@@ -62,13 +70,12 @@ export function registerNodeModal() {
         setNode(data.node);
       }, [data.node]);
 
-
-      /////////////////// 
+      ///////////////////
       // ACTIONS
 
       // collects on an existing production
       const collect = (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionCollect',
@@ -82,7 +89,7 @@ export function registerNodeModal() {
 
       // feed a kami
       const feed = (kami: Kami, foodIndex: number) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',
@@ -97,21 +104,24 @@ export function registerNodeModal() {
       // liquidate a production
       // assume this function is only called with two kamis that have productions
       const liquidate = (myKami: Kami, enemyKami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionLiquidate',
           params: [enemyKami.production!.id, myKami.id],
           description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
-            return api.player.production.liquidate(enemyKami.production!.id, myKami.id);
+            return api.player.production.liquidate(
+              enemyKami.production!.id,
+              myKami.id
+            );
           },
         });
       };
 
       // starts a production for the given pet and node
       const start = (kami: Kami, node: Node) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionStart',
@@ -125,18 +135,19 @@ export function registerNodeModal() {
 
       // stops a production
       const stop = (kami: Kami) => {
-        const actionID = crypto.randomBytes(32).toString("hex") as EntityID;
+        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'ProductionStop',
           params: [kami.production!.id],
-          description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
+          description: `Removing ${kami.name} from ${
+            kami.production!.node?.name
+          }`,
           execute: async () => {
             return api.player.production.stop(kami.production!.id);
           },
         });
       };
-
 
       /////////////////
       // DISPLAY
@@ -153,7 +164,7 @@ export function registerNodeModal() {
               kamis={data.account.kamis || []}
               addKami={(kami) => start(kami, node)}
             />,
-            <Tabs key='tabs' tab={tab} setTab={setTab} />
+            <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
           canExit
         >

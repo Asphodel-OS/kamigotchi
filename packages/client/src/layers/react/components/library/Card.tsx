@@ -12,20 +12,25 @@ interface Props {
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = (props: Props) => {
-
   // toggle the kami modal settings depending on current its current state
   const imageOnClick = () => {
     if (props.imageOnClick) {
       props.imageOnClick();
       return;
     }
-  }
+  };
 
   return (
     <Container key={props.image} fullWidth={props.fullWidth}>
-      <Image onClick={() => imageOnClick()} src={props.image} size={props.size} />
+      <Image
+        onClick={() => imageOnClick()}
+        src={props.image}
+        size={props.size}
+      />
       <ContentContainer>
-        {props.titleBarContent ? <TitleBar>{props.titleBarContent}</TitleBar> : null}
+        {props.titleBarContent ? (
+          <TitleBar>{props.titleBarContent}</TitleBar>
+        ) : null}
         <Content>{props.content}</Content>
       </ContentContainer>
     </Container>
@@ -34,37 +39,37 @@ export const Card = (props: Props) => {
 
 const Container = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
-  border: .15vw solid black;
-  border-radius: .35vw;
+  border: 0.15vw solid black;
+  border-radius: 0.35vw;
   color: black;
-  margin: .15vw;
+  margin: 0.15vw;
 
   display: flex;
   flex-flow: row nowrap;
 
-  width: ${({ fullWidth }) => fullWidth ? '100%' : 'auto'};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
   border-style: solid;
-  border-width: 0vw .15vw 0vw 0vw;
+  border-width: 0vw 0.15vw 0vw 0vw;
   border-color: black;
-  border-radius: .15vw 0vw 0vw .15vw;
+  border-radius: 0.15vw 0vw 0vw 0.15vw;
   object-fit: cover;
   object-position: 100% 0;
-  
+
   cursor: pointer;
   &:hover {
     opacity: 0.75;
   }
 
-  height: ${props => {
+  height: ${(props) => {
     if (props.size === 'small') return '7vw';
     else if (props.size === 'large') return '12vw';
     else return '9vw';
   }};
 
-  width: ${props => {
+  width: ${(props) => {
     if (props.size === 'small') return '7vw';
     else if (props.size === 'large') return '12vw';
     else return '9vw';
@@ -73,7 +78,7 @@ const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
 
 const ContentContainer = styled.div`
   border-color: black;
-  border-width: .15vw;
+  border-width: 0.15vw;
   color: black;
   flex-grow: 1;
 
@@ -84,9 +89,9 @@ const ContentContainer = styled.div`
 
 const TitleBar = styled.div`
   border-style: solid;
-  border-width: 0vw 0vw .15vw 0vw;
+  border-width: 0vw 0vw 0.15vw 0vw;
   border-color: black;
-  padding: .45vw;
+  padding: 0.45vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -95,7 +100,7 @@ const TitleBar = styled.div`
 
 const Content = styled.div`
   flex-grow: 1;
-  padding: .7vw;
+  padding: 0.7vw;
 
   display: flex;
   flex-flow: row nowrap;

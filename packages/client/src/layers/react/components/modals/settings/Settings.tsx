@@ -10,7 +10,6 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
 
-
 export function registerSettingsModal() {
   registerUIComponent(
     'Settings',
@@ -23,7 +22,6 @@ export function registerSettingsModal() {
 
     (layers) => of(layers),
     () => {
-
       return (
         <ModalWrapper
           divName='settings'

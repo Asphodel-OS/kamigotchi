@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
-import styled from "styled-components";
+import { useEffect, useState } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
+import styled from 'styled-components';
 
-import { triggerIcons } from "assets/images/icons/triggers";
-import { playClick } from "utils/sounds";
-
+import { triggerIcons } from 'assets/images/icons/triggers';
+import { playClick } from 'utils/sounds';
 
 // TODO: formally define the settings struct at some central location
 // TODO: smoother volume slider (atm clunky bc relying directly on localstorage updates)
 export const Volume = () => {
-  const [settings, setSettings] = useLocalStorage('settings', { volume: { fx: .5, bgm: .5 } });
+  const [settings, setSettings] = useLocalStorage('settings', {
+    volume: { fx: 0.5, bgm: 0.5 },
+  });
   const [bgmVolume, setBgmVolume] = useState(settings.volume.bgm);
   const [fxVolume, setFxVolume] = useState(settings.volume.fx);
 
@@ -18,14 +19,14 @@ export const Volume = () => {
   }, [bgmVolume, fxVolume]);
 
   const toggleVolume = (type: string) => {
-    let volume = (type === 'fx') ? fxVolume : bgmVolume;
-    let setVolume = (type === 'fx') ? setFxVolume : setBgmVolume;
-    setVolume((volume === 0) ? .5 : 0);
+    let volume = type === 'fx' ? fxVolume : bgmVolume;
+    let setVolume = type === 'fx' ? setFxVolume : setBgmVolume;
+    setVolume(volume === 0 ? 0.5 : 0);
     playClick();
   };
 
   const MusicRow = () => {
-    const icon = (bgmVolume == 0) ? triggerIcons.soundOff : triggerIcons.soundOn;
+    const icon = bgmVolume == 0 ? triggerIcons.soundOff : triggerIcons.soundOn;
     return (
       <Row>
         <Text style={{ flexGrow: 2 }}>Music</Text>
@@ -35,14 +36,15 @@ export const Volume = () => {
           max='1'
           step='0.1'
           value={bgmVolume}
-          onChange={(e) => setBgmVolume(e.target.value as unknown as number)} />
+          onChange={(e) => setBgmVolume(e.target.value as unknown as number)}
+        />
         <Icon src={icon} onClick={() => toggleVolume('bgm')} />
       </Row>
     );
-  }
+  };
 
   const SoundEffectsRow = () => {
-    const icon = (fxVolume == 0) ? triggerIcons.soundOff : triggerIcons.soundOn;
+    const icon = fxVolume == 0 ? triggerIcons.soundOff : triggerIcons.soundOn;
     return (
       <Row>
         <Text style={{ flexGrow: 2 }}>Sounds</Text>
@@ -52,11 +54,12 @@ export const Volume = () => {
           max='1'
           step='0.1'
           value={fxVolume}
-          onChange={(e) => setFxVolume(e.target.value as unknown as number)} />
+          onChange={(e) => setFxVolume(e.target.value as unknown as number)}
+        />
         <Icon src={icon} onClick={() => toggleVolume('fx')} />
       </Row>
     );
-  }
+  };
 
   return (
     <Section>
@@ -65,12 +68,12 @@ export const Volume = () => {
       <SoundEffectsRow />
     </Section>
   );
-}
+};
 
 const Section = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: .6vw;
+  padding: 0.6vw;
 `;
 
 const Header = styled.div`
@@ -78,13 +81,13 @@ const Header = styled.div`
   color: #333;
   text-align: left;
   font-family: Pixel;
-  padding-bottom: .5vw;
+  padding-bottom: 0.5vw;
 `;
 
 const Row = styled.div`
-  padding-left: .7vw;
-  padding-right: .7vw;
-  padding-bottom: .3vw;
+  padding-left: 0.7vw;
+  padding-right: 0.7vw;
+  padding-bottom: 0.3vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -102,7 +105,7 @@ const Icon = styled.img`
 const Text = styled.p`
   color: #333;
   font-family: Pixel;
-  font-size: .8vw;
+  font-size: 0.8vw;
   text-align: left;
 `;
 

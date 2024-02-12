@@ -5,11 +5,4 @@ import cave from './cave.mp3';
 import glitter from './glitter.mp3';
 import mystique from './mystique.mp3';
 
-export {
-  abandoned,
-  amusement,
-  arrival,
-  cave,
-  glitter,
-  mystique,
-};
+export { abandoned, amusement, arrival, cave, glitter, mystique };

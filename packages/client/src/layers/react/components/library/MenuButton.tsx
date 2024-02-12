@@ -7,7 +7,7 @@ import { playClick } from 'utils/sounds';
 
 interface Props {
   id: string;
-  image: string,
+  image: string;
   tooltip: string;
   targetDiv: keyof Modals;
   visible: boolean;
@@ -52,7 +52,6 @@ export const MenuButton = (props: Props) => {
   );
 };
 
-
 const Button = styled.button`
   border-radius: 10px;
   cursor: pointer;
@@ -64,6 +63,6 @@ const Button = styled.button`
 `;
 
 const Image = styled.img`
-  height: 100%; 
+  height: 100%;
   width: auto;
 `;

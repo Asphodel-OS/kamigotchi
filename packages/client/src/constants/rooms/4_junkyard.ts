@@ -8,7 +8,6 @@ import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggers/triggerPetMintModal';
 
-
 export const room4: Room = {
   location: 4,
   background: {

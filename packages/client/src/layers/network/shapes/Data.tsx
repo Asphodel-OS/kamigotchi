@@ -8,21 +8,15 @@ import {
 
 import { NetworkLayer } from 'layers/network/types';
 
-// get a DataEntity for an account 
+// get a DataEntity for an account
 export const getData = (
   network: NetworkLayer,
   id: EntityID,
   type: string,
-  index?: number,
+  index?: number
 ): number => {
   const {
-    components: {
-      HolderID,
-      IsData,
-      Index,
-      Type,
-      Value,
-    }
+    components: { HolderID, IsData, Index, Type, Value },
   } = network;
 
   let configEntityIndex;
@@ -32,7 +26,7 @@ export const getData = (
         Has(IsData),
         HasValue(HolderID, { value: id }),
         HasValue(Type, { value: type }),
-        HasValue(Index, { value: index })
+        HasValue(Index, { value: index }),
       ])
     )[0];
   } else {
@@ -44,7 +38,7 @@ export const getData = (
       ])
     )[0];
   }
-  return (getComponentValue(Value, configEntityIndex)?.value != undefined)
-    ? getComponentValue(Value, configEntityIndex)?.value as number * 1
+  return getComponentValue(Value, configEntityIndex)?.value != undefined
+    ? (getComponentValue(Value, configEntityIndex)?.value as number) * 1
     : 0;
-}
+};

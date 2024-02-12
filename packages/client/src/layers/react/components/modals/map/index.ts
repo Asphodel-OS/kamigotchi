@@ -1,3 +1,3 @@
-import { registerMapModal } from "./Map";
+import { registerMapModal } from './Map';
 
 export { registerMapModal };
