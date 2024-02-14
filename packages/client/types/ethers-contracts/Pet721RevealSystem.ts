@@ -2,6 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
+  EventFragment,
+  FunctionFragment,
+  Result,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
   BaseContract,
   BigNumber,
   BigNumberish,
@@ -14,24 +20,18 @@ import type {
   utils,
 } from "ethers";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
   OnEvent,
   PromiseOrValue,
+  TypedEvent,
+  TypedEventFilter,
+  TypedListener,
 } from "./common";
 
 export interface Pet721RevealSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256)": FunctionFragment;
-    "forceReveal(uint256)": FunctionFragment;
+    "executeTyped(uint32)": FunctionFragment;
+    "forceReveal(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

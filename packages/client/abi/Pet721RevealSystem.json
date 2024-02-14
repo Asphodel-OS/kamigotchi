@@ -67,9 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "petIndex",
-          "type": "uint256"
+          "type": "uint32"
         }
       ],
       "name": "executeTyped",
@@ -86,9 +86,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "petIndex",
-          "type": "uint256"
+          "type": "uint32"
         }
       ],
       "name": "forceReveal",
@@ -131,8 +131,8 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
-    "forceReveal(uint256)": "265ab676",
+    "executeTyped(uint32)": "09c90324",
+    "forceReveal(uint32)": "c6aa4bd6",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

@@ -89,9 +89,9 @@
           "type": "tuple"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "index",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "string",
@@ -104,9 +104,9 @@
           "type": "string"
         },
         {
-          "internalType": "uint256[]",
+          "internalType": "uint32[]",
           "name": "exits",
-          "type": "uint256[]"
+          "type": "uint32[]"
         }
       ],
       "name": "executeTyped",
@@ -149,7 +149,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped((int32,int32,int32),uint256,string,string,uint256[])": "c324a648",
+    "executeTyped((int32,int32,int32),uint32,string,string,uint32[])": "404a02eb",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }
