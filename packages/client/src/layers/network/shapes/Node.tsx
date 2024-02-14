@@ -58,7 +58,7 @@ export const getNode = (
 
   let node: Node = {
     id: world.entities[entityIndex],
-    index: (getComponentValue(NodeIndex, entityIndex)?.value as number) * 1,
+    index: getComponentValue(NodeIndex, entityIndex)?.value as number,
     entityIndex,
     type: getComponentValue(Type, entityIndex)?.value as string,
     roomIndex: (getComponentValue(RoomIndex, entityIndex)?.value as number) * 1,

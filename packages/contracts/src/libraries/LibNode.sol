@@ -28,7 +28,7 @@ library LibNode {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint32 index,
     string memory nodeType,
     uint256 roomIndex
   ) internal returns (uint256) {
@@ -113,7 +113,7 @@ library LibNode {
     }
   }
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).getValue(id);
   }
 
@@ -152,7 +152,7 @@ library LibNode {
   }
 
   // Return the ID of a Node by its index
-  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
     fragments[1] = QueryFragment(

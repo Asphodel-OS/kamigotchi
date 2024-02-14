@@ -358,7 +358,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createHarvestingNode(
-    uint index,
+    uint32 index,
     uint roomIndex,
     string memory name,
     string memory description,

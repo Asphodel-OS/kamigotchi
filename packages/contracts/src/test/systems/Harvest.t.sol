@@ -49,7 +49,7 @@ contract HarvestTest is SetupTemplate {
   // test node creation for expected behaviors
   function testNodeCreation() public {
     // test that a node cannot be created by an arbitrary address
-    for (uint i = 0; i < 10; i++) {
+    for (uint32 i = 0; i < 10; i++) {
       vm.prank(_getOwner(0));
       vm.expectRevert();
       __NodeCreateSystem.executeTyped(i, "HARVESTING", i, "testNode", "", "");
@@ -65,8 +65,8 @@ contract HarvestTest is SetupTemplate {
     string memory name;
     string memory description;
     string memory affinity;
-    for (uint i = 0; i < 10; i++) {
-      roomIndex = (i % 3) + 1;
+    for (uint32 i = 0; i < 10; i++) {
+      location = (i % 3) + 1;
       name = LibString.concat("testNode", LibString.toString(i));
       description = LibString.concat("this is a description of the node ", LibString.toString(i));
       affinity = (i % 2 == 0) ? "INSECT" : "EERIE";
@@ -162,7 +162,7 @@ contract HarvestTest is SetupTemplate {
 
     // create nodes
     uint[] memory nodeIDs = new uint[](3);
-    for (uint i = 0; i < numNodes; i++) {
+    for (uint32 i = 0; i < numNodes; i++) {
       nodeIDs[i] = _createHarvestingNode(i + 1, i + 1, "testNode", "", "NORMAL");
     }
 
