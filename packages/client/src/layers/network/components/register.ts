@@ -155,7 +155,7 @@ export function createComponents(world: World) {
     Time: defineNumberEZ('Time', 'component.Time'),
     Timelock: defineTimelockComponent(world),
 
-    // speeeeecial
+    // speeeeeecial
     CanName: defineBoolEZ('CanName', 'component.Can.Name'),
     GachaOrder: defineBoolEZ('CanName', 'component.Gacha.Order'),
     FavoriteFood: defineStringEZ('FavoriteFood', 'component.Favorite.Food'),
