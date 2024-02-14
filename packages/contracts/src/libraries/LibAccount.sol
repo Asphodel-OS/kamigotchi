@@ -281,8 +281,8 @@ library LibAccount {
   // QUERIES
 
   // Get the total number of accounts
-  function getTotal(IUintComp components) internal view returns (uint256) {
-    return getAll(components).length;
+  function getTotal(IUintComp components) internal view returns (uint32) {
+    return uint32(getAll(components).length);
   }
 
   // retrieves the pet with the specified name
