@@ -8,7 +8,7 @@ import { CoinComponent, ID as CoinComponentID } from "components/CoinComponent.s
 
 library LibCoin {
   // gets the coin balance of an entity
-  function get(IUintComp components, uint256 entityID) internal view returns (uint256) {
+  function get(IUintComp components, uint256 entityID) public view returns (uint256) {
     if (CoinComponent(getAddressById(components, CoinComponentID)).has(entityID)) {
       return CoinComponent(getAddressById(components, CoinComponentID)).getValue(entityID);
     } else {
@@ -23,7 +23,7 @@ library LibCoin {
   }
 
   // increases the coin balance of an entity by amt
-  function inc(IUintComp components, uint256 entityID, uint256 amt) internal {
+  function inc(IUintComp components, uint256 entityID, uint256 amt) public {
     CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
     if (!comp.has(entityID)) comp.set(entityID, amt);
     else comp.set(entityID, comp.getValue(entityID) + amt);
@@ -40,7 +40,7 @@ library LibCoin {
   }
 
   // sets the coin balance of an entity
-  function _set(IUintComp components, uint256 entityID, uint256 amt) internal {
+  function _set(IUintComp components, uint256 entityID, uint256 amt) public {
     CoinComponent(getAddressById(components, CoinComponentID)).set(entityID, amt);
   }
 }

@@ -524,19 +524,17 @@ library LibPet {
     return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
   }
 
-  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
+  // get the last time a kami commited a Standard Action
+  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {
     TimeLastActionComponent comp = TimeLastActionComponent(
       getAddressById(components, TimeLastActCompID)
     );
-    if (!comp.has(id)) return 0;
-    return comp.getValue(id);
+    if (!comp.has(id)) ts = comp.getValue(id);
   }
 
-  // NOTE: value should be set on Pet Reveal. check is insurance policy for backwards compatibility
+  // get the last time a kami commited a syncing Action
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
-    if (comp.has(id)) return comp.getValue(id);
-    else return 0;
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   // Get the implied roomIndex of a pet based on its state.

@@ -77,7 +77,7 @@ library LibProduction {
   }
 
   // snapshot a production's the balance and time. return the balance delta
-  function sync(IUintComp components, uint256 id) internal returns (uint256 delta) {
+  function sync(IUintComp components, uint256 id) public returns (uint256 delta) {
     if (isActive(components, id)) {
       delta = calcOutput(components, id);
       LibCoin.inc(components, id, delta);
@@ -221,11 +221,8 @@ library LibProduction {
     return LibCoin.get(components, id);
   }
 
-  // NOTE: value should be set on harvest start. the check is insurance for backwards compatibility
-  function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
-    if (comp.has(id)) return comp.getValue(id);
-    else return getStartTs(components, id);
+  function getLastTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -259,29 +256,17 @@ library LibProduction {
     }
   }
 
+  // get all productions
+  function getAll(IUintComp components) internal view returns (uint256[] memory) {
+    return _getAllX(components, 0, 0, "");
+  }
+
   // get all the active productions on a node
   function getAllOnNode(
     IUintComp components,
     uint256 nodeID
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsProdCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdNodeCompID),
-      abi.encode(nodeID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, StateCompID),
-      abi.encode("ACTIVE")
-    );
-
-    return LibQuery.query(fragments);
-  }
-
-  function getAll(IUintComp components) internal view returns (uint256[] memory) {
-    return _getAllX(components, 0, 0, "");
+    return _getAllX(components, nodeID, 0, "ACTIVE");
   }
 
   // Retrieves all productions based on any defined filters
