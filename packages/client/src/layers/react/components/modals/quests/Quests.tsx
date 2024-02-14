@@ -17,7 +17,7 @@ import {
   getRegistryQuests,
   parseQuestsStatus,
 } from 'layers/network/shapes/Quest';
-import { getRoomByIndex } from 'layers/network/shapes/Room';
+import { getRoomByLocation } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -129,16 +129,11 @@ export function registerQuestsModal() {
             utils={{
               setNumAvail: (num: number) => setNumAvail(num),
               getItem: (index: EntityIndex) => getItem(network, index),
-              getRoom: (roomIndex: number) =>
-                getRoomByIndex(network, roomIndex),
-              getQuestByIndex: (index: number) =>
-                getQuestByIndex(network, index),
-              queryItemRegistry: (index: number) =>
-                getItemByIndex(network, index).entityIndex,
-              queryFoodRegistry: (index: number) =>
-                queryFoodRegistry(network, index),
-              queryReviveRegistry: (index: number) =>
-                queryReviveRegistry(network, index),
+              getRoom: (location: number) => getRoomByLocation(network, location),
+              getQuestByIndex: (index: number) => getQuestByIndex(network, index),
+              queryItemRegistry: (index: number) => getItemByIndex(network, index).entityIndex,
+              queryFoodRegistry: (index: number) => queryFoodRegistry(network, index),
+              queryReviveRegistry: (index: number) => queryReviveRegistry(network, index),
             }}
           />
         </ModalWrapper>

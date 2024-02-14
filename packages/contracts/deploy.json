@@ -472,6 +472,8 @@
         "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
+        "IsRoomComponent",
+        "IndexRoomComponent",
         "LocationComponent",
         "LogicTypeComponent",
         "NameComponent",

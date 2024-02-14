@@ -60,7 +60,8 @@ library LibRoom {
   ) internal returns (uint256 id) {
     id = LibBoolean.create(world, components, type_, logicType);
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
-    IndexSourceComponent(getAddressById(components, IndexSourceCompID)).set(id, sourceIndex);
+    if (sourceIndex != 0)
+      IndexSourceComponent(getAddressById(components, IndexSourceCompID)).set(id, sourceIndex);
     if (conIndex != 0) LibBoolean.setIndex(components, id, conIndex);
     if (conValue != 0) LibBoolean.setValue(components, id, conValue);
   }
@@ -112,8 +113,6 @@ library LibRoom {
 
     uint256[] memory exits = getSpecialExits(components, fromID);
     for (uint256 i; i < exits.length; i++) if (exits[i] == toIndex) return true;
-
-    return false;
   }
 
   /// @notice checks if accessability conditions to a room are met
@@ -264,10 +263,18 @@ library LibRoom {
       getComponentById(components, IndexRoomCompID),
       abi.encode(toIndex)
     );
-    fragments[2] = QueryFragment(QueryType.HasValue, sourceComp, abi.encode(0));
+    fragments[2] = QueryFragment(
+      QueryType.Not,
+      getComponentById(components, IndexSourceCompID),
+      ""
+    );
     uint256[] memory generic = LibQuery.query(fragments);
 
-    fragments[2] = QueryFragment(QueryType.HasValue, sourceComp, abi.encode(fromIndex));
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexSourceCompID),
+      abi.encode(fromIndex)
+    );
     uint256[] memory specific = LibQuery.query(fragments);
 
     uint256 genLen = generic.length;
@@ -285,6 +292,10 @@ library LibRoom {
     IUintComp components,
     uint256 toIndex
   ) internal view returns (uint256[] memory) {
+    IndexSourceComponent sourceComp = IndexSourceComponent(
+      getAddressById(components, IndexSourceCompID)
+    );
+
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.Has,

@@ -8,7 +8,7 @@ import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room2: Room = {
-  roomIndex: 2,
+  location: 2,
   background: {
     key: 'bg_room002',
     path: backgroundShop,

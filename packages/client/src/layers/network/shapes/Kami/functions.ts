@@ -3,7 +3,7 @@ import { LiquidationConfig } from '../LiquidationConfig';
 import {
   calcIdleTime as calcProductionIdletime,
   calcOutput as calcProductionOutput,
-  getRoomIndex as getProductionRoomIndex,
+  getLocation as getProductionLocation,
 } from '../Production';
 import { Kami } from './types';
 
@@ -40,11 +40,11 @@ export const isWithAccount = (kami: Kami): boolean => {
   if (isDead(kami) || isResting(kami) || isUnrevealed(kami)) return true;
   if (isOffWorld(kami)) return false;
   if (isHarvesting(kami)) {
-    const accLoc = kami.account?.roomIndex ?? 0;
-    const kamiLoc = kami.production?.node?.roomIndex ?? 0;
+    const accLoc = kami.account?.location ?? 0;
+    const kamiLoc = kami.production?.node?.location ?? 0;
     if (accLoc == 0 || kamiLoc == 0)
       console.warn(
-        `Invalid RoomIndex for kami ${
+        `Invalid Location for kami ${
           kami.index * 1
         }\n\tProduction: ${kamiLoc} \n\tAccount: ${accLoc}`
       );
@@ -54,17 +54,17 @@ export const isWithAccount = (kami: Kami): boolean => {
   return false;
 };
 
-// interpret the roomIndex of the kami based on the kami's state (using Account and Production Node)
-// return 0 if the roomIndex cannot be determined from information provided
-export const getRoomIndex = (kami: Kami): number => {
-  let roomIndex = 0;
-  if (isOffWorld(kami)) roomIndex = 0;
-  else if (isHarvesting(kami)) return getProductionRoomIndex(kami.production);
+// interpret the location of the kami based on the kami's state (using Account and Production Node)
+// return 0 if the location cannot be determined from information provided
+export const getLocation = (kami: Kami): number => {
+  let location = 0;
+  if (isOffWorld(kami)) location = 0;
+  else if (isHarvesting(kami)) return getProductionLocation(kami.production);
   else {
-    if (!kami.account) roomIndex = 0;
-    else roomIndex = kami.account.roomIndex;
+    if (!kami.account) location = 0;
+    else location = kami.account.location;
   }
-  return roomIndex;
+  return location;
 };
 
 ////////////////

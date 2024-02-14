@@ -10,7 +10,7 @@ import { Room } from 'constants/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
 
 export const room14: Room = {
-  roomIndex: 14,
+  location: 14,
   background: {
     key: 'bg_room014',
     path: backgroundDefault,

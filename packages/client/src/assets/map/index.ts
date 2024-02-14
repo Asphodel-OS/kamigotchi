@@ -1,6 +1,6 @@
-import { rooms } from './rooms';
+import { location } from './locations';
 import { coreSprites } from './map_tiles';
 import { road } from './map_tiles/road';
 import { water } from './map_tiles/water';
 
-export { rooms, coreSprites, water, road };
+export { location, coreSprites, water, road };

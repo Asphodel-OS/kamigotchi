@@ -1,7 +1,7 @@
+import { coreSprites, location, road, water } from 'assets/map';
+import { useSelected } from 'layers/react/store/selected';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { roomIndex, road, coreSprites, water } from 'assets/map';
-import { useSelected } from 'layers/react/store/selected';
 
 interface MapProps {
   currentRoom?: number;
@@ -35,7 +35,7 @@ const GRID_MAP = [
     coreSprites.Sprite1,
     coreSprites.Sprite18,
     coreSprites.Sprite20,
-    roomIndex.Sprite6,
+    location.Sprite6,
     road.Sprite6,
     road.Sprite8,
     coreSprites.Sprite1,
@@ -67,21 +67,21 @@ const GRID_MAP = [
     coreSprites.Sprite5,
     coreSprites.Sprite22,
     water.Sprite10,
-    roomIndex.Sprite1,
+    location.Sprite1,
     water.Sprite6,
   ],
   // #6
   [
     coreSprites.Sprite18,
-    roomIndex.Sprite14,
+    location.Sprite14,
     road.Sprite6,
-    roomIndex.Sprite7,
+    location.Sprite7,
     coreSprites.Sprite3,
     road.Sprite9,
     coreSprites.Sprite2,
     coreSprites.Sprite9,
     coreSprites.Sprite12,
-    roomIndex.Sprite12,
+    location.Sprite12,
     coreSprites.Sprite11,
     coreSprites.Sprite4,
     coreSprites.Sprite3,
@@ -115,17 +115,17 @@ const GRID_MAP = [
     coreSprites.Sprite1,
     coreSprites.Sprite16,
     coreSprites.Sprite1,
-    roomIndex.Sprite8,
+    location.Sprite8,
     coreSprites.Sprite1,
-    roomIndex.Sprite5,
+    location.Sprite5,
     road.Sprite6,
     road.Sprite6,
     road.Sprite6,
-    roomIndex.Sprite4,
+    location.Sprite4,
     coreSprites.Sprite10,
     coreSprites.Sprite2,
     coreSprites.Sprite3,
-    roomIndex.Sprite13,
+    location.Sprite13,
     coreSprites.Sprite8,
     road.Sprite9,
     coreSprites.Sprite6,
@@ -153,19 +153,19 @@ const GRID_MAP = [
   // #2
   [
     coreSprites.Sprite14,
-    roomIndex.Sprite11,
+    location.Sprite11,
     road.Sprite6,
     road.Sprite6,
     road.Sprite6,
-    roomIndex.Sprite9,
+    location.Sprite9,
     road.Sprite6,
-    roomIndex.Sprite10,
+    location.Sprite10,
     coreSprites.Sprite8,
     road.Sprite10,
     road.Sprite6,
-    roomIndex.Sprite3,
+    location.Sprite3,
     road.Sprite6,
-    roomIndex.Sprite2,
+    location.Sprite2,
     road.Sprite6,
     road.Sprite11,
     coreSprites.Sprite7,
@@ -235,10 +235,10 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   const [isHovered, setHovered] = useState(false);
   const { setRoom } = useSelected();
 
-  const roomIndex = ROOM_POSITIONS.get(`${rowIndex},${colIndex}`);
-  const isCurrentRoom = roomIndex === currentRoom;
-  const isNeighbor = NEIGHBOR_ROOMS[currentRoom]?.includes(roomIndex || 0);
-  const isClickable = !!roomIndex;
+  const location = ROOM_POSITIONS.get(`${rowIndex},${colIndex}`);
+  const isCurrentRoom = location === currentRoom;
+  const isNeighbor = NEIGHBOR_ROOMS[currentRoom]?.includes(location || 0);
+  const isClickable = !!location;
   const isTopLeft = rowIndex === 0 && colIndex === 0;
   const isTopRight = rowIndex === 0 && colIndex === 16;
 
@@ -255,7 +255,7 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
   const handleMouseEnter = () => {
     if (isClickable) {
       setHovered(true);
-      setRoom(roomIndex * 1);
+      setRoom(location * 1);
     }
   };
 
@@ -280,7 +280,7 @@ const Tile = ({ img, currentRoom, move, rowIndex, colIndex }: any) => {
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={isClickable && isNeighbor ? () => move(roomIndex) : undefined}
+      onClick={isClickable && isNeighbor ? () => move(location) : undefined}
     />
   );
 };

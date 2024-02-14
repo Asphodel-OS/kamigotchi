@@ -7,7 +7,6 @@ import {
 
 import {
   defineLoadingStateComponent,
-  defineLocationComponent,
   defineNumberArrayComponent,
   defineTimelockComponent,
 } from './definitions';
@@ -81,48 +80,32 @@ export function createComponents(world: World) {
     // Indices
     Index: defineNumberEZ('Index', 'component.Index'), // generic index
     AccountIndex: defineNumberEZ('AccountIndex', 'component.Index.Account'),
-    BackgroundIndex: defineNumberEZ(
-      'BackgroundIndex',
-      'component.Index.Background'
-    ),
+    NPCIndex: defineNumberEZ('NPCIndex', 'component.Index.NPC'),
+    NodeIndex: defineNumberEZ('NodeIndex', 'component.Index.Node'),
+    ObjectiveIndex: defineNumberEZ('ObjectiveIndex', 'component.Index.Objective'),
+    QuestIndex: defineNumberEZ('QuestIndex', 'component.Index.Quest'),
+    PetIndex: defineNumberEZ('PetIndex', 'component.Index.Pet'),
+    RelationshipIndex: defineNumberEZ('RelationshipIndex', 'component.Index.Relationship'),
+    SkillIndex: defineNumberEZ('SkillIndex', 'component.Index.Skill'),
+
+    ItemIndex: defineNumberEZ('ItemIndex', 'component.Index.Item'),
+    FoodIndex: defineNumberEZ('FoodIndex', 'component.Index.Food'),
+    GearIndex: defineNumberEZ('GearIndex', 'component.Index.Gear'),
+    ModIndex: defineNumberEZ('ModIndex', 'component.Index.Mod'),
+    ReviveIndex: defineNumberEZ('ReviveIndex', 'component.Index.Revive'),
+
+    TraitIndex: defineNumberEZ('PetIndex', 'component.Index.Trait'),
+    BackgroundIndex: defineNumberEZ('BackgroundIndex', 'component.Index.Background'),
     BodyIndex: defineNumberEZ('BodyIndex', 'component.Index.Body'),
     ColorIndex: defineNumberEZ('ColorIndex', 'component.Index.Color'),
     FaceIndex: defineNumberEZ('FaceIndex', 'component.Index.Face'),
-    FoodIndex: defineNumberEZ('FoodIndex', 'component.Index.Food'),
-    GearIndex: defineNumberEZ('GearIndex', 'component.Index.Gear'),
     HandIndex: defineNumberEZ('HandIndex', 'component.Index.Hand'),
-    ItemIndex: defineNumberEZ('ItemIndex', 'component.Index.Item'),
-    NPCIndex: defineNumberEZ('NPCIndex', 'component.Index.NPC'),
-    ModIndex: defineNumberEZ('ModIndex', 'component.Index.Mod'),
-    NodeIndex: defineNumberEZ('NodeIndex', 'component.Index.Node'),
-    ObjectiveIndex: defineNumberEZ(
-      'ObjectiveIndex',
-      'component.Index.Objective'
-    ),
-    QuestIndex: defineNumberEZ('QuestIndex', 'component.Index.Quest'),
-    PetIndex: defineNumberEZ('PetIndex', 'component.Index.Pet'),
-    RelationshipIndex: defineNumberEZ(
-      'RelationshipIndex',
-      'component.Index.Relationship'
-    ),
-    RoomIndex: defineNumberEZ('RoomIndex', 'component.Index.Room'),
-    ReviveIndex: defineNumberEZ('ReviveIndex', 'component.Index.Revive'),
-    SkillIndex: defineNumberEZ('SkillIndex', 'component.Index.Skill'),
-    TraitIndex: defineNumberEZ('PetIndex', 'component.Index.Trait'),
 
     // Attributes
     Affinity: defineStringEZ('Affinity', 'component.Affinity'),
     Balance: defineNumberEZ('Balance', 'component.Balance'),
-    Balances: defineNumberArrayComponent(
-      world,
-      'Balances',
-      'component.Balances'
-    ),
-    Blacklist: defineNumberArrayComponent(
-      world,
-      'Blacklist',
-      'component.Blacklist'
-    ),
+    Balances: defineNumberArrayComponent(world, 'Balances', 'component.Balances'),
+    Blacklist: defineNumberArrayComponent(world, 'Blacklist', 'component.Blacklist'),
     Coin: defineNumberEZ('Coin', 'component.Coin'),
     Cost: defineNumberEZ('Cost', 'component.Cost'),
     Description: defineStringEZ('Description', 'component.Description'),
@@ -136,7 +119,7 @@ export function createComponents(world: World) {
     HealthCurrent: defineNumberEZ('HealthCurrent', 'component.Health.Current'),
     Keys: defineNumberArrayComponent(world, 'Keys', 'component.Keys'),
     Level: defineNumberEZ('Level', 'component.Level'),
-    Location: defineLocationComponent(world, 'Location', 'component.Location'),
+    Location: defineNumberEZ('Location', 'component.Location'),
     LogicType: defineStringEZ('LogicType', 'component.LogicType'),
     Max: defineNumberEZ('Max', 'component.Max'),
     Name: defineStringEZ('Name', 'component.Name'),
@@ -160,20 +143,13 @@ export function createComponents(world: World) {
     Value: defineNumberEZ('Value', 'component.Value'),
     Violence: defineNumberEZ('Violence', 'component.Violence'),
     Weights: defineNumberArrayComponent(world, 'Weights', 'component.Weights'),
-    Whitelist: defineNumberArrayComponent(
-      world,
-      'Whitelist',
-      'component.Whitelist'
-    ),
+    Whitelist: defineNumberArrayComponent(world, 'Whitelist', 'component.Whitelist'),
     Wei: defineStringEZ('Wei', 'component.Wei'),
 
     // Time/Block Tracking
     LastBlock: defineNumberEZ('BlockLast', 'component.Block.Last'),
     RevealBlock: defineNumberEZ('BlockReveal', 'component.Block.Reveal'),
-    LastActionTime: defineNumberEZ(
-      'LastActionTime',
-      'component.Time.LastAction'
-    ),
+    LastActionTime: defineNumberEZ('LastActionTime', 'component.Time.LastAction'),
     LastTime: defineNumberEZ('LastTime', 'component.Time.Last'),
     StartTime: defineNumberEZ('StartTime', 'component.Time.Start'),
     Time: defineNumberEZ('Time', 'component.Time'),
@@ -185,10 +161,7 @@ export function createComponents(world: World) {
     FavoriteFood: defineStringEZ('FavoriteFood', 'component.Favorite.Food'),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ('MediaURI', 'component.MediaURI'),
-    OperatorAddress: defineStringEZ(
-      'OperatorAddress',
-      'component.Address.Operator'
-    ),
+    OperatorAddress: defineStringEZ('OperatorAddress', 'component.Address.Operator'),
     OwnerAddress: defineStringEZ('OwnerAddress', 'component.Address.Owner'),
   };
 }

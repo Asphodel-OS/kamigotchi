@@ -50,7 +50,7 @@ export const Banner = (props: Props) => {
     let reason = '';
     let available = [...kamis];
 
-    if (account.roomIndex !== node.roomIndex) {
+    if (account.location !== node.location) {
       reason = 'node too far!';
     }
 
@@ -88,7 +88,7 @@ export const Banner = (props: Props) => {
           key={`harvest-add`}
           img={harvestIcon}
           options={actionOptions}
-          disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
+          disabled={options.length == 0 || account.location !== node.location}
         />
       </Tooltip>
     );

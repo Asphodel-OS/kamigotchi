@@ -9,7 +9,7 @@ import { Room } from 'constants/rooms';
 import { triggerShopModal } from 'layers/phaser/utils/triggers/triggerShopModal';
 
 export const room13: Room = {
-  roomIndex: 13,
+  location: 13,
   background: {
     key: 'bg_room013',
     path: backgroundMina,

@@ -8,7 +8,7 @@ import { Room } from 'constants/rooms';
 import { triggerLeaderboardModal } from 'layers/phaser/utils/triggers/triggerLeaderboardModal';
 
 export const room19: Room = {
-  roomIndex: 19,
+  location: 19,
   background: {
     key: 'bg_room19',
     path: backgroundDefault,

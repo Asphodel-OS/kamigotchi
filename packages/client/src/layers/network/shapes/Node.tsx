@@ -17,7 +17,7 @@ export interface Node {
   index: number;
   entityIndex: EntityIndex;
   type: string;
-  roomIndex: number;
+  location: number;
   name: string;
   description: string;
   affinity?: string;
@@ -46,7 +46,7 @@ export const getNode = (
       Affinity,
       Description,
       IsProduction,
-      RoomIndex,
+      Location,
       Name,
       NodeID,
       NodeIndex,
@@ -61,7 +61,7 @@ export const getNode = (
     index: (getComponentValue(NodeIndex, entityIndex)?.value as number) * 1,
     entityIndex,
     type: getComponentValue(Type, entityIndex)?.value as string,
-    roomIndex: (getComponentValue(RoomIndex, entityIndex)?.value as number) * 1,
+    location: (getComponentValue(Location, entityIndex)?.value as number) * 1,
     name: getComponentValue(Name, entityIndex)?.value as string,
     description: getComponentValue(Description, entityIndex)?.value as string,
     affinity: getComponentValue(Affinity, entityIndex)?.value as string, // does this break if there's no affinity?

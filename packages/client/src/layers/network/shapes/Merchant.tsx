@@ -17,7 +17,7 @@ export interface Merchant {
   index: number;
   entityIndex: EntityIndex;
   name: string;
-  roomIndex: number;
+  location: number;
   listings: Listing[];
 }
 
@@ -25,7 +25,7 @@ export interface Merchant {
 export const getMerchant = (network: NetworkLayer, entityIndex: EntityIndex): Merchant => {
   const {
     world,
-    components: { IsListing, RoomIndex, NPCIndex, Name },
+    components: { IsListing, Location, NPCIndex, Name },
   } = network;
 
   let merchant: Merchant = {
@@ -33,7 +33,7 @@ export const getMerchant = (network: NetworkLayer, entityIndex: EntityIndex): Me
     index: getComponentValue(NPCIndex, entityIndex)?.value as number,
     entityIndex,
     name: getComponentValue(Name, entityIndex)?.value as string,
-    roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
+    location: getComponentValue(Location, entityIndex)?.value as number,
     listings: [],
   };
 

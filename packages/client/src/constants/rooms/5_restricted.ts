@@ -8,7 +8,7 @@ import { amusement } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
 export const room5: Room = {
-  roomIndex: 5,
+  location: 5,
   background: {
     key: 'bg_room005',
     path: backgroundDefault,

@@ -4,7 +4,7 @@ import { Room } from 'constants/rooms';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggers/triggerPetMintModal';
 
 export const room4: Room = {
-  roomIndex: 4,
+  location: 4,
   background: {
     key: 'bg_room004',
     path: backgroundNight,

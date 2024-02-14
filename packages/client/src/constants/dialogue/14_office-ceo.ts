@@ -18,7 +18,7 @@ export const smallwaterfall: DialogueNode = {
 export default [appleimac, businesspaperwork, smallwaterfall];
 
 // export const sallwaterfall: Room = {
-//   roomIndex: 14,
+//   location: 14,
 //   background: {
 //     key: 'bg_room014',
 //     path: backgroundDefault,

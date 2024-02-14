@@ -1,15 +1,12 @@
 import { Component, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
-import { NetworkLayer } from '../types';
-import {
-  getAccountByIndex,
-  getAllAccounts,
-} from 'layers/network/shapes/Account';
-import { getKamiByIndex, getAllKamis } from 'layers/network/shapes/Kami';
-import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
-import { getNodeByIndex, getAllNodes } from 'layers/network/shapes/Node';
-import { getRoomByIndex, getAllRooms } from 'layers/network/shapes/Room';
+import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
+import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
+import { getAllRooms, getRoomByLocation } from 'layers/network/shapes/Room';
 import { numberToHex } from 'utils/hex';
+import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
+import { NetworkLayer } from '../types';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
 // TODO: implement Item, Quest, Skill, Trait paths (registries)
@@ -55,11 +52,11 @@ export const initExplorer = (network: NetworkLayer) => {
 
   explorer.room = {
     get: (index: number, options?: {}) => {
-      return getRoomByIndex(network, numberToHex(index), options);
+      return getRoomByLocation(network, numberToHex(index), options);
     },
     getAll: (options?: {}) => getAllRooms(network, options),
     entities: () => Array.from(components.IsRoom.entities()),
-    indices: () => Array.from(components.RoomIndex.values.value.values()),
+    indices: () => Array.from(components.Location.values.value.values()),
   };
 
   // helper function to get all the set components values for a given entity

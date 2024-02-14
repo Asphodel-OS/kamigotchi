@@ -23,7 +23,7 @@ interface Props {
     queryFoodRegistry: (index: number) => EntityIndex;
     queryReviveRegistry: (index: number) => EntityIndex;
     getItem: (index: EntityIndex) => Item;
-    getRoom: (roomIndex: number) => Room;
+    getRoom: (location: number) => Room;
     getQuestByIndex: (index: number) => Quest | undefined;
   };
 }

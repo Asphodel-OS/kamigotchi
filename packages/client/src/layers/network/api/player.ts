@@ -53,10 +53,10 @@ export function createPlayerAPI(systems: any) {
     });
   }
 
-  // @dev moves the account to another room from their current roomIndex
-  // @param roomIndex  destination room roomIndex
-  function moveAccount(roomIndex: number) {
-    return systems['system.Account.Move'].executeTyped(roomIndex);
+  // @dev moves the account to another room from their current location
+  // @param location  destination room location
+  function moveAccount(location: number) {
+    return systems['system.Account.Move'].executeTyped(location);
   }
 
   // @dev registers an account. should be called by Owner wallet

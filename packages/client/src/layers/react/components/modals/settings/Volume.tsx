@@ -5,7 +5,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { playClick } from 'utils/sounds';
 
-// TODO: formally define the settings struct at some central roomIndex
+// TODO: formally define the settings struct at some central location
 // TODO: smoother volume slider (atm clunky bc relying directly on localstorage updates)
 export const Volume = () => {
   const [settings, setSettings] = useLocalStorage('settings', {

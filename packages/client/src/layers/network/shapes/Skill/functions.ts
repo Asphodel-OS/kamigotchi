@@ -1,16 +1,12 @@
-import { Effect, Requirement, Skill } from './types';
 import { Account } from '../Account';
-import { Kami, isStarving, isDead, isOffWorld, isWithAccount } from '../Kami';
+import { Kami, isDead, isOffWorld, isStarving, isWithAccount } from '../Kami';
+import { Effect, Requirement, Skill } from './types';
 
 // get the reason why a player cannot upgrade a skill
-// checking (in order) roomIndex/status, maxxed out, requirements unmet, not enough points
+// checking (in order) location/status, maxxed out, requirements unmet, not enough points
 // NOTE: assumes Account, Skills and Production are attached to the input Kami
-export const getUpgradeError = (
-  index: number,
-  kami: Kami,
-  registry: Map<number, Skill>
-) => {
-  // status/roomIndex check
+export const getUpgradeError = (index: number, kami: Kami, registry: Map<number, Skill>) => {
+  // status/location check
   if (isDead(kami)) return [`${kami.name} is Dead`];
   if (isOffWorld(kami)) return [`${kami.name} is Off World`];
   if (isStarving(kami)) return [`${kami.name} is Starving`];
@@ -23,8 +19,7 @@ export const getUpgradeError = (
   // maxxed out check
   const maxPoints = rSkill.points.max;
   const kSkill = kami.skills?.find((s) => s.index === rSkill.index);
-  if ((kSkill?.points.current ?? 0) >= maxPoints)
-    return [`Maxxed Out (${maxPoints}/${maxPoints})`];
+  if ((kSkill?.points.current ?? 0) >= maxPoints) return [`Maxxed Out (${maxPoints}/${maxPoints})`];
 
   // requirements check
   for (let req of rSkill.requirements ?? []) {
@@ -34,10 +29,7 @@ export const getUpgradeError = (
 
   // skill cost
   if (rSkill.cost > kami.skillPoints)
-    return [
-      `Insufficient Skill Points.`,
-      `Need ${rSkill.cost}. Have ${kami.skillPoints}.`,
-    ];
+    return [`Insufficient Skill Points.`, `Need ${rSkill.cost}. Have ${kami.skillPoints}.`];
 };
 
 // parse the description of a skill requirement from its components
@@ -71,10 +63,8 @@ export const parseEffectText = (effect: Effect): string => {
 
   // number formatting
   if (effect.type === 'STAT') text += effect.value * 1;
-  else if (effect.subtype === 'DRAIN')
-    text += `${(effect.value / 10).toFixed(1)}%`;
-  else if (effect.subtype === 'OUTPUT')
-    text += `${(effect.value / 10).toFixed(1)}%`;
+  else if (effect.subtype === 'DRAIN') text += `${(effect.value / 10).toFixed(1)}%`;
+  else if (effect.subtype === 'OUTPUT') text += `${(effect.value / 10).toFixed(1)}%`;
   else if (effect.subtype === 'COOLDOWN') text += `${effect.value * 1}s`;
   else text += effect.value * 1;
 
@@ -93,8 +83,7 @@ export const parseEffectText = (effect: Effect): string => {
 // check whether a skill is maxxed out
 export const isMaxxed = (skill: Skill, holder: Account | Kami) => {
   const target = skill.points.max;
-  const current =
-    holder.skills?.find((n) => n.index === skill.index)?.points.current || 0;
+  const current = holder.skills?.find((n) => n.index === skill.index)?.points.current || 0;
   return current < target;
 };
 
@@ -104,10 +93,7 @@ export const meetsCost = (skill: Skill, holder: Account | Kami): boolean => {
 };
 
 // check whether a holder meets a requirement of a skill
-export const meetsRequirement = (
-  requirement: Requirement,
-  holder: Account | Kami
-) => {
+export const meetsRequirement = (requirement: Requirement, holder: Account | Kami) => {
   let target, current, skill;
   switch (requirement.type) {
     case 'LEVEL':

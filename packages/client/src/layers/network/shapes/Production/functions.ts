@@ -21,8 +21,8 @@ export const calcOutput = (production?: Production): number => {
   return Math.max(0, output);
 };
 
-// interpret the roomIndex of a production
-export const getRoomIndex = (production?: Production): number => {
+// interpret the location of a production
+export const getLocation = (production?: Production): number => {
   if (!production || !production.node) return 0;
-  return production.node.roomIndex;
+  return production.node.location;
 };
