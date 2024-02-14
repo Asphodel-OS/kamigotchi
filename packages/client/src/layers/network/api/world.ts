@@ -1,17 +1,17 @@
+import { utils } from 'ethers';
 import { AdminAPI, createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
-import { utils } from 'ethers';
 
-import items from 'assets/data/items/Items.csv';
 import droptables from 'assets/data/items/Droptables.csv';
+import items from 'assets/data/items/Items.csv';
 import background from 'assets/data/kami/Background.csv';
 import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
 import face from 'assets/data/kami/Face.csv';
 import hand from 'assets/data/kami/Hand.csv';
-import rooms from 'assets/data/rooms/Rooms.csv';
 import nodes from 'assets/data/nodes/Nodes.csv';
 import maps from 'assets/data/rooms/Maps.csv';
+import rooms from 'assets/data/rooms/Rooms.csv';
 
 export function setUpWorldAPI(systems: any) {
   const api = createAdminAPI(systems);
@@ -350,14 +350,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(2, 'COMPLETE', 'QUEST', 0, 1);
-    await api.registry.quest.add.objective(
-      2,
-      'Mint a Kami',
-      'CURR_MIN',
-      'KAMI',
-      0,
-      1
-    );
+    await api.registry.quest.add.objective(2, 'Mint a Kami', 'CURR_MIN', 'KAMI', 0, 1);
     await api.registry.quest.add.reward(2, 'ITEM', 2, 1);
     await api.registry.quest.add.reward(2, 'QUEST_POINTS', 0, 2);
 
@@ -370,14 +363,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(3, 'COMPLETE', 'QUEST', 0, 2);
-    await api.registry.quest.add.objective(
-      3,
-      'Harvest from a Node',
-      'INC_MIN',
-      'COIN_TOTAL',
-      0,
-      1
-    );
+    await api.registry.quest.add.objective(3, 'Harvest from a Node', 'INC_MIN', 'COIN_TOTAL', 0, 1);
     await api.registry.quest.add.reward(3, 'ITEM', 1001, 1);
     await api.registry.quest.add.reward(3, 'QUEST_POINTS', 0, 2);
 
@@ -390,14 +376,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(4, 'COMPLETE', 'QUEST', 0, 3);
-    await api.registry.quest.add.objective(
-      4,
-      'Harvest 100 $MUSU',
-      'INC_MIN',
-      'COIN_TOTAL',
-      0,
-      100
-    );
+    await api.registry.quest.add.objective(4, 'Harvest 100 $MUSU', 'INC_MIN', 'COIN_TOTAL', 0, 100);
     await api.registry.quest.add.reward(4, 'ITEM', 1001, 3);
     await api.registry.quest.add.reward(4, 'QUEST_POINTS', 0, 3);
 
@@ -442,21 +421,8 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.quest.add.reward(6, 'QUEST_POINTS', 0, 8);
 
     // quest 7
-    await api.registry.quest.create(
-      7,
-      'Daily quest: Harvesting',
-      'Harvest 200 $MUSU',
-      0,
-      64800
-    );
-    await api.registry.quest.add.objective(
-      7,
-      'Harvest 200 $MUSU',
-      'INC_MIN',
-      'COIN_TOTAL',
-      0,
-      200
-    );
+    await api.registry.quest.create(7, 'Daily quest: Harvesting', 'Harvest 200 $MUSU', 0, 64800);
+    await api.registry.quest.add.objective(7, 'Harvest 200 $MUSU', 'INC_MIN', 'COIN_TOTAL', 0, 200);
     await api.registry.quest.add.reward(7, 'ITEM', 10001, 1);
 
     // quest 8 and 9 have previously been repeatable quests for testing
@@ -472,14 +438,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(10, 'COMPLETE', 'QUEST', 0, 3);
-    await api.registry.quest.add.objective(
-      10,
-      'Liquidate 1 Kami',
-      'INC_MIN',
-      'LIQUIDATE',
-      0,
-      1
-    );
+    await api.registry.quest.add.objective(10, 'Liquidate 1 Kami', 'INC_MIN', 'LIQUIDATE', 0, 1);
     await api.registry.quest.add.reward(10, 'ITEM', 5, 1);
 
     await api.registry.quest.create(
@@ -490,14 +449,7 @@ export function setUpWorldAPI(systems: any) {
       0
     );
     await api.registry.quest.add.requirement(11, 'COMPLETE', 'QUEST', 0, 10);
-    await api.registry.quest.add.objective(
-      11,
-      'Liquidate 10 Kamis',
-      'INC_MIN',
-      'LIQUIDATE',
-      0,
-      10
-    );
+    await api.registry.quest.add.objective(11, 'Liquidate 10 Kamis', 'INC_MIN', 'LIQUIDATE', 0, 10);
     await api.registry.quest.add.reward(11, 'ITEM', 4, 1);
   }
 
@@ -532,19 +484,13 @@ export function setUpWorldAPI(systems: any) {
     await api.registry.relationship.create(1, 10, 'mina 10', [5, 7, 9], []);
   }
 
-  async function deleteRelationships(
-    api: AdminAPI,
-    npcs: number[],
-    indices: number[]
-  ) {
+  async function deleteRelationships(api: AdminAPI, npcs: number[], indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
         await api.registry.relationship.delete(npcs[i], indices[i]);
       } catch {
-        console.error(
-          'Could not delete relationship ' + indices[i] + ' for npc ' + npcs[i]
-        );
+        console.error('Could not delete relationship ' + indices[i] + ' for npc ' + npcs[i]);
       }
     }
   }
@@ -705,14 +651,7 @@ export function setUpWorldAPI(systems: any) {
       '+10% Harvest Output per level',
       'images/skills/looping.png'
     );
-    await api.registry.skill.add.effect(
-      203,
-      'HARVEST',
-      'OUTPUT',
-      'INC',
-      0,
-      100
-    );
+    await api.registry.skill.add.effect(203, 'HARVEST', 'OUTPUT', 'INC', 0, 100);
     await api.registry.skill.add.requirement(203, 'SKILL', 202, 3);
 
     await api.registry.skill.create(
@@ -725,14 +664,7 @@ export function setUpWorldAPI(systems: any) {
       '+12.5% Harvest Output per level',
       'images/skills/degenerate.png'
     );
-    await api.registry.skill.add.effect(
-      204,
-      'HARVEST',
-      'OUTPUT',
-      'INC',
-      0,
-      125
-    );
+    await api.registry.skill.add.effect(204, 'HARVEST', 'OUTPUT', 'INC', 0, 125);
     await api.registry.skill.add.requirement(204, 'SKILL', 203, 3);
 
     await api.registry.skill.create(
@@ -758,14 +690,7 @@ export function setUpWorldAPI(systems: any) {
       '-20s Harvest Cooldown per level',
       'images/skills/bandit.png'
     );
-    await api.registry.skill.add.effect(
-      220,
-      'HARVEST',
-      'COOLDOWN',
-      'INC',
-      0,
-      20
-    );
+    await api.registry.skill.add.effect(220, 'HARVEST', 'COOLDOWN', 'INC', 0, 20);
     await api.registry.skill.add.requirement(220, 'SKILL', 2, 3);
 
     // (Violence) Skill Tree
@@ -779,14 +704,7 @@ export function setUpWorldAPI(systems: any) {
       '-20s Attack Cooldown per level',
       'images/skills/sniper.png'
     );
-    await api.registry.skill.add.effect(
-      320,
-      'ATTACK',
-      'COOLDOWN',
-      'INC',
-      0,
-      20
-    );
+    await api.registry.skill.add.effect(320, 'ATTACK', 'COOLDOWN', 'INC', 0, 20);
     await api.registry.skill.add.requirement(320, 'SKILL', 3, 3);
 
     // (Harmony) Skill Tree
@@ -865,9 +783,7 @@ export function setUpWorldAPI(systems: any) {
             data[i].get('Harmony') ? data[i].get('Harmony') : 0,
             data[i].get('Slots') ? data[i].get('Slots') : 0,
             data[i].get('Tier') ? data[i].get('Tier') : 0,
-            data[i].get('Affinity')
-              ? data[i].get('Affinity').toUpperCase()
-              : '',
+            data[i].get('Affinity') ? data[i].get('Affinity').toUpperCase() : '',
             data[i].get('Name'), // name of trait
             type // type: body, color, etc
           );
@@ -885,11 +801,7 @@ export function setUpWorldAPI(systems: any) {
     await initSingle(hand, 'HAND');
   }
 
-  async function deleteTraits(
-    api: AdminAPI,
-    indices: number[],
-    types: string[]
-  ) {
+  async function deleteTraits(api: AdminAPI, indices: number[], types: string[]) {
     for (let i = 0; i < indices.length; i++) {
       await sleepIf();
       try {
@@ -968,9 +880,7 @@ export function setUpWorldAPI(systems: any) {
         for (let j = i + 1; j < arr.length && arr[j][0] === ''; j++) {
           data = arr[j];
           for (let k = 1; k < headers.length; k++) {
-            mp.get(headers[k].trim()).push(
-              data[k].trim() ? data[k].trim() : '0'
-            );
+            mp.get(headers[k].trim()).push(data[k].trim() ? data[k].trim() : '0');
           }
           i = j - 1;
         }
@@ -1005,8 +915,7 @@ export function setUpWorldAPI(systems: any) {
     },
     relationships: {
       init: () => initRelationships(api),
-      delete: (npcs: number[], indices: number[]) =>
-        deleteRelationships(api, indices, npcs),
+      delete: (npcs: number[], indices: number[]) => deleteRelationships(api, indices, npcs),
     },
     rooms: {
       init: () => initRooms(api),
@@ -1019,8 +928,7 @@ export function setUpWorldAPI(systems: any) {
     traits: {
       init: () => initTraits(api),
       tryInit: () => initTraitsWithFail(api),
-      delete: (indices: number[], types: string[]) =>
-        deleteTraits(api, indices, types),
+      delete: (indices: number[], types: string[]) => deleteTraits(api, indices, types),
     },
   };
 

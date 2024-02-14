@@ -9,9 +9,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Account, getAccount } from './Account';
-import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
+import { numberToHex } from 'utils/hex';
+import { Account, getAccount } from './Account';
 
 export interface Location {
   x: number;
@@ -39,21 +39,10 @@ export interface RoomOptions {
 }
 
 // get a Room object from its EnityIndex
-export const getRoom = (
-  network: NetworkLayer,
-  index: EntityIndex,
-  options?: RoomOptions
-): Room => {
+export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: RoomOptions): Room => {
   const {
     world,
-    components: {
-      IsAccount,
-      AccountID,
-      Description,
-      Location,
-      RoomIndex,
-      Name,
-    },
+    components: { IsAccount, AccountID, Description, Location, RoomIndex, Name },
   } = network;
 
   let room: Room = {
@@ -76,19 +65,14 @@ export const getRoom = (
   // if the room has an owner, include their name
   if (options?.owner && hasComponent(AccountID, index)) {
     const accountID = getComponentValue(AccountID, index)?.value as EntityID;
-    const accountEntityIndex = world.entityToIndex.get(
-      accountID
-    ) as EntityIndex;
+    const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
     room.owner = getAccount(network, accountEntityIndex);
   }
 
   // pull players currently in room
   if (options?.players) {
     const accountResults = Array.from(
-      runQuery([
-        Has(IsAccount),
-        HasValue(RoomIndex, { value: numberToHex(room.index) }),
-      ])
+      runQuery([Has(IsAccount), HasValue(RoomIndex, { value: numberToHex(room.index) })])
     );
 
     room.players = accountResults.map((accountEntityIndex) => {
@@ -114,9 +98,7 @@ export const getExits = (network: NetworkLayer, room: Room): Room[] => {
   // console.log('exits1', exits);
 
   const storedExits = getComponentValue(Exits, room.entityIndex)
-    ? (getComponentValue(Exits, room.entityIndex)?.value as number[]).map(
-        (exit) => exit * 1
-      )
+    ? (getComponentValue(Exits, room.entityIndex)?.value as number[]).map((exit) => exit * 1)
     : [];
   // console.log('storedExits', storedExits);
   for (let i = 0; i < storedExits.length; i++) {
@@ -129,10 +111,8 @@ export const getExits = (network: NetworkLayer, room: Room): Room[] => {
   return exits;
 };
 
-export const getAllRooms = (
-  network: NetworkLayer,
-  options?: RoomOptions
-): Room[] => queryRoomsX(network, {}, options);
+export const getAllRooms = (network: NetworkLayer, options?: RoomOptions): Room[] =>
+  queryRoomsX(network, {}, options);
 
 export const getRoomByIndex = (
   network: NetworkLayer,
@@ -173,8 +153,7 @@ export const queryRoomsEntitiesX = (
 
   const toQuery: QueryFragment[] = [Has(IsRoom)];
 
-  if (options?.index)
-    toQuery.push(HasValue(RoomIndex, { value: numberToHex(options.index) }));
+  if (options?.index) toQuery.push(HasValue(RoomIndex, { value: numberToHex(options.index) }));
 
   if (options?.location)
     toQuery.push(

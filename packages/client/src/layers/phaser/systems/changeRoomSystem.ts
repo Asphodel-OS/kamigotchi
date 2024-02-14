@@ -1,9 +1,9 @@
 import {
-  defineRxSystem,
-  defineQuery,
-  getComponentValue,
   Has,
   HasValue,
+  defineQuery,
+  defineRxSystem,
+  getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 import { merge } from 'rxjs';
@@ -13,8 +13,8 @@ import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
 import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
@@ -41,15 +41,11 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
 
     // TODO: update this (and everything) to operate off of the selected Connector address
     const accountIndex = Array.from(
-      runQuery([
-        Has(IsAccount),
-        HasValue(OperatorAddress, { value: connectedAddress.get() }),
-      ])
+      runQuery([Has(IsAccount), HasValue(OperatorAddress, { value: connectedAddress.get() })])
     )[0];
 
     if (accountIndex == update.entity || 0 == update.entity) {
-      const currentRoom =
-        (getComponentValue(RoomIndex, accountIndex)?.value as number) * 1;
+      const currentRoom = (getComponentValue(RoomIndex, accountIndex)?.value as number) * 1;
       setRoom(currentRoom);
 
       GameSceneInstance.room = rooms[currentRoom];
@@ -65,8 +61,7 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   defineRxSystem(
     world,
     merge(
-      defineQuery([Has(RoomIndex), Has(OperatorAddress), Has(OwnerAddress)])
-        .update$,
+      defineQuery([Has(RoomIndex), Has(OperatorAddress), Has(OwnerAddress)]).update$,
       Network.update$
     ).pipe(),
     system
