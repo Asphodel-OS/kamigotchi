@@ -2,12 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  EventFragment,
-  FunctionFragment,
-  Result,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
   BigNumber,
   BigNumberish,
@@ -20,11 +14,17 @@ import type {
   utils,
 } from "ethers";
 import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
   OnEvent,
   PromiseOrValue,
-  TypedEvent,
-  TypedEventFilter,
-  TypedListener,
 } from "./common";
 
 export interface StringBareComponentInterface extends utils.Interface {
