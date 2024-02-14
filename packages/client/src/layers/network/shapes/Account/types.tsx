@@ -124,7 +124,7 @@ export const getAccount = (
     operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
     coin: (getComponentValue(Coin, entityIndex)?.value || (0 as number)) * 1,
-    roomIndex: (getComponentValue(RoomIndex, entityIndex)?.value || (0 as number)) * 1,
+    roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     level: 0, // placeholder
     questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
     skillPoints: 0, // placeholder
