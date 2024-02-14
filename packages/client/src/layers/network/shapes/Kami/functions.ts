@@ -85,8 +85,7 @@ export const calcHarvestTime = (kami: Kami): number => {
 export const calcCooldownRemaining = (kami: Kami): number => {
   const now = Date.now() / 1000;
   const lastStandardActionTime = kami.time.cooldown.last;
-  const remainingTime =
-    kami.time.cooldown.requirement + lastStandardActionTime - now;
+  const remainingTime = kami.time.cooldown.requirement + lastStandardActionTime - now;
   return Math.max(0, remainingTime);
 };
 
@@ -166,13 +165,8 @@ const calcLiqAffinityMultiplier = (
 };
 
 // calculate the base liquidation threshold b/w two kamis as a %
-const calcLiqThresholdBase = (
-  attacker: Kami,
-  victim: Kami,
-  config: LiquidationConfig
-): number => {
-  const attackerTotalViolence =
-    attacker.stats.violence + attacker.bonusStats.violence;
+const calcLiqThresholdBase = (attacker: Kami, victim: Kami, config: LiquidationConfig): number => {
+  const attackerTotalViolence = attacker.stats.violence + attacker.bonusStats.violence;
   const victimTotalHarmony = victim.stats.harmony + victim.bonusStats.harmony;
   const ratio = attackerTotalViolence / victimTotalHarmony;
   const weight = cdf(Math.log(ratio), 0, 1);
@@ -202,23 +196,11 @@ export const calcLiqThresholdValue = (
 };
 
 // determine whether a kami can liquidate another kami
-export const canLiquidate = (
-  attacker: Kami,
-  victim: Kami,
-  config: LiquidationConfig
-): boolean => {
-  return (
-    !onCooldown(attacker) &&
-    !isStarving(attacker) &&
-    canMog(attacker, victim, config)
-  );
+export const canLiquidate = (attacker: Kami, victim: Kami, config: LiquidationConfig): boolean => {
+  return !onCooldown(attacker) && !isStarving(attacker) && canMog(attacker, victim, config);
 };
 
-export const canMog = (
-  attacker: Kami,
-  victim: Kami,
-  config: LiquidationConfig
-): boolean => {
+export const canMog = (attacker: Kami, victim: Kami, config: LiquidationConfig): boolean => {
   const thresholdPercent = calcLiqThresholdPercent(attacker, victim, config);
   const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
   const absoluteThreshold = thresholdPercent * victimTotalHealth;

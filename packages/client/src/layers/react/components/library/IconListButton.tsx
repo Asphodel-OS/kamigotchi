@@ -63,12 +63,7 @@ export function IconListButton(props: Props) {
 
   return (
     <div>
-      <Button
-        ref={toggleRef}
-        id={props.id}
-        onClick={handleClick}
-        style={setStyles()}
-      >
+      <Button ref={toggleRef} id={props.id} onClick={handleClick} style={setStyles()}>
         <Corner />
         <Image src={props.img} />
       </Button>

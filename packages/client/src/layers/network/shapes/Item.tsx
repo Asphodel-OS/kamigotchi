@@ -61,12 +61,8 @@ export const getItem = (
     type: '',
     name: (getComponentValue(Name, index)?.value as string) ?? 'Unknown Item',
     image: {
-      default: `${baseURI}${
-        getComponentValue(MediaURI, index)?.value as string
-      }`,
-      x4: `${baseURI}${(
-        getComponentValue(MediaURI, index)?.value as string
-      ).slice(0, -4)}_x4.png`,
+      default: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
+      x4: `${baseURI}${(getComponentValue(MediaURI, index)?.value as string).slice(0, -4)}_x4.png`,
     },
     description: getComponentValue(Description, index)?.value as string,
     stats: getStats(network, index),
@@ -75,12 +71,10 @@ export const getItem = (
   // determine the type of the item based on the presence of indices
   if (getComponentValue(FoodIndex, index) !== undefined) {
     Item.type = 'FOOD';
-    Item.familyIndex =
-      (getComponentValue(FoodIndex, index)?.value as number) * 1;
+    Item.familyIndex = (getComponentValue(FoodIndex, index)?.value as number) * 1;
   } else if (getComponentValue(ReviveIndex, index) !== undefined) {
     Item.type = 'REVIVE';
-    Item.familyIndex =
-      (getComponentValue(ReviveIndex, index)?.value as number) * 1;
+    Item.familyIndex = (getComponentValue(ReviveIndex, index)?.value as number) * 1;
   } else if (hasComponent(IsLootbox, index)) {
     Item.type = 'LOOTBOX';
   } else if (hasComponent(IsConsumable, index)) {
@@ -99,19 +93,13 @@ export const getItemByIndex = (
   } = network;
 
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      HasValue(ItemIndex, { value: numberToHex(index) }),
-    ])
+    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: numberToHex(index) })])
   );
   return getItem(network, entityIndices[0]);
 };
 
 // Query for a Food Registry entry by its FoodIndex
-export const queryFoodRegistry = (
-  network: NetworkLayer,
-  index: number
-): EntityIndex => {
+export const queryFoodRegistry = (network: NetworkLayer, index: number): EntityIndex => {
   const {
     components: { FoodIndex, IsRegistry },
   } = network;
@@ -123,10 +111,7 @@ export const queryFoodRegistry = (
 };
 
 // Query for a Revive Registry entry by its ReviveIndex
-export const queryReviveRegistry = (
-  network: NetworkLayer,
-  index: number
-): EntityIndex => {
+export const queryReviveRegistry = (network: NetworkLayer, index: number): EntityIndex => {
   const {
     components: { ReviveIndex, IsRegistry },
   } = network;

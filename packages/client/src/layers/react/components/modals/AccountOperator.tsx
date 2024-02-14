@@ -76,15 +76,11 @@ export function registerAccountOperator() {
         if (newPrivKey != '') setPrivKey(newPrivKey);
       };
 
-      const handleChangePublic = (
-        event: React.ChangeEvent<HTMLInputElement>
-      ) => {
+      const handleChangePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNewAddress(event.target.value);
       };
 
-      const handleChangePrivate = (
-        event: React.ChangeEvent<HTMLInputElement>
-      ) => {
+      const handleChangePrivate = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNewPrivKey(event.target.value);
       };
 
@@ -97,12 +93,8 @@ export function registerAccountOperator() {
             <Title>Update Operator</Title>
             <Description style={{ color: '#FF785B' }}>{helperText}</Description>
             <br />
-            <Description>
-              Current Operator: {kamiAccount.operatorAddress}
-            </Description>
-            <Description>
-              Connected Burner: {burner.connected.address}
-            </Description>
+            <Description>Current Operator: {kamiAccount.operatorAddress}</Description>
+            <Description>Connected Burner: {burner.connected.address}</Description>
             <Container id='new-operator'>
               <Label>new address (optional)</Label>
               <Input

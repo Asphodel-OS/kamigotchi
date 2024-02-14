@@ -1,10 +1,4 @@
-import {
-  EntityIndex,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 
 import { Stats, getStats } from './Stats';
 import { NetworkLayer } from 'layers/network/types';
@@ -35,10 +29,7 @@ export interface TraitIndices {
 
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
-export const getTrait = (
-  network: NetworkLayer,
-  entityIndex: EntityIndex
-): Trait => {
+export const getTrait = (network: NetworkLayer, entityIndex: EntityIndex): Trait => {
   const { Affinity, Name, Rarity } = network.components;
 
   return {
@@ -49,10 +40,7 @@ export const getTrait = (
   };
 };
 
-export const getTraitByIndex = (
-  network: NetworkLayer,
-  index: number
-): Trait => {
+export const getTraitByIndex = (network: NetworkLayer, index: number): Trait => {
   const { IsRegistry, TraitIndex } = network.components;
 
   const entityIndices = Array.from(
@@ -61,10 +49,7 @@ export const getTraitByIndex = (
   return getTrait(network, entityIndices[0]);
 };
 
-export const getTraits = (
-  network: NetworkLayer,
-  indices: TraitIndices
-): Traits => {
+export const getTraits = (network: NetworkLayer, indices: TraitIndices): Traits => {
   return {
     background: getTrait(network, indices.backgroundIndex),
     body: getTrait(network, indices.bodyIndex),

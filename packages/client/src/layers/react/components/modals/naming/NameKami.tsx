@@ -63,9 +63,7 @@ export function registerNameKamiModal() {
       return (
         <ModalWrapper id='name_kami_modal' divName='nameKami' canExit>
           <Title>Name your Kami</Title>
-          <Description>
-            A Kami can only be named once. Choose wisely.
-          </Description>
+          <Description>A Kami can only be named once. Choose wisely.</Description>
           <InputSingleTextForm
             id={`kami-name`}
             label='new name'

@@ -199,14 +199,10 @@ export const useVisibility = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setButtons: (data: Buttons) =>
-      set((state: State) => ({ ...state, buttons: data })),
-    setFixtures: (data: Fixtures) =>
-      set((state: State) => ({ ...state, fixtures: data })),
-    setModals: (data: Modals) =>
-      set((state: State) => ({ ...state, modals: data })),
-    setValidators: (data: Validators) =>
-      set((state: State) => ({ ...state, validators: data })),
+    setButtons: (data: Buttons) => set((state: State) => ({ ...state, buttons: data })),
+    setFixtures: (data: Fixtures) => set((state: State) => ({ ...state, fixtures: data })),
+    setModals: (data: Modals) => set((state: State) => ({ ...state, modals: data })),
+    setValidators: (data: Validators) => set((state: State) => ({ ...state, validators: data })),
     toggleButtons: (isOn: boolean) =>
       set((state: State) => ({ ...state, buttons: toggleButtons(isOn) })),
     toggleFixtures: (isOn: boolean) =>

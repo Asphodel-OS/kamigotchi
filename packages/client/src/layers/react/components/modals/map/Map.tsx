@@ -117,9 +117,7 @@ export function registerMapModal() {
         <ModalWrapper
           id='world_map'
           divName='map'
-          header={
-            <ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />
-          }
+          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
           footer={<ExitsDisplay />}
           canExit
         >

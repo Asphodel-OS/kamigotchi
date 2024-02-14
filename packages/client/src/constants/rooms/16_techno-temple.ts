@@ -1,7 +1,4 @@
-import {
-  backgroundDefault,
-  path15,
-} from 'assets/images/rooms/16_techno-temple';
+import { backgroundDefault, path15 } from 'assets/images/rooms/16_techno-temple';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 

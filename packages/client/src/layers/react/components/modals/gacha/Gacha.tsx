@@ -13,11 +13,7 @@ import { Tabs } from './components/Tabs';
 import { getLazyKamis } from './utils/queries';
 import { abi } from 'abi/Pet721ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import {
-  GachaCommit,
-  isGachaAvailable,
-  calcRerollCost,
-} from 'layers/network/shapes/Gacha';
+import { GachaCommit, isGachaAvailable, calcRerollCost } from 'layers/network/shapes/Gacha';
 import { Kami } from 'layers/network/shapes/Kami';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
@@ -44,9 +40,7 @@ export function registerGachaModal() {
             kamis: true,
           });
 
-          const commits = [
-            ...(account.gacha ? account.gacha.commits : []),
-          ].reverse();
+          const commits = [...(account.gacha ? account.gacha.commits : [])].reverse();
 
           return {
             network,
@@ -234,9 +228,7 @@ export function registerGachaModal() {
       ///////////////
       // DISPLAY
 
-      const TabsBar = (
-        <Tabs tab={tab} setTab={setTab} commits={data.commits.length} />
-      );
+      const TabsBar = <Tabs tab={tab} setTab={setTab} commits={data.commits.length} />;
 
       const MainDisplay = () => {
         if (tab === 'MINT')
@@ -283,9 +275,7 @@ export function registerGachaModal() {
           header={
             <ModalHeader
               title='Gacha'
-              icon={
-                'https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif'
-              }
+              icon={'https://kamigotchi.nyc3.digitaloceanspaces.com/placeholder.gif'}
             />
           }
           canExit

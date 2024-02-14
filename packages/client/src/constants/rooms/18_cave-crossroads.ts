@@ -1,9 +1,4 @@
-import {
-  backgroundDefault,
-  path15,
-  path19,
-  path20,
-} from 'assets/images/rooms/18_cave-crossroads';
+import { backgroundDefault, path15, path19, path20 } from 'assets/images/rooms/18_cave-crossroads';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 

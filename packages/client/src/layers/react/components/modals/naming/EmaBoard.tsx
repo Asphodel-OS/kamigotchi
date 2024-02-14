@@ -54,9 +54,7 @@ export function registerEMABoardModal() {
       };
 
       const useRenamePotion = (kami: Kami) => {
-        const inv = data.account.inventories?.consumables.find(
-          (inv) => inv.item.index === 9001
-        );
+        const inv = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001);
         if (!inv) return;
 
         const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
@@ -100,11 +98,7 @@ export function registerEMABoardModal() {
         } else if (isDead(kami)) {
           return <Tooltip text={['cannot hear you (dead)']}>{button}</Tooltip>;
         } else if (!canName(kami)) {
-          return (
-            <Tooltip text={['cannot rename;', 'use some holy dust!']}>
-              {button}
-            </Tooltip>
-          );
+          return <Tooltip text={['cannot rename;', 'use some holy dust!']}>{button}</Tooltip>;
         }
         return button;
       };

@@ -61,9 +61,7 @@ export function registerWalletConnecter() {
           setButtonLabel('Connect');
         } else if (!chainMatches) {
           setTitle('Wrong Network');
-          setWarning(
-            `You're currently connected to the ${chain?.name} network`
-          );
+          setWarning(`You're currently connected to the ${chain?.name} network`);
           setDescription(`Please connect to ${defaultChain.name} network.`);
           setButtonLabel('Change Networks');
         } else {

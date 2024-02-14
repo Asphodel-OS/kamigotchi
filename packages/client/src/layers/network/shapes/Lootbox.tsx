@@ -37,10 +37,7 @@ export interface LootboxLog {
 }
 
 // get lootbox as an item with extra stuff
-export const getLootbox = (
-  network: NetworkLayer,
-  index: EntityIndex
-): Lootbox => {
+export const getLootbox = (network: NetworkLayer, index: EntityIndex): Lootbox => {
   const {
     components: { Keys, Weights },
   } = network;
@@ -66,10 +63,7 @@ export const getLootboxByIndex = (
   } = network;
 
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      HasValue(ItemIndex, { value: numberToHex(index) }),
-    ])
+    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: numberToHex(index) })])
   );
   return getLootbox(network, entityIndices[0]);
 };
@@ -83,10 +77,7 @@ export const getLootboxes = (
 };
 
 // gets a lootbox log entity
-export const getLootboxLog = (
-  network: NetworkLayer,
-  index: EntityIndex
-): LootboxLog => {
+export const getLootboxLog = (network: NetworkLayer, index: EntityIndex): LootboxLog => {
   const {
     world,
     components: {
@@ -122,8 +113,7 @@ export const getLootboxLog = (
   if (!log.isRevealed) {
     log.revealBlock = getComponentValue(RevealBlock, index)?.value as number;
   } else {
-    log.droptable.results = getComponentValue(Balances, index)
-      ?.value as number[];
+    log.droptable.results = getComponentValue(Balances, index)?.value as number[];
   }
 
   return log;

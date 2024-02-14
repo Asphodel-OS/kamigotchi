@@ -7,9 +7,7 @@ const stonelantern: DialogueNode = {
 
 const smallshrine: DialogueNode = {
   index: 112,
-  text: [
-    'A small shrine. This almost has the energy of a Node, but something is off...',
-  ],
+  text: ['A small shrine. This almost has the energy of a Node, but something is off...'],
 };
 
 const waterfall: DialogueNode = {

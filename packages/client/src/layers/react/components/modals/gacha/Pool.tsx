@@ -23,10 +23,7 @@ interface Props {
     Tab: JSX.Element;
   };
   query: {
-    getLazyKamis: (
-      queryOpts: QueryOptions,
-      options?: Options
-    ) => Array<() => Kami>;
+    getLazyKamis: (queryOpts: QueryOptions, options?: Options) => Array<() => Kami>;
   };
 }
 
@@ -62,10 +59,7 @@ export const Pool = (props: Props) => {
     ];
   };
 
-  const lazyKamis = props.query.getLazyKamis(
-    { state: 'GACHA' },
-    { traits: true }
-  );
+  const lazyKamis = props.query.getLazyKamis({ state: 'GACHA' }, { traits: true });
 
   const getTruncatedKamis = () => {
     const amt = numShown < lazyKamis.length ? numShown : lazyKamis.length;

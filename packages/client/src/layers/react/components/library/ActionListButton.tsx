@@ -46,12 +46,7 @@ export function ActionListButton(props: Props) {
 
   return (
     <div>
-      <Button
-        ref={toggleRef}
-        id={props.id}
-        onClick={handleClick}
-        style={setStyles()}
-      >
+      <Button ref={toggleRef} id={props.id} onClick={handleClick} style={setStyles()}>
         {props.text + ' ▾'}
       </Button>
       <Popover

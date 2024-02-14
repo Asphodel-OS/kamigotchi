@@ -22,15 +22,9 @@ export const Card = (props: Props) => {
 
   return (
     <Container key={props.image} fullWidth={props.fullWidth}>
-      <Image
-        onClick={() => imageOnClick()}
-        src={props.image}
-        size={props.size}
-      />
+      <Image onClick={() => imageOnClick()} src={props.image} size={props.size} />
       <ContentContainer>
-        {props.titleBarContent ? (
-          <TitleBar>{props.titleBarContent}</TitleBar>
-        ) : null}
+        {props.titleBarContent ? <TitleBar>{props.titleBarContent}</TitleBar> : null}
         <Content>{props.content}</Content>
       </ContentContainer>
     </Container>

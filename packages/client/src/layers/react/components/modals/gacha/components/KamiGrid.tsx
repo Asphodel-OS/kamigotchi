@@ -58,17 +58,11 @@ export const KamiGrid = (props: Props) => {
     };
 
     return (
-      <Tooltip
-        key={kami.index}
-        text={props.getKamiText ? props.getKamiText(kami) : []}
-      >
+      <Tooltip key={kami.index} text={props.getKamiText ? props.getKamiText(kami) : []}>
         <CellContainer id={`grid-${kami.id}`}>
           <Image onClick={() => imageOnClick()} src={kami.uri} />
           {props.select && (
-            <SelectButton
-              onClick={selectFunc}
-              style={isSelected ? selectedStyle : {}}
-            />
+            <SelectButton onClick={selectFunc} style={isSelected ? selectedStyle : {}} />
           )}
         </CellContainer>
       </Tooltip>
@@ -83,8 +77,7 @@ export const KamiGrid = (props: Props) => {
   // because of vw units, always 5 items per row
   const NullItems = () => {
     // total items, add 1 if show more is displayed
-    const gross =
-      props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
+    const gross = props.amtShown + (props.amtShown < props.grossShowable ? 1 : 0);
     const remainder = gross % 5 == 0 ? 0 : 5 - (gross % 5);
 
     return Array(remainder).fill(<EmptyEntry key={'empty'} />);

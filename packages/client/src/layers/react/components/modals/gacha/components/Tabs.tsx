@@ -21,11 +21,7 @@ export const Tabs = (props: Props) => {
 
   let text: string[] = [];
   if (props.tab === 'MINT')
-    text = [
-      'Get a kamigochi from the gacha pool!',
-      '',
-      'Each kamigochi costs 1 $KAMI.',
-    ];
+    text = ['Get a kamigochi from the gacha pool!', '', 'Each kamigochi costs 1 $KAMI.'];
   else if (props.tab === 'REROLL')
     text = [
       'Re-roll your kamigochi to get a new one from the pool!',

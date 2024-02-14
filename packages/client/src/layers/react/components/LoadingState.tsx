@@ -32,15 +32,12 @@ export function registerLoadingState() {
     ({ LoadingState, world }) => {
       const GodEntityIndex = world.entityToIndex.get(GodID);
       const loadingState =
-        GodEntityIndex == null
-          ? null
-          : getComponentValue(LoadingState, GodEntityIndex);
+        GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
 
       // percentage display when loading blocks from RPC
       const getProgressString = () => {
         if (loadingState == null) return;
-        if (loadingState.percentage == 100 || loadingState.percentage == 0)
-          return;
+        if (loadingState.percentage == 100 || loadingState.percentage == 0) return;
         return `  (${loadingState.percentage.toFixed(1)}%)`;
       };
 

@@ -7,9 +7,7 @@ export const clock: DialogueNode = {
 
 export const mina: DialogueNode = {
   index: 132,
-  text: [
-    "Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon.",
-  ],
+  text: ["Mina doesn't want to talk to you. Perhaps her dialogue will be implemented soon."],
 };
 
 export default [clock, mina];

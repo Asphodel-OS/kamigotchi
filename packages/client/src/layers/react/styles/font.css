@@ -1,5 +1,4 @@
 @font-face {
-  font-family: "Pixel";
-  src: local("Minecraft"),
-    url("../../../assets/fonts/dogicapixel.ttf") format("truetype");
+  font-family: 'Pixel';
+  src: local('Minecraft'), url('../../../assets/fonts/dogicapixel.ttf') format('truetype');
 }

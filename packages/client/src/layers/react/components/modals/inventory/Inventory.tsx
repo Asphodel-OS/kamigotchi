@@ -41,14 +41,10 @@ export function registerInventoryModal() {
         if (accInv?.revives) inventories = inventories.concat(accInv.revives);
         if (accInv?.mods) inventories = inventories.concat(accInv.mods);
         if (accInv?.gear) inventories = inventories.concat(accInv.gear);
-        if (accInv?.consumables)
-          inventories = inventories.concat(accInv.consumables);
-        if (accInv?.lootboxes)
-          inventories = inventories.concat(accInv.lootboxes);
+        if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
+        if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
 
-        return inventories.filter(
-          (inv) => !inv.item.isFungible || inv.balance! > 0
-        );
+        return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
       };
 
       /////////////////

@@ -57,8 +57,7 @@ export const InputSingleNumberForm = (props: Props) => {
   };
 
   const Stepper = () => {
-    const atMax =
-      props.bounds.max != undefined && value + step > props.bounds.max;
+    const atMax = props.bounds.max != undefined && value + step > props.bounds.max;
     const atMin = value - step <= (props.bounds.min || 0);
     return (
       <StepperGroup>
@@ -69,9 +68,7 @@ export const InputSingleNumberForm = (props: Props) => {
           {' '}
           +{' '}
         </StepperButtonTop>
-        <hr
-          style={{ width: '100%', height: '0px', border: '0.08vw solid black' }}
-        />
+        <hr style={{ width: '100%', height: '0px', border: '0.08vw solid black' }} />
         <StepperButtonBottom
           style={atMin ? disabledStepperStyle : {}}
           onClick={() => (atMin ? 0 : updateValue(value - step))}

@@ -4,9 +4,4 @@ import backgroundSunset from './backgrounds/sunset.png';
 
 import objectVendingMachine from './objects/vending-machine.png';
 
-export {
-  backgroundCloudy,
-  backgroundNight,
-  backgroundSunset,
-  objectVendingMachine,
-};
+export { backgroundCloudy, backgroundNight, backgroundSunset, objectVendingMachine };

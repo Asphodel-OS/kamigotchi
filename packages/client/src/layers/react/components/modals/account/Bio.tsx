@@ -69,9 +69,7 @@ export const Bio = (props: Props) => {
     return (
       <DetailRow>
         <CakeIcon style={{ height: '1vw', width: '1vw' }} />
-        <Description>
-          {moment(1000 * account.time.creation).format('MMM DD, YYYY')}
-        </Description>
+        <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
       </DetailRow>
     );
   };

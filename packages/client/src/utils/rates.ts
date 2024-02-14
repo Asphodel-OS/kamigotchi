@@ -1,8 +1,5 @@
 // converts a per-second rate to a per-hour rate string with a given precision
-export const getRateDisplay = (
-  rate: number | undefined,
-  roundTo: number
-): string => {
+export const getRateDisplay = (rate: number | undefined, roundTo: number): string => {
   if (rate === undefined) rate = 0;
   let hourlyRate = rate * 3600;
   let display = hourlyRate.toString();

@@ -111,10 +111,7 @@ export function registerNodeModal() {
           params: [enemyKami.production!.id, myKami.id],
           description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
-            return api.player.production.liquidate(
-              enemyKami.production!.id,
-              myKami.id
-            );
+            return api.player.production.liquidate(enemyKami.production!.id, myKami.id);
           },
         });
       };
@@ -140,9 +137,7 @@ export function registerNodeModal() {
           id: actionID,
           action: 'ProductionStop',
           params: [kami.production!.id],
-          description: `Removing ${kami.name} from ${
-            kami.production!.node?.name
-          }`,
+          description: `Removing ${kami.name} from ${kami.production!.node?.name}`,
           execute: async () => {
             return api.player.production.stop(kami.production!.id);
           },

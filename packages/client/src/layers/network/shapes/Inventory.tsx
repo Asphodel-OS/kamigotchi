@@ -22,10 +22,7 @@ export interface Inventory {
 }
 
 // get an Inventory from its EntityIndex
-export const getInventory = (
-  network: NetworkLayer,
-  index: EntityIndex
-): Inventory => {
+export const getInventory = (network: NetworkLayer, index: EntityIndex): Inventory => {
   return getTypedInventory(network, index, getItem);
 };
 
@@ -69,16 +66,11 @@ export const getTypedInventory = (
 
 // sorts a list of Inventories by their item indices
 export const sortInventories = (inventories: Inventory[]) => {
-  return inventories.sort((a: Inventory, b: Inventory) =>
-    a.item.index > b.item.index ? 1 : -1
-  );
+  return inventories.sort((a: Inventory, b: Inventory) => (a.item.index > b.item.index ? 1 : -1));
 };
 
 // gets an Inventory instance from a inventories of Inventories by its Family Index
-export const getInventoryByFamilyIndex = (
-  inventories: Inventory[],
-  familyIndex: number
-) => {
+export const getInventoryByFamilyIndex = (inventories: Inventory[], familyIndex: number) => {
   if (!inventories) return;
   for (let i = 0, len = inventories.length; i < len; i++) {
     if (inventories[i].item.familyIndex === familyIndex) {
@@ -88,10 +80,7 @@ export const getInventoryByFamilyIndex = (
 };
 
 // get an Inventory from a inventories of Inventories
-export const getInventoryByIndex = (
-  inventories: Inventory[],
-  index: number
-) => {
+export const getInventoryByIndex = (inventories: Inventory[], index: number) => {
   if (!inventories) return;
   for (let i = 0, len = inventories.length; i < len; i++) {
     if (inventories[i].item.index === index) {
@@ -109,10 +98,7 @@ export interface QueryOptions {
   itemIndex?: number;
 }
 
-export const queryInventoryX = (
-  network: NetworkLayer,
-  options: QueryOptions
-): Inventory[] => {
+export const queryInventoryX = (network: NetworkLayer, options: QueryOptions): Inventory[] => {
   const {
     components: { HolderID, IsInventory, IsRegistry, ItemIndex },
   } = network;

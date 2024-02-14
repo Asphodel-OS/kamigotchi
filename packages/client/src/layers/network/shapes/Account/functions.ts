@@ -16,9 +16,7 @@ export const calcStandardIdleTime = (account: Account) => {
 
 // calculate the current stamina on an account
 export const calcStamina = (account: Account) => {
-  const recovered = Math.floor(
-    calcStandardIdleTime(account) / account.stamina.recoveryPeriod
-  );
+  const recovered = Math.floor(calcStandardIdleTime(account) / account.stamina.recoveryPeriod);
   const current = account.stamina.last + recovered;
   return Math.min(account.stamina.total, current);
 };

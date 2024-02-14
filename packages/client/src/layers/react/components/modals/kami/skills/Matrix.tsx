@@ -105,13 +105,7 @@ export const Matrix = (props: Props) => {
             </NodeRow>
           ))}
         {edges.map((edge, i) => (
-          <Edge
-            key={i}
-            from={edge[0]}
-            to={edge[1]}
-            baseRect={baseRect!}
-            nodeRects={nodeRects}
-          />
+          <Edge key={i} from={edge[0]} to={edge[1]} baseRect={baseRect!} nodeRects={nodeRects} />
         ))}
       </Content>
     </Container>

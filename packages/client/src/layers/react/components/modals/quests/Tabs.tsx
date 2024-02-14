@@ -23,10 +23,7 @@ export const Tabs = (props: Props) => {
       >
         Available
       </Button>
-      <Button
-        onClick={() => setTab('ONGOING')}
-        disabled={props.tab === 'ONGOING'}
-      >
+      <Button onClick={() => setTab('ONGOING')} disabled={props.tab === 'ONGOING'}>
         Accepted
       </Button>
     </Container>

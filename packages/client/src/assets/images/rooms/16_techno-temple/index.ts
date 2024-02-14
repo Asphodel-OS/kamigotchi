@@ -6,10 +6,4 @@ import objectTelevision from './objects/television.png';
 
 import path15 from './paths/15.png';
 
-export {
-  backgroundDefault,
-  objectAltar,
-  objectOfferingBox,
-  objectTelevision,
-  path15,
-};
+export { backgroundDefault, objectAltar, objectOfferingBox, objectTelevision, path15 };

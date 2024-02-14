@@ -1,10 +1,7 @@
 import { Component, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
 import { NetworkLayer } from '../types';
-import {
-  getAccountByIndex,
-  getAllAccounts,
-} from 'layers/network/shapes/Account';
+import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
 import { getKamiByIndex, getAllKamis } from 'layers/network/shapes/Kami';
 import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
 import { getNodeByIndex, getAllNodes } from 'layers/network/shapes/Node';

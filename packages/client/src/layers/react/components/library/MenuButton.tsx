@@ -41,10 +41,7 @@ export const MenuButton = (props: Props) => {
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>
-        <Button
-          style={{ display: visible ? 'flex' : 'none' }}
-          onClick={handleToggle}
-        >
+        <Button style={{ display: visible ? 'flex' : 'none' }} onClick={handleToggle}>
           <Image src={image} alt={id} />
         </Button>
       </div>

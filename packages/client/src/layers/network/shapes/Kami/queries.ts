@@ -1,11 +1,4 @@
-import {
-  EntityID,
-  Has,
-  HasValue,
-  runQuery,
-  QueryFragment,
-  EntityIndex,
-} from '@latticexyz/recs';
+import { EntityID, Has, HasValue, runQuery, QueryFragment, EntityIndex } from '@latticexyz/recs';
 
 import { Kami, Options, getKami } from './types';
 import { NetworkLayer } from 'layers/network/types';
@@ -27,10 +20,7 @@ export const queryKamisX = (
 };
 
 // returns raw entity indices
-export const queryKamiEntitiesX = (
-  network: NetworkLayer,
-  options: QueryOptions
-): EntityIndex[] => {
+export const queryKamiEntitiesX = (network: NetworkLayer, options: QueryOptions): EntityIndex[] => {
   const {
     components: { AccountID, IsPet, State },
   } = network;
@@ -53,11 +43,7 @@ export const getAllKamis = (network: NetworkLayer, options?: Options) => {
 };
 
 // get a kami by its index (token ID)
-export const getKamiByIndex = (
-  network: NetworkLayer,
-  index: number,
-  options?: Options
-) => {
+export const getKamiByIndex = (network: NetworkLayer, index: number, options?: Options) => {
   const {
     components: { IsPet, PetIndex },
   } = network;

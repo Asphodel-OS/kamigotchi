@@ -93,11 +93,7 @@ export const ActionButton = (props: Props) => {
     );
   else
     return (
-      <Button
-        id={props.id}
-        onClick={!props.disabled ? handleClick : () => {}}
-        style={setStyles()}
-      >
+      <Button id={props.id} onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         {props.text}
       </Button>
     );

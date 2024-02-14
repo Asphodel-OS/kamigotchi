@@ -68,10 +68,7 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     map(() => {
       let _a;
       return {
-        pointer:
-          (_a = inputPlugin.manager) === null || _a === void 0
-            ? void 0
-            : _a.activePointer,
+        pointer: (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer,
       };
     }),
     filterNullish()
@@ -81,10 +78,7 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     map((event) => {
       let _a;
       return {
-        pointer:
-          (_a = inputPlugin.manager) === null || _a === void 0
-            ? void 0
-            : _a.activePointer,
+        pointer: (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer,
         event: event,
       };
     }),
@@ -95,10 +89,7 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     map((event) => {
       let _a;
       return {
-        pointer:
-          (_a = inputPlugin.manager) === null || _a === void 0
-            ? void 0
-            : _a.activePointer,
+        pointer: (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer,
         event: event,
       };
     }),
@@ -107,17 +98,12 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
   // Click stream
   const click$ = merge(pointerdown$, pointerup$).pipe(
     filter(() => enabled.current),
-    map(({ event }) => [
-      event.type === 'mousedown' && event.button === 0,
-      Date.now(),
-    ]), // Map events to whether the left button is down and the current timestamp
+    map(({ event }) => [event.type === 'mousedown' && event.button === 0, Date.now()]), // Map events to whether the left button is down and the current timestamp
     bufferCount(2, 1), // Store the last two timestamps
     filter(([prev, now]) => prev[0] && !now[0] && now[1] - prev[1] < 250), // Only care if button was pressed before and is not anymore and it happened within 500ms
     map(() => {
       let _a;
-      return (_a = inputPlugin.manager) === null || _a === void 0
-        ? void 0
-        : _a.activePointer;
+      return (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer;
     }), // Return the current pointer
     filterNullish()
   );
@@ -130,9 +116,7 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     throttleTime(500), // A third click within 500ms is not counted as another double click
     map(() => {
       let _a;
-      return (_a = inputPlugin.manager) === null || _a === void 0
-        ? void 0
-        : _a.activePointer;
+      return (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer;
     }), // Return the current pointer
     filterNullish()
   );
@@ -141,9 +125,7 @@ function CreateInput(inputPlugin: Phaser.Input.InputManager) {
     filter(({ pointer }) => enabled.current && pointer!.rightButtonDown()),
     map(() => {
       let _a;
-      return (_a = inputPlugin.manager) === null || _a === void 0
-        ? void 0
-        : _a.activePointer;
+      return (_a = inputPlugin.manager) === null || _a === void 0 ? void 0 : _a.activePointer;
     }), // Return the current pointer
     filterNullish()
   );

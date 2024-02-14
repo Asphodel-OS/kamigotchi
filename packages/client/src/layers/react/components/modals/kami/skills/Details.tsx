@@ -9,11 +9,7 @@ import {
   parseRequirementText,
   getSkillUpgradeError,
 } from 'layers/network/shapes/Skill';
-import {
-  ActionButton,
-  HelpIcon,
-  Tooltip,
-} from 'layers/react/components/library';
+import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
 
 interface Props {
   data: {
@@ -32,9 +28,7 @@ export const Details = (props: Props) => {
   const { actions, data } = props;
   const [rSkill, setRSkill] = useState<Skill | undefined>(undefined);
   const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
-  const [disabledReason, setDisabledReason] = useState<string[] | undefined>(
-    undefined
-  );
+  const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
 
   // update registry/kami skill instances when index changes
   useEffect(() => {
@@ -115,8 +109,7 @@ export const Details = (props: Props) => {
       </NameSection>
 
       <Description>
-        {rSkill.description} blah blah blah this is a fuller description lorem
-        ipsum falalala
+        {rSkill.description} blah blah blah this is a fuller description lorem ipsum falalala
       </Description>
       <LabeledList
         label='Effects'
@@ -124,9 +117,7 @@ export const Details = (props: Props) => {
       />
       <LabeledList
         label='Requirements'
-        values={(rSkill.requirements ?? []).map((req) =>
-          parseRequirementText(req, data.skills)
-        )}
+        values={(rSkill.requirements ?? []).map((req) => parseRequirementText(req, data.skills))}
       />
     </Container>
   );

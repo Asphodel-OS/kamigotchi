@@ -13,10 +13,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
-import {
-  getLootboxByIndex,
-  getLootboxLog,
-} from 'layers/network/shapes/Lootbox';
+import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
 import { getItemByIndex } from 'layers/network/shapes/Item';
 import { useVisibility } from 'layers/react/store/visibility';
 
@@ -209,13 +206,7 @@ export function registerLootboxesModal() {
       };
 
       return (
-        <ModalWrapper
-          divName='lootboxes'
-          id='LootboxesModal'
-          header={Header()}
-          overlay
-          canExit
-        >
+        <ModalWrapper divName='lootboxes' id='LootboxesModal' header={Header()} overlay canExit>
           {SelectScreen()}
         </ModalWrapper>
       );

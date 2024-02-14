@@ -16,15 +16,7 @@ interface Props {
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
   const { validators } = useVisibility();
-  const {
-    id,
-    divName,
-    title,
-    subtitle,
-    children,
-    errorPrimary,
-    errorSecondary,
-  } = props;
+  const { id, divName, title, subtitle, children, errorPrimary, errorSecondary } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {

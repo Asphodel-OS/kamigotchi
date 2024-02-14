@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 
 import { useEventCallback, useEventListener } from 'usehooks-ts';
 
@@ -16,10 +10,7 @@ declare global {
 
 type SetValue<T> = Dispatch<SetStateAction<T>>;
 
-export function useLocalStorage<T>(
-  key: string,
-  initialValue: T
-): [T, SetValue<T>] {
+export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
   // Get from local storage then
   // parse stored json or return initialValue
   const getValue = useCallback((): T => {

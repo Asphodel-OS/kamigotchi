@@ -63,16 +63,8 @@ export function createPlayerAPI(systems: any) {
   // @param operatorAddress   address of the Operator wallet
   // @param name              name of the account
   // @param food              player's reported favorite food
-  function registerAccount(
-    operatorAddress: BigNumberish,
-    name: string,
-    food: string
-  ) {
-    return systems['system.Account.Register'].executeTyped(
-      operatorAddress,
-      name,
-      food
-    );
+  function registerAccount(operatorAddress: BigNumberish, name: string, food: string) {
+    return systems['system.Account.Register'].executeTyped(operatorAddress, name, food);
   }
 
   // @dev renames account. should be called by Owner EOA
@@ -169,14 +161,8 @@ export function createPlayerAPI(systems: any) {
   }
 
   // @dev liquidates a production, if able to, using the specified pet
-  function liquidateProduction(
-    productionID: BigNumberish,
-    petID: BigNumberish
-  ) {
-    return systems['system.Production.Liquidate'].executeTyped(
-      productionID,
-      petID
-    );
+  function liquidateProduction(productionID: BigNumberish, petID: BigNumberish) {
+    return systems['system.Production.Liquidate'].executeTyped(productionID, petID);
   }
 
   // @dev starts a deposit production for a character. If none exists, it creates one.
@@ -215,10 +201,7 @@ export function createPlayerAPI(systems: any) {
   // RELATIONSHIP
 
   function advanceRelationship(indexNPC: number, indexRelationship: number) {
-    return systems['system.Relationship.Advance'].executeTyped(
-      indexNPC,
-      indexRelationship
-    );
+    return systems['system.Relationship.Advance'].executeTyped(indexNPC, indexRelationship);
   }
 
   /////////////////

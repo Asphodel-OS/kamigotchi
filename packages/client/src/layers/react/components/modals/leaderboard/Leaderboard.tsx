@@ -70,9 +70,7 @@ export function registerLeaderboardModal() {
           <Filters
             filter={filter}
             setFilter={setFilter}
-            epochOptions={Array.from(
-              new Set(network.components.Epoch.values.value.values())
-            )}
+            epochOptions={Array.from(new Set(network.components.Epoch.values.value.values()))}
           />
           <Table data={tableData} />
         </ModalWrapper>

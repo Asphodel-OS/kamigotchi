@@ -30,11 +30,7 @@ export interface RoomOptions {
 }
 
 // get a Room object from its EnityIndex
-export const getRoom = (
-  network: NetworkLayer,
-  index: EntityIndex,
-  options?: RoomOptions
-): Room => {
+export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: RoomOptions): Room => {
   const {
     world,
     components: { IsAccount, AccountID, Description, Exits, Location, Name },
@@ -52,19 +48,14 @@ export const getRoom = (
   // if the room has an owner, include their name
   if (options?.owner && hasComponent(AccountID, index)) {
     const accountID = getComponentValue(AccountID, index)?.value as EntityID;
-    const accountEntityIndex = world.entityToIndex.get(
-      accountID
-    ) as EntityIndex;
+    const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
     room.owner = getAccount(network, accountEntityIndex);
   }
 
   // pull players currently in room
   if (options?.players) {
     const accountResults = Array.from(
-      runQuery([
-        Has(IsAccount),
-        HasValue(Location, { value: numberToHex(room.location) }),
-      ])
+      runQuery([Has(IsAccount), HasValue(Location, { value: numberToHex(room.location) })])
     );
 
     room.players = accountResults.map((accountEntityIndex) => {
@@ -88,10 +79,7 @@ export const getRoomByLocation = (
   return getRoom(network, roomEntityIndex, options);
 };
 
-export const getAllRooms = (
-  network: NetworkLayer,
-  options?: RoomOptions
-): Room[] => {
+export const getAllRooms = (network: NetworkLayer, options?: RoomOptions): Room[] => {
   const { IsRoom } = network.components;
   const roomEntityIndices = Array.from(runQuery([Has(IsRoom)]));
   return roomEntityIndices.map((roomEntityIndex) => {

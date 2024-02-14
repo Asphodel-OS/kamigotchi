@@ -45,10 +45,7 @@ export function createNotificationSystem<M = undefined>(world: World) {
    */
   function remove(id: EntityID): boolean {
     const index = world.entityToIndex.get(id);
-    if (
-      index == undefined ||
-      getComponentValue(Notification, index) == undefined
-    ) {
+    if (index == undefined || getComponentValue(Notification, index) == undefined) {
       console.warn(`Notification ${id} was not found`);
       return false;
     }
@@ -63,10 +60,7 @@ export function createNotificationSystem<M = undefined>(world: World) {
    */
   function update(id: EntityID, toUpdate: Partial<NotificationData>) {
     const index = world.entityToIndex.get(id);
-    if (
-      index == undefined ||
-      getComponentValue(Notification, index) == undefined
-    ) {
+    if (index == undefined || getComponentValue(Notification, index) == undefined) {
       console.warn(`Notification ${id} was not found`);
       return;
     }

@@ -21,11 +21,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountByName } from 'layers/network/shapes/Account';
 import { useVisibility } from 'layers/react/store/visibility';
-import {
-  Account,
-  emptyAccountDetails,
-  useAccount,
-} from 'layers/react/store/account';
+import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 import { playScribble } from 'utils/sounds';
 
@@ -62,13 +58,7 @@ export function registerAccountRegistrar() {
       const {
         network: {
           world,
-          components: {
-            IsAccount,
-            AccountIndex,
-            Name,
-            OperatorAddress,
-            OwnerAddress,
-          },
+          components: { IsAccount, AccountIndex, Name, OperatorAddress, OwnerAddress },
           actions,
         },
       } = layers;
@@ -80,10 +70,8 @@ export function registerAccountRegistrar() {
           id: world.entities[entityIndex],
           entityIndex: entityIndex,
           index: getComponentValue(AccountIndex, entityIndex)?.value as number,
-          ownerAddress: getComponentValue(OwnerAddress, entityIndex)
-            ?.value as string,
-          operatorAddress: getComponentValue(OperatorAddress, entityIndex)
-            ?.value as string,
+          ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
+          operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
           name: getComponentValue(Name, entityIndex)?.value as string,
         };
       };
@@ -108,14 +96,9 @@ export function registerAccountRegistrar() {
       ).pipe(
         map(() => {
           const { selectedAddress } = useNetwork.getState();
-          const accountIndexUpdatedByWorld =
-            getAccountIndexFromOwner(selectedAddress);
-          const kamiAccountFromWorldUpdate = getAccountDetails(
-            accountIndexUpdatedByWorld
-          );
-          const operatorAddresses = new Set(
-            OperatorAddress.values.value.values()
-          );
+          const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
+          const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
+          const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
             layers,
             actions,
@@ -139,12 +122,7 @@ export function registerAccountRegistrar() {
       const {
         network: { actions, world },
       } = layers;
-      const {
-        burner,
-        selectedAddress,
-        networks,
-        validations: networkValidations,
-      } = useNetwork();
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { setAccount, validations, setValidations } = useAccount();
@@ -185,11 +163,7 @@ export function registerAccountRegistrar() {
           toggleModals(false);
           toggleButtons(false);
         }
-        toggleFixtures(
-          !isVisible &&
-            !validators.walletConnector &&
-            !validators.burnerDetector
-        );
+        toggleFixtures(!isVisible && !validators.walletConnector && !validators.burnerDetector);
         if (isVisible != validators.accountRegistrar) {
           const { validators } = useVisibility.getState();
           setValidators({ ...validators, accountRegistrar: isVisible });
@@ -315,12 +289,7 @@ export function registerAccountRegistrar() {
       };
 
       const NextButton = () => (
-        <ActionButton
-          id='next'
-          text='Next'
-          onClick={() => setStep(step + 1)}
-          size='vending'
-        />
+        <ActionButton id='next' text='Next' onClick={() => setStep(step + 1)} size='vending' />
       );
 
       const BackButton = () => (
@@ -376,17 +345,11 @@ export function registerAccountRegistrar() {
           );
 
           let tooltip: string[] = [];
-          if (addressTaken)
-            tooltip = ['Unfortunately, that Avatar is already taken.'];
-          else if (nameTaken)
-            tooltip = ['Unfortunately, that Name is already taken.'];
+          if (addressTaken) tooltip = ['Unfortunately, that Avatar is already taken.'];
+          else if (nameTaken) tooltip = ['Unfortunately, that Name is already taken.'];
           else if (name === '')
-            tooltip = [
-              `It's dangerous to go alone.`,
-              `One needs to take an Avatar.`,
-            ];
-          if (tooltip.length > 0)
-            button = <Tooltip text={tooltip}>{button}</Tooltip>;
+            tooltip = [`It's dangerous to go alone.`, `One needs to take an Avatar.`];
+          if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>;
 
           return button;
         };

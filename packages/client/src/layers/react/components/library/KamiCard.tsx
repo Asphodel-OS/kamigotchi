@@ -5,12 +5,7 @@ import { Battery } from './Battery';
 import { Card } from './Card';
 import { Countdown } from './Countdown';
 import { Tooltip } from './Tooltip';
-import {
-  Kami,
-  isUnrevealed,
-  calcCooldownRemaining,
-  calcHealth,
-} from 'layers/network/shapes/Kami';
+import { Kami, isUnrevealed, calcCooldownRemaining, calcHealth } from 'layers/network/shapes/Kami';
 import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
 import { playClick } from 'utils/sounds';
@@ -29,8 +24,7 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current production or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, description, subtext, actions, showBattery, showCooldown } =
-    props;
+  const { kami, description, subtext, actions, showBattery, showCooldown } = props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
 
@@ -89,10 +83,7 @@ export const KamiCard = (props: Props) => {
       <TitleCorner key='corner'>
         {showCooldown && (
           <Tooltip key='cooldown' text={[cooldownString]}>
-            <Countdown
-              total={kami.time.cooldown.requirement}
-              current={cooldown}
-            />
+            <Countdown total={kami.time.cooldown.requirement} current={cooldown} />
           </Tooltip>
         )}
         {showBattery && (
@@ -119,9 +110,7 @@ export const KamiCard = (props: Props) => {
           <Description />
         </ContentColumn>,
         <ContentColumn key='column-2'>
-          <ContentSubtext onClick={props.subtextOnClick}>
-            {subtext}
-          </ContentSubtext>
+          <ContentSubtext onClick={props.subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>
         </ContentColumn>,
       ]}

@@ -34,11 +34,7 @@ export const ItemGrid = (props: Props) => {
     );
   };
 
-  return (
-    <Container key='grid'>
-      {props.inventories.map((inv) => Cell(inv))}
-    </Container>
-  );
+  return <Container key='grid'>{props.inventories.map((inv) => Cell(inv))}</Container>;
 };
 
 const Container = styled.div`

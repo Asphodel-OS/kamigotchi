@@ -5,12 +5,7 @@ import { NodeImages } from 'constants/nodes';
 import { IconListButton } from 'layers/react/components/library/IconListButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Node } from 'layers/network/shapes/Node';
-import {
-  Kami,
-  canHarvest,
-  isResting,
-  onCooldown,
-} from 'layers/network/shapes/Kami';
+import { Kami, canHarvest, isResting, onCooldown } from 'layers/network/shapes/Kami';
 import { harvestIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
 

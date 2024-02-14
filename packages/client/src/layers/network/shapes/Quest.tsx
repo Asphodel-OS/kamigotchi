@@ -23,18 +23,12 @@ export const getRegistryQuests = (network: NetworkLayer): Quest[] => {
 };
 
 // get the ongoing quests for an account
-export const getOngoingQuests = (
-  network: NetworkLayer,
-  accountEntityID: EntityID
-): Quest[] => {
+export const getOngoingQuests = (network: NetworkLayer, accountEntityID: EntityID): Quest[] => {
   return queryQuestsX(network, { account: accountEntityID, completed: false });
 };
 
 // get the completed quests for an account
-export const getCompletedQuests = (
-  network: NetworkLayer,
-  accountEntityID: EntityID
-): Quest[] => {
+export const getCompletedQuests = (network: NetworkLayer, accountEntityID: EntityID): Quest[] => {
   return queryQuestsX(network, { account: accountEntityID, completed: true });
 };
 
@@ -49,10 +43,7 @@ export const parseQuestsStatus = (
   });
 };
 
-export const getQuestByIndex = (
-  network: NetworkLayer,
-  index: number
-): Quest | undefined => {
+export const getQuestByIndex = (network: NetworkLayer, index: number): Quest | undefined => {
   return queryQuestsX(network, { index: index, registry: true })[0];
 };
 
@@ -124,24 +115,17 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
     },
   } = network;
 
-  const questIndex =
-    getComponentValue(QuestIndex, entityIndex)?.value || (0 as number);
+  const questIndex = getComponentValue(QuestIndex, entityIndex)?.value || (0 as number);
   const registryIndex = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      Has(IsQuest),
-      HasValue(QuestIndex, { value: questIndex }),
-    ])
+    runQuery([Has(IsRegistry), Has(IsQuest), HasValue(QuestIndex, { value: questIndex })])
   )[0];
 
   let result: Quest = {
     id: world.entities[entityIndex],
     index: questIndex,
     name: getComponentValue(Name, registryIndex)?.value || ('' as string),
-    description:
-      getComponentValue(Description, registryIndex)?.value || ('' as string),
-    startTime:
-      getComponentValue(StartTime, entityIndex)?.value || (0 as number),
+    description: getComponentValue(Description, registryIndex)?.value || ('' as string),
+    startTime: getComponentValue(StartTime, entityIndex)?.value || (0 as number),
     complete: hasComponent(IsComplete, entityIndex) || (false as boolean),
     repeatable: hasComponent(IsRepeatable, registryIndex) || (false as boolean),
     requirements: queryQuestRequirements(network, questIndex),
@@ -150,18 +134,14 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
   };
 
   if (hasComponent(IsRepeatable, registryIndex)) {
-    result.repeatDuration =
-      getComponentValue(Time, registryIndex)?.value || (0 as number);
+    result.repeatDuration = getComponentValue(Time, registryIndex)?.value || (0 as number);
   }
 
   return result;
 };
 
 // Get a Requirement Registry object
-const getRequirement = (
-  network: NetworkLayer,
-  entityIndex: EntityIndex
-): Requirement => {
+const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex): Requirement => {
   const {
     world,
     components: { Index, LogicType, Type, Value },
@@ -185,10 +165,7 @@ const getRequirement = (
 };
 
 // Get an Objective Registry object
-const getObjective = (
-  network: NetworkLayer,
-  entityIndex: EntityIndex
-): Objective => {
+const getObjective = (network: NetworkLayer, entityIndex: EntityIndex): Objective => {
   const {
     world,
     components: { Index, LogicType, Name, ObjectiveIndex, Type, Value },
@@ -196,8 +173,7 @@ const getObjective = (
 
   let objective: Objective = {
     id: world.entities[entityIndex],
-    index:
-      getComponentValue(ObjectiveIndex, entityIndex)?.value || (0 as number),
+    index: getComponentValue(ObjectiveIndex, entityIndex)?.value || (0 as number),
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
     target: {
@@ -237,26 +213,13 @@ const getReward = (network: NetworkLayer, entityIndex: EntityIndex): Reward => {
   return reward;
 };
 
-const parseQuestStatus = (
-  network: NetworkLayer,
-  account: Account,
-  quest: Quest
-): Quest => {
+const parseQuestStatus = (network: NetworkLayer, account: Account, quest: Quest): Quest => {
   for (let i = 0; i < quest.requirements.length; i++) {
-    quest.requirements[i].status = checkRequirement(
-      network,
-      quest.requirements[i],
-      account
-    );
+    quest.requirements[i].status = checkRequirement(network, quest.requirements[i], account);
   }
 
   for (let i = 0; i < quest.objectives.length; i++) {
-    quest.objectives[i].status = checkObjective(
-      network,
-      quest.objectives[i],
-      quest,
-      account
-    );
+    quest.objectives[i].status = checkObjective(network, quest.objectives[i], quest, account);
   }
 
   return quest;
@@ -273,10 +236,7 @@ export interface QueryOptions {
 }
 
 // Query for Entity Indices of Quests, depending on the options provided
-const queryQuestsX = (
-  network: NetworkLayer,
-  options: QueryOptions
-): Quest[] => {
+const queryQuestsX = (network: NetworkLayer, options: QueryOptions): Quest[] => {
   const {
     components: { AccountID, IsComplete, IsQuest, IsRegistry, QuestIndex },
   } = network;
@@ -309,51 +269,28 @@ const queryQuestsX = (
 };
 
 // Get the Entity Indices of the Requirements of a Quest
-const queryQuestRequirements = (
-  network: NetworkLayer,
-  questIndex: number
-): Requirement[] => {
+const queryQuestRequirements = (network: NetworkLayer, questIndex: number): Requirement[] => {
   const { IsRegistry, IsRequirement, QuestIndex } = network.components;
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      Has(IsRequirement),
-      HasValue(QuestIndex, { value: questIndex }),
-    ])
+    runQuery([Has(IsRegistry), Has(IsRequirement), HasValue(QuestIndex, { value: questIndex })])
   );
-  return entityIndices.map((entityIndex) =>
-    getRequirement(network, entityIndex)
-  );
+  return entityIndices.map((entityIndex) => getRequirement(network, entityIndex));
 };
 
 // Get the Entity Indices of the Objectives of a Quest
-const queryQuestObjectives = (
-  network: NetworkLayer,
-  questIndex: number
-): Objective[] => {
+const queryQuestObjectives = (network: NetworkLayer, questIndex: number): Objective[] => {
   const { IsRegistry, IsObjective, QuestIndex } = network.components;
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      Has(IsObjective),
-      HasValue(QuestIndex, { value: questIndex }),
-    ])
+    runQuery([Has(IsRegistry), Has(IsObjective), HasValue(QuestIndex, { value: questIndex })])
   );
   return entityIndices.map((index) => getObjective(network, index));
 };
 
 // Get the Entity Indices of the Rewards of a Quest
-const queryQuestRewards = (
-  network: NetworkLayer,
-  questIndex: number
-): Reward[] => {
+const queryQuestRewards = (network: NetworkLayer, questIndex: number): Reward[] => {
   const { IsRegistry, IsReward, QuestIndex } = network.components;
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsRegistry),
-      Has(IsReward),
-      HasValue(QuestIndex, { value: questIndex }),
-    ])
+    runQuery([Has(IsRegistry), Has(IsReward), HasValue(QuestIndex, { value: questIndex })])
   );
   return entityIndices.map((entityIndex) => getReward(network, entityIndex));
 };
@@ -415,14 +352,10 @@ export const checkObjective = (
   const subLogics = objective.logic.split('_');
   const deltaType = subLogics[0];
   const operator = subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
-  if (deltaType === 'CURR')
-    return checkCurrent(network, objective.target, account, operator);
-  else if (deltaType === 'INC')
-    return checkIncrease(network, objective, quest, account, operator);
-  else if (deltaType === 'DEC')
-    return checkDecrease(network, objective, quest, account, operator);
-  else if (deltaType === 'BOOL')
-    return checkBoolean(network, objective.target, account, operator);
+  if (deltaType === 'CURR') return checkCurrent(network, objective.target, account, operator);
+  else if (deltaType === 'INC') return checkIncrease(network, objective, quest, account, operator);
+  else if (deltaType === 'DEC') return checkDecrease(network, objective, quest, account, operator);
+  else if (deltaType === 'BOOL') return checkBoolean(network, objective.target, account, operator);
   else return { completable: false }; // should not get here
 };
 
@@ -432,8 +365,7 @@ const checkCurrent = (
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
-  const accVal =
-    getAccBal(network, account, condition.index, condition.type) || 0;
+  const accVal = getAccBal(network, account, condition.index, condition.type) || 0;
 
   return {
     target: condition.value,
@@ -449,14 +381,8 @@ const checkIncrease = (
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
-  const prevVal = querySnapshotObjective(network, quest.id, objective.index)
-    .target.value as number;
-  const currVal = getData(
-    network,
-    account.id,
-    objective.target.type,
-    objective.target.index
-  );
+  const prevVal = querySnapshotObjective(network, quest.id, objective.index).target.value as number;
+  const currVal = getData(network, account.id, objective.target.type, objective.target.index);
 
   return {
     target: objective.target.value,
@@ -476,14 +402,8 @@ const checkDecrease = (
   account: Account,
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
-  const prevVal = querySnapshotObjective(network, quest.id, objective.index)
-    .target.value as number;
-  const currVal = getData(
-    network,
-    account.id,
-    objective.target.type,
-    objective.target.index
-  );
+  const prevVal = querySnapshotObjective(network, quest.id, objective.index).target.value as number;
+  const currVal = getData(network, account.id, objective.target.type, objective.target.index);
 
   return {
     target: objective.target.value,
@@ -559,28 +479,20 @@ const getAccBal = (
 ///////////////////////
 // UTILS
 
-const getInventoryBalance = (
-  account: Account,
-  index: number | undefined,
-  type: string
-): number => {
+const getInventoryBalance = (account: Account, index: number | undefined, type: string): number => {
   if (index === undefined) return 0; // should not reach here
   if (account.inventories === undefined) return 0; // should not reach here
 
   let balance = 0;
   switch (type) {
     case 'EQUIP':
-      balance =
-        getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
     case 'FOOD':
-      balance =
-        getInventoryByIndex(account.inventories.food, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.food, index)?.balance || 0;
     case 'MOD':
-      balance =
-        getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
     case 'REVIVE':
-      balance =
-        getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
+      balance = getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
     default:
       balance = 0; // should not reach here
   }

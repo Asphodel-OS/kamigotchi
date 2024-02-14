@@ -21,9 +21,7 @@ export type NetworkConfig = {
 };
 
 // shape a flat NetworkConfig struct into lattice's SetupContractConfig struct
-const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (
-  config
-) => ({
+const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) => ({
   clock: {
     period: 1000,
     initialTime: 0,
@@ -50,9 +48,7 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (
 });
 
 // Populate the network config based on url params
-export function createConfig(
-  externalProvider?: ExternalProvider
-): SetupContractConfig | undefined {
+export function createConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
   // get the determined environment mode
@@ -92,9 +88,7 @@ export function createConfig(
 }
 
 // Get the network config of a local deployment based on url params
-function createConfigRawLocal(
-  externalProvider?: ExternalProvider
-): NetworkConfig {
+function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfig {
   const params = new URLSearchParams(window.location.search);
 
   let config: NetworkConfig = <NetworkConfig>{};
@@ -106,14 +100,10 @@ function createConfigRawLocal(
   else {
     let wallet;
     if (params.get('admin') !== 'false') {
-      wallet = new Wallet(
-        '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-      );
+      wallet = new Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
     } else {
       const detectedPrivateKey = localStorage.getItem('operatorPrivateKey');
-      wallet = detectedPrivateKey
-        ? new Wallet(detectedPrivateKey)
-        : Wallet.createRandom();
+      wallet = detectedPrivateKey ? new Wallet(detectedPrivateKey) : Wallet.createRandom();
 
       localStorage.setItem('operatorPrivateKey', wallet.privateKey);
     }
@@ -122,8 +112,7 @@ function createConfigRawLocal(
 
   // RPCs
   const jsonRpc = params.get('rpc') || 'http://localhost:8545';
-  const wsRpc =
-    params.get('wsRpc') || (jsonRpc && jsonRpc.replace('http', 'ws'));
+  const wsRpc = params.get('wsRpc') || (jsonRpc && jsonRpc.replace('http', 'ws'));
   config.jsonRpc = jsonRpc;
   config.wsRpc = wsRpc;
 
@@ -148,9 +137,7 @@ function createConfigRawLocal(
 }
 
 // Get the network config of a deployment to Optimism testnet
-function createConfigRawOPSepolia(
-  externalProvider?: ExternalProvider
-): NetworkConfig {
+function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: 'https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7',
     wsRpc: 'wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f',
@@ -178,8 +165,7 @@ function createConfigRawOPSepolia(
 const getModeOverride = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const modeOverride = urlParams.get('mode');
-  if (modeOverride)
-    console.warn(`Environment mode override ${modeOverride} detected.`);
+  if (modeOverride) console.warn(`Environment mode override ${modeOverride} detected.`);
   else return;
 
   // return the mode override if it is a valid one

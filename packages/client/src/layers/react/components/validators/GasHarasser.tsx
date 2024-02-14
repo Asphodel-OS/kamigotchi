@@ -31,11 +31,7 @@ export function registerGasHarasser() {
       const {
         network: { actions, world },
       } = layers;
-      const {
-        selectedAddress,
-        networks,
-        validations: networkValidations,
-      } = useNetwork();
+      const { selectedAddress, networks, validations: networkValidations } = useNetwork();
       const { validators, setValidators } = useVisibility();
       const { account, validations, setValidations } = useAccount();
 
@@ -147,12 +143,7 @@ export function registerGasHarasser() {
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
-            <ActionButton
-              id={`feed`}
-              text='Feed'
-              onClick={feed}
-              size='vending'
-            />
+            <ActionButton id={`feed`} text='Feed' onClick={feed} size='vending' />
           </Row>
         </ValidatorWrapper>
       );

@@ -80,10 +80,7 @@ export const Kards = (props: Props) => {
   // assume the kami is either resting or harvesting
   const whyCantFeed = (kami: Kami, account: Account): string => {
     let reason = '';
-    if (
-      isHarvesting(kami) &&
-      kami.production?.node?.location != account.location
-    ) {
+    if (isHarvesting(kami) && kami.production?.node?.location != account.location) {
       reason = `not at your location`;
     } else if (isFull(kami)) {
       reason = `can't eat, full`;
@@ -145,8 +142,7 @@ export const Kards = (props: Props) => {
 
   // returns the onClick function for the description
   const getDescriptionOnClick = (kami: Kami) => {
-    if (isHarvesting(kami))
-      return () => selectNode(kami.production?.node?.index!);
+    if (isHarvesting(kami)) return () => selectNode(kami.production?.node?.index!);
   };
 
   /////////////////
@@ -156,13 +152,10 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     const canFeedKami = canFeed(kami, account);
     const tooltipText = whyCantFeed(kami, account);
-    const canHeal = (inv: Inventory) =>
-      !isFull(kami) || inv.item.stats?.health! == 0;
+    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health! == 0;
 
     const stockedInventory =
-      account.inventories?.food?.filter(
-        (inv: Inventory) => inv.balance && inv.balance > 0
-      ) ?? [];
+      account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
@@ -180,8 +173,7 @@ export const Kards = (props: Props) => {
         options={feedOptions}
       />
     );
-    if (!canFeedKami)
-      returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
+    if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
 
     return returnVal;
   };

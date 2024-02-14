@@ -21,23 +21,12 @@ export interface AffinityMultiplers {
 }
 
 // get the Liquidation relevant fields from the world config
-export const getLiquidationConfig = (
-  network: NetworkLayer
-): LiquidationConfig => {
+export const getLiquidationConfig = (network: NetworkLayer): LiquidationConfig => {
   const affinityMultiplierPrecision =
     10 ** getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_PREC');
-  const affinityMultiplierUp = getConfigFieldValue(
-    network,
-    'LIQ_THRESH_MULT_AFF_UP'
-  );
-  const affinityMultiplierDown = getConfigFieldValue(
-    network,
-    'LIQ_THRESH_MULT_AFF_DOWN'
-  );
-  const affinityMultiplierBase = getConfigFieldValue(
-    network,
-    'LIQ_THRESH_MULT_AFF_BASE'
-  );
+  const affinityMultiplierUp = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_UP');
+  const affinityMultiplierDown = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_DOWN');
+  const affinityMultiplierBase = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_BASE');
 
   const affinityMultipliers: AffinityMultiplers = {
     base: affinityMultiplierBase / affinityMultiplierPrecision,
@@ -50,11 +39,9 @@ export const getLiquidationConfig = (
   };
 
   const bountyBase = getConfigFieldValue(network, 'LIQ_BOUNTY_BASE');
-  const bountyBasePrecision =
-    10 ** getConfigFieldValue(network, 'LIQ_BOUNTY_BASE_PREC');
+  const bountyBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_BOUNTY_BASE_PREC');
   const thresholdBase = getConfigFieldValue(network, 'LIQ_THRESH_BASE');
-  const thresholdBasePrecision =
-    10 ** getConfigFieldValue(network, 'LIQ_THRESH_BASE_PREC');
+  const thresholdBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_THRESH_BASE_PREC');
 
   return {
     bountyRatio: bountyBase / bountyBasePrecision,

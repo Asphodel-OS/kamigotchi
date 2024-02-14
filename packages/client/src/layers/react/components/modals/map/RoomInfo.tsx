@@ -17,9 +17,7 @@ export const RoomInfo = (props: Props) => {
       </Section>
       <Section>
         <Title>Players</Title>
-        <Description>
-          {room.players?.map((player) => player.name).join(', ')}
-        </Description>
+        <Description>{room.players?.map((player) => player.name).join(', ')}</Description>
       </Section>
     </Container>
   );

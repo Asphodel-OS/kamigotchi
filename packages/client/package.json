@@ -13,8 +13,10 @@
     "prepare": "rimraf dist && yarn cache:clear",
     "cache:clear": "rimraf ../../.parcel-cache && rimraf .parcel-cache",
     "build": "parcel build src/index.html --no-source-maps",
+    "start": "yarn prepare && yarn parcel src/index.html --port 3000",
     "lint": "eslint . --fix --ext .ts",
-    "start": "yarn prepare && yarn parcel src/index.html --port 3000"
+    "prettier": "prettier src --check",
+    "prettier:fix": "yarn run prettier -- --write"
   },
   "devDependencies": {
     "@parcel/core": "^2.8.3",

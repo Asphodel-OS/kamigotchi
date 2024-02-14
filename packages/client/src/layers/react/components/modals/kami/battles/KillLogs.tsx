@@ -1,12 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
+import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 import { Kill } from 'layers/network/shapes/Kill';
 import { Kami } from 'layers/network/shapes/Kami';
@@ -83,12 +77,8 @@ export const KillLogs = (props: Props) => {
         >
           {adversary?.name}
         </TableCell>
-        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>
-          {type}
-        </TableCell>
-        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>
-          {getPnLString(log)}
-        </TableCell>
+        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>{type}</TableCell>
+        <TableCell sx={type === 'kill' ? killStyle : deathStyle}>{getPnLString(log)}</TableCell>
       </TableRow>
     );
   };

@@ -5,10 +5,4 @@ import objectCentipede from './objects/centipede.png';
 import objectHollowTrunk from './objects/hollow-trunk.png';
 import objectTermiteMound from './objects/termite-mound.png';
 
-export {
-  backgroundDefault,
-  objectBeetle4,
-  objectCentipede,
-  objectHollowTrunk,
-  objectTermiteMound,
-};
+export { backgroundDefault, objectBeetle4, objectCentipede, objectHollowTrunk, objectTermiteMound };

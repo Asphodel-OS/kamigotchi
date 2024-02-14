@@ -10,8 +10,7 @@ export interface Props {
 export const Listings = (props: Props) => {
   return (
     <List>
-      {props.listings &&
-        props.listings.map((l) => <ItemRow key={l.entityIndex} listing={l} />)}
+      {props.listings && props.listings.map((l) => <ItemRow key={l.entityIndex} listing={l} />)}
     </List>
   );
 };

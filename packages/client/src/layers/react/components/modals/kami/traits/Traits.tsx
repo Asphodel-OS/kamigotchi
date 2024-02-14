@@ -13,23 +13,19 @@ export const Traits = (props: Props) => {
   const statsDetails = new Map(
     Object.entries({
       health: {
-        description:
-          'Health defines how resilient a Kami is to accumulated damage',
+        description: 'Health defines how resilient a Kami is to accumulated damage',
         image: StatIcons.health,
       },
       power: {
-        description:
-          'Power determines the potential rate at which $MUSU can be farmed',
+        description: 'Power determines the potential rate at which $MUSU can be farmed',
         image: StatIcons.power,
       },
       violence: {
-        description:
-          'Violence dictates the threshold at which a Kami can liquidate others',
+        description: 'Violence dictates the threshold at which a Kami can liquidate others',
         image: StatIcons.violence,
       },
       harmony: {
-        description:
-          'Harmony divines resting recovery rate and defends against violence',
+        description: 'Harmony divines resting recovery rate and defends against violence',
         image: StatIcons.harmony,
       },
       slots: {
@@ -40,9 +36,7 @@ export const Traits = (props: Props) => {
   );
 
   const TraitBox = (type: string, trait: Trait) => {
-    const statArray = Object.entries(trait.stats).filter(
-      ([_, value]) => value > 0
-    );
+    const statArray = Object.entries(trait.stats).filter(([_, value]) => value > 0);
     return (
       <Container>
         <Title>{`${type}: ${trait.name}`}</Title>

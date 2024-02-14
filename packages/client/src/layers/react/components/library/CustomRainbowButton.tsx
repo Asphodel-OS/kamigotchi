@@ -78,9 +78,7 @@ export const AccountButton = (props: Props) => {
                     id='chain-button'
                     onClick={openAccountModal}
                     text={
-                      account.address.substring(0, 4) +
-                      '...' +
-                      account.address.substring(38, 42)
+                      account.address.substring(0, 4) + '...' + account.address.substring(38, 42)
                     }
                     size={props.size}
                     disabled={props.disabled}

@@ -65,10 +65,7 @@ export const Account = () => {
           </Tooltip>
         </SubHeaderRow>
         {FieldRow('Address', kamiAccount.operatorAddress)}
-        {FieldRow(
-          'Private Key',
-          localStorage.getItem('operatorPrivateKey') || ''
-        )}
+        {FieldRow('Private Key', localStorage.getItem('operatorPrivateKey') || '')}
       </Section>
     </Container>
   );

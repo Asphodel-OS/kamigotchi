@@ -26,8 +26,7 @@ export function registerAccountInfoFixture() {
     },
     (layers) => {
       const { network } = layers;
-      const { Coin, Location, Name, OperatorAddress, StaminaCurrent, Stamina } =
-        network.components;
+      const { Coin, Location, Name, OperatorAddress, StaminaCurrent, Stamina } = network.components;
 
       return merge(
         Coin.update$,
@@ -77,8 +76,7 @@ export function registerAccountInfoFixture() {
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
-        address: network.systems['system.Mint20.Proxy']
-          .address as `0x${string}`,
+        address: network.systems['system.Mint20.Proxy'].address as `0x${string}`,
         abi: Pet721ProxySystemABI,
         functionName: 'getTokenAddy',
       });
@@ -93,9 +91,7 @@ export function registerAccountInfoFixture() {
       // INTERPRETATION
 
       // calculated the gas gauge level
-      const calcGaugeSetting = (
-        gasBalance: FetchBalanceResult | undefined
-      ): number => {
+      const calcGaugeSetting = (gasBalance: FetchBalanceResult | undefined): number => {
         const amt = Number(gasBalance?.formatted);
         if (amt >= GasConstants.Full) return 100;
         if (amt <= GasConstants.Low) return 0;
@@ -103,10 +99,7 @@ export function registerAccountInfoFixture() {
       };
 
       // parses a wagmi FetchBalanceResult
-      const parseBalanceResult = (
-        bal: FetchBalanceResult | undefined,
-        precision: number = 4
-      ) => {
+      const parseBalanceResult = (bal: FetchBalanceResult | undefined, precision: number = 4) => {
         return Number(bal?.formatted ?? 0).toFixed(precision);
       };
 
@@ -130,11 +123,7 @@ export function registerAccountInfoFixture() {
       };
 
       const getKAMITooltip = () => {
-        return [
-          `$KAMI Balance`,
-          '',
-          `Use this to mint your party of Kamigotchi.`,
-        ];
+        return [`$KAMI Balance`, '', `Use this to mint your party of Kamigotchi.`];
       };
 
       const getGasTooltip = () => {
@@ -148,10 +137,7 @@ export function registerAccountInfoFixture() {
       const borderLeftStyle = { borderLeft: '.1vw solid black' };
       return (
         account && (
-          <Container
-            id='accountInfo'
-            style={{ display: fixtures.accountInfo ? 'block' : 'none' }}
-          >
+          <Container id='accountInfo' style={{ display: fixtures.accountInfo ? 'block' : 'none' }}>
             <Row>
               <TextBox>
                 {account.name} - {room.name}

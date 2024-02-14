@@ -28,10 +28,7 @@ const templedoor: DialogueNode = {
 
 const templecave: DialogueNode = {
   index: 153,
-  text: [
-    'The cave ahead looks dark and damp.',
-    'The air is heavy with the smell of rot.',
-  ],
+  text: ['The cave ahead looks dark and damp.', 'The air is heavy with the smell of rot.'],
   action: {
     type: 'move',
     label: 'Explore',

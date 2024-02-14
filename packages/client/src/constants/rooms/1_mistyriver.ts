@@ -1,7 +1,4 @@
-import {
-  backgroundSign,
-  objectMooringPost,
-} from 'assets/images/rooms/1_misty-river';
+import { backgroundSign, objectMooringPost } from 'assets/images/rooms/1_misty-river';
 import { cave, arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 

@@ -46,10 +46,7 @@ export const getFriendship = (
     entityIndex: entityIndex,
     account: account,
     target: target,
-    state: getComponentValue(State, entityIndex)?.value as
-      | 'REQUEST'
-      | 'FRIEND'
-      | 'BLOCKED',
+    state: getComponentValue(State, entityIndex)?.value as 'REQUEST' | 'FRIEND' | 'BLOCKED',
   };
 };
 
@@ -61,24 +58,14 @@ export const getAccFriends = (
   account: Account,
   accountOptions?: any
 ): Friendship[] => {
-  return queryFriendshipX(
-    network,
-    { account: account.id, state: 'FRIEND' },
-    accountOptions
-  );
+  return queryFriendshipX(network, { account: account.id, state: 'FRIEND' }, accountOptions);
 };
 
-export const getAccIncomingRequests = (
-  network: NetworkLayer,
-  account: Account
-): Friendship[] => {
+export const getAccIncomingRequests = (network: NetworkLayer, account: Account): Friendship[] => {
   return queryFriendshipX(network, { target: account.id, state: 'REQUEST' });
 };
 
-export const getAccOutgoingRequests = (
-  network: NetworkLayer,
-  account: Account
-): Friendship[] => {
+export const getAccOutgoingRequests = (network: NetworkLayer, account: Account): Friendship[] => {
   return queryFriendshipX(network, { account: account.id, state: 'REQUEST' });
 };
 
@@ -87,11 +74,7 @@ export const getAccBlocked = (
   account: Account,
   accountOptions?: any
 ): Friendship[] => {
-  return queryFriendshipX(
-    network,
-    { account: account.id, state: 'BLOCKED' },
-    accountOptions
-  );
+  return queryFriendshipX(network, { account: account.id, state: 'BLOCKED' }, accountOptions);
 };
 
 export interface FriendshipOptions {
@@ -111,17 +94,13 @@ export const queryFriendshipX = (
 
   const toQuery: QueryFragment[] = [Has(IsFriendship)];
 
-  if (options?.account)
-    toQuery.push(HasValue(AccountID, { value: options.account }));
+  if (options?.account) toQuery.push(HasValue(AccountID, { value: options.account }));
 
-  if (options?.target)
-    toQuery.push(HasValue(TargetID, { value: options.target }));
+  if (options?.target) toQuery.push(HasValue(TargetID, { value: options.target }));
 
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
 
   const raw = Array.from(runQuery(toQuery));
 
-  return raw.map((index: EntityIndex) =>
-    getFriendship(network, index, accountOptions)
-  );
+  return raw.map((index: EntityIndex) => getFriendship(network, index, accountOptions));
 };

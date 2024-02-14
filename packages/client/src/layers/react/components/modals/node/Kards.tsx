@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {
-  collectIcon,
-  feedIcon,
-  liquidateIcon,
-  stopIcon,
-} from 'assets/images/icons/actions';
+import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { IconListButton } from 'layers/react/components/library/IconListButton';
@@ -98,9 +93,7 @@ export const Kards = (props: Props) => {
     const health = calcHealth(kami);
     const description = [
       '',
-      `Health: ${health.toFixed()}/${
-        kami.stats.health + kami.bonusStats.health
-      }`,
+      `Health: ${health.toFixed()}/${kami.stats.health + kami.bonusStats.health}`,
       `Harmony: ${kami.stats.harmony + kami.bonusStats.harmony}`,
       `Violence: ${kami.stats.violence + kami.bonusStats.violence}`,
     ];
@@ -111,8 +104,7 @@ export const Kards = (props: Props) => {
   const getDisabledReason = (kami: Kami): string => {
     let reason = '';
     if (onCooldown(kami)) {
-      reason =
-        'On cooldown (' + calcCooldownRemaining(kami).toFixed(0) + 's left)';
+      reason = 'On cooldown (' + calcCooldownRemaining(kami).toFixed(0) + 's left)';
     } else if (isStarving(kami)) {
       reason = 'starving :(';
     }
@@ -151,22 +143,16 @@ export const Kards = (props: Props) => {
     }
 
     // check what the liquidation threshold is for any kamis that have made it to
-    const valid = available.filter((kami) =>
-      canMog(kami, target, battleConfig)
-    );
+    const valid = available.filter((kami) => canMog(kami, target, battleConfig));
     if (valid.length == 0 && reason === '') {
       // get the details of the highest cap liquidation
-      const thresholds = available.map((ally) =>
-        calcLiqThresholdValue(ally, target, battleConfig)
-      );
+      const thresholds = available.map((ally) => calcLiqThresholdValue(ally, target, battleConfig));
       const [threshold, index] = thresholds.reduce(
         (a, b, i) => (a[0] < b ? [b, i] : a),
         [Number.MIN_VALUE, -1]
       );
       const champion = available[index];
-      reason = `${champion.name} can liquidate at ${Math.round(
-        threshold
-      )} Health`;
+      reason = `${champion.name} can liquidate at ${Math.round(threshold)} Health`;
     }
 
     if (reason === '') reason = 'Liquidate this Kami';
@@ -199,9 +185,7 @@ export const Kards = (props: Props) => {
           id={`harvest-collect-${kami.index}`}
           onClick={() => actions.collect(kami)}
           img={collectIcon}
-          disabled={
-            kami.production === undefined || getDisabledReason(kami) !== ''
-          }
+          disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
         />
       </Tooltip>
     );
@@ -212,9 +196,7 @@ export const Kards = (props: Props) => {
     const tooltipText = whyCantFeed(kami, account);
 
     const stockedInventory =
-      account.inventories?.food?.filter(
-        (inv: Inventory) => inv.balance && inv.balance > 0
-      ) ?? [];
+      account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
@@ -245,9 +227,7 @@ export const Kards = (props: Props) => {
           id={`harvest-stop-${kami.index}`}
           img={stopIcon}
           onClick={() => actions.stop(kami)}
-          disabled={
-            kami.production === undefined || getDisabledReason(kami) !== ''
-          }
+          disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
         />
       </Tooltip>
     );
@@ -255,9 +235,7 @@ export const Kards = (props: Props) => {
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options = allies.filter((ally) =>
-      canLiquidate(ally, target, battleConfig)
-    );
+    const options = allies.filter((ally) => canLiquidate(ally, target, battleConfig));
     const actionOptions = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
@@ -292,11 +270,7 @@ export const Kards = (props: Props) => {
         kami={kami}
         description={getDescription(kami)}
         subtext={`yours (\$${output})`}
-        actions={[
-          FeedButton(kami, account),
-          CollectButton(kami),
-          StopButton(kami),
-        ]}
+        actions={[FeedButton(kami, account), CollectButton(kami), StopButton(kami)]}
         showBattery
         showCooldown
       />

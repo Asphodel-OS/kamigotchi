@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import {
-  EntityIndex,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 import * as mqtt from 'mqtt';
 
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
@@ -91,10 +85,7 @@ export function registerChatModal() {
           relay.on('message', function (topic: any, rawMessage: any) {
             const message = rawMessage.toString();
             if (!hasURL(message)) {
-              setMessages((messages) => [
-                ...messages,
-                { seenAt: Date.now(), message },
-              ]);
+              setMessages((messages) => [...messages, { seenAt: Date.now(), message }]);
             }
           });
           botElement?.scrollIntoView({

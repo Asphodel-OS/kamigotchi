@@ -1,10 +1,4 @@
-import {
-  EntityID,
-  Has,
-  HasValue,
-  getComponentValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 
@@ -31,11 +25,7 @@ export const getData = (
     )[0];
   } else {
     configEntityIndex = Array.from(
-      runQuery([
-        Has(IsData),
-        HasValue(HolderID, { value: id }),
-        HasValue(Type, { value: type }),
-      ])
+      runQuery([Has(IsData), HasValue(HolderID, { value: id }), HasValue(Type, { value: type })])
     )[0];
   }
   return getComponentValue(Value, configEntityIndex)?.value != undefined

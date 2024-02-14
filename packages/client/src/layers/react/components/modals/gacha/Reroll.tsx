@@ -55,11 +55,7 @@ export const Reroll = (props: Props) => {
     text.push('');
 
     // stats
-    text.push(
-      'Re-roll cost: ' +
-        utils.formatEther(props.utils.getRerollCost(kami)) +
-        'Ξ'
-    );
+    text.push('Re-roll cost: ' + utils.formatEther(props.utils.getRerollCost(kami)) + 'Ξ');
     text.push('Re-rolls done: ' + kami.rerolls.toString());
 
     return text;
@@ -77,9 +73,7 @@ export const Reroll = (props: Props) => {
         onClick={handleReroll}
         text='Re-roll'
         size='large'
-        disabled={
-          selectedKamis.length === 0 || rerollPrice > props.data.balance
-        }
+        disabled={selectedKamis.length === 0 || rerollPrice > props.data.balance}
         fill
       />
     </Footer>
@@ -122,9 +116,7 @@ export const Reroll = (props: Props) => {
       />
       <InnerBox>
         {props.display.Tab}
-        <AmountText>
-          Kamigotchis re-rollable: {props.data.kamis.length}
-        </AmountText>
+        <AmountText>Kamigotchis re-rollable: {props.data.kamis.length}</AmountText>
         {Grid}
       </InnerBox>
       {FooterButton}

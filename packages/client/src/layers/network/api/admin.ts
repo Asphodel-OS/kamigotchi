@@ -201,12 +201,7 @@ export function createAdminAPI(systems: any) {
   }
 
   // creates a Reward for an existing Quest
-  async function addQuestReward(
-    questIndex: number,
-    type: string,
-    index: number,
-    value: number
-  ) {
+  async function addQuestReward(questIndex: number, type: string, index: number, value: number) {
     await sleepIf();
     return systems['system._Registry.Quest.Create.Reward'].executeTyped(
       questIndex,
@@ -220,19 +215,9 @@ export function createAdminAPI(systems: any) {
   //  ROOMS
 
   // @dev creates a room with name, location and exits. cannot overwrite room at location
-  async function createRoom(
-    location: number,
-    name: string,
-    description: string,
-    exits: number[]
-  ) {
+  async function createRoom(location: number, name: string, description: string, exits: number[]) {
     await sleepIf();
-    return systems['system._Room.Create'].executeTyped(
-      location,
-      name,
-      description,
-      exits
-    );
+    return systems['system._Room.Create'].executeTyped(location, name, description, exits);
   }
 
   async function deleteRoom(location: number) {
@@ -520,10 +505,7 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  async function deleteRelationship(
-    indexNPC: number,
-    indexRelationship: number
-  ) {
+  async function deleteRelationship(indexNPC: number, indexRelationship: number) {
     await sleepIf();
     return systems['system._Registry.Relationship.Delete'].executeTyped(
       indexNPC,

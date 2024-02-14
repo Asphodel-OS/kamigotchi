@@ -2,9 +2,7 @@ import { DialogueNode } from '.';
 
 export const appleimac: DialogueNode = {
   index: 141,
-  text: [
-    "An apple iMac. Looks like the G3, actually. There's no power cable, so it's dead.",
-  ],
+  text: ["An apple iMac. Looks like the G3, actually. There's no power cable, so it's dead."],
 };
 
 export const businesspaperwork: DialogueNode = {

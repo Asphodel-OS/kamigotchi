@@ -37,12 +37,9 @@ export const ItemIcon = (props: Props) => {
 
   const balance = () => {
     if (props.balance) {
-      if (props.size == 'small')
-        return <SmallBalance>{props.balance}</SmallBalance>;
-      else if (props.size == 'large')
-        return <LargeBalance>{props.balance}</LargeBalance>;
-      else if (props.size == 'fixed')
-        return <FixedBalance>{props.balance}</FixedBalance>;
+      if (props.size == 'small') return <SmallBalance>{props.balance}</SmallBalance>;
+      else if (props.size == 'large') return <LargeBalance>{props.balance}</LargeBalance>;
+      else if (props.size == 'fixed') return <FixedBalance>{props.balance}</FixedBalance>;
     } else {
       return <></>;
     }
@@ -93,11 +90,7 @@ export const ItemIcon = (props: Props) => {
   let result = base();
 
   if (props.description) {
-    result = (
-      <Tooltip text={[props.item.name, '', props.item.description]}>
-        {result}
-      </Tooltip>
-    );
+    result = <Tooltip text={[props.item.name, '', props.item.description]}>{result}</Tooltip>;
   }
 
   return result;

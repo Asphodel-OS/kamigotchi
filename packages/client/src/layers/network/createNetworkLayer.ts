@@ -24,16 +24,12 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const world = createWorld();
   const components = createComponents(world);
 
-  const { txQueue, systems, txReduced$, network, startSync } =
-    await setupMUDNetwork<typeof components, SystemTypes>(
-      config,
-      world,
-      components,
-      SystemAbis,
-      {
-        fetchSystemCalls: true,
-      }
-    );
+  const { txQueue, systems, txReduced$, network, startSync } = await setupMUDNetwork<
+    typeof components,
+    SystemTypes
+  >(config, world, components, SystemAbis, {
+    fetchSystemCalls: true,
+  });
 
   let actions;
   const provider = network.providers.get().json;

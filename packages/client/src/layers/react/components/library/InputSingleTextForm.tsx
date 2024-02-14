@@ -52,11 +52,7 @@ export const InputSingleTextForm = (props: Props) => {
         />
       </InputGroup>
       {props.hasButton && (
-        <ActionButton
-          id={`submit`}
-          text={props.buttonText}
-          onClick={() => handleSubmit()}
-        />
+        <ActionButton id={`submit`} text={props.buttonText} onClick={() => handleSubmit()} />
       )}
     </Container>
   );

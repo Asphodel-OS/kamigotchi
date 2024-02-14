@@ -44,9 +44,7 @@ export function registerActionQueueFixture() {
       return (
         <Wrapper style={{ display: fixtures.actionQueue ? 'block' : 'none' }}>
           <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
-            {mode !== 0 && (
-              <Logs actionIndices={actionIndices} network={layers.network} />
-            )}
+            {mode !== 0 && <Logs actionIndices={actionIndices} network={layers.network} />}
             <Controls mode={mode} setMode={setMode} network={layers.network} />
           </Content>
         </Wrapper>

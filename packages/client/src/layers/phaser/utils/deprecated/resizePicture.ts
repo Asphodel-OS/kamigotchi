@@ -4,8 +4,7 @@ export const resizePicture = () => {
     { width: 1536, height: 864, scale: 0.82 },
     { width: 1920, height: 1080, scale: 0.85 },
   ];
-  const { clientWidth: windowWidth, clientHeight: windowHeight } =
-    document.documentElement;
+  const { clientWidth: windowWidth, clientHeight: windowHeight } = document.documentElement;
 
   const screenSize = screenSizes.find(
     ({ width, height }) => windowWidth <= width && windowHeight <= height

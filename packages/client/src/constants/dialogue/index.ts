@@ -52,13 +52,9 @@ const dialogueList = dialogues00.concat(
 );
 
 // aggregated map of all dialogue nodes, referenced by index
-export const dialogues = dialogueList.reduce(function (
-  map,
-  node: DialogueNode
-) {
+export const dialogues = dialogueList.reduce(function (map, node: DialogueNode) {
   map[node.index] = node;
   return map;
-},
-{} as { [key: number]: DialogueNode });
+}, {} as { [key: number]: DialogueNode });
 
 export type { DialogueNode } from './types';

@@ -20,9 +20,7 @@ export const Outbound = (props: Props) => {
       <ActionListButton
         id={`friendship-options-${friendship.entityIndex}`}
         text=''
-        options={[
-          { text: 'Cancel', onClick: () => actions.cancelFren(friendship) },
-        ]}
+        options={[{ text: 'Cancel', onClick: () => actions.cancelFren(friendship) }]}
       />
     );
   };

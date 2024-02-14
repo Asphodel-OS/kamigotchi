@@ -47,8 +47,7 @@ export const Rewards = (props: Props) => {
       const amounts = log.droptable.results!;
 
       for (let i = 0; i < items.length; i++) {
-        if (amounts[i] > 0)
-          list.push(parseItem(items[i], rarities[i], amounts[i]));
+        if (amounts[i] > 0) list.push(parseItem(items[i], rarities[i], amounts[i]));
       }
     }
 

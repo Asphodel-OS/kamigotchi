@@ -30,10 +30,7 @@ export const Tabs = (props: Props) => {
       >
         Skills
       </Button>
-      <Button
-        onClick={() => setTab('battles')}
-        disabled={props.tab === 'battles'}
-      >
+      <Button onClick={() => setTab('battles')} disabled={props.tab === 'battles'}>
         Battles
       </Button>
     </Container>

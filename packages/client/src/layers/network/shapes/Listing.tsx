@@ -19,10 +19,7 @@ export interface Listing {
 }
 
 // get an Listing from its EntityIndex
-export const getListing = (
-  network: NetworkLayer,
-  index: EntityIndex
-): Listing => {
+export const getListing = (network: NetworkLayer, index: EntityIndex): Listing => {
   const {
     world,
     components: { IsRegistry, ItemIndex, PriceBuy },

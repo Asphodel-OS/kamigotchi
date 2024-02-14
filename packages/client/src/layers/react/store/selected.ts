@@ -34,19 +34,13 @@ export const useSelected = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setAccount: (accountIndex: number) =>
-      set((state: State) => ({ ...state, accountIndex })),
-    setDialogue: (dialogueIndex: number) =>
-      set((state: State) => ({ ...state, dialogueIndex })),
-    setKami: (kamiIndex: number) =>
-      set((state: State) => ({ ...state, kamiIndex })),
+    setAccount: (accountIndex: number) => set((state: State) => ({ ...state, accountIndex })),
+    setDialogue: (dialogueIndex: number) => set((state: State) => ({ ...state, dialogueIndex })),
+    setKami: (kamiIndex: number) => set((state: State) => ({ ...state, kamiIndex })),
     setListing: (listingEntityIndex: EntityIndex) =>
       set((state: State) => ({ ...state, listingEntityIndex })),
-    setNode: (nodeIndex: number) =>
-      set((state: State) => ({ ...state, nodeIndex })),
-    setNpc: (npcIndex: number) =>
-      set((state: State) => ({ ...state, npcIndex })),
-    setRoom: (roomLocation: number) =>
-      set((state: State) => ({ ...state, roomLocation })),
+    setNode: (nodeIndex: number) => set((state: State) => ({ ...state, nodeIndex })),
+    setNpc: (npcIndex: number) => set((state: State) => ({ ...state, npcIndex })),
+    setRoom: (roomLocation: number) => set((state: State) => ({ ...state, roomLocation })),
   };
 });

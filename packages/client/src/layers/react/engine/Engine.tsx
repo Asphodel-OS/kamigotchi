@@ -1,11 +1,7 @@
 // src/layers/react/engine/Engine.tsx:
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-  lightTheme,
-} from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 

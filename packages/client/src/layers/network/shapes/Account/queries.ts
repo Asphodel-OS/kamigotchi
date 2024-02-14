@@ -1,18 +1,9 @@
-import {
-  EntityIndex,
-  EntityID,
-  Has,
-  HasValue,
-  runQuery,
-} from '@latticexyz/recs';
+import { EntityIndex, EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 
 import { getAccount, AccountOptions } from './types';
 import { NetworkLayer } from 'layers/network/types';
 
-export const getAllAccounts = (
-  network: NetworkLayer,
-  options?: AccountOptions
-) => {
+export const getAllAccounts = (network: NetworkLayer, options?: AccountOptions) => {
   const {
     components: { IsAccount },
   } = network;
@@ -22,17 +13,9 @@ export const getAllAccounts = (
 };
 
 // get an Account by its entityID
-export const getAccountByID = (
-  network: NetworkLayer,
-  id: EntityID,
-  options?: AccountOptions
-) => {
+export const getAccountByID = (network: NetworkLayer, id: EntityID, options?: AccountOptions) => {
   const { world } = network;
-  return getAccount(
-    network,
-    world.entityToIndex.get(id) as EntityIndex,
-    options
-  );
+  return getAccount(network, world.entityToIndex.get(id) as EntityIndex, options);
 };
 
 // get an Account by its AccountIndex
@@ -63,9 +46,7 @@ export const getAccountByName = (
   const {
     components: { IsAccount, Name },
   } = network;
-  const entityIndex = Array.from(
-    runQuery([Has(IsAccount), HasValue(Name, { value: name })])
-  )[0];
+  const entityIndex = Array.from(runQuery([Has(IsAccount), HasValue(Name, { value: name })]))[0];
   return getAccount(network, entityIndex, options);
 };
 
@@ -80,10 +61,7 @@ export const getAccountByOperator = (
     components: { IsAccount, OperatorAddress },
   } = network;
   const entityIndex = Array.from(
-    runQuery([
-      Has(IsAccount),
-      HasValue(OperatorAddress, { value: operatorEOA }),
-    ])
+    runQuery([Has(IsAccount), HasValue(OperatorAddress, { value: operatorEOA })])
   )[0];
   return getAccount(network, entityIndex, options);
 };
@@ -104,10 +82,7 @@ export const getAccountByOwner = (
 };
 
 // get an Account, assuming the currently connected burner is the Operator
-export const getAccountFromBurner = (
-  network: NetworkLayer,
-  options?: AccountOptions
-) => {
+export const getAccountFromBurner = (network: NetworkLayer, options?: AccountOptions) => {
   const connectedBurner = network.network.connectedAddress.get();
   return getAccountByOperator(network, connectedBurner!, options);
 };

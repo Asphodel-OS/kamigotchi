@@ -1,8 +1,4 @@
-import {
-  backgroundDefault,
-  objectCabinet,
-  objectChair,
-} from 'assets/images/rooms/7_office-lobby';
+import { backgroundDefault, objectCabinet, objectChair } from 'assets/images/rooms/7_office-lobby';
 import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 

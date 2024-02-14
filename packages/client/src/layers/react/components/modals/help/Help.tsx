@@ -36,19 +36,14 @@ export function registerHelpModal() {
             display: `${tab == HelpTabs.HOME ? 'none' : 'inline-flex'}`,
           }}
         >
-          <ActionButton
-            id='help_back_button'
-            onClick={() => setTab(HelpTabs.HOME)}
-            text='<'
-          />
+          <ActionButton id='help_back_button' onClick={() => setTab(HelpTabs.HOME)} text='<' />
         </ButtonRow>
       );
 
       const Menu = () => (
         <MenuBody>
           <MenuText>
-            Here are valuable resources that can help you navigate Kamigotchi
-            World.
+            Here are valuable resources that can help you navigate Kamigotchi World.
           </MenuText>
           <Tooltip text={['Getting Started']}>
             <Label>Book 1</Label>
@@ -89,11 +84,7 @@ export function registerHelpModal() {
         >
           <BackButton />
           <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
-          {tab === HelpTabs.HOME ? (
-            <Menu />
-          ) : (
-            <SectionContent body={CopyInfo[tab].body} />
-          )}
+          {tab === HelpTabs.HOME ? <Menu /> : <SectionContent body={CopyInfo[tab].body} />}
         </ModalWrapper>
       );
     }

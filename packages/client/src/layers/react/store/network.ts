@@ -57,8 +57,7 @@ export const useNetwork = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setBurner: (burner: Burner) =>
-      set((state: State) => ({ ...state, burner })),
+    setBurner: (burner: Burner) => set((state: State) => ({ ...state, burner })),
     setSelectedAddress: (selectedAddress: string) =>
       set((state: State) => ({ ...state, selectedAddress })),
     setValidations: (validations: Validations) =>

@@ -21,8 +21,8 @@ const UIGrid = styled.div`
   z-index: 100;
 `;
 
-const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> =
-  React.memo(({ children, gridConfig }) => {
+const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.memo(
+  ({ children, gridConfig }) => {
     const { colStart, colEnd, rowStart, rowEnd } = gridConfig;
 
     return (
@@ -37,25 +37,24 @@ const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> =
         {children}
       </Cell>
     );
-  });
+  }
+);
 
 export const UIComponentRenderer: React.FC<{
   layers: Layers;
   id: string;
   uiComponent: UIComponent;
-}> = React.memo(
-  ({ layers, id, uiComponent: { requirement, Render, gridConfig } }) => {
-    const req = useMemo(() => requirement(layers), [requirement, layers]);
-    const state = useStream(req);
-    if (!state) return null;
+}> = React.memo(({ layers, id, uiComponent: { requirement, Render, gridConfig } }) => {
+  const req = useMemo(() => requirement(layers), [requirement, layers]);
+  const state = useStream(req);
+  if (!state) return null;
 
-    return (
-      <UIComponentContainer key={`component-${id}`} gridConfig={gridConfig}>
-        {<Render {...state} />}
-      </UIComponentContainer>
-    );
-  }
-);
+  return (
+    <UIComponentContainer key={`component-${id}`} gridConfig={gridConfig}>
+      {<Render {...state} />}
+    </UIComponentContainer>
+  );
+});
 
 export const ComponentRenderer: React.FC = observer(() => {
   const { UIComponents } = useEngineStore();

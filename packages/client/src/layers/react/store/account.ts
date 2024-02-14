@@ -61,9 +61,7 @@ export const useAccount = create<State & Actions>((set) => {
   };
   return {
     ...initialState,
-    setAccount: (data: Account) =>
-      set((state: State) => ({ ...state, account: data })),
-    setValidations: (data: Validations) =>
-      set((state: State) => ({ ...state, validations: data })),
+    setAccount: (data: Account) => set((state: State) => ({ ...state, account: data })),
+    setValidations: (data: Validations) => set((state: State) => ({ ...state, validations: data })),
   };
 });

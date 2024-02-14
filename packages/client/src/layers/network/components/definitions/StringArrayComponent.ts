@@ -1,10 +1,6 @@
 import { defineComponent, Type, World } from '@latticexyz/recs';
 
-export function defineStringArrayComponent(
-  world: World,
-  name: string,
-  contractId: string
-) {
+export function defineStringArrayComponent(world: World, name: string, contractId: string) {
   return defineComponent(
     world,
     {

@@ -22,10 +22,7 @@ export interface Merchant {
 }
 
 // get an Merchant from its EntityIndex
-export const getMerchant = (
-  network: NetworkLayer,
-  entityIndex: EntityIndex
-): Merchant => {
+export const getMerchant = (network: NetworkLayer, entityIndex: EntityIndex): Merchant => {
   const {
     world,
     components: { IsListing, Location, NPCIndex, Name },
@@ -45,9 +42,7 @@ export const getMerchant = (
     runQuery([Has(IsListing), HasValue(NPCIndex, { value: merchant.index })])
   );
 
-  let listings = listingResults.map((entityIndex) =>
-    getListing(network, entityIndex)
-  );
+  let listings = listingResults.map((entityIndex) => getListing(network, entityIndex));
   merchant.listings = listings.sort((a, b) => a.buyPrice - b.buyPrice);
 
   return merchant;

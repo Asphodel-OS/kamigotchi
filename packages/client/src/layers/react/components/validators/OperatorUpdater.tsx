@@ -33,23 +33,11 @@ export function registerOperatorUpdater() {
       const {
         network: { actions },
       } = layers;
-      const [_, setDetectedPrivateKey] = useLocalStorage(
-        'operatorPrivateKey',
-        ''
-      );
-      const {
-        burner,
-        selectedAddress,
-        networks,
-        validations: networkValidations,
-      } = useNetwork();
+      const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
+      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const {
-        account: kamiAccount,
-        validations,
-        setValidations,
-      } = useAccount();
+      const { account: kamiAccount, validations, setValidations } = useAccount();
 
       const [operatorMatches, setOperatorMatches] = useState(false);
       const [operatorTaken, setOperatorTaken] = useState(false);
@@ -59,8 +47,7 @@ export function registerOperatorUpdater() {
 
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
-        const operatorMatches =
-          kamiAccount.operatorAddress === burner.connected.address;
+        const operatorMatches = kamiAccount.operatorAddress === burner.connected.address;
         setOperatorMatches(operatorMatches);
         setValidations({ ...validations, operatorMatches });
       }, [burner.connected.address, kamiAccount.operatorAddress]);
@@ -98,10 +85,7 @@ export function registerOperatorUpdater() {
 
       // check if the connected burner is already taken by an account
       useEffect(() => {
-        const account = getAccountByOperator(
-          layers.network,
-          burner.connected.address
-        );
+        const account = getAccountByOperator(layers.network, burner.connected.address);
         setOperatorTaken(!!account.id);
       }, [mode, burner.connected.address]);
 
@@ -149,9 +133,7 @@ export function registerOperatorUpdater() {
         setValue('');
       };
 
-      const handleInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-      ) => {
+      const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
       };
 
@@ -196,11 +178,7 @@ export function registerOperatorUpdater() {
             />
           );
           if (operatorTaken) {
-            button = (
-              <Tooltip text={['This Avatar is taken by another account']}>
-                {button}
-              </Tooltip>
-            );
+            button = <Tooltip text={['This Avatar is taken by another account']}>{button}</Tooltip>;
           }
         }
 
@@ -217,16 +195,11 @@ export function registerOperatorUpdater() {
           title='Update Avatar'
           errorPrimary='Connected Burner != Account Avatar'
         >
-          <Description>
-            Account Avatar: {kamiAccount.operatorAddress}
-          </Description>
-          <Description>
-            Connected Burner: {burner.connected.address}
-          </Description>
+          <Description>Account Avatar: {kamiAccount.operatorAddress}</Description>
+          <Description>Connected Burner: {burner.connected.address}</Description>
           <br />
           <WarningOption onClick={() => handleSetMode('key')}>
-            {mode === 'key' ? '→ ' : ''}Please, find your keys{' '}
-            {kamiAccount.name}
+            {mode === 'key' ? '→ ' : ''}Please, find your keys {kamiAccount.name}
           </WarningOption>
           <WarningOption onClick={() => handleSetMode('address')}>
             {mode !== 'key' ? '→ ' : ''}or replace your current Avatar
@@ -243,12 +216,7 @@ export function registerOperatorUpdater() {
           </InputContainer>
           <Row>
             <SupportButton />
-            <ActionButton
-              id={`submit`}
-              text='Submit'
-              onClick={submit}
-              size='vending'
-            />
+            <ActionButton id={`submit`} text='Submit' onClick={submit} size='vending' />
           </Row>
         </ValidatorWrapper>
       );

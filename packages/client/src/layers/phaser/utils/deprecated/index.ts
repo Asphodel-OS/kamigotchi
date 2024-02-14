@@ -1,10 +1,4 @@
-import {
-  EntityIndex,
-  getComponentValue,
-  Schema,
-  Metadata,
-  Component,
-} from '@latticexyz/recs';
+import { EntityIndex, getComponentValue, Schema, Metadata, Component } from '@latticexyz/recs';
 
 export const hexToDecimal = (hex: string) => parseInt(hex, 16);
 

@@ -32,10 +32,7 @@ export const Tabs = (props: Props) => {
         >
           Requests
         </Button>
-        <Button
-          onClick={() => setTab('blocked')}
-          disabled={props.tab === 'blocked'}
-        >
+        <Button onClick={() => setTab('blocked')} disabled={props.tab === 'blocked'}>
           Blocked
         </Button>
       </>
@@ -59,10 +56,7 @@ export const Tabs = (props: Props) => {
         >
           Friends
         </Button>
-        <Button
-          onClick={() => setTab('activity')}
-          disabled={props.tab === 'activity'}
-        >
+        <Button onClick={() => setTab('activity')} disabled={props.tab === 'activity'}>
           Activity
         </Button>
       </>
