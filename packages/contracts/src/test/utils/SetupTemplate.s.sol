@@ -23,7 +23,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUp() public virtual override {
     super.setUp();
 
-    _initAllConfigs();
+    setUpConfigs();
     _currTime = 5 minutes;
 
     vm.prank(deployer);
@@ -33,12 +33,22 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpMint();
     setUpItems();
     setUpRooms();
+
+    // placeholder: init components that may not be alr init
+    // LibQuery bugs out when querying an empty component set
+    vm.prank(deployer);
+    _IndexSourceComponent.set(0, 0);
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed
   function setUpAccounts() public virtual {
     _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
     _registerAccounts(10);
+  }
+
+  // sets up default configs. override to change/remove behaviour if needed
+  function setUpConfigs() public virtual {
+    _initAllConfigs();
   }
 
   // sets up mint to a default state. override to change/remove behaviour if needed

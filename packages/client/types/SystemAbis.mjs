@@ -31,6 +31,7 @@ import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshi
 import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
 import _RegistryDeleteTraitSystem from "../abi/_RegistryDeleteTraitSystem.json";
 import _RegistryUpdateRelationshipSystem from "../abi/_RegistryUpdateRelationshipSystem.json";
+import _RoomCreateGateSystem from "../abi/_RoomCreateGateSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import _RoomDeleteSystem from "../abi/_RoomDeleteSystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
@@ -118,6 +119,7 @@ export const SystemAbis = {
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
   "system._Registry.Trait.Delete": _RegistryDeleteTraitSystem.abi,
   "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem.abi,
+  "system._Room.Create.Gate": _RoomCreateGateSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
   "system._Room.Delete": _RoomDeleteSystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,
