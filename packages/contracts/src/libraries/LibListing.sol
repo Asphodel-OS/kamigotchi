@@ -30,14 +30,14 @@ library LibListing {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 merchantIndex,
+    uint32 npcIndex,
     uint256 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsListingComponent(getAddressById(components, IsListingCompID)).set(id);
-    IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, merchantIndex);
+    IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, npcIndex);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
 
     // set buy and sell prices if valid
@@ -133,7 +133,7 @@ library LibListing {
     return LibNPC.getByIndex(components, getNPCIndex(components, id));
   }
 
-  function getNPCIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getNPCIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).getValue(id);
   }
 

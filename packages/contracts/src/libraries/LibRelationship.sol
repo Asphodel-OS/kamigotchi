@@ -23,7 +23,7 @@ library LibRelationship {
     IWorld world,
     IUintComp components,
     uint256 accountID,
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -44,7 +44,7 @@ library LibRelationship {
   function canCreate(
     IUintComp components,
     uint256 accountID,
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex
   ) internal view returns (bool) {
     uint256 registryID = LibRegistryRelationship.get(components, npcIndex, relIndex);
@@ -57,7 +57,7 @@ library LibRelationship {
   function has(
     IUintComp components,
     uint256 accountID,
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex
   ) internal view returns (bool) {
     return get(components, accountID, npcIndex, relIndex) != 0;
@@ -70,7 +70,7 @@ library LibRelationship {
     uint256 registryID
   ) internal view returns (bool) {
     uint256[] memory blacklist = LibRegistryRelationship.getBlacklist(components, registryID);
-    uint256 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
+    uint32 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
     for (uint256 i = 0; i < blacklist.length; i++) {
       if (has(components, accountID, npcIndex, blacklist[i])) return true;
     }
@@ -85,7 +85,7 @@ library LibRelationship {
     uint256 registryID
   ) internal view returns (bool) {
     uint256[] memory whitelist = LibRegistryRelationship.getWhitelist(components, registryID);
-    uint256 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
+    uint32 npcIndex = LibRegistryRelationship.getNpcIndex(components, registryID);
     if (whitelist.length == 0) return true;
     for (uint256 i = 0; i < whitelist.length; i++) {
       if (has(components, accountID, npcIndex, whitelist[i])) return true;
@@ -99,7 +99,7 @@ library LibRelationship {
   function get(
     IUintComp components,
     uint256 accountID,
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](4);

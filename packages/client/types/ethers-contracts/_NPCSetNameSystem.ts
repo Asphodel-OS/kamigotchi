@@ -30,7 +30,7 @@ import type {
 export interface _NPCSetNameSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string)": FunctionFragment;
+    "executeTyped(uint32,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

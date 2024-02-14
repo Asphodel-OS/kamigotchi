@@ -31,7 +31,7 @@ export interface _RegistryUpdateRelationshipSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,string,uint256[],uint256[])": FunctionFragment;
+    "executeTyped(uint32,uint256,string,uint256[],uint256[])": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

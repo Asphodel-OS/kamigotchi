@@ -376,20 +376,20 @@ abstract contract SetupTemplate is TestSetupImports {
     return abi.decode(nodeID, (uint));
   }
 
-  function _createNPC(uint index, uint roomIndex, string memory name) public returns (uint) {
+  function _createNPC(uint32 index, uint roomIndex, string memory name) public returns (uint) {
     vm.prank(deployer);
     bytes memory merchantID = __NPCCreateSystem.executeTyped(index, name, roomIndex);
     return abi.decode(merchantID, (uint));
   }
 
   function _setListing(
-    uint index,
+    uint32 npcIndex,
     uint itemId,
     uint priceBuy,
     uint priceSell
   ) public returns (uint) {
     vm.prank(deployer);
-    bytes memory listingID = __ListingSetSystem.executeTyped(index, itemId, priceBuy, priceSell);
+    bytes memory listingID = __ListingSetSystem.executeTyped(npcIndex, itemId, priceBuy, priceSell);
     return abi.decode(listingID, (uint));
   }
 

@@ -26,7 +26,7 @@ library LibRegistryRelationship {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -65,10 +65,10 @@ library LibRegistryRelationship {
 
   function exists(
     IUintComp components,
-    uint256 indexNPC,
-    uint256 indexRel
+    uint32 npcIndex,
+    uint256 indexRelationship
   ) internal view returns (bool) {
-    return get(components, indexNPC, indexRel) != 0;
+    return get(components, npcIndex, indexRelationship) != 0;
   }
 
   /////////////////
@@ -89,7 +89,7 @@ library LibRegistryRelationship {
   /////////////////
   // GETTERS
 
-  function getNpcIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getNpcIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).getValue(id);
   }
 
@@ -151,7 +151,7 @@ library LibRegistryRelationship {
   // Get a Relationship Registry Entity by its RelationshipIndex and NPCIndex.
   function get(
     IUintComp components,
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](4);

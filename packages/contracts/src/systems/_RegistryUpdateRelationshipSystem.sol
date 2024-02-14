@@ -16,12 +16,12 @@ contract _RegistryUpdateRelationshipSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 npcIndex,
+      uint32 npcIndex,
       uint256 relIndex,
       string memory name,
       uint256[] memory whitelist,
       uint256[] memory blacklist
-    ) = abi.decode(arguments, (uint256, uint256, string, uint256[], uint256[]));
+    ) = abi.decode(arguments, (uint32, uint256, string, uint256[], uint256[]));
     uint256 registryID = LibRegRel.get(components, npcIndex, relIndex);
 
     require(registryID != 0, "RegistryUpdateRelationship: flag does not exist");
@@ -33,7 +33,7 @@ contract _RegistryUpdateRelationshipSystem is System {
   }
 
   function executeTyped(
-    uint256 npcIndex,
+    uint32 npcIndex,
     uint256 relIndex,
     string memory name,
     uint256[] memory whitelist,
