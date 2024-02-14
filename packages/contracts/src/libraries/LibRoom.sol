@@ -34,7 +34,7 @@ library LibRoom {
     IWorld world,
     IUintComp components,
     Location memory location,
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description
   ) internal returns (uint256) {
@@ -51,8 +51,8 @@ library LibRoom {
   function createGate(
     IWorld world,
     IUintComp components,
-    uint256 roomIndex,
-    uint256 sourceIndex, // optional: if condition specific from Room A->B
+    uint32 roomIndex,
+    uint32 sourceIndex, // optional: if condition specific from Room A->B
     uint256 conIndex,
     uint256 conValue,
     string memory logicType,
@@ -110,7 +110,7 @@ library LibRoom {
     Location memory toLoc = locationComp.getValue(toID);
     if (isAdjacent(fromLoc, toLoc)) return true;
 
-    uint256[] memory exits = getSpecialExits(components, fromID);
+    uint32[] memory exits = getSpecialExits(components, fromID);
     for (uint256 i; i < exits.length; i++) if (exits[i] == toIndex) return true;
 
     return false;
@@ -147,12 +147,12 @@ library LibRoom {
   function getSpecialExits(
     IUintComp components,
     uint256 id
-  ) internal view returns (uint256[] memory) {
+  ) internal view returns (uint32[] memory) {
     ExitsComponent comp = ExitsComponent(getAddressById(components, ExitsCompID));
-    return comp.has(id) ? comp.getValue(id) : new uint256[](0);
+    return comp.has(id) ? comp.getValue(id) : new uint32[](0);
   }
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).getValue(id);
   }
 
@@ -167,7 +167,7 @@ library LibRoom {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setExits(IUintComp components, uint256 id, uint256[] memory exits) internal {
+  function setExits(IUintComp components, uint256 id, uint32[] memory exits) internal {
     ExitsComponent(getAddressById(components, ExitsCompID)).set(id, exits);
   }
 
@@ -208,20 +208,20 @@ library LibRoom {
   /// @dev clunky and not ideal, but used here to reduce query calls
   function queryByIndexDouble(
     IUintComp components,
-    uint256 roomA,
-    uint256 roomB
+    uint32 indexA,
+    uint32 indexB
   ) internal view returns (uint256 roomAID, uint256 roomBID) {
     IndexRoomComponent indexComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
 
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRoomCompID), "");
 
-    fragments[1] = QueryFragment(QueryType.HasValue, indexComp, abi.encode(roomA));
+    fragments[1] = QueryFragment(QueryType.HasValue, indexComp, abi.encode(indexA));
     uint256[] memory results = LibQuery.query(fragments);
     require(results.length > 0, "LibRoom: no room at index A");
     roomAID = results[0];
 
-    fragments[1] = QueryFragment(QueryType.HasValue, indexComp, abi.encode(roomB));
+    fragments[1] = QueryFragment(QueryType.HasValue, indexComp, abi.encode(indexB));
     results = LibQuery.query(fragments);
     require(results.length > 0, "LibRoom: no room at index B");
     roomBID = results[0];

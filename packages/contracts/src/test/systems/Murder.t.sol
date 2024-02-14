@@ -192,7 +192,7 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // confirm we CANNOT liquidate from the wrong nodes
-    uint roomIndex;
+    uint32 roomIndex;
     uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 1; i < _nodeIDs.length; i++) {
       // move to the room where the Node is

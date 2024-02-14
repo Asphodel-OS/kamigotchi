@@ -90,7 +90,7 @@ contract RoomTest is SetupTemplate {
     vm.assume(z2 < 2 && z2 > -2);
     vm.assume(!LibRoom.isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
 
-    uint256 accountIndex = 0;
+    uint32 accountIndex = 0;
     _createRoom("1", Location(x1, y1, z1), 1);
     _createRoom("2", Location(x2, y2, z2), 2);
 
@@ -112,7 +112,7 @@ contract RoomTest is SetupTemplate {
   }
 
   function testExitFuzzTrue(
-    uint256 exit,
+    uint32 exit,
     int16 x1,
     int16 y1,
     int16 z1,
@@ -126,7 +126,7 @@ contract RoomTest is SetupTemplate {
     vm.assume(!LibRoom.isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
     vm.assume(!LibRoom.isAdjacent(Location(x1, y1, z1), Location(x2, y2, z2)));
 
-    uint256 accountIndex = 0;
+    uint32 accountIndex = 0;
     _createRoom("1", Location(x1, y1, z1), 1, exit);
     _createRoom("2", Location(x2, y2, z2), exit);
 
@@ -138,8 +138,8 @@ contract RoomTest is SetupTemplate {
   }
 
   function testExitFuzzFalse(
-    uint256 realExit,
-    uint256 fakeExit,
+    uint32 realExit,
+    uint32 fakeExit,
     int16 x1,
     int16 y1,
     int16 z1,
@@ -154,7 +154,7 @@ contract RoomTest is SetupTemplate {
     vm.assume(!LibRoom.isSameLocation(Location(x1, y1, z1), Location(x2, y2, z2)));
     vm.assume(!LibRoom.isAdjacent(Location(x1, y1, z1), Location(x2, y2, z2)));
 
-    uint256 accountIndex = 0;
+    uint32 accountIndex = 0;
     _createRoom("1", Location(x1, y1, z1), 1, realExit);
     _createRoom("2", Location(x2, y2, z2), fakeExit);
 
@@ -168,7 +168,7 @@ contract RoomTest is SetupTemplate {
   }
 
   function testClosedGate() public {
-    uint256[] memory exits = new uint256[](2);
+    uint32[] memory exits = new uint32[](2);
     exits[0] = 2;
     exits[1] = 4;
     _createRoom("1", Location(1, 1, 0), 1, exits);
@@ -183,7 +183,7 @@ contract RoomTest is SetupTemplate {
     __RoomCreateGateSystem.executeTyped(5, 1, 10, 1, "ITEM", "CURR_MIN");
     vm.stopPrank();
 
-    uint256 accountIndex = 0;
+    uint32 accountIndex = 0;
 
     _AssertReachable(1, 2);
     _AssertReachable(1, 3);
@@ -199,7 +199,7 @@ contract RoomTest is SetupTemplate {
     _AssertAccessible(2, 4, accountIndex);
 
     // actually trying to move
-    for (uint256 i = 2; i < 6; i++) {
+    for (uint32 i = 2; i < 6; i++) {
       _AssertAccRoom(accountIndex, 1);
       vm.prank(_getOperator(accountIndex));
       vm.expectRevert("AccMove: inaccessible room");
@@ -239,23 +239,23 @@ contract RoomTest is SetupTemplate {
   //////////////
   // UTILS
 
-  function _AssertAccRoom(uint256 playerIndex, uint256 roomIndex) internal {
+  function _AssertAccRoom(uint32 playerIndex, uint32 roomIndex) internal {
     assertEq(LibAccount.getRoom(components, _getAccount(playerIndex)), roomIndex);
   }
 
-  function _AssertAccessible(uint256 from, uint256 to, uint256 accIndex) internal {
+  function _AssertAccessible(uint32 from, uint32 to, uint32 accIndex) internal {
     _AssertAccessible(from, to, accIndex, true);
   }
 
-  function _AssertAccessible(uint256 from, uint256 to, uint256 accIndex, bool state) internal {
+  function _AssertAccessible(uint32 from, uint32 to, uint32 accIndex, bool state) internal {
     assertTrue(LibRoom.isAccessible(components, from, to, _getAccount(accIndex)) == state);
   }
 
-  function _AssertReachable(uint256 from, uint256 to) internal {
+  function _AssertReachable(uint32 from, uint32 to) internal {
     _AssertReachable(from, to, true);
   }
 
-  function _AssertReachable(uint256 from, uint256 to, bool state) internal {
+  function _AssertReachable(uint32 from, uint32 to, bool state) internal {
     assertTrue(
       LibRoom.isReachable(
         components,

@@ -535,7 +535,7 @@ library LibPet {
   }
 
   // Get the implied roomIndex of a pet based on its state.
-  function getRoom(IUintComp components, uint256 id) public view returns (uint256 roomIndex) {
+  function getRoom(IUintComp components, uint256 id) public view returns (uint32 roomIndex) {
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {

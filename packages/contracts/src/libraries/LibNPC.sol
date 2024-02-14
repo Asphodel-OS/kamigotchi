@@ -23,7 +23,7 @@ library LibNPC {
     IUintComp components,
     uint32 index,
     string memory name,
-    uint256 roomIndex
+    uint32 roomIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id);
@@ -44,14 +44,14 @@ library LibNPC {
     uint256 accountID
   ) internal view returns (bool) {
     IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
-    uint256 roomIndex = roomComp.getValue(id);
+    uint32 roomIndex = roomComp.getValue(id);
     return roomIndex == 0 || roomIndex == roomComp.getValue(accountID);
   }
 
   /////////////////
   // SETTERS
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
+  function setRoomIndex(IUintComp components, uint256 id, uint32 roomIndex) internal {
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
   }
 

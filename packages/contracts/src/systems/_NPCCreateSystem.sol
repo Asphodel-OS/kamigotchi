@@ -13,9 +13,9 @@ contract _NPCCreateSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint32 index, string memory name, uint256 roomIndex) = abi.decode(
+    (uint32 index, string memory name, uint32 roomIndex) = abi.decode(
       arguments,
-      (uint32, string, uint256)
+      (uint32, string, uint32)
     );
     uint256 id = LibNPC.getByIndex(components, index);
 
@@ -28,7 +28,7 @@ contract _NPCCreateSystem is System {
   function executeTyped(
     uint32 index,
     string memory name,
-    uint256 roomIndex
+    uint32 roomIndex
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index, name, roomIndex));
   }
