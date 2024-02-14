@@ -1,7 +1,7 @@
+import { coreSprites, road, roomIndex, water } from 'assets/map';
+import { useSelected } from 'layers/react/store/selected';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { roomIndex, road, coreSprites, water } from 'assets/map';
-import { useSelected } from 'layers/react/store/selected';
 
 interface MapProps {
   currentRoom?: number;

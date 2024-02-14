@@ -1,10 +1,6 @@
 import { defineComponent, Type, World } from '@latticexyz/recs';
 
-export function defineLocationComponent(
-  world: World,
-  name: string,
-  contractId: string
-) {
+export function defineLocationComponent(world: World, name: string, contractId: string) {
   return defineComponent(
     world,
     {
