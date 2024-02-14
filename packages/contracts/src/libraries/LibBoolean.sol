@@ -67,12 +67,6 @@ library LibBoolean {
     return id;
   }
 
-  function remove(IUintComp components, uint256 id) internal {
-    IsConditionComponent(getAddressById(components, IsConditionCompID)).remove(id);
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
-  }
-
   ///////////////////////
   // INTERACTIONS
 
@@ -178,16 +172,6 @@ library LibBoolean {
 
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetValue(IUintComp components, uint256 id) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    if (comp.has(id)) comp.remove(id);
   }
 
   ///////////////////////
