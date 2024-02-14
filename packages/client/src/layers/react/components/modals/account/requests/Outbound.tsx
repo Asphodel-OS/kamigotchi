@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import { Account } from 'layers/network/shapes/Account';
 import { Friendship } from 'layers/network/shapes/Friendship';
 import { ActionListButton } from 'layers/react/components/library';
 import { AccountCard } from 'layers/react/components/library/AccountCard';

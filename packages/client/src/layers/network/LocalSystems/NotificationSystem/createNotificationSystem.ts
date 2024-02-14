@@ -1,15 +1,15 @@
 import {
+  EntityID,
+  EntityIndex,
   World,
   createEntity,
   getComponentValue,
-  updateComponent,
-  EntityID,
-  EntityIndex,
   removeComponent,
   setComponent,
+  updateComponent,
 } from '@latticexyz/recs';
-import { NotificationData } from './types';
 import { defineNotificationComponent } from './NotificationComponent';
+import { NotificationData } from './types';
 
 export type NotificationSystem = ReturnType<typeof createNotificationSystem>;
 

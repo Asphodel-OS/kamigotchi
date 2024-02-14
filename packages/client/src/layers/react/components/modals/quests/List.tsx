@@ -1,13 +1,13 @@
 import { EntityIndex } from '@latticexyz/recs';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Account } from 'layers/network/shapes/Account';
 import { Item } from 'layers/network/shapes/Item';
 import { Objective, Quest, Requirement, Reward } from 'layers/network/shapes/Quest';
 import { Room } from 'layers/network/shapes/Room';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 
 interface Props {
   account: Account;

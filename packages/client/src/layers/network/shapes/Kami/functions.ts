@@ -1,11 +1,11 @@
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
-import { Kami } from './types';
 import { LiquidationConfig } from '../LiquidationConfig';
 import {
   calcIdleTime as calcProductionIdletime,
   calcOutput as calcProductionOutput,
   getLocation as getProductionLocation,
 } from '../Production';
+import { Kami } from './types';
 
 ////////////////
 // STATE CHECKS

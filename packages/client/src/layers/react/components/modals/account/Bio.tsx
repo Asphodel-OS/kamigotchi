@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
-import { Tooltip } from '../../library';
 import { playClick } from 'utils/sounds';
+import { Tooltip } from '../../library';
 
 interface Props {
   account: Account;

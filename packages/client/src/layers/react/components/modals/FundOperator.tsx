@@ -1,17 +1,17 @@
+import { EntityID, EntityIndex } from '@latticexyz/recs';
+import { waitForActionCompletion } from '@latticexyz/std-client';
+import crypto from 'crypto';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { useBalance } from 'wagmi';
-import { EntityID, EntityIndex } from '@latticexyz/recs';
-import { waitForActionCompletion } from '@latticexyz/std-client';
-import crypto from 'crypto';
 
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
-import { playSuccess, playScribble } from 'utils/sounds';
+import { playScribble, playSuccess } from 'utils/sounds';
 
 export function registerFundOperatorModal() {
   registerUIComponent(

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Inbound } from './Inbound';
-import { Outbound } from './Outbound';
 import { Account } from 'layers/network/shapes/Account';
 import { Friendship } from 'layers/network/shapes/Friendship';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
+import { Inbound } from './Inbound';
+import { Outbound } from './Outbound';
 import { Searched } from './Searched';
 
 interface Props {

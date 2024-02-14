@@ -1,8 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 
-import { ActionListButton } from '../../library/ActionListButton';
 import { ScoresFilter } from 'layers/network/shapes/Score';
+import { ActionListButton } from '../../library/ActionListButton';
 
 interface Props {
   filter: ScoresFilter;

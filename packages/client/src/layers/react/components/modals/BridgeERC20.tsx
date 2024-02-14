@@ -1,15 +1,15 @@
+import { EntityID } from '@latticexyz/recs';
+import crypto from 'crypto';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { useBalance, useContractRead } from 'wagmi';
-import { EntityID } from '@latticexyz/recs';
-import crypto from 'crypto';
 
 import { abi } from 'abi/Farm20ProxySystem.json';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 

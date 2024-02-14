@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
-import styled from 'styled-components';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
 import crypto from 'crypto';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { useEffect, useState } from 'react';
+import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
 
+import { getItemByIndex } from 'layers/network/shapes/Item';
+import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
+import { useVisibility } from 'layers/react/store/visibility';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';
-import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
-import { getItemByIndex } from 'layers/network/shapes/Item';
-import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerLootboxesModal() {
   registerUIComponent(

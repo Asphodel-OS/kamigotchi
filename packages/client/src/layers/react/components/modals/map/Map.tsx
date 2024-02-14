@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { interval, map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
+import { useEffect, useState } from 'react';
+import { interval, map } from 'rxjs';
 
-import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Room, getRoomByLocation } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Room, getRoomByLocation } from 'layers/network/shapes/Room';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
+import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
   registerUIComponent(

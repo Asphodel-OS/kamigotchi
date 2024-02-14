@@ -1,6 +1,6 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
   getComponentValue,
@@ -8,10 +8,10 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Stats, getStats } from './Stats';
-import { baseURI } from 'src/constants/media';
 import { NetworkLayer } from 'layers/network/types';
+import { baseURI } from 'src/constants/media';
 import { numberToHex } from 'utils/hex';
+import { Stats, getStats } from './Stats';
 
 // The standard shape of a FE Item Entity
 export interface Item {

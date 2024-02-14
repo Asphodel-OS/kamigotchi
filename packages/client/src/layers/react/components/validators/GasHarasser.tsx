@@ -10,11 +10,11 @@ import { defaultChain } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
-import { playClick, playSuccess } from 'utils/sounds';
+import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
+import { playClick, playSuccess } from 'utils/sounds';
 
 // TODO: check for whether an account with the burner address already exists
 export function registerGasHarasser() {

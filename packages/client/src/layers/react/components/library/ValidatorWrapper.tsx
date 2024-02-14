@@ -1,6 +1,6 @@
+import { useVisibility, Validators } from 'layers/react/store/visibility';
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { useVisibility, Validators } from 'layers/react/store/visibility';
 
 interface Props {
   id: string;

@@ -1,8 +1,8 @@
-import { Room } from 'constants/rooms';
-import { checkDuplicateRooms } from '../utils/rooms';
 import { backgrounds } from 'assets/images/backgrounds';
-import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
+import { Room } from 'constants/rooms';
 import { checkModalCoverage } from '../utils/checkModalCoverage';
+import { checkDuplicateRooms } from '../utils/rooms';
+import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull

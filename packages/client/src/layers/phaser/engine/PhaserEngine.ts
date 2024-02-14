@@ -1,17 +1,17 @@
-import Phaser from 'phaser';
 import { deferred, filterNullish } from '@latticexyz/utils';
+import Phaser from 'phaser';
 
 import {
   Subject,
-  map,
-  throttleTime,
-  scan,
-  fromEvent,
-  filter,
-  merge,
   bufferCount,
-  pairwise,
   distinctUntilChanged,
+  filter,
+  fromEvent,
+  map,
+  merge,
+  pairwise,
+  scan,
+  throttleTime,
 } from 'rxjs';
 import { PhaserConfig } from '../config';
 

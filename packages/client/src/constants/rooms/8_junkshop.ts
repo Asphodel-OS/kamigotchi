@@ -1,6 +1,5 @@
 import {
   backgroundDefault,
-  backgroundOld,
   objectMonitors,
   objectPoster,
   objectVendingWall,

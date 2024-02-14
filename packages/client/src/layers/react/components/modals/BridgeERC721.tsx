@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
-import { Has, HasValue, runQuery } from '@latticexyz/recs';
-import { EntityID } from '@latticexyz/recs';
-import { BigNumberish } from 'ethers';
-import { useContractRead } from 'wagmi';
+import { EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
 import crypto from 'crypto';
+import { BigNumberish } from 'ethers';
+import { useEffect, useState } from 'react';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import { useContractRead } from 'wagmi';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { Account, getAccount } from 'layers/network/shapes/Account';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
 

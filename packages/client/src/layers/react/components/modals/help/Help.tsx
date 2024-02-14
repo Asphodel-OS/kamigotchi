@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import { HelpTabs } from './types';
-import { CopyInfo } from './copy';
-import { SectionContent } from './SectionContent';
-import { helpIcon } from 'assets/images/icons/menu';
 import { HelpMenuIcons } from 'assets/images/icons/help';
+import { helpIcon } from 'assets/images/icons/menu';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
@@ -14,6 +11,9 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
+import { SectionContent } from './SectionContent';
+import { CopyInfo } from './copy';
+import { HelpTabs } from './types';
 
 export function registerHelpModal() {
   registerUIComponent(

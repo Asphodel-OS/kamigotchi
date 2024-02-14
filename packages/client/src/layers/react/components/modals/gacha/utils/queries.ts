@@ -1,11 +1,9 @@
-import { EntityID, Has, HasValue, runQuery, QueryFragment, EntityIndex } from '@latticexyz/recs';
-
 import {
   Kami,
+  Options,
+  QueryOptions,
   getKami,
   queryKamiEntitiesX,
-  QueryOptions,
-  Options,
 } from 'layers/network/shapes/Kami';
 import { NetworkLayer } from 'layers/network/types';
 

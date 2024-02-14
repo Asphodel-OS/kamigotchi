@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import crypto from 'crypto';
+import { useEffect, useState } from 'react';
+import { interval, map } from 'rxjs';
 
-import { Footer } from './Footer';
-import { List } from './List';
-import { Tabs } from './Tabs';
 import { questsIcon } from 'assets/images/icons/menu';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import {
-  Quest,
-  getQuestByIndex,
-  getRegistryQuests,
-  parseQuestsStatus,
-} from 'layers/network/shapes/Quest';
 import {
   getItem,
   getItemByIndex,
   queryFoodRegistry,
   queryReviveRegistry,
 } from 'layers/network/shapes/Item';
+import {
+  Quest,
+  getQuestByIndex,
+  getRegistryQuests,
+  parseQuestsStatus,
+} from 'layers/network/shapes/Quest';
 import { getRoomByLocation } from 'layers/network/shapes/Room';
+import { ModalHeader } from 'layers/react/components/library/ModalHeader';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { Footer } from './Footer';
+import { List } from './List';
+import { Tabs } from './Tabs';
 
 export function registerQuestsModal() {
   registerUIComponent(

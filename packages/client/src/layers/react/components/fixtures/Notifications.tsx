@@ -1,5 +1,4 @@
-import { EntityIndex, getComponentValue, getComponentEntities } from '@latticexyz/recs';
-import React from 'react';
+import { EntityIndex, getComponentEntities, getComponentValue } from '@latticexyz/recs';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 

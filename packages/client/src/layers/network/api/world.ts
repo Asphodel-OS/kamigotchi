@@ -1,16 +1,16 @@
+import { utils } from 'ethers';
 import { AdminAPI, createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
-import { utils } from 'ethers';
 
-import items from 'assets/data/items/Items.csv';
 import droptables from 'assets/data/items/Droptables.csv';
+import items from 'assets/data/items/Items.csv';
 import background from 'assets/data/kami/Background.csv';
 import body from 'assets/data/kami/Body.csv';
 import color from 'assets/data/kami/Color.csv';
 import face from 'assets/data/kami/Face.csv';
 import hand from 'assets/data/kami/Hand.csv';
-import rooms from 'assets/data/rooms/Rooms.csv';
 import nodes from 'assets/data/nodes/Nodes.csv';
+import rooms from 'assets/data/rooms/Rooms.csv';
 
 export function setUpWorldAPI(systems: any) {
   const api = createAdminAPI(systems);

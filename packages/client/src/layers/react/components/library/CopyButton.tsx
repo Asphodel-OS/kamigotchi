@@ -1,5 +1,5 @@
-import { Snackbar, IconButton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { IconButton, Snackbar } from '@mui/material';
 import { useState } from 'react';
 
 import { playClick } from 'utils/sounds';

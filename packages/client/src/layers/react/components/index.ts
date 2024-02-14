@@ -11,9 +11,9 @@ import {
 } from './fixtures/buttons';
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
-import { registerActionQueueFixture } from './fixtures/queue/';
-import { registerWalletFixture } from './fixtures/Wallet';
 import { registerNotificationFixture } from './fixtures/Notifications';
+import { registerWalletFixture } from './fixtures/Wallet';
+import { registerActionQueueFixture } from './fixtures/queue/';
 
 import { registerAccountModal } from './modals/account';
 import { registerDialogueModal } from './modals/dialogue';
@@ -31,17 +31,17 @@ import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
 
+import { registerAccountOperator } from './modals/AccountOperator';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
-import { registerAccountOperator } from './modals/AccountOperator';
 
 import {
   registerAccountRegistrar,
   registerBurnerDetector,
-  registerWalletConnecter,
-  registerOperatorUpdater,
   registerGasHarasser,
+  registerOperatorUpdater,
+  registerWalletConnecter,
 } from './validators';
 
 export function registerUIComponents() {

@@ -1,15 +1,15 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 
-import { Listing, getListing } from './Listing';
-import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
+import { numberToHex } from 'utils/hex';
+import { Listing, getListing } from './Listing';
 
 // standardized shape of a FE Merchant Entity
 export interface Merchant {

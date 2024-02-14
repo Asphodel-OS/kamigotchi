@@ -8,9 +8,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { getConfigFieldValueWei } from './Config';
-import { Kami, queryKamisX, Options as KamiOptions } from './Kami';
 import { NetworkLayer } from 'layers/network/types';
+import { getConfigFieldValueWei } from './Config';
+import { Kami, Options as KamiOptions, queryKamisX } from './Kami';
 
 // standardized shape of a gacha commit
 export interface GachaCommit {

@@ -8,8 +8,8 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Account, getAccount } from './Account';
 import { NetworkLayer } from 'layers/network/types';
+import { Account, getAccount } from './Account';
 
 // standardized Object shape of a Score Entity
 export interface Score {

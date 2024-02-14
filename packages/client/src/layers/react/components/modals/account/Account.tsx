@@ -1,13 +1,9 @@
 import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { Bio } from './Bio';
-import { Bottom } from './Bottom';
-import { Tabs } from './Tabs';
 import { operatorIcon } from 'assets/images/icons/menu';
-import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import {
   Account,
   getAccountByIndex,
@@ -15,8 +11,12 @@ import {
   getAllAccounts,
 } from 'layers/network/shapes/Account';
 import { Friendship } from 'layers/network/shapes/Friendship';
-import { useSelected } from 'layers/react/store/selected';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useSelected } from 'layers/react/store/selected';
+import { Bio } from './Bio';
+import { Bottom } from './Bottom';
+import { Tabs } from './Tabs';
 
 export function registerAccountModal() {
   registerUIComponent(

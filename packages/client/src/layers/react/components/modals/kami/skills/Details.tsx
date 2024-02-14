@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import {
   Skill,
+  getSkillUpgradeError,
   parseEffectText,
   parseRequirementText,
-  getSkillUpgradeError,
 } from 'layers/network/shapes/Skill';
 import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
 

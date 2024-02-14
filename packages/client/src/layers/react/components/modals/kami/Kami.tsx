@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { interval, map } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
+import { useState } from 'react';
+import { interval, map } from 'rxjs';
 
-import { KillLogs } from './battles/KillLogs';
-import { Banner } from './header/Banner';
-import { Tabs } from './header/Tabs';
-import { Skills } from './skills/Skills';
-import { Traits } from './traits/Traits';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { Skill, getRegistrySkills } from 'layers/network/shapes/Skill';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
+import { KillLogs } from './battles/KillLogs';
+import { Banner } from './header/Banner';
+import { Tabs } from './header/Tabs';
+import { Skills } from './skills/Skills';
+import { Traits } from './traits/Traits';
 
 export function registerKamiModal() {
   registerUIComponent(

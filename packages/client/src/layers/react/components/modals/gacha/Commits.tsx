@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import React, { useEffect, useState } from 'react';
 
 import { ActionButton } from 'layers/react/components/library';
 

@@ -1,6 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import { map, merge } from 'rxjs';
-import { BigNumber } from 'ethers';
 import {
   EntityIndex,
   Has,
@@ -9,6 +6,7 @@ import {
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
+import { map, merge } from 'rxjs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 

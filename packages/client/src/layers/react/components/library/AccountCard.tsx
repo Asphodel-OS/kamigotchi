@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { Account } from 'layers/network/shapes/Account';
+import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
+import { playClick } from 'utils/sounds';
 import { Card } from './Card';
 import { Tooltip } from './Tooltip';
-import { Account } from 'layers/network/shapes/Account';
-import { useVisibility } from 'layers/react/store/visibility';
-import { useSelected } from 'layers/react/store/selected';
-import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;

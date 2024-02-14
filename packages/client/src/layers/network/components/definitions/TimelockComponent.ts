@@ -1,4 +1,4 @@
-import { defineComponent, World, Type } from '@latticexyz/recs';
+import { Type, World, defineComponent } from '@latticexyz/recs';
 
 export function defineTimelockComponent(world: World) {
   return defineComponent(

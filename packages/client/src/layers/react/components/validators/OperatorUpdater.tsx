@@ -5,18 +5,18 @@ import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
+import { getAccountByOperator } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage';
-import { getAccountByOperator } from 'layers/network/shapes/Account';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
+import { useVisibility } from 'layers/react/store/visibility';
+import 'layers/react/styles/font.css';
 import { generatePrivateKey } from 'utils/address';
 import { playClick, playScribble, playSuccess } from 'utils/sounds';
-import 'layers/react/styles/font.css';
 
 // TODO: check for whether an account with the burner address already exists
 export function registerOperatorUpdater() {

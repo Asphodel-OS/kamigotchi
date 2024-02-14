@@ -1,6 +1,6 @@
 import { namespaceWorld } from '@latticexyz/recs';
-import CreatePhaserEngine from './engine/PhaserEngine';
 import { phaserConfig, PhaserConfig } from './config';
+import CreatePhaserEngine from './engine/PhaserEngine';
 import { changeRoomSystem } from './systems/changeRoomSystem';
 
 /**

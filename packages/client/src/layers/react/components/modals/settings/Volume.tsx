@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 import styled from 'styled-components';
+import { useLocalStorage } from 'usehooks-ts';
 
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { playClick } from 'utils/sounds';

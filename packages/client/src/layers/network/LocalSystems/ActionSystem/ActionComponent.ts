@@ -1,4 +1,4 @@
-import { defineComponent, World, Type, Component, Metadata, SchemaOf } from '@latticexyz/recs';
+import { Component, Metadata, SchemaOf, Type, World, defineComponent } from '@latticexyz/recs';
 
 export function defineActionComponent<T = undefined>(world: World) {
   const Action = defineComponent(

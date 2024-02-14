@@ -1,12 +1,12 @@
 import { Component, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
-import { NetworkLayer } from '../types';
 import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
-import { getKamiByIndex, getAllKamis } from 'layers/network/shapes/Kami';
-import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
-import { getNodeByIndex, getAllNodes } from 'layers/network/shapes/Node';
-import { getRoomByLocation, getAllRooms } from 'layers/network/shapes/Room';
+import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
+import { getAllRooms, getRoomByLocation } from 'layers/network/shapes/Room';
 import { numberToHex } from 'utils/hex';
+import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
+import { NetworkLayer } from '../types';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
 // TODO: implement Item, Quest, Skill, Trait paths (registries)

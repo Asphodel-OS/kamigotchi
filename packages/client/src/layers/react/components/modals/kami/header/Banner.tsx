@@ -2,12 +2,12 @@ import { Kami } from 'layers/network/shapes/Kami';
 import styled from 'styled-components';
 
 import { StatIcons } from 'assets/images/icons/stats';
+import { Account } from 'layers/network/shapes/Account';
 import { ExperienceBar } from 'layers/react/components/library/ExperienceBar';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
-import { Account } from 'layers/network/shapes/Account';
 
 interface Props {
   data: {

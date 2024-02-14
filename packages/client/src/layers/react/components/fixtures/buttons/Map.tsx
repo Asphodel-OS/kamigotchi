@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 
 import { mapIcon } from 'assets/images/icons/menu';
-import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { getRoomByLocation, Room } from 'layers/network/shapes/Room';
+import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useVisibility, Modals } from 'layers/react/store/visibility';
+import { Modals, useVisibility } from 'layers/react/store/visibility';
 
 export function registerMapButton() {
   registerUIComponent(

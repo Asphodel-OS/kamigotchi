@@ -1,15 +1,15 @@
 import {
-  EntityIndex,
   EntityID,
-  getComponentValue,
+  EntityIndex,
   Has,
   HasValue,
+  getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 
-import { Kami, getKami } from './Kami';
-import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
+import { numberToHex } from 'utils/hex';
+import { Kami, getKami } from './Kami';
 
 // standardized shape of a Node Entity
 export interface Node {

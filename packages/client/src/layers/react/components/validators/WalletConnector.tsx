@@ -1,8 +1,8 @@
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
-import { useAccount, useNetwork, Connector } from 'wagmi';
+import { Connector, useAccount, useNetwork } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { createNetworkConfig, createNetworkLayer } from 'layers/network';

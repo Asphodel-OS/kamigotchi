@@ -1,15 +1,14 @@
-import React from 'react';
-import { interval, map } from 'rxjs';
-import styled from 'styled-components';
 import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
+import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
-import { useVisibility } from 'layers/react/store/visibility';
+import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
+import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
 
 export function registerNameKamiModal() {

@@ -1,11 +1,11 @@
 /* eslint-disable prefer-const */
 import { getComponentValue, removeComponent, setComponent } from '@latticexyz/recs';
 
-import { Layers } from './types';
 import { createNetworkConfig, createNetworkLayer } from 'layers/network';
 import { createPhaserLayer } from 'layers/phaser/createPhaserLayer';
-import { mountReact, setLayers, boot as bootReact } from 'layers/react/boot';
+import { boot as bootReact, mountReact, setLayers } from 'layers/react/boot';
 import { Time } from 'utils/time';
+import { Layers } from './types';
 
 // boot the whole thing
 export async function boot() {

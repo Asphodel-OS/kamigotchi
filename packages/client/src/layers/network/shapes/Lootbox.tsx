@@ -1,19 +1,19 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
   Not,
+  QueryFragment,
   getComponentValue,
   hasComponent,
   runQuery,
-  QueryFragment,
 } from '@latticexyz/recs';
 
-import { numberToHex } from 'utils/hex';
-import { Item, getItem } from './Item';
-import { Inventory, getTypedInventory } from './Inventory';
 import { NetworkLayer } from 'layers/network/types';
+import { numberToHex } from 'utils/hex';
+import { Inventory, getTypedInventory } from './Inventory';
+import { Item, getItem } from './Item';
 
 export interface Droptable {
   keys: number[];

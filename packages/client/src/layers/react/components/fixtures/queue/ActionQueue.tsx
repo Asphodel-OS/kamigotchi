@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Logs } from './Logs';
-import { Controls } from './Controls';
+import { EntityIndex, getComponentEntities } from '@latticexyz/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
-import { EntityIndex, getComponentEntities } from '@latticexyz/recs';
+import { Controls } from './Controls';
+import { Logs } from './Logs';
 
 export function registerActionQueueFixture() {
   registerUIComponent(

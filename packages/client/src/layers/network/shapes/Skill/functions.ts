@@ -1,6 +1,6 @@
-import { Effect, Requirement, Skill } from './types';
 import { Account } from '../Account';
-import { Kami, isStarving, isDead, isOffWorld, isWithAccount } from '../Kami';
+import { Kami, isDead, isOffWorld, isStarving, isWithAccount } from '../Kami';
+import { Effect, Requirement, Skill } from './types';
 
 // get the reason why a player cannot upgrade a skill
 // checking (in order) location/status, maxxed out, requirements unmet, not enough points

@@ -1,9 +1,7 @@
 import {
   backgroundMina,
-  backgroundEmpty,
   objectCashRegister,
   objectClock,
-  objectMina,
   objectMinaRed,
 } from 'assets/images/rooms/13_giftshop';
 import { mystique } from 'assets/sound/ost';

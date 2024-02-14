@@ -1,12 +1,3 @@
-import { room1 } from './1_mistyriver';
-import { room2 } from './2_treetunnel';
-import { room3 } from './3_gate';
-import { room4 } from './4_junkyard';
-import { room5 } from './5_restricted';
-import { room6 } from './6_office-front';
-import { room7 } from './7_office-lobby';
-import { room8 } from './8_junkshop';
-import { room9 } from './9_forest';
 import { room10 } from './10_forest-insect';
 import { room11 } from './11_waterfall';
 import { room12 } from './12_junkyard-machine';
@@ -17,6 +8,15 @@ import { room16 } from './16_techno-temple';
 import { room17 } from './17_misty-park';
 import { room18 } from './18_cave-crossroads';
 import { room19 } from './19_violence-temple';
+import { room1 } from './1_mistyriver';
+import { room2 } from './2_treetunnel';
+import { room3 } from './3_gate';
+import { room4 } from './4_junkyard';
+import { room5 } from './5_restricted';
+import { room6 } from './6_office-front';
+import { room7 } from './7_office-lobby';
+import { room8 } from './8_junkshop';
+import { room9 } from './9_forest';
 
 // represents a room in all its glory
 export interface Room {

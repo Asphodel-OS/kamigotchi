@@ -1,17 +1,17 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
   Not,
+  QueryFragment,
   getComponentValue,
   runQuery,
-  QueryFragment,
 } from '@latticexyz/recs';
 
+import { NetworkLayer } from 'layers/network/types';
 import { Item, getItem } from './Item';
 import { getStats } from './Stats';
-import { NetworkLayer } from 'layers/network/types';
 
 // standardized shape of a FE Inventory Entity
 export interface Inventory {

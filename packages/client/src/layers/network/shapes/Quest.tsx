@@ -1,19 +1,19 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
+  Not,
+  QueryFragment,
   getComponentValue,
   hasComponent,
   runQuery,
-  Not,
-  QueryFragment,
 } from '@latticexyz/recs';
 
+import { NetworkLayer } from 'layers/network/types';
 import { Account } from './Account';
 import { getData } from './Data';
 import { getInventoryByIndex } from './Inventory';
-import { NetworkLayer } from 'layers/network/types';
 
 /////////////////
 // GETTERS

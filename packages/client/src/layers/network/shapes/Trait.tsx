@@ -1,7 +1,7 @@
 import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@latticexyz/recs';
 
-import { Stats, getStats } from './Stats';
 import { NetworkLayer } from 'layers/network/types';
+import { Stats, getStats } from './Stats';
 
 // standardized shape of Traits on an Entity
 export interface Trait {

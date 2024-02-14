@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, Components, SchemaOf, Override } from '@latticexyz/recs';
+import { Components, EntityID, EntityIndex, Override, SchemaOf } from '@latticexyz/recs';
 import { ValueOf } from '@latticexyz/utils';
 import { ContractTransaction } from 'ethers';
 

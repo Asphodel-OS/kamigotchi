@@ -1,7 +1,7 @@
-import { EntityID, Has, HasValue, runQuery, QueryFragment, EntityIndex } from '@latticexyz/recs';
+import { EntityID, EntityIndex, Has, HasValue, QueryFragment, runQuery } from '@latticexyz/recs';
 
-import { Kami, Options, getKami } from './types';
 import { NetworkLayer } from 'layers/network/types';
+import { Kami, Options, getKami } from './types';
 
 // fields to filter by (only supports an AND of all fields)
 export type QueryOptions = {

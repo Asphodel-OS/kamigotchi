@@ -1,20 +1,19 @@
 import { Provider } from '@ethersproject/providers';
 import {
+  EntityIndex,
   World,
   createEntity,
   getComponentValue,
-  updateComponent,
-  EntityID,
-  EntityIndex,
   removeComponent,
   setComponent,
+  updateComponent,
 } from '@latticexyz/recs';
 import { awaitStreamValue } from '@latticexyz/utils';
 import { Observable } from 'rxjs';
 
+import { defineActionComponent } from './ActionComponent';
 import { ActionState } from './constants';
 import { ActionRequest } from './types';
-import { defineActionComponent } from './ActionComponent';
 
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 

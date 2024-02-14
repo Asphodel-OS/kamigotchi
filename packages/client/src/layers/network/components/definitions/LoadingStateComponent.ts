@@ -1,4 +1,4 @@
-import { defineComponent, World, Type } from '@latticexyz/recs';
+import { Type, World, defineComponent } from '@latticexyz/recs';
 
 export function defineLoadingStateComponent(world: World) {
   return defineComponent(

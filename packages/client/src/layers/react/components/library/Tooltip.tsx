@@ -1,5 +1,5 @@
-import React from 'react';
 import { default as MUITooltip } from '@mui/material/Tooltip';
+import React from 'react';
 
 interface Props {
   text: string[];

@@ -1,5 +1,3 @@
-import { DialogueNode } from '.';
-
 export default [];
 // export const room3: Room = {
 //   location: 3,

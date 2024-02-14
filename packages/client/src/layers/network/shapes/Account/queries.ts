@@ -1,7 +1,7 @@
-import { EntityIndex, EntityID, Has, HasValue, runQuery } from '@latticexyz/recs';
+import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@latticexyz/recs';
 
-import { getAccount, AccountOptions } from './types';
 import { NetworkLayer } from 'layers/network/types';
+import { AccountOptions, getAccount } from './types';
 
 export const getAllAccounts = (network: NetworkLayer, options?: AccountOptions) => {
   const {

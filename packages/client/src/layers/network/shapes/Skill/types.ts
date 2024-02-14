@@ -1,6 +1,6 @@
 import {
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
   getComponentValue,

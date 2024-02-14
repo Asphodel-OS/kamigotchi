@@ -1,7 +1,7 @@
-import { Wallet } from 'ethers';
-import { SetupContractConfig } from '@latticexyz/std-client';
 import { ExternalProvider } from '@ethersproject/providers';
+import { SetupContractConfig } from '@latticexyz/std-client';
 import { chainConfigs } from 'constants/chains';
+import { Wallet } from 'ethers';
 
 // flat network configuration struct
 // TODO: replace this with Lattice's version in "@latticexyz/network/dist/types"

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Details } from './Details';
-import { Matrix } from './Matrix';
 import { Account } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
 import { playClick } from 'utils/sounds';
+import { Details } from './Details';
+import { Matrix } from './Matrix';
 
 interface Props {
   account: Account;

@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
-import { useContractRead, useBalance } from 'wagmi';
 import { FetchBalanceResult } from '@wagmi/core';
+import { useEffect, useState } from 'react';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import { useBalance, useContractRead } from 'wagmi';
 
 import { abi as Pet721ProxySystemABI } from 'abi/Pet721ProxySystem.json';
 import { GasConstants } from 'constants/gas';
-import { Account, getAccountFromBurner } from 'layers/network/shapes/Account';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import {
+  Account,
+  calcStamina,
+  calcStaminaPercent,
+  getAccountFromBurner,
+} from 'layers/network/shapes/Account';
+import { getRoomByLocation } from 'layers/network/shapes/Room';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
-import { calcStamina, calcStaminaPercent } from 'layers/network/shapes/Account';
-import { getRoomByLocation } from 'layers/network/shapes/Room';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerAccountInfoFixture() {

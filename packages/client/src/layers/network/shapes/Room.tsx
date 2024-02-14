@@ -8,9 +8,9 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Account, getAccount } from './Account';
-import { numberToHex } from 'utils/hex';
 import { NetworkLayer } from 'layers/network/types';
+import { numberToHex } from 'utils/hex';
+import { Account, getAccount } from './Account';
 
 // standardized Object shape of a Room Entity
 export interface Room {

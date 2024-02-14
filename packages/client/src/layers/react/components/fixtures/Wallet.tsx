@@ -1,8 +1,7 @@
 // src/layers/react/components/buttons/Wallet.tsx
-import React from 'react';
-import { of } from 'rxjs';
-import { AccountButton } from 'layers/react/components/library/CustomRainbowButton';
 import '@rainbow-me/rainbowkit/styles.css';
+import { AccountButton } from 'layers/react/components/library/CustomRainbowButton';
+import { of } from 'rxjs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
 

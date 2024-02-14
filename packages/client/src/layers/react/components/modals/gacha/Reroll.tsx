@@ -1,12 +1,11 @@
-import styled from 'styled-components';
-import React, { useEffect, useState } from 'react';
 import { utils } from 'ethers';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
-import { playClick } from 'utils/sounds';
 import ethIcon from 'assets/images/icons/Ethereum.png';
 import { Kami } from 'layers/network/shapes/Kami';
 

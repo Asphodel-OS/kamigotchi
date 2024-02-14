@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';
 
 import { Kami } from 'layers/network/shapes/Kami';

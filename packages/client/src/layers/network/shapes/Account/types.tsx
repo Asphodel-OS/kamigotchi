@@ -1,22 +1,22 @@
-import { EntityIndex, EntityID, getComponentValue } from '@latticexyz/recs';
+import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
+import { NetworkLayer } from 'layers/network/types';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
-import { Kami, queryKamisX } from '../Kami';
-import { GachaCommit, queryAccCommits } from '../Gacha';
-import { Inventory, sortInventories, queryInventoryX } from '../Inventory';
-import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
-import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
-import { Skill } from '../Skill/types';
+import { getData } from '../Data';
 import {
   Friendship,
+  getAccBlocked,
   getAccFriends,
   getAccIncomingRequests,
   getAccOutgoingRequests,
-  getAccBlocked,
 } from '../Friendship';
-import { getData } from '../Data';
-import { NetworkLayer } from 'layers/network/types';
+import { GachaCommit, queryAccCommits } from '../Gacha';
+import { Inventory, queryInventoryX, sortInventories } from '../Inventory';
+import { Kami, queryKamisX } from '../Kami';
+import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
+import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
+import { Skill } from '../Skill/types';
 
 // standardized shape of an Account Entity
 export interface Account {

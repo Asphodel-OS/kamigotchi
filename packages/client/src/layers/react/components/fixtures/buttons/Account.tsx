@@ -1,12 +1,11 @@
-import React from 'react';
 import { of } from 'rxjs';
 
 import { operatorIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useVisibility, Modals } from 'layers/react/store/visibility';
-import { useSelected } from 'layers/react/store/selected';
 import { useAccount } from 'layers/react/store/account';
+import { useSelected } from 'layers/react/store/selected';
+import { Modals, useVisibility } from 'layers/react/store/visibility';
 
 export function registerAccountButton() {
   registerUIComponent(

@@ -1,5 +1,4 @@
 /* eslint-disable prefer-const */
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { Layers } from 'src/types';

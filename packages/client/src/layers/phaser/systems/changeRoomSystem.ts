@@ -1,9 +1,9 @@
 import {
-  defineRxSystem,
-  defineQuery,
-  getComponentValue,
   Has,
   HasValue,
+  defineQuery,
+  defineRxSystem,
+  getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 import { merge } from 'rxjs';
@@ -13,8 +13,8 @@ import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
 import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {

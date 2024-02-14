@@ -1,6 +1,5 @@
 import {
   backgroundDefault,
-  backgroundOld,
   objectEmaBoard,
   objectSmallShrine,
   objectStoneLantern,

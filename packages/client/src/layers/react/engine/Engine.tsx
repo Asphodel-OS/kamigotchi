@@ -1,15 +1,15 @@
 // src/layers/react/engine/Engine.tsx:
-import React, { useEffect, useState } from 'react';
+import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
 import { observer } from 'mobx-react-lite';
-import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import React, { useEffect, useState } from 'react';
+import { WagmiConfig, configureChains, createConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 
+import { defaultChain } from 'constants/chains';
+import { Layers } from 'src/types';
 import { BootScreen, MainWindow } from './components';
 import { EngineContext, LayerContext } from './context';
 import { EngineStore } from './store';
-import { defaultChain } from 'constants/chains';
-import { Layers } from 'src/types';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [defaultChain],

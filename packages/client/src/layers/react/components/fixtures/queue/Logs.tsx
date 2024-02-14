@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import moment from 'moment';
-import styled from 'styled-components';
 import { EntityIndex, getComponentValueStrict } from '@latticexyz/recs';
 import PendingIcon from '@mui/icons-material/Pending';
+import moment from 'moment';
+import { useEffect } from 'react';
+import styled from 'styled-components';
 
 import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { ActionState, ActionStateString } from 'layers/network/LocalSystems/ActionSystem/constants';
 import { NetworkLayer } from 'layers/network/types';
-import { ActionStateString, ActionState } from 'layers/network/LocalSystems/ActionSystem/constants';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 
 interface Props {

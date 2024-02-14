@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Tooltip } from 'layers/react/components/library';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 
 import { helpIcon } from 'assets/images/icons/menu';
 import { playClick } from 'utils/sounds';

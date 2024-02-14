@@ -1,14 +1,13 @@
-import React from 'react';
 import { interval, map } from 'rxjs';
 
-import { ItemGrid } from './ItemGrid';
-import { MusuRow } from './MusuRow';
 import { inventoryIcon } from 'assets/images/icons/menu';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Inventory } from 'layers/network/shapes/Inventory';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Inventory } from 'layers/network/shapes/Inventory';
+import { ItemGrid } from './ItemGrid';
+import { MusuRow } from './MusuRow';
 
 export function registerInventoryModal() {
   registerUIComponent(

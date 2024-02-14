@@ -1,12 +1,11 @@
-import React from 'react';
 import styled from 'styled-components';
 
-import { Friends } from './friends/Friends';
-import { Kamis } from './party/Kamis';
-import { Requests } from './requests/Requests';
 import { Account } from 'layers/network/shapes/Account';
 import { Friendship } from 'layers/network/shapes/Friendship';
 import { Blocked } from './blocked/Blocked';
+import { Friends } from './friends/Friends';
+import { Kamis } from './party/Kamis';
+import { Requests } from './requests/Requests';
 
 interface Props {
   tab: string;

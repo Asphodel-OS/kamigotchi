@@ -1,14 +1,13 @@
-import React from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 
-import { Account } from './Account';
-import { Volume } from './Volume';
 import { settingsIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import 'layers/react/styles/font.css';
+import { Account } from './Account';
+import { Volume } from './Volume';
 
 export function registerSettingsModal() {
   registerUIComponent(

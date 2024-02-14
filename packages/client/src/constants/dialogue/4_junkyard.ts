@@ -1,5 +1,3 @@
-import { DialogueNode } from '.';
-
 export default [];
 // export const vendingmachine: DialogueNode = {
 //   index: 41,

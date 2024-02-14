@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { Node } from './Node';
-import { Edge } from './Edge';
 import { SkillTrees } from 'constants/skills/trees';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
+import { Edge } from './Edge';
+import { Node } from './Node';
 
 interface Props {
   kami: Kami;

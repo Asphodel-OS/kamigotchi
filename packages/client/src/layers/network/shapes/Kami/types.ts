@@ -1,22 +1,22 @@
 import {
   Component,
-  EntityIndex,
   EntityID,
+  EntityIndex,
   Has,
   HasValue,
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';
 
+import { NetworkLayer } from 'layers/network/types';
 import { Account, getAccount } from '../Account';
 import { Bonuses, getBonuses } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
-import { Stats, getStats } from '../Stats';
 import { Skill, getHolderSkills } from '../Skill';
-import { Traits, TraitIndices, getTraits } from '../Trait';
-import { NetworkLayer } from 'layers/network/types';
+import { Stats, getStats } from '../Stats';
+import { TraitIndices, Traits, getTraits } from '../Trait';
 
 // standardized shape of a Kami Entity
 export interface Kami {

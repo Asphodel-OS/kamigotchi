@@ -1,7 +1,7 @@
 import {
   backgroundDefault,
-  path18,
   objectDharmaWheel,
+  path18,
 } from 'assets/images/rooms/19_violence-temple';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';

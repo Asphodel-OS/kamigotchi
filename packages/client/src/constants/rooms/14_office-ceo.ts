@@ -1,6 +1,5 @@
 import {
   backgroundDefault,
-  backgroundOld,
   objectImac,
   objectOccultCircle,
   objectPaperwork,

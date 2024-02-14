@@ -1,6 +1,6 @@
-import { HelpTabs, PageCopy } from './types';
 import { HelpBanners } from 'assets/images/banners';
 import { HelpMenuIcons } from 'assets/images/icons/help';
+import { HelpTabs, PageCopy } from './types';
 
 const WelcomeCopy: PageCopy = {
   title: 'Welcome to Kamigotchi',

@@ -1,11 +1,11 @@
-import styled from 'styled-components';
 import { EntityIndex } from '@latticexyz/recs';
 import { getRarities } from 'constants/rarities';
 import { ItemIcon } from 'layers/react/components/library/ItemIcon';
+import styled from 'styled-components';
 
-import { LootboxLog } from 'layers/network/shapes/Lootbox';
-import { Item } from 'layers/network/shapes/Item';
 import { Account } from 'layers/network/shapes/Account';
+import { Item } from 'layers/network/shapes/Item';
+import { LootboxLog } from 'layers/network/shapes/Lootbox';
 
 interface Props {
   account: Account;

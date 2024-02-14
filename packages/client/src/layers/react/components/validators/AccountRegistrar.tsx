@@ -7,22 +7,22 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import { IconButton } from '@mui/material';
 import crypto from 'crypto';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
+import { getAccountByName } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountByName } from 'layers/network/shapes/Account';
-import { useVisibility } from 'layers/react/store/visibility';
 import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
 import { useNetwork } from 'layers/react/store/network';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playScribble } from 'utils/sounds';
 
 /**

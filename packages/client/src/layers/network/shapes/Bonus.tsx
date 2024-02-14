@@ -3,7 +3,6 @@ import {
   EntityIndex,
   Has,
   HasValue,
-  Layers,
   getComponentValue,
   runQuery,
 } from '@latticexyz/recs';

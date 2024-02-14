@@ -1,12 +1,12 @@
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Account } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';
 import { Lootbox } from 'layers/network/shapes/Lootbox';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ItemIcon } from 'layers/react/components/library/ItemIcon';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 
 interface Props {
   account: Account;

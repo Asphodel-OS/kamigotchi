@@ -1,4 +1,3 @@
-import React from 'react';
 import { of } from 'rxjs';
 
 import { kamiIcon } from 'assets/images/icons/menu';

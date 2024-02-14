@@ -1,4 +1,4 @@
-import { registerNameKamiModal } from './NameKami';
 import { registerEMABoardModal } from './EmaBoard';
+import { registerNameKamiModal } from './NameKami';
 
 export { registerNameKamiModal, registerEMABoardModal };

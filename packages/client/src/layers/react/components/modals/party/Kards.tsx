@@ -2,28 +2,28 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { feedIcon, reviveIcon } from 'assets/images/icons/actions';
-import { IconButton } from 'layers/react/components/library/IconButton';
-import { IconListButton } from 'layers/react/components/library/IconListButton';
-import { KamiCard } from 'layers/react/components/library/KamiCard';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { Account } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';
 import {
   Kami,
+  calcHealth,
+  calcOutput,
   isDead,
+  isFull,
   isHarvesting,
+  isOffWorld,
   isResting,
   isUnrevealed,
-  isOffWorld,
   onCooldown,
-  calcHealth,
-  isFull,
-  calcOutput,
 } from 'layers/network/shapes/Kami';
-import { getRateDisplay } from 'utils/rates';
-import { playClick } from 'utils/sounds';
+import { IconButton } from 'layers/react/components/library/IconButton';
+import { IconListButton } from 'layers/react/components/library/IconListButton';
+import { KamiCard } from 'layers/react/components/library/KamiCard';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
+import { getRateDisplay } from 'utils/rates';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;

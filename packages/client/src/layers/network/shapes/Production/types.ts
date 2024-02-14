@@ -1,9 +1,9 @@
-import { EntityIndex, EntityID, getComponentValue } from '@latticexyz/recs';
+import { EntityID, EntityIndex, getComponentValue } from '@latticexyz/recs';
 
+import { NetworkLayer } from 'layers/network/types';
 import { getConfigFieldValue } from '../Config';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
-import { NetworkLayer } from 'layers/network/types';
 
 // standardized shape of an Production Entity
 export interface Production {

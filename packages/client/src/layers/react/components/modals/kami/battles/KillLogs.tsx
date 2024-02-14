@@ -1,9 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
 import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import styled from 'styled-components';
 
-import { Kill } from 'layers/network/shapes/Kill';
 import { Kami } from 'layers/network/shapes/Kami';
+import { Kill } from 'layers/network/shapes/Kill';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import { playClick } from 'utils/sounds';

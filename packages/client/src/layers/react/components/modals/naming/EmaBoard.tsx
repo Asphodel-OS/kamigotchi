@@ -1,20 +1,19 @@
 import { EntityID } from '@latticexyz/recs';
-import React from 'react';
+import crypto from 'crypto';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
-import crypto from 'crypto';
 
 import { useIcon } from 'assets/images/icons/actions';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Kami } from 'layers/network/shapes/Kami';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Kami } from 'layers/network/shapes/Kami';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerEMABoardModal() {
   registerUIComponent(

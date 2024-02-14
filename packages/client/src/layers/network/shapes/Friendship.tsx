@@ -8,8 +8,8 @@ import {
   runQuery,
 } from '@latticexyz/recs';
 
-import { Account, getAccountByID } from './Account';
 import { NetworkLayer } from 'layers/network/types';
+import { Account, getAccountByID } from './Account';
 
 export interface Friendship {
   id: EntityID;

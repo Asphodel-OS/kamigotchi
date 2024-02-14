@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { Kami, calcCooldownRemaining, calcHealth, isUnrevealed } from 'layers/network/shapes/Kami';
+import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
+import { playClick } from 'utils/sounds';
 import { Battery } from './Battery';
 import { Card } from './Card';
 import { Countdown } from './Countdown';
 import { Tooltip } from './Tooltip';
-import { Kami, isUnrevealed, calcCooldownRemaining, calcHealth } from 'layers/network/shapes/Kami';
-import { useVisibility } from 'layers/react/store/visibility';
-import { useSelected } from 'layers/react/store/selected';
-import { playClick } from 'utils/sounds';
 
 interface Props {
   kami: Kami;

@@ -1,6 +1,6 @@
+import ErrorIcon from '@mui/icons-material/Error';
 import styled from 'styled-components';
 import { useBalance } from 'wagmi';
-import ErrorIcon from '@mui/icons-material/Error';
 
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';

@@ -1,7 +1,6 @@
-import React from 'react';
-import { concat, map } from 'rxjs';
-import { getComponentValue } from '@latticexyz/recs';
 import { GodID, SyncState } from '@latticexyz/network';
+import { getComponentValue } from '@latticexyz/recs';
+import { concat, map } from 'rxjs';
 
 import { BootScreen } from 'layers/react/engine/components';
 import { registerUIComponent } from 'layers/react/engine/store';

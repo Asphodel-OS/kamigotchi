@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
-import { registerUIComponent } from 'layers/react/engine/store';
 import { EntityID, EntityIndex } from '@latticexyz/recs';
 import { waitForActionCompletion } from '@latticexyz/std-client';
-import { useAccount, useContractRead, useBalance } from 'wagmi';
 import crypto from 'crypto';
+import { registerUIComponent } from 'layers/react/engine/store';
+import { useEffect, useState } from 'react';
+import { interval, map } from 'rxjs';
+import { useAccount, useBalance, useContractRead } from 'wagmi';
 
-import { Pool } from './Pool';
-import { Reroll } from './Reroll';
-import { Commits } from './Commits';
-import { Tabs } from './components/Tabs';
-import { getLazyKamis } from './utils/queries';
 import { abi } from 'abi/Pet721ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { GachaCommit, isGachaAvailable, calcRerollCost } from 'layers/network/shapes/Gacha';
+import { GachaCommit, calcRerollCost, isGachaAvailable } from 'layers/network/shapes/Gacha';
 import { Kami } from 'layers/network/shapes/Kami';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { useAccount as useKamiAccount } from 'layers/react/store/account';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useNetwork } from 'layers/react/store/network';
+import { useVisibility } from 'layers/react/store/visibility';
 import { playVending } from 'utils/sounds';
+import { Commits } from './Commits';
+import { Pool } from './Pool';
+import { Reroll } from './Reroll';
+import { Tabs } from './components/Tabs';
+import { getLazyKamis } from './utils/queries';
 
 export function registerGachaModal() {
   registerUIComponent(

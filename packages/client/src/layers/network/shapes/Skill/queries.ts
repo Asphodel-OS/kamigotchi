@@ -1,6 +1,6 @@
 import { EntityID, Has, HasValue, QueryFragment, runQuery } from '@latticexyz/recs';
 import { NetworkLayer } from 'layers/network/types';
-import { Skill, Effect, Requirement, getSkill, getEffect, getRequirement, Options } from './types';
+import { Effect, Options, Requirement, Skill, getEffect, getRequirement, getSkill } from './types';
 
 /////////////////
 // GETTERS

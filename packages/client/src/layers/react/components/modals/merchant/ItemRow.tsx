@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Listing } from 'layers/network/shapes/Listing';
-import { useVisibility } from 'layers/react/store/visibility';
+import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
+import styled from 'styled-components';
 import { Tooltip } from '../../library/Tooltip';
 
 export interface Props {

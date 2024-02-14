@@ -5,10 +5,10 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { DialogueNode, dialogues } from 'constants/dialogue';
-import { registerUIComponent } from 'layers/react/engine/store';
+import { getRoomByLocation } from 'layers/network/shapes/Room';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
-import { getRoomByLocation } from 'layers/network/shapes/Room';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import 'layers/react/styles/font.css';
