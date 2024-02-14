@@ -111,20 +111,20 @@ export const getExits = (network: NetworkLayer, room: Room): Room[] => {
     if (rooms.length > 0) exits.push(rooms[0]);
   }
 
-  console.log('exits1', exits);
+  // console.log('exits1', exits);
 
   const storedExits = getComponentValue(Exits, room.entityIndex)
     ? (getComponentValue(Exits, room.entityIndex)?.value as number[]).map(
         (exit) => exit * 1
       )
     : [];
-  console.log('storedExits', storedExits);
+  // console.log('storedExits', storedExits);
   for (let i = 0; i < storedExits.length; i++) {
     const rooms = queryRoomsX(network, { index: storedExits[i] });
     if (rooms.length > 0) exits.push(rooms[0]);
   }
 
-  console.log('exits2', exits);
+  // console.log('exits2', exits);
 
   return exits;
 };
