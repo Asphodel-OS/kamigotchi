@@ -31,7 +31,7 @@ export interface _RegistryDeleteRelationshipSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,uint256)": FunctionFragment;
+    "executeTyped(uint32,uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

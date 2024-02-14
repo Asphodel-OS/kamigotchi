@@ -143,9 +143,9 @@
       "name": "getValue",
       "outputs": [
         {
-          "internalType": "uint256[]",
+          "internalType": "uint32[]",
           "name": "",
-          "type": "uint256[]"
+          "type": "uint32[]"
         }
       ],
       "stateMutability": "view",
@@ -261,9 +261,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256[]",
+          "internalType": "uint32[]",
           "name": "value",
-          "type": "uint256[]"
+          "type": "uint32[]"
         }
       ],
       "name": "set",
@@ -344,7 +344,7 @@
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "set(uint256,bytes)": "8b282947",
-    "set(uint256,uint256[])": "946aadc6",
+    "set(uint256,uint32[])": "f96911fa",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "world()": "30b67baa",
