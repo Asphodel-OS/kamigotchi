@@ -80,24 +80,26 @@ export function createComponents(world: World) {
     // Indices
     Index: defineNumberEZ('Index', 'component.Index'), // generic index
     AccountIndex: defineNumberEZ('AccountIndex', 'component.Index.Account'),
-    BackgroundIndex: defineNumberEZ('BackgroundIndex', 'component.Index.Background'),
-    BodyIndex: defineNumberEZ('BodyIndex', 'component.Index.Body'),
-    ColorIndex: defineNumberEZ('ColorIndex', 'component.Index.Color'),
-    FaceIndex: defineNumberEZ('FaceIndex', 'component.Index.Face'),
-    FoodIndex: defineNumberEZ('FoodIndex', 'component.Index.Food'),
-    GearIndex: defineNumberEZ('GearIndex', 'component.Index.Gear'),
-    HandIndex: defineNumberEZ('HandIndex', 'component.Index.Hand'),
-    ItemIndex: defineNumberEZ('ItemIndex', 'component.Index.Item'),
     NPCIndex: defineNumberEZ('NPCIndex', 'component.Index.NPC'),
-    ModIndex: defineNumberEZ('ModIndex', 'component.Index.Mod'),
     NodeIndex: defineNumberEZ('NodeIndex', 'component.Index.Node'),
     ObjectiveIndex: defineNumberEZ('ObjectiveIndex', 'component.Index.Objective'),
     QuestIndex: defineNumberEZ('QuestIndex', 'component.Index.Quest'),
     PetIndex: defineNumberEZ('PetIndex', 'component.Index.Pet'),
     RelationshipIndex: defineNumberEZ('RelationshipIndex', 'component.Index.Relationship'),
-    ReviveIndex: defineNumberEZ('ReviveIndex', 'component.Index.Revive'),
     SkillIndex: defineNumberEZ('SkillIndex', 'component.Index.Skill'),
+
+    ItemIndex: defineNumberEZ('ItemIndex', 'component.Index.Item'),
+    FoodIndex: defineNumberEZ('FoodIndex', 'component.Index.Food'),
+    GearIndex: defineNumberEZ('GearIndex', 'component.Index.Gear'),
+    ModIndex: defineNumberEZ('ModIndex', 'component.Index.Mod'),
+    ReviveIndex: defineNumberEZ('ReviveIndex', 'component.Index.Revive'),
+
     TraitIndex: defineNumberEZ('PetIndex', 'component.Index.Trait'),
+    BackgroundIndex: defineNumberEZ('BackgroundIndex', 'component.Index.Background'),
+    BodyIndex: defineNumberEZ('BodyIndex', 'component.Index.Body'),
+    ColorIndex: defineNumberEZ('ColorIndex', 'component.Index.Color'),
+    FaceIndex: defineNumberEZ('FaceIndex', 'component.Index.Face'),
+    HandIndex: defineNumberEZ('HandIndex', 'component.Index.Hand'),
 
     // Attributes
     Affinity: defineStringEZ('Affinity', 'component.Affinity'),

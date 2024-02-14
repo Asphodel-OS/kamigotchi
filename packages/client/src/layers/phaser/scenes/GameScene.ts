@@ -1,5 +1,6 @@
 import { backgrounds } from 'assets/images/backgrounds';
 import { Room } from 'constants/rooms';
+import Phaser from 'phaser';
 import { checkModalCoverage } from '../utils/checkModalCoverage';
 import { checkDuplicateRooms } from '../utils/rooms';
 import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
