@@ -36,7 +36,7 @@ contract SkillUpgradeSystem is System {
     } else if (isPet) {
       require(accountID == LibPet.getAccount(components, holderID), "SkillUpgrade: not ur pet");
       require(
-        LibPet.getRoom(components, holderID) == LibAccount.getRoom(components, accountID),
+        LibPet.getLocation(components, holderID) == LibAccount.getLocation(components, accountID),
         "SkillUpgrade: must be in same room"
       );
 

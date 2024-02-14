@@ -32,7 +32,7 @@ contract ProductionStartSystem is System {
     // sync the pet's health and ensure the Pet is able to harvest on this Node
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmStart: pet starving..");
-    require(LibAccount.sharesRoom(components, accountID, nodeID), "FarmStart: node too far");
+    require(LibAccount.sharesLocation(components, accountID, nodeID), "FarmStart: node too far");
 
     // start the production, create if none exists
     uint256 id = LibProduction.getForPet(components, petID);

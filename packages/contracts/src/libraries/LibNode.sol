@@ -12,7 +12,7 @@ import { IsNodeComponent, ID as IsNodeCompID } from "components/IsNodeComponent.
 import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
+import { LocationComponent, ID as LocCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
@@ -30,13 +30,13 @@ library LibNode {
     IUintComp components,
     uint256 index,
     string memory nodeType,
-    uint256 roomIndex
+    uint256 location
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(id, index);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, roomIndex);
+    LocationComponent(getAddressById(components, LocCompID)).set(id, location);
     return id;
   }
 
@@ -44,7 +44,7 @@ library LibNode {
     IsNodeComponent(getAddressById(components, IsNodeCompID)).remove(id);
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).remove(id);
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).remove(id);
+    LocationComponent(getAddressById(components, LocCompID)).remove(id);
     if (hasAffinity(components, id))
       AffinityComponent(getAddressById(components, AffCompID)).remove(id);
     if (hasDescription(components, id))
@@ -64,8 +64,8 @@ library LibNode {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
-    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, roomIndex);
+  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+    LocationComponent(getAddressById(components, LocCompID)).set(id, location);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -117,8 +117,8 @@ library LibNode {
     return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).getValue(id);
   }
 
-  function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexRoomComponent(getAddressById(components, RoomCompID)).getValue(id);
+  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LocationComponent(getAddressById(components, LocCompID)).getValue(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory name) {
@@ -135,17 +135,17 @@ library LibNode {
   /////////////////
   // QUERIES
 
-  // return an array of all nodes at a room roomIndex
-  function getAllAtRoomIndex(
+  // return an array of all nodes at a room location
+  function getAllAtLocation(
     IUintComp components,
-    uint256 roomIndex
+    uint256 location
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, RoomCompID),
-      abi.encode(roomIndex)
+      getComponentById(components, LocCompID),
+      abi.encode(location)
     );
 
     return LibQuery.query(fragments);

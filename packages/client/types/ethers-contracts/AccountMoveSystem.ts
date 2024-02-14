@@ -120,7 +120,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      toIndex: PromiseOrValue<BigNumberish>,
+      to: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -138,7 +138,7 @@ export interface AccountMoveSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    toIndex: PromiseOrValue<BigNumberish>,
+    to: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -156,7 +156,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      toIndex: PromiseOrValue<BigNumberish>,
+      to: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -186,7 +186,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      toIndex: PromiseOrValue<BigNumberish>,
+      to: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -205,7 +205,7 @@ export interface AccountMoveSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      toIndex: PromiseOrValue<BigNumberish>,
+      to: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

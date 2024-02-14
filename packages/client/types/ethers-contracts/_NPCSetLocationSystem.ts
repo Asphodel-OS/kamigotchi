@@ -27,7 +27,7 @@ import type {
   TypedListener,
 } from "./common";
 
-export interface _NPCSetRoomSystemInterface extends utils.Interface {
+export interface _NPCSetLocationSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
     "executeTyped(uint256,uint256)": FunctionFragment;
@@ -87,12 +87,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface _NPCSetRoomSystem extends BaseContract {
+export interface _NPCSetLocationSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: _NPCSetRoomSystemInterface;
+  interface: _NPCSetLocationSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -121,7 +121,7 @@ export interface _NPCSetRoomSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -140,7 +140,7 @@ export interface _NPCSetRoomSystem extends BaseContract {
 
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
-    roomIndex: PromiseOrValue<BigNumberish>,
+    location: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -159,7 +159,7 @@ export interface _NPCSetRoomSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -190,7 +190,7 @@ export interface _NPCSetRoomSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -210,7 +210,7 @@ export interface _NPCSetRoomSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

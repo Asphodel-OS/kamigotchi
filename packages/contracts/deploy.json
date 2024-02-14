@@ -84,7 +84,6 @@
     "KeysComponent",
     "LevelComponent",
     "LocationComponent",
-    "IndexRoomComponent",
     "LogicTypeComponent",
     "MaxComponent",
     "MediaURIComponent",
@@ -171,7 +170,7 @@
         "AffinityComponent",
         "DescriptionComponent",
         "IndexNodeComponent",
-        "IndexRoomComponent",
+        "LocationComponent",
         "NameComponent",
         "TypeComponent"
       ]
@@ -183,7 +182,7 @@
         "AffinityComponent",
         "DescriptionComponent",
         "IndexNodeComponent",
-        "IndexRoomComponent",
+        "LocationComponent",
         "NameComponent",
         "TypeComponent"
       ]
@@ -193,14 +192,14 @@
       "writeAccess": [
         "IsNPCComponent",
         "IndexNPCComponent",
-        "IndexRoomComponent",
+        "LocationComponent",
         "NameComponent"
       ]
     },
     {
-      "name": "_NPCSetRoomSystem",
+      "name": "_NPCSetLocationSystem",
       "writeAccess": [
-        "IndexRoomComponent"
+        "LocationComponent"
       ]
     },
     {
@@ -478,10 +477,9 @@
     {
       "name": "_RoomCreateSystem",
       "writeAccess": [
+        "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
-        "IsRoomComponent",
-        "IndexRoomComponent",
         "LocationComponent",
         "NameComponent"
       ]
@@ -489,10 +487,9 @@
     {
       "name": "_RoomDeleteSystem",
       "writeAccess": [
+        "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
-        "IsRoomComponent",
-        "IndexRoomComponent",
         "LocationComponent",
         "NameComponent"
       ]
@@ -513,7 +510,7 @@
     {
       "name": "AccountMoveSystem",
       "writeAccess": [
-        "IndexRoomComponent",
+        "LocationComponent",
         "StaminaComponent",
         "StaminaCurrentComponent",
         "TimeLastComponent",
@@ -528,7 +525,7 @@
         "AddressOperatorComponent",
         "AddressOwnerComponent",
         "FavoriteFoodComponent",
-        "IndexRoomComponent",
+        "LocationComponent",
         "NameComponent",
         "StaminaComponent",
         "StaminaCurrentComponent",
@@ -764,7 +761,7 @@
         "IdHolderComponent",
         "IsAccountComponent",
         "IsDataComponent",
-        "IndexRoomComponent",
+        "LocationComponent",
         "NameComponent",
         "ProxyPermissionsERC721Component",
         "StaminaComponent",

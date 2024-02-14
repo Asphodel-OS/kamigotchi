@@ -207,7 +207,7 @@ library LibQuests {
 
   // splits based on logicType. requirements are simpler than objectives
   // list of logicTypes:
-  // AT: equal, current roomIndex
+  // AT: equal, current location
   // COMPLETE: equal, if index is completed
   // HAVE: min current balance
   // GREATER: min current balance
@@ -257,7 +257,7 @@ library LibQuests {
   }
 
   // splits based on logicType. list of logicTypes:
-  // AT: equal, current roomIndex
+  // AT: equal, current location
   // BUY: min delta increase, shop items
   // HAVE: min current balance
   // GATHER: min delta increase, COIN

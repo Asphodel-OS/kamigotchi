@@ -26,7 +26,7 @@ contract NodeCollectSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "NodeCollectSystem: no account");
     require(
-      LibAccount.getRoom(components, accountID) == LibNode.getRoom(components, nodeID),
+      LibAccount.getLocation(components, accountID) == LibNode.getLocation(components, nodeID),
       "Node: too far"
     );
 

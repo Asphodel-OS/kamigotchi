@@ -98,26 +98,9 @@
     {
       "inputs": [
         {
-          "components": [
-            {
-              "internalType": "int32",
-              "name": "x",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "y",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "z",
-              "type": "int32"
-            }
-          ],
-          "internalType": "struct Location",
+          "internalType": "uint256",
           "name": "value",
-          "type": "tuple"
+          "type": "uint256"
         }
       ],
       "name": "getEntitiesWithValue",
@@ -179,26 +162,9 @@
       "name": "getValue",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "int32",
-              "name": "x",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "y",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "z",
-              "type": "int32"
-            }
-          ],
-          "internalType": "struct Location",
+          "internalType": "uint256",
           "name": "",
-          "type": "tuple"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -296,9 +262,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "bytes",
+          "internalType": "uint256",
           "name": "value",
-          "type": "bytes"
+          "type": "uint256"
         }
       ],
       "name": "set",
@@ -314,26 +280,9 @@
           "type": "uint256"
         },
         {
-          "components": [
-            {
-              "internalType": "int32",
-              "name": "x",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "y",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "z",
-              "type": "int32"
-            }
-          ],
-          "internalType": "struct Location",
+          "internalType": "bytes",
           "name": "value",
-          "type": "tuple"
+          "type": "bytes"
         }
       ],
       "name": "set",
@@ -403,8 +352,8 @@
   "methodIdentifiers": {
     "authorizeWriter(address)": "4fef6a38",
     "getEntities()": "31b933b9",
-    "getEntitiesWithValue((int32,int32,int32))": "d2b54c3f",
     "getEntitiesWithValue(bytes)": "b361be46",
+    "getEntitiesWithValue(uint256)": "fbdfa1ea",
     "getRawValue(uint256)": "b8bc073d",
     "getSchema()": "6b122fe0",
     "getValue(uint256)": "0ff4c916",
@@ -414,8 +363,8 @@
     "registerIndexer(address)": "75c0669c",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
-    "set(uint256,(int32,int32,int32))": "dd4d16d5",
     "set(uint256,bytes)": "8b282947",
+    "set(uint256,uint256)": "1ab06ee5",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "world()": "30b67baa",

@@ -9,7 +9,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IsNPCComponent, ID as IsNPCCompID } from "components/IsNPCComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
-import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
+import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { Strings } from "utils/Strings.sol";
 
@@ -23,13 +23,13 @@ library LibNPC {
     IUintComp components,
     uint256 index,
     string memory name,
-    uint256 roomIndex
+    uint256 location
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id);
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, index);
     setName(components, id, name);
-    setRoomIndex(components, id, roomIndex);
+    setLocation(components, id, location);
     return id;
   }
 
@@ -37,22 +37,21 @@ library LibNPC {
   // CHECKERS
 
   // Check whether a user account shares a room with the specified merchant
-  // Merchants with roomIndex 0 are considered global and are always accessible
+  // Merchants with location 0 are considered global and are always accessible
   function sharesRoomWith(
     IUintComp components,
     uint256 id,
     uint256 accountID
   ) internal view returns (bool) {
-    IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
-    uint256 roomIndex = roomComp.getValue(id);
-    return roomIndex == 0 || roomIndex == roomComp.getValue(accountID);
+    uint256 location = getLocation(components, id);
+    return location == 0 || location == getLocation(components, accountID);
   }
 
   /////////////////
   // SETTERS
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
+  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+    LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -66,8 +65,8 @@ library LibNPC {
     return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).getValue(id);
   }
 
-  function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).getValue(id);
+  function getLocation(IUintComp components, uint256 id) internal view returns (uint256) {
+    return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
   }
 
   // gets the name of a specified merchant

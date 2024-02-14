@@ -13,7 +13,7 @@ contract HarvestTest is SetupTemplate {
   // structure of Node data for test purposes
   struct TestNodeData {
     uint256 index;
-    uint256 roomIndex;
+    uint256 location;
     string name;
     string description;
     string affinity;
@@ -61,22 +61,22 @@ contract HarvestTest is SetupTemplate {
 
     // test that a node created by the deployer has the expected fields
     uint nodeID;
-    uint roomIndex;
+    uint location;
     string memory name;
     string memory description;
     string memory affinity;
     for (uint i = 0; i < 10; i++) {
-      roomIndex = (i % 3) + 1;
+      location = (i % 3) + 1;
       name = LibString.concat("testNode", LibString.toString(i));
       description = LibString.concat("this is a description of the node ", LibString.toString(i));
       affinity = (i % 2 == 0) ? "INSECT" : "EERIE";
-      nodeID = _createHarvestingNode(i, roomIndex, name, description, affinity);
+      nodeID = _createHarvestingNode(i, location, name, description, affinity);
 
       assertEq(LibNode.getByIndex(components, i), nodeID);
       assertEq(LibNode.getAffinity(components, nodeID), affinity);
       assertEq(LibNode.getDescription(components, nodeID), description);
       assertEq(LibNode.getIndex(components, nodeID), i);
-      assertEq(LibNode.getRoom(components, nodeID), roomIndex);
+      assertEq(LibNode.getLocation(components, nodeID), location);
       assertEq(LibNode.getName(components, nodeID), name);
       assertEq(LibNode.getType(components, nodeID), "HARVEST");
     }
@@ -154,8 +154,8 @@ contract HarvestTest is SetupTemplate {
     }
   }
 
-  // test roomIndex constraints apply for relevant harvesting functions
-  function testProductionRoomIndexConstraints() public {
+  // test location constraints apply for relevant harvesting functions
+  function testProductionLocationConstraints() public {
     uint playerIndex = 0;
     uint numNodes = 3;
     uint numKamis = 5;
@@ -181,7 +181,7 @@ contract HarvestTest is SetupTemplate {
       vm.prank(_getOperator(playerIndex));
       _ProductionStartSystem.executeTyped(kamiIDs[i], nodeIDs[1]);
 
-      productionIDs[i] = _startProduction(kamiIDs[i], nodeIDs[0]); // roomIndex 1, where account is
+      productionIDs[i] = _startProduction(kamiIDs[i], nodeIDs[0]); // location 1, where account is
     }
     _fastForward(_idleRequirement);
 

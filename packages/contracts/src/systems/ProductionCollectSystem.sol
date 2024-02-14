@@ -35,7 +35,7 @@ contract ProductionCollectSystem is System {
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
     require(
-      LibAccount.getRoom(components, accountID) == LibPet.getRoom(components, petID),
+      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
       "FarmCollect: node too far"
     );
 

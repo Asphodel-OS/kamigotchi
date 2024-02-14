@@ -129,7 +129,7 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -151,7 +151,7 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
-    roomIndex: PromiseOrValue<BigNumberish>,
+    location: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -173,7 +173,7 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -207,7 +207,7 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -230,7 +230,7 @@ export interface _RegistryCreateQuestSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -68,7 +68,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "room",
+          "name": "location",
           "type": "uint256"
         }
       ],

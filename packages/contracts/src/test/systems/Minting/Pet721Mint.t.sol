@@ -10,7 +10,7 @@
 // // - (separate test) batch minting to sudo pool
 // //
 // // For each of the above cases we want to test
-// // - proper account alroomIndex of kami
+// // - proper account allocation of kami
 // // - proper detraction of funds
 // // - proper respect for minting limits
 // //

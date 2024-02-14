@@ -34,7 +34,7 @@ contract Pet721StakeSystem is System {
     // account checks
     require(accountID != 0, "Pet721Stake: no account detected");
     require(
-      LibAccount.getRoom(components, accountID) == ROOM,
+      LibAccount.getLocation(components, accountID) == ROOM,
       "Pet721Stake: must be in room 12"
     );
 

@@ -67,30 +67,8 @@
     {
       "inputs": [
         {
-          "components": [
-            {
-              "internalType": "int32",
-              "name": "x",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "y",
-              "type": "int32"
-            },
-            {
-              "internalType": "int32",
-              "name": "z",
-              "type": "int32"
-            }
-          ],
-          "internalType": "struct Location",
-          "name": "location",
-          "type": "tuple"
-        },
-        {
           "internalType": "uint256",
-          "name": "index",
+          "name": "location",
           "type": "uint256"
         },
         {
@@ -149,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped((int32,int32,int32),uint256,string,string,uint256[])": "c324a648",
+    "executeTyped(uint256,string,string,uint256[])": "9b185777",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

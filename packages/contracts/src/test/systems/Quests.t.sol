@@ -163,9 +163,9 @@ contract QuestsTest is SetupTemplate {
     _QuestCompleteSystem.executeTyped(questID);
   }
 
-  function testQuestRoomIndex() public {
+  function testQuestLocation() public {
     // create quest
-    _createQuest(1, "BasicRoomIndexQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, "BasicLocationQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 0, 3);
     _createQuestObjective(1, "NAME", "CURR_EQUAL", "ROOM", 0, 4);
 

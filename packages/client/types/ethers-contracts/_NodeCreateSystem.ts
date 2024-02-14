@@ -129,7 +129,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
@@ -152,7 +152,7 @@ export interface _NodeCreateSystem extends BaseContract {
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
     nodeType: PromiseOrValue<string>,
-    roomIndex: PromiseOrValue<BigNumberish>,
+    location: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
     affinity: PromiseOrValue<string>,
@@ -175,7 +175,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
@@ -210,7 +210,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,
@@ -234,7 +234,7 @@ export interface _NodeCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       nodeType: PromiseOrValue<string>,
-      roomIndex: PromiseOrValue<BigNumberish>,
+      location: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       affinity: PromiseOrValue<string>,

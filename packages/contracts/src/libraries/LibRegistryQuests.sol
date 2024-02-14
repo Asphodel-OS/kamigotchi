@@ -18,7 +18,7 @@ import { IsRequirementComponent, ID as IsRequirementCompID } from "components/Is
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
+import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
@@ -119,7 +119,7 @@ library LibRegistryQuests {
     unsetQuestIndex(components, questID);
     unsetName(components, questID);
     unsetDescription(components, questID);
-    unsetRoomIndex(components, questID);
+    unsetLocation(components, questID);
 
     unsetIsRepeatable(components, questID);
     unsetTime(components, questID);
@@ -226,8 +226,8 @@ library LibRegistryQuests {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
+  function setLocation(IUintComp components, uint256 id, uint256 location) internal {
+    LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
   }
 
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
@@ -313,9 +313,9 @@ library LibRegistryQuests {
     }
   }
 
-  function unsetRoomIndex(IUintComp components, uint256 id) internal {
-    if (IndexRoomComponent(getAddressById(components, IndexRoomCompID)).has(id)) {
-      IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(id);
+  function unsetLocation(IUintComp components, uint256 id) internal {
+    if (LocationComponent(getAddressById(components, LocationCompID)).has(id)) {
+      LocationComponent(getAddressById(components, LocationCompID)).remove(id);
     }
   }
 

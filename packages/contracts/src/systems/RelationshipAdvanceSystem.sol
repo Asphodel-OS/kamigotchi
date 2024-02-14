@@ -19,7 +19,7 @@ contract RelationshipAdvanceSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "RelationshipAdvance: no account");
 
-    // npc existence and roomIndex check
+    // npc existence and location check
     uint256 npcID = LibNPC.getByIndex(components, npcIndex);
     require(npcID != 0, "RelationshipAdvance: npc does not exist");
     require(

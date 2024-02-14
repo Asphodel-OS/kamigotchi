@@ -38,9 +38,9 @@ contract ProductionStopSystem is System {
     LibPet.sync(components, petID);
     require(LibPet.isHealthy(components, petID), "FarmStop: pet starving..");
 
-    // roomIndex check
+    // location check
     require(
-      LibAccount.getRoom(components, accountID) == LibPet.getRoom(components, petID),
+      LibAccount.getLocation(components, accountID) == LibPet.getLocation(components, petID),
       "FarmStop: node too far"
     );
 
