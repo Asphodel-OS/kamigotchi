@@ -66,7 +66,7 @@ contract HarvestTest is SetupTemplate {
     string memory description;
     string memory affinity;
     for (uint32 i = 0; i < 10; i++) {
-      location = (i % 3) + 1;
+      roomIndex = (i % 3) + 1;
       name = LibString.concat("testNode", LibString.toString(i));
       description = LibString.concat("this is a description of the node ", LibString.toString(i));
       affinity = (i % 2 == 0) ? "INSECT" : "EERIE";
