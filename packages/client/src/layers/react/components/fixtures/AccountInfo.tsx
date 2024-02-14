@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
-import { useContractRead, useBalance } from 'wagmi';
 import { FetchBalanceResult } from '@wagmi/core';
+import { useEffect, useState } from 'react';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import { useBalance, useContractRead } from 'wagmi';
 
 import { abi as Pet721ProxySystemABI } from 'abi/Pet721ProxySystem.json';
 import { GasConstants } from 'constants/gas';
-import { Account, getAccountFromBurner } from 'layers/network/shapes/Account';
-import { registerUIComponent } from 'layers/react/engine/store';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import {
+  Account,
+  calcStamina,
+  calcStaminaPercent,
+  getAccountFromBurner,
+} from 'layers/network/shapes/Account';
+import { getRoomByIndex } from 'layers/network/shapes/Room';
 import { Battery } from 'layers/react/components/library/Battery';
 import { Gauge } from 'layers/react/components/library/Gauge';
-import { calcStamina, calcStaminaPercent } from 'layers/network/shapes/Account';
-import { getRoomByIndex } from 'layers/network/shapes/Room';
+import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store/visibility';
 
 export function registerAccountInfoFixture() {
@@ -77,8 +81,7 @@ export function registerAccountInfoFixture() {
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
-        address: network.systems['system.Mint20.Proxy']
-          .address as `0x${string}`,
+        address: network.systems['system.Mint20.Proxy'].address as `0x${string}`,
         abi: Pet721ProxySystemABI,
         functionName: 'getTokenAddy',
       });
@@ -93,9 +96,7 @@ export function registerAccountInfoFixture() {
       // INTERPRETATION
 
       // calculated the gas gauge level
-      const calcGaugeSetting = (
-        gasBalance: FetchBalanceResult | undefined
-      ): number => {
+      const calcGaugeSetting = (gasBalance: FetchBalanceResult | undefined): number => {
         const amt = Number(gasBalance?.formatted);
         if (amt >= GasConstants.Full) return 100;
         if (amt <= GasConstants.Low) return 0;
@@ -103,10 +104,7 @@ export function registerAccountInfoFixture() {
       };
 
       // parses a wagmi FetchBalanceResult
-      const parseBalanceResult = (
-        bal: FetchBalanceResult | undefined,
-        precision: number = 4
-      ) => {
+      const parseBalanceResult = (bal: FetchBalanceResult | undefined, precision: number = 4) => {
         return Number(bal?.formatted ?? 0).toFixed(precision);
       };
 
@@ -130,11 +128,7 @@ export function registerAccountInfoFixture() {
       };
 
       const getKAMITooltip = () => {
-        return [
-          `$KAMI Balance`,
-          '',
-          `Use this to mint your party of Kamigotchi.`,
-        ];
+        return [`$KAMI Balance`, '', `Use this to mint your party of Kamigotchi.`];
       };
 
       const getGasTooltip = () => {
@@ -148,10 +142,7 @@ export function registerAccountInfoFixture() {
       const borderLeftStyle = { borderLeft: '.1vw solid black' };
       return (
         account && (
-          <Container
-            id='accountInfo'
-            style={{ display: fixtures.accountInfo ? 'block' : 'none' }}
-          >
+          <Container id='accountInfo' style={{ display: fixtures.accountInfo ? 'block' : 'none' }}>
             <Row>
               <TextBox>
                 {account.name} - {room.name}

@@ -129,16 +129,11 @@ export function registerQuestsModal() {
             utils={{
               setNumAvail: (num: number) => setNumAvail(num),
               getItem: (index: EntityIndex) => getItem(network, index),
-              getRoom: (roomIndex: number) =>
-                getRoomByIndex(network, roomIndex),
-              getQuestByIndex: (index: number) =>
-                getQuestByIndex(network, index),
-              queryItemRegistry: (index: number) =>
-                getItemByIndex(network, index).entityIndex,
-              queryFoodRegistry: (index: number) =>
-                queryFoodRegistry(network, index),
-              queryReviveRegistry: (index: number) =>
-                queryReviveRegistry(network, index),
+              getRoom: (roomIndex: number) => getRoomByIndex(network, roomIndex),
+              getQuestByIndex: (index: number) => getQuestByIndex(network, index),
+              queryItemRegistry: (index: number) => getItemByIndex(network, index).entityIndex,
+              queryFoodRegistry: (index: number) => queryFoodRegistry(network, index),
+              queryReviveRegistry: (index: number) => queryReviveRegistry(network, index),
             }}
           />
         </ModalWrapper>

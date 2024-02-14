@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { interval, map, merge } from 'rxjs';
 import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
+import { useEffect, useState } from 'react';
+import { interval, map } from 'rxjs';
 
-import { RoomInfo } from './RoomInfo';
 import { mapIcon } from 'assets/images/icons/menu';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { Room, queryRoomsX } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Room, queryRoomsX } from 'layers/network/shapes/Room';
-import { useVisibility } from 'layers/react/store/visibility';
 import { useSelected } from 'layers/react/store/selected';
+import { useVisibility } from 'layers/react/store/visibility';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
+import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -104,10 +104,7 @@ export function registerMapModal() {
             <Title>Go To..</Title>
             {selectedExits.map((exit) => {
               return (
-                <ClickableDescription
-                  key={exit.index}
-                  onClick={() => handleClick(exit.index)}
-                >
+                <ClickableDescription key={exit.index} onClick={() => handleClick(exit.index)}>
                   → {exit.name}
                 </ClickableDescription>
               );
@@ -123,9 +120,7 @@ export function registerMapModal() {
         <ModalWrapper
           id='world_map'
           divName='map'
-          header={
-            <ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />
-          }
+          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
           footer={<ExitsDisplay />}
           canExit
         >
