@@ -14,13 +14,13 @@ contract _RegistryCreateSkillEffectSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 skillIndex,
+      uint32 skillIndex,
       string memory type_,
       string memory subtype,
       string memory logicType,
       uint256 index,
       uint256 value
-    ) = abi.decode(arguments, (uint256, string, string, string, uint256, uint256));
+    ) = abi.decode(arguments, (uint32, string, string, string, uint256, uint256));
 
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
 
@@ -35,7 +35,7 @@ contract _RegistryCreateSkillEffectSystem is System {
   }
 
   function executeTyped(
-    uint256 skillIndex,
+    uint32 skillIndex,
     string memory type_,
     string memory subtype, // optional
     string memory logicType, // optional

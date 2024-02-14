@@ -529,7 +529,7 @@ library LibPet {
     TimeLastActionComponent comp = TimeLastActionComponent(
       getAddressById(components, TimeLastActCompID)
     );
-    if (!comp.has(id)) ts = comp.getValue(id);
+    if (comp.has(id)) ts = comp.getValue(id);
   }
 
   // get the last time a kami commited a syncing Action

@@ -285,7 +285,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* SKILLS */
 
-  function _upgradeSkill(uint playerIndex, uint targetID, uint skillIndex) internal virtual {
+  function _upgradeSkill(uint playerIndex, uint targetID, uint32 skillIndex) internal virtual {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
     _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
@@ -476,7 +476,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* SKILLS */
 
   function _createSkill(
-    uint index,
+    uint32 index,
     string memory for_,
     string memory type_,
     string memory name,
@@ -489,7 +489,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createSkillEffect(
-    uint skillIndex,
+    uint32 skillIndex,
     string memory type_,
     string memory subtype, // can be empty
     string memory logicType, // can be empty
@@ -508,7 +508,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createSkillRequirement(
-    uint skillIndex,
+    uint32 skillIndex,
     string memory type_,
     uint index, // can be empty
     uint value // can be empty
