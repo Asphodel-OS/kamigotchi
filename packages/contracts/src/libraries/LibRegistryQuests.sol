@@ -40,7 +40,7 @@ library LibRegistryQuests {
   function createQuest(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description
   ) internal returns (uint256) {
@@ -65,28 +65,29 @@ library LibRegistryQuests {
   function createEmptyObjective(
     IWorld world,
     IUintComp components,
-    uint256 questIndex,
+    uint32 questIndex,
     string memory name, // this is a crutch to help FE, ideally we drop this
     string memory logicType,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
+    uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
+
+    setQuestIndex(components, id, questIndex);
+    setObjectiveIndex(components, id, uint32(numObjectives) + 1);
     setIsRegistry(components, id);
     setIsObjective(components, id);
-    setQuestIndex(components, id, questIndex);
     setName(components, id, name);
     setLogicType(components, id, logicType);
     setType(components, id, type_);
 
-    uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
-    setObjectiveIndex(components, id, numObjectives + 1);
     return id;
   }
 
   function createEmptyRequirement(
     IWorld world,
     IUintComp components,
-    uint256 questIndex,
+    uint32 questIndex,
     string memory logicType,
     string memory type_
   ) internal returns (uint256) {
@@ -102,7 +103,7 @@ library LibRegistryQuests {
   function createEmptyReward(
     IWorld world,
     IUintComp components,
-    uint256 questIndex,
+    uint32 questIndex,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -210,15 +211,15 @@ library LibRegistryQuests {
     IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
   }
 
-  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
   }
 
-  function setObjectiveIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setObjectiveIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).set(id, index);
   }
 
-  function setQuestIndex(IUintComp components, uint256 id, uint256 questIndex) internal {
+  function setQuestIndex(IUintComp components, uint256 id, uint32 questIndex) internal {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
   }
 
@@ -355,7 +356,7 @@ library LibRegistryQuests {
   // get registry entry by Quest index
   function getByQuestIndex(
     IUintComp components,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
@@ -373,7 +374,7 @@ library LibRegistryQuests {
   // get Objectives by Quest index
   function getObjectivesByQuestIndex(
     IUintComp components,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256[] memory results) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
@@ -394,7 +395,7 @@ library LibRegistryQuests {
   // get requirements by Quest index
   function getRequirementsByQuestIndex(
     IUintComp components,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256[] memory results) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
@@ -415,7 +416,7 @@ library LibRegistryQuests {
   // get reward by Quest index
   function getRewardsByQuestIndex(
     IUintComp components,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256[] memory results) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");

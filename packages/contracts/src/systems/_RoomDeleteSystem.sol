@@ -14,19 +14,19 @@ contract _RoomDeleteSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    uint256 room = abi.decode(arguments, (uint256));
+    uint32 index = abi.decode(arguments, (uint32));
 
-    uint256 roomID = LibRoom.queryByIndex(components, room);
+    uint256 roomID = LibRoom.queryByIndex(components, index);
     require(roomID != 0, "Room: does not exist");
 
     LibRoom.remove(components, roomID);
-    uint256[] memory gates = LibRoom.queryAllGates(components, room);
+    uint256[] memory gates = LibRoom.queryAllGates(components, index);
     for (uint256 i = 0; i < gates.length; i++) LibRoom.remove(components, gates[i]);
 
     return "";
   }
 
-  function executeTyped(uint256 room) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(room));
+  function executeTyped(uint32 index) public onlyOwner returns (bytes memory) {
+    return execute(abi.encode(index));
   }
 }

@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateQuestSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,uint32,uint256)": FunctionFragment;
+    "executeTyped(uint32,string,string,uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

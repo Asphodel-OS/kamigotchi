@@ -265,7 +265,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
-  function _acceptQuest(uint playerIndex, uint questIndex) internal virtual returns (uint) {
+  function _acceptQuest(uint playerIndex, uint32 questIndex) internal virtual returns (uint) {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
     return abi.decode(_QuestAcceptSystem.executeTyped(questIndex), (uint));
@@ -428,7 +428,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* QUESTS */
 
   function _createQuest(
-    uint index,
+    uint32 index,
     string memory name,
     string memory description,
     uint32 roomIndex,
@@ -439,11 +439,11 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createQuestObjective(
-    uint questIndex,
+    uint32 questIndex,
     string memory name,
     string memory logicType,
     string memory _type,
-    uint index, // can be empty
+    uint32 index, // can be empty
     uint value // can be empty
   ) public {
     vm.prank(deployer);
@@ -458,10 +458,10 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createQuestRequirement(
-    uint questIndex,
+    uint32 questIndex,
     string memory logicType,
     string memory _type,
-    uint index, // can be empty
+    uint32 index, // can be empty
     uint value // can be empty
   ) public {
     vm.prank(deployer);
@@ -469,7 +469,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createQuestReward(
-    uint questIndex,
+    uint32 questIndex,
     string memory _type,
     uint32 itemIndex, // can be empty
     uint value // can be empty
@@ -498,7 +498,7 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory type_,
     string memory subtype, // can be empty
     string memory logicType, // can be empty
-    uint index, // can be empty
+    uint32 index, // can be empty
     uint value // can be empty
   ) public {
     vm.prank(deployer);
@@ -515,7 +515,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createSkillRequirement(
     uint32 skillIndex,
     string memory type_,
-    uint index, // can be empty
+    uint32 index, // can be empty
     uint value // can be empty
   ) public {
     vm.prank(deployer);

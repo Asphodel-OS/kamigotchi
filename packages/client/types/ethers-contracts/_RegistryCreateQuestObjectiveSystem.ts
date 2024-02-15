@@ -31,7 +31,7 @@ export interface _RegistryCreateQuestObjectiveSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,string,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint32,string,string,string,uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

@@ -145,7 +145,7 @@ library LibRegistrySkill {
     IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
   }
 
-  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
   }
 
@@ -275,7 +275,7 @@ library LibRegistrySkill {
   /////////////////
   // GETTERS
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
   }
 

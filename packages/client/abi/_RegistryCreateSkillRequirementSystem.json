@@ -77,9 +77,9 @@
           "type": "string"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "index",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "uint256",
@@ -127,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,uint256,uint256)": "0d544252",
+    "executeTyped(uint32,string,uint32,uint256)": "0a831ed1",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

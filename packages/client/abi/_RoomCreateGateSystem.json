@@ -77,13 +77,13 @@
           "type": "uint32"
         },
         {
-          "internalType": "uint256",
-          "name": "conIndex",
-          "type": "uint256"
+          "internalType": "uint32",
+          "name": "conditionIndex",
+          "type": "uint32"
         },
         {
           "internalType": "uint256",
-          "name": "conValue",
+          "name": "conditionValue",
           "type": "uint256"
         },
         {
@@ -137,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,uint32,uint256,uint256,string,string)": "f8a108f9",
+    "executeTyped(uint32,uint32,uint32,uint256,string,string)": "b7698477",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

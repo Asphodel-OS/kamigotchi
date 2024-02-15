@@ -67,9 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "questIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "string",
@@ -87,9 +87,9 @@
           "type": "string"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "index",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "uint256",
@@ -137,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,string,string,uint256,uint256)": "85276891",
+    "executeTyped(uint32,string,string,string,uint32,uint256)": "53f01ed7",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

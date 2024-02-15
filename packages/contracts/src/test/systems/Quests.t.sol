@@ -166,8 +166,8 @@ contract QuestsTest is SetupTemplate {
   function testQuestRoomIndex() public {
     // create quest
     _createQuest(1, "BasicRoomIndexQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(1, "AT", "ROOM", 0, 3);
-    _createQuestObjective(1, "NAME", "CURR_EQUAL", "ROOM", 0, 4);
+    _createQuestRequirement(1, "AT", "ROOM", 3, 0);
+    _createQuestObjective(1, "NAME", "BOOL_IS", "ROOM", 4, 0);
 
     // register account
     address operator = _getOperator(0);
@@ -200,7 +200,7 @@ contract QuestsTest is SetupTemplate {
   function testMintKami() public {
     // create quest
     _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(1, "AT", "ROOM", 0, 1);
+    _createQuestRequirement(1, "AT", "ROOM", 1, 0);
     _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
 
     // register account
@@ -229,7 +229,7 @@ contract QuestsTest is SetupTemplate {
     // create quest(s)
     _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
     _createQuest(2, "BasicQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(2, "COMPLETE", "QUEST", 0, 1);
+    _createQuestRequirement(2, "COMPLETE", "QUEST", 1, 0);
 
     // register account
     address operator = _getOperator(0);

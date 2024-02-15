@@ -245,18 +245,16 @@ library LibAccount {
     IUintComp components,
     uint256 id,
     string memory _type,
-    uint256 index
+    uint32 index
   ) public view returns (uint256 balance) {
     uint256 inventoryID;
     if (LibString.eq(_type, "ITEM")) {
-      inventoryID = LibInventory.get(components, id, uint32(index));
+      inventoryID = LibInventory.get(components, id, index);
       balance = LibInventory.getBalance(components, inventoryID);
     } else if (LibString.eq(_type, "COIN")) {
       balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");
     } else if (LibString.eq(_type, "KAMI")) {
       balance = getPetsOwned(components, id).length;
-    } else if (LibString.eq(_type, "ROOM")) {
-      balance = getRoom(components, id);
     } else {
       require(false, "LibAccount: unknown type");
     }

@@ -266,7 +266,7 @@ contract RoomTest is SetupTemplate {
     );
   }
 
-  function _locFromIndex(uint256 index) internal view returns (Location memory) {
+  function _locFromIndex(uint32 index) internal view returns (Location memory) {
     return LibRoom.getLocation(components, LibRoom.queryByIndex(components, index));
   }
 

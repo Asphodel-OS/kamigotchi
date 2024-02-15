@@ -321,7 +321,7 @@ export const checkRequirement = (
 ): Status => {
   switch (requirement.logic) {
     case 'AT':
-      return checkCurrent(network, requirement.target, account, 'EQUAL');
+      return checkBoolean(network, requirement.target, account, 'IS');
     case 'COMPLETE':
       return checkBoolean(network, requirement.target, account, 'IS');
     case 'HAVE':
@@ -350,7 +350,7 @@ export const checkObjective = (
   }
 
   const subLogics = objective.logic.split('_');
-  const deltaType = subLogics[0];
+  const deltaType = subLogics[0] as 'CURR' | 'INC' | 'DEC' | 'BOOL';
   const operator = subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
   if (deltaType === 'CURR') return checkCurrent(network, objective.target, account, operator);
   else if (deltaType === 'INC') return checkIncrease(network, objective, quest, account, operator);
@@ -423,12 +423,18 @@ const checkBoolean = (
   logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
 ): Status => {
   const _type = condition.type;
-
+  let current;
+  let target;
   let result = false;
 
   switch (_type) {
     case 'QUEST':
-      result = checkQuestComplete(network, condition.value as number, account);
+      result = checkQuestComplete(network, condition.index as number, account);
+      break;
+    case 'ROOM':
+      current = account.roomIndex;
+      target = condition.index;
+      result = current == target;
       break;
     default:
       result = false; // should not get here
@@ -437,6 +443,8 @@ const checkBoolean = (
   if (logic == 'NOT') result = !result;
 
   return {
+    current,
+    target,
     completable: result,
   };
 };

@@ -220,6 +220,7 @@ export const List = (props: Props) => {
     }
   };
 
+  // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective, showTracking: boolean): string => {
     let text = objective.name;
 
