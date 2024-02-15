@@ -67,9 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "index",
-          "type": "uint256"
+          "type": "uint32"
         }
       ],
       "name": "executeTyped",
@@ -112,7 +112,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeTyped(uint32)": "09c90324",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

@@ -30,7 +30,7 @@ import type {
 export interface _RoomCreateGateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,uint32,uint256,uint256,string,string)": FunctionFragment;
+    "executeTyped(uint32,uint32,uint32,uint256,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -129,8 +129,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
     executeTyped(
       roomIndex: PromiseOrValue<BigNumberish>,
       sourceIndex: PromiseOrValue<BigNumberish>,
-      conIndex: PromiseOrValue<BigNumberish>,
-      conValue: PromiseOrValue<BigNumberish>,
+      conditionIndex: PromiseOrValue<BigNumberish>,
+      conditionValue: PromiseOrValue<BigNumberish>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -152,8 +152,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
   executeTyped(
     roomIndex: PromiseOrValue<BigNumberish>,
     sourceIndex: PromiseOrValue<BigNumberish>,
-    conIndex: PromiseOrValue<BigNumberish>,
-    conValue: PromiseOrValue<BigNumberish>,
+    conditionIndex: PromiseOrValue<BigNumberish>,
+    conditionValue: PromiseOrValue<BigNumberish>,
     logicType: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -175,8 +175,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
     executeTyped(
       roomIndex: PromiseOrValue<BigNumberish>,
       sourceIndex: PromiseOrValue<BigNumberish>,
-      conIndex: PromiseOrValue<BigNumberish>,
-      conValue: PromiseOrValue<BigNumberish>,
+      conditionIndex: PromiseOrValue<BigNumberish>,
+      conditionValue: PromiseOrValue<BigNumberish>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -210,8 +210,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
     executeTyped(
       roomIndex: PromiseOrValue<BigNumberish>,
       sourceIndex: PromiseOrValue<BigNumberish>,
-      conIndex: PromiseOrValue<BigNumberish>,
-      conValue: PromiseOrValue<BigNumberish>,
+      conditionIndex: PromiseOrValue<BigNumberish>,
+      conditionValue: PromiseOrValue<BigNumberish>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -234,8 +234,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
     executeTyped(
       roomIndex: PromiseOrValue<BigNumberish>,
       sourceIndex: PromiseOrValue<BigNumberish>,
-      conIndex: PromiseOrValue<BigNumberish>,
-      conValue: PromiseOrValue<BigNumberish>,
+      conditionIndex: PromiseOrValue<BigNumberish>,
+      conditionValue: PromiseOrValue<BigNumberish>,
       logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
