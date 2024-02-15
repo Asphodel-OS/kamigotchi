@@ -11,10 +11,8 @@ import _NPCCreateSystem from "../abi/_NPCCreateSystem.json";
 import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
 import _NPCSetRoomSystem from "../abi/_NPCSetRoomSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
-import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateItemConsumableSystem from "../abi/_RegistryCreateItemConsumableSystem.json";
 import _RegistryCreateLootboxSystem from "../abi/_RegistryCreateLootboxSystem.json";
-import _RegistryCreateModSystem from "../abi/_RegistryCreateModSystem.json";
 import _RegistryCreateQuestObjectiveSystem from "../abi/_RegistryCreateQuestObjectiveSystem.json";
 import _RegistryCreateQuestRequirementSystem from "../abi/_RegistryCreateQuestRequirementSystem.json";
 import _RegistryCreateQuestRewardSystem from "../abi/_RegistryCreateQuestRewardSystem.json";
@@ -99,10 +97,8 @@ export const SystemAbis = {
   "system._NPC.Set.Name": _NPCSetNameSystem.abi,
   "system._NPC.Set.Room": _NPCSetRoomSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
-  "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem.abi,
   "system._Registry.Lootbox.Create": _RegistryCreateLootboxSystem.abi,
-  "system._Registry.Mod.Create": _RegistryCreateModSystem.abi,
   "system._Registry.Quest.Create.Objective": _RegistryCreateQuestObjectiveSystem.abi,
   "system._Registry.Quest.Create.Requirement": _RegistryCreateQuestRequirementSystem.abi,
   "system._Registry.Quest.Create.Reward": _RegistryCreateQuestRewardSystem.abi,

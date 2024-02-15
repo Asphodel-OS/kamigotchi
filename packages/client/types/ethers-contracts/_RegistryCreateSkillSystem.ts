@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateSkillSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,string,uint256,uint256,string,string)": FunctionFragment;
+    "executeTyped(uint32,string,string,string,uint256,uint256,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

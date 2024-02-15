@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
@@ -18,22 +19,22 @@ contract PetReviveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 id, uint256 reviveIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+
+    // get/check registry entry
+    uint256 registryID = LibRegistryItem.getByIndex(components, itemIndex);
+    string memory type_ = LibRegistryItem.getType(components, registryID);
+    require(LibString.eq(type_, "REVIVE"), "PetRevive: god can't save you");
 
     // standard checks (ownership, cooldown, state)
     require(accountID != 0, "PetRevive: no account");
     require(LibPet.getAccount(components, id) == accountID, "PetRevive: pet not urs");
     require(LibPet.isDead(components, id), "PetRevive: pet not dead");
 
-    // find the registry entry
-    uint256 registryID = LibRegistryItem.getByReviveIndex(components, reviveIndex);
-    require(registryID != 0, "PetRevive: not a revive");
-
-    // decrement item from inventory
-    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
+    // decrement item from inventory with implicit check for insufficient balance
     uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
-    LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
+    LibInventory.dec(components, inventoryID, 1);
 
     // revive and heal according to item stats
     uint256 healAmt = LibStat.getHealth(components, registryID);
@@ -47,7 +48,7 @@ contract PetReviveSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 id, uint256 reviveIndex) public returns (bytes memory) {
-    return execute(abi.encode(id, reviveIndex));
+  function executeTyped(uint256 id, uint32 itemIndex) public returns (bytes memory) {
+    return execute(abi.encode(id, itemIndex));
   }
 }

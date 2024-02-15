@@ -30,7 +30,7 @@ import type {
 export interface AccountUpgradeSkillSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256)": FunctionFragment;
+    "executeTyped(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

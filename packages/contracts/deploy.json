@@ -35,17 +35,13 @@
     "IndexBodyComponent",
     "IndexColorComponent",
     "IndexFaceComponent",
-    "IndexFoodComponent",
-    "IndexGearComponent",
     "IndexHandComponent",
     "IndexItemComponent",
-    "IndexModComponent",
     "IndexNodeComponent",
     "IndexNPCComponent",
     "IndexObjectiveComponent",
     "IndexPetComponent",
     "IndexRelationshipComponent",
-    "IndexReviveComponent",
     "IndexQuestComponent",
     "IndexSkillComponent",
     "IndexSourceComponent",
@@ -67,7 +63,6 @@
     "IsLogComponent",
     "IsLootboxComponent",
     "IsNodeComponent",
-    "IsNonFungibleComponent",
     "IsNPCComponent",
     "IsPetComponent",
     "IsProductionComponent",
@@ -205,33 +200,16 @@
     {
       "name": "_RegistryCreateFoodSystem",
       "writeAccess": [
-        "ExperienceComponent",
+        "IndexItemComponent",
         "IsRegistryComponent",
+        "IsConsumableComponent",
         "IsFungibleComponent",
-        "IndexItemComponent",
-        "IndexFoodComponent",
         "NameComponent",
         "DescriptionComponent",
+        "ExperienceComponent",
         "HealthComponent",
-        "MediaURIComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateGearSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "IsRegistryComponent",
-        "IsNonFungibleComponent",
-        "IndexItemComponent",
-        "IndexGearComponent",
-        "NameComponent",
-        "TypeComponent",
-        "HealthComponent",
-        "PowerComponent",
-        "ViolenceComponent",
-        "HarmonyComponent",
-        "SlotsComponent",
-        "MediaURIComponent"
+        "MediaURIComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -239,30 +217,15 @@
       "writeAccess": [
         "DescriptionComponent",
         "IsRegistryComponent",
+        "IsConsumableComponent",
         "IsFungibleComponent",
         "IsLootboxComponent",
         "IndexItemComponent",
         "KeysComponent",
         "WeightsComponent",
         "NameComponent",
-        "MediaURIComponent"
-      ]
-    },
-    {
-      "name": "_RegistryCreateModSystem",
-      "writeAccess": [
-        "DescriptionComponent",
-        "IsRegistryComponent",
-        "IsFungibleComponent",
-        "IndexItemComponent",
-        "IndexGearComponent",
-        "NameComponent",
-        "TypeComponent",
-        "HealthComponent",
-        "PowerComponent",
-        "ViolenceComponent",
-        "HarmonyComponent",
-        "MediaURIComponent"
+        "MediaURIComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -296,14 +259,15 @@
     {
       "name": "_RegistryCreateReviveSystem",
       "writeAccess": [
-        "IsRegistryComponent",
-        "IsFungibleComponent",
         "IndexItemComponent",
-        "IndexReviveComponent",
+        "IsRegistryComponent",
+        "IsConsumableComponent",
+        "IsFungibleComponent",
         "NameComponent",
         "DescriptionComponent",
         "HealthComponent",
-        "MediaURIComponent"
+        "MediaURIComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -392,14 +356,9 @@
         "ExperienceComponent",
         "IsRegistryComponent",
         "IsFungibleComponent",
-        "IsNonFungibleComponent",
         "IndexItemComponent",
         "NameComponent",
         "TypeComponent",
-        "IndexFoodComponent",
-        "IndexGearComponent",
-        "IndexModComponent",
-        "IndexReviveComponent",
         "IsLootboxComponent",
         "IsConsumableComponent",
         "HealthComponent",

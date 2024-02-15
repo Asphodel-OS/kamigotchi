@@ -11,13 +11,8 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IndexFoodComponent, ID as IndexFoodCompID } from "components/IndexFoodComponent.sol";
-import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
-import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComponent.sol";
-import { IndexReviveComponent, ID as IndexReviveCompID } from "components/IndexReviveComponent.sol";
 import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
 import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
-import { IsNonFungibleComponent, ID as IsNonFungCompID } from "components/IsNonFungibleComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
@@ -29,17 +24,7 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 import { LibStat } from "libraries/LibStat.sol";
 
 // Registries hold shared information on individual entity instances in the world.
-// This can include attribute information such as stats and effects or even prices
-// commonly shared betweeen merchants. They also taxonomize entities in the world using
-// the explicit Index Components (e.g. ItemIndex + gearIndex|FoodIndex|ModIndex) to
-// to identify the first two taxonomic tiers of Domain and Category.
-//
-// NOTE: The value of Domain Indices are automatically incremented for new entries, while
-// Category Indices should be explicitly defined/referenced for human-readablility. These
-// tiers of taxonomization are elaborated upon for the sake of a shared language, and we
-// should revisit their naming if use cases demand further tiering. Very likely we will
-// for the equipment use case. There is no requirement to use these taxonomic tiers
-// exhaustively, but we should be consistent on depth within a given context.
+// This can include attribute information such as capabilities, stats and effects.
 library LibRegistryItem {
   /////////////////
   // INTERACTIONS
@@ -48,90 +33,22 @@ library LibRegistryItem {
   function createConsumable(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description,
     string memory type_,
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    setIsFungible(components, id);
+    setIndex(components, id, index);
     setIsRegistry(components, id);
-    setItemIndex(components, id, index);
     setIsConsumable(components, id);
-    setName(components, id, name);
-    setDescription(components, id, description);
-    setType(components, id, type_);
-    setMediaURI(components, id, mediaURI);
-    return id;
-  }
-
-  // @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
-  function createFood(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    uint256 foodIndex,
-    string memory name,
-    string memory description,
-    uint256 health,
-    uint256 experience,
-    string memory mediaURI
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsRegistry(components, id);
     setIsFungible(components, id);
-    setItemIndex(components, id, index);
-    setFoodIndex(components, id, foodIndex);
-    setName(components, id, name);
-    setDescription(components, id, description);
-    if (health > 0) LibStat.setHealth(components, id, health);
-    if (experience > 0) setExperience(components, id, experience);
-    setMediaURI(components, id, mediaURI);
-    return id;
-  }
-
-  // @notice Create a registry entry for an equipment item. (e.g. armor, helmet, etc.)
-  function createGear(
-    IWorld world,
-    IUintComp components,
-    uint256 index,
-    uint256 gearIndex,
-    string memory name,
-    string memory description,
-    string memory type_,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
-    string memory mediaURI
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsRegistry(components, id);
-    setIsNonFungible(components, id);
-    setItemIndex(components, id, index);
-    setGearIndex(components, id, gearIndex);
-    setName(components, id, name);
-    setDescription(components, id, description);
     setType(components, id, type_);
+
+    setName(components, id, name);
+    setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
-
-    if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
-
-    if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
-
-    if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
-
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
-
-    if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
-
     return id;
   }
 
@@ -144,18 +61,21 @@ library LibRegistryItem {
   function createLootbox(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description,
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256[] memory weights,
     string memory mediaURI
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
+    setIndex(components, id, index);
     setIsRegistry(components, id);
+    setIsConsumable(components, id);
     setIsFungible(components, id);
     setIsLootbox(components, id);
-    setItemIndex(components, id, index);
+    setType(components, id, "LOOTBOX");
+
     setKeys(components, id, keys);
     setWeights(components, id, weights);
     setName(components, id, name);
@@ -163,41 +83,30 @@ library LibRegistryItem {
     setMediaURI(components, id, mediaURI);
   }
 
-  // Create a Registry entry for a Mod item. (e.g. cpu, gem, etc.)
-  function createMod(
+  // @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
+  function createFood(
     IWorld world,
     IUintComp components,
-    uint256 index,
-    uint256 modIndex,
+    uint32 index,
     string memory name,
     string memory description,
     uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
+    uint256 experience,
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
+    setIndex(components, id, index);
     setIsRegistry(components, id);
+    setIsConsumable(components, id);
     setIsFungible(components, id);
-    setItemIndex(components, id, index);
-    setModIndex(components, id, modIndex);
+    setType(components, id, "FOOD");
+
     setName(components, id, name);
     setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
 
     if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
-
-    if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
-
-    if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
-
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
-
+    if (experience > 0) setExperience(components, id, experience);
     return id;
   }
 
@@ -205,40 +114,38 @@ library LibRegistryItem {
   function createRevive(
     IWorld world,
     IUintComp components,
-    uint256 index,
-    uint256 reviveIndex,
+    uint32 index,
     string memory name,
     string memory description,
     uint256 health,
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
+    setIndex(components, id, index);
     setIsRegistry(components, id);
+    setIsConsumable(components, id);
     setIsFungible(components, id);
-    setItemIndex(components, id, index);
-    setReviveIndex(components, id, reviveIndex);
+    setType(components, id, "REVIVE");
+
     setName(components, id, name);
     setDescription(components, id, description);
-    LibStat.setHealth(components, id, health);
     setMediaURI(components, id, mediaURI);
+    LibStat.setHealth(components, id, health);
     return id;
   }
 
   // @notice delete a Registry entry for an item.
   function deleteItem(IUintComp components, uint256 id) internal {
+    unsetIndex(components, id);
     unsetIsRegistry(components, id);
+    unsetIsConsumable(components, id);
     unsetIsFungible(components, id);
-    unsetIsNonFungible(components, id);
-    unsetItemIndex(components, id);
+    unsetIsLootbox(components, id);
+
     unsetName(components, id);
     unsetDescription(components, id);
     unsetType(components, id);
     unsetMediaURI(components, id);
-    unsetFoodIndex(components, id);
-    unsetGearIndex(components, id);
-    unsetModIndex(components, id);
-    unsetReviveIndex(components, id);
-    unsetIsLootbox(components, id);
 
     LibStat.removeHealth(components, id);
     LibStat.removePower(components, id);
@@ -254,8 +161,8 @@ library LibRegistryItem {
   /////////////////
   // CHECKERS
 
-  function hasName(IUintComp components, uint256 id) internal view returns (bool) {
-    return NameComponent(getAddressById(components, NameCompID)).has(id);
+  function isItem(IUintComp components, uint256 id) internal view returns (bool) {
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id);
   }
 
   function hasType(IUintComp components, uint256 id) internal view returns (bool) {
@@ -274,47 +181,26 @@ library LibRegistryItem {
     return IsFungibleComponent(getAddressById(components, IsFungCompID)).has(id);
   }
 
-  function isNonFungible(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).has(id);
+  /////////////////
+  // GETTERS
+
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
   }
 
-  function isFood(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexFoodComponent(getAddressById(components, IndexFoodCompID)).has(id);
+  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
+    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
   }
 
-  function isGear(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexGearComponent(getAddressById(components, IndexGearCompID)).has(id);
-  }
-
-  function isItem(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id);
-  }
-
-  function isMod(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexModComponent(getAddressById(components, IndexModCompID)).has(id);
-  }
-
-  function isRevive(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexReviveComponent(getAddressById(components, IndexReviveCompID)).has(id);
+  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
+    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
   }
 
   /////////////////
   // SETTERS
 
-  function setFoodIndex(IUintComp components, uint256 id, uint256 foodIndex) internal {
-    IndexFoodComponent(getAddressById(components, IndexFoodCompID)).set(id, foodIndex);
-  }
-
-  function setDescription(IUintComp components, uint256 id, string memory description) internal {
-    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
-  }
-
-  function setExperience(IUintComp components, uint256 id, uint256 experience) internal {
-    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
-  }
-
-  function setGearIndex(IUintComp components, uint256 id, uint256 gearIndex) internal {
-    IndexGearComponent(getAddressById(components, IndexGearCompID)).set(id, gearIndex);
+  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
+    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
   }
 
   function setIsConsumable(IUintComp components, uint256 id) internal {
@@ -329,32 +215,24 @@ library LibRegistryItem {
     IsLootboxComponent(getAddressById(components, IsLootboxCompID)).set(id);
   }
 
-  function setIsNonFungible(IUintComp components, uint256 id) internal {
-    IsNonFungibleComponent(getAddressById(components, IsNonFungCompID)).set(id);
-  }
-
   function setIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
   }
 
-  function setItemIndex(IUintComp components, uint256 id, uint256 itemIndex) internal {
-    IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
+  function setDescription(IUintComp components, uint256 id, string memory description) internal {
+    DescriptionComponent(getAddressById(components, DescriptionCompID)).set(id, description);
   }
 
-  function setKeys(IUintComp components, uint256 id, uint256[] memory keys) internal {
+  function setExperience(IUintComp components, uint256 id, uint256 experience) internal {
+    ExperienceComponent(getAddressById(components, ExpCompID)).set(id, experience);
+  }
+
+  function setKeys(IUintComp components, uint256 id, uint32[] memory keys) internal {
     KeysComponent(getAddressById(components, KeysCompID)).set(id, keys);
-  }
-
-  function setModIndex(IUintComp components, uint256 id, uint256 modIndex) internal {
-    IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
   }
 
   function setMediaURI(IUintComp components, uint256 id, string memory mediaURI) internal {
     MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, mediaURI);
-  }
-
-  function setReviveIndex(IUintComp components, uint256 id, uint256 reviveIndex) internal {
-    IndexReviveComponent(getAddressById(components, IndexReviveCompID)).set(id, reviveIndex);
   }
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
@@ -369,23 +247,16 @@ library LibRegistryItem {
     WeightsComponent(getAddressById(components, WeightsCompID)).set(id, weights);
   }
 
+  /////////////////
+  // UNSETTERS
+
   function unsetExperience(IUintComp components, uint256 id) internal {
     ExperienceComponent comp = ExperienceComponent(getAddressById(components, ExpCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetFoodIndex(IUintComp components, uint256 id) internal {
-    IndexFoodComponent comp = IndexFoodComponent(getAddressById(components, IndexFoodCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
   function unsetDescription(IUintComp components, uint256 id) internal {
     DescriptionComponent comp = DescriptionComponent(getAddressById(components, DescriptionCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetGearIndex(IUintComp components, uint256 id) internal {
-    IndexGearComponent comp = IndexGearComponent(getAddressById(components, IndexGearCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
@@ -406,30 +277,18 @@ library LibRegistryItem {
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetIsNonFungible(IUintComp components, uint256 id) internal {
-    IsNonFungibleComponent comp = IsNonFungibleComponent(
-      getAddressById(components, IsNonFungCompID)
-    );
-    if (comp.has(id)) comp.remove(id);
-  }
-
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent comp = IsRegistryComponent(getAddressById(components, IsRegCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetItemIndex(IUintComp components, uint256 id) internal {
+  function unsetIndex(IUintComp components, uint256 id) internal {
     IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
   function unsetKeys(IUintComp components, uint256 id) internal {
     KeysComponent comp = KeysComponent(getAddressById(components, KeysCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetModIndex(IUintComp components, uint256 id) internal {
-    IndexModComponent comp = IndexModComponent(getAddressById(components, IndexModCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
@@ -448,45 +307,9 @@ library LibRegistryItem {
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetReviveIndex(IUintComp components, uint256 id) internal {
-    IndexReviveComponent comp = IndexReviveComponent(getAddressById(components, IndexReviveCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
   function unsetWeights(IUintComp components, uint256 id) internal {
     WeightsComponent comp = WeightsComponent(getAddressById(components, WeightsCompID));
     if (comp.has(id)) comp.remove(id);
-  }
-
-  /////////////////
-  // GETTERS
-
-  function getFoodIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexFoodComponent(getAddressById(components, IndexFoodCompID)).getValue(id);
-  }
-
-  function getGearIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexGearComponent(getAddressById(components, IndexGearCompID)).getValue(id);
-  }
-
-  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
-  }
-
-  function getModIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexModComponent(getAddressById(components, IndexModCompID)).getValue(id);
-  }
-
-  function getReviveIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexReviveComponent(getAddressById(components, IndexReviveCompID)).getValue(id);
-  }
-
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
-  }
-
-  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
   }
 
   /////////////////
@@ -503,139 +326,50 @@ library LibRegistryItem {
   // get the associated item registry entry of a given instance entity
   // NOTE: the item instance will not have a [food, mod, gear]index, so unlikely anything
   // below the first conditional path is useful.
-  function getByInstance(
-    IUintComp components,
-    uint instanceID
-  ) internal view returns (uint result) {
-    uint index;
-    if (isItem(components, instanceID)) {
-      index = getItemIndex(components, instanceID);
-      result = getByItemIndex(components, index);
-    } else if (isFood(components, instanceID)) {
-      index = getFoodIndex(components, instanceID);
-      result = getByFoodIndex(components, index);
-    } else if (isGear(components, instanceID)) {
-      index = getGearIndex(components, instanceID);
-      result = getByGearIndex(components, index);
-    } else if (isMod(components, instanceID)) {
-      index = getModIndex(components, instanceID);
-      result = getByModIndex(components, index);
-    } else if (isRevive(components, instanceID)) {
-      index = getReviveIndex(components, instanceID);
-      result = getByReviveIndex(components, index);
-    } else {
-      revert("LibRegistryItem.getByInstance(): Entity does not have any associated indices");
-    }
+  function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
+    uint32 index = getIndex(components, instanceID);
+    return getByIndex(components, index);
   }
 
   // get the registry entry by item index
-  function getByItemIndex(
-    IUintComp components,
-    uint256 itemIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
+    fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexItemCompID),
-      abi.encode(itemIndex)
+      abi.encode(index)
     );
 
     uint256[] memory results = LibQuery.query(fragments);
     if (results.length != 0) result = results[0];
   }
 
-  // get the registry entry by food index
-  function getByFoodIndex(
-    IUintComp components,
-    uint256 foodIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexFoodCompID),
-      abi.encode(foodIndex)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
-  }
-
-  // get the registry entry by gear index
-  function getByGearIndex(
-    IUintComp components,
-    uint256 gearIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexGearCompID),
-      abi.encode(gearIndex)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
-  }
-
-  // get the registry entry by mod index
-  function getByModIndex(
-    IUintComp components,
-    uint256 modIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexModCompID),
-      abi.encode(modIndex)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
-  }
-
-  // get the registry entry by food index
-  function getByReviveIndex(
-    IUintComp components,
-    uint256 reviveIndex
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexReviveCompID),
-      abi.encode(reviveIndex)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
-  }
+  ////////////////
+  // TEST HELPERS
 
   function getAllFood(IUintComp components) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IndexFoodCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, TypeCompID),
+      abi.encode("FOOD")
+    );
 
     return LibQuery.query(fragments);
   }
 
   function getAllRevive(IUintComp components) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IndexReviveCompID),
-      ""
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
+    fragments[2] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, TypeCompID),
+      abi.encode("REVIVE")
     );
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
 
     return LibQuery.query(fragments);
   }

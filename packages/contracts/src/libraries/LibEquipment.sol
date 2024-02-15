@@ -9,10 +9,9 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
-import { IndexGearComponent, ID as IndexGearCompID } from "components/IndexGearComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { IndexModComponent, ID as IndexModCompID } from "components/IndexModComponent.sol";
 import { IsEquippedComponent, ID as IsEquipCompID } from "components/IsEquippedComponent.sol";
+import { IsFungibleComponent, ID as IsFungibleCompID } from "components/IsFungibleComponent.sol";
 import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -35,108 +34,85 @@ library LibEquipment {
   ) internal returns (uint256) {
     uint256 equipID;
     uint256 registryID = LibRegistryItem.getByInstance(components, invID);
-    if (LibRegistryItem.isMod(components, registryID)) {
-      equipID = equipMod(world, components, petID, invID);
-    } else if (LibRegistryItem.isGear(components, registryID)) {
-      equipID = equipGear(components, petID, invID);
+    if (LibRegistryItem.isFungible(components, registryID)) {
+      equipID = equipFungible(world, components, petID, invID);
+    } else {
+      equipID = equipNonfungible(components, petID, invID);
     }
     require(equipID != 0, "LibEquipment.equip(): failed to equip");
     return equipID;
   }
 
-  // Move Gear (non-fungible item) from inventory to equipped
-  function equipGear(
+  // Move a non-fungible item from inventory to equipped
+  function equipNonfungible(
     IUintComp components,
     uint256 petID,
     uint256 invID
   ) internal returns (uint256) {
-    IsInventoryComponent(getAddressById(components, IsInvCompID)).remove(invID);
-    IsEquippedComponent(getAddressById(components, IsEquipCompID)).set(invID);
-    setHolder(components, invID, petID);
+    unsetIsInventory(components, invID);
+    setIsEquipped(components, invID);
 
-    // set the gear index and remove the item index
+    // set the slot type of equipment entity
     uint256 registryID = LibRegistryItem.getByInstance(components, invID);
-    uint256 gearIndex = LibRegistryItem.getGearIndex(components, registryID);
-    setGearIndex(components, invID, gearIndex);
-    removeItemIndex(components, invID);
-
-    // set the type of the equipment entity
     string memory type_ = LibRegistryItem.getType(components, registryID);
     setType(components, invID, type_);
     return invID;
   }
 
-  // Move a Mod (fungible item) from inventory to equipped. Assume there are enough slots.
-  function equipMod(
+  // Move a fungible item from inventory to equipped. Assume there are enough slots.
+  function equipFungible(
     IWorld world,
     IUintComp components,
     uint256 petID,
     uint256 invID
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    IsEquippedComponent(getAddressById(components, IsEquipCompID)).set(id);
+    setIsEquipped(components, id);
+    setIsFungible(components, id);
     setHolder(components, id, petID);
-
-    // set the mod index
-    uint256 registryID = LibRegistryItem.getByInstance(components, invID);
-    uint256 modIndex = LibRegistryItem.getModIndex(components, registryID);
-    IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
-
-    // decrement the inventory balance
+    setItemIndex(components, id, getItemIndex(components, invID));
     LibInventory.dec(components, invID, 1);
     return id;
   }
 
-  // Move an equipped Gear (non-fungible item) back to the player inventory
-  function unequipGear(IUintComp components, uint256 id) internal returns (uint256) {
-    IsEquippedComponent(getAddressById(components, IsEquipCompID)).remove(id);
-    IsInventoryComponent(getAddressById(components, IsInvCompID)).set(id);
-    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-
-    // set the gear index and remove the item index
-    uint256 registryID = LibRegistryItem.getByInstance(components, id);
-    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
-    setItemIndex(components, id, itemIndex);
-    removeGearIndex(components, id);
-
-    // reassign this inventory to the player's inventory
-    uint256 petID = getHolder(components, id);
-    uint256 accountID = LibPet.getAccount(components, petID);
-    setHolder(components, id, accountID);
+  // Move an equipped non-fungible item back to the player inventory
+  function unequipNonfungible(IUintComp components, uint256 id) internal returns (uint256) {
+    setIsInventory(components, id);
+    unsetIsEquipped(components, id);
+    unsetType(components, id); // maybe could be set to an inventory category in the future
     return id;
   }
 
-  // Move an equipped Mod (fungible item) back to the player inventory. This deletes the entity.
-  function unequipMod(IUintComp components, uint256 id) internal {
+  // Move an equipped fungible item back to the player inventory. This deletes the entity.
+  // NOTE: this function can break if no inventory instance exists. we must be able to
+  // guarantee a path through nonperishing inventory before an item is equipped.
+  function unequipFungible(IUintComp components, uint256 id) internal {
     // increment the player inventory balance
     uint256 petID = getHolder(components, id);
     uint256 accountID = LibPet.getAccount(components, petID);
-    uint256 registryID = LibRegistryItem.getByInstance(components, id);
-    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
-    uint256 invID = LibInventory.get(components, accountID, itemIndex);
+    uint256 invID = LibInventory.get(components, accountID, getItemIndex(components, id));
     LibInventory.inc(components, invID, 1);
 
     // delete the equipped entity
-    IsEquippedComponent(getAddressById(components, IsEquipCompID)).remove(id);
-    removeHolder(components, id);
-    removeModIndex(components, id);
+    unsetIsEquipped(components, id);
+    unsetItemIndex(components, id);
+    unsetHolder(components, id);
   }
 
   /////////////////
   // CHECKERS
 
-  // Check if the specified entity is an equipped Gear instance
-  function isGear(IUintComp components, uint256 id) internal view returns (bool) {
-    return
-      IsEquippedComponent(getAddressById(components, IsEquipCompID)).has(id) &&
-      IndexGearComponent(getAddressById(components, IndexGearCompID)).has(id);
+  function isEquipped(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsEquippedComponent(getAddressById(components, IsEquipCompID)).has(id);
   }
 
   // Check if the specified entity is an equipped Mod instance
-  function isMod(IUintComp components, uint256 id) internal view returns (bool) {
-    return
-      IsEquippedComponent(getAddressById(components, IsEquipCompID)).has(id) &&
-      IndexModComponent(getAddressById(components, IndexModCompID)).has(id);
+  function isFungible(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsFungibleComponent(getAddressById(components, IsFungibleCompID)).has(id);
+  }
+
+  function IsInventory(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsInventoryComponent(getAddressById(components, IsInvCompID)).has(id);
   }
 
   /////////////////
@@ -146,19 +122,23 @@ library LibEquipment {
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
   }
 
-  function setGearIndex(IUintComp components, uint256 id, uint256 gearIndex) internal {
-    IndexGearComponent(getAddressById(components, IndexGearCompID)).set(id, gearIndex);
+  function setIsEquipped(IUintComp components, uint256 id) internal {
+    IsEquippedComponent(getAddressById(components, IsEquipCompID)).set(id);
   }
 
-  function setItemIndex(IUintComp components, uint256 id, uint256 itemIndex) internal {
+  function setIsFungible(IUintComp components, uint256 id) internal {
+    IsFungibleComponent(getAddressById(components, IsFungibleCompID)).set(id);
+  }
+
+  function setIsInventory(IUintComp components, uint256 id) internal {
+    IsInventoryComponent(getAddressById(components, IsInvCompID)).set(id);
+  }
+
+  function setItemIndex(IUintComp components, uint256 id, uint32 itemIndex) internal {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
   }
 
-  function setModIndex(IUintComp components, uint256 id, uint256 modIndex) internal {
-    IndexModComponent(getAddressById(components, IndexModCompID)).set(id, modIndex);
-  }
-
-  // body-type restrictions for gear
+  // body slot category for postiional equipment
   function setType(IUintComp components, uint256 id, string memory type_) internal {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
@@ -166,20 +146,24 @@ library LibEquipment {
   /////////////////
   // REMOVERS
 
-  function removeGearIndex(IUintComp components, uint256 id) internal {
-    IndexGearComponent(getAddressById(components, IndexGearCompID)).remove(id);
+  function unsetHolder(IUintComp components, uint256 id) internal {
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).remove(id);
   }
 
-  function removeItemIndex(IUintComp components, uint256 id) internal {
+  function unsetIsEquipped(IUintComp components, uint256 id) internal {
+    IsEquippedComponent(getAddressById(components, IsEquipCompID)).remove(id);
+  }
+
+  function unsetIsInventory(IUintComp components, uint256 id) internal {
+    IsInventoryComponent(getAddressById(components, IsInvCompID)).remove(id);
+  }
+
+  function unsetItemIndex(IUintComp components, uint256 id) internal {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).remove(id);
   }
 
-  function removeModIndex(IUintComp components, uint256 id) internal {
-    IndexModComponent(getAddressById(components, IndexModCompID)).remove(id);
-  }
-
-  function removeHolder(IUintComp components, uint256 id) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).remove(id);
+  function unsetType(IUintComp components, uint256 id) internal {
+    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
   }
 
   /////////////////
@@ -189,60 +173,52 @@ library LibEquipment {
     return IdHolderComponent(getAddressById(components, IdHolderCompID)).getValue(id);
   }
 
-  function getGearIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexGearComponent(getAddressById(components, IndexGearCompID)).getValue(id);
-  }
-
-  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
   }
 
-  function getModIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexModComponent(getAddressById(components, IndexModCompID)).getValue(id);
+  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
+    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
   }
 
   // Get the harmony of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getHarmony(IUintComp components, uint256 id) internal view returns (uint256 harmony) {
-    if (isMod(components, id)) {
+  function getHarmony(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      harmony = LibStat.getHarmony(components, registryID);
-    } else if (isGear(components, id)) {
-      harmony = LibStat.getHarmony(components, id);
+      return LibStat.getHarmony(components, registryID);
     }
+    return LibStat.getHarmony(components, id);
   }
 
   // Get the health of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getHealth(IUintComp components, uint256 id) internal view returns (uint256 health) {
-    if (isMod(components, id)) {
+  function getHealth(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      health = LibStat.getPower(components, registryID);
-    } else if (isGear(components, id)) {
-      health = LibStat.getPower(components, id);
+      return LibStat.getPower(components, registryID);
     }
+    return LibStat.getPower(components, id);
   }
 
   // Get the power of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getPower(IUintComp components, uint256 id) internal view returns (uint256 power) {
-    if (isMod(components, id)) {
+  function getPower(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      power = LibStat.getPower(components, registryID);
-    } else if (isGear(components, id)) {
-      power = LibStat.getPower(components, id);
+      return LibStat.getPower(components, registryID);
     }
+    return LibStat.getPower(components, id);
   }
 
   // Get the violence of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getViolence(IUintComp components, uint256 id) internal view returns (uint256 violence) {
-    if (isMod(components, id)) {
+  function getViolence(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      violence = LibStat.getViolence(components, registryID);
-    } else if (isGear(components, id)) {
-      violence = LibStat.getViolence(components, id);
+      return LibStat.getViolence(components, registryID);
     }
+    return LibStat.getViolence(components, id);
   }
 
   /////////////////
@@ -250,36 +226,17 @@ library LibEquipment {
 
   // Get all items equipped to a Pet Entity.
   function getForPet(IUintComp components, uint256 petID) internal view returns (uint256[] memory) {
-    return _getAllX(components, petID, "", "");
-  }
-
-  // Get the Gear items equipped to a Pet Entity. Get them all if type is empty.
-  function getGearForPet(
-    IUintComp components,
-    uint256 petID,
-    string memory type_
-  ) internal view returns (uint256[] memory) {
-    return _getAllX(components, petID, "GEAR", type_);
-  }
-
-  // Get all Mod items equipped to a Pet Entity.
-  function getModsForPet(
-    IUintComp components,
-    uint256 petID
-  ) internal view returns (uint256[] memory) {
-    return _getAllX(components, petID, "MOD", "");
+    return _getAllX(components, petID, "");
   }
 
   // Get all instances of Equipped items as specified. Blank filters are not applied.
   function _getAllX(
     IUintComp components,
     uint256 holderID,
-    string memory class, // GEAR | MOD
     string memory type_ // gear type
   ) internal view returns (uint256[] memory) {
     uint256 setFilters; // number of optional non-zero filters
     if (holderID != 0) setFilters++;
-    if (!LibString.eq(class, "")) setFilters++;
     if (!LibString.eq(type_, "")) setFilters++;
 
     uint256 filterCount = 1; // start with the number of mandatory filters
@@ -291,18 +248,6 @@ library LibEquipment {
         QueryType.HasValue,
         getComponentById(components, IdHolderCompID),
         abi.encode(holderID)
-      );
-    }
-    if (!LibString.eq(class, "")) {
-      uint componentID;
-      if (LibString.eq(class, "GEAR")) componentID = IndexGearCompID;
-      else if (LibString.eq(class, "MOD")) componentID = IndexModCompID;
-      else revert("LibEquip._getAllX(): Invalid equipment class");
-
-      fragments[filterCount++] = QueryFragment(
-        QueryType.Has,
-        getComponentById(components, componentID),
-        ""
       );
     }
     if (!LibString.eq(type_, "")) {

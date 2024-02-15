@@ -14,14 +14,14 @@ contract _RegistryCreateItemConsumableSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
+      uint32 index,
       string memory name,
       string memory description,
       string memory type_,
       string memory media
-    ) = abi.decode(arguments, (uint256, string, string, string, string));
+    ) = abi.decode(arguments, (uint32, string, string, string, string));
 
-    uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
+    uint256 registryID = LibRegistryItem.getByIndex(components, index);
     require(registryID == 0, "CreateMiscItem: index alr exists");
     require(!LibString.eq(name, ""), "CreateMiscItem: name empty");
 
@@ -31,7 +31,7 @@ contract _RegistryCreateItemConsumableSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description,
     string memory type_,

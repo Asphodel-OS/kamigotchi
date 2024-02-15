@@ -72,9 +72,9 @@
           "type": "uint32"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "itemIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "uint256",
@@ -127,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,uint256,uint256,uint256)": "f5485503",
+    "executeTyped(uint32,uint32,uint256,uint256)": "7827e2de",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

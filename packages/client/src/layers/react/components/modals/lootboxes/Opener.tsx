@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Account } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';
 import { Lootbox } from 'layers/network/shapes/Lootbox';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -9,7 +8,6 @@ import { ItemIcon } from 'layers/react/components/library/ItemIcon';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 
 interface Props {
-  account: Account;
   inventory: Inventory | undefined;
   lootbox: Lootbox;
   utils: {
@@ -19,15 +17,16 @@ interface Props {
 }
 
 export const Opener = (props: Props) => {
+  const { inventory, lootbox, utils } = props;
   const [curBal, setCurBal] = useState(0);
 
   useEffect(() => {
-    setCurBal(props.inventory?.balance || 0);
-  }, [props.inventory ? props.inventory.item : 0]);
+    setCurBal(inventory?.balance || 0);
+  }, [inventory ? inventory.item : 0]);
 
   const startReveal = async (amount: number) => {
-    props.utils.setAmount(amount);
-    props.utils.setState('REVEALING');
+    utils.setAmount(amount);
+    utils.setState('REVEALING');
     return;
   };
 
@@ -52,12 +51,7 @@ export const Opener = (props: Props) => {
 
   return (
     <Container>
-      <ItemIcon
-        id={props.lootbox.index.toString()}
-        item={props.lootbox}
-        balance={curBal}
-        size='large'
-      />
+      <ItemIcon id={(lootbox.index || 1).toString()} item={lootbox} balance={curBal} size='large' />
       <ButtonBox>
         {OpenButton(1)}
         {OpenButton(10)}

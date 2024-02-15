@@ -65,8 +65,8 @@ library LibLootbox {
     uint256 holderID
   ) internal {
     uint256 count = getBalance(components, revealID);
-    uint256 regID = LibRegistryItem.getByItemIndex(components, getIndex(components, revealID));
-    uint256[] memory keys = getKeys(components, regID);
+    uint256 regID = LibRegistryItem.getByIndex(components, getIndex(components, revealID));
+    uint32[] memory keys = getKeys(components, regID);
     uint256[] memory weights = getWeights(components, regID);
     uint256 seed = uint256(
       keccak256(
@@ -95,7 +95,7 @@ library LibLootbox {
     IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint256 index,
+    uint32 index,
     uint256 count
   ) internal {
     if (count == 0) return;
@@ -133,11 +133,11 @@ library LibLootbox {
     return IdHolderComponent(getAddressById(components, IdHolderCompID)).getValue(id);
   }
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
   }
 
-  function getKeys(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
+  function getKeys(IUintComp components, uint256 id) internal view returns (uint32[] memory) {
     return KeysComponent(getAddressById(components, KeysCompID)).getValue(id);
   }
 
@@ -160,7 +160,7 @@ library LibLootbox {
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
   }
 
-  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, index);
   }
 

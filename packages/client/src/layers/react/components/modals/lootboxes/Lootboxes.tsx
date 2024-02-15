@@ -179,8 +179,7 @@ export function registerLootboxesModal() {
           case 'OPEN':
             return (
               <Opener
-                account={account}
-                inventory={account.inventories?.lootboxes![0]}
+                inventory={account.inventories?.lootboxes[0]}
                 lootbox={selectedBox}
                 utils={{ setAmount, setState }}
               />
@@ -195,8 +194,7 @@ export function registerLootboxesModal() {
           default:
             return (
               <Opener
-                account={account}
-                inventory={account.inventories?.lootboxes![0]}
+                inventory={account.inventories?.lootboxes[0]}
                 lootbox={selectedBox}
                 utils={{ setAmount, setState }}
               />

@@ -10,7 +10,6 @@ import {
 
 import { NetworkLayer } from 'layers/network/types';
 import { baseURI } from 'src/constants/media';
-import { numberToHex } from 'utils/hex';
 import { Stats, getStats } from './Stats';
 
 // The standard shape of a FE Item Entity
@@ -18,7 +17,11 @@ export interface Item {
   id: EntityID;
   entityIndex: EntityIndex;
   index: number;
-  isFungible: boolean;
+  is: {
+    consumable: boolean;
+    fungible: boolean;
+    lootbox: boolean;
+  };
   type: string;
   image: {
     default: string;
@@ -26,7 +29,6 @@ export interface Item {
   };
   name: string;
   description: string;
-  familyIndex?: number;
   stats?: Stats;
 }
 
@@ -36,50 +38,44 @@ export interface Item {
  */
 export const getItem = (
   network: NetworkLayer,
-  index: EntityIndex // entity index of the registry instance
+  entityIndex: EntityIndex // entity index of the registry instance
 ): Item => {
   const {
     world,
     components: {
       Description,
-      FoodIndex,
-      ReviveIndex,
       ItemIndex,
       IsConsumable,
+      IsFungible,
       IsLootbox,
       MediaURI,
       Name,
-      IsFungible,
+      Type,
     },
   } = network;
 
   let Item: Item = {
-    id: world.entities[index],
-    entityIndex: index,
-    index: (getComponentValue(ItemIndex, index)?.value as number) * 1,
-    isFungible: hasComponent(IsFungible, index),
-    type: '',
-    name: (getComponentValue(Name, index)?.value as string) ?? 'Unknown Item',
+    entityIndex,
+    id: world.entities[entityIndex],
+    index: getComponentValue(ItemIndex, entityIndex)?.value as number,
+    type: getComponentValue(Type, entityIndex)?.value as string,
+    name: (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item',
+    description: getComponentValue(Description, entityIndex)?.value as string,
     image: {
-      default: `${baseURI}${getComponentValue(MediaURI, index)?.value as string}`,
-      x4: `${baseURI}${(getComponentValue(MediaURI, index)?.value as string).slice(0, -4)}_x4.png`,
+      default: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
+      x4: `${baseURI}${(getComponentValue(MediaURI, entityIndex)?.value as string).slice(
+        0,
+        -4
+      )}_x4.png`,
     },
-    description: getComponentValue(Description, index)?.value as string,
-    stats: getStats(network, index),
+    stats: getStats(network, entityIndex),
+    is: {
+      consumable: hasComponent(IsConsumable, entityIndex),
+      fungible: hasComponent(IsFungible, entityIndex),
+      lootbox: hasComponent(IsLootbox, entityIndex),
+    },
   };
-
-  // determine the type of the item based on the presence of indices
-  if (getComponentValue(FoodIndex, index) !== undefined) {
-    Item.type = 'FOOD';
-    Item.familyIndex = (getComponentValue(FoodIndex, index)?.value as number) * 1;
-  } else if (getComponentValue(ReviveIndex, index) !== undefined) {
-    Item.type = 'REVIVE';
-    Item.familyIndex = (getComponentValue(ReviveIndex, index)?.value as number) * 1;
-  } else if (hasComponent(IsLootbox, index)) {
-    Item.type = 'LOOTBOX';
-  } else if (hasComponent(IsConsumable, index)) {
-    Item.type = 'CONSUMABLE';
-  }
+  if (hasComponent(IsLootbox, entityIndex)) Item.type = 'LOOTBOX';
 
   return Item;
 };
@@ -93,31 +89,7 @@ export const getItemByIndex = (
   } = network;
 
   const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: numberToHex(index) })])
+    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
   );
   return getItem(network, entityIndices[0]);
-};
-
-// Query for a Food Registry entry by its FoodIndex
-export const queryFoodRegistry = (network: NetworkLayer, index: number): EntityIndex => {
-  const {
-    components: { FoodIndex, IsRegistry },
-  } = network;
-
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(FoodIndex, { value: index })])
-  );
-  return entityIndices[0];
-};
-
-// Query for a Revive Registry entry by its ReviveIndex
-export const queryReviveRegistry = (network: NetworkLayer, index: number): EntityIndex => {
-  const {
-    components: { ReviveIndex, IsRegistry },
-  } = network;
-
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ReviveIndex, { value: index })])
-  );
-  return entityIndices[0];
 };

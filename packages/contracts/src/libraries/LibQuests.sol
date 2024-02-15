@@ -311,7 +311,7 @@ library LibQuests {
       string memory _type = getType(components, rewards[i]);
       uint256 index = getIndex(components, rewards[i]);
       uint256 amount = getValue(components, rewards[i]);
-      LibAccount.incBalanceOf(world, components, accountID, _type, index, amount);
+      LibAccount.incBalanceOf(world, components, accountID, _type, uint32(index), amount);
     }
   }
 
