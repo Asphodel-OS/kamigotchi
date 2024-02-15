@@ -8,7 +8,6 @@ import {
 } from '@latticexyz/recs';
 
 import { NetworkLayer } from 'layers/network/types';
-import { numberToHex } from 'utils/hex';
 import { Kami, getKami } from './Kami';
 
 // standardized shape of a Node Entity
@@ -58,10 +57,10 @@ export const getNode = (
 
   let node: Node = {
     id: world.entities[entityIndex],
-    index: (getComponentValue(NodeIndex, entityIndex)?.value as number) * 1,
+    index: getComponentValue(NodeIndex, entityIndex)?.value as number,
     entityIndex,
     type: getComponentValue(Type, entityIndex)?.value as string,
-    roomIndex: (getComponentValue(RoomIndex, entityIndex)?.value as number) * 1,
+    roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
     name: getComponentValue(Name, entityIndex)?.value as string,
     description: getComponentValue(Description, entityIndex)?.value as string,
     affinity: getComponentValue(Affinity, entityIndex)?.value as string, // does this break if there's no affinity?
@@ -122,9 +121,7 @@ export const getNodeByIndex = (network: NetworkLayer, index: number, options?: O
   const {
     components: { IsNode, NodeIndex },
   } = network;
-  const entityIndex = Array.from(
-    runQuery([Has(IsNode), HasValue(NodeIndex, { value: numberToHex(index) })])
-  )[0];
+  const entityIndex = Array.from(runQuery([Has(IsNode), HasValue(NodeIndex, { value: index })]))[0];
 
   return getNode(network, entityIndex, options);
 };

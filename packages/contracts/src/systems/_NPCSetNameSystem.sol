@@ -14,7 +14,7 @@ contract _NPCSetNameSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory name) = abi.decode(arguments, (uint256, string));
+    (uint32 index, string memory name) = abi.decode(arguments, (uint32, string));
     uint256 id = LibNPC.getByIndex(components, index);
 
     require(id != 0, "NPC: does not exist");
@@ -23,7 +23,7 @@ contract _NPCSetNameSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 index, string memory name) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint32 index, string memory name) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index, name));
   }
 }

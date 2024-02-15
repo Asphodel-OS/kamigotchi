@@ -31,7 +31,7 @@ contract MurderTest is SetupTemplate {
   /////////////////
   // HELPER FUNCTIONS
 
-  function _createFoodListings(uint npcIndex) internal {
+  function _createFoodListings(uint32 npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
@@ -40,7 +40,7 @@ contract MurderTest is SetupTemplate {
     }
   }
 
-  function _createReviveListings(uint npcIndex) internal {
+  function _createReviveListings(uint32 npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
@@ -192,7 +192,7 @@ contract MurderTest is SetupTemplate {
     _fastForward(_idleRequirement);
 
     // confirm we CANNOT liquidate from the wrong nodes
-    uint roomIndex;
+    uint32 roomIndex;
     uint[] memory playerProductionIDs = new uint[](numPets);
     for (uint i = 1; i < _nodeIDs.length; i++) {
       // move to the room where the Node is

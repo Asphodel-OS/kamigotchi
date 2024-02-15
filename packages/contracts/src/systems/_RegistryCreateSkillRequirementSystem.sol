@@ -13,9 +13,9 @@ contract _RegistryCreateSkillRequirementSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 skillIndex, string memory type_, uint256 index, uint256 value) = abi.decode(
+    (uint32 skillIndex, string memory type_, uint256 index, uint256 value) = abi.decode(
       arguments,
-      (uint256, string, uint256, uint256)
+      (uint32, string, uint256, uint256)
     );
 
     require(!LibString.eq(type_, ""), "Skill type cannot be empty");
@@ -29,7 +29,7 @@ contract _RegistryCreateSkillRequirementSystem is System {
   }
 
   function executeTyped(
-    uint256 skillIndex,
+    uint32 skillIndex,
     string memory type_,
     uint256 index, // can be empty
     uint256 value // can be empty

@@ -28,9 +28,9 @@ library LibNode {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint32 index,
     string memory nodeType,
-    uint256 roomIndex
+    uint32 roomIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
@@ -64,7 +64,7 @@ library LibNode {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
+  function setRoomIndex(IUintComp components, uint256 id, uint32 roomIndex) internal {
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, roomIndex);
   }
 
@@ -113,11 +113,11 @@ library LibNode {
     }
   }
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).getValue(id);
   }
 
-  function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexRoomComponent(getAddressById(components, RoomCompID)).getValue(id);
   }
 
@@ -138,7 +138,7 @@ library LibNode {
   // return an array of all nodes at a room roomIndex
   function getAllAtRoomIndex(
     IUintComp components,
-    uint256 roomIndex
+    uint32 roomIndex
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
@@ -152,7 +152,7 @@ library LibNode {
   }
 
   // Return the ID of a Node by its index
-  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
     fragments[1] = QueryFragment(

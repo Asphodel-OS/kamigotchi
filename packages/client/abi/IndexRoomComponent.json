@@ -79,9 +79,9 @@
     {
       "inputs": [
         {
-          "internalType": "bytes",
+          "internalType": "uint32",
           "name": "value",
-          "type": "bytes"
+          "type": "uint32"
         }
       ],
       "name": "getEntitiesWithValue",
@@ -98,9 +98,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "bytes",
           "name": "value",
-          "type": "uint256"
+          "type": "bytes"
         }
       ],
       "name": "getEntitiesWithValue",
@@ -162,9 +162,9 @@
       "name": "getValue",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "",
-          "type": "uint256"
+          "type": "uint32"
         }
       ],
       "stateMutability": "view",
@@ -262,9 +262,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
+          "internalType": "bytes",
           "name": "value",
-          "type": "uint256"
+          "type": "bytes"
         }
       ],
       "name": "set",
@@ -280,9 +280,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "bytes",
+          "internalType": "uint32",
           "name": "value",
-          "type": "bytes"
+          "type": "uint32"
         }
       ],
       "name": "set",
@@ -353,7 +353,7 @@
     "authorizeWriter(address)": "4fef6a38",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
-    "getEntitiesWithValue(uint256)": "fbdfa1ea",
+    "getEntitiesWithValue(uint32)": "447e2bd2",
     "getRawValue(uint256)": "b8bc073d",
     "getSchema()": "6b122fe0",
     "getValue(uint256)": "0ff4c916",
@@ -364,7 +364,7 @@
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "set(uint256,bytes)": "8b282947",
-    "set(uint256,uint256)": "1ab06ee5",
+    "set(uint256,uint32)": "d923c3c4",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "world()": "30b67baa",

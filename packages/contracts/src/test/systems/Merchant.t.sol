@@ -6,7 +6,7 @@ import "test/utils/SetupTemplate.s.sol";
 contract NPCTest is SetupTemplate {
   // structure of Listing data for test purposes
   struct TestListingData {
-    uint npcIndex;
+    uint32 npcIndex;
     uint itemIndex;
     uint priceBuy;
     uint priceSell;
@@ -44,8 +44,8 @@ contract NPCTest is SetupTemplate {
     }
 
     // create a npc and ensure its fields are correct
-    uint npcIndex1 = 1;
-    uint npcRoomIndex1 = 3;
+    uint32 npcIndex1 = 1;
+    uint32 npcRoomIndex1 = 3;
     string memory npcName1 = "testNPC";
     uint npcID1 = _createNPC(npcIndex1, npcRoomIndex1, npcName1);
     assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
@@ -58,8 +58,8 @@ contract NPCTest is SetupTemplate {
     __NPCCreateSystem.executeTyped(1, "testNPC", 3); // index, name, roomIndex
 
     // but that we CAN create npc with the same name and roomIndex
-    uint npcIndex2 = 2;
-    uint npcRoomIndex2 = 3;
+    uint32 npcIndex2 = 2;
+    uint32 npcRoomIndex2 = 3;
     string memory npcName2 = "testNPC";
     uint npcID2 = _createNPC(npcIndex2, npcRoomIndex2, npcName2);
     assertEq(npcIndex2, LibNPC.getIndex(components, npcID2));
@@ -70,7 +70,7 @@ contract NPCTest is SetupTemplate {
     // NOTE: we now have two npcs, named 'testNPC' at roomIndex 3
 
     // update fields on npc2 and check that both are correct
-    uint newNPCRoomIndex = 2;
+    uint32 newNPCRoomIndex = 2;
     string memory newNPCName = "newNPCName";
     vm.prank(deployer);
     __NPCSetRoomSystem.executeTyped(2, newNPCRoomIndex);
@@ -349,7 +349,7 @@ contract NPCTest is SetupTemplate {
 
     // create the npc and its listings
     uint[] memory listingIDs = new uint[](testData.numNPCs * testData.numItems);
-    for (uint i = 0; i < testData.numNPCs; i++) {
+    for (uint32 i = 0; i < testData.numNPCs; i++) {
       _createNPC(i, 1, "npc");
 
       for (uint j = 0; j < testData.numItems; j++) {

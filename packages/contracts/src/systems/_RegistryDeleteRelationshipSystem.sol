@@ -16,7 +16,7 @@ contract _RegistryDeleteRelationshipSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 npcIndex, uint256 relIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint32 npcIndex, uint32 relIndex) = abi.decode(arguments, (uint32, uint32));
     uint256 registryID = LibRegRel.get(components, npcIndex, relIndex);
 
     require(registryID != 0, "RegistryDeleteRelationship: flag does not exist");
@@ -26,7 +26,7 @@ contract _RegistryDeleteRelationshipSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 npcIndex, uint256 index) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint32 npcIndex, uint32 index) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(npcIndex, index));
   }
 }

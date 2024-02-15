@@ -46,7 +46,7 @@ contract FeedingTest is SetupTemplate {
     return health;
   }
 
-  function _createFoodListings(uint npcIndex) internal {
+  function _createFoodListings(uint32 npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
@@ -55,7 +55,7 @@ contract FeedingTest is SetupTemplate {
     }
   }
 
-  function _createReviveListings(uint npcIndex) internal {
+  function _createReviveListings(uint32 npcIndex) internal {
     uint itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
@@ -70,7 +70,7 @@ contract FeedingTest is SetupTemplate {
   // test that feeding is only permissioned to the operating account of a pet
   function testFeedPermissionConstraints() public {
     uint foodIndex;
-    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    uint32 npcIndex = LibNPC.getIndex(components, _npcID);
     _createFoodListings(npcIndex);
 
     // register some new accounts and buy some items through them
@@ -123,7 +123,7 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is only permissioned to the operating account of a pet
   // NOTE: only one revive item to check for these
   function testRevivePermissionConstraints() public {
-    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    uint32 npcIndex = LibNPC.getIndex(components, _npcID);
     _createReviveListings(npcIndex);
     uint listingID = _listingIDs[0];
     uint reviveIndex = _getListingReviveIndex(listingID);
@@ -175,7 +175,7 @@ contract FeedingTest is SetupTemplate {
   // test that feeding is restricted by pet roomIndex in respect to account
   function testFeedRoomIndexConstraints() public {
     uint foodIndex;
-    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    uint32 npcIndex = LibNPC.getIndex(components, _npcID);
     _createFoodListings(npcIndex);
 
     // register, fund and stock account
@@ -242,7 +242,7 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is restricted by pet state
   function testFeedStateConstraints() public {
     uint foodIndex;
-    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    uint32 npcIndex = LibNPC.getIndex(components, _npcID);
     _createFoodListings(npcIndex);
 
     // register, fund and stock account
@@ -350,7 +350,7 @@ contract FeedingTest is SetupTemplate {
   // test that reviving is restricted by pet state
   function testReviveStateConstraints() public {
     uint numPets = 5;
-    uint npcIndex = LibNPC.getIndex(components, _npcID);
+    uint32 npcIndex = LibNPC.getIndex(components, _npcID);
     _createReviveListings(npcIndex);
     uint listingID = _listingIDs[0];
     uint reviveIndex = _getListingReviveIndex(listingID);
@@ -421,7 +421,7 @@ contract FeedingTest is SetupTemplate {
   }
 
   // function testFeedEffects() public {
-  //   uint npcIndex = LibNPC.getIndex(components, _npcID);
+  //   uint32 npcIndex = LibNPC.getIndex(components, _npcID);
   //   _createFoodListings(npcIndex);
 
   //   // register, fund and stock account

@@ -36,7 +36,7 @@ export const Searched = (props: Props) => {
         <AccountCard
           key={account.index}
           account={account}
-          description={[`free agent ${account.index * 1}`]}
+          description={[`free agent ${account.index}`]}
           actions={Actions(account)}
         />
       ))}

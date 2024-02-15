@@ -39,7 +39,7 @@ library LibRegistrySkill {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 skillIndex,
+    uint32 skillIndex,
     string memory for_,
     string memory type_,
     string memory name,
@@ -68,7 +68,7 @@ library LibRegistrySkill {
   function createEffect(
     IWorld world,
     IUintComp components,
-    uint256 skillIndex,
+    uint32 skillIndex,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -82,7 +82,7 @@ library LibRegistrySkill {
   function createRequirement(
     IWorld world,
     IUintComp components,
-    uint256 skillIndex,
+    uint32 skillIndex,
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -149,7 +149,7 @@ library LibRegistrySkill {
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
   }
 
-  function setSkillIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, index);
   }
 
@@ -279,7 +279,7 @@ library LibRegistrySkill {
     return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
   }
 
-  function getSkillIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getSkillIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexSkillComponent(getAddressById(components, IndexSkillCompID)).getValue(id);
   }
 
@@ -311,7 +311,7 @@ library LibRegistrySkill {
   // QUERIES
 
   // get registry entry by Skill index
-  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsSkillCompID), "");
@@ -327,7 +327,7 @@ library LibRegistrySkill {
 
   function getEffectsByIndex(
     IUintComp components,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
@@ -344,7 +344,7 @@ library LibRegistrySkill {
   // get requirements by Skill index
   function getRequirementsByIndex(
     IUintComp components,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");

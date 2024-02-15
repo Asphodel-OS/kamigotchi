@@ -39,18 +39,15 @@ contract Pet721MintSystem is System {
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Pet721Mint: no account");
-    require(
-      LibAccount.getRoom(components, accountID) == ROOM,
-      "Pet721Mint: must be in room 4 "
-    );
+    require(LibAccount.getRoom(components, accountID) == ROOM, "Pet721Mint: must be in room 4 ");
 
     // burn required Mint20, implicitly checks balance
     LibMint20.burn(world, msg.sender, amount);
 
     // Create each pet, commit random, mint the 721 token
-    uint256 index = LibPet721.getCurrentSupply(world) + 1;
+    uint32 index = uint32(LibPet721.getCurrentSupply(world)) + 1;
     uint256[] memory petIDs = new uint256[](amount);
-    for (uint256 i; i < amount; i++) {
+    for (uint32 i; i < amount; i++) {
       uint256 petID = LibPet.create(world, components, accountID, index + i);
       LibRandom.setRevealBlock(components, petID, block.number);
       LibPet721.mintInGame(world, index + i);

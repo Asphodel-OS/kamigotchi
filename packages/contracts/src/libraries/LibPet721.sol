@@ -45,7 +45,7 @@ library LibPet721 {
     assignTraits(components, petID, traits);
 
     // emit update event
-    updateEvent(world, LibPet.idToIndex(components, petID));
+    updateEvent(world, LibPet.getIndex(components, petID));
 
     // returns packed traits
     packed = LibRandom.packArray(traits, 8);
@@ -94,29 +94,29 @@ library LibPet721 {
   /// @dev     checks are performed in system
   /// @param   world     world contract
   /// @param   from      EOA to stake from
-  /// @param   index     ERC721 index of pet
-  function stake(IWorld world, address from, uint256 index) internal {
+  /// @param   tokenID   ERC721 index of pet
+  function stake(IWorld world, address from, uint256 tokenID) internal {
     Pet721 token = getContract(world);
-    token.stakeToken(from, index);
+    token.stakeToken(from, tokenID);
   }
 
   /// @notice  unstakes a kami, in game -> out of game
   /// @dev     checks are performed in system
   /// @param   world     world contract
   /// @param   to        EOA to unstake to
-  /// @param   index     ERC721 index of pet
-  function unstake(IWorld world, address to, uint256 index) internal {
+  /// @param   tokenID   ERC721 index of pet
+  function unstake(IWorld world, address to, uint256 tokenID) internal {
     Pet721 token = getContract(world);
-    token.unstakeToken(to, index);
+    token.unstakeToken(to, tokenID);
   }
 
   /// @notice  emits a metadata update event. to be called whenever metadata changes
   /// @dev     no state changes, only emits event. for marketplaces
   /// @param   world     world contract
-  /// @param   index     ERC721 index of pet
-  function updateEvent(IWorld world, uint256 index) internal {
+  /// @param   tokenID   ERC721 index of pet
+  function updateEvent(IWorld world, uint256 tokenID) internal {
     Pet721 token = getContract(world);
-    token.emitMetadataUpdate(index);
+    token.emitMetadataUpdate(tokenID);
   }
 
   /////////////////////////
@@ -126,8 +126,8 @@ library LibPet721 {
     return Pet721ProxySystem(getAddressById(world.systems(), ProxyID)).getToken();
   }
 
-  function getEOAOwner(IWorld world, uint256 index) internal view returns (address) {
-    return getContract(world).ownerOf(index);
+  function getEOAOwner(IWorld world, uint256 tokenID) internal view returns (address) {
+    return getContract(world).ownerOf(tokenID);
   }
 
   // gets current supply of kamiERC721
@@ -230,7 +230,7 @@ library LibPet721 {
   /// @return  string      base64 encoded json
   function getJsonBase64(
     IUintComp components,
-    uint256 petIndex
+    uint32 petIndex
   ) public view returns (string memory) {
     return
       LibString.concat(
@@ -243,8 +243,8 @@ library LibPet721 {
   /// @param   components  components contract
   /// @param   petIndex    ERC721 index of pet
   /// @return  string      json in UTF-8 format
-  function getJsonUtf(IUintComp components, uint256 petIndex) public view returns (string memory) {
-    uint256 petID = LibPet.indexToID(components, petIndex);
+  function getJsonUtf(IUintComp components, uint32 petIndex) public view returns (string memory) {
+    uint256 petID = LibPet.getByIndex(components, petIndex);
 
     /// TODO: add affinities somewhere
 

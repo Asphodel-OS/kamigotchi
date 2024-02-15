@@ -19,7 +19,7 @@ contract Pet721MetadataSystem is System {
   /// @param  petIndex  the ERC721 index of the pet
   /// @return pet metadata string
   function tokenURI(uint256 petIndex) public view returns (string memory) {
-    return LibPet721.getJsonBase64(components, petIndex);
+    return LibPet721.getJsonBase64(components, uint32(petIndex));
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {

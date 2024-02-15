@@ -82,9 +82,9 @@
           "type": "string"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "roomIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "uint256",
@@ -132,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,string,uint256,uint256)": "c39b6f69",
+    "executeTyped(uint256,string,string,uint32,uint256)": "bf40becf",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

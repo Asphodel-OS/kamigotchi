@@ -189,14 +189,14 @@ contract GachaTest is SetupTemplate {
     uint256[] memory commits = abi.decode(_PetGachaMintSystem.executeTyped(1), (uint256[]));
     vm.roll(++_currBlock);
     uint256[] memory resultPets = _PetGachaRevealSystem.reveal(commits);
-    counts[LibPet.idToIndex(components, resultPets[0]) - 1]++;
+    counts[LibPet.getIndex(components, resultPets[0]) - 1]++;
 
     for (uint256 i = 0; i < 1000; i++) {
       uint256 cost = _getRerollCost(i + 1);
       uint256[] memory reCommits = _reroll(0, cost, resultPets);
       vm.roll(++_currBlock);
       resultPets[0] = _PetGachaRevealSystem.reveal(reCommits)[0];
-      counts[LibPet.idToIndex(components, resultPets[0]) - 1]++;
+      counts[LibPet.getIndex(components, resultPets[0]) - 1]++;
     }
 
     for (uint256 i = 0; i < length; i++) {

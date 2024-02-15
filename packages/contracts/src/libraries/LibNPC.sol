@@ -21,9 +21,9 @@ library LibNPC {
   function create(
     IWorld world,
     IUintComp components,
-    uint256 index,
+    uint32 index,
     string memory name,
-    uint256 roomIndex
+    uint32 roomIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id);
@@ -44,14 +44,14 @@ library LibNPC {
     uint256 accountID
   ) internal view returns (bool) {
     IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
-    uint256 roomIndex = roomComp.getValue(id);
+    uint32 roomIndex = roomComp.getValue(id);
     return roomIndex == 0 || roomIndex == roomComp.getValue(accountID);
   }
 
   /////////////////
   // SETTERS
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
+  function setRoomIndex(IUintComp components, uint256 id, uint32 roomIndex) internal {
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
   }
 
@@ -62,7 +62,7 @@ library LibNPC {
   /////////////////
   // GETTERS
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).getValue(id);
   }
 
@@ -79,7 +79,7 @@ library LibNPC {
   // QUERIES
 
   // Return the ID of a Merchant by its index
-  function getByIndex(IUintComp components, uint256 index) internal view returns (uint256 result) {
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNPCCompID), "");
     fragments[1] = QueryFragment(

@@ -66,7 +66,9 @@ contract Pet721 is ERC721Enumerable, ERC2981, IERC4906 {
   /// @dev uses an external system call to allow for upgradability
   modifier isOutOfWorld(uint256 tokenID) {
     require(
-      !IsInWorldSystem(getAddressById(World.systems(), IsInWorldSystemID)).isInWorld(tokenID),
+      !IsInWorldSystem(getAddressById(World.systems(), IsInWorldSystemID)).isInWorld(
+        uint32(tokenID)
+      ),
       "721: not out of game world"
     );
     _;

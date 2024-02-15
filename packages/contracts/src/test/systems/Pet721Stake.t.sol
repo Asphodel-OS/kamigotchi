@@ -21,7 +21,7 @@ contract Pet721StakeTest is SetupTemplate {
   function testStates() public {
     // minting
     uint256 petID = _mintPet(0);
-    uint256 petIndex = LibPet.idToIndex(components, petID);
+    uint32 petIndex = LibPet.getIndex(components, petID);
     _assertPetState(petID, "RESTING");
 
     _moveAccount(0, 12); // bridging restricted to room 12
@@ -39,7 +39,7 @@ contract Pet721StakeTest is SetupTemplate {
 
   function testTransferOutOfGame() public {
     uint256 petID = _mintPet(0);
-    uint256 petIndex = LibPet.idToIndex(components, petID);
+    uint32 petIndex = LibPet.getIndex(components, petID);
     _moveAccount(0, 12); // bridging restricted to room 12
 
     vm.prank(_getOwner(0));
@@ -54,14 +54,14 @@ contract Pet721StakeTest is SetupTemplate {
   function testMetadata() public {
     _mintPet(0);
 
-    // console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
+    // console.log(LibPet.getMediaURI(components, LibPet.getByIndex(components, 1)));
   }
 
   // only prints mediaURI, does not check if it is accurate
   function testMediaURI() public {
     _mintPet(0);
 
-    console.log(LibPet.getMediaURI(components, LibPet.indexToID(components, 1)));
+    console.log(LibPet.getMediaURI(components, LibPet.getByIndex(components, 1)));
   }
 
   ////////////////
@@ -79,7 +79,7 @@ contract Pet721StakeTest is SetupTemplate {
       2) State is not 721_EXTERNAL (LibPet.isInWorld)
       3) Has an owner (checked implicitly in 1)
     */
-    uint256 entityID = LibPet.indexToID(components, tokenID);
+    uint256 entityID = LibPet.getByIndex(components, uint32(tokenID));
     assertEq(
       addr,
       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
@@ -94,7 +94,7 @@ contract Pet721StakeTest is SetupTemplate {
       2) State is  721_EXTERNAL (LibPet.isInWorld)
       3) Has no Account
     */
-    uint256 entityID = LibPet.indexToID(components, tokenID);
+    uint256 entityID = LibPet.getByIndex(components, uint32(tokenID));
     assertEq(_Pet721.ownerOf(tokenID), addr);
     assertEq(LibPet.getAccount(components, entityID), 0);
     assertTrue(!LibPet.isInWorld(components, entityID));

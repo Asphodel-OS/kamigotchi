@@ -18,8 +18,8 @@ contract AccountMoveSystem is System {
     require(accountID != 0, "AccMove: no account");
     require(LibAccount.syncStamina(components, accountID) != 0, "AccMove: out of stamina");
 
-    uint256 toIndex = abi.decode(arguments, (uint256));
-    uint256 currIndex = LibAccount.getRoom(components, accountID);
+    uint32 toIndex = abi.decode(arguments, (uint32));
+    uint32 currIndex = LibAccount.getRoom(components, accountID);
     (uint256 currRoomID, uint256 toRoomID) = LibRoom.queryByIndexDouble(
       components,
       currIndex,
@@ -42,7 +42,7 @@ contract AccountMoveSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 toIndex) public returns (bytes memory) {
+  function executeTyped(uint32 toIndex) public returns (bytes memory) {
     return execute(abi.encode(toIndex));
   }
 }

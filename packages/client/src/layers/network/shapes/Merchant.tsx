@@ -8,7 +8,6 @@ import {
 } from '@latticexyz/recs';
 
 import { NetworkLayer } from 'layers/network/types';
-import { numberToHex } from 'utils/hex';
 import { Listing, getListing } from './Listing';
 
 // standardized shape of a FE Merchant Entity
@@ -53,9 +52,7 @@ export const getMerchantByIndex = (network: NetworkLayer, index: number) => {
   const {
     components: { IsNPC, NPCIndex },
   } = network;
-  const entityIndex = Array.from(
-    runQuery([Has(IsNPC), HasValue(NPCIndex, { value: numberToHex(index) })])
-  )[0];
+  const entityIndex = Array.from(runQuery([Has(IsNPC), HasValue(NPCIndex, { value: index })]))[0];
 
   return getMerchant(network, entityIndex);
 };
