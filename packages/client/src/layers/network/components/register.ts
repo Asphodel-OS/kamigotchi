@@ -34,6 +34,7 @@ export function createComponents(world: World) {
     IsAccount: defineBoolEZ('IsAccount', 'component.Is.Account'),
     IsBonus: defineBoolEZ('IsBonus', 'component.Is.Bonus'),
     IsConfig: defineBoolEZ('IsConfig', 'component.Is.Config'),
+    IsCondition: defineBoolEZ('IsCondition', 'component.Is.Condition'),
     IsData: defineBoolEZ('IsData', 'component.Is.Data'),
     IsEffect: defineBoolEZ('IsEffect', 'component.Is.Effect'),
     IsFriendship: defineBoolEZ('IsFriendship', 'component.Is.Friendship'),
@@ -142,9 +143,6 @@ export function createComponents(world: World) {
     Weights: defineNumberArrayComponent(world, 'Weights', 'component.Weights'),
     Whitelist: defineNumberArrayComponent(world, 'Whitelist', 'component.Whitelist'),
     Wei: defineStringEZ('Wei', 'component.Wei'),
-
-    Prototype: defineNumberEZ('Prototype', 'component.Prototype'),
-    Upgrades: defineNumberEZ('Upgrades', 'component.Upgrades'),
 
     // Time/Block Tracking
     LastBlock: defineNumberEZ('BlockLast', 'component.Block.Last'),
