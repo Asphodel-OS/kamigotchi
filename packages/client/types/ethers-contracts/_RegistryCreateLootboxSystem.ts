@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateLootboxSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,uint256[],uint256[],string)": FunctionFragment;
+    "executeTyped(uint32,string,string,uint32[],uint256[],string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

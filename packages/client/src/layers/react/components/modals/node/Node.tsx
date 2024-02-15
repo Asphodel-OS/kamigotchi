@@ -88,15 +88,15 @@ export function registerNodeModal() {
       };
 
       // feed a kami
-      const feed = (kami: Kami, foodIndex: number) => {
+      const feed = (kami: Kami, itemIndex: number) => {
         const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiFeed',
-          params: [kami.id, foodIndex],
+          params: [kami.id, itemIndex],
           description: `Feeding ${kami.name}`,
           execute: async () => {
-            return api.player.pet.feed(kami.id, foodIndex);
+            return api.player.pet.feed(kami.id, itemIndex);
           },
         });
       };

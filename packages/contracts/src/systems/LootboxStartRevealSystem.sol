@@ -16,7 +16,7 @@ contract LootboxStartRevealSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 index, uint256 amt) = abi.decode(arguments, (uint256, uint256));
+    (uint32 index, uint256 amt) = abi.decode(arguments, (uint32, uint256));
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "no account");
@@ -36,7 +36,7 @@ contract LootboxStartRevealSystem is System {
     return abi.encode(revealID);
   }
 
-  function executeTyped(uint256 index, uint256 amt) public returns (bytes memory) {
+  function executeTyped(uint32 index, uint256 amt) public returns (bytes memory) {
     return execute(abi.encode(index, amt));
   }
 }

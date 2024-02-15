@@ -199,7 +199,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   // easy function for getting the proper inputs to feed a pet
-  function _feedPet(uint petID, uint foodIndex) internal {
+  function _feedPet(uint petID, uint32 foodIndex) internal {
     uint accountID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accountID);
 
@@ -208,7 +208,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   // easy function for getting the proper inputs to revive a pet
-  function _revivePet(uint petID, uint reviveIndex) internal {
+  function _revivePet(uint petID, uint32 reviveIndex) internal {
     uint accountID = LibPet.getAccount(components, petID);
     address operator = LibAccount.getOperator(components, accountID);
 
@@ -253,7 +253,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* LOOTBOXES */
 
-  function _openLootbox(uint playerIndex, uint index, uint amount) internal virtual {
+  function _openLootbox(uint playerIndex, uint32 index, uint amount) internal virtual {
     address operator = _getOperator(playerIndex);
 
     vm.startPrank(operator);
@@ -294,7 +294,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // GETTERS
 
-  function _getItemBalance(uint playerIndex, uint itemIndex) internal view returns (uint) {
+  function _getItemBalance(uint playerIndex, uint32 itemIndex) internal view returns (uint) {
     uint accountID = _getAccount(playerIndex);
     uint inventoryID = LibInventory.get(components, accountID, itemIndex);
     return LibInventory.getBalance(components, inventoryID);
@@ -308,7 +308,7 @@ abstract contract SetupTemplate is TestSetupImports {
     _Mint20.adminMint(_getOwner(playerIndex), amount);
   }
 
-  function _giveLootbox(uint256 playerIndex, uint256 index, uint256 amt) internal {
+  function _giveLootbox(uint256 playerIndex, uint32 index, uint256 amt) internal {
     uint256 accountID = _getAccount(playerIndex);
 
     vm.startPrank(deployer);
@@ -384,12 +384,17 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _setListing(
     uint32 npcIndex,
-    uint itemId,
+    uint32 itemIndex,
     uint priceBuy,
     uint priceSell
   ) public returns (uint) {
     vm.prank(deployer);
-    bytes memory listingID = __ListingSetSystem.executeTyped(npcIndex, itemId, priceBuy, priceSell);
+    bytes memory listingID = __ListingSetSystem.executeTyped(
+      npcIndex,
+      itemIndex,
+      priceBuy,
+      priceSell
+    );
     return abi.decode(listingID, (uint));
   }
 
@@ -399,7 +404,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* ITEMS */
 
   // @notice creates and empty item index for testing
-  function _createGenericItem(uint index) public {
+  function _createGenericItem(uint32 index) public {
     vm.startPrank(deployer);
 
     uint256 id = world.getUniqueEntityId();
@@ -411,9 +416,9 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createLootbox(
-    uint index,
+    uint32 index,
     string memory name,
-    uint[] memory keys,
+    uint32[] memory keys,
     uint[] memory weights
   ) public {
     vm.prank(deployer);
@@ -466,7 +471,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createQuestReward(
     uint questIndex,
     string memory _type,
-    uint itemIndex, // can be empty
+    uint32 itemIndex, // can be empty
     uint value // can be empty
   ) public {
     vm.prank(deployer);
@@ -731,12 +736,12 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(deployer);
 
     // food (foodIndex, name, health)
-    __RegistryCreateFoodSystem.executeTyped(1, 1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
-    __RegistryCreateFoodSystem.executeTyped(2, 2, "Candy", "DESCRIPTION", 50, 0, ""); // itemIndex 2
-    __RegistryCreateFoodSystem.executeTyped(3, 3, "Cookie Sticks", "DESCRIPTION", 100, 0, ""); // itemIndex 3
+    __RegistryCreateFoodSystem.executeTyped(1, "Gum", "DESCRIPTION", 25, 0, ""); // itemIndex 1
+    __RegistryCreateFoodSystem.executeTyped(2, "Candy", "DESCRIPTION", 50, 0, ""); // itemIndex 2
+    __RegistryCreateFoodSystem.executeTyped(3, "Cookie Sticks", "DESCRIPTION", 100, 0, ""); // itemIndex 3
 
     // revives (reviveIndex, name, health)
-    __RegistryCreateReviveSystem.executeTyped(1000, 1, "Ribbon", "DESCRIPTION", 10, ""); // itemIndex 4
+    __RegistryCreateReviveSystem.executeTyped(1000, "Ribbon", "DESCRIPTION", 10, ""); // itemIndex 4
 
     vm.stopPrank();
   }

@@ -11,7 +11,6 @@ import {
 } from '@latticexyz/recs';
 
 import { NetworkLayer } from 'layers/network/types';
-import { numberToHex } from 'utils/hex';
 import { Inventory, getTypedInventory } from './Inventory';
 import { Item, getItem } from './Item';
 
@@ -63,7 +62,7 @@ export const getLootboxByIndex = (
   } = network;
 
   const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: numberToHex(index) })])
+    runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
   );
   return getLootbox(network, entityIndices[0]);
 };

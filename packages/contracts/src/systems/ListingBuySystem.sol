@@ -33,7 +33,7 @@ contract ListingBuySystem is System {
     );
 
     // create an inventory for the account first if one doesn't exist
-    uint256 itemIndex = LibListing.getItemIndex(components, listingID);
+    uint32 itemIndex = LibListing.getItemIndex(components, listingID);
     if (LibInventory.get(components, accountID, itemIndex) == 0) {
       LibInventory.create(world, components, accountID, itemIndex);
     }

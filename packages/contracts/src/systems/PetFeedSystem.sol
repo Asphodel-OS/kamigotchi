@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
@@ -20,8 +21,13 @@ contract PetFeedSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 id, uint256 foodIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint256 id, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+
+    // get/check registry entry
+    uint256 registryID = LibRegistryItem.getByIndex(components, itemIndex);
+    string memory type_ = LibRegistryItem.getType(components, registryID);
+    require(LibString.eq(type_, "FOOD"), "PetFeed: that's not food");
 
     // standard checks (ownership, state, roomIndex)
     require(accountID != 0, "PetFeed: no account");
@@ -37,14 +43,10 @@ contract PetFeedSystem is System {
       "PetFeed: pet must be in same room"
     );
 
+    // sync
     LibPet.sync(components, id);
 
-    // get food registry entry
-    uint256 registryID = LibRegistryItem.getByFoodIndex(components, foodIndex);
-    require(registryID != 0, "PetFeed: not food");
-
     // decrement item from inventory
-    uint256 itemIndex = LibRegistryItem.getItemIndex(components, registryID);
     uint256 inventoryID = LibInventory.get(components, accountID, itemIndex);
     LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
 
@@ -59,7 +61,7 @@ contract PetFeedSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 id, uint256 foodIndex) public returns (bytes memory) {
-    return execute(abi.encode(id, foodIndex));
+  function executeTyped(uint256 id, uint32 itemIndex) public returns (bytes memory) {
+    return execute(abi.encode(id, itemIndex));
   }
 }

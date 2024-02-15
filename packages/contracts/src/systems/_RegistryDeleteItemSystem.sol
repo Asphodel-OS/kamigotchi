@@ -12,9 +12,9 @@ contract _RegistryDeleteItemSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    uint256 index = abi.decode(arguments, (uint256));
+    uint32 index = abi.decode(arguments, (uint32));
 
-    uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
+    uint256 registryID = LibRegistryItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: does not exists");
 
     LibRegistryItem.deleteItem(components, registryID);
@@ -22,7 +22,7 @@ contract _RegistryDeleteItemSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 index) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint32 index) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index));
   }
 }

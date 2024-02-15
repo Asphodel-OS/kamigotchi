@@ -5,8 +5,8 @@ export function createPlayerAPI(systems: any) {
   //     PET
 
   // feed a pet using a Pet Item
-  function feedPet(petID: BigNumberish, foodIndex: number) {
-    return systems['system.Pet.Feed'].executeTyped(petID, foodIndex);
+  function feedPet(petID: BigNumberish, itemIndex: number) {
+    return systems['system.Pet.Feed'].executeTyped(petID, itemIndex);
   }
 
   // level a pet, if it has enough experience

@@ -327,7 +327,6 @@ export function createAdminAPI(systems: any) {
   // @dev add a food item registry entry
   async function registerFood(
     index: number,
-    foodIndex: number,
     name: string,
     description: string,
     health: number,
@@ -337,41 +336,10 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Registry.Food.Create'].executeTyped(
       index,
-      foodIndex,
       name,
       description,
       health,
       experience,
-      media
-    );
-  }
-
-  // @dev add an equipment item registry entry
-  async function registerGear(
-    index: number,
-    gearIndex: number,
-    name: string,
-    description: string,
-    type_: string,
-    health: number,
-    power: number,
-    violence: number,
-    harmony: number,
-    slots: number,
-    media: string
-  ) {
-    await sleepIf();
-    return systems['system._Registry.Gear.Create'].executeTyped(
-      index,
-      gearIndex,
-      name,
-      description,
-      type_,
-      health,
-      power,
-      violence,
-      harmony,
-      slots,
       media
     );
   }
@@ -413,36 +381,9 @@ export function createAdminAPI(systems: any) {
     );
   }
 
-  // @dev add a modification item registry entry
-  async function registerModification(
-    index: number,
-    modIndex: number,
-    name: string,
-    description: string,
-    health: number,
-    power: number,
-    harmony: number,
-    violence: number,
-    media: string
-  ) {
-    await sleepIf();
-    return systems['system._Registry.Mod.Create'].executeTyped(
-      index,
-      modIndex,
-      name,
-      description,
-      health,
-      power,
-      violence,
-      harmony,
-      media
-    );
-  }
-
   // @dev add a revive item registry entry
   async function registerRevive(
     index: number,
-    reviveIndex: number,
     name: string,
     description: string,
     health: number,
@@ -451,7 +392,6 @@ export function createAdminAPI(systems: any) {
     await sleepIf();
     return systems['system._Registry.Revive.Create'].executeTyped(
       index,
-      reviveIndex,
       name,
       description,
       health,
@@ -596,10 +536,8 @@ export function createAdminAPI(systems: any) {
       item: {
         create: {
           food: registerFood,
-          gear: registerGear,
           lootbox: registerLootbox,
           consumable: registerConsumable,
-          modification: registerModification,
           revive: registerRevive,
         },
         delete: deleteItem,

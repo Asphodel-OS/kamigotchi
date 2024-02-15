@@ -19,12 +19,12 @@ contract LootboxTest is SetupTemplate {
   }
 
   function testLootboxSingleDT(uint256 startAmt, uint256 useAmt) public {
-    uint256[] memory keys = new uint256[](1);
+    uint32[] memory keys = new uint32[](1);
     keys[0] = 1;
     uint256[] memory weights = new uint256[](1);
     weights[0] = 1;
 
-    uint256 lootboxIndex = 10;
+    uint32 lootboxIndex = 10;
     _createLootbox(lootboxIndex, "Lootbox", keys, weights);
 
     _giveLootbox(0, lootboxIndex, startAmt);

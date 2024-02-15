@@ -48,7 +48,7 @@ library LibRegister {
     IWorld world,
     IUintComp components,
     uint256 id,
-    uint256 itemIndex,
+    uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256) {
     uint256 delegatorID = IdDelegatorComponent(getAddressById(components, IdDelegatorCompID))
@@ -76,7 +76,7 @@ library LibRegister {
   // Process the contents of a register from the register to the specified entity.
   function process(IWorld world, IUintComp components, uint256 id, bool reversed) internal {
     uint256 balance;
-    uint256 itemIndex;
+    uint32 itemIndex;
     uint256 toInventoryID;
     uint256 fromInventoryID;
     uint256 toID = (reversed) ? getDelegator(components, id) : getDelegatee(components, id);

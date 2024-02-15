@@ -31,7 +31,7 @@ export interface _RegistryCreateItemConsumableSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string,string,string,string)": FunctionFragment;
+    "executeTyped(uint32,string,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

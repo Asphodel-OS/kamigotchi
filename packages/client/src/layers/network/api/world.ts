@@ -211,7 +211,6 @@ export function setUpWorldAPI(systems: any) {
   async function setFood(api: AdminAPI, item: any) {
     await api.registry.item.create.food(
       item.get('Index'),
-      item.get('FamilyIndex(depreciated)'),
       item.get('Name'),
       item.get('Description'),
       item.get('Health'),
@@ -223,7 +222,6 @@ export function setUpWorldAPI(systems: any) {
   async function setRevive(api: AdminAPI, item: any) {
     await api.registry.item.create.revive(
       item.get('Index'),
-      item.get('FamilyIndex(depreciated)'),
       item.get('Name'),
       item.get('Description'),
       item.get('Health'),

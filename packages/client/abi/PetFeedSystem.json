@@ -72,9 +72,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "foodIndex",
-          "type": "uint256"
+          "internalType": "uint32",
+          "name": "itemIndex",
+          "type": "uint32"
         }
       ],
       "name": "executeTyped",
@@ -117,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256)": "915657fb",
+    "executeTyped(uint256,uint32)": "e60f3a76",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

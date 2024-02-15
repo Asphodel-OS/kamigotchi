@@ -16,15 +16,14 @@ contract _RegistryCreateFoodSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
-      uint256 foodIndex,
+      uint32 index,
       string memory name,
       string memory description,
       uint256 health,
       uint256 experience,
       string memory media
-    ) = abi.decode(arguments, (uint256, uint256, string, string, uint256, uint256, string));
-    uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
+    ) = abi.decode(arguments, (uint32, string, string, uint256, uint256, string));
+    uint256 registryID = LibRegistryItem.getByIndex(components, index);
 
     require(!LibString.eq(name, ""), "CreateFood: name cannot be empty");
     require(registryID == 0, "CreateFood: Index already exists");
@@ -33,7 +32,6 @@ contract _RegistryCreateFoodSystem is System {
       world,
       components,
       index,
-      foodIndex,
       name,
       description,
       health,
@@ -45,14 +43,13 @@ contract _RegistryCreateFoodSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
-    uint256 foodIndex,
+    uint32 index,
     string memory name,
     string memory description,
     uint256 health,
     uint256 experience,
     string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, foodIndex, name, description, health, experience, media));
+    return execute(abi.encode(index, name, description, health, experience, media));
   }
 }

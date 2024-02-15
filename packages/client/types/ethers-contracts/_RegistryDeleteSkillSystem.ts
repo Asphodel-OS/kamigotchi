@@ -30,7 +30,7 @@ import type {
 export interface _RegistryDeleteSkillSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256)": FunctionFragment;
+    "executeTyped(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -120,7 +120,7 @@ export interface _RegistryDeleteSkillSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      skillIndex: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -138,7 +138,7 @@ export interface _RegistryDeleteSkillSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    skillIndex: PromiseOrValue<BigNumberish>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -156,7 +156,7 @@ export interface _RegistryDeleteSkillSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      skillIndex: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -186,7 +186,7 @@ export interface _RegistryDeleteSkillSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      skillIndex: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -205,7 +205,7 @@ export interface _RegistryDeleteSkillSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      skillIndex: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
