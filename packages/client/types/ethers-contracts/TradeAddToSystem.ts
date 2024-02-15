@@ -30,7 +30,7 @@ import type {
 export interface TradeAddToSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,uint256)": FunctionFragment;
+    "executeTyped(uint256,uint32,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

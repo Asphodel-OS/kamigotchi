@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateReviveSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,string,string,uint256,string)": FunctionFragment;
+    "executeTyped(uint32,string,string,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -50,7 +50,6 @@ export interface _RegistryCreateReviveSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -128,7 +127,6 @@ export interface _RegistryCreateReviveSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      reviveIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -151,7 +149,6 @@ export interface _RegistryCreateReviveSystem extends BaseContract {
 
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
-    reviveIndex: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
     description: PromiseOrValue<string>,
     health: PromiseOrValue<BigNumberish>,
@@ -174,7 +171,6 @@ export interface _RegistryCreateReviveSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      reviveIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -209,7 +205,6 @@ export interface _RegistryCreateReviveSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      reviveIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,
@@ -233,7 +228,6 @@ export interface _RegistryCreateReviveSystem extends BaseContract {
 
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
-      reviveIndex: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
       description: PromiseOrValue<string>,
       health: PromiseOrValue<BigNumberish>,

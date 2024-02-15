@@ -67,14 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "index",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "reviveIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "string",
@@ -137,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,string,uint256,string)": "c03c5cd9",
+    "executeTyped(uint32,string,string,uint256,string)": "9c67e226",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }
