@@ -328,14 +328,7 @@ export function setUpWorldAPI(systems: any) {
       1,
       0
     );
-    await api.registry.quest.add.objective(
-      1,
-      'Find the vending machine',
-      'CURR_EQUAL',
-      'ROOM',
-      0,
-      4
-    );
+    await api.registry.quest.add.objective(1, 'Find the vending machine', 'BOOL_IS', 'ROOM', 4, 0);
     await api.registry.quest.add.reward(1, 'MINT20', 0, 5);
     await api.registry.quest.add.reward(1, 'QUEST_POINTS', 0, 1);
 
@@ -347,7 +340,7 @@ export function setUpWorldAPI(systems: any) {
       2,
       0
     );
-    await api.registry.quest.add.requirement(2, 'COMPLETE', 'QUEST', 0, 1);
+    await api.registry.quest.add.requirement(2, 'COMPLETE', 'QUEST', 1, 0);
     await api.registry.quest.add.objective(2, 'Mint a Kami', 'CURR_MIN', 'KAMI', 0, 1);
     await api.registry.quest.add.reward(2, 'ITEM', 2, 1);
     await api.registry.quest.add.reward(2, 'QUEST_POINTS', 0, 2);
@@ -360,7 +353,7 @@ export function setUpWorldAPI(systems: any) {
       4,
       0
     );
-    await api.registry.quest.add.requirement(3, 'COMPLETE', 'QUEST', 0, 2);
+    await api.registry.quest.add.requirement(3, 'COMPLETE', 'QUEST', 2, 0);
     await api.registry.quest.add.objective(3, 'Harvest from a Node', 'INC_MIN', 'COIN_TOTAL', 0, 1);
     await api.registry.quest.add.reward(3, 'ITEM', 1001, 1);
     await api.registry.quest.add.reward(3, 'QUEST_POINTS', 0, 2);
@@ -373,7 +366,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       0
     );
-    await api.registry.quest.add.requirement(4, 'COMPLETE', 'QUEST', 0, 3);
+    await api.registry.quest.add.requirement(4, 'COMPLETE', 'QUEST', 3, 0);
     await api.registry.quest.add.objective(4, 'Harvest 100 $MUSU', 'INC_MIN', 'COIN_TOTAL', 0, 100);
     await api.registry.quest.add.reward(4, 'ITEM', 1001, 3);
     await api.registry.quest.add.reward(4, 'QUEST_POINTS', 0, 3);
@@ -386,7 +379,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       0
     );
-    await api.registry.quest.add.requirement(5, 'COMPLETE', 'QUEST', 0, 4);
+    await api.registry.quest.add.requirement(5, 'COMPLETE', 'QUEST', 4, 0);
     await api.registry.quest.add.objective(
       5,
       'Harvest 1000 $MUSU',
@@ -406,7 +399,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       0
     );
-    await api.registry.quest.add.requirement(6, 'COMPLETE', 'QUEST', 0, 5);
+    await api.registry.quest.add.requirement(6, 'COMPLETE', 'QUEST', 5, 0);
     await api.registry.quest.add.objective(
       6,
       'Harvest 5000 $MUSU',
@@ -435,7 +428,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       0
     );
-    await api.registry.quest.add.requirement(10, 'COMPLETE', 'QUEST', 0, 3);
+    await api.registry.quest.add.requirement(10, 'COMPLETE', 'QUEST', 3, 0);
     await api.registry.quest.add.objective(10, 'Liquidate 1 Kami', 'INC_MIN', 'LIQUIDATE', 0, 1);
     await api.registry.quest.add.reward(10, 'ITEM', 5, 1);
 
@@ -446,7 +439,7 @@ export function setUpWorldAPI(systems: any) {
       0,
       0
     );
-    await api.registry.quest.add.requirement(11, 'COMPLETE', 'QUEST', 0, 10);
+    await api.registry.quest.add.requirement(11, 'COMPLETE', 'QUEST', 10, 0);
     await api.registry.quest.add.objective(11, 'Liquidate 10 Kamis', 'INC_MIN', 'LIQUIDATE', 0, 10);
     await api.registry.quest.add.reward(11, 'ITEM', 4, 1);
   }

@@ -167,7 +167,7 @@ contract QuestsTest is SetupTemplate {
     // create quest
     _createQuest(1, "BasicRoomIndexQuest", "DESCRIPTION", 0, 0);
     _createQuestRequirement(1, "AT", "ROOM", 3, 0);
-    _createQuestObjective(1, "NAME", "CURR_EQUAL", "ROOM", 0, 4);
+    _createQuestObjective(1, "NAME", "BOOL_IS", "ROOM", 4, 0);
 
     // register account
     address operator = _getOperator(0);

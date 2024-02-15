@@ -267,7 +267,7 @@ library LibQuests {
     IUintComp components,
     uint256 questID,
     uint256 accountID
-  ) internal view returns (bool) {
+  ) internal view returns (bool result) {
     uint32 questIndex = getQuestIndex(components, questID);
 
     uint256[] memory objectives = LibRegistryQuests.getObjectivesByQuestIndex(
@@ -277,8 +277,6 @@ library LibQuests {
 
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      bool result;
-
       (HANDLER handler, LOGIC operator) = parseObjectiveLogic(logicType);
 
       if (handler == HANDLER.CURRENT) {
@@ -287,13 +285,13 @@ library LibQuests {
         result = checkIncrease(components, objectives[i], questID, accountID, operator);
       } else if (handler == HANDLER.DECREASE) {
         result = checkDecrease(components, objectives[i], questID, accountID, operator);
+      } else if (handler == HANDLER.BOOLEAN) {
+        result = checkBoolean(components, objectives[i], accountID, operator);
       } else {
         require(false, "Unknown condition handler");
       }
 
-      if (!result) {
-        return false;
-      }
+      if (!result) return false;
     }
 
     return true;
@@ -408,17 +406,13 @@ library LibQuests {
       uint32 questIndex = getIndex(components, conditionID);
       result = checkAccQuestComplete(components, questIndex, accountID);
     } else if (LibString.eq(_type, "ROOM")) {
-      uint32 roomIndex = getIndex(components, conditionID);
-      result = LibAccount.getRoom(components, accountID) == roomIndex;
+      result = LibAccount.getRoom(components, accountID) == getIndex(components, conditionID);
     } else {
       require(false, "Unknown bool condition type");
     }
 
-    if (logic == LOGIC.NOT) {
-      result = !result;
-    } else {
-      require(logic == LOGIC.IS, "Unknown bool logic operator");
-    }
+    if (logic == LOGIC.NOT) result = !result;
+    else require(logic == LOGIC.IS, "Unknown bool logic operator");
   }
 
   // checks if an account has completed a quest

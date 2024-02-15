@@ -71,15 +71,16 @@ library LibRegistryQuests {
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
+    uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
+
+    setQuestIndex(components, id, questIndex);
+    setObjectiveIndex(components, id, uint32(numObjectives) + 1);
     setIsRegistry(components, id);
     setIsObjective(components, id);
-    setQuestIndex(components, id, questIndex);
     setName(components, id, name);
     setLogicType(components, id, logicType);
     setType(components, id, type_);
 
-    uint256 numObjectives = getObjectivesByQuestIndex(components, questIndex).length;
-    setObjectiveIndex(components, id, uint32(numObjectives) + 1);
     return id;
   }
 
