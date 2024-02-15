@@ -5,12 +5,7 @@ import { interval, map } from 'rxjs';
 
 import { questsIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import {
-  getItem,
-  getItemByIndex,
-  queryFoodRegistry,
-  queryReviveRegistry,
-} from 'layers/network/shapes/Item';
+import { getItem, getItemByIndex } from 'layers/network/shapes/Item';
 import {
   Quest,
   getQuestByIndex,
@@ -132,8 +127,6 @@ export function registerQuestsModal() {
               getRoom: (roomIndex: number) => getRoomByIndex(network, roomIndex),
               getQuestByIndex: (index: number) => getQuestByIndex(network, index),
               queryItemRegistry: (index: number) => getItemByIndex(network, index).entityIndex,
-              queryFoodRegistry: (index: number) => queryFoodRegistry(network, index),
-              queryReviveRegistry: (index: number) => queryReviveRegistry(network, index),
             }}
           />
         </ModalWrapper>

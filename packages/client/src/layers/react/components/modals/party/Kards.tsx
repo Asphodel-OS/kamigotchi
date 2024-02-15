@@ -28,7 +28,7 @@ import { playClick } from 'utils/sounds';
 interface Props {
   account: Account;
   actions: {
-    feed: (kami: Kami, foodIndex: number) => void;
+    feed: (kami: Kami, itemIndex: number) => void;
     revive: (kami: Kami, reviveIndex: number) => void;
   };
   kamis: Kami[];
@@ -159,8 +159,8 @@ export const Kards = (props: Props) => {
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
-        text: `${inv.item.name!} ${!canHeal(inv) ? ' [Kami full]' : ''}`,
-        onClick: () => actions.feed(kami, inv.item.familyIndex || 1),
+        text: `${inv.item.name} ${!canHeal(inv) ? ' [Kami full]' : ''}`,
+        onClick: () => actions.feed(kami, inv.item.index),
         disabled: !canHeal(inv),
       };
     });

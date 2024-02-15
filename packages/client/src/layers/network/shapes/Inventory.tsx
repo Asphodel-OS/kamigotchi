@@ -51,12 +51,8 @@ export const getTypedInventory = (
 
   // if fungible: populate the balance
   // if non-fungible: copy stats of the inventory entity over to the nested item
-  if (item.isFungible) {
-    inventory.balance = getComponentValue(Balance, index)?.value as number;
-    inventory.balance = inventory.balance * 1;
-  } else {
-    inventory.item.stats = getStats(network, index);
-  }
+  if (!item.is.fungible) inventory.item.stats = getStats(network, index);
+  else inventory.balance = (getComponentValue(Balance, index)?.value as number) * 1;
 
   return inventory;
 };
@@ -67,16 +63,6 @@ export const getTypedInventory = (
 // sorts a list of Inventories by their item indices
 export const sortInventories = (inventories: Inventory[]) => {
   return inventories.sort((a: Inventory, b: Inventory) => (a.item.index > b.item.index ? 1 : -1));
-};
-
-// gets an Inventory instance from a inventories of Inventories by its Family Index
-export const getInventoryByFamilyIndex = (inventories: Inventory[], familyIndex: number) => {
-  if (!inventories) return;
-  for (let i = 0, len = inventories.length; i < len; i++) {
-    if (inventories[i].item.familyIndex === familyIndex) {
-      return inventories[i];
-    }
-  }
 };
 
 // get an Inventory from a inventories of Inventories

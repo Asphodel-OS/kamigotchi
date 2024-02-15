@@ -20,8 +20,6 @@ interface Props {
   utils: {
     setNumAvail: (num: number) => void;
     queryItemRegistry: (index: number) => EntityIndex;
-    queryFoodRegistry: (index: number) => EntityIndex;
-    queryReviveRegistry: (index: number) => EntityIndex;
     getItem: (index: EntityIndex) => Item;
     getRoom: (roomIndex: number) => Room;
     getQuestByIndex: (index: number) => Quest | undefined;
@@ -129,10 +127,10 @@ export const List = (props: Props) => {
     return registryObject.name ? registryObject.name : `Item ${itemIndex}`;
   };
 
-  const getFoodName = (foodIndex: number): string => {
-    let entityIndex = props.utils.queryItemRegistry(foodIndex);
+  const getFoodName = (itemIndex: number): string => {
+    let entityIndex = props.utils.queryItemRegistry(itemIndex);
     let registryObject = props.utils.getItem(entityIndex);
-    return registryObject.name ? registryObject.name : `Food ${foodIndex}`;
+    return registryObject.name ? registryObject.name : `Food ${itemIndex}`;
   };
 
   const getRepeatText = (quest: Quest): string => {

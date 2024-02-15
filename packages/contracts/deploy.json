@@ -217,13 +217,15 @@
       "writeAccess": [
         "DescriptionComponent",
         "IsRegistryComponent",
+        "IsConsumableComponent",
         "IsFungibleComponent",
         "IsLootboxComponent",
         "IndexItemComponent",
         "KeysComponent",
         "WeightsComponent",
         "NameComponent",
-        "MediaURIComponent"
+        "MediaURIComponent",
+        "TypeComponent"
       ]
     },
     {

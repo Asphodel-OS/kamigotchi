@@ -28,7 +28,7 @@ interface Props {
   account: Account;
   actions: {
     collect: (kami: Kami) => void;
-    feed: (kami: Kami, foodIndex: number) => void;
+    feed: (kami: Kami, itemIndex: number) => void;
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
     stop: (kami: Kami) => void;
   };
@@ -200,8 +200,8 @@ export const Kards = (props: Props) => {
 
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
-        text: inv.item.name!,
-        onClick: () => actions.feed(kami, inv.item.familyIndex || 1),
+        text: inv.item.name,
+        onClick: () => actions.feed(kami, inv.item.index),
       };
     });
 

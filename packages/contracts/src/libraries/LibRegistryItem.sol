@@ -40,13 +40,14 @@ library LibRegistryItem {
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    setIsFungible(components, id);
-    setIsRegistry(components, id);
     setIndex(components, id, index);
+    setIsRegistry(components, id);
     setIsConsumable(components, id);
+    setIsFungible(components, id);
+    setType(components, id, type_);
+
     setName(components, id, name);
     setDescription(components, id, description);
-    setType(components, id, type_);
     setMediaURI(components, id, mediaURI);
     return id;
   }
@@ -70,8 +71,10 @@ library LibRegistryItem {
     id = world.getUniqueEntityId();
     setIndex(components, id, index);
     setIsRegistry(components, id);
+    setIsConsumable(components, id);
     setIsFungible(components, id);
     setIsLootbox(components, id);
+    setType(components, id, "LOOTBOX");
 
     setKeys(components, id, keys);
     setWeights(components, id, weights);
