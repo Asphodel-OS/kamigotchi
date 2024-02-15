@@ -17,11 +17,11 @@ contract _RoomCreateGateSystem is System {
     (
       uint32 roomIndex,
       uint32 sourceIndex, // optional: if condition specific from Room A->B
-      uint256 conIndex,
-      uint256 conValue,
+      uint32 conditionIndex,
+      uint256 conditionValue,
       string memory logicType,
       string memory type_
-    ) = abi.decode(arguments, (uint32, uint32, uint256, uint256, string, string));
+    ) = abi.decode(arguments, (uint32, uint32, uint32, uint256, string, string));
 
     require(LibRoom.queryByIndex(components, roomIndex) != 0, "Room: does not exist");
 
@@ -32,8 +32,8 @@ contract _RoomCreateGateSystem is System {
           components,
           roomIndex,
           sourceIndex,
-          conIndex,
-          conValue,
+          conditionIndex,
+          conditionValue,
           logicType,
           type_
         )
@@ -43,11 +43,12 @@ contract _RoomCreateGateSystem is System {
   function executeTyped(
     uint32 roomIndex,
     uint32 sourceIndex, // optional: if condition specific from Room A->B
-    uint256 conIndex,
-    uint256 conValue,
+    uint32 conditionIndex,
+    uint256 conditionValue,
     string memory logicType,
     string memory type_
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(roomIndex, sourceIndex, conIndex, conValue, logicType, type_));
+    return
+      execute(abi.encode(roomIndex, sourceIndex, conditionIndex, conditionValue, logicType, type_));
   }
 }

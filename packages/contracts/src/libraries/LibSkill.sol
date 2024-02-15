@@ -156,7 +156,7 @@ library LibSkill {
       return getLevel(components, targetID) >= getValue(components, requirementID);
     }
     if (LibString.eq(type_, "SKILL")) {
-      uint256 index = getIndex(components, requirementID);
+      uint32 index = getIndex(components, requirementID);
       return getPointsOf(components, targetID, index) >= getValue(components, requirementID);
     }
     if (LibString.eq(type_, "AFFINITY")) {
@@ -188,7 +188,7 @@ library LibSkill {
   /////////////////
   // GETTERS
 
-  function getIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
   }
 
@@ -217,7 +217,7 @@ library LibSkill {
   function getPointsOf(
     IUintComp components,
     uint256 holderID,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256) {
     uint256 id = get(components, holderID, index);
     return getPoints(components, id);
@@ -229,7 +229,7 @@ library LibSkill {
   function get(
     IUintComp components,
     uint256 holderID,
-    uint256 index
+    uint32 index
   ) internal view returns (uint256) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsSkillCompID), "");

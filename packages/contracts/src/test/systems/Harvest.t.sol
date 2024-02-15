@@ -12,7 +12,7 @@ contract HarvestTest is SetupTemplate {
 
   // structure of Node data for test purposes
   struct TestNodeData {
-    uint256 index;
+    uint32 index;
     uint32 roomIndex;
     string name;
     string description;

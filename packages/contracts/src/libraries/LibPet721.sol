@@ -54,7 +54,7 @@ library LibPet721 {
   /// @notice  mints a pet with ERC721 for in-game kamis, with the ERC721 contract as owner
   /// @dev     this is the default state, with revealed kamis minted this way
   /// @param   world     world contract
-  /// @param   index     ERC721 index of pet
+  /// @param   index     tokenID of pet
   function mintInGame(IWorld world, uint256 index) internal {
     Pet721 token = getContract(world);
     token.mint(address(token), index);
@@ -64,7 +64,7 @@ library LibPet721 {
   /// @dev     no reason to use rn, created before Mint20. does not interact with other mud systems
   /// @param   world     world contract
   /// @param   to        EOA to mint to
-  /// @param   index     ERC721 index of pet
+  /// @param   index     tokenID of pet
   function mintOutGame(IWorld world, address to, uint256 index) internal {
     Pet721 token = getContract(world);
     token.mint(to, index);

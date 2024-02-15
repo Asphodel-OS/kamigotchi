@@ -93,7 +93,7 @@ library LibBoolean {
     for (uint256 i = 0; i < conditionIDs.length; i++) {
       // uint256 targetID = accountID; // placeholder, can change in future
       // uint256 forID = forComp.has(conditionIDs[i]) ? forComp.getValue(conditionIDs[i]) : 0;
-      uint256 index = indexComp.has(conditionIDs[i]) ? indexComp.getValue(conditionIDs[i]) : 0;
+      uint32 index = indexComp.has(conditionIDs[i]) ? indexComp.getValue(conditionIDs[i]) : 0;
       uint256 value = valueComp.has(conditionIDs[i]) ? valueComp.getValue(conditionIDs[i]) : 0;
       string memory type_ = typeComp.getValue(conditionIDs[i]);
       string memory logicType = logicTypeComp.getValue(conditionIDs[i]);
@@ -117,7 +117,7 @@ library LibBoolean {
   function check(
     IUintComp components,
     uint256 targetID,
-    uint256 index,
+    uint32 index,
     uint256 expected,
     uint256 forEntity, // ForComp, used to differenciate entities. defaults to Account
     string memory logicType,
@@ -133,7 +133,7 @@ library LibBoolean {
   function checkCurr(
     IUintComp components,
     uint256 targetID,
-    uint256 index,
+    uint32 index,
     uint256 expected,
     uint256 forEntity, // ForComp, used to differenciate entities. defaults to Account
     string memory _type,
@@ -168,7 +168,7 @@ library LibBoolean {
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
   }
 
-  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
   }
 

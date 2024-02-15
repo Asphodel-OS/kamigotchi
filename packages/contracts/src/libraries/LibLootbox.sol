@@ -199,7 +199,7 @@ library LibLootbox {
     IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint256 index,
+    uint32 index,
     uint256 count
   ) internal {
     LibDataEntity.incFor(world, components, holderID, index, "LOOTBOX_OPENED", count);

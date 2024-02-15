@@ -53,7 +53,7 @@ library LibRoom {
     IUintComp components,
     uint32 roomIndex,
     uint32 sourceIndex, // optional: if condition specific from Room A->B
-    uint256 conIndex,
+    uint32 conIndex,
     uint256 conValue,
     string memory logicType,
     string memory type_
@@ -119,8 +119,8 @@ library LibRoom {
   /// @notice checks if accessability conditions to a room are met
   function isAccessible(
     IUintComp components,
-    uint256 fromIndex,
-    uint256 toIndex,
+    uint32 fromIndex,
+    uint32 toIndex,
     uint256 accountID
   ) internal view returns (bool) {
     uint256[] memory conditions = queryGates(components, fromIndex, toIndex);
@@ -188,10 +188,7 @@ library LibRoom {
   /////////////////
   // QUERIES
 
-  function queryByIndex(
-    IUintComp components,
-    uint256 index
-  ) internal view returns (uint256 result) {
+  function queryByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRoomCompID), "");
     fragments[1] = QueryFragment(
@@ -246,8 +243,8 @@ library LibRoom {
   /// @notice queries for all gates from A->B, specific and non-specific (generic)
   function queryGates(
     IUintComp components,
-    uint256 fromIndex,
-    uint256 toIndex
+    uint32 fromIndex,
+    uint32 toIndex
   ) internal view returns (uint256[] memory) {
     IndexSourceComponent sourceComp = IndexSourceComponent(
       getAddressById(components, IndexSourceCompID)
@@ -283,7 +280,7 @@ library LibRoom {
   /// @dev used for deleting rooms
   function queryAllGates(
     IUintComp components,
-    uint256 toIndex
+    uint32 toIndex
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(

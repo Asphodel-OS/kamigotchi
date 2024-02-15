@@ -42,7 +42,7 @@ library LibDataEntity {
   function get(
     IUintComp components,
     uint256 holderID,
-    uint256 index,
+    uint32 index,
     string memory type_
   ) public view returns (uint256) {
     uint256 dataID = queryDataEntity(components, holderID, index, type_);
@@ -53,7 +53,7 @@ library LibDataEntity {
     IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint256 index,
+    uint32 index,
     string memory type_,
     uint256 amt
   ) internal {
@@ -69,7 +69,7 @@ library LibDataEntity {
     IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint256 index,
+    uint32 index,
     string memory type_,
     uint256 amt
   ) internal {
@@ -85,7 +85,7 @@ library LibDataEntity {
     IWorld world,
     IUintComp components,
     uint256 holderID,
-    uint256 index,
+    uint32 index,
     string memory type_,
     uint256 value
   ) internal {
@@ -107,7 +107,7 @@ library LibDataEntity {
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
   }
 
-  function setIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
   }
 
@@ -146,7 +146,7 @@ library LibDataEntity {
   function queryDataEntity(
     IUintComp components,
     uint256 holderID,
-    uint256 index, // optional - 0 if not used
+    uint32 index, // optional - 0 if not used
     string memory type_
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](index == 0 ? 3 : 4);

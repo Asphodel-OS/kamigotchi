@@ -14,12 +14,12 @@ contract _RegistryCreateQuestSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
+      uint32 index,
       string memory name,
       string memory description,
       uint32 roomIndex,
       uint256 duration
-    ) = abi.decode(arguments, (uint256, string, string, uint32, uint256));
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
 
     uint256 regID = LibRegistryQuests.createQuest(world, components, index, name, description);
 
@@ -37,7 +37,7 @@ contract _RegistryCreateQuestSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description,
     uint32 roomIndex,
