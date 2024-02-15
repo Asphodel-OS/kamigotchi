@@ -308,7 +308,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     IWorld _world,
     address _components
   ) System(_world, _components) TraitHandler(_components) {
-    baseSeed = uint256(keccak256(abi.encode(blockhash(block.number - 1))));
+    baseSeed = uint256(keccak256(abi.encode(blockhash(block.number == 0 ? 0 : block.number - 1))));
 
     pet721 = LibPet721.getContract(world);
     canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));

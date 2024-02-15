@@ -61,7 +61,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     api: {
       admin: createAdminAPI(systems),
       player: createPlayerAPI(systems),
-      world: setUpWorldAPI(systems),
+      world: setUpWorldAPI(systems, provider),
     },
     updates: {
       components: {

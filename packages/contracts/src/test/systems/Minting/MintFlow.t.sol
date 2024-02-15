@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "test/utils/SetupTemplate.s.sol";
+import "test/utils/SetupTemplate.t.sol";
 
 /** @dev
  * this focus on minting flow, specifically

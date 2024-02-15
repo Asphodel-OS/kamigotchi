@@ -1,50 +1,50 @@
 {
   "abi": [
     {
+      "type": "function",
+      "name": "_getTraitStats",
       "inputs": [
         {
-          "internalType": "uint256",
           "name": "id",
-          "type": "uint256"
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
-      "name": "_getTraitStats",
       "outputs": [
         {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct TraitStats",
           "components": [
             {
-              "internalType": "uint8",
               "name": "health",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "power",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "violence",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "harmony",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "slots",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             }
-          ],
-          "internalType": "struct TraitStats",
-          "name": "",
-          "type": "tuple"
+          ]
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "stateMutability": "nonpayable"
     }
   ],
   "methodIdentifiers": {
