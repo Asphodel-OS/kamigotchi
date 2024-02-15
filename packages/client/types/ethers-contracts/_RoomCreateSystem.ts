@@ -2,6 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
+  EventFragment,
+  FunctionFragment,
+  Result,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
   BaseContract,
   BigNumber,
   BigNumberish,
@@ -14,17 +20,11 @@ import type {
   utils,
 } from "ethers";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
   OnEvent,
   PromiseOrValue,
+  TypedEvent,
+  TypedEventFilter,
+  TypedListener,
 } from "./common";
 
 export type LocationStruct = {
@@ -42,7 +42,7 @@ export type LocationStructOutput = [number, number, number] & {
 export interface _RoomCreateSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped((int32,int32,int32),uint256,string,string,uint256[])": FunctionFragment;
+    "executeTyped((int32,int32,int32),uint32,string,string,uint32[])": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

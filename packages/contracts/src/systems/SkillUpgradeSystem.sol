@@ -18,7 +18,7 @@ contract SkillUpgradeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 holderID, uint256 skillIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint256 holderID, uint32 skillIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // check that the skill exists
@@ -76,7 +76,7 @@ contract SkillUpgradeSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 holderID, uint256 skillIndex) public returns (bytes memory) {
+  function executeTyped(uint256 holderID, uint32 skillIndex) public returns (bytes memory) {
     return execute(abi.encode(holderID, skillIndex));
   }
 }

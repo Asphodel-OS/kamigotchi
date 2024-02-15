@@ -67,9 +67,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "index",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "string",
@@ -77,9 +77,9 @@
           "type": "string"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "roomIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "string",
@@ -137,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string,uint256,string,string,string)": "ae39fdd7",
+    "executeTyped(uint32,string,uint32,string,string,string)": "cfa21ff1",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

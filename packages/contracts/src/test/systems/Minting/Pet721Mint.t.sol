@@ -53,7 +53,7 @@
 //       2) State is not 721_EXTERNAL (LibPet.isInWorld)
 //       3) Has an owner (checked implicitly in 1)
 //     */
-//     uint entityID = LibPet.indexToID(components, tokenID);
+//     uint entityID = LibPet.getByIndex(components, tokenID);
 //     assertEq(
 //       addr,
 //       address(uint160((LibAccount.getOwner(components, LibPet.getAccount(components, entityID)))))
@@ -68,7 +68,7 @@
 //       2) State is  721_EXTERNAL (LibPet.isInWorld)
 //       3) Has no Account
 //     */
-//     uint entityID = LibPet.indexToID(components, tokenID);
+//     uint entityID = LibPet.getByIndex(components, tokenID);
 //     assertEq(_Pet721.ownerOf(tokenID), addr);
 //     assertEq(LibPet.getAccount(components, entityID), 0);
 //     assertTrue(!LibPet.isInWorld(components, entityID));

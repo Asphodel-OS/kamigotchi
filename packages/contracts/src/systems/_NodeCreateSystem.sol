@@ -16,13 +16,13 @@ contract _NodeCreateSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
+      uint32 index,
       string memory nodeType,
-      uint256 roomIndex,
+      uint32 roomIndex,
       string memory name,
       string memory description,
       string memory affinity
-    ) = abi.decode(arguments, (uint256, string, uint256, string, string, string));
+    ) = abi.decode(arguments, (uint32, string, uint32, string, string, string));
     uint256 id = LibNode.getByIndex(components, index);
 
     require(id == 0, "Node: already exists");
@@ -37,9 +37,9 @@ contract _NodeCreateSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
+    uint32 index,
     string memory nodeType,
-    uint256 roomIndex,
+    uint32 roomIndex,
     string memory name,
     string memory description,
     string memory affinity

@@ -15,13 +15,13 @@ contract _RoomCreateGateSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 roomIndex,
-      uint256 sourceIndex, // optional: if condition specific from Room A->B
+      uint32 roomIndex,
+      uint32 sourceIndex, // optional: if condition specific from Room A->B
       uint256 conIndex,
       uint256 conValue,
       string memory logicType,
       string memory type_
-    ) = abi.decode(arguments, (uint256, uint256, uint256, uint256, string, string));
+    ) = abi.decode(arguments, (uint32, uint32, uint256, uint256, string, string));
 
     require(LibRoom.queryByIndex(components, roomIndex) != 0, "Room: does not exist");
 
@@ -41,8 +41,8 @@ contract _RoomCreateGateSystem is System {
   }
 
   function executeTyped(
-    uint256 roomIndex,
-    uint256 sourceIndex, // optional: if condition specific from Room A->B
+    uint32 roomIndex,
+    uint32 sourceIndex, // optional: if condition specific from Room A->B
     uint256 conIndex,
     uint256 conValue,
     string memory logicType,

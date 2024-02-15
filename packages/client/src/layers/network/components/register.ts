@@ -99,6 +99,7 @@ export function createComponents(world: World) {
     RoomIndex: defineNumberEZ('RoomIndex', 'component.Index.Room'),
     ReviveIndex: defineNumberEZ('ReviveIndex', 'component.Index.Revive'),
     SkillIndex: defineNumberEZ('SkillIndex', 'component.Index.Skill'),
+    SourceIndex: defineNumberEZ('SourceIndex', 'component.Index.Source'),
     TraitIndex: defineNumberEZ('PetIndex', 'component.Index.Trait'),
 
     // Attributes

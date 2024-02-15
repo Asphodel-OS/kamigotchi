@@ -16,7 +16,7 @@ contract Pet721IsInWorldSystem is System {
   /// @notice checks if pet is in world
   /// @param  petIndex  the ERC721 index of the pet
   function isInWorld(uint256 petIndex) public view returns (bool) {
-    uint256 entityID = LibPet.indexToID(components, petIndex);
+    uint256 entityID = LibPet.getByIndex(components, uint32(petIndex));
     return LibPet.isInWorld(components, entityID);
   }
 

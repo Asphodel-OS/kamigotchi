@@ -330,7 +330,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   function batchMint(uint256 amount) external onlyOwner returns (uint256[] memory) {
     // require(colorWeights.keys != 0, "traits not set");
 
-    uint256 startIndex = pet721.totalSupply() + 1; // starts from 1
+    uint32 startIndex = uint32(pet721.totalSupply()) + 1; // starts from 1
     uint256 startGacha = balanceComp.getValue(GACHA_DATA_ID); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
@@ -358,12 +358,12 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
   /// @notice create pet, replaces LibPet.create
   function createPets(
-    uint256 startIndex,
+    uint32 startIndex,
     uint256 startGacha,
     uint256 amount
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](amount);
-    for (uint256 i; i < amount; i++) {
+    for (uint32 i; i < amount; i++) {
       uint256 id = world.getUniqueEntityId();
       ids[i] = id;
 

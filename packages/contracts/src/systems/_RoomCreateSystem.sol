@@ -16,11 +16,11 @@ contract _RoomCreateSystem is System {
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
       Location memory location,
-      uint256 index,
+      uint32 index,
       string memory name,
       string memory description,
-      uint256[] memory exits
-    ) = abi.decode(arguments, (Location, uint256, string, string, uint256[]));
+      uint32[] memory exits
+    ) = abi.decode(arguments, (Location, uint32, string, string, uint32[]));
 
     require(LibRoom.queryByLocation(components, location) == 0, "Room: already exists at location");
     require(LibRoom.queryByIndex(components, index) == 0, "Room: already exists at index");
@@ -34,10 +34,10 @@ contract _RoomCreateSystem is System {
 
   function executeTyped(
     Location memory location,
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description,
-    uint256[] memory exits
+    uint32[] memory exits
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(location, index, name, description, exits));
   }

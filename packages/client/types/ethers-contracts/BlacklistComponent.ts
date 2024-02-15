@@ -2,6 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
+  EventFragment,
+  FunctionFragment,
+  Result,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
   BaseContract,
   BigNumber,
   BigNumberish,
@@ -14,17 +20,11 @@ import type {
   utils,
 } from "ethers";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
   OnEvent,
   PromiseOrValue,
+  TypedEvent,
+  TypedEventFilter,
+  TypedListener,
 } from "./common";
 
 export interface BlacklistComponentInterface extends utils.Interface {
@@ -42,7 +42,7 @@ export interface BlacklistComponentInterface extends utils.Interface {
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
-    "set(uint256,uint256[])": FunctionFragment;
+    "set(uint256,uint32[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -64,7 +64,7 @@ export interface BlacklistComponentInterface extends utils.Interface {
       | "registerWorld"
       | "remove"
       | "set(uint256,bytes)"
-      | "set(uint256,uint256[])"
+      | "set(uint256,uint32[])"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -115,7 +115,7 @@ export interface BlacklistComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint256[])",
+    functionFragment: "set(uint256,uint32[])",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
@@ -167,7 +167,7 @@ export interface BlacklistComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint256[])",
+    functionFragment: "set(uint256,uint32[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -254,7 +254,7 @@ export interface BlacklistComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+    ): Promise<[number[]]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -286,7 +286,7 @@ export interface BlacklistComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,uint256[])"(
+    "set(uint256,uint32[])"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -334,7 +334,7 @@ export interface BlacklistComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  ): Promise<number[]>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -366,7 +366,7 @@ export interface BlacklistComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,uint256[])"(
+  "set(uint256,uint32[])"(
     entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -414,7 +414,7 @@ export interface BlacklistComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<number[]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -446,7 +446,7 @@ export interface BlacklistComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,uint256[])"(
+    "set(uint256,uint32[])"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -536,7 +536,7 @@ export interface BlacklistComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,uint256[])"(
+    "set(uint256,uint32[])"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -615,7 +615,7 @@ export interface BlacklistComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint256[])"(
+    "set(uint256,uint32[])"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }

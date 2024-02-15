@@ -175,11 +175,11 @@ abstract contract SetupTemplate is TestSetupImports {
   // OPERATOR ACTIONS
 
   // attempt to move an account if it's not already there
-  function _moveAccount(uint playerIndex, uint256 room) internal {
-    if (room != LibAccount.getRoom(components, _getAccount(playerIndex))) {
+  function _moveAccount(uint playerIndex, uint32 roomIndex) internal {
+    if (roomIndex != LibAccount.getRoom(components, _getAccount(playerIndex))) {
       address operator = _operators[_owners[playerIndex]];
       vm.prank(operator);
-      _AccountMoveSystem.executeTyped(room);
+      _AccountMoveSystem.executeTyped(roomIndex);
     }
   }
 
@@ -285,7 +285,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* SKILLS */
 
-  function _upgradeSkill(uint playerIndex, uint targetID, uint skillIndex) internal virtual {
+  function _upgradeSkill(uint playerIndex, uint targetID, uint32 skillIndex) internal virtual {
     address operator = _getOperator(playerIndex);
     vm.prank(operator);
     _SkillUpgradeSystem.executeTyped(targetID, skillIndex);
@@ -328,8 +328,8 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // WORLD POPULATION
 
-  function _createRoom(string memory name, Location memory location, uint index) internal {
-    uint256[] memory exits = new uint256[](0);
+  function _createRoom(string memory name, Location memory location, uint32 index) internal {
+    uint32[] memory exits = new uint32[](0);
     vm.prank(deployer);
     __RoomCreateSystem.executeTyped(location, index, name, "", exits);
   }
@@ -337,11 +337,11 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createRoom(
     string memory name,
     Location memory location,
-    uint index,
-    uint256 exit1
+    uint32 index,
+    uint32 exitIndex
   ) internal {
-    uint256[] memory exits = new uint256[](1);
-    exits[0] = exit1;
+    uint32[] memory exits = new uint32[](1);
+    exits[0] = exitIndex;
 
     vm.prank(deployer);
     __RoomCreateSystem.executeTyped(location, index, name, "", exits);
@@ -350,16 +350,16 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createRoom(
     string memory name,
     Location memory location,
-    uint index,
-    uint256[] memory exits
+    uint32 index,
+    uint32[] memory exits
   ) internal {
     vm.prank(deployer);
     __RoomCreateSystem.executeTyped(location, index, name, "", exits);
   }
 
   function _createHarvestingNode(
-    uint index,
-    uint roomIndex,
+    uint32 index,
+    uint32 roomIndex,
     string memory name,
     string memory description,
     string memory affinity
@@ -376,20 +376,20 @@ abstract contract SetupTemplate is TestSetupImports {
     return abi.decode(nodeID, (uint));
   }
 
-  function _createNPC(uint index, uint roomIndex, string memory name) public returns (uint) {
+  function _createNPC(uint32 index, uint32 roomIndex, string memory name) public returns (uint) {
     vm.prank(deployer);
     bytes memory merchantID = __NPCCreateSystem.executeTyped(index, name, roomIndex);
     return abi.decode(merchantID, (uint));
   }
 
   function _setListing(
-    uint index,
+    uint32 npcIndex,
     uint itemId,
     uint priceBuy,
     uint priceSell
   ) public returns (uint) {
     vm.prank(deployer);
-    bytes memory listingID = __ListingSetSystem.executeTyped(index, itemId, priceBuy, priceSell);
+    bytes memory listingID = __ListingSetSystem.executeTyped(npcIndex, itemId, priceBuy, priceSell);
     return abi.decode(listingID, (uint));
   }
 
@@ -426,11 +426,11 @@ abstract contract SetupTemplate is TestSetupImports {
     uint index,
     string memory name,
     string memory description,
-    uint room,
+    uint32 roomIndex,
     uint duration
   ) public {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(index, name, description, room, duration);
+    __RegistryCreateQuestSystem.executeTyped(index, name, description, roomIndex, duration);
   }
 
   function _createQuestObjective(
@@ -476,7 +476,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* SKILLS */
 
   function _createSkill(
-    uint index,
+    uint32 index,
     string memory for_,
     string memory type_,
     string memory name,
@@ -489,7 +489,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createSkillEffect(
-    uint skillIndex,
+    uint32 skillIndex,
     string memory type_,
     string memory subtype, // can be empty
     string memory logicType, // can be empty
@@ -508,7 +508,7 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createSkillRequirement(
-    uint skillIndex,
+    uint32 skillIndex,
     string memory type_,
     uint index, // can be empty
     uint value // can be empty

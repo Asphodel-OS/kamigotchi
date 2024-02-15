@@ -4,7 +4,6 @@ import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account
 import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
 import { getAllRooms, getRoomByIndex } from 'layers/network/shapes/Room';
-import { numberToHex } from 'utils/hex';
 import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
 import { NetworkLayer } from '../types';
 
@@ -16,7 +15,7 @@ export const initExplorer = (network: NetworkLayer) => {
 
   explorer.account = {
     get: (index: number, options?: {}) => {
-      return getAccountByIndex(network, numberToHex(index), options);
+      return getAccountByIndex(network, index, options);
     },
     getAll: (options?: {}) => getAllAccounts(network, options),
     entities: () => Array.from(components.IsAccount.entities()),
@@ -25,7 +24,7 @@ export const initExplorer = (network: NetworkLayer) => {
 
   explorer.kami = {
     get: (index: number, options?: {}) => {
-      return getKamiByIndex(network, numberToHex(index), options);
+      return getKamiByIndex(network, index, options);
     },
     getAll: (options?: {}) => getAllKamis(network, options),
     entities: () => Array.from(components.IsPet.entities()),
@@ -34,7 +33,7 @@ export const initExplorer = (network: NetworkLayer) => {
 
   explorer.node = {
     get: (index: number, options?: {}) => {
-      return getNodeByIndex(network, numberToHex(index), options);
+      return getNodeByIndex(network, index, options);
     },
     getAll: (options?: {}) => getAllNodes(network, options),
     entities: () => Array.from(components.IsNode.entities()),
@@ -43,7 +42,7 @@ export const initExplorer = (network: NetworkLayer) => {
 
   explorer.npc = {
     get: (index: number, options?: {}) => {
-      return getMerchantByIndex(network, numberToHex(index));
+      return getMerchantByIndex(network, index);
     },
     getAll: (options?: {}) => getAllMerchants(network),
     entities: () => Array.from(components.IsNPC.entities()),
@@ -52,7 +51,7 @@ export const initExplorer = (network: NetworkLayer) => {
 
   explorer.room = {
     get: (index: number, options?: {}) => {
-      return getRoomByIndex(network, numberToHex(index), options);
+      return getRoomByIndex(network, index, options);
     },
     getAll: (options?: {}) => getAllRooms(network, options),
     entities: () => Array.from(components.IsRoom.entities()),

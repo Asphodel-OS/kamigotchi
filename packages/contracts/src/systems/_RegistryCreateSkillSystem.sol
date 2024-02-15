@@ -14,7 +14,7 @@ contract _RegistryCreateSkillSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
+      uint32 index,
       string memory for_,
       string memory type_,
       string memory name,
@@ -22,7 +22,7 @@ contract _RegistryCreateSkillSystem is System {
       uint256 max,
       string memory description,
       string memory media
-    ) = abi.decode(arguments, (uint256, string, string, string, uint256, uint256, string, string));
+    ) = abi.decode(arguments, (uint32, string, string, string, uint256, uint256, string, string));
 
     require(index != 0, "SkillCreate: index cannot be 0");
     require(!LibString.eq(type_, ""), "SkillCreate: type empty");
@@ -49,7 +49,7 @@ contract _RegistryCreateSkillSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
+    uint32 index,
     string memory for_,
     string memory type_,
     string memory name,

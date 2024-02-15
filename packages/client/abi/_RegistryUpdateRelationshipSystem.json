@@ -67,14 +67,14 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "npcIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "relIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "string",
@@ -82,14 +82,14 @@
           "type": "string"
         },
         {
-          "internalType": "uint256[]",
+          "internalType": "uint32[]",
           "name": "whitelist",
-          "type": "uint256[]"
+          "type": "uint32[]"
         },
         {
-          "internalType": "uint256[]",
+          "internalType": "uint32[]",
           "name": "blacklist",
-          "type": "uint256[]"
+          "type": "uint32[]"
         }
       ],
       "name": "executeTyped",
@@ -132,7 +132,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,string,uint256[],uint256[])": "5cf2de43",
+    "executeTyped(uint32,uint32,string,uint32[],uint32[])": "bf6fc90c",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

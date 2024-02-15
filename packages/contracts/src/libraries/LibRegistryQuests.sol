@@ -226,7 +226,7 @@ library LibRegistryQuests {
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
   }
 
-  function setRoomIndex(IUintComp components, uint256 id, uint256 roomIndex) internal {
+  function setRoomIndex(IUintComp components, uint256 id, uint32 roomIndex) internal {
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
   }
 

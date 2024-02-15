@@ -15,7 +15,7 @@ contract RelationshipAdvanceSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 npcIndex, uint256 relIndex) = abi.decode(arguments, (uint256, uint256));
+    (uint32 npcIndex, uint32 relIndex) = abi.decode(arguments, (uint32, uint32));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "RelationshipAdvance: no account");
 
@@ -52,10 +52,7 @@ contract RelationshipAdvanceSystem is System {
     return "";
   }
 
-  function executeTyped(
-    uint256 npcIndex,
-    uint256 relIndex
-  ) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint32 npcIndex, uint32 relIndex) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(npcIndex, relIndex));
   }
 }

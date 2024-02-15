@@ -67,14 +67,14 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "roomIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint32",
           "name": "sourceIndex",
-          "type": "uint256"
+          "type": "uint32"
         },
         {
           "internalType": "uint256",
@@ -137,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256,uint256,uint256,string,string)": "354b6416",
+    "executeTyped(uint32,uint32,uint256,uint256,string,string)": "f8a108f9",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

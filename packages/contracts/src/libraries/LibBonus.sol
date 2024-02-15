@@ -23,7 +23,7 @@ library LibBonus {
     IUintComp components,
     uint256 holderID,
     string memory _type
-  ) internal returns (uint256) {
+  ) public returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsBonusComponent(getAddressById(components, IsBonusCompID)).set(id);
     IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
@@ -31,24 +31,24 @@ library LibBonus {
     return id;
   }
 
-  function inc(IUintComp components, uint256 id, uint256 amt) internal {
+  function inc(IUintComp components, uint256 id, uint256 amt) public {
     uint256 curr = getValue(components, id);
     setValue(components, id, curr + amt);
   }
 
-  function dec(IUintComp components, uint256 id, uint256 amt) internal {
+  function dec(IUintComp components, uint256 id, uint256 amt) public {
     uint256 curr = getValue(components, id);
     require(curr >= amt, "LibBonus: lower limit reached");
     setValue(components, id, curr - amt);
   }
 
-  function incStat(IUintComp components, uint256 id, string memory type_, uint256 value) internal {
+  function incStat(IUintComp components, uint256 id, string memory type_, uint256 value) public {
     uint256 currVal = getStat(components, id, type_);
     setStat(components, id, type_, currVal + value);
   }
 
   // NOTE: this does not fail gracefully when value > currVal. need to consider how best to handle
-  function decStat(IUintComp components, uint256 id, string memory type_, uint256 value) internal {
+  function decStat(IUintComp components, uint256 id, string memory type_, uint256 value) public {
     uint256 currVal = getStat(components, id, type_);
     setStat(components, id, type_, currVal - value);
   }
@@ -56,7 +56,7 @@ library LibBonus {
   /////////////////
   // CHECKERS
 
-  function hasValue(IUintComp components, uint256 id) internal view returns (bool) {
+  function hasValue(IUintComp components, uint256 id) public view returns (bool) {
     return ValueComponent(getAddressById(components, ValueCompID)).has(id);
   }
 
@@ -67,7 +67,7 @@ library LibBonus {
     IUintComp components,
     uint256 id,
     string memory type_
-  ) internal view returns (uint256) {
+  ) public view returns (uint256) {
     if (LibString.eq(type_, "HEALTH")) return LibStat.getHealth(components, id);
     if (LibString.eq(type_, "POWER")) return LibStat.getPower(components, id);
     if (LibString.eq(type_, "HARMONY")) return LibStat.getHarmony(components, id);
@@ -78,7 +78,7 @@ library LibBonus {
 
   // default value of bonus multipliers is 1000
   // this represents for 100.0% for percentage based bonuses
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getValue(IUintComp components, uint256 id) public view returns (uint256) {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     if (!comp.has(id)) return 1000;
     return comp.getValue(id);
@@ -87,7 +87,7 @@ library LibBonus {
   /////////////////
   // SETTERS
 
-  function setStat(IUintComp components, uint256 id, string memory type_, uint256 value) internal {
+  function setStat(IUintComp components, uint256 id, string memory type_, uint256 value) public {
     if (LibString.eq(type_, "HEALTH")) LibStat.setHealth(components, id, value);
     else if (LibString.eq(type_, "POWER")) LibStat.setPower(components, id, value);
     else if (LibString.eq(type_, "HARMONY")) LibStat.setHarmony(components, id, value);
@@ -95,7 +95,7 @@ library LibBonus {
     else if (LibString.eq(type_, "SLOTS")) LibStat.setSlots(components, id, value);
   }
 
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
+  function setValue(IUintComp components, uint256 id, uint256 value) public {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
@@ -106,7 +106,7 @@ library LibBonus {
     IUintComp components,
     uint256 holderID,
     string memory type_
-  ) internal view returns (uint256 result) {
+  ) public view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsBonusCompID), "");
     fragments[1] = QueryFragment(

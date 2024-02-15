@@ -42,7 +42,7 @@ contract PetLevelSystem is System {
     LibSkill.inc(components, id, 1);
 
     // signal a metadata update
-    LibPet721.updateEvent(world, LibPet.idToIndex(components, id));
+    LibPet721.updateEvent(world, LibPet.getIndex(components, id));
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

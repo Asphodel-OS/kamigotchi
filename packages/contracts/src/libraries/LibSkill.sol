@@ -33,7 +33,7 @@ library LibSkill {
     IWorld world,
     IUintComp components,
     uint256 targetID,
-    uint256 skillIndex
+    uint32 skillIndex
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setIsSkill(components, id);
@@ -125,7 +125,7 @@ library LibSkill {
     uint256 targetID,
     uint256 registryID // skill registry entity id
   ) public view returns (bool) {
-    uint256 skillIndex = LibRegistrySkill.getSkillIndex(components, registryID);
+    uint32 skillIndex = LibRegistrySkill.getSkillIndex(components, registryID);
 
     // check point balance against skill cost
     uint256 cost = LibRegistrySkill.getCost(components, registryID);
@@ -173,7 +173,7 @@ library LibSkill {
     IsSkillComponent(getAddressById(components, IsSkillCompID)).set(id);
   }
 
-  function setSkillIndex(IUintComp components, uint256 id, uint256 index) internal {
+  function setSkillIndex(IUintComp components, uint256 id, uint32 index) internal {
     IndexSkillComponent(getAddressById(components, IndexSkillCompID)).set(id, index);
   }
 

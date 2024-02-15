@@ -31,8 +31,8 @@ contract Pet721RevealSystem is System {
       "721 user mint: not enabled"
     );
 
-    uint256 petIndex = abi.decode(arguments, (uint256));
-    uint256 petID = LibPet.indexToID(components, petIndex);
+    uint32 petIndex = abi.decode(arguments, (uint32));
+    uint256 petID = LibPet.getByIndex(components, petIndex);
 
     // checks
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
@@ -52,8 +52,8 @@ contract Pet721RevealSystem is System {
   /// @notice a backup in case user misses the 256 block window to reveal
   /// @dev takes previous blockhash for random seed; permissioned assumes caller won't abuse randomness
   /// @dev likely to include other roles in the future just to reveal
-  function forceReveal(uint256 petIndex) public onlyOwner returns (bytes memory) {
-    uint256 petID = LibPet.indexToID(components, petIndex);
+  function forceReveal(uint32 petIndex) public onlyOwner returns (bytes memory) {
+    uint256 petID = LibPet.getByIndex(components, petIndex);
     require(LibPet.isUnrevealed(components, petID), "already revealed!");
 
     uint256 seed = uint256(blockhash(block.number - 1));
@@ -63,7 +63,7 @@ contract Pet721RevealSystem is System {
     return reveal(petID, seed);
   }
 
-  function executeTyped(uint256 petIndex) public returns (bytes memory) {
+  function executeTyped(uint32 petIndex) public returns (bytes memory) {
     return execute(abi.encode(petIndex));
   }
 

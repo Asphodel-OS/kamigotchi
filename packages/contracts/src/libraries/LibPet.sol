@@ -53,7 +53,7 @@ library LibPet {
     IWorld world,
     IUintComp components,
     uint256 accountID,
-    uint256 index
+    uint32 index
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
@@ -161,9 +161,9 @@ library LibPet {
 
   // transfer ERC721 pet
   // NOTE: transfers are disabled in game
-  function transfer(IUintComp components, uint256 index, uint256 accountID) internal {
+  function transfer(IUintComp components, uint32 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
-    uint256 id = indexToID(components, index);
+    uint256 id = getByIndex(components, index);
     setAccount(components, id, accountID);
   }
 
@@ -509,6 +509,11 @@ library LibPet {
   /////////////////
   // GETTERS
 
+  // get the index of a pet (aka its 721 tokenID) from its entity ID
+  function getIndex(IUintComp components, uint256 entityID) internal view returns (uint32) {
+    return IndexPetComponent(getAddressById(components, IndexPetCompID)).getValue(entityID);
+  }
+
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
@@ -519,23 +524,21 @@ library LibPet {
     return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
   }
 
-  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
+  // get the last time a kami commited a Standard Action
+  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {
     TimeLastActionComponent comp = TimeLastActionComponent(
       getAddressById(components, TimeLastActCompID)
     );
-    if (!comp.has(id)) return 0;
-    return comp.getValue(id);
+    if (comp.has(id)) ts = comp.getValue(id);
   }
 
-  // NOTE: value should be set on Pet Reveal. check is insurance policy for backwards compatibility
+  // get the last time a kami commited a syncing Action
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    TimeLastComponent comp = TimeLastComponent(getAddressById(components, TimeLastCompID));
-    if (comp.has(id)) return comp.getValue(id);
-    else return 0;
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
   }
 
   // Get the implied roomIndex of a pet based on its state.
-  function getRoom(IUintComp components, uint256 id) public view returns (uint256 roomIndex) {
+  function getRoom(IUintComp components, uint256 id) public view returns (uint32 roomIndex) {
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {
@@ -610,18 +613,14 @@ library LibPet {
   // QUERIES
 
   // get the entity ID of a pet from its index (tokenID)
-  function indexToID(IUintComp components, uint256 index) internal view returns (uint256 result) {
+  // NOTE: this looks unreliable if we use pet index to identify pets on other entities
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
     uint256[] memory results = IndexPetComponent(getAddressById(components, IndexPetCompID))
       .getEntitiesWithValue(index);
     // assumes only 1 pet per index
     if (results.length > 0) {
       result = results[0];
     }
-  }
-
-  // get the index of a pet (aka its 721 tokenID) from its entity ID
-  function idToIndex(IUintComp components, uint256 entityID) internal view returns (uint256) {
-    return IndexPetComponent(getAddressById(components, IndexPetCompID)).getValue(entityID);
   }
 
   /// @notice retrieves the pet with the specified name

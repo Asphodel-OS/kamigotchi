@@ -10,7 +10,6 @@ import {
 } from '@latticexyz/recs';
 
 import { NetworkLayer } from 'layers/network/types';
-import { numberToHex } from 'utils/hex';
 import { Account, getAccount } from './Account';
 
 export interface Location {
@@ -48,12 +47,12 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
   let room: Room = {
     id: world.entities[index],
     entityIndex: index,
-    index: (getComponentValue(RoomIndex, index)?.value || (0 as number)) * 1,
+    index: getComponentValue(RoomIndex, index)?.value as number,
     name: getComponentValue(Name, index)?.value as string,
     location: {
-      x: (getComponentValue(Location, index)?.x as number) * 1,
-      y: (getComponentValue(Location, index)?.y as number) * 1,
-      z: (getComponentValue(Location, index)?.z as number) * 1,
+      x: getComponentValue(Location, index)?.x as number,
+      y: getComponentValue(Location, index)?.y as number,
+      z: getComponentValue(Location, index)?.z as number,
     },
     description: getComponentValue(Description, index)?.value as string,
   };
@@ -72,7 +71,7 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
   // pull players currently in room
   if (options?.players) {
     const accountResults = Array.from(
-      runQuery([Has(IsAccount), HasValue(RoomIndex, { value: numberToHex(room.index) })])
+      runQuery([Has(IsAccount), HasValue(RoomIndex, { value: room.index })])
     );
 
     room.players = accountResults.map((accountEntityIndex) => {
@@ -98,7 +97,7 @@ export const getExits = (network: NetworkLayer, room: Room): Room[] => {
   // console.log('exits1', exits);
 
   const storedExits = getComponentValue(Exits, room.entityIndex)
-    ? (getComponentValue(Exits, room.entityIndex)?.value as number[]).map((exit) => exit * 1)
+    ? (getComponentValue(Exits, room.entityIndex)?.value as number[])
     : [];
   // console.log('storedExits', storedExits);
   for (let i = 0; i < storedExits.length; i++) {
@@ -153,7 +152,7 @@ export const queryRoomsEntitiesX = (
 
   const toQuery: QueryFragment[] = [Has(IsRoom)];
 
-  if (options?.index) toQuery.push(HasValue(RoomIndex, { value: numberToHex(options.index) }));
+  if (options?.index) toQuery.push(HasValue(RoomIndex, { value: options.index }));
 
   if (options?.location)
     toQuery.push(

@@ -59,7 +59,7 @@ library LibAccount {
   }
 
   // Move the Account to a room
-  function move(IUintComp components, uint256 id, uint256 to) internal {
+  function move(IUintComp components, uint256 id, uint32 to) internal {
     StaminaCurrentComponent currStaminaComp = StaminaCurrentComponent(
       getAddressById(components, StaminaCurrCompID)
     );
@@ -208,7 +208,7 @@ library LibAccount {
   }
 
   // gets the roomIndex of a specified account account
-  function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexRoomComponent(getAddressById(components, RoomCompID)).getValue(id);
   }
 
@@ -281,8 +281,8 @@ library LibAccount {
   // QUERIES
 
   // Get the total number of accounts
-  function getTotal(IUintComp components) internal view returns (uint256) {
-    return getAll(components).length;
+  function getTotal(IUintComp components) internal view returns (uint32) {
+    return uint32(getAll(components).length);
   }
 
   // retrieves the pet with the specified name
