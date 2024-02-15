@@ -14,15 +14,15 @@ contract _RegistryCreateLootboxSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
+      uint32 index,
       string memory name,
       string memory description,
-      uint256[] memory keys,
+      uint32[] memory keys,
       uint256[] memory weights,
       string memory media
-    ) = abi.decode(arguments, (uint256, string, string, uint256[], uint256[], string));
+    ) = abi.decode(arguments, (uint32, string, string, uint32[], uint256[], string));
 
-    uint256 registryID = LibRegistryItem.getByItemIndex(components, index);
+    uint256 registryID = LibRegistryItem.getByIndex(components, index);
     require(registryID == 0, "CreateLootbox: index alr exists");
     require(!LibString.eq(name, ""), "CreateLootbox: name empty");
 
@@ -41,10 +41,10 @@ contract _RegistryCreateLootboxSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
+    uint32 index,
     string memory name,
     string memory description,
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256[] memory weights,
     string memory media
   ) public onlyOwner returns (bytes memory) {

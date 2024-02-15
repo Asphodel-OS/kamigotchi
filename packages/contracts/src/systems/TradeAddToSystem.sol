@@ -15,9 +15,9 @@ contract TradeAddToSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 tradeID, uint256 itemIndex, uint256 amt) = abi.decode(
+    (uint256 tradeID, uint32 itemIndex, uint256 amt) = abi.decode(
       arguments,
-      (uint256, uint256, uint256)
+      (uint256, uint32, uint256)
     );
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "TradeAddTo: no account");
@@ -39,7 +39,7 @@ contract TradeAddToSystem is System {
 
   function executeTyped(
     uint256 tradeID,
-    uint256 itemIndex,
+    uint32 itemIndex,
     uint256 amt
   ) public returns (bytes memory) {
     return execute(abi.encode(tradeID, itemIndex, amt));

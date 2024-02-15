@@ -32,19 +32,19 @@ contract MurderTest is SetupTemplate {
   // HELPER FUNCTIONS
 
   function _createFoodListings(uint32 npcIndex) internal {
-    uint itemIndex;
+    uint32 itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllFood(components);
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
+      itemIndex = LibRegistryItem.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
 
   function _createReviveListings(uint32 npcIndex) internal {
-    uint itemIndex;
+    uint32 itemIndex;
     uint[] memory registryIDs = LibRegistryItem.getAllRevive(components);
     for (uint i = 0; i < registryIDs.length; i++) {
-      itemIndex = LibRegistryItem.getItemIndex(components, registryIDs[i]);
+      itemIndex = LibRegistryItem.getIndex(components, registryIDs[i]);
       _listingIDs.push(_setListing(npcIndex, itemIndex, 10, 10));
     }
   }
@@ -342,7 +342,7 @@ contract MurderTest is SetupTemplate {
 
     // revive our pets and start their productions
     for (uint i = 0; i < numPets; i++) {
-      _revivePet(_petIDs[playerIndex][i], 1);
+      _revivePet(_petIDs[playerIndex][i], 1000); // hardcoded for now
       _fastForward(_idleRequirement);
       _startProduction(_petIDs[playerIndex][i], nodeID);
     }
@@ -426,7 +426,7 @@ contract MurderTest is SetupTemplate {
   //       // liquidate, revive, heal
   //       _liquidateProduction(attackerID, productionID);
   //       _fastForward(_idleRequirement);
-  //       _revivePet(victimID, 1);
+  //       _revivePet(victimID, 1000);
   //       _fastForward(_idleRequirement);
   //       _feedPet(victimID, 1);
   //       _fastForward(_idleRequirement);

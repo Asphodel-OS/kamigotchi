@@ -31,7 +31,7 @@ library LibListing {
     IWorld world,
     IUintComp components,
     uint32 npcIndex,
-    uint256 itemIndex,
+    uint32 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) internal returns (uint256) {
@@ -62,7 +62,7 @@ library LibListing {
     uint256 accountID,
     uint256 amt
   ) internal returns (bool) {
-    uint256 itemIndex = getItemIndex(components, id);
+    uint32 itemIndex = getItemIndex(components, id);
     uint256 price = getBuyPrice(components, id);
     if (price == 0) {
       return false;
@@ -81,7 +81,7 @@ library LibListing {
     uint256 accountID,
     uint256 amt
   ) internal returns (bool) {
-    uint256 itemIndex = getItemIndex(components, id);
+    uint32 itemIndex = getItemIndex(components, id);
     uint256 price = getSellPrice(components, id);
     if (price == 0) {
       return false;
@@ -138,7 +138,7 @@ library LibListing {
   }
 
   // return the item index of a listing
-  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
   }
 
@@ -159,7 +159,7 @@ library LibListing {
   function get(
     IUintComp components,
     uint256 merchantIndex,
-    uint256 itemIndex
+    uint32 itemIndex
   ) internal view returns (uint256 result) {
     uint256[] memory results = _getAllX(components, merchantIndex, itemIndex);
     if (results.length != 0) {
@@ -179,7 +179,7 @@ library LibListing {
   function _getAllX(
     IUintComp components,
     uint256 merchantIndex,
-    uint256 itemIndex
+    uint32 itemIndex
   ) internal view returns (uint256[] memory) {
     uint256 numFilters;
     if (merchantIndex != 0) numFilters++;
@@ -214,7 +214,7 @@ library LibListing {
     IWorld world,
     IUintComp components,
     uint256 accountID,
-    uint256 itemIndex,
+    uint32 itemIndex,
     uint256 amt
   ) internal {
     LibDataEntity.incFor(world, components, accountID, itemIndex, "ITEM_BUY", amt);
@@ -225,7 +225,7 @@ library LibListing {
     IWorld world,
     IUintComp components,
     uint256 accountID,
-    uint256 itemIndex,
+    uint32 itemIndex,
     uint256 amt
   ) internal {
     LibDataEntity.incFor(world, components, accountID, itemIndex, "ITEM_SELL", amt);

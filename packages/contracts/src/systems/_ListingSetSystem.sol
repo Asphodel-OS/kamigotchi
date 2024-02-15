@@ -15,13 +15,13 @@ contract _ListingSetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint32 npcIndex, uint256 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
+    (uint32 npcIndex, uint32 itemIndex, uint256 buyPrice, uint256 sellPrice) = abi.decode(
       arguments,
-      (uint32, uint256, uint256, uint256)
+      (uint32, uint32, uint256, uint256)
     );
 
     require(LibNPC.getByIndex(components, npcIndex) != 0, "NPC: does not exist");
-    require(LibRegistryItem.getByItemIndex(components, itemIndex) != 0, "Item: does not exist");
+    require(LibRegistryItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
     uint256 id = LibListing.get(components, npcIndex, itemIndex);
     if (id == 0)
@@ -32,7 +32,7 @@ contract _ListingSetSystem is System {
 
   function executeTyped(
     uint32 npcIndex,
-    uint256 itemIndex,
+    uint32 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) public onlyOwner returns (bytes memory) {

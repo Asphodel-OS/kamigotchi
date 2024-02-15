@@ -100,7 +100,7 @@ library LibAccount {
     IUintComp components,
     uint256 id,
     string memory _type,
-    uint256 index,
+    uint32 index,
     uint256 amount
   ) public {
     uint256 inventoryID;
@@ -109,14 +109,6 @@ library LibAccount {
       if (inventoryID == 0) inventoryID = LibInventory.create(world, components, id, index);
       LibInventory.inc(components, inventoryID, amount);
       LibInventory.logIncItemTotal(world, components, id, index, amount);
-    } else if (LibString.eq(_type, "MOD")) {
-      inventoryID = LibInventory.getMod(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.createMod(world, components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
-    } else if (LibString.eq(_type, "GEAR")) {
-      inventoryID = LibInventory.getGear(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.createGear(world, components, id, index);
-      LibInventory.inc(components, inventoryID, amount);
     } else if (LibString.eq(_type, "COIN")) {
       LibCoin.inc(components, id, amount);
     } else if (LibString.eq(_type, "MINT20")) {
@@ -256,15 +248,8 @@ library LibAccount {
     uint256 index
   ) public view returns (uint256 balance) {
     uint256 inventoryID;
-
     if (LibString.eq(_type, "ITEM")) {
-      inventoryID = LibInventory.get(components, id, index);
-      balance = LibInventory.getBalance(components, inventoryID);
-    } else if (LibString.eq(_type, "MOD")) {
-      inventoryID = LibInventory.getMod(components, id, index);
-      balance = LibInventory.getBalance(components, inventoryID);
-    } else if (LibString.eq(_type, "GEAR")) {
-      inventoryID = LibInventory.getGear(components, id, index);
+      inventoryID = LibInventory.get(components, id, uint32(index));
       balance = LibInventory.getBalance(components, inventoryID);
     } else if (LibString.eq(_type, "COIN")) {
       balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");

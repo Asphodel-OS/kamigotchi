@@ -7,7 +7,7 @@ contract NPCTest is SetupTemplate {
   // structure of Listing data for test purposes
   struct TestListingData {
     uint32 npcIndex;
-    uint itemIndex;
+    uint32 itemIndex;
     uint priceBuy;
     uint priceSell;
   }
@@ -356,7 +356,7 @@ contract NPCTest is SetupTemplate {
         testData.buyPrice = uint16(10 * (i + 3 * (j + 1))); // 20, 40, 60, 80 baseline, premium depending on npc
         listingIDs[i * testData.numItems + j] = _setListing(
           i,
-          j + 1,
+          uint32(j + 1),
           testData.buyPrice,
           testData.buyPrice / 2
         );
