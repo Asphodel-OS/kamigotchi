@@ -13,7 +13,7 @@ contract _RegistryDeleteQuestSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    uint256 index = abi.decode(arguments, (uint256));
+    uint32 index = abi.decode(arguments, (uint32));
     uint256 registryQuestID = LibRegistryQuests.getByQuestIndex(components, index);
     require(registryQuestID != 0, "Quest does not exist");
 
@@ -44,7 +44,7 @@ contract _RegistryDeleteQuestSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 index) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint32 index) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index));
   }
 }

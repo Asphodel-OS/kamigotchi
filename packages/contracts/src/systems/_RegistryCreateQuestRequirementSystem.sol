@@ -16,12 +16,12 @@ contract _RegistryCreateQuestRequirementSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 questIndex,
+      uint32 questIndex,
       string memory logicType,
       string memory type_,
-      uint256 index,
+      uint32 index,
       uint256 value
-    ) = abi.decode(arguments, (uint256, string, string, uint256, uint256));
+    ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
 
     // check that the quest exists
     uint256 questID = LibRegistryQuests.getByQuestIndex(components, questIndex);
@@ -43,10 +43,10 @@ contract _RegistryCreateQuestRequirementSystem is System {
   }
 
   function executeTyped(
-    uint256 questIndex,
+    uint32 questIndex,
     string memory logicType,
     string memory type_,
-    uint256 index,
+    uint32 index,
     uint256 value
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(questIndex, logicType, type_, index, value));

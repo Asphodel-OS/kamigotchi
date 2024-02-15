@@ -14,9 +14,9 @@ contract _RegistryCreateQuestRewardSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 questIndex, string memory type_, uint256 index, uint256 value) = abi.decode(
+    (uint32 questIndex, string memory type_, uint32 index, uint256 value) = abi.decode(
       arguments,
-      (uint256, string, uint256, uint256)
+      (uint32, string, uint32, uint256)
     );
 
     // check that the quest exists
@@ -33,9 +33,9 @@ contract _RegistryCreateQuestRewardSystem is System {
   }
 
   function executeTyped(
-    uint256 questIndex,
+    uint32 questIndex,
     string memory type_,
-    uint256 index, // can be empty
+    uint32 index, // can be empty
     uint256 value // can be empty
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(questIndex, type_, index, value));
