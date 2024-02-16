@@ -94,7 +94,6 @@ export function createComponents(world: World) {
     SkillIndex: defineNumberEZ('SkillIndex', 'component.Index.Skill'),
     SourceIndex: defineNumberEZ('SourceIndex', 'component.Index.Source'),
     TraitIndex: defineNumberEZ('PetIndex', 'component.Index.Trait'),
-
     BackgroundIndex: defineNumberEZ('BackgroundIndex', 'component.Index.Background'),
     BodyIndex: defineNumberEZ('BodyIndex', 'component.Index.Body'),
     ColorIndex: defineNumberEZ('ColorIndex', 'component.Index.Color'),
@@ -113,7 +112,6 @@ export function createComponents(world: World) {
     Exits: defineNumberArrayComponent(world, 'Exits', 'component.Exits'),
     Experience: defineNumberEZ('Experience', 'component.Experience'),
     For: defineNumberEZ('For', 'component.For'),
-    Genus: defineStringEZ('Genus', 'component.Genus'),
     Harmony: defineNumberEZ('Harmony', 'component.Harmony'),
     Health: defineNumberEZ('Health', 'component.Health'),
     HealthCurrent: defineNumberEZ('HealthCurrent', 'component.Health.Current'),
