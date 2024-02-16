@@ -14,7 +14,7 @@ contract _RegistryDeleteTraitSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
-    (uint256 index, string memory traitType) = abi.decode(arguments, (uint256, string));
+    (uint32 index, string memory traitType) = abi.decode(arguments, (uint32, string));
 
     uint256 traitID;
     if (LibString.eq(traitType, "BODY"))

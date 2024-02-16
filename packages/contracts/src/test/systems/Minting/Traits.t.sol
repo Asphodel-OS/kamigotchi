@@ -65,7 +65,7 @@ contract TraitsTest is SetupTemplate {
     return stats;
   }
 
-  function _getTraitWeight(uint traitIndex) internal view returns (uint) {
+  function _getTraitWeight(uint32 traitIndex) internal view returns (uint) {
     uint registryID = LibRegistryTrait.getByTraitIndex(components, traitIndex);
     uint tier = LibStat.getRarity(components, registryID);
     return (tier > 0) ? 3 ** (tier - 1) : 0;

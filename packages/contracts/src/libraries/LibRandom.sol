@@ -99,13 +99,13 @@ library LibRandom {
   }
 
   /// @notice picks an item from unweighted array
-  function selectFrom(uint256[] memory keys, uint256 randN) internal pure returns (uint256) {
+  function selectFrom(uint32[] memory keys, uint256 randN) internal pure returns (uint256) {
     return keys[randN % keys.length];
   }
 
   /// @notice picks multiple results from unweighted array, with replacement
   function selectMultipleFrom(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256 randN,
     uint256 count
   ) internal pure returns (uint256[] memory) {
@@ -122,7 +122,7 @@ library LibRandom {
 
   /// @notice picks multiple results from unweighted array, without replacement
   function selectMultipleFromNoReplacement(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256 randN,
     uint256 count
   ) internal pure returns (uint256[] memory) {
@@ -144,7 +144,7 @@ library LibRandom {
 
   /// @notice picks multiple results from unweighted array, without replacement
   function selectMultipleFromNoReplacement(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256[] memory randNs
   ) internal pure returns (uint256[] memory) {
     uint256 max = keys.length;
@@ -169,15 +169,15 @@ library LibRandom {
   // select an item from a weighted list of options
 
   /// @notice picks from a weighted random array based on a random input
-  /// @param keys     keys, position correspnds to weights
+  /// @param keys     keys, position correspnds to weights (assume uint32 indicies)
   /// @param weights  the weights for each item
   /// @param randN    the input random number
   /// @return         the selected key
   function selectFromWeighted(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256[] memory weights,
     uint256 randN
-  ) internal pure returns (uint256) {
+  ) internal pure returns (uint32) {
     uint256 totalWeight;
     for (uint256 i; i < weights.length; i++) {
       totalWeight += weights[i];
@@ -250,13 +250,13 @@ library LibRandom {
     uint256[] memory weights,
     uint256 totalWeight,
     uint256 randN
-  ) internal pure returns (uint256) {
+  ) internal pure returns (uint32) {
     // roll for the constrained random number
     uint256 roll = randN % totalWeight;
 
     // iterate to find item
     uint256 currentWeight;
-    for (uint256 i; i < weights.length; i++) {
+    for (uint32 i; i < weights.length; i++) {
       currentWeight += weights[i];
       if (roll < currentWeight) {
         return (i);
@@ -378,7 +378,7 @@ library LibRandom {
   }
 
   // converts a regular array to a bitpacked array
-  function packArray(uint256[] memory arr, uint256 SIZE) internal pure returns (uint256) {
+  function packArray(uint32[] memory arr, uint256 SIZE) internal pure returns (uint256) {
     uint256 result;
     for (uint256 i; i < arr.length; i++) {
       require(arr[i] < (1 << SIZE) - 1, "max over limit");
