@@ -250,13 +250,13 @@ library LibRandom {
     uint256[] memory weights,
     uint256 totalWeight,
     uint256 randN
-  ) internal pure returns (uint32) {
+  ) internal pure returns (uint256) {
     // roll for the constrained random number
     uint256 roll = randN % totalWeight;
 
     // iterate to find item
     uint256 currentWeight;
-    for (uint32 i; i < weights.length; i++) {
+    for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
       if (roll < currentWeight) {
         return (i);
