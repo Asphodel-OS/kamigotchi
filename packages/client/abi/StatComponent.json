@@ -7,6 +7,136 @@
           "name": "world",
           "type": "address",
           "internalType": "address"
+        },
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "adjustBase",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "adjustLast",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        },
+        {
+          "name": "max",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "adjustLast",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "adjustMult",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "adjustShift",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
         }
       ],
       "stateMutability": "nonpayable"
@@ -23,6 +153,25 @@
       ],
       "outputs": [],
       "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "calcTotal",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "view"
     },
     {
       "type": "function",
@@ -106,8 +255,30 @@
       "outputs": [
         {
           "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "tuple",
+          "internalType": "struct Stat",
+          "components": [
+            {
+              "name": "base",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "shift",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "mult",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "last",
+              "type": "int32",
+              "internalType": "int32"
+            }
+          ]
         }
       ],
       "stateMutability": "view"
@@ -207,8 +378,30 @@
         },
         {
           "name": "value",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "tuple",
+          "internalType": "struct Stat",
+          "components": [
+            {
+              "name": "base",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "shift",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "mult",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "last",
+              "type": "int32",
+              "internalType": "int32"
+            }
+          ]
         }
       ],
       "outputs": [],
@@ -331,7 +524,13 @@
     }
   ],
   "methodIdentifiers": {
+    "adjustBase(uint256,int32)": "e3508538",
+    "adjustLast(uint256,int32)": "f88252af",
+    "adjustLast(uint256,int32,int32)": "0a60ac38",
+    "adjustMult(uint256,int32)": "767ca5ca",
+    "adjustShift(uint256,int32)": "9f9cf580",
     "authorizeWriter(address)": "4fef6a38",
+    "calcTotal(uint256)": "af6128c2",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
     "getRawValue(uint256)": "b8bc073d",
@@ -343,8 +542,8 @@
     "registerIndexer(address)": "75c0669c",
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
+    "set(uint256,(int32,int32,int32,int32))": "32e5cc30",
     "set(uint256,bytes)": "8b282947",
-    "set(uint256,uint256)": "1ab06ee5",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "world()": "30b67baa",

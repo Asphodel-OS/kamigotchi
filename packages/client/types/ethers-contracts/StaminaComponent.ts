@@ -27,9 +27,29 @@ import type {
   TypedListener,
 } from "./common";
 
+export type StatStruct = {
+  base: PromiseOrValue<BigNumberish>;
+  shift: PromiseOrValue<BigNumberish>;
+  mult: PromiseOrValue<BigNumberish>;
+  last: PromiseOrValue<BigNumberish>;
+};
+
+export type StatStructOutput = [number, number, number, number] & {
+  base: number;
+  shift: number;
+  mult: number;
+  last: number;
+};
+
 export interface StaminaComponentInterface extends utils.Interface {
   functions: {
+    "adjustBase(uint256,int32)": FunctionFragment;
+    "adjustLast(uint256,int32,int32)": FunctionFragment;
+    "adjustLast(uint256,int32)": FunctionFragment;
+    "adjustMult(uint256,int32)": FunctionFragment;
+    "adjustShift(uint256,int32)": FunctionFragment;
     "authorizeWriter(address)": FunctionFragment;
+    "calcTotal(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
@@ -41,7 +61,7 @@ export interface StaminaComponentInterface extends utils.Interface {
     "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "set(uint256,uint256)": FunctionFragment;
+    "set(uint256,(int32,int32,int32,int32))": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
@@ -51,7 +71,13 @@ export interface StaminaComponentInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "adjustBase"
+      | "adjustLast(uint256,int32,int32)"
+      | "adjustLast(uint256,int32)"
+      | "adjustMult"
+      | "adjustShift"
       | "authorizeWriter"
+      | "calcTotal"
       | "getEntities"
       | "getEntitiesWithValue"
       | "getRawValue"
@@ -63,7 +89,7 @@ export interface StaminaComponentInterface extends utils.Interface {
       | "registerIndexer"
       | "registerWorld"
       | "remove"
-      | "set(uint256,uint256)"
+      | "set(uint256,(int32,int32,int32,int32))"
       | "set(uint256,bytes)"
       | "transferOwnership"
       | "unauthorizeWriter"
@@ -72,8 +98,36 @@ export interface StaminaComponentInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "adjustBase",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adjustLast(uint256,int32,int32)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adjustLast(uint256,int32)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adjustMult",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adjustShift",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "authorizeWriter",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calcTotal",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntities",
@@ -111,8 +165,8 @@ export interface StaminaComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "set(uint256,(int32,int32,int32,int32))",
+    values: [PromiseOrValue<BigNumberish>, StatStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
@@ -132,10 +186,25 @@ export interface StaminaComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "adjustBase", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "adjustLast(uint256,int32,int32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "adjustLast(uint256,int32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "adjustMult", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "adjustShift",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "authorizeWriter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "calcTotal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
     data: BytesLike
@@ -163,7 +232,7 @@ export interface StaminaComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint256)",
+    functionFragment: "set(uint256,(int32,int32,int32,int32))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -230,10 +299,46 @@ export interface StaminaComponent extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    adjustBase(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "adjustLast(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "adjustLast(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    adjustMult(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    adjustShift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
@@ -254,7 +359,7 @@ export interface StaminaComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[StatStructOutput]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -280,9 +385,9 @@ export interface StaminaComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -310,10 +415,46 @@ export interface StaminaComponent extends BaseContract {
     ): Promise<[boolean]>;
   };
 
+  adjustBase(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "adjustLast(uint256,int32,int32)"(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    max: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "adjustLast(uint256,int32)"(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  adjustMult(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  adjustShift(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   authorizeWriter(
     writer: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  calcTotal(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -334,7 +475,7 @@ export interface StaminaComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<StatStructOutput>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -360,9 +501,9 @@ export interface StaminaComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,uint256)"(
+  "set(uint256,(int32,int32,int32,int32))"(
     entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
+    value: StatStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -390,10 +531,46 @@ export interface StaminaComponent extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    adjustBase(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "adjustLast(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "adjustLast(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    adjustMult(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    adjustShift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -414,7 +591,7 @@ export interface StaminaComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<StatStructOutput>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -440,9 +617,9 @@ export interface StaminaComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -482,9 +659,45 @@ export interface StaminaComponent extends BaseContract {
   };
 
   estimateGas: {
+    adjustBase(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "adjustLast(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "adjustLast(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    adjustMult(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    adjustShift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
@@ -530,9 +743,9 @@ export interface StaminaComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -561,9 +774,45 @@ export interface StaminaComponent extends BaseContract {
   };
 
   populateTransaction: {
+    adjustBase(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "adjustLast(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "adjustLast(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adjustMult(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adjustShift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -609,9 +858,9 @@ export interface StaminaComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
