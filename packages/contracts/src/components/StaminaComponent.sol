@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "std-contracts/components/Uint256BareComponent.sol";
+import "components/types/StatComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Stamina"));
+uint256 constant ID = uint256(keccak256("component.stat.stamina"));
 
 // the total stamina of an entity
-contract StaminaComponent is Uint256BareComponent {
-  constructor(address world) Uint256BareComponent(world, ID) {}
+contract StaminaComponent is StatComponent {
+  constructor(address world) StatComponent(world, ID) {}
 }

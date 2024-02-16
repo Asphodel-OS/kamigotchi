@@ -96,7 +96,6 @@
     "SkillPointComponent",
     "SlotsComponent",
     "StaminaComponent",
-    "StaminaCurrentComponent",
     "StateComponent",
     "SubtypeComponent",
     "TimeComponent",
@@ -436,7 +435,6 @@
       "writeAccess": [
         "IndexRoomComponent",
         "StaminaComponent",
-        "StaminaCurrentComponent",
         "TimeLastComponent",
         "TimeLastActionComponent"
       ]
@@ -452,7 +450,6 @@
         "IndexRoomComponent",
         "NameComponent",
         "StaminaComponent",
-        "StaminaCurrentComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
         "TimeStartComponent"
@@ -683,7 +680,6 @@
         "NameComponent",
         "ProxyPermissionsERC721Component",
         "StaminaComponent",
-        "StaminaCurrentComponent",
         "StateComponent",
         "TimeLastComponent",
         "TypeComponent",
