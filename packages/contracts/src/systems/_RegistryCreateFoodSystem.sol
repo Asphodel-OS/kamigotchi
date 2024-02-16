@@ -19,10 +19,10 @@ contract _RegistryCreateFoodSystem is System {
       uint32 index,
       string memory name,
       string memory description,
-      uint256 health,
+      int32 health,
       uint256 experience,
       string memory media
-    ) = abi.decode(arguments, (uint32, string, string, uint256, uint256, string));
+    ) = abi.decode(arguments, (uint32, string, string, int32, uint256, string));
     uint256 registryID = LibRegistryItem.getByIndex(components, index);
 
     require(!LibString.eq(name, ""), "CreateFood: name cannot be empty");
@@ -46,7 +46,7 @@ contract _RegistryCreateFoodSystem is System {
     uint32 index,
     string memory name,
     string memory description,
-    uint256 health,
+    int32 health,
     uint256 experience,
     string memory media
   ) public onlyOwner returns (bytes memory) {

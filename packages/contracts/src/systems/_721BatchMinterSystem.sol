@@ -16,7 +16,6 @@ import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComp
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
-import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
@@ -107,7 +106,6 @@ abstract contract TraitHandler {
   IndexHandComponent internal immutable indexHandComp;
 
   HealthComponent internal immutable healthComp;
-  HealthCurrentComponent internal immutable healthCurrentComp;
   PowerComponent internal immutable powerComp;
   ViolenceComponent internal immutable violenceComp;
   HarmonyComponent internal immutable harmonyComp;
@@ -123,7 +121,6 @@ abstract contract TraitHandler {
     indexHandComp = IndexHandComponent(getAddressById(components, IndexHandCompID));
 
     healthComp = HealthComponent(getAddressById(components, HealthCompID));
-    healthCurrentComp = HealthCurrentComponent(getAddressById(components, HealthCurrentCompID));
     powerComp = PowerComponent(getAddressById(components, PowerCompID));
     violenceComp = ViolenceComponent(getAddressById(components, ViolenceCompID));
     harmonyComp = HarmonyComponent(getAddressById(components, HarmonyCompID));
@@ -169,7 +166,6 @@ abstract contract TraitHandler {
     base.slots += delta.slots;
 
     healthComp.set(id, abi.encode(base.health));
-    healthCurrentComp.set(id, abi.encode(base.health));
     powerComp.set(id, abi.encode(base.power));
     violenceComp.set(id, abi.encode(base.violence));
     harmonyComp.set(id, abi.encode(base.harmony));
@@ -253,11 +249,11 @@ abstract contract TraitHandler {
   function _getTraitStats(uint256 id) public returns (TraitStats memory) {
     return
       TraitStats(
-        uint8(healthComp.has(id) ? healthComp.getValue(id) : 0),
-        uint8(powerComp.has(id) ? powerComp.getValue(id) : 0),
-        uint8(violenceComp.has(id) ? violenceComp.getValue(id) : 0),
-        uint8(harmonyComp.has(id) ? harmonyComp.getValue(id) : 0),
-        uint8(slotsComp.has(id) ? slotsComp.getValue(id) : 0)
+        uint8(healthComp.has(id) ? uint8(int8(healthComp.getValue(id).base)) : 0),
+        uint8(powerComp.has(id) ? uint8(int8(powerComp.getValue(id).base)) : 0),
+        uint8(violenceComp.has(id) ? uint8(int8(violenceComp.getValue(id).base)) : 0),
+        uint8(harmonyComp.has(id) ? uint8(int8(harmonyComp.getValue(id).base)) : 0),
+        uint8(slotsComp.has(id) ? uint8(int8(slotsComp.getValue(id).base)) : 0)
       );
   }
 

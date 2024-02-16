@@ -90,7 +90,7 @@ library LibRegistryItem {
     uint32 index,
     string memory name,
     string memory description,
-    uint256 health,
+    int32 health,
     uint256 experience,
     string memory mediaURI
   ) internal returns (uint256) {
@@ -117,7 +117,7 @@ library LibRegistryItem {
     uint32 index,
     string memory name,
     string memory description,
-    uint256 health,
+    int32 health,
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();

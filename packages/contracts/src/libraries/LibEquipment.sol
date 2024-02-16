@@ -183,42 +183,42 @@ library LibEquipment {
 
   // Get the harmony of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getHarmony(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getHarmony(IUintComp components, uint256 id) internal view returns (int32) {
     if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      return LibStat.getHarmony(components, registryID);
+      return LibStat.getHarmonyTotal(components, registryID);
     }
-    return LibStat.getHarmony(components, id);
+    return LibStat.getHarmonyTotal(components, id);
   }
 
   // Get the health of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getHealth(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getHealth(IUintComp components, uint256 id) internal view returns (int32) {
     if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      return LibStat.getPower(components, registryID);
+      return LibStat.getPowerTotal(components, registryID);
     }
-    return LibStat.getPower(components, id);
+    return LibStat.getPowerTotal(components, id);
   }
 
   // Get the power of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getPower(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getPower(IUintComp components, uint256 id) internal view returns (int32) {
     if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      return LibStat.getPower(components, registryID);
+      return LibStat.getPowerTotal(components, registryID);
     }
-    return LibStat.getPower(components, id);
+    return LibStat.getPowerTotal(components, id);
   }
 
   // Get the violence of the equipped item. For fungible items we retrieve the stat from the
   // registry. For non-fungible items we retrieve the stat from the item itself.
-  function getViolence(IUintComp components, uint256 id) internal view returns (uint256) {
+  function getViolence(IUintComp components, uint256 id) internal view returns (int32) {
     if (isFungible(components, id)) {
       uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      return LibStat.getViolence(components, registryID);
+      return LibStat.getViolenceTotal(components, registryID);
     }
-    return LibStat.getViolence(components, id);
+    return LibStat.getViolenceTotal(components, id);
   }
 
   /////////////////

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
@@ -34,6 +35,26 @@ library LibStat {
     for (uint256 i = 0; i < componentIDs.length; i++) {
       getComponentById(components, componentIDs[i]).remove(id);
     }
+  }
+
+  // adjust the shift field of a specified stat type
+  function adjustShift(
+    IUintComp components,
+    uint256 id,
+    string memory type_,
+    int32 amt
+  ) internal returns (int32) {
+    getStatComponent(components, type_).adjustShift(id, amt);
+  }
+
+  // adjust the multiplier field of a specified stat type (1e3 decimals of precision)
+  function adjustMult(
+    IUintComp components,
+    uint256 id,
+    string memory type_,
+    int32 amt
+  ) internal returns (int32) {
+    getStatComponent(components, type_).adjustMult(id, amt);
   }
 
   /////////////////
@@ -100,9 +121,17 @@ library LibStat {
     return HarmonyComponent(getAddressById(components, HarmonyCompID)).getValue(id);
   }
 
+  function getHarmonyTotal(IUintComp components, uint256 id) internal view returns (int32) {
+    return HarmonyComponent(getAddressById(components, HarmonyCompID)).calcTotal(id);
+  }
+
   function getHealth(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasHealth(components, id)) return Stat(0, 0, 0, 0);
     return HealthComponent(getAddressById(components, HealthCompID)).getValue(id);
+  }
+
+  function getHealthTotal(IUintComp components, uint256 id) internal view returns (int32) {
+    return HealthComponent(getAddressById(components, HealthCompID)).calcTotal(id);
   }
 
   function getPower(IUintComp components, uint256 id) internal view returns (Stat memory) {
@@ -110,9 +139,17 @@ library LibStat {
     return PowerComponent(getAddressById(components, PowerCompID)).getValue(id);
   }
 
+  function getPowerTotal(IUintComp components, uint256 id) internal view returns (int32) {
+    return PowerComponent(getAddressById(components, PowerCompID)).calcTotal(id);
+  }
+
   function getSlots(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasSlots(components, id)) return Stat(0, 0, 0, 0);
     return SlotsComponent(getAddressById(components, SlotsCompID)).getValue(id);
+  }
+
+  function getSlotsTotal(IUintComp components, uint256 id) internal view returns (int32) {
+    return SlotsComponent(getAddressById(components, SlotsCompID)).calcTotal(id);
   }
 
   function getStamina(IUintComp components, uint256 id) internal view returns (Stat memory) {
@@ -120,36 +157,86 @@ library LibStat {
     return StaminaComponent(getAddressById(components, StaminaCompID)).getValue(id);
   }
 
+  function getStaminaTotal(IUintComp components, uint256 id) internal view returns (int32) {
+    return StaminaComponent(getAddressById(components, StaminaCompID)).calcTotal(id);
+  }
+
   function getViolence(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasViolence(components, id)) return Stat(0, 0, 0, 0);
     return ViolenceComponent(getAddressById(components, ViolenceCompID)).getValue(id);
   }
 
+  function getViolenceTotal(IUintComp components, uint256 id) internal view returns (int32) {
+    return ViolenceComponent(getAddressById(components, ViolenceCompID)).calcTotal(id);
+  }
+
   /////////////////
   // SETTERS
 
+  // set the harmony stat struct of an entity
   function setHarmony(IUintComp components, uint256 id, Stat memory value) internal {
     HarmonyComponent(getAddressById(components, HarmonyCompID)).set(id, value);
   }
 
+  // instantiates a harmony stat with the specified base value
+  function setHarmony(IUintComp components, uint256 id, int32 value) internal {
+    Stat memory stat = Stat(value, 0, 0, 0);
+    setHarmony(components, id, stat);
+  }
+
+  // set the health stat struct of an entity
   function setHealth(IUintComp components, uint256 id, Stat memory value) internal {
     HealthComponent(getAddressById(components, HealthCompID)).set(id, value);
   }
 
+  // instantiates a health stat with the specified base and last value
+  function setHealth(IUintComp components, uint256 id, int32 value) internal {
+    Stat memory stat = Stat(value, 0, 0, value);
+    setHealth(components, id, stat);
+  }
+
+  // set the power stat struct of an entity
   function setPower(IUintComp components, uint256 id, Stat memory value) internal {
     PowerComponent(getAddressById(components, PowerCompID)).set(id, value);
   }
 
+  // instantiates a power stat with the specified base value
+  function setPower(IUintComp components, uint256 id, int32 value) internal {
+    Stat memory stat = Stat(value, 0, 0, 0);
+    setPower(components, id, stat);
+  }
+
+  // set the slots stat struct of an entity
   function setSlots(IUintComp components, uint256 id, Stat memory value) internal {
     SlotsComponent(getAddressById(components, SlotsCompID)).set(id, value);
   }
 
+  // instantiates a slots stat with the specified base and last value
+  function setSlots(IUintComp components, uint256 id, int32 value) internal {
+    Stat memory stat = Stat(value, 0, 0, value);
+    setSlots(components, id, stat);
+  }
+
+  // set the stamina stat struct of an entity
   function setStamina(IUintComp components, uint256 id, Stat memory value) internal {
     StaminaComponent(getAddressById(components, StaminaCompID)).set(id, value);
   }
 
+  // instantiates a stamina stat with the specified base and last value
+  function setStamina(IUintComp components, uint256 id, int32 value) internal {
+    Stat memory stat = Stat(value, 0, 0, value);
+    setStamina(components, id, stat);
+  }
+
+  // set the violence stat struct of an entity
   function setViolence(IUintComp components, uint256 id, Stat memory value) internal {
     ViolenceComponent(getAddressById(components, ViolenceCompID)).set(id, value);
+  }
+
+  // instantiates a violence stat with the specified base value
+  function setViolence(IUintComp components, uint256 id, int32 value) internal {
+    Stat memory stat = Stat(value, 0, 0, 0);
+    setViolence(components, id, stat);
   }
 
   /////////////////
@@ -177,5 +264,27 @@ library LibStat {
 
   function unsetViolence(IUintComp components, uint256 id) internal {
     if (hasViolence(components, id)) getComponentById(components, ViolenceCompID).remove(id);
+  }
+
+  ////////////////////
+  // COMPONENT GETTERS
+
+  function getStatComponent(
+    IUintComp components,
+    string memory type_
+  ) public returns (StatComponent) {
+    if (LibString.eq(type_, "HEALTH"))
+      return HealthComponent(getAddressById(components, HealthCompID));
+    if (LibString.eq(type_, "POWER"))
+      return PowerComponent(getAddressById(components, PowerCompID));
+    if (LibString.eq(type_, "HARMONY"))
+      return HarmonyComponent(getAddressById(components, HarmonyCompID));
+    if (LibString.eq(type_, "VIOLENCE"))
+      return ViolenceComponent(getAddressById(components, ViolenceCompID));
+    if (LibString.eq(type_, "SLOTS"))
+      return SlotsComponent(getAddressById(components, SlotsCompID));
+    if (LibString.eq(type_, "STAMINA"))
+      return StaminaComponent(getAddressById(components, StaminaCompID));
+    revert("LibStat: invalid stat type");
   }
 }

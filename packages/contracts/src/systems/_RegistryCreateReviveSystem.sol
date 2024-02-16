@@ -19,9 +19,9 @@ contract _RegistryCreateReviveSystem is System {
       uint32 index,
       string memory name,
       string memory description,
-      uint256 health,
+      int32 health,
       string memory media
-    ) = abi.decode(arguments, (uint32, string, string, uint256, string));
+    ) = abi.decode(arguments, (uint32, string, string, int32, string));
     uint256 registryID = LibRegistryItem.getByIndex(components, index);
 
     require(registryID == 0, "CreateRevive: index alr exists");
@@ -37,7 +37,7 @@ contract _RegistryCreateReviveSystem is System {
     uint32 index,
     string memory name,
     string memory description,
-    uint256 health,
+    int32 health,
     string memory media
   ) public onlyOwner returns (bytes memory) {
     return execute(abi.encode(index, name, description, health, media));

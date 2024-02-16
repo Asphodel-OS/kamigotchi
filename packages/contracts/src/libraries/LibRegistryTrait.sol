@@ -35,11 +35,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 bodyIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
@@ -71,11 +71,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 backgroundIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -105,11 +105,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 colorIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -139,11 +139,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 faceIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -173,11 +173,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 handIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
@@ -209,11 +209,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 bodyIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
@@ -253,11 +253,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 backgroundIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity
   ) internal returns (uint256) {
     uint256 id = getByBackgroundIndex(components, backgroundIndex);
@@ -293,11 +293,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 colorIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity
   ) internal returns (uint256) {
     uint256 id = getByColorIndex(components, colorIndex);
@@ -333,11 +333,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 faceIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity
   ) internal returns (uint256) {
     uint256 id = getByFaceIndex(components, faceIndex);
@@ -373,11 +373,11 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 handIndex,
     string memory name,
-    uint256 health,
-    uint256 power,
-    uint256 violence,
-    uint256 harmony,
-    uint256 slots,
+    int32 health,
+    int32 power,
+    int32 violence,
+    int32 harmony,
+    int32 slots,
     uint256 rarity,
     string memory affinity
   ) internal returns (uint256) {
