@@ -44,7 +44,7 @@ library LibStat {
     string memory type_,
     int32 amt
   ) internal returns (int32) {
-    getStatComponent(components, type_).adjustShift(id, amt);
+    return getStatComponent(components, type_).adjustShift(id, amt);
   }
 
   // adjust the multiplier field of a specified stat type (1e3 decimals of precision)
@@ -54,7 +54,7 @@ library LibStat {
     string memory type_,
     int32 amt
   ) internal returns (int32) {
-    getStatComponent(components, type_).adjustMult(id, amt);
+    return getStatComponent(components, type_).adjustMult(id, amt);
   }
 
   /////////////////
