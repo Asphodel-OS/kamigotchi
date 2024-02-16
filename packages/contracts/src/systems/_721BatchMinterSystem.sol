@@ -156,11 +156,7 @@ abstract contract TraitHandler {
   function _setPetStats(
     uint256 id,
     uint32[] memory traits,
-<<<<<<< HEAD
     uint32[] memory offsets,
-=======
-    uint256[] memory offsets,
->>>>>>> c2149962 (convert trait indices and 'keys' refs to uint32)
     TraitStats[] memory stats
   ) internal {
     TraitStats memory base = TraitStats(50, 10, 10, 10, 0); // base stats

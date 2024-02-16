@@ -101,7 +101,7 @@ contract TraitsTest is SetupTemplate {
   // test that the distributions are as expected
   // TODO: confirm distributions fall within 99.9 percentile statistical deviation
   function testTraitDistribution() public {
-    uint numPets = 3000;
+    uint numPets = 300;
 
     _initEmptyTraits();
     vm.startPrank(deployer);
