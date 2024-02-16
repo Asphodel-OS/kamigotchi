@@ -994,6 +994,7 @@
     "LibProduction",
     "LibQuests",
     "LibRandom",
+    "LibRarity",
     "LibRegistryAffinity",
     "LibRegistryItem",
     "LibRegistryQuests",

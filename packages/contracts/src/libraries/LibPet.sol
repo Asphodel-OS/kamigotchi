@@ -14,6 +14,7 @@ import { CanNameComponent, ID as CanNameCompID } from "components/CanNameCompone
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
 import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -518,6 +519,13 @@ library LibPet {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
   }
 
+  // null string might not be very useful, may be better for a has check
+  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
+    AffinityComponent comp = AffinityComponent(getAddressById(components, AffinityCompID));
+    if (!comp.has(id)) return "";
+    return comp.getValue(id);
+  }
+
   // gets the last explicitly set health of a pet. naming discrepancy for clarity
   function getLastHealth(IUintComp components, uint256 id) internal view returns (uint256) {
     return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
@@ -591,8 +599,8 @@ library LibPet {
     string[] memory affinities = new string[](2);
     uint256 bodyRegistryID = LibRegistryTrait.getBodyOf(components, id);
     uint256 handRegistryID = LibRegistryTrait.getHandOf(components, id);
-    affinities[0] = LibStat.getAffinity(components, bodyRegistryID);
-    affinities[1] = LibStat.getAffinity(components, handRegistryID);
+    affinities[0] = getAffinity(components, bodyRegistryID);
+    affinities[1] = getAffinity(components, handRegistryID);
     return affinities;
   }
 

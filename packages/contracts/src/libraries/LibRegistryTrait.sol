@@ -15,15 +15,15 @@ import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceC
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
-import { LibStat } from "libraries/LibStat.sol";
 import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRarity } from "libraries/LibRarity.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 // LibRegistryTrait is based heavily off LibRegistryItem, but is used for traits.
-// All traits are considered fungible and are not compeitiable with the inventory layer but default, but can be added.
-// Traits are compatible with stats and LibStat.
-// IndexTrait is the domain index is automatically incremented
+// IndexTrait is the automatically incremented domain index, but traits are
+// more commonly identified by the specific index (e.g. body, hand, color index)
 
 library LibRegistryTrait {
   /////////////////
@@ -224,25 +224,25 @@ library LibRegistryTrait {
     setName(components, id, name);
 
     if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
+    else LibStat.unsetHealth(components, id);
 
     if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
+    else LibStat.unsetPower(components, id);
 
     if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
+    else LibStat.unsetViolence(components, id);
 
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
+    else LibStat.unsetHarmony(components, id);
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
+    else LibStat.unsetSlots(components, id);
 
-    if (rarity > 0) LibStat.setRarity(components, id, rarity);
-    else LibStat.removeRarity(components, id);
+    if (rarity > 0) LibRarity.set(components, id, rarity);
+    else LibRarity.unset(components, id);
 
-    if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
-    else LibStat.removeAffinity(components, id);
+    if (!LibString.eq(affinity, "")) setAffinity(components, id, affinity);
+    else unsetAffinity(components, id);
 
     return id;
   }
@@ -267,22 +267,22 @@ library LibRegistryTrait {
     setName(components, id, name);
 
     if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
+    else LibStat.unsetHealth(components, id);
 
     if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
+    else LibStat.unsetPower(components, id);
 
     if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
+    else LibStat.unsetViolence(components, id);
 
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
+    else LibStat.unsetHarmony(components, id);
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
+    else LibStat.unsetSlots(components, id);
 
-    if (rarity > 0) LibStat.setRarity(components, id, rarity);
-    else LibStat.removeRarity(components, id);
+    if (rarity > 0) LibRarity.set(components, id, rarity);
+    else LibRarity.unset(components, id);
 
     return id;
   }
@@ -307,22 +307,22 @@ library LibRegistryTrait {
     setName(components, id, name);
 
     if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
+    else LibStat.unsetHealth(components, id);
 
     if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
+    else LibStat.unsetPower(components, id);
 
     if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
+    else LibStat.unsetViolence(components, id);
 
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
+    else LibStat.unsetHarmony(components, id);
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
+    else LibStat.unsetSlots(components, id);
 
-    if (rarity > 0) LibStat.setRarity(components, id, rarity);
-    else LibStat.removeRarity(components, id);
+    if (rarity > 0) LibRarity.set(components, id, rarity);
+    else LibRarity.unset(components, id);
 
     return id;
   }
@@ -347,22 +347,22 @@ library LibRegistryTrait {
     setName(components, id, name);
 
     if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
+    else LibStat.unsetHealth(components, id);
 
     if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
+    else LibStat.unsetPower(components, id);
 
     if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
+    else LibStat.unsetViolence(components, id);
 
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
+    else LibStat.unsetHarmony(components, id);
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
+    else LibStat.unsetSlots(components, id);
 
-    if (rarity > 0) LibStat.setRarity(components, id, rarity);
-    else LibStat.removeRarity(components, id);
+    if (rarity > 0) LibRarity.set(components, id, rarity);
+    else LibRarity.unset(components, id);
 
     return id;
   }
@@ -388,25 +388,25 @@ library LibRegistryTrait {
     setName(components, id, name);
 
     if (health > 0) LibStat.setHealth(components, id, health);
-    else LibStat.removeHealth(components, id);
+    else LibStat.unsetHealth(components, id);
 
     if (power > 0) LibStat.setPower(components, id, power);
-    else LibStat.removePower(components, id);
+    else LibStat.unsetPower(components, id);
 
     if (violence > 0) LibStat.setViolence(components, id, violence);
-    else LibStat.removeViolence(components, id);
+    else LibStat.unsetViolence(components, id);
 
     if (harmony > 0) LibStat.setHarmony(components, id, harmony);
-    else LibStat.removeHarmony(components, id);
+    else LibStat.unsetHarmony(components, id);
 
     if (slots > 0) LibStat.setSlots(components, id, slots);
-    else LibStat.removeSlots(components, id);
+    else LibStat.unsetSlots(components, id);
 
-    if (rarity > 0) LibStat.setRarity(components, id, rarity);
-    else LibStat.removeRarity(components, id);
+    if (rarity > 0) LibRarity.set(components, id, rarity);
+    else LibRarity.unset(components, id);
 
-    if (!LibString.eq(affinity, "")) LibStat.setAffinity(components, id, affinity);
-    else LibStat.removeAffinity(components, id);
+    if (!LibString.eq(affinity, "")) setAffinity(components, id, affinity);
+    else unsetAffinity(components, id);
 
     return id;
   }
@@ -426,13 +426,13 @@ library LibRegistryTrait {
     if (isHand(components, id))
       IndexHandComponent(getAddressById(components, IndexHandCompID)).remove(id);
 
-    LibStat.removeHealth(components, id);
-    LibStat.removePower(components, id);
-    LibStat.removeViolence(components, id);
-    LibStat.removeHarmony(components, id);
-    LibStat.removeSlots(components, id);
-    LibStat.removeRarity(components, id);
-    LibStat.removeAffinity(components, id);
+    LibStat.unsetHealth(components, id);
+    LibStat.unsetPower(components, id);
+    LibStat.unsetViolence(components, id);
+    LibStat.unsetHarmony(components, id);
+    LibStat.unsetSlots(components, id);
+    LibRarity.unset(components, id);
+    unsetAffinity(components, id);
   }
 
   /////////////////
@@ -492,12 +492,21 @@ library LibRegistryTrait {
     IndexTraitComponent(getAddressById(components, IndexTraitCompID)).set(id, traitIndex);
   }
 
+  function setAffinity(IUintComp components, uint256 id, string memory value) internal {
+    AffinityComponent(getAddressById(components, AffinityCompID)).set(id, value);
+  }
+
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
+  function unsetAffinity(IUintComp components, uint256 id) internal {
+    AffinityComponent comp = AffinityComponent(getAddressById(components, AffinityCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
   /////////////////
-  // GETTERS (COMPONENT VALUES)
+  // GETTERS
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
     return NameComponent(getAddressById(components, NameCompID)).getValue(id);
@@ -567,7 +576,7 @@ library LibRegistryTrait {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getBackgroundIndex(components, ids[i]);
     }
-    weights = LibStat.getRarityWeights(components, ids);
+    weights = LibRarity.getWeights(components, ids);
   }
 
   // Get body rarities as key value pair arrays
@@ -579,7 +588,7 @@ library LibRegistryTrait {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getBodyIndex(components, ids[i]);
     }
-    weights = LibStat.getRarityWeights(components, ids);
+    weights = LibRarity.getWeights(components, ids);
   }
 
   // Get color rarities as key value pair arrays
@@ -591,7 +600,7 @@ library LibRegistryTrait {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getColorIndex(components, ids[i]);
     }
-    weights = LibStat.getRarityWeights(components, ids);
+    weights = LibRarity.getWeights(components, ids);
   }
 
   // Get face rarities as key value pair arrays
@@ -603,7 +612,7 @@ library LibRegistryTrait {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getFaceIndex(components, ids[i]);
     }
-    weights = LibStat.getRarityWeights(components, ids);
+    weights = LibRarity.getWeights(components, ids);
   }
 
   // Get hand rarities as key value pair arrays
@@ -615,7 +624,7 @@ library LibRegistryTrait {
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getHandIndex(components, ids[i]);
     }
-    weights = LibStat.getRarityWeights(components, ids);
+    weights = LibRarity.getWeights(components, ids);
   }
 
   /////////////////

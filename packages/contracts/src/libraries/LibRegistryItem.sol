@@ -147,11 +147,11 @@ library LibRegistryItem {
     unsetType(components, id);
     unsetMediaURI(components, id);
 
-    LibStat.removeHealth(components, id);
-    LibStat.removePower(components, id);
-    LibStat.removeViolence(components, id);
-    LibStat.removeHarmony(components, id);
-    LibStat.removeSlots(components, id);
+    LibStat.unsetHealth(components, id);
+    LibStat.unsetPower(components, id);
+    LibStat.unsetViolence(components, id);
+    LibStat.unsetHarmony(components, id);
+    LibStat.unsetSlots(components, id);
     unsetExperience(components, id);
 
     unsetKeys(components, id);
