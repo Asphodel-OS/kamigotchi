@@ -309,23 +309,7 @@
     },
     {
       "name": "_RegistryCreateTraitSystem",
-      "writeAccess": [
-        "IndexBodyComponent",
-        "IndexBackgroundComponent",
-        "IndexColorComponent",
-        "IndexFaceComponent",
-        "IndexHandComponent",
-        "IndexTraitComponent",
-        "IsRegistryComponent",
-        "NameComponent",
-        "RarityComponent",
-        "AffinityComponent",
-        "HealthComponent",
-        "HarmonyComponent",
-        "PowerComponent",
-        "SlotsComponent",
-        "ViolenceComponent"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_RegistryDeleteTraitSystem",

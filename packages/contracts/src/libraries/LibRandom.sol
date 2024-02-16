@@ -99,7 +99,7 @@ library LibRandom {
   }
 
   /// @notice picks an item from unweighted array
-  function selectFrom(uint32[] memory keys, uint256 randN) internal pure returns (uint256) {
+  function selectFrom(uint32[] memory keys, uint256 randN) internal pure returns (uint32) {
     return keys[randN % keys.length];
   }
 
@@ -108,8 +108,8 @@ library LibRandom {
     uint32[] memory keys,
     uint256 randN,
     uint256 count
-  ) internal pure returns (uint256[] memory) {
-    uint256[] memory results = new uint256[](count);
+  ) internal pure returns (uint32[] memory) {
+    uint32[] memory results = new uint32[](count);
     uint256 max = keys.length;
 
     for (uint256 i; i < count; i++) {
@@ -125,8 +125,8 @@ library LibRandom {
     uint32[] memory keys,
     uint256 randN,
     uint256 count
-  ) internal pure returns (uint256[] memory) {
-    uint256[] memory results = new uint256[](count);
+  ) internal pure returns (uint32[] memory) {
+    uint32[] memory results = new uint32[](count);
     uint256 max = keys.length;
 
     require(count <= max, "LibRandom: not enough keys");
@@ -146,13 +146,13 @@ library LibRandom {
   function selectMultipleFromNoReplacement(
     uint32[] memory keys,
     uint256[] memory randNs
-  ) internal pure returns (uint256[] memory) {
+  ) internal pure returns (uint32[] memory) {
     uint256 max = keys.length;
     uint256 count = randNs.length;
 
     require(count <= max, "LibRandom: not enough keys");
 
-    uint256[] memory results = new uint256[](count);
+    uint32[] memory results = new uint32[](count);
     for (uint256 i; i < count; i++) {
       uint256 pos = randNs[i] % max;
       results[i] = keys[pos];
@@ -250,13 +250,13 @@ library LibRandom {
     uint256[] memory weights,
     uint256 totalWeight,
     uint256 randN
-  ) internal pure returns (uint32) {
+  ) internal pure returns (uint256) {
     // roll for the constrained random number
     uint256 roll = randN % totalWeight;
 
     // iterate to find item
     uint256 currentWeight;
-    for (uint32 i; i < weights.length; i++) {
+    for (uint256 i; i < weights.length; i++) {
       currentWeight += weights[i];
       if (roll < currentWeight) {
         return (i);
@@ -393,12 +393,12 @@ library LibRandom {
     uint256 packed,
     uint256 numElements,
     uint256 SIZE
-  ) internal pure returns (uint256[] memory) {
-    uint256[] memory result = new uint256[](numElements);
+  ) internal pure returns (uint32[] memory) {
+    uint32[] memory result = new uint32[](numElements);
 
     for (uint256 i; i < numElements; i++) {
       // packed order is reversed
-      result[numElements - 1 - i] = packed & ((1 << SIZE) - 1);
+      result[numElements - 1 - i] = uint32(packed & ((1 << SIZE) - 1));
       // result[i] = packed & ((1 << SIZE) - 1);
 
       packed = packed >> SIZE;

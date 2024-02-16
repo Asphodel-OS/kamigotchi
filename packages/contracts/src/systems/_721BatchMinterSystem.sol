@@ -156,7 +156,7 @@ abstract contract TraitHandler {
   function _setPetStats(
     uint256 id,
     uint32[] memory traits,
-    uint256[] memory offsets,
+    uint32[] memory offsets,
     TraitStats[] memory stats
   ) internal {
     TraitStats memory base = TraitStats(50, 10, 10, 10, 0); // base stats
@@ -236,7 +236,7 @@ abstract contract TraitHandler {
   /// @notice calculates stats, returns stats delta to update
   function _calcStats(
     uint32[] memory traits,
-    uint256[] memory offsets,
+    uint32[] memory offsets,
     TraitStats[] memory stats
   ) internal returns (TraitStats memory delta) {
     delta = TraitStats(0, 0, 0, 0, 0);
@@ -388,7 +388,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     // memoized trait weight and stats
     TraitWeights[] memory weights = traitWeights;
     TraitStats[] memory stats = traitStats;
-    uint256[] memory offsets = LibRandom.unpackArray(offsetsSum, 5, OFFSET_BIT_SIZE);
+    uint32[] memory offsets = LibRandom.unpackArray(offsetsSum, 5, OFFSET_BIT_SIZE);
 
     for (uint256 i; i < amount; i++) {
       uint32[] memory traits = _setPetTraits(seed, ids[i], weights);
