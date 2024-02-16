@@ -70,9 +70,6 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
     case 'TEST':
       config = createConfigRawOPSepolia(externalProvider);
       break;
-    case 'OPSEP':
-      config = createConfigRawOPSepolia(externalProvider);
-      break;
     default:
       config = createConfigRawLocal(externalProvider);
   }
@@ -119,15 +116,13 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   // urls
   config.checkpointUrl = params.get('checkpoint') || '';
   config.snapshotUrl = params.get('snapshotUrl') || '';
-  config.faucetServiceUrl = '';
-  config.relayServiceUrl = '';
 
   // chainId
   const chainIdString = params.get('chainId') || '31337';
   config.chainId = parseInt(chainIdString);
 
   // world
-  config.worldAddress = params.get('worldAddress') || '';
+  config.worldAddress = params.get('worldAddress') || '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853';
 
   // block number
   let initialBlockNumberString = params.get('initialBlockNumber') || '0';

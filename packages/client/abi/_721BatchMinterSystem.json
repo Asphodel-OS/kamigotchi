@@ -1,166 +1,166 @@
 {
   "abi": [
     {
+      "type": "constructor",
       "inputs": [
         {
-          "internalType": "contract IWorld",
           "name": "_world",
-          "type": "address"
+          "type": "address",
+          "internalType": "contract IWorld"
         },
         {
-          "internalType": "address",
           "name": "_components",
-          "type": "address"
+          "type": "address",
+          "internalType": "address"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+      "stateMutability": "nonpayable"
     },
     {
-      "inputs": [],
-      "name": "Ownable__NotOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "Ownable__NotTransitiveOwner",
-      "type": "error"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
+      "type": "function",
       "name": "_getTraitStats",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
       "outputs": [
         {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct TraitStats",
           "components": [
             {
-              "internalType": "uint8",
               "name": "health",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "power",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "violence",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "harmony",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             },
             {
-              "internalType": "uint8",
               "name": "slots",
-              "type": "uint8"
+              "type": "uint8",
+              "internalType": "uint8"
             }
-          ],
-          "internalType": "struct TraitStats",
-          "name": "",
-          "type": "tuple"
+          ]
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "stateMutability": "nonpayable"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
+      "type": "function",
       "name": "batchMint",
-      "outputs": [
-        {
-          "internalType": "uint256[]",
-          "name": "",
-          "type": "uint256[]"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "bytes",
-          "name": "arguments",
-          "type": "bytes"
+          "name": "amount",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "execute",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "setTraits",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
-      "name": "transferOwnership",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "setTraits",
+      "inputs": [],
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotOwner",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotTransitiveOwner",
+      "inputs": []
     }
   ],
   "methodIdentifiers": {

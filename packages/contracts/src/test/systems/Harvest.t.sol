@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
 
-import "test/utils/SetupTemplate.s.sol";
+import "test/utils/SetupTemplate.t.sol";
 
 // TODO: test for correct production rates upon starting harvests
 contract HarvestTest is SetupTemplate {

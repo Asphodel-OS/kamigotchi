@@ -91,12 +91,7 @@ library LibQuests {
       unsetCompleted(components, id);
       setTimeStart(components, id, block.timestamp);
     } else {
-      id = world.getUniqueEntityId();
-
-      setAccountId(components, id, accountID);
-      setIsQuest(components, id);
-      setQuestIndex(components, id, questIndex);
-      setTimeStart(components, id, block.timestamp);
+      id = assign(world, components, questIndex, accountID);
       setIsRepeatable(components, id);
     }
 
