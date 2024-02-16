@@ -1,126 +1,126 @@
 {
   "abi": [
     {
+      "type": "constructor",
       "inputs": [
         {
-          "internalType": "contract IWorld",
           "name": "_world",
-          "type": "address"
+          "type": "address",
+          "internalType": "contract IWorld"
         },
         {
-          "internalType": "address",
           "name": "_components",
-          "type": "address"
+          "type": "address",
+          "internalType": "address"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+      "stateMutability": "nonpayable"
     },
     {
-      "inputs": [],
-      "name": "Ownable__NotOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "Ownable__NotTransitiveOwner",
-      "type": "error"
-    },
-    {
-      "anonymous": false,
+      "type": "function",
+      "name": "execute",
       "inputs": [
         {
-          "indexed": true,
-          "internalType": "address",
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "executeTyped",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "forceReveal",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
           "name": "previousOwner",
-          "type": "address"
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
         },
         {
-          "indexed": true,
-          "internalType": "address",
           "name": "newOwner",
-          "type": "address"
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
         }
       ],
-      "name": "OwnershipTransferred",
-      "type": "event"
+      "anonymous": false
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "arguments",
-          "type": "bytes"
-        }
-      ],
-      "name": "execute",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "type": "error",
+      "name": "Ownable__NotOwner",
+      "inputs": []
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
-      "name": "executeTyped",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
-      "name": "forceReveal",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "type": "error",
+      "name": "Ownable__NotTransitiveOwner",
+      "inputs": []
     }
   ],
   "methodIdentifiers": {

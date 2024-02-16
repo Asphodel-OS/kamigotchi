@@ -1,133 +1,133 @@
 {
   "abi": [
     {
+      "type": "constructor",
       "inputs": [
         {
-          "internalType": "contract IWorld",
           "name": "_world",
-          "type": "address"
+          "type": "address",
+          "internalType": "contract IWorld"
         },
         {
-          "internalType": "address",
           "name": "_components",
-          "type": "address"
+          "type": "address",
+          "internalType": "address"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+      "stateMutability": "nonpayable"
     },
     {
-      "inputs": [],
-      "name": "Ownable__NotOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "Ownable__NotTransitiveOwner",
-      "type": "error"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "arguments",
-          "type": "bytes"
-        }
-      ],
+      "type": "function",
       "name": "execute",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "uint32",
-          "name": "questIndex",
-          "type": "uint32"
-        },
-        {
-          "internalType": "string",
-          "name": "logicType",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "type_",
-          "type": "string"
-        },
-        {
-          "internalType": "uint32",
-          "name": "index",
-          "type": "uint32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "executeTyped",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
+          "name": "questIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "logicType",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "type_",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "value",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotOwner",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotTransitiveOwner",
+      "inputs": []
     }
   ],
   "methodIdentifiers": {

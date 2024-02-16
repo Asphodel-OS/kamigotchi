@@ -2,6 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Vm } from "forge-std/Vm.sol";
+import "forge-std/Script.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IDeploy } from "std-contracts/test/MudTest.t.sol";
 import { LibDeploy, DeployResult } from "./LibDeploy.sol";

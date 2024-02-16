@@ -13,10 +13,12 @@ import nodes from 'assets/data/nodes/Nodes.csv';
 import maps from 'assets/data/rooms/Maps.csv';
 import rooms from 'assets/data/rooms/Rooms.csv';
 
-export function setUpWorldAPI(systems: any) {
+export function setUpWorldAPI(systems: any, provider: any) {
   const api = createAdminAPI(systems);
 
   async function initAll() {
+    setAutoMine(true);
+
     await initConfig(api);
     await initRooms(api);
     await initNodes(api);
@@ -39,6 +41,8 @@ export function setUpWorldAPI(systems: any) {
       'load_bearer',
       'fudge'
     );
+
+    setAutoMine(false);
   }
 
   ///////////////////
@@ -921,11 +925,20 @@ export function setUpWorldAPI(systems: any) {
       tryInit: () => initTraitsWithFail(api),
       delete: (indices: number[], types: string[]) => deleteTraits(api, indices, types),
     },
+    test: setAutoMine,
   };
 
   function sleepIf() {
-    if (process.env.MODE == 'OPSEP' || process.env.MODE == 'TEST') {
+    if (process.env.MODE == 'TEST') {
       return new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
+
+  // temporary function to enable switch anvil modes for sending many transactions at one go
+  // will not be needed when world.ts migrates to solidity
+  function setAutoMine(on: boolean) {
+    if (process.env.MODE == 'DEV' || process.env.MODE == undefined) {
+      provider.send(`${on ? 'evm_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
     }
   }
 }
