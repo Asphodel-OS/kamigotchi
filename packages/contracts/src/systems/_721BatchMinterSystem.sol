@@ -204,7 +204,7 @@ abstract contract TraitHandler {
 
       for (uint256 j; j < length; j++) {
         keys[j] = traitComps[i].getValue(ids[j]);
-        weights[j] = rarityComp.has(ids[j]) ? 3 ** (rarityComp.getValue(ids[j]) - 1) : 0;
+        weights[j] = rarityComp.has(ids[j]) ? 2 ** (rarityComp.getValue(ids[j]) - 1) : 0;
 
         traitStats.push(_getTraitStats(ids[j]));
       }

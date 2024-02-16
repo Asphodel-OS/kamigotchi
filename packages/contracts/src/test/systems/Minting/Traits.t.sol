@@ -68,7 +68,7 @@ contract TraitsTest is SetupTemplate {
   function _getTraitWeight(uint32 traitIndex) internal view returns (uint) {
     uint registryID = LibRegistryTrait.getByTraitIndex(components, traitIndex);
     uint tier = LibStat.getRarity(components, registryID);
-    return (tier > 0) ? 3 ** (tier - 1) : 0;
+    return (tier > 0) ? 2 ** (tier - 1) : 0;
   }
 
   /////////////////
@@ -101,12 +101,12 @@ contract TraitsTest is SetupTemplate {
   // test that the distributions are as expected
   // TODO: confirm distributions fall within 99.9 percentile statistical deviation
   function testTraitDistribution() public {
-    uint numPets = 3000;
+    uint numPets = 300;
 
     _initEmptyTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    uint[] memory petIDs = __721BatchMinterSystem.batchMint(300);
+    uint[] memory petIDs = __721BatchMinterSystem.batchMint(numPets);
     vm.stopPrank();
 
     uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
