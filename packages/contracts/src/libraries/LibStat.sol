@@ -44,6 +44,8 @@ library LibStat {
     string memory type_,
     int32 amt
   ) internal returns (int32) {
+    Stat memory stat = getStatComponent(components, type_).getValue(id);
+
     return getStatComponent(components, type_).adjustShift(id, amt);
   }
 
@@ -272,7 +274,7 @@ library LibStat {
   function getStatComponent(
     IUintComp components,
     string memory type_
-  ) public returns (StatComponent) {
+  ) public view returns (StatComponent) {
     if (LibString.eq(type_, "HEALTH"))
       return HealthComponent(getAddressById(components, HealthCompID));
     if (LibString.eq(type_, "POWER"))

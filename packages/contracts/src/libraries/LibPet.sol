@@ -121,6 +121,10 @@ library LibPet {
   function heal(IUintComp components, uint256 id, int32 amt) internal {
     if (amt == 0) return; // skip if no healing
     int32 total = calcTotalHealth(components, id);
+    Stat memory health = LibStat.getHealth(components, id);
+    health.last += amt;
+    if (health.last > total) health.last = total;
+    LibStat.setHealth(components, id, health);
     HealthComponent(getAddressById(components, HealthCompID)).adjustLast(id, amt, total);
   }
 
@@ -144,7 +148,8 @@ library LibPet {
       uint256 deltaBalance = LibProduction.sync(components, productionID);
       drain(components, id, int32(uint32(calcDrain(components, id, deltaBalance))));
     } else if (LibString.eq(state, "RESTING")) {
-      heal(components, id, int32(uint32(calcRestingRecovery(components, id))));
+      uint256 recovery = calcRestingRecovery(components, id);
+      heal(components, id, int32(int(recovery)));
     }
 
     setLastTs(components, id, block.timestamp);
@@ -233,8 +238,8 @@ library LibPet {
     configs[1] = "HEALTH_RATE_HEAL_BASE";
     configs[2] = "HEALTH_RATE_HEAL_BASE_PREC";
     uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+    uint256 totalHarmony = uint(int(calcTotalHarmony(components, id)));
 
-    uint256 totalHarmony = uint256(uint32(calcTotalHarmony(components, id)));
     uint256 precision = 10 ** configVals[0];
     uint256 base = configVals[1];
     uint256 basePrecision = 10 ** configVals[2];
@@ -478,11 +483,11 @@ library LibPet {
     }
 
     // set the stats
-    LibStat.setHealth(components, id, Stat(health, 0, 0, health));
-    LibStat.setPower(components, id, Stat(power, 0, 0, 0));
-    LibStat.setViolence(components, id, Stat(violence, 0, 0, 0));
-    LibStat.setHarmony(components, id, Stat(harmony, 0, 0, 0));
-    LibStat.setSlots(components, id, Stat(slots, 0, 0, 0));
+    LibStat.setHealth(components, id, health);
+    LibStat.setPower(components, id, power);
+    LibStat.setViolence(components, id, violence);
+    LibStat.setHarmony(components, id, harmony);
+    LibStat.setSlots(components, id, slots);
   }
 
   /////////////////

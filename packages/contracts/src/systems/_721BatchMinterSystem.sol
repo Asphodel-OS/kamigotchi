@@ -12,6 +12,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { Stat, StatComponent } from "components/types/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
@@ -66,11 +67,11 @@ struct TraitWeights {
 }
 
 struct TraitStats {
-  uint8 health;
-  uint8 power;
-  uint8 violence;
-  uint8 harmony;
-  uint8 slots;
+  int32 health;
+  int32 power;
+  int32 violence;
+  int32 harmony;
+  int32 slots;
 }
 
 /// @notice small contract to make trait handling more readable
@@ -165,11 +166,11 @@ abstract contract TraitHandler {
     base.harmony += delta.harmony;
     base.slots += delta.slots;
 
-    healthComp.set(id, abi.encode(base.health));
-    powerComp.set(id, abi.encode(base.power));
-    violenceComp.set(id, abi.encode(base.violence));
-    harmonyComp.set(id, abi.encode(base.harmony));
-    slotsComp.set(id, abi.encode(base.slots));
+    healthComp.set(id, abi.encode(Stat(base.health, 0, 0, base.health)));
+    powerComp.set(id, abi.encode(Stat(base.power, 0, 0, 0)));
+    violenceComp.set(id, abi.encode(Stat(base.violence, 0, 0, 0)));
+    harmonyComp.set(id, abi.encode(Stat(base.harmony, 0, 0, 0)));
+    slotsComp.set(id, abi.encode(Stat(base.slots, 0, 0, base.slots)));
   }
 
   ////////////////////
@@ -247,14 +248,19 @@ abstract contract TraitHandler {
   }
 
   function _getTraitStats(uint256 id) public returns (TraitStats memory) {
-    return
-      TraitStats(
-        uint8(healthComp.has(id) ? uint8(int8(healthComp.getValue(id).base)) : 0),
-        uint8(powerComp.has(id) ? uint8(int8(powerComp.getValue(id).base)) : 0),
-        uint8(violenceComp.has(id) ? uint8(int8(violenceComp.getValue(id).base)) : 0),
-        uint8(harmonyComp.has(id) ? uint8(int8(harmonyComp.getValue(id).base)) : 0),
-        uint8(slotsComp.has(id) ? uint8(int8(slotsComp.getValue(id).base)) : 0)
-      );
+    int32 health;
+    int32 power;
+    int32 violence;
+    int32 harmony;
+    int32 slots;
+
+    if (healthComp.has(id)) health = healthComp.getValue(id).base;
+    if (powerComp.has(id)) power = powerComp.getValue(id).base;
+    if (violenceComp.has(id)) violence = violenceComp.getValue(id).base;
+    if (harmonyComp.has(id)) harmony = harmonyComp.getValue(id).base;
+    if (slotsComp.has(id)) slots = slotsComp.getValue(id).base;
+
+    return TraitStats(health, power, violence, harmony, slots);
   }
 
   /// @notice query all traits of a type (ie face) in registry. returns entityIDs

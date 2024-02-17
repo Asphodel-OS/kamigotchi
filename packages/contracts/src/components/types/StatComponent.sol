@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
+
 import "solecs/BareComponent.sol";
 
 // Stat is a struct that holds the modifying values of a core stat.
@@ -50,13 +51,6 @@ contract StatComponent is BareComponent {
     Stat memory value = getValue(entity);
     int32 total = ((value.mult + 1e3) * (value.base + value.shift)) / 1e3;
     return (total > 0) ? total : int32(0);
-  }
-
-  function adjustBase(uint256 entity, int32 amt) public returns (int32) {
-    Stat memory value = getValue(entity);
-    value.base += amt;
-    set(entity, value);
-    return value.base;
   }
 
   function adjustShift(uint256 entity, int32 amt) public returns (int32) {

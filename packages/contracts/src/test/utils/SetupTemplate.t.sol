@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
-import "forge-std/console.sol";
+
 import { LibString } from "solady/utils/LibString.sol";
 import "std-contracts/test/MudTest.t.sol";
 
@@ -834,7 +834,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
     // Kami Health Heal Rates
     _setConfig("HEALTH_RATE_HEAL_PREC", 6);
-    _setConfig("HEALTH_RATE_HEAL_BASE", 100); // in respect to harmony
+    _setConfig("HEALTH_RATE_HEAL_BASE", 1000); // in respect to harmony
     _setConfig("HEALTH_RATE_HEAL_BASE_PREC", 3);
   }
 
