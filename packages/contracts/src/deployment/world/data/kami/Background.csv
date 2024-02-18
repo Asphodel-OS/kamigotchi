@@ -1,0 +1,22 @@
+﻿Index,Name,Tier,Harmony,Violence,Health,Power,Rarity,BPs,Hex code
+0,Blue,9,2,0,0,0,Common,300,A2F5F5
+1,Blue-Grey,8,0,2,10,0,Common,300,6D9295
+2,Default Green,9,0,0,20,0,Common,500,E1E3A4
+3,Green,8,1,0,0,2,Common,500,B9FF98
+4,Grey!,7,2,0,20,0,Rare,500,867C7F
+5,Hot Pink,8,1,1,1,0,Common,500,FC5BA3
+6,Lavender!,7,2,2,0,0,Rare,300,C1A6FF
+7,BOG,5,2,1,20,1,Epic,300,
+8,"BOSD ",5,6,0,0,0,Epic,500,
+9,GOB,5,10,20,10,20,Epic,500,
+10,PURPLE!!!,6,1,1,20,1,Epic,300,
+11,RED!!!,6,0,5,0,0,Epic,300,
+12,GREY!!!!,6,1,0,1,3,Epic,500,
+13,Mustard,8,1,0,20,0,Common,400,F5D769
+14,Orange,9,1,0,0,1,Common,300,FF901C
+15,Pink,9,0,1,10,0,Common,300,F09EE7
+16,Purple,8,0,1,20,0,Common,300,C38DD9
+17,Red!,7,0,2,0,2,Rare,300,D1412C
+18,Rust,9,0,0,10,1,Common,300,BD685B
+19,White!,7,2,0,0,2,Rare,300,F7F2ED
+20,Yellow,9,0,1,0,1,Common,300,FFF981

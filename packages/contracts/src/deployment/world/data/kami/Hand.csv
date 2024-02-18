@@ -1,0 +1,18 @@
+﻿Index,Image,Name,Tier,Affinity,Power,Violence,Harmony,Health,Slot
+0,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_candles_default_green_0000.png,Candles,6,Eerie,8,0,0,0,0
+1,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_claws_default_green_0000.png,Spectral,8,Eerie,1,3,0,0,0
+2,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_coins_default_green_0000.png,Spinning Coins,6,Normal,4,0,0,40,0
+3,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_coins_static_default_green_0000.png,Coins,8,Normal,1,0,0,30,0
+4,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_default_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/default.png",Orbs,9,Normal,2,0,0,20,0
+5,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_eyeballs_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/eyes.png",Eyeballs,8,Eerie,4,0,0,0,0
+6,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_fan_front_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_fan_back_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/fan_blades.png",Fan Blades,6,Scrap,0,3,3,30,0
+7,Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_insect_basic_default_green_0000.png,Beetle,8,Insect,0,2,2,0,0
+8,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_mantis_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/mantis.png",Mantis,6,Insect,0,8,0,0,0
+9,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_paws_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/paws.png",Paws,8,Normal,0,2,2,0,0
+10,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_plugs_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/plugs.png",Plugs,8,Scrap,1,0,2,10,0
+11,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_scorpion_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/scorpion_claws.png",Scorpion,8,Insect,0,4,0,0,0
+12,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_tentacles_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/tentacles.png",Tentacles,8,Eerie,2,2,0,0,0
+13,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_toasters_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/toasters.png",Toasters,5,Scrap,4,4,4,40,0
+14,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_ufo_catcher_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/catcher_claws.png",UFO Catcher,8,Scrap,0,3,1,0,0
+15,"Hand%20c3f0ea61431749dab62a867a500a4c3e/hands_wrenches_default_green_0000.png, Hand%20c3f0ea61431749dab62a867a500a4c3e/wrenches_alternatively_known_as_5_dollar_attack.png",Wrenches,8,Scrap,0,4,0,0,0
+16,,Mole Cricket,8,Insect,3,0,1,0,0
