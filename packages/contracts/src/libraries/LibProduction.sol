@@ -24,7 +24,6 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { console } from "forge-std/Console.sol";
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -179,13 +178,10 @@ library LibProduction {
     uint256 targetPetID,
     uint256 sourcePetID
   ) public view returns (bool) {
-    uint256 targetHealth = uint(int(LibStat.getHealth(components, targetPetID).sync));
-    console.log("Target Health: %d", targetHealth);
-    uint256 targetTotalHealth = uint(int(LibPet.calcTotalHealth(components, targetPetID)));
-    console.log("Target Total Health: %d", targetTotalHealth);
+    uint256 health = uint(int(LibStat.getHealth(components, targetPetID).sync));
+    uint256 totalHealth = uint(int(LibPet.calcTotalHealth(components, targetPetID)));
     uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
-    console.log("Threshold: %d", threshold);
-    return threshold * targetTotalHealth > targetHealth * 1e18;
+    return threshold * totalHealth > health * 1e18;
   }
 
   /////////////////

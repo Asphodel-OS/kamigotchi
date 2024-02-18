@@ -9,7 +9,6 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
-import { console } from "forge-std/Console.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Start"));
 
@@ -23,7 +22,6 @@ contract ProductionStartSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 petID, uint256 nodeID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    console.log("\n\n==ProductionLStartSystem==");
 
     // standard checks (ownership, cooldown, state)
     require(accountID != 0, "FarmStart: no account");

@@ -9,7 +9,6 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 import { Gaussian } from "solstat/Gaussian.sol";
-import { console } from "forge-std/Console.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
@@ -138,19 +137,15 @@ library LibPet {
 
   // Update the current health of a pet as well as any active production
   function sync(IUintComp components, uint256 id) public {
-    console.log("\nsyncing pet", id);
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
-      console.log("deltaBalance: %d", deltaBalance);
       uint256 damage = calcDrain(components, id, deltaBalance);
-      console.log("damage: %d", damage);
       drain(components, id, int32(int(damage)));
     } else if (LibString.eq(state, "RESTING")) {
       uint256 recovery = calcRestingRecovery(components, id);
-      console.log("recovery: %d", recovery);
       heal(components, id, int32(int(recovery)));
     }
 

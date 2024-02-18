@@ -325,8 +325,6 @@ library LibRegistryItem {
   }
 
   // get the associated item registry entry of a given instance entity
-  // NOTE: the item instance will not have a [food, mod, gear]index, so unlikely anything
-  // below the first conditional path is useful.
   function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
     uint32 index = getIndex(components, instanceID);
     return getByIndex(components, index);
