@@ -2,7 +2,7 @@ const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 import { JsonRpcProvider } from "@ethersproject/providers";
 import dotenv from "dotenv";
-import { generateAndDeploy } from "../utils/deploy";
+import { generateAndDeploy } from "./utils/deploy";
 const openurl = require("openurl");
 
 const argv = yargs(hideBin(process.argv)).argv;
