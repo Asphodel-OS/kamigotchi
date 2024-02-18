@@ -32,32 +32,32 @@ export const Banner = (props: Props) => {
       health: {
         description: 'Health defines how resilient a Kami is to accumulated damage',
         image: StatIcons.health,
-        base: kami.stats.health,
-        bonus: kami.bonusStats.health,
+        base: kami.stats.health.base,
+        bonus: kami.stats.health.shift,
       },
       power: {
         description: 'Power determines the potential rate at which $MUSU can be farmed',
         image: StatIcons.power,
-        base: kami.stats.power,
-        bonus: kami.bonusStats.power,
+        base: kami.stats.power.base,
+        bonus: kami.stats.power.shift,
       },
       violence: {
         description: 'Violence dictates the threshold at which a Kami can liquidate others',
         image: StatIcons.violence,
-        base: kami.stats.violence,
-        bonus: kami.bonusStats.violence,
+        base: kami.stats.violence.base,
+        bonus: kami.stats.violence.shift,
       },
       harmony: {
         description: 'Harmony divines resting recovery rate and defends against violence',
         image: StatIcons.harmony,
-        base: kami.stats.harmony,
-        bonus: kami.bonusStats.harmony,
+        base: kami.stats.harmony.base,
+        bonus: kami.stats.harmony.shift,
       },
       slots: {
         description: 'Slots are room for upgrades ^_^',
         image: StatIcons.slots,
-        base: kami.stats.slots,
-        bonus: kami.bonusStats.slots,
+        base: kami.stats.slots.base,
+        bonus: kami.stats.slots.shift,
       },
     })
   );

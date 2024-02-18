@@ -103,10 +103,9 @@ export const calcHealth = (kami: Kami): number => {
   if (isHarvesting(kami)) duration = calcHarvestTime(kami);
   else if (isResting(kami)) duration = calcIdleTime(kami);
 
-  const totalHealth = kami.stats.health + kami.bonusStats.health;
-  let health = 1 * kami.health;
-  health += kami.healthRate * duration;
-  health = Math.min(Math.max(health, 0), totalHealth);
+  let health = kami.stats.health.sync;
+  health += kami.stats.health.rate * duration;
+  health = Math.min(Math.max(health, 0), kami.stats.health.total);
   return health;
 };
 
@@ -116,8 +115,7 @@ export const isStarving = (kami: Kami): boolean => {
 
 // check whether the kami is full
 export const isFull = (kami: Kami): boolean => {
-  const totalHealth = kami.stats.health + kami.bonusStats.health;
-  return Math.round(calcHealth(kami)) >= totalHealth;
+  return Math.round(calcHealth(kami)) >= kami.stats.health.total;
 };
 
 // calculate the expected output from a pet production based on start time
@@ -166,8 +164,8 @@ const calcLiqAffinityMultiplier = (
 
 // calculate the base liquidation threshold b/w two kamis as a %
 const calcLiqThresholdBase = (attacker: Kami, victim: Kami, config: LiquidationConfig): number => {
-  const attackerTotalViolence = attacker.stats.violence + attacker.bonusStats.violence;
-  const victimTotalHarmony = victim.stats.harmony + victim.bonusStats.harmony;
+  const attackerTotalViolence = attacker.stats.violence.total;
+  const victimTotalHarmony = victim.stats.harmony.total;
   const ratio = attackerTotalViolence / victimTotalHarmony;
   const weight = cdf(Math.log(ratio), 0, 1);
   const peakBaseThreshold = config.threshold;
@@ -190,7 +188,7 @@ export const calcLiqThresholdValue = (
   victim: Kami,
   config: LiquidationConfig
 ): number => {
-  const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
+  const victimTotalHealth = victim.stats.health.total;
   const thresholdPercent = calcLiqThresholdPercent(attacker, victim, config);
   return thresholdPercent * victimTotalHealth;
 };
@@ -202,7 +200,7 @@ export const canLiquidate = (attacker: Kami, victim: Kami, config: LiquidationCo
 
 export const canMog = (attacker: Kami, victim: Kami, config: LiquidationConfig): boolean => {
   const thresholdPercent = calcLiqThresholdPercent(attacker, victim, config);
-  const victimTotalHealth = victim.stats.health + victim.bonusStats.health;
+  const victimTotalHealth = victim.stats.health.total;
   const absoluteThreshold = thresholdPercent * victimTotalHealth;
   return calcHealth(victim) < absoluteThreshold;
 };

@@ -27,13 +27,10 @@ export interface Kami {
   uri: string;
   level: number;
   experience: KamiExperience;
-  health: number;
-  healthRate: number;
   rerolls: number;
   state: string;
   skillPoints: number;
   stats: Stats;
-  bonusStats: Stats;
   bonuses: Bonuses;
   time: {
     cooldown: {
@@ -84,10 +81,7 @@ export const getKami = (
       ColorIndex,
       Experience,
       FaceIndex,
-      HealthCurrent,
       HandIndex,
-      HolderID,
-      IsBonus,
       IsKill,
       IsProduction,
       LastTime,
@@ -120,8 +114,6 @@ export const getKami = (
       current: (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) * 1,
       threshold: 0,
     },
-    health: (getComponentValue(HealthCurrent, entityIndex)?.value as number) * 1,
-    healthRate: 0,
     state: getComponentValue(State, entityIndex)?.value as string,
     namable: getComponentValue(CanName, entityIndex)?.value as boolean,
     time: {
@@ -136,26 +128,7 @@ export const getKami = (
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
     stats: getStats(network, entityIndex),
     bonuses: getBonuses(network, entityIndex),
-    bonusStats: {
-      health: 0,
-      harmony: 0,
-      violence: 0,
-      power: 0,
-      slots: 0,
-    },
   };
-
-  // bonus stats
-  const bonusStatsEntityIndex = Array.from(
-    runQuery([
-      Has(IsBonus),
-      HasValue(Type, { value: 'STAT' }),
-      HasValue(HolderID, { value: kami.id }),
-    ])
-  );
-  if (bonusStatsEntityIndex.length > 0) {
-    kami.bonusStats = getStats(network, bonusStatsEntityIndex[0]);
-  }
 
   /////////////////
   // OPTIONAL DATA
@@ -262,12 +235,13 @@ export const getKami = (
     const multiplier = kami.bonuses.harvest.drain;
     healthRate = (-1 * productionRate * drainBase * multiplier) / (1000 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
-    const harmony = kami.stats.harmony + kami.bonusStats.harmony;
+    const harmony = kami.stats.harmony;
+    const totHarmony = (1.0 + harmony.boost / 1000) * (harmony.base + harmony.shift);
     const healBase = getConfigFieldValue(network, 'HEALTH_RATE_HEAL_BASE');
     const healBasePrecision = 10 ** getConfigFieldValue(network, 'HEALTH_RATE_HEAL_BASE_PREC');
-    healthRate = (harmony * healBase) / (3600 * healBasePrecision);
+    healthRate = (totHarmony * healBase) / (3600 * healBasePrecision);
   }
-  kami.healthRate = healthRate;
+  kami.stats.health.rate = healthRate;
 
   return kami;
 };
