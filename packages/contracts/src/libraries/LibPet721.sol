@@ -39,7 +39,7 @@ library LibPet721 {
     uint256 seed
   ) internal returns (uint256 packed) {
     // generates array of traits with weighted random
-    uint256[] memory traits = genRandTraits(components, petID, seed);
+    uint32[] memory traits = genRandTraits(components, petID, seed);
 
     // setting metadata
     assignTraits(components, petID, traits);
@@ -147,12 +147,12 @@ library LibPet721 {
     IUintComp components,
     uint256 petID,
     uint256 seed
-  ) internal view returns (uint256[] memory) {
-    uint256[] memory traits = new uint256[](NUM_TRAITS);
+  ) internal view returns (uint32[] memory) {
+    uint32[] memory traits = new uint32[](NUM_TRAITS);
     // scoping is used to save memory while execution
     {
       // color
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getColorRarities(
         components
       );
       traits[4] = LibRandom.selectFromWeighted(
@@ -163,7 +163,7 @@ library LibPet721 {
     }
     {
       // background
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBackgroundRarities(
         components
       );
       traits[3] = LibRandom.selectFromWeighted(
@@ -174,7 +174,7 @@ library LibPet721 {
     }
     {
       // body
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getBodyRarities(
         components
       );
       traits[2] = LibRandom.selectFromWeighted(
@@ -185,7 +185,7 @@ library LibPet721 {
     }
     {
       // hand
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getHandRarities(
         components
       );
       traits[1] = LibRandom.selectFromWeighted(
@@ -196,7 +196,7 @@ library LibPet721 {
     }
     {
       // face
-      (uint256[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
+      (uint32[] memory keys, uint256[] memory weights) = LibRegistryTrait.getFaceRarities(
         components
       );
       traits[0] = LibRandom.selectFromWeighted(
@@ -213,7 +213,7 @@ library LibPet721 {
   /// @param   components  components contract
   /// @param   petID       entityID of pet
   /// @param   traits      array of traits, indices ordered [Face, Hand, Body, Background, Color]
-  function assignTraits(IUintComp components, uint256 petID, uint256[] memory traits) internal {
+  function assignTraits(IUintComp components, uint256 petID, uint32[] memory traits) internal {
     LibRegistryTrait.setColorIndex(components, petID, traits[4]);
     LibRegistryTrait.setBackgroundIndex(components, petID, traits[3]);
     LibRegistryTrait.setBodyIndex(components, petID, traits[2]);

@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateTraitSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": FunctionFragment;
+    "executeTyped(uint32,uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

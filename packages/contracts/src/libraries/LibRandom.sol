@@ -99,17 +99,17 @@ library LibRandom {
   }
 
   /// @notice picks an item from unweighted array
-  function selectFrom(uint256[] memory keys, uint256 randN) internal pure returns (uint256) {
+  function selectFrom(uint32[] memory keys, uint256 randN) internal pure returns (uint32) {
     return keys[randN % keys.length];
   }
 
   /// @notice picks multiple results from unweighted array, with replacement
   function selectMultipleFrom(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256 randN,
     uint256 count
-  ) internal pure returns (uint256[] memory) {
-    uint256[] memory results = new uint256[](count);
+  ) internal pure returns (uint32[] memory) {
+    uint32[] memory results = new uint32[](count);
     uint256 max = keys.length;
 
     for (uint256 i; i < count; i++) {
@@ -122,11 +122,11 @@ library LibRandom {
 
   /// @notice picks multiple results from unweighted array, without replacement
   function selectMultipleFromNoReplacement(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256 randN,
     uint256 count
-  ) internal pure returns (uint256[] memory) {
-    uint256[] memory results = new uint256[](count);
+  ) internal pure returns (uint32[] memory) {
+    uint32[] memory results = new uint32[](count);
     uint256 max = keys.length;
 
     require(count <= max, "LibRandom: not enough keys");
@@ -144,15 +144,15 @@ library LibRandom {
 
   /// @notice picks multiple results from unweighted array, without replacement
   function selectMultipleFromNoReplacement(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256[] memory randNs
-  ) internal pure returns (uint256[] memory) {
+  ) internal pure returns (uint32[] memory) {
     uint256 max = keys.length;
     uint256 count = randNs.length;
 
     require(count <= max, "LibRandom: not enough keys");
 
-    uint256[] memory results = new uint256[](count);
+    uint32[] memory results = new uint32[](count);
     for (uint256 i; i < count; i++) {
       uint256 pos = randNs[i] % max;
       results[i] = keys[pos];
@@ -169,15 +169,15 @@ library LibRandom {
   // select an item from a weighted list of options
 
   /// @notice picks from a weighted random array based on a random input
-  /// @param keys     keys, position correspnds to weights
+  /// @param keys     keys, position correspnds to weights (assume uint32 indicies)
   /// @param weights  the weights for each item
   /// @param randN    the input random number
   /// @return         the selected key
   function selectFromWeighted(
-    uint256[] memory keys,
+    uint32[] memory keys,
     uint256[] memory weights,
     uint256 randN
-  ) internal pure returns (uint256) {
+  ) internal pure returns (uint32) {
     uint256 totalWeight;
     for (uint256 i; i < weights.length; i++) {
       totalWeight += weights[i];
@@ -378,7 +378,7 @@ library LibRandom {
   }
 
   // converts a regular array to a bitpacked array
-  function packArray(uint256[] memory arr, uint256 SIZE) internal pure returns (uint256) {
+  function packArray(uint32[] memory arr, uint256 SIZE) internal pure returns (uint256) {
     uint256 result;
     for (uint256 i; i < arr.length; i++) {
       require(arr[i] < (1 << SIZE) - 1, "max over limit");
@@ -393,12 +393,12 @@ library LibRandom {
     uint256 packed,
     uint256 numElements,
     uint256 SIZE
-  ) internal pure returns (uint256[] memory) {
-    uint256[] memory result = new uint256[](numElements);
+  ) internal pure returns (uint32[] memory) {
+    uint32[] memory result = new uint32[](numElements);
 
     for (uint256 i; i < numElements; i++) {
       // packed order is reversed
-      result[numElements - 1 - i] = packed & ((1 << SIZE) - 1);
+      result[numElements - 1 - i] = uint32(packed & ((1 << SIZE) - 1));
       // result[i] = packed & ((1 << SIZE) - 1);
 
       packed = packed >> SIZE;

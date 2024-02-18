@@ -17,7 +17,7 @@ contract _RegistryCreateTraitSystem is System {
 
   function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
     (
-      uint256 index,
+      uint32 index,
       uint256 health,
       uint256 power,
       uint256 violence,
@@ -29,7 +29,7 @@ contract _RegistryCreateTraitSystem is System {
       string memory traitType
     ) = abi.decode(
         arguments,
-        (uint256, uint256, uint256, uint256, uint256, uint256, uint256, string, string, string)
+        (uint32, uint256, uint256, uint256, uint256, uint256, uint256, string, string, string)
       );
 
     if (LibString.eq(traitType, "BODY")) {
@@ -107,7 +107,7 @@ contract _RegistryCreateTraitSystem is System {
   }
 
   function executeTyped(
-    uint256 index,
+    uint32 index,
     uint256 health,
     uint256 power,
     uint256 violence,

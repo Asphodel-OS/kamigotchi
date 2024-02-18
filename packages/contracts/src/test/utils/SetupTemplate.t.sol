@@ -525,7 +525,7 @@ abstract contract SetupTemplate is TestSetupImports {
   /* TRAITS */
 
   function registerTrait(
-    uint specialIndex,
+    uint32 specialIndex,
     uint health,
     uint power,
     uint violence,

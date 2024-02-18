@@ -5,6 +5,7 @@ import "forge-std/console.sol";
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { Uint32Component } from "std-contracts/components/Uint32Component.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
@@ -20,7 +21,7 @@ import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
-import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
+import { IndexBackgroundComponent, ID as IndexBgCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
@@ -61,7 +62,7 @@ uint256 constant OFFSET_BIT_SIZE = 32;
 /////////////
 
 struct TraitWeights {
-  uint256[] keys;
+  uint32[] keys;
   uint256[] weights;
 }
 
@@ -115,10 +116,8 @@ abstract contract TraitHandler {
 
   constructor(address _components) {
     components = IUintComp(_components);
+    indexBackgroundComp = IndexBackgroundComponent(getAddressById(components, IndexBgCompID));
     indexBodyComp = IndexBodyComponent(getAddressById(components, IndexBodyCompID));
-    indexBackgroundComp = IndexBackgroundComponent(
-      getAddressById(components, IndexBackgroundCompID)
-    );
     indexColorComp = IndexColorComponent(getAddressById(components, IndexColorCompID));
     indexFaceComp = IndexFaceComponent(getAddressById(components, IndexFaceCompID));
     indexHandComp = IndexHandComponent(getAddressById(components, IndexHandCompID));
@@ -141,8 +140,8 @@ abstract contract TraitHandler {
     uint256 seed,
     uint256 id,
     TraitWeights[] memory weights
-  ) internal returns (uint256[] memory) {
-    uint256[] memory traits = _calcTraits(seed, id, weights);
+  ) internal returns (uint32[] memory) {
+    uint32[] memory traits = _calcTraits(seed, id, weights);
 
     indexFaceComp.set(id, traits[0]);
     indexHandComp.set(id, traits[1]);
@@ -156,8 +155,8 @@ abstract contract TraitHandler {
   /// @notice generates and assigns stats for 1
   function _setPetStats(
     uint256 id,
-    uint256[] memory traits,
-    uint256[] memory offsets,
+    uint32[] memory traits,
+    uint32[] memory offsets,
     TraitStats[] memory stats
   ) internal {
     TraitStats memory base = TraitStats(50, 10, 10, 10, 0); // base stats
@@ -185,10 +184,10 @@ abstract contract TraitHandler {
   function _setTraits() internal {
     require(traitWeights.length == 0, "already set"); // assumes all other keys are set
 
-    uint256[] memory offsets = new uint256[](5);
+    uint32[] memory offsets = new uint32[](5);
     offsets[0] = 0;
 
-    IUintComp[] memory traitComps = new IUintComp[](5);
+    Uint32Component[] memory traitComps = new Uint32Component[](5);
     traitComps[0] = indexFaceComp;
     traitComps[1] = indexHandComp;
     traitComps[2] = indexBodyComp;
@@ -198,14 +197,14 @@ abstract contract TraitHandler {
     // get indices, rarities, and stats for each trait type
     for (uint256 i; i < 5; i++) {
       uint256[] memory ids = queryTraitsOfType(traitComps[i]);
-      uint256 length = ids.length;
+      uint32 length = uint32(ids.length);
 
-      uint256[] memory keys = new uint256[](length);
+      uint32[] memory keys = new uint32[](length);
       uint256[] memory weights = new uint256[](length);
 
       for (uint256 j; j < length; j++) {
         keys[j] = traitComps[i].getValue(ids[j]);
-        weights[j] = rarityComp.has(ids[j]) ? 3 ** (rarityComp.getValue(ids[j]) - 1) : 0;
+        weights[j] = rarityComp.has(ids[j]) ? 1 << (rarityComp.getValue(ids[j]) - 1) : 0;
 
         traitStats.push(_getTraitStats(ids[j]));
       }
@@ -226,8 +225,8 @@ abstract contract TraitHandler {
     uint256 seed,
     uint256 id,
     TraitWeights[] memory weights
-  ) internal returns (uint256[] memory results) {
-    results = new uint256[](5);
+  ) internal returns (uint32[] memory results) {
+    results = new uint32[](5);
     for (uint256 i; i < 5; i++) {
       uint256 randN = uint256(keccak256(abi.encode(seed, id, i)));
       results[i] = LibRandom.selectFromWeighted(weights[i].keys, weights[i].weights, randN);
@@ -236,8 +235,8 @@ abstract contract TraitHandler {
 
   /// @notice calculates stats, returns stats delta to update
   function _calcStats(
-    uint256[] memory traits,
-    uint256[] memory offsets,
+    uint32[] memory traits,
+    uint32[] memory offsets,
     TraitStats[] memory stats
   ) internal returns (TraitStats memory delta) {
     delta = TraitStats(0, 0, 0, 0, 0);
@@ -263,7 +262,7 @@ abstract contract TraitHandler {
   }
 
   /// @notice query all traits of a type (ie face) in registry. returns entityIDs
-  function queryTraitsOfType(IUintComp comp) internal view returns (uint256[] memory) {
+  function queryTraitsOfType(Uint32Component comp) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
@@ -389,10 +388,10 @@ contract _721BatchMinterSystem is System, TraitHandler {
     // memoized trait weight and stats
     TraitWeights[] memory weights = traitWeights;
     TraitStats[] memory stats = traitStats;
-    uint256[] memory offsets = LibRandom.unpackArray(offsetsSum, 5, OFFSET_BIT_SIZE);
+    uint32[] memory offsets = LibRandom.unpackArray(offsetsSum, 5, OFFSET_BIT_SIZE);
 
     for (uint256 i; i < amount; i++) {
-      uint256[] memory traits = _setPetTraits(seed, ids[i], weights);
+      uint32[] memory traits = _setPetTraits(seed, ids[i], weights);
       _setPetStats(ids[i], traits, offsets, stats);
 
       // set mediaURI

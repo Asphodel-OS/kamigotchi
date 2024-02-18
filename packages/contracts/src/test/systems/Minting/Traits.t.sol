@@ -65,10 +65,10 @@ contract TraitsTest is SetupTemplate {
     return stats;
   }
 
-  function _getTraitWeight(uint traitIndex) internal view returns (uint) {
+  function _getTraitWeight(uint32 traitIndex) internal view returns (uint) {
     uint registryID = LibRegistryTrait.getByTraitIndex(components, traitIndex);
     uint tier = LibStat.getRarity(components, registryID);
-    return (tier > 0) ? 3 ** (tier - 1) : 0;
+    return (tier > 0) ? 1 << (tier - 1) : 0;
   }
 
   /////////////////
@@ -106,7 +106,7 @@ contract TraitsTest is SetupTemplate {
     _initEmptyTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
-    uint[] memory petIDs = __721BatchMinterSystem.batchMint(300);
+    uint[] memory petIDs = __721BatchMinterSystem.batchMint(numPets);
     vm.stopPrank();
 
     uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
