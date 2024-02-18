@@ -13,131 +13,6 @@
     },
     {
       "type": "function",
-      "name": "adjustBase",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "adjustLast",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        },
-        {
-          "name": "max",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "adjustLast",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "adjustMult",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "adjustShift",
-      "inputs": [
-        {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
-          "name": "amt",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "int32",
-          "internalType": "int32"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "authorizeWriter",
       "inputs": [
         {
@@ -147,6 +22,30 @@
         }
       ],
       "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "boost",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
       "stateMutability": "nonpayable"
     },
     {
@@ -264,12 +163,12 @@
               "internalType": "int32"
             },
             {
-              "name": "mult",
+              "name": "boost",
               "type": "int32",
               "internalType": "int32"
             },
             {
-              "name": "last",
+              "name": "sync",
               "type": "int32",
               "internalType": "int32"
             }
@@ -387,12 +286,12 @@
               "internalType": "int32"
             },
             {
-              "name": "mult",
+              "name": "boost",
               "type": "int32",
               "internalType": "int32"
             },
             {
-              "name": "last",
+              "name": "sync",
               "type": "int32",
               "internalType": "int32"
             }
@@ -418,6 +317,83 @@
         }
       ],
       "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "shift",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "sync",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        },
+        {
+          "name": "max",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "sync",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "amt",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
       "stateMutability": "nonpayable"
     },
     {
@@ -519,12 +495,8 @@
     }
   ],
   "methodIdentifiers": {
-    "adjustBase(uint256,int32)": "e3508538",
-    "adjustLast(uint256,int32)": "f88252af",
-    "adjustLast(uint256,int32,int32)": "0a60ac38",
-    "adjustMult(uint256,int32)": "767ca5ca",
-    "adjustShift(uint256,int32)": "9f9cf580",
     "authorizeWriter(address)": "4fef6a38",
+    "boost(uint256,int32)": "a8ed7591",
     "calcTotal(uint256)": "af6128c2",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
@@ -539,6 +511,9 @@
     "remove(uint256)": "4cc82215",
     "set(uint256,(int32,int32,int32,int32))": "32e5cc30",
     "set(uint256,bytes)": "8b282947",
+    "shift(uint256,int32)": "9ad30956",
+    "sync(uint256,int32)": "6ef23a3d",
+    "sync(uint256,int32,int32)": "06e76456",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "world()": "30b67baa",

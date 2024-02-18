@@ -30,25 +30,21 @@ import type {
 export type StatStruct = {
   base: PromiseOrValue<BigNumberish>;
   shift: PromiseOrValue<BigNumberish>;
-  mult: PromiseOrValue<BigNumberish>;
-  last: PromiseOrValue<BigNumberish>;
+  boost: PromiseOrValue<BigNumberish>;
+  sync: PromiseOrValue<BigNumberish>;
 };
 
 export type StatStructOutput = [number, number, number, number] & {
   base: number;
   shift: number;
-  mult: number;
-  last: number;
+  boost: number;
+  sync: number;
 };
 
 export interface SlotsComponentInterface extends utils.Interface {
   functions: {
-    "adjustBase(uint256,int32)": FunctionFragment;
-    "adjustLast(uint256,int32,int32)": FunctionFragment;
-    "adjustLast(uint256,int32)": FunctionFragment;
-    "adjustMult(uint256,int32)": FunctionFragment;
-    "adjustShift(uint256,int32)": FunctionFragment;
     "authorizeWriter(address)": FunctionFragment;
+    "boost(uint256,int32)": FunctionFragment;
     "calcTotal(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
@@ -63,6 +59,9 @@ export interface SlotsComponentInterface extends utils.Interface {
     "remove(uint256)": FunctionFragment;
     "set(uint256,(int32,int32,int32,int32))": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
+    "shift(uint256,int32)": FunctionFragment;
+    "sync(uint256,int32,int32)": FunctionFragment;
+    "sync(uint256,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -71,12 +70,8 @@ export interface SlotsComponentInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "adjustBase"
-      | "adjustLast(uint256,int32,int32)"
-      | "adjustLast(uint256,int32)"
-      | "adjustMult"
-      | "adjustShift"
       | "authorizeWriter"
+      | "boost"
       | "calcTotal"
       | "getEntities"
       | "getEntitiesWithValue"
@@ -91,6 +86,9 @@ export interface SlotsComponentInterface extends utils.Interface {
       | "remove"
       | "set(uint256,(int32,int32,int32,int32))"
       | "set(uint256,bytes)"
+      | "shift"
+      | "sync(uint256,int32,int32)"
+      | "sync(uint256,int32)"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -98,32 +96,12 @@ export interface SlotsComponentInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "adjustBase",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "adjustLast(uint256,int32,int32)",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "adjustLast(uint256,int32)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "adjustMult",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "adjustShift",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "authorizeWriter",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "boost",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "calcTotal",
@@ -173,6 +151,22 @@ export interface SlotsComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "shift",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sync(uint256,int32,int32)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sync(uint256,int32)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -186,24 +180,11 @@ export interface SlotsComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "adjustBase", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "adjustLast(uint256,int32,int32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "adjustLast(uint256,int32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "adjustMult", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "adjustShift",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "authorizeWriter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "boost", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "calcTotal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
@@ -237,6 +218,15 @@ export interface SlotsComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "set(uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "shift", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sync(uint256,int32,int32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sync(uint256,int32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -299,39 +289,14 @@ export interface SlotsComponent extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    adjustBase(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "adjustLast(uint256,int32,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      max: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "adjustLast(uint256,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    adjustMult(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    adjustShift(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     authorizeWriter(
       writer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -397,6 +362,25 @@ export interface SlotsComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -415,39 +399,14 @@ export interface SlotsComponent extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  adjustBase(
-    entity: PromiseOrValue<BigNumberish>,
-    amt: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "adjustLast(uint256,int32,int32)"(
-    entity: PromiseOrValue<BigNumberish>,
-    amt: PromiseOrValue<BigNumberish>,
-    max: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "adjustLast(uint256,int32)"(
-    entity: PromiseOrValue<BigNumberish>,
-    amt: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  adjustMult(
-    entity: PromiseOrValue<BigNumberish>,
-    amt: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  adjustShift(
-    entity: PromiseOrValue<BigNumberish>,
-    amt: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   authorizeWriter(
     writer: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  boost(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -513,6 +472,25 @@ export interface SlotsComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  shift(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "sync(uint256,int32,int32)"(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    max: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "sync(uint256,int32)"(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -531,41 +509,16 @@ export interface SlotsComponent extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    adjustBase(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    "adjustLast(uint256,int32,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      max: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    "adjustLast(uint256,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    adjustMult(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    adjustShift(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     calcTotal(
       entity: PromiseOrValue<BigNumberish>,
@@ -629,6 +582,25 @@ export interface SlotsComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -659,39 +631,14 @@ export interface SlotsComponent extends BaseContract {
   };
 
   estimateGas: {
-    adjustBase(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "adjustLast(uint256,int32,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      max: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "adjustLast(uint256,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    adjustMult(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    adjustShift(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     authorizeWriter(
       writer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -755,6 +702,25 @@ export interface SlotsComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -774,39 +740,14 @@ export interface SlotsComponent extends BaseContract {
   };
 
   populateTransaction: {
-    adjustBase(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "adjustLast(uint256,int32,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      max: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "adjustLast(uint256,int32)"(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    adjustMult(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    adjustShift(
-      entity: PromiseOrValue<BigNumberish>,
-      amt: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     authorizeWriter(
       writer: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -867,6 +808,25 @@ export interface SlotsComponent extends BaseContract {
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
