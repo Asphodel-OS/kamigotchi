@@ -773,6 +773,7 @@
         "IdHolderComponent",
         "IsDataComponent",
         "IndexComponent",
+        "HealthComponent",
         "StateComponent",
         "TimeLastComponent",
         "TypeComponent",
