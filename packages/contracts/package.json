@@ -28,7 +28,7 @@
     "deploy:testnet": "yarn deploy:script --mode TEST",
     "deploy:script": "ts-node src/deployment/commands/deploy.ts",
     "dev:local": "yarn prepare:local && yarn start",
-    "node:local": "anvil -b 1 --base-fee 0 --gas-price 0",
+    "node:local": "anvil -b 1 --base-fee 0 --gas-price 0 --timestamp 1708214400",
     "start:local": "run-p -l node:local deploy:local",
     "prettier": "prettier --write 'src/**/*.sol'",
     "prepare:local": "yarn codegen && rimraf out && forge build --skip test && yarn abi",
