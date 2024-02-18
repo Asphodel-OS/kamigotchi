@@ -5,7 +5,7 @@ import "test/utils/SetupTemplate.t.sol";
 
 contract Farm20Test is SetupTemplate {
   Farm20 token;
-  uint constant MAX_INT = 2 ** 256 - 1;
+  uint constant MAX_INT = 1 << 255;
   uint public minDelay;
 
   function setUp() public override {

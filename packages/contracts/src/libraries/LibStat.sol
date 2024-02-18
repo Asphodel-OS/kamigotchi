@@ -256,7 +256,7 @@ library LibStat {
     uint256 tier;
     for (uint256 i; i < registryIDs.length; i++) {
       tier = getRarity(components, registryIDs[i]);
-      if (tier > 0) rarities[i] = 3 ** (tier - 1);
+      if (tier > 0) rarities[i] = 1 << (tier - 1);
     }
   }
 

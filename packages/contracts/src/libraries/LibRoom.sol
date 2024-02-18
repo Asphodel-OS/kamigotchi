@@ -299,7 +299,7 @@ library LibRoom {
   //////////////////////
   // UTILS
 
-  function locationToUint256(Location memory location) internal view returns (uint256) {
+  function locationToUint256(Location memory location) internal pure returns (uint256) {
     return
       (uint256(uint32(location.x)) << 128) |
       (uint256(uint32(location.y)) << 64) |
