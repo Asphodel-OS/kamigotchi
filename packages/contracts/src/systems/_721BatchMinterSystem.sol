@@ -166,11 +166,11 @@ abstract contract TraitHandler {
     base.harmony += delta.harmony;
     base.slots += delta.slots;
 
-    healthComp.set(id, abi.encode(Stat(base.health, 0, 0, base.health)));
-    powerComp.set(id, abi.encode(Stat(base.power, 0, 0, 0)));
-    violenceComp.set(id, abi.encode(Stat(base.violence, 0, 0, 0)));
-    harmonyComp.set(id, abi.encode(Stat(base.harmony, 0, 0, 0)));
-    slotsComp.set(id, abi.encode(Stat(base.slots, 0, 0, base.slots)));
+    healthComp.set(id, Stat(base.health, 0, 0, base.health));
+    powerComp.set(id, Stat(base.power, 0, 0, 0));
+    violenceComp.set(id, Stat(base.violence, 0, 0, 0));
+    harmonyComp.set(id, Stat(base.harmony, 0, 0, 0));
+    slotsComp.set(id, Stat(base.slots, 0, 0, base.slots));
   }
 
   ////////////////////

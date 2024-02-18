@@ -4,13 +4,28 @@ pragma solidity ^0.8.0;
 import "solecs/BareComponent.sol";
 
 // Stat is a struct that holds the modifying values of a core stat.
-// Total = (1 + mult) * (base + shift)
+// Total = (1 + boost) * (base + shift)
 struct Stat {
   int32 base;
-  int32 shift; // fixed shift on the base stat
-  int32 mult; // % adjustment on shifted stat, 3 decimals of precision
-  int32 last; // the last seen value of the stat (optional, for depleting stats like hp)
+  int32 shift; // fixed +/- shift on the base stat
+  int32 boost; // % multiplier on post-shifted stat (3 decimals of precision)
+  int32 sync; // the last synced value of stat (optional, for depletable stats)
 }
+
+// on registry traits
+// - trait stats should only maintain a base value
+// - on instantiation these base values are added to the target's stat.base value
+// - sync value of depletable stats like hp and slots are inferred by total base value
+
+// on consumable registry-items
+// - base value updates the target's stat.shift value (e.g. perma stat boost items)
+// - sync value updates the target's stat.sync value (e.g. potions)
+
+// on nonfungible items (e.g. equipment)
+// - item instance tracks its own base, shift, boost and sync values
+// - shift and boost start at 0 and are upgradable
+// - sync only makes sense for depletable stats like slots and durability
+// - how overall stats are computed with equipment has yet to be determined
 
 contract StatComponent is BareComponent {
   constructor(address world, uint256 id) BareComponent(world, id) {}
@@ -30,10 +45,10 @@ contract StatComponent is BareComponent {
     keys[1] = "shift";
     values[1] = LibTypes.SchemaValue.INT32;
 
-    keys[2] = "mult";
+    keys[2] = "boost";
     values[2] = LibTypes.SchemaValue.INT32;
 
-    keys[3] = "last";
+    keys[3] = "sync";
     values[3] = LibTypes.SchemaValue.INT32;
   }
 
@@ -46,47 +61,43 @@ contract StatComponent is BareComponent {
     return value;
   }
 
-  // calculates the stat total (Total = (1 + mult) * (base + shift))
+  // calculate the stat total = ((1 + boost) * (base + shift))
   function calcTotal(uint256 entity) public view virtual returns (int32) {
     Stat memory value = getValue(entity);
-    int32 total = ((value.mult + 1e3) * (value.base + value.shift)) / 1e3;
+    int32 total = ((1e3 + value.boost) * (value.base + value.shift)) / 1e3;
     return (total > 0) ? total : int32(0);
   }
 
-  function adjustShift(uint256 entity, int32 amt) public returns (int32) {
+  // adjust the shift value of the stat.
+  function shift(uint256 entity, int32 amt) public returns (int32) {
     Stat memory value = getValue(entity);
     value.shift += amt;
     set(entity, value);
     return value.shift;
   }
 
-  function adjustMult(uint256 entity, int32 amt) public returns (int32) {
+  // adjust the boost value of the stat. an adjustment on baseline 1000 (100.0%)
+  function boost(uint256 entity, int32 amt) public returns (int32) {
     Stat memory value = getValue(entity);
-    value.mult += amt;
+    value.boost += amt;
     set(entity, value);
-    return value.mult;
+    return value.boost;
   }
 
-  // adjust the last value of the stat. bound result between 0 and Total
-  function adjustLast(uint256 entity, int32 amt) public returns (int32) {
+  // adjust the sync value of the stat. bound result between [0, calcTotal()]
+  function sync(uint256 entity, int32 amt) public returns (int32) {
     Stat memory value = getValue(entity);
-    int32 total = calcTotal(entity);
-
-    value.last += amt;
-    if (value.last < 0) value.last = 0;
-    if (value.last > total) value.last = total;
-    set(entity, value);
-    return value.last;
+    return sync(entity, amt, calcTotal(entity));
   }
 
-  // adjust the last value of the stat. bound result between 0 and max
-  function adjustLast(uint256 entity, int32 amt, int32 max) public returns (int32) {
+  // adjust the sync value of the stat with a specified max value
+  function sync(uint256 entity, int32 amt, int32 max) public returns (int32) {
     Stat memory value = getValue(entity);
 
-    value.last += amt;
-    if (value.last < 0) value.last = 0;
-    if (value.last > max) value.last = max;
+    value.sync += amt;
+    if (value.sync < 0) value.sync = 0;
+    if (value.sync > max) value.sync = max;
     set(entity, value);
-    return value.last;
+    return value.sync;
   }
 }

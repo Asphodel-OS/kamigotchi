@@ -268,7 +268,7 @@ contract HarvestTest is SetupTemplate {
     uint[] memory kamiHealths = new uint[](numKamis);
     uint[] memory productionIDs = new uint[](numKamis);
     for (uint i = 0; i < numKamis; i++) {
-      kamiHealths[i] = uint(int(LibStat.getHealth(components, kamiIDs[i]).last));
+      kamiHealths[i] = uint(int(LibStat.getHealth(components, kamiIDs[i]).sync));
       productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
     }
 
@@ -297,7 +297,7 @@ contract HarvestTest is SetupTemplate {
         } else {
           _collectProduction(productionIDs[j]);
           assertEq(
-            uint(int(LibStat.getHealth(components, kamiIDs[j]).last)),
+            uint(int(LibStat.getHealth(components, kamiIDs[j]).sync)),
             kamiHealths[j] - drain
           );
           assertEq(

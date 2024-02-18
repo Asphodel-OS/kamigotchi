@@ -103,9 +103,9 @@ library LibSkill {
   ) internal {
     string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
     string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
-    int32 amt = int32(uint32(LibRegistrySkill.getValue(components, effectID)));
+    int32 amt = int32(int(LibRegistrySkill.getValue(components, effectID)));
     if (LibString.eq(logicType, "DEC")) amt *= -1;
-    LibStat.adjustShift(components, holderID, subtype, amt);
+    LibStat.shift(components, holderID, subtype, amt);
   }
 
   /////////////////

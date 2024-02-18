@@ -38,25 +38,23 @@ library LibStat {
   }
 
   // adjust the shift field of a specified stat type
-  function adjustShift(
+  function shift(
     IUintComp components,
     uint256 id,
     string memory type_,
     int32 amt
   ) internal returns (int32) {
-    Stat memory stat = getStatComponent(components, type_).getValue(id);
-
-    return getStatComponent(components, type_).adjustShift(id, amt);
+    return getStatComponent(components, type_).shift(id, amt);
   }
 
   // adjust the multiplier field of a specified stat type (1e3 decimals of precision)
-  function adjustMult(
+  function boost(
     IUintComp components,
     uint256 id,
     string memory type_,
     int32 amt
   ) internal returns (int32) {
-    return getStatComponent(components, type_).adjustMult(id, amt);
+    return getStatComponent(components, type_).boost(id, amt);
   }
 
   /////////////////
@@ -180,21 +178,9 @@ library LibStat {
     HarmonyComponent(getAddressById(components, HarmonyCompID)).set(id, value);
   }
 
-  // instantiates a harmony stat with the specified base value
-  function setHarmony(IUintComp components, uint256 id, int32 value) internal {
-    Stat memory stat = Stat(value, 0, 0, 0);
-    setHarmony(components, id, stat);
-  }
-
   // set the health stat struct of an entity
   function setHealth(IUintComp components, uint256 id, Stat memory value) internal {
     HealthComponent(getAddressById(components, HealthCompID)).set(id, value);
-  }
-
-  // instantiates a health stat with the specified base and last value
-  function setHealth(IUintComp components, uint256 id, int32 value) internal {
-    Stat memory stat = Stat(value, 0, 0, value);
-    setHealth(components, id, stat);
   }
 
   // set the power stat struct of an entity
@@ -202,21 +188,9 @@ library LibStat {
     PowerComponent(getAddressById(components, PowerCompID)).set(id, value);
   }
 
-  // instantiates a power stat with the specified base value
-  function setPower(IUintComp components, uint256 id, int32 value) internal {
-    Stat memory stat = Stat(value, 0, 0, 0);
-    setPower(components, id, stat);
-  }
-
   // set the slots stat struct of an entity
   function setSlots(IUintComp components, uint256 id, Stat memory value) internal {
     SlotsComponent(getAddressById(components, SlotsCompID)).set(id, value);
-  }
-
-  // instantiates a slots stat with the specified base and last value
-  function setSlots(IUintComp components, uint256 id, int32 value) internal {
-    Stat memory stat = Stat(value, 0, 0, value);
-    setSlots(components, id, stat);
   }
 
   // set the stamina stat struct of an entity
@@ -224,21 +198,9 @@ library LibStat {
     StaminaComponent(getAddressById(components, StaminaCompID)).set(id, value);
   }
 
-  // instantiates a stamina stat with the specified base and last value
-  function setStamina(IUintComp components, uint256 id, int32 value) internal {
-    Stat memory stat = Stat(value, 0, 0, value);
-    setStamina(components, id, stat);
-  }
-
   // set the violence stat struct of an entity
   function setViolence(IUintComp components, uint256 id, Stat memory value) internal {
     ViolenceComponent(getAddressById(components, ViolenceCompID)).set(id, value);
-  }
-
-  // instantiates a violence stat with the specified base value
-  function setViolence(IUintComp components, uint256 id, int32 value) internal {
-    Stat memory stat = Stat(value, 0, 0, 0);
-    setViolence(components, id, stat);
   }
 
   /////////////////

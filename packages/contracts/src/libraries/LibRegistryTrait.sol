@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { Stat } from "components/types/StatComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
@@ -223,19 +224,19 @@ library LibRegistryTrait {
 
     setName(components, id, name);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) setHealth(components, id, health);
     else LibStat.unsetHealth(components, id);
 
-    if (power > 0) LibStat.setPower(components, id, power);
+    if (power > 0) setPower(components, id, power);
     else LibStat.unsetPower(components, id);
 
-    if (violence > 0) LibStat.setViolence(components, id, violence);
+    if (violence > 0) setViolence(components, id, violence);
     else LibStat.unsetViolence(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    if (harmony > 0) setHarmony(components, id, harmony);
     else LibStat.unsetHarmony(components, id);
 
-    if (slots > 0) LibStat.setSlots(components, id, slots);
+    if (slots > 0) setSlots(components, id, slots);
     else LibStat.unsetSlots(components, id);
 
     if (rarity > 0) LibRarity.set(components, id, rarity);
@@ -266,19 +267,19 @@ library LibRegistryTrait {
 
     setName(components, id, name);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) setHealth(components, id, health);
     else LibStat.unsetHealth(components, id);
 
-    if (power > 0) LibStat.setPower(components, id, power);
+    if (power > 0) setPower(components, id, power);
     else LibStat.unsetPower(components, id);
 
-    if (violence > 0) LibStat.setViolence(components, id, violence);
+    if (violence > 0) setViolence(components, id, violence);
     else LibStat.unsetViolence(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    if (harmony > 0) setHarmony(components, id, harmony);
     else LibStat.unsetHarmony(components, id);
 
-    if (slots > 0) LibStat.setSlots(components, id, slots);
+    if (slots > 0) setSlots(components, id, slots);
     else LibStat.unsetSlots(components, id);
 
     if (rarity > 0) LibRarity.set(components, id, rarity);
@@ -306,19 +307,19 @@ library LibRegistryTrait {
 
     setName(components, id, name);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) setHealth(components, id, health);
     else LibStat.unsetHealth(components, id);
 
-    if (power > 0) LibStat.setPower(components, id, power);
+    if (power > 0) setPower(components, id, power);
     else LibStat.unsetPower(components, id);
 
-    if (violence > 0) LibStat.setViolence(components, id, violence);
+    if (violence > 0) setViolence(components, id, violence);
     else LibStat.unsetViolence(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    if (harmony > 0) setHarmony(components, id, harmony);
     else LibStat.unsetHarmony(components, id);
 
-    if (slots > 0) LibStat.setSlots(components, id, slots);
+    if (slots > 0) setSlots(components, id, slots);
     else LibStat.unsetSlots(components, id);
 
     if (rarity > 0) LibRarity.set(components, id, rarity);
@@ -346,19 +347,19 @@ library LibRegistryTrait {
 
     setName(components, id, name);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) setHealth(components, id, health);
     else LibStat.unsetHealth(components, id);
 
-    if (power > 0) LibStat.setPower(components, id, power);
+    if (power > 0) setPower(components, id, power);
     else LibStat.unsetPower(components, id);
 
-    if (violence > 0) LibStat.setViolence(components, id, violence);
+    if (violence > 0) setViolence(components, id, violence);
     else LibStat.unsetViolence(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    if (harmony > 0) setHarmony(components, id, harmony);
     else LibStat.unsetHarmony(components, id);
 
-    if (slots > 0) LibStat.setSlots(components, id, slots);
+    if (slots > 0) setSlots(components, id, slots);
     else LibStat.unsetSlots(components, id);
 
     if (rarity > 0) LibRarity.set(components, id, rarity);
@@ -387,19 +388,19 @@ library LibRegistryTrait {
 
     setName(components, id, name);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) setHealth(components, id, health);
     else LibStat.unsetHealth(components, id);
 
-    if (power > 0) LibStat.setPower(components, id, power);
+    if (power > 0) setPower(components, id, power);
     else LibStat.unsetPower(components, id);
 
-    if (violence > 0) LibStat.setViolence(components, id, violence);
+    if (violence > 0) setViolence(components, id, violence);
     else LibStat.unsetViolence(components, id);
 
-    if (harmony > 0) LibStat.setHarmony(components, id, harmony);
+    if (harmony > 0) setHarmony(components, id, harmony);
     else LibStat.unsetHarmony(components, id);
 
-    if (slots > 0) LibStat.setSlots(components, id, slots);
+    if (slots > 0) setSlots(components, id, slots);
     else LibStat.unsetSlots(components, id);
 
     if (rarity > 0) LibRarity.set(components, id, rarity);
@@ -498,6 +499,26 @@ library LibRegistryTrait {
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  function setHarmony(IUintComp components, uint256 id, int32 value) internal {
+    LibStat.setHarmony(components, id, Stat(value, 0, 0, 0));
+  }
+
+  function setHealth(IUintComp components, uint256 id, int32 value) internal {
+    LibStat.setHealth(components, id, Stat(value, 0, 0, 0));
+  }
+
+  function setPower(IUintComp components, uint256 id, int32 value) internal {
+    LibStat.setPower(components, id, Stat(value, 0, 0, 0));
+  }
+
+  function setSlots(IUintComp components, uint256 id, int32 value) internal {
+    LibStat.setSlots(components, id, Stat(value, 0, 0, 0));
+  }
+
+  function setViolence(IUintComp components, uint256 id, int32 value) internal {
+    LibStat.setViolence(components, id, Stat(value, 0, 0, 0));
   }
 
   function unsetAffinity(IUintComp components, uint256 id) internal {

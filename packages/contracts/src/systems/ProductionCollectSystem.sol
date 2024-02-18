@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { console } from "forge-std/Console.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
@@ -24,6 +25,7 @@ contract ProductionCollectSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 petID = LibProduction.getPet(components, id);
+    console.log("\n\n==ProductionCollectSystem==");
 
     // standard checks (ownership, cooldown, state)
     require(accountID != 0, "FarmCollect: no account");

@@ -64,7 +64,7 @@ contract MurderTest is SetupTemplate {
     uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
     uint output = LibProduction.calcOutput(components, productionID);
     uint drain = LibPet.calcDrain(components, victimID, output);
-    uint health = uint(int(LibStat.getHealth(components, victimID).last));
+    uint health = uint(int(LibStat.getHealth(components, victimID).sync));
     health = (health > drain) ? health - drain : 0;
 
     uint threshold = LibPet.calcThreshold(components, attackerID, victimID); // 1e18 precision

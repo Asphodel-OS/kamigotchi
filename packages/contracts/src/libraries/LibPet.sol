@@ -9,6 +9,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 import { Gaussian } from "solstat/Gaussian.sol";
+import { console } from "forge-std/Console.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
@@ -111,27 +112,23 @@ library LibPet {
   ///////////////////////
   // STATS INTERACTIONS
 
-  // Drains HP from a pet. The opposite of heal().
+  // Drains HP from a pet. Opposite of healing
   function drain(IUintComp components, uint256 id, int32 amt) internal {
     if (amt == 0) return;
-    HealthComponent(getAddressById(components, HealthCompID)).adjustLast(id, amt);
+    HealthComponent(getAddressById(components, HealthCompID)).sync(id, -1 * amt);
   }
 
   // heal the pet by a given amount
   function heal(IUintComp components, uint256 id, int32 amt) internal {
     if (amt == 0) return; // skip if no healing
     int32 total = calcTotalHealth(components, id);
-    Stat memory health = LibStat.getHealth(components, id);
-    health.last += amt;
-    if (health.last > total) health.last = total;
-    LibStat.setHealth(components, id, health);
-    HealthComponent(getAddressById(components, HealthCompID)).adjustLast(id, amt, total);
+    HealthComponent(getAddressById(components, HealthCompID)).sync(id, amt, total);
   }
 
   // Update a pet's health to 0 and its state to DEAD
   function kill(IUintComp components, uint256 id) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("DEAD"));
-    HealthComponent(getAddressById(components, HealthCompID)).adjustLast(id, -(1 << 31));
+    HealthComponent(getAddressById(components, HealthCompID)).sync(id, -(1 << 31));
   }
 
   // Update a pet's state to RESTING
@@ -141,14 +138,19 @@ library LibPet {
 
   // Update the current health of a pet as well as any active production
   function sync(IUintComp components, uint256 id) public {
+    console.log("\nsyncing pet", id);
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
-      drain(components, id, int32(uint32(calcDrain(components, id, deltaBalance))));
+      console.log("deltaBalance: %d", deltaBalance);
+      uint256 damage = calcDrain(components, id, deltaBalance);
+      console.log("damage: %d", damage);
+      drain(components, id, int32(int(damage)));
     } else if (LibString.eq(state, "RESTING")) {
       uint256 recovery = calcRestingRecovery(components, id);
+      console.log("recovery: %d", recovery);
       heal(components, id, int32(int(recovery)));
     }
 
@@ -274,8 +276,8 @@ library LibPet {
 
     uint256 base = configVals[0];
     uint256 basePrecision = 10 ** configVals[1];
-    uint256 sourceViolence = uint256(uint32(calcTotalViolence(components, sourceID)));
-    uint256 targetHarmony = uint256(uint32(calcTotalHarmony(components, targetID)));
+    uint256 sourceViolence = uint(int(calcTotalViolence(components, sourceID)));
+    uint256 targetHarmony = uint(int(calcTotalHarmony(components, targetID)));
     int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
     int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
     return (uint256(weight) * base) / basePrecision;
@@ -355,7 +357,7 @@ library LibPet {
 
   // Check whether the kami is fully healed.
   function isFull(IUintComp components, uint256 id) internal view returns (bool) {
-    return calcTotalHealth(components, id) == LibStat.getHealth(components, id).last;
+    return calcTotalHealth(components, id) == LibStat.getHealth(components, id).sync;
   }
 
   // Check whether a pet is harvesting.
@@ -365,7 +367,7 @@ library LibPet {
 
   // Check whether the current health of a pet is greater than 0. Assume health synced this block.
   function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibStat.getHealth(components, id).last > 0;
+    return LibStat.getHealth(components, id).sync > 0;
   }
 
   // Check whether a pet's ERC721 token is in the game world
@@ -464,11 +466,11 @@ library LibPet {
     configs[3] = "KAMI_BASE_HARMONY";
     configs[4] = "KAMI_BASE_SLOTS";
     uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
-    int32 health = int32(uint32(configVals[0]));
-    int32 power = int32(uint32(configVals[1]));
-    int32 violence = int32(uint32(configVals[2]));
-    int32 harmony = int32(uint32(configVals[3]));
-    int32 slots = int32(uint32(configVals[4]));
+    int32 health = int32(int(configVals[0]));
+    int32 power = int32(int(configVals[1]));
+    int32 violence = int32(int(configVals[2]));
+    int32 harmony = int32(int(configVals[3]));
+    int32 slots = int32(int(configVals[4]));
 
     // sum the stats from all traits
     uint256 traitRegistryID;
@@ -483,11 +485,11 @@ library LibPet {
     }
 
     // set the stats
-    LibStat.setHealth(components, id, health);
-    LibStat.setPower(components, id, power);
-    LibStat.setViolence(components, id, violence);
-    LibStat.setHarmony(components, id, harmony);
-    LibStat.setSlots(components, id, slots);
+    LibStat.setHealth(components, id, Stat(health, 0, 0, health));
+    LibStat.setPower(components, id, Stat(power, 0, 0, 0));
+    LibStat.setViolence(components, id, Stat(violence, 0, 0, 0));
+    LibStat.setHarmony(components, id, Stat(harmony, 0, 0, 0));
+    LibStat.setSlots(components, id, Stat(slots, 0, 0, slots));
   }
 
   /////////////////

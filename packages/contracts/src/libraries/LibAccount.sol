@@ -8,7 +8,6 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
-// import { Stat } from "components/types/StatComponent.sol";
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
@@ -61,13 +60,13 @@ library LibAccount {
 
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint32 to) internal {
-    StaminaComponent(getAddressById(components, StaminaCompID)).adjustLast(id, -1);
+    StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, -1);
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, to);
   }
 
   // Recover's stamina to an account
   function recover(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
-    return StaminaComponent(getAddressById(components, StaminaCompID)).adjustLast(id, amt);
+    return StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, amt);
   }
 
   // syncs the stamina of an account. rounds down, ruthlessly

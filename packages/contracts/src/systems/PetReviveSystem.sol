@@ -38,7 +38,7 @@ contract PetReviveSystem is System {
 
     // revive and heal according to item stats
     LibPet.revive(components, id);
-    LibPet.heal(components, id, LibStat.getHealth(components, registryID).base);
+    LibPet.heal(components, id, LibStat.getHealth(components, registryID).sync);
     LibPet.setLastTs(components, id, block.timestamp); // explicitly, as we don't sync health on this EP
 
     // standard logging and tracking

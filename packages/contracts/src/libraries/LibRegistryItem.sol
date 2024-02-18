@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { Stat } from "components/types/StatComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
@@ -105,7 +106,7 @@ library LibRegistryItem {
     setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
     if (experience > 0) setExperience(components, id, experience);
     return id;
   }
@@ -130,7 +131,7 @@ library LibRegistryItem {
     setName(components, id, name);
     setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
-    LibStat.setHealth(components, id, health);
+    LibStat.setHealth(components, id, Stat(0, 0, 0, health));
     return id;
   }
 

@@ -14,6 +14,7 @@ import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
 import { LibScore } from "libraries/LibScore.sol";
+import { console } from "forge-std/Console.sol";
 
 uint256 constant ID = uint256(keccak256("system.Production.Liquidate"));
 
@@ -25,6 +26,7 @@ contract ProductionLiquidateSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 targetProductionID, uint256 petID) = abi.decode(arguments, (uint256, uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
+    console.log("\n\n==ProductionLiquidateSystem==");
 
     // standard checks (ownership, cooldown, state)
     require(accountID != 0, "FarmLiquidate: no account");

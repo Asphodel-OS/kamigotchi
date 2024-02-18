@@ -36,7 +36,7 @@ contract FeedingTest is SetupTemplate {
     uint productionID = LibPet.getProduction(components, petID);
     uint output = LibProduction.calcOutput(components, productionID);
     uint drain = LibPet.calcDrain(components, petID, output);
-    uint health = uint(int(LibStat.getHealth(components, petID).last));
+    uint health = uint(int(LibStat.getHealth(components, petID).sync));
     health = (health > drain) ? health - drain : 0;
     return health;
   }
