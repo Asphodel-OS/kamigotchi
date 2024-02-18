@@ -36,19 +36,19 @@ export const Traits = (props: Props) => {
   );
 
   const TraitBox = (type: string, trait: Trait) => {
-    const statArray = Object.entries(trait.stats).filter(([_, value]) => value > 0);
+    const statArray = Object.entries(trait.stats).filter(([_, stat]) => stat.base > 0);
     return (
       <Container>
         <Title>{`${type}: ${trait.name}`}</Title>
         <Content>
-          {statArray.map(([name, value]) => {
+          {statArray.map(([name, stat]) => {
             const details = statsDetails.get(name);
             const tooltipText = [details?.description ?? ''];
             return (
               <Tooltip key={name} text={tooltipText}>
                 <InfoBox>
                   <InfoIcon src={details?.image} />
-                  <InfoNumber>{value}</InfoNumber>
+                  <InfoNumber>{stat.base}</InfoNumber>
                 </InfoBox>
               </Tooltip>
             );

@@ -30,16 +30,14 @@ export function registerAccountInfoFixture() {
     },
     (layers) => {
       const { network } = layers;
-      const { Coin, RoomIndex, Name, OperatorAddress, StaminaCurrent, Stamina } =
-        network.components;
+      const { Coin, RoomIndex, Name, OperatorAddress, Stamina } = network.components;
 
       return merge(
         Coin.update$,
         RoomIndex.update$,
         Name.update$,
         OperatorAddress.update$,
-        Stamina.update$,
-        StaminaCurrent.update$
+        Stamina.update$
       ).pipe(
         map(() => {
           const account = getAccountFromBurner(network);
@@ -119,7 +117,7 @@ export function registerAccountInfoFixture() {
 
       const getStaminaTooltip = (account: Account) => {
         const staminaString = parseStaminaString(account);
-        const recoveryPeriod = account.stamina.recoveryPeriod;
+        const recoveryPeriod = Math.round(1 / account.stamina.rate);
         return [
           `Account Stamina (${staminaString})`,
           '',

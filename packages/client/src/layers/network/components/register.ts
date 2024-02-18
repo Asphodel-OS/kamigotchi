@@ -106,12 +106,12 @@ export function createComponents(world: World) {
     Whitelist: defineNumberArrayComponent(world, 'Whitelist', 'component.Whitelist'),
 
     // Stat Attributes
-    Health: defineStatComponent(world, 'Health', 'component.stat.Health'),
-    Harmony: defineStatComponent(world, 'Harmony', 'component.stat.Harmony'),
-    Power: defineStatComponent(world, 'Power', 'component.stat.Power'),
-    Slots: defineStatComponent(world, 'Slots', 'component.stat.Slots'),
-    Stamina: defineStatComponent(world, 'Stamina', 'component.stat.Stamina'),
-    Violence: defineStatComponent(world, 'Violence', 'component.stat.Violence'),
+    Health: defineStatComponent(world, 'Health', 'component.stat.health'),
+    Harmony: defineStatComponent(world, 'Harmony', 'component.stat.harmony'),
+    Power: defineStatComponent(world, 'Power', 'component.stat.power'),
+    Slots: defineStatComponent(world, 'Slots', 'component.stat.slots'),
+    Stamina: defineStatComponent(world, 'Stamina', 'component.stat.stamina'),
+    Violence: defineStatComponent(world, 'Violence', 'component.stat.violence'),
 
     // General Attributes
     Affinity: defineStringEZ('Affinity', 'component.Affinity'),
