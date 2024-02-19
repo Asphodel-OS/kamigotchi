@@ -52,7 +52,7 @@ contract StatComponent is BareComponent {
     values[3] = LibTypes.SchemaValue.INT32;
   }
 
-  function set(uint256 entity, Stat memory value) public {
+  function set(uint256 entity, Stat memory value) public onlyWriter {
     _set(entity, abi.encode(value));
   }
 
@@ -69,7 +69,7 @@ contract StatComponent is BareComponent {
   }
 
   // adjust the shift value of the stat.
-  function shift(uint256 entity, int32 amt) public returns (int32) {
+  function shift(uint256 entity, int32 amt) public onlyWriter returns (int32) {
     Stat memory value = getValue(entity);
     value.shift += amt;
     _set(entity, abi.encode(value));
@@ -77,7 +77,7 @@ contract StatComponent is BareComponent {
   }
 
   // adjust the boost value of the stat. an adjustment on baseline 1000 (100.0%)
-  function boost(uint256 entity, int32 amt) public returns (int32) {
+  function boost(uint256 entity, int32 amt) public onlyWriter returns (int32) {
     Stat memory value = getValue(entity);
     value.boost += amt;
     _set(entity, abi.encode(value));
@@ -85,13 +85,13 @@ contract StatComponent is BareComponent {
   }
 
   // adjust the sync value of the stat. bound result between [0, calcTotal()]
-  function sync(uint256 entity, int32 amt) public returns (int32) {
+  function sync(uint256 entity, int32 amt) public onlyWriter returns (int32) {
     Stat memory value = getValue(entity);
     return sync(entity, amt, calcTotal(entity));
   }
 
   // adjust the sync value of the stat with a specified max value
-  function sync(uint256 entity, int32 amt, int32 max) public returns (int32) {
+  function sync(uint256 entity, int32 amt, int32 max) public onlyWriter returns (int32) {
     Stat memory value = getValue(entity);
 
     value.sync += amt;

@@ -600,6 +600,7 @@
         "BlockRevealComponent",
         "IdHolderComponent",
         "IndexItemComponent",
+        "IsDataComponent",
         "IsLootboxComponent",
         "IsLogComponent",
         "TimeLastComponent"
