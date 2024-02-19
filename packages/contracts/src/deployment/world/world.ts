@@ -30,7 +30,7 @@ export async function run() {
   const compiledCalls: string[] = [];
   const state = createStateAPI(compiledCalls);
   setUpWorld(state).init();
-  // console.log(compiledCalls.length);
+  console.log(compiledCalls.length);
   writeOutput(compiledCalls);
 
   function setUpWorld(api: StateAPI) {
@@ -52,7 +52,7 @@ export async function run() {
         initGachaPool(api, 3333);
       }
 
-      api.account.create("0x000000000000000000000000000000000000dead", "load_bearer", "fudge");
+      api.account.create("0x000000000000000000000000000000000000dEaD", "load_bearer", "fudge");
     }
 
     ///////////////////
@@ -921,11 +921,10 @@ function readFile(file: string): string {
 }
 
 function writeOutput(data: string[]) {
-  let result = "";
-  for (let i = 0; i < data.length; i++) {
-    result += data[i] + "\n";
-  }
+  let result = `{\n"calls":\n` + JSON.stringify(data, null, 2) + "\n}";
   const fs = require("fs");
   const path = require("path");
-  fs.writeFileSync(path.join(__dirname, "../contracts/", "initStream.csv"), result);
+  fs.writeFileSync(path.join(__dirname, "../contracts/", "initStream.json"), result, {
+    encoding: "utf8",
+  });
 }

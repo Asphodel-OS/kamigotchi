@@ -1,13 +1,13 @@
 import { BigNumberish } from "ethers";
-import { createCall } from "../commands/utils/systemCall";
+import { parseCall } from "../commands/utils/systemCall";
 import { SystemAbis } from "./abis/SystemAbis";
 
 export type StateAPI = Awaited<ReturnType<typeof createStateAPI>>;
 
 export function createStateAPI(compiledCalls: string[]) {
   function call(system: keyof typeof SystemAbis, args: any[]) {
-    const data = createCall(system, args);
-    const result = data.system + "," + data.args;
+    const data = parseCall(system, args);
+    const result = data.system + ", abi.encode(" + data.args + ")";
     compiledCalls.push(result);
     // console.log(result);
   }

@@ -35,7 +35,8 @@
     "abi:deploy:gen": "ts-node src/deployment/commands/genAbi.ts",
     "build:systems": "forge build --contracts src/systems --skip test --skip script",
     "codegen:deploy": "yarn ejs src/deployment/contracts/LibDeploy.ejs -f deploy.json -o src/deployment/contracts/LibDeploy.sol",
-    "codegen:tests": "yarn ejs src/test/utils/TestSetupImports.ejs -f deploy.json -o src/test/utils/TestSetupImports.sol"
+    "codegen:tests": "yarn ejs src/test/utils/TestSetupImports.ejs -f deploy.json -o src/test/utils/TestSetupImports.sol",
+    "codegen:world": "yarn ejs src/deployment/contracts/InitWorld.s.ejs -f src/deployment/contracts/initStream.json -o src/deployment/contracts/InitWorld.s.sol"
   },
   "devDependencies": {
     "@rari-capital/solmate": "https://github.com/rari-capital/solmate.git#ed67feda67b24fdeff8ad1032360f0ee6047ba0a",

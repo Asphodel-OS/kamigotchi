@@ -38,6 +38,13 @@ export const createCall = (system: keyof typeof SystemAbis, args: any[], world?:
   };
 };
 
+export const parseCall = (system: keyof typeof SystemAbis, args: any[]) => {
+  return {
+    system: systemID(system).toString(10),
+    args: parseArgs(system, args),
+  };
+};
+
 export const systemID = (system: string): bigint => {
   return BigInt(ethers.utils.id(system));
 };
@@ -50,6 +57,17 @@ export const encodeArgs = (system: keyof typeof SystemAbis, args: any[]) => {
       args
     );
   return "";
+};
+
+export const parseArgs = (system: keyof typeof SystemAbis, args: any[]) => {
+  const abi = getAbi(system).find((abi) => abi.type === "function" && abi.name === "executeTyped");
+  const inputTypes = abi?.inputs.map((n) => n.type);
+  for (let i = 0; i < args.length; i++) {
+    if (inputTypes && inputTypes[i] === "string") {
+      args[i] = `"` + args[i] + `"`;
+    }
+  }
+  return args;
 };
 
 export const getAbi = (system: keyof typeof SystemAbis) => {
