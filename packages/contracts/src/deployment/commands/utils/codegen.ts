@@ -2,7 +2,9 @@ import ejs from "ejs";
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 
-const contractsDir = path.join(__dirname, "../../");
+const deploymentDir = path.join(__dirname, "../../");
+const contractsDir = path.join(deploymentDir, "contracts/");
+const clientDir = path.join(deploymentDir, "../../../client/");
 
 /**
  * Generate LibDeploy.sol from deploy.json
@@ -45,15 +47,26 @@ export async function generateLibDeploy(
 
   // Generate LibDeploy
   console.log("Generating deployment script");
-  const LibDeploy = await ejs.renderFile(
-    path.join(contractsDir, "contracts/LibDeploy.ejs"),
-    config,
-    {
-      async: true,
-    }
-  );
+  const LibDeploy = await ejs.renderFile(path.join(contractsDir, "LibDeploy.ejs"), config, {
+    async: true,
+  });
   const libDeployPath = path.join(out, "LibDeploy.sol");
   await writeFile(libDeployPath, LibDeploy);
 
   return libDeployPath;
+}
+
+/**
+ * Generate SystemAbis.ts from client system config
+ * Copies over mud autogen system abis into a here
+ * needed to bypass esm/cjs/node stuff
+ */
+export async function generateSystemAbis() {
+  const outPath = path.join(deploymentDir, "world/abis/SystemAbis.ts");
+  const original = await readFile(path.join(clientDir, "types/SystemAbis.mjs"), {
+    encoding: "utf8",
+  });
+  const result = original.replace(/..\/abi/g, "../../../../abi");
+  await writeFile(outPath, result);
+  return;
 }
