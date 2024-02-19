@@ -2,6 +2,7 @@ import { registerLoadingState } from './LoadingState';
 
 import {
   registerAccountButton,
+  registerChatButton,
   registerHelpButton,
   registerInventoryButton,
   registerMapButton,
@@ -16,6 +17,7 @@ import { registerWalletFixture } from './fixtures/Wallet';
 import { registerActionQueueFixture } from './fixtures/queue/';
 
 import { registerAccountModal } from './modals/account';
+import { registerChatModal } from './modals/chat/';
 import { registerDialogueModal } from './modals/dialogue';
 import { registerGachaModal } from './modals/gacha';
 import { registerHelpModal } from './modals/help';
@@ -46,6 +48,9 @@ import {
 
 export function registerUIComponents() {
   registerLoadingState();
+
+  registerChatButton();
+  registerChatModal();
 
   // buttons
   registerAccountButton();

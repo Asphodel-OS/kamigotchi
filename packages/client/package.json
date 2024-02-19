@@ -53,6 +53,7 @@
     "@latticexyz/utils": "1.34.0",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.13.7",
+    "@neynar/nodejs-sdk": "^1.10.0",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@rainbow-me/rainbowkit": "^1.0.0",
     "@stdlib/stats-base-dists-normal-cdf": "^0.0.7",

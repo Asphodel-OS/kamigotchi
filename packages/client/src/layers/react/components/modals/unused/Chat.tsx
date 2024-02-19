@@ -62,6 +62,8 @@ export function registerChatModal() {
     ({ chatName }) => {
       type ChatMessage = { seenAt: number; message: string };
 
+      console.log('neynar key: ', process.env.NEYNAR_API_KEY);
+
       const [messages, setMessages] = useState<ChatMessage[]>([]);
       const [chatInput, setChatInput] = useState('');
 

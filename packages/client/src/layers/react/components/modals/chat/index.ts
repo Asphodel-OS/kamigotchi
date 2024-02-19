@@ -1,0 +1,1 @@
+export { registerChatModal } from './Chat';
