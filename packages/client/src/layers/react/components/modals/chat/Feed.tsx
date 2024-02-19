@@ -1,7 +1,7 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { CastWithInteractions, FeedResponse } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import moment from 'moment';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from '../../library';
@@ -16,12 +16,13 @@ export const Feed = (props: Props) => {
   const [casts, setCasts] = useState<CastWithInteractions[]>([]);
   const feedRef = useRef<HTMLDivElement>(null);
 
-  const poll = useCallback(async () => {
+  // poll for new messages and update the list of current casts
+  const poll = async () => {
     const newFeed = await client.fetchFeed('filter', {
       filterType: 'channel_id',
       channelId: 'kamigotchi',
       cursor: feed?.next.cursor ?? '',
-      limit: 5,
+      limit: 100, // defaults to 25, max 100
     });
     setFeed(newFeed);
 
@@ -30,32 +31,25 @@ export const Feed = (props: Props) => {
       if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
     }
     setCasts(currCasts);
-  }, [client, feed]);
+  };
 
   useEffect(() => {
     poll();
-    // const current = feedRef.current;
-    // const handleScroll = (oldCasts: CastWithInteractions[]) => {
-    //   if (feedRef.current && feedRef.current.scrollTop === 0) {
-    //     console.log('scrolltop: ', feedRef.current.scrollTop);
-    //     poll();
-    //   }
-    // };
-    //
-    // if (current) current.addEventListener('scroll', () => handleScroll(casts));
-    // return () => {
-    //   if (current) current.removeEventListener('scroll', () => handleScroll(casts));
-    // };
   }, []);
 
   useEffect(() => {
-    console.log('feed casts', feed?.casts);
-    console.log('feed cursor', feed?.next.cursor);
-  }, [feed]);
+    const current = feedRef.current;
+    const handleScroll = () => {
+      if (feedRef.current && feedRef.current.scrollTop === 0) {
+        if (feed?.next.cursor) poll();
+      }
+    };
 
-  useEffect(() => {
-    console.log('casts', casts);
-  }, [casts]);
+    if (current) current.addEventListener('scroll', handleScroll);
+    return () => {
+      if (current) current.removeEventListener('scroll', handleScroll);
+    };
+  }, [feed?.next.cursor]);
 
   return (
     <Wrapper ref={feedRef}>
