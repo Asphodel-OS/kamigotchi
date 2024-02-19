@@ -47,10 +47,7 @@ contract ProductionLiquidateSystem is System {
     uint256 nodeID = LibProduction.getNode(components, productionID);
     uint256 targetNodeID = LibProduction.getNode(components, targetProductionID);
     require(nodeID == targetNodeID, "FarmLiquidate: target too far");
-    require(
-      LibAccount.sharesRoom(components, accountID, nodeID),
-      "FarmLiquidate: node too far"
-    );
+    require(LibAccount.sharesRoom(components, accountID, nodeID), "FarmLiquidate: node too far");
 
     // check that the pet is capable of liquidating the target production
     uint256 targetPetID = LibProduction.getPet(components, targetProductionID);
@@ -65,7 +62,7 @@ contract ProductionLiquidateSystem is System {
     uint256 bounty = LibPet.calcBounty(components, petID, balance);
     uint256 recoil = LibPet.calcDrain(components, petID, bounty);
     LibCoin.inc(components, productionID, bounty);
-    LibPet.drain(components, petID, recoil);
+    LibPet.drain(components, petID, int32(int(recoil)));
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);

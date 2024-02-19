@@ -74,7 +74,7 @@ export const KamiCard = (props: Props) => {
   const CornerContent = (kami: Kami) => {
     const cooldown = calcCooldownRemaining(kami);
     const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
-    const totalHealth = kami.stats.health + kami.bonusStats.health;
+    const totalHealth = kami.stats.health.total;
     const batteryString = !isUnrevealed(kami)
       ? `Health: ${calcHealth(kami).toFixed()}/${totalHealth}`
       : '';

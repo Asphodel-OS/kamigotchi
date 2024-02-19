@@ -88,7 +88,6 @@ library LibBoolean {
     LogicTypeComponent logicTypeComp = LogicTypeComponent(
       getAddressById(components, LogicTypeCompID)
     );
-    ForComponent forComp = ForComponent(getAddressById(components, ForCompID));
 
     for (uint256 i = 0; i < conditionIDs.length; i++) {
       // uint256 targetID = accountID; // placeholder, can change in future

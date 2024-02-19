@@ -16,7 +16,7 @@ contract AccountMoveSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     require(accountID != 0, "AccMove: no account");
-    require(LibAccount.syncStamina(components, accountID) != 0, "AccMove: out of stamina");
+    require(LibAccount.syncStamina(components, accountID) > 0, "AccMove: out of stamina");
 
     uint32 toIndex = abi.decode(arguments, (uint32));
     uint32 currIndex = LibAccount.getRoom(components, accountID);

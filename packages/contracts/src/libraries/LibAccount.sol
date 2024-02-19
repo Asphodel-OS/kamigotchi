@@ -19,7 +19,6 @@ import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomCompon
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
-import { StaminaCurrentComponent, ID as StaminaCurrCompID } from "components/StaminaCurrentComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
@@ -30,6 +29,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
+import { Stat, LibStat } from "libraries/LibStat.sol";
 
 library LibAccount {
   /////////////////
@@ -50,9 +50,9 @@ library LibAccount {
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 1);
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
 
-    uint256 baseStamina = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE");
-    setStamina(components, id, baseStamina);
-    setCurrStamina(components, id, baseStamina);
+    int32 baseStamina = int32(uint32(LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE")));
+    LibStat.setStamina(components, id, Stat(baseStamina, 0, 0, baseStamina));
+
     updateLastActionTs(components, id);
     updateLastTs(components, id);
     return id;
@@ -60,27 +60,20 @@ library LibAccount {
 
   // Move the Account to a room
   function move(IUintComp components, uint256 id, uint32 to) internal {
-    StaminaCurrentComponent currStaminaComp = StaminaCurrentComponent(
-      getAddressById(components, StaminaCurrCompID)
-    );
-    currStaminaComp.set(id, currStaminaComp.getValue(id) - 1);
+    StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, -1);
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, to);
   }
 
   // Recover's stamina to an account
-  function recover(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
-    uint256 totalStamina = getStamina(components, id);
-    uint256 stamina = getCurrStamina(components, id) + amt;
-    if (stamina > totalStamina) stamina = totalStamina;
-    setCurrStamina(components, id, stamina);
-    return stamina;
+  function recover(IUintComp components, uint256 id, int32 amt) internal returns (int32) {
+    return StaminaComponent(getAddressById(components, StaminaCompID)).sync(id, amt);
   }
 
   // syncs the stamina of an account. rounds down, ruthlessly
-  function syncStamina(IUintComp components, uint256 id) internal returns (uint256) {
+  function syncStamina(IUintComp components, uint256 id) internal returns (int32) {
     uint256 timePassed = block.timestamp - getLastActionTs(components, id);
     uint256 recoveryPeriod = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
-    uint256 recoveredAmt = timePassed / recoveryPeriod;
+    int32 recoveredAmt = int32(uint32(timePassed / recoveryPeriod));
     updateLastActionTs(components, id);
     return recover(components, id, recoveredAmt);
   }
@@ -150,14 +143,6 @@ library LibAccount {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
-  function setStamina(IUintComp components, uint256 id, uint256 amt) internal {
-    StaminaComponent(getAddressById(components, StaminaCompID)).set(id, amt);
-  }
-
-  function setCurrStamina(IUintComp components, uint256 id, uint256 amt) internal {
-    StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).set(id, amt);
-  }
-
   function setQuestPoints(IUintComp components, uint256 id, uint256 amt) internal {
     QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, amt);
   }
@@ -216,14 +201,6 @@ library LibAccount {
   // get the address of an Account Owner
   function getOwner(IUintComp components, uint256 id) internal view returns (address) {
     return AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).getValue(id);
-  }
-
-  function getStamina(IUintComp components, uint256 id) internal view returns (uint256) {
-    return StaminaComponent(getAddressById(components, StaminaCompID)).getValue(id);
-  }
-
-  function getCurrStamina(IUintComp components, uint256 id) internal view returns (uint256) {
-    return StaminaCurrentComponent(getAddressById(components, StaminaCurrCompID)).getValue(id);
   }
 
   function getQuestPoints(IUintComp components, uint256 id) internal view returns (uint256) {

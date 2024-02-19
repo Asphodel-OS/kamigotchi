@@ -35,12 +35,12 @@ contract BatchMinterTest is SetupTemplate {
     vm.prank(deployer);
     uint256 petID = __721BatchMinterSystem.batchMint(1)[0];
 
-    uint[] memory stats = _calcStatsFromTraits(petID);
-    assertEq(stats[0], LibStat.getHealth(components, petID));
-    assertEq(stats[1], LibStat.getPower(components, petID));
-    assertEq(stats[2], LibStat.getViolence(components, petID));
-    assertEq(stats[3], LibStat.getHarmony(components, petID));
-    assertEq(stats[4], LibStat.getSlots(components, petID));
+    int32[] memory stats = _calcStatsFromTraits(petID);
+    assertEq(stats[0], LibStat.getHealth(components, petID).base);
+    assertEq(stats[1], LibStat.getPower(components, petID).base);
+    assertEq(stats[2], LibStat.getViolence(components, petID).base);
+    assertEq(stats[3], LibStat.getHarmony(components, petID).base);
+    assertEq(stats[4], LibStat.getSlots(components, petID).base);
   }
 
   function testTraitStats() public {
@@ -62,12 +62,12 @@ contract BatchMinterTest is SetupTemplate {
 
     for (uint i = 0; i < numPets; i++) {
       uint petID = petIDs[i];
-      uint[] memory stats = _calcStatsFromTraits(petID);
-      assertEq(stats[0], LibStat.getHealth(components, petID));
-      assertEq(stats[1], LibStat.getPower(components, petID));
-      assertEq(stats[2], LibStat.getViolence(components, petID));
-      assertEq(stats[3], LibStat.getHarmony(components, petID));
-      assertEq(stats[4], LibStat.getSlots(components, petID));
+      int32[] memory stats = _calcStatsFromTraits(petID);
+      assertEq(stats[0], LibStat.getHealth(components, petID).base);
+      assertEq(stats[1], LibStat.getPower(components, petID).base);
+      assertEq(stats[2], LibStat.getViolence(components, petID).base);
+      assertEq(stats[3], LibStat.getHarmony(components, petID).base);
+      assertEq(stats[4], LibStat.getSlots(components, petID).base);
     }
   }
 
@@ -150,26 +150,26 @@ contract BatchMinterTest is SetupTemplate {
   // HELPER FUNCTIONS //
   //////////////////////
 
-  function _calcStatsFromTraits(uint petID) internal view returns (uint[] memory) {
-    uint256 health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
-    uint256 power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
-    uint256 violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
-    uint256 harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
-    uint256 slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
+  function _calcStatsFromTraits(uint petID) internal view returns (int32[] memory) {
+    int32 health = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_HEALTH")));
+    int32 power = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_POWER")));
+    int32 violence = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE")));
+    int32 harmony = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_HARMONY")));
+    int32 slots = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_SLOTS")));
 
     // sum the stats from all traits
     uint256 traitRegistryID;
     uint256[] memory traits = LibPet.getTraits(components, petID);
     for (uint256 i = 0; i < traits.length; i++) {
       traitRegistryID = traits[i];
-      health += LibStat.getHealth(components, traitRegistryID);
-      power += LibStat.getPower(components, traitRegistryID);
-      violence += LibStat.getViolence(components, traitRegistryID);
-      harmony += LibStat.getHarmony(components, traitRegistryID);
-      slots += LibStat.getSlots(components, traitRegistryID);
+      health += LibStat.getHealth(components, traitRegistryID).base;
+      power += LibStat.getPower(components, traitRegistryID).base;
+      violence += LibStat.getViolence(components, traitRegistryID).base;
+      harmony += LibStat.getHarmony(components, traitRegistryID).base;
+      slots += LibStat.getSlots(components, traitRegistryID).base;
     }
 
-    uint[] memory stats = new uint[](5);
+    int32[] memory stats = new int32[](5);
     stats[0] = health;
     stats[1] = power;
     stats[2] = violence;

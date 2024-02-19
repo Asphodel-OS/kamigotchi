@@ -16,7 +16,8 @@ import { Inventory, queryInventoryX, sortInventories } from '../Inventory';
 import { Kami, queryKamisX } from '../Kami';
 import { LootboxLog, queryHolderLogs as queryAccLBLogs } from '../Lootbox';
 import { Quest, getCompletedQuests, getOngoingQuests, parseQuestsStatus } from '../Quest';
-import { Skill } from '../Skill/types';
+import { Skill } from '../Skill';
+import { Stat, getStat } from '../Stats';
 
 // standardized shape of an Account Entity
 export interface Account {
@@ -26,16 +27,13 @@ export interface Account {
   ownerEOA: string;
   operatorEOA: string;
   name: string;
+
   coin: number;
   roomIndex: number;
   level: number;
   questPoints: number;
   skillPoints: number;
-  stamina: {
-    total: number;
-    last: number;
-    recoveryPeriod: number;
-  };
+  stamina: Stat;
   time: {
     last: number;
     lastMove: number;
@@ -111,7 +109,6 @@ export const getAccount = (
       OwnerAddress,
       QuestPoint,
       Stamina,
-      StaminaCurrent,
       StartTime,
     },
   } = network;
@@ -128,11 +125,8 @@ export const getAccount = (
     level: 0, // placeholder
     questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
     skillPoints: 0, // placeholder
-    stamina: {
-      total: (getComponentValue(Stamina, entityIndex)?.value || (20 as number)) * 1,
-      last: (getComponentValue(StaminaCurrent, entityIndex)?.value || (0 as number)) * 1,
-      recoveryPeriod: getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') * 1,
-    },
+    stamina: getStat(entityIndex, Stamina),
+
     time: {
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       lastMove: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
@@ -142,6 +136,9 @@ export const getAccount = (
 
   // prevent further queries if account hasnt loaded yet
   if (!account.ownerEOA) return account;
+
+  account.stamina.rate =
+    1 / (getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') ?? 300);
 
   /////////////////
   // OPTIONAL DATA

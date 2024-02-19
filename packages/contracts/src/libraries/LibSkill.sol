@@ -23,6 +23,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 library LibSkill {
   /////////////////
@@ -100,15 +101,11 @@ library LibSkill {
     uint256 holderID,
     uint256 effectID
   ) internal {
-    uint256 bonusID = LibBonus.get(components, holderID, "STAT");
-    if (bonusID == 0) bonusID = LibBonus.create(world, components, holderID, "STAT");
-
     string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
     string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
-    uint256 value = LibRegistrySkill.getValue(components, effectID);
-
-    if (LibString.eq(logicType, "INC")) LibBonus.incStat(components, bonusID, subtype, value);
-    else if (LibString.eq(logicType, "DEC")) LibBonus.decStat(components, bonusID, subtype, value);
+    int32 amt = int32(int(LibRegistrySkill.getValue(components, effectID)));
+    if (LibString.eq(logicType, "DEC")) amt *= -1;
+    LibStat.shift(components, holderID, subtype, amt);
   }
 
   /////////////////

@@ -93,9 +93,9 @@ export const Kards = (props: Props) => {
     const health = calcHealth(kami);
     const description = [
       '',
-      `Health: ${health.toFixed()}/${kami.stats.health + kami.bonusStats.health}`,
-      `Harmony: ${kami.stats.harmony + kami.bonusStats.harmony}`,
-      `Violence: ${kami.stats.violence + kami.bonusStats.violence}`,
+      `Health: ${health.toFixed()}/${kami.stats.health.total}`,
+      `Harmony: ${kami.stats.harmony.total}`,
+      `Violence: ${kami.stats.violence.total}`,
     ];
     return description;
   };

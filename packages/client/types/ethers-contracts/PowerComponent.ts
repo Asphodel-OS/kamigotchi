@@ -27,9 +27,25 @@ import type {
   TypedListener,
 } from "./common";
 
+export type StatStruct = {
+  base: PromiseOrValue<BigNumberish>;
+  shift: PromiseOrValue<BigNumberish>;
+  boost: PromiseOrValue<BigNumberish>;
+  sync: PromiseOrValue<BigNumberish>;
+};
+
+export type StatStructOutput = [number, number, number, number] & {
+  base: number;
+  shift: number;
+  boost: number;
+  sync: number;
+};
+
 export interface PowerComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
+    "boost(uint256,int32)": FunctionFragment;
+    "calcTotal(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
@@ -41,8 +57,11 @@ export interface PowerComponentInterface extends utils.Interface {
     "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "set(uint256,uint256)": FunctionFragment;
+    "set(uint256,(int32,int32,int32,int32))": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
+    "shift(uint256,int32)": FunctionFragment;
+    "sync(uint256,int32,int32)": FunctionFragment;
+    "sync(uint256,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -52,6 +71,8 @@ export interface PowerComponentInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "authorizeWriter"
+      | "boost"
+      | "calcTotal"
       | "getEntities"
       | "getEntitiesWithValue"
       | "getRawValue"
@@ -63,8 +84,11 @@ export interface PowerComponentInterface extends utils.Interface {
       | "registerIndexer"
       | "registerWorld"
       | "remove"
-      | "set(uint256,uint256)"
+      | "set(uint256,(int32,int32,int32,int32))"
       | "set(uint256,bytes)"
+      | "shift"
+      | "sync(uint256,int32,int32)"
+      | "sync(uint256,int32)"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -74,6 +98,14 @@ export interface PowerComponentInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "authorizeWriter",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "boost",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calcTotal",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntities",
@@ -111,12 +143,28 @@ export interface PowerComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "set(uint256,(int32,int32,int32,int32))",
+    values: [PromiseOrValue<BigNumberish>, StatStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "shift",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sync(uint256,int32,int32)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sync(uint256,int32)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -136,6 +184,8 @@ export interface PowerComponentInterface extends utils.Interface {
     functionFragment: "authorizeWriter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "boost", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "calcTotal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
     data: BytesLike
@@ -163,11 +213,20 @@ export interface PowerComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint256)",
+    functionFragment: "set(uint256,(int32,int32,int32,int32))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "set(uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "shift", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sync(uint256,int32,int32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sync(uint256,int32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -235,6 +294,17 @@ export interface PowerComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     getEntitiesWithValue(
@@ -254,7 +324,7 @@ export interface PowerComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[StatStructOutput]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -280,15 +350,34 @@ export interface PowerComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -315,6 +404,17 @@ export interface PowerComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  boost(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  calcTotal(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getEntitiesWithValue(
@@ -334,7 +434,7 @@ export interface PowerComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<StatStructOutput>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -360,15 +460,34 @@ export interface PowerComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,uint256)"(
+  "set(uint256,(int32,int32,int32,int32))"(
     entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
+    value: StatStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   "set(uint256,bytes)"(
     entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  shift(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "sync(uint256,int32,int32)"(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
+    max: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "sync(uint256,int32)"(
+    entity: PromiseOrValue<BigNumberish>,
+    amt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -395,6 +514,17 @@ export interface PowerComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     getEntitiesWithValue(
@@ -414,7 +544,7 @@ export interface PowerComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<StatStructOutput>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -440,9 +570,9 @@ export interface PowerComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -451,6 +581,25 @@ export interface PowerComponent extends BaseContract {
       value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -485,6 +634,17 @@ export interface PowerComponent extends BaseContract {
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
@@ -530,15 +690,34 @@ export interface PowerComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -564,6 +743,17 @@ export interface PowerComponent extends BaseContract {
     authorizeWriter(
       writer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    boost(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    calcTotal(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -609,15 +799,34 @@ export interface PowerComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint256)"(
+    "set(uint256,(int32,int32,int32,int32))"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: StatStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    shift(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "sync(uint256,int32,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
+      max: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "sync(uint256,int32)"(
+      entity: PromiseOrValue<BigNumberish>,
+      amt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
