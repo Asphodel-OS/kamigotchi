@@ -438,10 +438,6 @@ library LibRegistryTrait {
   /////////////////
   // CHECKERS
 
-  function isInstance(IUintComp components, uint256 id) internal view returns (bool) {
-    return isRegistry(components, id) && isTrait(components, id);
-  }
-
   function isRegistry(IUintComp components, uint256 id) internal view returns (bool) {
     return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id);
   }
@@ -464,10 +460,6 @@ library LibRegistryTrait {
 
   function isHand(IUintComp components, uint256 id) internal view returns (bool) {
     return IndexHandComponent(getAddressById(components, IndexHandCompID)).has(id);
-  }
-
-  function isTrait(IUintComp components, uint256 id) internal view returns (bool) {
-    return IndexTraitComponent(getAddressById(components, IndexTraitCompID)).has(id);
   }
 
   /////////////////

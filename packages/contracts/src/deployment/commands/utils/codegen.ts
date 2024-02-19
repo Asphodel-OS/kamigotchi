@@ -2,7 +2,7 @@ import ejs from "ejs";
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 
-const contractsDir = path.join(__dirname, "/../");
+const contractsDir = path.join(__dirname, "../../");
 
 /**
  * Generate LibDeploy.sol from deploy.json

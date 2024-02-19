@@ -6,10 +6,7 @@ import { Vm } from "forge-std/Vm.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibDeploy, DeployResult } from "./LibDeploy.sol";
 
-contract Deploy {
-  address constant HEVM_ADDRESS = address(bytes20(uint160(uint256(keccak256("hevm cheat code")))));
-  Vm internal immutable vm = Vm(HEVM_ADDRESS);
-
+contract Deploy is Script {
   function deploy(
     uint256 deployerPriv,
     address worldAddr,

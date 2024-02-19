@@ -15,6 +15,6 @@ artifacts/
 broadcast/
 /cache/
 out/
-src/libraries/LibDeploy.sol
+src/deployment/LibDeploy.sol
 src/test/utils/TestSetupImports.sol
 types/
