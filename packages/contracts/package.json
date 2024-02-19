@@ -13,7 +13,7 @@
     "devnode": "mud devnode",
     "prepare": "yarn prepare:local",
     "start": "yarn start:local",
-    "test": "mud test && yarn abi:clean",
+    "test": "yarn codegen:tests && mud test && yarn abi:clean",
     "lint": "yarn prettier && yarn solhint",
     "----- INTERNAL -----": "---------------------------",
     "abi:gen": "rimraf ../client/abi && mkdir ../client/abi && bash exports.sh && rimraf ../client/abi/*.metadata.json",
