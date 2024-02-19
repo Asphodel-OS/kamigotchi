@@ -56,8 +56,8 @@
         },
         {
           "name": "health",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int32",
+          "internalType": "int32"
         },
         {
           "name": "experience",
@@ -137,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,uint256,uint256,string)": "9c93208e",
+    "executeTyped(uint32,string,string,int32,uint256,string)": "aedde60c",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

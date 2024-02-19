@@ -268,7 +268,7 @@ contract HarvestTest is SetupTemplate {
     uint[] memory kamiHealths = new uint[](numKamis);
     uint[] memory productionIDs = new uint[](numKamis);
     for (uint i = 0; i < numKamis; i++) {
-      kamiHealths[i] = LibPet.getLastHealth(components, kamiIDs[i]);
+      kamiHealths[i] = uint(int(LibStat.getHealth(components, kamiIDs[i]).sync));
       productionIDs[i] = _startProduction(kamiIDs[i], nodeID);
     }
 
@@ -296,7 +296,10 @@ contract HarvestTest is SetupTemplate {
           _isStarved[j] = true;
         } else {
           _collectProduction(productionIDs[j]);
-          assertEq(LibPet.getLastHealth(components, kamiIDs[j]), kamiHealths[j] - drain);
+          assertEq(
+            uint(int(LibStat.getHealth(components, kamiIDs[j]).sync)),
+            kamiHealths[j] - drain
+          );
           assertEq(
             LibCoin.get(components, _getAccount(0)),
             accountBalance + _getExpectedOutput(rate, timeDelta)

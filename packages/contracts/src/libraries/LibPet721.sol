@@ -312,21 +312,31 @@ library LibPet721 {
 
     // returns result for Health, Power, Violence, and Harmony
     result = string(
-      abi.encodePacked(result, _traitToString("Health", LibStat.getHealth(components, petID), true))
-    );
-    result = string(
-      abi.encodePacked(result, _traitToString("Power", LibStat.getPower(components, petID), true))
-    );
-    result = string(
       abi.encodePacked(
         result,
-        _traitToString("Violence", LibStat.getViolence(components, petID), true)
+        _traitToString("Health", uint256(uint32(LibStat.getHealthTotal(components, petID))), true)
       )
     );
     result = string(
       abi.encodePacked(
         result,
-        _traitToString("Harmony", LibStat.getHarmony(components, petID), true)
+        _traitToString("Power", uint256(uint32(LibStat.getPowerTotal(components, petID))), true)
+      )
+    );
+    result = string(
+      abi.encodePacked(
+        result,
+        _traitToString(
+          "Violence",
+          uint256(uint32(LibStat.getViolenceTotal(components, petID))),
+          true
+        )
+      )
+    );
+    result = string(
+      abi.encodePacked(
+        result,
+        _traitToString("Harmony", uint256(uint32(LibStat.getHarmonyTotal(components, petID))), true)
       )
     );
     result = string(

@@ -10,12 +10,14 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 import { Gaussian } from "solstat/Gaussian.sol";
 
+import { Stat } from "components/types/StatComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
-import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
+import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -109,33 +111,23 @@ library LibPet {
   ///////////////////////
   // STATS INTERACTIONS
 
-  // Drains HP from a pet. The opposite of heal().
-  function drain(IUintComp components, uint256 id, uint256 amt) internal {
-    HealthCurrentComponent healthComp = HealthCurrentComponent(
-      getAddressById(components, HealthCurrentCompID)
-    );
-    uint256 health = healthComp.getValue(id);
-    health = (health > amt) ? health - amt : 0;
-    healthComp.set(id, health);
+  // Drains HP from a pet. Opposite of healing
+  function drain(IUintComp components, uint256 id, int32 amt) internal {
+    if (amt == 0) return;
+    HealthComponent(getAddressById(components, HealthCompID)).sync(id, -1 * amt);
   }
 
   // heal the pet by a given amount
-  function heal(IUintComp components, uint256 id, uint256 amt) internal {
+  function heal(IUintComp components, uint256 id, int32 amt) internal {
     if (amt == 0) return; // skip if no healing
-
-    HealthCurrentComponent healthComp = HealthCurrentComponent(
-      getAddressById(components, HealthCurrentCompID)
-    );
-    uint256 totalHealth = calcTotalHealth(components, id);
-    uint256 health = healthComp.getValue(id) + amt;
-    if (health > totalHealth) health = totalHealth;
-    healthComp.set(id, health);
+    int32 total = calcTotalHealth(components, id);
+    HealthComponent(getAddressById(components, HealthCompID)).sync(id, amt, total);
   }
 
   // Update a pet's health to 0 and its state to DEAD
   function kill(IUintComp components, uint256 id) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, string("DEAD"));
-    setCurrHealth(components, id, 0);
+    HealthComponent(getAddressById(components, HealthCompID)).sync(id, -(1 << 31));
   }
 
   // Update a pet's state to RESTING
@@ -150,9 +142,11 @@ library LibPet {
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
-      drain(components, id, calcDrain(components, id, deltaBalance));
+      uint256 damage = calcDrain(components, id, deltaBalance);
+      drain(components, id, int32(int(damage)));
     } else if (LibString.eq(state, "RESTING")) {
-      heal(components, id, calcRestingRecovery(components, id));
+      uint256 recovery = calcRestingRecovery(components, id);
+      heal(components, id, int32(int(recovery)));
     }
 
     setLastTs(components, id, block.timestamp);
@@ -241,8 +235,8 @@ library LibPet {
     configs[1] = "HEALTH_RATE_HEAL_BASE";
     configs[2] = "HEALTH_RATE_HEAL_BASE_PREC";
     uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+    uint256 totalHarmony = uint(int(calcTotalHarmony(components, id)));
 
-    uint256 totalHarmony = calcTotalHarmony(components, id);
     uint256 precision = 10 ** configVals[0];
     uint256 base = configVals[1];
     uint256 basePrecision = 10 ** configVals[2];
@@ -277,62 +271,55 @@ library LibPet {
 
     uint256 base = configVals[0];
     uint256 basePrecision = 10 ** configVals[1];
-    uint256 sourceViolence = calcTotalViolence(components, sourceID);
-    uint256 targetHarmony = calcTotalHarmony(components, targetID);
+    uint256 sourceViolence = uint(int(calcTotalViolence(components, sourceID)));
+    uint256 targetHarmony = uint(int(calcTotalHarmony(components, targetID)));
     int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
     int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
     return (uint256(weight) * base) / basePrecision;
   }
 
-  // Calculate and return the total health of a pet (including mods and equips)
-  function calcTotalHarmony(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 total = LibStat.getHarmony(components, id);
-    uint256 bonusID = LibBonus.get(components, id, "STAT");
-    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "HARMONY");
-
-    uint256[] memory equipment = LibEquipment.getForPet(components, id);
-    for (uint256 i = 0; i < equipment.length; i++) {
-      total += LibEquipment.getHarmony(components, equipment[i]);
-    }
+  // Calculate and return the total harmony of a pet (including equips)
+  // TODO: implement equipment stats with new stat shapes
+  function calcTotalHarmony(IUintComp components, uint256 id) internal view returns (int32) {
+    int32 total = LibStat.getHarmonyTotal(components, id);
+    // uint256[] memory equipment = LibEquipment.getForPet(components, id);
+    // for (uint256 i = 0; i < equipment.length; i++) {
+    //   total += LibEquipment.getHarmony(components, equipment[i]);
+    // }
     return total;
   }
 
-  // Calculate and return the total health of a pet (including mods and equips)
-  function calcTotalHealth(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 total = LibStat.getHealth(components, id);
-    uint256 bonusID = LibBonus.get(components, id, "STAT");
-    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "HEALTH");
+  // Calculate and return the total health of a pet (including equips)
+  // TODO: implement equipment stats with new stat shapes
+  function calcTotalHealth(IUintComp components, uint256 id) internal view returns (int32) {
+    int32 total = LibStat.getHealthTotal(components, id);
 
-    uint256[] memory equipment = LibEquipment.getForPet(components, id);
-    for (uint256 i = 0; i < equipment.length; i++) {
-      total += LibEquipment.getHealth(components, equipment[i]);
-    }
+    // uint256[] memory equipment = LibEquipment.getForPet(components, id);
+    // for (uint256 i = 0; i < equipment.length; i++) {
+    //   total += LibEquipment.getHealth(components, equipment[i]);
+    // }
     return total;
   }
 
-  // Calculate and return the total power of a pet (including mods and equips)
-  function calcTotalPower(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 total = LibStat.getPower(components, id);
-    uint256 bonusID = LibBonus.get(components, id, "STAT");
-    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "POWER");
-
-    uint256[] memory equipment = LibEquipment.getForPet(components, id);
-    for (uint256 i = 0; i < equipment.length; i++) {
-      total += LibEquipment.getPower(components, equipment[i]);
-    }
+  // Calculate and return the total power of a pet (including equips)
+  // TODO: implement equipment stats with new stat shapes
+  function calcTotalPower(IUintComp components, uint256 id) internal view returns (int32) {
+    int32 total = LibStat.getPowerTotal(components, id);
+    // uint256[] memory equipment = LibEquipment.getForPet(components, id);
+    // for (uint256 i = 0; i < equipment.length; i++) {
+    //   total += LibEquipment.getPower(components, equipment[i]);
+    // }
     return total;
   }
 
-  // Calculate and return the total violence of a pet (including mods and equips)
-  function calcTotalViolence(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 total = LibStat.getViolence(components, id);
-    uint256 bonusID = LibBonus.get(components, id, "STAT");
-    if (bonusID != 0) total += LibBonus.getStat(components, bonusID, "VIOLENCE");
-
-    uint256[] memory equipment = LibEquipment.getForPet(components, id);
-    for (uint256 i = 0; i < equipment.length; i++) {
-      total += LibEquipment.getViolence(components, equipment[i]);
-    }
+  // Calculate and return the total violence of a pet (including equips)
+  // TODO: implement equipment stats with new stat shapes
+  function calcTotalViolence(IUintComp components, uint256 id) internal view returns (int32) {
+    int32 total = LibStat.getViolenceTotal(components, id);
+    // uint256[] memory equipment = LibEquipment.getForPet(components, id);
+    // for (uint256 i = 0; i < equipment.length; i++) {
+    //   total += LibEquipment.getViolence(components, equipment[i]);
+    // }
     return total;
   }
 
@@ -365,7 +352,7 @@ library LibPet {
 
   // Check whether the kami is fully healed.
   function isFull(IUintComp components, uint256 id) internal view returns (bool) {
-    return calcTotalHealth(components, id) == getLastHealth(components, id);
+    return calcTotalHealth(components, id) == LibStat.getHealth(components, id).sync;
   }
 
   // Check whether a pet is harvesting.
@@ -375,7 +362,7 @@ library LibPet {
 
   // Check whether the current health of a pet is greater than 0. Assume health synced this block.
   function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
-    return getLastHealth(components, id) > 0;
+    return LibStat.getHealth(components, id).sync > 0;
   }
 
   // Check whether a pet's ERC721 token is in the game world
@@ -439,10 +426,6 @@ library LibPet {
     else if (canNameComp.has(id)) canNameComp.remove(id);
   }
 
-  function setCurrHealth(IUintComp components, uint256 id, uint256 currHealth) internal {
-    HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).set(id, currHealth);
-  }
-
   // Update the TimeLastAction of a pet. to inform cooldown constraints on Standard Actions
   function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
     TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).set(id, ts);
@@ -478,31 +461,30 @@ library LibPet {
     configs[3] = "KAMI_BASE_HARMONY";
     configs[4] = "KAMI_BASE_SLOTS";
     uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
-    uint256 health = configVals[0];
-    uint256 power = configVals[1];
-    uint256 violence = configVals[2];
-    uint256 harmony = configVals[3];
-    uint256 slots = configVals[4];
+    int32 health = int32(int(configVals[0]));
+    int32 power = int32(int(configVals[1]));
+    int32 violence = int32(int(configVals[2]));
+    int32 harmony = int32(int(configVals[3]));
+    int32 slots = int32(int(configVals[4]));
 
     // sum the stats from all traits
     uint256 traitRegistryID;
     uint256[] memory traits = getTraits(components, id);
     for (uint256 i = 0; i < traits.length; i++) {
       traitRegistryID = traits[i];
-      health += LibStat.getHealth(components, traitRegistryID);
-      power += LibStat.getPower(components, traitRegistryID);
-      violence += LibStat.getViolence(components, traitRegistryID);
-      harmony += LibStat.getHarmony(components, traitRegistryID);
-      slots += LibStat.getSlots(components, traitRegistryID);
+      health += LibStat.getHealth(components, traitRegistryID).base;
+      power += LibStat.getPower(components, traitRegistryID).base;
+      violence += LibStat.getViolence(components, traitRegistryID).base;
+      harmony += LibStat.getHarmony(components, traitRegistryID).base;
+      slots += LibStat.getSlots(components, traitRegistryID).base;
     }
 
     // set the stats
-    setCurrHealth(components, id, health);
-    LibStat.setHealth(components, id, health);
-    LibStat.setPower(components, id, power);
-    LibStat.setViolence(components, id, violence);
-    LibStat.setHarmony(components, id, harmony);
-    LibStat.setSlots(components, id, slots);
+    LibStat.setHealth(components, id, Stat(health, 0, 0, health));
+    LibStat.setPower(components, id, Stat(power, 0, 0, 0));
+    LibStat.setViolence(components, id, Stat(violence, 0, 0, 0));
+    LibStat.setHarmony(components, id, Stat(harmony, 0, 0, 0));
+    LibStat.setSlots(components, id, Stat(slots, 0, 0, slots));
   }
 
   /////////////////
@@ -518,9 +500,11 @@ library LibPet {
     return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
   }
 
-  // gets the last explicitly set health of a pet. naming discrepancy for clarity
-  function getLastHealth(IUintComp components, uint256 id) internal view returns (uint256) {
-    return HealthCurrentComponent(getAddressById(components, HealthCurrentCompID)).getValue(id);
+  // null string might not be very useful, may be better for a has check
+  function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
+    AffinityComponent comp = AffinityComponent(getAddressById(components, AffinityCompID));
+    if (!comp.has(id)) return "";
+    return comp.getValue(id);
   }
 
   // get the last time a kami commited a Standard Action
@@ -591,8 +575,8 @@ library LibPet {
     string[] memory affinities = new string[](2);
     uint256 bodyRegistryID = LibRegistryTrait.getBodyOf(components, id);
     uint256 handRegistryID = LibRegistryTrait.getHandOf(components, id);
-    affinities[0] = LibStat.getAffinity(components, bodyRegistryID);
-    affinities[1] = LibStat.getAffinity(components, handRegistryID);
+    affinities[0] = getAffinity(components, bodyRegistryID);
+    affinities[1] = getAffinity(components, handRegistryID);
     return affinities;
   }
 

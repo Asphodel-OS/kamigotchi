@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
@@ -42,17 +41,6 @@ library LibBonus {
     setValue(components, id, curr - amt);
   }
 
-  function incStat(IUintComp components, uint256 id, string memory type_, uint256 value) public {
-    uint256 currVal = getStat(components, id, type_);
-    setStat(components, id, type_, currVal + value);
-  }
-
-  // NOTE: this does not fail gracefully when value > currVal. need to consider how best to handle
-  function decStat(IUintComp components, uint256 id, string memory type_, uint256 value) public {
-    uint256 currVal = getStat(components, id, type_);
-    setStat(components, id, type_, currVal - value);
-  }
-
   /////////////////
   // CHECKERS
 
@@ -62,19 +50,6 @@ library LibBonus {
 
   /////////////////
   // GETTERS
-
-  function getStat(
-    IUintComp components,
-    uint256 id,
-    string memory type_
-  ) public view returns (uint256) {
-    if (LibString.eq(type_, "HEALTH")) return LibStat.getHealth(components, id);
-    if (LibString.eq(type_, "POWER")) return LibStat.getPower(components, id);
-    if (LibString.eq(type_, "HARMONY")) return LibStat.getHarmony(components, id);
-    if (LibString.eq(type_, "VIOLENCE")) return LibStat.getViolence(components, id);
-    if (LibString.eq(type_, "SLOTS")) return LibStat.getSlots(components, id);
-    return 0;
-  }
 
   // default value of bonus multipliers is 1000
   // this represents for 100.0% for percentage based bonuses
@@ -86,14 +61,6 @@ library LibBonus {
 
   /////////////////
   // SETTERS
-
-  function setStat(IUintComp components, uint256 id, string memory type_, uint256 value) public {
-    if (LibString.eq(type_, "HEALTH")) LibStat.setHealth(components, id, value);
-    else if (LibString.eq(type_, "POWER")) LibStat.setPower(components, id, value);
-    else if (LibString.eq(type_, "HARMONY")) LibStat.setHarmony(components, id, value);
-    else if (LibString.eq(type_, "VIOLENCE")) LibStat.setViolence(components, id, value);
-    else if (LibString.eq(type_, "SLOTS")) LibStat.setSlots(components, id, value);
-  }
 
   function setValue(IUintComp components, uint256 id, uint256 value) public {
     ValueComponent(getAddressById(components, ValueCompID)).set(id, value);

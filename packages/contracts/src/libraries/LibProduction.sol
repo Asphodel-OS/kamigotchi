@@ -23,6 +23,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
+import { LibStat } from "libraries/LibStat.sol";
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -115,7 +116,7 @@ library LibProduction {
     uint256[] memory values = LibConfig.getBatchValueOf(components, configs);
 
     uint256 petID = getPet(components, id);
-    uint256 power = LibPet.calcTotalPower(components, petID);
+    uint256 power = uint256(uint32(LibPet.calcTotalPower(components, petID)));
     uint256 precision = 10 ** values[0];
     uint256 base = values[1];
     uint256 basePrecision = 10 ** values[2];
@@ -177,10 +178,10 @@ library LibProduction {
     uint256 targetPetID,
     uint256 sourcePetID
   ) public view returns (bool) {
-    uint256 targetHealth = LibPet.getLastHealth(components, targetPetID);
-    uint256 targetTotalHealth = LibPet.calcTotalHealth(components, targetPetID);
+    uint256 health = uint(int(LibStat.getHealth(components, targetPetID).sync));
+    uint256 totalHealth = uint(int(LibPet.calcTotalHealth(components, targetPetID)));
     uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
-    return threshold * targetTotalHealth > targetHealth * 1e18;
+    return threshold * totalHealth > health * 1e18;
   }
 
   /////////////////

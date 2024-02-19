@@ -46,28 +46,28 @@
         },
         {
           "name": "health",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int32",
+          "internalType": "int32"
         },
         {
           "name": "power",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int32",
+          "internalType": "int32"
         },
         {
           "name": "violence",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int32",
+          "internalType": "int32"
         },
         {
           "name": "harmony",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int32",
+          "internalType": "int32"
         },
         {
           "name": "slots",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int32",
+          "internalType": "int32"
         },
         {
           "name": "rarity",
@@ -157,7 +157,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,uint256,uint256,uint256,uint256,uint256,uint256,string,string,string)": "00276c2a",
+    "executeTyped(uint32,int32,int32,int32,int32,int32,uint256,string,string,string)": "0f5f63b7",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

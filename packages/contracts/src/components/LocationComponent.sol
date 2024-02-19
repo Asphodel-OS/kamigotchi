@@ -28,7 +28,7 @@ contract LocationComponent is Component {
     values[2] = LibTypes.SchemaValue.INT32;
   }
 
-  function set(uint256 entity, Location memory value) public {
+  function set(uint256 entity, Location memory value) public onlyWriter {
     set(entity, abi.encode(value));
   }
 

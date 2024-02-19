@@ -12,11 +12,11 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { Stat, StatComponent } from "components/types/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
 import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
-import { HealthCurrentComponent, ID as HealthCurrentCompID } from "components/HealthCurrentComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
@@ -67,11 +67,11 @@ struct TraitWeights {
 }
 
 struct TraitStats {
-  uint8 health;
-  uint8 power;
-  uint8 violence;
-  uint8 harmony;
-  uint8 slots;
+  int32 health;
+  int32 power;
+  int32 violence;
+  int32 harmony;
+  int32 slots;
 }
 
 /// @notice small contract to make trait handling more readable
@@ -107,7 +107,6 @@ abstract contract TraitHandler {
   IndexHandComponent internal immutable indexHandComp;
 
   HealthComponent internal immutable healthComp;
-  HealthCurrentComponent internal immutable healthCurrentComp;
   PowerComponent internal immutable powerComp;
   ViolenceComponent internal immutable violenceComp;
   HarmonyComponent internal immutable harmonyComp;
@@ -123,7 +122,6 @@ abstract contract TraitHandler {
     indexHandComp = IndexHandComponent(getAddressById(components, IndexHandCompID));
 
     healthComp = HealthComponent(getAddressById(components, HealthCompID));
-    healthCurrentComp = HealthCurrentComponent(getAddressById(components, HealthCurrentCompID));
     powerComp = PowerComponent(getAddressById(components, PowerCompID));
     violenceComp = ViolenceComponent(getAddressById(components, ViolenceCompID));
     harmonyComp = HarmonyComponent(getAddressById(components, HarmonyCompID));
@@ -168,12 +166,11 @@ abstract contract TraitHandler {
     base.harmony += delta.harmony;
     base.slots += delta.slots;
 
-    healthComp.set(id, abi.encode(base.health));
-    healthCurrentComp.set(id, abi.encode(base.health));
-    powerComp.set(id, abi.encode(base.power));
-    violenceComp.set(id, abi.encode(base.violence));
-    harmonyComp.set(id, abi.encode(base.harmony));
-    slotsComp.set(id, abi.encode(base.slots));
+    healthComp.set(id, Stat(base.health, 0, 0, base.health));
+    powerComp.set(id, Stat(base.power, 0, 0, 0));
+    violenceComp.set(id, Stat(base.violence, 0, 0, 0));
+    harmonyComp.set(id, Stat(base.harmony, 0, 0, 0));
+    slotsComp.set(id, Stat(base.slots, 0, 0, base.slots));
   }
 
   ////////////////////
@@ -251,14 +248,19 @@ abstract contract TraitHandler {
   }
 
   function _getTraitStats(uint256 id) public returns (TraitStats memory) {
-    return
-      TraitStats(
-        uint8(healthComp.has(id) ? healthComp.getValue(id) : 0),
-        uint8(powerComp.has(id) ? powerComp.getValue(id) : 0),
-        uint8(violenceComp.has(id) ? violenceComp.getValue(id) : 0),
-        uint8(harmonyComp.has(id) ? harmonyComp.getValue(id) : 0),
-        uint8(slotsComp.has(id) ? slotsComp.getValue(id) : 0)
-      );
+    int32 health;
+    int32 power;
+    int32 violence;
+    int32 harmony;
+    int32 slots;
+
+    if (healthComp.has(id)) health = healthComp.getValue(id).base;
+    if (powerComp.has(id)) power = powerComp.getValue(id).base;
+    if (violenceComp.has(id)) violence = violenceComp.getValue(id).base;
+    if (harmonyComp.has(id)) harmony = harmonyComp.getValue(id).base;
+    if (slotsComp.has(id)) slots = slotsComp.getValue(id).base;
+
+    return TraitStats(health, power, violence, harmony, slots);
   }
 
   /// @notice query all traits of a type (ie face) in registry. returns entityIDs

@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateReviveSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,string,string,uint256,string)": FunctionFragment;
+    "executeTyped(uint32,string,string,int32,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };

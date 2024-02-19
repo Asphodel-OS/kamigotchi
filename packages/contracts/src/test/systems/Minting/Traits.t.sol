@@ -36,26 +36,26 @@ contract TraitsTest is SetupTemplate {
   /////////////////
   // HELPER FUNCTIONS
 
-  function _calcStatsFromTraits(uint petID) internal view returns (uint[] memory) {
-    uint health = LibConfig.getValueOf(components, "KAMI_BASE_HEALTH");
-    uint power = LibConfig.getValueOf(components, "KAMI_BASE_POWER");
-    uint violence = LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE");
-    uint harmony = LibConfig.getValueOf(components, "KAMI_BASE_HARMONY");
-    uint slots = LibConfig.getValueOf(components, "KAMI_BASE_SLOTS");
+  function _calcStatsFromTraits(uint petID) internal view returns (int32[] memory) {
+    int32 health = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_HEALTH")));
+    int32 power = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_POWER")));
+    int32 violence = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE")));
+    int32 harmony = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_HARMONY")));
+    int32 slots = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_SLOTS")));
 
     // sum the stats from all traits
     uint traitRegistryID;
     uint[] memory traits = LibPet.getTraits(components, petID);
     for (uint i = 0; i < traits.length; i++) {
       traitRegistryID = traits[i];
-      health += LibStat.getHealth(components, traitRegistryID);
-      power += LibStat.getPower(components, traitRegistryID);
-      violence += LibStat.getViolence(components, traitRegistryID);
-      harmony += LibStat.getHarmony(components, traitRegistryID);
-      slots += LibStat.getSlots(components, traitRegistryID);
+      health += LibStat.getHealth(components, traitRegistryID).base;
+      power += LibStat.getPower(components, traitRegistryID).base;
+      violence += LibStat.getViolence(components, traitRegistryID).base;
+      harmony += LibStat.getHarmony(components, traitRegistryID).base;
+      slots += LibStat.getSlots(components, traitRegistryID).base;
     }
 
-    uint[] memory stats = new uint[](5);
+    int32[] memory stats = new int32[](5);
     stats[0] = health;
     stats[1] = power;
     stats[2] = violence;
@@ -67,7 +67,7 @@ contract TraitsTest is SetupTemplate {
 
   function _getTraitWeight(uint32 traitIndex) internal view returns (uint) {
     uint registryID = LibRegistryTrait.getByTraitIndex(components, traitIndex);
-    uint tier = LibStat.getRarity(components, registryID);
+    uint tier = LibRarity.get(components, registryID);
     return (tier > 0) ? 1 << (tier - 1) : 0;
   }
 
@@ -86,15 +86,15 @@ contract TraitsTest is SetupTemplate {
     uint[] memory petIDs = _mintPets(0, numPets);
 
     uint petID;
-    uint[] memory stats;
+    int32[] memory stats;
     for (uint i = 0; i < numPets; i++) {
       petID = petIDs[i];
       stats = _calcStatsFromTraits(petID);
-      assertEq(stats[0], LibStat.getHealth(components, petID));
-      assertEq(stats[1], LibStat.getPower(components, petID));
-      assertEq(stats[2], LibStat.getViolence(components, petID));
-      assertEq(stats[3], LibStat.getHarmony(components, petID));
-      assertEq(stats[4], LibStat.getSlots(components, petID));
+      assertEq(stats[0], LibStat.getHealth(components, petID).base);
+      assertEq(stats[1], LibStat.getPower(components, petID).base);
+      assertEq(stats[2], LibStat.getViolence(components, petID).base);
+      assertEq(stats[3], LibStat.getHarmony(components, petID).base);
+      assertEq(stats[4], LibStat.getSlots(components, petID).base);
     }
   }
 

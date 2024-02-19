@@ -18,28 +18,28 @@
           "components": [
             {
               "name": "health",
-              "type": "uint8",
-              "internalType": "uint8"
+              "type": "int32",
+              "internalType": "int32"
             },
             {
               "name": "power",
-              "type": "uint8",
-              "internalType": "uint8"
+              "type": "int32",
+              "internalType": "int32"
             },
             {
               "name": "violence",
-              "type": "uint8",
-              "internalType": "uint8"
+              "type": "int32",
+              "internalType": "int32"
             },
             {
               "name": "harmony",
-              "type": "uint8",
-              "internalType": "uint8"
+              "type": "int32",
+              "internalType": "int32"
             },
             {
               "name": "slots",
-              "type": "uint8",
-              "internalType": "uint8"
+              "type": "int32",
+              "internalType": "int32"
             }
           ]
         }

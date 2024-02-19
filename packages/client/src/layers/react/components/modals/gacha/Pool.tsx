@@ -49,11 +49,11 @@ export const Pool = (props: Props) => {
     return [
       traitString,
       '',
-      `Health: ${kami.stats.health}`,
-      `Power: ${kami.stats.power}`,
-      `Violence: ${kami.stats.violence}`,
-      `Harmony: ${kami.stats.harmony}`,
-      `Slots: ${kami.stats.slots}`,
+      `Health: ${kami.stats.health.base}`,
+      `Power: ${kami.stats.power.base}`,
+      `Violence: ${kami.stats.violence.base}`,
+      `Harmony: ${kami.stats.harmony.base}`,
+      `Slots: ${kami.stats.slots.base}`,
     ];
   };
 

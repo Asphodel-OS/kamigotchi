@@ -27,16 +27,16 @@ contract FeedingTest is SetupTemplate {
     return LibRegistryItem.getIndex(components, registryID);
   }
 
-  function _getFoodHealAmount(uint32 index) internal view returns (uint) {
+  function _getFoodHealAmount(uint32 index) internal view returns (int32) {
     uint registryID = LibRegistryItem.getByIndex(components, index);
-    return LibStat.getHealth(components, registryID);
+    return LibStat.getHealth(components, registryID).base;
   }
 
   function _calcHarvestingPetHealth(uint petID) internal view returns (uint) {
     uint productionID = LibPet.getProduction(components, petID);
     uint output = LibProduction.calcOutput(components, productionID);
     uint drain = LibPet.calcDrain(components, petID, output);
-    uint health = LibPet.getLastHealth(components, petID);
+    uint health = uint(int(LibStat.getHealth(components, petID).sync));
     health = (health > drain) ? health - drain : 0;
     return health;
   }

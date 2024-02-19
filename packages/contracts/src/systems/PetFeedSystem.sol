@@ -51,7 +51,7 @@ contract PetFeedSystem is System {
     LibInventory.dec(components, inventoryID, 1); // implicit check for insufficient balance
 
     // execute feeding actions
-    LibPet.heal(components, id, LibStat.getHealth(components, registryID));
+    LibPet.heal(components, id, LibStat.getHealth(components, registryID).sync);
     LibExperience.inc(components, id, LibExperience.get(components, registryID));
 
     // standard logging and tracking

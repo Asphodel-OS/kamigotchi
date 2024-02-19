@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { Stat } from "components/types/StatComponent.sol";
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
@@ -90,7 +91,7 @@ library LibRegistryItem {
     uint32 index,
     string memory name,
     string memory description,
-    uint256 health,
+    int32 health,
     uint256 experience,
     string memory mediaURI
   ) internal returns (uint256) {
@@ -105,7 +106,7 @@ library LibRegistryItem {
     setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
 
-    if (health > 0) LibStat.setHealth(components, id, health);
+    if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
     if (experience > 0) setExperience(components, id, experience);
     return id;
   }
@@ -117,7 +118,7 @@ library LibRegistryItem {
     uint32 index,
     string memory name,
     string memory description,
-    uint256 health,
+    int32 health,
     string memory mediaURI
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
@@ -130,7 +131,7 @@ library LibRegistryItem {
     setName(components, id, name);
     setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
-    LibStat.setHealth(components, id, health);
+    LibStat.setHealth(components, id, Stat(0, 0, 0, health));
     return id;
   }
 
@@ -147,11 +148,11 @@ library LibRegistryItem {
     unsetType(components, id);
     unsetMediaURI(components, id);
 
-    LibStat.removeHealth(components, id);
-    LibStat.removePower(components, id);
-    LibStat.removeViolence(components, id);
-    LibStat.removeHarmony(components, id);
-    LibStat.removeSlots(components, id);
+    LibStat.unsetHealth(components, id);
+    LibStat.unsetPower(components, id);
+    LibStat.unsetViolence(components, id);
+    LibStat.unsetHarmony(components, id);
+    LibStat.unsetSlots(components, id);
     unsetExperience(components, id);
 
     unsetKeys(components, id);
@@ -324,8 +325,6 @@ library LibRegistryItem {
   }
 
   // get the associated item registry entry of a given instance entity
-  // NOTE: the item instance will not have a [food, mod, gear]index, so unlikely anything
-  // below the first conditional path is useful.
   function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
     uint32 index = getIndex(components, instanceID);
     return getByIndex(components, index);

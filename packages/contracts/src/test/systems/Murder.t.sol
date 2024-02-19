@@ -61,10 +61,10 @@ contract MurderTest is SetupTemplate {
   // assumes the production is active to simulate a health sync
   function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
     uint victimID = LibProduction.getPet(components, productionID);
-    uint totalHealth = LibPet.calcTotalHealth(components, victimID);
+    uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
     uint output = LibProduction.calcOutput(components, productionID);
     uint drain = LibPet.calcDrain(components, victimID, output);
-    uint health = LibPet.getLastHealth(components, victimID);
+    uint health = uint(int(LibStat.getHealth(components, victimID).sync));
     health = (health > drain) ? health - drain : 0;
 
     uint threshold = LibPet.calcThreshold(components, attackerID, victimID); // 1e18 precision
