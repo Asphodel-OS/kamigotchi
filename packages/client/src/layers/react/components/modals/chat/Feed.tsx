@@ -20,9 +20,9 @@ export const Feed = (props: Props) => {
   const poll = async () => {
     const newFeed = await client.fetchFeed('filter', {
       filterType: 'channel_id',
-      channelId: 'kamigotchi',
+      channelId: 'farcaster',
       cursor: feed?.next.cursor ?? '',
-      limit: 100, // defaults to 25, max 100
+      limit: 20, // defaults to 25, max 100
     });
     setFeed(newFeed);
 
@@ -57,7 +57,9 @@ export const Feed = (props: Props) => {
         <ActionButton text='load more' id='load' onClick={poll} disabled={!feed?.next.cursor} />
       </Tooltip>
       {casts?.toReversed().map((cast) => (
-        <Message>
+        <Message
+          onClick={() => window.open(`https://warpcast.com/${cast.author.username}/${cast.hash}`)}
+        >
           <Pfp src={cast.author.pfp_url} />
           <Content>
             <Header>
@@ -93,12 +95,13 @@ const Message = styled.div`
 
   &:hover {
     background-color: #f5f5f5;
+    cursor: pointer;
   }
 `;
 
 const Content = styled.div`
+  width: 85%;
   color: black;
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -140,4 +143,6 @@ const Body = styled.div`
   font-family: Pixel;
   font-size: 0.8vw;
   line-height: 1.2vw;
+
+  word-wrap: break-word;
 `;
