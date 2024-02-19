@@ -122,7 +122,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   config.chainId = parseInt(chainIdString);
 
   // world
-  config.worldAddress = params.get('worldAddress') || '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853';
+  config.worldAddress = params.get('worldAddress') || '0x610178dA211FEF7D417bC0e6FeD39F05609AD788';
 
   // block number
   let initialBlockNumberString = params.get('initialBlockNumber') || '0';

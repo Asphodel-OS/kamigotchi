@@ -42,6 +42,7 @@ export function setUpWorldAPI(systems: any, provider: any) {
       'fudge'
     );
 
+    setTimestamp();
     setAutoMine(false);
   }
 
@@ -939,6 +940,13 @@ export function setUpWorldAPI(systems: any, provider: any) {
   function setAutoMine(on: boolean) {
     if (process.env.MODE == 'DEV' || process.env.MODE == undefined) {
       provider.send(`${on ? 'evm_setAutomine' : 'evm_setIntervalMining'}`, [on ? true : 1]);
+    }
+  }
+
+  function setTimestamp() {
+    if (process.env.MODE == 'DEV' || process.env.MODE == undefined) {
+      const timestamp = Math.floor(new Date().getTime() / 1000);
+      provider.send('evm_setNextBlockTimestamp', [timestamp]);
     }
   }
 }

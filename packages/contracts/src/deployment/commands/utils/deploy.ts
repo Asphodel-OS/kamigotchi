@@ -3,7 +3,7 @@ import { generateLibDeploy } from "./codegen";
 import { findLog } from "./findLog";
 import execa = require("execa");
 
-const contractsDir = __dirname + "/../";
+const contractsDir = __dirname + "/../../";
 
 /**
  * Deploy world, components and systems from deploy.json
