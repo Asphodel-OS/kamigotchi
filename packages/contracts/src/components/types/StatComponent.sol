@@ -53,7 +53,7 @@ contract StatComponent is BareComponent {
   }
 
   function set(uint256 entity, Stat memory value) public {
-    set(entity, abi.encode(value));
+    _set(entity, abi.encode(value));
   }
 
   function getValue(uint256 entity) public view virtual returns (Stat memory) {
@@ -72,7 +72,7 @@ contract StatComponent is BareComponent {
   function shift(uint256 entity, int32 amt) public returns (int32) {
     Stat memory value = getValue(entity);
     value.shift += amt;
-    set(entity, value);
+    _set(entity, abi.encode(value));
     return value.shift;
   }
 
@@ -80,7 +80,7 @@ contract StatComponent is BareComponent {
   function boost(uint256 entity, int32 amt) public returns (int32) {
     Stat memory value = getValue(entity);
     value.boost += amt;
-    set(entity, value);
+    _set(entity, abi.encode(value));
     return value.boost;
   }
 
@@ -97,7 +97,7 @@ contract StatComponent is BareComponent {
     value.sync += amt;
     if (value.sync < 0) value.sync = 0;
     if (value.sync > max) value.sync = max;
-    set(entity, value);
+    _set(entity, abi.encode(value));
     return value.sync;
   }
 }
