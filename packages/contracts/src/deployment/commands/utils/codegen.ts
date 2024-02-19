@@ -2,7 +2,7 @@ import ejs from "ejs";
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 
-const contractsDir = path.join(__dirname, "../../contracts/");
+const contractsDir = path.join(__dirname, "../../");
 
 /**
  * Generate LibDeploy.sol from deploy.json
@@ -45,9 +45,13 @@ export async function generateLibDeploy(
 
   // Generate LibDeploy
   console.log("Generating deployment script");
-  const LibDeploy = await ejs.renderFile(path.join(contractsDir, "LibDeploy.ejs"), config, {
-    async: true,
-  });
+  const LibDeploy = await ejs.renderFile(
+    path.join(contractsDir, "contracts/LibDeploy.ejs"),
+    config,
+    {
+      async: true,
+    }
+  );
   const libDeployPath = path.join(out, "LibDeploy.sol");
   await writeFile(libDeployPath, LibDeploy);
 

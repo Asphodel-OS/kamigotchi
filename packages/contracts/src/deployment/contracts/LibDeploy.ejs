@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 // Foundry
 import { DSTest } from "ds-test/test.sol";
 import { console } from "forge-std/console.sol";
-import { ICheats } from "../utils/ICheats.sol";
 
 // Solecs
 import { World } from "solecs/World.sol";
@@ -16,12 +15,12 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 
 // Components
 <% components.forEach(component=> { -%>
-import { <%= component %>, ID as <%= component %>ID } from "../components/<%- component %>.sol";
+import { <%= component %>, ID as <%= component %>ID } from "components/<%- component %>.sol";
 <% }); -%>
 
 // Systems
 <% systems.forEach(system=> { -%>
-import { <%= system.name %>, ID as <%= system.name %>ID } from "../systems/<%- system.name %>.sol";
+import { <%= system.name %>, ID as <%= system.name %>ID } from "systems/<%- system.name %>.sol";
 <% }); -%>
 
 struct DeployResult {

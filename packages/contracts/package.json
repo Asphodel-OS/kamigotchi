@@ -22,7 +22,7 @@
     "abi:types:gen": "yarn typechain --target=ethers-v5 --out-dir ../client/types/ethers-contracts ../client/abi/*.json ",
     "abi:types:mappings": "mud system-types --outputDir ../client/types/ && cp ../client/types/SystemAbis.mts ../client/types/SystemAbis.mjs",
     "build:systems": "forge build --contracts src/systems --skip test --skip script",
-    "codegen:deploy": "yarn ejs src/deployment/LibDeploy.ejs -f deploy.json -o src/deployment/LibDeploy.sol",
+    "codegen:deploy": "yarn ejs src/deployment/contracts/LibDeploy.ejs -f deploy.json -o src/deployment/contracts/LibDeploy.sol",
     "codegen:tests": "yarn ejs src/test/utils/TestSetupImports.ejs -f deploy.json -o src/test/utils/TestSetupImports.sol",
     "deploy:local": "yarn deploy:script --mode DEV",
     "deploy:testnet": "yarn deploy:script --mode TEST",
