@@ -20,6 +20,7 @@ export function registerQuestsButton() {
       const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
+        chat: false,
         dialogue: false,
         emaBoard: false,
         help: false,
