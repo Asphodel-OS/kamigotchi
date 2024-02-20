@@ -39,6 +39,7 @@ export const Kards = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode } = useSelected();
 
+  console.log(kamis);
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
@@ -99,7 +100,7 @@ export const Kards = (props: Props) => {
   // get the description of the kami as a list of lines
   // TODO: clean this up
   const getDescription = (kami: Kami): string[] => {
-    const healthRate = getRateDisplay(kami.healthRate, 2);
+    const healthRate = getRateDisplay(kami.stats.health.rate, 2);
 
     let description: string[] = [];
     if (isOffWorld(kami)) {
@@ -152,7 +153,7 @@ export const Kards = (props: Props) => {
   const FeedButton = (kami: Kami, account: Account) => {
     const canFeedKami = canFeed(kami, account);
     const tooltipText = whyCantFeed(kami, account);
-    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health! == 0;
+    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health.sync == 0;
 
     const stockedInventory =
       account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
@@ -165,7 +166,7 @@ export const Kards = (props: Props) => {
       };
     });
 
-    let returnVal = (
+    let button = (
       <IconListButton
         id={`feedKami-button-${kami.index}`}
         img={feedIcon}
@@ -173,9 +174,9 @@ export const Kards = (props: Props) => {
         options={feedOptions}
       />
     );
-    if (!canFeedKami) returnVal = <Tooltip text={[tooltipText]}>{returnVal}</Tooltip>;
+    if (!canFeedKami) button = <Tooltip text={[tooltipText]}>{button}</Tooltip>;
 
-    return returnVal;
+    return button;
   };
 
   // Revive Button display evaluation
