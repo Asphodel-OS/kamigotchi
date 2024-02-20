@@ -14,15 +14,17 @@ export const Feed = (props: Props) => {
   const { client } = props;
   const [feed, setFeed] = useState<FeedResponse>();
   const [casts, setCasts] = useState<CastWithInteractions[]>([]);
+  const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
 
   // poll for new messages and update the list of current casts
   const poll = async () => {
+    setIsPolling(true);
     const newFeed = await client.fetchFeed('filter', {
       filterType: 'channel_id',
       channelId: 'farcaster',
       cursor: feed?.next.cursor ?? '',
-      limit: 20, // defaults to 25, max 100
+      limit: 10, // defaults to 25, max 100
     });
     setFeed(newFeed);
 
@@ -31,17 +33,32 @@ export const Feed = (props: Props) => {
       if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
     }
     setCasts(currCasts);
+    setIsPolling(false);
   };
 
   useEffect(() => {
     poll();
   }, []);
 
+  // TODO update the scroll position accordingly when new casts come in
+  useEffect(() => {
+    // // scroll component to bottom
+    // if (feedRef.current) {
+    //   console.log('feedref found on mount');
+    //   console.log(`setting scroll to ${feedRef.current.scrollHeight}`);
+    //   feedRef.current.scrollTop = feedRef.current.scrollHeight;
+    // } else {
+    //   console.log('feedref not found on mount');
+    // }
+  }, [casts]);
+
+  // set poll when scrolling to top
   useEffect(() => {
     const current = feedRef.current;
-    const handleScroll = () => {
-      if (feedRef.current && feedRef.current.scrollTop === 0) {
-        if (feed?.next.cursor) poll();
+    const handleScroll = async () => {
+      const isNearTop = current && current.scrollTop < 20;
+      if (!isPolling && isNearTop) {
+        if (feed?.next.cursor) await poll();
       }
     };
 
@@ -49,12 +66,20 @@ export const Feed = (props: Props) => {
     return () => {
       if (current) current.removeEventListener('scroll', handleScroll);
     };
-  }, [feed?.next.cursor]);
+  }, [feed?.next.cursor, isPolling]);
+
+  /////////////////
+  // RENDER
 
   return (
     <Wrapper ref={feedRef}>
       <Tooltip text={feed?.next.cursor ? ['load more'] : ['no more!']}>
-        <ActionButton text='load more' id='load' onClick={poll} disabled={!feed?.next.cursor} />
+        <ActionButton
+          text={isPolling ? 'polling..' : 'load more'}
+          id='load'
+          onClick={poll}
+          disabled={!feed?.next.cursor || isPolling}
+        />
       </Tooltip>
       {casts?.toReversed().map((cast) => (
         <Message
