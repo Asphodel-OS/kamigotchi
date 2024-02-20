@@ -14,9 +14,9 @@ import { Friendship } from 'layers/network/shapes/Friendship';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
-import { Bio } from './Bio';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
+import { Bio } from './bio/Bio';
 
 export function registerAccountModal() {
   registerUIComponent(

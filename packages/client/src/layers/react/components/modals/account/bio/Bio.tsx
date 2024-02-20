@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
+import { Tooltip } from 'layers/react/components/library';
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../../library';
 
 interface Props {
   account: Account;
@@ -95,10 +95,12 @@ export const Bio = (props: Props) => {
   return (
     <Container key={account.name}>
       <Content>
-        <Identifiers>
-          <Title>{account.name}</Title>
-          <AddressDisplay />
-        </Identifiers>
+        <IdentityWrapper>
+          <Identifiers>
+            <Title>{account.name}</Title>
+            <AddressDisplay />
+          </Identifiers>
+        </IdentityWrapper>
         <BirthdayRow />
         <KillsRow />
         <CoinRow />
@@ -127,6 +129,13 @@ const Content = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
+`;
+
+const IdentityWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  gap: 0.5vw;
 `;
 
 const Identifiers = styled.div`

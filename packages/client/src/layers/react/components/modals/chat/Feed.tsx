@@ -83,6 +83,7 @@ export const Feed = (props: Props) => {
       </Tooltip>
       {casts?.toReversed().map((cast) => (
         <Message
+          key={cast.hash}
           onClick={() => window.open(`https://warpcast.com/${cast.author.username}/${cast.hash}`)}
         >
           <Pfp src={cast.author.pfp_url} />

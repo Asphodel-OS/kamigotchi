@@ -23,7 +23,8 @@ export function registerChatModal() {
     (layers) => of(layers),
 
     () => {
-      const client = new NeynarAPIClient('');
+      console.log('NEYNAR_API_KEY', process.env.NEYNAR_API_KEY);
+      const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY!);
 
       return (
         <ModalWrapper
