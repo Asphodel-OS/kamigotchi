@@ -1,16 +1,16 @@
-import { helpIcon } from 'assets/images/icons/menu';
 import { of } from 'rxjs';
 
+import { chatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { Modals, useVisibility } from 'layers/react/store/visibility';
 
-export function registerHelpButton() {
+export function registerChatButton() {
   registerUIComponent(
-    'HelpButton',
+    'ChatButton',
     {
-      colStart: 88,
-      colEnd: 91,
+      colStart: 76,
+      colEnd: 79,
       rowStart: 3,
       rowEnd: 10,
     },
@@ -20,10 +20,9 @@ export function registerHelpButton() {
       const modalsToHide: Partial<Modals> = {
         bridgeERC20: false,
         bridgeERC721: false,
-        chat: false,
         dialogue: false,
         emaBoard: false,
-        inventory: false,
+        help: false,
         kami: false,
         leaderboard: false,
         nameKami: false,
@@ -33,12 +32,12 @@ export function registerHelpButton() {
 
       return (
         <MenuButton
-          id='help_button'
-          image={helpIcon}
-          tooltip='Help'
-          targetDiv='help'
+          id='chat-button'
+          image={chatIcon}
+          tooltip='Chat'
+          targetDiv='chat'
           hideModals={modalsToHide}
-          visible={buttons.help}
+          visible={buttons.chat}
         />
       );
     }
