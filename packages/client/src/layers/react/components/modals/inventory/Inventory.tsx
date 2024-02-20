@@ -43,7 +43,7 @@ export function registerInventoryModal() {
         if (accInv?.consumables) inventories = inventories.concat(accInv.consumables);
         if (accInv?.lootboxes) inventories = inventories.concat(accInv.lootboxes);
 
-        return inventories.filter((inv) => !inv.item.isFungible || inv.balance! > 0);
+        return inventories.filter((inv) => !inv.item.is.fungible || inv.balance! > 0);
       };
 
       /////////////////
