@@ -39,7 +39,6 @@ export const Kards = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode } = useSelected();
 
-  console.log(kamis);
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
   useEffect(() => {
