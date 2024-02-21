@@ -20,9 +20,9 @@ export interface Location {
 
 // standardized Object shape of a Room Entity
 export interface Room {
-  id: EntityID;
-  entityIndex: EntityIndex;
   index: number;
+  entityIndex: EntityIndex;
+  id: EntityID;
   name: string;
   description: string;
   location: Location;
@@ -30,6 +30,16 @@ export interface Room {
   owner?: Account;
   players?: Account[];
 }
+
+export const emptyRoom: Room = {
+  index: 0,
+  entityIndex: 0 as EntityIndex,
+  id: '' as EntityID,
+  name: '',
+  description: '',
+  location: { x: 0, y: 0, z: 0 },
+  exits: [],
+};
 
 export interface RoomOptions {
   exits?: boolean;
@@ -105,9 +115,7 @@ export const getExits = (network: NetworkLayer, room: Room): Room[] => {
     if (rooms.length > 0) exits.push(rooms[0]);
   }
 
-  // console.log('exits2', exits);
-
-  return exits;
+  return [...new Set(exits)];
 };
 
 export const getAllRooms = (network: NetworkLayer, options?: RoomOptions): Room[] =>
