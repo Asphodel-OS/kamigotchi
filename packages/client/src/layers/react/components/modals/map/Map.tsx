@@ -5,7 +5,7 @@ import { interval, map } from 'rxjs';
 
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Room, queryRoomsX } from 'layers/network/shapes/Room';
+import { Room, getAllRooms, queryRoomsX } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -13,6 +13,7 @@ import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
+import { Grid } from './Grid';
 import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
@@ -22,7 +23,7 @@ export function registerMapModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 50,
+      rowEnd: 75,
     },
 
     // Requirement
@@ -39,12 +40,12 @@ export function registerMapModal() {
 
     // Render
     ({ network, data }) => {
-      const { actions, api } = network;
-
       // console.log('mRoom: ', data)
+      const { actions, api } = network;
       const { roomIndex, setRoom } = useSelected();
       const { modals } = useVisibility();
       const [selectedRoom, setSelectedRoom] = useState<Room>();
+      const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [selectedExits, setSelectedExits] = useState<Room[]>([]);
 
       /////////////////
@@ -75,6 +76,16 @@ export function registerMapModal() {
           setSelectedExits(exits);
         }
       }, [roomIndex, data.account]);
+
+      // query the set of rooms whenever the current z-level changes
+      useEffect(() => {
+        const roomMap = new Map<number, Room>();
+        const queriedRooms = getAllRooms(network, { exits: true });
+        for (const room of queriedRooms) {
+          roomMap.set(room.index, room);
+        }
+        setRoomMap(roomMap);
+      }, [selectedRoom?.location.z]);
 
       ///////////////////
       // ACTIONS
@@ -124,6 +135,7 @@ export function registerMapModal() {
           footer={<ExitsDisplay />}
           canExit
         >
+          <Grid roomIndex={roomIndex} rooms={roomMap} actions={{ move }} />
           <RoomInfo room={selectedRoom} />
         </ModalWrapper>
       );
