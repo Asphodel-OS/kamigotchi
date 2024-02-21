@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
 import { Tooltip } from 'layers/react/components/library';
+import { handleSignIn } from 'utils/neynar';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -20,6 +21,9 @@ interface Props {
 export const Bio = (props: Props) => {
   const { actions, account } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const clientID = process.env.NEYNAR_CLIENT_ID!;
+  const loginURL = process.env.NEYNAR_LOGIN_URL!;
+  const redirectURI = process.env.NEYNAR_REDIRECT_URI;
 
   /////////////////
   // TRACKING
@@ -100,6 +104,12 @@ export const Bio = (props: Props) => {
             <Title>{account.name}</Title>
             <AddressDisplay />
           </Identifiers>
+          <NeynarButton
+            className='neynar_signin'
+            onClick={() => handleSignIn(loginURL, clientID, redirectURI ?? '')}
+          >
+            Link Farcaster
+          </NeynarButton>
         </IdentityWrapper>
         <BirthdayRow />
         <KillsRow />
@@ -143,6 +153,16 @@ const Identifiers = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
+`;
+
+const NeynarButton = styled.div`
+  padding: 0.5vw;
+  background-color: #f00;
+  color: white;
+  font-size: 0.7vw;
+  font-family: Pixel;
+  border-radius: 0.3vw;
+  cursor: pointer;
 `;
 
 const Title = styled.div`

@@ -1,17 +1,14 @@
-import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { CastWithInteractions, FeedResponse } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from '../../library';
+import { ActionButton, Tooltip } from 'layers/react/components/library';
+import { client as neynarClient } from 'src/clients/neynar';
 
-interface Props {
-  client: NeynarAPIClient;
-}
+interface Props {}
 
 export const Feed = (props: Props) => {
-  const { client } = props;
   const [feed, setFeed] = useState<FeedResponse>();
   const [casts, setCasts] = useState<CastWithInteractions[]>([]);
   const [isPolling, setIsPolling] = useState(false);
@@ -20,7 +17,7 @@ export const Feed = (props: Props) => {
   // poll for new messages and update the list of current casts
   const poll = async () => {
     setIsPolling(true);
-    const newFeed = await client.fetchFeed('filter', {
+    const newFeed = await neynarClient.fetchFeed('filter', {
       filterType: 'channel_id',
       channelId: 'farcaster',
       cursor: feed?.next.cursor ?? '',
