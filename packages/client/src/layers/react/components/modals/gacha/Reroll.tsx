@@ -6,7 +6,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
-import ethIcon from 'assets/images/icons/Ethereum.png';
+import { ethereumLogo } from 'assets/images/logos';
 import { Kami } from 'layers/network/shapes/Kami';
 
 interface Props {
@@ -111,7 +111,7 @@ export const Reroll = (props: Props) => {
         balance={formatWei(props.data.balance)}
         price={formatWei(rerollPrice)}
         name='Total re-roll price'
-        icon={ethIcon}
+        icon={ethereumLogo}
       />
       <InnerBox>
         {props.display.Tab}

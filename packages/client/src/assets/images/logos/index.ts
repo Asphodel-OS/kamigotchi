@@ -1,3 +1,4 @@
-import farcasterIcon from './farcaster.png';
+import ethereumLogo from './ethereum.png';
+import farcasterLogo from './farcaster.png';
 
-export { farcasterIcon };
+export { ethereumLogo, farcasterLogo };

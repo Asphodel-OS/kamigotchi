@@ -168,7 +168,8 @@ export function registerAccountModal() {
         >
           <Bio
             key='bio'
-            account={account}
+            account={account} // account selected for viewing
+            playerAccount={data.account} // account of the player
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren, connectFarcaster }}
           />
           <Tabs tab={tab} setTab={setTab} isSelf={isSelf()} />

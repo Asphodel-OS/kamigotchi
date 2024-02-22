@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { farcasterIcon } from 'assets/images/logos';
+import { farcasterLogo } from 'assets/images/logos';
 import { Account } from 'layers/network/shapes/Account';
 import { IconButton, Tooltip } from 'layers/react/components/library';
 import { useAccount } from 'layers/react/store/account';
@@ -56,7 +56,7 @@ export const FarcasterConnect = (props: Props) => {
 
   return (
     <Tooltip text={getTooltipText()}>
-      <IconButton size='small' img={farcasterIcon} color={getColor()} onClick={getOnClick()} />
+      <IconButton size='small' img={farcasterLogo} color={getColor()} onClick={getOnClick()} />
     </Tooltip>
   );
 

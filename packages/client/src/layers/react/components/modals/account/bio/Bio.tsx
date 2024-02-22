@@ -4,16 +4,15 @@ import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useLocalStorage } from 'usehooks-ts';
 
 import { Account } from 'layers/network/shapes/Account';
 import { Tooltip } from 'layers/react/components/library';
-import { FarcasterUser, emptyFaracasterUser } from 'src/clients/neynar';
 import { playClick } from 'utils/sounds';
 import { FarcasterConnect } from './FarcasterConnect';
 
 interface Props {
-  account: Account;
+  account: Account; // account selected for viewing
+  playerAccount: Account; // account of the player
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
@@ -22,12 +21,8 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { actions, account } = props;
+  const { actions, account, playerAccount } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [farcasterUser, setFarcasterUser] = useLocalStorage<FarcasterUser>(
-    'farcasterUser',
-    emptyFaracasterUser
-  );
 
   /////////////////
   // TRACKING
@@ -106,10 +101,12 @@ export const Bio = (props: Props) => {
         <Identifiers>
           <TitleRow>
             <Title>{account.name}</Title>
-            <FarcasterConnect
-              account={account}
-              actions={{ connectFarcaster: actions.connectFarcaster }}
-            />
+            {account.index === playerAccount.index && (
+              <FarcasterConnect
+                account={account}
+                actions={{ connectFarcaster: actions.connectFarcaster }}
+              />
+            )}
           </TitleRow>
           <AddressDisplay />
         </Identifiers>
@@ -120,7 +117,7 @@ export const Bio = (props: Props) => {
       <PfpContainer>
         <Tooltip text={[getLastSeenString()]}>
           <PfpStatus timeDelta={lastRefresh - 1000 * account.time.last} />
-          <PfpImage src='https://images.blur.io/_blur-prod/0x5af0d9827e0c53e4799bb226655a1de152a425a5/833-07dc63fc2ea1b5a5?w=1000' />
+          <PfpImage src={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'} />
         </Tooltip>
       </PfpContainer>
     </Container>
