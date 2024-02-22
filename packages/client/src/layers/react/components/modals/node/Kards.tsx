@@ -182,7 +182,6 @@ export const Kards = (props: Props) => {
     return (
       <Tooltip key='collect-tooltip' text={[getCollectTooltip(kami)]}>
         <IconButton
-          id={`harvest-collect-${kami.index}`}
           onClick={() => actions.collect(kami)}
           img={collectIcon}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
@@ -207,12 +206,7 @@ export const Kards = (props: Props) => {
 
     let returnVal = (
       <Tooltip key={`feed-tooltip`} text={[tooltipText]}>
-        <IconListButton
-          id={`feed-button-${kami.index}`}
-          img={feedIcon}
-          disabled={!canFeedKami}
-          options={feedOptions}
-        />
+        <IconListButton img={feedIcon} disabled={!canFeedKami} options={feedOptions} />
       </Tooltip>
     );
 
@@ -224,7 +218,6 @@ export const Kards = (props: Props) => {
     return (
       <Tooltip key='stop-tooltip' text={[getStopTooltip(kami)]}>
         <IconButton
-          id={`harvest-stop-${kami.index}`}
           img={stopIcon}
           onClick={() => actions.stop(kami)}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
@@ -247,7 +240,6 @@ export const Kards = (props: Props) => {
     return (
       <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
         <IconListButton
-          id={`liquidate-button-${target.index}`}
           key={`harvest-liquidate`}
           img={liquidateIcon}
           options={actionOptions}

@@ -3,11 +3,11 @@ import styled, { keyframes } from 'styled-components';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  id: string;
   onClick: Function;
   img: string;
   disabled?: boolean;
   size?: 'small' | 'medium' | 'large' | 'book';
+  backgroundColor?: string;
   pulse?: boolean;
 }
 
@@ -56,6 +56,7 @@ export const IconButton = (props: Props) => {
       styles.boxShadow = '0 0 1vw 0 rgba(0, 0, 0, 0.5)';
     }
 
+    if (props.backgroundColor) styles.backgroundColor = props.backgroundColor;
     if (props.disabled) styles.backgroundColor = '#b2b2b2';
 
     return styles;
@@ -63,17 +64,13 @@ export const IconButton = (props: Props) => {
 
   if (props.pulse)
     return (
-      <PulseButton
-        id={props.id}
-        onClick={!props.disabled ? handleClick : () => {}}
-        style={setStyles()}
-      >
+      <PulseButton onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         <Image src={props.img} />
       </PulseButton>
     );
   else
     return (
-      <Button id={props.id} onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
+      <Button onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         <Image src={props.img} />
       </Button>
     );

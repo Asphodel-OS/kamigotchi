@@ -48,7 +48,6 @@ export function registerHelpModal() {
           <Tooltip text={['Getting Started']}>
             <Label>Book 1</Label>
             <IconButton
-              id='starting'
               img={HelpMenuIcons.starting}
               onClick={() => setTab(HelpTabs.START)}
               size='book'
@@ -57,7 +56,6 @@ export function registerHelpModal() {
           <Tooltip text={["What's a Kamigotchi?"]}>
             <Label>Book 2</Label>
             <IconButton
-              id='kamigotchi'
               img={HelpMenuIcons.kamis}
               onClick={() => setTab(HelpTabs.KAMIS)}
               size='book'
@@ -66,7 +64,6 @@ export function registerHelpModal() {
           <Tooltip text={["What's a Node?"]}>
             <Label>Book 3</Label>
             <IconButton
-              id='nodes'
               img={HelpMenuIcons.nodes}
               onClick={() => setTab(HelpTabs.NODES)}
               size='book'
