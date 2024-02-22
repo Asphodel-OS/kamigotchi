@@ -4,9 +4,13 @@ import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLocalStorage } from 'usehooks-ts';
 
+import { farcasterIcon } from 'assets/images/logos';
 import { Account } from 'layers/network/shapes/Account';
-import { Tooltip } from 'layers/react/components/library';
+import { IconButton, Tooltip } from 'layers/react/components/library';
+import { useAccount } from 'layers/react/store/account';
+import { FarcasterUser, emptyFaracasterUser, client as neynarClient } from 'src/clients/neynar';
 import { handleSignIn } from 'utils/neynar';
 import { playClick } from 'utils/sounds';
 
@@ -19,11 +23,17 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { actions, account } = props;
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
   const clientID = process.env.NEYNAR_CLIENT_ID!;
   const loginURL = process.env.NEYNAR_LOGIN_URL!;
   const redirectURI = process.env.NEYNAR_REDIRECT_URI;
+
+  const { actions, account } = props;
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [farcasterUser, setFarcasterUser] = useLocalStorage<FarcasterUser>(
+    'farcasterUser',
+    emptyFaracasterUser
+  );
+  const { account: kamiAccount } = useAccount();
 
   /////////////////
   // TRACKING
@@ -38,6 +48,34 @@ export const Bio = (props: Props) => {
       clearInterval(timerId);
     };
   }, []);
+
+  // set the farcaster user in localstorage
+  const updateFarcasterUser = async () => {
+    const fid = kamiAccount.fid!;
+    const signer_uuid = kamiAccount.neynar_signer!;
+    const response = await neynarClient.fetchBulkUsers([fid], {});
+    if (response.users.length > 0) {
+      const user = response.users[0];
+      const fUser = {
+        fid: user.fid,
+        username: user.username,
+        display_name: user.display_name,
+        custody_address: user.custody_address ?? '',
+        pfp_url: user.pfp_url,
+        signer_uuid,
+      };
+      console.log('setting farcaster user in localstorage', fUser);
+      setFarcasterUser(fUser);
+    }
+  };
+
+  // update farcaster user in localstorage when the account store value changes
+  useEffect(() => {
+    if (kamiAccount.fid && kamiAccount.neynar_signer) {
+      console.log('updating farcaster id and/or signer');
+      updateFarcasterUser();
+    }
+  }, [kamiAccount.fid, kamiAccount.neynar_signer]);
 
   const copyText = (text: string) => {
     playClick();
@@ -104,12 +142,12 @@ export const Bio = (props: Props) => {
             <Title>{account.name}</Title>
             <AddressDisplay />
           </Identifiers>
-          <NeynarButton
-            className='neynar_signin'
+          <IconButton
+            size='small'
+            img={farcasterIcon}
+            backgroundColor='purple'
             onClick={() => handleSignIn(loginURL, clientID, redirectURI ?? '')}
-          >
-            Link Farcaster
-          </NeynarButton>
+          />
         </IdentityWrapper>
         <BirthdayRow />
         <KillsRow />

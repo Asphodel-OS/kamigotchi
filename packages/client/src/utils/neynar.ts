@@ -1,18 +1,6 @@
+import { useAccount } from 'layers/react/store/account';
+
 let authWindow: any;
-
-const handleMessage = (event, authOrigin: string) => {
-  if (event.origin === authOrigin && event.data.is_authenticated) {
-    // set the Farcaster User Data here
-    console.log('handling message', event.data);
-
-    if (authWindow) {
-      authWindow.close();
-    }
-
-    window.removeEventListener('message', handleMessage);
-  }
-};
-
 export const handleSignIn = (neynarLoginUrl: string, clientId: string, redirectUri: string) => {
   console.log('handleSignIn', neynarLoginUrl, clientId, redirectUri);
   let authUrl = new URL(neynarLoginUrl);
@@ -30,4 +18,26 @@ export const handleSignIn = (neynarLoginUrl: string, clientId: string, redirectU
     },
     false
   );
+};
+
+const handleMessage = (event: any, authOrigin: string) => {
+  if (event.origin === authOrigin && event.data.is_authenticated) {
+    // set the Farcaster User Data here
+    console.log('handling message', event.data);
+
+    const { account } = useAccount.getState();
+    useAccount.setState({
+      account: {
+        ...account,
+        fid: event.data.fid,
+        neynar_signer: event.data.signer_uuid,
+      },
+    });
+
+    if (authWindow) {
+      authWindow.close();
+    }
+
+    window.removeEventListener('message', handleMessage);
+  }
 };
