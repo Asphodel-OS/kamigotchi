@@ -26,7 +26,9 @@ export interface Account {
   entityIndex: EntityIndex;
   ownerEOA: string;
   operatorEOA: string;
+  fid: number;
   name: string;
+  pfpURI: string;
 
   coin: number;
   roomIndex: number;
@@ -101,8 +103,10 @@ export const getAccount = (
     components: {
       AccountIndex,
       Coin,
+      FarcasterIndex,
       LastActionTime,
       LastTime,
+      MediaURI,
       RoomIndex,
       Name,
       OperatorAddress,
@@ -119,6 +123,8 @@ export const getAccount = (
     index: getComponentValue(AccountIndex, entityIndex)?.value as number,
     ownerEOA: getComponentValue(OwnerAddress, entityIndex)?.value as string,
     operatorEOA: getComponentValue(OperatorAddress, entityIndex)?.value as string,
+    fid: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
+    pfpURI: getComponentValue(MediaURI, entityIndex)?.value as string,
     name: getComponentValue(Name, entityIndex)?.value as string,
     coin: (getComponentValue(Coin, entityIndex)?.value || (0 as number)) * 1,
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,

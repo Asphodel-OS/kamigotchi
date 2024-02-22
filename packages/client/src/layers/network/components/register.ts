@@ -6,7 +6,6 @@ import {
 } from '@latticexyz/std-client';
 
 import {
-  defineFarcasterDataComponent,
   defineLoadingStateComponent,
   defineLocationComponent,
   defineNumberArrayComponent,
@@ -87,6 +86,7 @@ export function createComponents(world: World) {
     AccountIndex: defineNumberEZ('AccountIndex', 'component.Index.Account'),
     ItemIndex: defineNumberEZ('ItemIndex', 'component.Index.Item'),
     NodeIndex: defineNumberEZ('NodeIndex', 'component.Index.Node'),
+    FarcasterIndex: defineNumberEZ('FarcasterIndex', 'component.Index.Farcaster'),
     NPCIndex: defineNumberEZ('NPCIndex', 'component.Index.NPC'),
     ObjectiveIndex: defineNumberEZ('ObjectiveIndex', 'component.Index.Objective'),
     PetIndex: defineNumberEZ('PetIndex', 'component.Index.Pet'),
@@ -157,7 +157,6 @@ export function createComponents(world: World) {
     CanName: defineBoolEZ('CanName', 'component.Can.Name'),
     GachaOrder: defineBoolEZ('CanName', 'component.Gacha.Order'),
     FavoriteFood: defineStringEZ('FavoriteFood', 'component.Favorite.Food'),
-    FarcasterData: defineFarcasterDataComponent(world),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ('MediaURI', 'component.MediaURI'),
     OperatorAddress: defineStringEZ('OperatorAddress', 'component.Address.Operator'),

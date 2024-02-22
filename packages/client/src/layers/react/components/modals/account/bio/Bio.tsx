@@ -17,6 +17,7 @@ interface Props {
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
+    connectFarcaster: (fid: number, pfpURI: string) => void;
   };
 }
 
@@ -105,7 +106,10 @@ export const Bio = (props: Props) => {
         <Identifiers>
           <TitleRow>
             <Title>{account.name}</Title>
-            <FarcasterConnect />
+            <FarcasterConnect
+              account={account}
+              actions={{ connectFarcaster: actions.connectFarcaster }}
+            />
           </TitleRow>
           <AddressDisplay />
         </Identifiers>

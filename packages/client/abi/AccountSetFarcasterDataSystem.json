@@ -40,26 +40,14 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "farcasterData",
-          "type": "tuple",
-          "internalType": "struct FarcasterData",
-          "components": [
-            {
-              "name": "fid",
-              "type": "uint32",
-              "internalType": "uint32"
-            },
-            {
-              "name": "username",
-              "type": "string",
-              "internalType": "string"
-            },
-            {
-              "name": "pfpURI",
-              "type": "string",
-              "internalType": "string"
-            }
-          ]
+          "name": "fid",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "pfpURI",
+          "type": "string",
+          "internalType": "string"
         }
       ],
       "outputs": [
@@ -129,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped((uint32,string,string))": "9f6801ae",
+    "executeTyped(uint32,string)": "b1dc5aa6",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

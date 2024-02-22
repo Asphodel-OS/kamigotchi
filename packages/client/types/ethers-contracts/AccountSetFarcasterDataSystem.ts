@@ -27,23 +27,11 @@ import type {
   TypedListener,
 } from "./common";
 
-export type FarcasterDataStruct = {
-  fid: PromiseOrValue<BigNumberish>;
-  username: PromiseOrValue<string>;
-  pfpURI: PromiseOrValue<string>;
-};
-
-export type FarcasterDataStructOutput = [number, string, string] & {
-  fid: number;
-  username: string;
-  pfpURI: string;
-};
-
 export interface AccountSetFarcasterDataSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped((uint32,string,string))": FunctionFragment;
+    "executeTyped(uint32,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -62,7 +50,7 @@ export interface AccountSetFarcasterDataSystemInterface
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [FarcasterDataStruct]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -133,7 +121,8 @@ export interface AccountSetFarcasterDataSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      farcasterData: FarcasterDataStruct,
+      fid: PromiseOrValue<BigNumberish>,
+      pfpURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -151,7 +140,8 @@ export interface AccountSetFarcasterDataSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    farcasterData: FarcasterDataStruct,
+    fid: PromiseOrValue<BigNumberish>,
+    pfpURI: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -169,7 +159,8 @@ export interface AccountSetFarcasterDataSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      farcasterData: FarcasterDataStruct,
+      fid: PromiseOrValue<BigNumberish>,
+      pfpURI: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -199,7 +190,8 @@ export interface AccountSetFarcasterDataSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      farcasterData: FarcasterDataStruct,
+      fid: PromiseOrValue<BigNumberish>,
+      pfpURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -218,7 +210,8 @@ export interface AccountSetFarcasterDataSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      farcasterData: FarcasterDataStruct,
+      fid: PromiseOrValue<BigNumberish>,
+      pfpURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

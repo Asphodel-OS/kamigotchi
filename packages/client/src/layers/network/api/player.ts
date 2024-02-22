@@ -80,8 +80,8 @@ export function createPlayerAPI(systems: any) {
   }
 
   // @dev set the Farcaster-associated data for an account
-  function setAccountFarcasterData(fid: number, username: string, imageURI: string) {
-    return systems['system.Account.Set.FarcasterData'].executeTyped({ fid, username, imageURI });
+  function setAccountFarcasterData(fid: number, imageURI: string) {
+    return systems['system.Account.Set.FarcasterData'].executeTyped(fid, imageURI);
   }
 
   function upgradeAccountSkill(skillIndex: number) {

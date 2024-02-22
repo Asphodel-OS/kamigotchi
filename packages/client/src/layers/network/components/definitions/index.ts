@@ -1,4 +1,3 @@
-export { defineFarcasterDataComponent } from './FarcasterDataComponent';
 export { defineLoadingStateComponent } from './LoadingStateComponent';
 export { defineLocationComponent } from './LocationComponent';
 export { defineNumberArrayComponent } from './NumberArrayComponent';

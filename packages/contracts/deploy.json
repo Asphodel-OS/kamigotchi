@@ -14,7 +14,6 @@
     "EpochComponent",
     "ExitsComponent",
     "ExperienceComponent",
-    "FarcasterDataComponent",
     "FavoriteFoodComponent",
     "ForComponent",
     "GachaOrderComponent",
@@ -34,6 +33,7 @@
     "IndexBodyComponent",
     "IndexColorComponent",
     "IndexFaceComponent",
+    "IndexFarcasterComponent",
     "IndexHandComponent",
     "IndexItemComponent",
     "IndexNodeComponent",
@@ -465,7 +465,7 @@
     },
     {
       "name": "AccountSetFarcasterDataSystem",
-      "writeAccess": ["FarcasterDataComponent", "TimeLastComponent"]
+      "writeAccess": ["IndexFarcasterComponent", "MediaURIComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountUpgradeSkillSystem",

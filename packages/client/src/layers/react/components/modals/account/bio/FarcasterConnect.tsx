@@ -1,13 +1,21 @@
-import { farcasterIcon } from 'assets/images/logos';
-import { IconButton, Tooltip } from 'layers/react/components/library';
-import { useAccount } from 'layers/react/store/account';
 import { useEffect } from 'react';
-import { FarcasterUser, client, emptyFaracasterUser, handleSignIn } from 'src/clients/neynar';
 import { useLocalStorage } from 'usehooks-ts';
 
-interface Props {}
+import { farcasterIcon } from 'assets/images/logos';
+import { Account } from 'layers/network/shapes/Account';
+import { IconButton, Tooltip } from 'layers/react/components/library';
+import { useAccount } from 'layers/react/store/account';
+import { FarcasterUser, client, emptyFaracasterUser, handleSignIn } from 'src/clients/neynar';
+
+interface Props {
+  account: Account;
+  actions: {
+    connectFarcaster: (fid: number, pfpURI: string) => void;
+  };
+}
 
 export const FarcasterConnect = (props: Props) => {
+  const { account, actions } = props;
   const [farcasterUser, setFarcasterUser] = useLocalStorage<FarcasterUser>(
     'farcasterUser',
     emptyFaracasterUser
@@ -24,22 +32,31 @@ export const FarcasterConnect = (props: Props) => {
 
   const getColor = () => {
     if (!farcasterUser.fid) return 'orange';
+    if (!account.fid) return 'blue';
+    if (farcasterUser.fid !== account.fid) return 'red';
     return 'purple';
   };
 
   const getTooltipText = () => {
     if (!farcasterUser.fid) return ['Connect to Farcaster'];
+    if (!account.fid) return ['Link Farcaster Account to Kami Account'];
+    if (farcasterUser.fid !== account.fid)
+      return [`fid mismatch!`, `client: ${farcasterUser.fid}`, `server: ${account.fid}`];
     return [`Connected to Farcaster`, `FID: ${farcasterUser.fid}`];
+  };
+
+  const getOnClick = () => {
+    if (!farcasterUser.fid) return () => handleSignIn();
+    if (!account.fid)
+      return () => actions.connectFarcaster(farcasterUser.fid, farcasterUser.pfp_url);
+    if (farcasterUser.fid !== account.fid)
+      return () => actions.connectFarcaster(farcasterUser.fid, farcasterUser.pfp_url);
+    return () => {};
   };
 
   return (
     <Tooltip text={getTooltipText()}>
-      <IconButton
-        size='small'
-        img={farcasterIcon}
-        color={getColor()}
-        onClick={() => handleSignIn()}
-      />
+      <IconButton size='small' img={farcasterIcon} color={getColor()} onClick={getOnClick()} />
     </Tooltip>
   );
 
