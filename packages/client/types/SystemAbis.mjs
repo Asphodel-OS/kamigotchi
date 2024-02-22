@@ -35,6 +35,7 @@ import _RoomDeleteSystem from "../abi/_RoomDeleteSystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
+import AccountSetFarcasterDataSystem from "../abi/AccountSetFarcasterDataSystem.json";
 import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
 import AccountUpgradeSkillSystem from "../abi/AccountUpgradeSkillSystem.json";
@@ -121,6 +122,7 @@ export const SystemAbis = {
   "system.Account.Fund": AccountFundSystem.abi,
   "system.Account.Move": AccountMoveSystem.abi,
   "system.Account.Register": AccountRegisterSystem.abi,
+  "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem.abi,
   "system.Account.Set.Name": AccountSetNameSystem.abi,
   "system.Account.Set.Operator": AccountSetOperatorSystem.abi,
   "system.Account.Upgrade.Skill": AccountUpgradeSkillSystem.abi,

@@ -14,6 +14,7 @@ import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountC
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
+import { FarcasterData, FarcasterDataComponent, ID as FarcasterCompID } from "components/FarcasterDataComponent.sol";
 import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
@@ -145,6 +146,10 @@ library LibAccount {
 
   function setQuestPoints(IUintComp components, uint256 id, uint256 amt) internal {
     QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, amt);
+  }
+
+  function setFarcasterData(IUintComp components, uint256 id, FarcasterData memory data) internal {
+    FarcasterDataComponent(getAddressById(components, FarcasterCompID)).set(id, data);
   }
 
   function setMint20Minted(

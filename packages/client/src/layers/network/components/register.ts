@@ -6,6 +6,7 @@ import {
 } from '@latticexyz/std-client';
 
 import {
+  defineFarcasterDataComponent,
   defineLoadingStateComponent,
   defineLocationComponent,
   defineNumberArrayComponent,
@@ -156,6 +157,7 @@ export function createComponents(world: World) {
     CanName: defineBoolEZ('CanName', 'component.Can.Name'),
     GachaOrder: defineBoolEZ('CanName', 'component.Gacha.Order'),
     FavoriteFood: defineStringEZ('FavoriteFood', 'component.Favorite.Food'),
+    FarcasterData: defineFarcasterDataComponent(world),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ('MediaURI', 'component.MediaURI'),
     OperatorAddress: defineStringEZ('OperatorAddress', 'component.Address.Operator'),

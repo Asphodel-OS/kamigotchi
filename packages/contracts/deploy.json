@@ -14,6 +14,7 @@
     "EpochComponent",
     "ExitsComponent",
     "ExperienceComponent",
+    "FarcasterDataComponent",
     "FavoriteFoodComponent",
     "ForComponent",
     "GachaOrderComponent",
@@ -461,6 +462,10 @@
     {
       "name": "AccountSetOperatorSystem",
       "writeAccess": ["AddressOperatorComponent", "TimeLastComponent"]
+    },
+    {
+      "name": "AccountSetFarcasterDataSystem",
+      "writeAccess": ["FarcasterDataComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountUpgradeSkillSystem",
