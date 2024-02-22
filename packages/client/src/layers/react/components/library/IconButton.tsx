@@ -7,7 +7,7 @@ interface Props {
   img: string;
   disabled?: boolean;
   size?: 'small' | 'medium' | 'large' | 'book';
-  backgroundColor?: string;
+  color?: string;
   pulse?: boolean;
 }
 
@@ -27,7 +27,6 @@ export const IconButton = (props: Props) => {
     if (size === 'small') {
       styles.width = '1.5vw';
       styles.height = '1.5vw';
-      styles.margin = '.1vw';
       styles.padding = '.1vw';
       styles.borderRadius = '.3vw';
       styles.borderWidth = '.1vw';
@@ -56,8 +55,8 @@ export const IconButton = (props: Props) => {
       styles.boxShadow = '0 0 1vw 0 rgba(0, 0, 0, 0.5)';
     }
 
-    if (props.backgroundColor) styles.backgroundColor = props.backgroundColor;
     if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    if (props.color) styles.backgroundColor = props.color;
 
     return styles;
   };

@@ -102,13 +102,13 @@ export const Bio = (props: Props) => {
   return (
     <Container key={account.name}>
       <Content>
-        <IdentityWrapper>
-          <Identifiers>
+        <Identifiers>
+          <TitleRow>
             <Title>{account.name}</Title>
-            <AddressDisplay />
-          </Identifiers>
-          <FarcasterConnect />
-        </IdentityWrapper>
+            <FarcasterConnect />
+          </TitleRow>
+          <AddressDisplay />
+        </Identifiers>
         <BirthdayRow />
         <KillsRow />
         <CoinRow />
@@ -139,13 +139,6 @@ const Content = styled.div`
   justify-content: flex-start;
 `;
 
-const IdentityWrapper = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: flex-start;
-  gap: 0.5vw;
-`;
-
 const Identifiers = styled.div`
   padding-bottom: 0.6vw;
   display: flex;
@@ -153,7 +146,15 @@ const Identifiers = styled.div`
   align-items: flex-start;
 `;
 
+const TitleRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  gap: 0.5vw;
+`;
+
 const Title = styled.div`
+  padding-top: 0.15vw;
   font-family: Pixel;
   font-size: 1.2vw;
 `;

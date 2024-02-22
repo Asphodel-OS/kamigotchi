@@ -1,5 +1,5 @@
 import { farcasterIcon } from 'assets/images/logos';
-import { IconButton } from 'layers/react/components/library';
+import { IconButton, Tooltip } from 'layers/react/components/library';
 import { useAccount } from 'layers/react/store/account';
 import { useEffect } from 'react';
 import { FarcasterUser, client, emptyFaracasterUser, handleSignIn } from 'src/clients/neynar';
@@ -22,13 +22,25 @@ export const FarcasterConnect = (props: Props) => {
     }
   }, [kamiAccount.fid, kamiAccount.neynar_signer]);
 
+  const getColor = () => {
+    if (!farcasterUser.fid) return 'orange';
+    return 'purple';
+  };
+
+  const getTooltipText = () => {
+    if (!farcasterUser.fid) return ['Connect to Farcaster'];
+    return [`Connected to Farcaster`, `FID: ${farcasterUser.fid}`];
+  };
+
   return (
-    <IconButton
-      size='small'
-      img={farcasterIcon}
-      backgroundColor='purple'
-      onClick={() => handleSignIn()}
-    />
+    <Tooltip text={getTooltipText()}>
+      <IconButton
+        size='small'
+        img={farcasterIcon}
+        color={getColor()}
+        onClick={() => handleSignIn()}
+      />
+    </Tooltip>
   );
 
   // set the farcaster user in localstorage, based on the fid found in Account Store
