@@ -11,10 +11,11 @@ import { FarcasterUser, client, emptyFaracasterUser, handleSignIn } from 'src/cl
 
 interface Props {
   account: Account;
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const FarcasterConnect = (props: Props) => {
-  const { account } = props;
+  const { account, size } = props;
   const { selectedAddress, networks } = useNetwork();
   const [farcasterUser, setFarcasterUser] = useLocalStorage<FarcasterUser>(
     'farcasterUser',
@@ -24,12 +25,11 @@ export const FarcasterConnect = (props: Props) => {
 
   // update farcaster user in localstorage when the account store value changes
   useEffect(() => {
-    if (
-      kamiAccount.fid &&
-      kamiAccount.neynar_signer &&
-      (farcasterUser.fid != kamiAccount.fid ||
-        farcasterUser.signer_uuid !== kamiAccount.neynar_signer)
-    ) {
+    const isValidated = kamiAccount.fid && kamiAccount.neynar_signer; // whether set in localstorage
+    const isMismatched =
+      farcasterUser.fid != kamiAccount.fid ||
+      farcasterUser.signer_uuid !== kamiAccount.neynar_signer;
+    if (isValidated && isMismatched) {
       console.log('updating farcaster id and/or signer');
       updateLocalStorageFUser();
     }
@@ -40,14 +40,14 @@ export const FarcasterConnect = (props: Props) => {
 
   const getColor = () => {
     if (!farcasterUser.fid) return 'orange';
-    if (!account.fid) return 'blue';
+    if (!account?.fid) return 'blue';
     if (farcasterUser.fid !== account.fid) return 'red';
     return 'purple';
   };
 
   const getTooltipText = () => {
     if (!farcasterUser.fid) return ['Connect to Farcaster'];
-    if (!account.fid) return ['Link Farcaster Account to Kami Account'];
+    if (!account?.fid) return ['Link Farcaster Account to Kami Account'];
     if (farcasterUser.fid !== account.fid)
       return [`fid mismatch!`, `client: ${farcasterUser.fid}`, `server: ${account.fid}`];
     return [`Connected to Farcaster`, `FID: ${farcasterUser.fid}`];
@@ -55,7 +55,7 @@ export const FarcasterConnect = (props: Props) => {
 
   const getOnClick = () => {
     if (!farcasterUser.fid) return () => handleSignIn();
-    if (!account.fid) return () => connectFarcaster(farcasterUser.fid, farcasterUser.pfp_url);
+    if (!account?.fid) return () => connectFarcaster(farcasterUser.fid, farcasterUser.pfp_url);
     if (farcasterUser.fid !== account.fid)
       return () => connectFarcaster(farcasterUser.fid, farcasterUser.pfp_url);
     return () => {};
@@ -66,7 +66,12 @@ export const FarcasterConnect = (props: Props) => {
 
   return (
     <Tooltip text={getTooltipText()}>
-      <IconButton size='small' img={farcasterLogo} color={getColor()} onClick={getOnClick()} />
+      <IconButton
+        size={size ?? 'small'}
+        img={farcasterLogo}
+        color={getColor()}
+        onClick={getOnClick()}
+      />
     </Tooltip>
   );
 
@@ -90,6 +95,7 @@ export const FarcasterConnect = (props: Props) => {
     }
   }
 
+  // connect the farcaster account found in localstorage to the onchain kami account
   function connectFarcaster(fid: number, pfpURI: string) {
     const network = networks.get(selectedAddress);
     if (!network) {

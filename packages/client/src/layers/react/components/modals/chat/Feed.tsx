@@ -14,42 +14,11 @@ export const Feed = (props: Props) => {
   const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
 
-  // poll for new messages and update the list of current casts
-  const poll = async () => {
-    setIsPolling(true);
-    const newFeed = await neynarClient.fetchFeed('filter', {
-      filterType: 'channel_id',
-      channelId: 'farcaster',
-      cursor: feed?.next.cursor ?? '',
-      limit: 10, // defaults to 25, max 100
-    });
-    setFeed(newFeed);
-
-    const currCasts = [...casts];
-    for (const cast of newFeed.casts) {
-      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
-    }
-    setCasts(currCasts);
-    setIsPolling(false);
-  };
-
   useEffect(() => {
     poll();
   }, []);
 
-  // TODO update the scroll position accordingly when new casts come in
-  useEffect(() => {
-    // // scroll component to bottom
-    // if (feedRef.current) {
-    //   console.log('feedref found on mount');
-    //   console.log(`setting scroll to ${feedRef.current.scrollHeight}`);
-    //   feedRef.current.scrollTop = feedRef.current.scrollHeight;
-    // } else {
-    //   console.log('feedref not found on mount');
-    // }
-  }, [casts]);
-
-  // set poll when scrolling to top
+  // start polling when scrolling to top
   useEffect(() => {
     const current = feedRef.current;
     const handleScroll = async () => {
@@ -64,6 +33,18 @@ export const Feed = (props: Props) => {
       if (current) current.removeEventListener('scroll', handleScroll);
     };
   }, [feed?.next.cursor, isPolling]);
+
+  // TODO: update the scroll position accordingly when new casts come in
+  useEffect(() => {
+    // // scroll component to bottom
+    // if (feedRef.current) {
+    //   console.log('feedref found on mount');
+    //   console.log(`setting scroll to ${feedRef.current.scrollHeight}`);
+    //   feedRef.current.scrollTop = feedRef.current.scrollHeight;
+    // } else {
+    //   console.log('feedref not found on mount');
+    // }
+  }, [casts]);
 
   /////////////////
   // RENDER
@@ -95,6 +76,25 @@ export const Feed = (props: Props) => {
       ))}
     </Wrapper>
   );
+
+  // poll for new messages and update the list of current casts
+  async function poll() {
+    setIsPolling(true);
+    const newFeed = await neynarClient.fetchFeed('filter', {
+      filterType: 'channel_id',
+      channelId: 'farcaster',
+      cursor: feed?.next.cursor ?? '',
+      limit: 10, // defaults to 25, max 100
+    });
+    setFeed(newFeed);
+
+    const currCasts = [...casts];
+    for (const cast of newFeed.casts) {
+      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
+    }
+    setCasts(currCasts);
+    setIsPolling(false);
+  }
 };
 
 const Wrapper = styled.div`
