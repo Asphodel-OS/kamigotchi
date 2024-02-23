@@ -7,12 +7,14 @@ import { ActionButton, Tooltip } from 'layers/react/components/library';
 import { client as neynarClient } from 'src/clients/neynar';
 
 interface Props {
+  max: number; // max number of casts to disable polling at
   casts: CastWithInteractions[];
   setCasts: (casts: CastWithInteractions[]) => void;
 }
 
 export const Feed = (props: Props) => {
-  const { casts, setCasts } = props;
+  const { max, casts, setCasts } = props;
+  const [scrollBottom, setScrollBottom] = useState(0);
   const [feed, setFeed] = useState<FeedResponse>();
   const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
@@ -21,33 +23,38 @@ export const Feed = (props: Props) => {
     poll();
   }, []);
 
-  // start polling when scrolling to top
+  // scrolling effects
   useEffect(() => {
-    const current = feedRef.current;
+    const node = feedRef.current;
     const handleScroll = async () => {
-      const isNearTop = current && current.scrollTop < 20;
-      if (!isPolling && isNearTop) {
-        if (feed?.next.cursor) await poll();
+      // start polling when scrolling to top
+      const isNearTop = node && node.scrollTop < 20;
+      if (!isPolling && isNearTop && feed?.next.cursor) await poll();
+
+      // set the new scroll position as distance from bottom
+      if (node) {
+        const { scrollTop, scrollHeight, clientHeight } = node;
+        const scrollBottom = scrollHeight - scrollTop - clientHeight;
+        setScrollBottom(scrollBottom);
       }
     };
 
-    if (current) current.addEventListener('scroll', handleScroll);
+    if (node) node.addEventListener('scroll', handleScroll);
     return () => {
-      if (current) current.removeEventListener('scroll', handleScroll);
+      if (node) node.removeEventListener('scroll', handleScroll);
     };
   }, [feed?.next.cursor, isPolling]);
 
-  // TODO: update the scroll position accordingly when new casts come in
+  // update the scroll position accordingly when new casts come in
   useEffect(() => {
-    // // scroll component to bottom
-    // if (feedRef.current) {
-    //   console.log('feedref found on mount');
-    //   console.log(`setting scroll to ${feedRef.current.scrollHeight}`);
-    //   feedRef.current.scrollTop = feedRef.current.scrollHeight;
-    // } else {
-    //   console.log('feedref not found on mount');
-    // }
-  }, [casts]);
+    if (!feedRef.current) return;
+    const node = feedRef.current;
+    const { clientHeight, scrollHeight } = node;
+
+    // set scroll position to bottom if already there, otherwise ensure position is maintained
+    if (scrollBottom < 5) node.scrollTop = scrollHeight;
+    else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
+  }, [casts.length]);
 
   /////////////////
   // RENDER
@@ -82,6 +89,9 @@ export const Feed = (props: Props) => {
 
   // poll for new messages and update the list of current casts
   async function poll() {
+    if (casts.length > max) return;
+    if (casts.length > 0 && feed?.next.cursor === '') return;
+
     setIsPolling(true);
     const newFeed = await neynarClient.fetchFeed('filter', {
       filterType: 'channel_id',

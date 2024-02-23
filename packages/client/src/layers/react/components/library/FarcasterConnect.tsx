@@ -75,6 +75,9 @@ export const FarcasterConnect = (props: Props) => {
     </Tooltip>
   );
 
+  /////////////////
+  // HELPERS
+
   // set the farcaster user in localstorage, based on the fid found in Account Store
   async function updateLocalStorageFUser() {
     const fid = kamiAccount.fid!;

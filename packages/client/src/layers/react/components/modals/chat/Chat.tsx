@@ -36,9 +36,16 @@ export function registerChatModal() {
     ({ network, data }) => {
       const { account } = data;
       const [casts, setCasts] = useState<CastWithInteractions[]>([]);
+      const maxCasts = 100;
 
       const pushCast = (cast: CastWithInteractions) => {
         setCasts([cast, ...casts]);
+      };
+
+      // filter out duplicates and sort by timestamp
+      // possibly limit the length of the list
+      const setCastsFiltered = (newCasts: CastWithInteractions[]) => {
+        setCasts(newCasts.filter((cast) => !casts.find((c) => c.hash === cast.hash)));
       };
 
       return (
@@ -49,7 +56,7 @@ export function registerChatModal() {
           footer={<InputRow account={account} actions={{ pushCast }} />}
           canExit
         >
-          <Feed casts={casts} setCasts={setCasts} />
+          <Feed max={maxCasts} casts={casts} setCasts={setCasts} />
         </ModalWrapper>
       );
     }
