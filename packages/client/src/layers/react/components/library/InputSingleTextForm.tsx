@@ -7,23 +7,26 @@ import { IconButton } from './IconButton';
 import { Tooltip } from './Tooltip';
 
 interface Props {
+  fullWidth?: boolean; // whether the input should take up the full width of its container
   label?: string; // the label for the input
   placeholder?: string; // placeholder for empty input
-  fullWidth?: boolean; // whether the input should take up the full width of its container
+  maxLen?: number; // the maximum length of the input
   initialValue?: string; // the initial value of the input
   hasButton?: boolean; // whether the input has a submit button
-  onSubmit?: Function;
+  onSubmit?: (text: string) => void; // the function to call when the submit button is clicked
 }
 
 // InputSingleTextForm is a styled input field with some additional frills
 export const InputSingleTextForm = (props: Props) => {
-  const { fullWidth, hasButton, initialValue, label, placeholder, onSubmit } = props;
+  const { maxLen, fullWidth, hasButton, initialValue, label, placeholder, onSubmit } = props;
   const [value, setValue] = useState(initialValue || '');
   let styleOverride = {};
   if (fullWidth) styleOverride = { width: '100%' };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+    let value = event.target.value;
+    if (maxLen && value.length > maxLen) value = value.slice(0, maxLen);
+    setValue(value);
   };
 
   const handleSubmit = () => {
@@ -33,10 +36,7 @@ export const InputSingleTextForm = (props: Props) => {
   };
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSubmit();
-      console.log(`entered ${value}`);
-    }
+    if (event.key === 'Enter' && value.length > 0) handleSubmit();
   };
 
   return (

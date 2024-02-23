@@ -82,7 +82,7 @@ export const Feed = (props: Props) => {
     setIsPolling(true);
     const newFeed = await neynarClient.fetchFeed('filter', {
       filterType: 'channel_id',
-      channelId: 'farcaster',
+      channelId: 'kamigotchi',
       cursor: feed?.next.cursor ?? '',
       limit: 10, // defaults to 25, max 100
     });
