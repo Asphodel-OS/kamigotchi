@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import ReactDOM from 'react-dom/client';
 
 import { Layers } from 'src/types';
@@ -19,11 +18,6 @@ export function boot() {
   if (!rootElement) return console.warn('React root not found');
 
   const root = ReactDOM.createRoot(rootElement);
-
-  function renderEngine() {
-    root.render(<Engine setLayers={setLayers} mountReact={mountReact} />);
-  }
-
-  renderEngine();
+  root.render(<Engine setLayers={setLayers} mountReact={mountReact} />);
   registerUIComponents();
 }

@@ -26,6 +26,8 @@ export interface Account {
   name: string;
   ownerAddress: string;
   operatorAddress: string;
+  fid?: number;
+  neynar_signer?: string;
 }
 
 export const emptyAccountDetails = (): Account => ({

@@ -1,6 +1,5 @@
 import { of } from 'rxjs';
 
-import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { chatIcon } from 'assets/images/icons/menu';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
@@ -23,8 +22,6 @@ export function registerChatModal() {
     (layers) => of(layers),
 
     () => {
-      const client = new NeynarAPIClient('');
-
       return (
         <ModalWrapper
           divName='chat'
@@ -32,7 +29,7 @@ export function registerChatModal() {
           header={<ModalHeader title='Chat' icon={chatIcon} />}
           canExit
         >
-          <Feed client={client} />
+          <Feed />
         </ModalWrapper>
       );
     }

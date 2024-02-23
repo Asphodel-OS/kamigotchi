@@ -24,6 +24,7 @@ export function registerChatButton() {
         emaBoard: false,
         help: false,
         kami: false,
+        inventory: false,
         leaderboard: false,
         nameKami: false,
         quests: false,

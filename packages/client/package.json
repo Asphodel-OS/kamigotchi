@@ -60,6 +60,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "antd": "^5.4.3",
     "async-mutex": "^0.3.2",
+    "axios": "^1.6.7",
     "ethers": "^5",
     "google-protobuf": "^3.14.0",
     "mobx": "^6.7.0",

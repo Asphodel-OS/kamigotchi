@@ -12,10 +12,12 @@ import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountCompo
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
+import { IndexFarcasterComponent, ID as IndexFarcasterCompID } from "components/IndexFarcasterComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
+import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
@@ -127,8 +129,16 @@ library LibAccount {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
   }
 
+  function setFarcasterIndex(IUintComp components, uint256 id, uint32 fid) internal {
+    IndexFarcasterComponent(getAddressById(components, IndexFarcasterCompID)).set(id, fid);
+  }
+
   function setFavoriteFood(IUintComp components, uint256 id, string memory food) internal {
     FavoriteFoodComponent(getAddressById(components, FavFoodCompID)).set(id, food);
+  }
+
+  function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {
+    MediaURIComponent(getAddressById(components, MediaURICompID)).set(id, uri);
   }
 
   function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
@@ -243,6 +253,20 @@ library LibAccount {
   // Get the total number of accounts
   function getTotal(IUintComp components) internal view returns (uint32) {
     return uint32(getAll(components).length);
+  }
+
+  // retrieves the pet with the specified name
+  function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IndexFarcasterCompID),
+      abi.encode(fid)
+    );
+
+    uint256[] memory results = LibQuery.query(fragments);
+    return (results.length > 0) ? results[0] : 0;
   }
 
   // retrieves the pet with the specified name

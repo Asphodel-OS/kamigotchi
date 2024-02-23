@@ -113,7 +113,6 @@ export function registerEMABoardModal() {
 
         let button = (
           <IconButton
-            id='use_dust_button'
             img={useIcon}
             onClick={() => useRenamePotion(kami)}
             disabled={dustAmt == 0 || isHarvesting(kami) || isDead(kami)}

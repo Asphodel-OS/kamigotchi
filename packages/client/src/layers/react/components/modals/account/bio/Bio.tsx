@@ -6,19 +6,22 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
+import { Tooltip } from 'layers/react/components/library';
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../../library';
+import { FarcasterConnect } from './FarcasterConnect';
 
 interface Props {
-  account: Account;
+  account: Account; // account selected for viewing
+  playerAccount: Account; // account of the player
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
+    connectFarcaster: (fid: number, pfpURI: string) => void;
   };
 }
 
 export const Bio = (props: Props) => {
-  const { actions, account } = props;
+  const { actions, account, playerAccount } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   /////////////////
@@ -96,7 +99,15 @@ export const Bio = (props: Props) => {
     <Container key={account.name}>
       <Content>
         <Identifiers>
-          <Title>{account.name}</Title>
+          <TitleRow>
+            <Title>{account.name}</Title>
+            {account.index === playerAccount.index && (
+              <FarcasterConnect
+                account={account}
+                actions={{ connectFarcaster: actions.connectFarcaster }}
+              />
+            )}
+          </TitleRow>
           <AddressDisplay />
         </Identifiers>
         <BirthdayRow />
@@ -106,7 +117,7 @@ export const Bio = (props: Props) => {
       <PfpContainer>
         <Tooltip text={[getLastSeenString()]}>
           <PfpStatus timeDelta={lastRefresh - 1000 * account.time.last} />
-          <PfpImage src='https://images.blur.io/_blur-prod/0x5af0d9827e0c53e4799bb226655a1de152a425a5/833-07dc63fc2ea1b5a5?w=1000' />
+          <PfpImage src={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'} />
         </Tooltip>
       </PfpContainer>
     </Container>
@@ -136,7 +147,15 @@ const Identifiers = styled.div`
   align-items: flex-start;
 `;
 
+const TitleRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  gap: 0.5vw;
+`;
+
 const Title = styled.div`
+  padding-top: 0.15vw;
   font-family: Pixel;
   font-size: 1.2vw;
 `;
