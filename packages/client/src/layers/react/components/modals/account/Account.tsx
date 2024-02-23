@@ -13,7 +13,6 @@ import {
 import { Friendship } from 'layers/network/shapes/Friendship';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useNetwork } from 'layers/react/store/network';
 import { useSelected } from 'layers/react/store/selected';
 import { Bottom } from './Bottom';
 import { Tabs } from './Tabs';
@@ -51,7 +50,6 @@ export function registerAccountModal() {
     ({ network, data }) => {
       // console.log('AccountM: data', data);
       const { actions, api } = network;
-      const { selectedAddress, networks } = useNetwork();
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(
         getAccountByIndex(network, accountIndex)
@@ -137,21 +135,6 @@ export function registerAccountModal() {
         });
       };
 
-      const connectFarcaster = (fid: number, pfpURI: string) => {
-        const network = networks.get(selectedAddress);
-        const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
-        actions?.add({
-          id: actionID,
-          action: 'ConnectFarcaster',
-          params: [fid, pfpURI],
-          description: `Connecting to Farcaster Account ${fid}`,
-          execute: async () => {
-            console.log(network);
-            return network?.api.player.account.set.farcaster(fid, pfpURI);
-          },
-        });
-      };
-
       /////////////////
       // RENDERING
 
@@ -170,7 +153,7 @@ export function registerAccountModal() {
             key='bio'
             account={account} // account selected for viewing
             playerAccount={data.account} // account of the player
-            actions={{ sendRequest: requestFren, acceptRequest: acceptFren, connectFarcaster }}
+            actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
           />
           <Tabs tab={tab} setTab={setTab} isSelf={isSelf()} />
           <Bottom
