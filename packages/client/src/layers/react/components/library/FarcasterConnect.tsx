@@ -81,17 +81,10 @@ export const FarcasterConnect = (props: Props) => {
     const signer_uuid = kamiAccount.neynar_signer!;
     const response = await client.fetchBulkUsers([fid], {});
     if (response.users.length > 0) {
-      const user = response.users[0];
-      const fUser = {
-        fid: user.fid,
-        username: user.username,
-        display_name: user.display_name,
-        custody_address: user.custody_address ?? '',
-        pfp_url: user.pfp_url,
-        signer_uuid,
-      };
-      console.log('setting farcaster user in localstorage', fUser);
-      setFarcasterUser(fUser);
+      const user = response.users[0] as FarcasterUser;
+      console.log('setting farcaster user in localstorage', user);
+      user.signer_uuid = signer_uuid;
+      setFarcasterUser(user);
     }
   }
 

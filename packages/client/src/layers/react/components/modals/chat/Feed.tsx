@@ -6,11 +6,14 @@ import styled from 'styled-components';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
 import { client as neynarClient } from 'src/clients/neynar';
 
-interface Props {}
+interface Props {
+  casts: CastWithInteractions[];
+  setCasts: (casts: CastWithInteractions[]) => void;
+}
 
 export const Feed = (props: Props) => {
+  const { casts, setCasts } = props;
   const [feed, setFeed] = useState<FeedResponse>();
-  const [casts, setCasts] = useState<CastWithInteractions[]>([]);
   const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
 

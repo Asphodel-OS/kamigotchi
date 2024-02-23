@@ -1,24 +1,28 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
+import { User } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useAccount } from 'layers/react/store/account';
 
 export const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY!);
 
-export interface FarcasterUser {
-  fid: number;
-  username: string;
-  display_name: string;
-  custody_address: string;
-  pfp_url: string;
-  signer_uuid: string;
+interface UUIDHolder {
+  signer_uuid?: string;
 }
+export interface FarcasterUser extends User, UUIDHolder {}
 
+// this is so retarded, but necessary to work with Farcaster's User object
 export const emptyFaracasterUser: FarcasterUser = {
+  object: 'user',
   fid: 0,
   username: '',
   display_name: '',
   custody_address: '',
   pfp_url: '',
-  signer_uuid: '',
+  follower_count: 0,
+  following_count: 0,
+  verifications: [],
+  active_status: 'inactive',
+  viewer_context: { following: false, followed_by: false },
+  profile: { bio: { text: '', mentioned_profiles: [] } },
 };
 
 // farcaster sign-in handling through neynar

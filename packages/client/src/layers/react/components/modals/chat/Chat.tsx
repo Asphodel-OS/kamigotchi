@@ -1,3 +1,5 @@
+import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
+import { useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { chatIcon } from 'assets/images/icons/menu';
@@ -24,7 +26,6 @@ export function registerChatModal() {
       interval(3333).pipe(
         map(() => {
           const account = getAccountFromBurner(layers.network, { friends: true });
-
           return {
             network: layers.network,
             data: { account },
@@ -34,15 +35,21 @@ export function registerChatModal() {
 
     ({ network, data }) => {
       const { account } = data;
+      const [casts, setCasts] = useState<CastWithInteractions[]>([]);
+
+      const pushCast = (cast: CastWithInteractions) => {
+        setCasts([cast, ...casts]);
+      };
+
       return (
         <ModalWrapper
           divName='chat'
           id='chat_modal'
           header={<ModalHeader title='Chat' icon={chatIcon} />}
-          footer={<InputRow account={account} />}
+          footer={<InputRow account={account} actions={{ pushCast }} />}
           canExit
         >
-          <Feed />
+          <Feed casts={casts} setCasts={setCasts} />
         </ModalWrapper>
       );
     }

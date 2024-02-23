@@ -1,3 +1,4 @@
+import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
@@ -8,6 +9,9 @@ import { FarcasterUser, emptyFaracasterUser, client as neynarClient } from 'src/
 
 interface Props {
   account: Account;
+  actions: {
+    pushCast: (cast: CastWithInteractions) => void;
+  };
 }
 
 export const InputRow = (props: Props) => {
@@ -41,12 +45,32 @@ export const InputRow = (props: Props) => {
 
   // send a message to chat
   async function send(text: string) {
+    if (!farcasterUser.signer_uuid) return;
     setIsSending(true);
-    const cast = await neynarClient.publishCast(farcasterUser.signer_uuid, text, {
+    const response = await neynarClient.publishCast(farcasterUser.signer_uuid, text, {
       channelId: 'kamigotchi',
     });
-    // addCast(cast);
-    console.log('cast sent', cast);
+
+    // // another retarded pattern, but preferable to iterating over every damn field
+    // // can't even do this because the hash in the PostCastResponseCast is not a cast hash..
+    // const response2 = await neynarClient.fetchBulkCasts([response.hash]);
+    // const cast = response2.result.casts[0];
+
+    const cast: CastWithInteractions = {
+      author: farcasterUser,
+      hash: response.hash,
+      text: response.text,
+      parent_hash: '',
+      parent_author: { fid: '0' },
+      parent_url: '',
+      embeds: [],
+      timestamp: new Date(Date.now()).toISOString(),
+      reactions: { likes: [], recasts: [] },
+      mentioned_profiles: [],
+      replies: { count: 0 },
+      thread_hash: '',
+    };
+    props.actions.pushCast(cast);
     setIsSending(false);
   }
 };
