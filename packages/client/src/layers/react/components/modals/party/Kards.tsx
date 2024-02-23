@@ -165,14 +165,7 @@ export const Kards = (props: Props) => {
       };
     });
 
-    let button = (
-      <IconListButton
-        id={`feedKami-button-${kami.index}`}
-        img={feedIcon}
-        disabled={!canFeedKami}
-        options={feedOptions}
-      />
-    );
+    let button = <IconListButton img={feedIcon} disabled={!canFeedKami} options={feedOptions} />;
     if (!canFeedKami) button = <Tooltip text={[tooltipText]}>{button}</Tooltip>;
 
     return button;
@@ -187,7 +180,6 @@ export const Kards = (props: Props) => {
     return (
       <Tooltip text={[tooltipText]}>
         <IconButton
-          id={`revive-kami`}
           img={reviveIcon}
           onClick={() => actions.revive(kami, 1)}
           disabled={!hasRevive(account) || onCooldown(kami)}

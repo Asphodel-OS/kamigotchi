@@ -75,7 +75,7 @@ export const AccountCard = (props: Props) => {
 
   return (
     <Card
-      image='https://miladymaker.net/milady/9248.png'
+      image={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
       imageOnClick={() => accountOnClick()}
       titleBarContent={[<Title key='title' />]}
       content={[

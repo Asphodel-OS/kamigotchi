@@ -71,7 +71,7 @@ export const Controls = (props: Props) => {
   const ToggleButton = () => {
     const iconMapping = [triggerIcons.eyeClosed, triggerIcons.eyeHalf, triggerIcons.eyeOpen];
 
-    return <IconButton id='toggle' onClick={() => toggleMode()} img={iconMapping[mode]} />;
+    return <IconButton onClick={() => toggleMode()} img={iconMapping[mode]} />;
   };
 
   return (

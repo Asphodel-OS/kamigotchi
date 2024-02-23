@@ -84,7 +84,6 @@ export const Banner = (props: Props) => {
     return (
       <Tooltip text={[getAddTooltip(kamis)]}>
         <IconListButton
-          id={`harvest-add`}
           key={`harvest-add`}
           img={harvestIcon}
           options={actionOptions}

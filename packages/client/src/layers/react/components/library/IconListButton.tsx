@@ -5,7 +5,6 @@ import { Popover } from '@mui/material';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  id: string;
   img: string;
   options: Option[];
   disabled?: boolean;
@@ -63,7 +62,7 @@ export function IconListButton(props: Props) {
 
   return (
     <div>
-      <Button ref={toggleRef} id={props.id} onClick={handleClick} style={setStyles()}>
+      <Button ref={toggleRef} onClick={handleClick} style={setStyles()}>
         <Corner />
         <Image src={props.img} />
       </Button>

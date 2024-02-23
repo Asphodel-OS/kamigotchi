@@ -35,6 +35,7 @@ import { _RoomDeleteSystem } from "./ethers-contracts/_RoomDeleteSystem";
 import { AccountFundSystem } from "./ethers-contracts/AccountFundSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
+import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
 import { AccountUpgradeSkillSystem } from "./ethers-contracts/AccountUpgradeSkillSystem";
@@ -121,6 +122,7 @@ export type SystemTypes = {
   "system.Account.Fund": AccountFundSystem;
   "system.Account.Move": AccountMoveSystem;
   "system.Account.Register": AccountRegisterSystem;
+  "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem;
   "system.Account.Set.Name": AccountSetNameSystem;
   "system.Account.Set.Operator": AccountSetOperatorSystem;
   "system.Account.Upgrade.Skill": AccountUpgradeSkillSystem;

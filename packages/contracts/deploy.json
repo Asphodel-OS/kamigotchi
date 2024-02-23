@@ -33,6 +33,7 @@
     "IndexBodyComponent",
     "IndexColorComponent",
     "IndexFaceComponent",
+    "IndexFarcasterComponent",
     "IndexHandComponent",
     "IndexItemComponent",
     "IndexNodeComponent",
@@ -461,6 +462,10 @@
     {
       "name": "AccountSetOperatorSystem",
       "writeAccess": ["AddressOperatorComponent", "TimeLastComponent"]
+    },
+    {
+      "name": "AccountSetFarcasterDataSystem",
+      "writeAccess": ["IndexFarcasterComponent", "MediaURIComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountUpgradeSkillSystem",

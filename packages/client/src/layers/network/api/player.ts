@@ -79,6 +79,11 @@ export function createPlayerAPI(systems: any) {
     return systems['system.Account.Set.Operator'].executeTyped(operatorAddress);
   }
 
+  // @dev set the Farcaster-associated data for an account
+  function setAccountFarcasterData(fid: number, imageURI: string) {
+    return systems['system.Account.Set.FarcasterData'].executeTyped(fid, imageURI);
+  }
+
   function upgradeAccountSkill(skillIndex: number) {
     return systems['system.Account.Skill.Upgrade'].executeTyped(skillIndex);
   }
@@ -323,6 +328,7 @@ export function createPlayerAPI(systems: any) {
       register: registerAccount,
       refund: refundOwner,
       set: {
+        farcaster: setAccountFarcasterData,
         name: setAccountName,
         operator: setAccountOperator,
       },
