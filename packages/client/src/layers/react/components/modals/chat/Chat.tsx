@@ -1,11 +1,13 @@
-import { of } from 'rxjs';
+import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
+import { useState } from 'react';
+import { interval, map } from 'rxjs';
 
 import { chatIcon } from 'assets/images/icons/menu';
-import { ModalHeader } from 'layers/react/components/library/ModalHeader';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
-import 'layers/react/styles/font.css';
 import { Feed } from './Feed';
+import { InputRow } from './InputRow';
 
 // make sure to set your NEYNAR_API_KEY .env
 
@@ -19,17 +21,42 @@ export function registerChatModal() {
       rowEnd: 75,
     },
 
-    (layers) => of(layers),
+    // Requirement
+    (layers) =>
+      interval(3333).pipe(
+        map(() => {
+          const account = getAccountFromBurner(layers.network, { friends: true });
+          return {
+            network: layers.network,
+            data: { account },
+          };
+        })
+      ),
 
-    () => {
+    ({ network, data }) => {
+      const { account } = data;
+      const [casts, setCasts] = useState<CastWithInteractions[]>([]);
+      const maxCasts = 100;
+
+      const pushCast = (cast: CastWithInteractions) => {
+        setCasts([cast, ...casts]);
+      };
+
+      // filter out duplicates and sort by timestamp
+      // possibly limit the length of the list
+      const setCastsFiltered = (newCasts: CastWithInteractions[]) => {
+        setCasts(newCasts.filter((cast) => !casts.find((c) => c.hash === cast.hash)));
+      };
+
       return (
         <ModalWrapper
           divName='chat'
           id='chat_modal'
           header={<ModalHeader title='Chat' icon={chatIcon} />}
+          footer={<InputRow account={account} actions={{ pushCast }} />}
           canExit
         >
-          <Feed />
+          <Feed max={maxCasts} casts={casts} setCasts={setCasts} />
         </ModalWrapper>
       );
     }

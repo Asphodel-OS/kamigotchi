@@ -1,58 +1,60 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
+import PlaceholderIcon from 'assets/images/icons/placeholder.png';
 import { playClick } from 'utils/sounds';
+import { IconButton } from './IconButton';
+import { Tooltip } from './Tooltip';
 
 interface Props {
-  id: string;
-  buttonText?: string;
-  fullWidth?: boolean;
-  hasButton?: boolean;
-  initialValue?: string;
-  label?: string;
-  placeholder?: string;
-  onSubmit?: Function;
+  fullWidth?: boolean; // whether the input should take up the full width of its container
+  label?: string; // the label for the input
+  placeholder?: string; // placeholder for empty input
+  maxLen?: number; // the maximum length of the input
+  initialValue?: string; // the initial value of the input
+  hasButton?: boolean; // whether the input has a submit button
+  onSubmit?: (text: string) => void; // the function to call when the submit button is clicked
 }
 
 // InputSingleTextForm is a styled input field with some additional frills
 export const InputSingleTextForm = (props: Props) => {
-  const [value, setValue] = useState(props.initialValue || '');
+  const { maxLen, fullWidth, hasButton, initialValue, label, placeholder, onSubmit } = props;
+  const [value, setValue] = useState(initialValue || '');
   let styleOverride = {};
-  if (props.fullWidth) styleOverride = { width: '100%' };
-  props.buttonText = props.buttonText || 'Submit';
+  if (fullWidth) styleOverride = { width: '100%' };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+    let value = event.target.value;
+    if (maxLen && value.length > maxLen) value = value.slice(0, maxLen);
+    setValue(value);
   };
 
   const handleSubmit = () => {
     playClick();
-    props.onSubmit && props.onSubmit(value);
+    if (onSubmit) onSubmit(value);
     setValue('');
   };
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSubmit();
-      console.log(`entered ${value}`);
-    }
+    if (event.key === 'Enter' && value.length > 0) handleSubmit();
   };
 
   return (
-    <Container id={props.id} style={styleOverride}>
+    <Container style={styleOverride}>
       <InputGroup>
-        {props.label && <Label>{props.label}</Label>}
+        {label && <Label>{label}</Label>}
         <Input
           type='text'
-          placeholder={props.placeholder}
+          placeholder={placeholder}
           value={value}
           onKeyDown={(e) => catchKeys(e)}
           onChange={(e) => handleChange(e)}
         />
       </InputGroup>
-      {props.hasButton && (
-        <ActionButton id={`submit`} text={props.buttonText} onClick={() => handleSubmit()} />
+      {hasButton && (
+        <Tooltip text={['submit']}>
+          <IconButton img={PlaceholderIcon} onClick={() => handleSubmit()} />
+        </Tooltip>
       )}
     </Container>
   );
@@ -61,13 +63,12 @@ export const InputSingleTextForm = (props: Props) => {
 const Container = styled.div`
   width: 50%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 `;
 
 const InputGroup = styled.div`
-  max-width: 400px;
   width: 100%;
 
   display: flex;
@@ -85,21 +86,21 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-  width: 100%;
-  background-color: #ffffff;
-  border-color: black;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 2px;
-  color: black;
-  margin: 5px 0px;
+  border: solid 0.15vw black;
+  border-radius: 0.4vw;
 
-  padding: 15px 12px;
-  cursor: pointer;
+  background-color: #ffffff;
+  width: 100%;
+  color: black;
+  margin: 0.1vw 0vw;
+  padding: 0.52vw 1vw;
+
   font-family: Pixel;
-  font-size: 12px;
+  font-size: 0.8vw;
+  line-height: 1.2vw;
   text-align: left;
   text-decoration: none;
+
   justify-content: center;
   align-items: center;
 `;

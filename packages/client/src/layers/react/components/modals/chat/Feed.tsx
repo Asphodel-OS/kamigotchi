@@ -6,64 +6,55 @@ import styled from 'styled-components';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
 import { client as neynarClient } from 'src/clients/neynar';
 
-interface Props {}
+interface Props {
+  max: number; // max number of casts to disable polling at
+  casts: CastWithInteractions[];
+  setCasts: (casts: CastWithInteractions[]) => void;
+}
 
 export const Feed = (props: Props) => {
+  const { max, casts, setCasts } = props;
+  const [scrollBottom, setScrollBottom] = useState(0);
   const [feed, setFeed] = useState<FeedResponse>();
-  const [casts, setCasts] = useState<CastWithInteractions[]>([]);
   const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
-
-  // poll for new messages and update the list of current casts
-  const poll = async () => {
-    setIsPolling(true);
-    const newFeed = await neynarClient.fetchFeed('filter', {
-      filterType: 'channel_id',
-      channelId: 'farcaster',
-      cursor: feed?.next.cursor ?? '',
-      limit: 10, // defaults to 25, max 100
-    });
-    setFeed(newFeed);
-
-    const currCasts = [...casts];
-    for (const cast of newFeed.casts) {
-      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
-    }
-    setCasts(currCasts);
-    setIsPolling(false);
-  };
 
   useEffect(() => {
     poll();
   }, []);
 
-  // TODO update the scroll position accordingly when new casts come in
+  // scrolling effects
   useEffect(() => {
-    // // scroll component to bottom
-    // if (feedRef.current) {
-    //   console.log('feedref found on mount');
-    //   console.log(`setting scroll to ${feedRef.current.scrollHeight}`);
-    //   feedRef.current.scrollTop = feedRef.current.scrollHeight;
-    // } else {
-    //   console.log('feedref not found on mount');
-    // }
-  }, [casts]);
-
-  // set poll when scrolling to top
-  useEffect(() => {
-    const current = feedRef.current;
+    const node = feedRef.current;
     const handleScroll = async () => {
-      const isNearTop = current && current.scrollTop < 20;
-      if (!isPolling && isNearTop) {
-        if (feed?.next.cursor) await poll();
+      // start polling when scrolling to top
+      const isNearTop = node && node.scrollTop < 20;
+      if (!isPolling && isNearTop && feed?.next.cursor) await poll();
+
+      // set the new scroll position as distance from bottom
+      if (node) {
+        const { scrollTop, scrollHeight, clientHeight } = node;
+        const scrollBottom = scrollHeight - scrollTop - clientHeight;
+        setScrollBottom(scrollBottom);
       }
     };
 
-    if (current) current.addEventListener('scroll', handleScroll);
+    if (node) node.addEventListener('scroll', handleScroll);
     return () => {
-      if (current) current.removeEventListener('scroll', handleScroll);
+      if (node) node.removeEventListener('scroll', handleScroll);
     };
   }, [feed?.next.cursor, isPolling]);
+
+  // update the scroll position accordingly when new casts come in
+  useEffect(() => {
+    if (!feedRef.current) return;
+    const node = feedRef.current;
+    const { clientHeight, scrollHeight } = node;
+
+    // set scroll position to bottom if already there, otherwise ensure position is maintained
+    if (scrollBottom < 5) node.scrollTop = scrollHeight;
+    else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
+  }, [casts.length]);
 
   /////////////////
   // RENDER
@@ -95,6 +86,28 @@ export const Feed = (props: Props) => {
       ))}
     </Wrapper>
   );
+
+  // poll for new messages and update the list of current casts
+  async function poll() {
+    if (casts.length > max) return;
+    if (casts.length > 0 && feed?.next.cursor === '') return;
+
+    setIsPolling(true);
+    const newFeed = await neynarClient.fetchFeed('filter', {
+      filterType: 'channel_id',
+      channelId: 'kamigotchi',
+      cursor: feed?.next.cursor ?? '',
+      limit: 10, // defaults to 25, max 100
+    });
+    setFeed(newFeed);
+
+    const currCasts = [...casts];
+    for (const cast of newFeed.casts) {
+      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
+    }
+    setCasts(currCasts);
+    setIsPolling(false);
+  }
 };
 
 const Wrapper = styled.div`
