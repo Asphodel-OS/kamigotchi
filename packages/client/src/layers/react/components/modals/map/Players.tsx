@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 import { Room } from 'layers/network/shapes/Room';
+import { useSelected, useVisibility } from 'layers/react/store';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   index: number; // index of displayed room
@@ -12,13 +14,29 @@ export const Players = (props: Props) => {
   if (index == 0 || !rooms.has(index)) return <div />;
   const room = rooms.get(index)!;
 
+  const { setAccount } = useSelected();
+  const { modals, setModals } = useVisibility();
+
+  ///////////////////
+  // INTERACTION
+
+  const handleClick = (playerIndex: number) => {
+    playClick();
+    setAccount(playerIndex);
+    setModals({ ...modals, account: true, map: false });
+  };
+
   ///////////////////
   // RENDER
 
   return (
     <Container>
       <Title>Players</Title>
-      <Description>{room.players?.map((player) => player.name).join(', ')}</Description>
+      <PlayerRow>
+        {room.players?.map((player) => (
+          <Player onClick={() => handleClick(player.index)}>{player.name}</Player>
+        ))}
+      </PlayerRow>
     </Container>
   );
 };
@@ -29,8 +47,8 @@ const Container = styled.div`
   align-items: flex-start;
 
   width: 100%;
-  height: 100%;
-  margin: 1vw;
+  height: 5vw;
+  padding: 1vw;
 `;
 
 const Title = styled.p`
@@ -38,11 +56,21 @@ const Title = styled.p`
   padding-bottom: 0.5vw;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 0.6vw;
   text-align: left;
 `;
 
-const Description = styled.p`
+const PlayerRow = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+`;
+
+const Player = styled.p`
   color: #333;
   padding: 0.3vw;
 
@@ -50,4 +78,9 @@ const Description = styled.p`
   font-size: 0.8vw;
   text-align: left;
   line-height: 1.2vw;
+
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+  }
 `;

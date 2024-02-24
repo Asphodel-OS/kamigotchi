@@ -42,7 +42,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: 100%;
   height: 100%;
   margin: 1vw;
 `;
@@ -60,7 +59,8 @@ const Title = styled.div`
 const ClickableDescription = styled.div`
   color: #333;
   cursor: pointer;
-  padding: 0.3vw;
+  padding: 0.3vw 0.6vw;
+  border-radius: 0.3vw;
 
   font-size: 0.6vw;
   font-family: Pixel;

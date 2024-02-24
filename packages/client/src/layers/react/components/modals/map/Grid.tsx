@@ -17,10 +17,10 @@ export const Grid = (props: Props) => {
 
   useEffect(() => {
     // establish the grid size
-    let maxX = 0,
-      maxY = 0,
-      minX = 9999,
-      minY = 9999;
+    let maxX = 0;
+    let maxY = 0;
+    let minX = 9999;
+    let minY = 9999;
     for (const [_, room] of rooms) {
       if (room.location.x > maxX) maxX = room.location.x;
       if (room.location.y > maxY) maxY = room.location.y;
@@ -62,12 +62,12 @@ export const Grid = (props: Props) => {
             let color = 'gray';
             let onClick: MouseEventHandler | undefined;
             if (isCurrRoom) {
-              color = 'red';
+              color = '#3b3';
             } else if (isExit) {
-              color = 'orange';
+              color = '#f85';
               onClick = () => actions.move(room?.index ?? 0);
             } else if (isRoom) {
-              color = 'green';
+              color = '#d33';
             }
 
             return (
