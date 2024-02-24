@@ -1,5 +1,6 @@
-import { Room } from 'layers/network/shapes/Room';
 import styled from 'styled-components';
+
+import { Room } from 'layers/network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -18,6 +19,9 @@ export const Exits = (props: Props) => {
     playClick();
     actions.move(targetRoom);
   };
+
+  ///////////////////
+  // RENDER
 
   return (
     <Container>
@@ -43,7 +47,7 @@ const Container = styled.div`
   margin: 1vw;
 `;
 
-const Title = styled.p`
+const Title = styled.div`
   color: #333;
   padding-bottom: 0.5vw;
 

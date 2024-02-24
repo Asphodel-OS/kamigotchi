@@ -1,5 +1,6 @@
-import { Room } from 'layers/network/shapes/Room';
 import styled from 'styled-components';
+
+import { Room } from 'layers/network/shapes/Room';
 
 interface Props {
   index: number; // index of displayed room
@@ -10,6 +11,9 @@ export const Players = (props: Props) => {
   const { index, rooms } = props;
   if (index == 0 || !rooms.has(index)) return <div />;
   const room = rooms.get(index)!;
+
+  ///////////////////
+  // RENDER
 
   return (
     <Container>
