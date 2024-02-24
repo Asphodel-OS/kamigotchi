@@ -3,14 +3,15 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
-  roomIndex: number;
+  index: number; // index of current room
   rooms: Map<number, Room>;
   actions: {
-    move: (targetRoom: number) => void;
+    move: (roomIndex: number) => void;
+    setHoveredRoom: (roomIndex: number) => void;
   };
 }
 export const Grid = (props: Props) => {
-  const { roomIndex, rooms, actions } = props;
+  const { index, rooms, actions } = props;
   const [grid, setGrid] = useState<Room[][]>([]);
 
   useEffect(() => {
@@ -24,14 +25,14 @@ export const Grid = (props: Props) => {
 
     // create eeach row
     const grid = new Array<Room[]>();
-    for (let i = 0; i <= maxY; i++) {
-      grid[i] = new Array<Room>(maxX + 1);
+    for (let i = 1; i <= maxY + 2; i++) {
+      grid[i] = new Array<Room>(maxX + 3);
       grid[i].fill(emptyRoom);
     }
 
     // push the rooms into their respective locations
     for (const [_, room] of rooms) {
-      grid[room.location.y][room.location.x] = room;
+      grid[room.location.y + 1][room.location.x + 1] = room;
     }
 
     setGrid(grid);
@@ -40,59 +41,91 @@ export const Grid = (props: Props) => {
   useEffect(() => {}, [grid]);
 
   return (
-    <Wrapper>
+    <Container>
       {grid.map((row, i) => (
         <Row key={i}>
           {row.map((room, j) => {
-            let color = 'blue';
+            const isRoom = room.index != 0;
+            const isCurrRoom = room.index == index;
+            const isExit = rooms.get(index)?.exits?.find((e) => e === room.index);
+
+            let color = 'gray';
             let onClick: MouseEventHandler | undefined;
-            if (room?.index === roomIndex) {
+            if (isCurrRoom) {
               color = 'red';
-            } else if (rooms.get(roomIndex)?.exits?.find((e) => e.index === room.index)) {
-              color = 'black';
+            } else if (isExit) {
+              color = 'orange';
               onClick = () => actions.move(room?.index ?? 0);
+            } else if (isRoom) {
+              color = 'green';
             }
 
             return (
-              <Tile key={j} style={{ backgroundColor: color }} onClick={onClick}>
-                {room?.index ?? 0}
+              <Tile
+                key={j}
+                style={{ backgroundColor: color }}
+                onClick={onClick}
+                hasRoom={isRoom}
+                onMouseEnter={() => {
+                  if (isRoom) actions.setHoveredRoom(room.index);
+                }}
+                onMouseLeave={() => {
+                  if (isRoom) actions.setHoveredRoom(0);
+                }}
+              >
+                {room?.index != 0 ? room?.index : ''}
               </Tile>
             );
           })}
         </Row>
       ))}
-    </Wrapper>
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
-  background-color: #000;
-  width: 100%;
+const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
+  overflow-y: scroll;
 `;
 
 const Row = styled.div`
   width: 100%;
-  background-color: blue;
   display: flex;
   flex-flow: row nowrap;
   align-items: space-between;
   justify-content: center;
 `;
 
-const Tile = styled.div`
+const Tile = styled.div<{ hasRoom: boolean }>`
   background-color: red;
-  border: 1px solid black;
-  flex-grow: 1;
+  border: 0.1vw solid black;
+  width: 1.5vw;
+  height: 1.5vw;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Pixel;
+  font-size: 0.8vw;
+  text-align: center;
+
+  ${({ hasRoom }) =>
+    hasRoom &&
+    `
+    &:hover {
+      opacity: 0.6;
+      cursor: help;
+    }
+  `}
 
   ${({ onClick }) =>
     onClick &&
     `
     &:hover {
-      opacity: 0.6;
       cursor: pointer;
     }
   `}

@@ -6,16 +6,15 @@ interface Props {
   rooms: Map<number, Room>;
 }
 
-export const RoomInfo = (props: Props) => {
+export const Players = (props: Props) => {
   const { index, rooms } = props;
   if (index == 0 || !rooms.has(index)) return <div />;
   const room = rooms.get(index)!;
 
   return (
     <Container>
-      <Title>{room.name}</Title>
-      {room.owner && <Description>{room.owner.name}</Description>}
-      <Description>{room.description}</Description>
+      <Title>Players</Title>
+      <Description>{room.players?.map((player) => player.name).join(', ')}</Description>
     </Container>
   );
 };
@@ -27,24 +26,24 @@ const Container = styled.div`
 
   width: 100%;
   height: 100%;
-  margin: 0.5vw 1vw;
+  margin: 1vw;
 `;
 
-const Title = styled.div`
+const Title = styled.p`
   color: #333;
   padding-bottom: 0.5vw;
 
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 1vw;
   text-align: left;
 `;
 
-const Description = styled.div`
+const Description = styled.p`
   color: #333;
   padding: 0.3vw;
 
   font-family: Pixel;
-  font-size: 0.75vw;
+  font-size: 0.8vw;
   text-align: left;
   line-height: 1.2vw;
 `;
