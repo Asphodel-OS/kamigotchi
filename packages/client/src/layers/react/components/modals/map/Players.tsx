@@ -34,7 +34,9 @@ export const Players = (props: Props) => {
       <Title>Players</Title>
       <PlayerRow>
         {room.players?.map((player) => (
-          <Player onClick={() => handleClick(player.index)}>{player.name}</Player>
+          <Player key={player.index} onClick={() => handleClick(player.index)}>
+            {player.name}
+          </Player>
         ))}
       </PlayerRow>
     </Container>

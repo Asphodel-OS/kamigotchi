@@ -19,7 +19,7 @@ import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
   registerUIComponent(
-    'WorldMap',
+    'MapModal',
     {
       colStart: 2,
       colEnd: 33,

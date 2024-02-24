@@ -13,7 +13,7 @@ import { Kards } from './Kards';
 
 export function registerPartyModal() {
   registerUIComponent(
-    'PartyList',
+    'PartyModal',
     {
       colStart: 2,
       colEnd: 33,
