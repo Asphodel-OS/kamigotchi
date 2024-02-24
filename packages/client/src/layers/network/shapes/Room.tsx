@@ -26,7 +26,7 @@ export interface Room {
   name: string;
   description: string;
   location: Location;
-  exits?: Room[];
+  exits?: number[];
   owner?: Account;
   players?: Account[];
 }
@@ -59,14 +59,15 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
     entityIndex: index,
     index: getComponentValue(RoomIndex, index)?.value as number,
     name: getComponentValue(Name, index)?.value as string,
+    description: getComponentValue(Description, index)?.value as string,
     location: {
       x: getComponentValue(Location, index)?.x as number,
       y: getComponentValue(Location, index)?.y as number,
       z: getComponentValue(Location, index)?.z as number,
     },
-    description: getComponentValue(Description, index)?.value as string,
   };
 
+  // get the exit indices of the room
   if (options?.exits) {
     room.exits = getExits(network, room);
   }
@@ -92,30 +93,27 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
   return room;
 };
 
-export const getExits = (network: NetworkLayer, room: Room): Room[] => {
+// get the exits of a room (as room indices)
+export const getExits = (network: NetworkLayer, room: Room): number[] => {
   const {
     components: { Exits },
   } = network;
-  const exits: Room[] = [];
+  let exits = new Set<number>();
 
+  // get exits based on adjacent locations
   const adjLocs = getAdjacentLocations(room.location);
   for (let i = 0; i < adjLocs.length; i++) {
     const rooms = queryRoomsX(network, { location: adjLocs[i] });
-    if (rooms.length > 0) exits.push(rooms[0]);
+    if (rooms.length > 0) exits.add(rooms[0].index);
   }
 
-  // console.log('exits1', exits);
-
+  // get special exits
   const storedExits = getComponentValue(Exits, room.entityIndex)
     ? (getComponentValue(Exits, room.entityIndex)?.value as number[])
     : [];
-  // console.log('storedExits', storedExits);
-  for (let i = 0; i < storedExits.length; i++) {
-    const rooms = queryRoomsX(network, { index: storedExits[i] });
-    if (rooms.length > 0) exits.push(rooms[0]);
-  }
+  storedExits.forEach((exit) => exits.add(exit));
 
-  return [...new Set(exits)];
+  return [...exits];
 };
 
 export const getAllRooms = (network: NetworkLayer, options?: RoomOptions): Room[] =>

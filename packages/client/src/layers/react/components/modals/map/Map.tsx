@@ -2,28 +2,29 @@ import { EntityID } from '@latticexyz/recs';
 import crypto from 'crypto';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 
 import { mapIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { Room, getAllRooms, queryRoomsX } from 'layers/network/shapes/Room';
+import { Room, getAllRooms } from 'layers/network/shapes/Room';
 import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store/selected';
 import { useVisibility } from 'layers/react/store/visibility';
-import styled from 'styled-components';
-import { playClick } from 'utils/sounds';
+import { Exits } from './Exits';
 import { Grid } from './Grid';
+import { Players } from './Players';
 import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
   registerUIComponent(
-    'WorldMap',
+    'MapModal',
     {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 75,
+      rowEnd: 60,
     },
 
     // Requirement
@@ -42,136 +43,86 @@ export function registerMapModal() {
     ({ network, data }) => {
       // console.log('mRoom: ', data)
       const { actions, api } = network;
-      const { roomIndex, setRoom } = useSelected();
+      const { roomIndex: selectedRoom, setRoom: setSelectedRoom } = useSelected();
       const { modals } = useVisibility();
-      const [selectedRoom, setSelectedRoom] = useState<Room>();
+      const [hoveredRoom, setHoveredRoom] = useState(0);
+      const [displayedRoom, setDisplayedRoom] = useState(0);
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
-      const [selectedExits, setSelectedExits] = useState<Room[]>([]);
-
-      /////////////////
-      // DATA FETCHING
 
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
-        if (modals.map) setRoom(data.account.roomIndex);
+        if (modals.map) setSelectedRoom(data.account.roomIndex);
       }, [modals.map]);
 
-      // update the selected room details
-      useEffect(() => {
-        if (roomIndex) {
-          const roomArr = queryRoomsX(
-            network,
-            { index: roomIndex },
-            { exits: true, players: true }
-          );
-          if (roomArr.length == 0) {
-            console.warn('no room found');
-            return;
-          }
-
-          const roomObject = roomArr[0];
-          setSelectedRoom(roomObject);
-
-          const exits = roomObject.exits ? roomObject.exits : [];
-          setSelectedExits(exits);
-        }
-      }, [roomIndex, data.account]);
-
-      // query the set of rooms whenever the current z-level changes
+      // query the set of rooms whenever the selected room changes
       useEffect(() => {
         const roomMap = new Map<number, Room>();
-        const queriedRooms = getAllRooms(network, { exits: true });
+        const queriedRooms = getAllRooms(network, { players: true, exits: true });
         for (const room of queriedRooms) {
           roomMap.set(room.index, room);
         }
         setRoomMap(roomMap);
-      }, [selectedRoom?.location.z]);
+      }, [selectedRoom]);
+
+      // set the displayed room based on the selected and hovered
+      useEffect(() => {
+        if (hoveredRoom) setDisplayedRoom(hoveredRoom);
+        else setDisplayedRoom(selectedRoom);
+      }, [hoveredRoom, selectedRoom]);
 
       ///////////////////
       // ACTIONS
 
-      const move = (targetRoom: number) => {
-        const room = queryRoomsX(network, { index: targetRoom })[0];
+      const move = (index: number) => {
         const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'AccountMove',
-          params: [targetRoom],
-          description: `Moving to ${room.name}`,
+          params: [index],
+          description: `Moving to ${roomMap.get(index)?.name}`,
           execute: async () => {
-            return api.player.account.move(targetRoom);
+            return api.player.account.move(index);
           },
         });
       };
 
-      const handleClick = (targetRoom: number) => {
-        playClick();
-        move(targetRoom);
-      };
-
-      const ExitsDisplay = () => {
-        return (
-          <Section>
-            <Title>Go To..</Title>
-            {selectedExits.map((exit) => {
-              return (
-                <ClickableDescription key={exit.index} onClick={() => handleClick(exit.index)}>
-                  → {exit.name}
-                </ClickableDescription>
-              );
-            })}
-          </Section>
-        );
-      };
-
       ///////////////////
-      // DISPLAY
+      // RENDER
 
       return (
         <ModalWrapper
           id='world_map'
           divName='map'
-          header={<ModalHeader title={selectedRoom?.name ?? 'Map'} icon={mapIcon} />}
-          footer={<ExitsDisplay />}
+          header={<ModalHeader title={roomMap.get(selectedRoom)?.name ?? 'Map'} icon={mapIcon} />}
+          footer={<Players index={displayedRoom} rooms={roomMap} />}
           canExit
         >
-          <Grid roomIndex={roomIndex} rooms={roomMap} actions={{ move }} />
-          <RoomInfo room={selectedRoom} />
+          <Container>
+            <Column>
+              <Grid index={selectedRoom} rooms={roomMap} actions={{ move, setHoveredRoom }} />
+            </Column>
+            <Column>
+              <RoomInfo index={displayedRoom} rooms={roomMap} />
+              <Exits index={displayedRoom} rooms={roomMap} actions={{ move }} />
+            </Column>
+          </Container>
         </ModalWrapper>
       );
     }
   );
 }
 
-const Section = styled.div`
-  margin: 1.2vw;
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: 1vw;
+`;
+
+const Column = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-`;
-
-const Title = styled.p`
-  color: #333;
-  padding-bottom: 0.5vw;
-
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: left;
-`;
-
-// TODO: merge this with Description using props
-const ClickableDescription = styled.div`
-  color: #333;
-  cursor: pointer;
-  padding: 0.3vw;
-
-  font-size: 0.8vw;
-  font-family: Pixel;
-  text-align: left;
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
+  align-items: flex-start;
 `;

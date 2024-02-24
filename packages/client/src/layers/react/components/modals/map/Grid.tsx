@@ -1,98 +1,141 @@
-import { Room, emptyRoom } from 'layers/network/shapes/Room';
 import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { Room, emptyRoom } from 'layers/network/shapes/Room';
+
 interface Props {
-  roomIndex: number;
+  index: number; // index of current room
   rooms: Map<number, Room>;
   actions: {
-    move: (targetRoom: number) => void;
+    move: (roomIndex: number) => void;
+    setHoveredRoom: (roomIndex: number) => void;
   };
 }
 export const Grid = (props: Props) => {
-  const { roomIndex, rooms, actions } = props;
+  const { index, rooms, actions } = props;
   const [grid, setGrid] = useState<Room[][]>([]);
 
   useEffect(() => {
     // establish the grid size
     let maxX = 0;
     let maxY = 0;
+    let minX = 9999;
+    let minY = 9999;
     for (const [_, room] of rooms) {
       if (room.location.x > maxX) maxX = room.location.x;
       if (room.location.y > maxY) maxY = room.location.y;
+      if (room.location.x < minX) minX = room.location.x;
+      if (room.location.y < minY) minY = room.location.y;
     }
 
     // create eeach row
+    const width = maxX - minX + 3;
+    const height = maxY - minY + 3;
     const grid = new Array<Room[]>();
-    for (let i = 0; i <= maxY; i++) {
-      grid[i] = new Array<Room>(maxX + 1);
+    for (let i = 0; i < height; i++) {
+      grid[i] = new Array<Room>(width);
       grid[i].fill(emptyRoom);
     }
 
     // push the rooms into their respective locations
+    const xOffset = minX - 1;
+    const yOffset = minY - 1;
     for (const [_, room] of rooms) {
-      grid[room.location.y][room.location.x] = room;
+      grid[room.location.y - yOffset][room.location.x - xOffset] = room;
     }
 
     setGrid(grid);
   }, [rooms.size]);
 
-  useEffect(() => {}, [grid]);
+  ///////////////////
+  // RENDER
 
   return (
-    <Wrapper>
+    <Container>
       {grid.map((row, i) => (
         <Row key={i}>
           {row.map((room, j) => {
-            let color = 'blue';
+            const isRoom = room.index != 0;
+            const isCurrRoom = room.index == index;
+            const isExit = rooms.get(index)?.exits?.find((e) => e === room.index);
+
+            let color = 'gray';
             let onClick: MouseEventHandler | undefined;
-            if (room?.index === roomIndex) {
-              color = 'red';
-            } else if (rooms.get(roomIndex)?.exits?.find((e) => e.index === room.index)) {
-              color = 'black';
+            if (isCurrRoom) {
+              color = '#3b3';
+            } else if (isExit) {
+              color = '#f85';
               onClick = () => actions.move(room?.index ?? 0);
+            } else if (isRoom) {
+              color = '#d33';
             }
 
             return (
-              <Tile key={j} style={{ backgroundColor: color }} onClick={onClick}>
-                {room?.index ?? 0}
+              <Tile
+                key={j}
+                style={{ backgroundColor: color }}
+                onClick={onClick}
+                hasRoom={isRoom}
+                onMouseEnter={() => {
+                  if (isRoom) actions.setHoveredRoom(room.index);
+                }}
+                onMouseLeave={() => {
+                  if (isRoom) actions.setHoveredRoom(0);
+                }}
+              >
+                {room?.index != 0 ? room?.index : ''}
               </Tile>
             );
           })}
         </Row>
       ))}
-    </Wrapper>
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
-  background-color: #000;
-  width: 100%;
+const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
+  overflow-y: scroll;
 `;
 
 const Row = styled.div`
   width: 100%;
-  background-color: blue;
   display: flex;
   flex-flow: row nowrap;
   align-items: space-between;
   justify-content: center;
 `;
 
-const Tile = styled.div`
+const Tile = styled.div<{ hasRoom: boolean }>`
   background-color: red;
-  border: 1px solid black;
-  flex-grow: 1;
+  border: 0.1vw solid black;
+  width: 1.5vw;
+  height: 1.5vw;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Pixel;
+  font-size: 0.8vw;
+  text-align: center;
+
+  ${({ hasRoom }) =>
+    hasRoom &&
+    `
+    &:hover {
+      opacity: 0.6;
+      cursor: help;
+    }
+  `}
 
   ${({ onClick }) =>
     onClick &&
     `
     &:hover {
-      opacity: 0.6;
       cursor: pointer;
     }
   `}

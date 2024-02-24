@@ -1,24 +1,25 @@
-import { Room } from 'layers/network/shapes/Room';
 import styled from 'styled-components';
 
+import { Room } from 'layers/network/shapes/Room';
+
 interface Props {
-  room: Room | undefined;
+  index: number; // index of displayed room
+  rooms: Map<number, Room>;
 }
 
 export const RoomInfo = (props: Props) => {
-  const { room } = props;
-  if (!room) return <div />;
+  const { index, rooms } = props;
+  if (index == 0 || !rooms.has(index)) return <div />;
+  const room = rooms.get(index)!;
+
+  ///////////////////
+  // RENDER
 
   return (
     <Container>
-      <Section>
-        {room.owner && <Description>{room.owner.name}</Description>}
-        <Description>{room.description}</Description>
-      </Section>
-      <Section>
-        <Title>Players</Title>
-        <Description>{room.players?.map((player) => player.name).join(', ')}</Description>
-      </Section>
+      <Title>{room.name}</Title>
+      {room.owner && <Description>{room.owner.name}</Description>}
+      <Description>{room.description}</Description>
     </Container>
   );
 };
@@ -30,31 +31,24 @@ const Container = styled.div`
 
   width: 100%;
   height: 100%;
-  padding: 1vw;
+  margin: 0.5vw 1vw;
 `;
 
-const Section = styled.div`
-  margin: 1vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-
-const Title = styled.p`
+const Title = styled.div`
   color: #333;
   padding-bottom: 0.5vw;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 0.9vw;
   text-align: left;
 `;
 
-const Description = styled.p`
+const Description = styled.div`
   color: #333;
   padding: 0.3vw;
 
   font-family: Pixel;
-  font-size: 0.8vw;
+  font-size: 0.75vw;
   text-align: left;
   line-height: 1.2vw;
 `;

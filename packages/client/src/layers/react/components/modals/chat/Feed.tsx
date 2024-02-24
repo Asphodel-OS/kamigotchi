@@ -78,7 +78,10 @@ export const Feed = (props: Props) => {
           <Content>
             <Header>
               <Author>{cast.author.username}</Author>
-              <Time>{moment(cast.timestamp).format('MM/DD HH:mm')}</Time>
+              <Time>
+                {moment(cast.timestamp).format('MM/DD HH:mm')}
+                <Heart color='red' />
+              </Time>
             </Header>
             <Body>{cast.text}</Body>
           </Content>
@@ -86,6 +89,9 @@ export const Feed = (props: Props) => {
       ))}
     </Wrapper>
   );
+
+  /////////////////
+  // HELPERS
 
   // poll for new messages and update the list of current casts
   async function poll() {
@@ -151,7 +157,7 @@ const Pfp = styled.img`
 `;
 
 const Header = styled.div`
-  padding-bottom: 0.9vw;
+  padding-bottom: 0.6vw;
   width: 100%;
   color: black;
   display: flex;
@@ -171,6 +177,11 @@ const Time = styled.div`
   color: black;
   font-family: Pixel;
   font-size: 0.9vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.4vw;
 `;
 
 const Body = styled.div`
@@ -181,4 +192,25 @@ const Body = styled.div`
   line-height: 1.2vw;
 
   word-wrap: break-word;
+`;
+
+const Heart = styled.div<{ color: string }>`
+  width: 1.2vw;
+  background: radial-gradient(circle at 60% 65%, ${(props) => props.color} 64%, transparent 65%) top
+      left,
+    radial-gradient(circle at 40% 65%, ${(props) => props.color} 64%, transparent 65%) top right,
+    linear-gradient(to bottom left, ${(props) => props.color} 43%, transparent 43%) bottom left,
+    linear-gradient(to bottom right, ${(props) => props.color} 43%, transparent 43%) bottom right;
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
+  display: inline-block;
+  cursor: pointer;
+
+  margin-bottom: 0.1vw;
+  &::before {
+    content: '';
+    padding-left: 0.3vw;
+    padding-top: 100%;
+    display: block;
+  }
 `;

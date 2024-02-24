@@ -41,6 +41,11 @@ export const List = (props: Props) => {
     };
   }, []);
 
+  // set the number of available quests whenever the registry or account quests are updated
+  useEffect(() => {
+    props.utils.setNumAvail(getAvailableQuests().length);
+  }, [props.registryQuests.length, props.account.quests?.ongoing.length]);
+
   ///////////////////
   // LOGIC
 
@@ -252,12 +257,6 @@ export const List = (props: Props) => {
     });
 
     const quests = repeats.concat(oneTimes);
-
-    // calling a setState during a render is a no-no, even if indirect/nested.
-    // we should consider when specifically we'd like update this value, rather
-    // than calling it here.
-    props.utils.setNumAvail(quests.length);
-
     return quests;
   };
 
