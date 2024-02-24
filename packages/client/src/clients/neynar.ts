@@ -1,24 +1,28 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
+import { User } from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { useAccount } from 'layers/react/store/account';
 
 export const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY!);
 
-export interface FarcasterUser {
-  fid: number;
-  username: string;
-  display_name: string;
-  custody_address: string;
-  pfp_url: string;
-  signer_uuid: string;
+interface UUIDHolder {
+  signer_uuid?: string;
 }
+export interface FarcasterUser extends User, UUIDHolder {}
 
+// this is so retarded, but necessary to work with Farcaster's User object
 export const emptyFaracasterUser: FarcasterUser = {
+  object: 'user',
   fid: 0,
   username: '',
   display_name: '',
   custody_address: '',
   pfp_url: '',
-  signer_uuid: '',
+  follower_count: 0,
+  following_count: 0,
+  verifications: [],
+  active_status: 'inactive',
+  viewer_context: { following: false, followed_by: false },
+  profile: { bio: { text: '', mentioned_profiles: [] } },
 };
 
 // farcaster sign-in handling through neynar
@@ -29,7 +33,11 @@ export const handleSignIn = () => {
   const clientID = process.env.NEYNAR_CLIENT_ID;
   const redirectURI = process.env.NEYNAR_REDIRECT_URI;
   if (!loginURL || !clientID) {
-    console.error('NEYNAR_LOGIN_URL or NEYNAR_CLIENT_ID environment variable not set.');
+    console.error(
+      'Required environment variable(s) not set.',
+      `NEYNAR_LOGIN_URL: ${loginURL}`,
+      `NEYNAR_CLIENT_ID: ${clientID}`
+    );
     return;
   }
 
@@ -43,33 +51,24 @@ export const handleSignIn = () => {
   // spawn window and event listener
   const authOrigin = new URL(loginURL).origin;
   authWindow = window.open(authUrl.toString(), '_blank');
-  window.addEventListener(
-    'message',
-    function (event) {
-      handleMessage(event, authOrigin);
-    },
-    false
-  );
+  window.addEventListener('message', (e) => handleMessage(e, authOrigin), false);
 };
 
 // sets the farcaster user in the Account Store from a subscribed message event
-const handleMessage = (event: MessageEvent, authOrigin: string) => {
-  if (event.origin === authOrigin && event.data.is_authenticated) {
-    console.log('handling message', event.data);
-    // set the Farcaster User Data here
+const handleMessage = (e: MessageEvent, authOrigin: string) => {
+  if (e.origin === authOrigin && e.data.is_authenticated) {
+    // set Farcaster user data here
     const { account } = useAccount.getState();
     useAccount.setState({
       account: {
         ...account,
-        fid: event.data.fid,
-        neynar_signer: event.data.signer_uuid,
+        fid: e.data.fid,
+        neynar_signer: e.data.signer_uuid,
       },
     });
 
-    if (authWindow) {
-      authWindow.close();
-    }
-
-    window.removeEventListener('message', handleMessage);
+    // clean up
+    if (authWindow) authWindow.close();
+    window.removeEventListener('message', (e) => handleMessage(e, authOrigin));
   }
 };

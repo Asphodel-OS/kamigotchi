@@ -64,7 +64,6 @@ export function registerNameKamiModal() {
           <Title>Name your Kami</Title>
           <Description>A Kami can only be named once. Choose wisely.</Description>
           <InputSingleTextForm
-            id={`kami-name`}
             label='new name'
             placeholder={kami.name}
             onSubmit={(v: string) => handleNameTx(v)}

@@ -6,9 +6,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
-import { Tooltip } from 'layers/react/components/library';
+import { FarcasterConnect, Tooltip } from 'layers/react/components/library';
 import { playClick } from 'utils/sounds';
-import { FarcasterConnect } from './FarcasterConnect';
 
 interface Props {
   account: Account; // account selected for viewing
@@ -16,7 +15,6 @@ interface Props {
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
-    connectFarcaster: (fid: number, pfpURI: string) => void;
   };
 }
 
@@ -101,12 +99,7 @@ export const Bio = (props: Props) => {
         <Identifiers>
           <TitleRow>
             <Title>{account.name}</Title>
-            {account.index === playerAccount.index && (
-              <FarcasterConnect
-                account={account}
-                actions={{ connectFarcaster: actions.connectFarcaster }}
-              />
-            )}
+            {account.index === playerAccount.index && <FarcasterConnect account={account} />}
           </TitleRow>
           <AddressDisplay />
         </Identifiers>
@@ -157,7 +150,7 @@ const TitleRow = styled.div`
 const Title = styled.div`
   padding-top: 0.15vw;
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.1vw;
 `;
 
 const Subtitle = styled.div`
