@@ -20,7 +20,15 @@ export const Feed = (props: Props) => {
   const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    poll();
+    pollMore();
+  }, []);
+
+  // ticking
+  useEffect(() => {
+    const timerId = setInterval(pollNew, 5000);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
   }, []);
 
   // scrolling effects
@@ -29,7 +37,7 @@ export const Feed = (props: Props) => {
     const handleScroll = async () => {
       // start polling when scrolling to top
       const isNearTop = node && node.scrollTop < 20;
-      if (!isPolling && isNearTop && feed?.next.cursor) await poll();
+      if (!isPolling && isNearTop && feed?.next.cursor) await pollMore();
 
       // set the new scroll position as distance from bottom
       if (node) {
@@ -65,7 +73,7 @@ export const Feed = (props: Props) => {
         <ActionButton
           text={isPolling ? 'polling..' : 'load more'}
           id='load'
-          onClick={poll}
+          onClick={pollMore}
           disabled={!feed?.next.cursor || isPolling}
         />
       </Tooltip>
@@ -93,8 +101,8 @@ export const Feed = (props: Props) => {
   /////////////////
   // HELPERS
 
-  // poll for new messages and update the list of current casts
-  async function poll() {
+  // poll for the next feed of messages and update the list of current casts
+  async function pollMore() {
     if (casts.length > max) return;
     if (casts.length > 0 && feed?.next.cursor === '') return;
 
@@ -113,6 +121,22 @@ export const Feed = (props: Props) => {
     }
     setCasts(currCasts);
     setIsPolling(false);
+  }
+
+  // poll for new messages
+  async function pollNew() {
+    const newFeed = await neynarClient.fetchFeed('filter', {
+      filterType: 'channel_id',
+      channelId: 'kamigotchi',
+      cursor: feed?.next.cursor ?? '',
+      limit: 25, // defaults to 25, max 100
+    });
+    const currCasts = [...casts];
+    for (const cast of newFeed.casts) {
+      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
+    }
+    currCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
+    if (currCasts.length != casts.length) setCasts(currCasts);
   }
 };
 
