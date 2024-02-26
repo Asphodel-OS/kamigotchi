@@ -1,22 +1,22 @@
-﻿Index,Name,Tier,Harmony,Violence,Health,Power,Rarity,BPs,Hex code
-0,Blue,9,2,0,0,0,Common,300,A2F5F5
-1,Blue-Grey,8,0,2,10,0,Common,300,6D9295
-2,Default Green,9,0,0,20,0,Common,500,E1E3A4
-3,Green,8,1,0,0,2,Common,500,B9FF98
-4,Grey!,7,2,0,20,0,Rare,500,867C7F
-5,Hot Pink,8,1,1,1,0,Common,500,FC5BA3
-6,Lavender!,7,2,2,0,0,Rare,300,C1A6FF
-7,BOG,5,2,1,20,1,Epic,300,
-8,"BOSD ",5,6,0,0,0,Epic,500,
-9,GOB,5,10,20,10,20,Epic,500,
-10,PURPLE!!!,6,1,1,20,1,Epic,300,
-11,RED!!!,6,0,5,0,0,Epic,300,
-12,GREY!!!!,6,1,0,1,3,Epic,500,
-13,Mustard,8,1,0,20,0,Common,400,F5D769
-14,Orange,9,1,0,0,1,Common,300,FF901C
-15,Pink,9,0,1,10,0,Common,300,F09EE7
-16,Purple,8,0,1,20,0,Common,300,C38DD9
-17,Red!,7,0,2,0,2,Rare,300,D1412C
-18,Rust,9,0,0,10,1,Common,300,BD685B
-19,White!,7,2,0,0,2,Rare,300,F7F2ED
-20,Yellow,9,0,1,0,1,Common,300,FFF981
+﻿Image,Index,Name,Tier,Tuning,Health,Power,Violence,Harmony,Hex code,Rarity,BPs
+,0,Blue,9,2,0,0,0,2,A2F5F5,Common,300
+,1,Blue-Grey,9,2,0,0,2,0,6D9295,Common,300
+,2,Default Green,9,2,20,0,0,0,E1E3A4,Common,500
+,3,Alt Green,9,2,0,2,0,0,B9FF98,Common,500
+,5,Hot Pink,9,2,10,0,1,0,FC5BA3,Common,500
+,13,Mustard,9,2,10,0,0,1,F5D769,Common,400
+,14,Orange,9,2,0,1,0,1,FF901C,Common,300
+,15,Pink,9,2,10,0,0,1,F09EE7,Common,300
+,16,Purple,9,2,10,0,1,0,C38DD9,Common,300
+,18,Rust,9,2,10,1,0,0,BD685B,Common,300
+,20,Yellow,9,2,0,1,1,0,FFF981,Common,300
+,4,Grey!,7,4,40,0,0,0,867C7F,Rare,500
+,6,Lavender!,7,4,0,0,4,0,C1A6FF,Rare,300
+,17,Red!,7,4,0,4,0,0,D1412C,Rare,300
+,19,White!,7,4,0,0,0,4,F7F2ED,Rare,300
+,7,BOG,6,6,30,3,0,0,,Epic,300
+,8,"BOSD ",6,6,30,0,0,3,,Epic,500
+,9,GOB,6,6,30,0,3,0,,Epic,500
+,10,PURPLE!!!,6,6,0,6,0,0,,Epic,300
+,11,RED!!!,6,6,0,0,6,0,,Epic,300
+,12,GREY!!!!,6,6,0,0,0,6,,Epic,500

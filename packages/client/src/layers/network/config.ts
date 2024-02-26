@@ -139,8 +139,8 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
     snapshotUrl: 'https://snapshot.asphodel.io',
 
     chainId: 11155420,
-    worldAddress: '0xcfb6aa5e713cEf37e7688544CdbA50d80cE04EE6',
-    initialBlockNumber: 5913546,
+    worldAddress: '0xB85F066f2eec6f5fCea0C02591f3ed5E40070e22',
+    initialBlockNumber: 8553115,
   };
 
   // EOAs and privatekey
