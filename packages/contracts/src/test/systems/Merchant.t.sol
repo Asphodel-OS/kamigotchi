@@ -23,13 +23,6 @@ contract NPCTest is SetupTemplate {
     _createGenericItem(4);
   }
 
-  function setUpRooms() public override {
-    // create rooms
-    _createRoom("testRoom1", 1, 2, 3, 0);
-    _createRoom("testRoom2", 2, 1, 3, 0);
-    _createRoom("testRoom3", 3, 1, 2, 0);
-  }
-
   function setUpAccounts() public override {
     _createOwnerOperatorPairs(25);
   }
@@ -52,50 +45,50 @@ contract NPCTest is SetupTemplate {
 
     // create a npc and ensure its fields are correct
     uint npcIndex1 = 1;
-    uint npcLocation1 = 3;
+    uint npcRoomIndex1 = 3;
     string memory npcName1 = "testNPC";
-    uint npcID1 = _createNPC(npcIndex1, npcLocation1, npcName1);
+    uint npcID1 = _createNPC(npcIndex1, npcRoomIndex1, npcName1);
     assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
-    assertEq(npcLocation1, LibNPC.getLocation(components, npcID1));
+    assertEq(npcRoomIndex1, LibNPC.getRoom(components, npcID1));
     assertEq(npcName1, LibNPC.getName(components, npcID1));
 
     // test that we can't create a npc with the same index
     vm.expectRevert("NPC: already exists");
     vm.prank(deployer);
-    __NPCCreateSystem.executeTyped(1, "testNPC", 3); // index, name, location
+    __NPCCreateSystem.executeTyped(1, "testNPC", 3); // index, name, roomIndex
 
-    // but that we CAN create npc with the same name and location
+    // but that we CAN create npc with the same name and roomIndex
     uint npcIndex2 = 2;
-    uint npcLocation2 = 3;
+    uint npcRoomIndex2 = 3;
     string memory npcName2 = "testNPC";
-    uint npcID2 = _createNPC(npcIndex2, npcLocation2, npcName2);
+    uint npcID2 = _createNPC(npcIndex2, npcRoomIndex2, npcName2);
     assertEq(npcIndex2, LibNPC.getIndex(components, npcID2));
-    assertEq(npcLocation2, LibNPC.getLocation(components, npcID2));
+    assertEq(npcRoomIndex2, LibNPC.getRoom(components, npcID2));
     assertEq(npcName2, LibNPC.getName(components, npcID2));
     // assertNotEq(npcID1, npcID2); // not available in this version of foundry
 
-    // NOTE: we now have two npcs, named 'testNPC' at location 3
+    // NOTE: we now have two npcs, named 'testNPC' at roomIndex 3
 
     // update fields on npc2 and check that both are correct
-    uint newNPCLocation = 2;
+    uint newNPCRoomIndex = 2;
     string memory newNPCName = "newNPCName";
     vm.prank(deployer);
-    __NPCSetLocationSystem.executeTyped(2, newNPCLocation);
+    __NPCSetRoomSystem.executeTyped(2, newNPCRoomIndex);
     vm.prank(deployer);
     __NPCSetNameSystem.executeTyped(2, newNPCName);
 
     assertEq(npcIndex1, LibNPC.getIndex(components, npcID1));
-    assertEq(npcLocation1, LibNPC.getLocation(components, npcID1));
+    assertEq(npcRoomIndex1, LibNPC.getRoom(components, npcID1));
     assertEq(npcName1, LibNPC.getName(components, npcID1));
 
     assertEq(npcIndex2, LibNPC.getIndex(components, npcID2));
-    assertEq(newNPCLocation, LibNPC.getLocation(components, npcID2));
+    assertEq(newNPCRoomIndex, LibNPC.getRoom(components, npcID2));
     assertEq(newNPCName, LibNPC.getName(components, npcID2));
 
     // test that we can't update a npc that doesnt exist
     vm.prank(deployer);
     vm.expectRevert("NPC: does not exist");
-    __NPCSetLocationSystem.executeTyped(3, newNPCLocation);
+    __NPCSetRoomSystem.executeTyped(3, newNPCRoomIndex);
 
     vm.prank(deployer);
     vm.expectRevert("NPC: does not exist");
@@ -105,13 +98,13 @@ contract NPCTest is SetupTemplate {
     for (uint i = 0; i < 5; i++) {
       vm.startPrank(_getOwner(i));
       vm.expectRevert();
-      __NPCSetLocationSystem.executeTyped(1, newNPCLocation);
+      __NPCSetRoomSystem.executeTyped(1, newNPCRoomIndex);
 
       vm.expectRevert();
       __NPCSetNameSystem.executeTyped(1, newNPCName);
 
       vm.expectRevert();
-      __NPCSetLocationSystem.executeTyped(2, newNPCLocation);
+      __NPCSetRoomSystem.executeTyped(2, newNPCRoomIndex);
 
       vm.expectRevert();
       __NPCSetNameSystem.executeTyped(2, newNPCName);

@@ -5,7 +5,7 @@ import "std-contracts/components/Uint256Component.sol";
 
 uint256 constant ID = uint256(keccak256("component.Level"));
 
-// high level location of an entity (e.g. room number)
+// high level roomIndex of an entity (e.g. room number)
 contract LevelComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}
 }

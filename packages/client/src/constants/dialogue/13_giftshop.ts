@@ -13,7 +13,7 @@ export const mina: DialogueNode = {
 export default [clock, mina];
 
 // export const room13: Room = {
-//   location: 13,
+//   roomIndex: 13,
 //   background: {
 //     key: 'bg_room013',
 //     path: backgroundMina,

@@ -20,7 +20,7 @@ import { room9 } from './9_forest';
 
 // represents a room in all its glory
 export interface Room {
-  location: number;
+  roomIndex: number;
   background?: RoomAsset;
   music?: RoomMusic;
   objects?: RoomAsset[];
@@ -52,7 +52,7 @@ export const duplicateRoomMusic = [
 
 // all our lovely, hardcoded room details
 export const rooms: Room[] = [
-  { location: 0 },
+  { roomIndex: 0 },
   room1,
   room2,
   room3,

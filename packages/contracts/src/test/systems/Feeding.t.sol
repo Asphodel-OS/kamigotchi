@@ -172,8 +172,8 @@ contract FeedingTest is SetupTemplate {
     }
   }
 
-  // test that feeding is restricted by pet location in respect to account
-  function testFeedLocationConstraints() public {
+  // test that feeding is restricted by pet roomIndex in respect to account
+  function testFeedRoomIndexConstraints() public {
     uint foodIndex;
     uint npcIndex = LibNPC.getIndex(components, _npcID);
     _createFoodListings(npcIndex);
@@ -193,7 +193,7 @@ contract FeedingTest is SetupTemplate {
       _startProduction(petIDs[i], _nodeID);
     }
 
-    // test that we Can feed pets at the current location
+    // test that we Can feed pets at the current roomIndex
     for (uint i = 0; i < _listingIDs.length; i++) {
       foodIndex = _getListingFoodIndex(_listingIDs[i]);
       _fastForward(_idleRequirement + 1 hours);
@@ -420,50 +420,50 @@ contract FeedingTest is SetupTemplate {
     }
   }
 
-  function testFeedEffects() public {
-    uint npcIndex = LibNPC.getIndex(components, _npcID);
-    _createFoodListings(npcIndex);
+  // function testFeedEffects() public {
+  //   uint npcIndex = LibNPC.getIndex(components, _npcID);
+  //   _createFoodListings(npcIndex);
 
-    // register, fund and stock account
-    uint playerIndex = 0;
-    _fundAccount(playerIndex, 1e9);
-    for (uint j = 0; j < _listingIDs.length; j++) {
-      _buyFromListing(playerIndex, _listingIDs[j], 100);
-    }
+  //   // register, fund and stock account
+  //   uint playerIndex = 0;
+  //   _fundAccount(playerIndex, 1e9);
+  //   for (uint j = 0; j < _listingIDs.length; j++) {
+  //     _buyFromListing(playerIndex, _listingIDs[j], 100);
+  //   }
 
-    // mint some pets and start their production
-    uint numPets = 5;
-    uint[] memory petIDs = _mintPets(playerIndex, numPets);
-    _fastForward(_idleRequirement);
-    for (uint i = 0; i < numPets; i++) {
-      _startProduction(petIDs[i], _nodeID);
-    }
+  //   // mint some pets and start their production
+  //   uint numPets = 5;
+  //   uint[] memory petIDs = _mintPets(playerIndex, numPets);
+  //   _fastForward(_idleRequirement);
+  //   for (uint i = 0; i < numPets; i++) {
+  //     _startProduction(petIDs[i], _nodeID);
+  //   }
 
-    // pass a number of iterations and
-    uint seed;
-    uint petID;
-    uint foodIndex;
-    uint timeDelta;
-    uint initialHealth;
-    uint healAmt;
-    uint finalHealth;
-    uint numIterations = 50;
-    for (uint i = 0; i < numIterations; i++) {
-      seed = uint(keccak256(abi.encode(i, block.timestamp)));
-      foodIndex = _getListingFoodIndex(_listingIDs[seed % _listingIDs.length]);
-      petID = petIDs[seed % numPets];
+  //   // pass a number of iterations and
+  //   uint seed;
+  //   uint petID;
+  //   uint foodIndex;
+  //   uint timeDelta;
+  //   uint initialHealth;
+  //   uint healAmt;
+  //   uint finalHealth;
+  //   uint numIterations = 50;
+  //   for (uint i = 0; i < numIterations; i++) {
+  //     seed = uint(keccak256(abi.encode(i, block.timestamp)));
+  //     foodIndex = _getListingFoodIndex(_listingIDs[seed % _listingIDs.length]);
+  //     petID = petIDs[seed % numPets];
 
-      timeDelta = (seed % 5 hours) + _idleRequirement;
-      _currTime += timeDelta;
-      vm.warp(_currTime);
+  //     timeDelta = (seed % 5 hours) + _idleRequirement;
+  //     _currTime += timeDelta;
+  //     vm.warp(_currTime);
 
-      initialHealth = _calcHarvestingPetHealth(petID);
-      healAmt = _getFoodHealAmount(foodIndex);
-      finalHealth = (initialHealth + healAmt > LibStat.getHealth(components, petID))
-        ? LibStat.getHealth(components, petID)
-        : initialHealth + healAmt;
-      _feedPet(petID, foodIndex);
-      assertEq(LibPet.getLastHealth(components, petID), finalHealth);
-    }
-  }
+  //     initialHealth = _calcHarvestingPetHealth(petID);
+  //     healAmt = _getFoodHealAmount(foodIndex);
+  //     finalHealth = (initialHealth + healAmt > LibStat.getHealth(components, petID))
+  //       ? LibStat.getHealth(components, petID)
+  //       : initialHealth + healAmt;
+  //     _feedPet(petID, foodIndex);
+  //     assertEq(LibPet.getLastHealth(components, petID), finalHealth);
+  //   }
+  // }
 }

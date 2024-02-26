@@ -8,8 +8,8 @@ import { _ListingSetSystem } from "./ethers-contracts/_ListingSetSystem";
 import { _NodeCreateSystem } from "./ethers-contracts/_NodeCreateSystem";
 import { _NodeDeleteSystem } from "./ethers-contracts/_NodeDeleteSystem";
 import { _NPCCreateSystem } from "./ethers-contracts/_NPCCreateSystem";
-import { _NPCSetLocationSystem } from "./ethers-contracts/_NPCSetLocationSystem";
 import { _NPCSetNameSystem } from "./ethers-contracts/_NPCSetNameSystem";
+import { _NPCSetRoomSystem } from "./ethers-contracts/_NPCSetRoomSystem";
 import { _RegistryCreateFoodSystem } from "./ethers-contracts/_RegistryCreateFoodSystem";
 import { _RegistryCreateGearSystem } from "./ethers-contracts/_RegistryCreateGearSystem";
 import { _RegistryCreateItemConsumableSystem } from "./ethers-contracts/_RegistryCreateItemConsumableSystem";
@@ -31,6 +31,7 @@ import { _RegistryDeleteRelationshipSystem } from "./ethers-contracts/_RegistryD
 import { _RegistryDeleteSkillSystem } from "./ethers-contracts/_RegistryDeleteSkillSystem";
 import { _RegistryDeleteTraitSystem } from "./ethers-contracts/_RegistryDeleteTraitSystem";
 import { _RegistryUpdateRelationshipSystem } from "./ethers-contracts/_RegistryUpdateRelationshipSystem";
+import { _RoomCreateGateSystem } from "./ethers-contracts/_RoomCreateGateSystem";
 import { _RoomCreateSystem } from "./ethers-contracts/_RoomCreateSystem";
 import { _RoomDeleteSystem } from "./ethers-contracts/_RoomDeleteSystem";
 import { AccountFundSystem } from "./ethers-contracts/AccountFundSystem";
@@ -95,8 +96,8 @@ export type SystemTypes = {
   "system._Node.Create": _NodeCreateSystem;
   "system._Node.Delete": _NodeDeleteSystem;
   "system._NPC.Create": _NPCCreateSystem;
-  "system._NPC.Set.Location": _NPCSetLocationSystem;
   "system._NPC.Set.Name": _NPCSetNameSystem;
+  "system._NPC.Set.Room": _NPCSetRoomSystem;
   "system._Registry.Food.Create": _RegistryCreateFoodSystem;
   "system._Registry.Gear.Create": _RegistryCreateGearSystem;
   "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem;
@@ -118,6 +119,7 @@ export type SystemTypes = {
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem;
   "system._Registry.Trait.Delete": _RegistryDeleteTraitSystem;
   "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem;
+  "system._Room.Create.Gate": _RoomCreateGateSystem;
   "system._Room.Create": _RoomCreateSystem;
   "system._Room.Delete": _RoomDeleteSystem;
   "system.Account.Fund": AccountFundSystem;

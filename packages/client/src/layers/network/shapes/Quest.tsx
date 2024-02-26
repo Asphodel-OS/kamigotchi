@@ -469,7 +469,7 @@ const getAccBal = (
   } else if (type === 'KAMI') {
     balance = account.kamis?.length || 0;
   } else if (type === 'ROOM') {
-    balance = account.location || 0;
+    balance = account.roomIndex || 0;
   } else {
     console.log('getAccBal: invalid type');
   }

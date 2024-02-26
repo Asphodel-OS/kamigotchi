@@ -38,7 +38,7 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Withdraw: no account");
     require(
-      LibAccount.getLocation(components, accountID) == ROOM,
+      LibAccount.getRoom(components, accountID) == ROOM,
       "Farm20Withdraw: not in room 12"
     );
     require(LibCoin.get(components, accountID) >= value, "Coin: insufficient balance");

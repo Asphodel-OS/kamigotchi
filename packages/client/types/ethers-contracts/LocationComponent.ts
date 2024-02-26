@@ -27,12 +27,24 @@ import type {
   TypedListener,
 } from "./common";
 
+export type LocationStruct = {
+  x: PromiseOrValue<BigNumberish>;
+  y: PromiseOrValue<BigNumberish>;
+  z: PromiseOrValue<BigNumberish>;
+};
+
+export type LocationStructOutput = [number, number, number] & {
+  x: number;
+  y: number;
+  z: number;
+};
+
 export interface LocationComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
-    "getEntitiesWithValue(uint256)": FunctionFragment;
+    "getEntitiesWithValue((int32,int32,int32))": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
     "getSchema()": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
@@ -42,8 +54,8 @@ export interface LocationComponentInterface extends utils.Interface {
     "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "set(uint256,uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
+    "set(uint256,(int32,int32,int32))": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -55,7 +67,7 @@ export interface LocationComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "getEntities"
       | "getEntitiesWithValue(bytes)"
-      | "getEntitiesWithValue(uint256)"
+      | "getEntitiesWithValue((int32,int32,int32))"
       | "getRawValue"
       | "getSchema"
       | "getValue"
@@ -65,8 +77,8 @@ export interface LocationComponentInterface extends utils.Interface {
       | "registerIndexer"
       | "registerWorld"
       | "remove"
-      | "set(uint256,uint256)"
       | "set(uint256,bytes)"
+      | "set(uint256,(int32,int32,int32))"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -86,8 +98,8 @@ export interface LocationComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getEntitiesWithValue((int32,int32,int32))",
+    values: [LocationStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "getRawValue",
@@ -117,12 +129,12 @@ export interface LocationComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "set(uint256,(int32,int32,int32))",
+    values: [PromiseOrValue<BigNumberish>, LocationStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -151,7 +163,7 @@ export interface LocationComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(uint256)",
+    functionFragment: "getEntitiesWithValue((int32,int32,int32))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -173,11 +185,11 @@ export interface LocationComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint256)",
+    functionFragment: "set(uint256,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,bytes)",
+    functionFragment: "set(uint256,(int32,int32,int32))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -252,8 +264,8 @@ export interface LocationComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    "getEntitiesWithValue((int32,int32,int32))"(
+      value: LocationStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -269,7 +281,7 @@ export interface LocationComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[LocationStructOutput]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -295,15 +307,15 @@ export interface LocationComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "set(uint256,(int32,int32,int32))"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -337,8 +349,8 @@ export interface LocationComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  "getEntitiesWithValue(uint256)"(
-    value: PromiseOrValue<BigNumberish>,
+  "getEntitiesWithValue((int32,int32,int32))"(
+    value: LocationStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -354,7 +366,7 @@ export interface LocationComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<LocationStructOutput>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -380,15 +392,15 @@ export interface LocationComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   "set(uint256,bytes)"(
     entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "set(uint256,(int32,int32,int32))"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: LocationStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -422,8 +434,8 @@ export interface LocationComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    "getEntitiesWithValue((int32,int32,int32))"(
+      value: LocationStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -439,7 +451,7 @@ export interface LocationComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<LocationStructOutput>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -465,15 +477,15 @@ export interface LocationComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "set(uint256,(int32,int32,int32))"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: LocationStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -519,8 +531,8 @@ export interface LocationComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    "getEntitiesWithValue((int32,int32,int32))"(
+      value: LocationStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -560,15 +572,15 @@ export interface LocationComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "set(uint256,(int32,int32,int32))"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -603,8 +615,8 @@ export interface LocationComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getEntitiesWithValue(uint256)"(
-      value: PromiseOrValue<BigNumberish>,
+    "getEntitiesWithValue((int32,int32,int32))"(
+      value: LocationStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -644,15 +656,15 @@ export interface LocationComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "set(uint256,(int32,int32,int32))"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: LocationStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

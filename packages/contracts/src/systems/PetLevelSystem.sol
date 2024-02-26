@@ -20,12 +20,12 @@ contract PetLevelSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    // standard checks (type check, ownership, location)
+    // standard checks (type check, ownership, roomIndex)
     require(accountID != 0, "PetLevel: no account");
     require(LibPet.isPet(components, id), "PetLevel: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "PetLevel: not urs");
     require(
-      LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
+      LibPet.getRoom(components, id) == LibAccount.getRoom(components, accountID),
       "PetLevel: must be in same room"
     );
 

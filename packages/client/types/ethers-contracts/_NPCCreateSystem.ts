@@ -126,7 +126,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      roomIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -146,7 +146,7 @@ export interface _NPCCreateSystem extends BaseContract {
   executeTyped(
     index: PromiseOrValue<BigNumberish>,
     name: PromiseOrValue<string>,
-    location: PromiseOrValue<BigNumberish>,
+    roomIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -166,7 +166,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      roomIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -198,7 +198,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      roomIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -219,7 +219,7 @@ export interface _NPCCreateSystem extends BaseContract {
     executeTyped(
       index: PromiseOrValue<BigNumberish>,
       name: PromiseOrValue<string>,
-      location: PromiseOrValue<BigNumberish>,
+      roomIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

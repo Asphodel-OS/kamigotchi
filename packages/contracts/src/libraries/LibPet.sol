@@ -534,19 +534,19 @@ library LibPet {
     else return 0;
   }
 
-  // Get the implied location of a pet based on its state.
-  function getLocation(IUintComp components, uint256 id) public view returns (uint256 location) {
+  // Get the implied roomIndex of a pet based on its state.
+  function getRoom(IUintComp components, uint256 id) public view returns (uint256 roomIndex) {
     string memory state = getState(components, id);
 
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 nodeID = LibProduction.getNode(components, productionID);
-      location = LibNode.getLocation(components, nodeID);
+      roomIndex = LibNode.getRoom(components, nodeID);
     } else if (LibString.eq(state, "721_EXTERNAL")) {
-      location = 0;
+      roomIndex = 0;
     } else {
       uint256 accountID = getAccount(components, id);
-      location = LibAccount.getLocation(components, accountID);
+      roomIndex = LibAccount.getRoom(components, accountID);
     }
   }
 

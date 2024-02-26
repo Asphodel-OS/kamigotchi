@@ -27,7 +27,7 @@ contract PetUpgradeSkillSystem is System {
     require(LibPet.isPet(components, id), "PetUpgradeSkill: not a pet");
     require(accountID == LibPet.getAccount(components, id), "PetUpgradeSkill: not ur pet");
     require(
-      LibPet.getLocation(components, id) == LibAccount.getLocation(components, accountID),
+      LibPet.getRoom(components, id) == LibAccount.getRoom(components, accountID),
       "PetUpgradeSkill: must be in same room" // NOTE: do we want to enforce this?
     );
     require(

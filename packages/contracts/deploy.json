@@ -48,6 +48,7 @@
     "IndexReviveComponent",
     "IndexQuestComponent",
     "IndexSkillComponent",
+    "IndexSourceComponent",
     "IndexTraitComponent",
     "IsAccountComponent",
     "IsBonusComponent",
@@ -84,6 +85,7 @@
     "KeysComponent",
     "LevelComponent",
     "LocationComponent",
+    "IndexRoomComponent",
     "LogicTypeComponent",
     "MaxComponent",
     "MediaURIComponent",
@@ -131,27 +133,15 @@
     },
     {
       "name": "_ConfigSetSystem",
-      "writeAccess": [
-        "IsConfigComponent",
-        "NameComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "ValueComponent"]
     },
     {
       "name": "_ConfigSetStringSystem",
-      "writeAccess": [
-        "IsConfigComponent",
-        "NameComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "ValueComponent"]
     },
     {
       "name": "_ConfigSetWeiSystem",
-      "writeAccess": [
-        "IsConfigComponent",
-        "NameComponent",
-        "WeiComponent"
-      ]
+      "writeAccess": ["IsConfigComponent", "NameComponent", "WeiComponent"]
     },
     {
       "name": "_ListingSetSystem",
@@ -170,7 +160,7 @@
         "AffinityComponent",
         "DescriptionComponent",
         "IndexNodeComponent",
-        "LocationComponent",
+        "IndexRoomComponent",
         "NameComponent",
         "TypeComponent"
       ]
@@ -182,31 +172,22 @@
         "AffinityComponent",
         "DescriptionComponent",
         "IndexNodeComponent",
-        "LocationComponent",
+        "IndexRoomComponent",
         "NameComponent",
         "TypeComponent"
       ]
     },
     {
       "name": "_NPCCreateSystem",
-      "writeAccess": [
-        "IsNPCComponent",
-        "IndexNPCComponent",
-        "LocationComponent",
-        "NameComponent"
-      ]
+      "writeAccess": ["IsNPCComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
     },
     {
-      "name": "_NPCSetLocationSystem",
-      "writeAccess": [
-        "LocationComponent"
-      ]
+      "name": "_NPCSetRoomSystem",
+      "writeAccess": ["IndexRoomComponent"]
     },
     {
       "name": "_NPCSetNameSystem",
-      "writeAccess": [
-        "NameComponent"
-      ]
+      "writeAccess": ["NameComponent"]
     },
     {
       "name": "_RegistryCreateItemConsumableSystem",
@@ -286,27 +267,19 @@
     },
     {
       "name": "_RegistryCreateQuestSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_RegistryCreateQuestObjectiveSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_RegistryCreateQuestRequirementSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_RegistryCreateQuestRewardSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_RegistryCreateRelationshipSystem",
@@ -441,9 +414,7 @@
     },
     {
       "name": "_RegistryDeleteQuestSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "_RegistryDeleteSkillSystem",
@@ -468,18 +439,27 @@
     },
     {
       "name": "_RegistryUpdateRelationshipSystem",
+      "writeAccess": ["NameComponent", "BlacklistComponent", "WhitelistComponent"]
+    },
+    {
+      "name": "_RoomCreateGateSystem",
       "writeAccess": [
-        "NameComponent",
-        "BlacklistComponent",
-        "WhitelistComponent"
+        "IsConditionComponent",
+        "IndexRoomComponent",
+        "IndexSourceComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "ValueComponent",
+        "TypeComponent"
       ]
     },
     {
       "name": "_RoomCreateSystem",
       "writeAccess": [
-        "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
+        "IsRoomComponent",
+        "IndexRoomComponent",
         "LocationComponent",
         "NameComponent"
       ]
@@ -487,11 +467,16 @@
     {
       "name": "_RoomDeleteSystem",
       "writeAccess": [
+        "IndexRoomComponent",
+        "IndexSourceComponent",
         "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
         "LocationComponent",
-        "NameComponent"
+        "LogicTypeComponent",
+        "NameComponent",
+        "TypeComponent",
+        "ValueComponent"
       ]
     },
     {
@@ -510,7 +495,7 @@
     {
       "name": "AccountMoveSystem",
       "writeAccess": [
-        "LocationComponent",
+        "IndexRoomComponent",
         "StaminaComponent",
         "StaminaCurrentComponent",
         "TimeLastComponent",
@@ -525,7 +510,7 @@
         "AddressOperatorComponent",
         "AddressOwnerComponent",
         "FavoriteFoodComponent",
-        "LocationComponent",
+        "IndexRoomComponent",
         "NameComponent",
         "StaminaComponent",
         "StaminaCurrentComponent",
@@ -536,17 +521,11 @@
     },
     {
       "name": "AccountSetNameSystem",
-      "writeAccess": [
-        "NameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["NameComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountSetOperatorSystem",
-      "writeAccess": [
-        "AddressOperatorComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["AddressOperatorComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountUpgradeSkillSystem",
@@ -761,7 +740,7 @@
         "IdHolderComponent",
         "IsAccountComponent",
         "IsDataComponent",
-        "LocationComponent",
+        "IndexRoomComponent",
         "NameComponent",
         "ProxyPermissionsERC721Component",
         "StaminaComponent",
@@ -851,11 +830,7 @@
     },
     {
       "name": "PetNameSystem",
-      "writeAccess": [
-        "CanNameComponent",
-        "NameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["CanNameComponent", "NameComponent", "TimeLastComponent"]
     },
     {
       "name": "PetReviveSystem",
@@ -873,10 +848,7 @@
     },
     {
       "name": "PetSetAccountSystem",
-      "writeAccess": [
-        "IdAccountComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["IdAccountComponent", "TimeLastComponent"]
     },
     {
       "name": "PetUpgradeSkillSystem",
@@ -902,11 +874,7 @@
     },
     {
       "name": "PetUseItemSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "CanNameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["BalanceComponent", "CanNameComponent", "TimeLastComponent"]
     },
     {
       "name": "ProductionCollectSystem",
@@ -1010,9 +978,7 @@
     },
     {
       "name": "QuestCompleteSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     },
     {
       "name": "QuestDropSystem",
@@ -1065,9 +1031,7 @@
     },
     {
       "name": "_721BatchMinterSystem",
-      "writeAccess": [
-        "*"
-      ]
+      "writeAccess": ["*"]
     }
   ],
   "libraries": [

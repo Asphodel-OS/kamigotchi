@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { Location, LibRoom } from "libraries/LibRoom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Account.Move"));
 
@@ -13,21 +14,35 @@ contract AccountMoveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 to = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(accountID != 0, "AccountMoveSystem: no account");
+    require(accountID != 0, "AccMove: no account");
+    require(LibAccount.syncStamina(components, accountID) != 0, "AccMove: out of stamina");
 
-    require(LibAccount.syncStamina(components, accountID) != 0, "Account: out of stamina");
-    require(LibAccount.canMoveTo(components, accountID, to), "Account: unreachable location");
+    uint256 toIndex = abi.decode(arguments, (uint256));
+    uint256 currIndex = LibAccount.getRoom(components, accountID);
+    (uint256 currRoomID, uint256 toRoomID) = LibRoom.queryByIndexDouble(
+      components,
+      currIndex,
+      toIndex
+    );
 
-    LibAccount.move(components, accountID, to);
+    require(
+      LibRoom.isReachable(components, toIndex, currRoomID, toRoomID),
+      "AccMove: unreachable room"
+    );
+    require(
+      LibRoom.isAccessible(components, currIndex, toIndex, accountID),
+      "AccMove: inaccessible room"
+    );
+
+    LibAccount.move(components, accountID, toIndex);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
 
-  function executeTyped(uint256 to) public returns (bytes memory) {
-    return execute(abi.encode(to));
+  function executeTyped(uint256 toIndex) public returns (bytes memory) {
+    return execute(abi.encode(toIndex));
   }
 }

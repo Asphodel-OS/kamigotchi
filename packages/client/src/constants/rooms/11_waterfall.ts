@@ -10,7 +10,7 @@ import { Room } from 'constants/rooms';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggers/triggerPetNamingModal';
 
 export const room11: Room = {
-  location: 11,
+  roomIndex: 11,
   background: {
     key: 'bg_room011',
     path: backgroundDefault,

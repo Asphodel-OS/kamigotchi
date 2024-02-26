@@ -72,8 +72,8 @@ export const Kards = (props: Props) => {
   // get the reason why a kami can't feed. assume the kami is either resting or harvesting
   const whyCantFeed = (kami: Kami, account: Account): string => {
     let reason = '';
-    if (kami.production?.node?.location != account.location) {
-      reason = `not at your location`;
+    if (kami.production?.node?.roomIndex != account.roomIndex) {
+      reason = `not at your roomIndex`;
     } else if (isFull(kami)) {
       reason = `already full`;
     } else if (!hasFood(account)) {

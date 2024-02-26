@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 
 import { mapIcon } from 'assets/images/icons/menu';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
-import { getRoomByLocation, Room } from 'layers/network/shapes/Room';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getRoomByIndex, Room } from 'layers/network/shapes/Room';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Modals, useVisibility } from 'layers/react/store/visibility';
+import { useVisibility, Modals } from 'layers/react/store/visibility';
 
 export function registerMapButton() {
   registerUIComponent(
@@ -19,9 +19,9 @@ export function registerMapButton() {
     },
     (layers) => {
       const { network } = layers;
-      const { Location, OperatorAddress } = network.components;
+      const { RoomIndex, OperatorAddress } = network.components;
 
-      return merge(Location.update$, OperatorAddress.update$).pipe(
+      return merge(RoomIndex.update$, OperatorAddress.update$).pipe(
         map(() => {
           const account = getAccountFromBurner(network);
           return {
@@ -35,10 +35,10 @@ export function registerMapButton() {
       const [_, setRoomObject] = useState<Room>();
       const { buttons } = useVisibility();
 
-      // set selected room location to the player's current one when map modal is opened
+      // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
-        setRoomObject(getRoomByLocation(network, data.account.location));
-      }, [data?.account.location]);
+        setRoomObject(getRoomByIndex(network, data.account.roomIndex));
+      }, [data?.account.roomIndex]);
 
       const modalsToHide: Partial<Modals> = {
         account: false,

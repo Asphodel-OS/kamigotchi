@@ -8,8 +8,8 @@ import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
 import _NodeDeleteSystem from "../abi/_NodeDeleteSystem.json";
 import _NPCCreateSystem from "../abi/_NPCCreateSystem.json";
-import _NPCSetLocationSystem from "../abi/_NPCSetLocationSystem.json";
 import _NPCSetNameSystem from "../abi/_NPCSetNameSystem.json";
+import _NPCSetRoomSystem from "../abi/_NPCSetRoomSystem.json";
 import _RegistryCreateFoodSystem from "../abi/_RegistryCreateFoodSystem.json";
 import _RegistryCreateGearSystem from "../abi/_RegistryCreateGearSystem.json";
 import _RegistryCreateItemConsumableSystem from "../abi/_RegistryCreateItemConsumableSystem.json";
@@ -31,6 +31,7 @@ import _RegistryDeleteRelationshipSystem from "../abi/_RegistryDeleteRelationshi
 import _RegistryDeleteSkillSystem from "../abi/_RegistryDeleteSkillSystem.json";
 import _RegistryDeleteTraitSystem from "../abi/_RegistryDeleteTraitSystem.json";
 import _RegistryUpdateRelationshipSystem from "../abi/_RegistryUpdateRelationshipSystem.json";
+import _RoomCreateGateSystem from "../abi/_RoomCreateGateSystem.json";
 import _RoomCreateSystem from "../abi/_RoomCreateSystem.json";
 import _RoomDeleteSystem from "../abi/_RoomDeleteSystem.json";
 import AccountFundSystem from "../abi/AccountFundSystem.json";
@@ -95,8 +96,8 @@ export const SystemAbis = {
   "system._Node.Create": _NodeCreateSystem.abi,
   "system._Node.Delete": _NodeDeleteSystem.abi,
   "system._NPC.Create": _NPCCreateSystem.abi,
-  "system._NPC.Set.Location": _NPCSetLocationSystem.abi,
   "system._NPC.Set.Name": _NPCSetNameSystem.abi,
+  "system._NPC.Set.Room": _NPCSetRoomSystem.abi,
   "system._Registry.Food.Create": _RegistryCreateFoodSystem.abi,
   "system._Registry.Gear.Create": _RegistryCreateGearSystem.abi,
   "system._Registry.Create.Item.Consumable": _RegistryCreateItemConsumableSystem.abi,
@@ -118,6 +119,7 @@ export const SystemAbis = {
   "system._Registry.Skill.Delete": _RegistryDeleteSkillSystem.abi,
   "system._Registry.Trait.Delete": _RegistryDeleteTraitSystem.abi,
   "system._Registry.Relationship.Update": _RegistryUpdateRelationshipSystem.abi,
+  "system._Room.Create.Gate": _RoomCreateGateSystem.abi,
   "system._Room.Create": _RoomCreateSystem.abi,
   "system._Room.Delete": _RoomDeleteSystem.abi,
   "system.Account.Fund": AccountFundSystem.abi,

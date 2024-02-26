@@ -8,7 +8,7 @@ export const glassbox: DialogueNode = {
 export default [glassbox];
 
 // export const room12: Room = {
-//   location: 12,
+//   roomIndex: 12,
 //   background: {
 //     key: 'bg_room012',
 //     path: backgroundDefault,
