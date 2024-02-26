@@ -49,7 +49,7 @@ library LibAccount {
     IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(id, getTotal(components));
     AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
-    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 1);
+    IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 4);
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
 
     int32 baseStamina = int32(uint32(LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE")));
