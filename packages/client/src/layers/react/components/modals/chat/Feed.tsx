@@ -25,7 +25,7 @@ export const Feed = (props: Props) => {
 
   // ticking
   useEffect(() => {
-    const timerId = setInterval(pollNew, 5000);
+    const timerId = setInterval(pollNew, 10000);
     return function cleanup() {
       clearInterval(timerId);
     };
@@ -129,7 +129,7 @@ export const Feed = (props: Props) => {
       filterType: 'channel_id',
       channelId: 'kamigotchi',
       cursor: feed?.next.cursor ?? '',
-      limit: 25, // defaults to 25, max 100
+      limit: 5, // defaults to 25, max 100
     });
     const currCasts = [...casts];
     for (const cast of newFeed.casts) {
