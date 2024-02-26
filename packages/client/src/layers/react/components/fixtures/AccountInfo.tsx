@@ -79,7 +79,7 @@ export function registerAccountInfoFixture() {
 
       // $KAMI Balance
       const { data: mint20Addy } = useContractRead({
-        address: network.systems['system.Mint20.Proxy'].address as `0x${string}`,
+        address: network.systems['system.Mint20.Proxy']?.address as `0x${string}`,
         abi: Pet721ProxySystemABI,
         functionName: 'getTokenAddy',
       });
