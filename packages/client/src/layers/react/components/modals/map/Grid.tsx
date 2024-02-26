@@ -2,6 +2,7 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Room, emptyRoom } from 'layers/network/shapes/Room';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   index: number; // index of current room
@@ -16,19 +17,22 @@ export const Grid = (props: Props) => {
   const [grid, setGrid] = useState<Room[][]>([]);
 
   useEffect(() => {
+    const z = rooms.get(index)?.location.z;
+
     // establish the grid size
     let maxX = 0;
     let maxY = 0;
     let minX = 9999;
     let minY = 9999;
     for (const [_, room] of rooms) {
+      if (room.location.z !== z) continue;
       if (room.location.x > maxX) maxX = room.location.x;
       if (room.location.y > maxY) maxY = room.location.y;
       if (room.location.x < minX) minX = room.location.x;
       if (room.location.y < minY) minY = room.location.y;
     }
 
-    // create eeach row
+    // create each row
     const width = maxX - minX + 3;
     const height = maxY - minY + 3;
     const grid = new Array<Room[]>();
@@ -41,13 +45,22 @@ export const Grid = (props: Props) => {
     const xOffset = minX - 1;
     const yOffset = minY - 1;
     for (const [_, room] of rooms) {
+      if (room.location.z !== z) continue;
       grid[room.location.y - yOffset][room.location.x - xOffset] = room;
     }
 
     setGrid(grid);
   }, [rooms.size]);
 
-  ///////////////////
+  /////////////////
+  // INTERACTIONS
+
+  const handleRoomMove = (roomIndex: number) => {
+    playClick();
+    actions.move(roomIndex);
+  };
+
+  /////////////////
   // RENDER
 
   return (
@@ -65,7 +78,7 @@ export const Grid = (props: Props) => {
               color = '#3b3';
             } else if (isExit) {
               color = '#f85';
-              onClick = () => actions.move(room?.index ?? 0);
+              onClick = () => handleRoomMove(room?.index ?? 0);
             } else if (isRoom) {
               color = '#d33';
             }
