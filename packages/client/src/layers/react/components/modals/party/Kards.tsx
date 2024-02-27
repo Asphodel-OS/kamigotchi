@@ -128,22 +128,6 @@ export const Kards = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  // get the reason why a kami can't feed.
-  // assume the kami is either resting or harvesting
-  const getFeedTooltip = (kami: Kami, account: Account): string => {
-    let tooltip = 'feed kami';
-    if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
-      tooltip = `not at your roomIndex`;
-    } else if (isFull(kami)) {
-      tooltip = `can't eat, full`;
-    } else if (!hasFood(account)) {
-      tooltip = `buy food, poore`;
-    } else if (onCooldown(kami)) {
-      tooltip = `can't eat, on cooldown`;
-    }
-    return tooltip;
-  };
-
   // Feed Button display evaluation
   const FeedButton = (kami: Kami, account: Account) => {
     // filter down to available food items
@@ -187,7 +171,7 @@ export const Kards = (props: Props) => {
       <Tooltip text={[tooltipText]}>
         <IconButton
           img={reviveIcon}
-          onClick={() => actions.revive(kami, 1)}
+          onClick={() => actions.revive(kami, account.inventories!.revives[0].item.index)}
           disabled={!hasRevive(account) || onCooldown(kami)}
         />
       </Tooltip>

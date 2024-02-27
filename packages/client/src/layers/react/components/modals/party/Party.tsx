@@ -60,15 +60,15 @@ export function registerPartyModal() {
       };
 
       // revive a kami using a revive item
-      const revive = (kami: Kami, reviveIndex: number) => {
+      const revive = (kami: Kami, itemIndex: number) => {
         const actionID = crypto.randomBytes(32).toString('hex') as EntityID;
         actions?.add({
           id: actionID,
           action: 'KamiRevive',
-          params: [kami.id, reviveIndex],
+          params: [kami.id, itemIndex],
           description: `Reviving ${kami.name}`,
           execute: async () => {
-            return api.player.pet.revive(kami.id, reviveIndex);
+            return api.player.pet.revive(kami.id, itemIndex);
           },
         });
       };
