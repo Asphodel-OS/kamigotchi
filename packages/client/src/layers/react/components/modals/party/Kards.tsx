@@ -76,26 +76,6 @@ export const Kards = (props: Props) => {
     return total > 0;
   };
 
-  // get the reason why a kami can't feed.
-  // assume the kami is either resting or harvesting
-  const whyCantFeed = (kami: Kami, account: Account): string => {
-    let reason = '';
-    if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
-      reason = `not at your roomIndex`;
-    } else if (isFull(kami)) {
-      reason = `can't eat, full`;
-    } else if (!hasFood(account)) {
-      reason = `buy food, poore`;
-    } else if (onCooldown(kami)) {
-      reason = `can't eat, on cooldown`;
-    }
-    return reason;
-  };
-
-  const canFeed = (kami: Kami, account: Account): boolean => {
-    return !whyCantFeed(kami, account);
-  };
-
   // get the description of the kami as a list of lines
   // TODO: clean this up
   const getDescription = (kami: Kami): string[] => {
@@ -148,15 +128,28 @@ export const Kards = (props: Props) => {
   /////////////////
   // DISPLAY
 
+  // get the reason why a kami can't feed.
+  // assume the kami is either resting or harvesting
+  const getFeedTooltip = (kami: Kami, account: Account): string => {
+    let tooltip = 'feed kami';
+    if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
+      tooltip = `not at your roomIndex`;
+    } else if (isFull(kami)) {
+      tooltip = `can't eat, full`;
+    } else if (!hasFood(account)) {
+      tooltip = `buy food, poore`;
+    } else if (onCooldown(kami)) {
+      tooltip = `can't eat, on cooldown`;
+    }
+    return tooltip;
+  };
+
   // Feed Button display evaluation
   const FeedButton = (kami: Kami, account: Account) => {
-    const canFeedKami = canFeed(kami, account);
-    const tooltipText = whyCantFeed(kami, account);
-    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health.sync == 0;
-
+    // filter down to available food items
     const stockedInventory =
       account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
-
+    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health.sync == 0;
     const feedOptions = stockedInventory.map((inv: Inventory) => {
       return {
         text: `${inv.item.name} ${!canHeal(inv) ? ' [Kami full]' : ''}`,
@@ -165,10 +158,23 @@ export const Kards = (props: Props) => {
       };
     });
 
-    let button = <IconListButton img={feedIcon} disabled={!canFeedKami} options={feedOptions} />;
-    if (!canFeedKami) button = <Tooltip text={[tooltipText]}>{button}</Tooltip>;
+    // check whether the kami can be fed and generate a tooltip for the reason
+    let tooltip = 'feed kami';
+    if (isHarvesting(kami) && kami.production?.node?.roomIndex != account.roomIndex) {
+      tooltip = `not at your roomIndex`;
+    } else if (isFull(kami)) {
+      tooltip = `can't eat, full`;
+    } else if (!hasFood(account)) {
+      tooltip = `buy food, poore`;
+    } else if (onCooldown(kami)) {
+      tooltip = `can't eat, on cooldown`;
+    }
 
-    return button;
+    return (
+      <Tooltip text={[tooltip]}>
+        <IconListButton img={feedIcon} disabled={tooltip !== 'feed kami'} options={feedOptions} />;
+      </Tooltip>
+    );
   };
 
   // Revive Button display evaluation
