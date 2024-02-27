@@ -6,6 +6,7 @@ import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
 import { getAllRooms, getRoomByIndex } from 'layers/network/shapes/Room';
 import { getAllItems, getItemByIndex } from '../shapes/Item';
 import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
+import { getQuestByIndex, getRegistryQuests } from '../shapes/Quest';
 import { getRegistrySkills, getSkillByIndex } from '../shapes/Skill';
 import { NetworkLayer } from '../types';
 
@@ -70,6 +71,12 @@ export const initExplorer = (network: NetworkLayer) => {
     get: (index: number) => getItemByIndex(network, index),
     getAll: () => getAllItems(network),
     indices: () => [...new Set(Array.from(components.ItemIndex.values.value.values()))],
+  };
+
+  explorer.quest = {
+    get: (index: number) => getQuestByIndex(network, index),
+    getAll: () => getRegistryQuests(network),
+    indices: () => [...new Set(Array.from(components.QuestIndex.values.value.values()))],
   };
 
   explorer.skill = {
