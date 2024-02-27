@@ -8,6 +8,7 @@ import { getAllItems, getItemByIndex } from '../shapes/Item';
 import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
 import { getQuestByIndex, getRegistryQuests } from '../shapes/Quest';
 import { getRegistrySkills, getSkillByIndex } from '../shapes/Skill';
+import { getRegistryTraits, getTraitByIndex } from '../shapes/Trait';
 import { NetworkLayer } from '../types';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
@@ -83,6 +84,12 @@ export const initExplorer = (network: NetworkLayer) => {
     get: (index: number, options?: {}) => getSkillByIndex(network, index, options),
     getAll: () => getRegistrySkills(network),
     indices: () => [...new Set(Array.from(components.SkillIndex.values.value.values()))],
+  };
+
+  explorer.trait = {
+    get: (index: number) => getTraitByIndex(network, index),
+    getAll: () => getRegistryTraits(network),
+    indices: () => [...new Set(Array.from(components.TraitIndex.values.value.values()))],
   };
 
   // helper function to get all the set components values for a given entity

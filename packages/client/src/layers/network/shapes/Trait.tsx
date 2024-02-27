@@ -49,6 +49,13 @@ export const getTraitByIndex = (network: NetworkLayer, index: number): Trait => 
   return getTrait(network, entityIndices[0]);
 };
 
+export const getRegistryTraits = (network: NetworkLayer): Trait[] => {
+  const { IsRegistry, TraitIndex } = network.components;
+
+  const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(TraitIndex)]));
+  return entityIndices.map((index) => getTrait(network, index));
+};
+
 export const getTraits = (network: NetworkLayer, indices: TraitIndices): Traits => {
   return {
     background: getTrait(network, indices.backgroundIndex),
