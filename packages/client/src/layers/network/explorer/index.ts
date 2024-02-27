@@ -4,6 +4,7 @@ import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account
 import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
 import { getAllRooms, getRoomByIndex } from 'layers/network/shapes/Room';
+import { getAllItems, getItemByIndex } from '../shapes/Item';
 import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
 import { getQuestByIndex } from '../shapes/Quest';
 import { NetworkLayer } from '../types';
@@ -13,6 +14,9 @@ import { NetworkLayer } from '../types';
 export const initExplorer = (network: NetworkLayer) => {
   let explorer = network.explorer;
   const { components } = network;
+
+  /////////////////
+  // INSTANCES
 
   explorer.account = {
     get: (index: number, options?: {}) => {
@@ -57,6 +61,17 @@ export const initExplorer = (network: NetworkLayer) => {
     getAll: (options?: {}) => getAllRooms(network, options),
     entities: () => Array.from(components.IsRoom.entities()),
     indices: () => Array.from(components.RoomIndex.values.value.values()),
+  };
+
+  /////////////////
+  // REGISTRIES
+
+  explorer.item = {
+    get: (index: number) => {
+      return getItemByIndex(network, index);
+    },
+    getAll: () => getAllItems(network),
+    indices: () => [...new Set(Array.from(components.ItemIndex.values.value.values()))],
   };
 
   explorer.quest = {

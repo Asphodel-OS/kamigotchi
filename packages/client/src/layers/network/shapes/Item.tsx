@@ -80,6 +80,7 @@ export const getItem = (
   return Item;
 };
 
+// get an item in the registry by index
 export const getItemByIndex = (
   network: NetworkLayer,
   index: number // item index of the registry instance
@@ -92,4 +93,14 @@ export const getItemByIndex = (
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
   );
   return getItem(network, entityIndices[0]);
+};
+
+// get all items in the registry
+export const getAllItems = (network: NetworkLayer): Item[] => {
+  const {
+    components: { IsRegistry, ItemIndex },
+  } = network;
+
+  const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(ItemIndex)]));
+  return entityIndices.map((entityIndex) => getItem(network, entityIndex));
 };
