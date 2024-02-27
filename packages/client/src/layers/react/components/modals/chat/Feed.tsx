@@ -3,32 +3,32 @@ import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { Account } from 'layers/network/shapes/Account';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
-import { client as neynarClient } from 'src/clients/neynar';
+import { FarcasterUser, emptyFaracasterUser, client as neynarClient } from 'src/clients/neynar';
+import { useLocalStorage } from 'usehooks-ts';
+import { playClick } from 'utils/sounds';
 
 interface Props {
+  account: Account;
   max: number; // max number of casts to disable polling at
   casts: CastWithInteractions[];
   setCasts: (casts: CastWithInteractions[]) => void;
 }
 
 export const Feed = (props: Props) => {
-  const { max, casts, setCasts } = props;
+  const { account, max, casts, setCasts } = props;
+  const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const [scrollBottom, setScrollBottom] = useState(0);
   const [feed, setFeed] = useState<FeedResponse>();
   const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
 
+  /////////////////
+  // DATA HANDLING
+
   useEffect(() => {
     pollMore();
-  }, []);
-
-  // ticking
-  useEffect(() => {
-    const timerId = setInterval(pollNew, 10000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
   }, []);
 
   // scrolling effects
@@ -65,6 +65,24 @@ export const Feed = (props: Props) => {
   }, [casts.length]);
 
   /////////////////
+  // INTERPRETATION
+
+  // checks whether the cast has been liked by the current user
+  const isLiked = (cast: CastWithInteractions) => {
+    if (account.fid == 0) return false;
+    return !!cast.reactions.likes.find((l) => l.fid == account.fid);
+  };
+
+  /////////////////
+  // INTERACTION
+
+  const handleLike = (cast: CastWithInteractions) => {
+    playClick();
+    // if (isLiked(cast)) unlikeCast(cast);
+    // else likeCast(cast);
+  };
+
+  /////////////////
   // RENDER
 
   return (
@@ -88,7 +106,7 @@ export const Feed = (props: Props) => {
               <Author>{cast.author.username}</Author>
               <Time>
                 {moment(cast.timestamp).format('MM/DD HH:mm')}
-                <Heart color='red' />
+                <Heart color={isLiked(cast) ? 'gray' : 'red'} onClick={() => handleLike(cast)} />
               </Time>
             </Header>
             <Body>{cast.text}</Body>
@@ -100,6 +118,51 @@ export const Feed = (props: Props) => {
 
   /////////////////
   // HELPERS
+
+  // // trigger a like of a cast
+  // async function likeCast(cast: CastWithInteractions) {
+  //   if (!farcasterUser.signer_uuid) return;
+  //   const response = await neynarClient.publishReactionToCast(
+  //     farcasterUser.signer_uuid,
+  //     'like',
+  //     cast.hash
+  //   );
+
+  //   // update the list of casts
+  //   if (response.success) {
+  //     cast.reactions.likes.push({ fid: farcasterUser.fid });
+  //     for (const [i, cast] of casts.entries()) {
+  //       if (casts.find((c) => c.hash === cast.hash)) {
+  //         casts[i] = cast;
+  //         break;
+  //       }
+  //     }
+  //     setCasts(casts);
+  //   }
+  // }
+
+  // // trigger an unlike of a cast
+  // async function unlikeCast(cast: CastWithInteractions) {
+  //   if (!farcasterUser.signer_uuid) return;
+  //   const response = await neynarClient.deleteReactionFromCast(
+  //     farcasterUser.signer_uuid,
+  //     'like',
+  //     cast.hash
+  //   );
+
+  //   // update the list of casts
+  //   if (response.success) {
+  //     const index = cast.reactions.likes.findIndex((l) => l.fid == farcasterUser.fid);
+  //     if (index > -1) cast.reactions.likes.splice(index, 1);
+  //     for (const [i, cast] of casts.entries()) {
+  //       if (casts.find((c) => c.hash === cast.hash)) {
+  //         casts[i] = cast;
+  //         break;
+  //       }
+  //     }
+  //     setCasts(casts);
+  //   }
+  // }
 
   // poll for the next feed of messages and update the list of current casts
   async function pollMore() {
@@ -115,15 +178,18 @@ export const Feed = (props: Props) => {
     });
     setFeed(newFeed);
 
+    // adds new casts to the current list, with preference for new data, and sorts the list
     const currCasts = [...casts];
-    for (const cast of newFeed.casts) {
-      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
+    for (const [i, cast] of newFeed.casts.entries()) {
+      if (currCasts.find((c) => c.hash === cast.hash)) currCasts[i] = cast;
+      else currCasts.push(cast);
     }
+    currCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
     setCasts(currCasts);
     setIsPolling(false);
   }
 
-  // poll for new messages
+  // poll for new messages from the feed and update the list of current casts. do not update the Feed state
   async function pollNew() {
     const newFeed = await neynarClient.fetchFeed('filter', {
       filterType: 'channel_id',
@@ -131,12 +197,18 @@ export const Feed = (props: Props) => {
       cursor: feed?.next.cursor ?? '',
       limit: 5, // defaults to 25, max 100
     });
+
+    // adds new casts to the current list, with preference for new data, and sorts the list
     const currCasts = [...casts];
-    for (const cast of newFeed.casts) {
-      if (!currCasts.find((c) => c.hash === cast.hash)) currCasts.push(cast);
+    for (const [i, cast] of newFeed.casts.entries()) {
+      if (currCasts.find((c) => c.hash === cast.hash)) {
+        currCasts[i] = cast;
+      } else {
+        currCasts.push(cast);
+      }
     }
     currCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
-    if (currCasts.length != casts.length) setCasts(currCasts);
+    setCasts(currCasts);
   }
 };
 
@@ -236,5 +308,9 @@ const Heart = styled.div<{ color: string }>`
     padding-left: 0.3vw;
     padding-top: 100%;
     display: block;
+  }
+
+  &::hover {
+    opacity: 0.6;
   }
 `;
