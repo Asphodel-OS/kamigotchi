@@ -6,7 +6,7 @@ import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
 import { getAllRooms, getRoomByIndex } from 'layers/network/shapes/Room';
 import { getAllItems, getItemByIndex } from '../shapes/Item';
 import { getAllMerchants, getMerchantByIndex } from '../shapes/Merchant';
-import { getQuestByIndex } from '../shapes/Quest';
+import { getRegistrySkills, getSkillByIndex } from '../shapes/Skill';
 import { NetworkLayer } from '../types';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
@@ -67,19 +67,15 @@ export const initExplorer = (network: NetworkLayer) => {
   // REGISTRIES
 
   explorer.item = {
-    get: (index: number) => {
-      return getItemByIndex(network, index);
-    },
+    get: (index: number) => getItemByIndex(network, index),
     getAll: () => getAllItems(network),
     indices: () => [...new Set(Array.from(components.ItemIndex.values.value.values()))],
   };
 
-  explorer.quest = {
-    get: (index: number, options?: {}) => {
-      return getQuestByIndex(network, index);
-    },
-    entities: () => Array.from(components.IsRoom.entities()),
-    indices: () => Array.from(components.RoomIndex.values.value.values()),
+  explorer.skill = {
+    get: (index: number, options?: {}) => getSkillByIndex(network, index, options),
+    getAll: () => getRegistrySkills(network),
+    indices: () => [...new Set(Array.from(components.SkillIndex.values.value.values()))],
   };
 
   // helper function to get all the set components values for a given entity

@@ -10,16 +10,20 @@ export const getRegistrySkills = (network: NetworkLayer): Skill[] => {
   return querySkillsX(network, { registry: true }, { requirements: true, effects: true });
 };
 
-export const getHolderSkills = (network: NetworkLayer, holder: EntityID): Skill[] => {
-  return querySkillsX(network, { holder: holder });
+export const getHolderSkills = (
+  network: NetworkLayer,
+  holder: EntityID,
+  options?: Options
+): Skill[] => {
+  return querySkillsX(network, { holder: holder }, options);
 };
 
-export const getSkillByIndex = (network: NetworkLayer, index: number): Skill => {
+export const getSkillByIndex = (network: NetworkLayer, index: number, options?: Options): Skill => {
   const { IsRegistry, SkillIndex } = network.components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(SkillIndex, { value: index })])
   );
-  return getSkill(network, entityIndices[0]);
+  return getSkill(network, entityIndices[0], options);
 };
 
 /////////////////
