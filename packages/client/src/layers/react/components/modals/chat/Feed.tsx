@@ -17,6 +17,7 @@ interface Props {
 }
 
 export const Feed = (props: Props) => {
+  const baseUrl = 'https://warpcast.com';
   const { account, max, casts, setCasts } = props;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const [scrollBottom, setScrollBottom] = useState(0);
@@ -78,8 +79,8 @@ export const Feed = (props: Props) => {
 
   const handleLike = (cast: CastWithInteractions) => {
     playClick();
-    // if (isLiked(cast)) unlikeCast(cast);
-    // else likeCast(cast);
+    if (isLiked(cast)) unlikeCast(cast);
+    else likeCast(cast);
   };
 
   /////////////////
@@ -96,20 +97,24 @@ export const Feed = (props: Props) => {
         />
       </Tooltip>
       {casts?.toReversed().map((cast) => (
-        <Message
-          key={cast.hash}
-          onClick={() => window.open(`https://warpcast.com/${cast.author.username}/${cast.hash}`)}
-        >
-          <Pfp src={cast.author.pfp_url} />
+        <Message key={cast.hash}>
+          <Pfp
+            src={cast.author.pfp_url}
+            onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}
+          />
           <Content>
             <Header>
-              <Author>{cast.author.username}</Author>
+              <Author onClick={() => window.open(`${baseUrl}/${cast.author.username}`)}>
+                {cast.author.username}
+              </Author>
               <Time>
                 {moment(cast.timestamp).format('MM/DD HH:mm')}
-                <Heart color={isLiked(cast) ? 'gray' : 'red'} onClick={() => handleLike(cast)} />
+                <Heart color={isLiked(cast) ? 'red' : 'gray'} onClick={() => handleLike(cast)} />
               </Time>
             </Header>
-            <Body>{cast.text}</Body>
+            <Body onClick={() => window.open(`${baseUrl}/${cast.author.username}/${cast.hash}`)}>
+              {cast.text}
+            </Body>
           </Content>
         </Message>
       ))}
@@ -119,50 +124,50 @@ export const Feed = (props: Props) => {
   /////////////////
   // HELPERS
 
-  // // trigger a like of a cast
-  // async function likeCast(cast: CastWithInteractions) {
-  //   if (!farcasterUser.signer_uuid) return;
-  //   const response = await neynarClient.publishReactionToCast(
-  //     farcasterUser.signer_uuid,
-  //     'like',
-  //     cast.hash
-  //   );
+  // trigger a like of a cast
+  async function likeCast(cast: CastWithInteractions) {
+    if (!farcasterUser.signer_uuid) return;
+    const response = await neynarClient.publishReactionToCast(
+      farcasterUser.signer_uuid,
+      'like',
+      cast.hash
+    );
 
-  //   // update the list of casts
-  //   if (response.success) {
-  //     cast.reactions.likes.push({ fid: farcasterUser.fid });
-  //     for (const [i, cast] of casts.entries()) {
-  //       if (casts.find((c) => c.hash === cast.hash)) {
-  //         casts[i] = cast;
-  //         break;
-  //       }
-  //     }
-  //     setCasts(casts);
-  //   }
-  // }
+    // update the list of casts
+    if (response.success) {
+      cast.reactions.likes.push({ fid: farcasterUser.fid });
+      for (const [i, cast] of casts.entries()) {
+        if (casts.find((c) => c.hash === cast.hash)) {
+          casts[i] = cast;
+          break;
+        }
+      }
+      setCasts(casts);
+    }
+  }
 
-  // // trigger an unlike of a cast
-  // async function unlikeCast(cast: CastWithInteractions) {
-  //   if (!farcasterUser.signer_uuid) return;
-  //   const response = await neynarClient.deleteReactionFromCast(
-  //     farcasterUser.signer_uuid,
-  //     'like',
-  //     cast.hash
-  //   );
+  // trigger an unlike of a cast
+  async function unlikeCast(cast: CastWithInteractions) {
+    if (!farcasterUser.signer_uuid) return;
+    const response = await neynarClient.deleteReactionFromCast(
+      farcasterUser.signer_uuid,
+      'like',
+      cast.hash
+    );
 
-  //   // update the list of casts
-  //   if (response.success) {
-  //     const index = cast.reactions.likes.findIndex((l) => l.fid == farcasterUser.fid);
-  //     if (index > -1) cast.reactions.likes.splice(index, 1);
-  //     for (const [i, cast] of casts.entries()) {
-  //       if (casts.find((c) => c.hash === cast.hash)) {
-  //         casts[i] = cast;
-  //         break;
-  //       }
-  //     }
-  //     setCasts(casts);
-  //   }
-  // }
+    // update the list of casts
+    if (response.success) {
+      const index = cast.reactions.likes.findIndex((l) => l.fid == farcasterUser.fid);
+      if (index > -1) cast.reactions.likes.splice(index, 1);
+      for (const [i, cast] of casts.entries()) {
+        if (casts.find((c) => c.hash === cast.hash)) {
+          casts[i] = cast;
+          break;
+        }
+      }
+      setCasts(casts);
+    }
+  }
 
   // poll for the next feed of messages and update the list of current casts
   async function pollMore() {
@@ -230,11 +235,6 @@ const Message = styled.div`
   flex-flow: row nowrap;
   align-items: flex-start;
   gap: 0.4vw;
-
-  &:hover {
-    background-color: #f5f5f5;
-    cursor: pointer;
-  }
 `;
 
 const Content = styled.div`
@@ -250,6 +250,11 @@ const Pfp = styled.img`
   width: 3.6vw;
   height: 3.6vw;
   border-radius: 50%;
+
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+  }
 `;
 
 const Header = styled.div`
@@ -267,6 +272,11 @@ const Author = styled.div`
   color: orange;
   font-family: Pixel;
   font-size: 1vw;
+
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+  }
 `;
 
 const Time = styled.div`
@@ -283,11 +293,16 @@ const Time = styled.div`
 const Body = styled.div`
   color: black;
   width: 100%;
+
   font-family: Pixel;
   font-size: 0.8vw;
   line-height: 1.2vw;
-
   word-wrap: break-word;
+
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+  }
 `;
 
 const Heart = styled.div<{ color: string }>`
@@ -311,6 +326,6 @@ const Heart = styled.div<{ color: string }>`
   }
 
   &::hover {
-    opacity: 0.6;
+    cursor: pointer;
   }
 `;
