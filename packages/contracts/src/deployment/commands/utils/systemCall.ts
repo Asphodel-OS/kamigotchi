@@ -27,7 +27,31 @@ export const executeCall = async (rpc: string, deployerKey: string, data: Call) 
     ],
     { stdio: ["inherit", "pipe", "pipe"] }
   );
-  child.stdout?.on("data", (data) => console.log("stderr:", data.toString()));
+  child.stderr?.on("data", (data) => console.log("stderr:", data.toString()));
+  child.stdout?.on("data", (data) => console.log(data.toString()));
+
+  return { child: await child };
+};
+
+export const executeCallFromStream = async (rpc: string, deployerKey: string, world: string) => {
+  const child = execa(
+    "forge",
+    [
+      "script",
+      "src/deployment/contracts/InitWorld.s.sol:InitWorld",
+      "--fork-url",
+      rpc,
+      "--sig",
+      "initWorld(uint256,address)",
+      deployerKey,
+      world || "0x00",
+    ],
+    { stdio: ["inherit", "pipe", "pipe"] }
+  );
+  child.stderr?.on("data", (data) => console.log("stderr:", data.toString()));
+  child.stdout?.on("data", (data) => console.log(data.toString()));
+
+  return { child: await child };
 };
 
 export const createCall = (system: keyof typeof SystemAbis, args: any[], world?: string): Call => {
@@ -53,7 +77,7 @@ export const encodeArgs = (system: keyof typeof SystemAbis, args: any[]) => {
   const abi = getAbi(system).find((abi) => abi.type === "function" && abi.name === "executeTyped");
   if (abi)
     return ethers.utils.defaultAbiCoder.encode(
-      abi.inputs.map((n) => n.type),
+      abi.inputs.map((n: { type: any }) => n.type),
       args
     );
   return "";
@@ -61,10 +85,17 @@ export const encodeArgs = (system: keyof typeof SystemAbis, args: any[]) => {
 
 export const parseArgs = (system: keyof typeof SystemAbis, args: any[]) => {
   const abi = getAbi(system).find((abi) => abi.type === "function" && abi.name === "executeTyped");
-  const inputTypes = abi?.inputs.map((n) => n.type);
+  const inputTypes = abi?.inputs.map((n: { type: any }) => n.type);
   for (let i = 0; i < args.length; i++) {
     if (inputTypes && inputTypes[i] === "string") {
       args[i] = `"` + args[i] + `"`;
+    } else if (inputTypes && inputTypes[i].includes("[]")) {
+      args[i] =
+        args[i].length > 0
+          ? `_convertArray${inputTypes[i].slice(0, -2)}(abi.encode([${args[i]}]), ${
+              args[i].length
+            })` // converting array literal to memory
+          : `${inputTypes[i]}(0)`;
     }
   }
   return args;

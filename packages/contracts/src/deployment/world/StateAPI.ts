@@ -7,7 +7,11 @@ export type StateAPI = Awaited<ReturnType<typeof createStateAPI>>;
 export function createStateAPI(compiledCalls: string[]) {
   function call(system: keyof typeof SystemAbis, args: any[]) {
     const data = parseCall(system, args);
-    const result = data.system + ", abi.encode(" + data.args + ")";
+    let result = data.system + ", abi.encode(" + data.args + ")";
+    result = result.replace(/\n/g, "\\n");
+    result = result.replace(/[\u2018\u2019]/g, "'");
+    result = result.replace(/[\u201C\u201D]/g, '\\"');
+    result = result.replace(/[\u2026]/g, "...");
     compiledCalls.push(result);
     // console.log(result);
   }
@@ -174,8 +178,9 @@ export function createStateAPI(compiledCalls: string[]) {
     description: string,
     exits: number[]
   ) {
+    const loc = `Location(${location.x},${location.y},${location.z})`;
     return call("system._Room.Create", [
-      location,
+      loc,
       roomIndex,
       name,
       description,

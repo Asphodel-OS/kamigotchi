@@ -66,7 +66,7 @@ export async function generateSystemAbis() {
   const original = await readFile(path.join(clientDir, "types/SystemAbis.mjs"), {
     encoding: "utf8",
   });
-  const result = original.replace(/..\/abi/g, "../../../../abi");
+  const result = original.replace(/..\/abi/g, "../../../../../client/abi");
   await writeFile(outPath, result);
   return;
 }
