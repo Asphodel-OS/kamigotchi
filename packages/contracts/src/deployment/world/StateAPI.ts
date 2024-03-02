@@ -5,7 +5,9 @@ import { SystemAbis } from "./abis/SystemAbis";
 /// @note not currently in use, but archived in the codebase to potentially be useful someday
 /**
  * This is adapted off admin.ts from the client package,
- * but instead of calling the system directly, it parses it into a machine readable output that foundry scripts can parse through and act upon
+ * but instead of calling the system directly, it parses outputs that foundry scripts can parse through
+ *
+ * Not implemented as of now – some challenges wrt handling arrays and structs
  */
 
 export type StateAPI = Awaited<ReturnType<typeof createStateAPI>>;
