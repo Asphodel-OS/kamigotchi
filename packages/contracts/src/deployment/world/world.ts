@@ -2,7 +2,12 @@ import { parse } from "csv-parse/sync";
 import { utils } from "ethers";
 import { createStateAPI, StateAPI } from "./StateAPI";
 
-run();
+/// @note not currently in use, but archived in the codebase to potentially be useful someday
+/**
+ * This is adapted off world.ts from the client package.
+ *
+ * Not implemented
+ */
 
 export async function run() {
   const droptablesFile = readFile("items/Droptables.csv");

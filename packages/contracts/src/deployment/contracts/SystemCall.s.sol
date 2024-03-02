@@ -29,36 +29,6 @@ contract SystemCall is Script {
   //////////////
   // INTERNAL
 
-  function _convertArrayuint256(
-    bytes memory data,
-    uint256 length
-  ) internal returns (uint256[] memory) {
-    uint256[] memory arr = new uint256[](length);
-    for (uint256 i = 0; i < length; i++) {
-      arr[i] = abi.decode(data, (uint256[length]))[i];
-    }
-    return arr;
-  }
-
-  function _convertArrayuint32(
-    bytes memory data,
-    uint256 length
-  ) internal returns (uint32[] memory) {
-    uint32[] memory arr = new uint32[](length);
-    for (uint256 i = 0; i < length; i++) {
-      arr[i] = abi.decode(data, (uint32[length]))[i];
-    }
-    return arr;
-  }
-
-  function _convertArrayint32(bytes memory data, uint256 length) internal returns (int32[] memory) {
-    int32[] memory arr = new int32[](length);
-    for (uint256 i = 0; i < length; i++) {
-      arr[i] = abi.decode(data, (int32[length]))[i];
-    }
-    return arr;
-  }
-
   function _call(uint256 systemID, bytes memory args) public returns (bytes memory) {
     return _getSys(systemID).execute(args);
   }

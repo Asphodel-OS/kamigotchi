@@ -3,7 +3,6 @@ const { hideBin } = require("yargs/helpers");
 import { JsonRpcProvider } from "@ethersproject/providers";
 import dotenv from "dotenv";
 import { generateAndDeploy } from "./utils/deploy";
-import { executeCallFromStream } from "./utils/systemCall";
 const openurl = require("openurl");
 
 const argv = yargs(hideBin(process.argv)).argv;
@@ -32,11 +31,12 @@ const run = async () => {
     forgeOpts: argv.forgeOpts,
   });
 
-  const initResult = await executeCallFromStream(
-    getRpc(mode)!,
-    getDeployerKey(mode)!,
-    "0x610178da211fef7d417bc0e6fed39f05609ad788"
-  );
+  /// foundry implementation of world.ts - not in use
+  // const initResult = await executeCallFromStream(
+  //   getRpc(mode)!,
+  //   getDeployerKey(mode)!,
+  //   "0x610178da211fef7d417bc0e6fed39f05609ad788"
+  // );
 
   openurl.open(
     "http://localhost:3000/?worldAddress=" +

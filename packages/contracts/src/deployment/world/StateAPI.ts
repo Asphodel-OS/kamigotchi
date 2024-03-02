@@ -2,6 +2,12 @@ import { BigNumberish } from "ethers";
 import { parseCall } from "../commands/utils/systemCall";
 import { SystemAbis } from "./abis/SystemAbis";
 
+/// @note not currently in use, but archived in the codebase to potentially be useful someday
+/**
+ * This is adapted off admin.ts from the client package,
+ * but instead of calling the system directly, it parses it into a machine readable output that foundry scripts can parse through and act upon
+ */
+
 export type StateAPI = Awaited<ReturnType<typeof createStateAPI>>;
 
 export function createStateAPI(compiledCalls: string[]) {
