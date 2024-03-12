@@ -20,6 +20,7 @@ export const emptyFaracasterUser: FarcasterUser = {
   follower_count: 0,
   following_count: 0,
   verifications: [],
+  verified_addresses: { eth_addresses: [], sol_addresses: [] },
   active_status: 'inactive',
   viewer_context: { following: false, followed_by: false },
   profile: { bio: { text: '', mentioned_profiles: [] } },

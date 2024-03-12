@@ -11,15 +11,14 @@
   },
   "scripts": {
     "dev": "vite --port 3000",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "build": "vite build",
+    "preview": "rimraf dist/ && mkdir dist/ && vite preview",
     "lint": "eslint . --fix --ext .ts",
     "nuke": "rimraf node_modules dist",
     "prettier": "prettier src --check",
     "prettier:fix": "pnpm run prettier --write"
   },
   "devDependencies": {
-    "@rollup/plugin-inject": "^5.0.5",
     "@types/lodash": "^4.14.202",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^18.0.4",
@@ -28,11 +27,8 @@
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "@vitejs/plugin-react": "^4.1.1",
-    "csv-parser": "^3.0.0",
     "eslint": "^8.29.0",
     "fs": "0.0.1-security",
-    "parcel-reporter-static-files-copy": "^1.4.0",
-    "parcel-transformer-csv": "^0.0.3",
     "prettier": "^2.5.1",
     "prettier-plugin-organize-imports": "^3.2.4",
     "threads": "^1.7.0",
@@ -100,11 +96,11 @@
   },
   "alias": {
     "abi": "./abi",
+    "types": "./types",
     "src": "./src",
     "assets": "./src/assets",
     "constants": "./src/constants",
     "layers": "./src/layers",
-    "types": "./types",
     "utils": "./src/utils"
   }
 }

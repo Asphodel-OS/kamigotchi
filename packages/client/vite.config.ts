@@ -1,12 +1,12 @@
 import dsv from '@rollup/plugin-dsv';
-import inject from '@rollup/plugin-inject';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [dsv({ include: ['**/*.csv'] }), react()],
+  plugins: [dsv(), react()],
+  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.mp3', '**/*.png', '**/*.wav'],
   resolve: {
     alias: {
       abi: path.resolve(__dirname, './abi'),
@@ -19,8 +19,6 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
-    },
+    assetsInlineLimit: 0,
   },
 });

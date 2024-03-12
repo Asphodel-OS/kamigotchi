@@ -9,38 +9,22 @@
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
     "baseUrl": "./",
     "paths": {
-      "abi/*": [
-        "./abi/*",
-        "./abi"
-      ],
-      "assets/*": [
-        "./src/assets/*",
-        "./src/assets"
-      ],
-      "constants/*": [
-        "./src/constants/*",
-        "./src/constants"
-      ],
-      "layers/*": [
-        "./src/layers/*",
-        "./src/layers"
-      ],
-      "utils/*": [
-        "./src/utils/*",
-        "./src/utils"
-      ],
-      "types/*": [
-        "./types/*",
-        "./types",
-      ],
+      "abi/*": ["./abi/*", "./abi"],
+      "assets/*": ["./src/assets/*", "./src/assets"],
+      "constants/*": ["./src/constants/*", "./src/constants"],
+      "layers/*": ["./src/layers/*", "./src/layers"],
+      "utils/*": ["./src/utils/*", "./src/utils"],
+      "types/*": ["./types/*", "./types"]
     },
     "resolveJsonModule": true /* Enable importing .json files */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "strict": true /* Enable all strict type-checking options. */,
     "target": "esnext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "types": ["vite/client"] /* Specify type package names to be included without being referenced in a source file. */,
-    "useDefineForClassFields": true /* Emit ECMAScript-standard-compliant class fields. */,
+    "types": [
+      "vite/client"
+    ] /* Specify type package names to be included without being referenced in a source file. */,
+    "useDefineForClassFields": true /* Emit ECMAScript-standard-compliant class fields. */
   },
-  "exclude": ["dist", "packages"]
+  "exclude": ["dist", "packages", "node_modules", "types/", "abi"]
 }

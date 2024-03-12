@@ -24,34 +24,34 @@ import { Mint20 } from "tokens/Mint20.sol";
 import { Pet721 } from "tokens/Pet721.sol";
 
 abstract contract TestSetupImports is MudTest {
-// Components vars
+  // Components vars
 <% components.forEach(component => { -%>
-<%= component %> _<%= component %>;
+  <%= component %> _<%= component %>;
 <% }); -%>
 
-// System vars
+  // System vars
 <% systems.forEach(system => { -%>
-<%= system.name %> _<%= system.name %>;
+  <%= system.name %> _<%= system.name %>;
 <% }); -%>
 
-// Token vars
-Farm20 _Farm20;
-Mint20 _Mint20;
-Pet721 _Pet721;
+  // Token vars
+  Farm20 _Farm20;
+  Mint20 _Mint20;
+  Pet721 _Pet721;
 
-function setUp() public virtual override {
-super.setUp();
+  function setUp() public virtual override {
+    super.setUp();
 
 <% components.forEach(component => { -%>
-_<%= component %> = <%= component %>(component(<%= component %>ID));
+    _<%= component %> = <%= component %>(component(<%= component %>ID));
 <% }); -%>
 
 <% systems.forEach(system => { -%>
-_<%= system.name %> = <%= system.name %>(system(<%= system.name %>ID));
+    _<%= system.name %> = <%= system.name %>(system(<%= system.name %>ID));
 <% }); -%>
 
-_Farm20 = _Farm20ProxySystem.getToken();
-_Pet721 = _Pet721ProxySystem.getToken();
-_Mint20 = _Mint20ProxySystem.getToken();
-}
+    _Farm20 = _Farm20ProxySystem.getToken();
+    _Pet721 = _Pet721ProxySystem.getToken();
+    _Mint20 = _Mint20ProxySystem.getToken();
+  }
 }

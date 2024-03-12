@@ -1,0 +1,6 @@
+Index,Name,RoomIndex,Type,Description,Affinity,Room (old),Power Ratio,Per Tick Max,Finite?,Total Supply
+1,Torii Gate,3,HARVEST,"These gates usually indicate sacred areas. If you have Kamigotchi, this might be a good place to have them gather $MUSU....",NORMAL,8 - Forest,,,No,0
+2,Trash Compactor,7,HARVEST,Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor Trash compactor.,SCRAP,1 - Forest Clearing,,,Yes,0
+3,Termite Mound,10,HARVEST,"A huge termite mound. Apparently, this is sacred to the local insects.",INSECT,11 - Forest Shrine,,,Yes,0
+4,Occult Circle,14,HARVEST,The energy existing here exudes an eeriness that calls out to EERIE Kamigotchi.,EERIE,6 - Corridor,,,Yes,0
+5,Monolith,12,HARVEST,This huge black monolith seems to draw in energy from the rest of the junkyard.,SCRAP,9 - Insect Area,,,Yes,0

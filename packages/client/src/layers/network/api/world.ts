@@ -1,14 +1,14 @@
 import { utils } from 'ethers';
 
-import droptablesCSV from 'assets/data/items/Droptables.csv';
-import itemsCSV from 'assets/data/items/items.csv';
-import nodesCSV from 'assets/data/nodes/nodes.csv';
-import roomsCSV from 'assets/data/rooms/rooms.csv';
-import backgroundCSV from 'assets/data/traits/backgrounds.csv';
-import bodyCSV from 'assets/data/traits/bodies.csv';
-import colorCSV from 'assets/data/traits/colors.csv';
-import faceCSV from 'assets/data/traits/faces.csv';
-import handCSV from 'assets/data/traits/hands.csv';
+import droptablesCSV from 'assets/data/items/droptables2.csv';
+import itemsCSV from 'assets/data/items/items2.csv';
+import nodesCSV from 'assets/data/nodes/nodes2.csv';
+import roomsCSV from 'assets/data/rooms/rooms2.csv';
+import backgroundCSV from 'assets/data/traits/backgrounds2.csv';
+import bodyCSV from 'assets/data/traits/bodies2.csv';
+import colorCSV from 'assets/data/traits/colors2.csv';
+import faceCSV from 'assets/data/traits/faces2.csv';
+import handCSV from 'assets/data/traits/hands2.csv';
 
 import { createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
