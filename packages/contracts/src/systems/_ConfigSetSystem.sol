@@ -10,7 +10,6 @@ import { LibConfig } from "libraries/LibConfig.sol";
 uint256 constant ID = uint256(keccak256("system._Config.Set"));
 
 // _ConfigSetSystem creates a global config field entity of the provided type
-// and value. If the entry already exists, it will be overwritten.
 contract _ConfigSetSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -24,7 +23,21 @@ contract _ConfigSetSystem is System {
     return "";
   }
 
-  function executeTyped(string memory name, uint256 value) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(name, value));
+  function setValue(string memory name, uint256 value) public onlyOwner {
+    uint256 configID = LibConfig.get(components, name);
+    if (configID == 0) configID = LibConfig.create(world, components, name);
+    LibConfig.setValue(components, configID, value);
+  }
+
+  function setValueArray(string memory name, uint32[8] memory values) public onlyOwner {
+    uint256 configID = LibConfig.get(components, name);
+    if (configID == 0) configID = LibConfig.create(world, components, name);
+    LibConfig.setValueArray(components, configID, values);
+  }
+
+  function setValueString(string memory name, string memory value) public onlyOwner {
+    uint256 configID = LibConfig.get(components, name);
+    if (configID == 0) configID = LibConfig.create(world, components, name);
+    LibConfig.setValueString(components, configID, value);
   }
 }

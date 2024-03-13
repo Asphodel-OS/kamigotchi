@@ -143,7 +143,8 @@ library LibScore {
 
   // set current epoch for leaderboard. shoud only be called by owner
   function setCurrentEpoch(IUintComp components, uint256 epoch) internal {
-    LibConfig.setValueOf(components, "LEADERBOARD_EPOCH", epoch);
+    uint256 id = LibConfig.get(components, "LEADERBOARD_EPOCH");
+    LibConfig.setValue(components, id, epoch);
   }
 
   /////////////////

@@ -30,16 +30,20 @@ import type {
 export interface _ConfigSetSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(string,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "setValue(string,uint256)": FunctionFragment;
+    "setValueArray(string,uint32[8])": FunctionFragment;
+    "setValueString(string,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "execute"
-      | "executeTyped"
       | "owner"
+      | "setValue"
+      | "setValueArray"
+      | "setValueString"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -47,22 +51,35 @@ export interface _ConfigSetSystemInterface extends utils.Interface {
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "executeTyped",
+    functionFragment: "setValue",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setValueArray",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setValueString",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setValue", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "executeTyped",
+    functionFragment: "setValueArray",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setValueString",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -119,13 +136,25 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    setValue(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    setValueArray(
+      name: PromiseOrValue<string>,
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setValueString(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -138,13 +167,25 @@ export interface _ConfigSetSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  executeTyped(
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  setValue(
     name: PromiseOrValue<string>,
     value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
+  setValueArray(
+    name: PromiseOrValue<string>,
+    values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setValueString(
+    name: PromiseOrValue<string>,
+    value: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferOwnership(
     account: PromiseOrValue<string>,
@@ -157,13 +198,25 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    setValue(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    setValueArray(
+      name: PromiseOrValue<string>,
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setValueString(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -188,13 +241,25 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setValue(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    setValueArray(
+      name: PromiseOrValue<string>,
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setValueString(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     transferOwnership(
       account: PromiseOrValue<string>,
@@ -208,13 +273,25 @@ export interface _ConfigSetSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    executeTyped(
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setValue(
       name: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setValueArray(
+      name: PromiseOrValue<string>,
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setValueString(
+      name: PromiseOrValue<string>,
+      value: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       account: PromiseOrValue<string>,

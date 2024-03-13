@@ -23,9 +23,10 @@ library LibRegistryAffinity {
     string memory sourceAff,
     string memory targetAff
   ) public view returns (uint256) {
-    uint256 multBase = LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_BASE");
-    uint256 multUp = LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_UP");
-    uint256 multDown = LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_DOWN");
+    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "LIQ_THRESH_MULT_AFF");
+    uint256 multBase = uint256(configVals[0]);
+    uint256 multUp = uint256(configVals[1]);
+    uint256 multDown = uint256(configVals[2]);
 
     uint256 multiplier = multBase;
     if (LibString.eq(sourceAff, "EERIE")) {
@@ -48,9 +49,11 @@ library LibRegistryAffinity {
     string memory sourceAff,
     string memory targetAff
   ) public view returns (uint256) {
-    uint256 multBase = LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_BASE");
-    uint256 multUp = LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_UP");
-    uint256 multDown = LibConfig.getValueOf(components, "HARVEST_RATE_MULT_AFF_DOWN");
+    uint32[8] memory values = LibConfig.getValueArrayOf(components, "HARVEST_RATE_MULT_AFF");
+
+    uint256 multBase = uint256(values[0]);
+    uint256 multUp = uint256(values[1]);
+    uint256 multDown = uint256(values[2]);
 
     // default case is misalignment
     uint256 multiplier = multDown;

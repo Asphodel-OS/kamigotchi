@@ -747,23 +747,19 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // CONFIGS
 
-  function _getConfig(string memory key) internal view returns (uint) {
-    return LibConfig.getValueOf(components, key);
-  }
-
   function _setConfig(string memory key, uint value) internal {
     vm.prank(deployer);
-    __ConfigSetSystem.executeTyped(key, value);
+    __ConfigSetSystem.setValue(key, value);
+  }
+
+  function _setConfigArray(string memory key, uint32[8] memory values) internal {
+    vm.prank(deployer);
+    __ConfigSetSystem.setValueArray(key, values);
   }
 
   function _setConfigString(string memory key, string memory value) internal {
     vm.prank(deployer);
-    __ConfigSetStringSystem.executeTyped(key, value);
-  }
-
-  function _setConfigWei(string memory key, uint value) internal {
-    vm.prank(deployer);
-    __ConfigSetWeiSystem.executeTyped(key, value);
+    __ConfigSetSystem.setValueString(key, value);
   }
 
   function _initAllConfigs() internal {
@@ -801,15 +797,14 @@ abstract contract SetupTemplate is TestSetupImports {
   // Kami Leveling Curve
   function _initLevelingConfigs() internal {
     _setConfig("KAMI_LVL_REQ_BASE", 40);
-    _setConfig("KAMI_LVL_REQ_MULT_BASE", 1259);
-    _setConfig("KAMI_LVL_REQ_MULT_BASE_PREC", 3);
+    _setConfigArray("KAMI_LVL_REQ_MULT_BASE", [uint32(1259), 3, 0, 0, 0, 0, 0, 0]);
   }
 
   function _initMintConfigs() internal {
     _setConfig("MINT_ACCOUNT_MAX", 500);
     _setConfig("MINT_INITIAL_MAX", 1111);
     _setConfig("MINT_PRICE", 0);
-    _setConfigWei("GACHA_REROLL_PRICE", 0);
+    _setConfig("GACHA_REROLL_PRICE", 0);
     _setConfig("MINT_LEGACY_ENABLED", 0);
   }
 
@@ -827,39 +822,31 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initHealthConfigs() internal {
     // Kami Health Drain Rates
-    _setConfig("HEALTH_RATE_DRAIN_BASE", 1000); // in respect to harvest rate
-    _setConfig("HEALTH_RATE_DRAIN_BASE_PREC", 3);
+    _setConfigArray("HEALTH_RATE_DRAIN_BASE", [uint32(1000), 3, 0, 0, 0, 0, 0, 0]);
 
     // Kami Health Heal Rates
-    _setConfig("HEALTH_RATE_HEAL_PREC", 6);
-    _setConfig("HEALTH_RATE_HEAL_BASE", 1000); // in respect to harmony
-    _setConfig("HEALTH_RATE_HEAL_BASE_PREC", 3);
+    // (prec, base, base_prec)
+    _setConfigArray("HEALTH_RATE_HEAL_BASE", [uint32(6), 1000, 3, 0, 0, 0, 0, 0]);
   }
 
   function _initHarvestConfigs() internal {
     // Harvest Rates
-    _setConfig("HARVEST_RATE_PREC", 9);
-    _setConfig("HARVEST_RATE_BASE", 1000);
-    _setConfig("HARVEST_RATE_BASE_PREC", 3);
-    _setConfig("HARVEST_RATE_MULT_PREC", 7);
-    _setConfig("HARVEST_RATE_MULT_AFF_BASE", 100);
-    _setConfig("HARVEST_RATE_MULT_AFF_UP", 150);
-    _setConfig("HARVEST_RATE_MULT_AFF_DOWN", 50);
+    // [prec, base, base_prec, mult_prec]
+    _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 7, 0, 0, 0, 0]);
+    // [base, up, down]
+    _setConfigArray("HARVEST_RATE_MULT_AFF", [uint32(100), 150, 50, 0, 0, 0, 0, 0]);
     _setConfig("HARVEST_RATE_MULT_AFF_PREC", 2);
   }
 
   function _initLiquidationConfigs() internal {
     // Liquidation Calcs
-    _setConfig("LIQ_THRESH_BASE", 20);
-    _setConfig("LIQ_THRESH_BASE_PREC", 2);
-    _setConfig("LIQ_THRESH_MULT_AFF_BASE", 100);
-    _setConfig("LIQ_THRESH_MULT_AFF_UP", 200);
-    _setConfig("LIQ_THRESH_MULT_AFF_DOWN", 50);
+    _setConfigArray("LIQ_THRESH_BASE", [uint32(20), 2, 0, 0, 0, 0, 0, 0]);
+    // [base, up, down]
+    _setConfigArray("LIQ_THRESH_MULT_AFF", [uint32(100), 200, 50, 0, 0, 0, 0, 0]);
     _setConfig("LIQ_THRESH_MULT_AFF_PREC", 2);
 
     // Liquidation Bounty
-    _setConfig("LIQ_BOUNTY_BASE", 50);
-    _setConfig("LIQ_BOUNTY_BASE_PREC", 3);
+    _setConfigArray("LIQ_BOUNTY_BASE", [uint32(50), 3, 0, 0, 0, 0, 0, 0]);
   }
 
   ///////////////////////
