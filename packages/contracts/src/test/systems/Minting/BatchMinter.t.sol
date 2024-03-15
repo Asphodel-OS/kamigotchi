@@ -151,11 +151,11 @@ contract BatchMinterTest is SetupTemplate {
   //////////////////////
 
   function _calcStatsFromTraits(uint petID) internal view returns (int32[] memory) {
-    int32 health = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_HEALTH")));
-    int32 power = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_POWER")));
-    int32 violence = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_VIOLENCE")));
-    int32 harmony = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_HARMONY")));
-    int32 slots = int32(int(LibConfig.getValueOf(components, "KAMI_BASE_SLOTS")));
+    int32 health = int32(int(LibConfig.get(components, "KAMI_BASE_HEALTH")));
+    int32 power = int32(int(LibConfig.get(components, "KAMI_BASE_POWER")));
+    int32 violence = int32(int(LibConfig.get(components, "KAMI_BASE_VIOLENCE")));
+    int32 harmony = int32(int(LibConfig.get(components, "KAMI_BASE_HARMONY")));
+    int32 slots = int32(int(LibConfig.get(components, "KAMI_BASE_SLOTS")));
 
     // sum the stats from all traits
     uint256 traitRegistryID;

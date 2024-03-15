@@ -251,7 +251,7 @@ library LibGacha {
   }
 
   function getBaseRerollCost(IUintComp components) internal view returns (uint256) {
-    return LibConfig.getValueOf(components, "GACHA_REROLL_PRICE");
+    return LibConfig.get(components, "GACHA_REROLL_PRICE");
   }
 
   function getIncrement(IUintComp components) internal view returns (uint256) {

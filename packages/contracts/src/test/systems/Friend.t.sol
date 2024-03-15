@@ -75,7 +75,7 @@ contract FriendTest is SetupTemplate {
   }
 
   function testRequestLimit() public {
-    uint256 baseLimit = LibConfig.getValueOf(components, "FRIENDS_REQUEST_LIMIT");
+    uint256 baseLimit = LibConfig.get(components, "FRIENDS_REQUEST_LIMIT");
     for (uint256 i = 1; i < baseLimit + 1; i++) {
       _request(i, 0);
     }
@@ -103,7 +103,7 @@ contract FriendTest is SetupTemplate {
   }
 
   function testAcceptLimit() public {
-    uint256 baseLimit = LibConfig.getValueOf(components, "FRIENDS_BASE_LIMIT");
+    uint256 baseLimit = LibConfig.get(components, "FRIENDS_BASE_LIMIT");
     for (uint256 i = 1; i < baseLimit + 1; i++) {
       _accept(0, _request(i, 0));
     }

@@ -27,11 +27,20 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IsConfigComponentInterface extends utils.Interface {
+export type PreciseValueStruct = {
+  value: PromiseOrValue<BigNumberish>;
+  precision: PromiseOrValue<BigNumberish>;
+};
+
+export type PreciseValueStructOutput = [number, number] & {
+  value: number;
+  precision: number;
+};
+
+export interface PreciseValueComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
-    "getEntitiesWithValue(bool)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
     "getSchema()": FunctionFragment;
@@ -42,7 +51,7 @@ export interface IsConfigComponentInterface extends utils.Interface {
     "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "set(uint256)": FunctionFragment;
+    "set(uint256,(int32,uint8))": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
@@ -54,8 +63,7 @@ export interface IsConfigComponentInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "authorizeWriter"
       | "getEntities"
-      | "getEntitiesWithValue(bool)"
-      | "getEntitiesWithValue(bytes)"
+      | "getEntitiesWithValue"
       | "getRawValue"
       | "getSchema"
       | "getValue"
@@ -65,7 +73,7 @@ export interface IsConfigComponentInterface extends utils.Interface {
       | "registerIndexer"
       | "registerWorld"
       | "remove"
-      | "set(uint256)"
+      | "set(uint256,(int32,uint8))"
       | "set(uint256,bytes)"
       | "transferOwnership"
       | "unauthorizeWriter"
@@ -82,11 +90,7 @@ export interface IsConfigComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(bool)",
-    values: [PromiseOrValue<boolean>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -117,8 +121,8 @@ export interface IsConfigComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "set(uint256,(int32,uint8))",
+    values: [PromiseOrValue<BigNumberish>, PreciseValueStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
@@ -147,11 +151,7 @@ export interface IsConfigComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(bool)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -173,7 +173,7 @@ export interface IsConfigComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256)",
+    functionFragment: "set(uint256,(int32,uint8))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -213,12 +213,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface IsConfigComponent extends BaseContract {
+export interface PreciseValueComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IsConfigComponentInterface;
+  interface: PreciseValueComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -247,13 +247,8 @@ export interface IsConfigComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -269,7 +264,7 @@ export interface IsConfigComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[PreciseValueStructOutput]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -281,7 +276,7 @@ export interface IsConfigComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -295,8 +290,9 @@ export interface IsConfigComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256)"(
+    "set(uint256,(int32,uint8))"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PreciseValueStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -331,13 +327,8 @@ export interface IsConfigComponent extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  "getEntitiesWithValue(bool)"(
-    value: PromiseOrValue<boolean>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  "getEntitiesWithValue(bytes)"(
-    value: PromiseOrValue<BytesLike>,
+  getEntitiesWithValue(
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -353,7 +344,7 @@ export interface IsConfigComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<boolean>;
+  ): Promise<PreciseValueStructOutput>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -365,7 +356,7 @@ export interface IsConfigComponent extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   registerIndexer(
-    indexer: PromiseOrValue<string>,
+    arg0: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -379,8 +370,9 @@ export interface IsConfigComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256)"(
+  "set(uint256,(int32,uint8))"(
     entity: PromiseOrValue<BigNumberish>,
+    value: PreciseValueStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -415,13 +407,8 @@ export interface IsConfigComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -437,7 +424,7 @@ export interface IsConfigComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<PreciseValueStructOutput>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -449,7 +436,7 @@ export interface IsConfigComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -463,8 +450,9 @@ export interface IsConfigComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256)"(
+    "set(uint256,(int32,uint8))"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PreciseValueStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -511,13 +499,8 @@ export interface IsConfigComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -543,7 +526,7 @@ export interface IsConfigComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -557,8 +540,9 @@ export interface IsConfigComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256)"(
+    "set(uint256,(int32,uint8))"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PreciseValueStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -594,13 +578,8 @@ export interface IsConfigComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getEntitiesWithValue(bool)"(
-      value: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -626,7 +605,7 @@ export interface IsConfigComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -640,8 +619,9 @@ export interface IsConfigComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256)"(
+    "set(uint256,(int32,uint8))"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PreciseValueStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
