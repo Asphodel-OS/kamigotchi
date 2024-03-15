@@ -2,9 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
-import "std-contracts/test/MudTest.t.sol";
 
-import { Deploy } from "test/Deploy.sol";
 import "./TestSetupImports.sol";
 
 import { Location } from "libraries/LibRoom.sol";
@@ -15,7 +13,7 @@ abstract contract SetupTemplate is TestSetupImports {
   mapping(address => address) internal _operators; // owner => operator
   uint internal _currBlock;
 
-  constructor() MudTest(new Deploy()) {}
+  constructor() MudTest() {}
 
   //////////////////
   // SETUP
@@ -98,9 +96,9 @@ abstract contract SetupTemplate is TestSetupImports {
 
   // create a set of owner/operator pair addresses
   function _createOwnerOperatorPair() internal returns (address) {
-    address owner = utils.getNextUserAddress();
+    address owner = _getNextUserAddress();
     _owners.push(owner);
-    _operators[owner] = utils.getNextUserAddress();
+    _operators[owner] = _getNextUserAddress();
     return owner;
   }
 

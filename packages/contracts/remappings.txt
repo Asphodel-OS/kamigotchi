@@ -1,4 +1,5 @@
 components/=src/components
+deployment/=src/deployment
 libraries/=src/libraries
 systems/=src/systems
 test/=src/test
