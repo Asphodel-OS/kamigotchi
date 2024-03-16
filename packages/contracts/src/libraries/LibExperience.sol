@@ -49,9 +49,9 @@ library LibExperience {
     uint256 multiplier = 1e18;
 
     if (level > 1) {
-      uint multiplierBase = LibConfig.getValueOf(components, "KAMI_LVL_REQ_MULT_BASE");
-      uint256 multiplierBasePrec = 10 **
-        LibConfig.getValueOf(components, "KAMI_LVL_REQ_MULT_BASE_PREC");
+      uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "KAMI_LVL_REQ_MULT_BASE");
+      uint multiplierBase = uint256(configVals[0]);
+      uint256 multiplierBasePrec = 10 ** uint256(configVals[1]);
       int256 multiplierBaseFormatted = int256((1e18 * multiplierBase) / multiplierBasePrec);
       multiplier = uint256(LibFPMath.powWad(multiplierBaseFormatted, int256(level - 1) * 1e18));
     }

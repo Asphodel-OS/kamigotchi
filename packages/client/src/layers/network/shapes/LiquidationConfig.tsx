@@ -1,5 +1,5 @@
 import { NetworkLayer } from 'src/layers/network/types';
-import { getConfigFieldValue } from './Config';
+import { getConfigFieldValue, getConfigFieldValueArray } from './Config';
 
 // Liquidation Configuration Settings
 export interface LiquidationConfig {
@@ -24,9 +24,11 @@ export interface AffinityMultiplers {
 export const getLiquidationConfig = (network: NetworkLayer): LiquidationConfig => {
   const affinityMultiplierPrecision =
     10 ** getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_PREC');
-  const affinityMultiplierUp = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_UP');
-  const affinityMultiplierDown = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_DOWN');
-  const affinityMultiplierBase = getConfigFieldValue(network, 'LIQ_THRESH_MULT_AFF_BASE');
+  // [base, up, down]
+  const affinityMultiplierBaseArr = getConfigFieldValueArray(network, 'LIQ_THRESH_MULT_AFF');
+  const affinityMultiplierUp = affinityMultiplierBaseArr[0];
+  const affinityMultiplierDown = affinityMultiplierBaseArr[1];
+  const affinityMultiplierBase = affinityMultiplierBaseArr[2];
 
   const affinityMultipliers: AffinityMultiplers = {
     base: affinityMultiplierBase / affinityMultiplierPrecision,
@@ -38,10 +40,12 @@ export const getLiquidationConfig = (network: NetworkLayer): LiquidationConfig =
     affinity: affinityMultipliers,
   };
 
-  const bountyBase = getConfigFieldValue(network, 'LIQ_BOUNTY_BASE');
-  const bountyBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_BOUNTY_BASE_PREC');
-  const thresholdBase = getConfigFieldValue(network, 'LIQ_THRESH_BASE');
-  const thresholdBasePrecision = 10 ** getConfigFieldValue(network, 'LIQ_THRESH_BASE_PREC');
+  const bountyBaseArr = getConfigFieldValueArray(network, 'LIQ_BOUNTY_BASE');
+  const bountyBase = bountyBaseArr[0];
+  const bountyBasePrecision = 10 ** bountyBaseArr[1];
+  const thresholdBaseArr = getConfigFieldValueArray(network, 'LIQ_THRESH_BASE');
+  const thresholdBase = thresholdBaseArr[0];
+  const thresholdBasePrecision = 10 ** thresholdBaseArr[1];
 
   return {
     bountyRatio: bountyBase / bountyBasePrecision,
