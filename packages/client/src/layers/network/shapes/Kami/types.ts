@@ -12,7 +12,7 @@ import {
 import { Components } from 'layers/network';
 import { Account, getAccount } from '../Account';
 import { Bonuses, getBonuses } from '../Bonus';
-import { getConfigFieldValue } from '../Config';
+import { getConfigFieldValue, getConfigFieldValueArray } from '../Config';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
@@ -217,8 +217,9 @@ export const getKami = (
   // experience threshold calculation according to level
   if (kami.level) {
     const experienceBase = getConfigFieldValue(components, 'KAMI_LVL_REQ_BASE');
-    const experienceExponent = getConfigFieldValue(components, 'KAMI_LVL_REQ_MULT_BASE');
-    const exponentPrecision = 10 ** getConfigFieldValue(components, 'KAMI_LVL_REQ_MULT_BASE_PREC');
+    const expereinceExponentArr = getConfigFieldValueArray(components, 'KAMI_LVL_REQ_MULT_BASE');
+    const experienceExponent = expereinceExponentArr[0];
+    const exponentPrecision = 10 ** expereinceExponentArr[1];
     kami.experience.threshold = Math.floor(
       experienceBase * ((1.0 * experienceExponent) / exponentPrecision) ** (kami.level - 1)
     );
@@ -229,15 +230,17 @@ export const getKami = (
   if (kami.state === 'HARVESTING') {
     let productionRate = 0;
     if (kami.production) productionRate = kami.production.rate;
-    const drainBase = getConfigFieldValue(components, 'HEALTH_RATE_DRAIN_BASE');
-    const drainBasePrecision = 10 ** getConfigFieldValue(components, 'HEALTH_RATE_DRAIN_BASE_PREC');
+    const drainBaseArr = getConfigFieldValueArray(components, 'HEALTH_RATE_DRAIN_BASE');
+    const drainBase = drainBaseArr[0];
+    const drainBasePrecision = 10 ** drainBaseArr[1];
     const multiplier = kami.bonuses.harvest.drain;
     healthRate = (-1 * productionRate * drainBase * multiplier) / (1000 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
     const harmony = kami.stats.harmony;
     const totHarmony = (1.0 + harmony.boost / 1000) * (harmony.base + harmony.shift);
-    const healBase = getConfigFieldValue(components, 'HEALTH_RATE_HEAL_BASE');
-    const healBasePrecision = 10 ** getConfigFieldValue(components, 'HEALTH_RATE_HEAL_BASE_PREC');
+    const healBaseArr = getConfigFieldValueArray(components, 'HEALTH_RATE_HEAL_BASE');
+    const healBase = healBaseArr[1];
+    const healBasePrecision = 10 ** healBaseArr[2];
     healthRate = (totHarmony * healBase) / (3600 * healBasePrecision);
   }
   kami.stats.health.rate = healthRate;

@@ -31,15 +31,16 @@ contract HarvestTest is SetupTemplate {
   // NOTE: health drain is rounded while reward is truncated
   // this assumes no drain multipliers
   function _getExpectedHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
-    uint ratePrecision = 10 ** LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+    uint ratePrecision = 10 ** uint256(LibConfig.getValueArrayOf(components, "HARVEST_RATE")[0]);
     uint output = (rate * timeDelta) / (ratePrecision);
-    uint drainBase = LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE");
-    uint drainBasePrecision = 10 ** LibConfig.getValueOf(components, "HEALTH_RATE_DRAIN_BASE_PREC");
+    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint drainBase = uint256(configVals[0]);
+    uint drainBasePrecision = 10 ** uint256(configVals[1]);
     return (output * drainBase + (drainBasePrecision / 2)) / drainBasePrecision;
   }
 
   function _getExpectedOutput(uint rate, uint timeDelta) internal view returns (uint) {
-    uint ratePrecision = LibConfig.getValueOf(components, "HARVEST_RATE_PREC");
+    uint ratePrecision = uint256(LibConfig.getValueArrayOf(components, "HARVEST_RATE")[0]);
     return (rate * timeDelta) / 10 ** ratePrecision;
   }
 

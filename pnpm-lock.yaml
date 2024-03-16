@@ -120,7 +120,7 @@ importers:
         version: 2.6.10(@types/react@17.0.78)(react@18.2.0)(typescript@5.4.2)(utf-8-validate@5.0.10)(viem@2.9.4)
       antd:
         specifier: ^5.4.3
-        version: 5.15.2(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0)
+        version: 5.15.3(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0)
       async-mutex:
         specifier: ^0.3.2
         version: 0.3.2
@@ -7189,8 +7189,8 @@ packages:
       ansi-wrap: 0.1.0
     dev: true
 
-  /antd@5.15.2(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-EByEiCQknPKJVYfD+zneXwEvjdFzvMw8CZrsxw9nq19ftC4uMcMkZ2irasW7RQQGg9i7XsAZpAwYz3anuFX+EA==}
+  /antd@5.15.3(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-53dpdGbfwipHVbqITmppp8N16i+BscMzz8NUNwaJgxwSvO9VQh/NfC/90lqGq3I2oBmxQ8TzRIxzFVKD/9OhlQ==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'

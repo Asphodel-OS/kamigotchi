@@ -118,6 +118,7 @@ export function createComponents(world: World) {
     Affinity: defineStringEZ('Affinity', 'component.Affinity'),
     Balance: defineNumberEZ('Balance', 'component.Balance'),
     Balances: defineNumberArrayComponent(world, 'Balances', 'component.Balances'),
+    BareValue: defineNumberEZ('BareValue', 'component.BareValue'),
     Coin: defineNumberEZ('Coin', 'component.Coin'),
     Cost: defineNumberEZ('Cost', 'component.Cost'),
     Description: defineStringEZ('Description', 'component.Description'),
@@ -142,7 +143,6 @@ export function createComponents(world: World) {
     Type: defineStringEZ('Type', 'component.Type'),
     Value: defineNumberEZ('Value', 'component.Value'),
     Weights: defineNumberArrayComponent(world, 'Weights', 'component.Weights'),
-    Wei: defineStringEZ('Wei', 'component.Wei'),
 
     // Time/Block Tracking
     LastBlock: defineNumberEZ('BlockLast', 'component.Block.Last'),

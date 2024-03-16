@@ -11,10 +11,15 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { IsConfigComponent, ID as IsConfigCompID } from "components/IsConfigComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
-import { WeiComponent, ID as WeiCompID } from "components/WeiComponent.sol";
+import { BareValueComponent, ID as ValueCompID } from "components/BareValueComponent.sol";
 
-// a config entity is a global config of field values, identified by its NameComponent
+/// @notice a config entity is a global config of field values, identified by its NameComponent
+/** @dev
+ * There are 3 types of configs, all packed and stored into a single uint256.
+ * - uint256
+ * - string
+ * - uint32[8] (to store multiple values in a single entry)
+ */
 library LibConfig {
   // Create a global config field entity. Value is set separately
   function create(
@@ -31,84 +36,78 @@ library LibConfig {
   //////////////////
   // SETTERS
 
-  // Set the value of a global config field entity
+  /// @notice Set a value of a global config field entity
   function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+    BareValueComponent(getAddressById(components, ValueCompID)).set(id, value);
   }
 
-  // Packs a string value as a uint256 for a config. Max 32 chars.
+  /// @notice Set an array of values of a global config field entity
+  function setValueArray(IUintComp components, uint256 id, uint32[8] memory values) internal {
+    setValue(components, id, _packArray(values));
+  }
+
+  /// @notice Set a string value of a global config field entity
   function setValueString(IUintComp components, uint256 id, string memory value) internal {
     require(bytes(value).length <= 32, "LibConfig: string too long");
     require(bytes(value).length > 0, "LibConfig: string too short");
-    setValue(components, id, uint256(LibString.packOne(value)));
-  }
-
-  // Set Wei value for a config entity
-  function setWei(IUintComp components, uint256 id, uint256 value) internal {
-    WeiComponent(getAddressById(components, WeiCompID)).set(id, value);
-  }
-
-  // set the value of a global config entity by its name
-  function setValueOf(IUintComp components, string memory name, uint256 value) internal {
-    uint256 id = get(components, name);
-    setValue(components, id, value);
+    setValue(components, id, _stringToUint(value));
   }
 
   //////////////////
   // GETTERS
 
-  // Retrieve the value of a global config field entity
+  /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+    return BareValueComponent(getAddressById(components, ValueCompID)).getValue(id);
   }
 
-  function getWei(IUintComp components, uint256 id) internal view returns (uint256) {
-    return WeiComponent(getAddressById(components, WeiCompID)).getValue(id);
+  /// @notice Retrieve an array of values. Assumes it exists
+  function getValueArray(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (uint32[8] memory) {
+    return _unpackArray(getValue(components, id));
   }
 
-  // Retrieve the value of a global config field entity by name. Assume it exists.
+  /// @notice Retrieve the string value of a global config field entity
+  function getValueString(IUintComp components, uint256 id) internal view returns (string memory) {
+    return _uintToString(getValue(components, id));
+  }
+
+  /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   function getValueOf(IUintComp components, string memory name) internal view returns (uint256) {
     uint256 id = get(components, name);
     return getValue(components, id);
   }
 
+  /// @notice Retrieve an array of values. Assumes it exists
+  function getValueArrayOf(
+    IUintComp components,
+    string memory name
+  ) internal view returns (uint32[8] memory) {
+    uint256 id = get(components, name);
+    return getValueArray(components, id);
+  }
+
+  /// @notice Retrieve the string value of a global config field entity. Assumes it exists
   function getValueStringOf(
     IUintComp components,
     string memory name
   ) internal view returns (string memory) {
-    return _uintToString(getValueOf(components, name));
-  }
-
-  function getWeiValueOf(IUintComp components, string memory name) internal view returns (uint256) {
     uint256 id = get(components, name);
-    return getWei(components, id);
+    return getValueString(components, id);
   }
 
+  /// @notice Retrieves a batch of values (without precision). Assumes all exists
   function getBatchValueOf(
     IUintComp components,
     string[] memory names
   ) public view returns (uint256[] memory) {
     uint256[] memory values = getBatch(components, names);
 
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
-    for (uint256 i = 0; i < names.length; i++) {
-      if (values[i] != 0) values[i] = valueComp.getValue(values[i]);
-    }
-
-    return values;
-  }
-
-  function getBatchValueStringOf(
-    IUintComp components,
-    string[] memory names
-  ) internal view returns (string[] memory) {
-    string[] memory values = new string[](names.length);
-    uint256[] memory ids = getBatch(components, names);
-
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
-    for (uint256 i = 0; i < names.length; i++) {
-      if (ids[i] != 0) values[i] = _uintToString(valueComp.getValue(ids[i]));
-    }
+    BareValueComponent valueComp = BareValueComponent(getAddressById(components, ValueCompID));
+    for (uint256 i = 0; i < names.length; i++)
+      if (values[i] != 0) values[i] = uint256(uint32(valueComp.getValue(values[i])));
 
     return values;
   }
@@ -158,10 +157,30 @@ library LibConfig {
     }
   }
 
-  /////////////////////////
-  // UTILITIES
+  ////////////////////
+  // UTILS
+
+  function _stringToUint(string memory value) internal pure returns (uint256) {
+    return uint256(LibString.packOne(value));
+  }
 
   function _uintToString(uint256 value) internal pure returns (string memory) {
     return LibString.unpackOne((bytes32(abi.encodePacked(value))));
+  }
+
+  function _packArray(uint32[8] memory values) internal pure returns (uint256 result) {
+    for (uint256 i; i < values.length; i++) {
+      require(values[i] < (1 << 32) - 1, "max over limit");
+      result = (result << 32) | values[i];
+    }
+  }
+
+  // converts a bitpacked array to a regular array, fixed size of uint32[8]
+  function _unpackArray(uint256 packed) internal pure returns (uint32[8] memory result) {
+    for (uint256 i; i < 8; i++) {
+      // packed order is reversed
+      result[7 - i] = uint32(packed & ((1 << 32) - 1));
+      packed = packed >> 32;
+    }
   }
 }

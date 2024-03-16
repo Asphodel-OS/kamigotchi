@@ -1,7 +1,7 @@
 import { World } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
-import { getConfigFieldValue } from './Config';
+import { getConfigFieldValue, getConfigFieldValueArray } from './Config';
 
 // Liquidation Configuration Settings
 export interface LiquidationConfig {
@@ -26,9 +26,11 @@ export interface AffinityMultiplers {
 export const getLiquidationConfig = (world: World, components: Components): LiquidationConfig => {
   const affinityMultiplierPrecision =
     10 ** getConfigFieldValue(components, 'LIQ_THRESH_MULT_AFF_PREC');
-  const affinityMultiplierUp = getConfigFieldValue(components, 'LIQ_THRESH_MULT_AFF_UP');
-  const affinityMultiplierDown = getConfigFieldValue(components, 'LIQ_THRESH_MULT_AFF_DOWN');
-  const affinityMultiplierBase = getConfigFieldValue(components, 'LIQ_THRESH_MULT_AFF_BASE');
+  // [base, up, down]
+  const affinityMultiplierBaseArr = getConfigFieldValueArray(components, 'LIQ_THRESH_MULT_AFF');
+  const affinityMultiplierUp = affinityMultiplierBaseArr[0];
+  const affinityMultiplierDown = affinityMultiplierBaseArr[1];
+  const affinityMultiplierBase = affinityMultiplierBaseArr[2];
 
   const affinityMultipliers: AffinityMultiplers = {
     base: affinityMultiplierBase / affinityMultiplierPrecision,
@@ -40,10 +42,12 @@ export const getLiquidationConfig = (world: World, components: Components): Liqu
     affinity: affinityMultipliers,
   };
 
-  const bountyBase = getConfigFieldValue(components, 'LIQ_BOUNTY_BASE');
-  const bountyBasePrecision = 10 ** getConfigFieldValue(components, 'LIQ_BOUNTY_BASE_PREC');
-  const thresholdBase = getConfigFieldValue(components, 'LIQ_THRESH_BASE');
-  const thresholdBasePrecision = 10 ** getConfigFieldValue(components, 'LIQ_THRESH_BASE_PREC');
+  const bountyBaseArr = getConfigFieldValueArray(components, 'LIQ_BOUNTY_BASE');
+  const bountyBase = bountyBaseArr[0];
+  const bountyBasePrecision = 10 ** bountyBaseArr[1];
+  const thresholdBaseArr = getConfigFieldValueArray(components, 'LIQ_THRESH_BASE');
+  const thresholdBase = thresholdBaseArr[0];
+  const thresholdBasePrecision = 10 ** thresholdBaseArr[1];
 
   return {
     bountyRatio: bountyBase / bountyBasePrecision,
