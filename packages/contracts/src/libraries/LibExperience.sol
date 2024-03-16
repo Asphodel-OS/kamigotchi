@@ -8,6 +8,7 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 
 // This library is a wrapper that provides useful functions around the experience and level
 // components. The progression calculation is bsed on
@@ -99,5 +100,12 @@ library LibExperience {
     LevelComponent comp = LevelComponent(getAddressById(components, LevelCompID));
     if (!comp.has(id)) return 1;
     return comp.getValue(id);
+  }
+
+  /////////////////
+  // LOGGING
+
+  function logPetLevelInc(IUintComp components, uint256 holderID) internal {
+    LibDataEntity.inc(components, holderID, 0, "KAMI_LEVEL_INC", 1);
   }
 }

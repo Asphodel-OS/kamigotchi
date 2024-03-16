@@ -31,16 +31,17 @@ contract ListingSellSystem is System {
       "Listing.Sell(): invalid listing!"
     );
 
+    uint256 price = LibListing.getSellPrice(components, listingID);
     LibListing.sellTo(components, listingID, accountID, amt);
 
     // standard logging and tracking
     LibListing.logIncItemSell(
-      world,
       components,
       accountID,
       LibListing.getItemIndex(components, listingID),
       amt
     );
+    LibListing.logSpendCoin(components, accountID, amt * price);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

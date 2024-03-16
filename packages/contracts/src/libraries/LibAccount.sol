@@ -17,6 +17,7 @@ import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/Address
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
@@ -227,6 +228,19 @@ library LibAccount {
     return LibDataEntity.get(components, id, 0, "MINT20_MINT");
   }
 
+  function getTopKamiLevel(
+    IUintComp components,
+    uint256[] memory petIDs
+  ) internal view returns (uint256) {
+    uint256 highestLevel = 0;
+    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+    for (uint256 i = 0; i < petIDs.length; i++) {
+      uint256 level = levelComp.getValue(petIDs[i]);
+      if (level > highestLevel) highestLevel = level;
+    }
+    return highestLevel;
+  }
+
   // get the balance of X (type+index) of an account
   function getBalanceOf(
     IUintComp components,
@@ -242,6 +256,8 @@ library LibAccount {
       balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");
     } else if (LibString.eq(_type, "KAMI")) {
       balance = getPetsOwned(components, id).length;
+    } else if (LibString.eq(_type, "KAMI_LEVEL_HIGHEST")) {
+      balance = getTopKamiLevel(components, getPetsOwned(components, id));
     } else {
       require(false, "LibAccount: unknown type");
     }

@@ -28,7 +28,8 @@ contract QuestCompleteSystem is System {
     LibQuests.complete(world, components, questID, accountID);
 
     // standard logging and tracking
-    LibDataEntity.inc(components, accountID, 0, "QUEST_COMPLETE", 1);
+    LibQuests.logComplete(components, accountID);
+    LibQuests.logCompleteRepeatable(components, accountID, questID);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
