@@ -210,6 +210,6 @@ library LibInventory {
     uint32 itemIndex,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(world, components, accountID, itemIndex, "ITEM_TOTAL", amt);
+    LibDataEntity.inc(components, accountID, itemIndex, "ITEM_TOTAL", amt);
   }
 }

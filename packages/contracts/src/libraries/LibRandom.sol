@@ -6,6 +6,8 @@ import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
+import { LibPack } from "libraries/utils/LibPack.sol";
+
 import { BlockRevealComponent as BlockRevealComp, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 
 library LibRandom {
@@ -201,7 +203,7 @@ library LibRandom {
     uint256 totalWeight = pTotalWeight(weights, SIZE);
 
     return
-      pGetAt(
+      LibPack.pGetAt(
         keys,
         _pPositionFromWeighted(weights, numElements, totalWeight, randN, SIZE),
         numElements,
@@ -286,7 +288,7 @@ library LibRandom {
     // iterate to find item
     uint256 currentWeight;
     for (uint256 i; i < numElements; i++) {
-      currentWeight += pGetAt(weights, i, numElements, SIZE);
+      currentWeight += LibPack.pGetAt(weights, i, numElements, SIZE);
       if (roll < currentWeight) {
         return (i);
       }
@@ -335,37 +337,6 @@ library LibRandom {
   //////////////////
   // BITPACK HELPERS
 
-  /// @notice updates a bitpacked value at a specific position. returns the new packed array
-  /// @param newElement: the new value to set
-  /// @param position: the position to set
-  /// @param maxPos: the number of elements in array
-  /// @param SIZE: the size of each element (eg 8 for uint8, which allows for 32 values packed)
-  /// @param packed: the original packed value
-  function pUpdateElement(
-    uint256 newElement,
-    uint256 position,
-    uint256 maxPos,
-    uint256 SIZE,
-    uint256 packed
-  ) internal pure returns (uint256) {
-    require(position < (256 / SIZE) && position <= maxPos, "out of bounds");
-    require(newElement < (1 << SIZE), "new num out of bounds");
-
-    return
-      (packed & ~(((1 << SIZE) - 1) << (SIZE * (maxPos - position)))) |
-      (newElement << (SIZE * (maxPos - position)));
-  }
-
-  /// @notice gets a bitpacked value at a specific position
-  function pGetAt(
-    uint256 packed,
-    uint256 position,
-    uint256 maxPos,
-    uint256 SIZE
-  ) internal pure returns (uint256) {
-    return packed & (((1 << SIZE) - 1) << (SIZE * (maxPos - position)));
-  }
-
   /// @notice calculates total weight of a bitpacked array
   function pTotalWeight(uint256 packed, uint256 SIZE) internal pure returns (uint256 totalWeight) {
     uint256 num = 256 / SIZE;
@@ -375,35 +346,5 @@ library LibRandom {
     }
 
     return totalWeight;
-  }
-
-  // converts a regular array to a bitpacked array
-  function packArray(uint32[] memory arr, uint256 SIZE) internal pure returns (uint256) {
-    uint256 result;
-    for (uint256 i; i < arr.length; i++) {
-      require(arr[i] < (1 << SIZE) - 1, "max over limit");
-      result = (result << SIZE) | arr[i];
-    }
-
-    return result;
-  }
-
-  // converts a bitpacked array to a regular array
-  function unpackArray(
-    uint256 packed,
-    uint256 numElements,
-    uint256 SIZE
-  ) internal pure returns (uint32[] memory) {
-    uint32[] memory result = new uint32[](numElements);
-
-    for (uint256 i; i < numElements; i++) {
-      // packed order is reversed
-      result[numElements - 1 - i] = uint32(packed & ((1 << SIZE) - 1));
-      // result[i] = packed & ((1 << SIZE) - 1);
-
-      packed = packed >> SIZE;
-    }
-
-    return result;
   }
 }

@@ -163,7 +163,7 @@ library LibAccount {
     uint256 account,
     uint256 value
   ) internal {
-    LibDataEntity.set(world, components, account, 0, "MINT20_MINT", value);
+    LibDataEntity.set(components, account, 0, "MINT20_MINT", value);
   }
 
   /////////////////
@@ -344,7 +344,7 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.inc(world, components, accountID, 0, "PET721_MINT", count);
+    LibDataEntity.inc(components, accountID, 0, "PET721_MINT", count);
   }
 
   function logIncPetsRerolled(
@@ -353,7 +353,7 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.inc(world, components, accountID, 0, "PET_REROLL", count);
+    LibDataEntity.inc(components, accountID, 0, "PET_REROLL", count);
   }
 
   function logIncPetsStaked(
@@ -362,6 +362,6 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.inc(world, components, accountID, 0, "PET_STAKE", count);
+    LibDataEntity.inc(components, accountID, 0, "PET_STAKE", count);
   }
 }
