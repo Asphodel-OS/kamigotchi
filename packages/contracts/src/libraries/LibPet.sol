@@ -638,4 +638,11 @@ library LibPet {
 
     return LibQuery.query(fragments);
   }
+
+  ////////////////////
+  // LOGGING
+
+  function logRevive(IUintComp components, uint256 accountID) internal {
+    LibDataEntity.inc(components, accountID, 0, "PET_REVIVE", 1);
+  }
 }

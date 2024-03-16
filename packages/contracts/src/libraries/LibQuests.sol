@@ -722,4 +722,20 @@ library LibQuests {
 
     return LibQuery.query(fragments);
   }
+
+  ////////////////////
+  // LOGGING
+
+  function logComplete(IUintComp components, uint256 accountID) internal {
+    LibDataEntity.inc(components, accountID, 0, "QUEST_COMPLETE", 1);
+  }
+
+  function logCompleteRepeatable(
+    IUintComp components,
+    uint256 accountID,
+    uint256 questID
+  ) internal {
+    if (isRepeatable(components, questID))
+      LibDataEntity.inc(components, accountID, 0, "QUEST_REPEATABLE_COMPLETE", 1);
+  }
 }

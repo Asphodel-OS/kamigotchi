@@ -36,6 +36,7 @@ contract AccountMoveSystem is System {
     );
 
     LibAccount.move(components, accountID, toIndex);
+    LibRoom.logMove(components, accountID);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

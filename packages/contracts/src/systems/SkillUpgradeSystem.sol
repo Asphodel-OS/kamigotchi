@@ -72,6 +72,7 @@ contract SkillUpgradeSystem is System {
     if (isPet) LibPet.sync(components, holderID);
 
     // standard logging and tracking
+    LibSkill.logUsePoint(components, accountID);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

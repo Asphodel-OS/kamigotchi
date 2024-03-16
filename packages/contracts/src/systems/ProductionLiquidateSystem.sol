@@ -82,14 +82,14 @@ contract ProductionLiquidateSystem is System {
       components,
       accountID,
       LibNode.getIndex(components, nodeID),
-      "NODE_LIQUIDATE",
+      "LIQUIDATE_AT_NODE",
       1
     );
     LibDataEntity.inc(
       components,
       LibPet.getAccount(components, targetPetID),
       0,
-      "BEEN_LIQUIDATEED",
+      "LIQUIDATED_VICTIM",
       1
     );
     LibAccount.updateLastTs(components, accountID);
