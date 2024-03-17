@@ -50,9 +50,7 @@
     "IsBonusComponent",
     "IsCompleteComponent",
     "IsConditionComponent",
-    "IsConfigComponent",
     "IsConsumableComponent",
-    "IsDataComponent",
     "IsEffectComponent",
     "IsEquippedComponent",
     "IsFriendshipComponent",
@@ -74,7 +72,6 @@
     "IsRoomComponent",
     "IsObjectiveComponent",
     "IsQuestComponent",
-    "IsScoreComponent",
     "IsSkillComponent",
     "KeysComponent",
     "LevelComponent",
@@ -113,17 +110,11 @@
   "systems": [
     {
       "name": "_devGiveTokensSystem",
-      "writeAccess": [
-        "IdHolderComponent",
-        "IsDataComponent",
-        "CoinComponent",
-        "TypeComponent",
-        "ValueComponent"
-      ]
+      "writeAccess": ["BareValueComponent", "CoinComponent"]
     },
     {
       "name": "_ConfigSetSystem",
-      "writeAccess": ["IsConfigComponent", "NameComponent", "BareValueComponent"]
+      "writeAccess": ["BareValueComponent"]
     },
     {
       "name": "_ListingSetSystem",
@@ -161,7 +152,12 @@
     },
     {
       "name": "_NPCCreateSystem",
-      "writeAccess": ["IsNPCComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
+      "writeAccess": [
+        "IsNPCComponent",
+        "IndexNPCComponent",
+        "IndexRoomComponent",
+        "NameComponent"
+      ]
     },
     {
       "name": "_NPCSetRoomSystem",
@@ -369,7 +365,11 @@
     },
     {
       "name": "_RegistryUpdateRelationshipSystem",
-      "writeAccess": ["NameComponent", "BlacklistComponent", "WhitelistComponent"]
+      "writeAccess": [
+        "NameComponent",
+        "BlacklistComponent",
+        "WhitelistComponent"
+      ]
     },
     {
       "name": "_RoomCreateGateSystem",
@@ -413,13 +413,9 @@
       "name": "AccountFundSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "EpochComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
-        "IsScoreComponent",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeLastComponent"
       ]
     },
     {
@@ -457,7 +453,11 @@
     },
     {
       "name": "AccountSetFarcasterDataSystem",
-      "writeAccess": ["IndexFarcasterComponent", "MediaURIComponent", "TimeLastComponent"]
+      "writeAccess": [
+        "IndexFarcasterComponent",
+        "MediaURIComponent",
+        "TimeLastComponent"
+      ]
     },
     {
       "name": "AccountUpgradeSkillSystem",
@@ -480,26 +480,22 @@
     {
       "name": "Farm20DepositSystem",
       "writeAccess": [
+        "BareValueComponent",
         "CoinComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "ProxyPermissionsFarm20Component",
-        "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeLastComponent"
       ]
     },
     {
       "name": "Farm20WithdrawSystem",
       "writeAccess": [
+        "BareValueComponent",
         "CoinComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "ProxyPermissionsFarm20Component",
-        "TypeComponent",
         "TimeLastComponent",
-        "TimelockComponent",
-        "ValueComponent"
+        "TimelockComponent"
       ]
     },
     {
@@ -546,9 +542,9 @@
       "name": "ListingBuySystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "CoinComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "IndexItemComponent",
         "IndexComponent",
         "IsFungibleComponent",
@@ -562,9 +558,9 @@
       "name": "ListingSellSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "CoinComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "IndexComponent",
         "TimeLastComponent",
         "TypeComponent",
@@ -574,13 +570,13 @@
     {
       "name": "LootboxExecuteRevealSystem",
       "writeAccess": [
+        "BlockRevealComponent",
         "BalanceComponent",
         "BalancesComponent",
-        "BlockRevealComponent",
+        "BareValueComponent",
         "IdHolderComponent",
         "IndexItemComponent",
         "IndexComponent",
-        "IsDataComponent",
         "IsLootboxComponent",
         "IsLogComponent",
         "IsInventoryComponent",
@@ -609,13 +605,10 @@
     {
       "name": "Mint20MintSystem",
       "writeAccess": [
+        "BareValueComponent",
         "IdAccountComponent",
         "IdPetComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
         "TimeLastComponent",
-        "TypeComponent",
-        "ValueComponent",
         "ProxyPermissionsMint20Component"
       ]
     },
@@ -623,19 +616,15 @@
       "name": "NodeCollectSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
-        "IsScoreComponent",
         "IndexComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeStartComponent"
       ]
     },
     {
@@ -653,9 +642,9 @@
     {
       "name": "Pet721UnstakeSystem",
       "writeAccess": [
+        "BareValueComponent",
         "IdAccountComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "ProxyPermissionsERC721Component",
         "StateComponent",
         "TimeLastComponent",
@@ -668,10 +657,10 @@
       "writeAccess": [
         "AddressOperatorComponent",
         "AddressOwnerComponent",
+        "BareValueComponent",
         "IdAccountComponent",
         "IdHolderComponent",
         "IsAccountComponent",
-        "IsDataComponent",
         "IndexRoomComponent",
         "NameComponent",
         "ProxyPermissionsERC721Component",
@@ -686,13 +675,12 @@
       "name": "PetFeedSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
         "IdHolderComponent",
-        "IsDataComponent",
-        "IsScoreComponent",
         "IndexComponent",
         "RateComponent",
         "TimeLastComponent",
@@ -704,27 +692,27 @@
     {
       "name": "PetGachaMintSystem",
       "writeAccess": [
-        "BalanceComponent",
         "BlockRevealComponent",
+        "BalanceComponent",
+        "BareValueComponent",
         "IdAccountComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "RerollComponent",
         "TimeLastComponent",
-        "TypeComponent",
         "ProxyPermissionsMint20Component",
+        "TypeComponent",
         "ValueComponent"
       ]
     },
     {
       "name": "PetGachaRerollSystem",
       "writeAccess": [
-        "BalanceComponent",
         "BlockRevealComponent",
+        "BalanceComponent",
+        "BareValueComponent",
         "GachaOrderComponent",
         "IdAccountComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "RerollComponent",
         "TimeLastComponent",
         "TypeComponent",
@@ -739,6 +727,7 @@
         "BlockRevealComponent",
         "GachaOrderComponent",
         "IdAccountComponent",
+        "IdHolderComponent",
         "RerollComponent",
         "StateComponent",
         "TypeComponent",
@@ -767,8 +756,8 @@
       "name": "PetReviveSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "IdHolderComponent",
-        "IsDataComponent",
         "IndexComponent",
         "HealthComponent",
         "StateComponent",
@@ -804,40 +793,38 @@
     },
     {
       "name": "PetUseItemSystem",
-      "writeAccess": ["BalanceComponent", "CanNameComponent", "TimeLastComponent"]
+      "writeAccess": [
+        "BalanceComponent",
+        "CanNameComponent",
+        "TimeLastComponent"
+      ]
     },
     {
       "name": "ProductionCollectSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
-        "IsScoreComponent",
         "IndexComponent",
         "RateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeStartComponent"
       ]
     },
     {
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
-        "IdHolderComponent",
+        "BareValueComponent",
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
         "IndexComponent",
         "IndexNodeComponent",
-        "IsDataComponent",
         "IsKillComponent",
-        "IsScoreComponent",
         "BalanceComponent",
         "CoinComponent",
         "EpochComponent",
@@ -847,9 +834,7 @@
         "TimeComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TypeComponent"
       ]
     },
     {
@@ -872,21 +857,17 @@
       "name": "ProductionStopSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "CoinComponent",
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
-        "IdHolderComponent",
-        "IsDataComponent",
-        "IsScoreComponent",
         "IndexComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TimeStartComponent"
       ]
     },
     {

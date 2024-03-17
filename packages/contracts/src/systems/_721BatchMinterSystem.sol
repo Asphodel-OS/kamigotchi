@@ -385,7 +385,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   /// @notice reveal traits
   function revealPets(uint256[] memory ids, uint256 amount) internal {
     uint256 seed = baseSeed;
-    string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
+    string memory _baseURI = LibConfig.getString(components, "BASE_URI");
 
     // memoized trait weight and stats
     TraitWeights[] memory weights = traitWeights;

@@ -25,7 +25,7 @@ contract MurderTest is SetupTemplate {
     _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
 
     // starting states
-    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
+    _idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
   }
 
   /////////////////

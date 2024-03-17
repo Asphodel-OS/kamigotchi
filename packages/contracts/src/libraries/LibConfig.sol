@@ -9,7 +9,6 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { LibString } from "solady/utils/LibString.sol";
 
-import { IsConfigComponent, ID as IsConfigCompID } from "components/IsConfigComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { BareValueComponent, ID as ValueCompID } from "components/BareValueComponent.sol";
 
@@ -21,16 +20,9 @@ import { BareValueComponent, ID as ValueCompID } from "components/BareValueCompo
  * - uint32[8] (to store multiple values in a single entry)
  */
 library LibConfig {
-  // Create a global config field entity. Value is set separately
-  function create(
-    IWorld world,
-    IUintComp components,
-    string memory name
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    IsConfigComponent(getAddressById(components, IsConfigCompID)).set(id);
-    NameComponent(getAddressById(components, NameCompID)).set(id, name);
-    return id;
+  /// @notice Retrieve the ID of a config with the given type
+  function getID(string memory name) internal pure returns (uint256 result) {
+    return uint256(keccak256(abi.encodePacked("Is.Config", name)));
   }
 
   //////////////////
@@ -57,6 +49,45 @@ library LibConfig {
   // GETTERS
 
   /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
+  function get(IUintComp components, string memory name) internal view returns (uint256) {
+    uint256 id = getID(name);
+    return getValue(components, id);
+  }
+
+  /// @notice Retrieve an array of values. Assumes it exists
+  function getArray(
+    IUintComp components,
+    string memory name
+  ) internal view returns (uint32[8] memory) {
+    uint256 id = getID(name);
+    return getValueArray(components, id);
+  }
+
+  /// @notice Retrieve the string value of a global config field entity. Assumes it exists
+  function getString(
+    IUintComp components,
+    string memory name
+  ) internal view returns (string memory) {
+    uint256 id = getID(name);
+    return getValueString(components, id);
+  }
+
+  /// @notice Retrieves a batch of values (without precision). Assumes all exists
+  function getBatch(
+    IUintComp components,
+    string[] memory names
+  ) public view returns (uint256[] memory) {
+    uint256[] memory values = new uint256[](names.length);
+    for (uint256 i = 0; i < names.length; i++) values[i] = getID(names[i]);
+
+    BareValueComponent valueComp = BareValueComponent(getAddressById(components, ValueCompID));
+    for (uint256 i = 0; i < names.length; i++)
+      if (values[i] != 0) values[i] = uint256(uint32(valueComp.getValue(values[i])));
+
+    return values;
+  }
+
+  /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
     return BareValueComponent(getAddressById(components, ValueCompID)).getValue(id);
   }
@@ -72,89 +103,6 @@ library LibConfig {
   /// @notice Retrieve the string value of a global config field entity
   function getValueString(IUintComp components, uint256 id) internal view returns (string memory) {
     return _uintToString(getValue(components, id));
-  }
-
-  /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
-  function getValueOf(IUintComp components, string memory name) internal view returns (uint256) {
-    uint256 id = get(components, name);
-    return getValue(components, id);
-  }
-
-  /// @notice Retrieve an array of values. Assumes it exists
-  function getValueArrayOf(
-    IUintComp components,
-    string memory name
-  ) internal view returns (uint32[8] memory) {
-    uint256 id = get(components, name);
-    return getValueArray(components, id);
-  }
-
-  /// @notice Retrieve the string value of a global config field entity. Assumes it exists
-  function getValueStringOf(
-    IUintComp components,
-    string memory name
-  ) internal view returns (string memory) {
-    uint256 id = get(components, name);
-    return getValueString(components, id);
-  }
-
-  /// @notice Retrieves a batch of values (without precision). Assumes all exists
-  function getBatchValueOf(
-    IUintComp components,
-    string[] memory names
-  ) public view returns (uint256[] memory) {
-    uint256[] memory values = getBatch(components, names);
-
-    BareValueComponent valueComp = BareValueComponent(getAddressById(components, ValueCompID));
-    for (uint256 i = 0; i < names.length; i++)
-      if (values[i] != 0) values[i] = uint256(uint32(valueComp.getValue(values[i])));
-
-    return values;
-  }
-
-  //////////////////
-  // QUERIES
-
-  /// @notice Retrieve the ID of a config with the given type
-  function get(IUintComp components, string memory name) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsConfigCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, NameCompID),
-      abi.encode(name)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) {
-      result = results[0];
-    }
-  }
-
-  /// @notice Retrieve an array of IDs of a config with the given types
-  function getBatch(
-    IUintComp components,
-    string[] memory names
-  ) internal view returns (uint256[] memory entities) {
-    entities = new uint256[](names.length);
-
-    QueryFragment memory nameFragment = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, NameCompID),
-      new bytes(0)
-    );
-
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsConfigCompID), "");
-
-    for (uint256 i = 0; i < names.length; i++) {
-      nameFragment.value = abi.encode(names[i]);
-      fragments[1] = nameFragment;
-      uint256[] memory results = LibQuery.query(fragments);
-      if (results.length > 0) {
-        entities[i] = results[0];
-      }
-    }
   }
 
   ////////////////////

@@ -52,7 +52,7 @@ library LibAccount {
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 1);
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
 
-    int32 baseStamina = int32(uint32(LibConfig.getValueOf(components, "ACCOUNT_STAMINA_BASE")));
+    int32 baseStamina = int32(uint32(LibConfig.get(components, "ACCOUNT_STAMINA_BASE")));
     LibStat.setStamina(components, id, Stat(baseStamina, 0, 0, baseStamina));
 
     updateLastActionTs(components, id);
@@ -74,7 +74,7 @@ library LibAccount {
   // syncs the stamina of an account. rounds down, ruthlessly
   function syncStamina(IUintComp components, uint256 id) internal returns (int32) {
     uint256 timePassed = block.timestamp - getLastActionTs(components, id);
-    uint256 recoveryPeriod = LibConfig.getValueOf(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
+    uint256 recoveryPeriod = LibConfig.get(components, "ACCOUNT_STAMINA_RECOVERY_PERIOD");
     int32 recoveredAmt = int32(uint32(timePassed / recoveryPeriod));
     updateLastActionTs(components, id);
     return recover(components, id, recoveredAmt);
@@ -109,7 +109,7 @@ library LibAccount {
     } else if (LibString.eq(_type, "MINT20")) {
       uint256 accountMinted = getMint20Minted(components, id);
       require(
-        accountMinted + amount <= LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX"),
+        accountMinted + amount <= LibConfig.get(components, "MINT_ACCOUNT_MAX"),
         "Mint20Mint: account limit exceeded"
       );
       address to = getOwner(components, id);
@@ -163,7 +163,7 @@ library LibAccount {
     uint256 account,
     uint256 value
   ) internal {
-    LibDataEntity.setFor(world, components, account, 0, "MINT20_MINT", value);
+    LibDataEntity.set(world, components, account, 0, "MINT20_MINT", value);
   }
 
   /////////////////
@@ -344,7 +344,7 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, accountID, 0, "PET721_MINT", count);
+    LibDataEntity.inc(world, components, accountID, 0, "PET721_MINT", count);
   }
 
   function logIncPetsRerolled(
@@ -353,7 +353,7 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, accountID, 0, "PET_REROLL", count);
+    LibDataEntity.inc(world, components, accountID, 0, "PET_REROLL", count);
   }
 
   function logIncPetsStaked(
@@ -362,6 +362,6 @@ library LibAccount {
     uint256 accountID,
     uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, accountID, 0, "PET_STAKE", count);
+    LibDataEntity.inc(world, components, accountID, 0, "PET_STAKE", count);
   }
 }

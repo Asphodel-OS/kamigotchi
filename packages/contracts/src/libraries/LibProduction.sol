@@ -106,7 +106,7 @@ library LibProduction {
   function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 rate = getRate(components, id);
     uint256 duration = calcDuration(components, id);
-    uint256 precision = 10 ** uint256(LibConfig.getValueArrayOf(components, "HARVEST_RATE")[0]);
+    uint256 precision = 10 ** uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
     return (rate * duration) / precision;
   }
 
@@ -114,7 +114,7 @@ library LibProduction {
   function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
 
-    uint32[8] memory values = LibConfig.getValueArrayOf(components, "HARVEST_RATE");
+    uint32[8] memory values = LibConfig.getArray(components, "HARVEST_RATE");
 
     uint256 petID = getPet(components, id);
     uint256 power = uint256(uint32(LibPet.calcTotalPower(components, petID)));

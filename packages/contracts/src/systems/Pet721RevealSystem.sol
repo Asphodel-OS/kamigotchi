@@ -26,10 +26,7 @@ contract Pet721RevealSystem is System {
 
   /// @notice reveals a player's pet, called by operator
   function execute(bytes memory arguments) public returns (bytes memory) {
-    require(
-      LibConfig.getValueOf(components, "MINT_LEGACY_ENABLED") != 0,
-      "721 user mint: not enabled"
-    );
+    require(LibConfig.get(components, "MINT_LEGACY_ENABLED") != 0, "721 user mint: not enabled");
 
     uint32 petIndex = abi.decode(arguments, (uint32));
     uint256 petID = LibPet.getByIndex(components, petIndex);
@@ -71,7 +68,7 @@ contract Pet721RevealSystem is System {
   function reveal(uint256 petID, uint256 seed) internal returns (bytes memory) {
     uint256 packed = LibPet721.reveal(world, components, petID, seed); // uses packed array to generate image off-chain
 
-    string memory _baseURI = LibConfig.getValueStringOf(components, "BASE_URI");
+    string memory _baseURI = LibConfig.getString(components, "BASE_URI");
     string memory uri = LibString.concat(
       _baseURI,
       LibString.concat(LibString.toString(packed), ".gif")

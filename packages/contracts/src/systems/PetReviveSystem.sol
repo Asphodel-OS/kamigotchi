@@ -42,7 +42,7 @@ contract PetReviveSystem is System {
     LibPet.setLastTs(components, id, block.timestamp); // explicitly, as we don't sync health on this EP
 
     // standard logging and tracking
-    LibDataEntity.incFor(world, components, accountID, itemIndex, "INV_USE", 1);
+    LibDataEntity.inc(world, components, accountID, itemIndex, "INV_USE", 1);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

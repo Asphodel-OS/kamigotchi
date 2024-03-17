@@ -180,7 +180,7 @@ library LibPet {
     uint256 id, // unused atm, but will be used for skill multipliers
     uint256 amt
   ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "LIQ_BOUNTY_BASE");
+    uint32[8] memory configVals = LibConfig.getArray(components, "LIQ_BOUNTY_BASE");
 
     uint256 base = uint256(configVals[0]);
     uint256 precision = 10 ** uint256(configVals[1]);
@@ -194,7 +194,7 @@ library LibPet {
     uint256 id,
     uint256 amt
   ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_DRAIN_BASE");
 
     uint256 base = uint256(configVals[0]);
     uint256 basePrecision = 10 ** uint256(configVals[1]);
@@ -215,8 +215,7 @@ library LibPet {
   function calcRestingRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 duration = block.timestamp - getLastTs(components, id);
     uint256 rate = calcRestingRecoveryRate(components, id);
-    uint256 precision = 10 **
-      uint256(LibConfig.getValueArrayOf(components, "HEALTH_RATE_HEAL_BASE")[0]);
+    uint256 precision = 10 ** uint256(LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE")[0]);
     return (duration * rate) / precision;
   }
 
@@ -225,7 +224,7 @@ library LibPet {
     IUintComp components,
     uint256 id
   ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "HEALTH_RATE_HEAL_BASE");
+    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE");
     uint256 totalHarmony = uint(int(calcTotalHarmony(components, id)));
 
     uint256 precision = 10 ** uint256(configVals[0]);
@@ -244,7 +243,7 @@ library LibPet {
     uint256 baseThreshold = calcThresholdBase(components, sourceID, targetID);
     uint256 affinityMultiplier = calcAttackAffinityMultiplier(components, sourceID, targetID);
     uint256 affinityMultiplierPrecision = 10 **
-      LibConfig.getValueOf(components, "LIQ_THRESH_MULT_AFF_PREC");
+      LibConfig.get(components, "LIQ_THRESH_MULT_AFF_PREC");
     return (affinityMultiplier * baseThreshold) / affinityMultiplierPrecision; // adjust for affinity multiplier precision
   }
 
@@ -255,7 +254,7 @@ library LibPet {
     uint256 sourceID,
     uint256 targetID
   ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "LIQ_THRESH_BASE");
+    uint32[8] memory configVals = LibConfig.getArray(components, "LIQ_THRESH_BASE");
 
     uint256 base = uint256(configVals[0]);
     uint256 basePrecision = 10 ** uint256(configVals[1]);
@@ -376,7 +375,7 @@ library LibPet {
   // Check whether a pet is on cooldown after its last Standard Action
   function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
     uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
+    uint256 idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
     return idleTime < idleRequirement;
   }
 
@@ -448,7 +447,7 @@ library LibPet {
     configs[2] = "KAMI_BASE_VIOLENCE";
     configs[3] = "KAMI_BASE_HARMONY";
     configs[4] = "KAMI_BASE_SLOTS";
-    uint256[] memory configVals = LibConfig.getBatchValueOf(components, configs);
+    uint256[] memory configVals = LibConfig.getBatch(components, configs);
     int32 health = int32(int(configVals[0]));
     int32 power = int32(int(configVals[1]));
     int32 violence = int32(int(configVals[2]));
