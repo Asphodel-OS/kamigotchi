@@ -29,10 +29,7 @@ contract Pet721MintSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    require(
-      LibConfig.getValueOf(components, "MINT_LEGACY_ENABLED") != 0,
-      "721 user mint: not enabled"
-    );
+    require(LibConfig.get(components, "MINT_LEGACY_ENABLED") != 0, "721 user mint: not enabled");
 
     uint256 amount = abi.decode(arguments, (uint256));
     require(amount > 0, "Pet721Mint: must be > 0");

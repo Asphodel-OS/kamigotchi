@@ -93,7 +93,7 @@
 
 //     address owner = _getOwner(0);
 
-//     uint supplyLimit = LibConfig.getValueOf(components, "MINT_TOTAL_MAX");
+//     uint supplyLimit = LibConfig.get(components, "MINT_TOTAL_MAX");
 //     if (supplyLimit < num20) {
 //       vm.prank(deployer);
 //       vm.expectRevert("Mint20: totalMinted exceeded");

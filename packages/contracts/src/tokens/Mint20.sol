@@ -64,7 +64,7 @@ contract Mint20 is ERC20 {
   function adminMint(address to, uint256 amount) external onlyOwner {
     require(!mintDisabled, "Mint20: minting disabled");
     require(
-      totalMinted + amount <= LibConfig.getValueOf(World.components(), "MINT_TOTAL_MAX"),
+      totalMinted + amount <= LibConfig.get(World.components(), "MINT_TOTAL_MAX"),
       "Mint20: totalMinted exceeded"
     );
     _mintFormatted(to, amount);
@@ -79,7 +79,7 @@ contract Mint20 is ERC20 {
   /// @dev  depreciated, but left in for testnet. will be removed
   function depreciatedMint(address to, uint256 amount) external onlyWriter {
     require(
-      totalMinted + amount <= LibConfig.getValueOf(World.components(), "MINT_TOTAL_MAX"),
+      totalMinted + amount <= LibConfig.get(World.components(), "MINT_TOTAL_MAX"),
       "Mint20: totalMinted exceeded"
     );
     _mintFormatted(to, amount);

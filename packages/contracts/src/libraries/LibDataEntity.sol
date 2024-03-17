@@ -7,49 +7,22 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
-import { IsDataComponent, ID as IsDataCompID } from "components/IsDataComponent.sol";
-import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
-import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { BareValueComponent, ID as ValueCompID } from "components/BareValueComponent.sol";
 
-/* Library for data entity patterns. basically a key value store entity linked to an owner
- * Basic structure:
- * - IsDataComponent
- * - IdHolderComponent
- * - TypeComponent (key)
- * - IndexComponent (optional key)
- * - ValueComponent (value)
- */
+/// @notice Library for data entity patterns. a key value store entity linked to an owner
 library LibDataEntity {
-  ///////////////////////
+  function getID(
+    uint256 holderID,
+    uint32 index,
+    string memory type_
+  ) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Is.Data", holderID, index, type_)));
+  }
+
+  /////////////////
   // INTERACTIONS
 
-  // creates a data entity owned by an account
-  function create(
-    IWorld world,
-    IUintComp components,
-    uint256 holderID,
-    string memory type_
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsData(components, id);
-    setHolder(components, id, holderID);
-    setType(components, id, type_);
-    return id;
-  }
-
-  function get(
-    IUintComp components,
-    uint256 holderID,
-    uint32 index,
-    string memory type_
-  ) public view returns (uint256) {
-    uint256 dataID = queryDataEntity(components, holderID, index, type_);
-    return dataID == 0 ? 0 : getValue(components, dataID);
-  }
-
-  function incFor(
+  function inc(
     IWorld world,
     IUintComp components,
     uint256 holderID,
@@ -57,15 +30,14 @@ library LibDataEntity {
     string memory type_,
     uint256 amt
   ) internal {
-    uint256 dataID = queryDataEntity(components, holderID, index, type_);
-    if (dataID == 0) {
-      dataID = create(world, components, holderID, type_);
-      if (index != 0) setIndex(components, dataID, index);
-    }
-    _inc(components, dataID, amt);
+    uint256 dataID = getID(holderID, index, type_);
+    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+
+    uint256 value = comp.has(dataID) ? comp.getValue(dataID) : 0;
+    comp.set(dataID, value + amt);
   }
 
-  function decFor(
+  function dec(
     IWorld world,
     IUintComp components,
     uint256 holderID,
@@ -73,15 +45,14 @@ library LibDataEntity {
     string memory type_,
     uint256 amt
   ) internal {
-    uint256 dataID = queryDataEntity(components, holderID, index, type_);
-    if (dataID == 0) {
-      dataID = create(world, components, holderID, type_);
-      if (index != 0) setIndex(components, dataID, index);
-    }
-    _dec(components, dataID, amt);
+    uint256 dataID = getID(holderID, index, type_);
+    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+
+    uint256 value = comp.has(dataID) ? comp.getValue(dataID) : 0;
+    comp.set(dataID, value - amt);
   }
 
-  function setFor(
+  function set(
     IWorld world,
     IUintComp components,
     uint256 holderID,
@@ -89,88 +60,21 @@ library LibDataEntity {
     string memory type_,
     uint256 value
   ) internal {
-    uint256 dataID = queryDataEntity(components, holderID, index, type_);
-    if (dataID == 0) {
-      dataID = create(world, components, holderID, type_);
-      if (index != 0) setIndex(components, dataID, index);
-    }
-    setValue(components, dataID, value);
+    uint256 dataID = getID(holderID, index, type_);
+    BareValueComponent(getAddressById(components, ValueCompID)).set(dataID, value);
   }
 
-  // SETTERS
-
-  function setIsData(IUintComp components, uint256 id) internal {
-    IsDataComponent(getAddressById(components, IsDataCompID)).set(id);
-  }
-
-  function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
-  }
-
-  function setIndex(IUintComp components, uint256 id, uint32 index) internal {
-    IndexComponent(getAddressById(components, IndexCompID)).set(id, index);
-  }
-
-  function setType(IUintComp components, uint256 id, string memory type_) internal {
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-  }
-
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
-  function _inc(IUintComp components, uint256 entityID, uint256 amt) internal {
-    uint256 value = getValue(components, entityID);
-    setValue(components, entityID, value + amt);
-  }
-
-  function _dec(IUintComp components, uint256 entityID, uint256 amt) internal {
-    uint256 value = getValue(components, entityID);
-    require(value >= amt, "LibDataEntity: insufficient val");
-    unchecked {
-      setValue(components, entityID, value - amt);
-    }
-  }
-
-  ///////////////////////
+  /////////////////
   // GETTERS
 
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256 result) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    if (comp.has(id)) result = comp.getValue(id);
-  }
-
-  ///////////////////////
-  // QUERIES
-
-  function queryDataEntity(
+  function get(
     IUintComp components,
     uint256 holderID,
-    uint32 index, // optional - 0 if not used
+    uint32 index,
     string memory type_
   ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](index == 0 ? 3 : 4);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsDataCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdHolderCompID),
-      abi.encode(holderID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, TypeCompID),
-      abi.encode(type_)
-    );
-
-    if (index != 0) {
-      fragments[3] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexCompID),
-        abi.encode(index)
-      );
-    }
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+    uint256 dataID = getID(holderID, index, type_);
+    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    if (comp.has(dataID)) result = comp.getValue(dataID);
   }
 }

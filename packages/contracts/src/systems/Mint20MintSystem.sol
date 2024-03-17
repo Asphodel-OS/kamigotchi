@@ -22,13 +22,13 @@ contract Mint20MintSystem is System {
   function mint(uint256 amount) external payable {
     // balance checks
     require(amount > 0, "Mint20Mint: must be > 0");
-    uint256 price = LibConfig.getValueOf(components, "MINT_PRICE");
+    uint256 price = LibConfig.get(components, "MINT_PRICE");
     require(msg.value >= price * amount, "Mint20Mint: not enough ETH");
 
     // check that resulting tx does not exceed the total supply limit
     uint256 totalMinted = LibMint20.getTotalMinted(world);
     require(
-      totalMinted + amount <= LibConfig.getValueOf(components, "MINT_INITIAL_MAX"),
+      totalMinted + amount <= LibConfig.get(components, "MINT_INITIAL_MAX"),
       "Mint20Mint: supply limit exceeded"
     );
 
@@ -40,7 +40,7 @@ contract Mint20MintSystem is System {
     // check that resulting account does not exceed the account limit
     uint256 accountMinted = LibAccount.getMint20Minted(components, accountID);
     require(
-      accountMinted + amount <= LibConfig.getValueOf(components, "MINT_ACCOUNT_MAX"),
+      accountMinted + amount <= LibConfig.get(components, "MINT_ACCOUNT_MAX"),
       "Mint20Mint: account limit exceeded"
     );
 

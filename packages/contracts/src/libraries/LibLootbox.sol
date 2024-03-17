@@ -202,6 +202,6 @@ library LibLootbox {
     uint32 index,
     uint256 count
   ) internal {
-    LibDataEntity.incFor(world, components, holderID, index, "LOOTBOX_OPENED", count);
+    LibDataEntity.inc(world, components, holderID, index, "LOOTBOX_OPENED", count);
   }
 }

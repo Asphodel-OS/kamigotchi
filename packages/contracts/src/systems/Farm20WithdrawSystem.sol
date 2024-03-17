@@ -37,10 +37,7 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
 
     uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Farm20Withdraw: no account");
-    require(
-      LibAccount.getRoom(components, accountID) == ROOM,
-      "Farm20Withdraw: not in room 12"
-    );
+    require(LibAccount.getRoom(components, accountID) == ROOM, "Farm20Withdraw: not in room 12");
     require(LibCoin.get(components, accountID) >= value, "Coin: insufficient balance");
 
     // scheduling timelock
@@ -66,7 +63,7 @@ contract Farm20WithdrawSystem is ControlledBridgeSystem {
     token.withdraw((target), value);
 
     // standard logging and tracking
-    LibDataEntity.incFor(world, components, accountID, 0, "COIN_WITHDRAW", value);
+    LibDataEntity.inc(world, components, accountID, 0, "COIN_WITHDRAW", value);
     LibAccount.updateLastTs(components, accountID);
   }
 

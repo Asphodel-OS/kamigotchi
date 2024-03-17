@@ -22,7 +22,7 @@ contract HarvestTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _idleRequirement = LibConfig.getValueOf(components, "KAMI_IDLE_REQ");
+    _idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
   }
 
   /////////////////
@@ -31,16 +31,16 @@ contract HarvestTest is SetupTemplate {
   // NOTE: health drain is rounded while reward is truncated
   // this assumes no drain multipliers
   function _getExpectedHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
-    uint ratePrecision = 10 ** uint256(LibConfig.getValueArrayOf(components, "HARVEST_RATE")[0]);
+    uint ratePrecision = 10 ** uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
     uint output = (rate * timeDelta) / (ratePrecision);
-    uint32[8] memory configVals = LibConfig.getValueArrayOf(components, "HEALTH_RATE_DRAIN_BASE");
+    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_DRAIN_BASE");
     uint drainBase = uint256(configVals[0]);
     uint drainBasePrecision = 10 ** uint256(configVals[1]);
     return (output * drainBase + (drainBasePrecision / 2)) / drainBasePrecision;
   }
 
   function _getExpectedOutput(uint rate, uint timeDelta) internal view returns (uint) {
-    uint ratePrecision = uint256(LibConfig.getValueArrayOf(components, "HARVEST_RATE")[0]);
+    uint ratePrecision = uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
     return (rate * timeDelta) / 10 ** ratePrecision;
   }
 

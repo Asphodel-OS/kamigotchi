@@ -22,8 +22,8 @@ contract AccountFundSystem is System {
     require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.incBy(world, components, accountID, "OPERATOR_GAS", msg.value);
-    LibDataEntity.incFor(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
+    LibScore.inc(world, components, accountID, "OPERATOR_GAS", msg.value);
+    LibDataEntity.inc(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
     LibAccount.updateLastTs(components, accountID);
 
     address operator = LibAccount.getOperator(components, accountID);
@@ -38,8 +38,8 @@ contract AccountFundSystem is System {
     require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
-    LibScore.decBy(world, components, accountID, "OPERATOR_GAS", msg.value);
-    LibDataEntity.decFor(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
+    LibScore.dec(world, components, accountID, "OPERATOR_GAS", msg.value);
+    LibDataEntity.dec(world, components, accountID, 0, "OPERATOR_GAS", msg.value);
 
     address owner = LibAccount.getOwner(components, accountID);
     transfer(owner, msg.value);
