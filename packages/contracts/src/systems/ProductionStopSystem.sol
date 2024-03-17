@@ -56,10 +56,9 @@ contract ProductionStopSystem is System {
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
-    LibScore.inc(world, components, accountID, "COLLECT", output);
-    LibDataEntity.inc(world, components, accountID, 0, "COIN_TOTAL", output);
+    LibScore.inc(components, accountID, "COLLECT", output);
+    LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", output);
     LibDataEntity.inc(
-      world,
       components,
       accountID,
       LibNode.getIndex(components, LibProduction.getNode(components, id)),

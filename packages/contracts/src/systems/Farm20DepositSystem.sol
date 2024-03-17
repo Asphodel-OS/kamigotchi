@@ -37,8 +37,8 @@ contract Farm20DepositSystem is System {
     LibCoin.inc(components, accountID, amount);
 
     // standard logging and tracking
-    LibDataEntity.inc(world, components, accountID, 0, "COIN_TOTAL", amount);
-    LibDataEntity.inc(world, components, accountID, 0, "COIN_DEPOSIT", amount);
+    LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", amount);
+    LibDataEntity.inc(components, accountID, 0, "COIN_DEPOSIT", amount);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

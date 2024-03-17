@@ -76,10 +76,9 @@ contract ProductionLiquidateSystem is System {
     LibPet.setLastActionTs(components, petID, standardActionTs);
 
     // standard logging and tracking
-    LibScore.inc(world, components, accountID, "LIQUIDATE", 1);
-    LibDataEntity.inc(world, components, accountID, 0, "LIQUIDATE", 1);
+    LibScore.inc(components, accountID, "LIQUIDATE", 1);
+    LibDataEntity.inc(components, accountID, 0, "LIQUIDATE_TOTAL", 1);
     LibDataEntity.inc(
-      world,
       components,
       accountID,
       LibNode.getIndex(components, nodeID),
@@ -87,7 +86,6 @@ contract ProductionLiquidateSystem is System {
       1
     );
     LibDataEntity.inc(
-      world,
       components,
       LibPet.getAccount(components, targetPetID),
       0,

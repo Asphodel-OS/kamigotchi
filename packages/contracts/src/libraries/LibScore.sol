@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Strings } from "utils/Strings.sol";
+import { LibPack } from "libraries/utils/LibPack.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IsScoreComponent, ID as IsScoreCompID } from "components/IsScoreComponent.sol";
@@ -24,9 +25,9 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 // like reaping production
 
 // Components:
-// IdHolder
-// Epoch: The current epoch the score is gained
-// Type: The type of action being tracked (e.g. COLLECT | LIQUIDATE | FEED)
+// [hashed] IdHolder
+// [hashed] Epoch: The current epoch the score is gained
+// [hashed] Type: The type of action being tracked (e.g. COLLECT | LIQUIDATE | FEED)
 // BareVaue: Score balance
 
 library LibScore {
@@ -43,13 +44,7 @@ library LibScore {
 
   /// @notice adds score based on current epoch.
   /// @dev to be called with any action that should be scored
-  function inc(
-    IWorld world,
-    IUintComp components,
-    uint256 holderID,
-    string memory _type,
-    uint256 amt
-  ) internal {
+  function inc(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
     uint256 epoch = getCurentEpoch(components);
     uint256 id = getID(holderID, epoch, _type);
 
@@ -61,13 +56,7 @@ library LibScore {
 
   /// @notice decs score based on current epoch.
   /// @dev to be called with any action that should be scored
-  function dec(
-    IWorld world,
-    IUintComp components,
-    uint256 holderID,
-    string memory _type,
-    uint256 amt
-  ) internal {
+  function dec(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
     uint256 epoch = getCurentEpoch(components);
     uint256 id = getID(holderID, epoch, _type);
 
@@ -75,6 +64,40 @@ library LibScore {
     uint256 bal = comp.has(id) ? comp.getValue(id) : 0;
     bal -= amt;
     comp.set(id, bal);
+  }
+
+  function incArr(
+    IUintComp components,
+    uint256 holderID,
+    string memory _type,
+    uint32[8] memory amt
+  ) internal {
+    uint256 epoch = getCurentEpoch(components);
+    uint256 id = getID(holderID, epoch, _type);
+
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    uint32[8] memory bal = comp.has(id)
+      ? LibPack.unpackArrU32(comp.getValue(id))
+      : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
+    for (uint256 i; i < 8; i++) bal[i] += amt[i];
+    comp.set(id, LibPack.packArrU32(bal));
+  }
+
+  function decArr(
+    IUintComp components,
+    uint256 holderID,
+    string memory _type,
+    uint32[8] memory amt
+  ) internal {
+    uint256 epoch = getCurentEpoch(components);
+    uint256 id = getID(holderID, epoch, _type);
+
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    uint32[8] memory bal = comp.has(id)
+      ? LibPack.unpackArrU32(comp.getValue(id))
+      : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
+    for (uint256 i; i < 8; i++) bal[i] -= amt[i];
+    comp.set(id, LibPack.packArrU32(bal));
   }
 
   /////////////////
