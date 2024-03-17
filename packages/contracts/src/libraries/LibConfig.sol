@@ -8,6 +8,7 @@ import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { LibString } from "solady/utils/LibString.sol";
+import { LibPack } from "libraries/utils/LibPack.sol";
 
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { BareValueComponent, ID as ValueCompID } from "components/BareValueComponent.sol";
@@ -35,14 +36,14 @@ library LibConfig {
 
   /// @notice Set an array of values of a global config field entity
   function setValueArray(IUintComp components, uint256 id, uint32[8] memory values) internal {
-    setValue(components, id, _packArray(values));
+    setValue(components, id, LibPack.packArrU32(values));
   }
 
   /// @notice Set a string value of a global config field entity
   function setValueString(IUintComp components, uint256 id, string memory value) internal {
     require(bytes(value).length <= 32, "LibConfig: string too long");
     require(bytes(value).length > 0, "LibConfig: string too short");
-    setValue(components, id, _stringToUint(value));
+    setValue(components, id, LibPack.stringToUint(value));
   }
 
   //////////////////
@@ -97,38 +98,11 @@ library LibConfig {
     IUintComp components,
     uint256 id
   ) internal view returns (uint32[8] memory) {
-    return _unpackArray(getValue(components, id));
+    return LibPack.unpackArrU32(getValue(components, id));
   }
 
   /// @notice Retrieve the string value of a global config field entity
   function getValueString(IUintComp components, uint256 id) internal view returns (string memory) {
-    return _uintToString(getValue(components, id));
-  }
-
-  ////////////////////
-  // UTILS
-
-  function _stringToUint(string memory value) internal pure returns (uint256) {
-    return uint256(LibString.packOne(value));
-  }
-
-  function _uintToString(uint256 value) internal pure returns (string memory) {
-    return LibString.unpackOne((bytes32(abi.encodePacked(value))));
-  }
-
-  function _packArray(uint32[8] memory values) internal pure returns (uint256 result) {
-    for (uint256 i; i < values.length; i++) {
-      require(values[i] < (1 << 32) - 1, "max over limit");
-      result = (result << 32) | values[i];
-    }
-  }
-
-  // converts a bitpacked array to a regular array, fixed size of uint32[8]
-  function _unpackArray(uint256 packed) internal pure returns (uint32[8] memory result) {
-    for (uint256 i; i < 8; i++) {
-      // packed order is reversed
-      result[7 - i] = uint32(packed & ((1 << 32) - 1));
-      packed = packed >> 32;
-    }
+    return LibPack.uintToString(getValue(components, id));
   }
 }

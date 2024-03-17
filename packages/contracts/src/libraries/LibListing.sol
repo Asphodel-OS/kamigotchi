@@ -217,7 +217,7 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(world, components, accountID, itemIndex, "ITEM_BUY", amt);
+    LibDataEntity.inc(components, accountID, itemIndex, "ITEM_BUY", amt);
   }
 
   // @notice log increase for item sell
@@ -228,6 +228,6 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(world, components, accountID, itemIndex, "ITEM_SELL", amt);
+    LibDataEntity.inc(components, accountID, itemIndex, "ITEM_SELL", amt);
   }
 }

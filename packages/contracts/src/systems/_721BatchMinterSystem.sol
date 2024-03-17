@@ -11,6 +11,7 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
+import { LibPack } from "libraries/utils/LibPack.sol";
 
 import { Stat, StatComponent } from "components/types/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
@@ -210,7 +211,7 @@ abstract contract TraitHandler {
       if (i < 4) offsets[i + 1] = length + offsets[i];
     }
 
-    offsetsSum = LibRandom.packArray(offsets, OFFSET_BIT_SIZE);
+    offsetsSum = LibPack.packArr(offsets, OFFSET_BIT_SIZE);
   }
 
   ////////////////////
@@ -390,7 +391,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     // memoized trait weight and stats
     TraitWeights[] memory weights = traitWeights;
     TraitStats[] memory stats = traitStats;
-    uint32[] memory offsets = LibRandom.unpackArray(offsetsSum, 5, OFFSET_BIT_SIZE);
+    uint32[] memory offsets = LibPack.unpackArr(offsetsSum, 5, OFFSET_BIT_SIZE);
 
     for (uint256 i; i < amount; i++) {
       uint32[] memory traits = _setPetTraits(seed, ids[i], weights);
@@ -401,7 +402,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
         ids[i],
         LibString.concat(
           _baseURI,
-          LibString.concat(LibString.toString(LibRandom.packArray(traits, 8)), ".gif")
+          LibString.concat(LibString.toString(LibPack.packArr(traits, 8)), ".gif")
         )
       );
     }
