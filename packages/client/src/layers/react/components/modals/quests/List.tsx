@@ -4,10 +4,11 @@ import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
 import { Item } from 'layers/network/shapes/Item';
-import { Objective, Quest, Requirement, Reward } from 'layers/network/shapes/Quest';
+import { Condition, Objective, Quest, Requirement, Reward } from 'layers/network/shapes/Quest';
 import { Room } from 'layers/network/shapes/Room';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
+import moment from 'moment';
 
 interface Props {
   account: Account;
@@ -49,14 +50,6 @@ export const List = (props: Props) => {
   ///////////////////
   // LOGIC
 
-  const isCompleted = (account: Account, questIndex: number) => {
-    let complete = false;
-    account.quests?.completed.forEach((q: Quest) => {
-      if (q.index === questIndex) complete = true;
-    });
-    return complete;
-  };
-
   const isOngoing = (account: Account, questIndex: number): boolean => {
     return account.quests?.ongoing.some((q: Quest) => q.index === questIndex) ?? false;
   };
@@ -94,14 +87,12 @@ export const List = (props: Props) => {
     return true;
   };
 
-  // TODO: convert to TextBool
   const meetsObjectives = (quest: Quest): boolean => {
     for (const objective of quest.objectives) {
       if (!objective.status?.completable) {
         return false;
       }
     }
-
     return true;
   };
 
@@ -132,12 +123,6 @@ export const List = (props: Props) => {
     return registryObject.name ? registryObject.name : `Item ${itemIndex}`;
   };
 
-  const getFoodName = (itemIndex: number): string => {
-    let entityIndex = props.utils.queryItemRegistry(itemIndex);
-    let registryObject = props.utils.getItem(entityIndex);
-    return registryObject.name ? registryObject.name : `Food ${itemIndex}`;
-  };
-
   const getRepeatText = (quest: Quest): string => {
     const allQuests = props.account.quests?.ongoing.concat(props.account.quests?.completed);
     const curr = allQuests?.find((x) => x.index == quest.index);
@@ -154,57 +139,27 @@ export const List = (props: Props) => {
     const now = lastRefresh / 1000;
     const wait = curr.repeatDuration !== undefined ? curr.repeatDuration : 0;
     if (Number(curr.startTime) + Number(wait) > Number(now)) {
-      const timeLeft = Number(curr.startTime) + Number(wait) - Number(now);
-      let timeText = '';
-      if (timeLeft > 3600) {
-        const hours = Math.floor(timeLeft / 3600);
-        timeText = `${hours} ${hours > 1 ? 'hours' : 'hour'} `;
-      }
-      if (timeLeft > 60) {
-        const mins = Math.floor((timeLeft % 3600) / 60);
-        timeText = timeText + `${mins} ${mins > 1 ? 'minutes' : 'minute'} `;
-      }
-      const seconds = Math.ceil(timeLeft % 60);
-      timeText = timeText + `${seconds} ${seconds > 1 ? 'seconds' : 'second'}`;
-      return `repeats in ${timeText}`;
+      return `repeats in ${moment.duration((curr.startTime + wait - now) * 1000).humanize()}`;
+      // const timeLeft = Number(curr.startTime) + Number(wait) - Number(now);
+      // let timeText = '';
+      // if (timeLeft > 3600) {
+      //   const hours = Math.floor(timeLeft / 3600);
+      //   timeText = `${hours} ${hours > 1 ? 'hours' : 'hour'} `;
+      // }
+      // if (timeLeft > 60) {
+      //   const mins = Math.floor((timeLeft % 3600) / 60);
+      //   timeText = timeText + `${mins} ${mins > 1 ? 'minutes' : 'minute'} `;
+      // }
+      // const seconds = Math.ceil(timeLeft % 60);
+      // timeText = timeText + `${seconds} ${seconds > 1 ? 'seconds' : 'second'}`;
+      // return `repeats in ${timeText}`;
     } else {
       return '';
     }
   };
 
-  const getRequirementText = (requirement: Requirement, status: boolean): string => {
-    let text = '';
-    switch (requirement.target.type) {
-      case 'COIN':
-        text = `${requirement.target.value! * 1} $MUSU`;
-        break;
-      case 'LEVEL': // TODO: account for both min/max
-        text = `Level ${requirement.target.value! * 1}`;
-        break;
-      case 'FOOD':
-        text = `${requirement.target.value! * 1} ${getFoodName(requirement.target.index!)}`;
-        break;
-      case 'QUEST':
-        text = `Complete Quest [${
-          props.utils.getQuestByIndex(requirement.target.value!)
-            ? props.utils.getQuestByIndex(requirement.target.value!)?.name
-            : requirement.target.value! * 1
-        }]`;
-        break;
-      default:
-        text = '???';
-    }
-
-    if (status) {
-      if (requirement.status?.completable) {
-        text = text + ' ✅';
-      } else {
-        text =
-          text + ` [${Number(requirement.status?.current)}/${Number(requirement.status?.target)}]`;
-      }
-    }
-
-    return text;
+  const getRequirementText = (requirement: Requirement): string => {
+    return parseConditionalText(requirement);
   };
 
   const getRewardText = (reward: Reward): string => {
@@ -227,19 +182,54 @@ export const List = (props: Props) => {
 
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective, showTracking: boolean): string => {
-    let text = objective.name;
+    return objective.name + (showTracking ? parseConditionalTracking(objective) : '');
+  };
 
-    if (showTracking) {
-      let tracking = '';
-      if (objective.status?.completable) {
-        tracking = ' ✅';
-      } else {
-        tracking = ` [${objective.status?.current ?? 0}/${Number(objective.status?.target)}]`;
-      }
-      text += tracking;
+  const parseConditionalUnits = (con: Condition): [string, string] => {
+    let tar = ((con.target.value ?? 0) * 1).toString();
+    let curr = ((con.status?.current ?? 0) * 1).toString();
+
+    if (con.target.type.includes('TIME')) {
+      tar = moment.duration((con.target.value ?? 0) * 1000).humanize();
+      curr = moment.duration((con.status?.current ?? 0) * 1000).humanize();
+    } else if (con.target.type.includes('COIN')) {
+      tar = tar + ' $MUSU';
+      curr = curr + ' $MUSU';
     }
 
-    return text;
+    return [tar, curr];
+  };
+
+  const parseConditionalTracking = (con: any): string => {
+    const [tar, curr] = parseConditionalUnits(con);
+
+    if (con.status?.completable) return ` ✅`;
+    const hideProgress = con.target.type == 'QUEST' || con.target.type == 'ROOM';
+    return hideProgress ? '' : ` [${curr}/${tar}]`;
+  };
+
+  // converts machine condition text to something more human readable
+  const parseConditionalText = (con: Condition): string => {
+    const [targetVal, currVal] = parseConditionalUnits(con);
+
+    let text = '';
+    if (con.target.type == 'ITEM') text = `${targetVal} ${getItemName(con.target.index!)}`;
+    else if (con.target.type == 'HARVEST_TIME') text = `Harvest for more than ${targetVal}`;
+    else if (con.target.type == 'LIQUIDATE_TOTAL') text = `Liquidate at least ${targetVal} Kami`;
+    else if (con.target.type == 'LIQUIDATED_VICTIM') text = `Been liquidated ${targetVal} times`;
+    else if (con.target.type == 'KAMI_LEVEL_HIGHEST') text = `Have a Kami of at least ${targetVal}`;
+    else if (con.target.type == 'KAMI') text = `Have at least ${targetVal} Kami`;
+    else if (con.target.type == 'QUEST')
+      text = `Complete Quest [${
+        props.utils.getQuestByIndex(con.target.index!)?.name || `Quest ${targetVal}`
+      }]`;
+    else if (con.target.type == 'QUEST_REPEATABLE_COMPLETE')
+      text = `Complete ${targetVal} daily quests`;
+    else if (con.target.type == 'ROOM')
+      text = `Move to ${props.utils.getRoom(con.target.index!)?.name || `Room ${targetVal}`}`;
+    else text = '???';
+
+    return text + parseConditionalTracking(con);
   };
 
   ///////////////////
@@ -315,7 +305,7 @@ export const List = (props: Props) => {
         <ConditionName>Requirements</ConditionName>
         {requirements.map((requirement) => (
           <ConditionDescription key={requirement.id}>
-            - {`${getRequirementText(requirement, true)}`}
+            - {`${getRequirementText(requirement)}`}
           </ConditionDescription>
         ))}
       </ConditionContainer>

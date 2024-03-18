@@ -1,5 +1,12 @@
 {
-  "plugins": ["prettier-plugin-solidity"],
+  "jsxSingleQuote": true,
+  "singleQuote": true,
+  "arrowParens": "always",
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "printWidth": 100,
+  "useTabs": false,
+  "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-solidity"],
   "overrides": [
     {
       "files": "*.sol",

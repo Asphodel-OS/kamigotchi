@@ -22,6 +22,7 @@ export type { CanNameComponent } from "./CanNameComponent";
 export type { CoinComponent } from "./CoinComponent";
 export type { ControlledBridgeSystem } from "./ControlledBridgeSystem";
 export type { CostComponent } from "./CostComponent";
+export type { DescriptionAltComponent } from "./DescriptionAltComponent";
 export type { DescriptionComponent } from "./DescriptionComponent";
 export type { EpochComponent } from "./EpochComponent";
 export type { ExitsComponent } from "./ExitsComponent";
@@ -231,6 +232,7 @@ export { CanNameComponent__factory } from "./factories/CanNameComponent__factory
 export { CoinComponent__factory } from "./factories/CoinComponent__factory";
 export { ControlledBridgeSystem__factory } from "./factories/ControlledBridgeSystem__factory";
 export { CostComponent__factory } from "./factories/CostComponent__factory";
+export { DescriptionAltComponent__factory } from "./factories/DescriptionAltComponent__factory";
 export { DescriptionComponent__factory } from "./factories/DescriptionComponent__factory";
 export { EpochComponent__factory } from "./factories/EpochComponent__factory";
 export { ExitsComponent__factory } from "./factories/ExitsComponent__factory";

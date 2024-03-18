@@ -116,8 +116,6 @@ library LibAccount {
       address to = getOwner(components, id);
       setMint20Minted(world, components, id, accountMinted + amount);
       LibMint20.mint(world, to, amount);
-    } else if (LibString.eq(_type, "QUEST_POINTS")) {
-      setQuestPoints(components, id, getQuestPoints(components, id) + amount);
     } else {
       require(false, "LibAccount: unknown type");
     }
@@ -259,7 +257,7 @@ library LibAccount {
     } else if (LibString.eq(_type, "KAMI_LEVEL_HIGHEST")) {
       balance = getTopKamiLevel(components, getPetsOwned(components, id));
     } else {
-      require(false, "LibAccount: unknown type");
+      balance = LibDataEntity.get(components, id, index, _type);
     }
   }
 
