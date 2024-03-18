@@ -42,6 +42,21 @@ library LibScore {
   /////////////////
   // INTERACTIONS
 
+  /// @notice creates a score entity for a holder
+  function create(
+    IUintComp components,
+    uint256 id,
+    uint256 holderID,
+    uint256 epoch,
+    string memory type_
+  ) internal returns (uint256) {
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
+    IsScoreComponent(getAddressById(components, IsScoreCompID)).set(id);
+    EpochComponent(getAddressById(components, EpochCompID)).set(id, epoch);
+    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
+    return id;
+  }
+
   /// @notice adds score based on current epoch.
   /// @dev to be called with any action that should be scored
   function inc(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
@@ -49,7 +64,9 @@ library LibScore {
     uint256 id = getID(holderID, epoch, _type);
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    uint256 bal = comp.has(id) ? comp.getValue(id) : 0;
+    uint256 bal;
+    if (comp.has(id)) bal = comp.getValue(id);
+    else create(components, id, holderID, epoch, _type);
     bal += amt;
     comp.set(id, bal);
   }
@@ -61,7 +78,9 @@ library LibScore {
     uint256 id = getID(holderID, epoch, _type);
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    uint256 bal = comp.has(id) ? comp.getValue(id) : 0;
+    uint256 bal;
+    if (comp.has(id)) bal = comp.getValue(id);
+    else create(components, id, holderID, epoch, _type);
     bal -= amt;
     comp.set(id, bal);
   }
@@ -76,9 +95,9 @@ library LibScore {
     uint256 id = getID(holderID, epoch, _type);
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    uint32[8] memory bal = comp.has(id)
-      ? LibPack.unpackArrU32(comp.getValue(id))
-      : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
+    uint32[8] memory bal = [uint32(0), 0, 0, 0, 0, 0, 0, 0];
+    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.getValue(id));
+    else create(components, id, holderID, epoch, _type);
     for (uint256 i; i < 8; i++) bal[i] += amt[i];
     comp.set(id, LibPack.packArrU32(bal));
   }
@@ -93,9 +112,9 @@ library LibScore {
     uint256 id = getID(holderID, epoch, _type);
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    uint32[8] memory bal = comp.has(id)
-      ? LibPack.unpackArrU32(comp.getValue(id))
-      : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
+    uint32[8] memory bal = [uint32(0), 0, 0, 0, 0, 0, 0, 0];
+    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.getValue(id));
+    else create(components, id, holderID, epoch, _type);
     for (uint256 i; i < 8; i++) bal[i] -= amt[i];
     comp.set(id, LibPack.packArrU32(bal));
   }
