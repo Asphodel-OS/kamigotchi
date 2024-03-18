@@ -7,6 +7,7 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
+import { utils } from 'ethers';
 
 import { NetworkLayer } from 'layers/network/types';
 import { Account, getAccount } from './Account';
@@ -23,6 +24,30 @@ export interface ScoresFilter {
   epoch?: number;
   type?: '' | 'FEED' | 'COLLECT' | 'LIQUIDATE';
 }
+
+export const getScoreFromHash = (
+  network: NetworkLayer,
+  holderID: EntityID,
+  epoch: number,
+  type: string
+): Score => {
+  const {
+    world,
+    components: { Balance },
+  } = network;
+
+  // populate the holder
+  const index = getEntityIndex(world, holderID, epoch, type);
+  const accountEntityIndex = world.entityToIndex.get(holderID) as EntityIndex;
+  const account = getAccount(network, accountEntityIndex);
+
+  return {
+    account,
+    score: index ? (getComponentValue(Balance, index)?.value as number) : 0,
+    epoch: epoch,
+    type: type,
+  };
+};
 
 // get a Score object from its EnityIndex
 export const getScore = (network: NetworkLayer, index: EntityIndex): Score => {
@@ -57,4 +82,17 @@ export const getScores = (network: NetworkLayer, filter: ScoresFilter): Score[] 
   const scores = scoreEntityIndices.map((index) => getScore(network, index));
 
   return scores.sort((a, b) => b.score - a.score);
+};
+
+const getEntityIndex = (
+  world: any,
+  holderID: EntityID,
+  index: number,
+  field: string
+): EntityIndex | undefined => {
+  const id = utils.solidityKeccak256(
+    ['string', 'uint256', 'uint32', 'string'],
+    [holderID, index, index, field]
+  );
+  return world.entityToIndex.get(id as EntityID);
 };
