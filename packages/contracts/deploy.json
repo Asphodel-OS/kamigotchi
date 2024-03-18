@@ -72,6 +72,7 @@
     "IsRoomComponent",
     "IsObjectiveComponent",
     "IsQuestComponent",
+    "IsScoreComponent",
     "IsSkillComponent",
     "KeysComponent",
     "LevelComponent",
@@ -415,7 +416,10 @@
         "BalanceComponent",
         "BareValueComponent",
         "EpochComponent",
-        "TimeLastComponent"
+        "IdHolderComponent",
+        "IsScoreComponent",
+        "TimeLastComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -621,10 +625,13 @@
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
+        "IdHolderComponent",
         "IndexComponent",
+        "IsScoreComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent"
+        "TimeStartComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -682,6 +689,7 @@
         "HealthComponent",
         "IdHolderComponent",
         "IndexComponent",
+        "IsScoreComponent",
         "RateComponent",
         "TimeLastComponent",
         "TimeStartComponent",
@@ -808,23 +816,28 @@
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
+        "IdHolderComponent",
         "IndexComponent",
+        "IsScoreComponent",
         "RateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent"
+        "TimeStartComponent",
+        "TypeComponent"
       ]
     },
     {
       "name": "ProductionLiquidateSystem",
       "writeAccess": [
         "BareValueComponent",
+        "IdHolderComponent",
         "IdNodeComponent",
         "IdSourceComponent",
         "IdTargetComponent",
         "IndexComponent",
         "IndexNodeComponent",
         "IsKillComponent",
+        "IsScoreComponent",
         "BalanceComponent",
         "CoinComponent",
         "EpochComponent",
@@ -862,12 +875,15 @@
         "EpochComponent",
         "ExperienceComponent",
         "HealthComponent",
+        "IdHolderComponent",
         "IndexComponent",
+        "IsScoreComponent",
         "RateComponent",
         "StateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent"
+        "TimeStartComponent",
+        "TypeComponent"
       ]
     },
     {

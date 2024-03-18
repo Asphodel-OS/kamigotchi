@@ -1,17 +1,18 @@
-import { Has, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
-
+import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { BigNumber, utils } from 'ethers';
 import { NetworkLayer } from 'layers/network/types';
 
 // get an Config from its EntityIndex
 export const getConfigFieldValue = (network: NetworkLayer, field: string): number => {
   const {
-    components: { IsConfig, Name, BareValue },
+    world,
+    components: { BareValue },
   } = network;
-
-  const configEntityIndex = Array.from(
-    runQuery([Has(IsConfig), HasValue(Name, { value: field })])
-  )[0];
+  const configEntityIndex = getID(world, field);
+  if (!configEntityIndex) {
+    console.error(`Config field not found for ${field}`);
+    return 0;
+  }
 
   return (getComponentValue(BareValue, configEntityIndex)?.value as number) * 1;
 };
@@ -19,12 +20,15 @@ export const getConfigFieldValue = (network: NetworkLayer, field: string): numbe
 // get an Config from its EntityIndex
 export const getConfigFieldValueArray = (network: NetworkLayer, field: string): number[] => {
   const {
-    components: { IsConfig, Name, BareValue },
+    world,
+    components: { BareValue },
   } = network;
 
-  const configEntityIndex = Array.from(
-    runQuery([Has(IsConfig), HasValue(Name, { value: field })])
-  )[0];
+  const configEntityIndex = getID(world, field);
+  if (!configEntityIndex) {
+    console.warn(`Config field not found for ${field}`);
+    return [0];
+  }
 
   const raw = getComponentValue(BareValue, configEntityIndex)?.value;
   if (!raw) return [];
@@ -34,14 +38,21 @@ export const getConfigFieldValueArray = (network: NetworkLayer, field: string): 
 // get an Config from its EntityIndex. Wei values are stored in bigint
 export const getConfigFieldValueWei = (network: NetworkLayer, field: string): bigint => {
   const {
-    components: { IsConfig, Name, BareValue },
+    world,
+    components: { BareValue },
   } = network;
-
-  const configEntityIndex = Array.from(
-    runQuery([Has(IsConfig), HasValue(Name, { value: field })])
-  )[0];
+  const configEntityIndex = getID(world, field);
+  if (!configEntityIndex) {
+    console.warn(`Config field not found for ${field}`);
+    return 0n;
+  }
   const stringVal = (getComponentValue(BareValue, configEntityIndex)?.value as number) || 0;
   return BigInt(stringVal);
+};
+
+const getID = (world: any, field: string): EntityIndex | undefined => {
+  const id = utils.solidityKeccak256(['string', 'string'], ['Is.Config', field]);
+  return world.entityToIndex.get(id as EntityID);
 };
 
 // unpack a uint32[8] array from a config uint256
