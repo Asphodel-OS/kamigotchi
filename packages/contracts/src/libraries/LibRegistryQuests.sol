@@ -8,17 +8,18 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { DescriptionAltComponent, ID as DescAltCompID } from "components/DescriptionAltComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/IndexObjectiveComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
+import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
 import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
-import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
@@ -42,7 +43,8 @@ library LibRegistryQuests {
     IUintComp components,
     uint32 index,
     string memory name,
-    string memory description
+    string memory description,
+    string memory endText
   ) internal returns (uint256) {
     uint256 regID = getByQuestIndex(components, index);
     require(regID == 0, "LibRegQ.createQ: index used");
@@ -52,7 +54,8 @@ library LibRegistryQuests {
     setIsQuest(components, id);
     setQuestIndex(components, id, index);
     setName(components, id, name);
-    setDescription(components, id, description);
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    DescriptionAltComponent(getAddressById(components, DescAltCompID)).set(id, endText);
 
     return id;
   }
@@ -119,7 +122,8 @@ library LibRegistryQuests {
     unsetIsQuest(components, questID);
     unsetQuestIndex(components, questID);
     unsetName(components, questID);
-    unsetDescription(components, questID);
+    DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
+    DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
     unsetRoomIndex(components, questID);
 
     unsetIsRepeatable(components, questID);
@@ -223,10 +227,6 @@ library LibRegistryQuests {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
   }
 
-  function setDescription(IUintComp components, uint256 id, string memory description) internal {
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
-  }
-
   function setRoomIndex(IUintComp components, uint256 id, uint32 roomIndex) internal {
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
   }
@@ -305,12 +305,6 @@ library LibRegistryQuests {
   function unsetQuestIndex(IUintComp components, uint256 id) internal {
     if (IndexQuestComponent(getAddressById(components, IndexQuestCompID)).has(id)) {
       IndexQuestComponent(getAddressById(components, IndexQuestCompID)).remove(id);
-    }
-  }
-
-  function unsetDescription(IUintComp components, uint256 id) internal {
-    if (DescriptionComponent(getAddressById(components, DescCompID)).has(id)) {
-      DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
     }
   }
 

@@ -11,6 +11,7 @@
     "CanNameComponent",
     "CoinComponent",
     "CostComponent",
+    "DescriptionAltComponent",
     "DescriptionComponent",
     "EpochComponent",
     "ExitsComponent",
