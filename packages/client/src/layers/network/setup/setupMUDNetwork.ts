@@ -1,55 +1,56 @@
-import "@ethersproject/abstract-provider"; // we really need to figure out why this is necessary
+import '@ethersproject/abstract-provider'; // we really need to figure out why this is necessary
+import { Type, World, defineComponent } from '@mud-classic/recs';
+import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
+import { keccak256 } from '@mud-classic/utils';
+import { Contract, ContractInterface } from 'ethers';
+import { keys } from 'lodash';
+import { computed } from 'mobx';
+import { BehaviorSubject, Subject } from 'rxjs';
+
+import { defineStringComponent } from 'layers/network/components';
 import {
-  createNetwork,
-  Mappings,
-  createTxQueue,
-  createSyncWorker,
-  createSystemExecutor,
   Ack,
   InputType,
-} from "layers/network/workers";
-import { defineComponent, Type, World } from "@mud-classic/recs";
-import { World as WorldContract } from "@mud-classic/solecs/types/ethers-contracts/World";
-import { abi as WorldAbi } from "@mud-classic/solecs/abi/World.json";
-import { keccak256 } from "@mud-classic/utils";
-import { Contract, ContractInterface } from "ethers";
-import { keys } from "lodash";
-import { computed } from "mobx";
-import { BehaviorSubject, concatMap, from, Subject } from "rxjs";
-import { createContracts } from "./createContracts";
-import { defineStringComponent } from "layers/network/components";
-import { ContractComponent, ContractComponents, NetworkComponents, SetupContractConfig } from "./types";
+  Mappings,
+  createNetwork,
+  createSyncWorker,
+  createSystemExecutor,
+} from 'layers/network/workers';
+import {
+  ContractComponent,
+  ContractComponents,
+  NetworkComponents,
+  SetupContractConfig,
+} from './types';
 import {
   applyNetworkUpdates,
   createDecodeNetworkComponentUpdate,
-  createEncoders,
   createSystemCallStreams,
-} from "./utils";
-
+} from './utils';
 
 export async function setupMUDNetwork<
   C extends ContractComponents,
   SystemTypes extends { [key: string]: Contract }
 >(
-  networkConfig: SetupContractConfig,
   world: World,
   contractComponents: C,
   SystemAbis: { [key in keyof SystemTypes]: ContractInterface },
+  networkConfig: SetupContractConfig,
   options?: { initialGasPrice?: number; fetchSystemCalls?: boolean }
 ) {
   const SystemsRegistry = findOrDefineComponent(
     contractComponents,
     defineStringComponent(world, {
-      id: "SystemsRegistry",
-      metadata: { contractId: "world.component.systems" },
+      id: 'SystemsRegistry',
+      metadata: { contractId: 'world.component.systems' },
     })
   );
 
   const ComponentsRegistry = findOrDefineComponent(
     contractComponents,
     defineStringComponent(world, {
-      id: "ComponentsRegistry",
-      metadata: { contractId: "world.component.components" },
+      id: 'ComponentsRegistry',
+      metadata: { contractId: 'world.component.components' },
     })
   );
 
@@ -64,8 +65,8 @@ export async function setupMUDNetwork<
         percentage: Type.Number,
       },
       {
-        id: "LoadingState",
-        metadata: { contractId: "component.LoadingState" },
+        id: 'LoadingState',
+        metadata: { contractId: 'component.LoadingState' },
       }
     )
   );
@@ -80,38 +81,29 @@ export async function setupMUDNetwork<
   // Mapping from component contract id to key in components object
   const mappings: Mappings<C> = {};
 
-  // Function to register new components in mappings object
-  function registerComponent(key: string, component: ContractComponent) {
-    const { contractId } = component.metadata;
+  // Register initial components in mappings object
+  for (const key of Object.keys(components)) {
+    const { contractId } = components[key].metadata;
     mappings[keccak256(contractId)] = key;
   }
 
-  // Register initial components in mappings object
-  for (const key of Object.keys(components)) {
-    registerComponent(key, components[key]);
-  }
-
+  // create the network from the connected signer/provider
+  // NOTE: tbh not sure what the purpose of this is aside from the pacemaking
   const network = await createNetwork(networkConfig);
   world.registerDisposer(network.dispose);
 
   const signerOrProvider = computed(() => network.signer.get() || network.providers.get().json);
 
-  const { contracts, config: contractsConfig } = await createContracts<{ World: WorldContract }>({
-    config: { World: { abi: WorldAbi, address: networkConfig.worldAddress } },
-    signerOrProvider,
-  });
+  // set the initial gas price
+  let gasPrice = options?.initialGasPrice;
+  if (!gasPrice) {
+    const detectedGasPrice = await signerOrProvider.get().getGasPrice();
+    gasPrice = Math.ceil(detectedGasPrice.toNumber() * 1.3);
+  }
+  const gasPriceInput$ = new BehaviorSubject<number>(gasPrice);
 
-  const gasPriceInput$ = new BehaviorSubject<number>(
-    // If no initial gas price is provided, check the gas price once and add a 30% buffer
-    options?.initialGasPrice || Math.ceil((await signerOrProvider.get().getGasPrice()).toNumber() * 1.3)
-  );
-
-  const { txQueue, dispose: disposeTxQueue } = createTxQueue(contracts, network, gasPriceInput$, {
-    devMode: networkConfig.devMode,
-  });
-  world.registerDisposer(disposeTxQueue);
-
-  const { systems, registerSystem, getSystemContract } = createSystemExecutor<SystemTypes>(
+  // create the system executor
+  const { systems, getSystemContract } = createSystemExecutor<SystemTypes>(
     world,
     network,
     SystemsRegistry,
@@ -122,32 +114,33 @@ export async function setupMUDNetwork<
     }
   );
 
-  const decodeNetworkComponentUpdate = createDecodeNetworkComponentUpdate(world, components, mappings);
-  const { systemCallStreams, decodeAndEmitSystemCall } = createSystemCallStreams(
+  const decodeNetworkUpdate = createDecodeNetworkComponentUpdate(world, components, mappings);
+  const { decodeAndEmitSystemCall } = createSystemCallStreams(
     world,
     keys(SystemAbis),
     SystemsRegistry,
     // @ts-ignore: we'll fix this type mismatch later..
     getSystemContract,
-    decodeNetworkComponentUpdate
+    decodeNetworkUpdate
   );
 
-
+  // create the sync web worker
   const ack$ = new Subject<Ack>();
-  // Avoid passing externalProvider to sync worker (too complex to copy)
   const {
     provider: { externalProvider: _, ...providerConfig },
     ...syncWorkerConfig
   } = networkConfig;
   const { ecsEvents$, input$, dispose } = createSyncWorker<C>(ack$);
   world.registerDisposer(dispose);
+
+  // define the startSync function
   function startSync() {
     input$.next({
       type: InputType.Config,
       data: {
         ...syncWorkerConfig,
         provider: providerConfig,
-        worldContract: contractsConfig.World,
+        worldContract: { abi: WorldAbi, address: networkConfig.worldAddress },
         initialBlockNumber: networkConfig.initialBlockNumber ?? 0,
         disableCache: networkConfig.devMode, // Disable cache on local networks (hardhat / anvil)
         fetchSystemCalls: options?.fetchSystemCalls,
@@ -155,26 +148,21 @@ export async function setupMUDNetwork<
     });
   }
 
-  const { txReduced$ } = applyNetworkUpdates(world, components, ecsEvents$, mappings, ack$, decodeAndEmitSystemCall);
-
-  const encoders = networkConfig.encoders
-    ? createEncoders(world, ComponentsRegistry, signerOrProvider)
-    : new Promise((resolve) => resolve({}));
+  const { txReduced$ } = applyNetworkUpdates(
+    world,
+    components,
+    ecsEvents$,
+    mappings,
+    ack$,
+    decodeAndEmitSystemCall
+  );
 
   return {
-    txQueue,
-    txReduced$,
-    encoders,
+    gasPriceInput$,
     network,
     startSync,
     systems,
-    systemCallStreams,
-    gasPriceInput$,
-    ecsEvent$: ecsEvents$.pipe(concatMap((updates) => from(updates))),
-    mappings,
-    registerComponent,
-    registerSystem,
-    components,
+    txReduced$,
   };
 }
 
@@ -184,10 +172,7 @@ export async function setupMUDNetwork<
  * @param component component to find
  * @returns component if it exists in components object, otherwise the component passed in
  */
-function findOrDefineComponent<
-  Cs extends ContractComponents,
-  C extends ContractComponent
->(
+function findOrDefineComponent<Cs extends ContractComponents, C extends ContractComponent>(
   components: Cs,
   component: C
 ): C {
@@ -197,9 +182,9 @@ function findOrDefineComponent<
 
   if (existingComponent) {
     console.warn(
-      "Component with contract id",
+      'Component with contract id',
       component.metadata.contractId,
-      "is defined by default in setupMUDNetwork"
+      'is defined by default in setupMUDNetwork'
     );
   }
 

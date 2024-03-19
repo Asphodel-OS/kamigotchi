@@ -54,7 +54,7 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
 
   // get the determined environment mode
   let mode = import.meta.env.MODE;
-  if (mode) console.log(`Environment mode ${mode} detected.\n`);
+  if (mode) console.log(`Environment mode { ${mode} } detected.\n`);
   else {
     console.warn(`No environment mode detected. Defaulting to 'development'\n`);
     mode = 'development';
@@ -161,7 +161,7 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
 const getModeOverride = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const modeOverride = urlParams.get('mode');
-  if (modeOverride) console.warn(`Environment mode override ${modeOverride} detected.`);
+  if (modeOverride) console.warn(`Environment mode override { ${modeOverride} } detected.`);
   else return;
 
   // return the mode override if it is a valid one
@@ -170,7 +170,7 @@ const getModeOverride = () => {
     return modeOverride;
   } else {
     console.warn(
-      `No chain config found for override mode '${modeOverride}'.\n`,
+      `No chain config found for override mode { ${modeOverride} }.\n`,
       `Must be one of [${Array.from(chainConfigs.keys()).join(' | ')}].\n`,
       `Defaulting to provided environment mode.`
     );

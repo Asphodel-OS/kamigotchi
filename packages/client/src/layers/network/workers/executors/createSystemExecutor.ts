@@ -1,11 +1,19 @@
-import { Provider } from "@ethersproject/providers";
-import { Component, EntityIndex, getComponentEntities, getComponentValue, Type, World } from "@mud-classic/recs";
-import { deferred, keccak256, toEthAddress } from "@mud-classic/utils";
-import { Contract, ContractInterface, Signer } from "ethers";
-import { observable, runInAction } from "mobx";
-import { createTxQueue } from "./createTxQueue";
-import { Network } from "./createNetwork";
-import { BehaviorSubject } from "rxjs";
+import { Provider } from '@ethersproject/providers';
+import {
+  Component,
+  EntityIndex,
+  getComponentEntities,
+  getComponentValue,
+  Type,
+  World,
+} from '@mud-classic/recs';
+import { deferred, keccak256, toEthAddress } from '@mud-classic/utils';
+import { Contract, ContractInterface, Signer } from 'ethers';
+import { observable, runInAction } from 'mobx';
+import { BehaviorSubject } from 'rxjs';
+
+import { Network } from './createNetwork';
+import { createTxQueue } from './createTxQueue';
 
 /**
  * Create a system executor object.
@@ -27,10 +35,14 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   gasPrice$: BehaviorSubject<number>,
   options?: { devMode?: boolean; concurrency?: number }
 ) {
+  console.log('Creating system executor');
   const systemContracts = observable.box({} as T);
-  const systemIdPreimages: { [key: string]: string } = Object.keys(interfaces).reduce((acc, curr) => {
-    return { ...acc, [keccak256(curr)]: curr };
-  }, {});
+  const systemIdPreimages: { [key: string]: string } = Object.keys(interfaces).reduce(
+    (acc, curr) => {
+      return { ...acc, [keccak256(curr)]: curr };
+    },
+    {}
+  );
 
   // Util to add new systems to the systems tx queue
   function registerSystem(system: { id: string; contract: Contract }) {
@@ -66,13 +78,10 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
 
   return { systems: txQueue, registerSystem, getSystemContract };
 
-  function getSystemContract(systemId: string) {
-    const name = systemIdPreimages[systemId] as keyof T;
-
-    return {
-      name,
-      contract: systemContracts.get()[name],
-    };
+  // get a system contract by its id
+  function getSystemContract(id: string) {
+    const name = systemIdPreimages[id] as keyof T;
+    return { name, contract: systemContracts.get()[name] };
   }
 
   function createSystemContract<C extends Contract>(
@@ -80,17 +89,18 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
     signerOrProvider?: Signer | Provider
   ): { id: string; contract: C } | undefined {
     const { value: hashedSystemId } = getComponentValue(systems, entity) || {};
-    if (!hashedSystemId) throw new Error("System entity not found");
+    if (!hashedSystemId) throw new Error('System entity not found');
     const id = systemIdPreimages[hashedSystemId];
     if (!id) {
-      console.warn("Unknown system:", hashedSystemId);
+      console.warn('Unknown system:', hashedSystemId);
       return;
     }
     return {
       id,
       contract: new Contract(
         toEthAddress(world.entities[entity]!),
-        interfaces[id]!, signerOrProvider
+        interfaces[id]!,
+        signerOrProvider
       ) as C,
     };
   }
