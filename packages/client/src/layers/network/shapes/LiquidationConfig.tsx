@@ -25,9 +25,13 @@ export interface AffinityMultiplers {
 // get the Liquidation relevant fields from the world config
 export const getLiquidationConfig = (world: World, components: Components): LiquidationConfig => {
   const affinityMultiplierPrecision =
-    10 ** getConfigFieldValue(components, 'LIQ_THRESH_MULT_AFF_PREC');
+    10 ** getConfigFieldValue(world, components, 'LIQ_THRESH_MULT_AFF_PREC');
   // [base, up, down]
-  const affinityMultiplierBaseArr = getConfigFieldValueArray(components, 'LIQ_THRESH_MULT_AFF');
+  const affinityMultiplierBaseArr = getConfigFieldValueArray(
+    world,
+    components,
+    'LIQ_THRESH_MULT_AFF'
+  );
   const affinityMultiplierUp = affinityMultiplierBaseArr[0];
   const affinityMultiplierDown = affinityMultiplierBaseArr[1];
   const affinityMultiplierBase = affinityMultiplierBaseArr[2];
@@ -42,10 +46,10 @@ export const getLiquidationConfig = (world: World, components: Components): Liqu
     affinity: affinityMultipliers,
   };
 
-  const bountyBaseArr = getConfigFieldValueArray(components, 'LIQ_BOUNTY_BASE');
+  const bountyBaseArr = getConfigFieldValueArray(world, components, 'LIQ_BOUNTY_BASE');
   const bountyBase = bountyBaseArr[0];
   const bountyBasePrecision = 10 ** bountyBaseArr[1];
-  const thresholdBaseArr = getConfigFieldValueArray(components, 'LIQ_THRESH_BASE');
+  const thresholdBaseArr = getConfigFieldValueArray(world, components, 'LIQ_THRESH_BASE');
   const thresholdBase = thresholdBaseArr[0];
   const thresholdBasePrecision = 10 ** thresholdBaseArr[1];
 

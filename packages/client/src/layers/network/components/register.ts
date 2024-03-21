@@ -34,9 +34,7 @@ export function createComponents(world: World) {
     // Archetypes
     IsAccount: defineBoolEZ('IsAccount', 'component.Is.Account'),
     IsBonus: defineBoolEZ('IsBonus', 'component.Is.Bonus'),
-    IsConfig: defineBoolEZ('IsConfig', 'component.Is.Config'),
     IsCondition: defineBoolEZ('IsCondition', 'component.Is.Condition'),
-    IsData: defineBoolEZ('IsData', 'component.Is.Data'),
     IsEffect: defineBoolEZ('IsEffect', 'component.Is.Effect'),
     IsFriendship: defineBoolEZ('IsFriendship', 'component.Is.Friendship'),
     IsInventory: defineBoolEZ('IsInventory', 'component.Is.Inventory'),
@@ -57,8 +55,8 @@ export function createComponents(world: World) {
     IsRequirement: defineBoolEZ('IsRequirement', 'component.Is.Requirement'),
     IsReward: defineBoolEZ('IsReward', 'component.Is.Reward'),
     IsRoom: defineBoolEZ('IsRoom', 'component.Is.Room'),
-    IsScore: defineBoolEZ('IsScore', 'component.Is.Score'),
     IsSkill: defineBoolEZ('IsSkill', 'component.Is.Skill'),
+    IsScore: defineBoolEZ('IsScore', 'component.Is.Score'),
     IsTrade: defineBoolEZ('IsTrade', 'component.Is.Trade'),
     IsTrait: defineBoolEZ('IsTrait', 'component.Is.Trait'),
 

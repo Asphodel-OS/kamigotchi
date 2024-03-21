@@ -117,7 +117,7 @@ export const getKami = (
     time: {
       cooldown: {
         last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
-        requirement: getConfigFieldValue(components, 'KAMI_IDLE_REQ'),
+        requirement: getConfigFieldValue(world, components, 'KAMI_IDLE_REQ'),
       },
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
@@ -216,8 +216,12 @@ export const getKami = (
 
   // experience threshold calculation according to level
   if (kami.level) {
-    const experienceBase = getConfigFieldValue(components, 'KAMI_LVL_REQ_BASE');
-    const expereinceExponentArr = getConfigFieldValueArray(components, 'KAMI_LVL_REQ_MULT_BASE');
+    const experienceBase = getConfigFieldValue(world, components, 'KAMI_LVL_REQ_BASE');
+    const expereinceExponentArr = getConfigFieldValueArray(
+      world,
+      components,
+      'KAMI_LVL_REQ_MULT_BASE'
+    );
     const experienceExponent = expereinceExponentArr[0];
     const exponentPrecision = 10 ** expereinceExponentArr[1];
     kami.experience.threshold = Math.floor(
@@ -230,7 +234,7 @@ export const getKami = (
   if (kami.state === 'HARVESTING') {
     let productionRate = 0;
     if (kami.production) productionRate = kami.production.rate;
-    const drainBaseArr = getConfigFieldValueArray(components, 'HEALTH_RATE_DRAIN_BASE');
+    const drainBaseArr = getConfigFieldValueArray(world, components, 'HEALTH_RATE_DRAIN_BASE');
     const drainBase = drainBaseArr[0];
     const drainBasePrecision = 10 ** drainBaseArr[1];
     const multiplier = kami.bonuses.harvest.drain;
@@ -238,7 +242,7 @@ export const getKami = (
   } else if (kami.state === 'RESTING') {
     const harmony = kami.stats.harmony;
     const totHarmony = (1.0 + harmony.boost / 1000) * (harmony.base + harmony.shift);
-    const healBaseArr = getConfigFieldValueArray(components, 'HEALTH_RATE_HEAL_BASE');
+    const healBaseArr = getConfigFieldValueArray(world, components, 'HEALTH_RATE_HEAL_BASE');
     const healBase = healBaseArr[1];
     const healBasePrecision = 10 ** healBaseArr[2];
     healthRate = (totHarmony * healBase) / (3600 * healBasePrecision);

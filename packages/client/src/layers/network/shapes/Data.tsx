@@ -1,4 +1,5 @@
-import { EntityID, Has, HasValue, World, getComponentValue, runQuery } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { utils } from 'ethers';
 
 import { Components } from 'layers/network';
 
@@ -10,24 +11,24 @@ export const getData = (
   type: string,
   index?: number
 ): number => {
-  const { HolderID, IsData, Index, Type, Value } = components;
-
-  let configEntityIndex;
-  if (index && index > 0) {
-    configEntityIndex = Array.from(
-      runQuery([
-        Has(IsData),
-        HasValue(HolderID, { value: id }),
-        HasValue(Type, { value: type }),
-        HasValue(Index, { value: index }),
-      ])
-    )[0];
-  } else {
-    configEntityIndex = Array.from(
-      runQuery([Has(IsData), HasValue(HolderID, { value: id }), HasValue(Type, { value: type })])
-    )[0];
+  const { BareValue } = components;
+  const configEntityIndex = getEntityIndex(world, id, index ? index : 0, type);
+  if (!configEntityIndex) {
+    // console.warn(`data field not found for ${type}`);
+    return 0;
   }
-  return getComponentValue(Value, configEntityIndex)?.value != undefined
-    ? (getComponentValue(Value, configEntityIndex)?.value as number) * 1
-    : 0;
+  return (getComponentValue(BareValue, configEntityIndex)?.value as number) * 1;
+};
+
+const getEntityIndex = (
+  world: any,
+  holderID: EntityID,
+  index: number,
+  field: string
+): EntityIndex | undefined => {
+  const id = utils.solidityKeccak256(
+    ['string', 'uint256', 'uint32', 'string'],
+    ['Is.Data', holderID ? holderID : ('0x00' as EntityID), index, field]
+  );
+  return world.entityToIndex.get(id as EntityID);
 };
