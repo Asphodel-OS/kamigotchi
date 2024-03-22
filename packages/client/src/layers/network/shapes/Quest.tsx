@@ -63,6 +63,7 @@ export interface Quest {
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Reward[];
+  points: number;
 }
 
 // the Target of a Condition (Objective, Requirement, Reward)
@@ -110,6 +111,7 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
       Name,
       Time,
       QuestIndex,
+      QuestPoint,
       StartTime,
     },
   } = network;
@@ -118,6 +120,8 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
   const registryIndex = Array.from(
     runQuery([Has(IsRegistry), Has(IsQuest), HasValue(QuestIndex, { value: questIndex })])
   )[0];
+
+  const points = (getComponentValue(QuestPoint, registryIndex)?.value || (0 as number)) * 1;
 
   let result: Quest = {
     id: world.entities[entityIndex],
@@ -129,7 +133,8 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
     repeatable: hasComponent(IsRepeatable, registryIndex) || (false as boolean),
     requirements: queryQuestRequirements(network, questIndex),
     objectives: queryQuestObjectives(network, questIndex),
-    rewards: queryQuestRewards(network, questIndex),
+    rewards: queryQuestRewards(network, questIndex, world.entities[entityIndex], points),
+    points: points,
   };
 
   if (hasComponent(IsRepeatable, registryIndex)) {
@@ -286,12 +291,21 @@ const queryQuestObjectives = (network: NetworkLayer, questIndex: number): Object
 };
 
 // Get the Entity Indices of the Rewards of a Quest
-const queryQuestRewards = (network: NetworkLayer, questIndex: number): Reward[] => {
+const queryQuestRewards = (
+  network: NetworkLayer,
+  questIndex: number,
+  questID: EntityID,
+  points: number
+): Reward[] => {
   const { IsRegistry, IsReward, QuestIndex } = network.components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), Has(IsReward), HasValue(QuestIndex, { value: questIndex })])
   );
-  return entityIndices.map((entityIndex) => getReward(network, entityIndex));
+  const queried = entityIndices.map((entityIndex) => getReward(network, entityIndex));
+
+  if (points > 0)
+    return [{ id: questID, target: { type: 'QUEST_POINTS', value: points } }, ...queried];
+  else return queried;
 };
 
 const querySnapshotObjective = (

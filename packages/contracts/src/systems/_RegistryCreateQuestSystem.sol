@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from "solecs/System.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { System } from 'solecs/System.sol';
+import { IWorld } from 'solecs/interfaces/IWorld.sol';
+import { getAddressById } from 'solecs/utils.sol';
 
-import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
+import { LibRegistryQuests } from 'libraries/LibRegistryQuests.sol';
 
-uint256 constant ID = uint256(keccak256("system._Registry.Quest.Create"));
+uint256 constant ID = uint256(keccak256('system._Registry.Quest.Create'));
 
 contract _RegistryCreateQuestSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -37,7 +37,7 @@ contract _RegistryCreateQuestSystem is System {
       LibRegistryQuests.setRepeatable(components, regID, duration);
     }
 
-    return "";
+    return '';
   }
 
   function executeTyped(

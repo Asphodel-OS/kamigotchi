@@ -16,7 +16,8 @@
         "semi": true,
         "tabWidth": 2,
         "useTabs": false,
-        "bracketSpacing": true
+        "bracketSpacing": true,
+        "singleQuote": false
       }
     }
   ]

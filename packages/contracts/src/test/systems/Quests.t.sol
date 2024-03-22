@@ -255,9 +255,6 @@ contract QuestsTest is SetupTemplate {
     _createQuest(1, 0);
     _createQuestReward(1, "MINT20", 0, 2);
 
-    // register account
-    address operator = _getOperator(0);
-
     // accept quest
     uint256 questID = _acceptQuest(0, 1);
 
@@ -268,16 +265,16 @@ contract QuestsTest is SetupTemplate {
 
   function testRewardPoints() public {
     // create quest
-    _createQuest(1, 0);
-    _createQuestReward(1, "QUEST_POINTS", 0, 2);
+    _createQuest(1, 2, 0);
 
-    // register account
-    address operator = _getOperator(0);
+    uint256 regID = LibRegistryQuests.getByQuestIndex(components, 1);
+    assertTrue(regID != 0);
+    assertEq(_QuestPointComponent.getValue(regID), 2);
+    assertEq(LibQuests.getPoints(components, regID), 2);
 
     // accept quest
     uint256 questID = _acceptQuest(0, 1);
 
-    // check that Mint20 is properly distributed
     _completeQuest(0, questID);
     assertEq(LibAccount.getQuestPoints(components, _getAccount(0)), 2);
   }

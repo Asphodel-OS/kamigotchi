@@ -437,6 +437,18 @@ abstract contract SetupTemplate is TestSetupImports {
     );
   }
 
+  function _createQuest(uint32 index, uint points, uint duration) public {
+    vm.prank(deployer);
+    __RegistryCreateQuestSystem.executeTyped(
+      index,
+      LibString.toString(index),
+      "DESCRIPTION",
+      "",
+      points,
+      duration
+    );
+  }
+
   function _createQuestObjective(
     uint32 questIndex,
     string memory name,

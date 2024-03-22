@@ -294,7 +294,7 @@ library LibQuests {
   }
 
   function distributePoints(IUintComp components, uint256 accountID, uint256 amount) internal {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
+    QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
     uint256 bal = comp.has(accountID) ? comp.getValue(accountID) : 0;
     comp.set(accountID, bal + amount);
   }
