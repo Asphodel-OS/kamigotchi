@@ -7,8 +7,6 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
-  ContractTransaction,
-  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -94,14 +92,14 @@ export interface TraitHandler extends BaseContract {
   functions: {
     _getTraitStats(
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[TraitStatsStructOutput]>;
   };
 
   _getTraitStats(
     id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<TraitStatsStructOutput>;
 
   callStatic: {
     _getTraitStats(
@@ -115,14 +113,14 @@ export interface TraitHandler extends BaseContract {
   estimateGas: {
     _getTraitStats(
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     _getTraitStats(
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

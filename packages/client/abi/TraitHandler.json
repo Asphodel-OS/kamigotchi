@@ -44,7 +44,7 @@
           ]
         }
       ],
-      "stateMutability": "nonpayable"
+      "stateMutability": "view"
     }
   ],
   "methodIdentifiers": {

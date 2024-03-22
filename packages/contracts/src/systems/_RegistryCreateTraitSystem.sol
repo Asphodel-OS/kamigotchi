@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { TraitValues, LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Trait.Create"));
@@ -32,73 +32,27 @@ contract _RegistryCreateTraitSystem is System {
         (uint32, int32, int32, int32, int32, int32, uint256, string, string, string)
       );
 
+    TraitValues memory values = TraitValues(
+      name,
+      health,
+      power,
+      violence,
+      harmony,
+      slots,
+      rarity,
+      affinity
+    );
+
     if (LibString.eq(traitType, "BODY")) {
-      LibRegistryTrait.createBody(
-        world,
-        components,
-        index,
-        name,
-        health,
-        power,
-        violence,
-        harmony,
-        slots,
-        rarity,
-        affinity
-      );
+      LibRegistryTrait.createBody(components, index, values);
     } else if (LibString.eq(traitType, "BACKGROUND")) {
-      LibRegistryTrait.createBackground(
-        world,
-        components,
-        index,
-        name,
-        health,
-        power,
-        violence,
-        harmony,
-        slots,
-        rarity
-      );
+      LibRegistryTrait.createBackground(components, index, values);
     } else if (LibString.eq(traitType, "COLOR")) {
-      LibRegistryTrait.createColor(
-        world,
-        components,
-        index,
-        name,
-        health,
-        power,
-        violence,
-        harmony,
-        slots,
-        rarity
-      );
+      LibRegistryTrait.createColor(components, index, values);
     } else if (LibString.eq(traitType, "FACE")) {
-      LibRegistryTrait.createFace(
-        world,
-        components,
-        index,
-        name,
-        health,
-        power,
-        violence,
-        harmony,
-        slots,
-        rarity
-      );
+      LibRegistryTrait.createFace(components, index, values);
     } else if (LibString.eq(traitType, "HAND")) {
-      LibRegistryTrait.createHand(
-        world,
-        components,
-        index,
-        name,
-        health,
-        power,
-        violence,
-        harmony,
-        slots,
-        rarity,
-        affinity
-      );
+      LibRegistryTrait.createHand(components, index, values);
     } else {
       revert("invalid traitType");
     }

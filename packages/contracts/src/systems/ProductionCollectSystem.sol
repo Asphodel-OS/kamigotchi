@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { System } from 'solecs/System.sol';
-import { IWorld } from 'solecs/interfaces/IWorld.sol';
-import { getAddressById } from 'solecs/utils.sol';
+import { System } from "solecs/System.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { getAddressById } from "solecs/utils.sol";
 
-import { LibAccount } from 'libraries/LibAccount.sol';
-import { LibCoin } from 'libraries/LibCoin.sol';
-import { LibDataEntity } from 'libraries/LibDataEntity.sol';
-import { LibExperience } from 'libraries/LibExperience.sol';
-import { LibNode } from 'libraries/LibNode.sol';
-import { LibPet } from 'libraries/LibPet.sol';
-import { LibProduction } from 'libraries/LibProduction.sol';
-import { LibScore } from 'libraries/LibScore.sol';
+import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCoin } from "libraries/LibCoin.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
+import { LibNode } from "libraries/LibNode.sol";
+import { LibPet } from "libraries/LibPet.sol";
+import { LibProduction } from "libraries/LibProduction.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
-uint256 constant ID = uint256(keccak256('system.Production.Collect'));
+uint256 constant ID = uint256(keccak256("system.Production.Collect"));
 
 // ProductionCollectSystem collects on an active pet production.
 contract ProductionCollectSystem is System {
@@ -26,19 +26,19 @@ contract ProductionCollectSystem is System {
     uint256 petID = LibProduction.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, 'FarmCollect: no account');
-    require(LibPet.getAccount(components, petID) == accountID, 'FarmCollect: pet not urs');
-    require(LibPet.isHarvesting(components, petID), 'FarmCollect: pet must be harvesting');
-    require(!LibPet.onCooldown(components, petID), 'FarmCollect: pet on cooldown');
+    require(accountID != 0, "FarmCollect: no account");
+    require(LibPet.getAccount(components, petID) == accountID, "FarmCollect: pet not urs");
+    require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
+    require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");
 
     uint256 timeDelta = block.timestamp - LibProduction.getLastTs(components, id);
 
     // health check
     LibPet.sync(components, petID);
-    require(LibPet.isHealthy(components, petID), 'FarmCollect: pet starving..');
+    require(LibPet.isHealthy(components, petID), "FarmCollect: pet starving..");
     require(
       LibAccount.getRoom(components, accountID) == LibPet.getRoom(components, petID),
-      'FarmCollect: node too far'
+      "FarmCollect: node too far"
     );
 
     // claim balance and increase experience
@@ -50,8 +50,8 @@ contract ProductionCollectSystem is System {
 
     // standard logging and tracking
     uint256 nodeID = LibProduction.getNode(components, id);
-    LibScore.inc(components, accountID, 'COLLECT', output);
-    LibDataEntity.inc(components, accountID, 0, 'COIN_TOTAL', output);
+    LibScore.inc(components, accountID, "COLLECT", output);
+    LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", output);
     LibNode.logHarvestAt(components, accountID, LibNode.getIndex(components, nodeID), output);
     LibNode.logHarvestAffinity(
       components,
