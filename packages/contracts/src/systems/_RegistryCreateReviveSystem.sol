@@ -24,11 +24,10 @@ contract _RegistryCreateReviveSystem is System {
     ) = abi.decode(arguments, (uint32, string, string, int32, string));
     uint256 registryID = LibRegistryItem.getByIndex(components, index);
 
-    require(registryID == 0, "CreateRevive: index alr exists");
     require(!LibString.eq(name, ""), "CreateRevive: name is empty");
     require(health > 0, "CreateRevive: health not > 0");
 
-    LibRegistryItem.createRevive(world, components, index, name, description, health, media);
+    LibRegistryItem.createRevive(components, index, name, description, health, media);
 
     return "";
   }

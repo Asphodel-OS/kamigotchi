@@ -30,37 +30,27 @@ library LibRegistryItem {
   /////////////////
   // INTERACTIONS
 
-  // Create a Registry entry for a Consumable Item.
+  /// @notice Create a Registry entry for a Consumable Item.
   function createConsumable(
-    IWorld world,
     IUintComp components,
     uint32 index,
     string memory name,
     string memory description,
     string memory type_,
     string memory mediaURI
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIndex(components, id, index);
-    setIsRegistry(components, id);
+  ) internal returns (uint256 id) {
+    id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
     setIsFungible(components, id);
     setType(components, id, type_);
-
-    setName(components, id, name);
-    setDescription(components, id, description);
-    setMediaURI(components, id, mediaURI);
-    return id;
   }
 
-  // @notice sets lootbox registry entity
-  // @param world       The world contract
-  // @param components  The components contract
-  // @param index   The index of the item to create an inventory for
-  // @param keys    The keys of the items in lootbox's droptable
-  // @param weights The weights of the items in lootbox's droptable
+  /// @notice sets lootbox registry entity
+  /// @param components  The components contract
+  /// @param index   The index of the item to create an inventory for
+  /// @param keys    The keys of the items in lootbox's droptable
+  /// @param weights The weights of the items in lootbox's droptable
   function createLootbox(
-    IWorld world,
     IUintComp components,
     uint32 index,
     string memory name,
@@ -69,24 +59,17 @@ library LibRegistryItem {
     uint256[] memory weights,
     string memory mediaURI
   ) internal returns (uint256 id) {
-    id = world.getUniqueEntityId();
-    setIndex(components, id, index);
-    setIsRegistry(components, id);
+    id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
     setIsFungible(components, id);
     setIsLootbox(components, id);
-    setType(components, id, "LOOTBOX");
 
     setKeys(components, id, keys);
     setWeights(components, id, weights);
-    setName(components, id, name);
-    setDescription(components, id, description);
-    setMediaURI(components, id, mediaURI);
   }
 
-  // @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
+  /// @notice Create a Registry entry for a Food item. (e.g. gum, cookie sticks, etc)
   function createFood(
-    IWorld world,
     IUintComp components,
     uint32 index,
     string memory name,
@@ -94,48 +77,55 @@ library LibRegistryItem {
     int32 health,
     uint256 experience,
     string memory mediaURI
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIndex(components, id, index);
-    setIsRegistry(components, id);
+  ) internal returns (uint256 id) {
+    id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
     setIsFungible(components, id);
     setType(components, id, "FOOD");
 
-    setName(components, id, name);
-    setDescription(components, id, description);
-    setMediaURI(components, id, mediaURI);
-
     if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
     if (experience > 0) setExperience(components, id, experience);
-    return id;
   }
 
-  // Create a Registry entry for a Revive item. (e.g. ribbon)
+  /// @notice Create a Registry entry for a Revive item. (e.g. ribbon)
   function createRevive(
-    IWorld world,
     IUintComp components,
     uint32 index,
     string memory name,
     string memory description,
     int32 health,
     string memory mediaURI
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIndex(components, id, index);
-    setIsRegistry(components, id);
+  ) internal returns (uint256 id) {
+    id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
     setIsFungible(components, id);
     setType(components, id, "REVIVE");
+    LibStat.setHealth(components, id, Stat(0, 0, 0, health));
+  }
+
+  /// @notice create a base Registry entry for an item.
+  function createItem(
+    IUintComp components,
+    uint32 index,
+    string memory name,
+    string memory description,
+    string memory mediaURI
+  ) internal returns (uint256 id) {
+    id = getID(index);
+    require(
+      !IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id),
+      "item reg: item alr exists"
+    );
+
+    setIndex(components, id, index);
+    setIsRegistry(components, id);
 
     setName(components, id, name);
     setDescription(components, id, description);
     setMediaURI(components, id, mediaURI);
-    LibStat.setHealth(components, id, Stat(0, 0, 0, health));
-    return id;
   }
 
-  // @notice delete a Registry entry for an item.
+  /// @notice delete a Registry entry for an item.
   function deleteItem(IUintComp components, uint256 id) internal {
     unsetIndex(components, id);
     unsetIsRegistry(components, id);
@@ -316,32 +306,19 @@ library LibRegistryItem {
   /////////////////
   // QUERIES
 
-  // get the number of item registry entries
-  function getItemCount(IUintComp components) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    return LibQuery.query(fragments).length;
-  }
-
   // get the associated item registry entry of a given instance entity
   function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
-    uint32 index = getIndex(components, instanceID);
-    return getByIndex(components, index);
+    IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    if (!comp.has(instanceID)) return 0;
+    uint32 index = comp.getValue(instanceID);
+    uint256 id = getID(index);
+    return comp.has(id) ? id : 0;
   }
 
-  // get the registry entry by item index
-  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexItemCompID),
-      abi.encode(index)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
+    IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
+    uint256 id = getID(index);
+    return comp.has(id) ? id : 0;
   }
 
   ////////////////
@@ -371,5 +348,13 @@ library LibRegistryItem {
     );
 
     return LibQuery.query(fragments);
+  }
+
+  /////////////////
+  // UTILS
+
+  /// @notice Retrieve the ID of a registry entry
+  function getID(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Registry.Item", index)));
   }
 }
