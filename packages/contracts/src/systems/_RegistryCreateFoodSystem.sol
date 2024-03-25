@@ -26,18 +26,8 @@ contract _RegistryCreateFoodSystem is System {
     uint256 registryID = LibRegistryItem.getByIndex(components, index);
 
     require(!LibString.eq(name, ""), "CreateFood: name cannot be empty");
-    require(registryID == 0, "CreateFood: Index already exists");
 
-    LibRegistryItem.createFood(
-      world,
-      components,
-      index,
-      name,
-      description,
-      health,
-      experience,
-      media
-    );
+    LibRegistryItem.createFood(components, index, name, description, health, experience, media);
 
     return "";
   }
