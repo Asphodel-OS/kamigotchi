@@ -402,10 +402,10 @@ abstract contract SetupTemplate is TestSetupImports {
   /* ITEMS */
 
   // @notice creates and empty item index for testing
-  function _createGenericItem(uint32 index) public {
+  function _createGenericItem(uint32 index) public returns (uint256 id) {
     vm.startPrank(deployer);
 
-    uint256 id = world.getUniqueEntityId();
+    id = LibRegistryItem.getID(index);
     _IsRegistryComponent.set(id);
     _IsFungibleComponent.set(id);
     _IndexItemComponent.set(id, index);

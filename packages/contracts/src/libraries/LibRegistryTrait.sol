@@ -459,7 +459,7 @@ library LibRegistryTrait {
   // UTILS
 
   /// @notice Retrieve the ID of a registry entry
-  function getID(uint32 index, string memory _type) internal pure returns (uint256 result) {
+  function getID(uint32 index, string memory _type) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("Registry.Trait", _type, index)));
   }
 }

@@ -23,19 +23,9 @@ contract _RegistryCreateLootboxSystem is System {
     ) = abi.decode(arguments, (uint32, string, string, uint32[], uint256[], string));
 
     uint256 registryID = LibRegistryItem.getByIndex(components, index);
-    require(registryID == 0, "CreateLootbox: index alr exists");
     require(!LibString.eq(name, ""), "CreateLootbox: name empty");
 
-    LibRegistryItem.createLootbox(
-      world,
-      components,
-      index,
-      name,
-      description,
-      keys,
-      weights,
-      media
-    );
+    LibRegistryItem.createLootbox(components, index, name, description, keys, weights, media);
 
     return "";
   }
