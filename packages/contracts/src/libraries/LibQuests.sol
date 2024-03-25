@@ -9,6 +9,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdHolderComponent, ID as HolderCompID } from "components/IdHolderComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
@@ -22,10 +23,10 @@ import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
@@ -69,7 +70,7 @@ library LibQuests {
     );
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, ) = parseObjectiveLogic(logicType);
+      (HANDLER handler, ) = LibBoolean.parseLogic(logicType);
       if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
         snapshotObjective(world, components, id, objectives[i], accountID);
       }
@@ -102,7 +103,7 @@ library LibQuests {
     );
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, ) = parseObjectiveLogic(logicType);
+      (HANDLER handler, ) = LibBoolean.parseLogic(logicType);
       if (handler == HANDLER.INCREASE || handler == HANDLER.DECREASE) {
         snapshotObjective(world, components, id, objectives[i], accountID);
       }
@@ -122,6 +123,10 @@ library LibQuests {
 
     uint32 questIndex = getQuestIndex(components, questID);
     distributeRewards(world, components, questIndex, accountID);
+
+    uint256 questRegID = LibRegistryQuests.getByQuestIndex(components, questIndex);
+    uint256 points = getPoints(components, questRegID);
+    distributePoints(components, accountID, points);
   }
 
   function drop(IUintComp components, uint256 questID) internal {
@@ -156,7 +161,7 @@ library LibQuests {
     setIsObjective(components, id);
     setHolderId(components, id, questID);
     setObjectiveIndex(components, id, getObjectiveIndex(components, conditionID));
-    setValue(components, id, amount);
+    setBalance(components, id, amount);
 
     return id;
   }
@@ -167,7 +172,7 @@ library LibQuests {
       unsetIsObjective(components, questID);
       unsetHolderId(components, questID);
       unsetObjectiveIndex(components, questID);
-      unsetValue(components, questID);
+      unsetBalance(components, questID);
     }
   }
 
@@ -214,7 +219,7 @@ library LibQuests {
     uint256 questID,
     uint32 questIndex,
     uint256 accountID
-  ) internal view returns (bool) {
+  ) internal view returns (bool result) {
     uint256[] memory requirements = LibRegistryQuests.getRequirementsByQuestIndex(
       components,
       questIndex
@@ -222,42 +227,22 @@ library LibQuests {
 
     for (uint256 i; i < requirements.length; i++) {
       string memory logicType = getLogicType(components, requirements[i]);
-      bool result;
+      (HANDLER handler, LOGIC operator) = LibBoolean.parseLogic(logicType);
 
-      if (LibString.eq(logicType, "AT")) {
-        result = checkBoolean(components, requirements[i], accountID, LOGIC.IS);
-      } else if (LibString.eq(logicType, "COMPLETE")) {
-        result = checkBoolean(components, requirements[i], accountID, LOGIC.IS);
-      } else if (LibString.eq(logicType, "HAVE")) {
-        result = checkCurrent(components, requirements[i], accountID, LOGIC.MIN);
-      } else if (LibString.eq(logicType, "GREATER")) {
-        result = checkCurrent(components, requirements[i], accountID, LOGIC.MIN);
-      } else if (LibString.eq(logicType, "LESSER")) {
-        result = checkCurrent(components, requirements[i], accountID, LOGIC.MAX);
-      } else if (LibString.eq(logicType, "EQUAL")) {
-        result = checkCurrent(components, requirements[i], accountID, LOGIC.EQUAL);
-      } else if (LibString.eq(logicType, "USE")) {
-        result = checkUseCurrent(components, requirements[i], accountID, LOGIC.MIN);
-        // TODO: implement use logic
+      if (handler == HANDLER.CURRENT) {
+        result = checkCurrent(components, requirements[i], accountID, operator);
+      } else if (handler == HANDLER.BOOLEAN) {
+        result = checkBoolean(components, requirements[i], accountID, operator);
       } else {
         require(false, "Unknown requirement logic type");
       }
 
-      if (!result) {
-        return false;
-      }
+      if (!result) return false;
     }
 
     return true;
   }
 
-  // splits based on logicType. list of logicTypes:
-  // AT: equal, current roomIndex
-  // BUY: min delta increase, shop items
-  // HAVE: min current balance
-  // GATHER: min delta increase, COIN
-  // MINT: min delta increase, Pets (721)
-  // USE: min delta decrease, shop items
   function checkObjectives(
     IUintComp components,
     uint256 questID,
@@ -272,7 +257,7 @@ library LibQuests {
 
     for (uint256 i; i < objectives.length; i++) {
       string memory logicType = getLogicType(components, objectives[i]);
-      (HANDLER handler, LOGIC operator) = parseObjectiveLogic(logicType);
+      (HANDLER handler, LOGIC operator) = LibBoolean.parseLogic(logicType);
 
       if (handler == HANDLER.CURRENT) {
         result = checkCurrent(components, objectives[i], accountID, operator);
@@ -303,9 +288,15 @@ library LibQuests {
     for (uint256 i = 0; i < rewards.length; i++) {
       string memory _type = getType(components, rewards[i]);
       uint32 index = getIndex(components, rewards[i]);
-      uint256 amount = getValue(components, rewards[i]);
+      uint256 amount = getBalance(components, rewards[i]);
       LibAccount.incBalanceOf(world, components, accountID, _type, index, amount);
     }
+  }
+
+  function distributePoints(IUintComp components, uint256 accountID, uint256 amount) internal {
+    QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
+    uint256 bal = comp.has(accountID) ? comp.getValue(accountID) : 0;
+    comp.set(accountID, bal + amount);
   }
 
   function checkCurrent(
@@ -317,28 +308,9 @@ library LibQuests {
     // details of condition
     string memory _type = getType(components, conditionID);
     uint32 index = getIndex(components, conditionID);
-    uint256 expected = getValue(components, conditionID);
+    uint256 expected = getBalance(components, conditionID);
 
     return LibBoolean.checkCurr(components, accountID, index, expected, 0, _type, logic);
-  }
-
-  function checkUseCurrent(
-    IUintComp components,
-    uint256 conditionID,
-    uint256 accountID,
-    LOGIC logic
-  ) internal view returns (bool) {
-    // details of condition
-    string memory _type = getType(components, conditionID);
-    uint32 index = getIndex(components, conditionID);
-    uint256 expected = getValue(components, conditionID);
-
-    // check account
-    uint256 accountValue = LibAccount.getBalanceOf(components, accountID, _type, index);
-
-    // TODO: implement use logic
-
-    return LibBoolean._checkLogicOperator(accountValue, expected, logic);
   }
 
   function checkIncrease(
@@ -354,14 +326,14 @@ library LibQuests {
     uint256 currValue = LibDataEntity.get(components, accountID, index, _type);
 
     uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
-    uint256 prevValue = getValue(components, snapshotID);
+    uint256 prevValue = getBalance(components, snapshotID);
 
     // overall value decreased - condition not be met, will overflow if checked
     if (prevValue > currValue) {
       return false;
     }
 
-    uint256 delta = getValue(components, conditionID);
+    uint256 delta = getBalance(components, conditionID);
     return LibBoolean._checkLogicOperator(currValue - prevValue, delta, logic);
   }
 
@@ -378,14 +350,14 @@ library LibQuests {
     uint256 currValue = LibDataEntity.get(components, accountID, index, _type);
 
     uint256 snapshotID = getSnapshotObjective(components, questID, conditionID);
-    uint256 prevValue = getValue(components, snapshotID);
+    uint256 prevValue = getBalance(components, snapshotID);
 
     // overall value increased - condition not be met, will overflow if checked
     if (currValue > prevValue) {
       return false;
     }
 
-    uint256 delta = getValue(components, conditionID);
+    uint256 delta = getBalance(components, conditionID);
     return LibBoolean._checkLogicOperator(prevValue - currValue, delta, logic);
   }
 
@@ -450,6 +422,10 @@ library LibQuests {
   /////////////////
   // SETTERS
 
+  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
+    BalanceComponent(getAddressById(components, BalCompID)).set(id, value);
+  }
+
   function setAccountId(IUintComp components, uint256 id, uint256 accountID) internal {
     IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accountID);
   }
@@ -498,12 +474,12 @@ library LibQuests {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
 
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
   function unsetAccountId(IUintComp components, uint256 id) internal {
     IdAccountComponent(getAddressById(components, IdAccountCompID)).remove(id);
+  }
+
+  function unsetBalance(IUintComp components, uint256 id) internal {
+    BalanceComponent(getAddressById(components, BalCompID)).remove(id);
   }
 
   function unsetCompleted(IUintComp components, uint256 id) internal {
@@ -538,15 +514,15 @@ library LibQuests {
     IndexObjectiveComponent(getAddressById(components, IndexObjectiveCompID)).remove(id);
   }
 
-  function unsetValue(IUintComp components, uint256 id) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).remove(id);
-  }
-
   /////////////////
   // GETTERS
 
   function getAccountId(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdAccountComponent(getAddressById(components, IdAccountCompID)).getValue(id);
+  }
+
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
+    return BalanceComponent(getAddressById(components, BalCompID)).getValue(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -583,17 +559,12 @@ library LibQuests {
     else return 0;
   }
 
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+  function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
+    return QuestPointComponent(getAddressById(components, QuestPointCompID)).getValue(id);
   }
 
   ////////////////
   // UTILS
-
-  // determins objective logic handler and operator
-  function parseObjectiveLogic(string memory _type) internal pure returns (HANDLER, LOGIC) {
-    return LibBoolean._parseLogic(_type);
-  }
 
   function getSnapshotObjective(
     IUintComp components,

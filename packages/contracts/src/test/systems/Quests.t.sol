@@ -22,7 +22,7 @@ contract QuestsTest is SetupTemplate {
 
   function testAcceptQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, 0);
 
     // register account
     address operator = _getOperator(0);
@@ -45,7 +45,7 @@ contract QuestsTest is SetupTemplate {
 
   function testRepeatableQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 1000);
+    _createQuest(1, 1000);
 
     // register account
     address operator = _getOperator(0);
@@ -75,7 +75,7 @@ contract QuestsTest is SetupTemplate {
 
   function testDropQuest() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, 0);
 
     // register account
     address operator = _getOperator(0);
@@ -91,8 +91,8 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestCoinHave() public {
     // create quest
-    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
+    _createQuest(1, 0);
+    _createQuestRequirement(1, "CURR_MIN", "COIN", 0, 1);
     _createQuestObjective(1, "Quest 1", "CURR_MIN", "COIN", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
 
@@ -129,8 +129,8 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestCoinGather() public {
     // create quest
-    _createQuest(1, "BasicCoinQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(1, "HAVE", "COIN", 0, 1);
+    _createQuest(1, 0);
+    _createQuestRequirement(1, "CURR_MIN", "COIN", 0, 1);
     _createQuestObjective(1, "NAME", "INC_MIN", "COIN_TOTAL", 0, 10);
     _createQuestReward(1, "COIN", 0, 1);
 
@@ -165,8 +165,8 @@ contract QuestsTest is SetupTemplate {
 
   function testQuestRoomIndex() public {
     // create quest
-    _createQuest(1, "BasicRoomIndexQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(1, "AT", "ROOM", 3, 0);
+    _createQuest(1, 0);
+    _createQuestRequirement(1, "BOOL_IS", "ROOM", 3, 0);
     _createQuestObjective(1, "NAME", "BOOL_IS", "ROOM", 4, 0);
 
     // register account
@@ -199,8 +199,8 @@ contract QuestsTest is SetupTemplate {
 
   function testMintKami() public {
     // create quest
-    _createQuest(1, "MintKamiQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(1, "AT", "ROOM", 1, 0);
+    _createQuest(1, 0);
+    _createQuestRequirement(1, "BOOL_IS", "ROOM", 1, 0);
     _createQuestObjective(1, "NAME", "INC_MIN", "PET721_MINT", 0, 2);
 
     // register account
@@ -227,9 +227,9 @@ contract QuestsTest is SetupTemplate {
 
   function testCompleteQuest() public {
     // create quest(s)
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
-    _createQuest(2, "BasicQuest", "DESCRIPTION", 0, 0);
-    _createQuestRequirement(2, "COMPLETE", "QUEST", 1, 0);
+    _createQuest(1, 0);
+    _createQuest(2, 0);
+    _createQuestRequirement(2, "BOOL_IS", "QUEST", 1, 0);
 
     // register account
     address operator = _getOperator(0);
@@ -252,11 +252,8 @@ contract QuestsTest is SetupTemplate {
 
   function testRewardMint20() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
+    _createQuest(1, 0);
     _createQuestReward(1, "MINT20", 0, 2);
-
-    // register account
-    address operator = _getOperator(0);
 
     // accept quest
     uint256 questID = _acceptQuest(0, 1);
@@ -268,16 +265,16 @@ contract QuestsTest is SetupTemplate {
 
   function testRewardPoints() public {
     // create quest
-    _createQuest(1, "EmptyQuest", "DESCRIPTION", 0, 0);
-    _createQuestReward(1, "QUEST_POINTS", 0, 2);
+    _createQuest(1, 2, 0);
 
-    // register account
-    address operator = _getOperator(0);
+    uint256 regID = LibRegistryQuests.getByQuestIndex(components, 1);
+    assertTrue(regID != 0);
+    assertEq(_QuestPointComponent.getValue(regID), 2);
+    assertEq(LibQuests.getPoints(components, regID), 2);
 
     // accept quest
     uint256 questID = _acceptQuest(0, 1);
 
-    // check that Mint20 is properly distributed
     _completeQuest(0, questID);
     assertEq(LibAccount.getQuestPoints(components, _getAccount(0)), 2);
   }

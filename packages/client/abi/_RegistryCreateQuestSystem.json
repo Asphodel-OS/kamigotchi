@@ -55,9 +55,14 @@
           "internalType": "string"
         },
         {
-          "name": "roomIndex",
-          "type": "uint32",
-          "internalType": "uint32"
+          "name": "endText",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "points",
+          "type": "uint256",
+          "internalType": "uint256"
         },
         {
           "name": "duration",
@@ -132,7 +137,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,uint32,uint256)": "db466a4f",
+    "executeTyped(uint32,string,string,string,uint256,uint256)": "5058ce7b",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

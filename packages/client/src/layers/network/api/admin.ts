@@ -146,7 +146,8 @@ export function createAdminAPI(systems: any) {
     index: number,
     name: string,
     description: string,
-    roomIndex: number,
+    endText: string,
+    points: number,
     repeatTime: number
   ) {
     await sleepIf();
@@ -154,7 +155,8 @@ export function createAdminAPI(systems: any) {
       index,
       name,
       description,
-      roomIndex,
+      endText,
+      points,
       repeatTime
     );
   }

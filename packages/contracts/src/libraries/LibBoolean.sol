@@ -122,7 +122,7 @@ library LibBoolean {
     string memory logicType,
     string memory type_
   ) internal view returns (bool) {
-    (HANDLER handler, LOGIC logic) = _parseLogic(logicType);
+    (HANDLER handler, LOGIC logic) = parseLogic(logicType);
     if (handler == HANDLER.CURRENT)
       return checkCurr(components, targetID, index, expected, forEntity, type_, logic);
     else require(false, "Handler not yet implemented");
@@ -202,7 +202,7 @@ library LibBoolean {
 
   /// @notice determines objective logic handler and operator
   /// @dev gets the logic from a formatted string - "[HANDLER]_[LOGIC]"
-  function _parseLogic(string memory logicType) internal pure returns (HANDLER, LOGIC) {
+  function parseLogic(string memory logicType) internal pure returns (HANDLER, LOGIC) {
     HANDLER handler;
     LOGIC operator;
 

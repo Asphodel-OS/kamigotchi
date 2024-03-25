@@ -8,6 +8,8 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { DescriptionAltComponent, ID as DescAltCompID } from "components/DescriptionAltComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexObjectiveComponent, ID as IndexObjectiveCompID } from "components/IndexObjectiveComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
@@ -17,13 +19,12 @@ import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRe
 import { IsRequirementComponent, ID as IsRequirementCompID } from "components/IsRequirementComponent.sol";
 import { IsRewardComponent, ID as IsRewardCompID } from "components/IsRewardComponent.sol";
 import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestComponent.sol";
-import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
-import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -42,7 +43,9 @@ library LibRegistryQuests {
     IUintComp components,
     uint32 index,
     string memory name,
-    string memory description
+    string memory description,
+    string memory endText,
+    uint256 points
   ) internal returns (uint256) {
     uint256 regID = getByQuestIndex(components, index);
     require(regID == 0, "LibRegQ.createQ: index used");
@@ -52,7 +55,9 @@ library LibRegistryQuests {
     setIsQuest(components, id);
     setQuestIndex(components, id, index);
     setName(components, id, name);
-    setDescription(components, id, description);
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
+    DescriptionAltComponent(getAddressById(components, DescAltCompID)).set(id, endText);
+    QuestPointComponent(getAddressById(components, QuestPointCompID)).set(id, points);
 
     return id;
   }
@@ -119,8 +124,9 @@ library LibRegistryQuests {
     unsetIsQuest(components, questID);
     unsetQuestIndex(components, questID);
     unsetName(components, questID);
-    unsetDescription(components, questID);
-    unsetRoomIndex(components, questID);
+    DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
+    DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
+    QuestPointComponent(getAddressById(components, QuestPointCompID)).remove(questID);
 
     unsetIsRepeatable(components, questID);
     unsetTime(components, questID);
@@ -135,7 +141,7 @@ library LibRegistryQuests {
     unsetLogicType(components, objectiveID);
     unsetType(components, objectiveID);
     unsetIndex(components, objectiveID);
-    unsetValue(components, objectiveID);
+    unsetBalance(components, objectiveID);
   }
 
   function deleteRequirement(IUintComp components, uint256 requirementID) internal {
@@ -145,7 +151,7 @@ library LibRegistryQuests {
     unsetLogicType(components, requirementID);
     unsetType(components, requirementID);
     unsetIndex(components, requirementID);
-    unsetValue(components, requirementID);
+    unsetBalance(components, requirementID);
   }
 
   function deleteReward(IUintComp components, uint256 rewardID) internal {
@@ -154,7 +160,7 @@ library LibRegistryQuests {
     unsetQuestIndex(components, rewardID);
     unsetType(components, rewardID);
     unsetIndex(components, rewardID);
-    unsetValue(components, rewardID);
+    unsetBalance(components, rewardID);
   }
 
   /////////////////
@@ -186,6 +192,10 @@ library LibRegistryQuests {
 
   /////////////////
   // SETTERS
+
+  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
+  }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
@@ -223,14 +233,6 @@ library LibRegistryQuests {
     IndexQuestComponent(getAddressById(components, IndexQuestCompID)).set(id, questIndex);
   }
 
-  function setDescription(IUintComp components, uint256 id, string memory description) internal {
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
-  }
-
-  function setRoomIndex(IUintComp components, uint256 id, uint32 roomIndex) internal {
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
-  }
-
   function setLogicType(IUintComp components, uint256 id, string memory logicType) internal {
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).set(id, logicType);
   }
@@ -247,12 +249,14 @@ library LibRegistryQuests {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
   }
 
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
-  }
-
   /////////////////
   // UNSETTERS
+
+  function unsetBalance(IUintComp components, uint256 id) internal {
+    if (BalanceComponent(getAddressById(components, BalanceCompID)).has(id)) {
+      BalanceComponent(getAddressById(components, BalanceCompID)).remove(id);
+    }
+  }
 
   function unsetIsRegistry(IUintComp components, uint256 id) internal {
     if (IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id)) {
@@ -308,18 +312,6 @@ library LibRegistryQuests {
     }
   }
 
-  function unsetDescription(IUintComp components, uint256 id) internal {
-    if (DescriptionComponent(getAddressById(components, DescCompID)).has(id)) {
-      DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
-    }
-  }
-
-  function unsetRoomIndex(IUintComp components, uint256 id) internal {
-    if (IndexRoomComponent(getAddressById(components, IndexRoomCompID)).has(id)) {
-      IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(id);
-    }
-  }
-
   function unsetLogicType(IUintComp components, uint256 id) internal {
     if (LogicTypeComponent(getAddressById(components, LogicTypeCompID)).has(id)) {
       LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
@@ -341,12 +333,6 @@ library LibRegistryQuests {
   function unsetType(IUintComp components, uint256 id) internal {
     if (TypeComponent(getAddressById(components, TypeCompID)).has(id)) {
       TypeComponent(getAddressById(components, TypeCompID)).remove(id);
-    }
-  }
-
-  function unsetValue(IUintComp components, uint256 id) internal {
-    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
-      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
     }
   }
 

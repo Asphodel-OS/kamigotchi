@@ -27,7 +27,7 @@ contract _RegistryCreateQuestRewardSystem is System {
     // create an empty Quest Reward and set any non-zero fields
     uint256 id = LibRegistryQuests.createEmptyReward(world, components, questIndex, type_);
     if (index != 0) LibRegistryQuests.setIndex(components, id, index);
-    if (value != 0) LibRegistryQuests.setValue(components, id, value);
+    if (value != 0) LibRegistryQuests.setBalance(components, id, value);
 
     return "";
   }
