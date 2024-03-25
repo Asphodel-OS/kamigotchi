@@ -19,7 +19,6 @@ contract LootboxStartRevealSystem is System {
     (uint32 index, uint256 amt) = abi.decode(arguments, (uint32, uint256));
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(accountID != 0, "no account");
 
     uint256 invID = LibInventory.get(components, accountID, index);
     require(invID != 0, "no lootboxes");

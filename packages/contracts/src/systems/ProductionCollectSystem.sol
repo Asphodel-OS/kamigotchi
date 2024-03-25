@@ -26,7 +26,6 @@ contract ProductionCollectSystem is System {
     uint256 petID = LibProduction.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "FarmCollect: no account");
     require(LibPet.getAccount(components, petID) == accountID, "FarmCollect: pet not urs");
     require(LibPet.isHarvesting(components, petID), "FarmCollect: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmCollect: pet on cooldown");

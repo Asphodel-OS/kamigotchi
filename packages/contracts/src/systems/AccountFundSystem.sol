@@ -35,7 +35,6 @@ contract AccountFundSystem is System {
   // msg.sender is operator wallet
   function operatorToOwner() public payable returns (bytes memory) {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(accountID != 0, "AccountFundSystem: no account");
 
     // update gas funded
     LibScore.dec(components, accountID, "OPERATOR_GAS", msg.value);

@@ -24,7 +24,6 @@ contract AccountUpgradeSkillSystem is System {
 
     // requirements
     require(registryID != 0, "AccountUpgradeSkill: skill not found");
-    require(accountID != 0, "AccountUpgradeSkill: calling account not found");
     require(
       LibSkill.meetsPrerequisites(components, accountID, registryID),
       "AccountUpgradeSkill: unmet prerequisites"

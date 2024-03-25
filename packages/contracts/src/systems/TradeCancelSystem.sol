@@ -19,7 +19,6 @@ contract TradeCancelSystem is System {
 
     // requirements
     // TODO: add same room check once disabling of room switching enforced on FE
-    require(accountID != 0, "TradeCancel: no account");
     require(LibTrade.isTrade(components, tradeID), "Trade: not a trade");
     require(LibTrade.hasParticipant(components, tradeID, accountID), "Trade: must be participant");
     require(!LibTrade.hasState(components, tradeID, "CANCELED"), "Trade: already canceled");
