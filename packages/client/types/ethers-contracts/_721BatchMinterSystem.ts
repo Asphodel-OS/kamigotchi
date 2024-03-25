@@ -149,8 +149,8 @@ export interface _721BatchMinterSystem extends BaseContract {
   functions: {
     _getTraitStats(
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[TraitStatsStructOutput]>;
 
     batchMint(
       amount: PromiseOrValue<BigNumberish>,
@@ -176,8 +176,8 @@ export interface _721BatchMinterSystem extends BaseContract {
 
   _getTraitStats(
     id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<TraitStatsStructOutput>;
 
   batchMint(
     amount: PromiseOrValue<BigNumberish>,
@@ -240,7 +240,7 @@ export interface _721BatchMinterSystem extends BaseContract {
   estimateGas: {
     _getTraitStats(
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     batchMint(
@@ -268,7 +268,7 @@ export interface _721BatchMinterSystem extends BaseContract {
   populateTransaction: {
     _getTraitStats(
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     batchMint(

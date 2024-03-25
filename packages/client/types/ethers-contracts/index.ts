@@ -67,7 +67,6 @@ export type { IndexRelationshipComponent } from "./IndexRelationshipComponent";
 export type { IndexRoomComponent } from "./IndexRoomComponent";
 export type { IndexSkillComponent } from "./IndexSkillComponent";
 export type { IndexSourceComponent } from "./IndexSourceComponent";
-export type { IndexTraitComponent } from "./IndexTraitComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsBonusComponent } from "./IsBonusComponent";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
@@ -277,7 +276,6 @@ export { IndexRelationshipComponent__factory } from "./factories/IndexRelationsh
 export { IndexRoomComponent__factory } from "./factories/IndexRoomComponent__factory";
 export { IndexSkillComponent__factory } from "./factories/IndexSkillComponent__factory";
 export { IndexSourceComponent__factory } from "./factories/IndexSourceComponent__factory";
-export { IndexTraitComponent__factory } from "./factories/IndexTraitComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
 export { IsBonusComponent__factory } from "./factories/IsBonusComponent__factory";
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";

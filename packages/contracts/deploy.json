@@ -46,7 +46,6 @@
     "IndexQuestComponent",
     "IndexSkillComponent",
     "IndexSourceComponent",
-    "IndexTraitComponent",
     "IsAccountComponent",
     "IsBonusComponent",
     "IsCompleteComponent",
@@ -154,12 +153,7 @@
     },
     {
       "name": "_NPCCreateSystem",
-      "writeAccess": [
-        "IsNPCComponent",
-        "IndexNPCComponent",
-        "IndexRoomComponent",
-        "NameComponent"
-      ]
+      "writeAccess": ["IsNPCComponent", "IndexNPCComponent", "IndexRoomComponent", "NameComponent"]
     },
     {
       "name": "_NPCSetRoomSystem",
@@ -306,7 +300,6 @@
         "IndexColorComponent",
         "IndexFaceComponent",
         "IndexHandComponent",
-        "IndexTraitComponent",
         "IsRegistryComponent",
         "NameComponent",
         "RarityComponent",
@@ -367,11 +360,7 @@
     },
     {
       "name": "_RegistryUpdateRelationshipSystem",
-      "writeAccess": [
-        "NameComponent",
-        "BlacklistComponent",
-        "WhitelistComponent"
-      ]
+      "writeAccess": ["NameComponent", "BlacklistComponent", "WhitelistComponent"]
     },
     {
       "name": "_RoomCreateGateSystem",
@@ -459,11 +448,7 @@
     },
     {
       "name": "AccountSetFarcasterDataSystem",
-      "writeAccess": [
-        "IndexFarcasterComponent",
-        "MediaURIComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["IndexFarcasterComponent", "MediaURIComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountUpgradeSkillSystem",
@@ -804,11 +789,7 @@
     },
     {
       "name": "PetUseItemSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "CanNameComponent",
-        "TimeLastComponent"
-      ]
+      "writeAccess": ["BalanceComponent", "CanNameComponent", "TimeLastComponent"]
     },
     {
       "name": "ProductionCollectSystem",
