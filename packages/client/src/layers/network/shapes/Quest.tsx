@@ -10,6 +10,7 @@ import {
   runQuery,
 } from '@mud-classic/recs';
 
+import { checkerSwitch } from 'layers/network/shapes/utils/LibBoolean';
 import { NetworkLayer } from 'layers/network/types';
 import { Account } from './Account';
 import { getData } from './Data';
@@ -62,6 +63,7 @@ export interface Quest {
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Reward[];
+  points: number;
 }
 
 // the Target of a Condition (Objective, Requirement, Reward)
@@ -77,21 +79,19 @@ export interface Status {
   completable: boolean;
 }
 
-export interface Objective {
+export interface Condition {
   id: EntityID;
-  index: number;
-  name: string;
   logic: string;
   target: Target;
   status?: Status;
 }
 
-export interface Requirement {
-  id: EntityID;
-  logic: string;
-  target: Target;
-  status?: Status;
+export interface Objective extends Condition {
+  index: number;
+  name: string;
 }
+
+export interface Requirement extends Condition {}
 
 export interface Reward {
   id: EntityID;
@@ -111,6 +111,7 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
       Name,
       Time,
       QuestIndex,
+      QuestPoint,
       StartTime,
     },
   } = network;
@@ -119,6 +120,8 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
   const registryIndex = Array.from(
     runQuery([Has(IsRegistry), Has(IsQuest), HasValue(QuestIndex, { value: questIndex })])
   )[0];
+
+  const points = (getComponentValue(QuestPoint, registryIndex)?.value || (0 as number)) * 1;
 
   let result: Quest = {
     id: world.entities[entityIndex],
@@ -130,7 +133,8 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
     repeatable: hasComponent(IsRepeatable, registryIndex) || (false as boolean),
     requirements: queryQuestRequirements(network, questIndex),
     objectives: queryQuestObjectives(network, questIndex),
-    rewards: queryQuestRewards(network, questIndex),
+    rewards: queryQuestRewards(network, questIndex, world.entities[entityIndex], points),
+    points: points,
   };
 
   if (hasComponent(IsRepeatable, registryIndex)) {
@@ -144,7 +148,7 @@ const getQuest = (network: NetworkLayer, entityIndex: EntityIndex): Quest => {
 const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex): Requirement => {
   const {
     world,
-    components: { Index, LogicType, Type, Value },
+    components: { Balance, Index, LogicType, Type },
   } = network;
 
   let requirement: Requirement = {
@@ -158,7 +162,7 @@ const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex): Requir
   const index = getComponentValue(Index, entityIndex)?.value;
   if (index) requirement.target.index = index;
 
-  const value = getComponentValue(Value, entityIndex)?.value;
+  const value = getComponentValue(Balance, entityIndex)?.value;
   if (value) requirement.target.value = value;
 
   return requirement;
@@ -168,7 +172,7 @@ const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex): Requir
 const getObjective = (network: NetworkLayer, entityIndex: EntityIndex): Objective => {
   const {
     world,
-    components: { Index, LogicType, Name, ObjectiveIndex, Type, Value },
+    components: { Balance, Index, LogicType, Name, ObjectiveIndex, Type },
   } = network;
 
   let objective: Objective = {
@@ -184,7 +188,7 @@ const getObjective = (network: NetworkLayer, entityIndex: EntityIndex): Objectiv
   const index = getComponentValue(Index, entityIndex)?.value;
   if (index) objective.target.index = index;
 
-  const value = getComponentValue(Value, entityIndex)?.value;
+  const value = getComponentValue(Balance, entityIndex)?.value;
   if (value) objective.target.value = value;
 
   return objective;
@@ -194,7 +198,7 @@ const getObjective = (network: NetworkLayer, entityIndex: EntityIndex): Objectiv
 const getReward = (network: NetworkLayer, entityIndex: EntityIndex): Reward => {
   const {
     world,
-    components: { Index, Type, Value },
+    components: { Balance, Index, Type },
   } = network;
 
   let reward: Reward = {
@@ -207,7 +211,7 @@ const getReward = (network: NetworkLayer, entityIndex: EntityIndex): Reward => {
   const index = getComponentValue(Index, entityIndex)?.value;
   if (index) reward.target.index = index;
 
-  const value = getComponentValue(Value, entityIndex)?.value;
+  const value = getComponentValue(Balance, entityIndex)?.value;
   if (value) reward.target.value = value;
 
   return reward;
@@ -287,12 +291,21 @@ const queryQuestObjectives = (network: NetworkLayer, questIndex: number): Object
 };
 
 // Get the Entity Indices of the Rewards of a Quest
-const queryQuestRewards = (network: NetworkLayer, questIndex: number): Reward[] => {
+const queryQuestRewards = (
+  network: NetworkLayer,
+  questIndex: number,
+  questID: EntityID,
+  points: number
+): Reward[] => {
   const { IsRegistry, IsReward, QuestIndex } = network.components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), Has(IsReward), HasValue(QuestIndex, { value: questIndex })])
   );
-  return entityIndices.map((entityIndex) => getReward(network, entityIndex));
+  const queried = entityIndices.map((entityIndex) => getReward(network, entityIndex));
+
+  if (points > 0)
+    return [{ id: questID, target: { type: 'QUEST_POINTS', value: points } }, ...queried];
+  else return queried;
 };
 
 const querySnapshotObjective = (
@@ -319,24 +332,14 @@ export const checkRequirement = (
   requirement: Requirement,
   account: Account
 ): Status => {
-  switch (requirement.logic) {
-    case 'AT':
-      return checkBoolean(network, requirement.target, account, 'IS');
-    case 'COMPLETE':
-      return checkBoolean(network, requirement.target, account, 'IS');
-    case 'HAVE':
-      return checkCurrent(network, requirement.target, account, 'MIN');
-    case 'GREATER':
-      return checkCurrent(network, requirement.target, account, 'MIN');
-    case 'LESSER':
-      return checkCurrent(network, requirement.target, account, 'MAX');
-    case 'EQUAL':
-      return checkCurrent(network, requirement.target, account, 'EQUAL');
-    case 'USE':
-      return checkCurrent(network, requirement.target, account, 'MIN');
-    default:
-      return { completable: false }; // should not get here
-  }
+  return checkerSwitch(
+    requirement.logic,
+    checkCurrent(network, requirement.target, account),
+    undefined,
+    undefined,
+    checkBoolean(network, requirement.target, account),
+    { completable: false }
+  );
 };
 
 export const checkObjective = (
@@ -349,28 +352,29 @@ export const checkObjective = (
     return { completable: true };
   }
 
-  const subLogics = objective.logic.split('_');
-  const deltaType = subLogics[0] as 'CURR' | 'INC' | 'DEC' | 'BOOL';
-  const operator = subLogics[1] as 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
-  if (deltaType === 'CURR') return checkCurrent(network, objective.target, account, operator);
-  else if (deltaType === 'INC') return checkIncrease(network, objective, quest, account, operator);
-  else if (deltaType === 'DEC') return checkDecrease(network, objective, quest, account, operator);
-  else if (deltaType === 'BOOL') return checkBoolean(network, objective.target, account, operator);
-  else return { completable: false }; // should not get here
+  return checkerSwitch(
+    objective.logic,
+    checkCurrent(network, objective.target, account),
+    checkIncrease(network, objective, quest, account),
+    checkDecrease(network, objective, quest, account),
+    checkBoolean(network, objective.target, account),
+    { completable: false }
+  );
 };
 
 const checkCurrent = (
   network: NetworkLayer,
   condition: Target,
-  account: Account,
-  logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): Status => {
+  account: Account
+): ((opt: any) => Status) => {
   const accVal = getAccBal(network, account, condition.index, condition.type) || 0;
 
-  return {
-    target: condition.value,
-    current: accVal,
-    completable: checkLogicOperator(accVal, condition.value ?? 0, logic),
+  return (opt: any) => {
+    return {
+      target: condition.value,
+      current: accVal,
+      completable: checkLogicOperator(accVal, condition.value ?? 0, opt),
+    };
   };
 };
 
@@ -378,20 +382,21 @@ const checkIncrease = (
   network: NetworkLayer,
   objective: Objective,
   quest: Quest,
-  account: Account,
-  logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): Status => {
+  account: Account
+): ((opt: any) => Status) => {
   const prevVal = querySnapshotObjective(network, quest.id, objective.index).target.value as number;
   const currVal = getData(network, account.id, objective.target.type, objective.target.index);
 
-  return {
-    target: objective.target.value,
-    current: currVal - prevVal,
-    completable: checkLogicOperator(
-      currVal - prevVal,
-      objective.target.value ? objective.target.value : 0,
-      logic
-    ),
+  return (opt: any) => {
+    return {
+      target: objective.target.value,
+      current: currVal - prevVal,
+      completable: checkLogicOperator(
+        currVal - prevVal,
+        objective.target.value ? objective.target.value : 0,
+        opt
+      ),
+    };
   };
 };
 
@@ -399,32 +404,32 @@ const checkDecrease = (
   network: NetworkLayer,
   objective: Objective,
   quest: Quest,
-  account: Account,
-  logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): Status => {
+  account: Account
+): ((opt: any) => Status) => {
   const prevVal = querySnapshotObjective(network, quest.id, objective.index).target.value as number;
   const currVal = getData(network, account.id, objective.target.type, objective.target.index);
 
-  return {
-    target: objective.target.value,
-    current: prevVal - currVal,
-    completable: checkLogicOperator(
-      prevVal - currVal,
-      objective.target.value ? objective.target.value : 0,
-      logic
-    ),
+  return (opt: any) => {
+    return {
+      target: objective.target.value,
+      current: prevVal - currVal,
+      completable: checkLogicOperator(
+        prevVal - currVal,
+        objective.target.value ? objective.target.value : 0,
+        opt
+      ),
+    };
   };
 };
 
 const checkBoolean = (
   network: NetworkLayer,
   condition: Target,
-  account: Account,
-  logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): Status => {
+  account: Account
+): ((opt: any) => Status) => {
   const _type = condition.type;
-  let current;
-  let target;
+  let current: number | undefined;
+  let target: number | undefined;
   let result = false;
 
   switch (_type) {
@@ -440,12 +445,12 @@ const checkBoolean = (
       result = false; // should not get here
   }
 
-  if (logic == 'NOT') result = !result;
-
-  return {
-    current,
-    target,
-    completable: result,
+  return (opt: any) => {
+    return {
+      current,
+      target,
+      completable: opt === 'IS' ? result : !result,
+    };
   };
 };
 
@@ -470,16 +475,20 @@ const getAccBal = (
   type: string
 ): number => {
   let balance = 0;
-  if (['EQUIP', 'FOOD', 'MOD', 'REVIVE'].includes(type)) {
+  if (type === 'ITEM') {
     balance = getInventoryBalance(account, index, type);
   } else if (type === 'COIN') {
     balance = getData(network, account.id, 'COIN_TOTAL', 0) || 0;
   } else if (type === 'KAMI') {
     balance = account.kamis?.length || 0;
+  } else if (type === 'KAMI_LEVEL_HIGHEST') {
+    account.kamis?.forEach((kami) => {
+      if (kami.level > balance) balance = kami.level;
+    });
   } else if (type === 'ROOM') {
     balance = account.roomIndex || 0;
   } else {
-    console.log('getAccBal: invalid type');
+    balance = getData(network, account.id, type, index ?? 0);
   }
   return Number(balance);
 };
@@ -517,4 +526,23 @@ const checkLogicOperator = (
   else if (logic == 'MAX') return a <= b;
   else if (logic == 'EQUAL') return a == b;
   else return false; // should not reach here
+};
+
+// parses common human readable words into machine types
+export const parseToLogicType = (str: string): string => {
+  const is = ['IS', 'COMPLETE', 'AT'];
+  const min = ['MIN', 'HAVE', 'GREATER'];
+  const max = ['MAX', 'LESSER'];
+  const equal = ['EQUAL'];
+  const not = ['NOT'];
+
+  if (is.includes(str)) return 'BOOL_IS';
+  else if (min.includes(str)) return 'CURR_MIN';
+  else if (max.includes(str)) return 'CURR_MAX';
+  else if (equal.includes(str)) return 'CURR_EQUAL';
+  else if (not.includes(str)) return 'BOOL_NOT';
+  else {
+    console.error('unrecognized logic type');
+    return '';
+  }
 };

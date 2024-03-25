@@ -106,6 +106,6 @@ library LibExperience {
   // LOGGING
 
   function logPetLevelInc(IUintComp components, uint256 holderID) internal {
-    LibDataEntity.inc(components, holderID, 0, "KAMI_LEVEL_INC", 1);
+    LibDataEntity.inc(components, holderID, 0, "KAMI_LEVELS_TOTAL", 1);
   }
 }

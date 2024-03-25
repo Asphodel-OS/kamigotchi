@@ -58,16 +58,14 @@ contract ProductionStopSystem is System {
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
+    uint256 nodeID = LibProduction.getNode(components, id); 
     LibScore.inc(components, accountID, "COLLECT", output);
     LibDataEntity.inc(components, accountID, 0, "COIN_TOTAL", output);
-    LibNode.logHarvestAt(
-      components,
-      accountID,
-      LibNode.getIndex(components, LibProduction.getNode(components, id)),
-      output
-    );
+    LibNode.logHarvestAt(components,accountID, LibNode.getIndex(components, nodeID),output);
+    LibNode.logHarvestAffinity(components, accountID, LibNode.getAffinity(components, nodeID), output);
     LibProduction.logHarvestTime(components, accountID, timeDelta);
     LibAccount.updateLastTs(components, accountID);
+
     return abi.encode(output);
   }
 

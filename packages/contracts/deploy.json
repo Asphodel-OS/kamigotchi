@@ -11,6 +11,7 @@
     "CanNameComponent",
     "CoinComponent",
     "CostComponent",
+    "DescriptionAltComponent",
     "DescriptionComponent",
     "EpochComponent",
     "ExitsComponent",
@@ -891,6 +892,7 @@
     {
       "name": "QuestAcceptSystem",
       "writeAccess": [
+        "BalanceComponent",
         "IdAccountComponent",
         "IdHolderComponent",
         "IndexQuestComponent",
@@ -901,8 +903,7 @@
         "IsObjectiveComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "TimeStartComponent"
       ]
     },
     {
@@ -912,6 +913,7 @@
     {
       "name": "QuestDropSystem",
       "writeAccess": [
+        "BalanceComponent",
         "IdAccountComponent",
         "IdHolderComponent",
         "IndexQuestComponent",
@@ -922,8 +924,7 @@
         "IsObjectiveComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
-        "TimeStartComponent",
-        "ValueComponent"
+        "TimeStartComponent"
       ]
     },
     {

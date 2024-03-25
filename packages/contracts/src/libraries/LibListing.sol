@@ -216,6 +216,7 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal {
+    LibDataEntity.inc(components, accountID, 0, "ITEM_BUY_TOTAL", amt);
     LibDataEntity.inc(components, accountID, itemIndex, "ITEM_BUY", amt);
   }
 
@@ -226,6 +227,7 @@ library LibListing {
     uint32 itemIndex,
     uint256 amt
   ) internal {
+    LibDataEntity.inc(components, accountID, 0, "ITEM_SELL_TOTAL", amt);
     LibDataEntity.inc(components, accountID, itemIndex, "ITEM_SELL", amt);
   }
 
