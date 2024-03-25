@@ -87,9 +87,17 @@ export const initExplorer = (network: NetworkLayer) => {
   };
 
   explorer.trait = {
-    get: (index: number) => getTraitByIndex(network, index),
+    get: (index: number, type: string) => getTraitByIndex(network, index, type),
     getAll: () => getRegistryTraits(network),
-    indices: () => [...new Set(Array.from(components.TraitIndex.values.value.values()))],
+    indices: () => [
+      ...new Set([
+        ...Array.from(components.BackgroundIndex.values.value.values()),
+        ...Array.from(components.BodyIndex.values.value.values()),
+        ...Array.from(components.ColorIndex.values.value.values()),
+        ...Array.from(components.FaceIndex.values.value.values()),
+        ...Array.from(components.HandIndex.values.value.values()),
+      ]),
+    ],
   };
 
   // helper function to get all the set components values for a given entity

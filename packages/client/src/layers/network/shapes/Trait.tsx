@@ -1,4 +1,11 @@
-import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
+import {
+  Component,
+  EntityIndex,
+  Has,
+  HasValue,
+  getComponentValue,
+  runQuery,
+} from '@mud-classic/recs';
 
 import { NetworkLayer } from 'layers/network/types';
 import { Stats, getStats } from './Stats';
@@ -40,19 +47,34 @@ export const getTrait = (network: NetworkLayer, entityIndex: EntityIndex): Trait
   };
 };
 
-export const getTraitByIndex = (network: NetworkLayer, index: number): Trait => {
-  const { IsRegistry, TraitIndex } = network.components;
+export const getTraitByIndex = (network: NetworkLayer, index: number, type?: string): Trait => {
+  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } =
+    network.components;
 
-  const entityIndices = Array.from(
-    runQuery([Has(IsRegistry), HasValue(TraitIndex, { value: index })])
-  );
-  return getTrait(network, entityIndices[0]);
+  const getPointer = (type: Component) => {
+    return Array.from(runQuery([Has(IsRegistry), HasValue(type, { value: index })]))[0];
+  };
+
+  if (type === 'BODY') return getTrait(network, getPointer(BodyIndex));
+  else if (type === 'BACKGROUND') return getTrait(network, getPointer(BackgroundIndex));
+  else if (type === 'COLOR') return getTrait(network, getPointer(ColorIndex));
+  else if (type === 'FACE') return getTrait(network, getPointer(FaceIndex));
+  else if (type === 'HAND') return getTrait(network, getPointer(HandIndex));
+
+  return {} as Trait; // should not reach here
 };
 
 export const getRegistryTraits = (network: NetworkLayer): Trait[] => {
-  const { IsRegistry, TraitIndex } = network.components;
+  const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } =
+    network.components;
 
-  const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(TraitIndex)]));
+  const entityIndices = [
+    ...Array.from(runQuery([Has(IsRegistry), Has(BackgroundIndex)])),
+    ...Array.from(runQuery([Has(IsRegistry), Has(BodyIndex)])),
+    ...Array.from(runQuery([Has(IsRegistry), Has(ColorIndex)])),
+    ...Array.from(runQuery([Has(IsRegistry), Has(FaceIndex)])),
+    ...Array.from(runQuery([Has(IsRegistry), Has(HandIndex)])),
+  ];
   return entityIndices.map((index) => getTrait(network, index));
 };
 

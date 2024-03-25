@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "forge-std/console.sol";
-
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { Uint32Component } from "std-contracts/components/Uint32Component.sol";
@@ -27,7 +25,6 @@ import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexCol
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
-import { IndexTraitComponent, ID as IndexTraitCompID } from "components/IndexTraitComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { ExperienceComponent, ID as ExperienceCompID } from "components/ExperienceComponent.sol";
@@ -211,6 +208,8 @@ abstract contract TraitHandler {
       if (i < 4) offsets[i + 1] = length + offsets[i];
     }
 
+    require(traitWeights.length > 0, "batchmint: no traits detected");
+
     offsetsSum = LibPack.packArr(offsets, OFFSET_BIT_SIZE);
   }
 
@@ -223,7 +222,7 @@ abstract contract TraitHandler {
     uint256 seed,
     uint256 id,
     TraitWeights[] memory weights
-  ) internal returns (uint32[] memory results) {
+  ) internal view returns (uint32[] memory results) {
     results = new uint32[](5);
     for (uint256 i; i < 5; i++) {
       uint256 randN = uint256(keccak256(abi.encode(seed, id, i)));
@@ -236,7 +235,7 @@ abstract contract TraitHandler {
     uint32[] memory traits,
     uint32[] memory offsets,
     TraitStats[] memory stats
-  ) internal returns (TraitStats memory delta) {
+  ) internal pure returns (TraitStats memory delta) {
     delta = TraitStats(0, 0, 0, 0, 0);
     for (uint256 i; i < 5; i++) {
       TraitStats memory curr = stats[offsets[i] + traits[i]];
@@ -248,7 +247,7 @@ abstract contract TraitHandler {
     }
   }
 
-  function _getTraitStats(uint256 id) public returns (TraitStats memory) {
+  function _getTraitStats(uint256 id) public view returns (TraitStats memory) {
     int32 health;
     int32 power;
     int32 violence;
@@ -266,10 +265,9 @@ abstract contract TraitHandler {
 
   /// @notice query all traits of a type (ie face) in registry. returns entityIDs
   function queryTraitsOfType(Uint32Component comp) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
+    QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexTraitCompID), "");
-    fragments[2] = QueryFragment(QueryType.Has, comp, "");
+    fragments[1] = QueryFragment(QueryType.Has, comp, "");
     uint256[] memory results = LibQuery.query(fragments);
     return results;
   }

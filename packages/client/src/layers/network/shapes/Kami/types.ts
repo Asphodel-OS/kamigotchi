@@ -84,6 +84,7 @@ export const getKami = (
       HandIndex,
       IsKill,
       IsProduction,
+      IsRegistry,
       LastTime,
       LastActionTime,
       Level,
@@ -97,7 +98,6 @@ export const getKami = (
       StartTime,
       State,
       TargetID,
-      TraitIndex,
       Type,
     },
   } = network;
@@ -186,17 +186,17 @@ export const getKami = (
   // populate Traits
   if (options?.traits) {
     // gets registry entity for a trait
-    const traitPointer = (type: Component) => {
+    const getTraitPointer = (type: Component) => {
       const traitIndex = getComponentValue(type, entityIndex)?.value as number;
-      return Array.from(runQuery([Has(TraitIndex), HasValue(type, { value: traitIndex })]))[0];
+      return Array.from(runQuery([Has(IsRegistry), HasValue(type, { value: traitIndex })]))[0];
     };
 
     // adding traits
-    const backgroundIndex = traitPointer(BackgroundIndex);
-    const bodyIndex = traitPointer(BodyIndex);
-    const colorIndex = traitPointer(ColorIndex);
-    const faceIndex = traitPointer(FaceIndex);
-    const handIndex = traitPointer(HandIndex);
+    const backgroundIndex = getTraitPointer(BackgroundIndex);
+    const bodyIndex = getTraitPointer(BodyIndex);
+    const colorIndex = getTraitPointer(ColorIndex);
+    const faceIndex = getTraitPointer(FaceIndex);
+    const handIndex = getTraitPointer(HandIndex);
 
     const traitIndices: TraitIndices = {
       backgroundIndex,
