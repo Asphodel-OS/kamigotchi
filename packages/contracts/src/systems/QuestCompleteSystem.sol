@@ -17,12 +17,10 @@ contract QuestCompleteSystem is System {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(accountID == LibQuests.getAccountId(components, questID), "QuestComplete: not account");
-    require(LibQuests.isQuest(components, questID), "QuestComplete: not a quest");
-    require(
-      LibQuests.checkObjectives(components, questID, accountID),
-      "QuestComplete: objs not met"
-    );
+    require(accountID == LibQuests.getAccountId(components, questID), "Quest: not account");
+    require(!LibQuests.isCompleted(components, questID), "Quests: alr completed");
+    require(LibQuests.isQuest(components, questID), "Quest: not a quest");
+    require(LibQuests.checkObjectives(components, questID, accountID), "Quest: objs not met");
 
     LibQuests.complete(world, components, questID, accountID);
 

@@ -27,11 +27,10 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IndexObjectiveComponentInterface extends utils.Interface {
+export interface HashComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
-    "getEntitiesWithValue(uint32)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
     "getSchema()": FunctionFragment;
@@ -42,8 +41,9 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
     "registerIndexer(address)": FunctionFragment;
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
+    "set(uint256,uint256)": FunctionFragment;
+    "set(uint256,bytes32)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
-    "set(uint256,uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -54,8 +54,7 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "authorizeWriter"
       | "getEntities"
-      | "getEntitiesWithValue(uint32)"
-      | "getEntitiesWithValue(bytes)"
+      | "getEntitiesWithValue"
       | "getRawValue"
       | "getSchema"
       | "getValue"
@@ -65,8 +64,9 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
       | "registerIndexer"
       | "registerWorld"
       | "remove"
+      | "set(uint256,uint256)"
+      | "set(uint256,bytes32)"
       | "set(uint256,bytes)"
-      | "set(uint256,uint32)"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -82,11 +82,7 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(uint32)",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -117,12 +113,16 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,bytes)",
+    functionFragment: "set(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "set(uint256,bytes32)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,uint32)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "set(uint256,bytes)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -147,11 +147,7 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(uint32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue(bytes)",
+    functionFragment: "getEntitiesWithValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -173,11 +169,15 @@ export interface IndexObjectiveComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,bytes)",
+    functionFragment: "set(uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,uint32)",
+    functionFragment: "set(uint256,bytes32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "set(uint256,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -213,12 +213,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface IndexObjectiveComponent extends BaseContract {
+export interface HashComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IndexObjectiveComponentInterface;
+  interface: HashComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -247,13 +247,8 @@ export interface IndexObjectiveComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    "getEntitiesWithValue(uint32)"(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -269,7 +264,7 @@ export interface IndexObjectiveComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<[BigNumber]>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -281,7 +276,7 @@ export interface IndexObjectiveComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -295,15 +290,21 @@ export interface IndexObjectiveComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,bytes)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "set(uint256,bytes32)"(
+      id: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -332,13 +333,8 @@ export interface IndexObjectiveComponent extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  "getEntitiesWithValue(uint32)"(
-    value: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  "getEntitiesWithValue(bytes)"(
-    value: PromiseOrValue<BytesLike>,
+  getEntitiesWithValue(
+    arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -354,7 +350,7 @@ export interface IndexObjectiveComponent extends BaseContract {
   getValue(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<BigNumber>;
 
   has(
     entity: PromiseOrValue<BigNumberish>,
@@ -366,7 +362,7 @@ export interface IndexObjectiveComponent extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   registerIndexer(
-    indexer: PromiseOrValue<string>,
+    arg0: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -380,15 +376,21 @@ export interface IndexObjectiveComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,bytes)"(
+  "set(uint256,uint256)"(
     entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "set(uint256,bytes32)"(
+    id: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,uint32)"(
+  "set(uint256,bytes)"(
     entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -417,13 +419,8 @@ export interface IndexObjectiveComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    "getEntitiesWithValue(uint32)"(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -439,7 +436,7 @@ export interface IndexObjectiveComponent extends BaseContract {
     getValue(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<BigNumber>;
 
     has(
       entity: PromiseOrValue<BigNumberish>,
@@ -451,7 +448,7 @@ export interface IndexObjectiveComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -465,15 +462,21 @@ export interface IndexObjectiveComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,bytes)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "set(uint256,bytes32)"(
+      id: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -514,13 +517,8 @@ export interface IndexObjectiveComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getEntitiesWithValue(uint32)"(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -546,7 +544,7 @@ export interface IndexObjectiveComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -560,15 +558,21 @@ export interface IndexObjectiveComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,bytes)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "set(uint256,bytes32)"(
+      id: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -598,13 +602,8 @@ export interface IndexObjectiveComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getEntitiesWithValue(uint32)"(
-      value: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+    getEntitiesWithValue(
+      arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -630,7 +629,7 @@ export interface IndexObjectiveComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     registerIndexer(
-      indexer: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -644,15 +643,21 @@ export interface IndexObjectiveComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,bytes)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "set(uint256,bytes32)"(
+      id: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,uint32)"(
+    "set(uint256,bytes)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

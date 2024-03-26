@@ -39,7 +39,7 @@ contract _RegistryDeleteQuestSystem is System {
     }
 
     // delete it
-    LibRegistryQuests.deleteQuest(components, registryQuestID);
+    LibRegistryQuests.deleteQuest(components, registryQuestID, index);
 
     return "";
   }

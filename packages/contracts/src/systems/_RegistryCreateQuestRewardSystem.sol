@@ -29,7 +29,7 @@ contract _RegistryCreateQuestRewardSystem is System {
     if (index != 0) LibRegistryQuests.setIndex(components, id, index);
     if (value != 0) LibRegistryQuests.setBalance(components, id, value);
 
-    return "";
+    return abi.encode(id);
   }
 
   function executeTyped(

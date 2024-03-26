@@ -425,28 +425,24 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /* QUESTS */
 
-  function _createQuest(uint32 index, uint duration) public {
-    vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(
-      index,
-      LibString.toString(index),
-      "DESCRIPTION",
-      "",
-      0,
-      duration
-    );
+  function _createQuest(uint32 index, uint duration) public returns (uint256) {
+    return _createQuest(index, 0, duration);
   }
 
-  function _createQuest(uint32 index, uint points, uint duration) public {
+  function _createQuest(uint32 index, uint points, uint duration) public returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateQuestSystem.executeTyped(
-      index,
-      LibString.toString(index),
-      "DESCRIPTION",
-      "",
-      points,
-      duration
-    );
+    return
+      abi.decode(
+        __RegistryCreateQuestSystem.executeTyped(
+          index,
+          LibString.toString(index),
+          "DESCRIPTION",
+          "",
+          points,
+          duration
+        ),
+        (uint256)
+      );
   }
 
   function _createQuestObjective(
@@ -456,16 +452,20 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory _type,
     uint32 index, // can be empty
     uint value // can be empty
-  ) public {
+  ) public returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateQuestObjectiveSystem.executeTyped(
-      questIndex,
-      name,
-      logicType,
-      _type,
-      index,
-      value
-    );
+    return
+      abi.decode(
+        __RegistryCreateQuestObjectiveSystem.executeTyped(
+          questIndex,
+          name,
+          logicType,
+          _type,
+          index,
+          value
+        ),
+        (uint256)
+      );
   }
 
   function _createQuestRequirement(
@@ -474,9 +474,19 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory _type,
     uint32 index, // can be empty
     uint value // can be empty
-  ) public {
+  ) public returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateQuestRequirementSystem.executeTyped(questIndex, logicType, _type, index, value);
+    return
+      abi.decode(
+        __RegistryCreateQuestRequirementSystem.executeTyped(
+          questIndex,
+          logicType,
+          _type,
+          index,
+          value
+        ),
+        (uint256)
+      );
   }
 
   function _createQuestReward(
@@ -484,9 +494,13 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory _type,
     uint32 itemIndex, // can be empty
     uint value // can be empty
-  ) public {
+  ) public returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateQuestRewardSystem.executeTyped(questIndex, _type, itemIndex, value);
+    return
+      abi.decode(
+        __RegistryCreateQuestRewardSystem.executeTyped(questIndex, _type, itemIndex, value),
+        (uint256)
+      );
   }
 
   /* SKILLS */
