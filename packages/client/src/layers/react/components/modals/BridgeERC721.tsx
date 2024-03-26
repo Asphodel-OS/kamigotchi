@@ -27,6 +27,7 @@ export function registerERC721BridgeModal() {
     (layers) => {
       const {
         network: {
+          actions,
           network,
           components: { AccountID, IsAccount, OperatorAddress, State },
           systems,
@@ -50,7 +51,7 @@ export function registerERC721BridgeModal() {
               : ({} as Account);
 
           return {
-            layers: layers,
+            network: layers.network,
             data: {
               account: { ...account },
             } as any,
@@ -60,15 +61,14 @@ export function registerERC721BridgeModal() {
       );
     },
 
-    ({ layers, data, proxyAddy }) => {
+    ({ network, data, proxyAddy }) => {
       const {
-        network: {
-          components: { IsPet, PetIndex },
-        },
-      } = layers;
+        actions,
+        components: { IsPet, PetIndex },
+      } = network;
 
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, networks } = useNetwork();
+      const { selectedAddress, apis } = useNetwork();
 
       const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
 
@@ -77,35 +77,31 @@ export function registerERC721BridgeModal() {
 
       // TODO: pets without accounts are linked to EOA, no account. link EOA
       const depositTx = (tokenID: BigNumberish) => {
-        const network = networks.get(selectedAddress);
-        const actions = network!.actions;
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         actions?.add({
           action: 'KamiDeposit',
           params: [tokenID],
           description: `Staking Kami ${tokenID}`,
           execute: async () => {
-            return api.ERC721.deposit(tokenID);
+            return api.player.ERC721.deposit(tokenID);
           },
         });
-        return actionID;
       };
 
       const withdrawTx = (tokenID: BigNumberish) => {
-        const network = networks.get(selectedAddress);
-        const actions = network!.actions;
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         actions?.add({
           action: 'KamiWithdraw',
           params: [tokenID],
           description: `Unstaking Kami ${tokenID}`,
           execute: async () => {
-            return api.ERC721.withdraw(tokenID);
+            return api.player.ERC721.withdraw(tokenID);
           },
         });
-        return actionID;
       };
 
       //////////////////
@@ -181,7 +177,7 @@ export function registerERC721BridgeModal() {
               )[0];
 
               kamis.push(
-                getKami(layers.network, entityID, {
+                getKami(network, entityID, {
                   deaths: true,
                   production: true,
                   traits: true,

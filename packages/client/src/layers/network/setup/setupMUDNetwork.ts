@@ -2,9 +2,9 @@ import '@ethersproject/abstract-provider'; // we really need to figure out why t
 import { Type, World, defineComponent } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { keccak256 } from '@mud-classic/utils';
-import { Contract, ContractInterface } from 'ethers';
+import { Contract, ContractInterface, Signer } from 'ethers';
 import { keys } from 'lodash';
-import { computed } from 'mobx';
+import { IComputedValue, computed } from 'mobx';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { defineStringComponent } from 'layers/network/components';
@@ -105,6 +105,7 @@ export async function setupMUDNetwork<
   // create the system executor
   const { systems, getSystemContract } = createSystemExecutor<SystemTypes>(
     world,
+    network.signer,
     network,
     SystemsRegistry,
     SystemAbis,
@@ -133,6 +134,15 @@ export async function setupMUDNetwork<
   const { ecsEvents$, input$, dispose } = createSyncWorker<C>(ack$);
   world.registerDisposer(dispose);
 
+  const { txReduced$ } = applyNetworkUpdates(
+    world,
+    components,
+    ecsEvents$,
+    mappings,
+    ack$,
+    decodeAndEmitSystemCall
+  );
+
   // define the startSync function
   function startSync() {
     input$.next({
@@ -148,20 +158,28 @@ export async function setupMUDNetwork<
     });
   }
 
-  const { txReduced$ } = applyNetworkUpdates(
-    world,
-    components,
-    ecsEvents$,
-    mappings,
-    ack$,
-    decodeAndEmitSystemCall
-  );
+  // allows us to create arbitrary System Executor instances by just passing in a Signer
+  function createSystems(signer: IComputedValue<Signer | undefined>) {
+    const { systems } = createSystemExecutor<SystemTypes>(
+      world,
+      signer,
+      network,
+      SystemsRegistry,
+      SystemAbis,
+      gasPriceInput$,
+      {
+        devMode: networkConfig.devMode,
+      }
+    );
+    return systems;
+  }
 
   return {
     gasPriceInput$,
     network,
     startSync,
     systems,
+    createSystems,
     txReduced$,
   };
 }

@@ -65,7 +65,7 @@ export function registerGachaModal() {
       const { isConnected } = useAccount();
       const { modals, setModals } = useVisibility();
       const { account: kamiAccount } = useKamiAccount();
-      const { selectedAddress, networks } = useNetwork();
+      const { selectedAddress, apis } = useNetwork();
 
       // revealing
       const [triedReveal, setTriedReveal] = useState(true);
@@ -139,6 +139,8 @@ export function registerGachaModal() {
         try {
           setWaitingToReveal(true);
           const mintActionID = mintTx(amount);
+          if (!mintActionID) throw new Error('Mint reveal failed');
+
           await waitForActionCompletion(
             actions!.Action,
             world.entityToIndex.get(mintActionID) as EntityIndex
@@ -154,10 +156,12 @@ export function registerGachaModal() {
         if (kamis.length === 0) return;
         try {
           setWaitingToReveal(true);
-          const mintActionID = rerollTx(kamis, price);
+          const rerollActionID = rerollTx(kamis, price);
+          if (!rerollActionID) throw new Error('Reroll action failed');
+
           await waitForActionCompletion(
             actions!.Action,
-            world.entityToIndex.get(mintActionID) as EntityIndex
+            world.entityToIndex.get(rerollActionID) as EntityIndex
           );
           setTriedReveal(false);
           playVending();
@@ -168,8 +172,8 @@ export function registerGachaModal() {
 
       // get a pet from gacha with Mint20
       const mintTx = (amount: number) => {
-        const network = networks.get(selectedAddress);
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         const actionID = uuid() as EntityID;
         actions!.add({
@@ -178,7 +182,7 @@ export function registerGachaModal() {
           params: [amount],
           description: `Minting ${amount} Kami`,
           execute: async () => {
-            return api.mint.mintPet(amount);
+            return api.player.mint.mintPet(amount);
           },
         });
         return actionID;
@@ -186,8 +190,8 @@ export function registerGachaModal() {
 
       // reroll a pet with eth payment
       const rerollTx = (kamis: Kami[], price: bigint) => {
-        const network = networks.get(selectedAddress);
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         const actionID = uuid() as EntityID;
         actions!.add({
@@ -196,7 +200,7 @@ export function registerGachaModal() {
           params: [kamis.map((n) => n.name)],
           description: `Rerolling ${kamis.length} Kami`,
           execute: async () => {
-            return api.mint.reroll(
+            return api.player.mint.reroll(
               kamis.map((n) => n.id),
               price
             );
@@ -207,6 +211,9 @@ export function registerGachaModal() {
 
       // reveal gacha result(s)
       const revealTx = async (commits: GachaCommit[]) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
         const toReveal = commits.map((n) => n.id);
 
         const actionID = uuid() as EntityID;
@@ -216,7 +223,7 @@ export function registerGachaModal() {
           params: [commits.length],
           description: `Revealing ${commits.length} Gacha rolls`,
           execute: async () => {
-            return player.mint.reveal(toReveal);
+            return api.player.mint.reveal(toReveal);
           },
         });
 

@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 import { deferred, keccak256, toEthAddress } from '@mud-classic/utils';
 import { Contract, ContractInterface, Signer } from 'ethers';
-import { observable, runInAction } from 'mobx';
+import { IComputedValue, observable, runInAction } from 'mobx';
 import { BehaviorSubject } from 'rxjs';
 
 import { Network } from './createNetwork';
@@ -29,6 +29,7 @@ import { createTxQueue } from './createTxQueue';
  */
 export function createSystemExecutor<T extends { [key: string]: Contract }>(
   world: World,
+  signer: IComputedValue<Signer | Provider | undefined>,
   network: Network,
   systems: Component<{ value: Type.String }>,
   interfaces: { [key in keyof T]: ContractInterface },
@@ -56,34 +57,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
     return promise;
   }
 
-  // Initialize systems
-  const initialContracts = {} as T;
-  for (const systemEntity of getComponentEntities(systems)) {
-    const system = createSystemContract(systemEntity, network.signer.get());
-    if (!system) continue;
-    initialContracts[system.id as keyof T] = system.contract as T[keyof T];
-  }
-  runInAction(() => systemContracts.set(initialContracts));
-
-  // Keep up to date
-  systems.update$.subscribe((update) => {
-    if (!update.value[0]) return;
-    const system = createSystemContract(update.entity, network.signer.get());
-    if (!system) return;
-    registerSystem(system);
-  });
-
-  const { txQueue, dispose } = createTxQueue<T>(systemContracts, network, gasPrice$, options);
-  world.registerDisposer(dispose);
-
-  return { systems: txQueue, registerSystem, getSystemContract };
-
-  // get a system contract by its id
-  function getSystemContract(id: string) {
-    const name = systemIdPreimages[id] as keyof T;
-    return { name, contract: systemContracts.get()[name] };
-  }
-
+  // Util to create a system contract
   function createSystemContract<C extends Contract>(
     entity: EntityIndex,
     signerOrProvider?: Signer | Provider
@@ -104,4 +78,31 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
       ) as C,
     };
   }
+
+  // Initialize systems
+  const contracts = {} as T;
+  for (const systemEntity of getComponentEntities(systems)) {
+    const system = createSystemContract(systemEntity, signer.get());
+    if (system) contracts[system.id as keyof T] = system.contract as T[keyof T];
+  }
+  runInAction(() => systemContracts.set(contracts));
+
+  // Keep up to date
+  systems.update$.subscribe((update) => {
+    if (!update.value[0]) return;
+    const system = createSystemContract(update.entity, signer.get());
+    if (system) registerSystem(system);
+  });
+
+  const { txQueue, dispose } = createTxQueue<T>(systemContracts, network, gasPrice$, options);
+  world.registerDisposer(dispose);
+
+  return {
+    systems: txQueue,
+    registerSystem,
+    getSystemContract: (id: string) => {
+      const name = systemIdPreimages[id] as keyof T;
+      return { name, contract: systemContracts.get()[name] };
+    },
+  };
 }

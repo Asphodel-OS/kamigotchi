@@ -23,7 +23,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const world = createWorld();
   const components = createComponents(world);
 
-  const { network, startSync, systems, txReduced$ } = await setupMUDNetwork<
+  const { network, startSync, systems, createSystems, txReduced$ } = await setupMUDNetwork<
     typeof components,
     SystemTypes
   >(world, components, SystemAbis, config, { fetchSystemCalls: true });
@@ -53,7 +53,8 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     components,
     notifications,
     startSync,
-    systems,
+    systems, // SystemExecutor
+    createSystems, // SystemExecutor factory function
     api: {
       admin: createAdminAPI(systems),
       player: createPlayerAPI(systems),

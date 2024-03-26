@@ -6,6 +6,7 @@ import { Connector, useAccount, useNetwork } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { createNetworkConfig, createNetworkLayer } from 'layers/network';
+import { createNetwork } from 'layers/network/workers';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -34,7 +35,7 @@ export function registerWalletConnecter() {
 
       const { validators, setValidators } = useVisibility();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
-      const { networks, addNetwork, setSelectedAddress } = useMUDNetwork();
+      const { networks, addNetwork, addAPI, setSelectedAddress } = useMUDNetwork();
       const { validations, setValidations } = useMUDNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
@@ -104,6 +105,12 @@ export function registerWalletConnecter() {
           const networkLayer = await createNetworkLayer(networkConfig);
           networkLayer.startSync();
           addNetwork(connectorAddressLowerCase, networkLayer);
+
+          // create api for the new network
+          // NOTE: may be inefficient, but the easiest workaround for now
+          const networkInstance = await createNetwork(networkConfig);
+          const systems = layers.network.createSystems(networkInstance.signer);
+          addAPI(connectorAddressLowerCase, systems);
         }
       };
 

@@ -23,6 +23,7 @@ export function registerERC20BridgeModal() {
     (layers) => {
       const {
         network: {
+          actions,
           systems,
           components: { Coin },
         },
@@ -34,6 +35,7 @@ export function registerERC20BridgeModal() {
           const { coin } = account;
 
           return {
+            actions,
             account,
             proxyAddy: systems['system.Farm20.Proxy'].address,
           };
@@ -41,9 +43,9 @@ export function registerERC20BridgeModal() {
       );
     },
 
-    ({ account, proxyAddy }) => {
+    ({ actions, account, proxyAddy }) => {
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, networks } = useNetwork();
+      const { selectedAddress, apis } = useNetwork();
 
       const [isDepositState, setIsDepositState] = useState(true);
       const [amount, setAmount] = useState(0);
@@ -66,25 +68,22 @@ export function registerERC20BridgeModal() {
       // TRANSACTIONS
 
       const depositTx = () => {
-        const network = networks.get(selectedAddress);
-        const actions = network!.actions;
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         actions?.add({
           action: 'MUSUDeposit',
           params: [amount],
           description: `Depositing ${amount} $MUSU`,
           execute: async () => {
-            return api.ERC20.deposit(amount);
+            return api.player.ERC20.deposit(amount);
           },
         });
-        return actionID;
       };
 
       const withdrawTx = () => {
-        const network = networks.get(selectedAddress);
-        const actions = network!.actions;
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         actions?.add({
           action: 'MUSUWithdraw',
@@ -95,7 +94,6 @@ export function registerERC20BridgeModal() {
             // return api.ERC20.withdraw(amount);
           },
         });
-        return actionID;
       };
 
       ///////////////

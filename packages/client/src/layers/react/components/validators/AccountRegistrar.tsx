@@ -122,7 +122,7 @@ export function registerAccountRegistrar() {
       const {
         network: { actions, world },
       } = layers;
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const { burner, selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { setAccount, validations, setValidations } = useAccount();
@@ -202,12 +202,10 @@ export function registerAccountRegistrar() {
       };
 
       const createAccount = (username: string, food: string) => {
-        const network = networks.get(selectedAddress);
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress)!.player;
         const connectedBurner = burner.connected.address;
 
-        console.log('CREATING ACCOUNT:', selectedAddress);
-
+        console.log(`CREATING ACCOUNT (${username}): ${selectedAddress}`);
         const actionID = uuid() as EntityID;
         actions?.add({
           id: actionID,

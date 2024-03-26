@@ -1,8 +1,9 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 import { useBalance } from 'wagmi';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -30,23 +31,15 @@ export function registerFundOperatorModal() {
 
       return merge(OperatorAddress.update$, IsAccount.update$).pipe(
         map(() => {
-          return { layers };
+          return { network: layers.network };
         })
       );
     },
 
-    ({ layers }) => {
-      const {
-        network: {
-          api: {
-            player: { account },
-          },
-          actions,
-          world,
-        },
-      } = layers;
+    ({ network }) => {
+      const { actions, world } = network;
       const { account: kamiAccount } = useAccount();
-      const { selectedAddress, networks } = useNetwork();
+      const { selectedAddress, apis } = useNetwork();
 
       const [isFundState, setIsFundState] = useState(true);
       const [amount, setAmount] = useState(0.05);
@@ -70,15 +63,15 @@ export function registerFundOperatorModal() {
       // TRANSACTIONS
 
       const fundTx = async () => {
-        const network = networks.get(selectedAddress);
-        const account = network!.api.player.account;
+        const api = apis.get(selectedAddress)!.player;
 
+        const actionID = uuid() as EntityID;
         actions?.add({
           action: 'AccountFund',
           params: [amount.toString()],
           description: `Funding Operator ${amount.toString()}`,
           execute: async () => {
-            return account.fund(amount.toString());
+            return api.account.fund(amount.toString());
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
@@ -86,12 +79,13 @@ export function registerFundOperatorModal() {
       };
 
       const refundTx = async () => {
+        const actionID = uuid() as EntityID;
         actions?.add({
           action: 'AccountRefund',
           params: [amount.toString()],
           description: `Refunding Owner ${amount.toString()}`,
           execute: async () => {
-            return account.refund(amount.toString());
+            return network.api.player.account.refund(amount.toString());
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;

@@ -13,7 +13,7 @@ import {
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerNotificationFixture } from './fixtures/Notifications';
-import { registerWalletFixture } from './fixtures/Wallet';
+import { registerWalletFixture } from './fixtures/login/Wallet';
 import { registerActionQueueFixture } from './fixtures/queue/';
 
 import { registerAccountModal } from './modals/account';
@@ -33,7 +33,6 @@ import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
 
-import { registerAccountOperator } from './modals/AccountOperator';
 import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
@@ -77,7 +76,6 @@ export function registerUIComponents() {
   registerSettingsModal();
 
   // game modals
-  registerAccountOperator();
   registerBuyModal();
   registerDialogueModal();
   registerERC20BridgeModal();

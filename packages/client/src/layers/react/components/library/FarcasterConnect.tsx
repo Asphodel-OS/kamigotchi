@@ -14,7 +14,7 @@ interface Props {
 
 export const FarcasterConnect = (props: Props) => {
   const { account, size } = props;
-  const { selectedAddress, networks } = useNetwork();
+  const { selectedAddress, apis, networks } = useNetwork();
   const [farcasterUser, setFarcasterUser] = useLocalStorage<FarcasterUser>(
     'farcasterUser',
     emptyFaracasterUser
@@ -92,17 +92,17 @@ export const FarcasterConnect = (props: Props) => {
   // connect the farcaster account found in localstorage to the onchain kami account
   function connectFarcaster(fid: number, pfpURI: string) {
     const network = networks.get(selectedAddress);
-    if (!network) {
-      console.error(`Network not found for address ${selectedAddress}`);
-      return;
-    }
+    if (!network) return console.error(`Network not established for ${selectedAddress}`);
+
+    const api = apis.get(selectedAddress);
+    if (!api) return console.error(`API not established for ${selectedAddress}`);
 
     network.actions?.add({
       action: 'ConnectFarcaster',
       params: [fid, pfpURI],
       description: `Connecting to Farcaster Account ${fid}`,
       execute: async () => {
-        return network.api.player.account.set.farcaster(fid, pfpURI);
+        return api.player.account.set.farcaster(fid, pfpURI);
       },
     });
   }

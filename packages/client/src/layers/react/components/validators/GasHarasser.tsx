@@ -1,8 +1,9 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 import { useBalance } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
@@ -30,7 +31,7 @@ export function registerGasHarasser() {
       const {
         network: { actions, world },
       } = layers;
-      const { selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators } = useVisibility();
       const { account, validations, setValidations } = useAccount();
 
@@ -81,15 +82,16 @@ export function registerGasHarasser() {
       // ACTIONS
 
       const fundTx = async () => {
-        const network = networks.get(selectedAddress);
-        const account = network!.api.player.account;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
+        const actionID = uuid() as EntityID;
         actions?.add({
           action: 'AccountFund',
           params: [value.toString()],
           description: `Funding Operator ${value.toString()}`,
           execute: async () => {
-            return account.fund(value.toString());
+            return api.player.account.fund(value.toString());
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
