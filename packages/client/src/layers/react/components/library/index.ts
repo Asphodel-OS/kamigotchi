@@ -1,10 +1,10 @@
+export { AccountButton } from '../fixtures/login/CustomRainbowButton';
 export { ActionButton } from './ActionButton';
 export { ActionListButton } from './ActionListButton';
 export { Battery } from './Battery';
 export { Card } from './Card';
 export { CopyButton } from './CopyButton';
 export { Countdown } from './Countdown';
-export { AccountButton } from './CustomRainbowButton';
 export { ExitButton } from './ExitButton';
 export { FarcasterConnect } from './FarcasterConnect';
 export { Gauge } from './Gauge';

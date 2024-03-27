@@ -5,9 +5,9 @@ import { registerOperatorUpdater } from './OperatorUpdater';
 import { registerWalletConnecter } from './WalletConnector';
 
 export {
-  registerWalletConnecter,
-  registerBurnerDetector,
   registerAccountRegistrar,
-  registerOperatorUpdater,
+  registerBurnerDetector,
   registerGasHarasser,
+  registerOperatorUpdater,
+  registerWalletConnecter,
 };

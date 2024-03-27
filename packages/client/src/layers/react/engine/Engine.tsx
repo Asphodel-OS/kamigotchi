@@ -1,4 +1,5 @@
 // src/layers/react/engine/Engine.tsx:
+import { PrivyProvider } from '@privy-io/react-auth';
 import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
@@ -40,9 +41,7 @@ export const Engine: React.FC<{
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(
-      `LOADED IN ${import.meta.env.MODE ?? 'development'} MODE (chain ${defaultChain.id})`
-    );
+    console.log(`LOADED IN '${import.meta.env.MODE}' MODE (chain ${defaultChain.id})`);
   }, []);
 
   if (!mounted || !layers) return <BootScreen />;
@@ -57,11 +56,30 @@ export const Engine: React.FC<{
         chains={chains}
         initialChain={defaultChain} // technically this is unnecessary, defaults to 1st chain
       >
-        <LayerContext.Provider value={layers}>
-          <EngineContext.Provider value={EngineStore}>
-            <MainWindow />
-          </EngineContext.Provider>
-        </LayerContext.Provider>
+        <PrivyProvider
+          appId='cltxr4rvw082u129anv6cq7wr'
+          config={{
+            // Customize Privy's appearance in your app
+            appearance: {
+              theme: 'light',
+              accentColor: '#676FFF',
+              logo: 'https://imgur.com/lYdPt9I',
+              showWalletLoginFirst: true,
+            },
+            defaultChain: defaultChain,
+            supportedChains: [defaultChain],
+            // Create embedded wallets for users who don't have a wallet
+            embeddedWallets: {
+              createOnLogin: 'all-users',
+            },
+          }}
+        >
+          <LayerContext.Provider value={layers}>
+            <EngineContext.Provider value={EngineStore}>
+              <MainWindow />
+            </EngineContext.Provider>
+          </LayerContext.Provider>
+        </PrivyProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

@@ -119,7 +119,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   config.snapshotUrl = params.get('snapshotUrl') || '';
 
   // chainId
-  const chainIdString = params.get('chainId') || '31337';
+  const chainIdString = params.get('chainId') || '1337';
   config.chainId = parseInt(chainIdString);
 
   // world

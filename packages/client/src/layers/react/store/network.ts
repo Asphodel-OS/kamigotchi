@@ -41,7 +41,7 @@ interface Burner {
 
 // the result of  validations run on network state
 interface Validations {
-  isConnected: boolean;
+  authenticated: boolean;
   chainMatches: boolean;
   burnerMatches: boolean;
 }
@@ -61,7 +61,7 @@ export const useNetwork = create<State & Actions>((set) => {
     networks: new Map<string, NetworkLayer>(),
     apis: new Map<string, API>(),
     validations: {
-      isConnected: false,
+      authenticated: false,
       chainMatches: false,
       burnerMatches: false,
     },

@@ -1,12 +1,11 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
-import { toHex } from 'viem';
-import { useAccount, useNetwork } from 'wagmi';
+import { Connector, useAccount, useNetwork } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
-import { createNetworkConfig } from 'layers/network';
+import { createNetworkConfig, createNetworkLayer } from 'layers/network';
 import { createNetwork } from 'layers/network/workers';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
@@ -17,10 +16,6 @@ import 'layers/react/styles/font.css';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
-//
-// TERMINOLOGY:
-//    connectorAddress (MM) = injectedAddress (privy) = ownerAddress (kamiworld)
-//    embeddedAddress (privy) = operatorAddress (kamiworld)
 export function registerWalletConnecter() {
   registerUIComponent(
     'WalletConnecter',
@@ -33,14 +28,14 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { UpdateNetwork } = layers.network.updates.functions;
-      const { address: connectorAddress, connector } = useAccount();
+      const { address, connector, isConnected, status } = useAccount();
+      const { openConnectModal } = useConnectModal();
+      const { openChainModal } = useChainModal();
       const { chain } = useNetwork();
-      const { wallets } = useWallets();
-      const { ready, authenticated, login, logout } = usePrivy();
 
       const { validators, setValidators } = useVisibility();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
-      const { apis, addAPI, setSelectedAddress } = useMUDNetwork();
+      const { networks, addNetwork, addAPI, setSelectedAddress } = useMUDNetwork();
       const { validations, setValidations } = useMUDNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
@@ -53,26 +48,23 @@ export function registerWalletConnecter() {
       // determine whether/with what content this Validator should be populated
       useEffect(() => {
         let isVisible = true;
-        const chainMatches = chain?.id === defaultChain.id;
-        setValidations({ ...validations, chainMatches, authenticated });
+        console.log(`NETWORK CHANGE DETECTED (wallet ${status})`);
 
-        const injectedAddress = wallets.find((w) => w.connectorType === 'injected')?.address;
-        const addressesMatch = connectorAddress === injectedAddress;
+        const chainMatches = chain?.id === defaultChain.id;
+        setValidations({ ...validations, chainMatches, authenticated: isConnected });
 
         // populate validator or initialize network depending on network validity
-        if (ready && !authenticated) {
+        if (!connector || !isConnected || !address) {
           setSelectedAddress('');
           setTitle('Wallet Disconnected');
           setWarning(`Your wallet is currently disconnected.`);
           setDescription('You must connect one to continue.');
-          setButtonLabel('Log in');
+          setButtonLabel('Connect');
         } else if (!chainMatches) {
           setTitle('Wrong Network');
-          setWarning(`You're currently connected to ${chain?.name} network`);
+          setWarning(`You're currently connected to the ${chain?.name} network`);
           setDescription(`Please connect to ${defaultChain.name} network.`);
           setButtonLabel('Change Networks');
-        } else if (!addressesMatch) {
-          logout();
         } else {
           isVisible = false;
           updateNetworkSettings();
@@ -80,7 +72,7 @@ export function registerWalletConnecter() {
         }
 
         setIsVisible(isVisible);
-      }, [chain?.id, ready, authenticated, connectorAddress, wallets]);
+      }, [chain?.id, connector, address, isConnected, Connector]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -101,43 +93,34 @@ export function registerWalletConnecter() {
       // add a network layer if one for the connection doesnt exist
       const updateNetworkSettings = async () => {
         // set the selected address and spawn network client for address as needed
-        const connectorAddressLowerCase = connectorAddress!.toLowerCase();
-        const chainMatches = chain?.id === defaultChain.id;
+        const connectorAddressLowerCase = address!.toLowerCase();
         setSelectedAddress(connectorAddressLowerCase);
+        if (!networks.has(connectorAddressLowerCase)) {
+          console.log(`CREATING NETWORK FOR..`, connectorAddressLowerCase);
 
-        if (chainMatches && !apis.has(connectorAddressLowerCase)) {
-          console.log(`Establishing APIs for 0x..${connectorAddressLowerCase.slice(-6)}`);
-
-          // create network config
+          // create network config and the new network layer
           const provider = await connector!.getProvider();
           const networkConfig = createNetworkConfig(provider);
           if (!networkConfig) throw new Error('Invalid config');
+          const networkLayer = await createNetworkLayer(networkConfig);
+          networkLayer.startSync();
+          addNetwork(connectorAddressLowerCase, networkLayer);
 
           // create api for the new network
-          // NOTE: may be inefficient but easiest workaround to create boutique signer
+          // NOTE: may be inefficient, but the easiest workaround for now
           const networkInstance = await createNetwork(networkConfig);
           const systems = layers.network.createSystems(networkInstance.signer);
           addAPI(connectorAddressLowerCase, systems);
         }
       };
 
-      // triggers a network switch request with the connector found in the window.ethereum slot
-      const changeNetwork = async () => {
-        if (window.ethereum) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: toHex(defaultChain.id) }],
-            });
-          } catch (e) {
-            console.error(e);
-          }
+      const getButtonAction = () => {
+        if (!isConnected) {
+          return openConnectModal;
         }
-      };
-
-      const handleClick = () => {
-        if (ready && !authenticated) login();
-        else if (chain?.id !== defaultChain.id) changeNetwork();
+        if (chain?.id !== defaultChain.id) {
+          return openChainModal;
+        }
       };
 
       /////////////////
@@ -151,7 +134,12 @@ export function registerWalletConnecter() {
           errorPrimary={warning}
         >
           <Description>{description}</Description>
-          <ActionButton id='connect' onClick={handleClick} text={buttonLabel} size='vending' />
+          <ActionButton
+            id='connect-button'
+            onClick={getButtonAction() ?? (() => {})}
+            text={buttonLabel}
+            size='vending'
+          />
         </ValidatorWrapper>
       );
     }

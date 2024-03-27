@@ -1,9 +1,10 @@
 // src/layers/react/components/buttons/Wallet.tsx
 import '@rainbow-me/rainbowkit/styles.css';
-import { AccountButton } from 'layers/react/components/library/CustomRainbowButton';
 import { of } from 'rxjs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
+import { AccountButton } from './CustomRainbowButton';
+import { PrivyButton } from './PrivyButton';
 
 export function registerWalletFixture() {
   registerUIComponent(
@@ -16,6 +17,7 @@ export function registerWalletFixture() {
     },
     (layers) => of(layers),
     () => {
+      return <PrivyButton />;
       return <AccountButton size='menu' />;
     }
   );
