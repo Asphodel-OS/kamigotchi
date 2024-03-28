@@ -4,11 +4,9 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
+import { IdOwnsRelationshipComponent, ID as IdOwnsRSCompID } from "components/IdOwnsRelationshipComponent.sol";
 import { IndexNPCComponent, ID as IndexNPCCompID } from "components/IndexNPCComponent.sol";
 import { IndexRelationshipComponent, ID as IndexRelCompID } from "components/IndexRelationshipComponent.sol";
 import { IsRelationshipComponent, ID as IsRelCompID } from "components/IsRelationshipComponent.sol";
@@ -20,15 +18,14 @@ library LibRelationship {
   // INTERACTIONS
 
   function create(
-    IWorld world,
     IUintComp components,
     uint256 accountID,
     uint32 npcIndex,
     uint32 relIndex
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = genID(accountID, npcIndex, relIndex);
     IsRelationshipComponent(getAddressById(components, IsRelCompID)).set(id);
-    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
+    IdOwnsRelationshipComponent(getAddressById(components, IdOwnsRSCompID)).set(id, accountID);
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, npcIndex);
     IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).set(id, relIndex);
     return id;
@@ -102,25 +99,14 @@ library LibRelationship {
     uint32 npcIndex,
     uint32 relIndex
   ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](4);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRelCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdAccCompID),
-      abi.encode(accountID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexNPCCompID),
-      abi.encode(npcIndex)
-    );
-    fragments[3] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexRelCompID),
-      abi.encode(relIndex)
-    );
+    uint256 id = genID(accountID, npcIndex, relIndex);
+    return LibRegistryRelationship.isRelationship(components, id) ? id : 0;
+  }
 
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+  /////////////////
+  //  UTILS
+
+  function genID(uint256 accID, uint32 npcIndex, uint32 relIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Relationship", accID, npcIndex, relIndex)));
   }
 }

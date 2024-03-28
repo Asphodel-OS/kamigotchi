@@ -26,11 +26,11 @@ contract _RegistryCreateRelationshipSystem is System {
 
     require(registryID == 0, "Registry: Relationship already exists");
 
-    registryID = LibRegRel.create(world, components, npcIndex, relIndex);
+    registryID = LibRegRel.create(components, npcIndex, relIndex);
     if (!LibString.eq(name, "")) LibRegRel.setName(components, registryID, name);
     if (blacklist.length > 0) LibRegRel.setBlacklist(components, registryID, blacklist);
     if (whitelist.length > 0) LibRegRel.setWhitelist(components, registryID, whitelist);
-    return "";
+    return abi.encode(registryID);
   }
 
   function executeTyped(
