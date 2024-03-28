@@ -7,8 +7,7 @@ import { GasConstants } from 'constants/gas';
 import { NetworkLayer } from 'layers/network/types';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { useAccount } from 'layers/react/store/account';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
 interface Props {

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useVisibility } from 'layers/react/store/visibility';
+import { useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
 interface Props {

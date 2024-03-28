@@ -1,5 +1,4 @@
-import { useSelected } from 'layers/react/store/selected';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
 export const triggerNodeModal = (index: number) => {

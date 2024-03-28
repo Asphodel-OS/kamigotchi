@@ -2,8 +2,7 @@ import styled from 'styled-components';
 
 import { Kami } from 'layers/network/shapes/Kami';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
-import { useSelected } from 'layers/react/store/selected';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
 interface Props {

@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Kami, calcCooldownRemaining, calcHealth, isUnrevealed } from 'layers/network/shapes/Kami';
-import { useSelected } from 'layers/react/store/selected';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 import { Battery } from './Battery';
 import { Card } from './Card';

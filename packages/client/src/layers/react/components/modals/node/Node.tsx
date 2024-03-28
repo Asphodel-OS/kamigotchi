@@ -7,7 +7,7 @@ import { getLiquidationConfig } from 'layers/network/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/network/shapes/Node';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelected } from 'layers/react/store/selected';
+import { useSelected } from 'layers/react/store';
 import { Banner } from './Banner';
 import { Kards } from './Kards';
 import { Tabs } from './Tabs';

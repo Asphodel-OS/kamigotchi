@@ -6,8 +6,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useLocalStorage } from 'layers/react/hooks/useLocalStorage';
-import { useNetwork } from 'layers/react/store/network';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useNetwork, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 import { generatePrivateKey, getAddressFromPrivateKey } from 'utils/address';
 

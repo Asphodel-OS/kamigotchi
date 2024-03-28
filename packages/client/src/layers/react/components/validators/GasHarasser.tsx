@@ -4,15 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { useBalance } from 'wagmi';
+import { useBalance, useBlockNumber } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 import { playClick, playSuccess } from 'utils/sounds';
 
@@ -31,6 +29,7 @@ export function registerGasHarasser() {
       const {
         network: { actions, world },
       } = layers;
+      const { data: blockNumber } = useBlockNumber({ watch: true });
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators } = useVisibility();
       const { account, validations, setValidations } = useAccount();
@@ -39,17 +38,24 @@ export function registerGasHarasser() {
       const [isVisible, setIsVisible] = useState(false);
       const [value, setValue] = useState(0.05);
 
-      const { data: OperatorBal } = useBalance({
+      // Operator Eth Balance
+      const { data: operatorBalance, refetch } = useBalance({
         address: account.operatorAddress as `0x${string}`,
-        watch: true,
       });
+
+      /////////////////
+      // SUBSCRIPTIONS
+
+      useEffect(() => {
+        refetch();
+      }, [blockNumber]);
 
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
-        const hasGas = Number(OperatorBal?.formatted) > 0;
+        const hasGas = Number(operatorBalance?.formatted) > 0;
         setHasGas(hasGas);
         setValidations({ ...validations, operatorHasGas: hasGas });
-      }, [OperatorBal]);
+      }, [operatorBalance]);
 
       // determine visibility based on above/prev checks
       useEffect(() => {

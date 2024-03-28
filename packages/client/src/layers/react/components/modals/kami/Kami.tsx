@@ -6,7 +6,7 @@ import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { Skill, getRegistrySkills } from 'layers/network/shapes/Skill';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelected } from 'layers/react/store/selected';
+import { useSelected } from 'layers/react/store';
 import { KillLogs } from './battles/KillLogs';
 import { Banner } from './header/Banner';
 import { Tabs } from './header/Tabs';

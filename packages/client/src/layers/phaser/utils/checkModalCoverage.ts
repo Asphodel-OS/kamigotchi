@@ -1,4 +1,4 @@
-import { useVisibility } from 'layers/react/store/visibility';
+import { useVisibility } from 'layers/react/store';
 
 // checks the open modals to see if a click occured over an open modal
 export function checkModalCoverage(e: Phaser.Input.Pointer): boolean {

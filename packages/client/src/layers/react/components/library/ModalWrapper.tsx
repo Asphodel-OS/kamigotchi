@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { ExitButton } from 'layers/react/components/library/ExitButton';
-import { Modals, useVisibility } from 'layers/react/store/visibility';
+import { Modals, useVisibility } from 'layers/react/store';
 
 interface Props {
   id: string;

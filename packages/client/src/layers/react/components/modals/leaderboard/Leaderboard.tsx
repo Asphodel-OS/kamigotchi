@@ -6,7 +6,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Score, ScoresFilter, getScores } from 'layers/network/shapes/Score';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 import { Filters } from './Filters';
 import { Table } from './Table';

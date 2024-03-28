@@ -1,34 +1,14 @@
-// src/layers/react/engine/Engine.tsx:
-import { PrivyProvider } from '@privy-io/react-auth';
-import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import { PrivyClientConfig, PrivyProvider } from '@privy-io/react-auth';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
-import { WagmiConfig, configureChains, createConfig } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { WagmiProvider, createConfig, http } from 'wagmi';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { defaultChain } from 'constants/chains';
 import { Layers } from 'src/types';
 import { BootScreen, MainWindow } from './components';
 import { EngineContext, LayerContext } from './context';
 import { EngineStore } from './store';
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [defaultChain],
-  [publicProvider()]
-);
-
-const { connectors } = getDefaultWallets({
-  appName: 'Kamigotchi',
-  projectId: 'YOUR_PROJECT_ID',
-  chains,
-});
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
-});
 
 export const Engine: React.FC<{
   setLayers: { current: (layers: Layers) => void };
@@ -44,43 +24,43 @@ export const Engine: React.FC<{
     console.log(`LOADED IN '${import.meta.env.MODE}' MODE (chain ${defaultChain.id})`);
   }, []);
 
+  const queryClient = new QueryClient();
+
+  const wagmiConfig = createConfig({
+    chains: [defaultChain],
+    transports: {
+      [defaultChain.id]: http(),
+    },
+  });
+
+  const privyConfig: PrivyClientConfig = {
+    // Customize Privy's appearance in your app
+    appearance: {
+      theme: 'light',
+      accentColor: '#676FFF',
+      logo: 'https://imgur.com/lYdPt9I',
+      showWalletLoginFirst: true,
+    },
+    defaultChain: defaultChain,
+    supportedChains: [defaultChain],
+    // Create embedded wallets for users who don't have a wallet
+    embeddedWallets: {
+      createOnLogin: 'all-users',
+    },
+  };
+
   if (!mounted || !layers) return <BootScreen />;
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider
-        theme={lightTheme({
-          accentColor: '#ffffff',
-          accentColorForeground: '#000000',
-          fontStack: 'system',
-        })}
-        chains={chains}
-        initialChain={defaultChain} // technically this is unnecessary, defaults to 1st chain
-      >
-        <PrivyProvider
-          appId='cltxr4rvw082u129anv6cq7wr'
-          config={{
-            // Customize Privy's appearance in your app
-            appearance: {
-              theme: 'light',
-              accentColor: '#676FFF',
-              logo: 'https://imgur.com/lYdPt9I',
-              showWalletLoginFirst: true,
-            },
-            defaultChain: defaultChain,
-            supportedChains: [defaultChain],
-            // Create embedded wallets for users who don't have a wallet
-            embeddedWallets: {
-              createOnLogin: 'all-users',
-            },
-          }}
-        >
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <PrivyProvider appId='cltxr4rvw082u129anv6cq7wr' config={privyConfig}>
           <LayerContext.Provider value={layers}>
             <EngineContext.Provider value={EngineStore}>
               <MainWindow />
             </EngineContext.Provider>
           </LayerContext.Provider>
         </PrivyProvider>
-      </RainbowKitProvider>
-    </WagmiConfig>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 });

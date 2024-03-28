@@ -10,8 +10,7 @@ import { KamiCard } from 'layers/react/components/library/KamiCard';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelected } from 'layers/react/store/selected';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected, useVisibility } from 'layers/react/store';
 
 export function registerEMABoardModal() {
   registerUIComponent(

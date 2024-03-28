@@ -3,9 +3,7 @@ import { of } from 'rxjs';
 import { operatorIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useAccount } from 'layers/react/store/account';
-import { useSelected } from 'layers/react/store/selected';
-import { Modals, useVisibility } from 'layers/react/store/visibility';
+import { Modals, useAccount, useSelected, useVisibility } from 'layers/react/store';
 
 export function registerAccountButton() {
   registerUIComponent(

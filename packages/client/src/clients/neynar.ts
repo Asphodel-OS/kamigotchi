@@ -1,6 +1,6 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { User } from '@neynar/nodejs-sdk/build/neynar-api/v2';
-import { useAccount } from 'layers/react/store/account';
+import { useAccount } from 'layers/react/store';
 
 export const client = new NeynarAPIClient(import.meta.env.VITE_NEYNAR_API_KEY!);
 

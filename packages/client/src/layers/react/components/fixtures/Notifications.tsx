@@ -3,7 +3,7 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Modals, useVisibility } from 'layers/react/store/visibility';
+import { Modals, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 
 export function registerNotificationFixture() {

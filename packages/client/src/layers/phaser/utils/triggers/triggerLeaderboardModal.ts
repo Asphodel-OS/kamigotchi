@@ -1,4 +1,4 @@
-import { useVisibility } from 'layers/react/store/visibility';
+import { useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
 export const triggerLeaderboardModal = () => {

@@ -6,7 +6,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Merchant, getMerchantByIndex } from 'layers/network/shapes/Merchant';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useSelected } from 'layers/react/store/selected';
+import { useSelected } from 'layers/react/store';
 import { Listings } from './Listings';
 import { MusuRow } from './MusuRow';
 

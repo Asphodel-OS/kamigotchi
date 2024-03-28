@@ -11,7 +11,7 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 
 import { getItemByIndex } from 'layers/network/shapes/Item';
 import { getLootboxByIndex, getLootboxLog } from 'layers/network/shapes/Lootbox';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useVisibility } from 'layers/react/store';
 import { Opener } from './Opener';
 import { Revealing } from './Revealing';
 import { Rewards } from './Rewards';

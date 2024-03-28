@@ -13,8 +13,7 @@ import { NetworkLayer } from 'layers/network/types';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
 import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';
-import { useSelected } from 'layers/react/store/selected';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected, useVisibility } from 'layers/react/store';
 
 export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {

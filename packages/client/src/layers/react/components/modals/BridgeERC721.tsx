@@ -3,15 +3,14 @@ import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
-import { useContractRead } from 'wagmi';
+import { useReadContract } from 'wagmi';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
 import { Account, getAccount } from 'layers/network/shapes/Account';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network';
+import { useAccount, useNetwork } from 'layers/react/store';
 
 import 'layers/react/styles/font.css';
 
@@ -125,12 +124,12 @@ export function registerERC721BridgeModal() {
       };
 
       // External Kamis
-      const { data: erc721 } = useContractRead({
+      const { data: erc721 } = useReadContract({
         address: proxyAddy as `0x${string}`,
         abi: abi,
         functionName: 'getTokenAddy',
       });
-      const { data: erc721List } = useContractRead({
+      const { data: erc721List } = useReadContract({
         address: erc721 as `0x${string}`,
         abi: [
           {
@@ -155,7 +154,6 @@ export function registerERC721BridgeModal() {
         ],
         functionName: 'getAllTokens',
         args: [kamiAccount.ownerAddress as `0x${string}`],
-        watch: true,
       });
 
       // update list of externally owned kamis

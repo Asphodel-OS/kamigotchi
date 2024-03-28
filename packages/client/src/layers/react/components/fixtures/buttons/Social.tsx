@@ -1,10 +1,9 @@
-import React from 'react';
-import { of } from 'rxjs';
 import { socialIcon } from 'assets/images/icons/menu';
+import { of } from 'rxjs';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Modals, useVisibility } from 'layers/react/store/visibility';
+import { Modals, useVisibility } from 'layers/react/store';
 
 export function registerSocialButton() {
   registerUIComponent(

@@ -20,9 +20,13 @@ import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Account, emptyAccountDetails, useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network';
-import { useVisibility } from 'layers/react/store/visibility';
+import {
+  Account,
+  emptyAccountDetails,
+  useAccount,
+  useNetwork,
+  useVisibility,
+} from 'layers/react/store';
 import { playScribble } from 'utils/sounds';
 
 /**

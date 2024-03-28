@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { EntityIndex, getComponentEntities } from '@mud-classic/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useVisibility } from 'layers/react/store';
 import { Controls } from './Controls';
 import { Logs } from './Logs';
 

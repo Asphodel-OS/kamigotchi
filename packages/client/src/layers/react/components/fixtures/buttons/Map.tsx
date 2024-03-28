@@ -6,7 +6,7 @@ import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { getRoomByIndex, Room } from 'layers/network/shapes/Room';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Modals, useVisibility } from 'layers/react/store/visibility';
+import { Modals, useVisibility } from 'layers/react/store';
 
 export function registerMapButton() {
   registerUIComponent(

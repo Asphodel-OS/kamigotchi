@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { toHex } from 'viem';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
 import { createNetworkConfig } from 'layers/network';
@@ -11,8 +11,7 @@ import { createNetwork } from 'layers/network/workers';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useNetwork as useMUDNetwork } from 'layers/react/store/network';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useNetwork as useMUDNetwork, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 
 // Detects network changes and populates network clients for inidividual addresses.
@@ -32,8 +31,7 @@ export function registerWalletConnecter() {
     },
     (layers) => of(layers),
     (layers) => {
-      const { address: connectorAddress, connector } = useAccount();
-      const { chain } = useNetwork();
+      const { address: connectorAddress, chain, connector } = useAccount();
       const { wallets } = useWallets();
       const { ready, authenticated, login, logout } = usePrivy();
 

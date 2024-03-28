@@ -9,8 +9,7 @@ import { useBalance } from 'wagmi';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useAccount } from 'layers/react/store/account';
-import { useNetwork } from 'layers/react/store/network';
+import { useAccount, useNetwork } from 'layers/react/store';
 import { playScribble, playSuccess } from 'utils/sounds';
 
 export function registerFundOperatorModal() {

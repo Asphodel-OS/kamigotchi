@@ -1,7 +1,6 @@
 import { Listing } from 'layers/network/shapes/Listing';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { useSelected } from 'layers/react/store/selected';
-import { useVisibility } from 'layers/react/store/visibility';
+import { useSelected, useVisibility } from 'layers/react/store';
 import styled from 'styled-components';
 import { Tooltip } from '../../library/Tooltip';
 
