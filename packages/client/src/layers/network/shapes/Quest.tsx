@@ -87,7 +87,6 @@ export interface Condition {
 }
 
 export interface Objective extends Condition {
-  index: number;
   name: string;
 }
 
@@ -172,12 +171,11 @@ const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex): Requir
 const getObjective = (network: NetworkLayer, entityIndex: EntityIndex): Objective => {
   const {
     world,
-    components: { Balance, Index, LogicType, Name, ObjectiveIndex, Type },
+    components: { Balance, Index, LogicType, Name, Type },
   } = network;
 
   let objective: Objective = {
     id: world.entities[entityIndex],
-    index: getComponentValue(ObjectiveIndex, entityIndex)?.value || (0 as number),
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
     target: {
@@ -242,13 +240,13 @@ export interface QueryOptions {
 // Query for Entity Indices of Quests, depending on the options provided
 const queryQuestsX = (network: NetworkLayer, options: QueryOptions): Quest[] => {
   const {
-    components: { AccountID, IsComplete, IsQuest, IsRegistry, QuestIndex },
+    components: { OwnsQuestID, IsComplete, IsQuest, IsRegistry, QuestIndex },
   } = network;
 
   const toQuery: QueryFragment[] = [Has(IsQuest)];
 
   if (options?.account) {
-    toQuery.push(HasValue(AccountID, { value: options.account }));
+    toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
   }
 
   if (options?.registry) {
@@ -308,18 +306,10 @@ const queryQuestRewards = (
   else return queried;
 };
 
-const querySnapshotObjective = (
-  network: NetworkLayer,
-  questID: EntityID,
-  objectiveIndex: number
-): Objective => {
-  const { IsObjective, ObjectiveIndex, HolderID } = network.components;
+const querySnapshotObjective = (network: NetworkLayer, questID: EntityID): Objective => {
+  const { IsObjective, OwnsQuestID } = network.components;
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsObjective),
-      HasValue(ObjectiveIndex, { value: objectiveIndex }),
-      HasValue(HolderID, { value: questID }),
-    ])
+    runQuery([Has(IsObjective), HasValue(OwnsQuestID, { value: questID })])
   );
   return getObjective(network, entityIndices[0]); // should only be one
 };
@@ -384,7 +374,7 @@ const checkIncrease = (
   quest: Quest,
   account: Account
 ): ((opt: any) => Status) => {
-  const prevVal = querySnapshotObjective(network, quest.id, objective.index).target.value as number;
+  const prevVal = querySnapshotObjective(network, quest.id).target.value as number;
   const currVal = getData(network, account.id, objective.target.type, objective.target.index);
 
   return (opt: any) => {
@@ -406,7 +396,7 @@ const checkDecrease = (
   quest: Quest,
   account: Account
 ): ((opt: any) => Status) => {
-  const prevVal = querySnapshotObjective(network, quest.id, objective.index).target.value as number;
+  const prevVal = querySnapshotObjective(network, quest.id).target.value as number;
   const currVal = getData(network, account.id, objective.target.type, objective.target.index);
 
   return (opt: any) => {

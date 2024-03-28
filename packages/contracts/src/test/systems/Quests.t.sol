@@ -73,7 +73,7 @@ contract QuestsTest is SetupTemplate {
     vm.expectRevert("QuestAccept: accepted before");
     _QuestAcceptSystem.executeTyped(1);
 
-    // check that quest cant be accepted over its max
+    // check that quest cant be accepted more than once
     _completeQuest(0, questID);
 
     vm.prank(operator);
@@ -159,10 +159,8 @@ contract QuestsTest is SetupTemplate {
     uint256[] memory snapshots = _getQuestObjSnapshots(questID);
     assertEq(snapshots.length, 1);
     assertTrue(_IsObjectiveComponent.has(snapshots[0]));
-    assertEq(_IdHolderComponent.getValue(snapshots[0]), questID);
+    assertEq(_IdOwnsQuestComponent.getValue(snapshots[0]), questID);
     assertEq(_BalanceComponent.getValue(snapshots[0]), startAmt);
-    assertEq(_HashComponent.getValue(snapshots[0]), hashedObj);
-    assertEq(LibHash.getByReverse(components, hashedObj), regObj);
 
     // check completability
     assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));
@@ -248,6 +246,33 @@ contract QuestsTest is SetupTemplate {
     vm.prank(operator);
     vm.expectRevert("Quests: alr completed");
     _QuestCompleteSystem.executeTyped(questID);
+  }
+
+  function testQuestCompleted() public {
+    // create quest
+    _createQuest(1, 0);
+    _createQuest(2, 0);
+    _createQuestRequirement(2, "BOOL_IS", "QUEST", 1, 0);
+
+    // register the account
+    address operator = _getOperator(0);
+
+    // check quest cant be accepted when failing requirements
+    vm.prank(operator);
+    vm.expectRevert("QuestAccept: reqs not met");
+    _QuestAcceptSystem.executeTyped(2);
+    uint256 reqQuest = _acceptQuest(0, 1);
+    vm.prank(operator);
+    vm.expectRevert("QuestAccept: reqs not met");
+    _QuestAcceptSystem.executeTyped(2);
+
+    // fufill requirements
+    _completeQuest(0, reqQuest);
+
+    // accept quest
+    uint256 questID = _acceptQuest(0, 2);
+    _assertQuestAccount(_getAccount(0), questID);
+    _completeQuest(0, questID);
   }
 
   function testQuestRoomIndex() public {
@@ -370,7 +395,7 @@ contract QuestsTest is SetupTemplate {
   // ASSERTIONS
 
   function _assertQuestAccount(uint256 accountID, uint256 questID) internal {
-    assertEq(LibQuests.getAccountId(components, questID), accountID);
+    assertEq(LibQuests.getOwner(components, questID), accountID);
   }
 
   function _assertAccNumQuests(uint256 accountID, uint256 numQuests) internal {
@@ -386,21 +411,31 @@ contract QuestsTest is SetupTemplate {
 
   function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(
+    fragments[1] = QueryFragment(
       QueryType.HasValue,
-      getComponentById(components, IdHolderComponentID),
+      getComponentById(components, IdOwnsQuestComponentID),
       abi.encode(questID)
     );
-    fragments[1] = QueryFragment(
+    fragments[0] = QueryFragment(
       QueryType.Has,
       getComponentById(components, IsObjectiveComponentID),
       ""
     );
-
     return LibQuery.query(fragments);
   }
 
   function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
-    return LibQuests.queryAccountQuests(components, accountID);
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdOwnsQuestComponentID),
+      abi.encode(accountID)
+    );
+    fragments[1] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsQuestComponentID),
+      ""
+    );
+    return LibQuery.query(fragments);
   }
 }
