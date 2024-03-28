@@ -1,4 +1,3 @@
-export { AccountButton } from '../fixtures/login/CustomRainbowButton';
 export { ActionButton } from './ActionButton';
 export { ActionListButton } from './ActionListButton';
 export { Battery } from './Battery';

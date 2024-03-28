@@ -55,7 +55,7 @@ export function registerGasHarasser() {
       useEffect(() => {
         setIsVisible(
           defaultChain.id !== 1337 &&
-            networkValidations.isConnected &&
+            networkValidations.authenticated &&
             networkValidations.chainMatches &&
             networkValidations.burnerMatches &&
             validations.accountExists &&

@@ -87,7 +87,7 @@ export function registerBurnerDetector() {
 
       // determining visibility based on above/prev checks
       useEffect(() => {
-        setIsVisible(validations.isConnected && validations.chainMatches && !burnerMatches);
+        setIsVisible(validations.authenticated && validations.chainMatches && !burnerMatches);
       }, [validations, burnerMatches]);
 
       // adjust visibility of windows based on above determination

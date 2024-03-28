@@ -150,7 +150,7 @@ export function registerAccountRegistrar() {
       // determine visibility based on above/prev checks
       useEffect(() => {
         setIsVisible(
-          networkValidations.isConnected &&
+          networkValidations.authenticated &&
             networkValidations.chainMatches &&
             networkValidations.burnerMatches &&
             !accountExists

@@ -1,11 +1,4 @@
-import {
-  EntityIndex,
-  Type,
-  createWorld,
-  defineComponent,
-  getComponentValue,
-  setComponent,
-} from '@mud-classic/recs';
+import { Type, createWorld, defineComponent } from '@mud-classic/recs';
 
 import { SetupContractConfig, setupMUDNetwork } from 'layers/network/setup';
 import { SystemAbis } from 'types/SystemAbis.mjs';
@@ -17,7 +10,6 @@ import { createComponents } from './components/register';
 import { initExplorer } from './explorer';
 import { createActionSystem } from './systems/ActionSystem/createActionSystem';
 import { createNotificationSystem } from './systems/NotificationSystem/createNotificationSystem';
-import { GodID } from './workers/workers';
 
 export async function createNetworkLayer(config: SetupContractConfig) {
   const world = createWorld();
@@ -37,14 +29,6 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   // effectively a hopper to make EOA wallet updates compatible with phaser
   // could be extended to replace clunky streams in react
   const NetworkUpdater = defineComponent(world, { value: Type.Boolean });
-  const UpdateNetwork = () => {
-    const godEntityIndex = world.entityToIndex.get(GodID) as EntityIndex;
-    let nextVal = false;
-    if (getComponentValue(NetworkUpdater, godEntityIndex)?.value != undefined) {
-      nextVal = !getComponentValue(NetworkUpdater, godEntityIndex)?.value;
-    }
-    setComponent(NetworkUpdater, godEntityIndex, { value: nextVal });
-  };
 
   let networkLayer = {
     world,
@@ -62,10 +46,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     },
     updates: {
       components: {
-        Network: NetworkUpdater,
-      },
-      functions: {
-        UpdateNetwork,
+        Network: defineComponent(world, { value: Type.Boolean }), // no clue how this is working..
       },
     },
     explorer: {} as any,

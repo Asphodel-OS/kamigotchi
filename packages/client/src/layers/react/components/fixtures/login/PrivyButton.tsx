@@ -6,8 +6,8 @@ export const PrivyButton = () => {
   const { wallets } = useWallets();
   const { login } = useLogin({
     onComplete: (user, isNewUser, wasAlreadyAuthenticated) => {
-      console.log(user, isNewUser, wasAlreadyAuthenticated);
-      console.log(wallets);
+      // console.log(user, isNewUser, wasAlreadyAuthenticated);
+      // console.log(wallets);
       // Any logic you'd like to execute if the user is/becomes authenticated while this
       // component is mounted
     },

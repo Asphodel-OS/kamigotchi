@@ -32,7 +32,6 @@ export function registerWalletConnecter() {
     },
     (layers) => of(layers),
     (layers) => {
-      const { UpdateNetwork } = layers.network.updates.functions;
       const { address: connectorAddress, connector } = useAccount();
       const { chain } = useNetwork();
       const { wallets } = useWallets();
@@ -71,16 +70,17 @@ export function registerWalletConnecter() {
           setWarning(`You're currently connected to ${chain?.name} network`);
           setDescription(`Please connect to ${defaultChain.name} network.`);
           setButtonLabel('Change Networks');
-        } else if (!addressesMatch) {
+        } else if (injectedAddress && connectorAddress && !addressesMatch) {
+          // log the user out if we conclusively identify a mismatch
+          console.warn('Addresses Mismatched. Logging Out.');
           logout();
         } else {
           isVisible = false;
           updateNetworkSettings();
-          UpdateNetwork();
         }
 
         setIsVisible(isVisible);
-      }, [chain?.id, ready, authenticated, connectorAddress, wallets]);
+      }, [chain, ready, authenticated, connectorAddress, wallets]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {

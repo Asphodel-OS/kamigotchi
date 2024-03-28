@@ -1,8 +1,9 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { waitForActionCompletion } from 'layers/network/utils';
 import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import { getAccountByOperator } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -54,7 +55,7 @@ export function registerOperatorUpdater() {
       // determine visibility based on above/prev checks
       useEffect(() => {
         setIsVisible(
-          networkValidations.isConnected &&
+          networkValidations.authenticated &&
             networkValidations.chainMatches &&
             networkValidations.burnerMatches &&
             validations.accountExists &&
@@ -96,6 +97,7 @@ export function registerOperatorUpdater() {
         const world = network!.world;
         const api = network!.api.player;
 
+        const actionID = uuid() as EntityID;
         actions?.add({
           action: 'AccountSetOperator',
           params: [address],
