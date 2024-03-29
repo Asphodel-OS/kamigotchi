@@ -5,7 +5,7 @@ import { SystemAbis } from 'types/SystemAbis.mjs';
 import { SystemTypes } from 'types/SystemTypes';
 import { createAdminAPI } from './api/admin';
 import { createPlayerAPI } from './api/player';
-import { setUpWorldAPI } from './api/world';
+import { setupWorldAPI } from './api/world';
 import { createComponents } from './components/register';
 import { initExplorer } from './explorer';
 import { createActionSystem } from './systems/ActionSystem/createActionSystem';
@@ -20,15 +20,11 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     SystemTypes
   >(world, components, SystemAbis, config, { fetchSystemCalls: true });
 
-  let actions;
   const provider = network.providers.get().json;
-  if (provider) actions = createActionSystem(world, txReduced$, provider);
-  const notifications = createNotificationSystem(world);
+  if (!provider) throw new Error('no Provider.. provided by network');
 
-  // local component to trigger updates
-  // effectively a hopper to make EOA wallet updates compatible with phaser
-  // could be extended to replace clunky streams in react
-  const NetworkUpdater = defineComponent(world, { value: Type.Boolean });
+  const actions = createActionSystem(world, txReduced$, provider);
+  const notifications = createNotificationSystem(world);
 
   let networkLayer = {
     world,
@@ -42,11 +38,11 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     api: {
       admin: createAdminAPI(systems),
       player: createPlayerAPI(systems),
-      world: setUpWorldAPI(systems, provider),
+      world: setupWorldAPI(systems, provider),
     },
     updates: {
       components: {
-        Network: defineComponent(world, { value: Type.Boolean }), // no clue how this is working..
+        Network: defineComponent(world, { value: Type.Boolean }), // local comp to tiggers updates
       },
     },
     explorer: {} as any,

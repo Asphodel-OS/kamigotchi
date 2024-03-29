@@ -1,5 +1,7 @@
 import { BigNumberish, utils } from 'ethers';
 
+export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
+
 export function createPlayerAPI(systems: any) {
   /////////////////
   //     PET

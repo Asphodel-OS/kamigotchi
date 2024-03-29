@@ -45,7 +45,7 @@ export function registerPartyModal() {
 
       // feed a kami
       const feed = (kami: Kami, itemIndex: number) => {
-        actions?.add({
+        actions.add({
           action: 'KamiFeed',
           params: [kami.id, itemIndex],
           description: `Feeding ${kami.name}`,
@@ -57,7 +57,7 @@ export function registerPartyModal() {
 
       // revive a kami using a revive item
       const revive = (kami: Kami, itemIndex: number) => {
-        actions?.add({
+        actions.add({
           action: 'KamiRevive',
           params: [kami.id, itemIndex],
           description: `Reviving ${kami.name}`,

@@ -10,7 +10,7 @@ interface Props {
   };
   data: {
     commits: GachaCommit[];
-    blockNum: number;
+    blockNumber: number;
   };
   display: {
     Tab: JSX.Element;
@@ -22,7 +22,7 @@ export const Commits = (props: Props) => {
   // LOGIC
 
   const getCommitTimeFrom = (commit: GachaCommit): string => {
-    const secDelta = (props.data.blockNum - commit.revealBlock) * 2;
+    const secDelta = (props.data.blockNumber - commit.revealBlock) * 2;
 
     if (secDelta > 86400) {
       const days = Math.floor(secDelta / 86400);
@@ -42,7 +42,9 @@ export const Commits = (props: Props) => {
   // DISPLAY
 
   const Cell = (commit: GachaCommit) => {
-    return isGachaAvailable(commit, props.data.blockNum) ? ActiveCell(commit) : ExpiredCell(commit);
+    return isGachaAvailable(commit, props.data.blockNumber)
+      ? ActiveCell(commit)
+      : ExpiredCell(commit);
   };
 
   const ActiveCell = (commit: GachaCommit) => {

@@ -11,7 +11,6 @@ interface Props {
 
 export const Players = (props: Props) => {
   const { index, rooms } = props;
-  if (index == 0 || !rooms.has(index)) return <div />;
   const room = rooms.get(index)!;
 
   const { setAccount } = useSelected();
@@ -29,6 +28,7 @@ export const Players = (props: Props) => {
   ///////////////////
   // RENDER
 
+  if (index == 0 || !rooms.has(index)) return <div />;
   return (
     <Container>
       <Title>Players</Title>

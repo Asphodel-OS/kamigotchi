@@ -21,7 +21,7 @@ export const Engine: React.FC<{
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(`LOADED IN '${import.meta.env.MODE}' MODE (chain ${defaultChain.id})`);
+    console.log(`Loaded in { ${import.meta.env.MODE} } mode (chain ${defaultChain.id}).`);
   }, []);
 
   const queryClient = new QueryClient();

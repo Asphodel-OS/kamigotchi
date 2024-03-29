@@ -71,20 +71,20 @@ export function registerERC721BridgeModal() {
 
       const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
 
-      //////////////////
-      // TRANSACTIONS //
+      /////////////////
+      // TRANSACTIONS
 
       // TODO: pets without accounts are linked to EOA, no account. link EOA
       const depositTx = (tokenID: BigNumberish) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-        actions?.add({
+        actions.add({
           action: 'KamiDeposit',
           params: [tokenID],
           description: `Staking Kami ${tokenID}`,
           execute: async () => {
-            return api.player.ERC721.deposit(tokenID);
+            return api.ERC721.deposit(tokenID);
           },
         });
       };
@@ -93,18 +93,18 @@ export function registerERC721BridgeModal() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-        actions?.add({
+        actions.add({
           action: 'KamiWithdraw',
           params: [tokenID],
           description: `Unstaking Kami ${tokenID}`,
           execute: async () => {
-            return api.player.ERC721.withdraw(tokenID);
+            return api.ERC721.withdraw(tokenID);
           },
         });
       };
 
       //////////////////
-      // MODAL LOGIC //
+      // MODAL LOGIC
 
       // for use in mud
       const buttonSelect = (props: any) => {
@@ -215,7 +215,7 @@ export function registerERC721BridgeModal() {
       };
 
       /////////////////
-      //  KAMI LOGIC
+      // KAMI LOGIC
 
       const isImportable = (kami: Kami): boolean => {
         return isOutOfWorld(kami);

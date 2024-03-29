@@ -53,7 +53,7 @@ export function registerEMABoardModal() {
         const inv = data.account.inventories?.consumables.find((inv) => inv.item.index === 9001);
         if (!inv) return;
 
-        actions?.add({
+        actions.add({
           action: 'KamiFeed',
           params: [kami.id, inv.id],
           description: `Using holy dust on ${kami.name}`,

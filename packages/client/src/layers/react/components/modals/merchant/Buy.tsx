@@ -47,7 +47,7 @@ export function registerBuyModal() {
 
       // buy from a listing
       const buy = (listing: Listing, amt: number) => {
-        actions?.add({
+        actions.add({
           action: 'ListingBuy',
           params: [listing.id, amt],
           description: `Buying ${amt} of ${listing.item!.name}`,

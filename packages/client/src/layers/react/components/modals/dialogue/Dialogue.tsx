@@ -54,7 +54,7 @@ export function registerDialogueModal() {
       const move = (roomIndex: number) => {
         const room = getRoomByIndex(network, roomIndex);
 
-        network.actions?.add({
+        network.actions.add({
           action: 'AccountMove',
           params: [roomIndex],
           description: `Moving to ${room.name}`,

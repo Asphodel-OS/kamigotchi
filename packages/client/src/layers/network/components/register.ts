@@ -1,13 +1,13 @@
-import { World } from "@mud-classic/recs";
+import { World } from '@mud-classic/recs';
 
 import {
   defineBoolComponent,
-  defineNumberComponent,
-  defineStringComponent,
   defineLoadingStateComponent,
   defineLocationComponent,
   defineNumberArrayComponent,
+  defineNumberComponent,
   defineStatComponent,
+  defineStringComponent,
   defineTimelockComponent,
 } from './definitions';
 

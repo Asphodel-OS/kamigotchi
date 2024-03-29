@@ -35,7 +35,7 @@ export function registerNameKamiModal() {
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
-        actions?.add({
+        actions.add({
           action: 'KamiName',
           params: [kami.id, name],
           description: `Renaming ${kami.name}`,

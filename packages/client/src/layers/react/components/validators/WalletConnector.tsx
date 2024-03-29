@@ -18,7 +18,7 @@ import 'layers/react/styles/font.css';
 // The purpose of this modal is to warn the user when something is amiss.
 //
 // TERMINOLOGY:
-//    connectorAddress (MM) = injectedAddress (privy) = ownerAddress (kamiworld)
+//    injectedAddress (privy) = ownerAddress (kamiworld) = connectorAddress (e.g. MM)
 //    embeddedAddress (privy) = operatorAddress (kamiworld)
 export function registerWalletConnecter() {
   registerUIComponent(
@@ -104,17 +104,18 @@ export function registerWalletConnecter() {
         setSelectedAddress(connectorAddressLowerCase);
 
         if (chainMatches && !apis.has(connectorAddressLowerCase)) {
+          if (!connector?.emitter) return console.warn(`No emitter found for connector.`);
           console.log(`Establishing APIs for 0x..${connectorAddressLowerCase.slice(-6)}`);
 
           // create network config
-          const provider = await connector!.getProvider();
+          const provider = await connector.getProvider();
           const networkConfig = createNetworkConfig(provider);
           if (!networkConfig) throw new Error('Invalid config');
 
           // create api for the new network
-          // NOTE: may be inefficient but easiest workaround to create boutique signer
+          // NOTE: may be inefficient but easiest workaround to create MUD's boutique signer
           const networkInstance = await createNetwork(networkConfig);
-          const systems = layers.network.createSystems(networkInstance.signer);
+          const systems = layers.network.createSystems(networkInstance);
           addAPI(connectorAddressLowerCase, systems);
         }
       };

@@ -79,7 +79,7 @@ export function registerAccountModal() {
       // INTERACTION
 
       const acceptFren = (friendship: Friendship) => {
-        actions?.add({
+        actions.add({
           action: 'AcceptFriend',
           params: [friendship.id],
           description: `Accepting ${friendship.account.name} Friend Request`,
@@ -91,7 +91,7 @@ export function registerAccountModal() {
 
       // block an account
       const blockFren = (account: Account) => {
-        actions?.add({
+        actions.add({
           action: 'BlockFriend',
           params: [account.ownerEOA],
           description: `Blocking ${account.name}`,
@@ -103,7 +103,7 @@ export function registerAccountModal() {
 
       // cancel a friendship - a request, block, or existing friendship
       const cancelFren = (friendship: Friendship) => {
-        actions?.add({
+        actions.add({
           action: 'CancelFriend',
           params: [friendship.id],
           description: `Cancelling ${friendship.target.name} Friendship`,
@@ -115,7 +115,7 @@ export function registerAccountModal() {
 
       // send a friend request
       const requestFren = (account: Account) => {
-        actions?.add({
+        actions.add({
           action: 'RequestFriend',
           params: [account.ownerEOA],
           description: `Sending ${account.name} Friend Request`,
@@ -143,6 +143,7 @@ export function registerAccountModal() {
             key='bio'
             account={account} // account selected for viewing
             playerAccount={data.account} // account of the player
+            actionSystem={actions}
             actions={{ sendRequest: requestFren, acceptRequest: acceptFren }}
           />
           <Tabs tab={tab} setTab={setTab} isSelf={isSelf()} />

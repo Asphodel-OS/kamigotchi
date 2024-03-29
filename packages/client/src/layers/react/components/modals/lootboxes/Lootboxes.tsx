@@ -101,7 +101,7 @@ export function registerLootboxesModal() {
       }, [waitingToReveal, amount, state]);
 
       const openTx = async (index: number, amount: number) => {
-        actions?.add({
+        actions.add({
           action: 'LootboxCommit',
           params: [index, amount],
           description: `Opening ${amount} of lootbox ${index}`,
@@ -117,7 +117,7 @@ export function registerLootboxesModal() {
       };
 
       const revealTx = async (id: EntityID) => {
-        actions?.add({
+        actions.add({
           action: 'LootboxReveal',
           params: [id],
           description: `Inspecting lootbox contents`,

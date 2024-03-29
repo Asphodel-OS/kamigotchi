@@ -71,7 +71,7 @@ export function registerMapModal() {
       // ACTIONS
 
       const move = (index: number) => {
-        actions?.add({
+        actions.add({
           action: 'AccountMove',
           params: [index],
           description: `Moving to ${roomMap.get(index)?.name}`,

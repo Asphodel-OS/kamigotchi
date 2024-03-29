@@ -78,7 +78,7 @@ export function registerSocialModal() {
       // accept a friend request
       const acceptFriend = (friendship: Friendship) => {
         const actionID = uuidv4() as EntityID;
-        actions?.add({
+        actions.add({
           action: 'AcceptFriend',
           params: [friendship.id],
           description: `Accepting friend request from ${friendship.target.name}`,
@@ -91,7 +91,7 @@ export function registerSocialModal() {
       // send a friend request
       const requestFriend = (target: Account) => {
         const actionID = uuidv4() as EntityID;
-        actions?.add({
+        actions.add({
           action: 'RequestFriend',
           params: [target.ownerEOA],
           description: `Sending friend request to ${target.name}`,
@@ -104,7 +104,7 @@ export function registerSocialModal() {
       // block an account
       const blockFriend = (target: Account) => {
         const actionID = uuidv4() as EntityID;
-        actions?.add({
+        actions.add({
           action: 'BlockFriend',
           params: [target.ownerEOA],
           description: `Blocking ${target.name}`,
@@ -117,7 +117,7 @@ export function registerSocialModal() {
       // cancel a friendship - a request, block, or friend
       const cancelFriend = (friendship: Friendship, actionText: string) => {
         const actionID = uuidv4() as EntityID;
-        actions?.add({
+        actions.add({
           action: 'CancelFriend',
           params: [friendship.id],
           description: actionText,

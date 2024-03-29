@@ -29,10 +29,10 @@ export function registerOperatorUpdater() {
     (layers) => of(layers),
     (layers) => {
       const {
-        network: { actions },
+        network: { actions, world },
       } = layers;
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const { burner, selectedAddress, networks, validations: networkValidations } = useNetwork();
+      const { burner, selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { account: kamiAccount, validations, setValidations } = useAccount();
@@ -91,12 +91,11 @@ export function registerOperatorUpdater() {
       // ACTIONS
 
       const setOperator = async (address: string) => {
-        const network = networks.get(selectedAddress);
-        const world = network!.world;
-        const api = network!.api.player;
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         const actionID = uuid() as EntityID;
-        actions?.add({
+        actions.add({
           action: 'AccountSetOperator',
           params: [address],
           description: `Setting Account Avatar to ${address}`,
@@ -105,7 +104,7 @@ export function registerOperatorUpdater() {
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions?.Action!, actionIndex);
+        await waitForActionCompletion(actions.Action, actionIndex);
       };
 
       const setOperatorWithFx = async (address: string) => {

@@ -2,9 +2,9 @@ import '@ethersproject/abstract-provider'; // we really need to figure out why t
 import { Type, World, defineComponent } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { keccak256 } from '@mud-classic/utils';
-import { Contract, ContractInterface, Signer } from 'ethers';
+import { Contract, ContractInterface } from 'ethers';
 import { keys } from 'lodash';
-import { IComputedValue, computed } from 'mobx';
+import { computed } from 'mobx';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { defineStringComponent } from 'layers/network/components';
@@ -12,6 +12,7 @@ import {
   Ack,
   InputType,
   Mappings,
+  Network,
   createNetwork,
   createSyncWorker,
   createSystemExecutor,
@@ -105,7 +106,6 @@ export async function setupMUDNetwork<
   // create the system executor
   const { systems, getSystemContract } = createSystemExecutor<SystemTypes>(
     world,
-    network.signer,
     network,
     SystemsRegistry,
     SystemAbis,
@@ -158,11 +158,10 @@ export async function setupMUDNetwork<
     });
   }
 
-  // allows us to create arbitrary System Executor instances by just passing in a Signer
-  function createSystems(signer: IComputedValue<Signer | undefined>) {
+  // allows us to create arbitrary System Executor instances by just passing in a Network
+  function createSystems(network: Network) {
     const { systems } = createSystemExecutor<SystemTypes>(
       world,
-      signer,
       network,
       SystemsRegistry,
       SystemAbis,
@@ -198,7 +197,7 @@ function findOrDefineComponent<Cs extends ContractComponents, C extends Contract
     (c) => c.metadata.contractId === component.metadata.contractId
   ) as C;
 
-  if (existingComponent) {
+  if (existingComponent && component.metadata.contractId !== 'component.LoadingState') {
     console.warn(
       'Component with contract id',
       component.metadata.contractId,

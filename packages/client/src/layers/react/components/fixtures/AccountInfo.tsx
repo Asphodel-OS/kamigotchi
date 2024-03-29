@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { erc20Abi, formatEther, formatUnits } from 'viem';
 import { useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
 
-import { abi as Pet721ProxySystemABI } from 'abi/Pet721ProxySystem.json';
+import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { GasConstants } from 'constants/gas';
 import {
   Account,
@@ -57,15 +57,18 @@ export function registerAccountInfoFixture() {
       const { fixtures } = useVisibility();
       const blockNumber = useBlockNumber({ watch: true, cacheTime: 500 });
 
+      /////////////////
+      // SUBSCRIPTIONS
+
       // Operator Eth Balance
       const { data: operatorEthBalance, refetch: refetchOperatorEthBalance } = useBalance({
         address: account.operatorEOA as `0x${string}`,
       });
 
       // $KAMI Contract Address
-      const { data: mint20Addr, refetch: refetchMint20Addr } = useReadContract({
+      const { data: mint20Addy, refetch: refetchMint20Addy } = useReadContract({
         address: network.systems['system.Mint20.Proxy']?.address as `0x${string}`,
-        abi: Pet721ProxySystemABI,
+        abi: Mint20ProxySystemABI,
         functionName: 'getTokenAddy',
       });
 
@@ -74,13 +77,13 @@ export function registerAccountInfoFixture() {
         contracts: [
           {
             abi: erc20Abi,
-            address: mint20Addr as `0x${string}`,
+            address: mint20Addy as `0x${string}`,
             functionName: 'balanceOf',
             args: [account.ownerEOA as `0x${string}`],
           },
           {
             abi: erc20Abi,
-            address: mint20Addr as `0x${string}`,
+            address: mint20Addy as `0x${string}`,
             functionName: 'decimals',
           },
         ],
@@ -89,9 +92,9 @@ export function registerAccountInfoFixture() {
       /////////////////
       // TRACKING
 
-      //
+      // update the relevant details as we retrieve new blocks
       useEffect(() => {
-        refetchMint20Addr();
+        refetchMint20Addy();
         refetchOwnerMint20Balance();
         refetchOperatorEthBalance();
       }, [blockNumber]);

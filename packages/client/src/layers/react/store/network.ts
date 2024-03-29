@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
-import { createAdminAPI } from 'layers/network/api/admin';
-import { createPlayerAPI } from 'layers/network/api/player';
+import { PlayerAPI, createPlayerAPI } from 'layers/network/api/player';
 import { TxQueue } from 'layers/network/workers';
 import { NetworkLayer } from 'src/layers/network/types';
 import { SystemTypes } from 'types/SystemTypes';
@@ -11,12 +10,7 @@ export interface State {
   selectedAddress: string;
   networks: Map<string, NetworkLayer>;
   validations: Validations;
-  apis: Map<string, API>;
-}
-
-interface API {
-  admin: any;
-  player: any;
+  apis: Map<string, PlayerAPI>;
 }
 
 interface Actions {
@@ -59,7 +53,7 @@ export const useNetwork = create<State & Actions>((set) => {
     },
     selectedAddress: '',
     networks: new Map<string, NetworkLayer>(),
-    apis: new Map<string, API>(),
+    apis: new Map<string, PlayerAPI>(),
     validations: {
       authenticated: false,
       chainMatches: false,
@@ -82,10 +76,7 @@ export const useNetwork = create<State & Actions>((set) => {
     addAPI: (address: string, systems: TxQueue<SystemTypes>) =>
       set((state: State) => ({
         ...state,
-        apis: new Map(state.apis).set(address, {
-          admin: createAdminAPI(systems),
-          player: createPlayerAPI(systems),
-        }),
+        apis: new Map(state.apis).set(address, createPlayerAPI(systems)),
       })),
   };
 });

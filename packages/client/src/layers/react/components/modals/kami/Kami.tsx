@@ -64,7 +64,7 @@ export function registerKamiModal() {
       // ACTIONS
 
       const levelUp = (kami: Kami) => {
-        actions?.add({
+        actions.add({
           action: 'KamiLevel',
           params: [kami.id],
           description: `Leveling up ${kami.name}`,
@@ -75,7 +75,7 @@ export function registerKamiModal() {
       };
 
       const upgradeSkill = (kami: Kami, skill: Skill) => {
-        actions?.add({
+        actions.add({
           action: 'SkillUpgrade',
           params: [kami.id, skill.index],
           description: `Upgrading ${skill.name} for ${kami.name}`,

@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 import { deferred, keccak256, toEthAddress } from '@mud-classic/utils';
 import { Contract, ContractInterface, Signer } from 'ethers';
-import { IComputedValue, observable, runInAction } from 'mobx';
+import { observable, runInAction } from 'mobx';
 import { BehaviorSubject } from 'rxjs';
 
 import { Network } from './createNetwork';
@@ -29,7 +29,6 @@ import { createTxQueue } from './createTxQueue';
  */
 export function createSystemExecutor<T extends { [key: string]: Contract }>(
   world: World,
-  signer: IComputedValue<Signer | Provider | undefined>,
   network: Network,
   systems: Component<{ value: Type.String }>,
   interfaces: { [key in keyof T]: ContractInterface },
@@ -82,7 +81,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   // Initialize systems
   const contracts = {} as T;
   for (const systemEntity of getComponentEntities(systems)) {
-    const system = createSystemContract(systemEntity, signer.get());
+    const system = createSystemContract(systemEntity, network.signer.get());
     if (system) contracts[system.id as keyof T] = system.contract as T[keyof T];
   }
   runInAction(() => systemContracts.set(contracts));
@@ -90,7 +89,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   // Keep up to date
   systems.update$.subscribe((update) => {
     if (!update.value[0]) return;
-    const system = createSystemContract(update.entity, signer.get());
+    const system = createSystemContract(update.entity, network.signer.get());
     if (system) registerSystem(system);
   });
 

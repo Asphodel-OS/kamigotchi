@@ -13,7 +13,9 @@ import handCSV from 'assets/data/traits/hands2.csv';
 import { createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
 
-export function setUpWorldAPI(systems: any, provider: any) {
+export type WorldAPI = ReturnType<typeof setupWorldAPI>;
+
+export function setupWorldAPI(systems: any, provider: any) {
   const api = createAdminAPI(systems);
 
   async function initAll() {

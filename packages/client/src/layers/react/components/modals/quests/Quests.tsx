@@ -79,7 +79,7 @@ export function registerQuestsModal() {
       // INTERACTIONS
 
       const acceptQuest = async (quest: Quest) => {
-        actions?.add({
+        actions.add({
           action: 'QuestAccept',
           params: [quest.index * 1],
           description: `Accepting Quest ${quest.index * 1}`,
@@ -90,7 +90,7 @@ export function registerQuestsModal() {
       };
 
       const completeQuest = async (quest: Quest) => {
-        actions?.add({
+        actions.add({
           action: 'QuestComplete',
           params: [quest.id],
           description: `Completing Quest ${quest.index * 1}`,

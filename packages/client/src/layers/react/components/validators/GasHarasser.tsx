@@ -92,12 +92,12 @@ export function registerGasHarasser() {
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         const actionID = uuid() as EntityID;
-        actions?.add({
+        actions.add({
           action: 'AccountFund',
           params: [value.toString()],
           description: `Funding Operator ${value.toString()}`,
           execute: async () => {
-            return api.player.account.fund(value.toString());
+            return api.account.fund(value.toString());
           },
         });
         const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;

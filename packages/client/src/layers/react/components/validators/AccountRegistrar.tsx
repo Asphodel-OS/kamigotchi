@@ -196,8 +196,10 @@ export function registerAccountRegistrar() {
         toggleFixtures(true);
         try {
           const actionID = createAccount(username, food);
+          if (!actionID) throw new Error('Account creation failed');
+
           await waitForActionCompletion(
-            actions?.Action!,
+            actions.Action,
             world.entityToIndex.get(actionID) as EntityIndex
           );
         } catch (e) {
@@ -206,12 +208,13 @@ export function registerAccountRegistrar() {
       };
 
       const createAccount = (username: string, food: string) => {
-        const api = apis.get(selectedAddress)!.player;
-        const connectedBurner = burner.connected.address;
-
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
         console.log(`CREATING ACCOUNT (${username}): ${selectedAddress}`);
+
+        const connectedBurner = burner.connected.address;
         const actionID = uuid() as EntityID;
-        actions?.add({
+        actions.add({
           id: actionID,
           action: 'AccountCreate',
           params: [connectedBurner, username, food],

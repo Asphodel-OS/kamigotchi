@@ -70,12 +70,12 @@ export function registerERC20BridgeModal() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-        actions?.add({
+        actions.add({
           action: 'MUSUDeposit',
           params: [amount],
           description: `Depositing ${amount} $MUSU`,
           execute: async () => {
-            return api.player.ERC20.deposit(amount);
+            return api.ERC20.deposit(amount);
           },
         });
       };
@@ -84,7 +84,7 @@ export function registerERC20BridgeModal() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-        actions?.add({
+        actions.add({
           action: 'MUSUWithdraw',
           params: [amount],
           description: `Withdrawing ${amount} $MUSU`,

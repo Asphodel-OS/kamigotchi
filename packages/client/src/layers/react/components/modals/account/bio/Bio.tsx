@@ -6,12 +6,14 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
+import { ActionSystem } from 'layers/network/systems/ActionSystem';
 import { FarcasterConnect, Tooltip } from 'layers/react/components/library';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account; // account selected for viewing
   playerAccount: Account; // account of the player
+  actionSystem: ActionSystem;
   actions: {
     sendRequest: (account: Account) => void;
     acceptRequest: (request: any) => void;
@@ -19,7 +21,7 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { actions, account, playerAccount } = props;
+  const { actions, actionSystem, account, playerAccount } = props;
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   /////////////////
@@ -99,7 +101,9 @@ export const Bio = (props: Props) => {
         <Identifiers>
           <TitleRow>
             <Title>{account.name}</Title>
-            {account.index === playerAccount.index && <FarcasterConnect account={account} />}
+            {account.index === playerAccount.index && (
+              <FarcasterConnect account={account} actionSystem={actionSystem} />
+            )}
           </TitleRow>
           <AddressDisplay />
         </Identifiers>

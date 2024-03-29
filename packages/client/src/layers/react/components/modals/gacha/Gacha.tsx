@@ -4,15 +4,16 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import { useAccount, useBalance, useContractRead } from 'wagmi';
+import { useAccount, useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
 
-import { abi } from 'abi/Pet721ProxySystem.json';
+import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { GachaCommit, calcRerollCost, isGachaAvailable } from 'layers/network/shapes/Gacha';
 import { Kami } from 'layers/network/shapes/Kami';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'layers/react/store';
 import { playVending } from 'utils/sounds';
+import { erc20Abi, formatUnits } from 'viem';
 import { Commits } from './Commits';
 import { Pool } from './Pool';
 import { Reroll } from './Reroll';
@@ -54,35 +55,60 @@ export function registerGachaModal() {
     ({ network, data }) => {
       const {
         actions,
-        api: { player },
-        systems,
         world,
-        network: { blockNumber$ },
+        api: { player },
       } = network;
-
+      const blockNumber = useBlockNumber({ watch: true, cacheTime: 500 });
       const { isConnected } = useAccount();
       const { modals, setModals } = useVisibility();
       const { account: kamiAccount } = useKamiAccount();
       const { selectedAddress, apis } = useNetwork();
 
-      // revealing
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [blockNumber, setBlockNumber] = useState(0);
-
-      // modal management
       const [tab, setTab] = useState('MINT');
 
+      /////////////////
+      // SUBSCRIPTIONS
+
+      // Owner ETH Balance
+      const { data: ownerEthBalance, refetch: refetchOwnerEthBalance } = useBalance({
+        address: kamiAccount.ownerAddress as `0x${string}`,
+      });
+
+      // $KAMI Contract Address
+      const { data: mint20Addy, refetch: refetchMint20Addy } = useReadContract({
+        address: network.systems['system.Mint20.Proxy']?.address as `0x${string}`,
+        abi: Mint20ProxySystemABI,
+        functionName: 'getTokenAddy',
+      });
+
+      // $KAMI Balance of Owner EOA
+      const { data: ownerMint20Balance, refetch: refetchOwnerMint20Balance } = useReadContracts({
+        contracts: [
+          {
+            abi: erc20Abi,
+            address: mint20Addy as `0x${string}`,
+            functionName: 'balanceOf',
+            args: [kamiAccount.ownerAddress as `0x${string}`],
+          },
+          {
+            abi: erc20Abi,
+            address: mint20Addy as `0x${string}`,
+            functionName: 'decimals',
+          },
+        ],
+      });
+
       //////////////
-      // HOOKS
+      // TRACKING
 
+      // update the relevant details as we retrieve new blocks
       useEffect(() => {
-        const sub = blockNumber$.subscribe((block) => {
-          setBlockNumber(block);
-        });
-
-        return () => sub.unsubscribe();
-      }, []);
+        refetchMint20Addy();
+        refetchOwnerMint20Balance();
+        refetchOwnerEthBalance();
+      }, [blockNumber]);
 
       useEffect(() => {
         const tx = async () => {
@@ -91,7 +117,7 @@ export function registerGachaModal() {
             // wait to give buffer for OP rpc
             await new Promise((resolve) => setTimeout(resolve, 500));
             const filtered = data.commits.filter((n) => {
-              return isGachaAvailable(n, blockNumber);
+              return isGachaAvailable(n, Number(blockNumber.data));
             });
             revealTx(filtered);
             if (waitingToReveal) {
@@ -104,34 +130,85 @@ export function registerGachaModal() {
       }, [data.commits]);
 
       //////////////////
-      // CALCULATIONS
+      // INTERPRETATION
 
       const getRerollCost = (kami: Kami) => {
         return calcRerollCost(network, kami);
       };
 
-      ///////////////
-      // COUNTER
-
-      const { data: mint20Addy } = useContractRead({
-        address: systems['system.Mint20.Proxy']?.address as `0x${string}`,
-        abi: abi,
-        functionName: 'getTokenAddy',
-      });
-
-      const { data: mint20Bal } = useBalance({
-        address: kamiAccount.ownerAddress as `0x${string}`,
-        token: mint20Addy as `0x${string}`,
-        watch: true,
-      });
-
-      const { data: ethBal } = useBalance({
-        address: kamiAccount.ownerAddress as `0x${string}`,
-        watch: true,
-      });
+      // parses a wagmi FetchBalanceResult
+      const parseTokenBalance = (balance: bigint = BigInt(0), decimals: number = 18) => {
+        const formatted = formatUnits(balance, decimals);
+        return Number(formatted);
+      };
 
       /////////////////
       // ACTIONS
+
+      // get a pet from gacha with Mint20
+      const mintTx = (amount: number) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'KamiMint',
+          params: [amount],
+          description: `Minting ${amount} Kami`,
+          execute: async () => {
+            return api.mint.mintPet(amount);
+          },
+        });
+        return actionID;
+      };
+
+      // reroll a pet with eth payment
+      const rerollTx = (kamis: Kami[], price: bigint) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'KamiReroll',
+          params: [kamis.map((n) => n.name)],
+          description: `Rerolling ${kamis.length} Kami`,
+          execute: async () => {
+            return api.mint.reroll(
+              kamis.map((n) => n.id),
+              price
+            );
+          },
+        });
+        return actionID;
+      };
+
+      // reveal gacha result(s)
+      const revealTx = async (commits: GachaCommit[]) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const toReveal = commits.map((n) => n.id);
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'KamiReveal',
+          params: [commits.length],
+          description: `Revealing ${commits.length} Gacha rolls`,
+          execute: async () => {
+            return player.mint.reveal(toReveal);
+          },
+        });
+
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(actionID) as EntityIndex
+        );
+      };
+
+      ///////////////
+      // HANDLERS
 
       const handleMint = (amount: number) => async () => {
         try {
@@ -168,69 +245,6 @@ export function registerGachaModal() {
         }
       };
 
-      // get a pet from gacha with Mint20
-      const mintTx = (amount: number) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'KamiMint',
-          params: [amount],
-          description: `Minting ${amount} Kami`,
-          execute: async () => {
-            return api.player.mint.mintPet(amount);
-          },
-        });
-        return actionID;
-      };
-
-      // reroll a pet with eth payment
-      const rerollTx = (kamis: Kami[], price: bigint) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'KamiReroll',
-          params: [kamis.map((n) => n.name)],
-          description: `Rerolling ${kamis.length} Kami`,
-          execute: async () => {
-            return api.player.mint.reroll(
-              kamis.map((n) => n.id),
-              price
-            );
-          },
-        });
-        return actionID;
-      };
-
-      // reveal gacha result(s)
-      const revealTx = async (commits: GachaCommit[]) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const toReveal = commits.map((n) => n.id);
-
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'KamiReveal',
-          params: [commits.length],
-          description: `Revealing ${commits.length} Gacha rolls`,
-          execute: async () => {
-            return api.player.mint.reveal(toReveal);
-          },
-        });
-
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-      };
-
       ///////////////
       // DISPLAY
 
@@ -242,7 +256,12 @@ export function registerGachaModal() {
             <Pool
               actions={{ handleMint }}
               data={{
-                account: { balance: Number(mint20Bal?.formatted || '0') },
+                account: {
+                  balance: parseTokenBalance(
+                    ownerMint20Balance?.[0]?.result,
+                    ownerMint20Balance?.[1]?.result
+                  ),
+                },
               }}
               display={{ Tab: TabsBar }}
               query={{ getLazyKamis: getLazyKamis(network) }}
@@ -254,7 +273,7 @@ export function registerGachaModal() {
               actions={{ handleReroll }}
               data={{
                 kamis: data.kamis || [],
-                balance: ethBal?.value || 0n, // bigint used for dealing with wei
+                balance: ownerEthBalance?.value || 0n, // bigint used for dealing with wei
               }}
               display={{ Tab: TabsBar }}
               utils={{ getRerollCost }}
@@ -266,7 +285,7 @@ export function registerGachaModal() {
               actions={{ revealTx }}
               data={{
                 commits: data.commits || [],
-                blockNum: blockNumber,
+                blockNumber: Number(blockNumber.data),
               }}
               display={{ Tab: TabsBar }}
             />

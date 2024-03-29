@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseContract, BigNumberish, utils, CallOverrides, Overrides } from "ethers";
-import { autorun, computed, IComputedValue, IObservableValue, observable, runInAction } from "mobx";
-import { mapObject, deferred, uuid, awaitValue, cacheUntilReady } from "@mud-classic/utils";
-import { Mutex } from "async-mutex";
-import { JsonRpcProvider, TransactionReceipt } from "@ethersproject/providers";
-import { Contracts, TxQueue } from "../types";
-import { ConnectionState } from "../providers/createProvider";
-import { Network } from "./createNetwork";
-import { getRevertReason } from "./utils";
-import { BehaviorSubject } from "rxjs";
+import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers';
+import { awaitValue, cacheUntilReady, deferred, mapObject, uuid } from '@mud-classic/utils';
+import { Mutex } from 'async-mutex';
+import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
+import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
+
+import { BehaviorSubject } from 'rxjs';
+import { ConnectionState } from '../providers/createProvider';
+import { Contracts, TxQueue } from '../types';
+import { Network } from './createNetwork';
+import { getRevertReason } from './utils';
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -48,7 +48,13 @@ export function createTxQueue<C extends Contracts>(
     const provider = network.providers.get()?.json;
     const nonce = _nonce.get();
 
-    if (connected !== ConnectionState.CONNECTED || !contracts || !signer || !provider || nonce == null)
+    if (
+      connected !== ConnectionState.CONNECTED ||
+      !contracts ||
+      !signer ||
+      !provider ||
+      nonce == null
+    )
       return undefined;
 
     return { contracts, signer, provider, nonce };
@@ -80,12 +86,12 @@ export function createTxQueue<C extends Contracts>(
   ): Promise<{
     hash: string;
     wait: () => Promise<TransactionReceipt>;
-    response: Promise<ReturnTypeStrict<typeof target[typeof prop]>>;
+    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
   }> {
     const [resolve, reject, promise] = deferred<{
       hash: string;
       wait: () => Promise<TransactionReceipt>;
-      response: Promise<ReturnTypeStrict<typeof target[typeof prop]>>;
+      response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
     }>();
 
     // Extract existing overrides from function call
@@ -99,7 +105,7 @@ export function createTxQueue<C extends Contracts>(
 
     // Create a function that estimates gas if no gas is provided
     let estimateGas: () => BigNumberish | Promise<BigNumberish>;
-    const gasLimit = overrides["gasLimit"];
+    const gasLimit = overrides['gasLimit'];
     if (gasLimit) estimateGas = () => gasLimit;
     else {
       const estGasFunction = target.estimateGas[prop as string];
@@ -112,7 +118,7 @@ export function createTxQueue<C extends Contracts>(
       try {
         const member = target.populateTransaction[prop as string];
         if (member == undefined) {
-          throw new Error("Member does not exist.");
+          throw new Error('Member does not exist.');
         }
 
         if (!(member instanceof Function)) {
@@ -130,7 +136,7 @@ export function createTxQueue<C extends Contracts>(
           nonce,
           gasLimit,
         };
-        console.log("[TXQueue] TXQUEUE EXECUTION", prop, argsWithoutOverrides, configOverrides);
+        console.log('[TXQueue] TXQUEUE EXECUTION', prop, argsWithoutOverrides, configOverrides);
         if (options?.devMode) configOverrides.gasPrice = 0;
 
         // Populate tx
@@ -139,13 +145,12 @@ export function createTxQueue<C extends Contracts>(
         populatedTx.chainId = network.config.chainId;
         // populatedTx.maxPriorityFeePerGas = utils.parseUnits("2", "gwei");
 
-
         // Execute tx
         let hash: string;
         try {
           // Attempt to sign the transaction and send it raw for higher performance
           const signedTx = await target.signer.signTransaction(populatedTx);
-          hash = await (target.provider as JsonRpcProvider).perform("sendTransaction", {
+          hash = await (target.provider as JsonRpcProvider).perform('sendTransaction', {
             signedTransaction: signedTx,
           });
         } catch (e) {
@@ -154,7 +159,9 @@ export function createTxQueue<C extends Contracts>(
           const tx = await target.signer.sendTransaction(populatedTx);
           hash = tx.hash;
         }
-        const response = target.provider.getTransaction(hash) as Promise<ReturnTypeStrict<typeof target[typeof prop]>>;
+        const response = target.provider.getTransaction(hash) as Promise<
+          ReturnTypeStrict<(typeof target)[typeof prop]>
+        >;
         // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
         // const wait = async () => (await response).wait();
         const wait = async () => {
@@ -181,7 +188,7 @@ export function createTxQueue<C extends Contracts>(
     queue.add(uuid(), {
       execute,
       estimateGas,
-      cancel: (error?: any) => reject(error ?? new Error("TX_CANCELLED")),
+      cancel: (error?: any) => reject(error ?? new Error('TX_CANCELLED')),
       stateMutability,
     });
 
@@ -220,7 +227,7 @@ export function createTxQueue<C extends Contracts>(
       try {
         gasLimit = await txRequest.estimateGas();
       } catch (e) {
-        console.error("[TXQueue] GAS ESTIMATION ERROR", e);
+        console.error('[TXQueue] GAS ESTIMATION ERROR', e);
         return txRequest.cancel(e);
       }
 
@@ -230,20 +237,21 @@ export function createTxQueue<C extends Contracts>(
       try {
         return await txRequest.execute(nonce, gasLimit);
       } catch (e: any) {
-        console.warn("[TXQueue] TXQUEUE EXECUTION FAILED", e);
+        console.warn('[TXQueue] TXQUEUE EXECUTION FAILED', e);
         // Nonce is handled centrally in finally block (for both failing and successful tx)
         error = e;
       } finally {
         // If the error includes information about the transaction,
         // then the transaction was submitted and the nonce needs to be
         // increased regardless of the error
-        const isNonViewTransaction = error && "transaction" in error && txRequest.stateMutability !== "view";
-        const shouldIncreaseNonce = (!error && stateMutability !== "view") || isNonViewTransaction;
+        const isNonViewTransaction =
+          error && 'transaction' in error && txRequest.stateMutability !== 'view';
+        const shouldIncreaseNonce = (!error && stateMutability !== 'view') || isNonViewTransaction;
 
         const shouldResetNonce =
           error &&
-          (("code" in error && error.code === "NONCE_EXPIRED") ||
-            JSON.stringify(error).includes("transaction already imported"));
+          (('code' in error && error.code === 'NONCE_EXPIRED') ||
+            JSON.stringify(error).includes('transaction already imported'));
         console.log(
           `[TXQueue] TX Sent (error=${!!error}, isMutationError=${!!isNonViewTransaction} incNonce=${!!shouldIncreaseNonce} resetNonce=${!!shouldResetNonce})`
         );
@@ -260,23 +268,23 @@ export function createTxQueue<C extends Contracts>(
       try {
         await txResult.wait();
       } catch (e) {
-        console.warn("[TXQueue] tx failed in block", e);
+        console.warn('[TXQueue] tx failed in block', e);
 
         // Decode and log the revert reason.
         // Use `then` instead of `await` to avoid letting consumers wait.
         getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
-          console.warn("[TXQueue] Revert reason:", reason)
+          console.warn('[TXQueue] Revert reason:', reason)
         );
 
         const params = new URLSearchParams(window.location.search);
-        const worldAddress = params.get("worldAddress");
+        const worldAddress = params.get('worldAddress');
         // Log useful commands that can be used to replay this tx
         const trace = `mud trace --config deploy.json --world ${worldAddress} --tx ${txResult.hash}`;
 
-        console.log("---------- DEBUG COMMANDS (RUN IN TERMINAL) -------------");
-        console.log("Trace:");
+        console.log('---------- DEBUG COMMANDS (RUN IN TERMINAL) -------------');
+        console.log('Trace:');
         console.log(trace);
-        console.log("---------------------------------------------------------");
+        console.log('---------------------------------------------------------');
       }
     }
 
@@ -307,23 +315,27 @@ export function createTxQueue<C extends Contracts>(
 
   const cachedProxiedContracts = cacheUntilReady(proxiedContracts);
 
-  return { txQueue: cachedProxiedContracts, dispose, ready: computed(() => (readyState ? true : undefined)) };
+  return {
+    txQueue: cachedProxiedContracts,
+    dispose,
+    ready: computed(() => (readyState ? true : undefined)),
+  };
 }
 
 function isOverrides(obj: any): obj is Overrides {
-  if (typeof obj !== "object" || Array.isArray(obj) || obj === null) return false;
+  if (typeof obj !== 'object' || Array.isArray(obj) || obj === null) return false;
   return (
-    "gasLimit" in obj ||
-    "gasPrice" in obj ||
-    "maxFeePerGas" in obj ||
-    "maxPriorityFeePerGas" in obj ||
-    "nonce" in obj ||
-    "type" in obj ||
-    "accessList" in obj ||
-    "customData" in obj ||
-    "value" in obj ||
-    "blockTag" in obj ||
-    "from" in obj
+    'gasLimit' in obj ||
+    'gasPrice' in obj ||
+    'maxFeePerGas' in obj ||
+    'maxPriorityFeePerGas' in obj ||
+    'nonce' in obj ||
+    'type' in obj ||
+    'accessList' in obj ||
+    'customData' in obj ||
+    'value' in obj ||
+    'blockTag' in obj ||
+    'from' in obj
   );
 }
 

@@ -33,7 +33,6 @@ import { registerPartyModal } from './modals/party';
 import { registerQuestsModal } from './modals/quests';
 import { registerSettingsModal } from './modals/settings';
 
-import { registerERC20BridgeModal } from './modals/BridgeERC20';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
 
@@ -78,7 +77,7 @@ export function registerUIComponents() {
   // game modals
   registerBuyModal();
   registerDialogueModal();
-  registerERC20BridgeModal();
+  // registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
   registerFundOperatorModal();
