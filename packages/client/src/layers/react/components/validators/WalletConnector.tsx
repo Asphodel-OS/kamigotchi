@@ -125,6 +125,20 @@ export function registerWalletConnecter() {
         if (window.ethereum) {
           try {
             await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: toHex(defaultChain.id),
+                  chainName: defaultChain.name,
+                  rpcUrls: defaultChain.rpcUrls.default.http,
+                  nativeCurrency: defaultChain.nativeCurrency,
+                  blockExplorerUrls: [
+                    defaultChain.blockExplorers?.default.url ?? 'https://etherscan.io',
+                  ],
+                },
+              ],
+            });
+            await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: toHex(defaultChain.id) }],
             });
