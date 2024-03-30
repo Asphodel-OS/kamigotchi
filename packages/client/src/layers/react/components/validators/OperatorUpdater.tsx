@@ -28,9 +28,9 @@ export function registerOperatorUpdater() {
     },
     (layers) => of(layers),
     (layers) => {
-      const {
-        network: { actions, world },
-      } = layers;
+      const { network } = layers;
+      const { actions, components, world } = network;
+
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
       const { burner, selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals } = useVisibility();
@@ -83,7 +83,7 @@ export function registerOperatorUpdater() {
 
       // check if the connected burner is already taken by an account
       useEffect(() => {
-        const account = getAccountByOperator(layers.network, burner.connected.address);
+        const account = getAccountByOperator(world, components, burner.connected.address);
         setOperatorTaken(!!account.id);
       }, [mode, burner.connected.address]);
 

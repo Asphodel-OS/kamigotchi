@@ -3,11 +3,12 @@ import {
   EntityIndex,
   Has,
   HasValue,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Kami, getKami } from './Kami';
 
 // standardized shape of a Node Entity
@@ -35,25 +36,23 @@ interface Options {
 
 // get a Node from its EntityIndex
 export const getNode = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   entityIndex: EntityIndex,
   options?: Options
 ): Node => {
   const {
-    world,
-    components: {
-      Affinity,
-      Description,
-      IsProduction,
-      RoomIndex,
-      Name,
-      NodeID,
-      NodeIndex,
-      PetID,
-      State,
-      Type,
-    },
-  } = network;
+    Affinity,
+    Description,
+    IsProduction,
+    RoomIndex,
+    Name,
+    NodeID,
+    NodeIndex,
+    PetID,
+    State,
+    Type,
+  } = components;
 
   let node: Node = {
     id: world.entities[entityIndex],
@@ -87,7 +86,7 @@ export const getNode = (
       const kamiEntityIndex = world.entityToIndex.get(kamiID);
       if (kamiEntityIndex) {
         kamis.push(
-          getKami(network, kamiEntityIndex, {
+          getKami(world, components, kamiEntityIndex, {
             account: true,
             production: true,
             traits: true,
@@ -117,22 +116,23 @@ export const getNode = (
   return node;
 };
 
-export const getNodeByIndex = (network: NetworkLayer, index: number, options?: Options): Node => {
-  const {
-    components: { IsNode, NodeIndex },
-  } = network;
+export const getNodeByIndex = (
+  world: World,
+  components: Components,
+  index: number,
+  options?: Options
+): Node => {
+  const { IsNode, NodeIndex } = components;
   const entityIndex = Array.from(runQuery([Has(IsNode), HasValue(NodeIndex, { value: index })]))[0];
 
-  return getNode(network, entityIndex, options);
+  return getNode(world, components, entityIndex, options);
 };
 
-export const getAllNodes = (network: NetworkLayer, options?: Options): Node[] => {
-  const {
-    components: { IsNode },
-  } = network;
+export const getAllNodes = (world: World, components: Components, options?: Options): Node[] => {
+  const { IsNode } = components;
   const entityIndices = Array.from(runQuery([Has(IsNode)]));
 
   return entityIndices.map((entityIndex) => {
-    return getNode(network, entityIndex, options);
+    return getNode(world, components, entityIndex, options);
   });
 };

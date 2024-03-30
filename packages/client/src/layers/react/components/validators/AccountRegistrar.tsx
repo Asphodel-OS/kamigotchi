@@ -59,13 +59,9 @@ export function registerAccountRegistrar() {
       rowEnd: 60,
     },
     (layers) => {
-      const {
-        network: {
-          world,
-          components: { IsAccount, AccountIndex, Name, OperatorAddress, OwnerAddress },
-          actions,
-        },
-      } = layers;
+      const { network } = layers;
+      const { world, components } = network;
+      const { IsAccount, AccountIndex, Name, OperatorAddress, OwnerAddress } = components;
 
       // TODO?: replace this with getAccount shape
       const getAccountDetails = (entityIndex: EntityIndex): Account => {
@@ -104,28 +100,25 @@ export function registerAccountRegistrar() {
           const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
-            layers,
-            actions,
-            world,
-            kamiAccountFromWorldUpdate,
-            operatorAddresses,
-            getAccountIndexFromOwner,
-            getAccountDetails,
+            data: {
+              kamiAccountFromWorldUpdate,
+              operatorAddresses,
+            },
+            functions: {
+              getAccountIndexFromOwner,
+              getAccountDetails,
+            },
+            network,
           };
         })
       );
     },
 
-    ({
-      layers,
-      kamiAccountFromWorldUpdate,
-      operatorAddresses,
-      getAccountIndexFromOwner,
-      getAccountDetails,
-    }) => {
-      const {
-        network: { actions, world },
-      } = layers;
+    ({ data, functions, network }) => {
+      const { kamiAccountFromWorldUpdate, operatorAddresses } = data;
+      const { getAccountDetails, getAccountIndexFromOwner } = functions;
+      const { actions, components, world } = network;
+
       const { burner, selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
@@ -176,7 +169,7 @@ export function registerAccountRegistrar() {
 
       // validation for username input
       useEffect(() => {
-        const account = getAccountByName(layers.network, name);
+        const account = getAccountByName(world, components, name);
         setNameTaken(!!account.id);
       }, [name]);
 

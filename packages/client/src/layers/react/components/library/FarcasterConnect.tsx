@@ -16,7 +16,7 @@ interface Props {
 
 export const FarcasterConnect = (props: Props) => {
   const { actionSystem, account, size } = props;
-  const { selectedAddress, apis, networks } = useNetwork();
+  const { selectedAddress, apis } = useNetwork();
   const [farcasterUser, setFarcasterUser] = useLocalStorage<FarcasterUser>(
     'farcasterUser',
     emptyFaracasterUser

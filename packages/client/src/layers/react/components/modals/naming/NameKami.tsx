@@ -28,10 +28,10 @@ export function registerNameKamiModal() {
 
     // Render
     ({ network }) => {
-      const { actions, api } = network;
+      const { actions, api, components, world } = network;
       const { modals, setModals } = useVisibility();
       const { kamiIndex } = useSelected();
-      const kami = getKamiByIndex(network, kamiIndex);
+      const kami = getKamiByIndex(world, components, kamiIndex);
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
@@ -43,7 +43,6 @@ export function registerNameKamiModal() {
             return api.player.pet.name(kami.id, name);
           },
         });
-        return actionID;
       };
 
       // handle naming action response (need to modify for error handling)

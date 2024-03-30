@@ -2,20 +2,17 @@ import { create } from 'zustand';
 
 import { PlayerAPI, createPlayerAPI } from 'layers/network/api/player';
 import { TxQueue } from 'layers/network/workers';
-import { NetworkLayer } from 'src/layers/network/types';
 import { SystemTypes } from 'types/SystemTypes';
 
 export interface State {
   burner: Burner;
   selectedAddress: string;
-  networks: Map<string, NetworkLayer>;
   validations: Validations;
   apis: Map<string, PlayerAPI>;
 }
 
 interface Actions {
   addAPI: (address: string, systems: TxQueue<SystemTypes>) => void;
-  addNetwork: (address: string, network: NetworkLayer) => void;
   setSelectedAddress: (address: string) => void;
   setBurner: (burner: Burner) => void;
   setValidations: (validations: Validations) => void;
@@ -52,7 +49,6 @@ export const useNetwork = create<State & Actions>((set) => {
       },
     },
     selectedAddress: '',
-    networks: new Map<string, NetworkLayer>(),
     apis: new Map<string, PlayerAPI>(),
     validations: {
       authenticated: false,
@@ -68,11 +64,6 @@ export const useNetwork = create<State & Actions>((set) => {
       set((state: State) => ({ ...state, selectedAddress })),
     setValidations: (validations: Validations) =>
       set((state: State) => ({ ...state, validations })),
-    addNetwork: (address: string, network: NetworkLayer) =>
-      set((state: State) => ({
-        ...state,
-        networks: new Map(state.networks).set(address, network),
-      })),
     addAPI: (address: string, systems: TxQueue<SystemTypes>) =>
       set((state: State) => ({
         ...state,

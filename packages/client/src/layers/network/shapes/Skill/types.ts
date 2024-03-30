@@ -3,12 +3,13 @@ import {
   EntityIndex,
   Has,
   HasValue,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
 import { baseURI } from 'constants/media';
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { querySkillEffects, querySkillRequirements } from './queries';
 
 /////////////////
@@ -53,24 +54,13 @@ export interface Options {
 
 // Get a Skill Registry object with effect and requirements
 export const getSkill = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   entityIndex: EntityIndex,
   options?: Options
 ): Skill => {
-  const {
-    world,
-    components: {
-      IsRegistry,
-      IsSkill,
-      Cost,
-      Description,
-      Max,
-      MediaURI,
-      Name,
-      SkillIndex,
-      SkillPoint,
-    },
-  } = network;
+  const { IsRegistry, IsSkill, Cost, Description, Max, MediaURI, Name, SkillIndex, SkillPoint } =
+    components;
 
   const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
   const registryIndex = Array.from(
@@ -90,17 +80,19 @@ export const getSkill = (
     },
   };
 
-  if (options?.effects) skill.effects = querySkillEffects(network, skill.index);
-  if (options?.requirements) skill.requirements = querySkillRequirements(network, skill.index);
+  if (options?.effects) skill.effects = querySkillEffects(world, components, skill.index);
+  if (options?.requirements)
+    skill.requirements = querySkillRequirements(world, components, skill.index);
   return skill;
 };
 
 // Get a Effect Registry object
-export const getEffect = (network: NetworkLayer, entityIndex: EntityIndex): Effect => {
-  const {
-    world,
-    components: { Index, Subtype, LogicType, Type, Value },
-  } = network;
+export const getEffect = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): Effect => {
+  const { Index, Subtype, LogicType, Type, Value } = components;
 
   let effect: Effect = {
     id: world.entities[entityIndex],
@@ -115,11 +107,12 @@ export const getEffect = (network: NetworkLayer, entityIndex: EntityIndex): Effe
 };
 
 // Get a Requirement Registry object
-export const getRequirement = (network: NetworkLayer, entityIndex: EntityIndex): Requirement => {
-  const {
-    world,
-    components: { Index, LogicType, Type, Value },
-  } = network;
+export const getRequirement = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): Requirement => {
+  const { Index, LogicType, Type, Value } = components;
 
   let requirement: Requirement = {
     id: world.entities[entityIndex],

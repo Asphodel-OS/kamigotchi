@@ -27,10 +27,12 @@ export function registerAccountModal() {
     },
 
     // Requirement
-    (layers) =>
-      interval(3333).pipe(
+    (layers) => {
+      const { network } = layers;
+
+      return interval(3333).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network, {
+          const account = getAccountFromBurner(network, {
             friends: true,
             inventory: true,
             kamis: true,
@@ -38,19 +40,19 @@ export function registerAccountModal() {
           });
 
           return {
-            network: layers.network,
+            network,
             data: { account },
           };
         })
-      ),
-
+      );
+    },
     // Render
-    ({ network, data }) => {
+    ({ data, network }) => {
       // console.log('AccountM: data', data);
-      const { actions, api } = network;
+      const { actions, api, components, world } = network;
       const { accountIndex } = useSelected();
       const [account, setAccount] = useState<Account | null>(
-        getAccountByIndex(network, accountIndex)
+        getAccountByIndex(world, components, accountIndex)
       );
       const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
 
@@ -62,7 +64,7 @@ export function registerAccountModal() {
           kamis: true,
           stats: true,
         };
-        setAccount(getAccountByIndex(network, accountIndex, accountOptions));
+        setAccount(getAccountByIndex(world, components, accountIndex, accountOptions));
       }, [accountIndex, data.account]);
 
       // set the default tab when account index switches
@@ -152,7 +154,7 @@ export function registerAccountModal() {
             tab={tab}
             data={{
               account,
-              accounts: getAllAccounts(network),
+              accounts: getAllAccounts(world, components),
             }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
           />

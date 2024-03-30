@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { NetworkLayer } from 'layers/network';
 import { ActionState, ActionStateString } from 'layers/network/systems/ActionSystem/constants';
-import { NetworkLayer } from 'layers/network/types';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 
 interface Props {

@@ -28,9 +28,10 @@ export function registerMapModal() {
     (layers) =>
       interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network);
+          const { network } = layers;
+          const account = getAccountFromBurner(network);
           return {
-            network: layers.network,
+            network,
             data: { account },
           };
         })
@@ -39,7 +40,7 @@ export function registerMapModal() {
     // Render
     ({ network, data }) => {
       // console.log('mRoom: ', data)
-      const { actions, api } = network;
+      const { actions, api, components, world } = network;
       const { roomIndex: selectedRoom, setRoom: setSelectedRoom } = useSelected();
       const { modals } = useVisibility();
       const [hoveredRoom, setHoveredRoom] = useState(0);
@@ -54,7 +55,7 @@ export function registerMapModal() {
       // query the set of rooms whenever the selected room changes
       useEffect(() => {
         const roomMap = new Map<number, Room>();
-        const queriedRooms = getAllRooms(network, { players: true, exits: true });
+        const queriedRooms = getAllRooms(world, components, { players: true, exits: true });
         for (const room of queriedRooms) {
           roomMap.set(room.index, room);
         }

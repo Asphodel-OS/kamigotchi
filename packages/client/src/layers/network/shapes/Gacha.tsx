@@ -4,11 +4,12 @@ import {
   Has,
   HasValue,
   QueryFragment,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { getConfigFieldValueWei } from './Config';
 import { Kami, Options as KamiOptions, queryKamisX } from './Kami';
 
@@ -21,11 +22,12 @@ export interface GachaCommit {
   // reroll (shown in Kami)
 }
 
-export const getCommit = (network: NetworkLayer, index: EntityIndex): GachaCommit => {
-  const {
-    components: { RevealBlock },
-    world,
-  } = network;
+export const getCommit = (
+  world: World,
+  components: Components,
+  index: EntityIndex
+): GachaCommit => {
+  const { RevealBlock } = components;
 
   return {
     id: world.entities[index],
@@ -33,10 +35,12 @@ export const getCommit = (network: NetworkLayer, index: EntityIndex): GachaCommi
   };
 };
 
-export const queryAccCommits = (network: NetworkLayer, accountID: EntityID): GachaCommit[] => {
-  const {
-    components: { AccountID, Type, RevealBlock },
-  } = network;
+export const queryAccCommits = (
+  world: World,
+  components: Components,
+  accountID: EntityID
+): GachaCommit[] => {
+  const { AccountID, Type, RevealBlock } = components;
 
   const toQuery: QueryFragment[] = [
     HasValue(AccountID, { value: accountID }),
@@ -46,15 +50,19 @@ export const queryAccCommits = (network: NetworkLayer, accountID: EntityID): Gac
 
   const raw = Array.from(runQuery(toQuery));
 
-  return raw.map((index): GachaCommit => getCommit(network, index));
+  return raw.map((index): GachaCommit => getCommit(world, components, index));
 };
 
-export const queryGachaKamis = (network: NetworkLayer, kamiOptions?: KamiOptions): Kami[] => {
-  return queryKamisX(network, { state: 'GACHA' }, kamiOptions);
+export const queryGachaKamis = (
+  world: World,
+  components: Components,
+  kamiOptions?: KamiOptions
+): Kami[] => {
+  return queryKamisX(world, components, { state: 'GACHA' }, kamiOptions);
 };
 
-export const calcRerollCost = (network: NetworkLayer, kami: Kami): bigint => {
-  const baseCost = getConfigFieldValueWei(network, 'GACHA_REROLL_PRICE');
+export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {
+  const baseCost = getConfigFieldValueWei(components, 'GACHA_REROLL_PRICE');
 
   // placeholder linear function
   return baseCost * BigInt(kami.rerolls + 1);

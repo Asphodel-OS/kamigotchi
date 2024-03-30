@@ -19,7 +19,8 @@ export function registerMapButton() {
     },
     (layers) => {
       const { network } = layers;
-      const { RoomIndex, OperatorAddress } = network.components;
+      const { components } = network;
+      const { RoomIndex, OperatorAddress } = components;
 
       return merge(RoomIndex.update$, OperatorAddress.update$).pipe(
         map(() => {
@@ -32,12 +33,13 @@ export function registerMapButton() {
       );
     },
     ({ network, data }) => {
+      const { world, components } = network;
       const [_, setRoomObject] = useState<Room>();
       const { buttons } = useVisibility();
 
       // set selected room roomIndex to the player's current one when map modal is opened
       useEffect(() => {
-        setRoomObject(getRoomByIndex(network, data.account.roomIndex));
+        setRoomObject(getRoomByIndex(world, components, data.account.roomIndex));
       }, [data?.account.roomIndex]);
 
       const modalsToHide: Partial<Modals> = {

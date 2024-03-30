@@ -1,12 +1,10 @@
 import { Has, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 
 // get an Config from its EntityIndex
-export const getConfigFieldValue = (network: NetworkLayer, field: string): number => {
-  const {
-    components: { IsConfig, Name, Value },
-  } = network;
+export const getConfigFieldValue = (components: Components, field: string): number => {
+  const { IsConfig, Name, Value } = components;
 
   const configEntityIndex = Array.from(
     runQuery([Has(IsConfig), HasValue(Name, { value: field })])
@@ -15,10 +13,8 @@ export const getConfigFieldValue = (network: NetworkLayer, field: string): numbe
 };
 
 // get an Config from its EntityIndex. Wei values are stored in bigint
-export const getConfigFieldValueWei = (network: NetworkLayer, field: string): bigint => {
-  const {
-    components: { IsConfig, Name, Wei },
-  } = network;
+export const getConfigFieldValueWei = (components: Components, field: string): bigint => {
+  const { IsConfig, Name, Wei } = components;
 
   const configEntityIndex = Array.from(
     runQuery([Has(IsConfig), HasValue(Name, { value: field })])

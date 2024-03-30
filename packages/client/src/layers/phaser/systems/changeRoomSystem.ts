@@ -9,7 +9,7 @@ import {
 import { merge } from 'rxjs';
 
 import { rooms } from 'constants/rooms';
-import { NetworkLayer } from 'layers/network/types';
+import { NetworkLayer } from 'layers/network';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
 import { PhaserLayer } from 'layers/phaser/types';
 import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';

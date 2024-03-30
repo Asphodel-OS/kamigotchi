@@ -26,13 +26,14 @@ export function registerEMABoardModal() {
     (layers) =>
       interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network, {
+          const { network } = layers;
+          const account = getAccountFromBurner(network, {
             inventory: true,
             kamis: true,
           });
 
           return {
-            network: layers.network,
+            network,
             data: { account },
           };
         })
@@ -163,7 +164,7 @@ export function registerEMABoardModal() {
           header={<Title>Ema Board</Title>}
           canExit
         >
-          <List>{KamiList(data.account.kamis || [])}</List>
+          <List>{KamiList(data.account.kamis)}</List>
         </ModalWrapper>
       );
     }

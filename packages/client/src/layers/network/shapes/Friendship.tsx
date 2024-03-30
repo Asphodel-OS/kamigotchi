@@ -4,11 +4,12 @@ import {
   Has,
   HasValue,
   QueryFragment,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Account, getAccountByID } from './Account';
 
 export interface Friendship {
@@ -20,23 +21,23 @@ export interface Friendship {
 }
 
 export const getFriendship = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   entityIndex: EntityIndex,
   accountOptions?: any
 ): Friendship => {
-  const {
-    world,
-    components: { AccountID, TargetID, State },
-  } = network;
+  const { AccountID, TargetID, State } = components;
 
   const account = getAccountByID(
-    network,
+    world,
+    components,
     getComponentValue(AccountID, entityIndex)?.value as EntityID,
     accountOptions
   );
 
   const target = getAccountByID(
-    network,
+    world,
+    components,
     getComponentValue(TargetID, entityIndex)?.value as EntityID,
     accountOptions
   );
@@ -54,27 +55,47 @@ export const getFriendship = (
 // QUERIES
 
 export const getAccFriends = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   account: Account,
   accountOptions?: any
 ): Friendship[] => {
-  return queryFriendshipX(network, { account: account.id, state: 'FRIEND' }, accountOptions);
+  return queryFriendshipX(
+    world,
+    components,
+    { account: account.id, state: 'FRIEND' },
+    accountOptions
+  );
 };
 
-export const getAccIncomingRequests = (network: NetworkLayer, account: Account): Friendship[] => {
-  return queryFriendshipX(network, { target: account.id, state: 'REQUEST' });
+export const getAccIncomingRequests = (
+  world: World,
+  components: Components,
+  account: Account
+): Friendship[] => {
+  return queryFriendshipX(world, components, { target: account.id, state: 'REQUEST' });
 };
 
-export const getAccOutgoingRequests = (network: NetworkLayer, account: Account): Friendship[] => {
-  return queryFriendshipX(network, { account: account.id, state: 'REQUEST' });
+export const getAccOutgoingRequests = (
+  world: World,
+  components: Components,
+  account: Account
+): Friendship[] => {
+  return queryFriendshipX(world, components, { account: account.id, state: 'REQUEST' });
 };
 
 export const getAccBlocked = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   account: Account,
   accountOptions?: any
 ): Friendship[] => {
-  return queryFriendshipX(network, { account: account.id, state: 'BLOCKED' }, accountOptions);
+  return queryFriendshipX(
+    world,
+    components,
+    { account: account.id, state: 'BLOCKED' },
+    accountOptions
+  );
 };
 
 export interface FriendshipOptions {
@@ -84,23 +105,18 @@ export interface FriendshipOptions {
 }
 
 export const queryFriendshipX = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   options: FriendshipOptions,
   accountOptions?: any
 ): Friendship[] => {
-  const {
-    components: { IsFriendship, AccountID, TargetID, State },
-  } = network;
+  const { IsFriendship, AccountID, TargetID, State } = components;
 
   const toQuery: QueryFragment[] = [Has(IsFriendship)];
-
   if (options?.account) toQuery.push(HasValue(AccountID, { value: options.account }));
-
   if (options?.target) toQuery.push(HasValue(TargetID, { value: options.target }));
-
   if (options?.state) toQuery.push(HasValue(State, { value: options.state }));
-
   const raw = Array.from(runQuery(toQuery));
 
-  return raw.map((index: EntityIndex) => getFriendship(network, index, accountOptions));
+  return raw.map((index: EntityIndex) => getFriendship(world, components, index, accountOptions));
 };

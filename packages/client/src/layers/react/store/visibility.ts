@@ -69,6 +69,7 @@ export interface Modals {
   bridgeERC20: boolean;
   bridgeERC721: boolean;
   buy: boolean;
+  chat: boolean;
   dialogue: boolean;
   emaBoard: boolean;
   gacha: boolean;
@@ -86,7 +87,6 @@ export interface Modals {
   party: boolean;
   quests: boolean;
   settings: boolean;
-  chat: boolean;
 }
 
 export const toggleModals = (isOn: boolean): Modals => ({
@@ -95,6 +95,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   bridgeERC20: isOn,
   bridgeERC721: isOn,
   buy: isOn,
+  chat: isOn,
   dialogue: isOn,
   emaBoard: isOn,
   gacha: isOn,
@@ -112,7 +113,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   party: isOn,
   quests: isOn,
   settings: isOn,
-  chat: isOn,
 });
 
 ////////////////
@@ -133,13 +133,13 @@ export const useVisibility = create<State & Actions>((set) => {
   const initialState: State = {
     buttons: {
       account: false,
+      chat: false,
       help: false,
       inventory: false,
       map: false,
       party: false,
       quests: false,
       settings: false,
-      chat: false,
     },
     fixtures: {
       accountInfo: false,
@@ -152,6 +152,7 @@ export const useVisibility = create<State & Actions>((set) => {
       bridgeERC20: false,
       bridgeERC721: false,
       buy: false,
+      chat: false,
       dialogue: false,
       emaBoard: false,
       gacha: false,
@@ -169,7 +170,6 @@ export const useVisibility = create<State & Actions>((set) => {
       party: false,
       quests: false,
       settings: false,
-      chat: false,
     },
     validators: {
       accountRegistrar: false,

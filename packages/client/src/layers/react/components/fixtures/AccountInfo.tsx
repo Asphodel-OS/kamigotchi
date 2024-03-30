@@ -30,7 +30,8 @@ export function registerAccountInfoFixture() {
     },
     (layers) => {
       const { network } = layers;
-      const { Coin, RoomIndex, Name, OperatorAddress, Stamina } = network.components;
+      const { world, components } = network;
+      const { Coin, RoomIndex, Name, OperatorAddress, Stamina } = components;
 
       return merge(
         Coin.update$,
@@ -45,7 +46,7 @@ export function registerAccountInfoFixture() {
             network,
             data: {
               account,
-              room: getRoomByIndex(network, account.roomIndex),
+              room: getRoomByIndex(world, components, account.roomIndex),
             },
           };
         })

@@ -28,9 +28,10 @@ export function registerMerchantModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
+          const { world, components } = network;
           const { npcIndex } = useSelected.getState();
           const account = getAccountFromBurner(network, { inventory: true });
-          const merchant = getMerchantByIndex(network, npcIndex);
+          const merchant = getMerchantByIndex(world, components, npcIndex);
 
           return {
             network,
@@ -42,6 +43,7 @@ export function registerMerchantModal() {
     // Render
     ({ network, data }) => {
       // console.log('mMerchant: data', data);
+      const { world, components } = network;
       const { npcIndex } = useSelected();
       const [merchant, setMerchant] = useState<Merchant>(data.merchant);
 
@@ -52,7 +54,7 @@ export function registerMerchantModal() {
 
       // updates from selected Merchant updates
       useEffect(() => {
-        setMerchant(getMerchantByIndex(network, npcIndex));
+        setMerchant(getMerchantByIndex(world, components, npcIndex));
       }, [npcIndex]);
 
       /////////////////

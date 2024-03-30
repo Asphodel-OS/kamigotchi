@@ -25,9 +25,10 @@ export function registerLeaderboardModal() {
     (layers) => {
       return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network);
+          const { network } = layers;
+          const account = getAccountFromBurner(network);
           return {
-            network: layers.network,
+            network,
             data: { account },
           };
         })
@@ -37,6 +38,7 @@ export function registerLeaderboardModal() {
     // Render
     ({ network, data }) => {
       // console.log('leaderboardM: tableData', tableData);
+      const { world, components } = network;
       const { modals } = useVisibility();
       const [filter, setFilter] = useState<ScoresFilter>({
         epoch: 0,
@@ -59,7 +61,7 @@ export function registerLeaderboardModal() {
       // table data update
       useEffect(() => {
         if (modals.leaderboard) {
-          const tableData = getScores(network, filter);
+          const tableData = getScores(world, components, filter);
           setTableData(tableData);
         }
       }, [filter, lastRefresh]);
@@ -70,7 +72,7 @@ export function registerLeaderboardModal() {
           <Filters
             filter={filter}
             setFilter={setFilter}
-            epochOptions={Array.from(new Set(network.components.Epoch.values.value.values()))}
+            epochOptions={Array.from(new Set(components.Epoch.values.value.values()))}
           />
           <Table data={tableData} />
         </ModalWrapper>

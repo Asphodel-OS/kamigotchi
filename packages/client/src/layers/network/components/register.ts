@@ -11,6 +11,8 @@ import {
   defineTimelockComponent,
 } from './definitions';
 
+export type Components = ReturnType<typeof createComponents>;
+
 // define functions for registration
 export function createComponents(world: World) {
   // shortcut function for boolean component registration

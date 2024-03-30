@@ -30,6 +30,7 @@ export function registerDialogueModal() {
 
     // Render
     ({ network }) => {
+      const { actions, components, world } = network;
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
       const [dialogueNode, setDialogueNode] = React.useState({
@@ -52,9 +53,9 @@ export function registerDialogueModal() {
       // ACTIONS
 
       const move = (roomIndex: number) => {
-        const room = getRoomByIndex(network, roomIndex);
+        const room = getRoomByIndex(world, components, roomIndex);
 
-        network.actions.add({
+        actions.add({
           action: 'AccountMove',
           params: [roomIndex],
           description: `Moving to ${room.name}`,

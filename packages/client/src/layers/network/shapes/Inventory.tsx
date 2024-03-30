@@ -5,11 +5,12 @@ import {
   HasValue,
   Not,
   QueryFragment,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Item, getItem } from './Item';
 import { getStats } from './Stats';
 
@@ -22,26 +23,28 @@ export interface Inventory {
 }
 
 // get an Inventory from its EntityIndex
-export const getInventory = (network: NetworkLayer, index: EntityIndex): Inventory => {
-  return getTypedInventory(network, index, getItem);
+export const getInventory = (
+  world: World,
+  components: Components,
+  index: EntityIndex
+): Inventory => {
+  return getTypedInventory(world, components, index, getItem);
 };
 
 export const getTypedInventory = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   index: EntityIndex,
-  getTypedItem: (network: NetworkLayer, index: EntityIndex) => Item
+  getTypedItem: (world: World, components: Components, index: EntityIndex) => Item
 ): Inventory => {
-  const {
-    world,
-    components: { Balance, IsRegistry, ItemIndex },
-  } = network;
+  const { Balance, IsRegistry, ItemIndex } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
   const registryEntityIndex = Array.from(
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
   )[0];
-  const item = getTypedItem(network, registryEntityIndex);
+  const item = getTypedItem(world, components, registryEntityIndex);
 
   let inventory: Inventory = {
     id: world.entities[index],
@@ -51,7 +54,7 @@ export const getTypedInventory = (
 
   // if fungible: populate the balance
   // if non-fungible: copy stats of the inventory entity over to the nested item
-  if (!item.is.fungible) inventory.item.stats = getStats(network, index);
+  if (!item.is.fungible) inventory.item.stats = getStats(components, index);
   else inventory.balance = (getComponentValue(Balance, index)?.value as number) * 1;
 
   return inventory;
@@ -84,10 +87,12 @@ export interface QueryOptions {
   itemIndex?: number;
 }
 
-export const queryInventoryX = (network: NetworkLayer, options: QueryOptions): Inventory[] => {
-  const {
-    components: { HolderID, IsInventory, IsRegistry, ItemIndex },
-  } = network;
+export const queryInventoryX = (
+  world: World,
+  components: Components,
+  options: QueryOptions
+): Inventory[] => {
+  const { HolderID, IsInventory, IsRegistry, ItemIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsInventory)];
 
@@ -104,5 +109,5 @@ export const queryInventoryX = (network: NetworkLayer, options: QueryOptions): I
 
   const raw = Array.from(runQuery(toQuery));
 
-  return raw.map((index): Inventory => getInventory(network, index));
+  return raw.map((index): Inventory => getInventory(world, components, index));
 };

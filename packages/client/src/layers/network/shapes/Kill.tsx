@@ -1,6 +1,6 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Kami, getKami } from './Kami';
 import { Node, getNode } from './Node';
 
@@ -22,24 +22,26 @@ interface Options {
 }
 
 // get a Kill object from its EnityIndex
-export const getKill = (network: NetworkLayer, index: EntityIndex, options?: Options): Kill => {
-  const {
-    components: { NodeID, SourceID, TargetID, Balance, Coin, Time },
-    world,
-  } = network;
+export const getKill = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex,
+  options?: Options
+): Kill => {
+  const { NodeID, SourceID, TargetID, Balance, Coin, Time } = components;
 
   // populate the Node
-  const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
+  const nodeID = getComponentValue(NodeID, entityIndex)?.value as EntityID;
   const nodeEntityIndex = world.entityToIndex.get(nodeID) as EntityIndex;
-  const node = getNode(network, nodeEntityIndex);
+  const node = getNode(world, components, nodeEntityIndex);
 
   const killLog: Kill = {
-    id: world.entities[index],
-    entityIndex: index,
+    id: world.entities[entityIndex],
+    entityIndex,
     node,
-    balance: (getComponentValue(Balance, index)?.value as number) * 1,
-    bounty: (getComponentValue(Coin, index)?.value as number) * 1,
-    time: (getComponentValue(Time, index)?.value as number) * 1,
+    balance: (getComponentValue(Balance, entityIndex)?.value as number) * 1,
+    bounty: (getComponentValue(Coin, entityIndex)?.value as number) * 1,
+    time: (getComponentValue(Time, entityIndex)?.value as number) * 1,
   };
 
   /////////////////
@@ -47,16 +49,16 @@ export const getKill = (network: NetworkLayer, index: EntityIndex, options?: Opt
 
   // populate the source kami
   if (options?.source) {
-    const sourceID = getComponentValue(SourceID, index)?.value as EntityID;
+    const sourceID = getComponentValue(SourceID, entityIndex)?.value as EntityID;
     const sourceEntityIndex = world.entityToIndex.get(sourceID) as EntityIndex;
-    killLog.source = getKami(network, sourceEntityIndex);
+    killLog.source = getKami(world, components, sourceEntityIndex);
   }
 
   // populate the target kami
   if (options?.target) {
-    const targetID = getComponentValue(TargetID, index)?.value as EntityID;
+    const targetID = getComponentValue(TargetID, entityIndex)?.value as EntityID;
     const targetEntityIndex = world.entityToIndex.get(targetID) as EntityIndex;
-    killLog.target = getKami(network, targetEntityIndex);
+    killLog.target = getKami(world, components, targetEntityIndex);
   }
 
   return killLog;

@@ -1,6 +1,6 @@
-import { EntityIndex, Has, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
+import { EntityIndex, Has, HasValue, World, getComponentValue, runQuery } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Stats, getStats } from './Stats';
 
 // standardized shape of Traits on an Entity
@@ -29,39 +29,39 @@ export interface TraitIndices {
 
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
-export const getTrait = (network: NetworkLayer, entityIndex: EntityIndex): Trait => {
-  const { Affinity, Name, Rarity } = network.components;
+export const getTrait = (components: Components, entityIndex: EntityIndex): Trait => {
+  const { Affinity, Name, Rarity } = components;
 
   return {
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     affinity: getComponentValue(Affinity, entityIndex)?.value || ('' as string),
     rarity: getComponentValue(Rarity, entityIndex)?.value || (0 as number),
-    stats: getStats(network, entityIndex),
+    stats: getStats(components, entityIndex),
   };
 };
 
-export const getTraitByIndex = (network: NetworkLayer, index: number): Trait => {
-  const { IsRegistry, TraitIndex } = network.components;
+export const getTraitByIndex = (world: World, components: Components, index: number): Trait => {
+  const { IsRegistry, TraitIndex } = components;
 
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(TraitIndex, { value: index })])
   );
-  return getTrait(network, entityIndices[0]);
+  return getTrait(components, entityIndices[0]);
 };
 
-export const getRegistryTraits = (network: NetworkLayer): Trait[] => {
-  const { IsRegistry, TraitIndex } = network.components;
+export const getRegistryTraits = (world: World, components: Components): Trait[] => {
+  const { IsRegistry, TraitIndex } = components;
 
   const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(TraitIndex)]));
-  return entityIndices.map((index) => getTrait(network, index));
+  return entityIndices.map((index) => getTrait(components, index));
 };
 
-export const getTraits = (network: NetworkLayer, indices: TraitIndices): Traits => {
+export const getTraits = (world: World, components: Components, indices: TraitIndices): Traits => {
   return {
-    background: getTrait(network, indices.backgroundIndex),
-    body: getTrait(network, indices.bodyIndex),
-    color: getTrait(network, indices.colorIndex),
-    face: getTrait(network, indices.faceIndex),
-    hand: getTrait(network, indices.handIndex),
+    background: getTrait(components, indices.backgroundIndex),
+    body: getTrait(components, indices.bodyIndex),
+    color: getTrait(components, indices.colorIndex),
+    face: getTrait(components, indices.faceIndex),
+    hand: getTrait(components, indices.handIndex),
   };
 };

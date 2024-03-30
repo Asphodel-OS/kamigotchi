@@ -4,12 +4,13 @@ import {
   Has,
   HasValue,
   QueryFragment,
+  World,
   getComponentValue,
   hasComponent,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Account, getAccount } from './Account';
 
 export interface Location {
@@ -48,11 +49,13 @@ export interface RoomOptions {
 }
 
 // get a Room object from its EnityIndex
-export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: RoomOptions): Room => {
-  const {
-    world,
-    components: { IsAccount, AccountID, Description, Location, RoomIndex, Name },
-  } = network;
+export const getRoom = (
+  world: World,
+  components: Components,
+  index: EntityIndex,
+  options?: RoomOptions
+): Room => {
+  const { IsAccount, AccountID, Description, Location, RoomIndex, Name } = components;
 
   let room: Room = {
     id: world.entities[index],
@@ -69,14 +72,14 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
 
   // get the exit indices of the room
   if (options?.exits) {
-    room.exits = getExits(network, room);
+    room.exits = getExits(world, components, room);
   }
 
   // if the room has an owner, include their name
   if (options?.owner && hasComponent(AccountID, index)) {
     const accountID = getComponentValue(AccountID, index)?.value as EntityID;
     const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
-    room.owner = getAccount(network, accountEntityIndex);
+    room.owner = getAccount(world, components, accountEntityIndex);
   }
 
   // pull players currently in room
@@ -86,7 +89,7 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
     );
 
     room.players = accountResults.map((accountEntityIndex) => {
-      return getAccount(network, accountEntityIndex);
+      return getAccount(world, components, accountEntityIndex);
     });
   }
 
@@ -94,16 +97,14 @@ export const getRoom = (network: NetworkLayer, index: EntityIndex, options?: Roo
 };
 
 // get the exits of a room (as room indices)
-export const getExits = (network: NetworkLayer, room: Room): number[] => {
-  const {
-    components: { Exits },
-  } = network;
+export const getExits = (world: World, components: Components, room: Room): number[] => {
+  const { Exits } = components;
   let exits = new Set<number>();
 
   // get exits based on adjacent locations
   const adjLocs = getAdjacentLocations(room.location);
   for (let i = 0; i < adjLocs.length; i++) {
-    const rooms = queryRoomsX(network, { location: adjLocs[i] });
+    const rooms = queryRoomsX(world, components, { location: adjLocs[i] });
     if (rooms.length > 0) exits.add(rooms[0].index);
   }
 
@@ -116,16 +117,17 @@ export const getExits = (network: NetworkLayer, room: Room): number[] => {
   return [...exits];
 };
 
-export const getAllRooms = (network: NetworkLayer, options?: RoomOptions): Room[] =>
-  queryRoomsX(network, {}, options);
+export const getAllRooms = (world: World, components: Components, options?: RoomOptions): Room[] =>
+  queryRoomsX(world, components, {}, options);
 
 export const getRoomByIndex = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   index: number,
   options?: RoomOptions
 ): Room => {
-  const entities = queryRoomsEntitiesX(network, { index: index });
-  return getRoom(network, entities[0], options);
+  const entities = queryRoomsEntitiesX(world, components, { index: index });
+  return getRoom(world, components, entities[0], options);
 };
 
 /////////////////////
@@ -137,24 +139,24 @@ export type QueryOptions = {
 };
 
 export const queryRoomsX = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   options: QueryOptions,
   roomOptions?: RoomOptions
 ): Room[] => {
-  const entities = queryRoomsEntitiesX(network, options);
+  const entities = queryRoomsEntitiesX(world, components, options);
   return entities.map((entity) => {
-    return getRoom(network, entity, roomOptions);
+    return getRoom(world, components, entity, roomOptions);
   });
 };
 
 // returns raw entity index
 export const queryRoomsEntitiesX = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   options: QueryOptions
 ): EntityIndex[] => {
-  const {
-    components: { Location, IsRoom, RoomIndex },
-  } = network;
+  const { Location, IsRoom, RoomIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsRoom)];
 

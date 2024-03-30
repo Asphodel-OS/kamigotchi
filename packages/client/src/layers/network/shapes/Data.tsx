@@ -1,17 +1,16 @@
-import { EntityID, Has, HasValue, getComponentValue, runQuery } from '@mud-classic/recs';
+import { EntityID, Has, HasValue, World, getComponentValue, runQuery } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 
 // get a DataEntity for an account
 export const getData = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   id: EntityID,
   type: string,
   index?: number
 ): number => {
-  const {
-    components: { HolderID, IsData, Index, Type, Value },
-  } = network;
+  const { HolderID, IsData, Index, Type, Value } = components;
 
   let configEntityIndex;
   if (index && index > 0) {

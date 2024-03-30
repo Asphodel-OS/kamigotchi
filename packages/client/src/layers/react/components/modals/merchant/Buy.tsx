@@ -23,22 +23,23 @@ export function registerBuyModal() {
     (layers) =>
       interval(1000).pipe(
         map(() => {
-          return { network: layers.network };
+          const { network } = layers;
+          return { network };
         })
       ),
 
     // Render
     ({ network }) => {
-      const { api, actions } = network;
+      const { api, actions, components, world } = network;
       const { modals, setModals } = useVisibility();
       const { listingEntityIndex } = useSelected();
-      const [listing, setListing] = useState(getListing(network, listingEntityIndex));
+      const [listing, setListing] = useState(getListing(world, components, listingEntityIndex));
       const [quantity, setQuantity] = useState(1);
 
       // update current item based on selection
       // NOTE: may need to subscribe to component updates too, to resolve edge cases
       useEffect(() => {
-        setListing(getListing(network, listingEntityIndex));
+        setListing(getListing(world, components, listingEntityIndex));
         setQuantity(1);
       }, [listingEntityIndex]);
 

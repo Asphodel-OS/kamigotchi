@@ -1,6 +1,6 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { getConfigFieldValue } from '../Config';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
@@ -27,14 +27,12 @@ export interface ProductionOptions {
 
 // get an Production from its EnityIndex
 export const getProduction = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   index: EntityIndex,
   options?: ProductionOptions
 ): Production => {
-  const {
-    world,
-    components: { Coin, NodeID, PetID, LastTime, Rate, State, StartTime },
-  } = network;
+  const { Coin, NodeID, PetID, LastTime, Rate, State, StartTime } = components;
 
   let production: Production = {
     id: world.entities[index],
@@ -42,8 +40,8 @@ export const getProduction = (
     rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
     time: {
-      last: getComponentValue(LastTime, index)?.value as number,
-      start: getComponentValue(StartTime, index)?.value as number,
+      last: (getComponentValue(LastTime, index)?.value as number) * 1,
+      start: (getComponentValue(StartTime, index)?.value as number) * 1,
     },
   };
 
@@ -56,20 +54,21 @@ export const getProduction = (
   if (options.kami) {
     const kamiID = getComponentValue(PetID, index)?.value as EntityID;
     const kamiEntityIndex = world.entityToIndex.get(kamiID);
-    if (kamiEntityIndex) production.kami = getKami(network, kamiEntityIndex, { account: true });
+    if (kamiEntityIndex)
+      production.kami = getKami(world, components, kamiEntityIndex, { account: true });
   }
 
   // populate Node
   if (options.node) {
     const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
     const nodeIndex = world.entityToIndex.get(nodeID);
-    if (nodeIndex) production.node = getNode(network, nodeIndex);
+    if (nodeIndex) production.node = getNode(world, components, nodeIndex);
   }
 
   /////////////////
   // ADJUSTMENTS
 
-  const ratePrecision = 10 ** getConfigFieldValue(network, 'HARVEST_RATE_PREC');
+  const ratePrecision = 10 ** getConfigFieldValue(components, 'HARVEST_RATE_PREC');
   production.rate /= ratePrecision;
 
   return production;

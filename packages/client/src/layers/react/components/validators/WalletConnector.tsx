@@ -11,7 +11,7 @@ import { createNetwork } from 'layers/network/workers';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useNetwork as useMUDNetwork, useVisibility } from 'layers/react/store';
+import { useNetwork, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 
 // Detects network changes and populates network clients for inidividual addresses.
@@ -32,13 +32,13 @@ export function registerWalletConnecter() {
     (layers) => of(layers),
     (layers) => {
       const { address: connectorAddress, chain, connector } = useAccount();
-      const { wallets } = useWallets();
       const { ready, authenticated, login, logout } = usePrivy();
+      const { wallets } = useWallets();
 
-      const { validators, setValidators } = useVisibility();
+      const { validations, setValidations } = useNetwork();
+      const { apis, addAPI, setSelectedAddress } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
-      const { apis, addAPI, setSelectedAddress } = useMUDNetwork();
-      const { validations, setValidations } = useMUDNetwork();
+      const { validators, setValidators } = useVisibility();
 
       const [isVisible, setIsVisible] = useState(false);
       const [title, setTitle] = useState('');

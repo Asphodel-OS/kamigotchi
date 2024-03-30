@@ -1,29 +1,35 @@
-import { EntityID, Has, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
-import { NetworkLayer } from 'layers/network/types';
+import { EntityID, Has, HasValue, QueryFragment, World, runQuery } from '@mud-classic/recs';
+import { Components } from 'layers/network';
 import { Effect, Options, Requirement, Skill, getEffect, getRequirement, getSkill } from './types';
 
 /////////////////
 // GETTERS
 
 // get all the skills in the registry
-export const getRegistrySkills = (network: NetworkLayer): Skill[] => {
-  return querySkillsX(network, { registry: true }, { requirements: true, effects: true });
+export const getRegistrySkills = (world: World, components: Components): Skill[] => {
+  return querySkillsX(world, components, { registry: true }, { requirements: true, effects: true });
 };
 
 export const getHolderSkills = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   holder: EntityID,
   options?: Options
 ): Skill[] => {
-  return querySkillsX(network, { holder: holder }, options);
+  return querySkillsX(world, components, { holder: holder }, options);
 };
 
-export const getSkillByIndex = (network: NetworkLayer, index: number, options?: Options): Skill => {
-  const { IsRegistry, SkillIndex } = network.components;
+export const getSkillByIndex = (
+  world: World,
+  components: Components,
+  index: number,
+  options?: Options
+): Skill => {
+  const { IsRegistry, SkillIndex } = components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(SkillIndex, { value: index })])
   );
-  return getSkill(network, entityIndices[0], options);
+  return getSkill(world, components, entityIndices[0], options);
 };
 
 /////////////////
@@ -36,8 +42,13 @@ export interface Filters {
 }
 
 // Query for a set of skill with an AND filter
-const querySkillsX = (network: NetworkLayer, filters: Filters, options?: Options): Skill[] => {
-  const { HolderID, IsRegistry, IsSkill, SkillIndex } = network.components;
+const querySkillsX = (
+  world: World,
+  components: Components,
+  filters: Filters,
+  options?: Options
+): Skill[] => {
+  const { HolderID, IsRegistry, IsSkill, SkillIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsSkill)];
   if (filters?.registry) toQuery.push(Has(IsRegistry));
@@ -45,27 +56,32 @@ const querySkillsX = (network: NetworkLayer, filters: Filters, options?: Options
   if (filters?.index) toQuery.push(HasValue(SkillIndex, { value: filters.index }));
 
   return Array.from(runQuery(toQuery)).map(
-    (entityIndex): Skill => getSkill(network, entityIndex, options)
+    (entityIndex): Skill => getSkill(world, components, entityIndex, options)
   );
 };
 
 // Get the Entity Indices of the Effect of a Skill
-export const querySkillEffects = (network: NetworkLayer, skillIndex: number): Effect[] => {
-  const { IsRegistry, IsEffect, SkillIndex } = network.components;
+export const querySkillEffects = (
+  world: World,
+  components: Components,
+  skillIndex: number
+): Effect[] => {
+  const { IsRegistry, IsEffect, SkillIndex } = components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), Has(IsEffect), HasValue(SkillIndex, { value: skillIndex })])
   );
-  return entityIndices.map((entityIndex) => getEffect(network, entityIndex));
+  return entityIndices.map((entityIndex) => getEffect(world, components, entityIndex));
 };
 
 // Get the Entity Indices of the Requirements of a Skill
 export const querySkillRequirements = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   skillIndex: number
 ): Requirement[] => {
-  const { IsRegistry, IsRequirement, SkillIndex } = network.components;
+  const { IsRegistry, IsRequirement, SkillIndex } = components;
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), Has(IsRequirement), HasValue(SkillIndex, { value: skillIndex })])
   );
-  return entityIndices.map((entityIndex) => getRequirement(network, entityIndex));
+  return entityIndices.map((entityIndex) => getRequirement(world, components, entityIndex));
 };

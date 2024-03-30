@@ -1,7 +1,7 @@
 import { EntityIndex, getComponentValue } from '@mud-classic/recs';
 
+import { Components } from 'layers/network';
 import { StatComponent } from 'layers/network/components/definitions/StatComponent';
-import { NetworkLayer } from 'layers/network/types';
 
 export interface Stat {
   base: number;
@@ -23,8 +23,8 @@ export interface Stats {
 
 // get the stats of an entity
 // get the Stats from the EnityIndex of a Kami
-export const getStats = (network: NetworkLayer, index: EntityIndex): Stats => {
-  const { Harmony, Health, Power, Slots, Violence } = network.components;
+export const getStats = (components: Components, index: EntityIndex): Stats => {
+  const { Harmony, Health, Power, Slots, Violence } = components;
 
   return {
     health: getStat(index, Health),

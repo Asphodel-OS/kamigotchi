@@ -1,3 +1,5 @@
+import { World } from '@mud-classic/recs';
+import { Components } from 'layers/network';
 import {
   Kami,
   Options,
@@ -5,24 +7,26 @@ import {
   getKami,
   queryKamiEntitiesX,
 } from 'layers/network/shapes/Kami';
-import { NetworkLayer } from 'layers/network/types';
 
 export const getLazyKamis = (
-  network: NetworkLayer
+  world: World,
+  components: Components
 ): ((queryOpts: QueryOptions, options?: Options) => Array<() => Kami>) => {
-  return (queryOpts: QueryOptions, options?: Options) => _getLazyKamis(network, queryOpts, options);
+  return (queryOpts: QueryOptions, options?: Options) =>
+    _getLazyKamis(world, components, queryOpts, options);
 };
 
 const _getLazyKamis = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   queryOpts: QueryOptions,
   options?: Options
 ): Array<() => Kami> => {
-  const kamiIDs = queryKamiEntitiesX(network, queryOpts);
+  const kamiIDs = queryKamiEntitiesX(components, queryOpts);
 
   return kamiIDs.map(
     (index): (() => Kami) =>
       () =>
-        getKami(network, index, options)
+        getKami(world, components, index, options)
   );
 };

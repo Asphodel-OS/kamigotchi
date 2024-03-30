@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components, World } from 'layers/network';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { getData } from '../Data';
@@ -41,7 +41,7 @@ export interface Account {
     lastMove: number;
     creation: number;
   };
-  kamis?: Kami[];
+  kamis: Kami[];
   friends?: Friends;
   gacha?: {
     commits: GachaCommit[];
@@ -94,28 +94,26 @@ export interface Friends {
 
 // get an Account from its EnityIndex
 export const getAccount = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   entityIndex: EntityIndex,
   options?: AccountOptions
 ): Account => {
   const {
-    world,
-    components: {
-      AccountIndex,
-      Coin,
-      FarcasterIndex,
-      LastActionTime,
-      LastTime,
-      MediaURI,
-      RoomIndex,
-      Name,
-      OperatorAddress,
-      OwnerAddress,
-      QuestPoint,
-      Stamina,
-      StartTime,
-    },
-  } = network;
+    AccountIndex,
+    Coin,
+    FarcasterIndex,
+    LastActionTime,
+    LastTime,
+    MediaURI,
+    RoomIndex,
+    Name,
+    OperatorAddress,
+    OwnerAddress,
+    QuestPoint,
+    Stamina,
+    StartTime,
+  } = components;
 
   let account: Account = {
     entityIndex,
@@ -128,11 +126,11 @@ export const getAccount = (
     name: getComponentValue(Name, entityIndex)?.value as string,
     coin: (getComponentValue(Coin, entityIndex)?.value || (0 as number)) * 1,
     roomIndex: getComponentValue(RoomIndex, entityIndex)?.value as number,
+    kamis: [], // placeholder
     level: 0, // placeholder
     questPoints: (getComponentValue(QuestPoint, entityIndex)?.value || (0 as number)) * 1,
     skillPoints: 0, // placeholder
     stamina: getStat(entityIndex, Stamina),
-
     time: {
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       lastMove: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
@@ -144,14 +142,14 @@ export const getAccount = (
   if (!account.ownerEOA) return account;
 
   account.stamina.rate =
-    1 / (getConfigFieldValue(network, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') ?? 300);
+    1 / (getConfigFieldValue(components, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') ?? 300);
 
   /////////////////
   // OPTIONAL DATA
 
   // populate inventories
   if (options?.inventory) {
-    const inventoryResults = queryInventoryX(network, { owner: account.id });
+    const inventoryResults = queryInventoryX(world, components, { owner: account.id });
     const foods: Inventory[] = [];
     const revives: Inventory[] = [];
     const gear: Inventory[] = [];
@@ -187,7 +185,8 @@ export const getAccount = (
   // populate Kamis
   if (options?.kamis) {
     account.kamis = queryKamisX(
-      network,
+      world,
+      components,
       { account: account.id },
       { deaths: true, production: true, traits: true }
     );
@@ -196,44 +195,54 @@ export const getAccount = (
   // populate Friends
   if (options?.friends) {
     account.friends = {
-      friends: getAccFriends(network, account),
-      incomingReqs: getAccIncomingRequests(network, account),
-      outgoingReqs: getAccOutgoingRequests(network, account),
-      blocked: getAccBlocked(network, account),
+      friends: getAccFriends(world, components, account),
+      incomingReqs: getAccIncomingRequests(world, components, account),
+      outgoingReqs: getAccOutgoingRequests(world, components, account),
+      blocked: getAccBlocked(world, components, account),
       limits: {
         friends:
-          getConfigFieldValue(network, 'BASE_FRIENDS_LIMIT') * 1 +
-          (getBonusValue(network, account.id, 'FRIENDS_LIMIT') ?? 0),
-        requests: getConfigFieldValue(network, 'FRIENDS_REQUEST_LIMIT') * 1,
+          getConfigFieldValue(components, 'BASE_FRIENDS_LIMIT') * 1 +
+          (getBonusValue(world, components, account.id, 'FRIENDS_LIMIT') ?? 0),
+        requests: getConfigFieldValue(components, 'FRIENDS_REQUEST_LIMIT') * 1,
       },
     };
   }
 
   // populate Gacha
   if (options?.gacha) {
-    account.gacha = { commits: queryAccCommits(network, account.id) };
+    account.gacha = { commits: queryAccCommits(world, components, account.id) };
   }
 
   // populate Quests
   if (options?.quests) {
     account.quests = {
-      ongoing: parseQuestsStatus(network, account, getOngoingQuests(network, account.id)),
-      completed: parseQuestsStatus(network, account, getCompletedQuests(network, account.id)),
+      ongoing: parseQuestsStatus(
+        world,
+        components,
+        account,
+        getOngoingQuests(world, components, account.id)
+      ),
+      completed: parseQuestsStatus(
+        world,
+        components,
+        account,
+        getCompletedQuests(world, components, account.id)
+      ),
     };
   }
 
   if (options?.lootboxLogs) {
     account.lootboxLogs = {
-      unrevealed: queryAccLBLogs(network, account.id, false),
-      revealed: queryAccLBLogs(network, account.id, true),
+      unrevealed: queryAccLBLogs(world, components, account.id, false),
+      revealed: queryAccLBLogs(world, components, account.id, true),
     };
   }
 
   // populate Stats
   if (options?.stats) {
     account.stats = {
-      kills: getData(network, account.id, 'LIQUIDATE'),
-      coin: getData(network, account.id, 'COIN_TOTAL'),
+      kills: getData(world, components, account.id, 'LIQUIDATE'),
+      coin: getData(world, components, account.id, 'COIN_TOTAL'),
     };
   }
 

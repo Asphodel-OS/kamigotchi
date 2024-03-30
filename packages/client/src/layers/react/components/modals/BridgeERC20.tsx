@@ -20,19 +20,13 @@ export function registerERC20BridgeModal() {
       rowEnd: 74,
     },
     (layers) => {
-      const {
-        network: {
-          actions,
-          systems,
-          components: { Coin },
-        },
-      } = layers;
+      const { network } = layers;
+      const { actions, components, systems } = network;
+      const { Coin } = components;
 
       return merge(Coin.update$).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network);
-          const { coin } = account;
-
+          const account = getAccountFromBurner(network);
           return {
             actions,
             account,

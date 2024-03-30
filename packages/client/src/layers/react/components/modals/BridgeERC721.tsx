@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useReadContract } from 'wagmi';
 
 import { abi } from 'abi/Pet721ProxySystem.json';
-import { Account, getAccount } from 'layers/network/shapes/Account';
+import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami, getKami } from 'layers/network/shapes/Kami';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -23,48 +23,27 @@ export function registerERC721BridgeModal() {
       rowStart: 15,
       rowEnd: 85,
     },
+    // REQUIREMENT: serve network props, based on subscriptions
     (layers) => {
-      const {
-        network: {
-          actions,
-          network,
-          components: { AccountID, IsAccount, OperatorAddress, State },
-          systems,
-        },
-      } = layers;
+      const { network } = layers;
+      const { components, systems } = network;
+      const { AccountID, State } = components;
 
       return merge(AccountID.update$, State.update$).pipe(
         map(() => {
-          const accountIndex = Array.from(
-            runQuery([
-              Has(IsAccount),
-              HasValue(OperatorAddress, {
-                value: network.connectedAddress.get(),
-              }),
-            ])
-          )[0];
-
-          const account =
-            accountIndex !== undefined
-              ? getAccount(layers.network, accountIndex, { kamis: true })
-              : ({} as Account);
-
           return {
-            network: layers.network,
-            data: {
-              account: { ...account },
-            } as any,
+            network,
+            data: { account: getAccountFromBurner(network, { kamis: true }) },
             proxyAddy: systems['system.Pet721.Proxy'].address,
           };
         })
       );
     },
-
-    ({ network, data, proxyAddy }) => {
-      const {
-        actions,
-        components: { IsPet, PetIndex },
-      } = network;
+    // RENDER: draw the damn thing
+    ({ data, network, proxyAddy }) => {
+      const { account } = data;
+      const { actions, components, world } = network;
+      const { IsPet, PetIndex } = components;
 
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
@@ -175,7 +154,7 @@ export function registerERC721BridgeModal() {
               )[0];
 
               kamis.push(
-                getKami(network, entityID, {
+                getKami(world, components, entityID, {
                   deaths: true,
                   production: true,
                   traits: true,
@@ -241,7 +220,7 @@ export function registerERC721BridgeModal() {
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>In game</Description>
             <Scrollable style={{ gridRow: 2, gridColumn: 1 }}>
-              {KamiCards(data.account.kamis)}
+              {KamiCards(account.kamis)}
             </Scrollable>
             <Description style={{ gridRow: 1, gridColumn: 2 }}>In wallet</Description>
             <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>{KamiCards(EOAKamis)}</Scrollable>

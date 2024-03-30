@@ -4,6 +4,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
@@ -30,11 +31,13 @@ export function registerLootboxesModal() {
     (layers) =>
       interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network, {
+          const { network } = layers;
+          const { world, components } = network;
+          const account = getAccountFromBurner(network, {
             lootboxLogs: true,
             inventory: true,
           });
-          const selectedBox = getLootboxByIndex(layers.network, 10001);
+          const selectedBox = getLootboxByIndex(world, components, 10001);
 
           return {
             network: layers.network,
@@ -46,7 +49,7 @@ export function registerLootboxesModal() {
     // Render
     ({ network, data }) => {
       const { account, selectedBox } = data;
-      const { actions, api, world } = network;
+      const { actions, api, components, world } = network;
 
       const { modals } = useVisibility();
       const [state, setState] = useState('OPEN');
@@ -101,6 +104,7 @@ export function registerLootboxesModal() {
       }, [waitingToReveal, amount, state]);
 
       const openTx = async (index: number, amount: number) => {
+        const actionID = uuid() as EntityID;
         actions.add({
           action: 'LootboxCommit',
           params: [index, amount],
@@ -117,6 +121,7 @@ export function registerLootboxesModal() {
       };
 
       const revealTx = async (id: EntityID) => {
+        const actionID = uuid() as EntityID;
         actions.add({
           action: 'LootboxReveal',
           params: [id],
@@ -136,11 +141,11 @@ export function registerLootboxesModal() {
       // UTILS
 
       const getLog = (index: EntityIndex) => {
-        return getLootboxLog(network, index);
+        return getLootboxLog(world, components, index);
       };
 
       const getItem = (index: number) => {
-        return getItemByIndex(network, index);
+        return getItemByIndex(world, components, index);
       };
 
       ///////////////

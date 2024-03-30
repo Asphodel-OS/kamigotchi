@@ -20,16 +20,15 @@ export function registerInventoryModal() {
     },
 
     // Requirement
-    (layers) =>
-      interval(1000).pipe(
+    (layers) => {
+      return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network, {
-            inventory: true,
-          });
+          const { network } = layers;
+          const account = getAccountFromBurner(network, { inventory: true });
           return { data: { account } };
         })
-      ),
-
+      );
+    },
     // Render
     ({ data }) => {
       const getInventories = () => {

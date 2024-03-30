@@ -3,10 +3,11 @@ import {
   EntityIndex,
   Has,
   HasValue,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 
 export interface Bonuses {
   attack: AttackBonus;
@@ -34,8 +35,11 @@ interface DefenseBonus {
 }
 
 // gets the bonuses based on the entity index of a kami
-export const getBonuses = (network: NetworkLayer, entityIndex: EntityIndex): Bonuses => {
-  const { world } = network;
+export const getBonuses = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex
+): Bonuses => {
   const holderID = world.entities[entityIndex];
 
   const bonuses = {
@@ -51,8 +55,8 @@ export const getBonuses = (network: NetworkLayer, entityIndex: EntityIndex): Bon
       multiplier: 100,
     },
     harvest: {
-      output: (getBonusValue(network, holderID, 'HARVEST_OUTPUT') ?? 1000) * 1,
-      drain: (getBonusValue(network, holderID, 'HARVEST_DRAIN') ?? 1000) * 1,
+      output: (getBonusValue(world, components, holderID, 'HARVEST_OUTPUT') ?? 1000) * 1,
+      drain: (getBonusValue(world, components, holderID, 'HARVEST_DRAIN') ?? 1000) * 1,
       cooldown: 0,
     },
   };
@@ -61,13 +65,12 @@ export const getBonuses = (network: NetworkLayer, entityIndex: EntityIndex): Bon
 };
 
 export const getBonusValue = (
-  network: NetworkLayer,
+  world: World,
+  components: Components,
   holderID: EntityID,
   type: string
 ): number | undefined => {
-  const {
-    components: { IsBonus, HolderID, Type, Value },
-  } = network;
+  const { IsBonus, HolderID, Type, Value } = components;
 
   const results = Array.from(
     runQuery([

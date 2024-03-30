@@ -198,7 +198,7 @@ export const Kards = (props: Props) => {
     }
 
     return (
-      <Tooltip text={[tooltip]}>
+      <Tooltip key='feed-tooltip' text={[tooltip]}>
         <IconListButton img={feedIcon} disabled={tooltip !== 'feed kami'} options={feedOptions} />
       </Tooltip>
     );

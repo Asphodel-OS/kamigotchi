@@ -29,15 +29,11 @@ export function registerGachaModal() {
       rowStart: 20,
       rowEnd: 90,
     },
-    (layers) => {
-      const { network } = layers;
-
-      return interval(1000).pipe(
+    (layers) =>
+      interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(network, {
-            gacha: true,
-            kamis: true,
-          });
+          const { network } = layers;
+          const account = getAccountFromBurner(network, { gacha: true, kamis: true });
 
           const commits = [...(account.gacha ? account.gacha.commits : [])].reverse();
 
@@ -49,12 +45,11 @@ export function registerGachaModal() {
             },
           };
         })
-      );
-    },
-
+      ),
     ({ network, data }) => {
       const {
         actions,
+        components,
         world,
         api: { player },
       } = network;
@@ -133,7 +128,7 @@ export function registerGachaModal() {
       // INTERPRETATION
 
       const getRerollCost = (kami: Kami) => {
-        return calcRerollCost(network, kami);
+        return calcRerollCost(world, components, kami);
       };
 
       // parses a wagmi FetchBalanceResult
@@ -264,7 +259,7 @@ export function registerGachaModal() {
                 },
               }}
               display={{ Tab: TabsBar }}
-              query={{ getLazyKamis: getLazyKamis(network) }}
+              query={{ getLazyKamis: getLazyKamis(world, components) }}
             />
           );
         else if (tab === 'REROLL')

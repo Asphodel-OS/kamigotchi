@@ -16,9 +16,8 @@ export type NetworkConfig = {
   externalProvider?: ExternalProvider;
   initialBlockNumber: number;
   checkpointUrl?: string;
-  faucetServiceUrl?: string;
-  relayServiceUrl?: string;
-  snapshotUrl?: string;
+  snapshotServiceUrl?: string;
+  streamServiceUrl?: string;
 };
 
 // shape a flat NetworkConfig struct into lattice's SetupContractConfig struct
@@ -43,9 +42,8 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) =>
   initialBlockNumber: config.initialBlockNumber,
   worldAddress: config.worldAddress,
   devMode: config.devMode,
-  faucetServiceUrl: config.faucetServiceUrl,
-  relayServiceUrl: config.relayServiceUrl,
-  snapshotServiceUrl: config.snapshotUrl,
+  snapshotServiceUrl: config.snapshotServiceUrl,
+  streamServiceUrl: config.streamServiceUrl,
 });
 
 // Populate the network config based on url params
@@ -114,10 +112,6 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   config.jsonRpc = jsonRpc;
   config.wsRpc = wsRpc;
 
-  // urls
-  config.checkpointUrl = params.get('checkpoint') || '';
-  config.snapshotUrl = params.get('snapshotUrl') || '';
-
   // chainId
   const chainIdString = params.get('chainId') || '1337';
   config.chainId = parseInt(chainIdString);
@@ -137,7 +131,7 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
   let config: NetworkConfig = <NetworkConfig>{
     jsonRpc: 'https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7',
     wsRpc: 'wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f',
-    snapshotUrl: 'https://snapshot.asphodel.io',
+    snapshotServiceUrl: 'https://snapshot.asphodel.io',
 
     chainId: 11155420,
     worldAddress: '0xB85F066f2eec6f5fCea0C02591f3ed5E40070e22',

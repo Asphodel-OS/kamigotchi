@@ -22,18 +22,18 @@ export function registerChatModal() {
     },
 
     // Requirement
-    (layers) =>
-      interval(3333).pipe(
+    (layers) => {
+      const { network } = layers;
+      return interval(3333).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network, { friends: true });
+          const account = getAccountFromBurner(network, { friends: true });
           return {
-            network: layers.network,
             data: { account },
           };
         })
-      ),
-
-    ({ network, data }) => {
+      );
+    },
+    ({ data }) => {
       const { account } = data;
       const [casts, setCasts] = useState<CastWithInteractions[]>([]);
       const maxCasts = 100;

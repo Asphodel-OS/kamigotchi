@@ -3,12 +3,13 @@ import {
   EntityIndex,
   Has,
   HasValue,
+  World,
   getComponentValue,
   hasComponent,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { baseURI } from 'src/constants/media';
 import { Stats, getStats } from './Stats';
 
@@ -35,24 +36,13 @@ export interface Item {
 /**
  * Gets info about an item from an SC item registry
  * Supplements additional data for FE consumption if available
+ * @param world - the world object
+ * @param components - the list (as object) of registered components in the world
+ * @param entityIndex - the entity index of the item in the registry
  */
-export const getItem = (
-  network: NetworkLayer,
-  entityIndex: EntityIndex // entity index of the registry instance
-): Item => {
-  const {
-    world,
-    components: {
-      Description,
-      ItemIndex,
-      IsConsumable,
-      IsFungible,
-      IsLootbox,
-      MediaURI,
-      Name,
-      Type,
-    },
-  } = network;
+export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
+  const { Description, ItemIndex, IsConsumable, IsFungible, IsLootbox, MediaURI, Name, Type } =
+    components;
 
   let Item: Item = {
     entityIndex,
@@ -65,7 +55,7 @@ export const getItem = (
       default: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
       x4: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
     },
-    stats: getStats(network, entityIndex),
+    stats: getStats(components, entityIndex),
     is: {
       consumable: hasComponent(IsConsumable, entityIndex),
       fungible: hasComponent(IsFungible, entityIndex),
@@ -77,27 +67,25 @@ export const getItem = (
   return Item;
 };
 
-// get an item in the registry by index
-export const getItemByIndex = (
-  network: NetworkLayer,
-  index: number // item index of the registry instance
-): Item => {
-  const {
-    components: { IsRegistry, ItemIndex },
-  } = network;
+/**
+ * get an item in the registry by index
+ * @param world - the world object
+ * @param components - the list (as object) of registered components in the world
+ * @param index - the item index of the registry instance
+ */
+
+export const getItemByIndex = (world: World, components: Components, index: number): Item => {
+  const { IsRegistry, ItemIndex } = components;
 
   const entityIndices = Array.from(
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: index })])
   );
-  return getItem(network, entityIndices[0]);
+  return getItem(world, components, entityIndices[0]);
 };
 
 // get all items in the registry
-export const getAllItems = (network: NetworkLayer): Item[] => {
-  const {
-    components: { IsRegistry, ItemIndex },
-  } = network;
-
+export const getAllItems = (world: World, components: Components): Item[] => {
+  const { IsRegistry, ItemIndex } = components;
   const entityIndices = Array.from(runQuery([Has(IsRegistry), Has(ItemIndex)]));
-  return entityIndices.map((entityIndex) => getItem(network, entityIndex));
+  return entityIndices.map((entityIndex) => getItem(world, components, entityIndex));
 };

@@ -4,11 +4,12 @@ import {
   Has,
   HasValue,
   QueryFragment,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Account, getAccount } from './Account';
 
 // standardized Object shape of a Score Entity
@@ -25,16 +26,13 @@ export interface ScoresFilter {
 }
 
 // get a Score object from its EnityIndex
-export const getScore = (network: NetworkLayer, index: EntityIndex): Score => {
-  const {
-    world,
-    components: { Balance, Epoch, HolderID, Type },
-  } = network;
+export const getScore = (world: World, components: Components, index: EntityIndex): Score => {
+  const { Balance, Epoch, HolderID, Type } = components;
 
   // populate the holder
   const accountID = getComponentValue(HolderID, index)?.value as EntityID;
   const accountEntityIndex = world.entityToIndex.get(accountID) as EntityIndex;
-  const account = getAccount(network, accountEntityIndex);
+  const account = getAccount(world, components, accountEntityIndex);
 
   return {
     account,
@@ -44,8 +42,8 @@ export const getScore = (network: NetworkLayer, index: EntityIndex): Score => {
   };
 };
 
-export const getScores = (network: NetworkLayer, filter: ScoresFilter): Score[] => {
-  const { IsScore, Epoch, Type } = network.components;
+export const getScores = (world: World, components: Components, filter: ScoresFilter): Score[] => {
+  const { IsScore, Epoch, Type } = components;
 
   // set filters
   const queryFragments = [Has(IsScore)] as QueryFragment[];
@@ -54,7 +52,7 @@ export const getScores = (network: NetworkLayer, filter: ScoresFilter): Score[] 
 
   // retrieve the relevant entities and their shapes
   const scoreEntityIndices = Array.from(runQuery(queryFragments));
-  const scores = scoreEntityIndices.map((index) => getScore(network, index));
+  const scores = scoreEntityIndices.map((index) => getScore(world, components, index));
 
   return scores.sort((a, b) => b.score - a.score);
 };

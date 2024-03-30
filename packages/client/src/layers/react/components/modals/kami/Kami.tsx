@@ -24,25 +24,23 @@ export function registerKamiModal() {
     },
 
     // Requirement
-    (layers) =>
-      interval(1000).pipe(
+    (layers) => {
+      const { network } = layers;
+      return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(layers.network, {
-            inventory: true,
-            kamis: true,
-          });
-
+          const account = getAccountFromBurner(network, { inventory: true, kamis: true });
           return {
-            network: layers.network,
+            network,
             data: { account },
           };
         })
-      ),
+      );
+    },
 
     // Render
     ({ data, network }) => {
       const { account } = data;
-      const { actions, api } = network;
+      const { actions, api, components, world } = network;
       const { kamiIndex } = useSelected();
       const [tab, setTab] = useState('traits');
 
@@ -50,7 +48,7 @@ export function registerKamiModal() {
       // DATA FETCHING
 
       const getSelectedKami = () => {
-        return getKamiByIndex(network, kamiIndex, {
+        return getKamiByIndex(world, components, kamiIndex, {
           account: true,
           deaths: true,
           kills: true,
@@ -110,7 +108,7 @@ export function registerKamiModal() {
             <Skills
               account={account}
               kami={getSelectedKami()}
-              skills={getRegistrySkills(network)}
+              skills={getRegistrySkills(world, components)}
               actions={{ upgrade: upgradeSkill }}
             />
           )}

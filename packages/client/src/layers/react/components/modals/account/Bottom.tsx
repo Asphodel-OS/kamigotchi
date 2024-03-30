@@ -28,7 +28,7 @@ export const Bottom = (props: Props) => {
   // re-render and persist their state, rather than remounting
   return (
     <Container>
-      {tab === 'party' && <Kamis kamis={data.account.kamis ?? []} />}
+      {tab === 'party' && <Kamis kamis={data.account.kamis} />}
       {tab === 'frens' && (
         <Friends
           key='friends'

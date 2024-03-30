@@ -3,11 +3,12 @@ import {
   EntityIndex,
   Has,
   HasValue,
+  World,
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
 
-import { NetworkLayer } from 'layers/network/types';
+import { Components } from 'layers/network';
 import { Item, getItem } from './Item';
 
 // standardized shape of a FE Listing Entity
@@ -19,18 +20,15 @@ export interface Listing {
 }
 
 // get an Listing from its EntityIndex
-export const getListing = (network: NetworkLayer, index: EntityIndex): Listing => {
-  const {
-    world,
-    components: { IsRegistry, ItemIndex, PriceBuy },
-  } = network;
+export const getListing = (world: World, components: Components, index: EntityIndex): Listing => {
+  const { IsRegistry, ItemIndex, PriceBuy } = components;
 
   // retrieve item details based on the registry
   const itemIndex = getComponentValue(ItemIndex, index)?.value as number;
   const registryEntityIndex = Array.from(
     runQuery([Has(IsRegistry), HasValue(ItemIndex, { value: itemIndex })])
   )[0];
-  const item = getItem(network, registryEntityIndex);
+  const item = getItem(world, components, registryEntityIndex);
 
   let listing: Listing = {
     id: world.entities[index],
