@@ -950,7 +950,7 @@
   ],
   "libraries": [
     "LibAccount",
-    "LibBoolean",
+    "LibBonus",
     "LibCoin",
     "LibConfig",
     "LibDataEntity",

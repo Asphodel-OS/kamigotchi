@@ -16,7 +16,7 @@ import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
-import { LibBoolean } from "libraries/LibBoolean.sol";
+import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 

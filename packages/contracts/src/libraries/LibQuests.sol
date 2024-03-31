@@ -26,11 +26,11 @@ import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LOGIC, HANDLER, LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
 import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
-import { LOGIC, HANDLER, LibBoolean } from "libraries/LibBoolean.sol";
 
 /**
  * @notice LibQuests handles quests!

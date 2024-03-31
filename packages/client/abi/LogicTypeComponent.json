@@ -42,28 +42,9 @@
       "name": "getEntitiesWithValue",
       "inputs": [
         {
-          "name": "value",
+          "name": "",
           "type": "bytes",
           "internalType": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getEntitiesWithValue",
-      "inputs": [
-        {
-          "name": "value",
-          "type": "string",
-          "internalType": "string"
         }
       ],
       "outputs": [
@@ -205,7 +186,7 @@
       "name": "registerIndexer",
       "inputs": [
         {
-          "name": "indexer",
+          "name": "",
           "type": "address",
           "internalType": "address"
         }
@@ -377,7 +358,6 @@
     "authorizeWriter(address)": "4fef6a38",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
-    "getEntitiesWithValue(string)": "f94655da",
     "getRawValue(uint256)": "b8bc073d",
     "getSchema()": "6b122fe0",
     "getValue(uint256)": "0ff4c916",
