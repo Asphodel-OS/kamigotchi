@@ -8,6 +8,7 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
@@ -15,7 +16,6 @@ import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol
 import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 
@@ -40,7 +40,7 @@ enum HANDLER {
  * - IdHolderComponent
  * - TypeComponent (key)
  * - IndexComponent (optional key)
- * - ValueComponent (value)
+ * - BalanceComponent (value)
  *
  * This library is designed to provide a base functionality for checks, but can be replaced for per-application logic
  * heavily inspired by Quest condition checks. Does not yet support increase/decrease checks, but can in future
@@ -83,7 +83,7 @@ library LibBoolean {
     uint256 accountID
   ) internal view returns (bool) {
     IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+    BalanceComponent balComp = BalanceComponent(getAddressById(components, BalanceCompID));
     TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
     LogicTypeComponent logicTypeComp = LogicTypeComponent(
       getAddressById(components, LogicTypeCompID)
@@ -93,7 +93,7 @@ library LibBoolean {
       // uint256 targetID = accountID; // placeholder, can change in future
       // uint256 forID = forComp.has(conditionIDs[i]) ? forComp.getValue(conditionIDs[i]) : 0;
       uint32 index = indexComp.has(conditionIDs[i]) ? indexComp.getValue(conditionIDs[i]) : 0;
-      uint256 value = valueComp.has(conditionIDs[i]) ? valueComp.getValue(conditionIDs[i]) : 0;
+      uint256 value = balComp.has(conditionIDs[i]) ? balComp.getValue(conditionIDs[i]) : 0;
       string memory type_ = typeComp.getValue(conditionIDs[i]);
       string memory logicType = logicTypeComp.getValue(conditionIDs[i]);
 
@@ -175,8 +175,8 @@ library LibBoolean {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
 
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
   }
 
   function unsetIndex(IUintComp components, uint256 id) internal {
@@ -184,16 +184,16 @@ library LibBoolean {
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetValue(IUintComp components, uint256 id) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+  function unsetBalance(IUintComp components, uint256 id) internal {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
   ///////////////////////
   // GETTERS
 
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256 result) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256 result) {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     if (comp.has(id)) result = comp.getValue(id);
   }
 

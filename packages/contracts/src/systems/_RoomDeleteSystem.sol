@@ -21,7 +21,7 @@ contract _RoomDeleteSystem is System {
 
     LibRoom.remove(components, roomID);
     uint256[] memory gates = LibRoom.queryAllGates(components, index);
-    for (uint256 i = 0; i < gates.length; i++) LibRoom.remove(components, gates[i]);
+    for (uint256 i = 0; i < gates.length; i++) LibRoom.removeGate(components, gates[i]);
 
     return "";
   }

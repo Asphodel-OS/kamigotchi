@@ -19,7 +19,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 // stores an increment to add entropy and prevent ordering attacks

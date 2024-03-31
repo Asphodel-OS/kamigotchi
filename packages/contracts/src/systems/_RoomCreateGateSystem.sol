@@ -24,6 +24,10 @@ contract _RoomCreateGateSystem is System {
     ) = abi.decode(arguments, (uint32, uint32, uint32, uint256, string, string));
 
     require(LibRoom.queryByIndex(components, roomIndex) != 0, "Room: does not exist");
+    require(
+      sourceIndex == 0 || LibRoom.queryByIndex(components, sourceIndex) != 0,
+      "Room: source does not exists"
+    );
 
     return
       abi.encode(
