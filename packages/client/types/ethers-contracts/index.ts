@@ -47,6 +47,7 @@ export type { IdDelegatorComponent } from "./IdDelegatorComponent";
 export type { IdHolderComponent } from "./IdHolderComponent";
 export type { IdNodeComponent } from "./IdNodeComponent";
 export type { IdOwnsQuestComponent } from "./IdOwnsQuestComponent";
+export type { IdOwnsRelationshipComponent } from "./IdOwnsRelationshipComponent";
 export type { IdPetComponent } from "./IdPetComponent";
 export type { IdRequesteeComponent } from "./IdRequesteeComponent";
 export type { IdRequesterComponent } from "./IdRequesterComponent";
@@ -259,6 +260,7 @@ export { IdDelegatorComponent__factory } from "./factories/IdDelegatorComponent_
 export { IdHolderComponent__factory } from "./factories/IdHolderComponent__factory";
 export { IdNodeComponent__factory } from "./factories/IdNodeComponent__factory";
 export { IdOwnsQuestComponent__factory } from "./factories/IdOwnsQuestComponent__factory";
+export { IdOwnsRelationshipComponent__factory } from "./factories/IdOwnsRelationshipComponent__factory";
 export { IdPetComponent__factory } from "./factories/IdPetComponent__factory";
 export { IdRequesteeComponent__factory } from "./factories/IdRequesteeComponent__factory";
 export { IdRequesterComponent__factory } from "./factories/IdRequesterComponent__factory";

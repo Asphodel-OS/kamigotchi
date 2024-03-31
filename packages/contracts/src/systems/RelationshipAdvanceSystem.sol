@@ -20,38 +20,35 @@ contract RelationshipAdvanceSystem is System {
 
     // npc existence and roomIndex check
     uint256 npcID = LibNPC.getByIndex(components, npcIndex);
-    require(npcID != 0, "RelationshipAdvance: npc does not exist");
-    require(
-      LibNPC.sharesRoomWith(components, npcID, accountID),
-      "RelationshipAdvance: must be in same room"
-    );
+    require(npcID != 0, "RS: npc does not exist");
+    require(LibNPC.sharesRoomWith(components, npcID, accountID), "RS: must be in same room");
 
     // check that the flag exists and that the account doesnt already have it
     uint256 registryID = LibRegistryRelationship.get(components, npcIndex, relIndex);
-    require(registryID != 0, "RelationshipAdvance: flag does not exist");
+    require(registryID != 0, "RS: flag does not exist");
     require(
       !LibRelationship.has(components, accountID, npcIndex, relIndex),
-      "RelationshipAdvance: flag already obtained"
+      "RS: flag already obtained"
     );
 
     // check blacklist and whitelist
     require(
       !LibRelationship.isBlacklisted(components, accountID, registryID),
-      "RelationshipAdvance: prohibited from advancing"
+      "RS: prohibited from advancing"
     );
     require(
       LibRelationship.isWhitelisted(components, accountID, registryID),
-      "RelationshipAdvance: unmet requirements"
+      "RS: unmet requirements"
     );
 
-    LibRelationship.create(world, components, accountID, npcIndex, relIndex);
+    uint256 id = LibRelationship.create(components, accountID, npcIndex, relIndex);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);
-    return "";
+    return abi.encode(id);
   }
 
-  function executeTyped(uint32 npcIndex, uint32 relIndex) public onlyOwner returns (bytes memory) {
+  function executeTyped(uint32 npcIndex, uint32 relIndex) public returns (bytes memory) {
     return execute(abi.encode(npcIndex, relIndex));
   }
 }

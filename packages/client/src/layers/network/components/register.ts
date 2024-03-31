@@ -77,6 +77,7 @@ export function createComponents(world: World) {
     RequesteeID: defineStringEZ('RequesteeID', 'component.Id.Requestee'),
     RequesterID: defineStringEZ('RequesterID', 'component.Id.Requester'),
     OwnsQuestID: defineStringEZ('OwnsQuestID', 'component.Id.Quest.Owns'),
+    OwnsRelationshipID: defineStringEZ('OwnsRelationshipID', 'component.Id.Relationship.Owns'),
     SourceID: defineStringEZ('SourceID', 'component.Id.Source'),
     TargetID: defineStringEZ('TargetID', 'component.Id.Target'),
 
