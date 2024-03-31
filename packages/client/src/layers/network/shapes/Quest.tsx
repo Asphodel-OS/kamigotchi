@@ -101,7 +101,6 @@ export interface Condition {
 }
 
 export interface Objective extends Condition {
-  index: number;
   name: string;
 }
 
@@ -186,11 +185,10 @@ const getObjective = (
   components: Components,
   entityIndex: EntityIndex
 ): Objective => {
-  const { Balance, Index, LogicType, Name, ObjectiveIndex, Type } = components;
+  const { Balance, Index, LogicType, Name, Type } = components;
 
   let objective: Objective = {
     id: world.entities[entityIndex],
-    index: getComponentValue(ObjectiveIndex, entityIndex)?.value || (0 as number),
     name: getComponentValue(Name, entityIndex)?.value || ('' as string),
     logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
     target: {
@@ -267,12 +265,12 @@ export interface QueryOptions {
 
 // Query for Entity Indices of Quests, depending on the options provided
 const queryQuestsX = (world: World, components: Components, options: QueryOptions): Quest[] => {
-  const { AccountID, IsComplete, IsQuest, IsRegistry, QuestIndex } = components;
+  const { OwnsQuestID, IsComplete, IsQuest, IsRegistry, QuestIndex } = components;
 
   const toQuery: QueryFragment[] = [Has(IsQuest)];
 
   if (options?.account) {
-    toQuery.push(HasValue(AccountID, { value: options.account }));
+    toQuery.push(HasValue(OwnsQuestID, { value: options.account }));
   }
 
   if (options?.registry) {
@@ -344,16 +342,11 @@ const queryQuestRewards = (
 const querySnapshotObjective = (
   world: World,
   components: Components,
-  questID: EntityID,
-  objectiveIndex: number
+  questID: EntityID
 ): Objective => {
-  const { IsObjective, ObjectiveIndex, HolderID } = components;
+  const { IsObjective, OwnsQuestID } = components;
   const entityIndices = Array.from(
-    runQuery([
-      Has(IsObjective),
-      HasValue(ObjectiveIndex, { value: objectiveIndex }),
-      HasValue(HolderID, { value: questID }),
-    ])
+    runQuery([Has(IsObjective), HasValue(OwnsQuestID, { value: questID })])
   );
   return getObjective(world, components, entityIndices[0]); // should only be one
 };
@@ -422,8 +415,7 @@ const checkIncrease = (
   quest: Quest,
   account: Account
 ): ((opt: any) => Status) => {
-  const prevVal = querySnapshotObjective(world, components, quest.id, objective.index).target
-    .value as number;
+  const prevVal = querySnapshotObjective(world, components, quest.id).target.value as number;
   const currVal = getData(
     world,
     components,
@@ -452,8 +444,7 @@ const checkDecrease = (
   quest: Quest,
   account: Account
 ): ((opt: any) => Status) => {
-  const prevVal = querySnapshotObjective(world, components, quest.id, objective.index).target
-    .value as number;
+  const prevVal = querySnapshotObjective(world, components, quest.id).target.value as number;
   const currVal = getData(
     world,
     components,

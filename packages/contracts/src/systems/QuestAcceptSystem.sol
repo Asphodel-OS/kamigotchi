@@ -25,32 +25,24 @@ contract QuestAcceptSystem is System {
       "QuestAccept: reqs not met"
     );
 
-    uint256 assignedID;
+    uint256 questID = LibQuests.queryAccountQuestIndex(components, accountID, index);
     if (LibQuests.isRepeatable(components, regID)) {
       // repeatable quests - accepted before check is implicit
-      uint256[] memory questIDs = LibQuests.queryAccountQuestIndex(components, accountID, index);
       // repeatable quests can only have 0 or 1 instances
-      // if no instance, leave assignedID as 0
-      if (questIDs.length == 1) {
-        assignedID = questIDs[0];
-      }
       require(
-        LibQuests.checkRepeat(components, index, assignedID),
+        LibQuests.checkRepeat(components, index, questID),
         "QuestAccept: repeat cons not met"
       );
-      assignedID = LibQuests.assignRepeatable(world, components, index, assignedID, accountID);
+      questID = LibQuests.assignRepeatable(world, components, index, questID, accountID);
     } else {
       // not repeatable - check that quest has not been accepted before
-      require(
-        LibQuests.checkMax(components, regID, index, accountID),
-        "QuestAccept: accepted before"
-      );
-      assignedID = LibQuests.assign(world, components, index, accountID);
+      require(questID == 0, "QuestAccept: accepted before");
+      questID = LibQuests.assign(world, components, index, accountID);
     }
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);
-    return abi.encode(assignedID);
+    return abi.encode(questID);
   }
 
   function executeTyped(uint32 index) public returns (bytes memory) {

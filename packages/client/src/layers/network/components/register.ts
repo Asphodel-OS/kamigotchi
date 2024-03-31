@@ -76,6 +76,7 @@ export function createComponents(world: World) {
     PetID: defineStringEZ('PetID', 'component.Id.Pet'),
     RequesteeID: defineStringEZ('RequesteeID', 'component.Id.Requestee'),
     RequesterID: defineStringEZ('RequesterID', 'component.Id.Requester'),
+    OwnsQuestID: defineStringEZ('OwnsQuestID', 'component.Id.Quest.Owns'),
     SourceID: defineStringEZ('SourceID', 'component.Id.Source'),
     TargetID: defineStringEZ('TargetID', 'component.Id.Target'),
 
@@ -86,7 +87,6 @@ export function createComponents(world: World) {
     NodeIndex: defineNumberEZ('NodeIndex', 'component.Index.Node'),
     FarcasterIndex: defineNumberEZ('FarcasterIndex', 'component.Index.Farcaster'),
     NPCIndex: defineNumberEZ('NPCIndex', 'component.Index.NPC'),
-    ObjectiveIndex: defineNumberEZ('ObjectiveIndex', 'component.Index.Objective'),
     PetIndex: defineNumberEZ('PetIndex', 'component.Index.Pet'),
     QuestIndex: defineNumberEZ('QuestIndex', 'component.Index.Quest'),
     RelationshipIndex: defineNumberEZ('RelationshipIndex', 'component.Index.Relationship'),
