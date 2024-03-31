@@ -281,6 +281,13 @@ abstract contract SetupTemplate is TestSetupImports {
     _QuestDropSystem.executeTyped(questID);
   }
 
+  /* RELATIONSHIP */
+
+  function _advRelationship(uint playerIdx, uint32 npcIdx, uint32 relIdx) internal returns (uint) {
+    vm.prank(_getOperator(playerIdx));
+    return abi.decode(_RelationshipAdvanceSystem.executeTyped(npcIdx, relIdx), (uint256));
+  }
+
   /* SKILLS */
 
   function _upgradeSkill(uint playerIndex, uint targetID, uint32 skillIndex) internal virtual {
@@ -499,6 +506,35 @@ abstract contract SetupTemplate is TestSetupImports {
     return
       abi.decode(
         __RegistryCreateQuestRewardSystem.executeTyped(questIndex, _type, itemIndex, value),
+        (uint256)
+      );
+  }
+
+  /* RELATIONSHIP */
+
+  function _createRelationship(uint32 npcIndex, uint32 relIndex) internal returns (uint256) {
+    uint32[] memory whitelist = new uint32[](0);
+    uint32[] memory blacklist = new uint32[](0);
+    return _createRelationship(npcIndex, relIndex, "relationship name", whitelist, blacklist);
+  }
+
+  function _createRelationship(
+    uint32 npcIndex,
+    uint32 relIndex,
+    string memory name,
+    uint32[] memory whitelist,
+    uint32[] memory blacklist
+  ) internal returns (uint256) {
+    vm.prank(deployer);
+    return
+      abi.decode(
+        __RegistryCreateRelationshipSystem.executeTyped(
+          npcIndex,
+          relIndex,
+          name,
+          whitelist,
+          blacklist
+        ),
         (uint256)
       );
   }

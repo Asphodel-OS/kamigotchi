@@ -28,6 +28,7 @@
     "IdDelegatorComponent",
     "IdHolderComponent",
     "IdOwnsQuestComponent",
+    "IdOwnsRelationshipComponent",
     "IdNodeComponent",
     "IdPetComponent",
     "IdSourceComponent",
@@ -914,7 +915,7 @@
       "name": "RelationshipAdvanceSystem",
       "writeAccess": [
         "IsRelationshipComponent",
-        "IdAccountComponent",
+        "IdOwnsRelationshipComponent",
         "IndexNPCComponent",
         "IndexRelationshipComponent",
         "TimeLastComponent"
