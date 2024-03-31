@@ -20,7 +20,6 @@ contract FriendRequestSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    require(accountID != 0, "FriendRequest: no account");
     require(targetID != 0, "FriendRequest: target no account");
     require(accountID != targetID, "FriendRequest: cannot fren self");
 

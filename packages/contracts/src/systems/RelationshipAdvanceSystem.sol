@@ -17,7 +17,6 @@ contract RelationshipAdvanceSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 npcIndex, uint32 relIndex) = abi.decode(arguments, (uint32, uint32));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(accountID != 0, "RelationshipAdvance: no account");
 
     // npc existence and roomIndex check
     uint256 npcID = LibNPC.getByIndex(components, npcIndex);

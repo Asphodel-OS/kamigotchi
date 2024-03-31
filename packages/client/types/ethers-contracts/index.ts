@@ -18,6 +18,7 @@ export type { BareValueComponent } from "./BareValueComponent";
 export type { BlacklistComponent } from "./BlacklistComponent";
 export type { BlockRevealComponent } from "./BlockRevealComponent";
 export type { BoolComponent } from "./BoolComponent";
+export type { CacheOperatorComponent } from "./CacheOperatorComponent";
 export type { CanNameComponent } from "./CanNameComponent";
 export type { CoinComponent } from "./CoinComponent";
 export type { ControlledBridgeSystem } from "./ControlledBridgeSystem";
@@ -227,6 +228,7 @@ export { BareValueComponent__factory } from "./factories/BareValueComponent__fac
 export { BlacklistComponent__factory } from "./factories/BlacklistComponent__factory";
 export { BlockRevealComponent__factory } from "./factories/BlockRevealComponent__factory";
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";
+export { CacheOperatorComponent__factory } from "./factories/CacheOperatorComponent__factory";
 export { CanNameComponent__factory } from "./factories/CanNameComponent__factory";
 export { CoinComponent__factory } from "./factories/CoinComponent__factory";
 export { ControlledBridgeSystem__factory } from "./factories/ControlledBridgeSystem__factory";

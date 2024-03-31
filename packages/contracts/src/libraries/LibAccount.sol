@@ -15,6 +15,7 @@ import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAcc
 import { IndexFarcasterComponent, ID as IndexFarcasterCompID } from "components/IndexFarcasterComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
+import { CacheOperatorComponent, ID as CacheOperatorCompID } from "components/CacheOperatorComponent.sol";
 import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
@@ -33,6 +34,7 @@ import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { Stat, LibStat } from "libraries/LibStat.sol";
+import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 library LibAccount {
   /////////////////
@@ -52,6 +54,10 @@ library LibAccount {
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 1);
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, block.timestamp);
+    CacheOperatorComponent(getAddressById(components, CacheOperatorCompID)).set(
+      uint256(uint160(operatorAddr)),
+      id
+    );
 
     int32 baseStamina = int32(uint32(LibConfig.get(components, "ACCOUNT_STAMINA_BASE")));
     LibStat.setStamina(components, id, Stat(baseStamina, 0, 0, baseStamina));
@@ -124,7 +130,12 @@ library LibAccount {
   /////////////////
   // SETTERS
 
-  function setOperator(IUintComp components, uint256 id, address addr) internal {
+  function setOperator(IUintComp components, uint256 id, address addr, address prevAddr) internal {
+    CacheOperatorComponent cacheComp = CacheOperatorComponent(
+      getAddressById(components, CacheOperatorCompID)
+    );
+    cacheComp.remove(uint256(uint160(prevAddr)));
+    cacheComp.set(uint256(uint160(addr)), id);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, addr);
   }
 
@@ -170,6 +181,20 @@ library LibAccount {
 
   function isAccount(IUintComp components, uint256 id) internal view returns (bool) {
     return IsAccountComponent(getAddressById(components, IsAccCompID)).has(id);
+  }
+
+  function ownerInUse(IUintComp components, address owner) internal view returns (bool) {
+    return
+      AddressOwnerComponent(getAddressById(components, AddrOwnerCompID))
+        .getEntitiesWithValue(abi.encode(owner))
+        .length > 0;
+  }
+
+  function operatorInUse(IUintComp components, address operator) internal view returns (bool) {
+    return
+      CacheOperatorComponent(getAddressById(components, CacheOperatorCompID)).has(
+        uint256(uint160(operator))
+      );
   }
 
   // Check whether an Account shares RoomIndex with another entity.
@@ -269,59 +294,43 @@ library LibAccount {
     return uint32(getAll(components).length);
   }
 
-  // retrieves the pet with the specified name
+  // retrieves the account with farcaster index
   function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
+    uint256[] memory results = LibSafeQuery.getIsWithValue(
       getComponentById(components, IndexFarcasterCompID),
+      getComponentById(components, IsAccCompID),
       abi.encode(fid)
     );
-
-    uint256[] memory results = LibQuery.query(fragments);
     return (results.length > 0) ? results[0] : 0;
   }
 
-  // retrieves the pet with the specified name
+  // retrieves the account with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
+    uint256[] memory results = LibSafeQuery.getIsWithValue(
       getComponentById(components, NameCompID),
+      getComponentById(components, IsAccCompID),
       abi.encode(name)
     );
-
-    uint256[] memory results = LibQuery.query(fragments);
     return (results.length > 0) ? results[0] : 0;
   }
 
   // Get an account entity by Wallet address. Assume only 1.
   function getByOperator(IUintComp components, address operator) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, AddrOperatorCompID),
-      abi.encode(operator)
+    CacheOperatorComponent cacheComp = CacheOperatorComponent(
+      getAddressById(components, CacheOperatorCompID)
     );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    return (results.length > 0) ? results[0] : 0;
+    uint256 id = uint256(uint160(operator));
+    require(cacheComp.has(id), "Account: Operator not found");
+    return cacheComp.getValue(id);
   }
 
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
+    uint256[] memory results = LibSafeQuery.getIsWithValue(
       getComponentById(components, AddrOwnerCompID),
+      getComponentById(components, IsAccCompID),
       abi.encode(owner)
     );
-
-    uint256[] memory results = LibQuery.query(fragments);
     return (results.length > 0) ? results[0] : 0;
   }
 

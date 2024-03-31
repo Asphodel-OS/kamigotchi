@@ -7,6 +7,8 @@ import "test/utils/MudTest.t.sol";
 <% libraries.forEach(library => { -%>
 import { <%=library%> } from "libraries/<%= library %>.sol";
 <% }); -%>
+import { LibPack } from "libraries/utils/LibPack.sol";
+import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 // Components
 <% components.forEach(component => { -%>

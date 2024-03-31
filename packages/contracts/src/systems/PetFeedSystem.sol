@@ -30,7 +30,6 @@ contract PetFeedSystem is System {
     require(LibString.eq(type_, "FOOD"), "PetFeed: that's not food");
 
     // standard checks (ownership, state, roomIndex)
-    require(accountID != 0, "PetFeed: no account");
     require(LibPet.isPet(components, id), "PetFeed: not a pet");
     require(LibPet.getAccount(components, id) == accountID, "PetFeed: pet not urs");
     require(!LibPet.onCooldown(components, id), "PetFeed: pet on cooldown");
