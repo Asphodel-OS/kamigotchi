@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+
+import "std-contracts/components/Uint256BareComponent.sol";
+
+uint256 constant ID = uint256(keccak256("component.Hash.Reverse"));
+
+/// @notice a generic component as a single reverse mapping to a hash
+contract HashReverseComponent is Uint256BareComponent {
+  constructor(address world) Uint256BareComponent(world, ID) {}
+
+  function set(uint256 id, bytes32 value) public onlyWriter {
+    _set(id, abi.encode(uint256(value)));
+  }
+}

@@ -152,43 +152,85 @@ contract GasTest is EmptyWorld {
     console.log("1 entity     : ", gasstart - gasleft());
 
     createEntity(9, 0);
-    createEntity(1, holder);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("10 entities  : ", gasstart - gasleft());
 
     createEntity(100, 0);
-    createEntity(1, holder);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("100 entities : ", gasstart - gasleft());
 
     createEntity(400, 0);
-    createEntity(1, holder);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("500 entities : ", gasstart - gasleft());
 
     createEntity(500, 0);
-    createEntity(1, holder);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("1000 entities: ", gasstart - gasleft());
 
     createEntity(500, 0);
-    createEntity(1, holder);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("1500 entities: ", gasstart - gasleft());
 
     createEntity(500, 0);
-    createEntity(1, holder);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("2000 entities: ", gasstart - gasleft());
 
     createEntity(500, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("2500 entities: ", gasstart - gasleft());
+  }
+
+  function testQuery2() public {
+    uint256 holder = uint256(keccak256("iambagholder"));
+
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[1] = QueryFragment(QueryType.Has, isComp, "");
+    fragments[0] = QueryFragment(QueryType.HasValue, ownerComp, abi.encode(holder));
+
+    createEntity(1, 0);
     createEntity(1, holder);
+    uint256 gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("1 entity     : ", gasstart - gasleft());
+
+    createEntity(9, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("10 entities  : ", gasstart - gasleft());
+
+    createEntity(100, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("100 entities : ", gasstart - gasleft());
+
+    createEntity(400, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("500 entities : ", gasstart - gasleft());
+
+    createEntity(500, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("1000 entities: ", gasstart - gasleft());
+
+    createEntity(500, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("1500 entities: ", gasstart - gasleft());
+
+    createEntity(500, 0);
+    gasstart = gasleft();
+    LibQuery.query(fragments);
+    console.log("2000 entities: ", gasstart - gasleft());
+
+    createEntity(500, 0);
     gasstart = gasleft();
     LibQuery.query(fragments);
     console.log("2500 entities: ", gasstart - gasleft());
