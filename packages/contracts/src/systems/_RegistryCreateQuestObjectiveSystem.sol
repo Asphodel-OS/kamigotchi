@@ -37,12 +37,13 @@ contract _RegistryCreateQuestObjectiveSystem is System {
       questIndex,
       name,
       logicType,
-      type_
+      type_,
+      index
     );
-    if (index != 0) LibRegistryQuests.setIndex(components, id, index);
+
     if (value != 0) LibRegistryQuests.setBalance(components, id, value);
 
-    return "";
+    return abi.encode(id);
   }
 
   function executeTyped(

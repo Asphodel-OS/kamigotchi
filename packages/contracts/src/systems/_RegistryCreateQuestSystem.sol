@@ -23,7 +23,6 @@ contract _RegistryCreateQuestSystem is System {
     ) = abi.decode(arguments, (uint32, string, string, string, uint256, uint256));
 
     uint256 regID = LibRegistryQuests.createQuest(
-      world,
       components,
       index,
       name,
@@ -37,7 +36,7 @@ contract _RegistryCreateQuestSystem is System {
       LibRegistryQuests.setRepeatable(components, regID, duration);
     }
 
-    return "";
+    return abi.encode(regID);
   }
 
   function executeTyped(

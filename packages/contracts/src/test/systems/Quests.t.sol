@@ -3,21 +3,59 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
+import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
+import { LibQuery } from "solecs/LibQuery.sol";
+import { getAddressById, getComponentById } from "solecs/utils.sol";
+
+import { LibHash } from "libraries/utils/LibHash.sol";
+
+struct DataEntity {
+  uint256 holderID;
+  uint32 index;
+  string type_;
+}
+
 contract QuestsTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
   }
 
-  function _assertQuestAccount(uint256 accountID, uint256 questID) internal {
-    assertEq(LibQuests.getAccountId(components, questID), accountID);
-  }
+  function testRegistryCreation() public {
+    uint256 expectedID = LibRegistryQuests.genQuestID(1);
+    uint256 regID = _createQuest(1, 0);
 
-  function _assertAccNumQuests(uint256 accountID, uint256 numQuests) internal {
-    assertEq(_getAccountQuests(accountID).length, numQuests);
-  }
+    assertEq(expectedID, regID);
+    assertTrue(!_QuestConditionsComponent.has(expectedID));
+    assertTrue(!_QuestConditionsComponent.has(LibRegistryQuests.genObjArrID(1)));
+    assertTrue(!_QuestConditionsComponent.has(LibRegistryQuests.genReqArrID(1)));
+    assertTrue(!_QuestConditionsComponent.has(LibRegistryQuests.genRewArrID(1)));
 
-  function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
-    return LibQuests.queryAccountQuests(components, accountID);
+    uint256[] memory reqsArr = new uint256[](5);
+    for (uint256 i; i < 5; i++) {
+      uint256 newID = _createQuestRequirement(1, "CURR_MIN", "COIN", 0, 1);
+      reqsArr[i] = newID;
+
+      uint256[] memory newArr = LibRegistryQuests.getRequirementsByQuestIndex(components, 1);
+      for (uint256 j; j <= i; j++) assertEq(newArr[j], reqsArr[j]);
+    }
+
+    uint256[] memory objsArr = new uint256[](5);
+    for (uint256 i; i < 5; i++) {
+      uint256 newID = _createQuestObjective(1, "Quest 1", "CURR_MIN", "COIN_TOTAL", uint32(i), 10);
+      objsArr[i] = newID;
+
+      uint256[] memory newArr = LibRegistryQuests.getObjectivesByQuestIndex(components, 1);
+      for (uint256 j; j <= i; j++) assertEq(newArr[j], objsArr[j]);
+    }
+
+    uint256[] memory rewsArr = new uint256[](5);
+    for (uint256 i; i < 5; i++) {
+      uint256 newID = _createQuestReward(1, "COIN", 0, 1);
+      rewsArr[i] = newID;
+
+      uint256[] memory newArr = LibRegistryQuests.getRewardsByQuestIndex(components, 1);
+      for (uint256 j; j <= i; j++) assertEq(newArr[j], rewsArr[j]);
+    }
   }
 
   function testAcceptQuest() public {
@@ -89,6 +127,55 @@ contract QuestsTest is SetupTemplate {
     _assertAccNumQuests(_getAccount(0), 0);
   }
 
+  function testObjectiveSnapshot(uint128 startAmt, uint128 useAmt, uint32 expIndex) public {
+    vm.assume(useAmt > 0);
+    DataEntity memory expData = DataEntity(_getAccount(0), expIndex, "TEST.DATA");
+    string memory expLogicType = "INC_MIN";
+
+    // initial setup
+    _createQuest(1, 0);
+    // _createQuestObjective(1, "TEST.OBJ", "CURR_MIN", "TEST.DATA", 0, 1);
+    uint256 regObj = _createQuestObjective(
+      1,
+      "TEST.OBJ",
+      expLogicType,
+      expData.type_,
+      expIndex,
+      uint256(useAmt)
+    );
+    uint256 hashedObj = uint256(
+      keccak256(abi.encode("Quest.Objective", expLogicType, expData.type_, expIndex))
+    );
+    if (startAmt > 0) {
+      vm.startPrank(deployer);
+      LibDataEntity.set(components, expData.holderID, expData.index, expData.type_, startAmt);
+      vm.stopPrank();
+    }
+
+    // accept quest
+    uint256 questID = _acceptQuest(0, 1);
+
+    // check that snapshots are correctly stored
+    uint256[] memory snapshots = _getQuestObjSnapshots(questID);
+    assertEq(snapshots.length, 1);
+    assertTrue(_IsObjectiveComponent.has(snapshots[0]));
+    assertEq(_IdHolderComponent.getValue(snapshots[0]), questID);
+    assertEq(_BalanceComponent.getValue(snapshots[0]), startAmt);
+    assertEq(_HashComponent.getValue(snapshots[0]), hashedObj);
+    assertEq(LibHash.getByReverse(components, hashedObj), regObj);
+
+    // check completability
+    assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));
+    vm.startPrank(deployer);
+    LibDataEntity.inc(components, expData.holderID, expData.index, expData.type_, useAmt);
+    vm.stopPrank();
+    assertTrue(LibQuests.checkObjectives(components, questID, _getAccount(0)));
+
+    // complete, check snapshots deleted
+    _completeQuest(0, questID);
+    assertEq(_getQuestObjSnapshots(questID).length, 0);
+  }
+
   function testQuestCoinHave() public {
     // create quest
     _createQuest(1, 0);
@@ -111,7 +198,7 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -144,11 +231,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
     _fundAccount(0, 9);
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -184,11 +271,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
     _moveAccount(0, 2);
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -212,11 +299,11 @@ contract QuestsTest is SetupTemplate {
 
     // check that quest cant be completed when failing objectives
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
     _mintPet(0);
     vm.prank(operator);
-    vm.expectRevert("QuestComplete: objs not met");
+    vm.expectRevert("Quest: objs not met");
     _QuestCompleteSystem.executeTyped(questID);
 
     // check that quest can be completed when objectives met
@@ -277,5 +364,43 @@ contract QuestsTest is SetupTemplate {
 
     _completeQuest(0, questID);
     assertEq(LibAccount.getQuestPoints(components, _getAccount(0)), 2);
+  }
+
+  //////////////////
+  // ASSERTIONS
+
+  function _assertQuestAccount(uint256 accountID, uint256 questID) internal {
+    assertEq(LibQuests.getAccountId(components, questID), accountID);
+  }
+
+  function _assertAccNumQuests(uint256 accountID, uint256 numQuests) internal {
+    assertEq(_getAccountQuests(accountID).length, numQuests);
+  }
+
+  ////////////////
+  // UTILS
+
+  function _getDataID(DataEntity memory data) internal view returns (uint256) {
+    return LibDataEntity.getID(data.holderID, data.index, data.type_);
+  }
+
+  function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdHolderComponentID),
+      abi.encode(questID)
+    );
+    fragments[1] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsObjectiveComponentID),
+      ""
+    );
+
+    return LibQuery.query(fragments);
+  }
+
+  function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
+    return LibQuests.queryAccountQuests(components, accountID);
   }
 }
