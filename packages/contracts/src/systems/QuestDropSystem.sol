@@ -18,7 +18,7 @@ contract QuestDropSystem is System {
 
     require(LibQuests.isQuest(components, questID), "Quest: not a quest");
     require(!LibQuests.isCompleted(components, questID), "Quests: alr completed");
-    require(accountID == LibQuests.getAccountId(components, questID), "Quest: not ur quest");
+    require(accountID == LibQuests.getOwner(components, questID), "Quest: not ur quest");
 
     LibQuests.drop(components, questID);
 
