@@ -20,7 +20,6 @@ contract PetNameSystem is System {
     (uint256 id, string memory name) = abi.decode(arguments, (uint256, string));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(accountID != 0, "PetName: no account");
     require(LibPet.isPet(components, id), "PetName: not a pet");
     require(LibPet.canName(components, id), "PetName: cannot named");
     require(LibPet.getAccount(components, id) == accountID, "PetName: not urs");

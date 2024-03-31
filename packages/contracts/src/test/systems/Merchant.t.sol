@@ -276,11 +276,11 @@ contract NPCTest is SetupTemplate {
     for (uint i = 0; i < numAccounts; i++) {
       for (uint j = 0; j < numListings; j++) {
         vm.prank(_getOwner(i));
-        vm.expectRevert("Account: not found");
+        vm.expectRevert("Account: Operator not found");
         _ListingBuySystem.executeTyped(listingIDs1[j], 0);
 
         vm.prank(_getOwner(i));
-        vm.expectRevert("Account: not found");
+        vm.expectRevert("Account: Operator not found");
         _ListingSellSystem.executeTyped(listingIDs1[j], 0);
       }
     }

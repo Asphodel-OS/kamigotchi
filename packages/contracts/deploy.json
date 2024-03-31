@@ -8,6 +8,7 @@
     "BareValueComponent",
     "BlacklistComponent",
     "BlockRevealComponent",
+    "CacheOperatorComponent",
     "CanNameComponent",
     "CoinComponent",
     "CostComponent",
@@ -429,6 +430,7 @@
         "IndexAccountComponent",
         "AddressOperatorComponent",
         "AddressOwnerComponent",
+        "CacheOperatorComponent",
         "FavoriteFoodComponent",
         "IndexRoomComponent",
         "NameComponent",
@@ -444,7 +446,7 @@
     },
     {
       "name": "AccountSetOperatorSystem",
-      "writeAccess": ["AddressOperatorComponent", "TimeLastComponent"]
+      "writeAccess": ["AddressOperatorComponent", "CacheOperatorComponent", "TimeLastComponent"]
     },
     {
       "name": "AccountSetFarcasterDataSystem",

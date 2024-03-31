@@ -24,7 +24,6 @@ contract ProductionStartSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "FarmStart: no account");
     require(LibPet.getAccount(components, petID) == accountID, "FarmStart: pet not urs");
     require(LibPet.isResting(components, petID), "FarmStart: pet must be resting");
     require(!LibPet.onCooldown(components, petID), "FarmStart: pet on cooldown");

@@ -28,7 +28,6 @@ contract PetReviveSystem is System {
     require(LibString.eq(type_, "REVIVE"), "PetRevive: god can't save you");
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "PetRevive: no account");
     require(LibPet.getAccount(components, id) == accountID, "PetRevive: pet not urs");
     require(LibPet.isDead(components, id), "PetRevive: pet not dead");
 

@@ -18,7 +18,6 @@ contract FriendCancelSystem is System {
     uint256 friendshipID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(accountID != 0, "FriendCancel: no account");
     require(LibFriend.isFriendship(components, friendshipID), "FriendCancel: not a friendship");
 
     string memory state = LibFriend.getState(components, friendshipID);

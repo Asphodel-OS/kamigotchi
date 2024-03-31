@@ -22,7 +22,6 @@ contract FriendBlockSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
     uint256 targetID = LibAccount.getByOwner(components, targetAddr);
 
-    require(accountID != 0, "FriendBlock: no account");
     require(targetID != 0, "FriendBlock: target no account");
     require(accountID != targetID, "FriendBlock: cannot block self");
 

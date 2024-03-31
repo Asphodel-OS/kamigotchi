@@ -17,18 +17,16 @@ contract AccountRegisterSystem is System {
       arguments,
       (address, string, string)
     );
-    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
-    require(accountID == 0, "Account: exists for Owner");
+    require(!LibAccount.ownerInUse(components, msg.sender), "Account: exists for Owner");
 
-    accountID = LibAccount.getByOperator(components, operator);
-    require(accountID == 0, "Account: exists for Operator");
+    require(!LibAccount.operatorInUse(components, operator), "Account: exists for Operator");
 
     // check for naming constraints
     require(bytes(name).length > 0, "Account: name cannot be empty");
     require(bytes(name).length <= 16, "Account: name must be < 16chars");
     require(LibAccount.getByName(components, name) == 0, "Account: name taken");
 
-    accountID = LibAccount.create(world, components, msg.sender, operator);
+    uint256 accountID = LibAccount.create(world, components, msg.sender, operator);
     LibAccount.setName(components, accountID, name);
     LibAccount.setFavoriteFood(components, accountID, food);
 

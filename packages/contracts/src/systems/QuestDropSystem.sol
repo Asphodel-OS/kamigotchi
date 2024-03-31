@@ -16,7 +16,6 @@ contract QuestDropSystem is System {
     uint256 questID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(accountID != 0, "QuestDrop: no account");
     require(LibQuests.isQuest(components, questID), "QuestDrop: not a quest");
     require(accountID == LibQuests.getAccountId(components, questID), "QuestDrop: not ur quest");
 

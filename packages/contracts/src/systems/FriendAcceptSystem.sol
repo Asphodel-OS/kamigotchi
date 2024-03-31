@@ -19,7 +19,6 @@ contract FriendAcceptSystem is System {
     uint256 requestID = abi.decode(arguments, (uint256));
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(accountID != 0, "FriendAccept: no account");
     require(LibFriend.isFriendship(components, requestID), "FriendAccept: not a friendship");
     require(
       LibString.eq(LibFriend.getState(components, requestID), "REQUEST"),

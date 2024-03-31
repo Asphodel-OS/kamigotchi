@@ -29,7 +29,6 @@ contract ProductionStopSystem is System {
     uint256 petID = LibProduction.getPet(components, id);
 
     // standard checks (ownership, cooldown, state)
-    require(accountID != 0, "FarmStop: no account");
     require(LibPet.getAccount(components, petID) == accountID, "FarmStop: pet not urs");
     require(LibPet.isHarvesting(components, petID), "FarmStop: pet must be harvesting");
     require(!LibPet.onCooldown(components, petID), "FarmStop: pet on cooldown");

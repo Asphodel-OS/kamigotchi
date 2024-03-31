@@ -14,13 +14,13 @@ contract AccountSetOperatorSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     address operator = abi.decode(arguments, (address));
-    uint256 accountID = LibAccount.getByOperator(components, operator);
-    require(accountID == 0, "Account: Operator already in use");
+    require(!LibAccount.operatorInUse(components, operator), "Account: Operator already in use");
 
-    accountID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accountID = LibAccount.getByOwner(components, msg.sender);
     require(accountID != 0, "Account: does not exist");
 
-    LibAccount.setOperator(components, accountID, operator);
+    address prevOperator = LibAccount.getOperator(components, accountID);
+    LibAccount.setOperator(components, accountID, operator, prevOperator);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

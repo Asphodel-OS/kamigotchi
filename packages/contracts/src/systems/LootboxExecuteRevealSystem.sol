@@ -19,7 +19,6 @@ contract LootboxExecuteRevealSystem is System {
     uint256 id = abi.decode(arguments, (uint256));
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
-    require(accountID != 0, "no account");
     require(accountID == LibLootbox.getHolder(components, id), "not ur lootbox");
     require(
       LibLootbox.isLootbox(components, id) && LibRandom.hasRevealBlock(components, id),
