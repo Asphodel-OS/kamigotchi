@@ -51,6 +51,11 @@ export function registerWalletConnecter() {
       // update the network settings whenever the connector/address changes
       // determine whether/with what content this Validator should be populated
       useEffect(() => {
+        console.log(wallets);
+        console.log('chain', chain);
+        console.log('defaultChain', defaultChain);
+        console.log('connectorAddress', connectorAddress);
+
         const injectedWallet = getInjectedWallet(wallets);
         const embeddedWallet = getEmbeddedWallet(wallets);
         if (!injectedWallet) return console.log(`No injected wallet found.`);
