@@ -1,9 +1,9 @@
 import { PrivyClientConfig, PrivyProvider } from '@privy-io/react-auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { defaultChain } from 'constants/chains';
 import { Layers } from 'src/types';
 import { BootScreen, MainWindow } from './components';
@@ -29,7 +29,7 @@ export const Engine: React.FC<{
   const wagmiConfig = createConfig({
     chains: [defaultChain],
     transports: {
-      [defaultChain.id]: http(),
+      [defaultChain.id]: http('https://go.getblock.io/ecf00857f13140bb9d75d51597663370'),
     },
   });
 
