@@ -103,11 +103,11 @@ contract TraitsTest is SetupTemplate {
     uint[] memory petIDs = __721BatchMinterSystem.batchMint(numPets);
     vm.stopPrank();
 
-    uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, IndexBackgroundCompID);
-    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, IndexBodyCompID);
-    uint[] memory colors = LibRegistryTrait.getAllOfType(components, IndexColorCompID);
-    uint[] memory faces = LibRegistryTrait.getAllOfType(components, IndexFaceCompID);
-    uint[] memory hands = LibRegistryTrait.getAllOfType(components, IndexHandCompID);
+    uint[] memory backgrounds = LibRegistryTrait.getAllOfType(components, "BACKGROUND");
+    uint[] memory bodies = LibRegistryTrait.getAllOfType(components, "BODY");
+    uint[] memory colors = LibRegistryTrait.getAllOfType(components, "COLOR");
+    uint[] memory faces = LibRegistryTrait.getAllOfType(components, "FACE");
+    uint[] memory hands = LibRegistryTrait.getAllOfType(components, "HAND");
 
     uint[] memory bgCounts = new uint[](backgrounds.length);
     uint[] memory bodyCounts = new uint[](bodies.length);

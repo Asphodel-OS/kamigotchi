@@ -4,23 +4,23 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
+import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBackgroundCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
 import { IndexFaceComponent, ID as IndexFaceCompID } from "components/IndexFaceComponent.sol";
 import { IndexHandComponent, ID as IndexHandCompID } from "components/IndexHandComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
-import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
+import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 // LibRegistryTrait is based heavily off LibRegistryItem, but is used for traits.
 // IndexTrait is the automatically incremented domain index, but traits are
@@ -49,9 +49,10 @@ library LibRegistryTrait {
   ) internal returns (uint256) {
     require(getByBodyIndex(components, bodyIndex) == 0, "LibRegTrait: body used");
 
-    uint256 id = getID(bodyIndex, "BODY");
+    uint256 id = genID(bodyIndex, "BODY");
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     setBodyIndex(components, id, bodyIndex);
+    setReverseMappingPtr(components, id, "BODY");
 
     createTrait(components, id, values);
     return id;
@@ -65,9 +66,10 @@ library LibRegistryTrait {
   ) internal returns (uint256) {
     require(getByBackgroundIndex(components, backgroundIndex) == 0, "LibRegTrait: background used");
 
-    uint256 id = getID(backgroundIndex, "BACKGROUND");
+    uint256 id = genID(backgroundIndex, "BACKGROUND");
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     setBackgroundIndex(components, id, backgroundIndex);
+    setReverseMappingPtr(components, id, "BACKGROUND");
 
     createTrait(components, id, values);
     return id;
@@ -81,9 +83,10 @@ library LibRegistryTrait {
   ) internal returns (uint256) {
     require(getByColorIndex(components, colorIndex) == 0, "LibRegTrait: color used");
 
-    uint256 id = getID(colorIndex, "COLOR");
+    uint256 id = genID(colorIndex, "COLOR");
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     setColorIndex(components, id, colorIndex);
+    setReverseMappingPtr(components, id, "COLOR");
 
     createTrait(components, id, values);
     return id;
@@ -97,9 +100,10 @@ library LibRegistryTrait {
   ) internal returns (uint256) {
     require(getByFaceIndex(components, faceIndex) == 0, "LibRegTrait: face used");
 
-    uint256 id = getID(faceIndex, "FACE");
+    uint256 id = genID(faceIndex, "FACE");
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     setFaceIndex(components, id, faceIndex);
+    setReverseMappingPtr(components, id, "FACE");
 
     createTrait(components, id, values);
     return id;
@@ -113,9 +117,10 @@ library LibRegistryTrait {
   ) internal returns (uint256) {
     require(getByHandIndex(components, handIndex) == 0, "LibRegTrait: hand used");
 
-    uint256 id = getID(handIndex, "HAND");
+    uint256 id = genID(handIndex, "HAND");
     IsRegistryComponent(getAddressById(components, IsRegCompID)).set(id);
     setHandIndex(components, id, handIndex);
+    setReverseMappingPtr(components, id, "HAND");
 
     createTrait(components, id, values);
     return id;
@@ -139,6 +144,7 @@ library LibRegistryTrait {
   function remove(IUintComp components, uint256 id) internal {
     IsRegistryComponent(getAddressById(components, IsRegCompID)).remove(id);
     NameComponent(getAddressById(components, NameCompID)).remove(id);
+    ForComponent(getAddressById(components, ForCompID)).remove(id);
     if (isBody(components, id))
       IndexBodyComponent(getAddressById(components, IndexBodyCompID)).remove(id);
     if (isBackground(components, id))
@@ -232,6 +238,10 @@ library LibRegistryTrait {
     LibStat.setPower(components, id, Stat(value, 0, 0, 0));
   }
 
+  function setReverseMappingPtr(IUintComp components, uint256 id, string memory _type) internal {
+    ForComponent(getAddressById(components, ForCompID)).set(id, genReverseMappingPtr(_type));
+  }
+
   function setSlots(IUintComp components, uint256 id, int32 value) internal {
     LibStat.setSlots(components, id, Stat(value, 0, 0, 0));
   }
@@ -307,7 +317,7 @@ library LibRegistryTrait {
   function getBackgroundRarities(
     IUintComp components
   ) internal view returns (uint32[] memory keys, uint256[] memory weights) {
-    uint256[] memory ids = getAllOfType(components, IndexBackgroundCompID);
+    uint256[] memory ids = getAllOfType(components, "BACKGROUND");
     keys = new uint32[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getBackgroundIndex(components, ids[i]);
@@ -319,7 +329,7 @@ library LibRegistryTrait {
   function getBodyRarities(
     IUintComp components
   ) internal view returns (uint32[] memory keys, uint256[] memory weights) {
-    uint256[] memory ids = getAllOfType(components, IndexBodyCompID);
+    uint256[] memory ids = getAllOfType(components, "BODY");
     keys = new uint32[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getBodyIndex(components, ids[i]);
@@ -331,7 +341,7 @@ library LibRegistryTrait {
   function getColorRarities(
     IUintComp components
   ) internal view returns (uint32[] memory keys, uint256[] memory weights) {
-    uint256[] memory ids = getAllOfType(components, IndexColorCompID);
+    uint256[] memory ids = getAllOfType(components, "COLOR");
     keys = new uint32[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getColorIndex(components, ids[i]);
@@ -343,7 +353,7 @@ library LibRegistryTrait {
   function getFaceRarities(
     IUintComp components
   ) internal view returns (uint32[] memory keys, uint256[] memory weights) {
-    uint256[] memory ids = getAllOfType(components, IndexFaceCompID);
+    uint256[] memory ids = getAllOfType(components, "FACE");
     keys = new uint32[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getFaceIndex(components, ids[i]);
@@ -355,7 +365,7 @@ library LibRegistryTrait {
   function getHandRarities(
     IUintComp components
   ) internal view returns (uint32[] memory keys, uint256[] memory weights) {
-    uint256[] memory ids = getAllOfType(components, IndexHandCompID);
+    uint256[] memory ids = getAllOfType(components, "HAND");
     keys = new uint32[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       keys[i] = getHandIndex(components, ids[i]);
@@ -401,7 +411,7 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 backgroundIndex
   ) internal view returns (uint256 result) {
-    result = getID(backgroundIndex, "BACKGROUND");
+    result = genID(backgroundIndex, "BACKGROUND");
     if (!IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).has(result))
       result = 0;
   }
@@ -411,7 +421,7 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 bodyIndex
   ) internal view returns (uint256 result) {
-    result = getID(bodyIndex, "BODY");
+    result = genID(bodyIndex, "BODY");
     if (!IndexBodyComponent(getAddressById(components, IndexBodyCompID)).has(result)) result = 0;
   }
 
@@ -420,7 +430,7 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 colorIndex
   ) internal view returns (uint256 result) {
-    result = getID(colorIndex, "COLOR");
+    result = genID(colorIndex, "COLOR");
     if (!IndexColorComponent(getAddressById(components, IndexColorCompID)).has(result)) result = 0;
   }
 
@@ -429,7 +439,7 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 faceIndex
   ) internal view returns (uint256 result) {
-    result = getID(faceIndex, "FACE");
+    result = genID(faceIndex, "FACE");
     if (!IndexFaceComponent(getAddressById(components, IndexFaceCompID)).has(result)) result = 0;
   }
 
@@ -438,7 +448,7 @@ library LibRegistryTrait {
     IUintComp components,
     uint32 handIndex
   ) internal view returns (uint256 result) {
-    result = getID(handIndex, "HAND");
+    result = genID(handIndex, "HAND");
     if (!IndexHandComponent(getAddressById(components, IndexHandCompID)).has(result)) result = 0;
   }
 
@@ -446,20 +456,27 @@ library LibRegistryTrait {
   // mostly used internally
   function getAllOfType(
     IUintComp components,
-    uint256 indexComponentID
+    string memory _type
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, indexComponentID), "");
-    uint256[] memory results = LibQuery.query(fragments);
-    return results;
+    uint256 ptr = genReverseMappingPtr(_type);
+    return
+      LibSafeQuery.getIsWithValue(
+        getComponentById(components, ForCompID),
+        getComponentById(components, IsRegCompID),
+        abi.encode(ptr)
+      );
   }
 
   /////////////////
   // UTILS
 
-  /// @notice Retrieve the ID of a registry entry
-  function getID(uint32 index, string memory _type) internal pure returns (uint256) {
+  /// @notice Gens the ID of a registry entry
+  function genID(uint32 index, string memory _type) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("Registry.Trait", _type, index)));
+  }
+
+  /// @notice Gens the pointer to trait type - used for querying AllOfType
+  function genReverseMappingPtr(string memory _type) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Registry.Trait.Type", _type)));
   }
 }
