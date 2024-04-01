@@ -79,7 +79,6 @@ export function registerGasHarasser() {
       }, [
         isVisible,
         validators.walletConnector,
-        validators.burnerDetector,
         validators.accountRegistrar,
         validators.operatorUpdater,
       ]);

@@ -30,12 +30,13 @@ export function registerOperatorUpdater() {
     (layers) => {
       const { network } = layers;
       const { actions, components, world } = network;
-
       const [_, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
-      const { burner, selectedAddress, apis, validations: networkValidations } = useNetwork();
+
+      const { account: kamiAccount, validations, setValidations } = useAccount();
+      const { burnerAddress, selectedAddress } = useNetwork();
+      const { apis, validations: networkValidations } = useNetwork();
       const { toggleButtons, toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { account: kamiAccount, validations, setValidations } = useAccount();
 
       const [operatorMatches, setOperatorMatches] = useState(false);
       const [operatorTaken, setOperatorTaken] = useState(false);
@@ -45,10 +46,10 @@ export function registerOperatorUpdater() {
 
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
-        const operatorMatches = kamiAccount.operatorAddress === burner.connected.address;
+        const operatorMatches = kamiAccount.operatorAddress === burnerAddress;
         setOperatorMatches(operatorMatches);
         setValidations({ ...validations, operatorMatches });
-      }, [burner.connected.address, kamiAccount.operatorAddress]);
+      }, [burnerAddress, kamiAccount.operatorAddress]);
 
       // determine visibility based on above/prev checks
       useEffect(() => {
@@ -83,9 +84,9 @@ export function registerOperatorUpdater() {
 
       // check if the connected burner is already taken by an account
       useEffect(() => {
-        const account = getAccountByOperator(world, components, burner.connected.address);
+        const account = getAccountByOperator(world, components, burnerAddress);
         setOperatorTaken(!!account.id);
-      }, [mode, burner.connected.address]);
+      }, [mode, burnerAddress]);
 
       /////////////////
       // ACTIONS
@@ -168,7 +169,7 @@ export function registerOperatorUpdater() {
             <ActionButton
               id={`copy`}
               text='Use connected one'
-              onClick={() => setValue(burner.connected.address)}
+              onClick={() => setValue(burnerAddress)}
               disabled={operatorTaken}
               size='vending'
             />
@@ -192,7 +193,7 @@ export function registerOperatorUpdater() {
           errorPrimary='Connected Burner != Account Avatar'
         >
           <Description>Account Avatar: {kamiAccount.operatorAddress}</Description>
-          <Description>Connected Burner: {burner.connected.address}</Description>
+          <Description>Connected Burner: {burnerAddress}</Description>
           <br />
           <WarningOption onClick={() => handleSetMode('key')}>
             {mode === 'key' ? '→ ' : ''}Please, find your keys {kamiAccount.name}

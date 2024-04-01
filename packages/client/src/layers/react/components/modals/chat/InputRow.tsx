@@ -4,18 +4,20 @@ import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { Account } from 'layers/network/shapes/Account';
+import { ActionSystem } from 'layers/network/systems';
 import { FarcasterConnect, InputSingleTextForm } from 'layers/react/components/library';
 import { FarcasterUser, emptyFaracasterUser, client as neynarClient } from 'src/clients/neynar';
 
 interface Props {
   account: Account;
+  actionSystem: ActionSystem;
   actions: {
     pushCast: (cast: CastWithInteractions) => void;
   };
 }
 
 export const InputRow = (props: Props) => {
-  const { account } = props;
+  const { account, actionSystem } = props;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const [isSending, setIsSending] = useState(false);
 
@@ -39,7 +41,9 @@ export const InputRow = (props: Props) => {
         placeholder='Cast to /Kamigotchi'
         onSubmit={onSubmit}
       />
-      {!isAuthenticated() && <FarcasterConnect account={account} size='medium' />}
+      {!isAuthenticated() && (
+        <FarcasterConnect actionSystem={actionSystem} account={account} size='medium' />
+      )}
     </Container>
   );
 
@@ -61,7 +65,7 @@ export const InputRow = (props: Props) => {
       hash: response.hash,
       text: response.text,
       parent_hash: '',
-      parent_author: { fid: '0' },
+      parent_author: { fid: 0 },
       parent_url: '',
       embeds: [],
       timestamp: new Date(Date.now()).toISOString(),

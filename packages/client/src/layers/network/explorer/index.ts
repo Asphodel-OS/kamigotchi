@@ -1,6 +1,6 @@
-import { Component, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { Component, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { Components, World } from 'layers/network';
+import { Components } from 'layers/network';
 import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
 import { getAllItems, getItemByIndex } from 'layers/network/shapes/Item';
 import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';

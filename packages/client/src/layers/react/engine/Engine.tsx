@@ -46,6 +46,8 @@ export const Engine: React.FC<{
     // Create embedded wallets for users who don't have a wallet
     embeddedWallets: {
       createOnLogin: 'all-users',
+      noPromptOnSignature: true,
+      waitForTransactionConfirmation: false,
     },
   };
 

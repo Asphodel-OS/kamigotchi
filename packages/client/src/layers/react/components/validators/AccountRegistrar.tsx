@@ -119,7 +119,12 @@ export function registerAccountRegistrar() {
       const { getAccountDetails, getAccountIndexFromOwner } = functions;
       const { actions, components, world } = network;
 
-      const { burner, selectedAddress, apis, validations: networkValidations } = useNetwork();
+      const {
+        burnerAddress,
+        selectedAddress,
+        apis,
+        validations: networkValidations,
+      } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { setAccount, validations, setValidations } = useAccount();
@@ -177,11 +182,11 @@ export function registerAccountRegistrar() {
       // ACTIONS
 
       const copyBurnerAddress = () => {
-        navigator.clipboard.writeText(burner.connected.address);
+        navigator.clipboard.writeText(burnerAddress);
       };
 
       const copyBurnerPrivateKey = () => {
-        navigator.clipboard.writeText(burner.detected.key);
+        // navigator.clipboard.writeText(burner.detected.key);
       };
 
       const handleAccountCreation = async (username: string, food: string) => {
@@ -205,7 +210,7 @@ export function registerAccountRegistrar() {
         if (!api) return console.error(`API not established for ${selectedAddress}`);
         console.log(`CREATING ACCOUNT (${username}): ${selectedAddress}`);
 
-        const connectedBurner = burner.connected.address;
+        const connectedBurner = burnerAddress;
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
@@ -231,7 +236,7 @@ export function registerAccountRegistrar() {
       // RENDERING
 
       const OperatorDisplay = () => {
-        const address = burner.connected.address;
+        const address = burnerAddress;
         const addrPrefix = address.slice(0, 6);
         const addrSuffix = address.slice(-4);
         const addressTaken = operatorAddresses.has(address);
@@ -330,7 +335,7 @@ export function registerAccountRegistrar() {
       };
 
       const UsernameStep = () => {
-        const addressTaken = operatorAddresses.has(burner.connected.address);
+        const addressTaken = operatorAddresses.has(burnerAddress);
 
         const NextButton = () => {
           let button = (

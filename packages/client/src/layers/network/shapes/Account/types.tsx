@@ -1,6 +1,6 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { Components, World } from 'layers/network';
+import { Components } from 'layers/network';
 import { getBonusValue } from '../Bonus';
 import { getConfigFieldValue } from '../Config';
 import { getData } from '../Data';

@@ -11,9 +11,9 @@ import { SetupContractConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
 import { createNetwork } from './workers';
 
-export type World = ReturnType<typeof createWorld>;
 export type NetworkLayer = Awaited<ReturnType<typeof createNetworkLayer>>;
 
+// create and return a full network layer
 export async function createNetworkLayer(config: SetupContractConfig) {
   const world = createWorld();
   const components = createComponents(world);
@@ -54,21 +54,26 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   return networkLayer;
 }
 
-// Update the actual network instance of the network layer as well as the api
-// from the newly initialized System Executor, using a new provider
-export async function updateNetworkLayer(layer: NetworkLayer, provider: ExternalProvider) {
+// Create a network instance using the provided provider.
+// Uses private key in localstorage if no provider is provided.
+export async function createNetworkInstance(provider?: ExternalProvider) {
   const networkConfig = createNetworkConfig(provider);
   if (!networkConfig) throw new Error('Invalid config');
+  const network = await createNetwork(networkConfig);
+  return network;
+}
 
-  // create api for the new network
-  // NOTE: may be inefficient but easiest workaround to create MUD's boutique signer
-  const networkInstance = await createNetwork(networkConfig);
+// Create a newly initialized System Executor, using a new provider.
+// Update the network/systems/api of the network layer, if one is provided.
+export async function updateNetworkLayer(layer: NetworkLayer, provider?: ExternalProvider) {
+  const networkInstance = await createNetworkInstance(provider);
   const systems = layer.createSystems(networkInstance);
   layer.network = networkInstance;
   layer.systems = systems;
   layer.api = {
     admin: createAdminAPI(systems),
     player: createPlayerAPI(systems),
-    world: setupWorldAPI(systems, provider),
+    world: setupWorldAPI(systems, provider ?? networkInstance.providers.get().json),
   };
+  return layer;
 }

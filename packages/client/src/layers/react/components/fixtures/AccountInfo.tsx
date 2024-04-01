@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { erc20Abi, formatEther, formatUnits } from 'viem';
 import { useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
@@ -31,15 +31,8 @@ export function registerAccountInfoFixture() {
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
-      const { Coin, RoomIndex, Name, OperatorAddress, Stamina } = components;
 
-      return merge(
-        Coin.update$,
-        RoomIndex.update$,
-        Name.update$,
-        OperatorAddress.update$,
-        Stamina.update$
-      ).pipe(
+      return interval(1000).pipe(
         map(() => {
           const account = getAccountFromBurner(network);
           return {

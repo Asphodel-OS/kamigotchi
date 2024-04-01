@@ -5,7 +5,7 @@ import { TxQueue } from 'layers/network/workers';
 import { SystemTypes } from 'types/SystemTypes';
 
 export interface State {
-  burner: Burner;
+  burnerAddress: string;
   selectedAddress: string;
   validations: Validations;
   apis: Map<string, PlayerAPI>;
@@ -14,20 +14,8 @@ export interface State {
 interface Actions {
   addAPI: (address: string, systems: TxQueue<SystemTypes>) => void;
   setSelectedAddress: (address: string) => void;
-  setBurner: (burner: Burner) => void;
+  setBurnerAddress: (address: string) => void;
   setValidations: (validations: Validations) => void;
-}
-
-// represents the burner EOA(s) detected in localstorage / connected to the network
-// in-game txs originate from 'connected', which is set from the 'detected' one upon load
-interface Burner {
-  connected: {
-    address: string;
-  };
-  detected: {
-    address: string;
-    key: string;
-  };
 }
 
 // the result of  validations run on network state
@@ -39,15 +27,7 @@ interface Validations {
 
 export const useNetwork = create<State & Actions>((set) => {
   const initialState: State = {
-    burner: {
-      connected: {
-        address: '',
-      },
-      detected: {
-        address: '',
-        key: '',
-      },
-    },
+    burnerAddress: '',
     selectedAddress: '',
     apis: new Map<string, PlayerAPI>(),
     validations: {
@@ -59,7 +39,8 @@ export const useNetwork = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setBurner: (burner: Burner) => set((state: State) => ({ ...state, burner })),
+    setBurnerAddress: (burnerAddress: string) =>
+      set((state: State) => ({ ...state, burnerAddress })),
     setSelectedAddress: (selectedAddress: string) =>
       set((state: State) => ({ ...state, selectedAddress })),
     setValidations: (validations: Validations) =>

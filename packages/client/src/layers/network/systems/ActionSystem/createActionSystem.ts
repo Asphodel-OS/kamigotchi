@@ -65,7 +65,7 @@ export function createActionSystem<M = undefined>(
     // Store the request with the Action System and execute it
     request.index = entityIndex;
     requests.set(entityIndex, request);
-    execute(entityIndex);
+    execute(request);
     return entityIndex;
   }
 
@@ -74,13 +74,12 @@ export function createActionSystem<M = undefined>(
    * @param index EntityIndex of the Action to be executed
    * @returns void
    */
-  async function execute(index: EntityIndex) {
-    const request = requests.get(index);
-    if (!request || !request.index) return;
-    if (getComponentValue(Action, request.index)?.state !== ActionState.Requested) return;
-    const updateAction = (updates: any) => updateComponent(Action, request.index!, updates);
+  async function execute(request: ActionRequest) {
+    const actionState = getComponentValue(Action, request.index!)?.state;
+    if (actionState !== ActionState.Requested) return;
 
     // Update the action state
+    const updateAction = (data: any) => updateComponent(Action, request.index!, data);
     updateAction({ state: ActionState.Executing });
 
     try {

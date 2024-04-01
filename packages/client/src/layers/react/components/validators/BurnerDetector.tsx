@@ -1,3 +1,4 @@
+import { useWallets } from '@privy-io/react-auth';
 import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
@@ -20,12 +21,8 @@ export function registerBurnerDetector() {
       rowEnd: 70,
     },
     (layers) => {
-      const {
-        network: {
-          network,
-          components: { IsAccount, OwnerAddress, IsRegistry },
-        },
-      } = layers;
+      const { network } = layers;
+      const { IsAccount, OwnerAddress, IsRegistry } = network.components;
 
       return merge(
         IsAccount.update$,
@@ -33,7 +30,7 @@ export function registerBurnerDetector() {
         OwnerAddress.update$
       ).pipe(
         map(() => {
-          const connectedEOA = network.connectedAddress.get() ?? '';
+          const connectedEOA = network.network.connectedAddress.get() ?? '';
           return {
             connectedEOA,
             network: layers.network.network,
@@ -44,9 +41,11 @@ export function registerBurnerDetector() {
 
     ({ connectedEOA, network }) => {
       const [detectedPrivateKey, setDetectedPrivateKey] = useLocalStorage('operatorPrivateKey', '');
+      const { wallets } = useWallets();
+
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { validations, setValidations, setBurner } = useNetwork();
+      const { validations, setValidations } = useNetwork();
 
       const [isVisible, setIsVisible] = useState(false);
       const [burnerMatches, setBurnerMatches] = useState(false);
@@ -74,14 +73,14 @@ export function registerBurnerDetector() {
           setErrorSecondary('Please Refresh or enter the correct private key.');
         }
 
-        setBurner({
-          connected: { address: connectedEOA },
-          detected: {
-            address: detectedEOA,
-            key: detectedPrivateKey,
-          },
-        });
-        setValidations({ ...validations, burnerMatches });
+        // setBurner({
+        //   connected: { address: connectedEOA },
+        //   detected: {
+        //     address: detectedEOA,
+        //     key: detectedPrivateKey,
+        //   },
+        // });
+        setValidations({ ...validations, burnerMatches: true });
       }, [detectedPrivateKey, connectedEOA]);
 
       // determining visibility based on above/prev checks
@@ -91,14 +90,14 @@ export function registerBurnerDetector() {
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
-        if (isVisible) {
-          toggleModals(false);
-          toggleButtons(false);
-          toggleFixtures(false);
-        }
+        // if (isVisible) {
+        //   toggleModals(false);
+        //   toggleButtons(false);
+        //   toggleFixtures(false);
+        // }
         if (isVisible != validators.burnerDetector) {
           const { validators } = useVisibility.getState();
-          setValidators({ ...validators, burnerDetector: isVisible });
+          setValidators({ ...validators, burnerDetector: false });
         }
       }, [isVisible, validators.walletConnector]);
 

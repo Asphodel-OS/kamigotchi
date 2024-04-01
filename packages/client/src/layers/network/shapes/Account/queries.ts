@@ -1,6 +1,6 @@
-import { EntityID, EntityIndex, Has, HasValue, runQuery } from '@mud-classic/recs';
+import { EntityID, EntityIndex, Has, HasValue, World, runQuery } from '@mud-classic/recs';
 
-import { Components, NetworkLayer, World } from 'layers/network';
+import { Components, NetworkLayer } from 'layers/network';
 import { AccountOptions, getAccount } from './types';
 
 export const getAllAccounts = (world: World, components: Components, options?: AccountOptions) => {

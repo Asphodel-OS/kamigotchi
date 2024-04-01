@@ -50,28 +50,18 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) =>
 export function createConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
-  // get the determined environment mode
+  // get the determined environment mode from env vars or override
   let mode = import.meta.env.MODE;
-  if (mode) console.log(`Environment mode { ${mode} } detected.\n`);
-  else {
+  if (!mode) {
     console.warn(`No environment mode detected. Defaulting to 'development'\n`);
     mode = 'development';
   }
-
-  // override the environment mode if the url param is set
   mode = getModeOverride() ?? mode;
 
   // resolve the network config based on the environment mode
-  switch (mode) {
-    case 'development':
-      config = createConfigRawLocal(externalProvider);
-      break;
-    case 'staging':
-      config = createConfigRawOPSepolia(externalProvider);
-      break;
-    default:
-      config = createConfigRawLocal(externalProvider);
-  }
+  if (mode === 'development') config = createConfigRawLocal(externalProvider);
+  else if (mode === 'staging') config = createConfigRawOPSepolia(externalProvider);
+  else config = createConfigRawLocal(externalProvider);
 
   if (
     config.worldAddress &&
@@ -88,7 +78,6 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   const params = new URLSearchParams(window.location.search);
 
   let config: NetworkConfig = <NetworkConfig>{};
-  // config.devMode = false;
   config.devMode = true;
 
   // EOAs and privatekey
@@ -155,10 +144,10 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
 const getModeOverride = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const modeOverride = urlParams.get('mode');
-  if (modeOverride) console.warn(`Environment mode override { ${modeOverride} } detected.`);
-  else return;
+  if (!modeOverride) return;
 
   // return the mode override if it is a valid one
+  console.warn(`Environment mode override { ${modeOverride} } detected.`);
   if (chainConfigs.has(modeOverride)) {
     console.warn(`Overriding environment mode..`);
     return modeOverride;
