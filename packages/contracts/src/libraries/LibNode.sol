@@ -28,13 +28,12 @@ library LibNode {
   // Create a Node as specified and return its id.
   // Type: [ HARVEST | HEALING | SACRIFICIAL | TRAINING ]
   function create(
-    IWorld world,
     IUintComp components,
     uint32 index,
     string memory nodeType,
     uint32 roomIndex
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = genID(index);
     IsNodeComponent(getAddressById(components, IsNodeCompID)).set(id);
     IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(id, index);
     TypeComponent(getAddressById(components, TypeCompID)).set(id, nodeType);
@@ -137,55 +136,10 @@ library LibNode {
   /////////////////
   // QUERIES
 
-  // return an array of all nodes at a room roomIndex
-  function getAllAtRoomIndex(
-    IUintComp components,
-    uint32 roomIndex
-  ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, RoomCompID),
-      abi.encode(roomIndex)
-    );
-
-    return LibQuery.query(fragments);
-  }
-
   // Return the ID of a Node by its index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexNodeCompID),
-      abi.encode(index)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) {
-      result = results[0];
-    }
-  }
-
-  // Return the ID of a Node by its name
-  function getByName(
-    IUintComp components,
-    string memory name
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNodeCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, NameCompID),
-      abi.encode(name)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) {
-      result = results[0];
-    }
+    uint256 id = genID(index);
+    return IsNodeComponent(getAddressById(components, IsNodeCompID)).has(id) ? id : 0;
   }
 
   /////////////////////
@@ -206,6 +160,19 @@ library LibNode {
     string memory affinity,
     uint256 amt
   ) internal {
-    LibDataEntity.inc(components, holderID, 0, LibString.concat("HARVEST_AFFINITY_", affinity), amt);
+    LibDataEntity.inc(
+      components,
+      holderID,
+      0,
+      LibString.concat("HARVEST_AFFINITY_", affinity),
+      amt
+    );
+  }
+
+  /////////////////////
+  // UTILS
+
+  function genID(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Node", index)));
   }
 }

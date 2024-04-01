@@ -61,8 +61,8 @@ library LibRoom {
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     LibBoolean.create(components, id, type_, logicType);
-    if (conIndex != 0) LibBoolean.setIndex(components, id, conIndex);
-    if (conValue != 0) LibBoolean.setBalance(components, id, conValue);
+    if (condIndex != 0) LibBoolean.setIndex(components, id, condIndex);
+    if (condValue != 0) LibBoolean.setBalance(components, id, condValue);
 
     IdRoomComponent(getAddressById(components, IdRoomCompID)).set(id, genGateAtPtr(roomIndex));
     IdSourceComponent sourceComp = IdSourceComponent(getAddressById(components, IdSourceCompID));

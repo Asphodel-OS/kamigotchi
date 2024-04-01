@@ -31,6 +31,7 @@ export interface IsSkillComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "getEntities()": FunctionFragment;
+    "getEntitiesWithValue(bool)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
     "getSchema()": FunctionFragment;
@@ -53,7 +54,8 @@ export interface IsSkillComponentInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "authorizeWriter"
       | "getEntities"
-      | "getEntitiesWithValue"
+      | "getEntitiesWithValue(bool)"
+      | "getEntitiesWithValue(bytes)"
       | "getRawValue"
       | "getSchema"
       | "getValue"
@@ -80,7 +82,11 @@ export interface IsSkillComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue",
+    functionFragment: "getEntitiesWithValue(bool)",
+    values: [PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesWithValue(bytes)",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -141,7 +147,11 @@ export interface IsSkillComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue",
+    functionFragment: "getEntitiesWithValue(bool)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesWithValue(bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -237,8 +247,13 @@ export interface IsSkillComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bool)"(
+      value: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -266,7 +281,7 @@ export interface IsSkillComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -316,8 +331,13 @@ export interface IsSkillComponent extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  getEntitiesWithValue(
-    arg0: PromiseOrValue<BytesLike>,
+  "getEntitiesWithValue(bool)"(
+    value: PromiseOrValue<boolean>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getEntitiesWithValue(bytes)"(
+    value: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -345,7 +365,7 @@ export interface IsSkillComponent extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   registerIndexer(
-    arg0: PromiseOrValue<string>,
+    indexer: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -395,8 +415,13 @@ export interface IsSkillComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bool)"(
+      value: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -424,7 +449,7 @@ export interface IsSkillComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -486,8 +511,13 @@ export interface IsSkillComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bool)"(
+      value: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -513,7 +543,7 @@ export interface IsSkillComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -564,8 +594,13 @@ export interface IsSkillComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
+    "getEntitiesWithValue(bool)"(
+      value: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getEntitiesWithValue(bytes)"(
+      value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -591,7 +626,7 @@ export interface IsSkillComponent extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     registerIndexer(
-      arg0: PromiseOrValue<string>,
+      indexer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
