@@ -6,34 +6,20 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
-import { merge } from 'rxjs';
 
 import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'layers/network';
 import { GameScene } from 'layers/phaser/scenes/GameScene';
-import { PhaserLayer } from 'layers/phaser/types';
 import { checkDuplicateRooms } from 'layers/phaser/utils/rooms';
 import { useSelected, useVisibility } from 'layers/react/store';
 
-export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
+export function changeRoomSystem(network: NetworkLayer, game: Phaser.Scene) {
+  const scene = game as GameScene;
   const {
     world,
     components: { IsAccount, RoomIndex, OwnerAddress, OperatorAddress },
     network: { connectedAddress },
-    updates: {
-      components: { Network },
-    },
   } = network;
-
-  const {
-    game: {
-      scene: {
-        keys: { Game },
-      },
-    },
-  } = phaser;
-
-  const GameSceneInstance = Game as GameScene;
 
   const system = async (update: any) => {
     const { setRoom } = useSelected.getState();
@@ -47,22 +33,19 @@ export function changeRoomSystem(network: NetworkLayer, phaser: PhaserLayer) {
       const currentRoom = (getComponentValue(RoomIndex, accountIndex)?.value as number) * 1;
       setRoom(currentRoom);
 
-      GameSceneInstance.room = rooms[currentRoom];
-      if (!checkDuplicateRooms(currentRoom, GameSceneInstance.prevRoom)) {
-        GameSceneInstance.sound.removeAll();
+      scene.room = rooms[currentRoom];
+      if (!checkDuplicateRooms(currentRoom, scene.prevRoom)) {
+        scene.sound.removeAll();
       }
-      GameSceneInstance.scene.restart();
-      GameSceneInstance.currentRoom = currentRoom;
+      scene.scene.restart();
+      scene.currentRoom = currentRoom;
       closeModalsOnRoomChange();
     }
   };
 
   defineRxSystem(
     world,
-    merge(
-      defineQuery([Has(RoomIndex), Has(OperatorAddress), Has(OwnerAddress)]).update$,
-      Network.update$
-    ).pipe(),
+    defineQuery([Has(RoomIndex), Has(OperatorAddress), Has(OwnerAddress)]).update$,
     system
   );
 }
