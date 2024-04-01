@@ -93,7 +93,8 @@ export function registerWalletConnecter() {
       /////////////////
       // ACTIONS
 
-      // add a network layer if one for the injected provider doesnt exist
+      // update the network settings for the given wallets
+      // opt for localstorage private key if in development mode
       const updateNetworkSettings = async (
         injectedWallet: ConnectedWallet,
         embeddedWallet: ConnectedWallet
@@ -132,7 +133,8 @@ export function registerWalletConnecter() {
         if (network.network.connectedAddress.get() !== embeddedAddress) {
           console.log(`Updating base network 0x..${embeddedAddress.slice(-6)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
-          await updateNetworkLayer(network, provider);
+          const networkLayer = await updateNetworkLayer(network, provider);
+          phaser.setChangeRoomSystem(networkLayer);
           setBurnerAddress(embeddedAddress);
         }
       };
