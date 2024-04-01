@@ -161,7 +161,7 @@ library LibProduction {
   ) internal view returns (uint256) {
     uint256 petID = getPet(components, id);
     uint256 bonusID = LibBonus.get(components, petID, "HARVEST_OUTPUT");
-    uint256 bonusMult = LibBonus.getValue(components, bonusID);
+    uint256 bonusMult = LibBonus.getBalance(components, bonusID);
     return bonusMult;
   }
 

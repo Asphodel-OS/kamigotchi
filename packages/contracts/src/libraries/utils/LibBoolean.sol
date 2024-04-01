@@ -13,11 +13,15 @@ import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
-import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibExperience } from "libraries/LibExperience.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
+import { LibSkill } from "libraries/LibSkill.sol";
 
 enum LOGIC {
   MIN,
@@ -36,9 +40,8 @@ enum HANDLER {
 
 /** @notice Library for the Condition entity and generalised combination of boolean checks
  * Basic Condition structure:
- * - IsCondition
- * - IdHolderComponent
  * - TypeComponent (key)
+ * - LogicTypeComponent (key)
  * - IndexComponent (optional key)
  * - BalanceComponent (value)
  *
@@ -55,20 +58,16 @@ library LibBoolean {
    *   - other libs are expected to add their own identifying features. Suggested: HolderID
    */
   function create(
-    IWorld world,
     IUintComp components,
+    uint256 id,
     string memory type_,
     string memory logicType
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsCondition(components, id);
     setType(components, id, type_);
     setLogicType(components, id, logicType);
-    return id;
   }
 
   function remove(IUintComp components, uint256 id) internal {
-    IsConditionComponent(getAddressById(components, IsConditionCompID)).remove(id);
     TypeComponent(getAddressById(components, TypeCompID)).remove(id);
     LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
   }
@@ -80,8 +79,9 @@ library LibBoolean {
   function checkConditions(
     IUintComp components,
     uint256[] memory conditionIDs,
-    uint256 accountID
+    uint256 targetID
   ) internal view returns (bool) {
+    if (conditionIDs.length == 0) return true;
     IndexComponent indexComp = IndexComponent(getAddressById(components, IndexCompID));
     BalanceComponent balComp = BalanceComponent(getAddressById(components, BalanceCompID));
     TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
@@ -90,24 +90,12 @@ library LibBoolean {
     );
 
     for (uint256 i = 0; i < conditionIDs.length; i++) {
-      // uint256 targetID = accountID; // placeholder, can change in future
-      // uint256 forID = forComp.has(conditionIDs[i]) ? forComp.getValue(conditionIDs[i]) : 0;
       uint32 index = indexComp.has(conditionIDs[i]) ? indexComp.getValue(conditionIDs[i]) : 0;
       uint256 value = balComp.has(conditionIDs[i]) ? balComp.getValue(conditionIDs[i]) : 0;
       string memory type_ = typeComp.getValue(conditionIDs[i]);
       string memory logicType = logicTypeComp.getValue(conditionIDs[i]);
 
-      if (
-        !check(
-          components,
-          accountID, // targetID,
-          index,
-          value,
-          0, // forID,
-          type_,
-          logicType
-        )
-      ) return false;
+      if (!check(components, targetID, index, value, type_, logicType)) return false;
     }
     return true;
   }
@@ -118,13 +106,12 @@ library LibBoolean {
     uint256 targetID,
     uint32 index,
     uint256 expected,
-    uint256 forEntity, // ForComp, used to differenciate entities. defaults to Account
     string memory logicType,
     string memory type_
   ) internal view returns (bool) {
     (HANDLER handler, LOGIC logic) = parseLogic(logicType);
     if (handler == HANDLER.CURRENT)
-      return checkCurr(components, targetID, index, expected, forEntity, type_, logic);
+      return checkCurr(components, targetID, index, expected, type_, logic);
     else require(false, "Handler not yet implemented");
   }
 
@@ -134,29 +121,17 @@ library LibBoolean {
     uint256 targetID,
     uint32 index,
     uint256 expected,
-    uint256 forEntity, // ForComp, used to differenciate entities. defaults to Account
     string memory _type,
     LOGIC logic
   ) internal view returns (bool) {
-    uint256 value;
-
-    // only works for account rn. implemented like this for future expansion
-    if (forEntity == 0 || forEntity == IdAccountCompID)
-      value = LibAccount.getBalanceOf(components, targetID, _type, index);
-    // possible future use: checks based on guilds, or other world values
-    /* else if (forEntity == IdGuildCompID) {
-      uint256 guildID = LibAccount.getGuild(components, targetID);
-      value = LibGuild.getBalanceOf(components, guildID, _type, index);
-    } */
-
-    return LibBoolean._checkLogicOperator(value, expected, logic);
+    uint256 value = getBalanceOf(components, targetID, _type, index);
+    return _checkLogicOperator(value, expected, logic);
   }
 
   //////////////
   // SETTERS
-
-  function setIsCondition(IUintComp components, uint256 id) internal {
-    IsConditionComponent(getAddressById(components, IsConditionCompID)).set(id);
+  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
   }
 
   function setHolder(IUintComp components, uint256 id, uint256 holderID) internal {
@@ -175,10 +150,6 @@ library LibBoolean {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
 
-  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
-  }
-
   function unsetIndex(IUintComp components, uint256 id) internal {
     IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
     if (comp.has(id)) comp.remove(id);
@@ -191,6 +162,42 @@ library LibBoolean {
 
   ///////////////////////
   // GETTERS
+
+  // get the balance of X (type+index) of an account
+  function getBalanceOf(
+    IUintComp components,
+    uint256 id,
+    string memory _type,
+    uint32 index
+  ) public view returns (uint256 balance) {
+    uint256 inventoryID;
+    if (LibString.eq(_type, "ITEM")) {
+      inventoryID = LibInventory.get(components, id, index);
+      balance = LibInventory.getBalance(components, inventoryID);
+    } else if (LibString.eq(_type, "COIN")) {
+      balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");
+    } else if (LibString.eq(_type, "LEVEL")) {
+      balance = LibExperience.getLevel(components, id);
+    } else if (LibString.eq(_type, "KAMI")) {
+      balance = LibAccount.getPetsOwned(components, id).length;
+    } else if (LibString.eq(_type, "KAMI_LEVEL_HIGHEST")) {
+      balance = getTopLevel(components, LibAccount.getPetsOwned(components, id));
+    } else if (LibString.eq(_type, "SKILL")) {
+      balance = LibSkill.getPointsOf(components, id, index);
+    } else {
+      balance = LibDataEntity.get(components, id, index, _type);
+    }
+  }
+
+  function getTopLevel(IUintComp components, uint256[] memory ids) internal view returns (uint256) {
+    uint256 highestLevel = 1;
+    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+    for (uint256 i = 0; i < ids.length; i++) {
+      uint256 level = levelComp.getValue(ids[i]);
+      if (level > highestLevel) highestLevel = level;
+    }
+    return highestLevel;
+  }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 result) {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));

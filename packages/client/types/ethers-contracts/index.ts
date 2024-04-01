@@ -47,6 +47,7 @@ export type { IdDelegateeComponent } from "./IdDelegateeComponent";
 export type { IdDelegatorComponent } from "./IdDelegatorComponent";
 export type { IdHolderComponent } from "./IdHolderComponent";
 export type { IdNodeComponent } from "./IdNodeComponent";
+export type { IdOwnsConditionComponent } from "./IdOwnsConditionComponent";
 export type { IdOwnsQuestComponent } from "./IdOwnsQuestComponent";
 export type { IdOwnsRelationshipComponent } from "./IdOwnsRelationshipComponent";
 export type { IdPetComponent } from "./IdPetComponent";
@@ -146,7 +147,6 @@ export type { ProxyPermissionsFarm20Component } from "./ProxyPermissionsFarm20Co
 export type { ProxyPermissionsMint20Component } from "./ProxyPermissionsMint20Component";
 export type { QuestAcceptSystem } from "./QuestAcceptSystem";
 export type { QuestCompleteSystem } from "./QuestCompleteSystem";
-export type { QuestConditionsComponent } from "./QuestConditionsComponent";
 export type { QuestDropSystem } from "./QuestDropSystem";
 export type { QuestPointComponent } from "./QuestPointComponent";
 export type { RarityComponent } from "./RarityComponent";
@@ -261,6 +261,7 @@ export { IdDelegateeComponent__factory } from "./factories/IdDelegateeComponent_
 export { IdDelegatorComponent__factory } from "./factories/IdDelegatorComponent__factory";
 export { IdHolderComponent__factory } from "./factories/IdHolderComponent__factory";
 export { IdNodeComponent__factory } from "./factories/IdNodeComponent__factory";
+export { IdOwnsConditionComponent__factory } from "./factories/IdOwnsConditionComponent__factory";
 export { IdOwnsQuestComponent__factory } from "./factories/IdOwnsQuestComponent__factory";
 export { IdOwnsRelationshipComponent__factory } from "./factories/IdOwnsRelationshipComponent__factory";
 export { IdPetComponent__factory } from "./factories/IdPetComponent__factory";
@@ -360,7 +361,6 @@ export { ProxyPermissionsFarm20Component__factory } from "./factories/ProxyPermi
 export { ProxyPermissionsMint20Component__factory } from "./factories/ProxyPermissionsMint20Component__factory";
 export { QuestAcceptSystem__factory } from "./factories/QuestAcceptSystem__factory";
 export { QuestCompleteSystem__factory } from "./factories/QuestCompleteSystem__factory";
-export { QuestConditionsComponent__factory } from "./factories/QuestConditionsComponent__factory";
 export { QuestDropSystem__factory } from "./factories/QuestDropSystem__factory";
 export { QuestPointComponent__factory } from "./factories/QuestPointComponent__factory";
 export { RarityComponent__factory } from "./factories/RarityComponent__factory";

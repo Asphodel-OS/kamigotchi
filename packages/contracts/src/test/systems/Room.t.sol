@@ -31,7 +31,7 @@ contract RoomTest is SetupTemplate {
     _createRoom("3", Location(1, 2, 0), 3);
 
     uint256 gate1 = _createRoomGate(1, 0, 10, 1, "ITEM", "CURR_MIN");
-    assertTrue(_IsConditionComponent.has(gate1));
+    assertTrue(_IdRoomComponent.has(gate1));
     assertEq(LibRoom.genGateAtPtr(1), _IdRoomComponent.getValue(gate1));
     assertEq(_IdSourceComponent.getValue(gate1), 0);
     uint256[] memory allGates = LibRoom.queryAllGates(components, 1);
@@ -63,8 +63,8 @@ contract RoomTest is SetupTemplate {
     assertEq(allGates.length, 0);
     spGates = LibRoom.queryGates(components, 2, 1);
     assertEq(spGates.length, 0);
-    assertTrue(!_IsConditionComponent.has(gate1));
-    assertTrue(!_IsConditionComponent.has(gate2));
+    assertTrue(!_IdRoomComponent.has(gate1));
+    assertTrue(!_IdRoomComponent.has(gate2));
   }
 
   function testAdjacency() public {

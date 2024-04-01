@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
@@ -13,10 +11,12 @@ import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQue
 import { IndexSkillComponent, ID as IndexSkillCompID } from "components/IndexSkillComponent.sol";
 import { ID as IsAccountCompID } from "components/IsAccountComponent.sol";
 import { ID as IsPetCompID } from "components/IsPetComponent.sol";
+import { IdOwnsConditionComponent, ID as IdOwnsCondCompID } from "components/IdOwnsConditionComponent.sol";
 import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
+import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
@@ -26,7 +26,9 @@ import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComp
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+
+import { LibArray } from "libraries/utils/LibArray.sol";
+import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 
 // A registry for Skill related entities
 // Skills are not copied onto entities, only referenced when assigning the effect
@@ -37,7 +39,6 @@ library LibRegistrySkill {
 
   // Create a registry entry for a Skill
   function create(
-    IWorld world,
     IUintComp components,
     uint32 skillIndex,
     string memory for_,
@@ -48,7 +49,7 @@ library LibRegistrySkill {
     string memory description,
     string memory media
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = genID(skillIndex);
     setIsRegistry(components, id);
     setIsSkill(components, id);
     setSkillIndex(components, id, skillIndex);
@@ -62,6 +63,7 @@ library LibRegistrySkill {
     if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
     else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
     else revert("LibRegistrySkill: invalid type");
+
     return id;
   }
 
@@ -72,10 +74,13 @@ library LibRegistrySkill {
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
+    setConditionOwner(components, id, genEffectPtr(skillIndex));
+
     setIsRegistry(components, id);
     setIsEffect(components, id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
+
     return id;
   }
 
@@ -86,10 +91,13 @@ library LibRegistrySkill {
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
+    setConditionOwner(components, id, genReqPtr(skillIndex));
+    LibBoolean.create(components, id, type_, "CURR_MIN");
+
     setIsRegistry(components, id);
     setIsRequirement(components, id);
     setSkillIndex(components, id, skillIndex);
-    setType(components, id, type_);
+
     return id;
   }
 
@@ -114,7 +122,8 @@ library LibRegistrySkill {
     unsetSubtype(components, id);
     unsetLogicType(components, id);
     unsetIndex(components, id);
-    unsetValue(components, id);
+    unsetBalance(components, id);
+    unsetConditionOwner(components, id);
   }
 
   function deleteRequirement(IUintComp components, uint256 id) internal {
@@ -123,11 +132,16 @@ library LibRegistrySkill {
     unsetSkillIndex(components, id);
     unsetType(components, id);
     unsetIndex(components, id);
-    unsetValue(components, id);
+    unsetBalance(components, id);
+    unsetConditionOwner(components, id);
   }
 
   /////////////////
   // SETTERS
+
+  function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
+    IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).set(id, ownerID);
+  }
 
   function setIsEffect(IUintComp components, uint256 id) internal {
     IsEffectComponent(getAddressById(components, IsEffectCompID)).set(id);
@@ -189,12 +203,16 @@ library LibRegistrySkill {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
   }
 
-  function setValue(IUintComp components, uint256 id, uint256 value) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+  function setBalance(IUintComp components, uint256 id, uint256 value) internal {
+    BalanceComponent(getAddressById(components, BalCompID)).set(id, value);
   }
 
   /////////////////
   // UNSETTERS
+
+  function unsetConditionOwner(IUintComp components, uint256 id) internal {
+    IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).remove(id);
+  }
 
   function unsetIsEffect(IUintComp components, uint256 id) internal {
     IsEffectComponent(getAddressById(components, IsEffectCompID)).remove(id);
@@ -266,9 +284,9 @@ library LibRegistrySkill {
     }
   }
 
-  function unsetValue(IUintComp components, uint256 id) internal {
-    if (ValueComponent(getAddressById(components, ValueCompID)).has(id)) {
-      ValueComponent(getAddressById(components, ValueCompID)).remove(id);
+  function unsetBalance(IUintComp components, uint256 id) internal {
+    if (BalanceComponent(getAddressById(components, BalCompID)).has(id)) {
+      BalanceComponent(getAddressById(components, BalCompID)).remove(id);
     }
   }
 
@@ -303,8 +321,8 @@ library LibRegistrySkill {
     return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
   }
 
-  function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
+    return BalanceComponent(getAddressById(components, BalCompID)).getValue(id);
   }
 
   /////////////////
@@ -312,33 +330,18 @@ library LibRegistrySkill {
 
   // get registry entry by Skill index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsSkillCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexSkillCompID),
-      abi.encode(index)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) result = results[0];
+    uint256 id = genID(index);
+    return IsSkillComponent(getAddressById(components, IsSkillCompID)).has(id) ? id : 0;
   }
 
   function getEffectsByIndex(
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsEffectCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexSkillCompID),
-      abi.encode(index)
-    );
-
-    return LibQuery.query(fragments);
+    return
+      IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).getEntitiesWithValue(
+        genEffectPtr(index)
+      );
   }
 
   // get requirements by Skill index
@@ -346,15 +349,24 @@ library LibRegistrySkill {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsReqCompID), "");
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexSkillCompID),
-      abi.encode(index)
-    );
+    return
+      IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).getEntitiesWithValue(
+        genReqPtr(index)
+      );
+  }
 
-    return LibQuery.query(fragments);
+  ////////////////////
+  // UTILS
+
+  function genID(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Registry.Skill", index)));
+  }
+
+  function genReqPtr(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Registry.Skill.Requirement", index)));
+  }
+
+  function genEffectPtr(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Registry.Skill.Effect", index)));
   }
 }

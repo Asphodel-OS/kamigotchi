@@ -10,7 +10,6 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { IdRoomComponent, ID as IdRoomCompID } from "components/IdRoomComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol";
@@ -60,9 +59,10 @@ library LibRoom {
     string memory logicType,
     string memory type_
   ) internal returns (uint256 id) {
-    id = LibBoolean.create(world, components, type_, logicType);
-    if (condIndex != 0) LibBoolean.setIndex(components, id, condIndex);
-    if (condValue != 0) LibBoolean.setBalance(components, id, condValue);
+    id = world.getUniqueEntityId();
+    LibBoolean.create(components, id, type_, logicType);
+    if (conIndex != 0) LibBoolean.setIndex(components, id, conIndex);
+    if (conValue != 0) LibBoolean.setBalance(components, id, conValue);
 
     IdRoomComponent(getAddressById(components, IdRoomCompID)).set(id, genGateAtPtr(roomIndex));
     IdSourceComponent sourceComp = IdSourceComponent(getAddressById(components, IdSourceCompID));
@@ -204,7 +204,7 @@ library LibRoom {
     uint32 fromIndex,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
+    QueryFragment[] memory fragments = new QueryFragment[](2);
     fragments[0] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IdRoomCompID),
@@ -214,11 +214,6 @@ library LibRoom {
       QueryType.HasValue,
       getComponentById(components, IdSourceCompID),
       abi.encode(0)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsConditionCompID),
-      ""
     );
 
     uint256[] memory generic = LibQuery.query(fragments);
@@ -235,16 +230,10 @@ library LibRoom {
     IUintComp components,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    uint256[] memory gatesTo = LibSafeQuery.getIsWithValue(
-      getComponentById(components, IdRoomCompID),
-      getComponentById(components, IsConditionCompID),
-      abi.encode(genGateAtPtr(toIndex))
-    );
-    uint256[] memory gatesFrom = LibSafeQuery.getIsWithValue(
-      getComponentById(components, IdSourceCompID),
-      getComponentById(components, IsConditionCompID),
-      abi.encode(genGateSourcePtr(toIndex))
-    );
+    uint256[] memory gatesTo = IdRoomComponent(getAddressById(components, IdRoomCompID))
+      .getEntitiesWithValue(genGateAtPtr(toIndex));
+    uint256[] memory gatesFrom = IdSourceComponent(getAddressById(components, IdSourceCompID))
+      .getEntitiesWithValue(genGateSourcePtr(toIndex));
     return LibArray.concat(gatesTo, gatesFrom);
   }
 

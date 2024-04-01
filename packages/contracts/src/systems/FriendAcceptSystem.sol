@@ -33,14 +33,14 @@ contract FriendAcceptSystem is System {
     uint256 baseLimit = LibConfig.get(components, "FRIENDS_BASE_LIMIT");
     uint256 bonusID = LibBonus.get(components, accountID, "FRIENDS_LIMIT");
     uint256 frenLimit = baseLimit;
-    if (bonusID != 0) frenLimit += LibBonus.getValue(components, bonusID);
+    if (bonusID != 0) frenLimit += LibBonus.getBalance(components, bonusID);
     require(
       LibFriend.getAccountFriends(components, accountID).length < frenLimit,
       "Friend limit reached"
     );
     frenLimit = baseLimit;
     bonusID = LibBonus.get(components, targetID, "FRIENDS_LIMIT");
-    if (bonusID != 0) frenLimit += LibBonus.getValue(components, bonusID);
+    if (bonusID != 0) frenLimit += LibBonus.getBalance(components, bonusID);
     require(
       LibFriend.getAccountFriends(components, targetID).length < frenLimit,
       "Friend limit reached"

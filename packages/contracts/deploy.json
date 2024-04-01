@@ -27,6 +27,7 @@
     "IdDelegateeComponent",
     "IdDelegatorComponent",
     "IdHolderComponent",
+    "IdOwnsConditionComponent",
     "IdOwnsQuestComponent",
     "IdOwnsRelationshipComponent",
     "IdNodeComponent",
@@ -52,7 +53,6 @@
     "IsAccountComponent",
     "IsBonusComponent",
     "IsCompleteComponent",
-    "IsConditionComponent",
     "IsConsumableComponent",
     "IsEffectComponent",
     "IsEquippedComponent",
@@ -91,7 +91,6 @@
     "ProxyPermissionsFarm20Component",
     "ProxyPermissionsERC721Component",
     "ProxyPermissionsMint20Component",
-    "QuestConditionsComponent",
     "QuestPointComponent",
     "RarityComponent",
     "RateComponent",
@@ -372,7 +371,6 @@
         "BalanceComponent",
         "IdRoomComponent",
         "IdSourceComponent",
-        "IsConditionComponent",
         "IndexRoomComponent",
         "IndexComponent",
         "LogicTypeComponent",
@@ -398,7 +396,6 @@
         "IdSourceComponent",
         "IndexRoomComponent",
         "IndexComponent",
-        "IsConditionComponent",
         "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
@@ -462,6 +459,7 @@
     {
       "name": "AccountUpgradeSkillSystem",
       "writeAccess": [
+        "BalanceComponent",
         "IdHolderComponent",
         "IndexSkillComponent",
         "IsBonusComponent",
@@ -469,8 +467,7 @@
         "SkillPointComponent",
         "TimeLastComponent",
         "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TypeComponent"
       ]
     },
     {
@@ -778,6 +775,7 @@
     {
       "name": "PetUpgradeSkillSystem",
       "writeAccess": [
+        "BalanceComponent",
         "CoinComponent",
         "IdHolderComponent",
         "IndexSkillComponent",
