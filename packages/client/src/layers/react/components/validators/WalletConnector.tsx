@@ -51,6 +51,8 @@ export function registerWalletConnecter() {
       // update the network settings whenever the connector/address changes
       // determine whether/with what content this Validator should be populated
       useEffect(() => {
+        console.log(import.meta.env.DEV);
+        console.log(import.meta.env.PROD);
         console.log(wallets);
         console.log('chain', chain);
         console.log('defaultChain', defaultChain);
@@ -99,17 +101,16 @@ export function registerWalletConnecter() {
         embeddedWallet: ConnectedWallet
       ) => {
         await addNetworkAPI(injectedWallet);
-
-        if (import.meta.env.MODE === 'development') {
-          const wallet = new Wallet(detectedPrivateKey);
-          const address = wallet.address.toLowerCase();
-          if (network.network.connectedAddress.get() !== address) {
-            console.log(`Updating base network w pk 0x..${detectedPrivateKey.slice(-6)}`);
-            const networkLayer = await updateNetworkLayer(network);
-            phaser.setChangeRoomSystem(networkLayer);
-          }
-          setBurnerAddress(address);
-        } else await updateBaseNetwork(embeddedWallet);
+        // if (import.meta.env.MODE === 'development') {
+        const wallet = new Wallet(detectedPrivateKey);
+        const address = wallet.address.toLowerCase();
+        if (network.network.connectedAddress.get() !== address) {
+          console.log(`Updating base network w pk 0x..${detectedPrivateKey.slice(-6)}`);
+          const networkLayer = await updateNetworkLayer(network);
+          phaser.setChangeRoomSystem(networkLayer);
+        }
+        setBurnerAddress(address);
+        // } else await updateBaseNetwork(embeddedWallet);
       };
 
       // update the network store with the injected wallet's api

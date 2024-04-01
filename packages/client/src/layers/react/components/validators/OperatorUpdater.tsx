@@ -99,7 +99,7 @@ export function registerOperatorUpdater() {
         actions.add({
           action: 'AccountSetOperator',
           params: [address],
-          description: `Setting Account Avatar to ${address}`,
+          description: `Setting Account Avatar to 0x..${address.slice(-4)}`,
           execute: async () => {
             return api.account.set.operator(address);
           },
