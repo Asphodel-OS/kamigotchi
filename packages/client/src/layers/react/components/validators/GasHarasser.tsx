@@ -13,6 +13,7 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
 import { playClick, playSuccess } from 'utils/sounds';
+import { formatEther } from 'viem';
 
 // TODO: check for whether an account with the burner address already exists
 export function registerGasHarasser() {
@@ -39,7 +40,7 @@ export function registerGasHarasser() {
       const [value, setValue] = useState(0.05);
 
       // Operator Eth Balance
-      const { data: operatorBalance, refetch } = useBalance({
+      const { data: balance, refetch } = useBalance({
         address: account.operatorAddress as `0x${string}`,
       });
 
@@ -52,18 +53,20 @@ export function registerGasHarasser() {
 
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
-        const hasGas = Number(operatorBalance?.formatted) > 0;
+        const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > 0;
         setHasGas(hasGas);
         setValidations({ ...validations, operatorHasGas: hasGas });
-      }, [operatorBalance]);
+      }, [balance]);
 
       // determine visibility based on above/prev checks
       useEffect(() => {
+        console.log('hasGas', hasGas);
+        console.log('validations', validations);
+        console.log('networkValidations', networkValidations);
         setIsVisible(
           defaultChain.id !== 1337 &&
             networkValidations.authenticated &&
             networkValidations.chainMatches &&
-            networkValidations.burnerMatches &&
             validations.accountExists &&
             validations.operatorMatches &&
             !hasGas
