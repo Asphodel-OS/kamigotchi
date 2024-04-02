@@ -56,7 +56,6 @@ export function registerOperatorUpdater() {
         setIsVisible(
           networkValidations.authenticated &&
             networkValidations.chainMatches &&
-            networkValidations.burnerMatches &&
             validations.accountExists &&
             !operatorMatches
         );
@@ -65,22 +64,12 @@ export function registerOperatorUpdater() {
       // adjust actual visibility of windows based on above determination
       useEffect(() => {
         if (isVisible) toggleModals(false);
-        toggleButtons(
-          !isVisible &&
-            !validators.walletConnector &&
-            !validators.burnerDetector &&
-            !validators.accountRegistrar
-        );
+        toggleButtons(!isVisible && !validators.walletConnector && !validators.accountRegistrar);
         if (isVisible != validators.operatorUpdater) {
           const { validators } = useVisibility.getState();
           setValidators({ ...validators, operatorUpdater: isVisible });
         }
-      }, [
-        isVisible,
-        validators.walletConnector,
-        validators.burnerDetector,
-        validators.accountRegistrar,
-      ]);
+      }, [isVisible, validators.walletConnector, validators.accountRegistrar]);
 
       // check if the connected burner is already taken by an account
       useEffect(() => {

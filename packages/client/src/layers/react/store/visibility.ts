@@ -120,7 +120,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
 
 export interface Validators {
   accountRegistrar: boolean;
-  burnerDetector: boolean;
   gasHarasser: boolean;
   operatorUpdater: boolean;
   walletConnector: boolean;
@@ -173,7 +172,6 @@ export const useVisibility = create<State & Actions>((set) => {
     },
     validators: {
       accountRegistrar: false,
-      burnerDetector: false,
       gasHarasser: false,
       operatorUpdater: false,
       walletConnector: false,

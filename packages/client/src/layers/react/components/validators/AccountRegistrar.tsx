@@ -152,10 +152,7 @@ export function registerAccountRegistrar() {
       // determine visibility based on above/prev checks
       useEffect(() => {
         setIsVisible(
-          networkValidations.authenticated &&
-            networkValidations.chainMatches &&
-            networkValidations.burnerMatches &&
-            !accountExists
+          networkValidations.authenticated && networkValidations.chainMatches && !accountExists
         );
       }, [networkValidations, selectedAddress, accountExists]);
 
@@ -165,12 +162,12 @@ export function registerAccountRegistrar() {
           toggleModals(false);
           toggleButtons(false);
         }
-        toggleFixtures(!isVisible && !validators.walletConnector && !validators.burnerDetector);
+        toggleFixtures(!isVisible && !validators.walletConnector);
         if (isVisible != validators.accountRegistrar) {
           const { validators } = useVisibility.getState();
           setValidators({ ...validators, accountRegistrar: isVisible });
         }
-      }, [isVisible, validators.walletConnector, validators.burnerDetector]);
+      }, [isVisible, validators.walletConnector]);
 
       // validation for username input
       useEffect(() => {

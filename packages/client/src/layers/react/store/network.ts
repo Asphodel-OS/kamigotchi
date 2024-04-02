@@ -22,7 +22,6 @@ interface Actions {
 interface Validations {
   authenticated: boolean;
   chainMatches: boolean;
-  burnerMatches: boolean;
 }
 
 export const useNetwork = create<State & Actions>((set) => {
@@ -33,7 +32,6 @@ export const useNetwork = create<State & Actions>((set) => {
     validations: {
       authenticated: false,
       chainMatches: false,
-      burnerMatches: false,
     },
   };
 

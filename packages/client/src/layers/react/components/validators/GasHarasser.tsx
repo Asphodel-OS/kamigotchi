@@ -27,13 +27,13 @@ export function registerGasHarasser() {
     },
     (layers) => of(layers),
     (layers) => {
-      const {
-        network: { actions, world },
-      } = layers;
+      const { network } = layers;
+      const { actions, world } = network;
       const { data: blockNumber } = useBlockNumber({ watch: true });
+
+      const { account, validations, setValidations } = useAccount();
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators } = useVisibility();
-      const { account, validations, setValidations } = useAccount();
 
       const [hasGas, setHasGas] = useState(false);
       const [isVisible, setIsVisible] = useState(false);
@@ -60,9 +60,6 @@ export function registerGasHarasser() {
 
       // determine visibility based on above/prev checks
       useEffect(() => {
-        console.log('hasGas', hasGas);
-        console.log('validations', validations);
-        console.log('networkValidations', networkValidations);
         setIsVisible(
           defaultChain.id !== 1337 &&
             networkValidations.authenticated &&
