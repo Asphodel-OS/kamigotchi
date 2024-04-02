@@ -1,6 +1,5 @@
 import { ExternalProvider } from '@ethersproject/providers';
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
-import { Wallet } from 'ethers';
 import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -8,6 +7,7 @@ import { toHex } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
+import { Wallet } from 'ethers';
 import { createNetworkInstance, updateNetworkLayer } from 'layers/network/createNetworkLayer';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
@@ -51,31 +51,34 @@ export function registerWalletConnecter() {
       // update the network settings whenever the connector/address changes
       // determine whether/with what content this Validator should be populated
       useEffect(() => {
-        console.log(wallets);
-        console.log('chain', chain);
-        console.log('defaultChain', defaultChain);
-        console.log('connectorAddress', connectorAddress);
-
-        const injectedWallet = getInjectedWallet(wallets);
-        const embeddedWallet = getEmbeddedWallet(wallets);
-        if (!injectedWallet) return console.log(`No injected wallet found.`);
-        if (!embeddedWallet) return console.log(`No embedded wallet found.`);
-
-        // checks
-        const injectedAddress = injectedWallet?.address;
-        const addressesMatch = connectorAddress === injectedAddress;
         const chainMatches = chain?.id === defaultChain.id;
+        setIsVisible(!authenticated || !chainMatches);
+        setValidations({ ...validations, authenticated, chainMatches });
 
         // update state or initialize networks depending on wallet validity
         if (ready && !authenticated) setState('disconnected');
         else if (!chainMatches) setState('wrongChain');
-        else if (!addressesMatch) logout();
-        else updateNetworkSettings(injectedWallet, embeddedWallet);
+        else {
+          const injectedWallet = getInjectedWallet(wallets);
+          const embeddedWallet = getEmbeddedWallet(wallets);
+          if (injectedWallet && embeddedWallet)
+            updateNetworkSettings(injectedWallet, embeddedWallet);
+        }
+      }, [ready, authenticated, chain, wallets, detectedPrivateKey]);
 
-        // update the visibility of this validator and any relevant network validations
-        setIsVisible(!authenticated || !chainMatches);
-        setValidations({ ...validations, authenticated, chainMatches });
-      }, [ready, authenticated, chain, connectorAddress, wallets, detectedPrivateKey]);
+      // log the user out if mismatch of privy injected wallet and wagmi connector
+      useEffect(() => {
+        const injectedWallet = getInjectedWallet(wallets);
+        if (injectedWallet) {
+          const injectedAddress = injectedWallet.address;
+          const addressesMatch = connectorAddress === injectedAddress;
+          if (!addressesMatch) logout();
+        }
+      }, [wallets, connectorAddress]);
+
+      // things to fix
+      // ? swap out funding call with privy
+      // ? funding rails in localhost
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
