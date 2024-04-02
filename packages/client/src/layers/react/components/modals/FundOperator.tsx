@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { useBalance, useBlockNumber } from 'wagmi';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
-import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
+import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork } from 'layers/react/store';
 import { playScribble, playSuccess } from 'utils/sounds';
@@ -37,9 +36,9 @@ export function registerFundOperatorModal() {
 
     ({ network }) => {
       const { actions, world } = network;
+      const blockNumber = useBlockNumber({ watch: true });
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
-      const blockNumber = useBlockNumber({ watch: true, cacheTime: 500 });
 
       const [isFunding, setIsFunding] = useState(true);
       const [amount, setAmount] = useState(0.05);

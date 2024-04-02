@@ -24,12 +24,18 @@ export const Engine: React.FC<{
     console.log(`Loaded in { ${import.meta.env.MODE} } mode (chain ${defaultChain.id}).`);
   }, []);
 
+  /////////////////
+  // CONFIGURATION
+
   const queryClient = new QueryClient();
+  const transportUrl = import.meta.env.DEV
+    ? ''
+    : 'https://go.getblock.io/ecf00857f13140bb9d75d51597663370';
 
   const wagmiConfig = createConfig({
     chains: [defaultChain],
     transports: {
-      [defaultChain.id]: http('https://go.getblock.io/ecf00857f13140bb9d75d51597663370'),
+      [defaultChain.id]: http(transportUrl),
     },
   });
 

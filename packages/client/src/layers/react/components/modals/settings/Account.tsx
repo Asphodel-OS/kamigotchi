@@ -36,35 +36,26 @@ export const Account = () => {
 
   return (
     <Container>
-      <Header>Account ({kamiAccount.name})</Header>
+      <HeaderRow>
+        <Header>Account ({kamiAccount.name})</Header>
+        <Tooltip text={['fund account operator']}>
+          <ActionButton
+            id='fund-button'
+            text='fund'
+            onClick={() => setModals({ ...modals, operatorFund: true })}
+            size='small'
+          />
+        </Tooltip>
+      </HeaderRow>
       <Section key='owner'>
-        <SubHeaderRow>
-          <SubHeader>Owner</SubHeader>
-        </SubHeaderRow>
+        <SubHeader>Owner</SubHeader>
         {FieldRow('Address', kamiAccount.ownerAddress)}
       </Section>
       <Section key='operator'>
-        <SubHeaderRow>
-          <SubHeader>Operator</SubHeader>
-          <Tooltip text={['update']}>
-            <ActionButton
-              id='update-button'
-              text='update'
-              onClick={() => setModals({ ...modals, accountOperator: true })}
-              size='small'
-            />
-          </Tooltip>
-          <Tooltip text={['fund']}>
-            <ActionButton
-              id='fund-button'
-              text='fund'
-              onClick={() => setModals({ ...modals, operatorFund: true })}
-              size='small'
-            />
-          </Tooltip>
-        </SubHeaderRow>
+        <SubHeader>Operator</SubHeader>
         {FieldRow('Address', kamiAccount.operatorAddress)}
-        {FieldRow('Private Key', localStorage.getItem('operatorPrivateKey') || '')}
+        {!import.meta.env.DEV &&
+          FieldRow('Private Key', localStorage.getItem('operatorPrivateKey') || '')}
       </Section>
     </Container>
   );
@@ -90,10 +81,10 @@ const Section = styled.div`
   margin: 0.4vw;
 `;
 
-const SubHeaderRow = styled.div`
+const HeaderRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
 `;
 
