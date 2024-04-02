@@ -13,7 +13,7 @@ import {
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerNotificationFixture } from './fixtures/Notifications';
-import { registerWalletFixture } from './fixtures/login/Wallet';
+import { registerLoginFixture } from './fixtures/login';
 import { registerActionQueueFixture } from './fixtures/queue/';
 
 import { registerAccountModal } from './modals/account';
@@ -38,7 +38,6 @@ import { registerFundOperatorModal } from './modals/FundOperator';
 
 import {
   registerAccountRegistrar,
-  registerBurnerDetector,
   registerGasHarasser,
   registerOperatorUpdater,
   registerWalletConnecter,
@@ -62,7 +61,7 @@ export function registerUIComponents() {
   // other fixtures
   registerAccountInfoFixture();
   registerActionQueueFixture();
-  registerWalletFixture();
+  registerLoginFixture();
   registerNotificationFixture();
 
   // menu modals
@@ -91,7 +90,6 @@ export function registerUIComponents() {
 
   // validators
   registerAccountRegistrar();
-  registerBurnerDetector();
   registerOperatorUpdater();
   registerWalletConnecter();
   registerGasHarasser();
