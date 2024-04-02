@@ -57,6 +57,9 @@ export const Engine: React.FC<{
     },
   };
 
+  /////////////////
+  // RENDER
+
   if (!mounted || !layers) return <BootScreen />;
   return (
     <WagmiProvider config={wagmiConfig}>
