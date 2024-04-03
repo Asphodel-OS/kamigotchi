@@ -19,13 +19,12 @@ import { Strings } from "utils/Strings.sol";
 library LibNPC {
   // create a merchant entity as specified
   function create(
-    IWorld world,
     IUintComp components,
     uint32 index,
     string memory name,
     uint32 roomIndex
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = genID(index);
     IsNPCComponent(getAddressById(components, IsNPCCompID)).set(id);
     IndexNPCComponent(getAddressById(components, IndexNPCCompID)).set(id, index);
     setName(components, id, name);
@@ -80,17 +79,15 @@ library LibNPC {
 
   // Return the ID of a Merchant by its index
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsNPCCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexNPCCompID),
-      abi.encode(index)
-    );
+    uint256 id = genID(index);
+    IsNPCComponent comp = IsNPCComponent(getAddressById(components, IsNPCCompID));
+    return comp.has(id) ? id : 0;
+  }
 
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length != 0) {
-      result = results[0];
-    }
+  /////////////////
+  // UTILS
+
+  function genID(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("NPC", index)));
   }
 }

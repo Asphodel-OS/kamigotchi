@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "std-contracts/components/StringComponent.sol";
+import "std-contracts/components/StringBareComponent.sol";
 
 uint256 constant ID = uint256(keccak256("component.LogicType"));
 
 // The LogicType of an entity, e.g. MIN, MAX
-contract LogicTypeComponent is StringComponent {
-  constructor(address world) StringComponent(world, ID) {}
+contract LogicTypeComponent is StringBareComponent {
+  constructor(address world) StringBareComponent(world, ID) {}
 
   function hasValue(uint256 id, string memory name) public view returns (bool) {
     return keccak256(getRawValue(id)) == keccak256(abi.encode(name));
