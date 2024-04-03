@@ -175,11 +175,10 @@ contract GachaTest is SetupTemplate {
   //   }
   // }
 
-  // Commented out to test faster - it takes a few minutes
   function testDistribution() public {
     uint256 length = 33;
     uint256[] memory ogPool = _batchMint(length);
-    uint256[] memory counts = new uint256[](length);
+    uint256[] memory counts = new uint256[](length + 1);
 
     address owner = _owners[0];
 

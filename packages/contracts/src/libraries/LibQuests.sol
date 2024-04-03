@@ -5,6 +5,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
@@ -29,7 +30,6 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LOGIC, HANDLER, LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibHash } from "libraries/utils/LibHash.sol";
-import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 import { LibRegistryQuests } from "libraries/LibRegistryQuests.sol";
 
 /**
@@ -564,7 +564,7 @@ library LibQuests {
     uint256 questID
   ) internal view returns (uint256[] memory) {
     return
-      LibSafeQuery.getIsWithValue(
+      LibQuery.getIsWithValue(
         getComponentById(components, OwnQuestCompID),
         getComponentById(components, IsObjectiveCompID),
         abi.encode(questID)

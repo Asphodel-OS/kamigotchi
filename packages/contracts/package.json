@@ -12,7 +12,7 @@
     "dev": "pnpm prepare && pnpm start",
     "nuke": "rimraf abi types out node_modules",
     "start": "pnpm run-p -l node:local deploy:local",
-    "test": "pnpm codegen && forge test",
+    "test": "pnpm codegen && forge test --contracts src/test/systems",
     "lint": "pnpm prettier && pnpm solhint",
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
     "prettier": "prettier --write 'src/**/*.sol'",

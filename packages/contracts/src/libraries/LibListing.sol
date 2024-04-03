@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
@@ -186,23 +185,28 @@ library LibListing {
     if (itemIndex != 0) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsListingCompID), "");
 
     uint256 filterCount;
     if (merchantIndex != 0) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IndexNPCComponentID),
         abi.encode(merchantIndex)
       );
     }
     if (itemIndex != 0) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IndexItemCompID),
         abi.encode(itemIndex)
       );
     }
+    fragments[filterCount] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsListingCompID),
+      ""
+    );
+
     return LibQuery.query(fragments);
   }
 

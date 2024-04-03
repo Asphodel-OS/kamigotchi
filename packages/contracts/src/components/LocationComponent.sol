@@ -33,7 +33,7 @@ contract LocationComponent is Component {
   }
 
   function getValue(uint256 entity) public view virtual returns (Location memory) {
-    Location memory value = abi.decode(getRawValue(entity), (Location));
+    Location memory value = abi.decode(getRaw(entity), (Location));
     return value;
   }
 
