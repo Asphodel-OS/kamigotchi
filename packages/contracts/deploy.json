@@ -30,6 +30,7 @@
     "IdOwnsConditionComponent",
     "IdOwnsQuestComponent",
     "IdOwnsRelationshipComponent",
+    "IdOwnsPetComponent",
     "IdNodeComponent",
     "IdPetComponent",
     "IdRoomComponent",
@@ -611,24 +612,6 @@
       ]
     },
     {
-      "name": "NodeCollectSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "BareValueComponent",
-        "CoinComponent",
-        "EpochComponent",
-        "ExperienceComponent",
-        "HealthComponent",
-        "IdHolderComponent",
-        "IndexComponent",
-        "IsScoreComponent",
-        "TimeLastActionComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent"
-      ]
-    },
-    {
       "name": "Pet721IsInWorldSystem",
       "writeAccess": []
     },
@@ -645,6 +628,7 @@
       "writeAccess": [
         "BareValueComponent",
         "IdAccountComponent",
+        "IdOwnsPetComponent",
         "IdHolderComponent",
         "ProxyPermissionsERC721Component",
         "StateComponent",
@@ -660,6 +644,7 @@
         "AddressOwnerComponent",
         "BareValueComponent",
         "IdAccountComponent",
+        "IdOwnsPetComponent",
         "IdHolderComponent",
         "IsAccountComponent",
         "IndexRoomComponent",
@@ -698,6 +683,7 @@
         "BalanceComponent",
         "BareValueComponent",
         "IdAccountComponent",
+        "IdOwnsPetComponent",
         "IdHolderComponent",
         "RerollComponent",
         "TimeLastComponent",
@@ -714,6 +700,7 @@
         "BareValueComponent",
         "GachaOrderComponent",
         "IdAccountComponent",
+        "IdOwnsPetComponent",
         "IdHolderComponent",
         "RerollComponent",
         "TimeLastComponent",
@@ -726,10 +713,12 @@
       "name": "PetGachaRevealSystem",
       "writeAccess": [
         "BalanceComponent",
+        "BareValueComponent",
         "BlockRevealComponent",
         "GachaOrderComponent",
         "IdAccountComponent",
         "IdHolderComponent",
+        "IdOwnsPetComponent",
         "RerollComponent",
         "StateComponent",
         "TypeComponent",
@@ -768,10 +757,6 @@
         "TypeComponent",
         "ValueComponent"
       ]
-    },
-    {
-      "name": "PetSetAccountSystem",
-      "writeAccess": ["IdAccountComponent", "TimeLastComponent"]
     },
     {
       "name": "PetUpgradeSkillSystem",

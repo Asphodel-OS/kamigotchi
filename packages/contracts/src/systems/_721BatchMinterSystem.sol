@@ -18,7 +18,7 @@ import { CanNameComponent, ID as CanNameCompID } from "components/CanNameCompone
 import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
-import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
+import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IndexBodyComponent, ID as IndexBodyCompID } from "components/IndexBodyComponent.sol";
 import { IndexBackgroundComponent, ID as IndexBgCompID } from "components/IndexBackgroundComponent.sol";
 import { IndexColorComponent, ID as IndexColorCompID } from "components/IndexColorComponent.sol";
@@ -45,7 +45,7 @@ import { Pet721 } from "tokens/Pet721.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
-import { GACHA_DATA_ID } from "libraries/LibGacha.sol";
+import { GACHA_ID, GACHA_DATA_ID } from "libraries/LibGacha.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
@@ -292,6 +292,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
   Pet721 internal immutable pet721;
   CanNameComponent internal immutable canNameComp;
   GachaOrderComponent internal immutable gachaOrderComp;
+  IdOwnsPetComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
   MediaURIComponent internal immutable mediaURIComp;
@@ -313,6 +314,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     pet721 = LibPet721.getContract(world);
     canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
     gachaOrderComp = GachaOrderComponent(getAddressById(components, GachaOrderCompID));
+    idOwnsPetComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
     mediaURIComp = MediaURIComponent(getAddressById(components, MediaURICompID));
@@ -369,6 +371,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
       canNameComp.set(id); // normally after reveal
       gachaOrderComp.set(id, startGacha + i);
+      idOwnsPetComp.set(id, GACHA_ID);
       isPetComp.set(id);
       indexPetComp.set(id, startIndex + i);
       nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));

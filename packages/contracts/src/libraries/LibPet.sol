@@ -5,13 +5,11 @@ import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.s
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
-import { IdAccountComponent, ID as IdAccCompID } from "components/IdAccountComponent.sol";
+import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IndexPetComponent, ID as IndexPetCompID } from "components/IndexPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
@@ -28,6 +26,7 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
@@ -36,6 +35,7 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
+import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
@@ -59,7 +59,7 @@ library LibPet {
     uint256 id = world.getUniqueEntityId();
     IsPetComponent(getAddressById(components, IsPetCompID)).set(id);
     IndexPetComponent(getAddressById(components, IndexPetCompID)).set(id, index);
-    setAccount(components, id, accountID);
+    setOwner(components, id, accountID);
     setMediaURI(components, id, UNREVEALED_URI);
     setState(components, id, "UNREVEALED");
     setStartTs(components, id, block.timestamp);
@@ -87,25 +87,25 @@ library LibPet {
   /// @notice bridging a pet Outside => MUD. Does not handle account details
   function stake(IUintComp components, uint256 id, uint256 accountID) internal {
     setState(components, id, "RESTING");
-    setAccount(components, id, accountID);
+    setOwner(components, id, accountID);
   }
 
   /// @notice bridging a pet MUD => Outside. Does not handle account details
   function unstake(IUintComp components, uint256 id) internal {
     setState(components, id, "721_EXTERNAL");
-    setAccount(components, id, 0);
+    setOwner(components, id, 0);
   }
 
   /// @notice put pet in gacha pool
   function toGacha(IUintComp components, uint256 id) internal {
     setState(components, id, "GACHA");
-    IdAccountComponent(getAddressById(components, IdAccCompID)).remove(id);
+    setOwner(components, id, GACHA_ID);
   }
 
   /// @notice take pet out of gacha pool
   function fromGacha(IUintComp components, uint256 id, uint256 accountID) internal {
     setState(components, id, "RESTING");
-    setAccount(components, id, accountID);
+    setOwner(components, id, accountID);
   }
 
   ///////////////////////
@@ -157,7 +157,7 @@ library LibPet {
   function transfer(IUintComp components, uint32 index, uint256 accountID) internal {
     // does not need to check for previous owner, ERC721 handles it
     uint256 id = getByIndex(components, index);
-    setAccount(components, id, accountID);
+    setOwner(components, id, accountID);
   }
 
   /////////////////
@@ -329,7 +329,7 @@ library LibPet {
 
   // Check whether a pet is attached to an account
   function hasAccount(IUintComp components, uint256 id) internal view returns (bool) {
-    return IdAccountComponent(getAddressById(components, IdAccCompID)).has(id);
+    return IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).has(id);
   }
 
   // Check whether a pet is dead.
@@ -402,8 +402,8 @@ library LibPet {
   /////////////////
   // SETTERS
 
-  function setAccount(IUintComp components, uint256 id, uint256 accountID) internal {
-    IdAccountComponent(getAddressById(components, IdAccCompID)).set(id, accountID);
+  function setOwner(IUintComp components, uint256 id, uint256 accountID) internal {
+    IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).set(id, accountID);
   }
 
   // add or remove the CanName component
@@ -484,7 +484,7 @@ library LibPet {
 
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddressById(components, IdAccCompID)).getValue(id);
+    return IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).getValue(id);
   }
 
   // null string might not be very useful, may be better for a has check
@@ -571,7 +571,7 @@ library LibPet {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    IdAccountComponent comp = IdAccountComponent(getAddressById(components, IdAccCompID));
+    IdOwnsPetComponent comp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
       results[i] = comp.getValue(ids[i]);
@@ -594,20 +594,13 @@ library LibPet {
   }
 
   /// @notice retrieves the pet with the specified name
-  function getByName(
-    IUintComp components,
-    string memory name
-  ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
+  function getByName(IUintComp components, string memory name) internal view returns (uint256) {
+    uint256[] memory results = LibSafeQuery.getIsWithValue(
       getComponentById(components, NameCompID),
+      getComponentById(components, IsPetCompID),
       abi.encode(name)
     );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) result = results[0];
+    return results.length > 0 ? results[0] : 0;
   }
 
   /// @notice gets all the pets owned by an account
@@ -615,28 +608,12 @@ library LibPet {
     IUintComp components,
     uint256 accountID
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdAccCompID),
-      abi.encode(accountID)
-    );
-
-    return LibQuery.query(fragments);
-  }
-
-  /// @notice get all pets in the gacha pool
-  function getAllInGacha(IUintComp components) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, StateCompID),
-      abi.encode("GACHA")
-    );
-
-    return LibQuery.query(fragments);
+    return
+      LibSafeQuery.getIsWithValue(
+        getComponentById(components, IdOwnsPetCompID),
+        getComponentById(components, IsPetCompID),
+        abi.encode(accountID)
+      );
   }
 
   ////////////////////
