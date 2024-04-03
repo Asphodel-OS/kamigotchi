@@ -21,7 +21,7 @@ contract _NPCCreateSystem is System {
 
     require(id == 0, "NPC: already exists");
 
-    id = LibNPC.create(world, components, index, name, roomIndex);
+    id = LibNPC.create(components, index, name, roomIndex);
     return abi.encode(id);
   }
 

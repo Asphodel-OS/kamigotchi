@@ -156,6 +156,8 @@ contract QuestsTest is SetupTemplate {
     uint256 questID = _acceptQuest(0, 1);
 
     // check that snapshots are correctly stored
+    vm.prank(deployer); // load bearing entity lol
+    _IdOwnsQuestComponent.set(1, 1); // load bearing entity lol
     uint256[] memory snapshots = _getQuestObjSnapshots(questID);
     assertEq(snapshots.length, 1);
     assertTrue(_IsObjectiveComponent.has(snapshots[0]));
@@ -410,18 +412,25 @@ contract QuestsTest is SetupTemplate {
   }
 
   function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdOwnsQuestComponentID),
-      abi.encode(questID)
-    );
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsObjectiveComponentID),
-      ""
-    );
-    return LibQuery.query(fragments);
+    // QueryFragment[] memory fragments = new QueryFragment[](2);
+    // fragments[0] = QueryFragment(
+    //   QueryType.HasValue,
+    //   getComponentById(components, IdOwnsQuestComponentID),
+    //   abi.encode(questID)
+    // );
+    // fragments[1] = QueryFragment(
+    //   QueryType.Has,
+    //   getComponentById(components, IsObjectiveComponentID),
+    //   ""
+    // );
+    // return LibQuery.query(fragments);
+
+    return
+      LibSafeQuery.getIsWithValue(
+        getComponentById(components, IdOwnsQuestComponentID),
+        getComponentById(components, IsObjectiveComponentID),
+        abi.encode(questID)
+      );
   }
 
   function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
