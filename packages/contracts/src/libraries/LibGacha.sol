@@ -1,21 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
+import { BareValueComponent, ID as BareValueCompID } from "components/BareValueComponent.sol";
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
-import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
@@ -27,6 +28,8 @@ uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 uint256 constant GACHA_DATA_ID = uint256(keccak256("gacha.data.id"));
 
 library LibGacha {
+  using LibComp for IComponent;
+
   /// @notice Creates a commit for a gacha roll
   function commit(
     IWorld world,
@@ -40,7 +43,7 @@ library LibGacha {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, string("GACHA_COMMIT"));
 
     // setting increment on commit, increasing increment
-    ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
+    BareValueComponent valComp = BareValueComponent(getAddressById(components, BareValueCompID));
     uint256 curr = valComp.get(GACHA_DATA_ID);
     valComp.set(id, curr + 1);
     valComp.set(GACHA_DATA_ID, curr + 1);
@@ -55,45 +58,38 @@ library LibGacha {
     uint256 revealBlock
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](amount);
-    IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
-    BlockRevealComponent revealComp = BlockRevealComponent(
-      getAddressById(components, BlockRevealCompID)
-    );
-    TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
+    BareValueComponent valueComp = BareValueComponent(getAddressById(components, BareValueCompID));
     uint256 currInc = valueComp.get(GACHA_DATA_ID) + 1;
+
+    uint256[] memory increments = new uint256[](amount);
+    uint256 initialID = world.getUniqueEntityId(); // needed to get unique ID each time - does not update till value is set
     for (uint256 i; i < amount; i++) {
-      uint256 id = world.getUniqueEntityId();
-      accComp.set(id, accountID);
-      revealComp.set(id, revealBlock);
-      typeComp.set(id, string("GACHA_COMMIT"));
-      valueComp.set(id, currInc + i);
-      ids[i] = id;
+      ids[i] = uint256(keccak256(abi.encodePacked(initialID, i)));
+      increments[i] = currInc + i;
     }
+
+    // setting values
+    getComponentById(components, IdAccountCompID).setAll(ids, accountID);
+    getComponentById(components, BlockRevealCompID).setAll(ids, revealBlock);
+    getComponentById(components, TypeCompID).setAll(ids, string("GACHA_COMMIT"));
+    valueComp.setBatch(ids, increments);
+
+    // update increment counter
     valueComp.set(GACHA_DATA_ID, currInc + amount);
   }
 
   /// @notice deposits pets into the gacha pool
   /// @dev doesnt use LibPet for batch efficiency
   function depositPets(IUintComp components, uint256[] memory petIDs) internal {
-    GachaOrderComponent orderComp = GachaOrderComponent(
-      getAddressById(components, GachaOrderCompID)
-    );
     IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
-    StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
 
     uint256 numInGacha = getNumInGacha(components);
 
     for (uint256 i; i < petIDs.length; i++) {
-      stateComp.set(petIDs[i], string("GACHA"));
-      orderComp.set(petIDs[i], numInGacha + i);
-
       ownerComp.set(petIDs[i], GACHA_ID);
       if (rerollComp.has(petIDs[i])) rerollComp.remove(petIDs[i]);
     }
-
-    setNumInGacha(components, numInGacha + petIDs.length);
   }
 
   /// @notice transfers multiple pets from gacha to accounts
@@ -106,13 +102,11 @@ library LibGacha {
   ) internal {
     IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
-    StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
 
-    for (uint256 i; i < petIDs.length; i++) {
-      ownerComp.set(petIDs[i], accountIDs[i]);
-      rerollComp.set(petIDs[i], rerolls[i] + 1);
-      stateComp.set(petIDs[i], string("RESTING"));
-    }
+    for (uint256 i; i < petIDs.length; i++) rerolls[i]++;
+
+    ownerComp.setBatch(petIDs, accountIDs);
+    rerollComp.setBatch(petIDs, rerolls);
   }
 
   /////////////////
@@ -146,20 +140,17 @@ library LibGacha {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    BlockRevealComponent blockComp = BlockRevealComponent(
-      getAddressById(components, BlockRevealCompID)
-    );
-    ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
     uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
+    uint256[] memory blockNums = BlockRevealComponent(getAddressById(components, BlockRevealCompID))
+      .getBatch(ids);
+    uint256[] memory increments = BareValueComponent(getAddressById(components, BareValueCompID))
+      .getBatch(ids);
+
+    for (uint256 i; i < ids.length; i++)
       results[i] = uint256(
-        keccak256(
-          abi.encode(LibRandom.getSeedBlockhash(blockComp.get(ids[i])), valueComp.get(ids[i]))
-        )
+        keccak256(abi.encode(LibRandom.getSeedBlockhash(blockNums[i]), increments[i]))
       );
-      blockComp.remove(ids[i]);
-      valueComp.remove(ids[i]);
-    }
+
     return results;
   }
 
@@ -201,10 +192,6 @@ library LibGacha {
     uint256[] memory selectedIndex = LibRandom.getRandomBatchNoReplacement(seeds, max);
 
     uint256[] memory results = _extractPets(components, selectedIndex, max);
-
-    // updating max in gacha
-    setNumInGacha(components, max - selectedIndex.length);
-
     return results;
   }
 
@@ -216,25 +203,15 @@ library LibGacha {
   ) internal returns (uint256[] memory) {
     uint256 count = indices.length;
     uint256[] memory results = new uint256[](count);
-
+    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     IsPetComponent isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
-    GachaOrderComponent orderComp = GachaOrderComponent(
-      getAddressById(components, GachaOrderCompID)
-    );
 
     for (uint256 i; i < count; i++) {
-      uint256 selectedID = orderComp.getEntitiesWithValue(indices[i])[0]; // only 1 of each index
+      uint256 selectedID = ownerComp.getAt(abi.encode(GACHA_ID), indices[i]);
       require(isPetComp.has(selectedID), "not a pet");
-      if (indices[i] < max - 1) {
-        // swap pop
-        uint256 lastID = orderComp.getEntitiesWithValue(max - 1)[0];
-        require(isPetComp.has(lastID), "not a pet");
-        orderComp.set(lastID, indices[i]);
-      }
 
-      orderComp.remove(selectedID);
+      ownerComp.remove(selectedID);
       results[i] = selectedID;
-
       max--;
     }
 
@@ -253,11 +230,12 @@ library LibGacha {
   }
 
   function getIncrement(IUintComp components) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).get(GACHA_DATA_ID);
+    return BareValueComponent(getAddressById(components, BareValueCompID)).get(GACHA_DATA_ID);
   }
 
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalanceCompID)).get(GACHA_DATA_ID);
+    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
+    return ownerComp.size(abi.encode(GACHA_ID));
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -273,57 +251,33 @@ library LibGacha {
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-    }
-    return results;
+    return BareValueComponent(getAddressById(components, BareValueCompID)).getBatch(ids);
   }
 
   function getTypeBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (string[] memory) {
-    TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
-    string[] memory results = new string[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-    }
-    return results;
+    return TypeComponent(getAddressById(components, TypeCompID)).getBatch(ids);
   }
 
   function getRerollBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal view returns (uint256[] memory) {
-    RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
-    uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-    }
-    return results;
+    return RerollComponent(getAddressById(components, RerollCompID)).getBatch(ids);
   }
 
   /////////////////
   // SETTERS
 
   function initIncrement(IUintComp components) internal {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    if (!comp.has(GACHA_DATA_ID)) comp.set(GACHA_DATA_ID, 0);
-  }
-
-  function initNumInGacha(IUintComp components) internal {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    BareValueComponent comp = BareValueComponent(getAddressById(components, BareValueCompID));
     if (!comp.has(GACHA_DATA_ID)) comp.set(GACHA_DATA_ID, 0);
   }
 
   function setIncrement(IUintComp components, uint256 increment) internal {
-    ValueComponent(getAddressById(components, ValueCompID)).set(GACHA_DATA_ID, increment);
-  }
-
-  function setNumInGacha(IUintComp components, uint256 num) internal {
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(GACHA_DATA_ID, num);
+    BareValueComponent(getAddressById(components, BareValueCompID)).set(GACHA_DATA_ID, increment);
   }
 
   function setReroll(IUintComp components, uint256 id, uint256 reroll) internal {
@@ -335,78 +289,51 @@ library LibGacha {
     uint256[] memory ids,
     uint256[] memory rerolls
   ) internal {
-    RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
-    for (uint256 i; i < ids.length; i++) {
-      comp.set(ids[i], rerolls[i]);
-    }
+    RerollComponent(getAddressById(components, RerollCompID)).setBatch(ids, rerolls);
   }
 
   ///////////////////
   // EXTRACTORS (get and remove)
 
   function extractReroll(IUintComp components, uint256 id) internal returns (uint256 result) {
-    RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
-    if (comp.has(id)) {
-      result = comp.get(id);
-      comp.remove(id);
-    } else {
-      result = 0;
-    }
+    // rerolls are not guaranteed to exist, so we need to check
+    bytes memory data = RerollComponent(getAddressById(components, RerollCompID)).extractRaw(id);
+    return data.length > 0 ? abi.decode(data, (uint256)) : 0;
   }
 
   function extractAccountBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    IdAccountComponent comp = IdAccountComponent(getAddressById(components, IdAccountCompID));
-    uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-      comp.remove(ids[i]);
-    }
-    return results;
+    return IdAccountComponent(getAddressById(components, IdAccountCompID)).extractBatch(ids);
   }
 
   function extractIncrementBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-      comp.remove(ids[i]);
-    }
-    return results;
+    return BareValueComponent(getAddressById(components, BareValueCompID)).extractBatch(ids);
   }
 
   function extractTypeBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal returns (string[] memory) {
-    TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
-    string[] memory results = new string[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-      comp.remove(ids[i]);
-    }
-    return results;
+    return TypeComponent(getAddressById(components, TypeCompID)).extractBatch(ids);
   }
 
   function extractRerollBatch(
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
+    // rerolls are not guaranteed to exist, so we need to check
+
+    bytes[] memory data = RerollComponent(getAddressById(components, RerollCompID)).extractRawBatch(
+      ids
+    );
     uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      if (comp.has(ids[i])) {
-        results[i] = comp.get(ids[i]);
-        comp.remove(ids[i]);
-      } else {
-        results[i] = 0;
-      }
-    }
+    for (uint256 i; i < ids.length; i++)
+      results[i] = data[i].length > 0 ? abi.decode(data[i], (uint256)) : 0;
     return results;
   }
 
@@ -414,12 +341,6 @@ library LibGacha {
     IUintComp components,
     uint256[] memory ids
   ) internal returns (uint256[] memory) {
-    BlockRevealComponent comp = BlockRevealComponent(getAddressById(components, BlockRevealCompID));
-    uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.get(ids[i]);
-      comp.remove(ids[i]);
-    }
-    return results;
+    return BlockRevealComponent(getAddressById(components, BlockRevealCompID)).extractBatch(ids);
   }
 }

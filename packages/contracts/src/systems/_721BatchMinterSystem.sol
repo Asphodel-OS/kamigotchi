@@ -14,7 +14,6 @@ import { Stat, StatComponent } from "components/types/StatComponent.sol";
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { CanNameComponent, ID as CanNameCompID } from "components/CanNameComponent.sol";
-import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
 import { HealthComponent, ID as HealthCompID } from "components/HealthComponent.sol";
 import { HarmonyComponent, ID as HarmonyCompID } from "components/HarmonyComponent.sol";
 import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
@@ -288,7 +287,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
   Pet721 internal immutable pet721;
   CanNameComponent internal immutable canNameComp;
-  GachaOrderComponent internal immutable gachaOrderComp;
   IdOwnsPetComponent internal immutable idOwnsPetComp;
   IsPetComponent internal immutable isPetComp;
   IndexPetComponent internal immutable indexPetComp;
@@ -310,7 +308,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
     pet721 = LibPet721.getContract(world);
     canNameComp = CanNameComponent(getAddressById(components, CanNameCompID));
-    gachaOrderComp = GachaOrderComponent(getAddressById(components, GachaOrderCompID));
     idOwnsPetComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     isPetComp = IsPetComponent(getAddressById(components, IsPetCompID));
     indexPetComp = IndexPetComponent(getAddressById(components, IndexPetCompID));
@@ -330,7 +327,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     // require(colorWeights.keys != 0, "traits not set");
 
     uint32 startIndex = uint32(pet721.totalSupply()) + 1; // starts from 1
-    uint256 startGacha = balanceComp.get(GACHA_DATA_ID); // starts from 0
+    uint256 startGacha = idOwnsPetComp.size(abi.encode(GACHA_ID)); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
     uint256[] memory ids = createPets(startIndex, startGacha, amount);
@@ -340,9 +337,6 @@ contract _721BatchMinterSystem is System, TraitHandler {
 
     /// @dev minting 721s
     mint721s(startIndex, amount);
-
-    // update gacha total
-    balanceComp.set(GACHA_DATA_ID, startGacha + amount);
 
     return ids;
   }
@@ -367,12 +361,11 @@ contract _721BatchMinterSystem is System, TraitHandler {
       ids[i] = id;
 
       canNameComp.set(id); // normally after reveal
-      gachaOrderComp.set(id, startGacha + i);
-      idOwnsPetComp.set(id, GACHA_ID);
+      idOwnsPetComp.set(id, GACHA_ID); // seed in gacha
       isPetComp.set(id);
       indexPetComp.set(id, startIndex + i);
       nameComp.set(id, LibString.concat("kamigotchi ", LibString.toString(startIndex + i)));
-      stateComp.set(id, string("GACHA")); // seed in gacha
+      stateComp.set(id, string("RESTING"));
       timeStartComp.set(id, block.timestamp);
       timeLastComp.set(id, block.timestamp); // normally after reveal
       levelComp.set(id, 1);

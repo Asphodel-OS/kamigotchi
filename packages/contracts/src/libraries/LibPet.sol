@@ -96,18 +96,6 @@ library LibPet {
     setOwner(components, id, 0);
   }
 
-  /// @notice put pet in gacha pool
-  function toGacha(IUintComp components, uint256 id) internal {
-    setState(components, id, "GACHA");
-    setOwner(components, id, GACHA_ID);
-  }
-
-  /// @notice take pet out of gacha pool
-  function fromGacha(IUintComp components, uint256 id, uint256 accountID) internal {
-    setState(components, id, "RESTING");
-    setOwner(components, id, accountID);
-  }
-
   ///////////////////////
   // STATS INTERACTIONS
 

@@ -78,7 +78,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
    */
   function extractRaw(uint256 entity) public virtual override onlyWriter returns (bytes memory) {
     bytes memory value = entityToValue[entity];
-    _remove(entity);
+    if (value.length > 0) _remove(entity);
     return value;
   }
 
@@ -92,7 +92,7 @@ abstract contract BareComponent is IComponent, OwnableWritable {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i = 0; i < entities.length; i++) {
       values[i] = entityToValue[entities[i]];
-      _remove(entities[i]);
+      if (values[i].length > 0) _remove(entities[i]);
     }
     return values;
   }

@@ -222,7 +222,7 @@ contract GachaTest is SetupTemplate {
       ogIndices[i] = uint256(keccak256(abi.encode(id, seed)));
 
       vm.prank(deployer);
-      _ValueComponent.set(id, ogIndices[i]);
+      _BareValueComponent.set(id, ogIndices[i]);
     }
 
     // sort
@@ -231,7 +231,7 @@ contract GachaTest is SetupTemplate {
     // check sort
     uint256 curr;
     for (uint256 i = 0; i < length; i++) {
-      uint256 val = _ValueComponent.get(sortedIDs[i]);
+      uint256 val = _BareValueComponent.get(sortedIDs[i]);
       assertTrue(val >= curr);
       curr = val;
     }
@@ -277,7 +277,6 @@ contract GachaTest is SetupTemplate {
   function _assertInGacha(uint256 petID) internal {
     assertEq(_IdOwnsPetComponent.get(petID), GACHA_ID);
     assertTrue(!_RerollComponent.has(petID));
-    assertEq(_StateComponent.get(petID), "GACHA");
   }
 
   function _assertOutGacha(uint256 petID, uint256 account, uint256 rerolls) internal {
@@ -295,16 +294,9 @@ contract GachaTest is SetupTemplate {
   ) internal {
     account = _getAccount(account);
     assertTrue(rerolls == 0 ? !_RerollComponent.has(id) : _RerollComponent.get(id) == rerolls);
-    assertTrue(_ValueComponent.has(id));
+    assertTrue(_BareValueComponent.has(id));
     assertEq(_IdAccountComponent.get(id), account);
     assertEq(_BlockRevealComponent.get(id), revealBlock);
     assertEq(_TypeComponent.get(id), "GACHA_COMMIT");
-  }
-
-  /// @notice
-  function _assertGachaOrder(uint256[] memory pool) internal {
-    uint256[] memory occurances = new uint256[](pool.length);
-    for (uint256 i = 0; i < pool.length; i++) occurances[_GachaOrderComponent.get(pool[i])]++;
-    for (uint256 i = 0; i < pool.length; i++) assertEq(occurances[i], 1);
   }
 }

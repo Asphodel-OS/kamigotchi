@@ -56,6 +56,5 @@ contract PetGachaRerollSystem is System {
 
   function init(bytes memory arguments) external onlyOwner {
     LibGacha.initIncrement(components);
-    LibGacha.initNumInGacha(components);
   }
 }

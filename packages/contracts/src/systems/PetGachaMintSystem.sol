@@ -45,6 +45,5 @@ contract PetGachaMintSystem is System {
 
   function init(bytes memory arugments) external onlyOwner {
     LibGacha.initIncrement(components);
-    LibGacha.initNumInGacha(components);
   }
 }
