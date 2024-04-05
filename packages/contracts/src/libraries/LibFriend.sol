@@ -53,7 +53,7 @@ library LibFriend {
     // set account & target - raw component for efficiency
     IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
     accComp.set(id, accID);
-    setTarget(components, id, accComp.getValue(requestID));
+    setTarget(components, id, accComp.get(requestID));
 
     // set state - raw component for efficiency
     StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
@@ -103,15 +103,15 @@ library LibFriend {
   // GETTERS
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddressById(components, IdAccountCompID)).getValue(id);
+    return IdAccountComponent(getAddressById(components, IdAccountCompID)).get(id);
   }
 
   function getTarget(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdTargetComponent(getAddressById(components, IdTargetCompID)).getValue(id);
+    return IdTargetComponent(getAddressById(components, IdTargetCompID)).get(id);
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
-    return StateComponent(getAddressById(components, StateCompID)).getValue(id);
+    return StateComponent(getAddressById(components, StateCompID)).get(id);
   }
 
   function isFriendship(IUintComp components, uint256 id) internal view returns (bool) {

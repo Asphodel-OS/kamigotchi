@@ -40,7 +40,7 @@ contract AddressComponent is Component {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (address) {
+  function get(uint256 entity) public view virtual returns (address) {
     return abi.decode(getRaw(entity), (address));
   }
 

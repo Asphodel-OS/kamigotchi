@@ -21,7 +21,7 @@ library LibRarity {
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!has(components, id)) return 0;
-    return RarityComponent(getAddressById(components, RarityCompID)).getValue(id);
+    return RarityComponent(getAddressById(components, RarityCompID)).get(id);
   }
 
   // get the selection weights of a list of registry entities based on their rarity tier

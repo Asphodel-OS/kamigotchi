@@ -92,14 +92,14 @@ library LibExperience {
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
     ExperienceComponent comp = ExperienceComponent(getAddressById(components, ExpCompID));
     if (!comp.has(id)) return 0;
-    return comp.getValue(id);
+    return comp.get(id);
   }
 
   // get the Level of an entity, defaults to 1 if not found
   function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
     LevelComponent comp = LevelComponent(getAddressById(components, LevelCompID));
     if (!comp.has(id)) return 1;
-    return comp.getValue(id);
+    return comp.get(id);
   }
 
   /////////////////

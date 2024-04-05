@@ -39,7 +39,7 @@ library LibDataEntity {
     uint256 dataID = getID(holderID, index, type_);
     BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
 
-    uint256 value = comp.has(dataID) ? comp.getValue(dataID) : 0;
+    uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
     comp.set(dataID, value + amt);
     return value + amt;
   }
@@ -54,7 +54,7 @@ library LibDataEntity {
     uint256 dataID = getID(holderID, index, type_);
     BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
 
-    uint256 value = comp.has(dataID) ? comp.getValue(dataID) : 0;
+    uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
     comp.set(dataID, value - amt);
     return value - amt;
   }
@@ -81,7 +81,7 @@ library LibDataEntity {
     BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
 
     uint32[8] memory value = comp.has(dataID)
-      ? LibPack.unpackArrU32(comp.getValue(dataID))
+      ? LibPack.unpackArrU32(comp.get(dataID))
       : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
     for (uint256 i; i < 8; i++) value[i] = value[i] + amt[i];
     comp.set(dataID, LibPack.packArrU32(value));
@@ -98,7 +98,7 @@ library LibDataEntity {
     BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
 
     uint32[8] memory value = comp.has(dataID)
-      ? LibPack.unpackArrU32(comp.getValue(dataID))
+      ? LibPack.unpackArrU32(comp.get(dataID))
       : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
     for (uint256 i; i < 8; i++) value[i] = value[i] - amt[i];
     comp.set(dataID, LibPack.packArrU32(value));
@@ -125,6 +125,6 @@ library LibDataEntity {
   ) internal view returns (uint256 result) {
     uint256 dataID = getID(holderID, index, type_);
     BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
-    if (comp.has(dataID)) result = comp.getValue(dataID);
+    if (comp.has(dataID)) result = comp.get(dataID);
   }
 }

@@ -24,7 +24,7 @@ library LibStat {
   function copy(IUintComp components, uint256 fromID, uint256 toID) internal {
     uint256[] memory componentIDs = getComponentsSet(components, fromID);
     for (uint256 i = 0; i < componentIDs.length; i++) {
-      uint256 val = IUintComp(getAddressById(components, componentIDs[i])).getValue(fromID);
+      uint256 val = IUintComp(getAddressById(components, componentIDs[i])).get(fromID);
       IUintComp(getAddressById(components, componentIDs[i])).set(toID, val);
     }
   }
@@ -118,7 +118,7 @@ library LibStat {
 
   function getHarmony(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasHarmony(components, id)) return Stat(0, 0, 0, 0);
-    return HarmonyComponent(getAddressById(components, HarmonyCompID)).getValue(id);
+    return HarmonyComponent(getAddressById(components, HarmonyCompID)).get(id);
   }
 
   function getHarmonyTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -127,7 +127,7 @@ library LibStat {
 
   function getHealth(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasHealth(components, id)) return Stat(0, 0, 0, 0);
-    return HealthComponent(getAddressById(components, HealthCompID)).getValue(id);
+    return HealthComponent(getAddressById(components, HealthCompID)).get(id);
   }
 
   function getHealthTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -136,7 +136,7 @@ library LibStat {
 
   function getPower(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasPower(components, id)) return Stat(0, 0, 0, 0);
-    return PowerComponent(getAddressById(components, PowerCompID)).getValue(id);
+    return PowerComponent(getAddressById(components, PowerCompID)).get(id);
   }
 
   function getPowerTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -145,7 +145,7 @@ library LibStat {
 
   function getSlots(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasSlots(components, id)) return Stat(0, 0, 0, 0);
-    return SlotsComponent(getAddressById(components, SlotsCompID)).getValue(id);
+    return SlotsComponent(getAddressById(components, SlotsCompID)).get(id);
   }
 
   function getSlotsTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -154,7 +154,7 @@ library LibStat {
 
   function getStamina(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasStamnina(components, id)) return Stat(0, 0, 0, 0);
-    return StaminaComponent(getAddressById(components, StaminaCompID)).getValue(id);
+    return StaminaComponent(getAddressById(components, StaminaCompID)).get(id);
   }
 
   function getStaminaTotal(IUintComp components, uint256 id) internal view returns (int32) {
@@ -163,7 +163,7 @@ library LibStat {
 
   function getViolence(IUintComp components, uint256 id) internal view returns (Stat memory) {
     if (!hasViolence(components, id)) return Stat(0, 0, 0, 0);
-    return ViolenceComponent(getAddressById(components, ViolenceCompID)).getValue(id);
+    return ViolenceComponent(getAddressById(components, ViolenceCompID)).get(id);
   }
 
   function getViolenceTotal(IUintComp components, uint256 id) internal view returns (int32) {

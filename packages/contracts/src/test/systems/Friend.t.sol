@@ -178,10 +178,10 @@ contract FriendTest is SetupTemplate {
     uint256 targetIndex,
     string memory state
   ) internal {
-    assertTrue(_IsFriendshipComponent.getValue(id));
-    assertEq(_IdAccountComponent.getValue(id), _getAccount(accIndex));
-    assertEq(_IdTargetComponent.getValue(id), _getAccount(targetIndex));
-    assertEq(_StateComponent.getValue(id), state);
+    assertTrue(_IsFriendshipComponent.get(id));
+    assertEq(_IdAccountComponent.get(id), _getAccount(accIndex));
+    assertEq(_IdTargetComponent.get(id), _getAccount(targetIndex));
+    assertEq(_StateComponent.get(id), state);
   }
 
   function _assertFSDeletion(uint256 id) internal {

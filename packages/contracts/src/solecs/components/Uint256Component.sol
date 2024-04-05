@@ -46,7 +46,7 @@ contract Uint256Component is Component, IUint256Component {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (uint256) {
+  function get(uint256 entity) public view virtual returns (uint256) {
     return abi.decode(getRaw(entity), (uint256));
   }
 

@@ -206,42 +206,42 @@ library LibAccount {
     uint256 entityID
   ) internal view returns (bool) {
     IndexRoomComponent locComp = IndexRoomComponent(getAddressById(components, RoomCompID));
-    return locComp.getValue(id) == locComp.getValue(entityID);
+    return locComp.get(id) == locComp.get(entityID);
   }
 
   /////////////////
   // GETTERS
 
   function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).getValue(id);
+    return TimeLastActionComponent(getAddressById(components, TimeLastActCompID)).get(id);
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).get(id);
   }
 
   // gets the roomIndex of a specified account account
   function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddressById(components, RoomCompID)).getValue(id);
+    return IndexRoomComponent(getAddressById(components, RoomCompID)).get(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    return NameComponent(getAddressById(components, NameCompID)).get(id);
   }
 
   // get the address of an Account Operator
   function getOperator(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).getValue(id);
+    return AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).get(id);
   }
 
   // get the address of an Account Owner
   function getOwner(IUintComp components, uint256 id) internal view returns (address) {
-    return AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).getValue(id);
+    return AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).get(id);
   }
 
   function getQuestPoints(IUintComp components, uint256 id) internal view returns (uint256) {
     QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
-    if (comp.has(id)) return comp.getValue(id);
+    if (comp.has(id)) return comp.get(id);
     else return 0;
   }
 
@@ -283,7 +283,7 @@ library LibAccount {
     );
     uint256 id = uint256(uint160(operator));
     require(cacheComp.has(id), "Account: Operator not found");
-    return cacheComp.getValue(id);
+    return cacheComp.get(id);
   }
 
   // Get the account of an owner. Assume only 1.

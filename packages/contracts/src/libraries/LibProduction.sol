@@ -186,7 +186,7 @@ library LibProduction {
   // Set the node for a pet's production
   function setNode(IUintComp components, uint256 id, uint256 nodeID) internal {
     IdNodeComponent comp = IdNodeComponent(getAddressById(components, IdNodeCompID));
-    if (comp.getValue(id) != nodeID) {
+    if (comp.get(id) != nodeID) {
       comp.set(id, nodeID);
       IndexNodeComponent(getAddressById(components, IndexNodeCompID)).set(
         id,
@@ -219,27 +219,27 @@ library LibProduction {
   }
 
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256 ts) {
-    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).get(id);
   }
 
   function getNode(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdNodeComponent(getAddressById(components, IdNodeCompID)).getValue(id);
+    return IdNodeComponent(getAddressById(components, IdNodeCompID)).get(id);
   }
 
   function getPet(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdPetComponent(getAddressById(components, IdPetCompID)).getValue(id);
+    return IdPetComponent(getAddressById(components, IdPetCompID)).get(id);
   }
 
   function getRate(IUintComp components, uint256 id) internal view returns (uint256) {
-    return RateComponent(getAddressById(components, RateCompID)).getValue(id);
+    return RateComponent(getAddressById(components, RateCompID)).get(id);
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
-    return StateComponent(getAddressById(components, StateCompID)).getValue(id);
+    return StateComponent(getAddressById(components, StateCompID)).get(id);
   }
 
   function getStartTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
+    return TimeStartComponent(getAddressById(components, TimeStartCompID)).get(id);
   }
 
   /////////////////

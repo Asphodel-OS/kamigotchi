@@ -41,7 +41,7 @@ library LibGacha {
 
     // setting increment on commit, increasing increment
     ValueComponent valComp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 curr = valComp.getValue(GACHA_DATA_ID);
+    uint256 curr = valComp.get(GACHA_DATA_ID);
     valComp.set(id, curr + 1);
     valComp.set(GACHA_DATA_ID, curr + 1);
   }
@@ -61,7 +61,7 @@ library LibGacha {
     );
     TypeComponent typeComp = TypeComponent(getAddressById(components, TypeCompID));
     ValueComponent valueComp = ValueComponent(getAddressById(components, ValueCompID));
-    uint256 currInc = valueComp.getValue(GACHA_DATA_ID) + 1;
+    uint256 currInc = valueComp.get(GACHA_DATA_ID) + 1;
     for (uint256 i; i < amount; i++) {
       uint256 id = world.getUniqueEntityId();
       accComp.set(id, accountID);
@@ -154,10 +154,7 @@ library LibGacha {
     for (uint256 i; i < ids.length; i++) {
       results[i] = uint256(
         keccak256(
-          abi.encode(
-            LibRandom.getSeedBlockhash(blockComp.getValue(ids[i])),
-            valueComp.getValue(ids[i])
-          )
+          abi.encode(LibRandom.getSeedBlockhash(blockComp.get(ids[i])), valueComp.get(ids[i]))
         )
       );
       blockComp.remove(ids[i]);
@@ -248,7 +245,7 @@ library LibGacha {
   // GETTERS
 
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdAccountComponent(getAddressById(components, IdAccountCompID)).getValue(id);
+    return IdAccountComponent(getAddressById(components, IdAccountCompID)).get(id);
   }
 
   function getBaseRerollCost(IUintComp components) internal view returns (uint256) {
@@ -256,20 +253,20 @@ library LibGacha {
   }
 
   function getIncrement(IUintComp components) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(GACHA_DATA_ID);
+    return ValueComponent(getAddressById(components, ValueCompID)).get(GACHA_DATA_ID);
   }
 
   function getNumInGacha(IUintComp components) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalanceCompID)).getValue(GACHA_DATA_ID);
+    return BalanceComponent(getAddressById(components, BalanceCompID)).get(GACHA_DATA_ID);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   function getReroll(IUintComp components, uint256 id) internal view returns (uint256) {
     RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
-    return comp.has(id) ? comp.getValue(id) : 0;
+    return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getIncrementBatch(
@@ -279,7 +276,7 @@ library LibGacha {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
     }
     return results;
   }
@@ -291,7 +288,7 @@ library LibGacha {
     TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
     string[] memory results = new string[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
     }
     return results;
   }
@@ -303,7 +300,7 @@ library LibGacha {
     RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
     }
     return results;
   }
@@ -350,7 +347,7 @@ library LibGacha {
   function extractReroll(IUintComp components, uint256 id) internal returns (uint256 result) {
     RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
     if (comp.has(id)) {
-      result = comp.getValue(id);
+      result = comp.get(id);
       comp.remove(id);
     } else {
       result = 0;
@@ -364,7 +361,7 @@ library LibGacha {
     IdAccountComponent comp = IdAccountComponent(getAddressById(components, IdAccountCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
       comp.remove(ids[i]);
     }
     return results;
@@ -377,7 +374,7 @@ library LibGacha {
     ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
       comp.remove(ids[i]);
     }
     return results;
@@ -390,7 +387,7 @@ library LibGacha {
     TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
     string[] memory results = new string[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
       comp.remove(ids[i]);
     }
     return results;
@@ -404,7 +401,7 @@ library LibGacha {
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i; i < ids.length; i++) {
       if (comp.has(ids[i])) {
-        results[i] = comp.getValue(ids[i]);
+        results[i] = comp.get(ids[i]);
         comp.remove(ids[i]);
       } else {
         results[i] = 0;
@@ -420,7 +417,7 @@ library LibGacha {
     BlockRevealComponent comp = BlockRevealComponent(getAddressById(components, BlockRevealCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
       comp.remove(ids[i]);
     }
     return results;

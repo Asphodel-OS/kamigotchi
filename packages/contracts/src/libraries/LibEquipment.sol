@@ -169,15 +169,15 @@ library LibEquipment {
   // GETTERS
 
   function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdHolderComponent(getAddressById(components, IdHolderCompID)).getValue(id);
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).get(id);
   }
 
   function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   // Get the harmony of the equipped item. For fungible items we retrieve the stat from the

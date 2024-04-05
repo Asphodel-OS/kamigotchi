@@ -106,8 +106,8 @@ library LibRoom {
     uint256 toID
   ) internal view returns (bool) {
     LocationComponent locationComp = LocationComponent(getAddressById(components, LocationCompID));
-    Location memory fromLoc = locationComp.getValue(fromID);
-    Location memory toLoc = locationComp.getValue(toID);
+    Location memory fromLoc = locationComp.get(fromID);
+    Location memory toLoc = locationComp.get(toID);
     if (isAdjacent(fromLoc, toLoc)) return true;
 
     uint32[] memory exits = getSpecialExits(components, fromID);
@@ -149,15 +149,15 @@ library LibRoom {
     uint256 id
   ) internal view returns (uint32[] memory) {
     ExitsComponent comp = ExitsComponent(getAddressById(components, ExitsCompID));
-    return comp.has(id) ? comp.getValue(id) : new uint32[](0);
+    return comp.has(id) ? comp.get(id) : new uint32[](0);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).getValue(id);
+    return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).get(id);
   }
 
   function getLocation(IUintComp components, uint256 id) internal view returns (Location memory) {
-    return LocationComponent(getAddressById(components, LocationCompID)).getValue(id);
+    return LocationComponent(getAddressById(components, LocationCompID)).get(id);
   }
 
   /////////////////

@@ -64,7 +64,7 @@ library LibScore {
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     uint256 bal;
-    if (comp.has(id)) bal = comp.getValue(id);
+    if (comp.has(id)) bal = comp.get(id);
     else create(components, id, holderID, epoch, _type);
     bal += amt;
     comp.set(id, bal);
@@ -78,7 +78,7 @@ library LibScore {
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     uint256 bal;
-    if (comp.has(id)) bal = comp.getValue(id);
+    if (comp.has(id)) bal = comp.get(id);
     else create(components, id, holderID, epoch, _type);
     bal -= amt;
     comp.set(id, bal);
@@ -95,7 +95,7 @@ library LibScore {
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     uint32[8] memory bal = [uint32(0), 0, 0, 0, 0, 0, 0, 0];
-    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.getValue(id));
+    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.get(id));
     else create(components, id, holderID, epoch, _type);
     for (uint256 i; i < 8; i++) bal[i] += amt[i];
     comp.set(id, LibPack.packArrU32(bal));
@@ -112,7 +112,7 @@ library LibScore {
 
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     uint32[8] memory bal = [uint32(0), 0, 0, 0, 0, 0, 0, 0];
-    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.getValue(id));
+    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.get(id));
     else create(components, id, holderID, epoch, _type);
     for (uint256 i; i < 8; i++) bal[i] -= amt[i];
     comp.set(id, LibPack.packArrU32(bal));
@@ -122,7 +122,7 @@ library LibScore {
   // GETTERS
 
   function getEpoch(IUintComp components, uint256 id) internal view returns (uint256) {
-    return EpochComponent(getAddressById(components, EpochCompID)).getValue(id);
+    return EpochComponent(getAddressById(components, EpochCompID)).get(id);
   }
 
   // get current epoch for leaderboard

@@ -50,8 +50,9 @@ library LibRegister {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256) {
-    uint256 delegatorID = IdDelegatorComponent(getAddressById(components, IdDelegatorCompID))
-      .getValue(id);
+    uint256 delegatorID = IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(
+      id
+    );
 
     // token case, no ItemInventory entity created
     if (itemIndex == 0) {
@@ -121,11 +122,11 @@ library LibRegister {
   // COMPONENT RETRIEVAL
 
   function getDelegatee(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdDelegateeComponent(getAddressById(components, IdDelegateeCompID)).getValue(id);
+    return IdDelegateeComponent(getAddressById(components, IdDelegateeCompID)).get(id);
   }
 
   function getDelegator(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).getValue(id);
+    return IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(id);
   }
 
   /////////////////

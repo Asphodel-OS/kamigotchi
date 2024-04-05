@@ -50,7 +50,7 @@ contract SystemCallbackComponent is Component {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (SystemCallback memory) {
+  function get(uint256 entity) public view virtual returns (SystemCallback memory) {
     return abi.decode(getRaw(entity), (SystemCallback));
   }
 

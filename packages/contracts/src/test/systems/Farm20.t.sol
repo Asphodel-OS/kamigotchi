@@ -88,7 +88,7 @@ contract Farm20Test is SetupTemplate {
 
     // execute withdraw and confirm correct internal/external/total balances
     _Farm20WithdrawSystem.executeWithdraw(withdrawID);
-    uint internalBalance = _CoinComponent.getValue(_getAccount(0));
+    uint internalBalance = _CoinComponent.get(_getAccount(0));
     uint externalBalance = token.balanceOf(_getOwner(0));
     assertEq(internalBalance, startBal - amt);
     assertEq(_tokenToGameDP(externalBalance), amt);
@@ -128,7 +128,7 @@ contract Farm20Test is SetupTemplate {
 
     // check the user has the correct balances in and out of the game
     _Farm20DepositSystem.executeTyped(amt);
-    uint internalBalance = _CoinComponent.getValue(_getAccount(0));
+    uint internalBalance = _CoinComponent.get(_getAccount(0));
     uint externalBalance = token.balanceOf(_getOwner(0));
     assertEq(internalBalance, amt);
     assertEq(_tokenToGameDP(externalBalance), startBal - amt);
@@ -199,13 +199,13 @@ contract Farm20Test is SetupTemplate {
       _Farm20WithdrawSystem.executeWithdraw(id);
 
       // check the user has the correct balances in and out of the game
-      uint internalBalance = _CoinComponent.getValue(_getAccount(0));
+      uint internalBalance = _CoinComponent.get(_getAccount(0));
       assertEq(internalBalance, startBal0 - amt0);
 
       uint externalBalance = token.balanceOf(_getOwner(0));
       assertEq(_tokenToGameDP(externalBalance), amt0);
 
-      uint internalBalance1 = _CoinComponent.getValue(_getAccount(1));
+      uint internalBalance1 = _CoinComponent.get(_getAccount(1));
       assertEq(internalBalance1, startBal1);
 
       uint externalBalance1 = token.balanceOf(_getOwner(1));
@@ -237,7 +237,7 @@ contract Farm20Test is SetupTemplate {
 
       // check the user has the correct balances in and out of the game
       if (withDeposit) {
-        uint internalBalance = _CoinComponent.getValue(_getAccount(0));
+        uint internalBalance = _CoinComponent.get(_getAccount(0));
         assertEq(internalBalance, startBal0);
 
         uint externalBalance = token.balanceOf(_getOwner(0));
@@ -246,7 +246,7 @@ contract Farm20Test is SetupTemplate {
         // check that the total supply is the balance out of the world
         assertEq(_tokenToGameDP(token.totalSupply()), amt1);
       } else {
-        uint internalBalance = _CoinComponent.getValue(_getAccount(0));
+        uint internalBalance = _CoinComponent.get(_getAccount(0));
         assertEq(internalBalance, startBal0 - amt0);
 
         uint externalBalance = token.balanceOf(_getOwner(0));
@@ -256,7 +256,7 @@ contract Farm20Test is SetupTemplate {
         assertEq(_tokenToGameDP(token.totalSupply()), amt0 + amt1);
       }
 
-      uint internalBalance1 = _CoinComponent.getValue(_getAccount(1));
+      uint internalBalance1 = _CoinComponent.get(_getAccount(1));
       assertEq(internalBalance1, startBal1 - amt1);
 
       uint externalBalance1 = token.balanceOf(_getOwner(1));

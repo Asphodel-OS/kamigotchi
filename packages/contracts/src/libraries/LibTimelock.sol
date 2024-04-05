@@ -68,9 +68,7 @@ library LibTimelock {
     IUintComp components,
     uint256 id
   ) internal view returns (address, uint256, uint256) {
-    TimelockOp memory tlo = TimelockComponent(getAddressById(components, TimelockCompID)).getValue(
-      id
-    );
+    TimelockOp memory tlo = TimelockComponent(getAddressById(components, TimelockCompID)).get(id);
     return (tlo.target, tlo.value, tlo.salt);
   }
 }

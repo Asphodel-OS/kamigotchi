@@ -92,26 +92,26 @@ library LibRegistryRelationship {
   }
 
   function getNpcIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).getValue(id);
+    return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).get(id);
   }
 
   function getRelationshipIndex(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).getValue(id);
+    return IndexRelationshipComponent(getAddressById(components, IndexRelCompID)).get(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
     if (!hasName(components, id)) return "";
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    return NameComponent(getAddressById(components, NameCompID)).get(id);
   }
 
   function getBlacklist(IUintComp components, uint256 id) internal view returns (uint32[] memory) {
     if (!hasBlacklist(components, id)) return new uint32[](0);
-    return BlacklistComponent(getAddressById(components, BlacklistCompID)).getValue(id);
+    return BlacklistComponent(getAddressById(components, BlacklistCompID)).get(id);
   }
 
   function getWhitelist(IUintComp components, uint256 id) internal view returns (uint32[] memory) {
     if (!hasWhitelist(components, id)) return new uint32[](0);
-    return WhitelistComponent(getAddressById(components, WhitelistCompID)).getValue(id);
+    return WhitelistComponent(getAddressById(components, WhitelistCompID)).get(id);
   }
 
   /////////////////

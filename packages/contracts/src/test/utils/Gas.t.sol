@@ -42,8 +42,8 @@ contract GasTest is EmptyWorld {
 
     // reading to make all warm
     isComp.has(id);
-    ownerComp.getValue(id);
-    bareComp.getValue(holder);
+    ownerComp.get(id);
+    bareComp.get(holder);
     vm.stopPrank();
 
     createEntity(1, 0);
@@ -52,7 +52,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("1 entity     : ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("1 cache     : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -63,7 +63,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("10 entities  : ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("10 cache    : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -74,7 +74,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("100 entities : ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("100 cache   : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -85,7 +85,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("500 entities : ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("500 cache   : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -96,7 +96,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("1000 entities: ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("1000 cache  : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -107,7 +107,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("1500 entities: ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("1500 cache  : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -118,7 +118,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("2000 entities: ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("2000 cache  : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -129,7 +129,7 @@ contract GasTest is EmptyWorld {
     LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("2500 entities: ", gasstart - gasleft());
     gasstart = gasleft();
-    if (bareComp.has(holder)) bareComp.getValue(holder);
+    if (bareComp.has(holder)) bareComp.get(holder);
     console.log("2500 cache  : ", gasstart - gasleft());
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
@@ -145,7 +145,7 @@ contract GasTest is EmptyWorld {
 
       // reading to make all warm
       isComp.has(id);
-      ownerComp.getValue(id);
+      ownerComp.get(id);
     }
     vm.stopPrank();
   }

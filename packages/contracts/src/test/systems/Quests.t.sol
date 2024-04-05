@@ -158,8 +158,8 @@ contract QuestsTest is SetupTemplate {
     uint256[] memory snapshots = _getQuestObjSnapshots(questID);
     assertEq(snapshots.length, 1);
     assertTrue(_IsObjectiveComponent.has(snapshots[0]));
-    assertEq(_IdOwnsQuestComponent.getValue(snapshots[0]), questID);
-    assertEq(_BalanceComponent.getValue(snapshots[0]), startAmt);
+    assertEq(_IdOwnsQuestComponent.get(snapshots[0]), questID);
+    assertEq(_BalanceComponent.get(snapshots[0]), startAmt);
 
     // check completability
     assertTrue(!LibQuests.checkObjectives(components, questID, _getAccount(0)));
@@ -380,7 +380,7 @@ contract QuestsTest is SetupTemplate {
 
     uint256 regID = LibRegistryQuests.getByQuestIndex(components, 1);
     assertTrue(regID != 0);
-    assertEq(_QuestPointComponent.getValue(regID), 2);
+    assertEq(_QuestPointComponent.get(regID), 2);
     assertEq(LibQuests.getPoints(components, regID), 2);
 
     // accept quest

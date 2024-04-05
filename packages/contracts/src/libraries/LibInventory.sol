@@ -137,15 +137,15 @@ library LibInventory {
   // get the balance of a fungible inventory instance. return 0 if non-fungible or if none exists
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    if (comp.has(id)) balance = comp.getValue(id);
+    if (comp.has(id)) balance = comp.get(id);
   }
 
   function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdHolderComponent(getAddressById(components, IdHolderCompID)).getValue(id);
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).get(id);
   }
 
   function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
   // Get the type from the registry entry if it exists.

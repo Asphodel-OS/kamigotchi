@@ -26,7 +26,7 @@ function getAddressById(IUint256Component registry, uint256 id) view returns (ad
 /** Get an entity id from an address/id registry component (like _components/_systems in World.sol) */
 function getIdByAddress(IUint256Component registry, address addr) view returns (uint256) {
   require(registry.has(addressToEntity(addr)), "address not registered");
-  return registry.getValue(addressToEntity(addr));
+  return registry.get(addressToEntity(addr));
 }
 
 /** Get a Component from an address/id registry component (like _components in World.sol) */
