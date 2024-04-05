@@ -33,7 +33,7 @@ export interface TestComponent3Interface extends utils.Interface {
     "authorizeWriter(address)": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
     "extractRawBatch(uint256[])": FunctionFragment;
-    "getAt(uint256,bytes)": FunctionFragment;
+    "getAt(bytes,uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
@@ -98,7 +98,7 @@ export interface TestComponent3Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAt",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntities",
@@ -287,8 +287,8 @@ export interface TestComponent3 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -395,8 +395,8 @@ export interface TestComponent3 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getAt(
-    entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -503,8 +503,8 @@ export interface TestComponent3 extends BaseContract {
     ): Promise<string[]>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -623,8 +623,8 @@ export interface TestComponent3 extends BaseContract {
     ): Promise<BigNumber>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -730,8 +730,8 @@ export interface TestComponent3 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

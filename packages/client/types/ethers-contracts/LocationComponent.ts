@@ -45,7 +45,7 @@ export interface LocationComponentInterface extends utils.Interface {
     "extractRaw(uint256)": FunctionFragment;
     "extractRawBatch(uint256[])": FunctionFragment;
     "get(uint256)": FunctionFragment;
-    "getAt(uint256,bytes)": FunctionFragment;
+    "getAt(bytes,uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getEntitiesWithValue((int32,int32,int32))": FunctionFragment;
@@ -117,7 +117,7 @@ export interface LocationComponentInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAt",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntities",
@@ -328,8 +328,8 @@ export interface LocationComponent extends BaseContract {
     ): Promise<[LocationStructOutput]>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -450,8 +450,8 @@ export interface LocationComponent extends BaseContract {
   ): Promise<LocationStructOutput>;
 
   getAt(
-    entity: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -572,8 +572,8 @@ export interface LocationComponent extends BaseContract {
     ): Promise<LocationStructOutput>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -706,8 +706,8 @@ export interface LocationComponent extends BaseContract {
     ): Promise<BigNumber>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -827,8 +827,8 @@ export interface LocationComponent extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getAt(
-      entity: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

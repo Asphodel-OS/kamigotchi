@@ -103,14 +103,14 @@
       "name": "getAt",
       "inputs": [
         {
-          "name": "entity",
-          "type": "uint256",
-          "internalType": "uint256"
-        },
-        {
           "name": "value",
           "type": "bytes",
           "internalType": "bytes"
+        },
+        {
+          "name": "index",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [
@@ -546,7 +546,7 @@
     "extractRaw(uint256)": "e9ff6c76",
     "extractRawBatch(uint256[])": "12b11155",
     "get(uint256)": "9507d39a",
-    "getAt(uint256,bytes)": "e79ee6c9",
+    "getAt(bytes,uint256)": "6f9aa155",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue((address,uint256,uint256))": "5ed453f7",
     "getEntitiesWithValue(bytes)": "b361be46",
