@@ -11,6 +11,7 @@ import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IndexAccountComponent, ID as IndexAccCompID } from "components/IndexAccountComponent.sol";
 import { IndexFarcasterComponent, ID as IndexFarcasterCompID } from "components/IndexFarcasterComponent.sol";
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
@@ -304,16 +305,10 @@ library LibAccount {
     IUintComp components,
     uint256 accountID
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsPetCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdAccountCompID),
-      abi.encode(accountID)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    return results;
+    return
+      IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).getEntitiesWithValue(
+        accountID
+      );
   }
 
   // Get all accounts

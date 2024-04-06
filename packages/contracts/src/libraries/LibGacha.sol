@@ -9,6 +9,7 @@ import { BalanceComponent, ID as BalanceCompID } from "components/BalanceCompone
 import { BlockRevealComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
 import { GachaOrderComponent, ID as GachaOrderCompID } from "components/GachaOrderComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IdOwnsPetComponent, ID as IdOwnsPetCompID } from "components/IdOwnsPetComponent.sol";
 import { IsPetComponent, ID as IsPetCompID } from "components/IsPetComponent.sol";
 import { RerollComponent, ID as RerollCompID } from "components/RerollComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
@@ -20,6 +21,8 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
+// hardcoded entity representing the gacha pool
+uint256 constant GACHA_ID = uint256(keccak256("gacha.id"));
 // stores an increment to add entropy and prevent ordering attacks
 uint256 constant GACHA_DATA_ID = uint256(keccak256("gacha.data.id"));
 
@@ -76,7 +79,7 @@ library LibGacha {
     GachaOrderComponent orderComp = GachaOrderComponent(
       getAddressById(components, GachaOrderCompID)
     );
-    IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
+    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
     StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
 
@@ -86,7 +89,7 @@ library LibGacha {
       stateComp.set(petIDs[i], string("GACHA"));
       orderComp.set(petIDs[i], numInGacha + i);
 
-      accComp.remove(petIDs[i]);
+      ownerComp.set(petIDs[i], GACHA_ID);
       if (rerollComp.has(petIDs[i])) rerollComp.remove(petIDs[i]);
     }
 
@@ -101,12 +104,12 @@ library LibGacha {
     uint256[] memory accountIDs,
     uint256[] memory rerolls
   ) internal {
-    IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
+    IdOwnsPetComponent ownerComp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     RerollComponent rerollComp = RerollComponent(getAddressById(components, RerollCompID));
     StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
 
     for (uint256 i; i < petIDs.length; i++) {
-      accComp.set(petIDs[i], accountIDs[i]);
+      ownerComp.set(petIDs[i], accountIDs[i]);
       rerollComp.set(petIDs[i], rerolls[i] + 1);
       stateComp.set(petIDs[i], string("RESTING"));
     }
@@ -267,18 +270,6 @@ library LibGacha {
   function getReroll(IUintComp components, uint256 id) internal view returns (uint256) {
     RerollComponent comp = RerollComponent(getAddressById(components, RerollCompID));
     return comp.has(id) ? comp.getValue(id) : 0;
-  }
-
-  function getAccountBatch(
-    IUintComp components,
-    uint256[] memory ids
-  ) internal view returns (uint256[] memory) {
-    IdAccountComponent comp = IdAccountComponent(getAddressById(components, IdAccountCompID));
-    uint256[] memory results = new uint256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
-    }
-    return results;
   }
 
   function getIncrementBatch(

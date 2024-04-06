@@ -50,7 +50,6 @@ import LootboxExecuteRevealSystem from "../abi/LootboxExecuteRevealSystem.json";
 import LootboxStartRevealSystem from "../abi/LootboxStartRevealSystem.json";
 import Mint20MintSystem from "../abi/Mint20MintSystem.json";
 import Mint20ProxySystem from "../abi/Mint20ProxySystem.json";
-import NodeCollectSystem from "../abi/NodeCollectSystem.json";
 import Pet721IsInWorldSystem from "../abi/Pet721IsInWorldSystem.json";
 import Pet721MetadataSystem from "../abi/Pet721MetadataSystem.json";
 import Pet721MintSystem from "../abi/Pet721MintSystem.json";
@@ -65,7 +64,6 @@ import PetGachaRevealSystem from "../abi/PetGachaRevealSystem.json";
 import PetLevelSystem from "../abi/PetLevelSystem.json";
 import PetNameSystem from "../abi/PetNameSystem.json";
 import PetReviveSystem from "../abi/PetReviveSystem.json";
-import PetSetAccountSystem from "../abi/PetSetAccountSystem.json";
 import PetUpgradeSkillSystem from "../abi/PetUpgradeSkillSystem.json";
 import PetUseItemSystem from "../abi/PetUseItemSystem.json";
 import ProductionCollectSystem from "../abi/ProductionCollectSystem.json";
@@ -135,7 +133,6 @@ export const SystemAbis = {
   "system.Lootbox.Reveal.Start": LootboxStartRevealSystem.abi,
   "system.Mint20.Mint": Mint20MintSystem.abi,
   "system.Mint20.Proxy": Mint20ProxySystem.abi,
-  "system.Node.Collect": NodeCollectSystem.abi,
   "system.Pet721.IsInWorld": Pet721IsInWorldSystem.abi,
   "system.Pet721.Metadata": Pet721MetadataSystem.abi,
   "system.Pet721.Mint": Pet721MintSystem.abi,
@@ -150,7 +147,6 @@ export const SystemAbis = {
   "system.Pet.Level": PetLevelSystem.abi,
   "system.Pet.Name": PetNameSystem.abi,
   "system.Pet.Revive": PetReviveSystem.abi,
-  "system.Pet.SetAccount": PetSetAccountSystem.abi,
   "system.Pet.Upgrade.Skill": PetUpgradeSkillSystem.abi,
   "system.Pet.Use.Item": PetUseItemSystem.abi,
   "system.Production.Collect": ProductionCollectSystem.abi,
