@@ -251,41 +251,6 @@ library LibAccount {
     return LibDataEntity.get(components, id, 0, "MINT20_MINT");
   }
 
-  function getTopKamiLevel(
-    IUintComp components,
-    uint256[] memory petIDs
-  ) internal view returns (uint256) {
-    uint256 highestLevel = 0;
-    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
-    for (uint256 i = 0; i < petIDs.length; i++) {
-      uint256 level = levelComp.getValue(petIDs[i]);
-      if (level > highestLevel) highestLevel = level;
-    }
-    return highestLevel;
-  }
-
-  // get the balance of X (type+index) of an account
-  function getBalanceOf(
-    IUintComp components,
-    uint256 id,
-    string memory _type,
-    uint32 index
-  ) public view returns (uint256 balance) {
-    uint256 inventoryID;
-    if (LibString.eq(_type, "ITEM")) {
-      inventoryID = LibInventory.get(components, id, index);
-      balance = LibInventory.getBalance(components, inventoryID);
-    } else if (LibString.eq(_type, "COIN")) {
-      balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");
-    } else if (LibString.eq(_type, "KAMI")) {
-      balance = getPetsOwned(components, id).length;
-    } else if (LibString.eq(_type, "KAMI_LEVEL_HIGHEST")) {
-      balance = getTopKamiLevel(components, getPetsOwned(components, id));
-    } else {
-      balance = LibDataEntity.get(components, id, index, _type);
-    }
-  }
-
   /////////////////
   // QUERIES
 

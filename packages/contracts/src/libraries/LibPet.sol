@@ -207,7 +207,7 @@ library LibPet {
   // defaults to 100/100 if not set for the pet
   function calcDrainMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 bonusID = LibBonus.get(components, id, "HARVEST_DRAIN");
-    uint256 bonusMult = LibBonus.getValue(components, bonusID);
+    uint256 bonusMult = LibBonus.getBalance(components, bonusID);
     return bonusMult;
   }
 

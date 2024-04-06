@@ -32,18 +32,7 @@ contract _RegistryCreateSkillSystem is System {
     uint256 registryID = LibRegistrySkill.getByIndex(components, index);
     require(registryID == 0, "SkillCreate: already exists");
 
-    LibRegistrySkill.create(
-      world,
-      components,
-      index,
-      for_,
-      type_,
-      name,
-      cost,
-      max,
-      description,
-      media
-    );
+    LibRegistrySkill.create(components, index, for_, type_, name, cost, max, description, media);
 
     return "";
   }

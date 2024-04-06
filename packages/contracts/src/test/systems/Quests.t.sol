@@ -23,12 +23,7 @@ contract QuestsTest is SetupTemplate {
   function testRegistryCreation() public {
     uint256 expectedID = LibRegistryQuests.genQuestID(1);
     uint256 regID = _createQuest(1, 0);
-
     assertEq(expectedID, regID);
-    assertTrue(!_QuestConditionsComponent.has(expectedID));
-    assertTrue(!_QuestConditionsComponent.has(LibRegistryQuests.genObjArrID(1)));
-    assertTrue(!_QuestConditionsComponent.has(LibRegistryQuests.genReqArrID(1)));
-    assertTrue(!_QuestConditionsComponent.has(LibRegistryQuests.genRewArrID(1)));
 
     uint256[] memory reqsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
@@ -38,6 +33,7 @@ contract QuestsTest is SetupTemplate {
       uint256[] memory newArr = LibRegistryQuests.getRequirementsByQuestIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], reqsArr[j]);
     }
+    assertEq(LibRegistryQuests.getRequirementsByQuestIndex(components, 1).length, 5);
 
     uint256[] memory objsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
@@ -47,6 +43,7 @@ contract QuestsTest is SetupTemplate {
       uint256[] memory newArr = LibRegistryQuests.getObjectivesByQuestIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], objsArr[j]);
     }
+    assertEq(LibRegistryQuests.getObjectivesByQuestIndex(components, 1).length, 5);
 
     uint256[] memory rewsArr = new uint256[](5);
     for (uint256 i; i < 5; i++) {
@@ -56,6 +53,7 @@ contract QuestsTest is SetupTemplate {
       uint256[] memory newArr = LibRegistryQuests.getRewardsByQuestIndex(components, 1);
       for (uint256 j; j <= i; j++) assertEq(newArr[j], rewsArr[j]);
     }
+    assertEq(LibRegistryQuests.getRewardsByQuestIndex(components, 1).length, 5);
   }
 
   function testAcceptQuest() public {

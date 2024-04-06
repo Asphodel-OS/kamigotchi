@@ -7,10 +7,10 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -31,21 +31,23 @@ library LibBonus {
   }
 
   function inc(IUintComp components, uint256 id, uint256 amt) public {
-    uint256 curr = getValue(components, id);
-    setValue(components, id, curr + amt);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
+    uint256 curr = comp.has(id) ? comp.getValue(id) : 0;
+    comp.set(id, curr + amt);
   }
 
   function dec(IUintComp components, uint256 id, uint256 amt) public {
-    uint256 curr = getValue(components, id);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
+    uint256 curr = comp.has(id) ? comp.getValue(id) : 0;
     require(curr >= amt, "LibBonus: lower limit reached");
-    setValue(components, id, curr - amt);
+    comp.set(id, curr - amt);
   }
 
   /////////////////
   // CHECKERS
 
-  function hasValue(IUintComp components, uint256 id) public view returns (bool) {
-    return ValueComponent(getAddressById(components, ValueCompID)).has(id);
+  function hasBalance(IUintComp components, uint256 id) public view returns (bool) {
+    return BalanceComponent(getAddressById(components, BalCompID)).has(id);
   }
 
   /////////////////
@@ -53,8 +55,8 @@ library LibBonus {
 
   // default value of bonus multipliers is 1000
   // this represents for 100.0% for percentage based bonuses
-  function getValue(IUintComp components, uint256 id) public view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddressById(components, ValueCompID));
+  function getBalance(IUintComp components, uint256 id) public view returns (uint256) {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
     if (!comp.has(id)) return 1000;
     return comp.getValue(id);
   }
@@ -62,8 +64,8 @@ library LibBonus {
   /////////////////
   // SETTERS
 
-  function setValue(IUintComp components, uint256 id, uint256 value) public {
-    ValueComponent(getAddressById(components, ValueCompID)).set(id, value);
+  function setBalance(IUintComp components, uint256 id, uint256 value) public {
+    BalanceComponent(getAddressById(components, BalCompID)).set(id, value);
   }
 
   /////////////////
@@ -73,21 +75,15 @@ library LibBonus {
     IUintComp components,
     uint256 holderID,
     string memory type_
-  ) public view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsBonusCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdHolderCompID),
-      abi.encode(holderID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, TypeCompID),
-      abi.encode(type_)
-    );
+  ) public view returns (uint256) {
+    uint256 id = genID(holderID, type_);
+    return IsBonusComponent(getAddressById(components, IsBonusCompID)).has(id) ? id : 0;
+  }
 
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) result = results[0];
+  //////////////
+  // UTILS
+
+  function genID(uint256 holderID, string memory type_) public pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Bonus", holderID, type_)));
   }
 }

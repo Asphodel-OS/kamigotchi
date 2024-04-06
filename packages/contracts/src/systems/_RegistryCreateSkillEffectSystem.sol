@@ -29,7 +29,7 @@ contract _RegistryCreateSkillEffectSystem is System {
     if (!LibString.eq(subtype, "")) LibRegistrySkill.setSubtype(components, id, subtype);
     if (!LibString.eq(logicType, "")) LibRegistrySkill.setLogicType(components, id, logicType);
     if (index != 0) LibRegistrySkill.setIndex(components, id, index);
-    if (value != 0) LibRegistrySkill.setValue(components, id, value);
+    if (value != 0) LibRegistrySkill.setBalance(components, id, value);
 
     return "";
   }
