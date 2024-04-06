@@ -27,7 +27,7 @@ contract _NodeCreateSystem is System {
 
     require(id == 0, "Node: already exists");
 
-    id = LibNode.create(world, components, index, nodeType, roomIndex);
+    id = LibNode.create(components, index, nodeType, roomIndex);
     LibNode.setName(components, id, name);
     LibNode.setDescription(components, id, description);
     if (!LibString.eq(affinity, "")) {

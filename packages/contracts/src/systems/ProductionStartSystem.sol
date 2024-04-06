@@ -35,7 +35,7 @@ contract ProductionStartSystem is System {
 
     // start the production, create if none exists
     uint256 id = LibProduction.getForPet(components, petID);
-    if (id == 0) id = LibProduction.create(world, components, nodeID, petID);
+    if (id == 0) id = LibProduction.create(components, nodeID, petID);
     else LibProduction.setNode(components, id, nodeID);
     LibProduction.start(components, id);
     LibPet.setState(components, petID, "HARVESTING");
