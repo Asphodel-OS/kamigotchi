@@ -32,8 +32,34 @@ contract PreciseValueComponent is BareComponent {
     _set(entity, abi.encode(value));
   }
 
+  function setBatch(uint256[] memory entities, PreciseValue[] memory values) public virtual {
+    bytes[] memory rawValues = new bytes[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++) rawValues[i] = abi.encode(values[i]);
+
+    setBatch(entities, rawValues);
+  }
+
+  function extract(uint256 entity) public virtual returns (PreciseValue memory) {
+    return abi.decode(extractRaw(entity), (PreciseValue));
+  }
+
+  function extractBatch(uint256[] memory entities) public virtual returns (PreciseValue[] memory) {
+    bytes[] memory rawValues = extractRawBatch(entities);
+    PreciseValue[] memory values = new PreciseValue[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++)
+      values[i] = abi.decode(rawValues[i], (PreciseValue));
+    return values;
+  }
+
   function getValue(uint256 entity) public view virtual returns (PreciseValue memory) {
-    PreciseValue memory value = abi.decode(getRawValue(entity), (PreciseValue));
-    return value;
+    return abi.decode(getRaw(entity), (PreciseValue));
+  }
+
+  function getBatch(uint256[] memory entities) public view virtual returns (PreciseValue[] memory) {
+    bytes[] memory rawValues = getRawBatch(entities);
+    PreciseValue[] memory values = new PreciseValue[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++)
+      values[i] = abi.decode(rawValues[i], (PreciseValue));
+    return values;
   }
 }

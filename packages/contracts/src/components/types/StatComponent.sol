@@ -56,9 +56,33 @@ contract StatComponent is BareComponent {
     _set(entity, abi.encode(value));
   }
 
+  function setBatch(uint256[] memory entities, Stat[] memory values) public virtual {
+    bytes[] memory rawValues = new bytes[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++) rawValues[i] = abi.encode(values[i]);
+
+    setBatch(entities, rawValues);
+  }
+
+  function extract(uint256 entity) public virtual returns (Stat memory) {
+    return abi.decode(extractRaw(entity), (Stat));
+  }
+
+  function extractBatch(uint256[] memory entities) public virtual returns (Stat[] memory) {
+    bytes[] memory rawValues = extractRawBatch(entities);
+    Stat[] memory values = new Stat[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (Stat));
+    return values;
+  }
+
   function getValue(uint256 entity) public view virtual returns (Stat memory) {
-    Stat memory value = abi.decode(getRawValue(entity), (Stat));
-    return value;
+    return abi.decode(getRaw(entity), (Stat));
+  }
+
+  function getBatch(uint256[] memory entities) public view virtual returns (Stat[] memory) {
+    bytes[] memory rawValues = getRawBatch(entities);
+    Stat[] memory values = new Stat[](entities.length);
+    for (uint256 i = 0; i < entities.length; i++) values[i] = abi.decode(rawValues[i], (Stat));
+    return values;
   }
 
   // calculate the stat total = ((1 + boost) * (base + shift))

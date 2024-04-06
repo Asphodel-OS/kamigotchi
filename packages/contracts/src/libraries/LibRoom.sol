@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdRoomComponent, ID as IdRoomCompID } from "components/IdRoomComponent.sol";
@@ -20,7 +19,6 @@ import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 struct Location {
   int32 x;
@@ -189,7 +187,7 @@ library LibRoom {
     IUintComp components,
     Location memory loc
   ) internal view returns (uint256 result) {
-    uint256[] memory results = LibSafeQuery.getIsWithValue(
+    uint256[] memory results = LibQuery.getIsWithValue(
       components,
       LocationCompID,
       IsRoomCompID,

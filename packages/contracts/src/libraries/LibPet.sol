@@ -5,6 +5,7 @@ import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.s
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
@@ -35,7 +36,6 @@ import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
-import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
@@ -595,7 +595,7 @@ library LibPet {
 
   /// @notice retrieves the pet with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
-    uint256[] memory results = LibSafeQuery.getIsWithValue(
+    uint256[] memory results = LibQuery.getIsWithValue(
       getComponentById(components, NameCompID),
       getComponentById(components, IsPetCompID),
       abi.encode(name)
@@ -609,7 +609,7 @@ library LibPet {
     uint256 accountID
   ) internal view returns (uint256[] memory) {
     return
-      LibSafeQuery.getIsWithValue(
+      LibQuery.getIsWithValue(
         getComponentById(components, IdOwnsPetCompID),
         getComponentById(components, IsPetCompID),
         abi.encode(accountID)

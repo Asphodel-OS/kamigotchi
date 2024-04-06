@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 contract MurderTest is SetupTemplate {
@@ -472,34 +471,35 @@ contract MurderTest is SetupTemplate {
     if (!LibString.eq(state, "")) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsProductionComponentID),
-      ""
-    );
 
     uint256 filterCount;
     if (nodeID != 0) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IdNodeComponentID),
         abi.encode(nodeID)
       );
     }
     if (petID != 0) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IdPetComponentID),
         abi.encode(petID)
       );
     }
     if (!LibString.eq(state, "")) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, StateComponentID),
         abi.encode(state)
       );
     }
+
+    fragments[filterCount] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsProductionComponentID),
+      ""
+    );
 
     return LibQuery.query(fragments);
   }

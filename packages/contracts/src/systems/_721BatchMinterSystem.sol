@@ -3,11 +3,10 @@ pragma solidity ^0.8.0;
 
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { Uint32Component } from "std-contracts/components/Uint32Component.sol";
+import { Uint32Component } from "components/types/Uint32Component.sol";
 import { System } from "solecs/System.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
@@ -189,9 +188,16 @@ abstract contract TraitHandler {
     traitComps[3] = indexBackgroundComp;
     traitComps[4] = indexColorComp;
 
+    string[] memory traitNames = new string[](5);
+    traitNames[0] = "FACE";
+    traitNames[1] = "HAND";
+    traitNames[2] = "BODY";
+    traitNames[3] = "BACKGROUND";
+    traitNames[4] = "COLOR";
+
     // get indices, rarities, and stats for each trait type
     for (uint256 i; i < 5; i++) {
-      uint256[] memory ids = queryTraitsOfType(traitComps[i]);
+      uint256[] memory ids = LibRegistryTrait.getAllOfType(components, traitNames[i]);
       uint32 length = uint32(ids.length);
 
       uint32[] memory keys = new uint32[](length);
@@ -261,15 +267,6 @@ abstract contract TraitHandler {
     if (slotsComp.has(id)) slots = slotsComp.getValue(id).base;
 
     return TraitStats(health, power, violence, harmony, slots);
-  }
-
-  /// @notice query all traits of a type (ie face) in registry. returns entityIDs
-  function queryTraitsOfType(Uint32Component comp) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
-    fragments[1] = QueryFragment(QueryType.Has, comp, "");
-    uint256[] memory results = LibQuery.query(fragments);
-    return results;
   }
 }
 

@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import "test/utils/SetupTemplate.t.sol";
 
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { LibHash } from "libraries/utils/LibHash.sol";
@@ -411,7 +410,7 @@ contract QuestsTest is SetupTemplate {
 
   function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
     return
-      LibSafeQuery.getIsWithValue(
+      LibQuery.getIsWithValue(
         getComponentById(components, IdOwnsQuestComponentID),
         getComponentById(components, IsObjectiveComponentID),
         abi.encode(questID)
@@ -420,7 +419,7 @@ contract QuestsTest is SetupTemplate {
 
   function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
     return
-      LibSafeQuery.getIsWithValue(
+      LibQuery.getIsWithValue(
         getComponentById(components, IdOwnsQuestComponentID),
         getComponentById(components, IsQuestComponentID),
         abi.encode(accountID)

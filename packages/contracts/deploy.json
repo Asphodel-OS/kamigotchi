@@ -436,6 +436,7 @@
         "IndexAccountComponent",
         "AddressOperatorComponent",
         "AddressOwnerComponent",
+        "BareValueComponent",
         "CacheOperatorComponent",
         "FavoriteFoodComponent",
         "IndexRoomComponent",

@@ -7,7 +7,7 @@ contract RegistryTest is SetupTemplate {
   function setUpItems() public override {}
 
   function testDeterminsticIDItem(uint32 index) public {
-    uint256 expectedid = LibRegistryItem.getID(index);
+    uint256 expectedid = LibRegistryItem.genID(index);
     uint256 createdID = _createGenericItem(index);
 
     assertEq(expectedid, createdID);

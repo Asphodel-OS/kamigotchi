@@ -3,13 +3,11 @@ pragma solidity >=0.8.0;
 
 import { console } from "forge-std/Test.sol";
 
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
-import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
-import { BoolComponent } from "std-contracts/components/BoolComponent.sol";
-import { Uint256BareComponent } from "std-contracts/components/Uint256BareComponent.sol";
-import { Uint256Component } from "std-contracts/components/Uint256Component.sol";
+import { BoolComponent } from "components/types/BoolComponent.sol";
+import { Uint256BareComponent } from "components/types/Uint256BareComponent.sol";
+import { Uint256Component } from "components/types/Uint256Component.sol";
 
 import { EmptyWorld } from "test/utils/EmptyWorld.t.sol";
 
@@ -51,7 +49,7 @@ contract GasTest is EmptyWorld {
     createEntity(1, 0);
     createEntity(1, holder);
     uint256 gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("1 entity     : ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -62,7 +60,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(9, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("10 entities  : ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -73,7 +71,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(100, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("100 entities : ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -84,7 +82,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(400, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("500 entities : ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -95,7 +93,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(500, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("1000 entities: ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -106,7 +104,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(500, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("1500 entities: ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -117,7 +115,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(500, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("2000 entities: ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -128,7 +126,7 @@ contract GasTest is EmptyWorld {
 
     createEntity(500, 0);
     gasstart = gasleft();
-    LibSafeQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
+    LibQuery.getIsWithValue(ownerComp, isComp, abi.encode(holder));
     console.log("2500 entities: ", gasstart - gasleft());
     gasstart = gasleft();
     if (bareComp.has(holder)) bareComp.getValue(holder);
@@ -136,104 +134,6 @@ contract GasTest is EmptyWorld {
     gasstart = gasleft();
     ownerComp.getEntitiesWithValue(abi.encode(holder))[0];
     console.log("2500 entitiesWVal: ", gasstart - gasleft());
-  }
-
-  function testQuery() public {
-    uint256 holder = uint256(keccak256("iambagholder"));
-
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, isComp, "");
-    fragments[1] = QueryFragment(QueryType.HasValue, ownerComp, abi.encode(holder));
-
-    createEntity(1, 0);
-    createEntity(1, holder);
-    uint256 gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("1 entity     : ", gasstart - gasleft());
-
-    createEntity(9, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("10 entities  : ", gasstart - gasleft());
-
-    createEntity(100, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("100 entities : ", gasstart - gasleft());
-
-    createEntity(400, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("500 entities : ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("1000 entities: ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("1500 entities: ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("2000 entities: ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("2500 entities: ", gasstart - gasleft());
-  }
-
-  function testQuery2() public {
-    uint256 holder = uint256(keccak256("iambagholder"));
-
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[1] = QueryFragment(QueryType.Has, isComp, "");
-    fragments[0] = QueryFragment(QueryType.HasValue, ownerComp, abi.encode(holder));
-
-    createEntity(1, 0);
-    createEntity(1, holder);
-    uint256 gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("1 entity     : ", gasstart - gasleft());
-
-    createEntity(9, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("10 entities  : ", gasstart - gasleft());
-
-    createEntity(100, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("100 entities : ", gasstart - gasleft());
-
-    createEntity(400, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("500 entities : ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("1000 entities: ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("1500 entities: ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("2000 entities: ", gasstart - gasleft());
-
-    createEntity(500, 0);
-    gasstart = gasleft();
-    LibQuery.query(fragments);
-    console.log("2500 entities: ", gasstart - gasleft());
   }
 
   function createEntity(uint256 amount, uint256 holderID) internal {
