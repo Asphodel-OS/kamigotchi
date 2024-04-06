@@ -13,7 +13,7 @@ export const getConfigFieldValue = (
 
   const configEntityIndex = getEntityIndex(world, field);
   if (!configEntityIndex) {
-    console.error(`Config field not found for ${field}`);
+    // console.error(`Config field not found for ${field}`);
     return 0;
   }
 
@@ -30,7 +30,7 @@ export const getConfigFieldValueArray = (
 
   const configEntityIndex = getEntityIndex(world, field);
   if (!configEntityIndex) {
-    console.warn(`Config field not found for ${field}`);
+    // console.warn(`Config field not found for ${field}`);
     return [0];
   }
 
@@ -49,14 +49,14 @@ export const getConfigFieldValueWei = (
 
   const configEntityIndex = getEntityIndex(world, field);
   if (!configEntityIndex) {
-    console.warn(`Config field not found for ${field}`);
+    // console.warn(`Config field not found for ${field}`);
     return 0n;
   }
   const stringVal = (getComponentValue(BareValue, configEntityIndex)?.value as number) || 0;
   return BigInt(stringVal);
 };
 
-const getEntityIndex = (world: any, field: string): EntityIndex | undefined => {
+const getEntityIndex = (world: World, field: string): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(['string', 'string'], ['Is.Config', field]);
   return world.entityToIndex.get(id as EntityID);
 };
