@@ -275,10 +275,11 @@
         "IsEffectComponent",
         "IndexSkillComponent",
         "IndexComponent",
+        "IdOwnsConditionComponent",
+        "BalanceComponent",
         "LogicTypeComponent",
         "SubtypeComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TypeComponent"
       ]
     },
     {
@@ -288,8 +289,10 @@
         "IsRequirementComponent",
         "IndexSkillComponent",
         "IndexComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "IdOwnsConditionComponent",
+        "BalanceComponent",
+        "LogicTypeComponent",
+        "TypeComponent"
       ]
     },
     {
@@ -350,6 +353,7 @@
         "IsEffectComponent",
         "IsRequirementComponent",
         "IndexSkillComponent",
+        "BalanceComponent",
         "CostComponent",
         "DescriptionComponent",
         "ForComponent",
