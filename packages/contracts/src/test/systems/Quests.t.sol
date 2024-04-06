@@ -410,19 +410,6 @@ contract QuestsTest is SetupTemplate {
   }
 
   function _getQuestObjSnapshots(uint256 questID) internal view returns (uint256[] memory) {
-    // QueryFragment[] memory fragments = new QueryFragment[](2);
-    // fragments[0] = QueryFragment(
-    //   QueryType.HasValue,
-    //   getComponentById(components, IdOwnsQuestComponentID),
-    //   abi.encode(questID)
-    // );
-    // fragments[1] = QueryFragment(
-    //   QueryType.Has,
-    //   getComponentById(components, IsObjectiveComponentID),
-    //   ""
-    // );
-    // return LibQuery.query(fragments);
-
     return
       LibSafeQuery.getIsWithValue(
         getComponentById(components, IdOwnsQuestComponentID),
@@ -432,17 +419,11 @@ contract QuestsTest is SetupTemplate {
   }
 
   function _getAccountQuests(uint256 accountID) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdOwnsQuestComponentID),
-      abi.encode(accountID)
-    );
-    fragments[1] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsQuestComponentID),
-      ""
-    );
-    return LibQuery.query(fragments);
+    return
+      LibSafeQuery.getIsWithValue(
+        getComponentById(components, IdOwnsQuestComponentID),
+        getComponentById(components, IsQuestComponentID),
+        abi.encode(accountID)
+      );
   }
 }

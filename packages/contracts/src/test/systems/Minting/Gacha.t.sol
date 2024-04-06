@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { GACHA_ID } from "libraries/LibGacha.sol";
 import "test/utils/SetupTemplate.t.sol";
 
 /** @dev
@@ -275,14 +276,14 @@ contract GachaTest is SetupTemplate {
   ////////////////
 
   function _assertInGacha(uint256 petID) internal {
-    assertTrue(!_IdAccountComponent.has(petID));
+    assertEq(_IdOwnsPetComponent.getValue(petID), GACHA_ID);
     assertTrue(!_RerollComponent.has(petID));
     assertEq(_StateComponent.getValue(petID), "GACHA");
   }
 
   function _assertOutGacha(uint256 petID, uint256 account, uint256 rerolls) internal {
     account = _getAccount(account);
-    assertEq(_IdAccountComponent.getValue(petID), account);
+    assertEq(_IdOwnsPetComponent.getValue(petID), account);
     assertEq(_RerollComponent.getValue(petID), rerolls);
     assertEq(_StateComponent.getValue(petID), "RESTING");
   }
