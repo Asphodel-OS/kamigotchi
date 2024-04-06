@@ -100,7 +100,7 @@ library LibNode {
     uint256 id
   ) internal view returns (string memory affinity) {
     if (hasAffinity(components, id)) {
-      affinity = AffinityComponent(getAddressById(components, AffCompID)).getValue(id);
+      affinity = AffinityComponent(getAddressById(components, AffCompID)).get(id);
     }
   }
 
@@ -109,27 +109,27 @@ library LibNode {
     uint256 id
   ) internal view returns (string memory description) {
     if (hasDescription(components, id)) {
-      description = DescriptionComponent(getAddressById(components, DescCompID)).getValue(id);
+      description = DescriptionComponent(getAddressById(components, DescCompID)).get(id);
     }
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).getValue(id);
+    return IndexNodeComponent(getAddressById(components, IndexNodeCompID)).get(id);
   }
 
   function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexRoomComponent(getAddressById(components, RoomCompID)).getValue(id);
+    return IndexRoomComponent(getAddressById(components, RoomCompID)).get(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory name) {
     if (hasName(components, id)) {
-      name = NameComponent(getAddressById(components, NameCompID)).getValue(id);
+      name = NameComponent(getAddressById(components, NameCompID)).get(id);
     }
   }
 
   // The type of node (e.g. Harvesting | Healing | etc)
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   /////////////////

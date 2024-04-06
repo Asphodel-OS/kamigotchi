@@ -126,23 +126,23 @@ library LibLootbox {
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalanceCompID)).getValue(id);
+    return BalanceComponent(getAddressById(components, BalanceCompID)).get(id);
   }
 
   function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdHolderComponent(getAddressById(components, IdHolderCompID)).getValue(id);
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
   function getKeys(IUintComp components, uint256 id) internal view returns (uint32[] memory) {
-    return KeysComponent(getAddressById(components, KeysCompID)).getValue(id);
+    return KeysComponent(getAddressById(components, KeysCompID)).get(id);
   }
 
   function getWeights(IUintComp components, uint256 id) internal view returns (uint256[] memory) {
-    return WeightsComponent(getAddressById(components, WeightsCompID)).getValue(id);
+    return WeightsComponent(getAddressById(components, WeightsCompID)).get(id);
   }
 
   //////////////////

@@ -204,8 +204,8 @@ abstract contract TraitHandler {
       uint256[] memory weights = new uint256[](length);
 
       for (uint256 j; j < length; j++) {
-        keys[j] = traitComps[i].getValue(ids[j]);
-        weights[j] = rarityComp.has(ids[j]) ? 1 << (rarityComp.getValue(ids[j]) - 1) : 0;
+        keys[j] = traitComps[i].get(ids[j]);
+        weights[j] = rarityComp.has(ids[j]) ? 1 << (rarityComp.get(ids[j]) - 1) : 0;
 
         traitStats.push(_getTraitStats(ids[j]));
       }
@@ -260,11 +260,11 @@ abstract contract TraitHandler {
     int32 harmony;
     int32 slots;
 
-    if (healthComp.has(id)) health = healthComp.getValue(id).base;
-    if (powerComp.has(id)) power = powerComp.getValue(id).base;
-    if (violenceComp.has(id)) violence = violenceComp.getValue(id).base;
-    if (harmonyComp.has(id)) harmony = harmonyComp.getValue(id).base;
-    if (slotsComp.has(id)) slots = slotsComp.getValue(id).base;
+    if (healthComp.has(id)) health = healthComp.get(id).base;
+    if (powerComp.has(id)) power = powerComp.get(id).base;
+    if (violenceComp.has(id)) violence = violenceComp.get(id).base;
+    if (harmonyComp.has(id)) harmony = harmonyComp.get(id).base;
+    if (slotsComp.has(id)) slots = slotsComp.get(id).base;
 
     return TraitStats(health, power, violence, harmony, slots);
   }
@@ -330,7 +330,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
     // require(colorWeights.keys != 0, "traits not set");
 
     uint32 startIndex = uint32(pet721.totalSupply()) + 1; // starts from 1
-    uint256 startGacha = balanceComp.getValue(GACHA_DATA_ID); // starts from 0
+    uint256 startGacha = balanceComp.get(GACHA_DATA_ID); // starts from 0
 
     /// @dev creating pets, unrevealed-ish state
     uint256[] memory ids = createPets(startIndex, startGacha, amount);

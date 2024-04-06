@@ -175,15 +175,15 @@ library LibRegistryItem {
   // GETTERS
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    return NameComponent(getAddressById(components, NameCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   /////////////////
@@ -309,7 +309,7 @@ library LibRegistryItem {
   function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
     IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
     if (!comp.has(instanceID)) return 0;
-    uint32 index = comp.getValue(instanceID);
+    uint32 index = comp.get(instanceID);
     uint256 id = genID(index);
     return comp.has(id) ? id : 0;
   }

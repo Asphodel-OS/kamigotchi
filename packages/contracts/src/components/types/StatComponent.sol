@@ -74,7 +74,7 @@ contract StatComponent is BareComponent {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (Stat memory) {
+  function get(uint256 entity) public view virtual returns (Stat memory) {
     return abi.decode(getRaw(entity), (Stat));
   }
 
@@ -87,14 +87,14 @@ contract StatComponent is BareComponent {
 
   // calculate the stat total = ((1 + boost) * (base + shift))
   function calcTotal(uint256 entity) public view virtual returns (int32) {
-    Stat memory value = getValue(entity);
+    Stat memory value = get(entity);
     int32 total = ((1e3 + value.boost) * (value.base + value.shift)) / 1e3;
     return (total > 0) ? total : int32(0);
   }
 
   // adjust the shift value of the stat.
   function shift(uint256 entity, int32 amt) public onlyWriter returns (int32) {
-    Stat memory value = getValue(entity);
+    Stat memory value = get(entity);
     value.shift += amt;
     _set(entity, abi.encode(value));
     return value.shift;
@@ -102,7 +102,7 @@ contract StatComponent is BareComponent {
 
   // adjust the boost value of the stat. an adjustment on baseline 1000 (100.0%)
   function boost(uint256 entity, int32 amt) public onlyWriter returns (int32) {
-    Stat memory value = getValue(entity);
+    Stat memory value = get(entity);
     value.boost += amt;
     _set(entity, abi.encode(value));
     return value.boost;
@@ -110,13 +110,13 @@ contract StatComponent is BareComponent {
 
   // adjust the sync value of the stat. bound result between [0, calcTotal()]
   function sync(uint256 entity, int32 amt) public onlyWriter returns (int32) {
-    Stat memory value = getValue(entity);
+    Stat memory value = get(entity);
     return sync(entity, amt, calcTotal(entity));
   }
 
   // adjust the sync value of the stat with a specified max value
   function sync(uint256 entity, int32 amt, int32 max) public onlyWriter returns (int32) {
-    Stat memory value = getValue(entity);
+    Stat memory value = get(entity);
 
     value.sync += amt;
     if (value.sync < 0) value.sync = 0;

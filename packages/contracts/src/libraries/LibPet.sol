@@ -479,19 +479,19 @@ library LibPet {
 
   // get the index of a pet (aka its 721 tokenID) from its entity ID
   function getIndex(IUintComp components, uint256 entityID) internal view returns (uint32) {
-    return IndexPetComponent(getAddressById(components, IndexPetCompID)).getValue(entityID);
+    return IndexPetComponent(getAddressById(components, IndexPetCompID)).get(entityID);
   }
 
   // get the entity ID of the pet account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).getValue(id);
+    return IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID)).get(id);
   }
 
   // null string might not be very useful, may be better for a has check
   function getAffinity(IUintComp components, uint256 id) internal view returns (string memory) {
     AffinityComponent comp = AffinityComponent(getAddressById(components, AffinityCompID));
     if (!comp.has(id)) return "";
-    return comp.getValue(id);
+    return comp.get(id);
   }
 
   // get the last time a kami commited a Standard Action
@@ -499,12 +499,12 @@ library LibPet {
     TimeLastActionComponent comp = TimeLastActionComponent(
       getAddressById(components, TimeLastActCompID)
     );
-    if (comp.has(id)) ts = comp.getValue(id);
+    if (comp.has(id)) ts = comp.get(id);
   }
 
   // get the last time a kami commited a syncing Action
   function getLastTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastComponent(getAddressById(components, TimeLastCompID)).getValue(id);
+    return TimeLastComponent(getAddressById(components, TimeLastCompID)).get(id);
   }
 
   // Get the implied roomIndex of a pet based on its state.
@@ -524,11 +524,11 @@ library LibPet {
   }
 
   function getMediaURI(IUintComp components, uint256 id) internal view returns (string memory) {
-    return MediaURIComponent(getAddressById(components, MediaURICompID)).getValue(id);
+    return MediaURIComponent(getAddressById(components, MediaURICompID)).get(id);
   }
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    return NameComponent(getAddressById(components, NameCompID)).get(id);
   }
 
   // get the entity ID of the pet owner
@@ -543,7 +543,7 @@ library LibPet {
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
-    return StateComponent(getAddressById(components, StateCompID)).getValue(id);
+    return StateComponent(getAddressById(components, StateCompID)).get(id);
   }
 
   // Get the traits of a pet, specifically the list of trait registry IDs
@@ -574,7 +574,7 @@ library LibPet {
     IdOwnsPetComponent comp = IdOwnsPetComponent(getAddressById(components, IdOwnsPetCompID));
     uint256[] memory results = new uint256[](ids.length);
     for (uint256 i = 0; i < ids.length; i++) {
-      results[i] = comp.getValue(ids[i]);
+      results[i] = comp.get(ids[i]);
     }
     return results;
   }

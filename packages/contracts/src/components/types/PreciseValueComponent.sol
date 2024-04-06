@@ -51,7 +51,7 @@ contract PreciseValueComponent is BareComponent {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (PreciseValue memory) {
+  function get(uint256 entity) public view virtual returns (PreciseValue memory) {
     return abi.decode(getRaw(entity), (PreciseValue));
   }
 

@@ -10,7 +10,7 @@ library LibCoin {
   // gets the coin balance of an entity
   function get(IUintComp components, uint256 entityID) public view returns (uint256) {
     if (CoinComponent(getAddressById(components, CoinComponentID)).has(entityID)) {
-      return CoinComponent(getAddressById(components, CoinComponentID)).getValue(entityID);
+      return CoinComponent(getAddressById(components, CoinComponentID)).get(entityID);
     } else {
       return 0;
     }
@@ -26,13 +26,13 @@ library LibCoin {
   function inc(IUintComp components, uint256 entityID, uint256 amt) public {
     CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
     if (!comp.has(entityID)) comp.set(entityID, amt);
-    else comp.set(entityID, comp.getValue(entityID) + amt);
+    else comp.set(entityID, comp.get(entityID) + amt);
   }
 
   // decreases the coin balance of an entity by amt
   function dec(IUintComp components, uint256 entityID, uint256 amt) internal {
     CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
-    uint256 balance = comp.has(entityID) ? comp.getValue(entityID) : 0;
+    uint256 balance = comp.has(entityID) ? comp.get(entityID) : 0;
     require(balance >= amt, "Coin: insufficient balance");
     unchecked {
       comp.set(entityID, balance - amt);

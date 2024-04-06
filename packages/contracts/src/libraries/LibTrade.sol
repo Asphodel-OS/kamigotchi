@@ -42,8 +42,8 @@ library LibTrade {
     IsRequestComponent(getAddressById(components, IsRequestCompID)).remove(id);
     StateComponent(getAddressById(components, StateCompID)).set(id, string("ACCEPTED"));
 
-    uint256 aliceID = IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).getValue(id);
-    uint256 bobID = IdRequesterComponent(getAddressById(components, IdReqerCompID)).getValue(id);
+    uint256 aliceID = IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
+    uint256 bobID = IdRequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
     LibRegister.create(world, components, aliceID, id);
     LibRegister.create(world, components, bobID, id);
   }
@@ -126,11 +126,11 @@ library LibTrade {
   // GETTERS
 
   function getRequestee(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).getValue(id);
+    return IdRequesteeComponent(getAddressById(components, IdReqeeCompID)).get(id);
   }
 
   function getRequester(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdRequesterComponent(getAddressById(components, IdReqerCompID)).getValue(id);
+    return IdRequesterComponent(getAddressById(components, IdReqerCompID)).get(id);
   }
 
   /////////////////

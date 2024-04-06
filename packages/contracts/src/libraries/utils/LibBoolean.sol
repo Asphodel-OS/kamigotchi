@@ -89,10 +89,10 @@ library LibBoolean {
     );
 
     for (uint256 i = 0; i < conditionIDs.length; i++) {
-      uint32 index = indexComp.has(conditionIDs[i]) ? indexComp.getValue(conditionIDs[i]) : 0;
-      uint256 value = balComp.has(conditionIDs[i]) ? balComp.getValue(conditionIDs[i]) : 0;
-      string memory type_ = typeComp.getValue(conditionIDs[i]);
-      string memory logicType = logicTypeComp.getValue(conditionIDs[i]);
+      uint32 index = indexComp.has(conditionIDs[i]) ? indexComp.get(conditionIDs[i]) : 0;
+      uint256 value = balComp.has(conditionIDs[i]) ? balComp.get(conditionIDs[i]) : 0;
+      string memory type_ = typeComp.get(conditionIDs[i]);
+      string memory logicType = logicTypeComp.get(conditionIDs[i]);
 
       if (!check(components, targetID, index, value, type_, logicType)) return false;
     }
@@ -192,7 +192,7 @@ library LibBoolean {
     uint256 highestLevel = 1;
     LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
     for (uint256 i = 0; i < ids.length; i++) {
-      uint256 level = levelComp.getValue(ids[i]);
+      uint256 level = levelComp.get(ids[i]);
       if (level > highestLevel) highestLevel = level;
     }
     return highestLevel;
@@ -200,7 +200,7 @@ library LibBoolean {
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256 result) {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    if (comp.has(id)) result = comp.getValue(id);
+    if (comp.has(id)) result = comp.get(id);
   }
 
   ///////////////////////

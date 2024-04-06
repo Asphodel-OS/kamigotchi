@@ -40,7 +40,7 @@ contract StringBareComponent is BareComponent {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (string memory) {
+  function get(uint256 entity) public view virtual returns (string memory) {
     return abi.decode(getRaw(entity), (string));
   }
 

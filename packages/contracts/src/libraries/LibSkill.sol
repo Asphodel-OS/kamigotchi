@@ -46,14 +46,14 @@ library LibSkill {
   // increase skill points of a skill by a specified value
   function inc(IUintComp components, uint256 id, uint256 value) internal {
     SkillPointComponent pointComp = SkillPointComponent(getAddressById(components, SPCompID));
-    uint256 curr = pointComp.has(id) ? pointComp.getValue(id) : 0;
+    uint256 curr = pointComp.has(id) ? pointComp.get(id) : 0;
     pointComp.set(id, curr + value);
   }
 
   // decrease skillPoints by a specified value
   function dec(IUintComp components, uint256 id, uint256 value) internal {
     SkillPointComponent pointComp = SkillPointComponent(getAddressById(components, SPCompID));
-    uint256 curr = pointComp.has(id) ? pointComp.getValue(id) : 0;
+    uint256 curr = pointComp.has(id) ? pointComp.get(id) : 0;
     require(curr >= value, "LibSkill: not enough points");
     pointComp.set(id, curr - value);
   }
@@ -163,28 +163,28 @@ library LibSkill {
   // GETTERS
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
+    return IndexComponent(getAddressById(components, IndexCompID)).get(id);
   }
 
   function getLevel(IUintComp components, uint256 id) internal view returns (uint256) {
-    return LevelComponent(getAddressById(components, LevelCompID)).getValue(id);
+    return LevelComponent(getAddressById(components, LevelCompID)).get(id);
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!hasPoints(components, id)) return 0;
-    return SkillPointComponent(getAddressById(components, SPCompID)).getValue(id);
+    return SkillPointComponent(getAddressById(components, SPCompID)).get(id);
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
-    return MaxComponent(getAddressById(components, MaxCompID)).getValue(id);
+    return MaxComponent(getAddressById(components, MaxCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return ValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+    return ValueComponent(getAddressById(components, ValueCompID)).get(id);
   }
 
   // get the point value of a specific skill for a target

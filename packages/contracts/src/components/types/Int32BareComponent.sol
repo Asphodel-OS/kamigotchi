@@ -40,7 +40,7 @@ contract Int32BareComponent is BareComponent {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (int32) {
+  function get(uint256 entity) public view virtual returns (int32) {
     return abi.decode(getRaw(entity), (int32));
   }
 

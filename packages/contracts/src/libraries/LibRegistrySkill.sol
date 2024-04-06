@@ -294,35 +294,35 @@ library LibRegistrySkill {
   // GETTERS
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
+    return IndexComponent(getAddressById(components, IndexCompID)).get(id);
   }
 
   function getSkillIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexSkillComponent(getAddressById(components, IndexSkillCompID)).getValue(id);
+    return IndexSkillComponent(getAddressById(components, IndexSkillCompID)).get(id);
   }
 
   function getCost(IUintComp components, uint256 id) internal view returns (uint256) {
-    return CostComponent(getAddressById(components, CostCompID)).getValue(id);
+    return CostComponent(getAddressById(components, CostCompID)).get(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).getValue(id);
+    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).get(id);
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
-    return MaxComponent(getAddressById(components, MaxCompID)).getValue(id);
+    return MaxComponent(getAddressById(components, MaxCompID)).get(id);
   }
 
   function getSubtype(IUintComp components, uint256 id) internal view returns (string memory) {
-    return SubtypeComponent(getAddressById(components, SubtypeCompID)).getValue(id);
+    return SubtypeComponent(getAddressById(components, SubtypeCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalCompID)).getValue(id);
+    return BalanceComponent(getAddressById(components, BalCompID)).get(id);
   }
 
   /////////////////

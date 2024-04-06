@@ -133,22 +133,22 @@ library LibListing {
   }
 
   function getNPCIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).getValue(id);
+    return IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).get(id);
   }
 
   // return the item index of a listing
   function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddressById(components, IndexItemCompID)).getValue(id);
+    return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
   function getBuyPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     if (hasBuyPrice(components, id))
-      price = PriceBuyComponent(getAddressById(components, PriceBuyCompID)).getValue(id);
+      price = PriceBuyComponent(getAddressById(components, PriceBuyCompID)).get(id);
   }
 
   function getSellPrice(IUintComp components, uint256 id) internal view returns (uint256 price) {
     if (hasSellPrice(components, id))
-      price = PriceSellComponent(getAddressById(components, PriceSellCompID)).getValue(id);
+      price = PriceSellComponent(getAddressById(components, PriceSellCompID)).get(id);
   }
 
   /////////////////

@@ -29,6 +29,6 @@ library LibHash {
   // GETTERS
 
   function get(IUintComp components, uint256 id) internal view returns (uint256) {
-    return HashComponent(getAddressById(components, HashCompID)).getValue(id);
+    return HashComponent(getAddressById(components, HashCompID)).get(id);
   }
 }

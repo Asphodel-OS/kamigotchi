@@ -40,7 +40,7 @@ contract BoolComponent is Component {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (bool) {
+  function get(uint256 entity) public view virtual returns (bool) {
     return abi.decode(getRaw(entity), (bool));
   }
 

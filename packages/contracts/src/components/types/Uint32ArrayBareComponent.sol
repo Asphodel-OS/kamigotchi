@@ -40,7 +40,7 @@ contract Uint32ArrayBareComponent is BareComponent {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (uint32[] memory) {
+  function get(uint256 entity) public view virtual returns (uint32[] memory) {
     return abi.decode(getRaw(entity), (uint32[]));
   }
 

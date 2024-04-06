@@ -42,8 +42,8 @@ library LibNPC {
     uint256 accountID
   ) internal view returns (bool) {
     IndexRoomComponent roomComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
-    uint32 roomIndex = roomComp.getValue(id);
-    return roomIndex == 0 || roomIndex == roomComp.getValue(accountID);
+    uint32 roomIndex = roomComp.get(id);
+    return roomIndex == 0 || roomIndex == roomComp.get(accountID);
   }
 
   /////////////////
@@ -61,16 +61,16 @@ library LibNPC {
   // GETTERS
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).getValue(id);
+    return IndexNPCComponent(getAddressById(components, IndexNPCCompID)).get(id);
   }
 
   function getRoom(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).getValue(id);
+    return IndexRoomComponent(getAddressById(components, IndexRoomCompID)).get(id);
   }
 
   // gets the name of a specified merchant
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    return NameComponent(getAddressById(components, NameCompID)).get(id);
   }
 
   /////////////////

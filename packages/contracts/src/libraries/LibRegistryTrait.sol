@@ -259,27 +259,27 @@ library LibRegistryTrait {
   // GETTERS
 
   function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddressById(components, NameCompID)).getValue(id);
+    return NameComponent(getAddressById(components, NameCompID)).get(id);
   }
 
   function getBodyIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexBodyComponent(getAddressById(components, IndexBodyCompID)).getValue(id);
+    return IndexBodyComponent(getAddressById(components, IndexBodyCompID)).get(id);
   }
 
   function getBackgroundIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).getValue(id);
+    return IndexBackgroundComponent(getAddressById(components, IndexBackgroundCompID)).get(id);
   }
 
   function getColorIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexColorComponent(getAddressById(components, IndexColorCompID)).getValue(id);
+    return IndexColorComponent(getAddressById(components, IndexColorCompID)).get(id);
   }
 
   function getFaceIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexFaceComponent(getAddressById(components, IndexFaceCompID)).getValue(id);
+    return IndexFaceComponent(getAddressById(components, IndexFaceCompID)).get(id);
   }
 
   function getHandIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexHandComponent(getAddressById(components, IndexHandCompID)).getValue(id);
+    return IndexHandComponent(getAddressById(components, IndexHandCompID)).get(id);
   }
 
   // Get the name of an entity's set Background (identified by IndexBackground value)

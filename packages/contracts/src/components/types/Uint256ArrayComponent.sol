@@ -40,7 +40,7 @@ contract Uint256ArrayComponent is Component {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (uint256[] memory) {
+  function get(uint256 entity) public view virtual returns (uint256[] memory) {
     return abi.decode(getRaw(entity), (uint256[]));
   }
 

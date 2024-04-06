@@ -42,15 +42,15 @@ contract AccountTest is SetupTemplate {
     assertTrue(!_CacheOperatorComponent.has(uint256(uint160(prevOperator))));
     assertTrue(!LibAccount.operatorInUse(components, prevOperator));
     vm.expectRevert();
-    _CacheOperatorComponent.getValue(uint256(uint160(prevOperator)));
+    _CacheOperatorComponent.get(uint256(uint160(prevOperator)));
     vm.expectRevert("Account: Operator not found");
     reverter.getByOperator(components, prevOperator);
   }
 
   function assertAddresses(uint256 id, address owner, address operator) public {
-    assertEq(_AddressOwnerComponent.getValue(id), owner);
-    assertEq(_AddressOperatorComponent.getValue(id), operator);
-    assertEq(_CacheOperatorComponent.getValue(uint256(uint160(operator))), id);
+    assertEq(_AddressOwnerComponent.get(id), owner);
+    assertEq(_AddressOperatorComponent.get(id), operator);
+    assertEq(_CacheOperatorComponent.get(uint256(uint160(operator))), id);
     assertEq(LibAccount.getByOwner(components, owner), id);
     assertEq(LibAccount.getByOperator(components, operator), id);
     assertTrue(LibAccount.ownerInUse(components, owner));

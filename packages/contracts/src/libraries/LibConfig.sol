@@ -82,14 +82,14 @@ library LibConfig {
 
     BareValueComponent valueComp = BareValueComponent(getAddressById(components, ValueCompID));
     for (uint256 i = 0; i < names.length; i++)
-      if (values[i] != 0) values[i] = uint256(uint32(valueComp.getValue(values[i])));
+      if (values[i] != 0) values[i] = uint256(uint32(valueComp.get(values[i])));
 
     return values;
   }
 
   /// @notice Retrieve the value (without precision) of a global config field entity. Assumes it exists
   function getValue(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BareValueComponent(getAddressById(components, ValueCompID)).getValue(id);
+    return BareValueComponent(getAddressById(components, ValueCompID)).get(id);
   }
 
   /// @notice Retrieve an array of values. Assumes it exists

@@ -26,8 +26,8 @@ contract RelationshipTest is SetupTemplate {
     assertEq(LibRegRel.get(components, index.npc, index.rel), regID);
     assertTrue(_IsRegistryComponent.has(regID));
     assertTrue(_IsRelationshipComponent.has(regID));
-    assertEq(index.npc, _IndexNPCComponent.getValue(regID));
-    assertEq(index.rel, _IndexRelationshipComponent.getValue(regID));
+    assertEq(index.npc, _IndexNPCComponent.get(regID));
+    assertEq(index.rel, _IndexRelationshipComponent.get(regID));
 
     // get() on empty relationship should return 0
     assertEq(LibRegRel.get(components, 111, 111), 0);
@@ -41,9 +41,9 @@ contract RelationshipTest is SetupTemplate {
     uint256 rsID = _advRelationship(0, index.npc, index.rel);
     assertEq(LibRelationship.get(components, _getAccount(0), index.npc, index.rel), rsID);
     assertTrue(_IsRelationshipComponent.has(rsID));
-    assertEq(_IdOwnsRelationshipComponent.getValue(rsID), _getAccount(0));
-    assertEq(_IndexNPCComponent.getValue(rsID), index.npc);
-    assertEq(_IndexRelationshipComponent.getValue(rsID), index.rel);
+    assertEq(_IdOwnsRelationshipComponent.get(rsID), _getAccount(0));
+    assertEq(_IndexNPCComponent.get(rsID), index.npc);
+    assertEq(_IndexRelationshipComponent.get(rsID), index.rel);
 
     // check repeat acceptance
     vm.prank(_getOperator(0));

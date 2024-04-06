@@ -278,7 +278,7 @@ library LibQuests {
 
   function distributePoints(IUintComp components, uint256 accountID, uint256 amount) internal {
     QuestPointComponent comp = QuestPointComponent(getAddressById(components, QuestPointCompID));
-    uint256 bal = comp.has(accountID) ? comp.getValue(accountID) : 0;
+    uint256 bal = comp.has(accountID) ? comp.get(accountID) : 0;
     comp.set(accountID, bal + amount);
   }
 
@@ -497,41 +497,41 @@ library LibQuests {
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalCompID)).getValue(id);
+    return BalanceComponent(getAddressById(components, BalCompID)).get(id);
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).getValue(id);
+    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).get(id);
   }
 
   function getQuestIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).getValue(id);
+    return IndexQuestComponent(getAddressById(components, IndexQuestCompID)).get(id);
   }
 
   function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).getValue(id);
+    return IdOwnsQuestComponent(getAddressById(components, OwnQuestCompID)).get(id);
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).getValue(id);
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   function getTimeStart(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeStartComponent(getAddressById(components, TimeStartCompID)).getValue(id);
+    return TimeStartComponent(getAddressById(components, TimeStartCompID)).get(id);
   }
 
   function getTime(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeComponent(getAddressById(components, TimeCompID)).getValue(id);
+    return TimeComponent(getAddressById(components, TimeCompID)).get(id);
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     if (hasIndex(components, id))
-      return IndexComponent(getAddressById(components, IndexCompID)).getValue(id);
+      return IndexComponent(getAddressById(components, IndexCompID)).get(id);
     else return 0;
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    return QuestPointComponent(getAddressById(components, QuestPointCompID)).getValue(id);
+    return QuestPointComponent(getAddressById(components, QuestPointCompID)).get(id);
   }
 
   ////////////////

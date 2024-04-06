@@ -36,7 +36,7 @@ library LibRandom {
   // GETTERS
 
   function getRevealBlock(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BlockRevealComp(getAddressById(components, BlockRevealCompID)).getValue(id);
+    return BlockRevealComp(getAddressById(components, BlockRevealCompID)).get(id);
   }
 
   function hasRevealBlock(IUintComp components, uint256 id) internal view returns (bool) {

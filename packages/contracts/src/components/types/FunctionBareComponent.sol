@@ -51,7 +51,7 @@ contract FunctionBareComponent is BareComponent {
     return values;
   }
 
-  function getValue(uint256 entity) public view virtual returns (FunctionSelector memory) {
+  function get(uint256 entity) public view virtual returns (FunctionSelector memory) {
     return abi.decode(getRaw(entity), (FunctionSelector));
   }
 

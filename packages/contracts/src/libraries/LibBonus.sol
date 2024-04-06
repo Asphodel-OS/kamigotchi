@@ -31,13 +31,13 @@ library LibBonus {
 
   function inc(IUintComp components, uint256 id, uint256 amt) public {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
-    uint256 curr = comp.has(id) ? comp.getValue(id) : 0;
+    uint256 curr = comp.has(id) ? comp.get(id) : 0;
     comp.set(id, curr + amt);
   }
 
   function dec(IUintComp components, uint256 id, uint256 amt) public {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
-    uint256 curr = comp.has(id) ? comp.getValue(id) : 0;
+    uint256 curr = comp.has(id) ? comp.get(id) : 0;
     require(curr >= amt, "LibBonus: lower limit reached");
     comp.set(id, curr - amt);
   }
@@ -57,7 +57,7 @@ library LibBonus {
   function getBalance(IUintComp components, uint256 id) public view returns (uint256) {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
     if (!comp.has(id)) return 1000;
-    return comp.getValue(id);
+    return comp.get(id);
   }
 
   /////////////////
