@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
@@ -20,7 +21,6 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 // LibRegistryTrait is based heavily off LibRegistryItem, but is used for traits.
 // IndexTrait is the automatically incremented domain index, but traits are
@@ -460,7 +460,7 @@ library LibRegistryTrait {
   ) internal view returns (uint256[] memory) {
     uint256 ptr = genReverseMappingPtr(_type);
     return
-      LibSafeQuery.getIsWithValue(
+      LibQuery.getIsWithValue(
         getComponentById(components, ForCompID),
         getComponentById(components, IsRegCompID),
         abi.encode(ptr)

@@ -4,8 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { Stat } from "components/types/StatComponent.sol";
@@ -111,7 +110,7 @@ library LibRegistryItem {
     string memory description,
     string memory mediaURI
   ) internal returns (uint256 id) {
-    id = getID(index);
+    id = genID(index);
     require(
       !IndexItemComponent(getAddressById(components, IndexItemCompID)).has(id),
       "item reg: item alr exists"
@@ -311,13 +310,13 @@ library LibRegistryItem {
     IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
     if (!comp.has(instanceID)) return 0;
     uint32 index = comp.getValue(instanceID);
-    uint256 id = getID(index);
+    uint256 id = genID(index);
     return comp.has(id) ? id : 0;
   }
 
   function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
     IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
-    uint256 id = getID(index);
+    uint256 id = genID(index);
     return comp.has(id) ? id : 0;
   }
 
@@ -326,9 +325,9 @@ library LibRegistryItem {
 
   function getAllFood(IUintComp components) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
+    fragments[0] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, TypeCompID),
       abi.encode("FOOD")
@@ -339,9 +338,9 @@ library LibRegistryItem {
 
   function getAllRevive(IUintComp components) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
+    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IsRegCompID), "");
     fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IndexItemCompID), "");
-    fragments[2] = QueryFragment(
+    fragments[0] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, TypeCompID),
       abi.encode("REVIVE")
@@ -354,7 +353,7 @@ library LibRegistryItem {
   // UTILS
 
   /// @notice Retrieve the ID of a registry entry
-  function getID(uint32 index) internal pure returns (uint256) {
+  function genID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("Registry.Item", index)));
   }
 }

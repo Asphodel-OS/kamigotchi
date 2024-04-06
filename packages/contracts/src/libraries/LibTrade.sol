@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
@@ -168,30 +167,34 @@ library LibTrade {
     if (!Strings.equal(state, "")) numFilters++;
 
     QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsTradeCompID), "");
 
     uint256 filterCount;
     if (aliceID != 0) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IdReqerCompID),
         abi.encode(aliceID)
       );
     }
     if (bobID != 0) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, IdReqeeCompID),
         abi.encode(bobID)
       );
     }
     if (!Strings.equal(state, "")) {
-      fragments[++filterCount] = QueryFragment(
+      fragments[filterCount++] = QueryFragment(
         QueryType.HasValue,
         getComponentById(components, StateCompID),
         abi.encode(state)
       );
     }
+    fragments[filterCount] = QueryFragment(
+      QueryType.Has,
+      getComponentById(components, IsTradeCompID),
+      ""
+    );
 
     return LibQuery.query(fragments);
   }

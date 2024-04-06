@@ -18,7 +18,7 @@ library LibHash {
 
   function copy(IUintComp components, uint256 toID, uint256 fromID) internal {
     HashComponent comp = HashComponent(getAddressById(components, HashCompID));
-    comp.set(toID, comp.getRawValue(fromID));
+    comp.set(toID, comp.getRaw(fromID));
   }
 
   function remove(IUintComp components, uint256 id) internal {

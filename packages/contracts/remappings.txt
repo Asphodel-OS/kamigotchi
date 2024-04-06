@@ -1,3 +1,5 @@
+solecs/=src/solecs
+
 components/=src/components
 deployment/=src/deployment
 libraries/=src/libraries
@@ -11,6 +13,5 @@ forge-std/=node_modules/forge-std/src/
 memmove/=node_modules/memmove/src/
 openzeppelin/=node_modules/@openzeppelin/contracts/
 solady/=node_modules/solady/src/
-solecs/=node_modules/@mud-classic/solecs/src/
 solmate/=node_modules/solmate/src/
 std-contracts/=node_modules/@mud-classic/std-contracts/src/

@@ -4,8 +4,7 @@ pragma solidity ^0.8.0;
 import { LibString } from "solady/utils/LibString.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById, addressToEntity } from "solecs/utils.sol";
 
 import { IsAccountComponent, ID as IsAccCompID } from "components/IsAccountComponent.sol";
@@ -35,7 +34,6 @@ import { LibInventory } from "libraries/LibInventory.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { Stat, LibStat } from "libraries/LibStat.sol";
-import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 library LibAccount {
   /////////////////
@@ -50,7 +48,10 @@ library LibAccount {
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     IsAccountComponent(getAddressById(components, IsAccCompID)).set(id);
-    IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(id, getTotal(components));
+    IndexAccountComponent(getAddressById(components, IndexAccCompID)).set(
+      id,
+      getAndUpdateTotalAccs(components)
+    );
     AddressOwnerComponent(getAddressById(components, AddrOwnerCompID)).set(id, ownerAddr);
     AddressOperatorComponent(getAddressById(components, AddrOperatorCompID)).set(id, operatorAddr);
     IndexRoomComponent(getAddressById(components, RoomCompID)).set(id, 1);
@@ -255,14 +256,9 @@ library LibAccount {
   /////////////////
   // QUERIES
 
-  // Get the total number of accounts
-  function getTotal(IUintComp components) internal view returns (uint32) {
-    return uint32(getAll(components).length);
-  }
-
   // retrieves the account with farcaster index
   function getByFarcasterIndex(IUintComp components, uint32 fid) internal view returns (uint256) {
-    uint256[] memory results = LibSafeQuery.getIsWithValue(
+    uint256[] memory results = LibQuery.getIsWithValue(
       getComponentById(components, IndexFarcasterCompID),
       getComponentById(components, IsAccCompID),
       abi.encode(fid)
@@ -272,7 +268,7 @@ library LibAccount {
 
   // retrieves the account with the specified name
   function getByName(IUintComp components, string memory name) internal view returns (uint256) {
-    uint256[] memory results = LibSafeQuery.getIsWithValue(
+    uint256[] memory results = LibQuery.getIsWithValue(
       getComponentById(components, NameCompID),
       getComponentById(components, IsAccCompID),
       abi.encode(name)
@@ -292,7 +288,7 @@ library LibAccount {
 
   // Get the account of an owner. Assume only 1.
   function getByOwner(IUintComp components, address owner) internal view returns (uint256) {
-    uint256[] memory results = LibSafeQuery.getIsWithValue(
+    uint256[] memory results = LibQuery.getIsWithValue(
       getComponentById(components, AddrOwnerCompID),
       getComponentById(components, IsAccCompID),
       abi.encode(owner)
@@ -311,15 +307,12 @@ library LibAccount {
       );
   }
 
-  // Get all accounts
-  function getAll(IUintComp components) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](1);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsAccCompID), "");
-    return LibQuery.query(fragments);
-  }
-
   //////////////////
   // DATA LOGGING
+
+  function getAndUpdateTotalAccs(IUintComp components) internal returns (uint32) {
+    return uint32(LibDataEntity.inc(components, 0, 0, "TOTAL_NUM_ACCOUNTS", 1));
+  }
 
   function logIncPetsMinted(
     IWorld world,

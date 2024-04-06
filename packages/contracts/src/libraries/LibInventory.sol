@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
-import { LibQuery } from "solecs/LibQuery.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
@@ -167,13 +166,13 @@ library LibInventory {
     uint32 itemIndex
   ) internal view returns (uint256 result) {
     QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
+    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
     fragments[1] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IdHolderCompID),
       abi.encode(holderID)
     );
-    fragments[2] = QueryFragment(
+    fragments[0] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IndexItemCompID),
       abi.encode(itemIndex)
@@ -189,8 +188,8 @@ library LibInventory {
     uint256 holderID
   ) internal view returns (uint256[] memory) {
     QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
-    fragments[1] = QueryFragment(
+    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
+    fragments[0] = QueryFragment(
       QueryType.HasValue,
       getComponentById(components, IdHolderCompID),
       abi.encode(holderID)
