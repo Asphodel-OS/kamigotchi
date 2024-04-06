@@ -307,6 +307,7 @@
         "NameComponent",
         "RarityComponent",
         "AffinityComponent",
+        "ForComponent",
         "HealthComponent",
         "HarmonyComponent",
         "PowerComponent",
