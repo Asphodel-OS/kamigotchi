@@ -48,7 +48,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { GACHA_DATA_ID } from "libraries/LibGacha.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.BatchMint"));

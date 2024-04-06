@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import { IComponent } from "solecs/interfaces/IComponent.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { getComponentById } from "solecs/utils.sol";
 
 /**
  *  @notice a library for safe, scalable querying with O(1) space reads
@@ -17,16 +19,32 @@ library LibSafeQuery {
   /// @notice to query a value entry for an entity via IsComponent (eg isAcc)
   /// @dev primary components must be a value without global scaling
   function getIsWithValue(
-    IComponent priComp,
-    IComponent secComp,
+    IUintComp components,
+    uint256 compA,
+    uint256 compB,
     bytes memory value
   ) internal view returns (uint256[] memory) {
-    uint256[] memory hasValue = priComp.getEntitiesWithValue(value);
+    return
+      getIsWithValue(
+        getComponentById(components, compA),
+        getComponentById(components, compB),
+        value
+      );
+  }
+
+  /// @notice to query a value entry for an entity via IsComponent (eg isAcc)
+  /// @dev primary components must be a value without global scaling
+  function getIsWithValue(
+    IComponent compA,
+    IComponent compB,
+    bytes memory value
+  ) internal view returns (uint256[] memory) {
+    uint256[] memory hasValue = compA.getEntitiesWithValue(value);
 
     uint256 maxLen = hasValue.length;
     uint256 numIs;
     for (uint256 i = 0; i < hasValue.length; i++) {
-      if (secComp.has(hasValue[i])) numIs++;
+      if (compB.has(hasValue[i])) numIs++;
       else hasValue[i] = 0;
     }
 

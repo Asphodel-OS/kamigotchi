@@ -19,11 +19,8 @@ contract AccountMoveSystem is System {
 
     uint32 toIndex = abi.decode(arguments, (uint32));
     uint32 currIndex = LibAccount.getRoom(components, accountID);
-    (uint256 currRoomID, uint256 toRoomID) = LibRoom.queryByIndexDouble(
-      components,
-      currIndex,
-      toIndex
-    );
+    uint256 currRoomID = LibRoom.queryByIndex(components, currIndex);
+    uint256 toRoomID = LibRoom.queryByIndex(components, toIndex);
 
     require(
       LibRoom.isReachable(components, toIndex, currRoomID, toRoomID),
@@ -35,9 +32,9 @@ contract AccountMoveSystem is System {
     );
 
     LibAccount.move(components, accountID, toIndex);
-    LibRoom.logMove(components, accountID);
 
     // standard logging and tracking
+    LibRoom.logMove(components, accountID);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

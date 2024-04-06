@@ -7,8 +7,9 @@ import { QueryFragment, QueryType } from "solecs/interfaces/Query.sol";
 import { LibQuery } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
+import { IdRoomComponent, ID as IdRoomCompID } from "components/IdRoomComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
-import { IndexSourceComponent, ID as IndexSourceCompID } from "components/IndexSourceComponent.sol";
 import { IsConditionComponent, ID as IsConditionCompID } from "components/IsConditionComponent.sol";
 import { IsRoomComponent, ID as IsRoomCompID } from "components/IsRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
@@ -16,9 +17,11 @@ import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol
 import { LocationComponent, ID as LocationCompID } from "components/LocationComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibSafeQuery } from "libraries/utils/LibSafeQuery.sol";
 
 struct Location {
   int32 x;
@@ -32,20 +35,18 @@ library LibRoom {
 
   /// @notice Create a room at a given location.
   function create(
-    IWorld world,
     IUintComp components,
     Location memory location,
     uint32 index,
     string memory name,
     string memory description
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+  ) internal returns (uint256 id) {
+    id = genID(index);
     IsRoomComponent(getAddressById(components, IsRoomCompID)).set(id);
     IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, index);
     LocationComponent(getAddressById(components, LocationCompID)).set(id, location);
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
-    return id;
   }
 
   /// @notice creates a room gating condition
@@ -54,16 +55,19 @@ library LibRoom {
     IUintComp components,
     uint32 roomIndex,
     uint32 sourceIndex, // optional: if condition specific from Room A->B
-    uint32 conIndex,
-    uint256 conValue,
+    uint32 condIndex,
+    uint256 condValue,
     string memory logicType,
     string memory type_
   ) internal returns (uint256 id) {
     id = LibBoolean.create(world, components, type_, logicType);
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).set(id, roomIndex);
-    IndexSourceComponent(getAddressById(components, IndexSourceCompID)).set(id, sourceIndex);
-    if (conIndex != 0) LibBoolean.setIndex(components, id, conIndex);
-    if (conValue != 0) LibBoolean.setValue(components, id, conValue);
+    if (condIndex != 0) LibBoolean.setIndex(components, id, condIndex);
+    if (condValue != 0) LibBoolean.setBalance(components, id, condValue);
+
+    IdRoomComponent(getAddressById(components, IdRoomCompID)).set(id, genGateAtPtr(roomIndex));
+    IdSourceComponent sourceComp = IdSourceComponent(getAddressById(components, IdSourceCompID));
+    if (sourceIndex != 0) sourceComp.set(id, genGateSourcePtr(sourceIndex));
+    else sourceComp.set(id, 0);
   }
 
   function remove(IUintComp components, uint256 id) internal returns (uint256) {
@@ -72,30 +76,27 @@ library LibRoom {
     LocationComponent(getAddressById(components, LocationCompID)).remove(id);
     NameComponent(getAddressById(components, NameCompID)).remove(id);
     DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
-    unsetExits(components, id);
+    ExitsComponent exitComp = ExitsComponent(getAddressById(components, ExitsCompID));
+    if (exitComp.has(id)) exitComp.remove(id);
     return id;
   }
 
   function removeGate(IUintComp components, uint256 id) internal {
-    LibBoolean.remove(components, id);
-    IndexRoomComponent(getAddressById(components, IndexRoomCompID)).remove(id);
+    IdRoomComponent(getAddressById(components, IdRoomCompID)).remove(id);
+    // IdSourceComponent sourceComp = IdSourceComponent(getAddressById(components, IdSourceCompID));
+    // if (sourceComp.has(id)) sourceComp.remove(id);
+    IdSourceComponent(getAddressById(components, IdSourceCompID)).remove(id);
 
-    unsetSource(components, id);
+    LibBoolean.remove(components, id);
     LibBoolean.unsetIndex(components, id);
-    LibBoolean.unsetValue(components, id);
+    LibBoolean.unsetBalance(components, id);
   }
 
   /////////////////
   // CHECKERS
 
-  /// @notice Checks if two entities share a location
-  function inSameLocation(IUintComp components, uint256 a, uint256 b) internal view returns (bool) {
-    LocationComponent comp = LocationComponent(getAddressById(components, LocationCompID));
-    return isSameLocation(comp.getValue(a), comp.getValue(b));
-  }
-
-  function isSameLocation(Location memory a, Location memory b) internal pure returns (bool) {
-    return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+  function isRoom(IUintComp components, uint256 id) internal view returns (bool) {
+    return IsRoomComponent(getAddressById(components, IsRoomCompID)).has(id);
   }
 
   /// @notice Checks whether a path from Room A to Room B is valid
@@ -176,69 +177,25 @@ library LibRoom {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
   }
 
-  function unsetExits(IUintComp components, uint256 id) internal {
-    ExitsComponent comp = ExitsComponent(getAddressById(components, ExitsCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
-  function unsetSource(IUintComp components, uint256 id) internal {
-    IndexSourceComponent comp = IndexSourceComponent(getAddressById(components, IndexSourceCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
   /////////////////
   // QUERIES
 
   function queryByIndex(IUintComp components, uint32 index) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRoomCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexRoomCompID),
-      abi.encode(index)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) result = results[0];
-  }
-
-  /// @notice a dual query for two rooms via index
-  /// @dev clunky and not ideal, but used here to reduce query calls
-  function queryByIndexDouble(
-    IUintComp components,
-    uint32 indexA,
-    uint32 indexB
-  ) internal view returns (uint256 roomAID, uint256 roomBID) {
-    IndexRoomComponent indexComp = IndexRoomComponent(getAddressById(components, IndexRoomCompID));
-
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRoomCompID), "");
-
-    fragments[1] = QueryFragment(QueryType.HasValue, indexComp, abi.encode(indexA));
-    uint256[] memory results = LibQuery.query(fragments);
-    require(results.length > 0, "LibRoom: no room at index A");
-    roomAID = results[0];
-
-    fragments[1] = QueryFragment(QueryType.HasValue, indexComp, abi.encode(indexB));
-    results = LibQuery.query(fragments);
-    require(results.length > 0, "LibRoom: no room at index B");
-    roomBID = results[0];
+    uint256 id = genID(index);
+    return isRoom(components, id) ? id : 0;
   }
 
   function queryByLocation(
     IUintComp components,
     Location memory loc
   ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(QueryType.Has, getComponentById(components, IsRoomCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, LocationCompID),
+    uint256[] memory results = LibSafeQuery.getIsWithValue(
+      components,
+      LocationCompID,
+      IsRoomCompID,
       abi.encode(loc)
     );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) result = results[0];
+    return results.length > 0 ? results[0] : 0;
   }
 
   /// @notice queries for all gates from A->B, specific and non-specific (generic)
@@ -247,54 +204,48 @@ library LibRoom {
     uint32 fromIndex,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    IndexSourceComponent sourceComp = IndexSourceComponent(
-      getAddressById(components, IndexSourceCompID)
-    );
-
     QueryFragment[] memory fragments = new QueryFragment[](3);
     fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdRoomCompID),
+      abi.encode(genGateAtPtr(toIndex))
+    );
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      getComponentById(components, IdSourceCompID),
+      abi.encode(0)
+    );
+    fragments[2] = QueryFragment(
       QueryType.Has,
       getComponentById(components, IsConditionCompID),
       ""
     );
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexRoomCompID),
-      abi.encode(toIndex)
-    );
-    fragments[2] = QueryFragment(QueryType.HasValue, sourceComp, abi.encode(0));
+
     uint256[] memory generic = LibQuery.query(fragments);
 
-    fragments[2] = QueryFragment(QueryType.HasValue, sourceComp, abi.encode(fromIndex));
+    fragments[1].value = abi.encode(genGateSourcePtr(fromIndex));
     uint256[] memory specific = LibQuery.query(fragments);
 
-    uint256 genLen = generic.length;
-    uint256 specLen = specific.length;
-    uint256[] memory results = new uint256[](genLen + specLen);
-    for (uint256 i; i < genLen; i++) results[i] = generic[i];
-    for (uint256 i; i < specLen; i++) results[genLen + i] = specific[i];
-
-    return results;
+    return LibArray.concat(generic, specific);
   }
 
-  /// @notice queries for all gates for a room
-  /// @dev used for deleting rooms
+  /// @notice queries for all gates related to a room
+  /// @dev used for deleting rooms; nukes all gates coming to/from a room
   function queryAllGates(
     IUintComp components,
     uint32 toIndex
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(
-      QueryType.Has,
+    uint256[] memory gatesTo = LibSafeQuery.getIsWithValue(
+      getComponentById(components, IdRoomCompID),
       getComponentById(components, IsConditionCompID),
-      ""
+      abi.encode(genGateAtPtr(toIndex))
     );
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexRoomCompID),
-      abi.encode(toIndex)
+    uint256[] memory gatesFrom = LibSafeQuery.getIsWithValue(
+      getComponentById(components, IdSourceCompID),
+      getComponentById(components, IsConditionCompID),
+      abi.encode(genGateSourcePtr(toIndex))
     );
-    return LibQuery.query(fragments);
+    return LibArray.concat(gatesTo, gatesFrom);
   }
 
   //////////////////////
@@ -306,6 +257,22 @@ library LibRoom {
 
   //////////////////////
   // UTILS
+
+  function genID(uint32 roomIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Room", roomIndex)));
+  }
+
+  // generates a pointer from a gate to destination room
+  // eg. Moves to room 1; genGateAtPointer(1) is used to point to the room
+  function genGateAtPtr(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Room.Gate.To", index)));
+  }
+
+  // generates a pointer from a gate to source room
+  // eg. Moves room 1 -> room 2; genGateSourcePointer(1) is used to point to the room
+  function genGateSourcePtr(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("Room.Gate.From", index)));
+  }
 
   function locationToUint256(Location memory location) internal pure returns (uint256) {
     return

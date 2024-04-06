@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibLootbox } from "libraries/LibLootbox.sol";
-import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Lootbox.Reveal.Execute"));
 

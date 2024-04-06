@@ -3,6 +3,13 @@ pragma solidity ^0.8.0;
 
 /// @notice a general utility library for memory array operations
 library LibArray {
+  function concat(uint256[] memory a, uint256[] memory b) internal pure returns (uint256[] memory) {
+    uint256[] memory result = new uint256[](a.length + b.length);
+    for (uint256 i = 0; i < a.length; i++) result[i] = a[i];
+    for (uint256 i = 0; i < b.length; i++) result[a.length + i] = b[i];
+    return result;
+  }
+
   function push(uint256[] memory arr, uint256 value) internal pure returns (uint256[] memory) {
     uint256[] memory result = new uint256[](arr.length + 1);
     for (uint256 i = 0; i < arr.length; i++) result[i] = arr[i];

@@ -17,7 +17,7 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 
 library LibLootbox {
