@@ -1,10 +1,10 @@
 import { utils } from 'ethers';
 
-import droptablesCSV from 'assets/data/items/droptablpes2.csv';
-import itemsCSV from 'assets/data/items/items2.csv';
-import nodesCSV from 'assets/data/nodes/nodes2.csv';
+import droptablesCSV from 'assets/data/items/droptables.csv';
+import itemsCSV from 'assets/data/items/items.csv';
+import nodesCSV from 'assets/data/nodes/nodes.csv';
 import questCSV from 'assets/data/quests/quests.csv';
-import roomsCSV from 'assets/data/rooms/rooms2.csv';
+import roomsCSV from 'assets/data/rooms/rooms.csv';
 import backgroundCSV from 'assets/data/traits/backgrounds.csv';
 import bodyCSV from 'assets/data/traits/bodies.csv';
 import colorCSV from 'assets/data/traits/colors.csv';
