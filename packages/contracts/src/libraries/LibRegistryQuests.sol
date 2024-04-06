@@ -10,6 +10,7 @@ import { DescriptionAltComponent, ID as DescAltCompID } from "components/Descrip
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
+import { IdOwnsConditionComponent, ID as IdOwnsCondCompID } from "components/IdOwnsConditionComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsObjectiveComponent, ID as IsObjectiveCompID } from "components/IsObjectiveComponent.sol";
 import { IsRepeatableComponent, ID as IsRepeatableCompID } from "components/IsRepeatableComponent.sol";
@@ -19,7 +20,6 @@ import { IsQuestComponent, ID as IsQuestCompID } from "components/IsQuestCompone
 import { HashComponent, ID as HashCompID } from "components/HashComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
-import { QuestConditionsComponent, ID as QuestConditionsCompID } from "components/QuestConditionsComponent.sol";
 import { QuestPointComponent, ID as QuestPointCompID } from "components/QuestPointComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -77,7 +77,7 @@ library LibRegistryQuests {
     uint32 objIndex // objs must have an index - it can be 0
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    appendCondition(components, genObjArrID(questIndex), id);
+    setConditionOwner(components, id, genObjPtr(questIndex));
 
     setQuestIndex(components, id, questIndex);
     setIsRegistry(components, id);
@@ -101,7 +101,7 @@ library LibRegistryQuests {
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    appendCondition(components, genReqArrID(questIndex), id);
+    setConditionOwner(components, id, genReqPtr(questIndex));
 
     setIsRegistry(components, id);
     setIsRequirement(components, id);
@@ -119,7 +119,7 @@ library LibRegistryQuests {
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    appendCondition(components, genRewArrID(questIndex), id);
+    setConditionOwner(components, id, genRewPtr(questIndex));
 
     setIsRegistry(components, id);
     setIsReward(components, id);
@@ -127,23 +127,6 @@ library LibRegistryQuests {
     setType(components, id, type_);
 
     return id;
-  }
-
-  function appendCondition(IUintComp components, uint256 arrID, uint256 conID) internal {
-    QuestConditionsComponent conArrComp = QuestConditionsComponent(
-      getAddressById(components, QuestConditionsCompID)
-    );
-
-    if (conArrComp.has(arrID)) {
-      // has existing array, append
-      uint256[] memory result = LibArray.push(conArrComp.getValue(arrID), conID);
-      conArrComp.set(arrID, result);
-    } else {
-      // no existing array, create
-      uint256[] memory result = new uint256[](1);
-      result[0] = conID;
-      conArrComp.set(arrID, result);
-    }
   }
 
   function deleteQuest(IUintComp components, uint256 questID, uint32 questIndex) internal {
@@ -154,18 +137,13 @@ library LibRegistryQuests {
     DescriptionComponent(getAddressById(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddressById(components, DescAltCompID)).remove(questID);
     QuestPointComponent(getAddressById(components, QuestPointCompID)).remove(questID);
-    QuestConditionsComponent conArrComp = QuestConditionsComponent(
-      getAddressById(components, QuestConditionsCompID)
-    );
-    if (conArrComp.has(genReqArrID(questIndex))) conArrComp.remove(genReqArrID(questIndex));
-    if (conArrComp.has(genRewArrID(questIndex))) conArrComp.remove(genRewArrID(questIndex));
-    if (conArrComp.has(genObjArrID(questIndex))) conArrComp.remove(genObjArrID(questIndex));
 
     unsetIsRepeatable(components, questID);
     unsetTime(components, questID);
   }
 
   function deleteObjective(IUintComp components, uint256 objectiveID) internal {
+    unsetConditionOwner(components, objectiveID);
     unsetIsRegistry(components, objectiveID);
     unsetIsObjective(components, objectiveID);
     unsetQuestIndex(components, objectiveID);
@@ -179,6 +157,7 @@ library LibRegistryQuests {
   }
 
   function deleteRequirement(IUintComp components, uint256 requirementID) internal {
+    unsetConditionOwner(components, requirementID);
     unsetIsRegistry(components, requirementID);
     unsetIsRequirement(components, requirementID);
     unsetQuestIndex(components, requirementID);
@@ -189,6 +168,7 @@ library LibRegistryQuests {
   }
 
   function deleteReward(IUintComp components, uint256 rewardID) internal {
+    unsetConditionOwner(components, rewardID);
     unsetIsRegistry(components, rewardID);
     unsetIsReward(components, rewardID);
     unsetQuestIndex(components, rewardID);
@@ -229,6 +209,10 @@ library LibRegistryQuests {
 
   function setBalance(IUintComp components, uint256 id, uint256 value) internal {
     BalanceComponent(getAddressById(components, BalanceCompID)).set(id, value);
+  }
+
+  function setConditionOwner(IUintComp components, uint256 id, uint256 ownerID) internal {
+    IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).set(id, ownerID);
   }
 
   function setIsRegistry(IUintComp components, uint256 id) internal {
@@ -285,6 +269,12 @@ library LibRegistryQuests {
   function unsetBalance(IUintComp components, uint256 id) internal {
     if (BalanceComponent(getAddressById(components, BalanceCompID)).has(id)) {
       BalanceComponent(getAddressById(components, BalanceCompID)).remove(id);
+    }
+  }
+
+  function unsetConditionOwner(IUintComp components, uint256 id) internal {
+    if (IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).has(id)) {
+      IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).remove(id);
     }
   }
 
@@ -369,7 +359,6 @@ library LibRegistryQuests {
     uint32 index
   ) internal view returns (uint256 result) {
     result = genQuestID(index);
-
     return IsQuestComponent(getAddressById(components, IsQuestCompID)).has(result) ? result : 0;
   }
 
@@ -378,12 +367,7 @@ library LibRegistryQuests {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    uint256 objsID = genObjArrID(index);
-    QuestConditionsComponent comp = QuestConditionsComponent(
-      getAddressById(components, QuestConditionsCompID)
-    );
-
-    return comp.has(objsID) ? comp.getValue(objsID) : new uint256[](0);
+    return getConditionsByQuestIndex(components, genObjPtr(index));
   }
 
   // get requirements by Quest index
@@ -391,12 +375,7 @@ library LibRegistryQuests {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    uint256 reqsID = genReqArrID(index);
-    QuestConditionsComponent comp = QuestConditionsComponent(
-      getAddressById(components, QuestConditionsCompID)
-    );
-
-    return comp.has(reqsID) ? comp.getValue(reqsID) : new uint256[](0);
+    return getConditionsByQuestIndex(components, genReqPtr(index));
   }
 
   // get reward by Quest index
@@ -404,12 +383,17 @@ library LibRegistryQuests {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    uint256 rewardsID = genRewArrID(index);
-    QuestConditionsComponent comp = QuestConditionsComponent(
-      getAddressById(components, QuestConditionsCompID)
-    );
+    return getConditionsByQuestIndex(components, genRewPtr(index));
+  }
 
-    return comp.has(rewardsID) ? comp.getValue(rewardsID) : new uint256[](0);
+  function getConditionsByQuestIndex(
+    IUintComp components,
+    uint256 pointer
+  ) internal view returns (uint256[] memory) {
+    return
+      IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).getEntitiesWithValue(
+        pointer
+      );
   }
 
   /////////////////
@@ -421,17 +405,17 @@ library LibRegistryQuests {
   }
 
   /// @notice Retrieve the ID of a requirement array
-  function genReqArrID(uint32 index) internal pure returns (uint256) {
+  function genReqPtr(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("Registry.Quest.Requirement", index)));
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRewArrID(uint32 index) internal pure returns (uint256) {
+  function genRewPtr(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("Registry.Quest.Reward", index)));
   }
 
   /// @notice Retrieve the ID of a objective array
-  function genObjArrID(uint32 index) internal pure returns (uint256) {
+  function genObjPtr(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("Registry.Quest.Objective", index)));
   }
 }

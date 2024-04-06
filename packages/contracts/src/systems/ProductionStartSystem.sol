@@ -43,7 +43,7 @@ contract ProductionStartSystem is System {
     // Update ts for Standard Action Cooldowns
     uint256 standardActionTs = block.timestamp;
     uint256 bonusID = LibBonus.get(components, petID, "HARVEST_COOLDOWN");
-    if (bonusID != 0) standardActionTs -= LibBonus.getValue(components, bonusID);
+    if (bonusID != 0) standardActionTs -= LibBonus.getBalance(components, bonusID);
     LibPet.setLastActionTs(components, petID, standardActionTs);
 
     // standard logging and tracking

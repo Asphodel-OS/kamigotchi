@@ -23,7 +23,7 @@ contract _RegistryCreateSkillRequirementSystem is System {
     // create an empty Skill and set any non-zero fields
     uint256 id = LibRegistrySkill.createRequirement(world, components, skillIndex, type_);
     if (index != 0) LibRegistrySkill.setIndex(components, id, index);
-    if (value != 0) LibRegistrySkill.setValue(components, id, value);
+    if (value != 0) LibRegistrySkill.setBalance(components, id, value);
 
     return "";
   }

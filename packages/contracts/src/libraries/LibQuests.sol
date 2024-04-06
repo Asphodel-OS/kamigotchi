@@ -293,7 +293,7 @@ library LibQuests {
     uint32 index = getIndex(components, conditionID);
     uint256 expected = getBalance(components, conditionID);
 
-    return LibBoolean.checkCurr(components, accountID, index, expected, 0, _type, logic);
+    return LibBoolean.checkCurr(components, accountID, index, expected, _type, logic);
   }
 
   function checkIncrease(

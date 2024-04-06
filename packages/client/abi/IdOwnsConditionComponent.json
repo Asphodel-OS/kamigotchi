@@ -42,9 +42,28 @@
       "name": "getEntitiesWithValue",
       "inputs": [
         {
-          "name": "",
+          "name": "value",
           "type": "bytes",
           "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getEntitiesWithValue",
+      "inputs": [
+        {
+          "name": "value",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [
@@ -106,8 +125,8 @@
       "outputs": [
         {
           "name": "",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "stateMutability": "view"
@@ -162,7 +181,7 @@
       "name": "registerIndexer",
       "inputs": [
         {
-          "name": "",
+          "name": "indexer",
           "type": "address",
           "internalType": "address"
         }
@@ -207,8 +226,8 @@
         },
         {
           "name": "value",
-          "type": "bytes",
-          "internalType": "bytes"
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [],
@@ -225,8 +244,8 @@
         },
         {
           "name": "value",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "outputs": [],
@@ -334,6 +353,7 @@
     "authorizeWriter(address)": "4fef6a38",
     "getEntities()": "31b933b9",
     "getEntitiesWithValue(bytes)": "b361be46",
+    "getEntitiesWithValue(uint256)": "fbdfa1ea",
     "getRawValue(uint256)": "b8bc073d",
     "getSchema()": "6b122fe0",
     "getValue(uint256)": "0ff4c916",
@@ -344,7 +364,7 @@
     "registerWorld(address)": "9d2c76b4",
     "remove(uint256)": "4cc82215",
     "set(uint256,bytes)": "8b282947",
-    "set(uint256,uint256[])": "946aadc6",
+    "set(uint256,uint256)": "1ab06ee5",
     "transferOwnership(address)": "f2fde38b",
     "unauthorizeWriter(address)": "bf4fe57e",
     "world()": "30b67baa",
