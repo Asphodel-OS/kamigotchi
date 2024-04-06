@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint32ArrayBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Whitelist"));
+uint256 constant ID = uint256(keccak256("component.whitelist"));
 
 // list of whitelisted IDs
 contract WhitelistComponent is Uint32ArrayBareComponent {

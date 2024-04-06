@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Id.Room"));
+uint256 constant ID = uint256(keccak256("component.id.room"));
 
 // a reference to a Room entity's ID
 contract IdRoomComponent is Uint256Component {

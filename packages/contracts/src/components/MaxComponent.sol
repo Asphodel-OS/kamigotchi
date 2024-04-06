@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Max"));
+uint256 constant ID = uint256(keccak256("component.max"));
 
 contract MaxComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}

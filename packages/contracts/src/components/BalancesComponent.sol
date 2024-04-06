@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256ArrayBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Balances"));
+uint256 constant ID = uint256(keccak256("component.balances"));
 
 contract BalancesComponent is Uint256ArrayBareComponent {
   constructor(address world) Uint256ArrayBareComponent(world, ID) {}

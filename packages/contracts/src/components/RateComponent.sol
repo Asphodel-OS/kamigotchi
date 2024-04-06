@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Rate"));
+uint256 constant ID = uint256(keccak256("component.rate"));
 
 // the rate of something. precisions can be set arbitrarily within libraries
 contract RateComponent is Uint256BareComponent {

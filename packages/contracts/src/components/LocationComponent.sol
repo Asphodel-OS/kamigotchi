@@ -4,7 +4,7 @@ import "solecs/Component.sol";
 
 import { Location } from "libraries/LibRoom.sol";
 
-uint256 constant ID = uint256(keccak256("component.Location"));
+uint256 constant ID = uint256(keccak256("component.location"));
 
 contract LocationComponent is Component {
   constructor(address world) Component(world, ID) {}

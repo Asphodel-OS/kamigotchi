@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Value"));
+uint256 constant ID = uint256(keccak256("component.value"));
 
 // function getComp(Uint256Component comp) internal pure returns (ValueComponent) {
 //   return ValueComponent(getAddressById(comp, ValueCompID));

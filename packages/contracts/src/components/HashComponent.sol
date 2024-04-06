@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Hash"));
+uint256 constant ID = uint256(keccak256("component.hash"));
 
 /// @notice a generic component to store a hash. context dependent
 contract HashComponent is Uint256BareComponent {

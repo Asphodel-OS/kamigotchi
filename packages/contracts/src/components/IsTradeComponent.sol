@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/BoolComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Is.Trade"));
+uint256 constant ID = uint256(keccak256("component.is.trade"));
 
 // TradesTradesTradesTrades
 contract IsTradeComponent is BoolComponent {

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint32Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Index.Account"));
+uint256 constant ID = uint256(keccak256("component.index.account"));
 
 // Auto-incremented index of an Account
 contract IndexAccountComponent is Uint32Component {

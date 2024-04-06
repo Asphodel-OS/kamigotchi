@@ -1,4 +1,12 @@
-import { awaitStreamValue, DoWork, filterNullish, keccak256, streamToDefinedComputed } from "@mud-classic/utils";
+import { Components, ComponentValue, SchemaOf } from '@mud-classic/recs';
+import {
+  awaitStreamValue,
+  DoWork,
+  filterNullish,
+  keccak256,
+  streamToDefinedComputed,
+} from '@mud-classic/utils';
+import { computed } from 'mobx';
 import {
   bufferTime,
   catchError,
@@ -11,16 +19,7 @@ import {
   of,
   Subject,
   take,
-} from "rxjs";
-import {
-  isNetworkComponentUpdateEvent,
-  NetworkComponentUpdate,
-  NetworkEvent,
-  NetworkEvents,
-  SyncStateStruct,
-  SyncWorkerConfig,
-} from "../types";
-import { Components, ComponentValue, SchemaOf } from "@mud-classic/recs";
+} from 'rxjs';
 import {
   createCacheStore,
   getCacheStoreEntries,
@@ -30,26 +29,33 @@ import {
   saveCacheStoreToIndexDb,
   storeEvent,
   storeEvents,
-} from "../cache/CacheStore";
-import { createReconnectingProvider } from "../providers/createProvider";
-import { computed } from "mobx";
+} from '../cache/CacheStore';
+import { createBlockNumberStream } from '../executors/createBlockNumberStream';
+import { createReconnectingProvider } from '../providers/createProvider';
 import {
-  createSnapshotClient,
+  isNetworkComponentUpdateEvent,
+  NetworkComponentUpdate,
+  NetworkEvent,
+  NetworkEvents,
+  SyncStateStruct,
+  SyncWorkerConfig,
+} from '../types';
+import { GodID, SyncState } from './constants';
+import { debug as parentDebug } from './debug';
+import {
   createDecode,
+  createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
-  getSnapshotBlockNumber,
-  fetchSnapshotChunked,
   createLatestEventStreamRPC,
   createLatestEventStreamService,
+  createSnapshotClient,
   createTransformWorldEventsFromStream,
-  createFetchSystemCallsFromEvents,
   fetchEventsInBlockRangeChunked,
-} from "./syncUtils";
-import { createBlockNumberStream } from "../executors/createBlockNumberStream";
-import { GodID, SyncState } from "./constants";
-import { debug as parentDebug } from "./debug";
+  fetchSnapshotChunked,
+  getSnapshotBlockNumber,
+} from './syncUtils';
 
-const debug = parentDebug.extend("SyncWorker");
+const debug = parentDebug.extend('SyncWorker');
 
 export enum InputType {
   Ack,
@@ -63,10 +69,10 @@ export type Input = Config | Ack;
 export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEvent<C>[]> {
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
-  private syncState: SyncStateStruct = { state: SyncState.CONNECTING, msg: "", percentage: 0 };
+  private syncState: SyncStateStruct = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
 
   constructor() {
-    debug("creating SyncWorker");
+    debug('creating SyncWorker');
     this.init();
   }
 
@@ -88,10 +94,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     this.syncState = newLoadingState;
     const update: NetworkComponentUpdate<C> = {
       type: NetworkEvents.NetworkComponentUpdate,
-      component: keccak256("component.LoadingState"),
+      component: keccak256('component.LoadingState'),
       value: newLoadingState as unknown as ComponentValue<SchemaOf<C[keyof C]>>,
       entity: GodID,
-      txHash: "worker",
+      txHash: 'worker',
       lastEventInTx: false,
       blockNumber,
     };
@@ -113,7 +119,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
    *  4.2 Else keep in sync with RPC
    */
   private async init() {
-    this.setLoadingState({ state: SyncState.CONNECTING, msg: "Connecting...", percentage: 0 });
+    this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting...', percentage: 0 });
 
     // Turn config into variable accessible outside the stream
     const computedConfig = await streamToDefinedComputed(
@@ -139,9 +145,13 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const cacheInterval = config.cacheInterval || 1;
 
     // Set up
-    const { providers } = await createReconnectingProvider(computed(() => computedConfig.get().provider));
+    const { providers } = await createReconnectingProvider(
+      computed(() => computedConfig.get().provider)
+    );
     const provider = providers.get().json;
-    const snapshotClient = snapshotServiceUrl ? createSnapshotClient(snapshotServiceUrl) : undefined;
+    const snapshotClient = snapshotServiceUrl
+      ? createSnapshotClient(snapshotServiceUrl)
+      : undefined;
     const indexDbCache = await getIndexDbECSCache(chainId, worldContract.address);
     const decode = createDecode(worldContract, provider);
     const fetchWorldEvents = createFetchWorldEventsInBlockRange(
@@ -154,8 +164,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     // Start syncing current events, but only start streaming to output once gap between initial state and current block is closed
 
-    debug("start initial sync");
-    this.setLoadingState({ state: SyncState.INITIAL, msg: "Starting initial sync", percentage: 0 });
+    debug('start initial sync');
+    this.setLoadingState({ state: SyncState.INITIAL, msg: 'Starting initial sync', percentage: 0 });
     let passLiveEventsToOutput = false;
     const cacheStore = { current: createCacheStore() };
     const { blockNumber$ } = createBlockNumberStream(providers);
@@ -167,16 +177,16 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     );
     const latestEvent$ = streamServiceUrl
       ? createLatestEventStreamService(
-        streamServiceUrl,
-        worldContract.address,
-        transformWorldEvents,
-        Boolean(fetchSystemCalls)
-      ).pipe(
-        catchError((err) => {
-          console.error("SyncWorker stream service error, falling back to RPC", err);
-          return latestEventRPC$;
-        })
-      )
+          streamServiceUrl,
+          worldContract.address,
+          transformWorldEvents,
+          Boolean(fetchSystemCalls)
+        ).pipe(
+          catchError((err) => {
+            console.error('SyncWorker stream service error, falling back to RPC', err);
+            return latestEventRPC$;
+          })
+        )
       : latestEventRPC$;
 
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
@@ -190,7 +200,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
       if (isNetworkComponentUpdateEvent(event)) {
         // Store cache to indexdb every block
-        if (event.blockNumber > cacheStore.current.blockNumber + 1 && event.blockNumber % cacheInterval === 0)
+        if (
+          event.blockNumber > cacheStore.current.blockNumber + 1 &&
+          event.blockNumber % cacheInterval === 0
+        )
           saveCacheStoreToIndexDb(indexDbCache, cacheStore.current);
 
         storeEvent(cacheStore.current, event);
@@ -201,14 +214,20 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
 
     // Load initial state from cache or snapshot service
-    this.setLoadingState({ state: SyncState.INITIAL, msg: "Fetching cache block number", percentage: 0 });
-    const cacheBlockNumber = !disableCache ? await getIndexDBCacheStoreBlockNumber(indexDbCache) : -1;
+    this.setLoadingState({
+      state: SyncState.INITIAL,
+      msg: 'Fetching cache block number',
+      percentage: 0,
+    });
+    const cacheBlockNumber = !disableCache
+      ? await getIndexDBCacheStoreBlockNumber(indexDbCache)
+      : -1;
     this.setLoadingState({ percentage: 50 });
     const snapshotBlockNumber = await getSnapshotBlockNumber(snapshotClient, worldContract.address);
     this.setLoadingState({ percentage: 100 });
     debug(`
       cache block: ${cacheBlockNumber}, 
-      snapshot block: ${snapshotBlockNumber > 0 ? snapshotBlockNumber : "Unavailable"}, 
+      snapshot block: ${snapshotBlockNumber > 0 ? snapshotBlockNumber : 'Unavailable'}, 
       start sync at ${initialBlockNumber}
     `);
 
@@ -217,10 +236,15 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       initialState.blockNumber = initialBlockNumber;
     } else {
       // Load from cache if the snapshot is less than <cacheAgeThreshold> blocks newer than the cache
-      const syncFromSnapshot = snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheAgeThreshold;
+      const syncFromSnapshot =
+        snapshotClient && snapshotBlockNumber > cacheBlockNumber + cacheAgeThreshold;
 
       if (syncFromSnapshot) {
-        this.setLoadingState({ state: SyncState.INITIAL, msg: "Fetching initial state from snapshot", percentage: 0 });
+        this.setLoadingState({
+          state: SyncState.INITIAL,
+          msg: 'Fetching initial state from snapshot',
+          percentage: 0,
+        });
         initialState = await fetchSnapshotChunked(
           snapshotClient,
           worldContract.address,
@@ -230,12 +254,16 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           config.pruneOptions
         );
       } else {
-        this.setLoadingState({ state: SyncState.INITIAL, msg: "Fetching initial state from cache", percentage: 0 });
+        this.setLoadingState({
+          state: SyncState.INITIAL,
+          msg: 'Fetching initial state from cache',
+          percentage: 0,
+        });
         initialState = await loadIndexDbCacheStore(indexDbCache);
         this.setLoadingState({ percentage: 100 });
       }
 
-      debug(`got ${initialState.state.size} items from ${syncFromSnapshot ? "snapshot" : "cache"}`);
+      debug(`got ${initialState.state.size} items from ${syncFromSnapshot ? 'snapshot' : 'cache'}`);
     }
 
     // Load events from gap between initial state and current block number from RPC

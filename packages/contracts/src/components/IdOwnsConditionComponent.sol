@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Id.Condition.Owns"));
+uint256 constant ID = uint256(keccak256("component.id.condition.owns"));
 
 // A reference to a Condition entity's owner ID. Used to represent object ownership in the world
 contract IdOwnsConditionComponent is Uint256Component {

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Cache.Operator"));
+uint256 constant ID = uint256(keccak256("component.cache.operator"));
 
 /// @notice a bare component to cache an operator's account
 contract CacheOperatorComponent is Uint256BareComponent {

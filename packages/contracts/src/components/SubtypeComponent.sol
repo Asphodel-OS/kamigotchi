@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/StringComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Subtype"));
+uint256 constant ID = uint256(keccak256("component.subtype"));
 
 // The Subtype of an entity. On Registries this is for taxonomization but the
 // field can be extended to other use cases

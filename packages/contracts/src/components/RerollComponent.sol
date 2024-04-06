@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Reroll"));
+uint256 constant ID = uint256(keccak256("component.reroll"));
 
 contract RerollComponent is Uint256Component {
   constructor(address world) Uint256Component(world, ID) {}

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/StringBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Favorite.Food"));
+uint256 constant ID = uint256(keccak256("component.favorite.food"));
 
 // The favorite food of an entity
 contract FavoriteFoodComponent is StringBareComponent {

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/BoolComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Is.Bonus"));
+uint256 constant ID = uint256(keccak256("component.is.bonus"));
 
 // identifies an entity as a Bonus mapped to another entity
 // bonuses can include various stats

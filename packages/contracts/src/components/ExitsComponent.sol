@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint32ArrayBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Exits"));
+uint256 constant ID = uint256(keccak256("component.exits"));
 
 // list of exits
 contract ExitsComponent is Uint32ArrayBareComponent {

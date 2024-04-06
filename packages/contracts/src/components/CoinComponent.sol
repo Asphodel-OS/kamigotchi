@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Coin"));
+uint256 constant ID = uint256(keccak256("component.coin"));
 
 // Coin balance of whatever entity
 contract CoinComponent is Uint256BareComponent {

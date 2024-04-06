@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "components/types/StringComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Affinity"));
+uint256 constant ID = uint256(keccak256("component.affiinity"));
 
 // The Affinity of an entity. For Kamis this is Eerie, Insect, Scrap and Mid.
 contract AffinityComponent is StringComponent {

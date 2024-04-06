@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256BareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.Experience"));
+uint256 constant ID = uint256(keccak256("component.experience"));
 
 // experience points of a kami or player
 contract ExperienceComponent is Uint256BareComponent {

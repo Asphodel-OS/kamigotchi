@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "components/types/Uint256Component.sol";
 
-uint256 constant ID = uint256(keccak256("component.Gacha.Order"));
+uint256 constant ID = uint256(keccak256("component.gacha.order"));
 
 // position of pet in the gacha pool
 contract GachaOrderComponent is Uint256Component {
