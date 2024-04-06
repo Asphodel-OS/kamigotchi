@@ -18,7 +18,7 @@ import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryCom
 import { AffinityComponent, ID as AffinityCompID } from "components/AffinityComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 
-import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
 import { LibRarity } from "libraries/LibRarity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 

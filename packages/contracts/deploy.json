@@ -31,6 +31,7 @@
     "IdOwnsRelationshipComponent",
     "IdNodeComponent",
     "IdPetComponent",
+    "IdRoomComponent",
     "IdSourceComponent",
     "IdTargetComponent",
     "IndexComponent",
@@ -48,7 +49,6 @@
     "IndexRelationshipComponent",
     "IndexQuestComponent",
     "IndexSkillComponent",
-    "IndexSourceComponent",
     "IsAccountComponent",
     "IsBonusComponent",
     "IsCompleteComponent",
@@ -369,12 +369,13 @@
     {
       "name": "_RoomCreateGateSystem",
       "writeAccess": [
+        "BalanceComponent",
+        "IdRoomComponent",
+        "IdSourceComponent",
         "IsConditionComponent",
         "IndexRoomComponent",
-        "IndexSourceComponent",
         "IndexComponent",
         "LogicTypeComponent",
-        "ValueComponent",
         "TypeComponent"
       ]
     },
@@ -392,16 +393,19 @@
     {
       "name": "_RoomDeleteSystem",
       "writeAccess": [
+        "BalanceComponent",
+        "IdRoomComponent",
+        "IdSourceComponent",
         "IndexRoomComponent",
-        "IndexSourceComponent",
+        "IndexComponent",
+        "IsConditionComponent",
         "IsRoomComponent",
         "DescriptionComponent",
         "ExitsComponent",
         "LocationComponent",
         "LogicTypeComponent",
         "NameComponent",
-        "TypeComponent",
-        "ValueComponent"
+        "TypeComponent"
       ]
     },
     {
@@ -968,7 +972,6 @@
     "LibPet",
     "LibProduction",
     "LibQuests",
-    "LibRandom",
     "LibRarity",
     "LibRegistryAffinity",
     "LibRegistryItem",

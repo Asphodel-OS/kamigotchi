@@ -333,10 +333,13 @@ abstract contract SetupTemplate is TestSetupImports {
   /////////////////
   // WORLD POPULATION
 
-  function _createRoom(string memory name, Location memory location, uint32 index) internal {
+  function _createRoom(
+    string memory name,
+    Location memory location,
+    uint32 index
+  ) internal returns (uint256) {
     uint32[] memory exits = new uint32[](0);
-    vm.prank(deployer);
-    __RoomCreateSystem.executeTyped(location, index, name, "", exits);
+    return _createRoom(name, location, index, exits);
   }
 
   function _createRoom(
@@ -344,12 +347,11 @@ abstract contract SetupTemplate is TestSetupImports {
     Location memory location,
     uint32 index,
     uint32 exitIndex
-  ) internal {
+  ) internal returns (uint256) {
     uint32[] memory exits = new uint32[](1);
     exits[0] = exitIndex;
 
-    vm.prank(deployer);
-    __RoomCreateSystem.executeTyped(location, index, name, "", exits);
+    return _createRoom(name, location, index, exits);
   }
 
   function _createRoom(
@@ -357,9 +359,32 @@ abstract contract SetupTemplate is TestSetupImports {
     Location memory location,
     uint32 index,
     uint32[] memory exits
-  ) internal {
+  ) internal returns (uint256) {
     vm.prank(deployer);
-    __RoomCreateSystem.executeTyped(location, index, name, "", exits);
+    return abi.decode(__RoomCreateSystem.executeTyped(location, index, name, "", exits), (uint256));
+  }
+
+  function _createRoomGate(
+    uint32 roomIndex,
+    uint32 sourceIndex,
+    uint32 conditionIndex,
+    uint256 conditionValue,
+    string memory logicType,
+    string memory type_
+  ) internal returns (uint256) {
+    vm.prank(deployer);
+    return
+      abi.decode(
+        __RoomCreateGateSystem.executeTyped(
+          roomIndex,
+          sourceIndex,
+          conditionIndex,
+          conditionValue,
+          logicType,
+          type_
+        ),
+        (uint256)
+      );
   }
 
   function _createHarvestingNode(

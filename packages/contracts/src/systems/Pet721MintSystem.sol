@@ -10,7 +10,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibMint20 } from "libraries/LibMint20.sol";
 import { LibPet721 } from "libraries/LibPet721.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRandom } from "libraries/LibRandom.sol";
+import { LibRandom } from "libraries/utils/LibRandom.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet721.Mint"));
 uint256 constant ROOM = 4;

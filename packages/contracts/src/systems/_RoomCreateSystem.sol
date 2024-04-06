@@ -26,7 +26,7 @@ contract _RoomCreateSystem is System {
     require(LibRoom.queryByIndex(components, index) == 0, "Room: already exists at index");
     require(bytes(name).length > 0, "Room: name cannot be empty");
 
-    uint256 id = LibRoom.create(world, components, location, index, name, description);
+    uint256 id = LibRoom.create(components, location, index, name, description);
     if (exits.length > 0 && exits[0] != 0) LibRoom.setExits(components, id, exits);
 
     return abi.encode(id);

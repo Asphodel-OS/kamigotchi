@@ -17,6 +17,7 @@ export type { BalancesComponent } from "./BalancesComponent";
 export type { BareValueComponent } from "./BareValueComponent";
 export type { BlacklistComponent } from "./BlacklistComponent";
 export type { BlockRevealComponent } from "./BlockRevealComponent";
+export type { BoolBareComponent } from "./BoolBareComponent";
 export type { BoolComponent } from "./BoolComponent";
 export type { CacheOperatorComponent } from "./CacheOperatorComponent";
 export type { CanNameComponent } from "./CanNameComponent";
@@ -51,6 +52,7 @@ export type { IdOwnsRelationshipComponent } from "./IdOwnsRelationshipComponent"
 export type { IdPetComponent } from "./IdPetComponent";
 export type { IdRequesteeComponent } from "./IdRequesteeComponent";
 export type { IdRequesterComponent } from "./IdRequesterComponent";
+export type { IdRoomComponent } from "./IdRoomComponent";
 export type { IdSourceComponent } from "./IdSourceComponent";
 export type { IdTargetComponent } from "./IdTargetComponent";
 export type { IndexAccountComponent } from "./IndexAccountComponent";
@@ -69,7 +71,6 @@ export type { IndexQuestComponent } from "./IndexQuestComponent";
 export type { IndexRelationshipComponent } from "./IndexRelationshipComponent";
 export type { IndexRoomComponent } from "./IndexRoomComponent";
 export type { IndexSkillComponent } from "./IndexSkillComponent";
-export type { IndexSourceComponent } from "./IndexSourceComponent";
 export type { IsAccountComponent } from "./IsAccountComponent";
 export type { IsBonusComponent } from "./IsBonusComponent";
 export type { IsCompleteComponent } from "./IsCompleteComponent";
@@ -230,6 +231,7 @@ export { BalancesComponent__factory } from "./factories/BalancesComponent__facto
 export { BareValueComponent__factory } from "./factories/BareValueComponent__factory";
 export { BlacklistComponent__factory } from "./factories/BlacklistComponent__factory";
 export { BlockRevealComponent__factory } from "./factories/BlockRevealComponent__factory";
+export { BoolBareComponent__factory } from "./factories/BoolBareComponent__factory";
 export { BoolComponent__factory } from "./factories/BoolComponent__factory";
 export { CacheOperatorComponent__factory } from "./factories/CacheOperatorComponent__factory";
 export { CanNameComponent__factory } from "./factories/CanNameComponent__factory";
@@ -264,6 +266,7 @@ export { IdOwnsRelationshipComponent__factory } from "./factories/IdOwnsRelation
 export { IdPetComponent__factory } from "./factories/IdPetComponent__factory";
 export { IdRequesteeComponent__factory } from "./factories/IdRequesteeComponent__factory";
 export { IdRequesterComponent__factory } from "./factories/IdRequesterComponent__factory";
+export { IdRoomComponent__factory } from "./factories/IdRoomComponent__factory";
 export { IdSourceComponent__factory } from "./factories/IdSourceComponent__factory";
 export { IdTargetComponent__factory } from "./factories/IdTargetComponent__factory";
 export { IndexAccountComponent__factory } from "./factories/IndexAccountComponent__factory";
@@ -282,7 +285,6 @@ export { IndexQuestComponent__factory } from "./factories/IndexQuestComponent__f
 export { IndexRelationshipComponent__factory } from "./factories/IndexRelationshipComponent__factory";
 export { IndexRoomComponent__factory } from "./factories/IndexRoomComponent__factory";
 export { IndexSkillComponent__factory } from "./factories/IndexSkillComponent__factory";
-export { IndexSourceComponent__factory } from "./factories/IndexSourceComponent__factory";
 export { IsAccountComponent__factory } from "./factories/IsAccountComponent__factory";
 export { IsBonusComponent__factory } from "./factories/IsBonusComponent__factory";
 export { IsCompleteComponent__factory } from "./factories/IsCompleteComponent__factory";
