@@ -23,7 +23,7 @@ library LibDataEntity {
     uint32 index,
     string memory type_
   ) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Is.Data", holderID, index, type_)));
+    return uint256(keccak256(abi.encodePacked("is.data", holderID, index, type_)));
   }
 
   /////////////////

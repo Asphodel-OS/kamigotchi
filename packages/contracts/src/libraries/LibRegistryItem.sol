@@ -12,7 +12,6 @@ import { DescriptionComponent, ID as DescriptionCompID } from "components/Descri
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsConsumableComponent, ID as IsConsumableCompID } from "components/IsConsumableComponent.sol";
-import { IsFungibleComponent, ID as IsFungCompID } from "components/IsFungibleComponent.sol";
 import { IsLootboxComponent, ID as IsLootboxCompID } from "components/IsLootboxComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
@@ -40,7 +39,6 @@ library LibRegistryItem {
   ) internal returns (uint256 id) {
     id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
-    setIsFungible(components, id);
     setType(components, id, type_);
   }
 
@@ -60,7 +58,6 @@ library LibRegistryItem {
   ) internal returns (uint256 id) {
     id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
-    setIsFungible(components, id);
     setIsLootbox(components, id);
 
     setKeys(components, id, keys);
@@ -79,7 +76,6 @@ library LibRegistryItem {
   ) internal returns (uint256 id) {
     id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
-    setIsFungible(components, id);
     setType(components, id, "FOOD");
 
     if (health > 0) LibStat.setHealth(components, id, Stat(0, 0, 0, health));
@@ -97,7 +93,6 @@ library LibRegistryItem {
   ) internal returns (uint256 id) {
     id = createItem(components, index, name, description, mediaURI);
     setIsConsumable(components, id);
-    setIsFungible(components, id);
     setType(components, id, "REVIVE");
     LibStat.setHealth(components, id, Stat(0, 0, 0, health));
   }
@@ -129,7 +124,6 @@ library LibRegistryItem {
     unsetIndex(components, id);
     unsetIsRegistry(components, id);
     unsetIsConsumable(components, id);
-    unsetIsFungible(components, id);
     unsetIsLootbox(components, id);
 
     unsetName(components, id);
@@ -167,10 +161,6 @@ library LibRegistryItem {
     return IsRegistryComponent(getAddressById(components, IsRegCompID)).has(id);
   }
 
-  function isFungible(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsFungibleComponent(getAddressById(components, IsFungCompID)).has(id);
-  }
-
   /////////////////
   // GETTERS
 
@@ -183,7 +173,8 @@ library LibRegistryItem {
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
-    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
+    TypeComponent comp = TypeComponent(getAddressById(components, TypeCompID));
+    return comp.has(id) ? comp.get(id) : "";
   }
 
   /////////////////
@@ -195,10 +186,6 @@ library LibRegistryItem {
 
   function setIsConsumable(IUintComp components, uint256 id) internal {
     IsConsumableComponent(getAddressById(components, IsConsumableCompID)).set(id);
-  }
-
-  function setIsFungible(IUintComp components, uint256 id) internal {
-    IsFungibleComponent(getAddressById(components, IsFungCompID)).set(id);
   }
 
   function setIsLootbox(IUintComp components, uint256 id) internal {
@@ -257,11 +244,6 @@ library LibRegistryItem {
     if (comp.has(id)) comp.remove(id);
   }
 
-  function unsetIsFungible(IUintComp components, uint256 id) internal {
-    IsFungibleComponent comp = IsFungibleComponent(getAddressById(components, IsFungCompID));
-    if (comp.has(id)) comp.remove(id);
-  }
-
   function unsetIsLootbox(IUintComp components, uint256 id) internal {
     IsLootboxComponent comp = IsLootboxComponent(getAddressById(components, IsLootboxCompID));
     if (comp.has(id)) comp.remove(id);
@@ -305,10 +287,10 @@ library LibRegistryItem {
   /////////////////
   // QUERIES
 
-  // get the associated item registry entry of a given instance entity
+  /// @notice get the associated item registry entry of a given instance entity
+  /// @dev assumes instanceID is a valid inventory instance
   function getByInstance(IUintComp components, uint256 instanceID) internal view returns (uint256) {
     IndexItemComponent comp = IndexItemComponent(getAddressById(components, IndexItemCompID));
-    if (!comp.has(instanceID)) return 0;
     uint32 index = comp.get(instanceID);
     uint256 id = genID(index);
     return comp.has(id) ? id : 0;
@@ -354,6 +336,6 @@ library LibRegistryItem {
 
   /// @notice Retrieve the ID of a registry entry
   function genID(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Item", index)));
+    return uint256(keccak256(abi.encodePacked("registry.item", index)));
   }
 }

@@ -121,11 +121,6 @@
       "type": "error",
       "name": "Ownable__NotTransitiveOwner",
       "inputs": []
-    },
-    {
-      "type": "error",
-      "name": "QueryOrderNotSupported",
-      "inputs": []
     }
   ],
   "methodIdentifiers": {

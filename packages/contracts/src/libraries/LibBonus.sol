@@ -83,6 +83,6 @@ library LibBonus {
   // UTILS
 
   function genID(uint256 holderID, string memory type_) public pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Bonus", holderID, type_)));
+    return uint256(keccak256(abi.encodePacked("bonus", holderID, type_)));
   }
 }

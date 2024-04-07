@@ -401,21 +401,21 @@ library LibRegistryQuests {
 
   /// @notice Retrieve the ID of a registry entry
   function genQuestID(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Quest", index)));
+    return uint256(keccak256(abi.encodePacked("registry.quest", index)));
   }
 
   /// @notice Retrieve the ID of a requirement array
   function genReqPtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Quest.Requirement", index)));
+    return uint256(keccak256(abi.encodePacked("registry.quest.requirement", index)));
   }
 
   /// @notice Retrieve the ID of a reward array
   function genRewPtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Quest.Reward", index)));
+    return uint256(keccak256(abi.encodePacked("registry.quest.reward", index)));
   }
 
   /// @notice Retrieve the ID of a objective array
   function genObjPtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Quest.Objective", index)));
+    return uint256(keccak256(abi.encodePacked("registry.quest.objective", index)));
   }
 }

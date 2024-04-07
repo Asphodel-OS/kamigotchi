@@ -107,6 +107,6 @@ library LibRelationship {
   //  UTILS
 
   function genID(uint256 accID, uint32 npcIndex, uint32 relIndex) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Relationship", accID, npcIndex, relIndex)));
+    return uint256(keccak256(abi.encodePacked("relationship", accID, npcIndex, relIndex)));
   }
 }

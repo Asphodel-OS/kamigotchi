@@ -172,6 +172,6 @@ library LibNode {
   // UTILS
 
   function genID(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Node", index)));
+    return uint256(keccak256(abi.encodePacked("node", index)));
   }
 }

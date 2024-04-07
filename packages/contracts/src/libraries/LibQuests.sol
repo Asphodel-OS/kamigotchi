@@ -591,10 +591,10 @@ library LibQuests {
   // UTILS
 
   function genQuestID(uint32 index, uint256 accountID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Quest", index, accountID)));
+    return uint256(keccak256(abi.encodePacked("registry.quest", index, accountID)));
   }
 
   function genObjSnapshotID(uint256 questID, uint256 objHash) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Quest.Objective.Snapshot", questID, objHash)));
+    return uint256(keccak256(abi.encodePacked("quest.objective.snapshot", questID, objHash)));
   }
 }

@@ -6,7 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
+import { IdOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IdOwnsInventoryComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
 import { IsInventoryComponent, ID as IsInvCompID } from "components/IsInventoryComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
@@ -20,87 +20,66 @@ library LibInventory {
   /////////////////
   // INTERACTIONS
 
-  // Create a new item inventory instance for a specified holder. The shape depends on
-  // whether the reference item is fungible or not as determined by its registry entry.
-  // NOTE: we don't save fields like affinity, class, type and name since they're
-  // consistent between instances. We could consider adding them for ease of access.
+  /**
+   * @notice  Create a new item inventory instance for a specified holder
+   * @dev fields like affinity, type and name not saved; refer to registry
+   *      assumes no other instance of type exists - (would be overwritten)
+   */
   function create(
-    IWorld world,
     IUintComp components,
     uint256 holderID,
     uint32 itemIndex
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+  ) internal returns (uint256 id) {
+    id = genID(holderID, itemIndex);
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, 0);
     IsInventoryComponent(getAddressById(components, IsInvCompID)).set(id);
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
-
-    // copy or create the appropriate fields depending on whether this item is fungible
-    uint registryID = LibRegistryItem.getByIndex(components, itemIndex);
-    if (LibRegistryItem.isFungible(components, registryID)) {
-      BalanceComponent(getAddressById(components, BalanceCompID)).set(id, 0);
-    } else {
-      LibStat.copy(components, registryID, id);
-    }
-    return id;
+    OwnerComponent(getAddressById(components, OwnerCompID)).set(id, holderID);
   }
 
-  // Delete the inventory instance
+  /// @notice Delete the inventory instance
   function del(IUintComp components, uint256 id) internal {
+    getComponentById(components, BalanceCompID).remove(id);
     getComponentById(components, IsInvCompID).remove(id);
-    getComponentById(components, IdHolderCompID).remove(id);
     getComponentById(components, IndexItemCompID).remove(id);
-
-    // remove the appropriate fields depending on whether this item is fungible
-    uint registryID = LibRegistryItem.getByInstance(components, id);
-    if (LibRegistryItem.isFungible(components, registryID)) {
-      removeBalance(components, id);
-    } else {
-      LibStat.wipe(components, id);
-    }
+    getComponentById(components, OwnerCompID).remove(id);
   }
 
-  // Increase a fungible inventory balance by the specified amount
-  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
-    uint256 bal = getBalance(components, id);
-    bal += amt;
-    setBalance(components, id, bal); // implicit check for fungible
-    return bal;
+  /// @notice Increase a inventory balance by the specified amount
+  function inc(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    bal = comp.get(id);
+    comp.set(id, bal += amt);
   }
 
-  // Decrease a fungible inventory balance by the specified amount
-  // NOTE: this does not clear out 0 balance inventories
-  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256) {
-    uint256 bal = getBalance(components, id);
-    require(bal >= amt, "Inventory: insufficient balance");
-    bal -= amt;
-    setBalance(components, id, bal); // implicit check for fungible
-    return bal;
+  /// @notice Decrease a inventory balance by the specified amount
+  function dec(IUintComp components, uint256 id, uint256 amt) internal returns (uint256 bal) {
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    bal = comp.get(id);
+    require(bal >= amt, "Inventory: insufficient balance"); // for user error feedback
+    comp.set(id, bal -= amt);
   }
 
-  // Transfer the specified NF inventory instance by updating the holder
-  // TODO: implement generalized transfer function
-  function transfer(IUintComp components, uint256 id, uint256 toID) internal {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, toID);
+  /// @notice sets the balance of an inventory instance
+  function set(IUintComp components, uint256 id, uint256 amt) internal {
+    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, amt);
   }
 
-  // Transfer the specified fungible inventory amt from=>to entity
-  // TODO: implement generalized transfer function
+  /// @notice Transfer the specified fungible inventory amt from=>to entity
   function transfer(IUintComp components, uint256 fromID, uint256 toID, uint256 amt) internal {
-    dec(components, fromID, amt);
-    inc(components, toID, amt);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+
+    // removing from
+    uint256 fromBal = comp.get(fromID);
+    require(fromBal >= amt, "Inventory: insufficient balance");
+    comp.set(fromID, fromBal - amt);
+
+    // adding to
+    comp.set(toID, comp.get(toID) + amt);
   }
 
   /////////////////
   // CHECKERS
-
-  // Check if the specified entity is a fungible inventory instance
-  // NOTE: it's possible we may just want to transfer this falg between contexts to
-  // avoid querying the registry so often
-  function isFungible(IUintComp components, uint256 id) internal view returns (bool) {
-    uint256 registryID = LibRegistryItem.getByInstance(components, id);
-    return LibRegistryItem.isFungible(components, registryID);
-  }
 
   function hasBalance(IUintComp components, uint256 id) internal view returns (bool) {
     return BalanceComponent(getAddressById(components, BalanceCompID)).has(id);
@@ -113,97 +92,72 @@ library LibInventory {
   }
 
   /////////////////
-  // SETTERS
-
-  // Set the balance of an existing fungible inventory entity
-  function setBalance(IUintComp components, uint256 id, uint256 amt) internal {
-    require(
-      isFungible(components, id),
-      "LibInventory.setBalance(): not a fungible inventory instance"
-    );
-    BalanceComponent(getAddressById(components, BalanceCompID)).set(id, amt);
-  }
-
-  // Remove the balance field if it's present
-  function removeBalance(IUintComp components, uint256 id) internal {
-    if (hasBalance(components, id)) {
-      getComponentById(components, BalanceCompID).remove(id);
-    }
-  }
-
-  /////////////////
   // GETTERS
 
-  // get the balance of a fungible inventory instance. return 0 if non-fungible or if none exists
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    if (comp.has(id)) balance = comp.get(id);
+  function getBalanceOf(
+    IUintComp components,
+    uint256 holderID,
+    uint32 itemIndex
+  ) internal view returns (uint256) {
+    uint256 id = get(components, holderID, itemIndex);
+    return id > 0 ? getBalance(components, id) : 0;
   }
 
-  function getHolder(IUintComp components, uint256 id) internal view returns (uint256) {
-    return IdHolderComponent(getAddressById(components, IdHolderCompID)).get(id);
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
+    return BalanceComponent(getAddressById(components, BalanceCompID)).get(id);
+  }
+
+  function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
+    return OwnerComponent(getAddressById(components, OwnerCompID)).get(id);
   }
 
   function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexItemComponent(getAddressById(components, IndexItemCompID)).get(id);
   }
 
-  // Get the type from the registry entry if it exists.
   function getType(IUintComp components, uint256 id) internal view returns (string memory v) {
-    if (hasType(components, id)) {
-      uint256 registryID = LibRegistryItem.getByInstance(components, id);
-      v = LibRegistryItem.getType(components, registryID);
-    }
+    uint256 registryID = LibRegistryItem.getByInstance(components, id);
+    return LibRegistryItem.getType(components, registryID);
   }
 
   /////////////////
   // QUERIES
 
-  // Get the specified inventory instance.
+  /// @notice Get the specified inventory instance.
   function get(
     IUintComp components,
     uint256 holderID,
     uint32 itemIndex
   ) internal view returns (uint256 result) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-    fragments[2] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdHolderCompID),
-      abi.encode(holderID)
-    );
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IndexItemCompID),
-      abi.encode(itemIndex)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length > 0) result = results[0];
+    uint256 id = genID(holderID, itemIndex);
+    return IsInventoryComponent(getAddressById(components, IsInvCompID)).has(id) ? id : 0;
   }
 
-  // Get all the inventories belonging to a holder
+  /// @notice Get all the inventories belonging to a holder
   function getAllForHolder(
     IUintComp components,
     uint256 holderID
   ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsInvCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdHolderCompID),
-      abi.encode(holderID)
-    );
+    return
+      LibQuery.getIsWithValue(
+        getComponentById(components, OwnerCompID),
+        getComponentById(components, IsInvCompID),
+        abi.encode(holderID)
+      );
+  }
 
-    return LibQuery.query(fragments);
+  /////////////////
+  // UTILS
+
+  function genID(uint256 holderID, uint32 itemIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("inventory.instance", holderID, itemIndex)));
   }
 
   /////////////////
   // DATA LOGGING
 
-  // @notice log increase for item total
+  /// @notice log increase for item total
   function logIncItemTotal(
-    IWorld world,
     IUintComp components,
     uint256 accountID,
     uint32 itemIndex,

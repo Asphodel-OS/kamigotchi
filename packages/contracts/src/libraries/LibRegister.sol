@@ -40,60 +40,59 @@ library LibRegister {
     return id;
   }
 
-  // Add an item or token balance to the specifed Register. The Delegator is determined
-  // from the component value on the Register.
-  // @return uint ID of the created (register) ItemInventory
+  /**
+   * @notice Add an item or token balance to the specifed Register. The Delegator is determined
+   * from the component value on the Register.
+   */
+  /// @return uint ID of the created (register) ItemInventory
   function addTo(
-    IWorld world,
     IUintComp components,
-    uint256 id,
+    uint256 registerID,
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256) {
     uint256 delegatorID = IdDelegatorComponent(getAddressById(components, IdDelegatorCompID)).get(
-      id
+      registerID
     );
 
     // token case, no ItemInventory entity created
     if (itemIndex == 0) {
-      LibCoin.transfer(components, delegatorID, id, amt);
+      LibCoin.transfer(components, delegatorID, registerID, amt);
       return 0;
     }
 
     // Get the item inventories of the register and delegator.
     // We don't care if the delegator's one doesn't exist as balance checks happen in LibInventory.
-    uint256 fromInventoryID = LibInventory.get(components, delegatorID, itemIndex);
-    uint256 toInventoryID = LibInventory.get(components, id, itemIndex);
-    if (toInventoryID == 0) {
-      toInventoryID = LibInventory.create(world, components, id, itemIndex);
-    }
+    uint256 fromInvID = LibInventory.get(components, delegatorID, itemIndex);
+    uint256 toInvID = LibInventory.get(components, registerID, itemIndex);
+    if (toInvID == 0) toInvID = LibInventory.create(components, registerID, itemIndex);
 
     // transfer the balance of item from delegator to the trade register
-    LibInventory.transfer(components, fromInventoryID, toInventoryID, amt);
-    return toInventoryID;
+    LibInventory.transfer(components, fromInvID, toInvID, amt);
+    return toInvID;
   }
 
   // Process the contents of a register from the register to the specified entity.
   function process(IWorld world, IUintComp components, uint256 id, bool reversed) internal {
     uint256 balance;
     uint32 itemIndex;
-    uint256 toInventoryID;
-    uint256 fromInventoryID;
+    uint256 toInvID;
+    uint256 fromInvID;
     uint256 toID = (reversed) ? getDelegator(components, id) : getDelegatee(components, id);
 
     // Process each inventory associated with this register.
     uint256[] memory registerInventoryIDs = LibInventory.getAllForHolder(components, id);
     for (uint256 i; i < registerInventoryIDs.length; i++) {
-      fromInventoryID = registerInventoryIDs[i];
-      itemIndex = LibInventory.getItemIndex(components, fromInventoryID);
+      fromInvID = registerInventoryIDs[i];
+      itemIndex = LibInventory.getItemIndex(components, fromInvID);
 
-      toInventoryID = LibInventory.get(components, toID, itemIndex);
-      if (toInventoryID == 0) {
-        toInventoryID = LibInventory.create(world, components, toID, itemIndex);
+      toInvID = LibInventory.get(components, toID, itemIndex);
+      if (toInvID == 0) {
+        toInvID = LibInventory.create(components, toID, itemIndex);
       }
 
-      balance = LibInventory.getBalance(components, fromInventoryID);
-      LibInventory.transfer(components, fromInventoryID, toInventoryID, balance);
+      balance = LibInventory.getBalance(components, fromInvID);
+      LibInventory.transfer(components, fromInvID, toInvID, balance);
     }
 
     // Process token balance.
@@ -180,6 +179,7 @@ library LibRegister {
         abi.encode(state)
       );
     }
+
     fragments[filterCount] = QueryFragment(
       QueryType.Has,
       getComponentById(components, IsRegisterCompID),

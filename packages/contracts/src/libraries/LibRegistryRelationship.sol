@@ -164,6 +164,6 @@ library LibRegistryRelationship {
   // UTILS
 
   function genID(uint32 npcIndex, uint32 relIndex) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Relationship", npcIndex, relIndex)));
+    return uint256(keccak256(abi.encodePacked("registry.relationship", npcIndex, relIndex)));
   }
 }

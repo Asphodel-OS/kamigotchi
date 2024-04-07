@@ -302,7 +302,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _getItemBalance(uint playerIndex, uint32 itemIndex) internal view returns (uint) {
     uint accountID = _getAccount(playerIndex);
     uint inventoryID = LibInventory.get(components, accountID, itemIndex);
-    return LibInventory.getBalance(components, inventoryID);
+    return inventoryID == 0 ? 0 : LibInventory.getBalance(components, inventoryID);
   }
 
   /////////////////
@@ -318,9 +318,9 @@ abstract contract SetupTemplate is TestSetupImports {
 
     vm.startPrank(deployer);
     uint256 invID = LibInventory.get(components, accountID, index);
-    if (invID == 0) invID = LibInventory.create(world, components, accountID, index);
+    if (invID == 0) invID = LibInventory.create(components, accountID, index);
     LibInventory.inc(components, invID, amt);
-    LibInventory.logIncItemTotal(world, components, accountID, index, amt);
+    LibInventory.logIncItemTotal(components, accountID, index, amt);
     vm.stopPrank();
   }
 
@@ -439,7 +439,6 @@ abstract contract SetupTemplate is TestSetupImports {
 
     id = LibRegistryItem.genID(index);
     _IsRegistryComponent.set(id);
-    _IsFungibleComponent.set(id);
     _IndexItemComponent.set(id, index);
 
     vm.stopPrank();

@@ -17,6 +17,7 @@ import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeC
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
@@ -171,10 +172,9 @@ library LibBoolean {
   ) public view returns (uint256 balance) {
     uint256 inventoryID;
     if (LibString.eq(_type, "ITEM")) {
-      inventoryID = LibInventory.get(components, id, index);
-      balance = LibInventory.getBalance(components, inventoryID);
+      balance = LibInventory.getBalanceOf(components, id, index);
     } else if (LibString.eq(_type, "COIN")) {
-      balance = LibDataEntity.get(components, id, index, "COIN_TOTAL");
+      balance = LibCoin.get(components, id);
     } else if (LibString.eq(_type, "LEVEL")) {
       balance = LibExperience.getLevel(components, id);
     } else if (LibString.eq(_type, "KAMI")) {

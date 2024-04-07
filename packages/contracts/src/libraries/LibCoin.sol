@@ -18,12 +18,20 @@ library LibCoin {
 
   // transfers the specified coin amt from=>to entity
   function transfer(IUintComp components, uint256 fromID, uint256 toID, uint256 amt) internal {
-    dec(components, fromID, amt);
-    inc(components, toID, amt);
+    CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
+
+    // removing from
+    uint256 fromBalance = comp.has(fromID) ? comp.get(fromID) : 0;
+    require(fromBalance >= amt, "LibCoin: insufficient balance");
+    comp.set(fromID, fromBalance - amt);
+
+    // adding to
+    if (!comp.has(toID)) comp.set(toID, amt);
+    else comp.set(toID, comp.get(toID) + amt);
   }
 
   // increases the coin balance of an entity by amt
-  function inc(IUintComp components, uint256 entityID, uint256 amt) public {
+  function inc(IUintComp components, uint256 entityID, uint256 amt) internal {
     CoinComponent comp = CoinComponent(getAddressById(components, CoinComponentID));
     if (!comp.has(entityID)) comp.set(entityID, amt);
     else comp.set(entityID, comp.get(entityID) + amt);
@@ -40,7 +48,7 @@ library LibCoin {
   }
 
   // sets the coin balance of an entity
-  function _set(IUintComp components, uint256 entityID, uint256 amt) public {
+  function _set(IUintComp components, uint256 entityID, uint256 amt) internal {
     CoinComponent(getAddressById(components, CoinComponentID)).set(entityID, amt);
   }
 }

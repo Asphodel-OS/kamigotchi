@@ -28,7 +28,7 @@ const getEntityIndex = (
 ): EntityIndex | undefined => {
   const id = utils.solidityKeccak256(
     ['string', 'uint256', 'uint32', 'string'],
-    ['Is.Data', holderID ? holderID : ('0x00' as EntityID), index, field]
+    ['is.data', holderID ? holderID : ('0x00' as EntityID), index, field]
   );
   return world.entityToIndex.get(id as EntityID);
 };
