@@ -24,7 +24,7 @@
     "----- LOW LEVEL COMMANDS -----": "---------------------------",
     "fund": "ts-node src/deployment/commands/fund.ts",
     "deploy:script": "ts-node src/deployment/commands/deploy.ts",
-    "node:local": "anvil --chain-id 1337 -b 1 --base-fee 0 --gas-price 0",
+    "node:local": "anvil --chain-id 1337 -b 1 --base-fee 0 --gas-price 0 --timestamp 1708214400",
     "call:system:script": "ts-node src/deployment/commands/callSystem.ts",
     "----- INTERNAL -----": "---------------------------",
     "abi:gen": "rimraf ../client/abi && mkdir ../client/abi && bash exports.sh && rimraf ../client/abi/*.metadata.json",
