@@ -22,6 +22,7 @@
     "call:system:local": "pnpm call:system:script --mode DEV",
     "call:system:testnet": "pnpm call:system:script --mode TEST",
     "----- LOW LEVEL COMMANDS -----": "---------------------------",
+    "fund": "ts-node src/deployment/commands/fund.ts",
     "deploy:script": "ts-node src/deployment/commands/deploy.ts",
     "node:local": "anvil --chain-id 1337 -b 1 --base-fee 0 --gas-price 0",
     "call:system:script": "ts-node src/deployment/commands/callSystem.ts",
