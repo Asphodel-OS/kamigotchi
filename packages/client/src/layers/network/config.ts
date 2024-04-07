@@ -83,15 +83,7 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
   // EOAs and privatekey
   if (externalProvider) config.externalProvider = externalProvider;
   else {
-    let wallet;
-    if (params.get('admin') !== 'false') {
-      wallet = new Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
-    } else {
-      const detectedPrivateKey = localStorage.getItem('operatorPrivateKey');
-      wallet = detectedPrivateKey ? new Wallet(detectedPrivateKey) : Wallet.createRandom();
-
-      localStorage.setItem('operatorPrivateKey', wallet.privateKey);
-    }
+    const wallet = new Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
     config.privateKey = wallet.privateKey;
   }
 
@@ -128,9 +120,9 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
   };
 
   // EOAs and privatekey
-  if (externalProvider) {
-    config.externalProvider = externalProvider;
-  } else {
+  // TODO: make sure it's safe then rug all the below
+  if (externalProvider) config.externalProvider = externalProvider;
+  else {
     // either pull or set up local burner
     let privateKey = localStorage.getItem('operatorPrivateKey');
     const wallet = privateKey ? new Wallet(privateKey) : Wallet.createRandom();
