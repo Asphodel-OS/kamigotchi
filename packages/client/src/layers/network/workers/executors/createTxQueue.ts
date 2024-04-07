@@ -4,7 +4,6 @@ import { Mutex } from 'async-mutex';
 import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 
-import { BehaviorSubject } from 'rxjs';
 import { ConnectionState } from '../providers/createProvider';
 import { Contracts, TxQueue } from '../types';
 import { Network } from './createNetwork';
@@ -23,12 +22,8 @@ type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : nev
  */
 export function createTxQueue<C extends Contracts>(
   computedContracts: IComputedValue<C> | IObservableValue<C>,
-  network: Network,
-  gasPrice$: BehaviorSubject<number>,
-  options?: { concurrency?: number; devMode?: boolean }
+  network: Network
 ): { txQueue: TxQueue<C>; dispose: () => void; ready: IComputedValue<boolean | undefined> } {
-  const { concurrency } = options || {};
-
   const queue = createPriorityQueue<{
     execute: (
       nonce: number,
@@ -130,14 +125,8 @@ export function createTxQueue<C extends Contracts>(
         }
 
         // Populate config
-        const configOverrides = {
-          gasPrice: gasPrice$.getValue(),
-          ...overrides,
-          nonce,
-          gasLimit,
-        };
-        console.log('[TXQueue] TXQUEUE EXECUTION', prop, argsWithoutOverrides, configOverrides);
-        if (options?.devMode) configOverrides.gasPrice = 0;
+        // TODO: rug this?
+        const configOverrides = { ...overrides, nonce };
 
         // Populate tx
         const populatedTx = await member(...argsWithoutOverrides, configOverrides);
@@ -201,9 +190,6 @@ export function createTxQueue<C extends Contracts>(
   }
 
   async function processQueue() {
-    // Don't enter if at max capacity
-    if (concurrency != null && utilization >= concurrency) return;
-
     // Check if there is a request to process
     const txRequest = queue.next();
     if (!txRequest) return;
@@ -325,10 +311,6 @@ export function createTxQueue<C extends Contracts>(
 function isOverrides(obj: any): obj is Overrides {
   if (typeof obj !== 'object' || Array.isArray(obj) || obj === null) return false;
   return (
-    'gasLimit' in obj ||
-    'gasPrice' in obj ||
-    'maxFeePerGas' in obj ||
-    'maxPriorityFeePerGas' in obj ||
     'nonce' in obj ||
     'type' in obj ||
     'accessList' in obj ||

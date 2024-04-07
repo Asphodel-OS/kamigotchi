@@ -25,9 +25,11 @@ export function changeRoomSystem(network: NetworkLayer, game: Phaser.Scene) {
     const { setRoom } = useSelected.getState();
 
     // TODO: update this (and everything) to operate off of the selected Connector address
-    const accountIndex = Array.from(
-      runQuery([Has(IsAccount), HasValue(OperatorAddress, { value: connectedAddress.get() })])
-    )[0];
+    const accountIndices = runQuery([
+      Has(IsAccount),
+      HasValue(OperatorAddress, { value: connectedAddress.get() }),
+    ]);
+    const accountIndex = Array.from(accountIndices)[0];
 
     if (accountIndex == update.entity || 0 == update.entity) {
       const currentRoom = (getComponentValue(RoomIndex, accountIndex)?.value as number) * 1;

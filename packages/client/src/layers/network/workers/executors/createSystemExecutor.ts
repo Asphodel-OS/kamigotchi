@@ -10,7 +10,6 @@ import {
 import { deferred, keccak256, toEthAddress } from '@mud-classic/utils';
 import { Contract, ContractInterface, Signer } from 'ethers';
 import { observable, runInAction } from 'mobx';
-import { BehaviorSubject } from 'rxjs';
 
 import { Network } from './createNetwork';
 import { createTxQueue } from './createTxQueue';
@@ -31,9 +30,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   world: World,
   network: Network,
   systems: Component<{ value: Type.String }>,
-  interfaces: { [key in keyof T]: ContractInterface },
-  gasPrice$: BehaviorSubject<number>,
-  options?: { devMode?: boolean; concurrency?: number }
+  interfaces: { [key in keyof T]: ContractInterface }
 ) {
   console.log('Creating system executor');
   const systemContracts = observable.box({} as T);
@@ -93,7 +90,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
     if (system) registerSystem(system);
   });
 
-  const { txQueue, dispose } = createTxQueue<T>(systemContracts, network, gasPrice$, options);
+  const { txQueue, dispose } = createTxQueue<T>(systemContracts, network);
   world.registerDisposer(dispose);
 
   return {

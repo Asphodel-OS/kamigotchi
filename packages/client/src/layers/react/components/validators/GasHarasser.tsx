@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { useBalance, useBlockNumber } from 'wagmi';
 
-import { defaultChain } from 'constants/chains';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -61,8 +60,7 @@ export function registerGasHarasser() {
       // determine visibility based on above/prev checks
       useEffect(() => {
         setIsVisible(
-          defaultChain.id !== 1337 &&
-            networkValidations.authenticated &&
+          networkValidations.authenticated &&
             networkValidations.chainMatches &&
             validations.accountExists &&
             validations.operatorMatches &&
