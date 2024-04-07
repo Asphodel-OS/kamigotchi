@@ -141,8 +141,8 @@ export const getAccount = (
   // prevent further queries if account hasnt loaded yet
   if (!account.ownerEOA) return account;
 
-  account.stamina.rate =
-    1 / (getConfigFieldValue(components, 'ACCOUNT_STAMINA_RECOVERY_PERIOD') ?? 300);
+  const recoveryPeriod = getConfigFieldValue(world, components, 'ACCOUNT_STAMINA_RECOVERY_PERIOD');
+  account.stamina.rate = (1 / (recoveryPeriod ?? 300)) * 1;
 
   /////////////////
   // OPTIONAL DATA
@@ -201,9 +201,9 @@ export const getAccount = (
       blocked: getAccBlocked(world, components, account),
       limits: {
         friends:
-          getConfigFieldValue(components, 'BASE_FRIENDS_LIMIT') * 1 +
+          getConfigFieldValue(world, components, 'BASE_FRIENDS_LIMIT') * 1 +
           (getBonusValue(world, components, account.id, 'FRIENDS_LIMIT') ?? 0),
-        requests: getConfigFieldValue(components, 'FRIENDS_REQUEST_LIMIT') * 1,
+        requests: getConfigFieldValue(world, components, 'FRIENDS_REQUEST_LIMIT') * 1,
       },
     };
   }

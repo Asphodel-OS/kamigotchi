@@ -7,7 +7,6 @@ import { toHex } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { defaultChain } from 'constants/chains';
-import { Wallet } from 'ethers';
 import { createNetworkInstance, updateNetworkLayer } from 'layers/network/createNetworkLayer';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
@@ -76,10 +75,6 @@ export function registerWalletConnecter() {
         }
       }, [wallets, connectorAddress]);
 
-      // things to fix
-      // ? swap out funding call with privy
-      // ? funding rails in localhost
-
       // adjust visibility of windows based on above determination
       useEffect(() => {
         if (isVisible) {
@@ -103,16 +98,7 @@ export function registerWalletConnecter() {
         embeddedWallet: ConnectedWallet
       ) => {
         await addNetworkAPI(injectedWallet);
-        if (import.meta.env.DEV) {
-          const wallet = new Wallet(detectedPrivateKey);
-          const address = wallet.address.toLowerCase();
-          if (network.network.connectedAddress.get() !== address) {
-            console.log(`Updating base network w pk 0x..${detectedPrivateKey.slice(-6)}`);
-            const networkLayer = await updateNetworkLayer(network);
-            phaser.setChangeRoomSystem(networkLayer);
-          }
-          setBurnerAddress(address);
-        } else await updateBaseNetwork(embeddedWallet);
+        await updateBaseNetwork(embeddedWallet);
       };
 
       // update the network store with the injected wallet's api
@@ -132,7 +118,8 @@ export function registerWalletConnecter() {
       // update the base network with the embedded wallet
       const updateBaseNetwork = async (wallet: ConnectedWallet) => {
         const embeddedAddress = wallet.address.toLowerCase();
-
+        console.log(`embeddedAddress: `, embeddedAddress);
+        console.log(`connectedAddress: `, network.network.connectedAddress.get());
         if (network.network.connectedAddress.get() !== embeddedAddress) {
           console.log(`Updating base network 0x..${embeddedAddress.slice(-6)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;

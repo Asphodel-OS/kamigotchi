@@ -1,11 +1,10 @@
-import { Block, JsonRpcProvider } from "@ethersproject/providers";
-import { EntityID } from "@mud-classic/recs";
-import { callWithRetry, range, sleep } from "@mud-classic/utils";
-import { BigNumber } from "ethers";
-import { keccak256 } from "ethers/lib/utils";
+import { Block, JsonRpcProvider } from '@ethersproject/providers';
+import { EntityID } from '@mud-classic/recs';
+import { callWithRetry, range, sleep } from '@mud-classic/utils';
+import { BigNumber } from 'ethers';
+import { keccak256 } from 'ethers/lib/utils';
 
-import { Message } from "./types/ecs-relay/ecs-relay";
-
+import { Message } from './types/ecs-relay/ecs-relay';
 
 // Message payload to sign and use to recover signer
 export function messagePayload(msg: Message) {
@@ -14,7 +13,7 @@ export function messagePayload(msg: Message) {
 
 // Remove zero padding from all entity ids
 export function formatEntityID(entityID: string | EntityID | BigNumber): EntityID {
-  if (BigNumber.isBigNumber(entityID) || entityID.substring(0, 2) === "0x") {
+  if (BigNumber.isBigNumber(entityID) || entityID.substring(0, 2) === '0x') {
     return BigNumber.from(entityID).toHexString() as EntityID;
   }
   return entityID as EntityID;
@@ -33,13 +32,15 @@ export function formatComponentID(componentID: string | BigNumber): string {
  * If the latest block number is below this number, the method waits for 1300ms and tries again, for at most 10 times.
  * @returns Promise resolving with the latest Ethereum block
  */
-export async function fetchBlock(provider: JsonRpcProvider, requireMinimumBlockNumber?: number): Promise<Block> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function fetchBlock(
+  provider: JsonRpcProvider,
+  requireMinimumBlockNumber?: number
+): Promise<Block> {
   for (const _ of range(10)) {
     const blockPromise = async () => {
-      const rawBlock = await provider.perform("getBlock", {
+      const rawBlock = await provider.perform('getBlock', {
         includeTransactions: false,
-        blockTag: provider.formatter.blockTag(await provider._getBlockTag("latest")),
+        blockTag: provider.formatter.blockTag(await provider._getBlockTag('latest')),
       });
       return provider.formatter.block(rawBlock);
     };
@@ -51,5 +52,5 @@ export async function fetchBlock(provider: JsonRpcProvider, requireMinimumBlockN
       return block;
     }
   }
-  throw new Error("Could not fetch a block with blockNumber " + requireMinimumBlockNumber);
+  throw new Error('Could not fetch a block with blockNumber ' + requireMinimumBlockNumber);
 }
