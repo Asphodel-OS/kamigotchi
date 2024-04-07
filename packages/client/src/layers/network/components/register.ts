@@ -63,7 +63,6 @@ export function createComponents(world: World) {
     IsComplete: defineBoolEZ('IsComplete', 'component.is.complete'),
     IsConsumable: defineBoolEZ('IsConsumable', 'component.is.consumable'),
     IsEquipped: defineBoolEZ('IsEquipped', 'component.is.equipped'),
-    IsFungible: defineBoolEZ('IsFungible', 'component.is.fungible'),
     IsRepeatable: defineBoolEZ('IsRepeatable', 'component.is.repeatable'),
 
     // IDs

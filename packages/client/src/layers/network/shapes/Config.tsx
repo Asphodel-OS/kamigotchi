@@ -57,7 +57,7 @@ export const getConfigFieldValueWei = (
 };
 
 const getEntityIndex = (world: World, field: string): EntityIndex | undefined => {
-  const id = utils.solidityKeccak256(['string', 'string'], ['Is.Config', field]);
+  const id = utils.solidityKeccak256(['string', 'string'], ['is.config', field]);
   return world.entityToIndex.get(id as EntityID);
 };
 

@@ -212,6 +212,20 @@ contract RoomTest is SetupTemplate {
   //   _AssertAccRoom(accountIndex, 1);
   // }
 
+  function testOpenedGate() public {
+    uint32 accountIndex = 0;
+    _createRoom("1", Location(1, 1, 0), 1);
+    _createRoom("2", Location(0, 1, 0), 2);
+
+    vm.startPrank(deployer);
+    __RoomCreateGateSystem.executeTyped(2, 0, 0, 0, "ITEM", "CURR_MIN");
+    vm.stopPrank();
+
+    _AssertAccRoom(accountIndex, 1);
+    _moveAccount(accountIndex, 2);
+    _AssertAccRoom(accountIndex, 2);
+  }
+
   function testClosedGate() public {
     uint32[] memory exits = new uint32[](2);
     exits[0] = 2;

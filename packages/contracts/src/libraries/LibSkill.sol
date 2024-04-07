@@ -223,6 +223,6 @@ library LibSkill {
   // UTILS
 
   function genID(uint256 holderID, uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Skill", holderID, index)));
+    return uint256(keccak256(abi.encodePacked("skill.instance", holderID, index)));
   }
 }

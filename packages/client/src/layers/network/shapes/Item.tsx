@@ -20,7 +20,6 @@ export interface Item {
   index: number;
   is: {
     consumable: boolean;
-    fungible: boolean;
     lootbox: boolean;
   };
   type: string;
@@ -41,8 +40,7 @@ export interface Item {
  * @param entityIndex - the entity index of the item in the registry
  */
 export const getItem = (world: World, components: Components, entityIndex: EntityIndex): Item => {
-  const { Description, ItemIndex, IsConsumable, IsFungible, IsLootbox, MediaURI, Name, Type } =
-    components;
+  const { Description, ItemIndex, IsConsumable, IsLootbox, MediaURI, Name, Type } = components;
 
   let Item: Item = {
     entityIndex,
@@ -58,7 +56,6 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     stats: getStats(components, entityIndex),
     is: {
       consumable: hasComponent(IsConsumable, entityIndex),
-      fungible: hasComponent(IsFungible, entityIndex),
       lootbox: hasComponent(IsLootbox, entityIndex),
     },
   };

@@ -35,7 +35,7 @@ library LibScore {
     uint256 epoch,
     string memory type_
   ) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Is.Score", holderID, epoch, type_)));
+    return uint256(keccak256(abi.encodePacked("is.score", holderID, epoch, type_)));
   }
 
   /////////////////

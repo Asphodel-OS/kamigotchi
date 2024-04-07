@@ -262,6 +262,6 @@ library LibProduction {
   // UTILS
 
   function genID(uint256 petID) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Production", petID)));
+    return uint256(keccak256(abi.encodePacked("production", petID)));
   }
 }

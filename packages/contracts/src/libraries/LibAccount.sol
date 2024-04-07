@@ -110,9 +110,9 @@ library LibAccount {
     uint256 inventoryID;
     if (LibString.eq(_type, "ITEM")) {
       inventoryID = LibInventory.get(components, id, index);
-      if (inventoryID == 0) inventoryID = LibInventory.create(world, components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.create(components, id, index);
       LibInventory.inc(components, inventoryID, amount);
-      LibInventory.logIncItemTotal(world, components, id, index, amount);
+      LibInventory.logIncItemTotal(components, id, index, amount);
     } else if (LibString.eq(_type, "COIN")) {
       LibCoin.inc(components, id, amount);
     } else if (LibString.eq(_type, "MINT20")) {

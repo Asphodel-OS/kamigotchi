@@ -29,7 +29,7 @@ contract TradeAddToSystem is System {
     require(LibTrade.hasState(components, tradeID, "ACCEPTED"), "Trade: must be accepted");
 
     uint256 registerID = LibRegister.get(components, accountID, tradeID);
-    LibRegister.addTo(world, components, registerID, itemIndex, amt);
+    LibRegister.addTo(components, registerID, itemIndex, amt);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

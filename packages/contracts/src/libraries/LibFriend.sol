@@ -12,7 +12,6 @@ import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComp
 import { IsFriendshipComponent, ID as IsFriendCompID } from "components/IsFriendshipComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibRegister } from "libraries/LibRegister.sol";
 import { Strings } from "utils/Strings.sol";
 
 /**

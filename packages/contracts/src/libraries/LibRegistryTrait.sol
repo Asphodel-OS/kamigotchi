@@ -472,11 +472,11 @@ library LibRegistryTrait {
 
   /// @notice Gens the ID of a registry entry
   function genID(uint32 index, string memory _type) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Trait", _type, index)));
+    return uint256(keccak256(abi.encodePacked("registry.trait", _type, index)));
   }
 
   /// @notice Gens the pointer to trait type - used for querying AllOfType
   function genReverseMappingPtr(string memory _type) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Trait.Type", _type)));
+    return uint256(keccak256(abi.encodePacked("registry.trait.type", _type)));
   }
 }

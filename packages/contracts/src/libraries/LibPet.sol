@@ -29,7 +29,6 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
-import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction } from "libraries/LibProduction.sol";

@@ -359,14 +359,14 @@ library LibRegistrySkill {
   // UTILS
 
   function genID(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Skill", index)));
+    return uint256(keccak256(abi.encodePacked("registry.skill", index)));
   }
 
   function genReqPtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Skill.Requirement", index)));
+    return uint256(keccak256(abi.encodePacked("registry.skill.requirement", index)));
   }
 
   function genEffectPtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Registry.Skill.Effect", index)));
+    return uint256(keccak256(abi.encodePacked("registry.skill.effect", index)));
   }
 }

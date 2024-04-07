@@ -246,19 +246,19 @@ library LibRoom {
   // UTILS
 
   function genID(uint32 roomIndex) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Room", roomIndex)));
+    return uint256(keccak256(abi.encodePacked("room", roomIndex)));
   }
 
   // generates a pointer from a gate to destination room
   // eg. Moves to room 1; genGateAtPointer(1) is used to point to the room
   function genGateAtPtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Room.Gate.To", index)));
+    return uint256(keccak256(abi.encodePacked("room.gate.to", index)));
   }
 
   // generates a pointer from a gate to source room
   // eg. Moves room 1 -> room 2; genGateSourcePointer(1) is used to point to the room
   function genGateSourcePtr(uint32 index) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("Room.Gate.From", index)));
+    return uint256(keccak256(abi.encodePacked("room.gate.from", index)));
   }
 
   function locationToUint256(Location memory location) internal pure returns (uint256) {

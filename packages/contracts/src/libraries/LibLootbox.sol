@@ -45,7 +45,7 @@ library LibLootbox {
     setIsLootbox(components, id);
     setIsLog(components, id);
     setBalance(components, id, count);
-    setHolder(components, id, LibInventory.getHolder(components, invID));
+    setHolder(components, id, LibInventory.getOwner(components, invID));
     setIndex(components, id, LibInventory.getItemIndex(components, invID));
     LibRandom.setRevealBlock(components, id, block.number);
   }
@@ -102,7 +102,7 @@ library LibLootbox {
 
     uint256 invID = LibInventory.get(components, holderID, index);
     if (invID == 0) {
-      invID = LibInventory.create(world, components, holderID, index);
+      invID = LibInventory.create(components, holderID, index);
     }
     LibInventory.inc(components, invID, count);
   }

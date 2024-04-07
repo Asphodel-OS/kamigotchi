@@ -22,7 +22,7 @@ import { BareValueComponent, ID as ValueCompID } from "components/BareValueCompo
 library LibConfig {
   /// @notice Retrieve the ID of a config with the given type
   function getID(string memory name) internal pure returns (uint256 result) {
-    return uint256(keccak256(abi.encodePacked("Is.Config", name)));
+    return uint256(keccak256(abi.encodePacked("is.config", name)));
   }
 
   //////////////////
