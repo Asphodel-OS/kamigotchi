@@ -4,8 +4,7 @@ import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { keccak256 } from '@mud-classic/utils';
 import { Contract, ContractInterface } from 'ethers';
 import { keys } from 'lodash';
-import { computed } from 'mobx';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { defineStringComponent } from 'layers/network/components';
 import {
@@ -93,26 +92,12 @@ export async function setupMUDNetwork<
   const network = await createNetwork(networkConfig);
   world.registerDisposer(network.dispose);
 
-  const signerOrProvider = computed(() => network.signer.get() || network.providers.get().json);
-
-  // set the initial gas price
-  let gasPrice = options?.initialGasPrice;
-  if (!gasPrice) {
-    const detectedGasPrice = await signerOrProvider.get().getGasPrice();
-    gasPrice = Math.ceil(detectedGasPrice.toNumber() * 1.3);
-  }
-  const gasPriceInput$ = new BehaviorSubject<number>(gasPrice);
-
   // create the system executor
   const { systems, getSystemContract } = createSystemExecutor<SystemTypes>(
     world,
     network,
     SystemsRegistry,
-    SystemAbis,
-    gasPriceInput$,
-    {
-      devMode: networkConfig.devMode,
-    }
+    SystemAbis
   );
 
   const decodeNetworkUpdate = createDecodeNetworkComponentUpdate(world, components, mappings);
@@ -164,17 +149,12 @@ export async function setupMUDNetwork<
       world,
       network,
       SystemsRegistry,
-      SystemAbis,
-      gasPriceInput$,
-      {
-        devMode: networkConfig.devMode,
-      }
+      SystemAbis
     );
     return systems;
   }
 
   return {
-    gasPriceInput$,
     network,
     startSync,
     systems,

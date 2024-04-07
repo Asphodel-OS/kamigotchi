@@ -1,7 +1,6 @@
-import { BaseProvider, TransactionRequest} from "@ethersproject/providers";
-import { extractEncodedArguments } from "@mud-classic/utils";
-import { defaultAbiCoder as abi } from "ethers/lib/utils";
-
+import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
+import { extractEncodedArguments } from '@mud-classic/utils';
+import { defaultAbiCoder as abi } from 'ethers/lib/utils';
 
 /**
  * Get the revert reason from a given transaction hash
@@ -15,6 +14,6 @@ export async function getRevertReason(txHash: string, provider: BaseProvider): P
   const tx = await provider.getTransaction(txHash);
   // tx.gasPrice = undefined; // tx object contains both gasPrice and maxFeePerGas
   const encodedRevertReason = await provider.call(tx as TransactionRequest);
-  const decodedRevertReason = abi.decode(["string"], extractEncodedArguments(encodedRevertReason));
+  const decodedRevertReason = abi.decode(['string'], extractEncodedArguments(encodedRevertReason));
   return decodedRevertReason[0];
 }
