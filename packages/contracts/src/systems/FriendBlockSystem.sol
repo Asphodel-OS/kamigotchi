@@ -25,24 +25,14 @@ contract FriendBlockSystem is System {
     require(targetID != 0, "FriendBlock: target no account");
     require(accountID != targetID, "FriendBlock: cannot block self");
 
-    // query for exisiting friendship from account to target
-    uint256 accToTarget = LibFriend.getFriendship(components, accountID, targetID);
-    if (accToTarget != 0) {
-      require(
-        !LibString.eq(LibFriend.getState(components, accToTarget), "BLOCKED"),
-        "FriendBlock: already blocked"
-      );
-      LibFriend.remove(components, accToTarget);
-    }
-
-    // query for exisiting friendship from target to account
+    // remove existing friendship from target->account
     uint256 targetToAcc = LibFriend.getFriendship(components, targetID, accountID);
     if (targetToAcc != 0 && !LibString.eq(LibFriend.getState(components, targetToAcc), "BLOCKED")) {
       LibFriend.remove(components, targetToAcc);
     }
 
-    // block
-    uint256 result = LibFriend.block(world, components, accountID, targetID);
+    // block; account->target friendship (if any) will be overwritten
+    uint256 result = LibFriend.create(components, accountID, targetID, "BLOCKED");
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

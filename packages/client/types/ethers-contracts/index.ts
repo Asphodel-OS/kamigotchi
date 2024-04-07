@@ -89,7 +89,6 @@ export type { IsConsumableComponent } from "./IsConsumableComponent";
 export type { IsEffectComponent } from "./IsEffectComponent";
 export type { IsEquippedComponent } from "./IsEquippedComponent";
 export type { IsFriendshipComponent } from "./IsFriendshipComponent";
-export type { IsFungibleComponent } from "./IsFungibleComponent";
 export type { IsInventoryComponent } from "./IsInventoryComponent";
 export type { IsKillComponent } from "./IsKillComponent";
 export type { IsListingComponent } from "./IsListingComponent";
@@ -326,7 +325,6 @@ export { IsConsumableComponent__factory } from "./factories/IsConsumableComponen
 export { IsEffectComponent__factory } from "./factories/IsEffectComponent__factory";
 export { IsEquippedComponent__factory } from "./factories/IsEquippedComponent__factory";
 export { IsFriendshipComponent__factory } from "./factories/IsFriendshipComponent__factory";
-export { IsFungibleComponent__factory } from "./factories/IsFungibleComponent__factory";
 export { IsInventoryComponent__factory } from "./factories/IsInventoryComponent__factory";
 export { IsKillComponent__factory } from "./factories/IsKillComponent__factory";
 export { IsListingComponent__factory } from "./factories/IsListingComponent__factory";

@@ -8,6 +8,12 @@ contract SkillTest is SetupTemplate {
     super.setUp();
   }
 
+  function testSkillCreate() public {
+    _createSkill(1, "ACCOUNT", "PASSIVE", "TEST_SKILL", 0, 1, "test skill description");
+    _createSkillEffect(1, "TEST_SKILL", "TEST_SUBTYPE", "TEST_LOGIC", 0, 1);
+    _createSkillRequirement(1, "TEST_SKILL", 0, 1);
+  }
+
   // test whether skill upgrades are properly gated by skill point availability
   function testSkillBasicAccount() public {
     uint256 accountID = _getAccount(0);

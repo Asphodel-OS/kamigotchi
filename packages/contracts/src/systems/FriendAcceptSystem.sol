@@ -26,28 +26,22 @@ contract FriendAcceptSystem is System {
     );
 
     // friendship specific checks
-    uint256 targetID = LibFriend.getTarget(components, requestID);
-    require(targetID == accountID, "FriendAccept: not for you");
+    uint256 senderID = LibFriend.getAccount(components, requestID);
+    require(LibFriend.getTarget(components, requestID) == accountID, "FriendAccept: not for you");
 
     // check number of friends limit
     uint256 baseLimit = LibConfig.get(components, "FRIENDS_BASE_LIMIT");
     uint256 bonusID = LibBonus.get(components, accountID, "FRIENDS_LIMIT");
     uint256 frenLimit = baseLimit;
     if (bonusID != 0) frenLimit += LibBonus.getBalance(components, bonusID);
-    require(
-      LibFriend.getAccountFriends(components, accountID).length < frenLimit,
-      "Friend limit reached"
-    );
+    require(LibFriend.getFriendCount(components, accountID) < frenLimit, "Friend limit reached");
     frenLimit = baseLimit;
-    bonusID = LibBonus.get(components, targetID, "FRIENDS_LIMIT");
+    bonusID = LibBonus.get(components, senderID, "FRIENDS_LIMIT");
     if (bonusID != 0) frenLimit += LibBonus.getBalance(components, bonusID);
-    require(
-      LibFriend.getAccountFriends(components, targetID).length < frenLimit,
-      "Friend limit reached"
-    );
+    require(LibFriend.getFriendCount(components, senderID) < frenLimit, "Friend limit reached");
 
-    // accept request
-    uint256 id = LibFriend.accept(world, components, accountID, requestID);
+    // accept request; overwrites any previous request/block
+    uint256 id = LibFriend.accept(components, accountID, senderID, requestID);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

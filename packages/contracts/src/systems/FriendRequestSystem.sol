@@ -25,7 +25,7 @@ contract FriendRequestSystem is System {
 
     // friendship specific checks
     require(
-      LibFriend.getAccountRequests(components, targetID).length <
+      LibFriend.getRequestCount(components, targetID) <
         LibConfig.get(components, "FRIENDS_REQUEST_LIMIT"),
       "Max friend requests reached"
     );
@@ -45,7 +45,7 @@ contract FriendRequestSystem is System {
     }
 
     // create request
-    uint256 requestID = LibFriend.request(world, components, accountID, targetID);
+    uint256 requestID = LibFriend.create(components, accountID, targetID, "REQUEST");
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

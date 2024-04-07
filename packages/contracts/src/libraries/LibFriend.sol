@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
@@ -8,10 +9,14 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
+import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComponent.sol";
 import { IsFriendshipComponent, ID as IsFriendCompID } from "components/IsFriendshipComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
+
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { Strings } from "utils/Strings.sol";
 
 /**
@@ -20,70 +25,86 @@ import { Strings } from "utils/Strings.sol";
  */
 /// @dev State = [ REQUEST | FRIEND | BLOCKED ]
 library LibFriend {
+  using LibComp for IComponent;
+  using LibString for string;
+
   /////////////////
   // INTERACTIONS
 
-  /// @notice Create a friend request and set initial values.
-  function request(
-    IWorld world,
+  /// @notice create a friendship entity
+  function create(
     IUintComp components,
-    uint256 fromID,
-    uint256 toID
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsFriendship(components, id);
-    setAccount(components, id, fromID);
-    setTarget(components, id, toID);
-    setState(components, id, string("REQUEST"));
+    uint256 accID,
+    uint256 targetID,
+    string memory state // REQUEST | FRIEND | BLOCKED
+  ) internal returns (uint256 id) {
+    id = genID(accID, targetID);
+    IsFriendshipComponent(getAddressById(components, IsFriendCompID)).set(id);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, targetID);
+    StateComponent(getAddressById(components, StateCompID)).set(id, state);
 
-    return id;
+    if (state.eq("REQUEST")) updateInReqCounter(components, id, targetID);
+    else if (state.eq("BLOCKED")) getComponentById(components, IdHolderCompID).remove(id);
   }
 
   /// @notice Accepts a friend request from existing request. Updates request for bidirectional friendship.
   function accept(
-    IWorld world,
     IUintComp components,
     uint256 accID,
+    uint256 senderID,
     uint256 requestID
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsFriendship(components, id);
-
-    // set account & target - raw component for efficiency
-    IdAccountComponent accComp = IdAccountComponent(getAddressById(components, IdAccountCompID));
-    accComp.set(id, accID);
-    setTarget(components, id, accComp.get(requestID));
+  ) internal returns (uint256 id) {
+    id = genID(accID, senderID);
+    IsFriendshipComponent(getAddressById(components, IsFriendCompID)).set(id);
+    IdAccountComponent(getAddressById(components, IdAccountCompID)).set(id, accID);
+    IdTargetComponent(getAddressById(components, IdTargetCompID)).set(id, senderID);
 
     // set state - raw component for efficiency
-    StateComponent stateComp = StateComponent(getAddressById(components, StateCompID));
-    stateComp.set(id, string("FRIEND"));
-    stateComp.set(requestID, string("FRIEND"));
+    uint256[] memory toUpdates = new uint256[](2);
+    toUpdates[0] = requestID;
+    toUpdates[1] = id;
+    getComponentById(components, StateCompID).setAll(toUpdates, string("FRIEND"));
 
-    return id;
+    // update counters
+    updateFriendCounter(components, id, requestID, accID, senderID);
   }
 
-  /// @notice Blocks another account.
-  function block(
-    IWorld world,
+  /// @notice updates friend counter via pointer
+  /// @dev used to track number of friends, instrinctly updates req counter
+  function updateFriendCounter(
     IUintComp components,
-    uint256 acc,
-    uint256 toBlock
-  ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    setIsFriendship(components, id);
-    setAccount(components, id, acc);
-    setTarget(components, id, toBlock);
-    setState(components, id, string("BLOCKED"));
+    uint256 accFS,
+    uint256 targetFS,
+    uint256 accID,
+    uint256 targetID
+  ) internal {
+    uint256[] memory ids = new uint256[](2);
+    ids[0] = accFS;
+    ids[1] = targetFS;
+    uint256[] memory pointers = new uint256[](2);
+    pointers[0] = genCounterPtr(accID, "FRIEND");
+    pointers[1] = genCounterPtr(targetID, "FRIEND");
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).setBatch(ids, pointers);
+  }
 
-    return id;
+  /// @notice update incoming request counter via pointer
+  /// @dev used to track number of incoming requests
+  function updateInReqCounter(IUintComp components, uint256 fsID, uint256 targetID) internal {
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(
+      fsID,
+      genCounterPtr(targetID, "REQUEST")
+    );
   }
 
   /// @notice removes a friend entity
+  /// @dev also instrinctly updates pointer
   function remove(IUintComp components, uint256 id) internal {
     unsetIsFriendship(components, id);
     unsetAccount(components, id);
     unsetTarget(components, id);
     unsetState(components, id);
+    IdHolderComponent(getAddressById(components, IdHolderCompID)).remove(id);
   }
 
   /////////////////
@@ -95,7 +116,7 @@ library LibFriend {
     uint256 targetID
   ) internal view returns (bool) {
     uint256 friendship = getFriendship(components, accID, targetID);
-    return friendship != 0 && LibString.eq(getState(components, friendship), "FRIEND");
+    return friendship != 0 && getState(components, friendship).eq("FRIEND");
   }
 
   /////////////////
@@ -161,66 +182,29 @@ library LibFriend {
     uint256 accID,
     uint256 targetID
   ) internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsFriendCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdAccountCompID),
-      abi.encode(accID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdTargetCompID),
-      abi.encode(targetID)
-    );
-
-    uint256[] memory results = LibQuery.query(fragments);
-    if (results.length == 0) return 0;
-    return results[0];
+    uint256 id = genID(accID, targetID);
+    return IsFriendshipComponent(getAddressById(components, IsFriendCompID)).has(id) ? id : 0;
   }
 
-  /// @notice queries all friends for an account
-  function getAccountFriends(
-    IUintComp components,
-    uint256 accID
-  ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
-
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsFriendCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdAccountCompID),
-      abi.encode(accID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, StateCompID),
-      abi.encode("FRIEND")
-    );
-
-    return LibQuery.query(fragments);
+  function getFriendCount(IUintComp components, uint256 accID) internal view returns (uint256) {
+    uint256 id = genCounterPtr(accID, "FRIEND");
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).size(abi.encode(id));
   }
 
-  /// @notice queries all incoming requests for an account
-  function getAccountRequests(
-    IUintComp components,
-    uint256 accID
-  ) internal view returns (uint256[] memory) {
-    QueryFragment[] memory fragments = new QueryFragment[](3);
+  function getRequestCount(IUintComp components, uint256 accID) internal view returns (uint256) {
+    uint256 id = genCounterPtr(accID, "REQUEST");
+    return IdHolderComponent(getAddressById(components, IdHolderCompID)).size(abi.encode(id));
+  }
 
-    fragments[1] = QueryFragment(QueryType.Has, getComponentById(components, IsFriendCompID), "");
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, IdTargetCompID),
-      abi.encode(accID)
-    );
-    fragments[2] = QueryFragment(
-      QueryType.HasValue,
-      getComponentById(components, StateCompID),
-      abi.encode("REQUEST")
-    );
+  ////////////////////
+  // UTILS
 
-    return LibQuery.query(fragments);
+  function genID(uint256 accID, uint256 targetID) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("friendship", accID, targetID)));
+  }
+
+  /// @notice generates a pointer that tracks the an account's friendships based on state
+  function genCounterPtr(uint256 accID, string memory state) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("friendship.ptr", accID, state)));
   }
 }
