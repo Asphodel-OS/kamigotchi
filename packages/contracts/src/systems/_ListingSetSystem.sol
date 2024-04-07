@@ -24,8 +24,7 @@ contract _ListingSetSystem is System {
     require(LibRegistryItem.getByIndex(components, itemIndex) != 0, "Item: does not exist");
 
     uint256 id = LibListing.get(components, npcIndex, itemIndex);
-    if (id == 0)
-      id = LibListing.create(world, components, npcIndex, itemIndex, buyPrice, sellPrice);
+    if (id == 0) id = LibListing.create(components, npcIndex, itemIndex, buyPrice, sellPrice);
     else LibListing.update(components, id, buyPrice, sellPrice);
     return abi.encode(id);
   }

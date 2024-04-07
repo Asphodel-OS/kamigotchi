@@ -266,12 +266,12 @@
     {
       "name": "_RegistryCreateSkillEffectSystem",
       "writeAccess": [
+        "BalanceComponent",
         "IsRegistryComponent",
         "IsEffectComponent",
         "IndexSkillComponent",
         "IndexComponent",
         "IdOwnsConditionComponent",
-        "BalanceComponent",
         "LogicTypeComponent",
         "SubtypeComponent",
         "TypeComponent"
@@ -280,12 +280,12 @@
     {
       "name": "_RegistryCreateSkillRequirementSystem",
       "writeAccess": [
+        "BalanceComponent",
         "IsRegistryComponent",
         "IsRequirementComponent",
         "IndexSkillComponent",
         "IndexComponent",
         "IdOwnsConditionComponent",
-        "BalanceComponent",
         "LogicTypeComponent",
         "TypeComponent"
       ]
@@ -500,6 +500,7 @@
       "name": "FriendAcceptSystem",
       "writeAccess": [
         "IdAccountComponent",
+        "IdHolderComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -510,6 +511,7 @@
       "name": "FriendBlockSystem",
       "writeAccess": [
         "IdAccountComponent",
+        "IdHolderComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -520,6 +522,7 @@
       "name": "FriendCancelSystem",
       "writeAccess": [
         "IdAccountComponent",
+        "IdHolderComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",
@@ -530,6 +533,7 @@
       "name": "FriendRequestSystem",
       "writeAccess": [
         "IdAccountComponent",
+        "IdHolderComponent",
         "IdTargetComponent",
         "IsFriendshipComponent",
         "StateComponent",

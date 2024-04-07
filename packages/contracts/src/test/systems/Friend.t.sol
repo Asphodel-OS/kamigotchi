@@ -137,7 +137,6 @@ contract FriendTest is SetupTemplate {
 
     uint256 blockID = _block(0, 1);
     _assertFSEntity(blockID, 0, 1, "BLOCKED");
-    _assertFSDeletion(requestID);
   }
 
   function testBlockReq2() public {
@@ -167,6 +166,52 @@ contract FriendTest is SetupTemplate {
 
     _cancel(0, blockID);
     _assertFSDeletion(blockID);
+  }
+
+  function testCounters() public {
+    uint256 aliceIndex = 0;
+    uint256 bobIndex = 1;
+
+    // requests
+    uint256 requestAB = _request(aliceIndex, bobIndex);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 1); // incoming
+    assertEq(LibFriend.getFriendCount(components, _getAccount(aliceIndex)), 0);
+
+    // friends after accepting
+    uint256 friendshipBA = _accept(bobIndex, requestAB);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 0); // incoming
+    assertEq(LibFriend.getFriendCount(components, _getAccount(aliceIndex)), 1);
+    assertEq(LibFriend.getFriendCount(components, _getAccount(bobIndex)), 1);
+
+    // cancel friendship
+    _cancel(bobIndex, friendshipBA);
+    assertEq(LibFriend.getFriendCount(components, _getAccount(aliceIndex)), 0);
+    assertEq(LibFriend.getFriendCount(components, _getAccount(bobIndex)), 0);
+
+    // request and cancel request
+    requestAB = _request(aliceIndex, bobIndex);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 1);
+    _cancel(bobIndex, requestAB);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 0);
+
+    // request and block
+    requestAB = _request(aliceIndex, bobIndex);
+    uint256 blockAB = _block(aliceIndex, bobIndex);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 0);
+    _cancel(aliceIndex, blockAB);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 0);
+    requestAB = _request(aliceIndex, bobIndex);
+    uint256 blockBA = _block(bobIndex, aliceIndex);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 0);
+    _cancel(bobIndex, blockBA);
+    assertEq(LibFriend.getRequestCount(components, _getAccount(bobIndex)), 0);
+
+    // friends and block
+    requestAB = _request(aliceIndex, bobIndex);
+    friendshipBA = _accept(bobIndex, requestAB);
+    _block(aliceIndex, bobIndex);
+    assertEq(LibFriend.getFriendCount(components, _getAccount(aliceIndex)), 0);
+    assertEq(LibFriend.getFriendCount(components, _getAccount(bobIndex)), 0);
   }
 
   ////////////////////

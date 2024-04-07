@@ -27,14 +27,13 @@ library LibListing {
 
   // creates a merchant listing with the specified parameters
   function create(
-    IWorld world,
     IUintComp components,
     uint32 npcIndex,
     uint32 itemIndex,
     uint256 buyPrice,
     uint256 sellPrice
   ) internal returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
+    uint256 id = genID(npcIndex, itemIndex);
     IsListingComponent(getAddressById(components, IsListingCompID)).set(id);
     IndexNPCComponent(getAddressById(components, IndexNPCComponentID)).set(id, npcIndex);
     IndexItemComponent(getAddressById(components, IndexItemCompID)).set(id, itemIndex);
@@ -157,57 +156,18 @@ library LibListing {
   // gets an item listing from a merchant by its indices
   function get(
     IUintComp components,
-    uint256 merchantIndex,
+    uint32 merchantIndex,
     uint32 itemIndex
   ) internal view returns (uint256 result) {
-    uint256[] memory results = _getAllX(components, merchantIndex, itemIndex);
-    if (results.length != 0) {
-      result = results[0];
-    }
+    uint256 id = genID(merchantIndex, itemIndex);
+    return IsListingComponent(getAddressById(components, IsListingCompID)).has(id) ? id : 0;
   }
 
-  // gets all listings from a merchant by its index
-  function getAllForMerchant(
-    IUintComp components,
-    uint256 merchantIndex
-  ) internal view returns (uint256[] memory) {
-    return _getAllX(components, merchantIndex, 0);
-  }
+  //////////////////
+  // UTILS
 
-  // Retrieves all listingsbased on any defined filters
-  function _getAllX(
-    IUintComp components,
-    uint256 merchantIndex,
-    uint32 itemIndex
-  ) internal view returns (uint256[] memory) {
-    uint256 numFilters;
-    if (merchantIndex != 0) numFilters++;
-    if (itemIndex != 0) numFilters++;
-
-    QueryFragment[] memory fragments = new QueryFragment[](numFilters + 1);
-
-    uint256 filterCount;
-    if (merchantIndex != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexNPCComponentID),
-        abi.encode(merchantIndex)
-      );
-    }
-    if (itemIndex != 0) {
-      fragments[filterCount++] = QueryFragment(
-        QueryType.HasValue,
-        getComponentById(components, IndexItemCompID),
-        abi.encode(itemIndex)
-      );
-    }
-    fragments[filterCount] = QueryFragment(
-      QueryType.Has,
-      getComponentById(components, IsListingCompID),
-      ""
-    );
-
-    return LibQuery.query(fragments);
+  function genID(uint32 merchantIndex, uint32 itemIndex) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("listing", merchantIndex, itemIndex)));
   }
 
   //////////////////

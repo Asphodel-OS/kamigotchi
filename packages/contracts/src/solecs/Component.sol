@@ -64,14 +64,13 @@ abstract contract Component is BareComponent {
    * @inheritdoc BareComponent
    */
   function _set(uint256 entity, bytes memory value) internal virtual override {
-    // Cache the storage pointer
-    EnumerableSet.UintSet storage valueSet = valToEntities[keccak256(value)];
+    bytes memory oldValue = entityToValue[entity];
 
     // Remove the entity from the previous reverse mapping
-    valueSet.remove(entity);
+    if (oldValue.length > 0) valToEntities[keccak256(oldValue)].remove(entity);
 
     // Add the entity to the new reverse mapping
-    valueSet.add(entity);
+    valToEntities[keccak256(value)].add(entity);
 
     // Store the entity's value; Emit global event
     super._set(entity, value);
@@ -86,14 +85,13 @@ abstract contract Component is BareComponent {
    */
   function _setBatch(uint256[] memory entities, bytes[] memory values) internal virtual override {
     for (uint256 i = 0; i < entities.length; i++) {
-      // Cache the storage pointer
-      EnumerableSet.UintSet storage valueSet = valToEntities[keccak256(values[i])];
+      bytes memory oldValue = entityToValue[entities[i]];
 
       // Remove the entity from the previous reverse mapping
-      valueSet.remove(entities[i]);
+      if (oldValue.length > 0) valToEntities[keccak256(oldValue)].remove(entities[i]);
 
       // Add the entity to the new reverse mapping
-      valueSet.add(entities[i]);
+      valToEntities[keccak256(values[i])].add(entities[i]);
     }
 
     // Store the entity's value; Emit global event
