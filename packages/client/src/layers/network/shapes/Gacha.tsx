@@ -8,10 +8,13 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
+import { utils } from 'ethers';
 
 import { Components } from 'layers/network';
 import { getConfigFieldValueWei } from './Config';
 import { Kami, Options as KamiOptions, queryKamisX } from './Kami';
+
+export const GACHA_ID = utils.solidityKeccak256(['string'], ['gacha.id']);
 
 // standardized shape of a gacha commit
 export interface GachaCommit {
@@ -58,11 +61,11 @@ export const queryGachaKamis = (
   components: Components,
   kamiOptions?: KamiOptions
 ): Kami[] => {
-  return queryKamisX(world, components, { state: 'GACHA' }, kamiOptions);
+  return queryKamisX(world, components, { account: GACHA_ID as EntityID }, kamiOptions);
 };
 
 export const calcRerollCost = (world: World, components: Components, kami: Kami): bigint => {
-  const baseCost = getConfigFieldValueWei(components, 'GACHA_REROLL_PRICE');
+  const baseCost = getConfigFieldValueWei(world, components, 'GACHA_REROLL_PRICE');
 
   // placeholder linear function
   return baseCost * BigInt(kami.rerolls + 1);

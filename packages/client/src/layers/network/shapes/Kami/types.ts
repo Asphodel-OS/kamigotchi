@@ -99,6 +99,7 @@ export const getKami = (
     State,
     TargetID,
     Type,
+    OwnsPetID,
   } = components;
 
   // populate the base Kami data
@@ -134,7 +135,7 @@ export const getKami = (
 
   // populate Account
   if (options?.account) {
-    const accountID = getComponentValue(AccountID, entityIndex)?.value as EntityID;
+    const accountID = getComponentValue(OwnsPetID, entityIndex)?.value as EntityID;
     const accountIndex = world.entityToIndex.get(accountID);
     if (accountIndex) kami.account = getAccount(world, components, accountIndex);
   }

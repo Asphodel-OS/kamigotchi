@@ -155,7 +155,6 @@ export function createComponents(world: World) {
 
     // speeeeecial
     CanName: defineBoolEZ('CanName', 'component.can.name'),
-    GachaOrder: defineBoolEZ('GachaOrder', 'component.gacha.order'),
     FavoriteFood: defineStringEZ('FavoriteFood', 'component.favorite.food'),
     LoadingState: defineLoadingStateComponent(world),
     MediaURI: defineStringEZ('MediaURI', 'component.mediaURI'),

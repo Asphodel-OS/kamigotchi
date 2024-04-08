@@ -32,12 +32,12 @@ export const queryKamiEntitiesX = (
   components: Components,
   options: QueryOptions
 ): EntityIndex[] => {
-  const { AccountID, IsPet, State } = components;
+  const { OwnsPetID, IsPet, State } = components;
 
   const toQuery: QueryFragment[] = [Has(IsPet)];
 
   if (options?.account) {
-    toQuery.push(HasValue(AccountID, { value: options.account }));
+    toQuery.push(HasValue(OwnsPetID, { value: options.account }));
   }
 
   if (options?.state) {

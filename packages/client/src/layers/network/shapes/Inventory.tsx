@@ -12,7 +12,6 @@ import {
 
 import { Components } from 'layers/network';
 import { Item, getItem } from './Item';
-import { getStats } from './Stats';
 
 // standardized shape of a FE Inventory Entity
 export interface Inventory {
@@ -52,10 +51,7 @@ export const getTypedInventory = (
     item: item,
   };
 
-  // if fungible: populate the balance
-  // if non-fungible: copy stats of the inventory entity over to the nested item
-  if (!item.is.fungible) inventory.item.stats = getStats(components, index);
-  else inventory.balance = (getComponentValue(Balance, index)?.value as number) * 1;
+  inventory.balance = (getComponentValue(Balance, index)?.value as number) * 1;
 
   return inventory;
 };

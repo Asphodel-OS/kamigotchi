@@ -5,7 +5,9 @@ import { ActionButton, InputSingleNumberForm } from 'layers/react/components/lib
 import { BalanceBar } from './components/BalanceBar';
 import { KamiGrid } from './components/KamiGrid';
 
+import { EntityID } from '@mud-classic/recs';
 import musuIcon from 'assets/images/icons/musu.png';
+import { GACHA_ID } from 'layers/network/shapes/Gacha';
 import { Kami, Options, QueryOptions } from 'layers/network/shapes/Kami';
 
 interface Props {
@@ -57,7 +59,7 @@ export const Pool = (props: Props) => {
     ];
   };
 
-  const lazyKamis = props.query.getLazyKamis({ state: 'GACHA' }, { traits: true });
+  const lazyKamis = props.query.getLazyKamis({ account: GACHA_ID as EntityID }, { traits: true });
 
   const getTruncatedKamis = () => {
     const amt = numShown < lazyKamis.length ? numShown : lazyKamis.length;

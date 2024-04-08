@@ -38,7 +38,7 @@ export function setupWorldAPI(systems: any, provider: any) {
       await initGachaPool(333);
       await initLocalQuests();
     } else {
-      await initGachaPool(3333);
+      await initGachaPool(333);
     }
 
     createPlayerAPI(systems).account.register(
@@ -338,7 +338,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     api.registry.quest.create(
       1000000,
       'The Chosen Taruchi',
-      'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi?',
+      'Hey there! You look like someone with good taste. Ever heard of a Kamigotchi? \n You need one to play the game - here, take 5!',
       'Was it really worth it?',
       0,
       0
