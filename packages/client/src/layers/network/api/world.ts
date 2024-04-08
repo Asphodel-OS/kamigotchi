@@ -33,7 +33,8 @@ export function setupWorldAPI(systems: any, provider: any) {
     await initTraits();
     await initRelationships();
 
-    if (!import.meta.env.MODE || import.meta.env.DEV) {
+    const mode = import.meta.env.MODE;
+    if (!mode || mode === 'development') {
       await initLocalConfig();
       await initGachaPool(333);
       await initLocalQuests();

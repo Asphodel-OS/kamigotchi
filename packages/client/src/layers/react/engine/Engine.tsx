@@ -16,21 +16,23 @@ export const Engine: React.FC<{
 }> = observer(({ mountReact, setLayers }) => {
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
+  const mode = import.meta.env.MODE;
 
   // mount root and layers used for app context
   useEffect(() => {
     mountReact.current = (mounted: boolean) => setMounted(mounted);
     setLayers.current = (layers: Layers) => _setLayers(layers);
-    console.log(`Loaded in { ${import.meta.env.MODE} } mode (chain ${defaultChain.id}).`);
+    console.log(`Loaded in { ${mode} } mode (chain ${defaultChain.id}).`);
   }, []);
 
   /////////////////
   // CONFIGURATION
 
   const queryClient = new QueryClient();
-  const deafultTransport = import.meta.env.DEV
-    ? http()
-    : http('https://go.getblock.io/ecf00857f13140bb9d75d51597663370');
+  const deafultTransport =
+    mode === 'development'
+      ? http()
+      : http('https://go.getblock.io/ecf00857f13140bb9d75d51597663370');
 
   const wagmiConfig = createConfig({
     chains: [defaultChain],

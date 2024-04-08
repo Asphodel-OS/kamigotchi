@@ -143,10 +143,10 @@ export function registerWalletConnecter() {
                 },
               ],
             });
-            injectedWallet.switchChain(defaultChain.id);
           } catch (e) {
             console.error(e);
           }
+          injectedWallet.switchChain(defaultChain.id);
         }
       };
 

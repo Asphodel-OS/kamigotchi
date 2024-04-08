@@ -7,6 +7,7 @@ const opSepoliaOverride = addRpcUrlOverrideToChain(
 );
 
 export const chainConfigs: Map<string, Chain> = new Map();
+chainConfigs.set('', localhost);
 chainConfigs.set('localhost', localhost);
 chainConfigs.set('development', localhost);
 chainConfigs.set('staging', opSepoliaOverride);
@@ -14,13 +15,4 @@ chainConfigs.set('test', opSepoliaOverride);
 chainConfigs.set('OPSEP', opSepoliaOverride);
 chainConfigs.set('production', optimism);
 
-// overrides the chosen chain config if the url param is set
-const getDefaultChainConfig = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode');
-  if (!mode) return chainConfigs.get(import.meta.env.MODE ?? '');
-  if (chainConfigs.has(mode)) return chainConfigs.get(mode);
-  return localhost;
-};
-
-export const defaultChain = getDefaultChainConfig()!;
+export const defaultChain = chainConfigs.get(import.meta.env.MODE ?? '')!;

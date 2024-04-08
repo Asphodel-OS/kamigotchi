@@ -1,7 +1,6 @@
 import { ExternalProvider } from '@ethersproject/providers';
 import { Wallet } from 'ethers';
 
-import { chainConfigs } from 'constants/chains';
 import { SetupContractConfig } from 'layers/network/setup';
 
 // flat network configuration struct
@@ -50,15 +49,8 @@ const shape: (networkConfig: NetworkConfig) => SetupContractConfig = (config) =>
 export function createConfig(externalProvider?: ExternalProvider): SetupContractConfig | undefined {
   let config: NetworkConfig = <NetworkConfig>{};
 
-  // get the determined environment mode from env vars or override
-  let mode = import.meta.env.MODE;
-  if (!mode) {
-    console.warn(`No environment mode detected. Defaulting to 'development'\n`);
-    mode = 'development';
-  }
-  mode = getModeOverride() ?? mode;
-
   // resolve the network config based on the environment mode
+  let mode = import.meta.env.MODE;
   if (mode === 'development') config = createConfigRawLocal(externalProvider);
   else if (mode === 'staging') config = createConfigRawOPSepolia(externalProvider);
   else config = createConfigRawLocal(externalProvider);
@@ -76,33 +68,19 @@ export function createConfig(externalProvider?: ExternalProvider): SetupContract
 // Get the network config of a local deployment based on url params
 function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfig {
   const params = new URLSearchParams(window.location.search);
+  let config: NetworkConfig = <NetworkConfig>{
+    devMode: true,
+    jsonRpc: 'http://localhost:8545',
+    wsRpc: 'ws://localhost:8545',
 
-  let config: NetworkConfig = <NetworkConfig>{};
-  config.devMode = true;
+    chainId: 1337,
+    worldAddress: params.get('worldAddress') ?? '0x610178dA211FEF7D417bC0e6FeD39F05609AD788',
+    initialBlockNumber: parseInt(params.get('initialBlockNumber') ?? '0'),
+  };
 
-  // EOAs and privatekey
+  // EOAs and privatekey)
   if (externalProvider) config.externalProvider = externalProvider;
-  else {
-    const wallet = new Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
-    config.privateKey = wallet.privateKey;
-  }
-
-  // RPCs
-  const jsonRpc = params.get('rpc') || 'http://localhost:8545';
-  const wsRpc = params.get('wsRpc') || (jsonRpc && jsonRpc.replace('http', 'ws'));
-  config.jsonRpc = jsonRpc;
-  config.wsRpc = wsRpc;
-
-  // chainId
-  const chainIdString = params.get('chainId') || '1337';
-  config.chainId = parseInt(chainIdString);
-
-  // world
-  config.worldAddress = params.get('worldAddress') || '0x610178dA211FEF7D417bC0e6FeD39F05609AD788';
-
-  // block number
-  let initialBlockNumberString = params.get('initialBlockNumber') || '0';
-  config.initialBlockNumber = parseInt(initialBlockNumberString);
+  else config.privateKey = import.meta.env.VITE_DEV_DEPLOYER_KEY;
 
   return config;
 }
@@ -131,23 +109,3 @@ function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkC
   }
   return config;
 }
-
-// gets the environment mode override from the url params
-const getModeOverride = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const modeOverride = urlParams.get('mode');
-  if (!modeOverride) return;
-
-  // return the mode override if it is a valid one
-  console.warn(`Environment mode override { ${modeOverride} } detected.`);
-  if (chainConfigs.has(modeOverride)) {
-    console.warn(`Overriding environment mode..`);
-    return modeOverride;
-  } else {
-    console.warn(
-      `No chain config found for override mode { ${modeOverride} }.\n`,
-      `Must be one of [${Array.from(chainConfigs.keys()).join(' | ')}].\n`,
-      `Defaulting to provided environment mode.`
-    );
-  }
-};
