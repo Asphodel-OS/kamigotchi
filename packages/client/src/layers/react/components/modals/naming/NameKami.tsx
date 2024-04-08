@@ -1,7 +1,8 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { EntityIndex } from '@mud-classic/recs';
+import { Kami, getKami } from 'layers/network/shapes/Kami';
 import { InputSingleTextForm } from 'layers/react/components/library/InputSingleTextForm';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -31,7 +32,7 @@ export function registerNameKamiModal() {
       const { actions, api, components, world } = network;
       const { modals, setModals } = useVisibility();
       const { kamiIndex } = useSelected();
-      const kami = getKamiByIndex(world, components, kamiIndex);
+      const kami = getKami(world, components, kamiIndex as EntityIndex);
 
       // queue the naming action up
       const nameKami = (kami: Kami, name: string) => {
@@ -59,7 +60,7 @@ export function registerNameKamiModal() {
           <Description>A Kami can only be named once. Choose wisely.</Description>
           <InputSingleTextForm
             label='new name'
-            placeholder={kami.name}
+            placeholder={kami ? kami.name : ''}
             onSubmit={(v: string) => handleNameTx(v)}
             fullWidth
             hasButton

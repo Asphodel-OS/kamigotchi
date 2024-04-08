@@ -74,7 +74,6 @@ export const getKami = (
   options?: Options
 ): Kami => {
   const {
-    AccountID,
     BackgroundIndex,
     BodyIndex,
     CanName,

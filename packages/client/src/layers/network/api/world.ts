@@ -720,7 +720,6 @@ export function setupWorldAPI(systems: any, provider: any) {
         console.error('Failed to create trait ', trait, e);
       }
     }
-
     return table.length;
   }
 

@@ -8,10 +8,21 @@ import "./TestSetupImports.sol";
 import { Location } from "libraries/LibRoom.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
+  struct PlayerAccount {
+    uint256 id;
+    uint256 index;
+    address operator;
+    address owner;
+  }
+
   uint _currTime;
+  mapping(uint256 => PlayerAccount) internal _accounts;
   address[] internal _owners;
   mapping(address => address) internal _operators; // owner => operator
   uint internal _currBlock;
+
+  PlayerAccount alice;
+  PlayerAccount bob;
 
   constructor() MudTest() {}
 
@@ -37,6 +48,8 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpAccounts() public virtual {
     _createOwnerOperatorPairs(25); // create 10 pairs of Owners/Operators
     _registerAccounts(10);
+    alice = _accounts[0];
+    bob = _accounts[1];
   }
 
   // sets up default configs. override to change/remove behaviour if needed
@@ -125,14 +138,20 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   // create an account. autogenerate names by the address for simplicity
-  function _registerAccount(uint playerIndex) internal {
+  function _registerAccount(uint playerIndex) internal returns (uint) {
     address owner = _owners[playerIndex];
     address operator = _operators[owner];
 
     vm.startPrank(owner);
     // string memory name = LibString.slice(LibString.toHexString(owner), 0, 15); // maxlen 16
-    _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex), "strawberry");
+    uint256 accountID = abi.decode(
+      _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex), "strawberry"),
+      (uint256)
+    );
     vm.stopPrank();
+
+    _accounts[playerIndex] = PlayerAccount(accountID, playerIndex, operator, owner);
+    return accountID;
   }
 
   // registers n accounts, starting from 0

@@ -29,6 +29,9 @@ contract InventoryTest is SetupTemplate {
     uint256 id = _createGenericItem(index);
     assertEq(_IndexItemComponent.get(id), index);
     assertEq(LibRegistryItem.getByIndex(components, index), id);
+
+    uint256 expectedid = LibRegistryItem.genID(index);
+    assertEq(expectedid, id);
   }
 
   function testBalance(uint32 index, uint256 amt) public {

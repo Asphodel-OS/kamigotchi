@@ -10,7 +10,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibPet } from "libraries/LibPet.sol";
 
 uint256 constant ID = uint256(keccak256("system.Pet.Name"));
-uint256 constant ROOM = 11;
+uint32 constant ROOM = 11;
 
 // name pet
 contract PetNameSystem is System {
@@ -21,7 +21,7 @@ contract PetNameSystem is System {
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
     require(LibPet.isPet(components, id), "PetName: not a pet");
-    require(LibPet.canName(components, id), "PetName: cannot named");
+    require(LibPet.canName(components, id), "PetName: cannot be named");
     require(LibPet.getAccount(components, id) == accountID, "PetName: not urs");
     require(LibPet.getRoom(components, id) == ROOM, "PetName: must be in room 11");
     require(bytes(name).length > 0, "PetName: name cannot be empty");
