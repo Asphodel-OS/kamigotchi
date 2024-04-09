@@ -44,7 +44,7 @@ export const Engine: React.FC<{
     appearance: {
       theme: 'light',
       accentColor: '#676FFF',
-      logo: import.meta.env.VITE_APP_LOGO_URL,
+      logo: import.meta.env.VITE_PRIVY_APP_LOGO,
       showWalletLoginFirst: true,
     },
     defaultChain: defaultChain,
