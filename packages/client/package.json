@@ -11,6 +11,7 @@
   },
   "scripts": {
     "dev": "vite --port 3000",
+    "dev:test": "vite --port 3000 --mode staging",
     "build": "vite build",
     "preview": "rimraf dist/ && mkdir dist/ && vite preview",
     "lint": "eslint . --fix --ext .ts",
