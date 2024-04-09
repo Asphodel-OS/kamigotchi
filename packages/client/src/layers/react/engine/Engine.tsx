@@ -29,11 +29,9 @@ export const Engine: React.FC<{
   // CONFIGURATION
 
   const queryClient = new QueryClient();
-  const deafultTransport =
-    mode === 'development'
-      ? http()
-      : http('https://go.getblock.io/ecf00857f13140bb9d75d51597663370');
 
+  const deafultTransport =
+    mode === 'development' ? http() : http(import.meta.env.VITE_RPC_TRANSPORT_URL);
   const wagmiConfig = createConfig({
     chains: [defaultChain],
     transports: {
@@ -46,7 +44,7 @@ export const Engine: React.FC<{
     appearance: {
       theme: 'light',
       accentColor: '#676FFF',
-      logo: 'https://imgur.com/lYdPt9I',
+      logo: import.meta.env.VITE_APP_LOGO_URL,
       showWalletLoginFirst: true,
     },
     defaultChain: defaultChain,
@@ -65,15 +63,15 @@ export const Engine: React.FC<{
   if (!mounted || !layers) return <BootScreen />;
   return (
     <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <PrivyProvider appId='cltxr4rvw082u129anv6cq7wr' config={privyConfig}>
+      <PrivyProvider appId={import.meta.env.VITE_PRIVY_APP_ID} config={privyConfig}>
+        <QueryClientProvider client={queryClient}>
           <LayerContext.Provider value={layers}>
             <EngineContext.Provider value={EngineStore}>
               <MainWindow />
             </EngineContext.Provider>
           </LayerContext.Provider>
-        </PrivyProvider>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </PrivyProvider>
     </WagmiProvider>
   );
 });

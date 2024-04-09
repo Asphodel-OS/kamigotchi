@@ -3,7 +3,7 @@ import { Chain, localhost, optimism, optimismSepolia } from '@wagmi/core/chains'
 
 const opSepoliaOverride = addRpcUrlOverrideToChain(
   optimismSepolia,
-  'https://go.getblock.io/ecf00857f13140bb9d75d51597663370'
+  import.meta.env.VITE_RPC_TRANSPORT_URL
 );
 
 export const chainConfigs: Map<string, Chain> = new Map();
