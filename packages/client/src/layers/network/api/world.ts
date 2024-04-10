@@ -133,21 +133,39 @@ export function setupWorldAPI(systems: any, provider: any) {
   ////////////////////
   // ROOMS
 
+  async function initRoom(roomIndex: number) {
+    const room = roomsCSV.find((r: any) => Number(r['Index']) === roomIndex);
+    if (!room) return;
+
+    await api.room.create(
+      {
+        x: Number(room['X']),
+        y: Number(room['Y']),
+        z: Number(room['Z']),
+      },
+      Number(room['Index']),
+      room['Name'],
+      room['Description'],
+      room['Exits'].split(',').map((n: string) => Number(n.trim()))
+    );
+  }
+
   async function initRooms() {
     for (let i = 0; i < roomsCSV.length; i++) {
-      await sleepIf();
-      // console.log(roomsCSV[i]);
-      if (roomsCSV[i]['Enabled'] === 'Yes') {
+      const room = roomsCSV[i];
+      if (room['Enabled'] === 'true') {
+        // console.log(room);
+        await sleepIf();
         await api.room.create(
           {
-            x: Number(roomsCSV[i]['X']),
-            y: Number(roomsCSV[i]['Y']),
-            z: Number(roomsCSV[i]['Z']),
+            x: Number(room['X']),
+            y: Number(room['Y']),
+            z: Number(room['Z']),
           },
-          Number(roomsCSV[i]['Index']),
-          roomsCSV[i]['Name'],
-          roomsCSV[i]['Description'],
-          roomsCSV[i]['Exits'].split(',').map((n: string) => Number(n.trim()))
+          Number(room['Index']),
+          room['Name'],
+          room['Description'],
+          room['Exits'].split(',').map((n: string) => Number(n.trim()))
         );
       }
     }
@@ -162,7 +180,6 @@ export function setupWorldAPI(systems: any, provider: any) {
 
   async function deleteRooms(indices: number[]) {
     for (let i = 0; i < indices.length; i++) {
-      await sleepIf();
       try {
         await api.room.delete(indices[i]);
       } catch {
@@ -765,6 +782,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     },
     rooms: {
       init: () => initRooms(),
+      initByIndex: (i: number) => initRoom(i),
       delete: (indices: number[]) => deleteRooms(indices),
     },
     skill: {
@@ -782,7 +800,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     const mode = urlParams.get('mode') || import.meta.env.MODE;
     if (mode && (mode == 'staging' || mode == 'production')) {
       console.log('sleeping');
-      return new Promise((resolve) => setTimeout(resolve, 8000));
+      return new Promise((resolve) => setTimeout(resolve, 4000));
     }
   }
 
