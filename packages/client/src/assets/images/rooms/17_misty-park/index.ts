@@ -1,4 +1,7 @@
-import backgroundDefault from './backgrounds/default.png';
+import bgOriginal from './backgrounds/original.png';
+import bgPlaytestDay from './backgrounds/playtest-a.png';
+import bgPlaytestEvening from './backgrounds/playtest-b.png';
+import bgPlaytestNight from './backgrounds/playtest-c.png';
 
 import objectAngelStatue from './objects/angel-statue.png';
 import objectCigarette1 from './objects/cigarette1.png';
@@ -12,7 +15,10 @@ import objectSoul4 from './objects/soul4.png';
 import pathUndecided from './paths/undecided.png';
 
 export {
-  backgroundDefault,
+  bgOriginal,
+  bgPlaytestDay,
+  bgPlaytestEvening,
+  bgPlaytestNight,
   objectAngelStatue,
   objectCigarette1,
   objectCigarette2,

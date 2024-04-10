@@ -1,4 +1,5 @@
-import backgroundDefault from './backgrounds/default.png';
+import bgOriginal from './backgrounds/original.png';
+import bgPlaytest from './backgrounds/playtest.png';
 
 import objectAltar from './objects/altar.png';
 import objectOfferingBox from './objects/offering-box.png';
@@ -6,4 +7,4 @@ import objectTelevision from './objects/television.png';
 
 import path15 from './paths/15.png';
 
-export { backgroundDefault, objectAltar, objectOfferingBox, objectTelevision, path15 };
+export { bgOriginal, bgPlaytest, objectAltar, objectOfferingBox, objectTelevision, path15 };

@@ -1,5 +1,5 @@
 import {
-  backgroundDefault,
+  bgPlaytestDay,
   objectEmaBoard,
   objectSmallShrine,
   objectStoneLantern,
@@ -13,7 +13,7 @@ export const room11: Room = {
   roomIndex: 11,
   background: {
     key: 'bg_room011',
-    path: backgroundDefault,
+    path: bgPlaytestDay,
   },
   music: {
     key: 'glitter',

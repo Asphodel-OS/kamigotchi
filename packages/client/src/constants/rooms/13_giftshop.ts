@@ -1,5 +1,5 @@
 import {
-  backgroundMina,
+  bgPlaytest,
   objectCashRegister,
   objectClock,
   objectMinaRed,
@@ -12,7 +12,7 @@ export const room13: Room = {
   roomIndex: 13,
   background: {
     key: 'bg_room013',
-    path: backgroundMina,
+    path: bgPlaytest,
   },
   music: {
     key: 'mystique',

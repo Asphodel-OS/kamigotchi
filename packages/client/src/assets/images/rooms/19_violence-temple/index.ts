@@ -1,4 +1,5 @@
-import backgroundDefault from './backgrounds/default.png';
+import bgOriginal from './backgrounds/original.png';
+import bgPlaytest from './backgrounds/playtest.png';
 
 import objectDharmaWheel from './objects/dharma-wheel.png';
 import objectLedge from './objects/ledge.png';
@@ -9,7 +10,8 @@ import objectPeaceLily2 from './objects/peace-lily2.png';
 import path18 from './paths/18.png';
 
 export {
-  backgroundDefault,
+  bgOriginal,
+  bgPlaytest,
   objectDharmaWheel,
   objectLedge,
   objectOilyPit,

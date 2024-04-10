@@ -1,8 +1,4 @@
-import {
-  backgroundDefault,
-  objectDharmaWheel,
-  path18,
-} from 'assets/images/rooms/19_violence-temple';
+import { bgPlaytest, objectDharmaWheel, path18 } from 'assets/images/rooms/19_violence-temple';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerLeaderboardModal } from 'layers/phaser/utils/triggers/triggerLeaderboardModal';
@@ -11,7 +7,7 @@ export const room19: Room = {
   roomIndex: 19,
   background: {
     key: 'bg_room19',
-    path: backgroundDefault,
+    path: bgPlaytest,
   },
   music: {
     key: 'cave',

@@ -1,7 +1,18 @@
-import backgroundCloudy from './backgrounds/cloudy.png';
-import backgroundNight from './backgrounds/night.png';
-import backgroundSunset from './backgrounds/sunset.png';
+import bgOriginalDay from './backgrounds/original-a.png';
+import bgOriginalEvening from './backgrounds/original-b.png';
+import bgOriginalNight from './backgrounds/original-c.png';
+import bgPlaytestDay from './backgrounds/playtest-a.png';
+import bgPlaytestEvening from './backgrounds/playtest-b.png';
+import bgPlaytestNight from './backgrounds/playtest-c.png';
 
 import objectVendingMachine from './objects/vending-machine.png';
 
-export { backgroundCloudy, backgroundNight, backgroundSunset, objectVendingMachine };
+export {
+  bgOriginalDay,
+  bgOriginalEvening,
+  bgOriginalNight,
+  bgPlaytestDay,
+  bgPlaytestEvening,
+  bgPlaytestNight,
+  objectVendingMachine,
+};

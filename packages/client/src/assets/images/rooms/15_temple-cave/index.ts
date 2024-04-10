@@ -1,4 +1,5 @@
-import backgroundDefault from './backgrounds/default.png';
+import bgOriginal from './backgrounds/original.png';
+import bgPlaytest from './backgrounds/playtest.png';
 
 import objectJizoLeftLarge from './objects/jizo-left-large.png';
 import objectJizoLeftSmall from './objects/jizo-left-small.png';
@@ -11,7 +12,8 @@ import path16 from './paths/16.png';
 import path18 from './paths/18.png';
 
 export {
-  backgroundDefault,
+  bgOriginal,
+  bgPlaytest,
   objectJizoLeftLarge,
   objectJizoLeftSmall,
   objectJizoRightLarge,

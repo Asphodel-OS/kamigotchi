@@ -1,4 +1,5 @@
-import backgroundDefault from './backgrounds/default.png';
+import bgOriginal from './backgrounds/original.png';
+import bgPlaytest from './backgrounds/playtest.png';
 
 import objectBigShroomCap from './objects/big-shroom-cap.png';
 import objectRitualBell from './objects/ritual-bell.png';
@@ -9,7 +10,8 @@ import path19 from './paths/19.png';
 import path20 from './paths/20.png';
 
 export {
-  backgroundDefault,
+  bgOriginal,
+  bgPlaytest,
   objectBigShroomCap,
   objectRitualBell,
   objectTwoBigShrooms,

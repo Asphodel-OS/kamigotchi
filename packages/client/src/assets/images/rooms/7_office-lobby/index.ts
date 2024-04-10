@@ -1,6 +1,7 @@
-import backgroundDefault from './backgrounds/default.png';
+import bgOriginal from './backgrounds/original.png';
+import bgPlaytest from './backgrounds/playtest.png';
 
 import objectCabinet from './objects/cabinet.png';
 import objectChair from './objects/chair.png';
 
-export { backgroundDefault, objectChair, objectCabinet };
+export { bgOriginal, bgPlaytest, objectCabinet, objectChair };

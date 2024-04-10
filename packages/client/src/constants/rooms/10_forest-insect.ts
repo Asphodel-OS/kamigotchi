@@ -1,5 +1,5 @@
 import {
-  backgroundDefault,
+  bgPlaytestDay,
   objectBeetle4,
   objectCentipede,
   objectHollowTrunk,
@@ -13,7 +13,7 @@ export const room10: Room = {
   roomIndex: 10,
   background: {
     key: 'bg_room010',
-    path: backgroundDefault,
+    path: bgPlaytestDay,
   },
   music: {
     key: 'glitter',

@@ -1,4 +1,4 @@
-import { backgroundDefault, path11, path16, path18 } from 'assets/images/rooms/15_temple-cave';
+import { bgPlaytest, path11, path16, path18 } from 'assets/images/rooms/15_temple-cave';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -6,7 +6,7 @@ export const room15: Room = {
   roomIndex: 15,
   background: {
     key: 'bg_room15',
-    path: backgroundDefault,
+    path: bgPlaytest,
   },
   music: {
     key: 'cave',

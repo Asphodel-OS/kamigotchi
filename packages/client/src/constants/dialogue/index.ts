@@ -1,3 +1,12 @@
+import dialogues01 from './01_mistyriver';
+import dialogues02 from './02_treetunnel';
+import dialogues03 from './03_gate';
+import dialogues04 from './04_junkyard';
+import dialogues05 from './05_restricted';
+import dialogues06 from './06_office-front';
+import dialogues07 from './07_office-lobby';
+import dialogues08 from './08_junkshop';
+import dialogues09 from './09_forest';
 import dialogues10 from './10_forest-insect';
 import dialogues11 from './11_waterfall';
 import dialogues12 from './12_junkyard-machine';
@@ -7,15 +16,6 @@ import dialogues15 from './15_temple-cave';
 import dialogues16 from './16_techno-temple';
 import dialogues18 from './18_cave-crossroads';
 import dialogues19 from './19_violence-temple';
-import dialogues01 from './1_mistyriver';
-import dialogues02 from './2_treetunnel';
-import dialogues03 from './3_gate';
-import dialogues04 from './4_junkyard';
-import dialogues05 from './5_restricted';
-import dialogues06 from './6_office-front';
-import dialogues07 from './7_office-lobby';
-import dialogues08 from './8_junkshop';
-import dialogues09 from './9_forest';
 import { DialogueNode } from './types';
 
 const dialogues00: DialogueNode[] = [
