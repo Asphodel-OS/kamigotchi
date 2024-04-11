@@ -28,6 +28,7 @@ export const Exits = (props: Props) => {
       <Title>Exits</Title>
       {rooms.get(index)!.exits!.map((exitIndex) => {
         const exit = rooms.get(exitIndex)!;
+        if (!exit) return;
         return (
           <ClickableDescription key={exit.index} onClick={() => handleClick(exit.index)}>
             → {exit.name}
