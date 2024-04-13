@@ -1,3 +1,5 @@
-import bgPlaytest from './backgrounds/playtest.png';
+import bgPlaytestDay from './backgrounds/playtest-a.png';
+import bgPlaytestEvening from './backgrounds/playtest-b.png';
+import bgPlaytestNight from './backgrounds/playtest-c.png';
 
-export { bgPlaytest };
+export { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight };
