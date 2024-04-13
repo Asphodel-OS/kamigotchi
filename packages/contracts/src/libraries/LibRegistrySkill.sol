@@ -99,11 +99,12 @@ library LibRegistrySkill {
     IWorld world,
     IUintComp components,
     uint32 skillIndex,
-    string memory type_
+    string memory type_,
+    string memory logicType
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setConditionOwner(components, id, genReqPtr(skillIndex));
-    LibBoolean.create(components, id, type_, "CURR_MIN");
+    LibBoolean.create(components, id, type_, logicType);
 
     setIsRegistry(components, id);
     setIsRequirement(components, id);

@@ -44,7 +44,8 @@ export const parseRequirementText = (
       return `Kami Lvl${requirement.value}`;
     case 'SKILL':
       const skillName = registry.get(index!)?.name;
-      return `Lvl${(requirement.value ?? 0) * 1} ${skillName}`;
+      if (requirement.value ?? 0 == 0) return `Cannot have [${skillName}]`;
+      return `Lvl${(requirement.value ?? 0) * 1} [${skillName}]`;
     default:
       return ' ???';
   }

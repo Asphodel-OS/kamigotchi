@@ -651,13 +651,20 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createSkillRequirement(
     uint32 skillIndex,
     string memory type_,
+    string memory logicType,
     uint32 index, // can be empty
     uint value // can be empty
   ) internal returns (uint256) {
     vm.prank(deployer);
     return
       abi.decode(
-        __RegistryCreateSkillRequirementSystem.executeTyped(skillIndex, type_, index, value),
+        __RegistryCreateSkillRequirementSystem.executeTyped(
+          skillIndex,
+          type_,
+          logicType,
+          index,
+          value
+        ),
         (uint256)
       );
   }

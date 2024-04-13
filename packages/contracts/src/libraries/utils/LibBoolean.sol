@@ -170,7 +170,6 @@ library LibBoolean {
     string memory _type,
     uint32 index
   ) public view returns (uint256 balance) {
-    uint256 inventoryID;
     if (LibString.eq(_type, "ITEM")) {
       balance = LibInventory.getBalanceOf(components, id, index);
     } else if (LibString.eq(_type, "COIN")) {

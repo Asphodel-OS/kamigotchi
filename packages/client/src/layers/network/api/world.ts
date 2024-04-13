@@ -5,6 +5,7 @@ import itemsCSV from 'assets/data/items/items.csv';
 import nodesCSV from 'assets/data/nodes/nodes.csv';
 import questCSV from 'assets/data/quests/quests.csv';
 import roomsCSV from 'assets/data/rooms/rooms.csv';
+import skillsCSV from 'assets/data/skills/skills.csv';
 import backgroundCSV from 'assets/data/traits/backgrounds.csv';
 import bodyCSV from 'assets/data/traits/bodies.csv';
 import colorCSV from 'assets/data/traits/colors.csv';
@@ -470,257 +471,49 @@ export function setupWorldAPI(systems: any, provider: any) {
   // SKILL
 
   async function initSkills() {
-    // Stat Skills
-    await api.registry.skill.create(1, 'KAMI', 'PASSIVE', 'Vigor', 1, 3, 'images/skills/vigor.png');
-    await api.registry.skill.add.effect(1, 'STAT', 'HEALTH', 10, '+10 Health per level');
+    for (let i = 0; i < skillsCSV.length; i++) {
+      const skill = skillsCSV[i];
+      await sleepIf();
+      try {
+        if (skill['Status'] !== 'For Implementation') continue;
+        if (skill['Class'] === 'Skill' || skill['Class'] === '') await initSkill(skill);
+        else if (skill['Class'] === 'Effect') await initSkillEffect(skill);
+        else if (skill['Class'] === 'Requirement') await initSkillRequirement(skill);
+      } catch {}
+    }
+  }
 
+  async function initSkill(entry: any) {
     await api.registry.skill.create(
-      2,
-      'KAMI',
-      'PASSIVE',
-      'Acquisitiveness',
-      1,
-      3,
-
-      'images/skills/acquisitiveness.png'
+      Number(entry['Index']), // individual skill index
+      'KAMI', // skills are only for Kami rn
+      'PASSIVE', // all skills are passive rn
+      entry['Tree'],
+      entry['Name'], // name of skill
+      Number(entry['Cost per level']), // cost of skill
+      Number(entry['Max Lvl']), // max level of skill
+      Number(entry['Tier']) - 1,
+      'images/skills/' + entry['Name'].toLowerCase() + '.png' // media uri
     );
-    await api.registry.skill.add.effect(2, 'STAT', 'POWER', 1, '+1 Power per level');
+  }
 
-    await api.registry.skill.create(
-      3,
-      'KAMI',
-      'PASSIVE',
-      'Aggression',
-      1,
-      3,
-      'images/skills/aggression.png'
-    );
-    await api.registry.skill.add.effect(3, 'STAT', 'VIOLENCE', 1, '+1 Violence per level');
-
-    await api.registry.skill.create(
-      4,
-      'KAMI',
-      'PASSIVE',
-      'Defensiveness',
-      1,
-      3,
-      'images/skills/defensiveness.png'
-    );
-    await api.registry.skill.add.effect(4, 'STAT', 'HARMONY', 1, '+1 Harmony per level');
-
-    await api.registry.skill.create(
-      5,
-      'KAMI',
-      'PASSIVE',
-      'Endurance',
-      2,
-      3,
-      'images/skills/endurance.png'
-    );
-    await api.registry.skill.add.effect(5, 'STAT', 'HEALTH', 10, '+10 Health per level');
-    await api.registry.skill.add.requirement(5, 'SKILL', 1, 3);
-
-    await api.registry.skill.create(
-      6,
-      'KAMI',
-      'PASSIVE',
-      'Predator',
-      2,
-      3,
-      'images/skills/predator.png'
-    );
-    await api.registry.skill.add.effect(6, 'STAT', 'POWER', 1, '+1 Power per level');
-    await api.registry.skill.add.requirement(6, 'SKILL', 2, 3);
-
-    await api.registry.skill.create(
-      7,
-      'KAMI',
-      'PASSIVE',
-      'Warmonger',
-      2,
-      3,
-      'images/skills/warmonger.png'
-    );
-    await api.registry.skill.add.effect(7, 'STAT', 'VIOLENCE', 1, '+1 Violence per level');
-    await api.registry.skill.add.requirement(7, 'SKILL', 3, 3);
-
-    await api.registry.skill.create(
-      8,
-      'KAMI',
-      'PASSIVE',
-      'Protector',
-      2,
-      3,
-      'images/skills/protector.png'
-    );
-    await api.registry.skill.add.effect(8, 'STAT', 'HARMONY', 1, '+1 Harmony per level');
-    await api.registry.skill.add.requirement(8, 'SKILL', 4, 3);
-
-    // (Health) Skill Tree
-    await api.registry.skill.create(
-      110,
-      'KAMI',
-      'PASSIVE',
-      'Workout Routine',
-      1,
-      3,
-      'images/skills/workout-routine.png'
-    );
+  async function initSkillEffect(entry: any) {
     await api.registry.skill.add.effect(
-      110,
-      'HARVEST',
-      'DRAIN',
-      -50,
-      '-5% Harvest Drain per level'
+      Number(entry['Index']), // individual skill index
+      entry['ConType'], // type of effect
+      entry['ConSubtype'], // subtype of effect
+      entry['ConValue'] // value of effect
     );
-    await api.registry.skill.add.requirement(110, 'SKILL', 1, 3);
+  }
 
-    // (Power) Skill Tree
-    await api.registry.skill.create(
-      201,
-      'KAMI',
-      'PASSIVE',
-      'Greed',
-      1,
-      3,
-      'images/skills/greed.png'
+  async function initSkillRequirement(entry: any) {
+    await api.registry.skill.add.requirement(
+      Number(entry['Index']), // individual skill index
+      entry['ConType'], // type of requirement
+      entry['ConSubtype'], // logic type of requirement
+      entry['ConIndex'], // index of requirement
+      entry['ConValue'] // value of requirement
     );
-    await api.registry.skill.add.effect(
-      201,
-      'HARVEST',
-      'OUTPUT',
-      50,
-      '+5% Harvest Output per level'
-    );
-    await api.registry.skill.add.requirement(201, 'SKILL', 2, 3);
-
-    await api.registry.skill.create(
-      202,
-      'KAMI',
-      'PASSIVE',
-      'Leverage',
-      2,
-      3,
-      'images/skills/leverage.png'
-    );
-    await api.registry.skill.add.effect(
-      202,
-      'HARVEST',
-      'OUTPUT',
-      75,
-      '+7.5% Harvest Output per level'
-    );
-    await api.registry.skill.add.requirement(202, 'SKILL', 201, 3);
-
-    await api.registry.skill.create(
-      203,
-      'KAMI',
-      'PASSIVE',
-      'Looping',
-      3,
-      3,
-      'images/skills/looping.png'
-    );
-    await api.registry.skill.add.effect(
-      203,
-      'HARVEST',
-      'OUTPUT',
-      100,
-      '+10% Harvest Output per level'
-    );
-    await api.registry.skill.add.requirement(203, 'SKILL', 202, 3);
-
-    await api.registry.skill.create(
-      204,
-      'KAMI',
-      'PASSIVE',
-      'Degenerate',
-      3,
-      3,
-      'images/skills/degenerate.png'
-    );
-    await api.registry.skill.add.effect(
-      204,
-      'HARVEST',
-      'OUTPUT',
-      125,
-      '+12.5% Harvest Output per level'
-    );
-    await api.registry.skill.add.requirement(204, 'SKILL', 203, 3);
-
-    await api.registry.skill.create(
-      210,
-      'KAMI',
-      'PASSIVE',
-      'Sunglasses Ownership',
-      1,
-      3,
-      'images/skills/sunglasses-ownership.png'
-    );
-    await api.registry.skill.add.effect(
-      210,
-      'HARVEST',
-      'DRAIN',
-      -50,
-      '-5% Harvest Drain per level'
-    );
-    await api.registry.skill.add.requirement(210, 'SKILL', 2, 3);
-
-    await api.registry.skill.create(
-      220,
-      'KAMI',
-      'PASSIVE',
-      'Bandit',
-      1,
-      3,
-      'images/skills/bandit.png'
-    );
-    await api.registry.skill.add.effect(
-      220,
-      'HARVEST',
-      'COOLDOWN',
-      20,
-      '-20s Harvest Cooldown per level'
-    );
-    await api.registry.skill.add.requirement(220, 'SKILL', 2, 3);
-
-    // (Violence) Skill Tree
-    await api.registry.skill.create(
-      320,
-      'KAMI',
-      'PASSIVE',
-      'Sniper',
-      1,
-      3,
-      'images/skills/sniper.png'
-    );
-    await api.registry.skill.add.effect(
-      320,
-      'ATTACK',
-      'COOLDOWN',
-      20,
-      '-20s Attack Cooldown per level'
-    );
-    await api.registry.skill.add.requirement(320, 'SKILL', 3, 3);
-
-    // (Harmony) Skill Tree
-    await api.registry.skill.create(
-      401,
-      'KAMI',
-      'PASSIVE',
-      'Patience',
-      1,
-      3,
-      'images/skills/patience.png'
-    );
-    await api.registry.skill.add.effect(
-      401,
-      'HARVEST',
-      'DRAIN',
-      -50,
-      '-5% Harvest Drain per level'
-    );
-    await api.registry.skill.add.requirement(401, 'SKILL', 4, 3);
   }
 
   async function deleteSkills(indices: number[]) {

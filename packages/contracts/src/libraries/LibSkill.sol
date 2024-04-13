@@ -189,8 +189,8 @@ library LibSkill {
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (!hasPoints(components, id)) return 0;
-    return SkillPointComponent(getAddressById(components, SPCompID)).get(id);
+    SkillPointComponent comp = SkillPointComponent(getAddressById(components, SPCompID));
+    return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getMax(IUintComp components, uint256 id) internal view returns (uint256) {
@@ -223,9 +223,6 @@ library LibSkill {
     uint256 holderID,
     uint32 index
   ) internal view returns (uint256) {
-    // // cheatcode to get account skill points (skill index never 0)
-    // if (index == 0) return getPoints(components, holderID);
-
     uint256 id = get(components, holderID, index);
     return getPoints(components, id);
   }

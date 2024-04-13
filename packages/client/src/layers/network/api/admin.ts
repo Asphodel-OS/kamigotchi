@@ -268,9 +268,11 @@ export function createAdminAPI(systems: any) {
     index: number,
     for_: string,
     type: string,
+    tree: string,
     name: string,
     cost: number,
     max: number,
+    treeTier: number,
     media: string
   ) {
     await sleepIf();
@@ -278,11 +280,11 @@ export function createAdminAPI(systems: any) {
       index,
       for_,
       type,
-      'tree',
+      tree,
       name,
       cost,
       max,
-      0, // tree tier
+      treeTier,
       media
     );
   }
@@ -292,13 +294,7 @@ export function createAdminAPI(systems: any) {
     return systems['system._Registry.Skill.Delete'].executeTyped(index);
   }
 
-  async function addSkillEffect(
-    skillIndex: number,
-    type: string,
-    subtype: string,
-    value: number,
-    description: string
-  ) {
+  async function addSkillEffect(skillIndex: number, type: string, subtype: string, value: number) {
     await sleepIf();
     return systems['system._Registry.Skill.Create.Effect'].executeTyped(
       skillIndex,
@@ -311,6 +307,7 @@ export function createAdminAPI(systems: any) {
   async function addSkillRequirement(
     skillIndex: number,
     type: string,
+    logicType: string,
     index: number,
     value: number
   ) {
@@ -318,6 +315,7 @@ export function createAdminAPI(systems: any) {
     return systems['system._Registry.Skill.Create.Requirement'].executeTyped(
       skillIndex,
       type,
+      logicType,
       index,
       value
     );

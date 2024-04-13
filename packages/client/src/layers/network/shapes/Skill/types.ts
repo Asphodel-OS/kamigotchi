@@ -7,6 +7,7 @@ import {
   getComponentValue,
   runQuery,
 } from '@mud-classic/recs';
+import { BigNumber } from 'ethers';
 
 import { baseURI } from 'constants/media';
 import { Components } from 'layers/network';
@@ -98,7 +99,10 @@ export const getEffect = (
     id: world.entities[entityIndex],
     type: getComponentValue(Type, entityIndex)?.value || ('' as string),
     subtype: getComponentValue(Subtype, entityIndex)?.value || ('' as string),
-    value: getComponentValue(BalanceSigned, entityIndex)?.value || (0 as number),
+    value:
+      BigNumber.from(getComponentValue(BalanceSigned, entityIndex)?.value)
+        .fromTwos(256)
+        .toNumber() || (0 as number),
   };
 
   return effect;
