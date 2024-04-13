@@ -58,11 +58,17 @@ export const closeModalsOnRoomChange = () => {
   useVisibility.setState({
     modals: {
       ...modals,
+      bridgeERC20: false,
+      bridgeERC721: false,
+      buy: false,
       dialogue: false,
-      merchant: false,
       gacha: false,
-      kami: false,
+      leaderboard: false,
+      lootboxes: false,
+      merchant: false,
+      nameKami: false,
       node: false,
+      operatorFund: false,
     },
   });
 };

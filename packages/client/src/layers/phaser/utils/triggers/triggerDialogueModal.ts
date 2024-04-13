@@ -12,10 +12,10 @@ export const triggerDialogueModal = (index: number) => {
       modals: {
         ...modals,
         dialogue: true,
-        bridgeERC721: false,
         bridgeERC20: false,
-        kami: false,
+        bridgeERC721: false,
         emaBoard: false,
+        kami: false,
         map: false,
         nameKami: false,
         node: false,
