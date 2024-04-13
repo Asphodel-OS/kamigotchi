@@ -123,6 +123,7 @@ export const rooms: Room[] = [
   room39,
   room40,
   room41,
+  { roomIndex: 42 },
   room43,
   room44,
   room45,

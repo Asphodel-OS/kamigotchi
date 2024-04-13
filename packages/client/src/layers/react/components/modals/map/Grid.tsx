@@ -1,6 +1,7 @@
 import { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { mapBackgrounds } from 'assets/images/map';
 import { Room, emptyRoom } from 'layers/network/shapes/Room';
 import { playClick } from 'utils/sounds';
 
@@ -65,6 +66,7 @@ export const Grid = (props: Props) => {
 
   return (
     <Container>
+      <Background src={mapBackgrounds.zone1} />
       {grid.map((row, i) => (
         <Row key={i}>
           {row.map((room, j) => {
@@ -72,12 +74,14 @@ export const Grid = (props: Props) => {
             const isCurrRoom = room.index == index;
             const isExit = rooms.get(index)?.exits?.find((e) => e === room.index);
 
-            let color = 'gray';
+            let color, opacity;
             let onClick: MouseEventHandler | undefined;
             if (isCurrRoom) {
               color = '#3b3';
+              opacity = 0.9;
             } else if (isExit) {
               color = '#f85';
+              opacity = 0.6;
               onClick = () => handleRoomMove(room?.index ?? 0);
             } else if (isRoom) {
               color = '#d33';
@@ -86,7 +90,7 @@ export const Grid = (props: Props) => {
             return (
               <Tile
                 key={j}
-                style={{ backgroundColor: color }}
+                style={{ backgroundColor: color, opacity }}
                 onClick={onClick}
                 hasRoom={isRoom}
                 onMouseEnter={() => {
@@ -95,9 +99,7 @@ export const Grid = (props: Props) => {
                 onMouseLeave={() => {
                   if (isRoom) actions.setHoveredRoom(0);
                 }}
-              >
-                {room?.index != 0 ? room?.index : ''}
-              </Tile>
+              />
             );
           })}
         </Row>
@@ -107,11 +109,18 @@ export const Grid = (props: Props) => {
 };
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
   overflow-y: scroll;
+`;
+
+const Background = styled.img`
+  position: absolute;
+  width: 100%;
+  height: 100%;
 `;
 
 const Row = styled.div`
@@ -123,7 +132,7 @@ const Row = styled.div`
 `;
 
 const Tile = styled.div<{ hasRoom: boolean }>`
-  background-color: red;
+  opacity: 0.1;
   border: 0.1vw solid black;
   width: 1.5vw;
   height: 1.5vw;
@@ -140,7 +149,7 @@ const Tile = styled.div<{ hasRoom: boolean }>`
     hasRoom &&
     `
     &:hover {
-      opacity: 0.6;
+      opacity: 0.9;
       cursor: help;
     }
   `}
