@@ -30,15 +30,21 @@ contract FriendAcceptSystem is System {
     require(LibFriend.getTarget(components, requestID) == accountID, "FriendAccept: not for you");
 
     // check number of friends limit
-    uint256 baseLimit = LibConfig.get(components, "FRIENDS_BASE_LIMIT");
-    uint256 bonusID = LibBonus.get(components, accountID, "FRIENDS_LIMIT");
-    uint256 frenLimit = baseLimit;
-    if (bonusID != 0) frenLimit += LibBonus.getBalance(components, bonusID);
+    uint256 frenLimit = LibBonus.processBonus(
+      components,
+      accountID,
+      "FRIENDS_LIMIT",
+      LibConfig.get(components, "FRIENDS_BASE_LIMIT")
+    );
     require(LibFriend.getFriendCount(components, accountID) < frenLimit, "Friend limit reached");
-    frenLimit = baseLimit;
-    bonusID = LibBonus.get(components, senderID, "FRIENDS_LIMIT");
-    if (bonusID != 0) frenLimit += LibBonus.getBalance(components, bonusID);
-    require(LibFriend.getFriendCount(components, senderID) < frenLimit, "Friend limit reached");
+
+    uint256 senderLimit = LibBonus.processBonus(
+      components,
+      accountID,
+      "FRIENDS_LIMIT",
+      LibConfig.get(components, "FRIENDS_BASE_LIMIT")
+    );
+    require(LibFriend.getFriendCount(components, senderID) < senderLimit, "Friend limit reached");
 
     // accept request; overwrites any previous request/block
     uint256 id = LibFriend.accept(components, accountID, senderID, requestID);

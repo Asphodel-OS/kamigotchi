@@ -471,17 +471,8 @@ export function setupWorldAPI(systems: any, provider: any) {
 
   async function initSkills() {
     // Stat Skills
-    await api.registry.skill.create(
-      1,
-      'KAMI',
-      'PASSIVE',
-      'Vigor',
-      1,
-      3,
-      '+10 Health per level',
-      'images/skills/vigor.png'
-    );
-    await api.registry.skill.add.effect(1, 'STAT', 'HEALTH', 'INC', 0, 10);
+    await api.registry.skill.create(1, 'KAMI', 'PASSIVE', 'Vigor', 1, 3, 'images/skills/vigor.png');
+    await api.registry.skill.add.effect(1, 'STAT', 'HEALTH', 10, '+10 Health per level');
 
     await api.registry.skill.create(
       2,
@@ -490,10 +481,10 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Acquisitiveness',
       1,
       3,
-      '+1 Power per level',
+
       'images/skills/acquisitiveness.png'
     );
-    await api.registry.skill.add.effect(2, 'STAT', 'POWER', 'INC', 0, 1);
+    await api.registry.skill.add.effect(2, 'STAT', 'POWER', 1, '+1 Power per level');
 
     await api.registry.skill.create(
       3,
@@ -502,10 +493,9 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Aggression',
       1,
       3,
-      '+1 Violence per level',
       'images/skills/aggression.png'
     );
-    await api.registry.skill.add.effect(3, 'STAT', 'VIOLENCE', 'INC', 0, 1);
+    await api.registry.skill.add.effect(3, 'STAT', 'VIOLENCE', 1, '+1 Violence per level');
 
     await api.registry.skill.create(
       4,
@@ -514,10 +504,9 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Defensiveness',
       1,
       3,
-      '+1 Harmony per level',
       'images/skills/defensiveness.png'
     );
-    await api.registry.skill.add.effect(4, 'STAT', 'HARMONY', 'INC', 0, 1);
+    await api.registry.skill.add.effect(4, 'STAT', 'HARMONY', 1, '+1 Harmony per level');
 
     await api.registry.skill.create(
       5,
@@ -526,10 +515,9 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Endurance',
       2,
       3,
-      '+10 Health per level',
       'images/skills/endurance.png'
     );
-    await api.registry.skill.add.effect(5, 'STAT', 'HEALTH', 'INC', 0, 10);
+    await api.registry.skill.add.effect(5, 'STAT', 'HEALTH', 10, '+10 Health per level');
     await api.registry.skill.add.requirement(5, 'SKILL', 1, 3);
 
     await api.registry.skill.create(
@@ -539,10 +527,9 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Predator',
       2,
       3,
-      '+1 Power per level',
       'images/skills/predator.png'
     );
-    await api.registry.skill.add.effect(6, 'STAT', 'POWER', 'INC', 0, 1);
+    await api.registry.skill.add.effect(6, 'STAT', 'POWER', 1, '+1 Power per level');
     await api.registry.skill.add.requirement(6, 'SKILL', 2, 3);
 
     await api.registry.skill.create(
@@ -552,10 +539,9 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Warmonger',
       2,
       3,
-      '+1 Violence per level',
       'images/skills/warmonger.png'
     );
-    await api.registry.skill.add.effect(7, 'STAT', 'VIOLENCE', 'INC', 0, 1);
+    await api.registry.skill.add.effect(7, 'STAT', 'VIOLENCE', 1, '+1 Violence per level');
     await api.registry.skill.add.requirement(7, 'SKILL', 3, 3);
 
     await api.registry.skill.create(
@@ -565,10 +551,9 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Protector',
       2,
       3,
-      '+1 Harmony per level',
       'images/skills/protector.png'
     );
-    await api.registry.skill.add.effect(8, 'STAT', 'HARMONY', 'INC', 0, 1);
+    await api.registry.skill.add.effect(8, 'STAT', 'HARMONY', 1, '+1 Harmony per level');
     await api.registry.skill.add.requirement(8, 'SKILL', 4, 3);
 
     // (Health) Skill Tree
@@ -579,10 +564,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Workout Routine',
       1,
       3,
-      '-5% Harvest Drain per level',
       'images/skills/workout-routine.png'
     );
-    await api.registry.skill.add.effect(110, 'HARVEST', 'DRAIN', 'DEC', 0, 50);
+    await api.registry.skill.add.effect(
+      110,
+      'HARVEST',
+      'DRAIN',
+      -50,
+      '-5% Harvest Drain per level'
+    );
     await api.registry.skill.add.requirement(110, 'SKILL', 1, 3);
 
     // (Power) Skill Tree
@@ -593,10 +583,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Greed',
       1,
       3,
-      '+5% Harvest Output per level',
       'images/skills/greed.png'
     );
-    await api.registry.skill.add.effect(201, 'HARVEST', 'OUTPUT', 'INC', 0, 50);
+    await api.registry.skill.add.effect(
+      201,
+      'HARVEST',
+      'OUTPUT',
+      50,
+      '+5% Harvest Output per level'
+    );
     await api.registry.skill.add.requirement(201, 'SKILL', 2, 3);
 
     await api.registry.skill.create(
@@ -606,10 +601,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Leverage',
       2,
       3,
-      '+7.5% Harvest Output per level',
       'images/skills/leverage.png'
     );
-    await api.registry.skill.add.effect(202, 'HARVEST', 'OUTPUT', 'INC', 0, 75);
+    await api.registry.skill.add.effect(
+      202,
+      'HARVEST',
+      'OUTPUT',
+      75,
+      '+7.5% Harvest Output per level'
+    );
     await api.registry.skill.add.requirement(202, 'SKILL', 201, 3);
 
     await api.registry.skill.create(
@@ -619,10 +619,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Looping',
       3,
       3,
-      '+10% Harvest Output per level',
       'images/skills/looping.png'
     );
-    await api.registry.skill.add.effect(203, 'HARVEST', 'OUTPUT', 'INC', 0, 100);
+    await api.registry.skill.add.effect(
+      203,
+      'HARVEST',
+      'OUTPUT',
+      100,
+      '+10% Harvest Output per level'
+    );
     await api.registry.skill.add.requirement(203, 'SKILL', 202, 3);
 
     await api.registry.skill.create(
@@ -632,10 +637,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Degenerate',
       3,
       3,
-      '+12.5% Harvest Output per level',
       'images/skills/degenerate.png'
     );
-    await api.registry.skill.add.effect(204, 'HARVEST', 'OUTPUT', 'INC', 0, 125);
+    await api.registry.skill.add.effect(
+      204,
+      'HARVEST',
+      'OUTPUT',
+      125,
+      '+12.5% Harvest Output per level'
+    );
     await api.registry.skill.add.requirement(204, 'SKILL', 203, 3);
 
     await api.registry.skill.create(
@@ -645,10 +655,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Sunglasses Ownership',
       1,
       3,
-      '-5% Harvest Drain per level',
       'images/skills/sunglasses-ownership.png'
     );
-    await api.registry.skill.add.effect(210, 'HARVEST', 'DRAIN', 'DEC', 0, 50);
+    await api.registry.skill.add.effect(
+      210,
+      'HARVEST',
+      'DRAIN',
+      -50,
+      '-5% Harvest Drain per level'
+    );
     await api.registry.skill.add.requirement(210, 'SKILL', 2, 3);
 
     await api.registry.skill.create(
@@ -658,10 +673,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Bandit',
       1,
       3,
-      '-20s Harvest Cooldown per level',
       'images/skills/bandit.png'
     );
-    await api.registry.skill.add.effect(220, 'HARVEST', 'COOLDOWN', 'INC', 0, 20);
+    await api.registry.skill.add.effect(
+      220,
+      'HARVEST',
+      'COOLDOWN',
+      20,
+      '-20s Harvest Cooldown per level'
+    );
     await api.registry.skill.add.requirement(220, 'SKILL', 2, 3);
 
     // (Violence) Skill Tree
@@ -672,10 +692,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Sniper',
       1,
       3,
-      '-20s Attack Cooldown per level',
       'images/skills/sniper.png'
     );
-    await api.registry.skill.add.effect(320, 'ATTACK', 'COOLDOWN', 'INC', 0, 20);
+    await api.registry.skill.add.effect(
+      320,
+      'ATTACK',
+      'COOLDOWN',
+      20,
+      '-20s Attack Cooldown per level'
+    );
     await api.registry.skill.add.requirement(320, 'SKILL', 3, 3);
 
     // (Harmony) Skill Tree
@@ -686,10 +711,15 @@ export function setupWorldAPI(systems: any, provider: any) {
       'Patience',
       1,
       3,
-      '-5% Harvest Drain per level',
       'images/skills/patience.png'
     );
-    await api.registry.skill.add.effect(401, 'HARVEST', 'DRAIN', 'DEC', 0, 50);
+    await api.registry.skill.add.effect(
+      401,
+      'HARVEST',
+      'DRAIN',
+      -50,
+      '-5% Harvest Drain per level'
+    );
     await api.registry.skill.add.requirement(401, 'SKILL', 4, 3);
   }
 

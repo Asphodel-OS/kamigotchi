@@ -107,9 +107,9 @@ export const Details = (props: Props) => {
         <Name>{rSkill.name}</Name>
       </NameSection>
 
-      <Description>
+      {/* <Description>
         {rSkill.description} blah blah blah this is a fuller description lorem ipsum falalala
-      </Description>
+      </Description> */}
       <LabeledList
         label='Effects'
         values={(rSkill.effects ?? []).map((eff) => parseEffectText(eff))}

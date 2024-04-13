@@ -17,36 +17,41 @@ contract _RegistryCreateSkillSystem is System {
       uint32 index,
       string memory for_,
       string memory type_,
+      string memory tree,
       string memory name,
       uint256 cost,
       uint256 max,
-      string memory description,
+      uint256 treeTier,
       string memory media
-    ) = abi.decode(arguments, (uint32, string, string, string, uint256, uint256, string, string));
+    ) = abi.decode(
+        arguments,
+        (uint32, string, string, string, string, uint256, uint256, uint256, string)
+      );
 
     require(index != 0, "SkillCreate: index cannot be 0");
     require(!LibString.eq(type_, ""), "SkillCreate: type empty");
     require(!LibString.eq(name, ""), "SkillCreate: name empty");
-    require(!LibString.eq(description, ""), "SkillCreate: description empty");
 
-    uint256 registryID = LibRegistrySkill.getByIndex(components, index);
-    require(registryID == 0, "SkillCreate: already exists");
+    uint256 regID = LibRegistrySkill.getByIndex(components, index);
+    require(regID == 0, "SkillCreate: already exists");
 
-    LibRegistrySkill.create(components, index, for_, type_, name, cost, max, description, media);
+    regID = LibRegistrySkill.create(components, index, for_, type_, name, cost, max, media);
+    if (!LibString.eq(tree, "")) LibRegistrySkill.setTree(components, regID, tree, treeTier);
 
-    return "";
+    return abi.encode(regID);
   }
 
   function executeTyped(
     uint32 index,
     string memory for_,
     string memory type_,
+    string memory tree,
     string memory name,
     uint256 cost,
     uint256 max,
-    string memory description,
+    uint256 treeTier,
     string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, for_, type_, name, cost, max, description, media));
+    return execute(abi.encode(index, for_, type_, tree, name, cost, max, treeTier, media));
   }
 }

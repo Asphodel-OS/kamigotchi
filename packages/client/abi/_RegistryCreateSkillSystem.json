@@ -55,6 +55,11 @@
           "internalType": "string"
         },
         {
+          "name": "tree",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
           "name": "name",
           "type": "string",
           "internalType": "string"
@@ -70,9 +75,9 @@
           "internalType": "uint256"
         },
         {
-          "name": "description",
-          "type": "string",
-          "internalType": "string"
+          "name": "treeTier",
+          "type": "uint256",
+          "internalType": "uint256"
         },
         {
           "name": "media",
@@ -147,7 +152,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,string,uint256,uint256,string,string)": "b5492f6e",
+    "executeTyped(uint32,string,string,string,string,uint256,uint256,uint256,string)": "060b09b7",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

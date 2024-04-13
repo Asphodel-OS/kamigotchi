@@ -271,7 +271,6 @@ export function createAdminAPI(systems: any) {
     name: string,
     cost: number,
     max: number,
-    description: string,
     media: string
   ) {
     await sleepIf();
@@ -279,10 +278,11 @@ export function createAdminAPI(systems: any) {
       index,
       for_,
       type,
+      'tree',
       name,
       cost,
       max,
-      description,
+      0, // tree tier
       media
     );
   }
@@ -296,17 +296,14 @@ export function createAdminAPI(systems: any) {
     skillIndex: number,
     type: string,
     subtype: string,
-    logicType: string,
-    index: number,
-    value: number
+    value: number,
+    description: string
   ) {
     await sleepIf();
     return systems['system._Registry.Skill.Create.Effect'].executeTyped(
       skillIndex,
       type,
       subtype,
-      logicType,
-      index,
       value
     );
   }

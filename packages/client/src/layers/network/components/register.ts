@@ -117,6 +117,7 @@ export function createComponents(world: World) {
     Affinity: defineStringEZ('Affinity', 'component.affiinity'),
     Balance: defineNumberEZ('Balance', 'component.balance'),
     Balances: defineNumberArrayComponent(world, 'Balances', 'component.balances'),
+    BalanceSigned: defineNumberEZ('Balance', 'component.balance.signed'),
     BareValue: defineNumberEZ('BareValue', 'component.barevalue'),
     Coin: defineNumberEZ('Coin', 'component.coin'),
     Cost: defineNumberEZ('Cost', 'component.cost'),

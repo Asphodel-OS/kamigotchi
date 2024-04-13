@@ -6,83 +6,90 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddressById, getComponentById } from "solecs/utils.sol";
 
-import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
+import { BalanceSignedComponent as IntBalComp, ID as IntBalCompID } from "components/BalanceSignedComponent.sol";
 import { IsBonusComponent, ID as IsBonusCompID } from "components/IsBonusComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibStat } from "libraries/LibStat.sol";
 
+/**
+ * @notice Library for managing bonuses - modifiers that affect specific calcs
+ */
 library LibBonus {
   /////////////////
   // INTERACTIONS
-  function create(
-    IWorld world,
-    IUintComp components,
-    uint256 holderID,
-    string memory _type
-  ) public returns (uint256) {
-    uint256 id = world.getUniqueEntityId();
-    IsBonusComponent(getAddressById(components, IsBonusCompID)).set(id);
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, _type);
-    return id;
-  }
 
-  function inc(IUintComp components, uint256 id, uint256 amt) public {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
-    uint256 curr = comp.has(id) ? comp.get(id) : 0;
+  function inc(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
+    uint256 id = genID(holderID, type_);
+    IntBalComp comp = IntBalComp(getAddressById(components, IntBalCompID));
+    int256 curr = comp.has(id) ? comp.get(id) : int256(0);
     comp.set(id, curr + amt);
   }
 
-  function dec(IUintComp components, uint256 id, uint256 amt) public {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
-    uint256 curr = comp.has(id) ? comp.get(id) : 0;
-    require(curr >= amt, "LibBonus: lower limit reached");
+  function dec(IUintComp components, uint256 holderID, string memory type_, int256 amt) internal {
+    uint256 id = genID(holderID, type_);
+    IntBalComp comp = IntBalComp(getAddressById(components, IntBalCompID));
+    int256 curr = comp.has(id) ? comp.get(id) : int256(0);
     comp.set(id, curr - amt);
-  }
-
-  /////////////////
-  // CHECKERS
-
-  function hasBalance(IUintComp components, uint256 id) public view returns (bool) {
-    return BalanceComponent(getAddressById(components, BalCompID)).has(id);
   }
 
   /////////////////
   // GETTERS
 
-  // default value of bonus multipliers is 1000
-  // this represents for 100.0% for percentage based bonuses
-  function getBalance(IUintComp components, uint256 id) public view returns (uint256) {
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
-    if (!comp.has(id)) return 1000;
-    return comp.get(id);
-  }
-
-  /////////////////
-  // SETTERS
-
-  function setBalance(IUintComp components, uint256 id, uint256 value) public {
-    BalanceComponent(getAddressById(components, BalCompID)).set(id, value);
-  }
-
-  /////////////////
-  // QUERIES
-
-  function get(
+  /// @notice gets a bonus in percent form. default is 1000 (100.0%)
+  function getPercent(
     IUintComp components,
     uint256 holderID,
     string memory type_
-  ) public view returns (uint256) {
+  ) internal view returns (uint256) {
+    int256 bonus = getRaw(components, holderID, type_);
+    if (bonus == 0) return 1000;
+    else {
+      // max change is 0.1%
+      if (bonus <= -1000) return 1;
+      else return uint256(1000 + bonus); // overflow alr checked
+    }
+  }
+
+  /// @notice adjust base value based on bonus
+  function processBonus(
+    IUintComp components,
+    uint256 holderID,
+    string memory type_,
+    uint256 base
+  ) internal view returns (uint256) {
+    int256 bonus = getRaw(components, holderID, type_);
+    return signCalc(base, bonus);
+  }
+
+  function getRaw(
+    IUintComp components,
+    uint256 holderID,
+    string memory type_
+  ) internal view returns (int256) {
     uint256 id = genID(holderID, type_);
-    return IsBonusComponent(getAddressById(components, IsBonusCompID)).has(id) ? id : 0;
+    IntBalComp comp = IntBalComp(getAddressById(components, IntBalCompID));
+    return comp.has(id) ? comp.get(id) : int256(0);
   }
 
   //////////////
   // UTILS
 
-  function genID(uint256 holderID, string memory type_) public pure returns (uint256) {
+  function genID(uint256 holderID, string memory type_) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("bonus", holderID, type_)));
+  }
+
+  /// @notice handles a custom signed/unsigned calculation
+  /// @dev recieves the signed bonus value, calculates, and spits out unsigned for other systems
+  function signCalc(uint256 base, int256 bonus) internal pure returns (uint256) {
+    // avoid converting base in case of overflow
+    if (bonus == 0) return base;
+    else if (bonus > 0) return base + uint256(bonus);
+    else {
+      uint256 delta = uint256(-bonus);
+      if (delta >= base) return 0;
+      else return base - delta;
+    }
   }
 }

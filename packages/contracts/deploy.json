@@ -3,6 +3,7 @@
     "AddressOperatorComponent",
     "AddressOwnerComponent",
     "AffinityComponent",
+    "BalanceSignedComponent",
     "BalanceComponent",
     "BalancesComponent",
     "BareValueComponent",
@@ -254,18 +255,19 @@
         "IsSkillComponent",
         "IndexSkillComponent",
         "CostComponent",
-        "DescriptionComponent",
         "ForComponent",
+        "LevelComponent",
         "MaxComponent",
         "MediaURIComponent",
         "NameComponent",
+        "SubtypeComponent",
         "TypeComponent"
       ]
     },
     {
       "name": "_RegistryCreateSkillEffectSystem",
       "writeAccess": [
-        "BalanceComponent",
+        "BalanceSignedComponent",
         "IsRegistryComponent",
         "IsEffectComponent",
         "IndexSkillComponent",
@@ -347,6 +349,7 @@
         "IsRequirementComponent",
         "IndexSkillComponent",
         "BalanceComponent",
+        "BalanceSignedComponent",
         "CostComponent",
         "DescriptionComponent",
         "ForComponent",
@@ -454,20 +457,6 @@
     {
       "name": "AccountSetFarcasterDataSystem",
       "writeAccess": ["IndexFarcasterComponent", "MediaURIComponent", "TimeLastComponent"]
-    },
-    {
-      "name": "AccountUpgradeSkillSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "IdHolderComponent",
-        "IndexSkillComponent",
-        "IsBonusComponent",
-        "IsSkillComponent",
-        "SkillPointComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent"
-      ]
     },
     {
       "name": "Farm20ProxySystem",
@@ -759,28 +748,6 @@
       ]
     },
     {
-      "name": "PetUpgradeSkillSystem",
-      "writeAccess": [
-        "BalanceComponent",
-        "CoinComponent",
-        "IdHolderComponent",
-        "IndexSkillComponent",
-        "IsBonusComponent",
-        "IsSkillComponent",
-        "HarmonyComponent",
-        "HealthComponent",
-        "PowerComponent",
-        "RateComponent",
-        "SkillPointComponent",
-        "SlotsComponent",
-        "TimeLastComponent",
-        "TimeStartComponent",
-        "TypeComponent",
-        "ValueComponent",
-        "ViolenceComponent"
-      ]
-    },
-    {
       "name": "PetUseItemSystem",
       "writeAccess": ["BalanceComponent", "CanNameComponent", "TimeLastComponent"]
     },
@@ -912,6 +879,8 @@
     {
       "name": "SkillUpgradeSystem",
       "writeAccess": [
+        "BalanceComponent",
+        "BalanceSignedComponent",
         "BareValueComponent",
         "CoinComponent",
         "IdHolderComponent",

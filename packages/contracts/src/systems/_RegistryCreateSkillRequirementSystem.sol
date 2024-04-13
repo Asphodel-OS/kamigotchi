@@ -25,7 +25,7 @@ contract _RegistryCreateSkillRequirementSystem is System {
     if (index != 0) LibRegistrySkill.setIndex(components, id, index);
     if (value != 0) LibRegistrySkill.setBalance(components, id, value);
 
-    return "";
+    return abi.encode(id);
   }
 
   function executeTyped(

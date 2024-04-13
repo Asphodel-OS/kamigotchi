@@ -124,8 +124,9 @@ library LibProduction {
 
   // Calculate the multiplier for harvesting
   function calcRateMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 bonusMult = calcRateBonusMultiplier(components, id);
-    uint256 affinityMult = calcRateAffinityMultiplier(components, id);
+    uint256 petID = getPet(components, id);
+    uint256 bonusMult = LibBonus.getPercent(components, petID, "HARVEST_OUTPUT");
+    uint256 affinityMult = calcRateAffinityMultiplier(components, id, petID);
     return affinityMult * bonusMult;
   }
 
@@ -133,30 +134,19 @@ library LibProduction {
   // (precision set by HARVEST_RATE_MULT_PREC)
   function calcRateAffinityMultiplier(
     IUintComp components,
-    uint256 id
+    uint256 id,
+    uint256 petID
   ) internal view returns (uint256) {
     uint256 nodeID = getNode(components, id);
     string memory nodeAff = LibNode.getAffinity(components, nodeID);
 
-    uint256 petID = getPet(components, id);
     string[] memory petAffs = LibPet.getAffinities(components, petID);
 
     // layer the multipliers due to each trait on top of each other
     uint256 totMultiplier = 1;
-    for (uint256 i = 0; i < petAffs.length; i++) {
+    for (uint256 i = 0; i < petAffs.length; i++)
       totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
-    }
     return totMultiplier;
-  }
-
-  function calcRateBonusMultiplier(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint256) {
-    uint256 petID = getPet(components, id);
-    uint256 bonusID = LibBonus.get(components, petID, "HARVEST_OUTPUT");
-    uint256 bonusMult = LibBonus.getBalance(components, bonusID);
-    return bonusMult;
   }
 
   /////////////////

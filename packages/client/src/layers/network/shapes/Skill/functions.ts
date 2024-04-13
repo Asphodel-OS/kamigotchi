@@ -57,9 +57,9 @@ export const parseRequirementText = (
 export const parseEffectText = (effect: Effect): string => {
   let text = '';
 
-  // positive or negative
-  if (effect.logicType === 'INC') text += '+';
-  else if (effect.logicType === 'DEC') text += '-';
+  // // positive or negative
+  // if (effect.logicType === 'INC') text += '+';
+  // else if (effect.logicType === 'DEC') text += '-';
 
   // number formatting
   if (effect.type === 'STAT') text += effect.value * 1;

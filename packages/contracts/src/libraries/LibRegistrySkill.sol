@@ -16,10 +16,12 @@ import { IsEffectComponent, ID as IsEffectCompID } from "components/IsEffectComp
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { IsRequirementComponent, ID as IsReqCompID } from "components/IsRequirementComponent.sol";
 import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillComponent.sol";
+
+import { BalanceSignedComponent, ID as BalSignedCompID } from "components/BalanceSignedComponent.sol";
 import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
-import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
+import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
@@ -30,14 +32,25 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibBoolean } from "libraries/utils/LibBoolean.sol";
 
-// A registry for Skill related entities
-// Skills are not copied onto entities, only referenced when assigning the effect
-
+/// @notice A registry for Skill related entities
+/// @dev Skills are not copied onto entities, only referenced when assigning the effect
 library LibRegistrySkill {
   /////////////////
   // INTERACTIONS
 
-  // Create a registry entry for a Skill
+  /**
+   * @notice Create a registry entry for a Skill
+   * @dev entity shape:
+   *      - skillIndex
+   *      - isRegistry + isSkill
+   *      - type
+   *      - name
+   *      - cost
+   *      - max
+   *      - mediaURI
+   *      - for (type of entity - likely Pet/Account)
+   *      - skill tree (optional) [subtype component]
+   */
   function create(
     IUintComp components,
     uint32 skillIndex,
@@ -46,10 +59,9 @@ library LibRegistrySkill {
     string memory name,
     uint256 cost,
     uint256 max,
-    string memory description,
     string memory media
-  ) internal returns (uint256) {
-    uint256 id = genID(skillIndex);
+  ) internal returns (uint256 id) {
+    id = genID(skillIndex);
     setIsRegistry(components, id);
     setIsSkill(components, id);
     setSkillIndex(components, id, skillIndex);
@@ -57,21 +69,19 @@ library LibRegistrySkill {
     setName(components, id, name);
     setCost(components, id, cost);
     setMax(components, id, max);
-    setDescription(components, id, description);
     setMediaURI(components, id, media);
 
     if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
     else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
     else revert("LibRegistrySkill: invalid type");
-
-    return id;
   }
 
   function createEffect(
     IWorld world,
     IUintComp components,
     uint32 skillIndex,
-    string memory type_
+    string memory type_,
+    int256 value
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
     setConditionOwner(components, id, genEffectPtr(skillIndex));
@@ -80,6 +90,7 @@ library LibRegistrySkill {
     setIsEffect(components, id);
     setSkillIndex(components, id, skillIndex);
     setType(components, id, type_);
+    BalanceSignedComponent(getAddressById(components, BalSignedCompID)).set(id, value);
 
     return id;
   }
@@ -106,7 +117,6 @@ library LibRegistrySkill {
     unsetIsSkill(components, id);
     unsetSkillIndex(components, id);
     unsetCost(components, id);
-    unsetDescription(components, id);
     unsetFor(components, id);
     unsetMax(components, id);
     unsetMediaURI(components, id);
@@ -122,7 +132,7 @@ library LibRegistrySkill {
     unsetSubtype(components, id);
     unsetLogicType(components, id);
     unsetIndex(components, id);
-    unsetBalance(components, id);
+    unsetBalanceSigned(components, id);
     unsetConditionOwner(components, id);
   }
 
@@ -171,10 +181,6 @@ library LibRegistrySkill {
     CostComponent(getAddressById(components, CostCompID)).set(id, cost);
   }
 
-  function setDescription(IUintComp components, uint256 id, string memory description) internal {
-    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
-  }
-
   function setFor(IUintComp components, uint256 id, uint for_) internal {
     ForComponent(getAddressById(components, ForCompID)).set(id, for_);
   }
@@ -193,6 +199,13 @@ library LibRegistrySkill {
 
   function setName(IUintComp components, uint256 id, string memory name) internal {
     NameComponent(getAddressById(components, NameCompID)).set(id, name);
+  }
+
+  /// @notice set the skill tree for a skill (optional)
+  /// @dev uses the subtype component
+  function setTree(IUintComp components, uint256 id, string memory tree, uint256 level) internal {
+    setSubtype(components, id, tree);
+    LevelComponent(getAddressById(components, LevelCompID)).set(id, level);
   }
 
   function setSubtype(IUintComp components, uint256 id, string memory subtype) internal {
@@ -244,10 +257,6 @@ library LibRegistrySkill {
     CostComponent(getAddressById(components, CostCompID)).remove(id);
   }
 
-  function unsetDescription(IUintComp components, uint256 id) internal {
-    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
-  }
-
   function unsetFor(IUintComp components, uint256 id) internal {
     ForComponent(getAddressById(components, ForCompID)).remove(id);
   }
@@ -278,6 +287,12 @@ library LibRegistrySkill {
     }
   }
 
+  function unsetTree(IUintComp components, uint256 id) internal {
+    unsetSubtype(components, id);
+    LevelComponent levelComp = LevelComponent(getAddressById(components, LevelCompID));
+    if (levelComp.has(id)) levelComp.remove(id);
+  }
+
   function unsetType(IUintComp components, uint256 id) internal {
     if (TypeComponent(getAddressById(components, TypeCompID)).has(id)) {
       TypeComponent(getAddressById(components, TypeCompID)).remove(id);
@@ -290,8 +305,22 @@ library LibRegistrySkill {
     }
   }
 
+  function unsetBalanceSigned(IUintComp components, uint256 id) internal {
+    if (BalanceSignedComponent(getAddressById(components, BalSignedCompID)).has(id)) {
+      BalanceSignedComponent(getAddressById(components, BalSignedCompID)).remove(id);
+    }
+  }
+
   /////////////////
   // GETTERS
+
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
+    return BalanceComponent(getAddressById(components, BalCompID)).get(id);
+  }
+
+  function getBalanceSigned(IUintComp components, uint256 id) internal view returns (int256) {
+    return BalanceSignedComponent(getAddressById(components, BalSignedCompID)).get(id);
+  }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexComponent(getAddressById(components, IndexCompID)).get(id);
@@ -314,15 +343,27 @@ library LibRegistrySkill {
   }
 
   function getSubtype(IUintComp components, uint256 id) internal view returns (string memory) {
-    return SubtypeComponent(getAddressById(components, SubtypeCompID)).get(id);
+    SubtypeComponent comp = SubtypeComponent(getAddressById(components, SubtypeCompID));
+    if (!comp.has(id)) return "";
+    else return comp.get(id);
+  }
+
+  function getTree(
+    IUintComp components,
+    uint256 id
+  ) internal view returns (bool, string memory, uint256) {
+    SubtypeComponent treeComp = SubtypeComponent(getAddressById(components, SubtypeCompID));
+    if (!treeComp.has(id)) return (false, "", 0);
+    else
+      return (
+        true,
+        treeComp.get(id),
+        LevelComponent(getAddressById(components, LevelCompID)).get(id)
+      );
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     return TypeComponent(getAddressById(components, TypeCompID)).get(id);
-  }
-
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalCompID)).get(id);
   }
 
   /////////////////

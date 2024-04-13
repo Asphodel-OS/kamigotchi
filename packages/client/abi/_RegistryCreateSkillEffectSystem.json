@@ -55,19 +55,9 @@
           "internalType": "string"
         },
         {
-          "name": "logicType",
-          "type": "string",
-          "internalType": "string"
-        },
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
           "name": "value",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "int256",
+          "internalType": "int256"
         }
       ],
       "outputs": [
@@ -137,7 +127,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,string,uint32,uint256)": "53f01ed7",
+    "executeTyped(uint32,string,string,int256)": "f8cdeb34",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

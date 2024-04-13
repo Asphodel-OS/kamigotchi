@@ -185,17 +185,9 @@ library LibPet {
 
     uint256 base = uint256(configVals[0]);
     uint256 basePrecision = 10 ** uint256(configVals[1]);
-    uint256 multiplier = calcDrainMultiplier(components, id);
+    uint256 multiplier = LibBonus.getPercent(components, id, "HARVEST_DRAIN");
     uint256 totalPrecision = basePrecision * 1000; // 1000 from bonus multiplier
     return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
-  }
-
-  // get the total drain multiplier for receiving coins
-  // defaults to 100/100 if not set for the pet
-  function calcDrainMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 bonusID = LibBonus.get(components, id, "HARVEST_DRAIN");
-    uint256 bonusMult = LibBonus.getBalance(components, bonusID);
-    return bonusMult;
   }
 
   // Calculate the recovery of the kami from resting. This assumes the Kami is actually resting.

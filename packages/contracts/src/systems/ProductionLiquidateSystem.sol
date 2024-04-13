@@ -69,9 +69,12 @@ contract ProductionLiquidateSystem is System {
     LibKill.create(world, components, petID, targetPetID, nodeID, balance, bounty);
 
     // Update ts for Standard Action Cooldowns
-    uint256 standardActionTs = block.timestamp;
-    uint256 bonusID = LibBonus.get(components, petID, "ATTACK_COOLDOWN");
-    if (bonusID != 0) standardActionTs -= LibBonus.getBalance(components, bonusID);
+    uint256 standardActionTs = LibBonus.processBonus(
+      components,
+      petID,
+      "ATTACK_COOLDOWN",
+      block.timestamp
+    );
     LibPet.setLastActionTs(components, petID, standardActionTs);
 
     // standard logging and tracking

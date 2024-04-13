@@ -26,7 +26,11 @@ import { LibPet } from "libraries/LibPet.sol";
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
+uint256 constant TREE_POINTS_PER_TIER = 5;
+
 library LibSkill {
+  using LibString for string;
+
   /////////////////
   // INTERACTIONS
 
@@ -65,7 +69,7 @@ library LibSkill {
     uint256 holderID,
     uint256 effectID
   ) public {
-    if (LibString.eq("STAT", LibRegistrySkill.getType(components, effectID))) {
+    if (LibRegistrySkill.getType(components, effectID).eq("STAT")) {
       processStatEffectUpgrade(world, components, holderID, effectID);
     } else {
       processGeneralEffectUpgrade(world, components, holderID, effectID);
@@ -81,18 +85,12 @@ library LibSkill {
   ) internal {
     string memory type_ = LibRegistrySkill.getType(components, effectID);
     string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
-    string memory bonusType = LibString.concat(LibString.concat(type_, "_"), subtype);
-    // get the bonus entity or create one if it doesnt exist
-    // default the initial value to 0 if Cooldown type (otherwise 1000 implicitly)
-    uint256 bonusID = LibBonus.get(components, holderID, bonusType);
-    if (bonusID == 0) {
-      bonusID = LibBonus.create(world, components, holderID, bonusType);
-      if (LibString.eq("COOLDOWN", subtype)) LibBonus.setBalance(components, bonusID, 0);
-    }
-    string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
-    uint256 value = LibRegistrySkill.getBalance(components, effectID);
-    if (LibString.eq(logicType, "INC")) LibBonus.inc(components, bonusID, value);
-    else if (LibString.eq(logicType, "DEC")) LibBonus.dec(components, bonusID, value);
+    string memory bonusType;
+    if (subtype.eq("")) bonusType = type_;
+    else bonusType = LibString.concat(LibString.concat(type_, "_"), subtype);
+    int256 value = LibRegistrySkill.getBalanceSigned(components, effectID);
+
+    LibBonus.inc(components, holderID, bonusType, value);
   }
 
   // processes the upgrade of a stat increment/decrement effect
@@ -104,9 +102,8 @@ library LibSkill {
     uint256 effectID
   ) internal {
     string memory subtype = LibRegistrySkill.getSubtype(components, effectID);
-    string memory logicType = LibRegistrySkill.getLogicType(components, effectID);
-    int32 amt = int32(int(LibRegistrySkill.getBalance(components, effectID)));
-    if (LibString.eq(logicType, "DEC")) amt *= -1;
+    int32 amt = int32(LibRegistrySkill.getBalanceSigned(components, effectID));
+
     LibStat.shift(components, holderID, subtype, amt);
   }
 
@@ -117,13 +114,13 @@ library LibSkill {
     return SkillPointComponent(getAddressById(components, SPCompID)).has(id);
   }
 
-  // check whether the target meets the prerequisites to invest in a skill
-  // prereqs include cost of skill, max points, and requirements
+  /// @notice check whether the target meets the prerequisites to invest in a skill
+  /// @dev prereqs include cost of skill, max points, and requirements
   function meetsPrerequisites(
     IUintComp components,
     uint256 targetID,
     uint256 registryID // skill registry entity id
-  ) public view returns (bool) {
+  ) internal view returns (bool) {
     uint32 skillIndex = LibRegistrySkill.getSkillIndex(components, registryID);
 
     // check point balance against skill cost
@@ -135,9 +132,30 @@ library LibSkill {
     uint256 max = LibRegistrySkill.getMax(components, registryID);
     if (getPoints(components, id) >= max) return false;
 
+    // check skill tree
+    if (!meetsTreePrerequisites(components, targetID, registryID)) return false;
+
     // check all other requirements
     uint256[] memory requirements = LibRegistrySkill.getRequirementsByIndex(components, skillIndex);
     return LibBoolean.checkConditions(components, requirements, targetID);
+  }
+
+  /// @notice check if entity has invested enough in a the appropriate skill tree
+  function meetsTreePrerequisites(
+    IUintComp components,
+    uint256 targetID,
+    uint256 registryID
+  ) internal view returns (bool) {
+    (bool has, string memory tree, uint256 tier) = LibRegistrySkill.getTree(components, registryID);
+
+    // if no skill tree, automatically pass
+    if (!has) return true;
+
+    // if tier 0, automatically pass
+    if (tier == 0) return true;
+
+    // check if target has enough points
+    return getTreePoints(components, targetID, tree) >= getTreeTierPoints(tier);
   }
 
   /////////////////
@@ -179,6 +197,18 @@ library LibSkill {
     return MaxComponent(getAddressById(components, MaxCompID)).get(id);
   }
 
+  function getTreePoints(
+    IUintComp components,
+    uint256 id,
+    string memory tree
+  ) internal view returns (uint256) {
+    return LibDataEntity.get(components, id, 0, tree.concat("SKILL_POINTS_USE"));
+  }
+
+  function getTreeTierPoints(uint256 tier) internal pure returns (uint256) {
+    return tier * TREE_POINTS_PER_TIER;
+  }
+
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {
     return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
@@ -217,6 +247,12 @@ library LibSkill {
 
   function logUsePoint(IUintComp components, uint256 holderID) internal {
     LibDataEntity.inc(components, holderID, 0, "SKILL_POINTS_USE", 1);
+  }
+
+  /// @notice uses a skill point in a skill tree
+  function logUseTreePoint(IUintComp components, uint256 holderID, uint256 registryID) internal {
+    (bool has, string memory tree, uint256 tier) = LibRegistrySkill.getTree(components, registryID);
+    if (has) LibDataEntity.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), 1);
   }
 
   //////////////////////

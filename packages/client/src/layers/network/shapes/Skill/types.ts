@@ -19,9 +19,10 @@ export interface Skill {
   id: EntityID;
   index: number;
   name: string;
-  description: string;
   uri: string;
   cost: number;
+  tree: string;
+  treeTier: number;
   points: {
     current?: number;
     max: number;
@@ -34,9 +35,7 @@ export interface Effect {
   id: EntityID;
   type: string;
   subtype: string;
-  logicType: string;
   value: number;
-  index?: number;
 }
 
 export interface Requirement {
@@ -59,7 +58,7 @@ export const getSkill = (
   entityIndex: EntityIndex,
   options?: Options
 ): Skill => {
-  const { IsRegistry, IsSkill, Cost, Description, Max, MediaURI, Name, SkillIndex, SkillPoint } =
+  const { IsRegistry, IsSkill, Cost, Level, Max, MediaURI, Name, SkillIndex, SkillPoint, Subtype } =
     components;
 
   const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
@@ -71,13 +70,14 @@ export const getSkill = (
     id: world.entities[entityIndex],
     index: skillIndex,
     name: getComponentValue(Name, registryIndex)?.value || ('' as string),
-    description: getComponentValue(Description, registryIndex)?.value || ('' as string),
     uri: `${baseURI}${getComponentValue(MediaURI, registryIndex)?.value || ('' as string)}`,
     cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
     points: {
       current: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),
       max: Number(getComponentValue(Max, registryIndex)?.value || 0),
     },
+    tree: getComponentValue(Subtype, registryIndex)?.value || ('' as string),
+    treeTier: Number(getComponentValue(Level, registryIndex)?.value || 0),
   };
 
   if (options?.effects) skill.effects = querySkillEffects(world, components, skill.index);
@@ -92,17 +92,15 @@ export const getEffect = (
   components: Components,
   entityIndex: EntityIndex
 ): Effect => {
-  const { Index, Subtype, LogicType, Type, Value } = components;
+  const { BalanceSigned, Subtype, Type } = components;
 
   let effect: Effect = {
     id: world.entities[entityIndex],
     type: getComponentValue(Type, entityIndex)?.value || ('' as string),
     subtype: getComponentValue(Subtype, entityIndex)?.value || ('' as string),
-    logicType: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
-    value: getComponentValue(Value, entityIndex)?.value || (0 as number),
+    value: getComponentValue(BalanceSigned, entityIndex)?.value || (0 as number),
   };
 
-  effect.index = getComponentValue(Index, entityIndex)?.value;
   return effect;
 };
 
@@ -112,7 +110,7 @@ export const getRequirement = (
   components: Components,
   entityIndex: EntityIndex
 ): Requirement => {
-  const { Index, LogicType, Type, Value } = components;
+  const { Balance, Index, LogicType, Type } = components;
 
   let requirement: Requirement = {
     id: world.entities[entityIndex],
@@ -121,6 +119,6 @@ export const getRequirement = (
   };
 
   requirement.index = getComponentValue(Index, entityIndex)?.value;
-  requirement.value = getComponentValue(Value, entityIndex)?.value;
+  requirement.value = getComponentValue(Balance, entityIndex)?.value;
   return requirement;
 };

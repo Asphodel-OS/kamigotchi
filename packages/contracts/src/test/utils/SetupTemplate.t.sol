@@ -588,32 +588,64 @@ abstract contract SetupTemplate is TestSetupImports {
     uint32 index,
     string memory for_,
     string memory type_,
+    uint256 cost,
+    uint256 max
+  ) internal returns (uint256) {
+    return _createSkill(index, for_, type_, "", "name", cost, max, 0);
+  }
+
+  function _createSkill(
+    uint32 index,
+    string memory for_,
+    string memory type_,
+    string memory tree,
+    uint256 cost,
+    uint256 max,
+    uint256 treeTier
+  ) internal returns (uint256) {
+    return _createSkill(index, for_, type_, tree, "name", cost, max, treeTier);
+  }
+
+  function _createSkill(
+    uint32 index,
+    string memory for_,
+    string memory type_,
+    string memory tree,
     string memory name,
     uint cost,
     uint max,
-    string memory description
-  ) public {
+    uint treeTier
+  ) internal returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateSkillSystem.executeTyped(index, for_, type_, name, cost, max, description, "");
+    return
+      abi.decode(
+        __RegistryCreateSkillSystem.executeTyped(
+          index,
+          for_,
+          type_,
+          tree,
+          name,
+          cost,
+          max,
+          treeTier,
+          ""
+        ),
+        (uint256)
+      );
   }
 
   function _createSkillEffect(
     uint32 skillIndex,
     string memory type_,
     string memory subtype, // can be empty
-    string memory logicType, // can be empty
-    uint32 index, // can be empty
-    uint value // can be empty
-  ) public {
+    int value // can be empty
+  ) internal returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateSkillEffectSystem.executeTyped(
-      skillIndex,
-      type_,
-      subtype,
-      logicType,
-      index,
-      value
-    );
+    return
+      abi.decode(
+        __RegistryCreateSkillEffectSystem.executeTyped(skillIndex, type_, subtype, value),
+        (uint256)
+      );
   }
 
   function _createSkillRequirement(
@@ -621,9 +653,13 @@ abstract contract SetupTemplate is TestSetupImports {
     string memory type_,
     uint32 index, // can be empty
     uint value // can be empty
-  ) public {
+  ) internal returns (uint256) {
     vm.prank(deployer);
-    __RegistryCreateSkillRequirementSystem.executeTyped(skillIndex, type_, index, value);
+    return
+      abi.decode(
+        __RegistryCreateSkillRequirementSystem.executeTyped(skillIndex, type_, index, value),
+        (uint256)
+      );
   }
 
   /* TRAITS */

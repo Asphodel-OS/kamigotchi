@@ -31,7 +31,7 @@ export interface _RegistryCreateSkillEffectSystemInterface
   extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,string,string,string,uint32,uint256)": FunctionFragment;
+    "executeTyped(uint32,string,string,int256)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -54,8 +54,6 @@ export interface _RegistryCreateSkillEffectSystemInterface
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -131,8 +129,6 @@ export interface _RegistryCreateSkillEffectSystem extends BaseContract {
       skillIndex: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
       subtype: PromiseOrValue<string>,
-      logicType: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -154,8 +150,6 @@ export interface _RegistryCreateSkillEffectSystem extends BaseContract {
     skillIndex: PromiseOrValue<BigNumberish>,
     type_: PromiseOrValue<string>,
     subtype: PromiseOrValue<string>,
-    logicType: PromiseOrValue<string>,
-    index: PromiseOrValue<BigNumberish>,
     value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -177,8 +171,6 @@ export interface _RegistryCreateSkillEffectSystem extends BaseContract {
       skillIndex: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
       subtype: PromiseOrValue<string>,
-      logicType: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -212,8 +204,6 @@ export interface _RegistryCreateSkillEffectSystem extends BaseContract {
       skillIndex: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
       subtype: PromiseOrValue<string>,
-      logicType: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -236,8 +226,6 @@ export interface _RegistryCreateSkillEffectSystem extends BaseContract {
       skillIndex: PromiseOrValue<BigNumberish>,
       type_: PromiseOrValue<string>,
       subtype: PromiseOrValue<string>,
-      logicType: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -73,6 +73,7 @@ contract SkillUpgradeSystem is System {
 
     // standard logging and tracking
     LibSkill.logUsePoint(components, accountID);
+    LibSkill.logUseTreePoint(components, accountID, registryID);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }
