@@ -46,9 +46,10 @@ const Title = styled.div`
 const Description = styled.div`
   color: #333;
   padding: 0.3vw;
+  padding-right: 0.9vw;
 
   font-family: Pixel;
-  font-size: 0.75vw;
+  font-size: 0.6vw;
   text-align: left;
   line-height: 1.2vw;
 `;
