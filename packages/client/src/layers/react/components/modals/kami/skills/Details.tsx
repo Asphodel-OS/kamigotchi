@@ -82,7 +82,7 @@ export const Details = (props: Props) => {
   return (
     <Container>
       <ImageSection>
-        <Image src={rSkill.uri} />
+        <Image src={rSkill.image} />
         <div style={{ position: 'absolute', bottom: '.6vw', right: '.6vw' }}>
           <Tooltip text={getUpgradeButtonTooltip()}>
             <ActionButton

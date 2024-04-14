@@ -21,8 +21,6 @@ export const Skills = (props: Props) => {
   // console.log('mSkill:', props.kami);
   const { account, kami, skills, actions } = props;
   const [skillMap, setSkillMap] = useState(new Map<number, Skill>());
-  const [selected, setSelected] = useState(0); // index of selected (anchored) skill
-  const [hovered, setHovered] = useState(0); // index of hovered skill
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
   // keep a hashmap for easy lookup of Skill Indices => Skill Objects
@@ -33,13 +31,6 @@ export const Skills = (props: Props) => {
     );
     setSkillMap(result);
   }, [skills.length]);
-
-  // set index of the displayed skill, based on the hovered and selected
-  useEffect(() => {
-    if (hovered !== 0) setDisplayed(hovered);
-    else if (selected !== 0) setDisplayed(selected);
-    else setDisplayed(1);
-  }, [selected, hovered]);
 
   ////////////////////
   // INTERACTIONS
@@ -62,8 +53,7 @@ export const Skills = (props: Props) => {
       <Matrix
         kami={kami}
         skills={skillMap}
-        setHovered={(skillIndex) => setHovered(skillIndex)}
-        setSelected={(skillIndex) => setSelected(skillIndex)}
+        setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
       />
     </Wrapper>
   );

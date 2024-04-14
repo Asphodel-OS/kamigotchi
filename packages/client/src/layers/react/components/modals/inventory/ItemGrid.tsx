@@ -24,7 +24,6 @@ export const ItemGrid = (props: Props) => {
     return (
       <ItemIcon
         key={`${inventory.id}`}
-        id={`item-${inventory.id}`}
         item={inventory.item}
         size='fixed'
         balance={inventory.balance}

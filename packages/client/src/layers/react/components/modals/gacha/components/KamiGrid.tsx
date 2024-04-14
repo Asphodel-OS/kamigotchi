@@ -59,7 +59,7 @@ export const KamiGrid = (props: Props) => {
     return (
       <Tooltip key={kami.index} text={props.getKamiText ? props.getKamiText(kami) : []}>
         <CellContainer key={kami.index} id={`grid-${kami.id}`}>
-          <Image key='image' onClick={() => imageOnClick()} src={kami.uri} />
+          <Image key='image' onClick={() => imageOnClick()} src={kami.image} />
           {props.select && (
             <SelectButton onClick={selectFunc} style={isSelected ? selectedStyle : {}} />
           )}

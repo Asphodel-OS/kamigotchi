@@ -96,7 +96,7 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card
-      image={kami.uri}
+      image={kami.image}
       imageOnClick={() => kamiOnClick()}
       titleBarContent={[
         <TitleText key='title' onClick={() => kamiOnClick()}>

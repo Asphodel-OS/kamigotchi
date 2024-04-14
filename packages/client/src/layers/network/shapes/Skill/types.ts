@@ -11,16 +11,15 @@ import { BigNumber } from 'ethers';
 
 import { baseURI } from 'constants/media';
 import { Components } from 'layers/network';
+import { DetailedEntity } from '../utils/EntityTypes';
 import { querySkillEffects, querySkillRequirements } from './queries';
 
 /////////////////
 // SHAPES
 
-export interface Skill {
+export interface Skill extends DetailedEntity {
   id: EntityID;
   index: number;
-  name: string;
-  uri: string;
   cost: number;
   tree: string;
   treeTier: number;
@@ -59,8 +58,19 @@ export const getSkill = (
   entityIndex: EntityIndex,
   options?: Options
 ): Skill => {
-  const { IsRegistry, IsSkill, Cost, Level, Max, MediaURI, Name, SkillIndex, SkillPoint, Subtype } =
-    components;
+  const {
+    IsRegistry,
+    IsSkill,
+    Cost,
+    Description,
+    Level,
+    Max,
+    MediaURI,
+    Name,
+    SkillIndex,
+    SkillPoint,
+    Subtype,
+  } = components;
 
   const skillIndex = getComponentValue(SkillIndex, entityIndex)?.value || (0 as number);
   const registryIndex = Array.from(
@@ -71,7 +81,8 @@ export const getSkill = (
     id: world.entities[entityIndex],
     index: skillIndex,
     name: getComponentValue(Name, registryIndex)?.value || ('' as string),
-    uri: `${baseURI}${getComponentValue(MediaURI, registryIndex)?.value || ('' as string)}`,
+    description: getComponentValue(Description, registryIndex)?.value || ('' as string),
+    image: `${baseURI}${getComponentValue(MediaURI, registryIndex)?.value || ('' as string)}`,
     cost: Number(getComponentValue(Cost, registryIndex)?.value || 0),
     points: {
       current: Number(getComponentValue(SkillPoint, entityIndex)?.value || 0),

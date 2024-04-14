@@ -12,9 +12,10 @@ import {
 import { Components } from 'layers/network';
 import { baseURI } from 'src/constants/media';
 import { Stats, getStats } from './Stats';
+import { DetailedEntity } from './utils/EntityTypes';
 
 // The standard shape of a FE Item Entity
-export interface Item {
+export interface Item extends DetailedEntity {
   id: EntityID;
   entityIndex: EntityIndex;
   index: number;
@@ -23,13 +24,6 @@ export interface Item {
     lootbox: boolean;
   };
   type: string;
-  image: {
-    default: string;
-    x4: string;
-  };
-  name: string;
-  description: string;
-  experience?: number;
   stats?: Stats;
 }
 
@@ -51,11 +45,8 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     type: getComponentValue(Type, entityIndex)?.value as string,
     name: (getComponentValue(Name, entityIndex)?.value as string) ?? 'Unknown Item',
     description: getComponentValue(Description, entityIndex)?.value as string,
-    image: {
-      default: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
-      x4: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
-    },
-    experience: (getComponentValue(Experience, entityIndex)?.value as number) * 1,
+    image: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
+    image4x: `${baseURI}${getComponentValue(MediaURI, entityIndex)?.value as string}`,
     stats: getStats(components, entityIndex),
     is: {
       consumable: hasComponent(IsConsumable, entityIndex),

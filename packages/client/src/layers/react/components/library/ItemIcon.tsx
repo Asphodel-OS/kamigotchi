@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 
-import { Item } from 'layers/network/shapes/Item';
+import { DetailedEntity } from 'layers/network/shapes/utils/EntityTypes';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  id: string;
-  item: Item;
+  item: DetailedEntity;
   size: 'small' | 'large' | 'fixed';
   description?: boolean;
   balance?: number;
@@ -50,10 +49,10 @@ export const ItemIcon = (props: Props) => {
         <SmallBox style={setStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <SmallIcon src={props.item.image.default} />
+              <SmallIcon src={props.item.image} />
             </ButtonWrapper>
           ) : (
-            <SmallIcon src={props.item.image.default} />
+            <SmallIcon src={props.item.image} />
           )}
           {balance()}
         </SmallBox>
@@ -63,10 +62,10 @@ export const ItemIcon = (props: Props) => {
         <LargeBox style={setStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <LargeIcon src={props.item.image.x4} />
+              <LargeIcon src={props.item.image4x ?? props.item.image} />
             </ButtonWrapper>
           ) : (
-            <LargeIcon src={props.item.image.x4} />
+            <LargeIcon src={props.item.image4x ?? props.item.image} />
           )}
           {balance()}
         </LargeBox>
@@ -76,10 +75,10 @@ export const ItemIcon = (props: Props) => {
       <FixedBox style={setStyles()}>
         {props.onClick ? (
           <ButtonWrapper onClick={handleClick}>
-            <FixedIcon src={props.item.image.default} />
+            <FixedIcon src={props.item.image} />
           </ButtonWrapper>
         ) : (
-          <FixedIcon src={props.item.image.default} />
+          <FixedIcon src={props.item.image} />
         )}
         {balance()}
       </FixedBox>
@@ -89,7 +88,7 @@ export const ItemIcon = (props: Props) => {
   let result = base();
 
   if (props.description) {
-    result = <Tooltip text={[props.item.name, '', props.item.description]}>{result}</Tooltip>;
+    result = <Tooltip text={[props.item.name, '', props.item.description ?? '']}>{result}</Tooltip>;
   }
 
   return result;

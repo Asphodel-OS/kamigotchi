@@ -18,14 +18,13 @@ import { Production, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
+import { DetailedEntity } from '../utils/EntityTypes';
 
 // standardized shape of a Kami Entity
-export interface Kami {
+export interface Kami extends DetailedEntity {
   id: EntityID;
   index: number;
   entityIndex: EntityIndex;
-  name: string;
-  uri: string;
   level: number;
   experience: KamiExperience;
   rerolls: number;
@@ -107,7 +106,7 @@ export const getKami = (
     index: getComponentValue(PetIndex, entityIndex)?.value as number,
     entityIndex,
     name: getComponentValue(Name, entityIndex)?.value as string,
-    uri: getComponentValue(MediaURI, entityIndex)?.value as string,
+    image: getComponentValue(MediaURI, entityIndex)?.value as string,
     level: (getComponentValue(Level, entityIndex)?.value ?? (1 as number)) * 1,
     experience: {
       current: (getComponentValue(Experience, entityIndex)?.value ?? (0 as number)) * 1,

@@ -28,7 +28,7 @@ export const Kamis = (props: Props) => {
       {props.kamis.map((kami) => (
         <Tooltip key={kami.index} text={[kami.name]}>
           <CellContainer id={`grid-${kami.id}`}>
-            <Image onClick={() => kamiOnClick(kami)} src={kami.uri} />
+            <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
           </CellContainer>
         </Tooltip>
       ))}

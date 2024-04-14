@@ -86,7 +86,7 @@ export const Banner = (props: Props) => {
 
   return (
     <Container>
-      <Image src={kami.uri} />
+      <Image src={kami.image} />
       <Content>
         <ContentTop>
           <TitleRow>

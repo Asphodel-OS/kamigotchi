@@ -1,73 +1,62 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { SkillTrees } from 'constants/skills/trees';
+import { MutualExclusivity, SkillTrees } from 'constants/skills/trees';
 import { Kami } from 'layers/network/shapes/Kami';
 import { Skill } from 'layers/network/shapes/Skill';
-import { ActionButton, Tooltip } from 'layers/react/components/library';
-import { Edge } from './Edge';
-import { Node } from './Node';
+import { ActionButton, ItemIcon, Tooltip } from 'layers/react/components/library';
 
 interface Props {
   kami: Kami;
   skills: Map<number, Skill>;
-  setHovered: (skillIndex: number) => void;
-  setSelected: (skillIndex: number) => void;
+  setDisplayed: (skillIndex: number) => void;
 }
 
 export const Matrix = (props: Props) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const { kami, skills, setHovered, setSelected } = props;
+  const { skills, setDisplayed } = props;
   const [mode, setMode] = useState(SkillTrees.keys().next().value);
-  const [nodeRects, setNodeRects] = useState(new Map<number, DOMRect>());
-  const [baseRect, setBaseRect] = useState<DOMRect>();
-  const [edges, setEdges] = useState<number[][]>([]);
 
+  // whenever the tree mode changes assign the skill at root node
   useEffect(() => {
-    // Function to update the bounding rectangle
-    const updateRect = () => {
-      if (contentRef.current) {
-        const newRect = contentRef.current.getBoundingClientRect();
-        setBaseRect(newRect);
-      }
-    };
-
-    // Set up a resize observer to update the rectangle when the window resizes
-    const resizeObserver = new ResizeObserver(updateRect);
-    if (contentRef.current) resizeObserver.observe(contentRef.current);
-    return () => {
-      if (contentRef.current) resizeObserver.unobserve(contentRef.current);
-    };
-  }, []);
-
-  // whenever the tree mode changes
-  // - assign the root node of the tree as the selected Display skill
-  // - update the web of dependencies used to draw edges
-  useEffect(() => {
-    const tree = SkillTrees.get(mode)!;
-    const indexList = tree.flat(); // list of skill indices in this tree
-    setSelected(indexList[0]); // set selected to root skill node
-
-    let edges = [] as number[][];
-    for (const index of indexList) {
-      const skill = skills.get(index);
-      if (!skill) continue;
-      const dependencies = getNodeDependencies(skill);
-      edges = edges.concat(dependencies.map((dep) => [dep, index]));
-    }
-
-    // no dependency data is available initially
-    setEdges(edges);
+    setDisplayed(SkillTrees.get(mode)![0][0]); // set selected to root skill node
   }, [mode, skills.size]);
 
-  ////////////////////
-  // INTERPRETATION
+  const getNodes = () => {
+    const tree = SkillTrees.get(mode)!;
+    return tree.map((row, i) => getNodeRow(row, MutualExclusivity[i]));
+  };
 
-  // get the (skill node) dependencies of a skill node
-  const getNodeDependencies = (skill: Skill) => {
-    if (!skill.requirements) return [];
-    const skillReqs = skill.requirements.filter((req) => req.type === 'SKILL');
-    return skillReqs.map((req) => req.index! * 1);
+  const getNodeRow = (skillIndices: number[], exclusive: boolean[]) => {
+    const skillRow = skillIndices.map((index) =>
+      skills.get(index) !== undefined ? (
+        <ItemIcon
+          key={index}
+          item={skills.get(index)!}
+          size='small'
+          onClick={() => setDisplayed(index)}
+        />
+      ) : (
+        <div></div>
+      )
+    );
+
+    // fill in the rest of the row with empty nodes if skill outnumber exclusive info
+    if (exclusive.length + 1 < skillIndices.length)
+      exclusive.concat(Array(skillIndices.length - exclusive.length).fill(false));
+
+    // create the row of lines; transparent if empty
+    const lineRow = exclusive.map((isOn) => <Line style={{ color: isOn ? '#fff' : '#333' }} />);
+
+    // creating the final row
+    const result: JSX.Element[] = [];
+    for (let i = 0; i < exclusive.length; i++) {
+      result.push(skillRow[i]);
+      result.push(lineRow[i]);
+    }
+    result.push(skillRow[exclusive.length]);
+
+    return <NodeRow>{result}</NodeRow>;
   };
 
   return (
@@ -86,27 +75,7 @@ export const Matrix = (props: Props) => {
           ))}
         </TreeButtons>
       </TopRow>
-      <Content ref={contentRef}>
-        {skills.size > 0 &&
-          SkillTrees.get(mode)!.map((row, i) => (
-            <NodeRow key={i}>
-              {row.map((index) => (
-                <Node
-                  key={index}
-                  kami={kami}
-                  skill={skills.get(index)!}
-                  nodeRects={nodeRects}
-                  setNodeRects={setNodeRects}
-                  setHovered={setHovered}
-                  setSelected={setSelected}
-                />
-              ))}
-            </NodeRow>
-          ))}
-        {edges.map((edge, i) => (
-          <Edge key={i} from={edge[0]} to={edge[1]} baseRect={baseRect!} nodeRects={nodeRects} />
-        ))}
-      </Content>
+      <Content ref={contentRef}>{getNodes()}</Content>
     </Container>
   );
 };
@@ -171,5 +140,11 @@ const NodeRow = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  gap: 1.5vw;
+
+  padding: 2.5vw;
+`;
+
+const Line = styled.hr`
+  flex-grow: 1;
+  align-self: center;
 `;
