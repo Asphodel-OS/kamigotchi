@@ -65,6 +65,11 @@
           "internalType": "string"
         },
         {
+          "name": "description",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
           "name": "cost",
           "type": "uint256",
           "internalType": "uint256"
@@ -152,7 +157,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint32,string,string,string,string,uint256,uint256,uint256,string)": "060b09b7",
+    "executeTyped(uint32,string,string,string,string,string,uint256,uint256,uint256,string)": "cf6640ea",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

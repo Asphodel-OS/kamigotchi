@@ -15,6 +15,14 @@ interface Props {
   actions: {
     upgrade: Function;
   };
+  utils: {
+    getSkillUpgradeError: (
+      index: number,
+      kami: Kami,
+      registry: Map<number, Skill>
+    ) => string[] | undefined;
+    getTreePoints: (target: Kami, tree: string) => number;
+  };
 }
 
 export const Skills = (props: Props) => {
@@ -49,11 +57,13 @@ export const Skills = (props: Props) => {
       <Details
         data={{ account, kami, index: displayed, skills: skillMap }}
         actions={{ upgrade: (skill: Skill) => triggerUpgrade(skill) }}
+        utils={props.utils}
       />
       <Matrix
         kami={kami}
         skills={skillMap}
         setDisplayed={(skillIndex) => setDisplayed(skillIndex)}
+        utils={props.utils}
       />
     </Wrapper>
   );

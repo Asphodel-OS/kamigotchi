@@ -30,7 +30,7 @@ import type {
 export interface _RegistryCreateSkillSystemInterface extends utils.Interface {
   functions: {
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint32,string,string,string,string,uint256,uint256,uint256,string)": FunctionFragment;
+    "executeTyped(uint32,string,string,string,string,string,uint256,uint256,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -51,6 +51,7 @@ export interface _RegistryCreateSkillSystemInterface extends utils.Interface {
     functionFragment: "executeTyped",
     values: [
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -135,6 +136,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       type_: PromiseOrValue<string>,
       tree: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       treeTier: PromiseOrValue<BigNumberish>,
@@ -161,6 +163,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
     type_: PromiseOrValue<string>,
     tree: PromiseOrValue<string>,
     name: PromiseOrValue<string>,
+    description: PromiseOrValue<string>,
     cost: PromiseOrValue<BigNumberish>,
     max: PromiseOrValue<BigNumberish>,
     treeTier: PromiseOrValue<BigNumberish>,
@@ -187,6 +190,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       type_: PromiseOrValue<string>,
       tree: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       treeTier: PromiseOrValue<BigNumberish>,
@@ -225,6 +229,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       type_: PromiseOrValue<string>,
       tree: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       treeTier: PromiseOrValue<BigNumberish>,
@@ -252,6 +257,7 @@ export interface _RegistryCreateSkillSystem extends BaseContract {
       type_: PromiseOrValue<string>,
       tree: PromiseOrValue<string>,
       name: PromiseOrValue<string>,
+      description: PromiseOrValue<string>,
       cost: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
       treeTier: PromiseOrValue<BigNumberish>,

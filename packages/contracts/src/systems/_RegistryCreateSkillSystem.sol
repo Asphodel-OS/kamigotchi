@@ -19,13 +19,14 @@ contract _RegistryCreateSkillSystem is System {
       string memory type_,
       string memory tree,
       string memory name,
+      string memory description,
       uint256 cost,
       uint256 max,
       uint256 treeTier,
       string memory media
     ) = abi.decode(
         arguments,
-        (uint32, string, string, string, string, uint256, uint256, uint256, string)
+        (uint32, string, string, string, string, string, uint256, uint256, uint256, string)
       );
 
     require(index != 0, "SkillCreate: index cannot be 0");
@@ -35,7 +36,7 @@ contract _RegistryCreateSkillSystem is System {
     uint256 regID = LibRegistrySkill.getByIndex(components, index);
     require(regID == 0, "SkillCreate: already exists");
 
-    regID = LibRegistrySkill.create(components, index, for_, type_, name, cost, max, media);
+    regID = LibRegistrySkill.create(components, index, for_, type_, name, description, cost, max, media);
     if (!LibString.eq(tree, "")) LibRegistrySkill.setTree(components, regID, tree, treeTier);
 
     return abi.encode(regID);
@@ -47,11 +48,12 @@ contract _RegistryCreateSkillSystem is System {
     string memory type_,
     string memory tree,
     string memory name,
+    string memory description,
     uint256 cost,
     uint256 max,
     uint256 treeTier,
     string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, for_, type_, tree, name, cost, max, treeTier, media));
+    return execute(abi.encode(index, for_, type_, tree, name, description, cost, max, treeTier, media));
   }
 }

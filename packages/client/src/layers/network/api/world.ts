@@ -490,6 +490,7 @@ export function setupWorldAPI(systems: any, provider: any) {
       'PASSIVE', // all skills are passive rn
       entry['Tree'],
       entry['Name'], // name of skill
+      entry['Description'] ?? '',
       Number(entry['Cost per level']), // cost of skill
       Number(entry['Max Lvl']), // max level of skill
       Number(entry['Tier']) - 1,

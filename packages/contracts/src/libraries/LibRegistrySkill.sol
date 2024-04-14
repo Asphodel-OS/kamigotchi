@@ -20,6 +20,7 @@ import { IsSkillComponent, ID as IsSkillCompID } from "components/IsSkillCompone
 import { BalanceSignedComponent, ID as BalSignedCompID } from "components/BalanceSignedComponent.sol";
 import { BalanceComponent, ID as BalCompID } from "components/BalanceComponent.sol";
 import { CostComponent, ID as CostCompID } from "components/CostComponent.sol";
+import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
@@ -57,6 +58,7 @@ library LibRegistrySkill {
     string memory for_,
     string memory type_,
     string memory name,
+    string memory description,
     uint256 cost,
     uint256 max,
     string memory media
@@ -70,6 +72,7 @@ library LibRegistrySkill {
     setCost(components, id, cost);
     setMax(components, id, max);
     setMediaURI(components, id, media);
+    DescriptionComponent(getAddressById(components, DescCompID)).set(id, description);
 
     if (LibString.eq(for_, "KAMI")) setFor(components, id, IsPetCompID);
     else if (LibString.eq(for_, "ACCOUNT")) setFor(components, id, IsAccountCompID);
@@ -123,6 +126,7 @@ library LibRegistrySkill {
     unsetMediaURI(components, id);
     unsetName(components, id);
     unsetType(components, id);
+    DescriptionComponent(getAddressById(components, DescCompID)).remove(id);
   }
 
   function deleteEffect(IUintComp components, uint256 id) internal {
@@ -345,8 +349,7 @@ library LibRegistrySkill {
 
   function getSubtype(IUintComp components, uint256 id) internal view returns (string memory) {
     SubtypeComponent comp = SubtypeComponent(getAddressById(components, SubtypeCompID));
-    if (!comp.has(id)) return "";
-    else return comp.get(id);
+    return comp.has(id) ? comp.get(id) : "";
   }
 
   function getTree(
@@ -355,12 +358,11 @@ library LibRegistrySkill {
   ) internal view returns (bool, string memory, uint256) {
     SubtypeComponent treeComp = SubtypeComponent(getAddressById(components, SubtypeCompID));
     if (!treeComp.has(id)) return (false, "", 0);
-    else
-      return (
-        true,
-        treeComp.get(id),
-        LevelComponent(getAddressById(components, LevelCompID)).get(id)
-      );
+    return (
+      true,
+      treeComp.get(id),
+      LevelComponent(getAddressById(components, LevelCompID)).get(id)
+    );
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {

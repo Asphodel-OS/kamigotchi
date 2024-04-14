@@ -134,6 +134,7 @@ const LargeIcon = styled.img`
   height: 100%;
   width: 100%;
   padding: 1vw;
+  image-rendering: pixelated;
 `;
 
 const LargeBalance = styled.div`
@@ -170,6 +171,7 @@ const SmallIcon = styled.img`
   height: 100%;
   width: 100%;
   padding: 0.5vw;
+  image-rendering: pixelated;
 `;
 
 const SmallBalance = styled.div`
@@ -204,6 +206,7 @@ const FixedIcon = styled.img`
   height: 50px;
   width: 50px;
   padding: 5px;
+  image-rendering: pixelated;
 `;
 
 const FixedBalance = styled.div`

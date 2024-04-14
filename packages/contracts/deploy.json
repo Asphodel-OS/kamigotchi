@@ -255,6 +255,7 @@
         "IsSkillComponent",
         "IndexSkillComponent",
         "CostComponent",
+        "DescriptionComponent",
         "ForComponent",
         "LevelComponent",
         "MaxComponent",

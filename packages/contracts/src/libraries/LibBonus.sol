@@ -60,7 +60,7 @@ library LibBonus {
     uint256 base
   ) internal view returns (uint256) {
     int256 bonus = getRaw(components, holderID, type_);
-    return signCalc(base, bonus);
+    return calcSigned(base, bonus);
   }
 
   function getRaw(
@@ -82,14 +82,12 @@ library LibBonus {
 
   /// @notice handles a custom signed/unsigned calculation
   /// @dev recieves the signed bonus value, calculates, and spits out unsigned for other systems
-  function signCalc(uint256 base, int256 bonus) internal pure returns (uint256) {
+  function calcSigned(uint256 base, int256 bonus) internal pure returns (uint256) {
     // avoid converting base in case of overflow
     if (bonus == 0) return base;
-    else if (bonus > 0) return base + uint256(bonus);
-    else {
-      uint256 delta = uint256(-bonus);
-      if (delta >= base) return 0;
-      else return base - delta;
-    }
+    if (bonus > 0) return base + uint256(bonus);
+    
+    uint256 delta = uint256(-bonus);
+    return (delta >= base) ? 0 : base - delta;
   }
 }

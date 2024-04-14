@@ -3,7 +3,12 @@ import { interval, map } from 'rxjs';
 
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Kami, getKamiByIndex } from 'layers/network/shapes/Kami';
-import { Skill, getRegistrySkills } from 'layers/network/shapes/Skill';
+import {
+  Skill,
+  getRegistrySkills,
+  getSkillUpgradeError,
+  getTreePoints,
+} from 'layers/network/shapes/Skill';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected } from 'layers/react/store';
@@ -110,6 +115,12 @@ export function registerKamiModal() {
               kami={getSelectedKami()}
               skills={getRegistrySkills(world, components)}
               actions={{ upgrade: upgradeSkill }}
+              utils={{
+                getSkillUpgradeError: (index: number, kami: Kami, registry: Map<number, Skill>) =>
+                  getSkillUpgradeError(world, components, index, kami, registry),
+                getTreePoints: (target: Kami, tree: string) =>
+                  getTreePoints(world, components, target, tree),
+              }}
             />
           )}
         </ModalWrapper>

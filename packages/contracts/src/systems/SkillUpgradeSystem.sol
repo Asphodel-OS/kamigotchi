@@ -63,7 +63,7 @@ contract SkillUpgradeSystem is System {
     // get the skill's effects and update the holder's bonuses accordingly
     uint256[] memory effectIDs = LibRegistrySkill.getEffectsByIndex(components, skillIndex);
     for (uint256 i = 0; i < effectIDs.length; i++) {
-      LibSkill.processEffectUpgrade(world, components, holderID, effectIDs[i]);
+      LibSkill.processEffectUpgrade(components, holderID, effectIDs[i]);
     }
 
     // NOTE: we sync the pet a second time here, because the updated Production Rate

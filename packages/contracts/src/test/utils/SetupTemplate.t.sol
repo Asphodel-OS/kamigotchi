@@ -625,6 +625,7 @@ abstract contract SetupTemplate is TestSetupImports {
           type_,
           tree,
           name,
+          "description",
           cost,
           max,
           treeTier,

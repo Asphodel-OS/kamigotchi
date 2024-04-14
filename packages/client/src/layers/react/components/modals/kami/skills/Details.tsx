@@ -5,9 +5,9 @@ import { Account } from 'layers/network/shapes/Account';
 import { Kami } from 'layers/network/shapes/Kami';
 import {
   Skill,
-  getSkillUpgradeError,
   parseEffectText,
   parseRequirementText,
+  parseTreeRequirementText,
 } from 'layers/network/shapes/Skill';
 import { ActionButton, HelpIcon, Tooltip } from 'layers/react/components/library';
 
@@ -21,11 +21,19 @@ interface Props {
   actions: {
     upgrade: (skill: Skill) => void;
   };
+  utils: {
+    getSkillUpgradeError: (
+      index: number,
+      kami: Kami,
+      registry: Map<number, Skill>
+    ) => string[] | undefined;
+    getTreePoints: (target: Kami, tree: string) => number;
+  };
 }
 
 // The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
-  const { actions, data } = props;
+  const { actions, data, utils } = props;
   const [rSkill, setRSkill] = useState<Skill | undefined>(undefined);
   const [kSkill, setKSkill] = useState<Skill | undefined>(undefined);
   const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
@@ -37,7 +45,7 @@ export const Details = (props: Props) => {
     setDisabledReason(
       data.kami.account?.index !== data.account.index
         ? ['not ur kami']
-        : getSkillUpgradeError(data.index, data.kami, data.skills)
+        : utils.getSkillUpgradeError(data.index, data.kami, data.skills)
     );
   }, [data.index, data.kami]);
 
@@ -64,7 +72,7 @@ export const Details = (props: Props) => {
 
   // render a list of values with a label (for Effects/Requirements)
   const LabeledList = (props: { label: string; values?: string[] }) => {
-    if (!props.values || props.values.length <= 0) return <></>;
+    if (!props.values || props.values.length <= 0 || props.values[0] == '') return <></>;
     return (
       <DetailSection>
         <DetailLabel>{props.label}:</DetailLabel>
@@ -105,11 +113,12 @@ export const Details = (props: Props) => {
 
       <NameSection>
         <Name>{rSkill.name}</Name>
+        <LevelText>
+          [{kSkill?.points.current ?? 0}/{rSkill.points.max}]
+        </LevelText>
       </NameSection>
 
-      {/* <Description>
-        {rSkill.description} blah blah blah this is a fuller description lorem ipsum falalala
-      </Description> */}
+      <Description>{rSkill.description}</Description>
 
       <LabeledList
         label='Effects'
@@ -117,7 +126,10 @@ export const Details = (props: Props) => {
       />
       <LabeledList
         label='Requirements'
-        values={(rSkill.requirements ?? []).map((req) => parseRequirementText(req, data.skills))}
+        values={[
+          parseTreeRequirementText(rSkill, utils.getTreePoints(data.kami, rSkill.tree)),
+          ...(rSkill.requirements ?? []).map((req) => parseRequirementText(req, data.skills)),
+        ]}
       />
     </Container>
   );
@@ -126,8 +138,8 @@ export const Details = (props: Props) => {
 const Container = styled.div`
   border-right: 0.15vw solid #333;
   padding-bottom: 3vw;
-  max-width: 18.9vw;
-  min-width: 18.9vw;
+  max-width: 20vw;
+  min-width: 20vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -144,12 +156,17 @@ const ImageSection = styled.div`
 `;
 
 const Image = styled.img`
-  width: 100%;
+  image-rendering: pixelated;
+  width: 10vw;
+  margin: 0.75vw;
+
+  border: solid black 0.15vw;
+  border-radius: 0.5vw;
 `;
 
 const NameSection = styled.div`
   border-bottom: 0.15vw solid #333;
-  padding: 1vw 0.3vw;
+  padding: 1.4vh 0.3vw;
 
   display: flex;
   flex-flow: row wrap;
@@ -170,34 +187,42 @@ const Name = styled.div`
   line-height: 1.5vw;
 `;
 
+const LevelText = styled.div`
+  color: #333;
+  font-family: Pixel;
+  font-size: 0.6vw;
+  width: 100%;
+  text-align: center;
+  padding: 0.5vh 0 0 0;
+`;
+
 const Description = styled.div`
   color: #666;
-  padding: 1vw;
-
-  display: flex;
-  justify-content: center;
-  line-height: 1.2vw;
-
+  padding: 1.2vh 1vw;
   font-family: Pixel;
-  font-size: 0.9vw;
+  text-align: left;
+  line-height: 1vw;
+  font-size: 0.75vw;
 `;
 
 const DetailSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.6vw 1vw;
+  padding: 0.8vh 1vw;
 `;
 
 const DetailLabel = styled.div`
   color: #333;
   font-family: Pixel;
   font-size: 0.9vw;
+  padding: 0.3vh 0;
 `;
 
 const DetailDescription = styled.div`
-  color: #999;
+  color: #666;
   font-family: Pixel;
   font-size: 0.6vw;
-  line-height: 1.5vw;
+  line-height: 1vw;
+  padding: 0.3vh 0;
   padding-left: 0.3vw;
 `;

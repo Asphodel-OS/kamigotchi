@@ -36,7 +36,6 @@ import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem"
 import { AccountSetFarcasterDataSystem } from "./ethers-contracts/AccountSetFarcasterDataSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
-import { AccountUpgradeSkillSystem } from "./ethers-contracts/AccountUpgradeSkillSystem";
 import { Farm20DepositSystem } from "./ethers-contracts/Farm20DepositSystem";
 import { Farm20ProxySystem } from "./ethers-contracts/Farm20ProxySystem";
 import { Farm20WithdrawSystem } from "./ethers-contracts/Farm20WithdrawSystem";
@@ -64,7 +63,6 @@ import { PetGachaRevealSystem } from "./ethers-contracts/PetGachaRevealSystem";
 import { PetLevelSystem } from "./ethers-contracts/PetLevelSystem";
 import { PetNameSystem } from "./ethers-contracts/PetNameSystem";
 import { PetReviveSystem } from "./ethers-contracts/PetReviveSystem";
-import { PetUpgradeSkillSystem } from "./ethers-contracts/PetUpgradeSkillSystem";
 import { PetUseItemSystem } from "./ethers-contracts/PetUseItemSystem";
 import { ProductionCollectSystem } from "./ethers-contracts/ProductionCollectSystem";
 import { ProductionLiquidateSystem } from "./ethers-contracts/ProductionLiquidateSystem";
@@ -119,7 +117,6 @@ export type SystemTypes = {
   "system.Account.Set.FarcasterData": AccountSetFarcasterDataSystem;
   "system.Account.Set.Name": AccountSetNameSystem;
   "system.Account.Set.Operator": AccountSetOperatorSystem;
-  "system.Account.Upgrade.Skill": AccountUpgradeSkillSystem;
   "system.Farm20.Deposit": Farm20DepositSystem;
   "system.Farm20.Proxy": Farm20ProxySystem;
   "system.Farm20.Withdraw": Farm20WithdrawSystem;
@@ -147,7 +144,6 @@ export type SystemTypes = {
   "system.Pet.Level": PetLevelSystem;
   "system.Pet.Name": PetNameSystem;
   "system.Pet.Revive": PetReviveSystem;
-  "system.Pet.Upgrade.Skill": PetUpgradeSkillSystem;
   "system.Pet.Use.Item": PetUseItemSystem;
   "system.Production.Collect": ProductionCollectSystem;
   "system.Production.Liquidate": ProductionLiquidateSystem;

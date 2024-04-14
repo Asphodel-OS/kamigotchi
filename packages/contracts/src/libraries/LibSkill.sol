@@ -64,21 +64,19 @@ library LibSkill {
 
   // process the upgrade of a skill (can be generic or stat skill)
   function processEffectUpgrade(
-    IWorld world,
     IUintComp components,
     uint256 holderID,
     uint256 effectID
   ) public {
     if (LibRegistrySkill.getType(components, effectID).eq("STAT")) {
-      processStatEffectUpgrade(world, components, holderID, effectID);
+      processStatEffectUpgrade(components, holderID, effectID);
     } else {
-      processGeneralEffectUpgrade(world, components, holderID, effectID);
+      processGeneralEffectUpgrade(components, holderID, effectID);
     }
   }
 
   // process the upgrade of a generic skill inc/dec effect
   function processGeneralEffectUpgrade(
-    IWorld world,
     IUintComp components,
     uint256 holderID,
     uint256 effectID
@@ -96,7 +94,6 @@ library LibSkill {
   // processes the upgrade of a stat increment/decrement effect
   // assume the holder's bonus entity exists
   function processStatEffectUpgrade(
-    IWorld world,
     IUintComp components,
     uint256 holderID,
     uint256 effectID
