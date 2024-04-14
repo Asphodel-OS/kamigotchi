@@ -70,6 +70,7 @@ export function registerFundOperatorModal() {
 
         const actionID = uuid() as EntityID;
         actions.add({
+          id: actionID,
           action: 'AccountFund',
           params: [amount.toString()],
           description: `Funding Operator ${amount.toString()}`,
@@ -85,6 +86,7 @@ export function registerFundOperatorModal() {
       const refundTx = async () => {
         const actionID = uuid() as EntityID;
         actions.add({
+          id: actionID,
           action: 'AccountRefund',
           params: [amount.toString()],
           description: `Refunding Owner ${amount.toString()}`,
@@ -101,8 +103,7 @@ export function registerFundOperatorModal() {
 
       const chooseTx = async () => {
         playScribble();
-        if (isFunding) await fundTx();
-        else await refundTx();
+        isFunding ? await fundTx() : await refundTx();
         playSuccess();
       };
 
@@ -121,9 +122,7 @@ export function registerFundOperatorModal() {
 
       const TxButton = () => {
         const text = isFunding! ? 'Fund Operator' : 'Send to Owner';
-        return (
-          <ActionButton id='button-deposit' onClick={() => chooseTx()} size='large' text={text} />
-        );
+        return <ActionButton id='button-deposit' onClick={chooseTx} size='large' text={text} />;
       };
 
       const StateBox = (fundState: boolean) => {
@@ -165,11 +164,13 @@ export function registerFundOperatorModal() {
 
       return (
         <ModalWrapper divName='operatorFund' id='operatorFund' canExit overlay>
-          <Header>Operator gas</Header>
           <Grid>
-            <div style={{ width: '100%', gridRow: 1, gridColumn: 1 }}>{StateBox(true)}</div>
-            <div style={{ width: '100%', gridRow: 1, gridColumn: 2 }}>{StateBox(false)}</div>
-            <Description style={{ gridRow: 2, gridColumnStart: 1, gridColumnEnd: 3 }}>
+            <Header>Operator gas</Header>
+            <Row>
+              {StateBox(true)}
+              {StateBox(false)}
+            </Row>
+            <Description>
               Fund operator. You need gas to function. Better description to follow.
             </Description>
             <div
@@ -177,9 +178,6 @@ export function registerFundOperatorModal() {
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                gridRow: 4,
-                gridColumnStart: 1,
-                gridColumnEnd: 3,
               }}
             >
               <Input
@@ -192,7 +190,7 @@ export function registerFundOperatorModal() {
               ></Input>
               <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
             </div>
-            <div style={{ gridRow: 5, gridColumnStart: 1, gridColumnEnd: 3 }}>{TxButton()}</div>
+            {TxButton()}
           </Grid>
         </ModalWrapper>
       );
@@ -203,11 +201,16 @@ export function registerFundOperatorModal() {
 const BoxButton = styled.button`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  min-width: 100px;
+  padding: 0.5vh 0;
+  margin: 0 0.5vw;
 
   background-color: #fff;
   border-style: solid;
-  border-width: 2px;
+  border-width: 0.15vw;
   border-color: black;
   color: black;
 
@@ -216,29 +219,35 @@ const BoxButton = styled.button`
 
 const Header = styled.p`
   color: black;
+  padding: 0.75vw;
 
-  padding: 32px;
   font-family: Pixel;
-  font-size: 24px;
+  font-size: 1.5vw;
   text-align: center;
 `;
 
 const Grid = styled.div`
-  display: grid;
-  justify-items: center;
-  justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  grid-column-gap: 6px;
-  grid-row-gap: 6px;
-  max-height: 80%;
-  padding: 20px;
+  height: 100%;
+
+  padding: 1vh 1vw;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row wrap;
+  align-items: center;
+  width: 100%;
 `;
 
 const Description = styled.p`
-  font-size: 14px;
+  font-size: 1vw;
   color: black;
   text-align: center;
-  padding: 4px;
+  padding: 0.5vw;
   font-family: Pixel;
   width: 100%;
 `;
@@ -249,13 +258,13 @@ const Input = styled.input`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 32px;
+  font-size: 1.5vw;
   cursor: pointer;
   justify-content: center;
   font-family: Pixel;
 
   border-width: 0px;
-  padding: 32px;
+  padding: 1vh 1vw;
 
   &:focus {
     outline: none;
@@ -263,38 +272,19 @@ const Input = styled.input`
 `;
 
 const SubDescription = styled.p`
-  font-size: 12px;
+  font-size: 0.8vw;
   color: grey;
   text-align: center;
-  padding: 4px;
+  padding: 0.1vw;
   font-family: Pixel;
   width: 100%;
 `;
 
-const TopButton = styled.button`
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  color: black;
-  padding: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-  border-radius: 5px;
-  font-family: Pixel;
-  width: 30px;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  margin: 0px;
-`;
-
 const WarnText = styled.div`
-  font-size: 12px;
+  font-size: 0.8vw;
   color: #ff785b;
   text-align: center;
-  padding: 4px;
+  padding: 0.75vw;
   font-family: Pixel;
 
   cursor: pointer;
