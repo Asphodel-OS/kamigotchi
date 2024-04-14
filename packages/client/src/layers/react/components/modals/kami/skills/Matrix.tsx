@@ -35,6 +35,8 @@ export const Matrix = (props: Props) => {
           item={skills.get(index)!}
           size='small'
           onClick={() => setDisplayed(index)}
+          hoverText={true}
+          styleOverride={{ box: { margin: '0' }, icon: { padding: '0' } }}
         />
       ) : (
         <div></div>
@@ -46,7 +48,7 @@ export const Matrix = (props: Props) => {
       exclusive.concat(Array(skillIndices.length - exclusive.length).fill(false));
 
     // create the row of lines; transparent if empty
-    const lineRow = exclusive.map((isOn) => <Line style={{ color: isOn ? '#fff' : '#333' }} />);
+    const lineRow = exclusive.map((isOn) => <Line style={{ opacity: isOn ? 1 : 0 }} />);
 
     // creating the final row
     const result: JSX.Element[] = [];
@@ -67,7 +69,7 @@ export const Matrix = (props: Props) => {
           {Array.from(SkillTrees.keys()).map((treeName) => (
             <Tooltip text={[`${treeName} tree`]} key={treeName}>
               <ActionButton
-                text={treeName[0]}
+                text={mode === treeName ? treeName : treeName[0]}
                 onClick={() => setMode(treeName)}
                 disabled={mode === treeName}
               />
@@ -75,7 +77,7 @@ export const Matrix = (props: Props) => {
           ))}
         </TreeButtons>
       </TopRow>
-      <Content ref={contentRef}>{getNodes()}</Content>
+      <Content>{getNodes()}</Content>
     </Container>
   );
 };
@@ -90,18 +92,27 @@ const Container = styled.div`
   overflow-y: scroll;
 `;
 
+const Content = styled.div`
+  padding-top: 3vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  overflow-y: scroll;
+`;
+
 const TopRow = styled.div`
   width: 100%;
   padding: 1vw 0.6vw;
   height: 3vw;
   background-color: #999;
-  opacity: 0.9;
   position: absolute;
+  opacity: 0.9;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+  z-index: 1;
 `;
 
 const PointsText = styled.div`
@@ -128,23 +139,17 @@ const TreeButtons = styled.div`
   gap: 0.6vw;
 `;
 
-const Content = styled.div`
-  padding-top: 3vw;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
-  overflow-y: scroll;
-`;
-
 const NodeRow = styled.div`
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row;
   justify-content: center;
 
-  padding: 2.5vw;
+  padding: 1.5vh;
+  column-gap: 0.15vw;
 `;
 
 const Line = styled.hr`
-  flex-grow: 1;
+  width: 2.5vw;
   align-self: center;
+  border: solid black 0.075vw;
 `;

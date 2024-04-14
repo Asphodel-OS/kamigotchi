@@ -7,11 +7,15 @@ import { playClick } from 'utils/sounds';
 interface Props {
   item: DetailedEntity;
   size: 'small' | 'large' | 'fixed';
-  description?: boolean;
+  hoverText?: boolean | string[];
   balance?: number;
   glow?: string;
   onClick?: Function;
   disabled?: boolean;
+  styleOverride?: {
+    box?: any;
+    icon?: any;
+  };
 }
 
 export const ItemIcon = (props: Props) => {
@@ -23,12 +27,20 @@ export const ItemIcon = (props: Props) => {
     }
   };
 
-  const setStyles = () => {
+  const setBoxStyles = () => {
     let styles: any = {};
+    if (props.styleOverride?.box) styles = props.styleOverride.box;
 
     if (props.glow) {
       styles.boxShadow = `0 0 0.75vw 0.75vw ${props.glow}`;
     }
+
+    return styles;
+  };
+
+  const setIconStyles = () => {
+    let styles: any = {};
+    if (props.styleOverride?.icon) styles = props.styleOverride.icon;
 
     return styles;
   };
@@ -46,10 +58,10 @@ export const ItemIcon = (props: Props) => {
   const base = () => {
     if (props.size == 'small')
       return (
-        <SmallBox style={setStyles()}>
+        <SmallBox style={setBoxStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <SmallIcon src={props.item.image} />
+              <SmallIcon style={setIconStyles()} src={props.item.image} />
             </ButtonWrapper>
           ) : (
             <SmallIcon src={props.item.image} />
@@ -59,10 +71,10 @@ export const ItemIcon = (props: Props) => {
       );
     else if (props.size == 'large')
       return (
-        <LargeBox style={setStyles()}>
+        <LargeBox style={setBoxStyles()}>
           {props.onClick ? (
             <ButtonWrapper onClick={handleClick}>
-              <LargeIcon src={props.item.image4x ?? props.item.image} />
+              <LargeIcon style={setIconStyles()} src={props.item.image4x ?? props.item.image} />
             </ButtonWrapper>
           ) : (
             <LargeIcon src={props.item.image4x ?? props.item.image} />
@@ -72,10 +84,10 @@ export const ItemIcon = (props: Props) => {
       );
     else props.size == 'fixed';
     return (
-      <FixedBox style={setStyles()}>
+      <FixedBox style={setBoxStyles()}>
         {props.onClick ? (
           <ButtonWrapper onClick={handleClick}>
-            <FixedIcon src={props.item.image} />
+            <FixedIcon style={setIconStyles()} src={props.item.image} />
           </ButtonWrapper>
         ) : (
           <FixedIcon src={props.item.image} />
@@ -87,9 +99,19 @@ export const ItemIcon = (props: Props) => {
 
   let result = base();
 
-  if (props.description) {
-    result = <Tooltip text={[props.item.name, '', props.item.description ?? '']}>{result}</Tooltip>;
-  }
+  if (typeof props.hoverText === 'boolean' && props.hoverText)
+    result = (
+      <Tooltip
+        text={
+          props.item.description ? [props.item.name, '', props.item.description] : [props.item.name]
+        }
+      >
+        {result}
+      </Tooltip>
+    );
+  else if (typeof props.hoverText === 'object')
+    // object = string array
+    result = <Tooltip text={props.hoverText}>{result}</Tooltip>;
 
   return result;
 };

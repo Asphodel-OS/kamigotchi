@@ -23,13 +23,7 @@ export const Rewards = (props: Props) => {
     const item = props.utils.getItem(Number(index));
     return (
       <ItemBox key={index.toString()}>
-        <ItemIcon
-          id={index.toString()}
-          item={item}
-          size='small'
-          glow={getRarities(rarity).color}
-          description
-        />
+        <ItemIcon item={item} size='small' glow={getRarities(rarity).color} hoverText={true} />
         <ItemText>x{Number(amount)}</ItemText>
       </ItemBox>
     );

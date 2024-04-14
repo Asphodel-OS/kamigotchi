@@ -50,7 +50,7 @@ export const Opener = (props: Props) => {
 
   return (
     <Container>
-      <ItemIcon id={(lootbox.index || 1).toString()} item={lootbox} balance={curBal} size='large' />
+      <ItemIcon item={lootbox} balance={curBal} size='large' />
       <ButtonBox>
         {OpenButton(1)}
         {OpenButton(10)}

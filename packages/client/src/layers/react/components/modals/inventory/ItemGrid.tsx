@@ -28,7 +28,7 @@ export const ItemGrid = (props: Props) => {
         size='fixed'
         balance={inventory.balance}
         onClick={inventory.item.type === 'LOOTBOX' ? openLootbox : undefined}
-        description
+        hoverText={true}
       />
     );
   };
