@@ -21,7 +21,7 @@ contract AccountTest is SetupTemplate {
     // creating account
     vm.prank(owner);
     uint256 id = abi.decode(
-      _AccountRegisterSystem.executeTyped(operator, "testAccount", "test account"),
+      _AccountRegisterSystem.executeTyped(operator, "testAccount"),
       (uint256)
     );
 
