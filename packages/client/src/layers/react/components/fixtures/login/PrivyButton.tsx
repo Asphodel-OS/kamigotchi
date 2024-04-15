@@ -28,13 +28,5 @@ export const PrivyButton = () => {
     return 'Log in';
   };
 
-  return (
-    <ActionButton
-      id='login-button'
-      onClick={handleClick}
-      text={getText()}
-      size='menu'
-      disabled={!ready}
-    />
-  );
+  return <ActionButton onClick={handleClick} text={getText()} size='menu' disabled={!ready} />;
 };

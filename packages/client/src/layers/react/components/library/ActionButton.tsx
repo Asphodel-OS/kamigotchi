@@ -3,7 +3,6 @@ import styled, { keyframes } from 'styled-components';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  id: string;
   onClick: Function;
   text: string;
   disabled?: boolean;
@@ -82,17 +81,13 @@ export const ActionButton = (props: Props) => {
 
   if (props.pulse)
     return (
-      <PulseButton
-        id={props.id}
-        onClick={!props.disabled ? handleClick : () => {}}
-        style={setStyles()}
-      >
+      <PulseButton onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         {props.text}
       </PulseButton>
     );
   else
     return (
-      <Button id={props.id} onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
+      <Button onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         {props.text}
       </Button>
     );

@@ -81,12 +81,10 @@ export function registerBuyModal() {
       // RENDER
 
       const ConfirmButton = () => (
-        <ActionButton id={`button-confirm`} onClick={() => buy(listing, quantity)} text='Confirm' />
+        <ActionButton onClick={() => buy(listing, quantity)} text='Confirm' />
       );
 
-      const CancelButton = () => (
-        <ActionButton id={`button-cancel`} onClick={() => closeModal()} text='Cancel' />
-      );
+      const CancelButton = () => <ActionButton onClick={() => closeModal()} text='Cancel' />;
 
       return (
         <ModalWrapper id='buy' divName='buy' header={<Title>Confirm Purchase</Title>} overlay>

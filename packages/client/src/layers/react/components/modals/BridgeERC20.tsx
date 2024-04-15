@@ -134,13 +134,7 @@ export function registerERC20BridgeModal() {
       const TxButton = () => {
         const text = isDepositState ? 'Deposit' : 'Withdraw';
         return (
-          <ActionButton
-            id='button-deposit'
-            onClick={chooseTx}
-            size='large'
-            text={text}
-            disabled={!enableButton}
-          />
+          <ActionButton onClick={chooseTx} size='large' text={text} disabled={!enableButton} />
         );
       };
 

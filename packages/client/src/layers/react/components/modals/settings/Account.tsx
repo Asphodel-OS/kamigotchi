@@ -40,7 +40,6 @@ export const Account = () => {
         <Header>Account ({kamiAccount.name})</Header>
         <Tooltip text={['fund account operator']}>
           <ActionButton
-            id='fund-button'
             text='fund'
             onClick={() => setModals({ ...modals, operatorFund: true })}
             size='small'

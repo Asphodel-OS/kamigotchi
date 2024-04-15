@@ -78,7 +78,6 @@ export const Matrix = (props: Props) => {
           {Array.from(SkillTrees.keys()).map((treeName) => (
             <Tooltip text={[`${treeName} tree`]} key={treeName}>
               <ActionButton
-                id={treeName}
                 text={treeName[0]}
                 onClick={() => setMode(treeName)}
                 disabled={mode === treeName}

@@ -154,13 +154,7 @@ export function registerLootboxesModal() {
       const BackButton = () => {
         if (state === 'OPEN') return <div></div>;
         return (
-          <ActionButton
-            key='button-back'
-            id='button-back'
-            text='<'
-            size='medium'
-            onClick={() => setState('OPEN')}
-          />
+          <ActionButton key='button-back' text='<' size='medium' onClick={() => setState('OPEN')} />
         );
       };
 

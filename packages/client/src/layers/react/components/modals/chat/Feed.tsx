@@ -91,7 +91,6 @@ export const Feed = (props: Props) => {
       <Tooltip text={feed?.next.cursor ? ['load more'] : ['no more!']}>
         <ActionButton
           text={isPolling ? 'polling..' : 'load more'}
-          id='load'
           onClick={pollMore}
           disabled={!feed?.next.cursor || isPolling}
         />

@@ -145,7 +145,7 @@ export function registerGasHarasser() {
               onKeyDown={(e) => catchKeys(e)}
               style={{ pointerEvents: 'auto' }}
             />
-            <ActionButton id={`feed`} text='Feed' onClick={feed} size='vending' />
+            <ActionButton text='Feed' onClick={feed} size='vending' />
           </Row>
         </ValidatorWrapper>
       );

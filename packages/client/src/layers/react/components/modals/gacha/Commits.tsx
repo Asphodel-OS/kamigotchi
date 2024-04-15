@@ -52,11 +52,7 @@ export const Commits = (props: Props) => {
       <CellContainer id={`grid-${commit.id}`}>
         <ActiveName>Available Commit, {getCommitTimeFrom(commit)}</ActiveName>
         <Row>
-          <ActionButton
-            id={`reveal-${commit.id}`}
-            onClick={() => props.actions.revealTx([commit])}
-            text='Reveal'
-          />
+          <ActionButton onClick={() => props.actions.revealTx([commit])} text='Reveal' />
         </Row>
       </CellContainer>
     );
@@ -70,7 +66,6 @@ export const Commits = (props: Props) => {
         <Description> Please send this commit's ID to support on discord.</Description>
         <Row>
           <ActionButton
-            id={`reveal-${commit.id}`}
             onClick={() => {
               navigator.clipboard.writeText(commit.id);
             }}

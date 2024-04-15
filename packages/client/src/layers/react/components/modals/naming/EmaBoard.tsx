@@ -81,7 +81,6 @@ export function registerEMABoardModal() {
       const RenameButton = (kami: Kami) => {
         let button = (
           <ActionButton
-            id='name_kami_button'
             onClick={() => promptRename(kami)}
             text='Rename'
             disabled={!canName(kami) || isHarvesting(kami) || isDead(kami)}

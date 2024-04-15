@@ -86,7 +86,6 @@ export const Details = (props: Props) => {
         <div style={{ position: 'absolute', bottom: '.6vw', right: '.6vw' }}>
           <Tooltip text={getUpgradeButtonTooltip()}>
             <ActionButton
-              id='upgrade'
               text={'Upgrade'}
               onClick={() => actions.upgrade(rSkill)}
               disabled={!!disabledReason}

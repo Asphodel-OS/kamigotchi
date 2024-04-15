@@ -79,7 +79,6 @@ export const Requests = (props: Props) => {
     return (
       <Tooltip text={[props.mode]}>
         <ActionButton
-          id={props.mode}
           text={props.label}
           onClick={() => setMode(props.mode)}
           disabled={mode === props.mode}

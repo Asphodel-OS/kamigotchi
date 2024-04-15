@@ -122,7 +122,7 @@ export function registerFundOperatorModal() {
 
       const TxButton = () => {
         const text = isFunding! ? 'Fund Operator' : 'Send to Owner';
-        return <ActionButton id='button-deposit' onClick={chooseTx} size='large' text={text} />;
+        return <ActionButton onClick={chooseTx} size='large' text={text} />;
       };
 
       const StateBox = (fundState: boolean) => {

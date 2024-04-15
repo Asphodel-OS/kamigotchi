@@ -39,7 +39,6 @@ export const Opener = (props: Props) => {
     return (
       <Tooltip text={[warnText]}>
         <ActionButton
-          id='button-open'
           onClick={() => startReveal(amount)}
           text={`Open ${amount}`}
           size='large'

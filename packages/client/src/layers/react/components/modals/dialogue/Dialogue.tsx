@@ -73,12 +73,7 @@ export function registerDialogueModal() {
         const disabled = step === 0;
         return (
           <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
-            <ActionButton
-              id='back'
-              text='←'
-              disabled={disabled}
-              onClick={() => setStep(step - 1)}
-            />
+            <ActionButton text='←' disabled={disabled} onClick={() => setStep(step - 1)} />
           </div>
         );
       };
@@ -91,12 +86,7 @@ export function registerDialogueModal() {
               visibility: disabled ? 'hidden' : 'visible',
             }}
           >
-            <ActionButton
-              id='next'
-              text='→'
-              disabled={disabled}
-              onClick={() => setStep(step + 1)}
-            />
+            <ActionButton text='→' disabled={disabled} onClick={() => setStep(step + 1)} />
           </div>
         );
       };
@@ -113,7 +103,6 @@ export function registerDialogueModal() {
             }}
           >
             <ActionButton
-              id='middle'
               text={action.label}
               disabled={disabled}
               onClick={() => move(action.input)} // hardcoded for now

@@ -41,14 +41,12 @@ export const Tabs = (props: Props) => {
     <Container>
       <div>
         <ActionButton
-          id={'tab-mint'}
           onClick={() => setTab('MINT')}
           text='Mint'
           disabled={props.tab === 'MINT'}
           size='vending'
         />
         <ActionButton
-          id={'tab-reroll'}
           onClick={() => setTab('REROLL')}
           text='Re-roll'
           disabled={props.tab === 'REROLL'}
@@ -56,7 +54,6 @@ export const Tabs = (props: Props) => {
         />
         {props.commits > 0 && (
           <ActionButton
-            id={'tab-commits'}
             onClick={() => setTab('COMMITS')}
             text='Pending'
             disabled={props.tab === 'COMMITS'}

@@ -33,7 +33,6 @@ export const ExperienceBar = (props: Props) => {
       </Tooltip>
       <Tooltip text={getLevelUpTooltip()}>
         <ActionButton
-          id={`level-button`}
           onClick={() => triggerLevelUp()}
           text=' ↑ '
           size='small'

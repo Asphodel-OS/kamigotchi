@@ -95,11 +95,7 @@ export const InputSingleNumberForm = (props: Props) => {
         {props.stepper && Stepper()}
       </InputGroup>
       {props.hasButton ? (
-        <ActionButton
-          id={`submit`}
-          text={props.buttonText || 'Submit'}
-          onClick={() => handleSubmit()}
-        />
+        <ActionButton text={props.buttonText || 'Submit'} onClick={() => handleSubmit()} />
       ) : (
         <div />
       )}

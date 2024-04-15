@@ -81,7 +81,6 @@ export const Pool = (props: Props) => {
         stepper
       />
       <ActionButton
-        id='mint-button'
         onClick={props.actions.handleMint(mintAmt)}
         text='Mint'
         size='large'

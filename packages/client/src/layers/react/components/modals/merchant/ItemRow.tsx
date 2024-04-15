@@ -10,6 +10,7 @@ export interface Props {
 
 // TODO: support multiple buys
 export const ItemRow = (props: Props) => {
+  const { listing } = props;
   const { modals, setModals } = useVisibility();
   const { setListing } = useSelected();
 
@@ -18,18 +19,16 @@ export const ItemRow = (props: Props) => {
     setModals({ ...modals, buy: true });
   };
 
-  const BuyButton = (listing: Listing) => (
-    <ActionButton id={`button-buy-${listing.item.index}`} onClick={openBuyModal} text='Buy' />
-  );
-
   return (
-    <Row key={props.listing.item!.index}>
-      <Tooltip text={[props.listing.item!.description]}>
-        <Image src={props.listing.item!.image.default} />
+    <Row key={listing.item!.index}>
+      <Tooltip text={[listing.item!.description]}>
+        <Image src={listing.item!.image.default} />
       </Tooltip>
-      <Name>{props.listing.item!.name}</Name>
-      <Price>{props.listing!.buyPrice}</Price>
-      <ButtonWrapper>{BuyButton(props.listing)}</ButtonWrapper>
+      <Name>{listing.item!.name}</Name>
+      <Price>{listing!.buyPrice}</Price>
+      <ButtonWrapper>
+        <ActionButton onClick={openBuyModal} text='Buy' />
+      </ButtonWrapper>
     </Row>
   );
 };

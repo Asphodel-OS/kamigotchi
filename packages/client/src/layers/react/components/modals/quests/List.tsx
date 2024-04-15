@@ -268,7 +268,6 @@ export const List = (props: Props) => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
         <Tooltip text={[tooltipText]}>
           <ActionButton
-            id={`complete-quest`}
             onClick={() => props.actions.acceptQuest(quest)}
             text='Accept'
             disabled={!canAccept(quest)}
@@ -288,7 +287,6 @@ export const List = (props: Props) => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
         <Tooltip text={[tooltipText]}>
           <ActionButton
-            id={`complete-quest`}
             onClick={() => props.actions.completeQuest(quest)}
             text='Complete'
             disabled={!canComplete(quest)}

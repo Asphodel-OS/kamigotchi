@@ -203,7 +203,7 @@ export function registerWalletConnecter() {
           errorPrimary={getWarning()}
         >
           <Description>{getDescription()}</Description>
-          <ActionButton id='connect' onClick={handleClick} text={getButtonLabel()} size='vending' />
+          <ActionButton onClick={handleClick} text={getButtonLabel()} size='vending' />
         </ValidatorWrapper>
       );
     }

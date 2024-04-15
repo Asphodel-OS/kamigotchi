@@ -36,7 +36,7 @@ export function registerHelpModal() {
             display: `${tab == HelpTabs.HOME ? 'none' : 'inline-flex'}`,
           }}
         >
-          <ActionButton id='help_back_button' onClick={() => setTab(HelpTabs.HOME)} text='<' />
+          <ActionButton onClick={() => setTab(HelpTabs.HOME)} text='<' />
         </ButtonRow>
       );
 

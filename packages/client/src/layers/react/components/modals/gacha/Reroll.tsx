@@ -68,7 +68,6 @@ export const Reroll = (props: Props) => {
     <Footer>
       <div style={{ width: '73%' }}></div>
       <ActionButton
-        id='mint-button'
         onClick={handleReroll}
         text='Re-roll'
         size='large'
