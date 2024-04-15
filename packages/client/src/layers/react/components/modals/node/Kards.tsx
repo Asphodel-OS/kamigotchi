@@ -176,12 +176,20 @@ export const Kards = (props: Props) => {
     // filter down to available food items
     const stockedInventory =
       account.inventories?.food?.filter((inv: Inventory) => inv.balance && inv.balance > 0) ?? [];
-    const canHeal = (inv: Inventory) => !isFull(kami) || inv.item.stats?.health.sync == 0;
+
     const feedOptions = stockedInventory.map((inv: Inventory) => {
+      const healAmt = inv.item.stats?.health.sync ?? 0;
+      const expAmt = inv.item.experience ?? 0;
+      const canEat = () => !isFull(kami) || healAmt == 0;
+
+      let text = `${inv.item.name}`;
+      if (healAmt > 0) text += ` (+${healAmt}hp)`;
+      if (expAmt > 0) text += ` (+${expAmt}xp)`;
+
       return {
-        text: `${inv.item.name} ${!canHeal(inv) ? ' [Kami full]' : ''}`,
+        text,
         onClick: () => actions.feed(kami, inv.item.index),
-        disabled: !canHeal(inv),
+        disabled: !canEat(),
       };
     });
 
