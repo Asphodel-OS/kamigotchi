@@ -145,7 +145,7 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(owner);
     // string memory name = LibString.slice(LibString.toHexString(owner), 0, 15); // maxlen 16
     uint256 accountID = abi.decode(
-      _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex), "strawberry"),
+      _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex)),
       (uint256)
     );
     vm.stopPrank();

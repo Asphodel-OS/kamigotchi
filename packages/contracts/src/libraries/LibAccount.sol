@@ -16,7 +16,6 @@ import { IndexFarcasterComponent, ID as IndexFarcasterCompID } from "components/
 import { AddressOwnerComponent, ID as AddrOwnerCompID } from "components/AddressOwnerComponent.sol";
 import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/AddressOperatorComponent.sol";
 import { CacheOperatorComponent, ID as CacheOperatorCompID } from "components/CacheOperatorComponent.sol";
-import { FavoriteFoodComponent, ID as FavFoodCompID } from "components/FavoriteFoodComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
@@ -143,10 +142,6 @@ library LibAccount {
 
   function setFarcasterIndex(IUintComp components, uint256 id, uint32 fid) internal {
     IndexFarcasterComponent(getAddressById(components, IndexFarcasterCompID)).set(id, fid);
-  }
-
-  function setFavoriteFood(IUintComp components, uint256 id, string memory food) internal {
-    FavoriteFoodComponent(getAddressById(components, FavFoodCompID)).set(id, food);
   }
 
   function setMediaURI(IUintComp components, uint256 id, string memory uri) internal {

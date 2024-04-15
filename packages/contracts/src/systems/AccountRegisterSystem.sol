@@ -13,12 +13,12 @@ contract AccountRegisterSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (address operator, string memory name, string memory food) = abi.decode(
+    (address operator, string memory name) = abi.decode(
       arguments,
-      (address, string, string)
+      (address, string)
     );
+    // address unqiueness  constraints
     require(!LibAccount.ownerInUse(components, msg.sender), "Account: exists for Owner");
-
     require(!LibAccount.operatorInUse(components, operator), "Account: exists for Operator");
 
     // check for naming constraints
@@ -28,7 +28,6 @@ contract AccountRegisterSystem is System {
 
     uint256 accountID = LibAccount.create(world, components, msg.sender, operator);
     LibAccount.setName(components, accountID, name);
-    LibAccount.setFavoriteFood(components, accountID, food);
 
     LibAccount.updateLastTs(components, accountID);
     return abi.encode(accountID);
@@ -36,9 +35,8 @@ contract AccountRegisterSystem is System {
 
   function executeTyped(
     address operator,
-    string memory name,
-    string memory food
+    string memory name
   ) public returns (bytes memory) {
-    return execute(abi.encode(operator, name, food));
+    return execute(abi.encode(operator, name));
   }
 }

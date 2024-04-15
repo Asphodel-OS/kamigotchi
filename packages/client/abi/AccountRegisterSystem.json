@@ -48,11 +48,6 @@
           "name": "name",
           "type": "string",
           "internalType": "string"
-        },
-        {
-          "name": "food",
-          "type": "string",
-          "internalType": "string"
         }
       ],
       "outputs": [
@@ -122,7 +117,7 @@
   ],
   "methodIdentifiers": {
     "execute(bytes)": "09c5eabe",
-    "executeTyped(address,string,string)": "167604e2",
+    "executeTyped(address,string)": "65ca12ec",
     "owner()": "8da5cb5b",
     "transferOwnership(address)": "f2fde38b"
   }

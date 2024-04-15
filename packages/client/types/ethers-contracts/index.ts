@@ -34,7 +34,6 @@ export type { ExperienceComponent } from "./ExperienceComponent";
 export type { Farm20DepositSystem } from "./Farm20DepositSystem";
 export type { Farm20ProxySystem } from "./Farm20ProxySystem";
 export type { Farm20WithdrawSystem } from "./Farm20WithdrawSystem";
-export type { FavoriteFoodComponent } from "./FavoriteFoodComponent";
 export type { ForComponent } from "./ForComponent";
 export type { FriendAcceptSystem } from "./FriendAcceptSystem";
 export type { FriendBlockSystem } from "./FriendBlockSystem";
@@ -270,7 +269,6 @@ export { ExperienceComponent__factory } from "./factories/ExperienceComponent__f
 export { Farm20DepositSystem__factory } from "./factories/Farm20DepositSystem__factory";
 export { Farm20ProxySystem__factory } from "./factories/Farm20ProxySystem__factory";
 export { Farm20WithdrawSystem__factory } from "./factories/Farm20WithdrawSystem__factory";
-export { FavoriteFoodComponent__factory } from "./factories/FavoriteFoodComponent__factory";
 export { ForComponent__factory } from "./factories/ForComponent__factory";
 export { FriendAcceptSystem__factory } from "./factories/FriendAcceptSystem__factory";
 export { FriendBlockSystem__factory } from "./factories/FriendBlockSystem__factory";
