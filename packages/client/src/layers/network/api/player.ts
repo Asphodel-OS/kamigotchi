@@ -65,8 +65,8 @@ export function createPlayerAPI(systems: any) {
   // @param operatorAddress   address of the Operator wallet
   // @param name              name of the account
   // @param food              player's reported favorite food
-  function registerAccount(operatorAddress: BigNumberish, name: string, food: string) {
-    return systems['system.Account.Register'].executeTyped(operatorAddress, name, food);
+  function registerAccount(operatorAddress: BigNumberish, name: string) {
+    return systems['system.Account.Register'].executeTyped(operatorAddress, name);
   }
 
   // @dev renames account. should be called by Owner EOA

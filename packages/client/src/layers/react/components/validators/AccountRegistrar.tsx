@@ -134,7 +134,6 @@ export function registerAccountRegistrar() {
       const [nameTaken, setNameTaken] = useState(false);
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
-      const [food, setFood] = useState('');
 
       // run the primary check(s) for this validator
       // track in store for easy access and update any local state variables accordingly
@@ -182,15 +181,11 @@ export function registerAccountRegistrar() {
         navigator.clipboard.writeText(burnerAddress);
       };
 
-      const copyBurnerPrivateKey = () => {
-        // navigator.clipboard.writeText(burner.detected.key);
-      };
-
-      const handleAccountCreation = async (username: string, food: string) => {
+      const handleAccountCreation = async (username: string) => {
         playScribble();
         toggleFixtures(true);
         try {
-          const actionID = createAccount(username, food);
+          const actionID = createAccount(username);
           if (!actionID) throw new Error('Account creation failed');
 
           await waitForActionCompletion(
@@ -202,7 +197,7 @@ export function registerAccountRegistrar() {
         }
       };
 
-      const createAccount = (username: string, food: string) => {
+      const createAccount = (username: string) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
         console.log(`CREATING ACCOUNT (${username}): ${selectedAddress}`);
@@ -212,10 +207,10 @@ export function registerAccountRegistrar() {
         actions.add({
           id: actionID,
           action: 'AccountCreate',
-          params: [connectedBurner, username, food],
+          params: [connectedBurner, username],
           description: `Creating Account for ${username}`,
           execute: async () => {
-            return api.account.register(connectedBurner, username, food);
+            return api.account.register(connectedBurner, username);
           },
         });
         return actionID;
@@ -225,8 +220,10 @@ export function registerAccountRegistrar() {
         setName(event.target.value);
       };
 
-      const handleChangeFood = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFood(event.target.value);
+      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+          handleAccountCreation(name);
+        }
       };
 
       /////////////////
@@ -271,9 +268,6 @@ export function registerAccountRegistrar() {
             <Tooltip text={['copy address']}>
               <CopyButton onClick={() => copyBurnerAddress()} />
             </Tooltip>
-            <Tooltip text={['copy private key']}>
-              <CopyButton onClick={() => copyBurnerPrivateKey()} />
-            </Tooltip>
           </AddressRow>
         );
       };
@@ -290,12 +284,11 @@ export function registerAccountRegistrar() {
       };
 
       const NextButton = () => (
-        <ActionButton id='next' text='Next' onClick={() => setStep(step + 1)} size='vending' />
+        <ActionButton text='Next' onClick={() => setStep(step + 1)} size='vending' />
       );
 
       const BackButton = () => (
         <ActionButton
-          id='back'
           text='Back'
           disabled={step === 0}
           onClick={() => setStep(step - 1)}
@@ -334,22 +327,21 @@ export function registerAccountRegistrar() {
       const UsernameStep = () => {
         const addressTaken = operatorAddresses.has(burnerAddress);
 
-        const NextButton = () => {
+        const SubmitButton = () => {
           let button = (
             <ActionButton
-              id='next'
-              text='Next'
-              onClick={() => setStep(step + 1)}
-              disabled={addressTaken || name === '' || nameTaken}
+              text='Submit'
+              disabled={addressTaken || name === '' || nameTaken || /\s/.test(name)}
+              onClick={() => handleAccountCreation(name)}
               size='vending'
             />
           );
 
           let tooltip: string[] = [];
-          if (addressTaken) tooltip = ['Unfortunately, that Avatar is already taken.'];
-          else if (nameTaken) tooltip = ['Unfortunately, that Name is already taken.'];
-          else if (name === '')
-            tooltip = [`It's dangerous to go alone.`, `One needs to take an Avatar.`];
+          if (addressTaken) tooltip = ['That Avatar is already taken.'];
+          else if (nameTaken) tooltip = ['That name is already taken.'];
+          else if (name === '') tooltip = [`Name cannot be empty.`];
+          else if (/\s/.test(name)) tooltip = [`Name cannot contain whitespace.`];
           if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>;
 
           return button;
@@ -366,48 +358,20 @@ export function registerAccountRegistrar() {
               type='string'
               value={name}
               onChange={(e) => handleChangeName(e)}
+              onKeyDown={(e) => catchKeys(e)}
               placeholder='username'
               style={{ pointerEvents: 'auto' }}
             />
             <Row>
               <BackButton />
-              <NextButton />
-            </Row>
-          </>
-        );
-      };
-
-      const FoodStep = () => {
-        return (
-          <>
-            <br />
-            <Description>And your favorite food?</Description>
-            <br />
-            <Input
-              type='string'
-              value={food}
-              placeholder='stawberi'
-              onChange={(e) => handleChangeFood(e)}
-              style={{ pointerEvents: 'auto' }}
-            />
-            <Row>
-              <BackButton />
-              <Tooltip text={food === '' ? ["You shouldn't skip lunch.."] : []}>
-                <ActionButton
-                  id='submit'
-                  text='Submit'
-                  disabled={food === ''}
-                  onClick={() => handleAccountCreation(name, food)}
-                  size='vending'
-                />
-              </Tooltip>
+              <SubmitButton />
             </Row>
           </>
         );
       };
 
       const GetSteps = () => {
-        return [IntroStep1(), IntroStep2(), UsernameStep(), FoodStep()];
+        return [IntroStep1(), IntroStep2(), UsernameStep()];
       };
 
       /////////////////
