@@ -21,7 +21,7 @@ export function registerMapModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 60,
+      rowEnd: 50,
     },
 
     // Requirement
@@ -86,7 +86,7 @@ export function registerMapModal() {
         return (
           <FooterRow>
             <Exits index={displayedRoom} rooms={roomMap} actions={{ move }} />
-            <Players index={displayedRoom} rooms={roomMap} />;
+            <Players index={displayedRoom} rooms={roomMap} />
           </FooterRow>
         );
       };
@@ -104,12 +104,12 @@ export function registerMapModal() {
           noPadding
         >
           <Container>
-            <Column1>
+            <Column>
               <Grid index={selectedRoom} rooms={roomMap} actions={{ move, setHoveredRoom }} />
-            </Column1>
-            <Column2>
+            </Column>
+            <Column>
               <RoomInfo index={displayedRoom} rooms={roomMap} />
-            </Column2>
+            </Column>
           </Container>
         </ModalWrapper>
       );
@@ -125,21 +125,13 @@ const Container = styled.div`
   align-items: flex-start;
 `;
 
-const Column1 = styled.div`
+const Column = styled.div`
   width: auto;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   flex-grow: 1;
-`;
-
-const Column2 = styled.div`
-  width: auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
 `;
 
 const FooterRow = styled.div`

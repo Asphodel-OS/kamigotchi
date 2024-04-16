@@ -70,9 +70,11 @@ const PlayerRow = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
+  padding: 0.3vw;
   padding-top: 1.5vw;
 
   width: 100%;
+  height: 100%;
   overflow-y: scroll;
 `;
 
