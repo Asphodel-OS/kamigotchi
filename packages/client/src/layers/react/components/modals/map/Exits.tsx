@@ -69,7 +69,7 @@ const Options = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  padding-top: 1.5vw;
+  padding-top: 1.8vw;
 
   width: 100%;
   height: 100%;

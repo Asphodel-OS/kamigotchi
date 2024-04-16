@@ -36,10 +36,9 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  border-bottom: solid #eee 0.1vw;
   padding: 0.7vw;
   width: 100%;
-  background-color: #fff;
+  background-color: #eee;
 
   color: #333;
   font-family: Pixel;
