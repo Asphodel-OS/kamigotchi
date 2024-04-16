@@ -67,75 +67,85 @@ export const Grid = (props: Props) => {
   return (
     <Container>
       <Background src={mapBackgrounds.zone1} />
-      {grid.map((row, i) => (
-        <Row key={i}>
-          {row.map((room, j) => {
-            const isRoom = room.index != 0;
-            const isCurrRoom = room.index == index;
-            const isExit = rooms.get(index)?.exits?.find((e) => e === room.index);
+      <Overlay>
+        {grid.map((row, i) => (
+          <Row key={i}>
+            {row.map((room, j) => {
+              const isRoom = room.index != 0;
+              const isCurrRoom = room.index == index;
+              const isExit = rooms.get(index)?.exits?.find((e) => e === room.index);
 
-            let color, opacity;
-            let onClick: MouseEventHandler | undefined;
-            if (isCurrRoom) {
-              color = '#3b3';
-              opacity = 0.9;
-            } else if (isExit) {
-              color = '#f85';
-              opacity = 0.6;
-              onClick = () => handleRoomMove(room?.index ?? 0);
-            } else if (isRoom) {
-              color = '#d33';
-            }
+              let color, opacity;
+              let onClick: MouseEventHandler | undefined;
+              if (isCurrRoom) {
+                color = '#3b3';
+                opacity = 0.9;
+              } else if (isExit) {
+                color = '#f85';
+                opacity = 0.6;
+                onClick = () => handleRoomMove(room?.index ?? 0);
+              } else if (isRoom) {
+                color = '#d33';
+              }
 
-            return (
-              <Tile
-                key={j}
-                style={{ backgroundColor: color, opacity }}
-                onClick={onClick}
-                hasRoom={isRoom}
-                onMouseEnter={() => {
-                  if (isRoom) actions.setHoveredRoom(room.index);
-                }}
-                onMouseLeave={() => {
-                  if (isRoom) actions.setHoveredRoom(0);
-                }}
-              />
-            );
-          })}
-        </Row>
-      ))}
+              return (
+                <Tile
+                  key={j}
+                  style={{ backgroundColor: color, opacity }}
+                  onClick={onClick}
+                  hasRoom={isRoom}
+                  onMouseEnter={() => {
+                    if (isRoom) actions.setHoveredRoom(room.index);
+                  }}
+                  onMouseLeave={() => {
+                    if (isRoom) actions.setHoveredRoom(0);
+                  }}
+                />
+              );
+            })}
+          </Row>
+        ))}
+      </Overlay>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
+  height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-  overflow-y: scroll;
+  align-items: stretch;
+  flex-grow: 1;
 `;
 
 const Background = styled.img`
-  position: absolute;
-  width: 100%;
   height: 100%;
+  width: auto;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
 `;
 
 const Row = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
-  align-items: space-between;
-  justify-content: center;
+  align-items: stretch;
+  flex-grow: 1;
 `;
 
 const Tile = styled.div<{ hasRoom: boolean }>`
-  opacity: 0.1;
+  opacity: 0.2;
   border: 0.1vw solid black;
-  width: 1.5vw;
-  height: 1.5vw;
+  flex-grow: 1;
 
   display: flex;
   align-items: center;

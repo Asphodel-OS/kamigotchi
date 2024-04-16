@@ -44,19 +44,23 @@ export const Players = (props: Props) => {
 };
 
 const Container = styled.div`
+  flex-grow: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 
+  height: 9vh;
   width: 100%;
-  height: 5vw;
-  padding: 1vw;
 `;
 
-const Title = styled.p`
-  color: #333;
-  padding-bottom: 0.5vw;
+const Title = styled.div`
+  position: absolute;
+  border-bottom: solid #eee 0.1vw;
+  padding: 0.45vw;
+  width: 100%;
+  background-color: #eee;
 
+  color: #333;
   font-family: Pixel;
   font-size: 0.6vw;
   text-align: left;
@@ -66,23 +70,25 @@ const PlayerRow = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
+  padding-top: 1.5vw;
 
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
 `;
 
-const Player = styled.p`
+const Player = styled.div`
   color: #333;
   padding: 0.3vw;
 
   font-family: Pixel;
-  font-size: 0.8vw;
+  font-size: 0.6vw;
   text-align: left;
-  line-height: 1.2vw;
+  line-height: 0.9vw;
 
   &:hover {
     opacity: 0.6;
     cursor: pointer;
+    background-color: #ddd;
+    border-radius: 0.45vw;
   }
 `;

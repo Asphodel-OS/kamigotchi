@@ -25,19 +25,23 @@ export const RoomInfo = (props: Props) => {
 };
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 
   width: 100%;
   height: 100%;
-  margin: 0.5vw 1vw;
 `;
 
 const Title = styled.div`
-  color: #333;
-  padding-bottom: 0.5vw;
+  position: absolute;
+  border-bottom: solid #eee 0.1vw;
+  padding: 0.7vw;
+  width: 100%;
+  background-color: #fff;
 
+  color: #333;
   font-family: Pixel;
   font-size: 0.9vw;
   text-align: left;
@@ -45,11 +49,13 @@ const Title = styled.div`
 
 const Description = styled.div`
   color: #333;
-  padding: 0.3vw;
-  padding-right: 0.9vw;
+  width: 100%;
+  padding: 1.5vw;
+  margin-top: 1.5vw;
 
   font-family: Pixel;
   font-size: 0.6vw;
   text-align: left;
   line-height: 1.2vw;
+  overflow-y: scroll;
 `;
