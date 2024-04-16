@@ -3,7 +3,7 @@ import { namespaceWorld } from '@mud-classic/recs';
 import { NetworkLayer } from 'layers/network';
 import { phaserConfig, PhaserConfig } from './config';
 import CreatePhaserEngine from './engine/PhaserEngine';
-import { changeRoomSystem } from './systems/changeRoomSystem';
+import { changeRoom, changeRoomSystem } from './systems/changeRoomSystem';
 
 /**
  * The Phaser layer is responsible for rendering game objects to the screen.
@@ -32,7 +32,9 @@ export async function createPhaserLayer(network: NetworkLayer) {
     game,
     scenes,
     setChangeRoomSystem: (network: NetworkLayer) => {
+      console.log('Setting change room system');
       changeRoomSystem(network, game.scene.keys.Game);
+      changeRoom(network, game.scene.keys.Game);
     },
   };
 
