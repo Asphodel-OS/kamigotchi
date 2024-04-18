@@ -3,7 +3,7 @@
   "editor.formatOnSave": true,
   "editor.inlineSuggest.enabled": true,
   "editor.tabSize": 2,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": null,
   "html.format.templating": true,
   "solidity.monoRepoSupport": true,
   "solidity.solhintRules": {
