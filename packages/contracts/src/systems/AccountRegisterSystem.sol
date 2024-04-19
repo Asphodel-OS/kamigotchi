@@ -13,10 +13,7 @@ contract AccountRegisterSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (address operator, string memory name) = abi.decode(
-      arguments,
-      (address, string)
-    );
+    (address operator, string memory name) = abi.decode(arguments, (address, string));
     // address unqiueness  constraints
     require(!LibAccount.ownerInUse(components, msg.sender), "Account: exists for Owner");
     require(!LibAccount.operatorInUse(components, operator), "Account: exists for Operator");
@@ -33,10 +30,7 @@ contract AccountRegisterSystem is System {
     return abi.encode(accountID);
   }
 
-  function executeTyped(
-    address operator,
-    string memory name
-  ) public returns (bytes memory) {
+  function executeTyped(address operator, string memory name) public returns (bytes memory) {
     return execute(abi.encode(operator, name));
   }
 }

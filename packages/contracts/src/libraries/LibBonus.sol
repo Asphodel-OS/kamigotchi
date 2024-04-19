@@ -86,7 +86,7 @@ library LibBonus {
     // avoid converting base in case of overflow
     if (bonus == 0) return base;
     if (bonus > 0) return base + uint256(bonus);
-    
+
     uint256 delta = uint256(-bonus);
     return (delta >= base) ? 0 : base - delta;
   }

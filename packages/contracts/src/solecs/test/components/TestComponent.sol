@@ -8,7 +8,12 @@ contract TestComponent is Component {
 
   constructor(address world) Component(world, ID) {}
 
-  function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
+  function getSchema()
+    public
+    pure
+    override
+    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
+  {
     values[0] = LibTypes.SchemaValue.UINT256;
   }
 }
@@ -18,7 +23,12 @@ contract TestComponent1 is Component {
 
   constructor(address world) Component(world, ID) {}
 
-  function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
+  function getSchema()
+    public
+    pure
+    override
+    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
+  {
     values[0] = LibTypes.SchemaValue.UINT256;
   }
 }
@@ -28,7 +38,12 @@ contract TestComponent2 is Component {
 
   constructor(address world) Component(world, ID) {}
 
-  function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
+  function getSchema()
+    public
+    pure
+    override
+    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
+  {
     values[0] = LibTypes.SchemaValue.UINT256;
   }
 }
@@ -38,7 +53,12 @@ contract TestComponent3 is Component {
 
   constructor(address world) Component(world, ID) {}
 
-  function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
+  function getSchema()
+    public
+    pure
+    override
+    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
+  {
     values[0] = LibTypes.SchemaValue.UINT256;
   }
 }
@@ -48,7 +68,12 @@ contract TestComponent4 is Component {
 
   constructor(address world) Component(world, ID) {}
 
-  function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
+  function getSchema()
+    public
+    pure
+    override
+    returns (string[] memory keys, LibTypes.SchemaValue[] memory values)
+  {
     values[0] = LibTypes.SchemaValue.UINT256;
   }
 }

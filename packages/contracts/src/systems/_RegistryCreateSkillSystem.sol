@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibRegistrySkill } from "libraries/LibRegistrySkill.sol";
-import { LibString } from "solady/utils/LibString.sol";
 
 uint256 constant ID = uint256(keccak256("system._Registry.Skill.Create"));
 
@@ -36,7 +36,17 @@ contract _RegistryCreateSkillSystem is System {
     uint256 regID = LibRegistrySkill.getByIndex(components, index);
     require(regID == 0, "SkillCreate: already exists");
 
-    regID = LibRegistrySkill.create(components, index, for_, type_, name, description, cost, max, media);
+    regID = LibRegistrySkill.create(
+      components,
+      index,
+      for_,
+      type_,
+      name,
+      description,
+      cost,
+      max,
+      media
+    );
     if (!LibString.eq(tree, "")) LibRegistrySkill.setTree(components, regID, tree, treeTier);
 
     return abi.encode(regID);
@@ -54,6 +64,7 @@ contract _RegistryCreateSkillSystem is System {
     uint256 treeTier,
     string memory media
   ) public onlyOwner returns (bytes memory) {
-    return execute(abi.encode(index, for_, type_, tree, name, description, cost, max, treeTier, media));
+    return
+      execute(abi.encode(index, for_, type_, tree, name, description, cost, max, treeTier, media));
   }
 }

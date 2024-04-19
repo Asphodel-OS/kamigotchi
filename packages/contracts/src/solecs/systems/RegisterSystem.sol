@@ -38,7 +38,10 @@ contract RegisterSystem is System {
       (address, RegisterType, address, uint256)
     );
     require(msg.sender == address(world), "system can only be called via World");
-    require(registerType == RegisterType.Component || registerType == RegisterType.System, "invalid type");
+    require(
+      registerType == RegisterType.Component || registerType == RegisterType.System,
+      "invalid type"
+    );
     require(id != 0, "invalid id");
     require(addr != address(0), "invalid address");
 
@@ -53,7 +56,8 @@ contract RegisterSystem is System {
 
     require(
       entitiesWithId.length == 0 ||
-        (entitiesWithId.length == 1 && IERC173(entityToAddress(entitiesWithId[0])).owner() == msgSender),
+        (entitiesWithId.length == 1 &&
+          IERC173(entityToAddress(entitiesWithId[0])).owner() == msgSender),
       "id already registered and caller not owner"
     );
 

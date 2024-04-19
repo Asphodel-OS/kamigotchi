@@ -63,11 +63,7 @@ library LibSkill {
   }
 
   // process the upgrade of a skill (can be generic or stat skill)
-  function processEffectUpgrade(
-    IUintComp components,
-    uint256 holderID,
-    uint256 effectID
-  ) public {
+  function processEffectUpgrade(IUintComp components, uint256 holderID, uint256 effectID) public {
     if (LibRegistrySkill.getType(components, effectID).eq("STAT")) {
       processStatEffectUpgrade(components, holderID, effectID);
     } else {
