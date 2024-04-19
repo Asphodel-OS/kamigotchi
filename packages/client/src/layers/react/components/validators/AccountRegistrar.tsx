@@ -27,7 +27,7 @@ import {
   useNetwork,
   useVisibility,
 } from 'layers/react/store';
-import { playScribble } from 'utils/sounds';
+import { playSignup } from 'utils/sounds';
 
 /**
  * The primary purpose of this here monstrosity is to keep track of the connected Kami Account
@@ -182,7 +182,7 @@ export function registerAccountRegistrar() {
       };
 
       const handleAccountCreation = async (username: string) => {
-        playScribble();
+        playSignup();
         toggleFixtures(true);
         try {
           const actionID = createAccount(username);

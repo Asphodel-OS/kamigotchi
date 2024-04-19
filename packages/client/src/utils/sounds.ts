@@ -5,17 +5,27 @@ export const playClick = () => {
   playSound(fx);
 };
 
+export const playFund = () => {
+  const fx = new Audio(InteractionFX.fund);
+  playSound(fx);
+}
+
 export const playScribble = () => {
   const fx = new Audio(InteractionFX.scribble);
   playSound(fx);
 };
+
+export const playSignup = () => {
+  const fx = new Audio(InteractionFX.signup);
+  playSound(fx);
+}
 
 export const playSuccess = () => {
   const fx = new Audio(InteractionFX.success);
   playSound(fx);
 };
 
-export const playVending = () => {
+export const playVend = () => {
   const fx = new Audio(InteractionFX.vend);
   playSound(fx);
 };

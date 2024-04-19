@@ -12,7 +12,7 @@ import { GachaCommit, calcRerollCost, isGachaAvailable } from 'layers/network/sh
 import { Kami } from 'layers/network/shapes/Kami';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { useAccount as useKamiAccount, useNetwork, useVisibility } from 'layers/react/store';
-import { playVending } from 'utils/sounds';
+import { playVend } from 'utils/sounds';
 import { erc20Abi, formatUnits } from 'viem';
 import { Commits } from './Commits';
 import { Pool } from './Pool';
@@ -216,7 +216,7 @@ export function registerGachaModal() {
             world.entityToIndex.get(mintActionID) as EntityIndex
           );
           setTriedReveal(false);
-          playVending();
+          playVend();
         } catch (e) {
           console.log('Gacha.tsx: handleMint() mint failed', e);
         }
@@ -234,7 +234,7 @@ export function registerGachaModal() {
             world.entityToIndex.get(rerollActionID) as EntityIndex
           );
           setTriedReveal(false);
-          playVending();
+          playVend();
         } catch (e) {
           console.log('KamiReroll.tsx: handleReroll() reroll failed', e);
         }

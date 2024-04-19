@@ -11,7 +11,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 import 'layers/react/styles/font.css';
-import { playClick, playSuccess } from 'utils/sounds';
+import { playFund, playSuccess } from 'utils/sounds';
 import { formatEther } from 'viem';
 
 // TODO: check for whether an account with the burner address already exists
@@ -118,7 +118,7 @@ export function registerGasHarasser() {
       };
 
       const feed = async () => {
-        playClick();
+        playFund();
         await fundTx();
         playSuccess();
       };

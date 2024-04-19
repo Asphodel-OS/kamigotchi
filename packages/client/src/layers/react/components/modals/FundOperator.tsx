@@ -9,7 +9,7 @@ import { useBalance, useBlockNumber } from 'wagmi';
 import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork } from 'layers/react/store';
-import { playScribble, playSuccess } from 'utils/sounds';
+import { playFund } from 'utils/sounds';
 
 export function registerFundOperatorModal() {
   registerUIComponent(
@@ -102,9 +102,8 @@ export function registerFundOperatorModal() {
       // INTERACTIONS
 
       const chooseTx = async () => {
-        playScribble();
+        playFund();
         isFunding ? await fundTx() : await refundTx();
-        playSuccess();
       };
 
       const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
