@@ -45,8 +45,7 @@ export function setupWorldAPI(systems: any, provider: any) {
 
     createPlayerAPI(systems).account.register(
       '0x000000000000000000000000000000000000dead',
-      'load_bearer',
-      'fudge'
+      'load_bearer'
     );
 
     setTimestamp();
