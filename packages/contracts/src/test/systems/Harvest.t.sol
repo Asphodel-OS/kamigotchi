@@ -26,11 +26,11 @@ contract HarvestTest is SetupTemplate {
   }
 
   /////////////////
-  // HELPER FUNCTIONS
+  // CALCS
 
   // NOTE: health drain is rounded while reward is truncated
   // this assumes no drain multipliers
-  function _getExpectedHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
+  function _calcHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
     uint ratePrecision = 10 ** uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
     uint output = (rate * timeDelta) / (ratePrecision);
     uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_DRAIN_BASE");
@@ -39,13 +39,56 @@ contract HarvestTest is SetupTemplate {
     return (output * drainBase + (drainBasePrecision / 2)) / drainBasePrecision;
   }
 
-  function _getExpectedOutput(uint rate, uint timeDelta) internal view returns (uint) {
+  function _calcOutput(uint rate, uint timeDelta) internal view returns (uint) {
     uint ratePrecision = uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
     return (rate * timeDelta) / 10 ** ratePrecision;
   }
 
+  function _calcRate(uint prodID) internal view returns (uint) {
+    // [prec, base, base_prec, mult_prec]
+    uint32[8] memory configs = LibConfig.getArray(components, "HARVEST_RATE");
+
+    uint256 petID = _IdPetComponent.get(prodID);
+    uint256 nodeID = _IdNodeComponent.get(prodID);
+
+    uint256 power = _calcPower(petID);
+    uint256 ratePrec = 10 ** uint256(configs[0]);
+    uint256 baseRate = uint256(configs[1]);
+    uint256 basePrec = 10 ** uint256(configs[2]);
+    uint256 multiplier = _calcMultiplier(prodID, petID);
+    uint256 multPrec = 10 ** uint256(configs[3]);
+
+    return (ratePrec * baseRate * power * multiplier) / (3600 * basePrec * multPrec);
+  }
+
+  // just kami stats for now - may include equipment later
+  function _calcPower(uint petID) internal view returns (uint256) {
+    return uint256(uint32(_PowerComponent.calcTotal(petID)));
+  }
+
+  function _calcMultiplier(uint prodID, uint petID) internal view returns (uint) {
+    uint256 bonusMult = LibBonus.getPercent(components, petID, "HARVEST_OUTPUT");
+    uint256 affinityMult = _calcAffinityMultiplier(prodID, petID);
+    return affinityMult * bonusMult;
+  }
+
+  function _calcAffinityMultiplier(uint prodID, uint petID) internal view returns (uint) {
+    string memory nodeAff = LibNode.getAffinity(
+      components,
+      LibProduction.getNode(components, prodID)
+    );
+    string[] memory petAffs = LibPet.getAffinities(components, petID);
+
+    // layer the multipliers due to each trait on top of each other
+    uint256 totMultiplier = 1;
+    for (uint256 i = 0; i < petAffs.length; i++)
+      totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
+
+    return totMultiplier;
+  }
+
   /////////////////
-  // TESTS
+  // SHAPE TESTS
 
   // test node creation for expected behaviors
   function testNodeCreation() public {
@@ -104,6 +147,9 @@ contract HarvestTest is SetupTemplate {
     assertEq(LibPet.getState(components, kamiID), "HARVESTING");
     assertEq(LibPet.getLastTs(components, kamiID), _currTime);
   }
+
+  /////////////////
+  // CONSTRAINTS TESTS
 
   // test that a pet's productions cannot be started/stopped/collected from by
   // anyone aside from the owner of the pet
@@ -256,6 +302,9 @@ contract HarvestTest is SetupTemplate {
     }
   }
 
+  /////////////////
+  // CALCULATION TESTS
+
   // test that productions yield the correct amount of funds
   // assume that rate calculations are correct
   function testProductionValues(uint seed) public {
@@ -287,8 +336,10 @@ contract HarvestTest is SetupTemplate {
       _fastForward(timeDelta);
       for (uint j = 0; j < numKamis; j++) {
         if (_isStarved[j]) continue;
+
         rate = LibProduction.getRate(components, productionIDs[j]);
-        drain = _getExpectedHealthDrain(rate, timeDelta);
+        assertEq(rate, _calcRate(productionIDs[j]));
+        drain = _calcHealthDrain(rate, timeDelta);
 
         if (kamiHealths[j] <= drain) {
           vm.prank(_getOperator(0));
@@ -303,13 +354,140 @@ contract HarvestTest is SetupTemplate {
           );
           assertEq(
             LibCoin.get(components, _getAccount(0)),
-            accountBalance + _getExpectedOutput(rate, timeDelta)
+            accountBalance + _calcOutput(rate, timeDelta)
           );
 
           kamiHealths[j] -= drain;
-          accountBalance += _getExpectedOutput(rate, timeDelta);
+          accountBalance += _calcOutput(rate, timeDelta);
         }
       }
     }
+  }
+
+  function testCalcsNoBonus(uint, int32 power, int32 health, uint32 timeDelta) public {
+    _setConfig("KAMI_IDLE_REQ", 0);
+    vm.assume(power > 0 && power < 2147483); // bounds for int32/1000
+    vm.assume(health > 0 && health < 2147483);
+
+    // setup
+    uint256[] memory seeds = _randomUints(3);
+    uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", _getFuzzAffinity(seeds[0], true));
+    uint256 petID = _mintPet(0);
+    // setting up affinity
+    registerTrait(127, 0, 5, 5, 0, 0, 5, _getFuzzAffinity(seeds[1], false), "Test Body", "BODY");
+    registerTrait(127, 0, 5, 5, 0, 0, 5, _getFuzzAffinity(seeds[2], false), "Test Hand", "HAND");
+    _setPetTrait(petID, "BODY", 127);
+    _setPetTrait(petID, "HAND", 127);
+    // setting up power and health
+    vm.startPrank(deployer);
+    _PowerComponent.set(petID, Stat(power, 0, 0, 0));
+    _HealthComponent.set(petID, Stat(health, 0, 0, health));
+    vm.stopPrank();
+
+    // test initial values set accurately
+    assertEq(
+      _getFuzzAffinity(seeds[0], true),
+      LibNode.getAffinity(components, nodeID),
+      "Node affinity mismatch"
+    );
+    assertEq(
+      _getFuzzAffinity(seeds[1], false),
+      LibPet.getAffinities(components, petID)[0],
+      "Pet affinity mismatch"
+    );
+    assertEq(
+      _getFuzzAffinity(seeds[2], false),
+      LibPet.getAffinities(components, petID)[1],
+      "Pet affinity mismatch"
+    );
+    assertEq(power, _PowerComponent.calcTotal(petID), "Power mismatch");
+    assertEq(health, _HealthComponent.calcTotal(petID), "Health mismatch");
+
+    // start production
+    uint prodID = _startProduction(petID, nodeID);
+
+    // checking calcs
+    assertEq(
+      _calcPower(petID),
+      uint(int(LibPet.calcTotalPower(components, petID))),
+      "Power calc mismatch"
+    );
+    assertEq(
+      _calcAffinityMultiplier(prodID, petID),
+      LibProduction.calcRateAffinityMultiplier(components, prodID, petID),
+      "Affinity multiplier calc mismatch"
+    );
+    assertEq(
+      _calcMultiplier(prodID, petID),
+      LibProduction.calcRateMultiplier(components, prodID),
+      "Multiplier calc mismatch"
+    );
+    assertEq(_calcRate(prodID), LibProduction.calcRate(components, prodID), "Rate calc mismatch");
+    assertEq(
+      _RateComponent.get(prodID),
+      LibProduction.calcRate(components, prodID),
+      "Rate set mismatch"
+    );
+
+    // adjusting based on time
+    _fastForward(timeDelta);
+
+    // checking time based calcs
+    uint256 rate = _calcRate(prodID);
+    assertEq(timeDelta, LibProduction.calcDuration(components, prodID), "Duration calc mismatch");
+    assertEq(
+      _calcOutput(rate, timeDelta),
+      LibProduction.calcOutput(components, prodID),
+      "Output calc mismatch"
+    );
+    assertEq(
+      _calcHealthDrain(rate, timeDelta),
+      LibPet.calcDrain(components, petID, _calcOutput(rate, timeDelta)),
+      "Health drain calc mismatch"
+    );
+
+    // collect, check final output and health
+    uint256 drain = _calcHealthDrain(rate, uint(timeDelta));
+
+    if (uint(int(health)) < drain) {
+      assertEq(
+        timeDelta,
+        LibProduction.calcDuration(components, prodID),
+        "Duration 2 calc mismatch"
+      );
+
+      assertEq(
+        _calcHealthDrain(rate, timeDelta),
+        LibPet.calcDrain(components, petID, _calcOutput(rate, timeDelta)),
+        "Health 2 drain calc mismatch"
+      );
+      vm.prank(_getOperator(0));
+      vm.expectRevert("FarmCollect: pet starving..");
+      _ProductionCollectSystem.executeTyped(prodID);
+    } else {
+      _collectProduction(prodID);
+      assertEq(
+        uint(int(health)) - drain,
+        uint(int(LibStat.getHealth(components, petID).sync)),
+        "health output mismatch"
+      );
+      assertEq(
+        _calcOutput(rate, timeDelta),
+        LibCoin.get(components, _getAccount(0)),
+        "coin output mismatch"
+      );
+    }
+  }
+
+  /////////////////
+  // HELPERS
+
+  function _getFuzzAffinity(uint256 seed, bool canBlank) internal view returns (string memory) {
+    uint256 result = seed % (canBlank ? 5 : 4);
+    if (result == 0) return "INSECT";
+    else if (result == 1) return "EERIE";
+    else if (result == 2) return "SCRAP";
+    else if (result == 3) return "NORMAL";
+    else return "";
   }
 }

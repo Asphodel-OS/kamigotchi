@@ -6,8 +6,11 @@ import { LibString } from "solady/utils/LibString.sol";
 import "./TestSetupImports.sol";
 
 import { Location } from "libraries/LibRoom.sol";
+import { Stat } from "components/types/StatComponent.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
+  using LibString for string;
+
   struct PlayerAccount {
     uint256 id;
     uint256 index;
@@ -33,7 +36,6 @@ abstract contract SetupTemplate is TestSetupImports {
     super.setUp();
 
     setUpConfigs();
-    _currTime = 5 minutes;
 
     vm.prank(deployer);
     _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
@@ -42,6 +44,7 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpMint();
     setUpItems();
     setUpRooms();
+    setUpTime();
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed
@@ -78,6 +81,11 @@ abstract contract SetupTemplate is TestSetupImports {
     _createRoom("testRoom2", Location(2, 1, 0), 2, 3);
     _createRoom("testRoom3", Location(1, 2, 0), 3, 2);
     _createRoom("testRoom4", Location(2, 2, 0), 4, 1);
+  }
+
+  function setUpTime() public virtual {
+    _currTime = 5 minutes;
+    vm.warp(_currTime);
   }
 
   function _fastForward(uint timeDelta) internal {
@@ -346,6 +354,17 @@ abstract contract SetupTemplate is TestSetupImports {
   function _giveSkillPoint(uint id, uint amt) internal {
     vm.startPrank(deployer);
     LibSkill.inc(components, id, amt);
+    vm.stopPrank();
+  }
+
+  function _setPetTrait(uint petID, string memory trait, uint32 traitIndex) internal {
+    vm.startPrank(deployer);
+    if (trait.eq("BODY")) LibRegistryTrait.setBodyIndex(components, petID, traitIndex);
+    else if (trait.eq("HAND")) LibRegistryTrait.setHandIndex(components, petID, traitIndex);
+    else if (trait.eq("FACE")) LibRegistryTrait.setFaceIndex(components, petID, traitIndex);
+    else if (trait.eq("COLOR")) LibRegistryTrait.setColorIndex(components, petID, traitIndex);
+    else if (trait.eq("BACKGROUND"))
+      LibRegistryTrait.setBackgroundIndex(components, petID, traitIndex);
     vm.stopPrank();
   }
 

@@ -50,7 +50,7 @@ contract MudTest is Test {
     return getAddressById(systems, id);
   }
 
-  function _randomUints(uint256 n) private returns (uint256[] memory a) {
+  function _randomUints(uint256 n) internal returns (uint256[] memory a) {
     unchecked {
       _misalignFreeMemoryPointer();
       /// @solidity memory-safe-assembly
