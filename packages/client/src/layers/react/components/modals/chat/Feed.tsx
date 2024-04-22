@@ -5,7 +5,8 @@ import styled from 'styled-components';
 
 import { Account } from 'layers/network/shapes/Account';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
-import { FarcasterUser, emptyFaracasterUser, client as neynarClient } from 'src/clients/neynar';
+import { FarcasterUser, emptyFaracasterUser, pollChannelCasts } from 'src/clients/neynar';
+import { likeCast, unlikeCast } from 'src/clients/neynar/casts';
 import { useLocalStorage } from 'usehooks-ts';
 import { playClick } from 'utils/sounds';
 
@@ -79,8 +80,8 @@ export const Feed = (props: Props) => {
 
   const handleLike = (cast: CastWithInteractions) => {
     playClick();
-    if (isLiked(cast)) unlikeCast(cast);
-    else likeCast(cast);
+    if (isLiked(cast)) handleCastUnlike(cast);
+    else handleCastLike(cast);
   };
 
   /////////////////
@@ -124,13 +125,9 @@ export const Feed = (props: Props) => {
   // HELPERS
 
   // trigger a like of a cast
-  async function likeCast(cast: CastWithInteractions) {
+  async function handleCastLike(cast: CastWithInteractions) {
     if (!farcasterUser.signer_uuid) return;
-    const response = await neynarClient.publishReactionToCast(
-      farcasterUser.signer_uuid,
-      'like',
-      cast.hash
-    );
+    const response = await likeCast(farcasterUser.signer_uuid, cast.hash);
 
     // update the list of casts
     if (response.success) {
@@ -146,13 +143,9 @@ export const Feed = (props: Props) => {
   }
 
   // trigger an unlike of a cast
-  async function unlikeCast(cast: CastWithInteractions) {
+  async function handleCastUnlike(cast: CastWithInteractions) {
     if (!farcasterUser.signer_uuid) return;
-    const response = await neynarClient.deleteReactionFromCast(
-      farcasterUser.signer_uuid,
-      'like',
-      cast.hash
-    );
+    const response = await unlikeCast(farcasterUser.signer_uuid, cast.hash);
 
     // update the list of casts
     if (response.success) {
@@ -174,12 +167,9 @@ export const Feed = (props: Props) => {
     if (casts.length > 0 && feed?.next.cursor === '') return;
 
     setIsPolling(true);
-    const newFeed = await neynarClient.fetchFeed('filter', {
-      filterType: 'channel_id',
-      channelId: 'kamigotchi',
-      cursor: feed?.next.cursor ?? '',
-      limit: 10, // defaults to 25, max 100
-    });
+
+    const cursor = feed?.next.cursor ?? '';
+    const newFeed = await pollChannelCasts('kamigotchi', cursor);
     setFeed(newFeed);
 
     // adds new casts to the current list, with preference for new data, and sorts the list
@@ -195,12 +185,8 @@ export const Feed = (props: Props) => {
 
   // poll for new messages from the feed and update the list of current casts. do not update the Feed state
   async function pollNew() {
-    const newFeed = await neynarClient.fetchFeed('filter', {
-      filterType: 'channel_id',
-      channelId: 'kamigotchi',
-      cursor: feed?.next.cursor ?? '',
-      limit: 5, // defaults to 25, max 100
-    });
+    const cursor = feed?.next.cursor ?? '';
+    const newFeed = await pollChannelCasts('kamigotchi', cursor, 5);
 
     // adds new casts to the current list, with preference for new data, and sorts the list
     const currCasts = [...casts];
@@ -306,8 +292,8 @@ const Body = styled.div`
 
 const Heart = styled.div<{ color: string }>`
   width: 1.2vw;
-  background: radial-gradient(circle at 60% 65%, ${(props) => props.color} 64%, transparent 65%) top
-      left,
+  background:
+    radial-gradient(circle at 60% 65%, ${(props) => props.color} 64%, transparent 65%) top left,
     radial-gradient(circle at 40% 65%, ${(props) => props.color} 64%, transparent 65%) top right,
     linear-gradient(to bottom left, ${(props) => props.color} 43%, transparent 43%) bottom left,
     linear-gradient(to bottom right, ${(props) => props.color} 43%, transparent 43%) bottom right;

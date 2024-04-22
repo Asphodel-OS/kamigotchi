@@ -52,7 +52,7 @@
     "@mud-classic/utils": "^0.0.3",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.13.7",
-    "@neynar/nodejs-sdk": "^1.10.0",
+    "@neynar/nodejs-sdk": "^1.19.0",
     "@privy-io/react-auth": "^1.59.4",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@rollup/plugin-dsv": "^3.0.4",

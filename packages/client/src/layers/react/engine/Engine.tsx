@@ -28,7 +28,15 @@ export const Engine: React.FC<{
   /////////////////
   // CONFIGURATION
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      // queries: {
+      //   staleTime: 1000 * 10,
+      //   gcTime: 1000 * 60 * 60 * 24,
+      //   retry: 5,
+      // },
+    },
+  });
 
   const deafultTransport =
     mode === 'development' ? http() : http(import.meta.env.VITE_RPC_TRANSPORT_URL);
