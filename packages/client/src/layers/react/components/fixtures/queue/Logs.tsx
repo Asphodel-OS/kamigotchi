@@ -124,20 +124,21 @@ const Text = styled.div`
   font-size: 0.6vw;
   color: #333;
   text-align: left;
-  padding: 0.2vw;
+  margin: 0.2vw;
   font-family: Pixel;
 `;
 
 const Icon = styled.img`
-  width: 70%;
+  width: 1.2vw;
+  margin: 0.3vw;
   align-self: center;
 `;
 
 // Color coded icon mapping of action queue
 type ColorMapping = { [key: string]: any };
 const statusIcons: ColorMapping = {
-  executing: <PendingIcon style={{ color: 'yellow' }} />,
-  pending: <PendingIcon style={{ color: 'orange' }} />,
+  executing: <PendingIcon style={{ color: 'yellow', width: '1.2vw', marginLeft: '0.3vw' }} />,
+  pending: <PendingIcon style={{ color: 'orange', width: '1.2vw', marginLeft: '0.3vw' }} />,
   complete: <Icon src={IndicatorIcons.success} />,
   failed: <Icon src={IndicatorIcons.failure} />,
   cancelled: <Icon src={IndicatorIcons.failure} />,

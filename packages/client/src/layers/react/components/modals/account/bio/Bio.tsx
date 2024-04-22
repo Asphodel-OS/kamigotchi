@@ -200,7 +200,7 @@ const PfpImage = styled.img`
 `;
 
 const PfpStatus = styled.div<{ timeDelta: number }>`
-  border: solid 0.18vw white;
+  border: solid 0.2vw white;
   position: absolute;
   bottom: 0.9vw;
   right: 0.9vw;
@@ -209,8 +209,8 @@ const PfpStatus = styled.div<{ timeDelta: number }>`
   border-radius: 3vw;
 
   background-color: ${(props) => {
-    if (props.timeDelta < 60000) return '#6f0';
-    else if (props.timeDelta < 600000) return '#fd0';
+    if (props.timeDelta < 60000) return '#6f3';
+    else if (props.timeDelta < 600000) return '#fd3';
     else return '#f33';
   }};
 `;
