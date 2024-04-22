@@ -26,6 +26,7 @@ import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComp
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibGacha, GACHA_ID } from "libraries/LibGacha.sol";
@@ -33,7 +34,6 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibProduction } from "libraries/LibProduction.sol";
-import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibRegistryTrait } from "libraries/LibRegistryTrait.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
@@ -161,7 +161,14 @@ library LibPet {
   ) internal view returns (uint256) {
     string memory targetAff = getAffinities(components, targetID)[0];
     string memory sourceAff = getAffinities(components, sourceID)[1];
-    return LibRegistryAffinity.getAttackMultiplier(components, sourceAff, targetAff);
+    return
+      LibAffinity.getMultiplier(
+        LibConfig.getArray(components, "LIQ_THRESH_MULT_AFF"),
+        0, // TODO: implement affinity attack/defense bonus
+        0, // TODO: implement affinity attack/defense bonus
+        0, // TODO: implement affinity attack/defense bonus
+        LibAffinity.getAttackStrength(components, sourceAff, targetAff)
+      );
   }
 
   // Calculate the reward for liquidating a specified Coin balance

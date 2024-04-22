@@ -45,11 +45,9 @@ library LibBonus {
   ) internal view returns (uint256) {
     int256 bonus = getRaw(components, holderID, type_);
     if (bonus == 0) return 1000;
-    else {
-      // max change is 0.1%
-      if (bonus <= -1000) return 1;
-      else return uint256(1000 + bonus); // overflow alr checked
-    }
+    // max change is 0.1%
+    else if (bonus <= -1000) return 1;
+    else return uint256(1000 + bonus); // overflow alr checked
   }
 
   /// @notice adjust base value based on bonus

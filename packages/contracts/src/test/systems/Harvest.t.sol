@@ -104,7 +104,13 @@ contract HarvestTest is SetupTemplate {
     // layer the multipliers due to each trait on top of each other
     uint256 totMultiplier = 1;
     for (uint256 i = 0; i < petAffs.length; i++)
-      totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
+      totMultiplier *= LibAffinity.getMultiplier(
+        LibConfig.getArray(components, "HARVEST_RATE_MULT_AFF"),
+        0, // netural bonus
+        bonusUp,
+        bonusDown,
+        LibAffinity.getHarvestStrength(components, petAffs[i], nodeAff)
+      );
 
     return totMultiplier;
   }

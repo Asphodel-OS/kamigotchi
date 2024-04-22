@@ -23,7 +23,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibRegistryAffinity } from "libraries/LibRegistryAffinity.sol";
+import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 struct HarvestRates {
@@ -144,10 +144,23 @@ library LibProduction {
 
     string[] memory petAffs = LibPet.getAffinities(components, petID);
 
+    // get affinity multipliers, with bonuses
+    LibAffinity.Multipliers memory mults = LibAffinity.calcMultipliers(
+      components,
+      "HARVEST_RATE_MULT_AFF",
+      petID,
+      "HARVEST_AFFINITY_NETURAL",
+      "HARVEST_AFFINITY_STRONG",
+      "HARVEST_AFFINITY_WEAK"
+    );
+
     // layer the multipliers due to each trait on top of each other
     uint256 totMultiplier = 1;
     for (uint256 i = 0; i < petAffs.length; i++)
-      totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
+      totMultiplier *= LibAffinity.getMultiplier(
+        mults,
+        LibAffinity.getHarvestStrength(components, petAffs[i], nodeAff)
+      );
     return totMultiplier;
   }
 
