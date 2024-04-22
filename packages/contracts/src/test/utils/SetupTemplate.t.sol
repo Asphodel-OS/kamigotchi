@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
 
 import "./TestSetupImports.sol";
 

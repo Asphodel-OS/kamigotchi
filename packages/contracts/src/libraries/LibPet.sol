@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.sol";
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
@@ -44,6 +45,8 @@ string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces
 
 library LibPet {
   using LibFPMath for int256;
+  using SafeCastLib for int32;
+  using SafeCastLib for uint256;
 
   ///////////////////////
   // ENTITY INTERACTIONS
@@ -130,10 +133,10 @@ library LibPet {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
       uint256 damage = calcDrain(components, id, deltaBalance);
-      drain(components, id, int32(int(damage)));
+      drain(components, id, damage.toInt32());
     } else if (LibString.eq(state, "RESTING")) {
       uint256 recovery = calcRestingRecovery(components, id);
-      heal(components, id, int32(int(recovery)));
+      heal(components, id, recovery.toInt32());
     }
 
     setLastTs(components, id, block.timestamp);
@@ -204,7 +207,7 @@ library LibPet {
     uint256 id
   ) internal view returns (uint256) {
     uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE");
-    uint256 totalHarmony = uint(int(calcTotalHarmony(components, id)));
+    uint256 totalHarmony = calcTotalHarmony(components, id).toUint256();
 
     uint256 precision = 10 ** uint256(configVals[0]);
     uint256 base = uint256(configVals[1]);
@@ -237,8 +240,8 @@ library LibPet {
 
     uint256 base = uint256(configVals[0]);
     uint256 basePrecision = 10 ** uint256(configVals[1]);
-    uint256 sourceViolence = uint(int(calcTotalViolence(components, sourceID)));
-    uint256 targetHarmony = uint(int(calcTotalHarmony(components, targetID)));
+    uint256 sourceViolence = calcTotalViolence(components, sourceID).toUint256();
+    uint256 targetHarmony = calcTotalHarmony(components, targetID).toUint256();
     int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
     int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
     return (uint256(weight) * base) / basePrecision;
@@ -427,11 +430,11 @@ library LibPet {
     configs[3] = "KAMI_BASE_HARMONY";
     configs[4] = "KAMI_BASE_SLOTS";
     uint256[] memory configVals = LibConfig.getBatch(components, configs);
-    int32 health = int32(int(configVals[0]));
-    int32 power = int32(int(configVals[1]));
-    int32 violence = int32(int(configVals[2]));
-    int32 harmony = int32(int(configVals[3]));
-    int32 slots = int32(int(configVals[4]));
+    int32 health = configVals[0].toInt32();
+    int32 power = configVals[1].toInt32();
+    int32 violence = configVals[2].toInt32();
+    int32 harmony = configVals[3].toInt32();
+    int32 slots = configVals[4].toInt32();
 
     // sum the stats from all traits
     uint256 traitRegistryID;

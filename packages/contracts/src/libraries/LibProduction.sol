@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
@@ -36,6 +37,7 @@ struct HarvestRates {
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
  */
 library LibProduction {
+  using SafeCastLib for int32;
   /////////////////
   // INTERACTIONS
 
@@ -164,8 +166,8 @@ library LibProduction {
     uint256 targetPetID,
     uint256 sourcePetID
   ) public view returns (bool) {
-    uint256 health = uint(int(LibStat.getHealth(components, targetPetID).sync));
-    uint256 totalHealth = uint(int(LibPet.calcTotalHealth(components, targetPetID)));
+    uint256 health = (LibStat.getHealth(components, targetPetID).sync).toUint256();
+    uint256 totalHealth = LibPet.calcTotalHealth(components, targetPetID).toUint256();
     uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
     return threshold * totalHealth > health * 1e18;
   }

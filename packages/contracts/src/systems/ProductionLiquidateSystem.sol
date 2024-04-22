@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -61,7 +62,7 @@ contract ProductionLiquidateSystem is System {
     uint256 bounty = LibPet.calcBounty(components, petID, balance);
     uint256 recoil = LibPet.calcDrain(components, petID, bounty);
     LibCoin.inc(components, productionID, bounty);
-    LibPet.drain(components, petID, int32(int(recoil)));
+    LibPet.drain(components, petID, SafeCastLib.toInt32(recoil));
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);

@@ -28,15 +28,16 @@ contract HarvestTest is SetupTemplate {
   /////////////////
   // CALCS
 
-  // NOTE: health drain is rounded while reward is truncated
-  // this assumes no drain multipliers
-  function _calcHealthDrain(uint rate, uint timeDelta) internal view returns (uint) {
-    uint ratePrecision = 10 ** uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
-    uint output = (rate * timeDelta) / (ratePrecision);
+  function _calcHealthDrain(uint256 output) internal view returns (uint) {
+    return _calcHealthDrain(output, 0);
+  }
+
+  function _calcHealthDrain(uint256 output, int256 bonus) internal view returns (uint) {
     uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_DRAIN_BASE");
-    uint drainBase = uint256(configVals[0]);
-    uint drainBasePrecision = 10 ** uint256(configVals[1]);
-    return (output * drainBase + (drainBasePrecision / 2)) / drainBasePrecision;
+    uint base = uint256(configVals[0]);
+    uint prec = 10 ** uint256(configVals[1]);
+    uint multiplier = _handlePercentBonus(bonus);
+    return (output * base + (prec / 2)) / prec;
   }
 
   function _calcOutput(uint rate, uint timeDelta) internal view returns (uint) {
@@ -51,14 +52,32 @@ contract HarvestTest is SetupTemplate {
     uint256 petID = _IdPetComponent.get(prodID);
     uint256 nodeID = _IdNodeComponent.get(prodID);
 
+    uint256 precision = 3600;
+
+    // power
     uint256 power = _calcPower(petID);
+    uint256 P = power;
+
+    // base rate
     uint256 ratePrec = 10 ** uint256(configs[0]);
     uint256 baseRate = uint256(configs[1]);
     uint256 basePrec = 10 ** uint256(configs[2]);
-    uint256 multiplier = _calcMultiplier(prodID, petID);
-    uint256 multPrec = 10 ** uint256(configs[3]);
+    uint256 rfBase = baseRate * ratePrec;
+    precision *= basePrec;
 
-    return (ratePrec * baseRate * power * multiplier) / (3600 * basePrec * multPrec);
+    // multiplier
+    uint256 multAffinity = _calcAffinityMultiplier(
+      prodID,
+      petID,
+      LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_STRONG"), // not implemented
+      LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_WEAK") // not implemented
+    );
+    uint256 multBonus = _calcBonusMultiplier(LibBonus.getRaw(components, petID, "HARVEST_OUTPUT"));
+    uint256 multPrec = 10 ** uint256(configs[3]);
+    uint256 rfMultiplier = multAffinity * multBonus;
+    precision *= multPrec;
+
+    return (P * rfBase * rfMultiplier) / precision;
   }
 
   // just kami stats for now - may include equipment later
@@ -66,13 +85,16 @@ contract HarvestTest is SetupTemplate {
     return uint256(uint32(_PowerComponent.calcTotal(petID)));
   }
 
-  function _calcMultiplier(uint prodID, uint petID) internal view returns (uint) {
-    uint256 bonusMult = LibBonus.getPercent(components, petID, "HARVEST_OUTPUT");
-    uint256 affinityMult = _calcAffinityMultiplier(prodID, petID);
-    return affinityMult * bonusMult;
+  function _calcAffinityMultiplier(uint prodID, uint petID) internal view returns (uint) {
+    return _calcAffinityMultiplier(prodID, petID, 0, 0);
   }
 
-  function _calcAffinityMultiplier(uint prodID, uint petID) internal view returns (uint) {
+  function _calcAffinityMultiplier(
+    uint prodID,
+    uint petID,
+    int256 bonusUp,
+    int256 bonusDown
+  ) internal view returns (uint) {
     string memory nodeAff = LibNode.getAffinity(
       components,
       LibProduction.getNode(components, prodID)
@@ -85,6 +107,11 @@ contract HarvestTest is SetupTemplate {
       totMultiplier *= LibRegistryAffinity.getHarvestMultiplier(components, petAffs[i], nodeAff);
 
     return totMultiplier;
+  }
+
+  /// @notice returns in raw form - precision is expected to be handled during rate calc
+  function _calcBonusMultiplier(int256 bonus) internal pure returns (uint256) {
+    return _handlePercentBonus(bonus);
   }
 
   /////////////////
@@ -339,7 +366,7 @@ contract HarvestTest is SetupTemplate {
 
         rate = LibProduction.getRate(components, productionIDs[j]);
         assertEq(rate, _calcRate(productionIDs[j]));
-        drain = _calcHealthDrain(rate, timeDelta);
+        drain = _calcHealthDrain(_calcOutput(rate, timeDelta));
 
         if (kamiHealths[j] <= drain) {
           vm.prank(_getOperator(0));
@@ -418,7 +445,7 @@ contract HarvestTest is SetupTemplate {
       "Affinity multiplier calc mismatch"
     );
     assertEq(
-      _calcMultiplier(prodID, petID),
+      _calcAffinityMultiplier(prodID, petID) * _calcBonusMultiplier(0),
       LibProduction.calcRateMultiplier(components, prodID),
       "Multiplier calc mismatch"
     );
@@ -441,18 +468,19 @@ contract HarvestTest is SetupTemplate {
       "Output calc mismatch"
     );
     assertEq(
-      _calcHealthDrain(rate, timeDelta),
+      _calcHealthDrain(_calcOutput(rate, timeDelta)),
       LibPet.calcDrain(components, petID, _calcOutput(rate, timeDelta)),
       "Health drain calc mismatch"
     );
 
     // collect, check final output and health
-    uint256 drain = _calcHealthDrain(rate, uint(timeDelta));
+    uint256 drain = _calcHealthDrain(_calcOutput(rate, timeDelta));
 
-    if (uint(int(health)) < drain) {
-      assertTrue(int32(int(drain)) >= 0, "drain overflow");
+    if (uint(int(health)) <= drain) {
       vm.prank(_getOperator(0));
-      vm.expectRevert("FarmCollect: pet starving..");
+      if (drain >= (1 << 31))
+        vm.expectRevert(SafeCastLib.Overflow.selector); // overflow check
+      else vm.expectRevert("FarmCollect: pet starving..");
       _ProductionCollectSystem.executeTyped(prodID);
     } else {
       _collectProduction(prodID);
@@ -479,5 +507,10 @@ contract HarvestTest is SetupTemplate {
     else if (result == 2) return "SCRAP";
     else if (result == 3) return "NORMAL";
     else return "";
+  }
+
+  /// @notice handles % bonus manipulation (base value of 1000 bps)
+  function _handlePercentBonus(int256 bonus) internal pure returns (uint256) {
+    return bonus > -1000 ? uint256(bonus + 1000) : 1;
   }
 }
