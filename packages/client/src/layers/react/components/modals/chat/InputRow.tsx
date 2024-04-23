@@ -67,6 +67,7 @@ export const InputRow = (props: Props) => {
       parent_hash: '',
       parent_author: { fid: 0 },
       parent_url: '',
+      root_parent_url: '',
       embeds: [],
       timestamp: new Date(Date.now()).toISOString(),
       reactions: { likes: [], recasts: [] },

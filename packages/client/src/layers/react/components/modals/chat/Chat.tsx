@@ -29,12 +29,14 @@ export function registerChatModal() {
           const account = getAccountFromBurner(network, { friends: true });
           return {
             data: { account },
+            network,
           };
         })
       );
     },
-    ({ data }) => {
+    ({ data, network }) => {
       const { account } = data;
+      const { actions } = network;
       const [casts, setCasts] = useState<CastWithInteractions[]>([]);
       const maxCasts = 100;
 
@@ -53,7 +55,7 @@ export function registerChatModal() {
           divName='chat'
           id='chat_modal'
           header={<ModalHeader title='Chat' icon={chatIcon} />}
-          footer={<InputRow account={account} actions={{ pushCast }} />}
+          footer={<InputRow account={account} actions={{ pushCast }} actionSystem={actions} />}
           canExit
         >
           <Feed account={account} max={maxCasts} casts={casts} setCasts={setCasts} />
