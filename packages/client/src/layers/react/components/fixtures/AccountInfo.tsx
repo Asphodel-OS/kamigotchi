@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { erc20Abi, formatEther, formatUnits } from 'viem';
-import { useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
+import { useBalance, useReadContract, useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { GasConstants } from 'constants/gas';
@@ -49,10 +48,17 @@ export function registerAccountInfoFixture() {
       // console.log('mAccountInfo:', data);
       const { account, room } = data;
       const { fixtures } = useVisibility();
-      const blockNumber = useBlockNumber({ watch: true, cacheTime: 500 });
 
       /////////////////
       // SUBSCRIPTIONS
+
+      useWatchBlockNumber({
+        onBlockNumber: (n) => {
+          refetchMint20Addy();
+          refetchOwnerMint20Balance();
+          refetchOperatorEthBalance();
+        },
+      });
 
       // Operator Eth Balance
       const { data: operatorEthBalance, refetch: refetchOperatorEthBalance } = useBalance({
@@ -82,16 +88,6 @@ export function registerAccountInfoFixture() {
           },
         ],
       });
-
-      /////////////////
-      // TRACKING
-
-      // update the relevant details as we retrieve new blocks
-      useEffect(() => {
-        refetchMint20Addy();
-        refetchOwnerMint20Balance();
-        refetchOperatorEthBalance();
-      }, [blockNumber]);
 
       /////////////////
       // INTERPRETATION

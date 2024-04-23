@@ -45,6 +45,7 @@ export const Engine: React.FC<{
     transports: {
       [defaultChain.id]: deafultTransport,
     },
+    pollingInterval: 2000, // TODO: set this with a config value
   });
 
   const privyConfig: PrivyClientConfig = {
