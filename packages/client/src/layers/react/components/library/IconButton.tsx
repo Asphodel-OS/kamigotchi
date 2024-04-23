@@ -55,44 +55,55 @@ export const IconButton = (props: Props) => {
       styles.boxShadow = '0 0 1vw 0 rgba(0, 0, 0, 0.5)';
     }
 
-    if (props.disabled) styles.backgroundColor = '#b2b2b2';
     if (props.color) styles.backgroundColor = props.color;
+    if (props.disabled) styles.backgroundColor = '#b2b2b2';
 
     return styles;
   };
 
-  if (props.pulse)
-    return (
-      <PulseButton onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
-        <Image src={props.img} />
-      </PulseButton>
-    );
-  else
-    return (
-      <Button onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
-        <Image src={props.img} />
-      </Button>
-    );
+  return (
+    <Button
+      onClick={!props.disabled ? handleClick : () => {}}
+      style={setStyles()}
+      color={props.color}
+      disabled={props.disabled}
+      pulse={props.pulse}
+    >
+      <Image src={props.img} />
+    </Button>
+  );
 };
 
-const Button = styled.div`
-  background-color: #ffffff;
+const Button = styled.div<{ color?: string; disabled?: boolean; pulse?: boolean }>`
   border: solid black;
-
-  color: black;
   justify-content: center;
 
   font-family: Pixel;
   text-align: center;
 
-  cursor: pointer;
   pointer-events: auto;
-  &:hover {
-    background-color: #e8e8e8;
-  }
-  &:active {
-    background-color: #c4c4c4;
-  }
+
+  ${({ color, disabled }) =>
+    disabled
+      ? `background-color: '#bbb';`
+      : `
+    background-color: ${color ? color : '#fff'};
+    &:hover {
+      cursor: pointer;
+      background-color: ${color ? color : '#bbb'};
+      opacity: ${color ? 0.6 : 0.9};
+    }
+    &:active {
+      background-color: ${color ? color : '#999'};
+      opacity: ${color ? 0.3 : 0.6};
+    }
+  `}
+
+  ${({ pulse }) =>
+    pulse &&
+    `
+    animation: ${Pulse} 3s ease-in-out infinite;
+  `}
 `;
 
 const Image = styled.img`
@@ -106,8 +117,4 @@ const Pulse = keyframes`
   85%, 95% {
     background-color: #e8e8e8;
   }
-`;
-
-const PulseButton = styled(Button)`
-  animation: ${Pulse} 3s ease-in-out infinite;
 `;

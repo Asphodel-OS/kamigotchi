@@ -21,8 +21,10 @@ export function IconListButton(props: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    playClick();
-    if (!props.disabled) setAnchorEl(event.currentTarget);
+    if (!props.disabled) {
+      playClick();
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleClose = () => {
@@ -62,7 +64,7 @@ export function IconListButton(props: Props) {
 
   return (
     <div>
-      <Button ref={toggleRef} onClick={handleClick} style={setStyles()}>
+      <Button ref={toggleRef} onClick={handleClick} style={setStyles()} disabled={!!props.disabled}>
         <Corner />
         <Image src={props.img} />
       </Button>
@@ -79,7 +81,7 @@ export function IconListButton(props: Props) {
   );
 }
 
-const Button = styled.button`
+const Button = styled.button<{ disabled: boolean }>`
   position: relative;
   background-color: #fff;
   border: solid black 0.15vw;
@@ -98,12 +100,19 @@ const Button = styled.button`
 
   cursor: pointer;
   pointer-events: auto;
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
+
+  ${({ disabled }) =>
+    !disabled &&
+    `
+    &:hover {
+      opacity: 0.9;
+      background-color: #bbb;
+    }
+    &:active {
+      opacity: 0.6;
+      background-color: #999;
+    }
+  `}
 `;
 
 const Corner = styled.div`
