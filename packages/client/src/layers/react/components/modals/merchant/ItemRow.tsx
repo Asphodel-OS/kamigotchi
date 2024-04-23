@@ -21,8 +21,8 @@ export const ItemRow = (props: Props) => {
 
   return (
     <Row key={listing.item!.index}>
-      <Tooltip text={[listing.item!.description]}>
-        <Image src={listing.item!.image.default} />
+      <Tooltip text={[listing.item.description ?? '']}>
+        <Image src={listing.item!.image} />
       </Tooltip>
       <Name>{listing.item!.name}</Name>
       <Price>{listing!.buyPrice}</Price>

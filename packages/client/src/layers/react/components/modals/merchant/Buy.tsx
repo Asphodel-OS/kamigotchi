@@ -89,7 +89,7 @@ export function registerBuyModal() {
       return (
         <ModalWrapper id='buy' divName='buy' header={<Title>Confirm Purchase</Title>} overlay>
           <Content>
-            <Image src={listing.item.image.default} />
+            <Image src={listing.item.image} />
             <InfoSection>
               <Name>{listing.item.name}</Name>
               <Description>{`lorem ipsum, description will go here`}</Description>
