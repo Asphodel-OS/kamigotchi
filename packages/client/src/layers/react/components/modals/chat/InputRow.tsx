@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
+import { chatIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
 import { ActionSystem } from 'layers/network/systems';
 import { FarcasterConnect, InputSingleTextForm } from 'layers/react/components/library';
@@ -79,7 +80,7 @@ export const InputRow = (props: Props) => {
       playScribble();
       await sendCast(text);
       // TODO: play success sound and update message in feed here (to succeeded)
-      console.log(`submitted ${text}`);
+      console.log(`submitted "${text}"`);
     } catch (e) {
       // TODO: play failure sound here and remove message from feed
       // later we want to retry it offer the option to
@@ -102,10 +103,11 @@ export const InputRow = (props: Props) => {
       <InputSingleTextForm
         fullWidth
         maxLen={320}
-        hasButton={isAuthorized}
         placeholder={getPlaceholder()}
         onSubmit={onSubmit}
         disabled={!isAuthorized}
+        hasButton={isAuthorized}
+        buttonIcon={chatIcon}
       />
       {!isAuthorized && (
         <FarcasterConnect actionSystem={actionSystem} account={account} size='medium' />

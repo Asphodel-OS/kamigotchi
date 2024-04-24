@@ -15,11 +15,13 @@ interface Props {
   hasButton?: boolean; // whether the input has a submit button
   onSubmit?: (text: string) => void; // the function to call when the submit button is clicked
   disabled?: boolean; // whether the input is disabled
+  buttonIcon?: string; // the icon to display on the button
 }
 
 // InputSingleTextForm is a styled input field with some additional frills
 export const InputSingleTextForm = (props: Props) => {
-  const { maxLen, fullWidth, hasButton, label, placeholder, onSubmit } = props;
+  const { maxLen, fullWidth, label, placeholder, onSubmit } = props;
+  const { hasButton, buttonIcon } = props;
   const [value, setValue] = useState(props.initialValue || '');
   let styleOverride = {};
   if (fullWidth) styleOverride = { width: '100%' };
@@ -55,7 +57,7 @@ export const InputSingleTextForm = (props: Props) => {
       </InputGroup>
       {hasButton && (
         <Tooltip text={['submit']}>
-          <IconButton img={PlaceholderIcon} onClick={() => handleSubmit()} />
+          <IconButton img={buttonIcon ?? PlaceholderIcon} onClick={() => handleSubmit()} />
         </Tooltip>
       )}
     </Container>
@@ -96,11 +98,10 @@ const Input = styled.input`
   width: 100%;
   color: black;
   margin: 0.1vw 0vw;
-  padding: 0.52vw 1vw;
+  padding: 0.8vw 1vw;
 
   font-family: Pixel;
   font-size: 0.8vw;
-  line-height: 1.2vw;
   text-align: left;
   text-decoration: none;
 
