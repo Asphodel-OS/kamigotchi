@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { useBalance, useBlockNumber } from 'wagmi';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -36,7 +36,6 @@ export function registerFundOperatorModal() {
 
     ({ network }) => {
       const { actions, world } = network;
-      const blockNumber = useBlockNumber({ watch: true });
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
 
@@ -45,6 +44,16 @@ export function registerFundOperatorModal() {
       const [statusText, setStatusText] = useState('');
       const [statusColor, setStatusColor] = useState('grey');
 
+      /////////////////
+      // SUBSCRIPTIONS
+
+      useWatchBlockNumber({
+        onBlockNumber: (n) => {
+          refetchOwnerBalance();
+          refetchOperatorBalance();
+        },
+      });
+
       const { data: OwnerBalance, refetch: refetchOwnerBalance } = useBalance({
         address: kamiAccount.ownerAddress as `0x${string}`,
       });
@@ -52,14 +61,6 @@ export function registerFundOperatorModal() {
       const { data: OperatorBalance, refetch: refetchOperatorBalance } = useBalance({
         address: kamiAccount.operatorAddress as `0x${string}`,
       });
-
-      /////////////////
-      // TRACKING
-
-      useEffect(() => {
-        refetchOwnerBalance();
-        refetchOperatorBalance();
-      }, [blockNumber]);
 
       /////////////////
       // ACTIONS

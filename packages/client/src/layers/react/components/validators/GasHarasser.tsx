@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { useBalance, useBlockNumber } from 'wagmi';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
@@ -28,7 +28,6 @@ export function registerGasHarasser() {
     (layers) => {
       const { network } = layers;
       const { actions, world } = network;
-      const { data: blockNumber } = useBlockNumber({ watch: true });
 
       const { account, validations, setValidations } = useAccount();
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
@@ -38,17 +37,19 @@ export function registerGasHarasser() {
       const [isVisible, setIsVisible] = useState(false);
       const [value, setValue] = useState(0.05);
 
-      // Operator Eth Balance
+      /////////////////
+      // SUBSCRIPTIONS
+
+      useWatchBlockNumber({
+        onBlockNumber: (n) => refetch(),
+      });
+
       const { data: balance, refetch } = useBalance({
         address: account.operatorAddress as `0x${string}`,
       });
 
       /////////////////
-      // SUBSCRIPTIONS
-
-      useEffect(() => {
-        refetch();
-      }, [blockNumber]);
+      // TRACKING
 
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
@@ -102,7 +103,7 @@ export function registerGasHarasser() {
       };
 
       /////////////////
-      // FORM HANDLING
+      // INTERACTIONS
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let newValue = Number(event.target.value);

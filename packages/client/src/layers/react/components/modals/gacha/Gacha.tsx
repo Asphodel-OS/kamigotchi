@@ -4,7 +4,13 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import { useAccount, useBalance, useBlockNumber, useReadContract, useReadContracts } from 'wagmi';
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useReadContracts,
+  useWatchBlockNumber,
+} from 'wagmi';
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
@@ -53,7 +59,6 @@ export function registerGachaModal() {
         world,
         api: { player },
       } = network;
-      const blockNumber = useBlockNumber({ watch: true, cacheTime: 500 });
       const { isConnected } = useAccount();
       const { modals, setModals } = useVisibility();
       const { account: kamiAccount } = useKamiAccount();
@@ -62,9 +67,19 @@ export function registerGachaModal() {
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
       const [tab, setTab] = useState('MINT');
+      const [blockNumber, setBlockNumber] = useState(BigInt(0));
 
       /////////////////
       // SUBSCRIPTIONS
+
+      useWatchBlockNumber({
+        onBlockNumber: (n) => {
+          refetchMint20Addy();
+          refetchOwnerMint20Balance();
+          refetchOwnerEthBalance();
+          setBlockNumber(n);
+        },
+      });
 
       // Owner ETH Balance
       const { data: ownerEthBalance, refetch: refetchOwnerEthBalance } = useBalance({
@@ -98,13 +113,6 @@ export function registerGachaModal() {
       //////////////
       // TRACKING
 
-      // update the relevant details as we retrieve new blocks
-      useEffect(() => {
-        refetchMint20Addy();
-        refetchOwnerMint20Balance();
-        refetchOwnerEthBalance();
-      }, [blockNumber]);
-
       useEffect(() => {
         const tx = async () => {
           if (isConnected && !triedReveal) {
@@ -112,7 +120,7 @@ export function registerGachaModal() {
             // wait to give buffer for OP rpc
             await new Promise((resolve) => setTimeout(resolve, 500));
             const filtered = data.commits.filter((n) => {
-              return isGachaAvailable(n, Number(blockNumber.data));
+              return isGachaAvailable(n, Number(blockNumber));
             });
             revealTx(filtered);
             if (waitingToReveal) {
@@ -280,7 +288,7 @@ export function registerGachaModal() {
               actions={{ revealTx }}
               data={{
                 commits: data.commits || [],
-                blockNumber: Number(blockNumber.data),
+                blockNumber: Number(blockNumber),
               }}
               display={{ Tab: TabsBar }}
             />
