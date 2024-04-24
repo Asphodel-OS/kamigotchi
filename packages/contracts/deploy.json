@@ -344,6 +344,7 @@
     {
       "name": "_RegistryDeleteSkillSystem",
       "writeAccess": [
+        "IdOwnsConditionComponent",
         "IsRegistryComponent",
         "IsSkillComponent",
         "IsEffectComponent",
@@ -927,7 +928,7 @@
     "LibProduction",
     "LibQuests",
     "LibRarity",
-    "LibRegistryAffinity",
+    "LibAffinity",
     "LibRegistryItem",
     "LibRegistryQuests",
     "LibRegistrySkill",

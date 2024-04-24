@@ -16,6 +16,9 @@ contract SkillTest is SetupTemplate {
     _createSkill(1, "ACCOUNT", "PASSIVE", 0, 1);
     _createSkillEffect(1, "TEST_TYPE", "TEST_SUBTYPE", 1);
     _createSkillRequirement(1, "TEST_TYPE", "CURR_MIN", 0, 1);
+
+    vm.prank(deployer);
+    __RegistryDeleteSkillSystem.executeTyped(1);
   }
 
   // test whether skill upgrades are properly gated by skill point availability

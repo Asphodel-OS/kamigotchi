@@ -409,7 +409,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     );
   }
 
-  async function initQuestByIndex(indices: number[]) {
+  async function initQuestsByIndex(indices: number[]) {
     for (let i = 0; i < questCSV.length; i++) {
       const quest = questCSV[i];
       if (!indices.includes(Number(quest['Index']))) continue;
@@ -472,6 +472,20 @@ export function setupWorldAPI(systems: any, provider: any) {
   async function initSkills() {
     for (let i = 0; i < skillsCSV.length; i++) {
       const skill = skillsCSV[i];
+      await sleepIf();
+      try {
+        if (skill['Status'] !== 'For Implementation') continue;
+        if (skill['Class'] === 'Skill' || skill['Class'] === '') await initSkill(skill);
+        else if (skill['Class'] === 'Effect') await initSkillEffect(skill);
+        else if (skill['Class'] === 'Requirement') await initSkillRequirement(skill);
+      } catch {}
+    }
+  }
+
+  async function initSkillsByIndex(indices: number[]) {
+    for (let i = 0; i < skillsCSV.length; i++) {
+      const skill = skillsCSV[i];
+      if (!indices.includes(Number(skill['Index']))) continue;
       await sleepIf();
       try {
         if (skill['Status'] !== 'For Implementation') continue;
@@ -595,7 +609,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     },
     quests: {
       init: () => initQuests(),
-      initByIndex: (indices: number[]) => initQuestByIndex(indices),
+      initByIndex: (indices: number[]) => initQuestsByIndex(indices),
       delete: (indices: number[]) => deleteQuests(indices),
     },
     relationships: {
@@ -609,6 +623,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     },
     skill: {
       init: () => initSkills(),
+      initByIndex: (indices: number[]) => initSkillsByIndex(indices),
       delete: (indices: number[]) => deleteSkills(indices),
     },
     traits: {
