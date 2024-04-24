@@ -7,6 +7,9 @@ import "test/utils/SetupTemplate.t.sol";
 
 // TODO: test for correct production rates upon starting harvests
 contract HarvestTest is SetupTemplate {
+  using SafeCastLib for int32;
+  using SafeCastLib for uint256;
+
   uint _idleRequirement;
   mapping(uint => bool) internal _isStarved;
 
@@ -393,12 +396,44 @@ contract HarvestTest is SetupTemplate {
     }
   }
 
-  function testCalcsNoBonus(uint, int32 power, int32 health, uint32 timeDelta) public {
+  /// @notice tests against a known fixed value - no bonus, no affinity
+  function testFixedCalcBase() public {
+    _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
+    uint256 power = 11;
+    uint256 health = 1000;
+    uint256 ratioNumerator = ((10 ** 9) * 1000);
+    uint256 ratioDenominator = ((10 ** 3) * 3600);
+    uint256 timeDelta = 15 minutes;
+
+    // setup
     _setConfig("KAMI_IDLE_REQ", 0);
+    uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", "");
+    uint256 petID = _mintPet(0);
+    // setting up power and health
+    vm.startPrank(deployer);
+    _PowerComponent.set(petID, Stat(power.toInt32(), 0, 0, 0));
+    _HealthComponent.set(petID, Stat(health.toInt32(), 0, 0, health.toInt32()));
+    vm.stopPrank();
+
+    // starting production
+    uint prodID = _startProduction(petID, nodeID);
+    _fastForward(timeDelta);
+
+    // checking calcs
+    uint256 expectedOutput = (power * ratioNumerator * timeDelta) / (ratioDenominator * 10 ** 9);
+    console.log(expectedOutput);
+    assertEq((power * ratioNumerator) / ratioDenominator, _calcRate(prodID), "Rate calc mismatch");
+    assertEq(expectedOutput, _calcOutput(_calcRate(prodID), timeDelta), "Output calc mismatch");
+    _collectProduction(prodID);
+    assertEq(expectedOutput, LibCoin.get(components, _getAccount(0)), "coin output mismatch");
+  }
+
+  function testCalcsNoBonus(uint, int32 power, int32 health, uint32 timeDelta) public {
     vm.assume(power > 0 && power < 2147483); // bounds for int32/1000
     vm.assume(health > 0 && health < 2147483);
 
     // setup
+    _setConfig("KAMI_IDLE_REQ", 0);
     uint256[] memory seeds = _randomUints(3);
     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", _getFuzzAffinity(seeds[0], true));
     uint256 petID = _mintPet(0);

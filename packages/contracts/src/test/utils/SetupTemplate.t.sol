@@ -11,6 +11,8 @@ import { Stat } from "components/types/StatComponent.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
+  using SafeCastLib for int32;
+  using SafeCastLib for uint256;
 
   struct PlayerAccount {
     uint256 id;
@@ -37,6 +39,7 @@ abstract contract SetupTemplate is TestSetupImports {
     super.setUp();
 
     setUpConfigs();
+    setUpTime();
 
     vm.prank(deployer);
     _PetGachaMintSystem.init(abi.encode(0)); // todo: make deploy script call `init()`
@@ -45,7 +48,6 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpMint();
     setUpItems();
     setUpRooms();
-    setUpTime();
   }
 
   // sets up some default accounts. override to change/remove behaviour if needed

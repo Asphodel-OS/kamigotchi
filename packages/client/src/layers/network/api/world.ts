@@ -126,7 +126,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_IDLE_REQ', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
-    await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 7]); // in respect to power
+    await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 9]); // in respect to power
     await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 10000, 2]); // in respect to harmony
   }
 
