@@ -11,7 +11,7 @@ import {
 
 import { Components } from 'layers/network';
 import { Account, getAccount } from '../Account';
-import { Bonuses, getBonuses } from '../Bonus';
+import { Bonuses, getBonusValue, getBonuses } from '../Bonus';
 import { getConfigFieldValue, getConfigFieldValueArray } from '../Config';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
@@ -245,7 +245,9 @@ export const getKami = (
     const healBaseArr = getConfigFieldValueArray(world, components, 'HEALTH_RATE_HEAL_BASE');
     const healBase = healBaseArr[1];
     const healBasePrecision = 10 ** healBaseArr[2];
-    healthRate = (totHarmony * healBase) / (3600 * healBasePrecision);
+    const bonusMult = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY', true);
+    const multPrecision = 10 ** healBaseArr[3];
+    healthRate = (totHarmony * healBase * bonusMult) / (3600 * healBasePrecision * multPrecision);
   }
   kami.stats.health.rate = healthRate;
 

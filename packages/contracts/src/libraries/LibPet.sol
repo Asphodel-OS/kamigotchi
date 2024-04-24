@@ -200,10 +200,15 @@ library LibPet {
 
   // Calculate the recovery of the kami from resting. This assumes the Kami is actually resting.
   function calcRestingRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE");
+
     uint256 duration = block.timestamp - getLastTs(components, id);
     uint256 rate = calcRestingRecoveryRate(components, id);
-    uint256 precision = 10 ** uint256(LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE")[0]);
-    return (duration * rate) / precision;
+    uint256 precision = 10 ** uint256(configVals[0]);
+    uint256 bonusMult = LibBonus.getPercent(components, id, "RESTING_RECOVERY");
+    uint256 multPrecision = 10 ** uint256(configVals[3]);
+
+    return (duration * rate * bonusMult) / (precision * multPrecision);
   }
 
   // calculates the health recovery rate of the Kami per second. Assumed resting.

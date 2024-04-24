@@ -1,12 +1,5 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  World,
-  getComponentValue,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { BigNumber, utils } from 'ethers';
 import { Components } from 'layers/network';
 
 export interface Bonuses {
@@ -55,8 +48,8 @@ export const getBonuses = (
       multiplier: 100,
     },
     harvest: {
-      output: (getBonusValue(world, components, holderID, 'HARVEST_OUTPUT') ?? 1000) * 1,
-      drain: (getBonusValue(world, components, holderID, 'HARVEST_DRAIN') ?? 1000) * 1,
+      output: (getBonusValue(world, components, holderID, 'HARVEST_OUTPUT', true) ?? 1000) * 1,
+      drain: (getBonusValue(world, components, holderID, 'HARVEST_DRAIN', true) ?? 1000) * 1,
       cooldown: 0,
     },
   };
@@ -68,21 +61,33 @@ export const getBonusValue = (
   world: World,
   components: Components,
   holderID: EntityID,
-  type: string
-): number | undefined => {
-  const { IsBonus, HolderID, Type, Value } = components;
+  type: string,
+  percent?: boolean
+): number => {
+  const { BalanceSigned } = components;
 
-  const results = Array.from(
-    runQuery([
-      Has(IsBonus),
-      HasValue(HolderID, { value: holderID }),
-      HasValue(Type, { value: type }),
-    ])
+  const entityIndex = getEntityIndex(world, holderID, type);
+  if (!entityIndex) return percent ? 1000 : 0;
+
+  const val =
+    BigNumber.from(getComponentValue(BalanceSigned, entityIndex)?.value || 0)
+      .fromTwos(256)
+      .toNumber() || (0 as number);
+  if (percent) return val <= -1000 ? 1 : 1000 + val;
+  return val;
+};
+
+////////////////////
+// UTILS
+
+const getEntityIndex = (
+  world: World,
+  holderID: EntityID,
+  field: string
+): EntityIndex | undefined => {
+  const id = utils.solidityKeccak256(
+    ['string', 'uint256', 'string'],
+    ['bonus', holderID ?? 0, field]
   );
-
-  // NOTE: different bonus types have different default values, so we return undefined when missing
-  // the caller must determine what the actual value is when the bonus is missing
-  return results.length > 0
-    ? (getComponentValue(Value, results[0])?.value as number | undefined)
-    : undefined;
+  return world.entityToIndex.get(id as EntityID);
 };
