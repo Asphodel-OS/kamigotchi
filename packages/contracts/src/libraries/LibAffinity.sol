@@ -34,12 +34,12 @@ library LibAffinity {
   // INTERACTIONS
 
   function getMultiplier(
-    Multipliers memory mult,
+    Multipliers memory mults,
     Effectiveness eff
   ) internal pure returns (uint256) {
-    if (eff == Effectiveness.Strong) return mult.up;
-    else if (eff == Effectiveness.Weak) return mult.down;
-    else return mult.base;
+    if (eff == Effectiveness.Strong) return mults.up;
+    else if (eff == Effectiveness.Weak) return mults.down;
+    else return mults.base;
   }
 
   function getMultiplier(
@@ -47,8 +47,8 @@ library LibAffinity {
     int256 bonus, // bonus applies to all values here
     Effectiveness eff
   ) internal pure returns (uint256) {
-    Multipliers memory mult = calcMultipliers(baseVals, bonus);
-    return getMultiplier(mult, eff);
+    Multipliers memory mults = calcMultipliers(baseVals, bonus);
+    return getMultiplier(mults, eff);
   }
 
   /// @notice gets the final multiplier
@@ -60,17 +60,15 @@ library LibAffinity {
     int256 bonusDown,
     Effectiveness eff
   ) internal pure returns (uint256) {
-    Multipliers memory mult = calcMultipliers(baseVals, bonusBase, bonusUp, bonusDown);
-    return getMultiplier(mult, eff);
+    Multipliers memory mults = calcMultipliers(baseVals, bonusBase, bonusUp, bonusDown);
+    return getMultiplier(mults, eff);
   }
 
-  // return the multiplier between a single source affinity and single target affinity.
-  // NOTE: values returned are denominated in percent (1e2 precision).
-  function getAttackStrength(
-    IUintComp components,
+  /// @notice return the multiplier between a single source affinity and single target affinity.
+  function getAttackEfficacy(
     string memory sourceAff,
     string memory targetAff
-  ) public view returns (Effectiveness) {
+  ) public pure returns (Effectiveness) {
     if (LibString.eq(sourceAff, "EERIE")) {
       if (LibString.eq(targetAff, "SCRAP")) return Effectiveness.Strong;
       if (LibString.eq(targetAff, "INSECT")) return Effectiveness.Weak;
@@ -83,13 +81,11 @@ library LibAffinity {
     } else return Effectiveness.Netural; // Normal or no Affinity means 1x multiplier
   }
 
-  // return the multiplier between a single source affinity and single node affinity.
-  // NOTE: values returned are denominated in percent (1e2 precision).
-  function getHarvestStrength(
-    IUintComp components,
+  /// @notice return the multiplier between a single source affinity and single node affinity.
+  function getHarvestEfficacy(
     string memory sourceAff,
     string memory targetAff
-  ) public view returns (Effectiveness) {
+  ) public pure returns (Effectiveness) {
     // default case is misalignment
     if (LibString.eq(sourceAff, "NORMAL")) return Effectiveness.Netural;
     else if (LibString.eq(targetAff, "NORMAL")) return Effectiveness.Netural;
@@ -107,16 +103,16 @@ library LibAffinity {
     uint32[8] memory baseVals, // [base, up, down]
     int256 bonus
   ) internal pure returns (Multipliers memory) {
-    Multipliers memory mult = Multipliers({
+    Multipliers memory mults = Multipliers({
       base: uint256(baseVals[0]),
       up: uint256(baseVals[1]),
       down: uint256(baseVals[2])
     });
 
-    mult.base = LibBonus.calcSigned(mult.base, bonus);
-    mult.up = LibBonus.calcSigned(mult.up, bonus);
-    mult.down = LibBonus.calcSigned(mult.down, bonus);
-    return mult;
+    mults.base = LibBonus.calcSigned(mults.base, bonus);
+    mults.up = LibBonus.calcSigned(mults.up, bonus);
+    mults.down = LibBonus.calcSigned(mults.down, bonus);
+    return mults;
   }
 
   /// @notice calculates a Multiplier struct from a given base, up, and down bonuses
@@ -141,16 +137,16 @@ library LibAffinity {
     int256 bonusUp,
     int256 bonusDown
   ) internal pure returns (Multipliers memory) {
-    Multipliers memory mult = Multipliers({
+    Multipliers memory mults = Multipliers({
       base: uint256(baseVals[0]),
       up: uint256(baseVals[1]),
       down: uint256(baseVals[2])
     });
 
-    mult.base = LibBonus.calcSigned(mult.base, bonusBase);
-    mult.up = LibBonus.calcSigned(mult.up, bonusUp);
-    mult.down = LibBonus.calcSigned(mult.down, bonusDown);
-    return mult;
+    mults.base = LibBonus.calcSigned(mults.base, bonusBase);
+    mults.up = LibBonus.calcSigned(mults.up, bonusUp);
+    mults.down = LibBonus.calcSigned(mults.down, bonusDown);
+    return mults;
   }
 
   /// @notice calculates a Multiplier struct from a given base, up, and down bonuses

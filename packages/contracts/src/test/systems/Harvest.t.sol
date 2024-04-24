@@ -7,6 +7,7 @@ import "test/utils/SetupTemplate.t.sol";
 
 // TODO: test for correct production rates upon starting harvests
 contract HarvestTest is SetupTemplate {
+  using LibString for string;
   using SafeCastLib for int32;
   using SafeCastLib for uint256;
 
@@ -108,7 +109,7 @@ contract HarvestTest is SetupTemplate {
       totMultiplier *= LibAffinity.getMultiplier(
         LibConfig.getArray(components, "HARVEST_RATE_MULT_AFF"),
         bonus,
-        LibAffinity.getHarvestStrength(components, petAffs[i], nodeAff)
+        LibAffinity.getHarvestEfficacy(petAffs[i], nodeAff)
       );
 
     return totMultiplier;
@@ -178,6 +179,79 @@ contract HarvestTest is SetupTemplate {
     // test that the kami's state is updated
     assertEq(LibPet.getState(components, kamiID), "HARVESTING");
     assertEq(LibPet.getLastTs(components, kamiID), _currTime);
+  }
+
+  function testAffinityMultiplier(uint8 nodeSeed, uint8 bodySeed, uint8 handSeed) public {
+    vm.assume(nodeSeed < 5 && bodySeed < 4 && handSeed < 4);
+    string memory nodeAff = _getFuzzAffinity(nodeSeed, true);
+    string memory bodyAff = _getFuzzAffinity(bodySeed, false);
+    string memory handAff = _getFuzzAffinity(handSeed, false);
+    /**
+     * uses prime products to ensure multiplier is added correctly
+     * base: 5, strong: 7, weak: 3
+     * expected:
+     *   pure strong: 49
+     *   pure weak: 9
+     *   strong & weak: 21
+     *   normal: 25
+     *   normal & strong: 35
+     *   normal & weak: 15
+     */
+
+    // setup
+    _setConfigArray("HARVEST_RATE_MULT_AFF", [uint32(5), 7, 3, 0, 0, 0, 0, 0]);
+    uint nodeID = _createHarvestingNode(1, 1, "testNode", "", nodeAff);
+    uint petID = _mintPet(0);
+    registerTrait(127, 0, 5, 5, 0, 0, 5, bodyAff, "Test Body", "BODY");
+    registerTrait(127, 0, 5, 5, 0, 0, 5, handAff, "Test Hand", "HAND");
+    _setPetTrait(petID, "BODY", 127);
+    _setPetTrait(petID, "HAND", 127);
+
+    uint256 expected;
+    if (nodeAff.eq("NORMAL") || nodeAff.eq("") || bodyAff.eq("NORMAL"))
+      expected = 5; // mid
+    else if (nodeAff.eq(bodyAff))
+      expected = 7; // strong
+    else expected = 3; // weak
+    if (nodeAff.eq("NORMAL") || nodeAff.eq("") || handAff.eq("NORMAL"))
+      expected *= 5; // mid
+    else if (nodeAff.eq(handAff))
+      expected *= 7; // strong
+    else expected *= 3; // weak
+
+    // start the production
+    _fastForward(_idleRequirement);
+    uint prodID = _startProduction(petID, nodeID);
+
+    // check multiplier
+    assertEq(expected, _calcAffinityMultiplier(prodID, petID));
+    assertEq(expected, LibProduction.calcRateAffinityMultiplier(components, prodID, petID));
+
+    // add bonus
+    /** add a bonus of 2 to all, therefore expected:
+     *   pure strong: 9 * 9 = 81
+     *   pure weak: 5 * 5 = 25
+     *   strong & weak: 5 * 9 = 45
+     *   normal: 7 * 7 = 49
+     *   normal & strong: 7 * 9 = 63
+     *   normal & weak: 7 * 5 = 35
+     */
+    vm.startPrank(deployer);
+    LibBonus.inc(components, petID, "HARVEST_AFFINITY_MULT", 2);
+    vm.stopPrank();
+    if (nodeAff.eq("NORMAL") || nodeAff.eq("") || bodyAff.eq("NORMAL"))
+      expected = 7; // mid
+    else if (nodeAff.eq(bodyAff))
+      expected = 9; // strong
+    else expected = 5; // weak
+    if (nodeAff.eq("NORMAL") || nodeAff.eq("") || handAff.eq("NORMAL"))
+      expected *= 7; // mid
+    else if (nodeAff.eq(handAff))
+      expected *= 9; // strong
+    else expected *= 5; // weak
+
+    assertEq(expected, _calcAffinityMultiplier(prodID, petID, 2));
+    assertEq(expected, LibProduction.calcRateAffinityMultiplier(components, prodID, petID));
   }
 
   /////////////////

@@ -95,11 +95,11 @@ export function setupWorldAPI(systems: any, provider: any) {
     // HarvestRate = power * base * multiplier
     // NOTE: precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
+    // mult_prec come from 10e6 from affinity bonuses and 1e3 from flat harvest bonus
     // [prec, base, base_prec, mult_prec]
     await api.config.set.array('HARVEST_RATE', [9, 250, 2, 9]);
     // [base, up, down]
     await api.config.set.array('HARVEST_RATE_MULT_AFF', [1000, 1500, 500]);
-    await api.config.set.number('HARVEST_RATE_MULT_AFF_PREC', 3); // 2, not actually used
 
     // Kami Health Drain/Heal Rates
     // DrainRate = HarvestRate * DrainBaseRate

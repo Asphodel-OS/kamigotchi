@@ -127,9 +127,9 @@ library LibProduction {
   // Calculate the multiplier for harvesting
   function calcRateMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
     uint256 petID = getPet(components, id);
-    uint256 bonusMult = LibBonus.getPercent(components, petID, "HARVEST_OUTPUT");
+    uint256 bonusMults = LibBonus.getPercent(components, petID, "HARVEST_OUTPUT");
     uint256 affinityMult = calcRateAffinityMultiplier(components, id, petID);
-    return affinityMult * bonusMult;
+    return affinityMult * bonusMults;
   }
 
   // Calculate the harvesting multiplier resulting from affinity matching
@@ -157,7 +157,7 @@ library LibProduction {
     for (uint256 i = 0; i < petAffs.length; i++)
       totMultiplier *= LibAffinity.getMultiplier(
         mults,
-        LibAffinity.getHarvestStrength(components, petAffs[i], nodeAff)
+        LibAffinity.getHarvestEfficacy(petAffs[i], nodeAff)
       );
     return totMultiplier;
   }

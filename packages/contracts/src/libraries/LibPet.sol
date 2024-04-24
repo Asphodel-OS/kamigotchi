@@ -165,7 +165,7 @@ library LibPet {
       LibAffinity.getMultiplier(
         LibConfig.getArray(components, "LIQ_THRESH_MULT_AFF"),
         0, // TODO: implement affinity attack/defense bonus
-        LibAffinity.getAttackStrength(components, sourceAff, targetAff)
+        LibAffinity.getAttackEfficacy(sourceAff, targetAff)
       );
   }
 
