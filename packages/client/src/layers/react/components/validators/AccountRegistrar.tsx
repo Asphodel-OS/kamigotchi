@@ -73,6 +73,7 @@ export function registerAccountRegistrar() {
           ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
           operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
           name: getComponentValue(Name, entityIndex)?.value as string,
+          farcaster: { id: 0, signer: '' },
         };
       };
 

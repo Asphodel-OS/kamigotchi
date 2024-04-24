@@ -26,8 +26,12 @@ export interface Account {
   name: string;
   ownerAddress: string;
   operatorAddress: string;
-  fid?: number;
-  neynar_signer?: string;
+  farcaster: Farcaster;
+}
+
+interface Farcaster {
+  id: number;
+  signer: string; // neynar signer uuid
 }
 
 export const emptyAccountDetails = (): Account => ({
@@ -37,6 +41,7 @@ export const emptyAccountDetails = (): Account => ({
   name: '',
   ownerAddress: '',
   operatorAddress: '',
+  farcaster: { id: 0, signer: '' },
 });
 
 ////////////////

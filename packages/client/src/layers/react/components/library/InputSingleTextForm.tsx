@@ -14,12 +14,13 @@ interface Props {
   initialValue?: string; // the initial value of the input
   hasButton?: boolean; // whether the input has a submit button
   onSubmit?: (text: string) => void; // the function to call when the submit button is clicked
+  disabled?: boolean; // whether the input is disabled
 }
 
 // InputSingleTextForm is a styled input field with some additional frills
 export const InputSingleTextForm = (props: Props) => {
-  const { maxLen, fullWidth, hasButton, initialValue, label, placeholder, onSubmit } = props;
-  const [value, setValue] = useState(initialValue || '');
+  const { maxLen, fullWidth, hasButton, label, placeholder, onSubmit } = props;
+  const [value, setValue] = useState(props.initialValue || '');
   let styleOverride = {};
   if (fullWidth) styleOverride = { width: '100%' };
 
@@ -49,6 +50,7 @@ export const InputSingleTextForm = (props: Props) => {
           value={value}
           onKeyDown={(e) => catchKeys(e)}
           onChange={(e) => handleChange(e)}
+          disabled={props.disabled}
         />
       </InputGroup>
       {hasButton && (

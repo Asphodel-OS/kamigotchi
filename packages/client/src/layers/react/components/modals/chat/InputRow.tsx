@@ -1,12 +1,19 @@
 import { CastWithInteractions } from '@neynar/nodejs-sdk/build/neynar-api/v2';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { Account } from 'layers/network/shapes/Account';
 import { ActionSystem } from 'layers/network/systems';
 import { FarcasterConnect, InputSingleTextForm } from 'layers/react/components/library';
-import { FarcasterUser, emptyFaracasterUser, client as neynarClient } from 'src/clients/neynar';
+import { useAccount } from 'layers/react/store';
+import {
+  FarcasterUser,
+  createEmptyCast,
+  emptyFaracasterUser,
+  client as neynarClient,
+} from 'src/clients/neynar';
+import { playScribble } from 'utils/sounds';
 
 interface Props {
   account: Account;
@@ -19,17 +26,76 @@ interface Props {
 export const InputRow = (props: Props) => {
   const { account, actionSystem } = props;
   const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
+  const { account: kamiAccount } = useAccount(); // client side account representation in store
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const isAuthenticated = () => {
-    const isValidated = farcasterUser.fid != 0 && farcasterUser.signer_uuid !== '';
-    const isMatched = account.fid == farcasterUser.fid;
-    return isValidated && isMatched;
+  /////////////////
+  // SUBSCRIPTION
+
+  // check whether the client is authenticated through neynar
+  useEffect(() => {
+    const fAccount = kamiAccount.farcaster;
+    // console.log('checking authentication', fAccount.id, fAccount.signer);
+    // console.log('checking authentication', !!fAccount.id, !!fAccount.signer);
+    setIsAuthenticated(!!fAccount.id && !!fAccount.signer);
+  }, [kamiAccount.farcaster]);
+
+  // check whether this kami account is linked to the authenticated farcaster account
+  useEffect(() => {
+    const fAccount = kamiAccount.farcaster;
+    // console.log('checking authorization', isAuthenticated, fAccount.id, account.fid);
+    setIsAuthorized(isAuthenticated && fAccount.id == account.fid);
+  }, [isAuthenticated, kamiAccount.farcaster, account.fid]);
+
+  /////////////////
+  // ACTION
+
+  // send a message to chat
+  // TODO: don't assume success here
+  const sendCast = async (text: string) => {
+    if (!farcasterUser.signer_uuid) return;
+    setIsSending(true);
+    const response = await neynarClient.publishCast(farcasterUser.signer_uuid, text, {
+      channelId: 'kamigotchi',
+    });
+
+    // minimally populate a new empty cast object with response data
+    const cast = createEmptyCast();
+    cast.author = farcasterUser;
+    cast.hash = response.hash;
+    cast.text = response.text;
+
+    props.actions.pushCast(cast);
+    setIsSending(false);
   };
 
-  const onSubmit = (text: string) => {
-    console.log(`submitted ${text}`);
-    send(text);
+  /////////////////
+  // INTERACTION
+
+  const onSubmit = async (text: string) => {
+    try {
+      playScribble();
+      await sendCast(text);
+      // TODO: play success sound and update message in feed here (to succeeded)
+      console.log(`submitted ${text}`);
+    } catch (e) {
+      // TODO: play failure sound here and remove message from feed
+      // later we want to retry it offer the option to
+      console.error('error sending message', e);
+    }
+  };
+
+  /////////////////
+  // INTERPRETATION
+
+  const getPlaceholder = () => {
+    // console.log('getting placeholder', isAuthenticated, isAuthorized);
+    if (!isAuthenticated) return 'Connect Farcaster -->';
+    if (!isAuthorized) return 'Link Farcaster Account -->';
+    return 'Cast to /Kamigotchi';
   };
 
   return (
@@ -37,47 +103,16 @@ export const InputRow = (props: Props) => {
       <InputSingleTextForm
         fullWidth
         maxLen={320}
-        hasButton={isAuthenticated()}
-        placeholder='Cast to /Kamigotchi'
+        hasButton={isAuthorized}
+        placeholder={getPlaceholder()}
         onSubmit={onSubmit}
+        disabled={!isAuthorized}
       />
-      {!isAuthenticated() && (
+      {!isAuthorized && (
         <FarcasterConnect actionSystem={actionSystem} account={account} size='medium' />
       )}
     </Container>
   );
-
-  // send a message to chat
-  async function send(text: string) {
-    if (!farcasterUser.signer_uuid) return;
-    setIsSending(true);
-    const response = await neynarClient.publishCast(farcasterUser.signer_uuid, text, {
-      channelId: 'kamigotchi',
-    });
-
-    // // another retarded pattern, but preferable to iterating over every damn field
-    // // can't even do this because the hash in the PostCastResponseCast is not a cast hash..
-    // const response2 = await neynarClient.fetchBulkCasts([response.hash]);
-    // const cast = response2.result.casts[0];
-
-    const cast: CastWithInteractions = {
-      author: farcasterUser,
-      hash: response.hash,
-      text: response.text,
-      parent_hash: '',
-      parent_author: { fid: 0 },
-      parent_url: '',
-      root_parent_url: '',
-      embeds: [],
-      timestamp: new Date(Date.now()).toISOString(),
-      reactions: { likes: [], recasts: [] },
-      mentioned_profiles: [],
-      replies: { count: 0 },
-      thread_hash: '',
-    };
-    props.actions.pushCast(cast);
-    setIsSending(false);
-  }
 };
 
 const Container = styled.div`

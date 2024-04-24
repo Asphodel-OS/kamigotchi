@@ -1,5 +1,26 @@
-import { FeedResponse, OperationResponse } from '@neynar/nodejs-sdk/build/neynar-api/v2';
+import {
+  CastWithInteractions,
+  FeedResponse,
+  OperationResponse,
+} from '@neynar/nodejs-sdk/build/neynar-api/v2';
 import { client } from './auth';
+import { emptyFaracasterUser } from './users';
+
+export const createEmptyCast = (): CastWithInteractions => ({
+  author: emptyFaracasterUser,
+  hash: '',
+  text: '',
+  parent_hash: '',
+  parent_author: { fid: 0 },
+  parent_url: '',
+  root_parent_url: '',
+  embeds: [],
+  timestamp: new Date(Date.now()).toISOString(),
+  reactions: { likes: [], recasts: [] },
+  mentioned_profiles: [],
+  replies: { count: 0 },
+  thread_hash: '',
+});
 
 export async function pollChannelCasts(
   channel: string,

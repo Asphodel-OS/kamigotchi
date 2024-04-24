@@ -20,4 +20,5 @@ export const emptyFaracasterUser: FarcasterUser = {
   active_status: 'inactive',
   viewer_context: { following: false, followed_by: false },
   profile: { bio: { text: '', mentioned_profiles: [] } },
+  power_badge: false,
 };

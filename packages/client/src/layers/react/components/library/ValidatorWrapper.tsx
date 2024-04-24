@@ -103,7 +103,7 @@ const Subtitle = styled.div`
   color: #666;
   padding: 5px;
   font-family: Pixel;
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
 `;
 

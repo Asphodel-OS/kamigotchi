@@ -20,6 +20,7 @@ export const handleSignIn = () => {
   }
 
   console.log('Connecting to Farcaster with Neynar');
+  console.log(loginURL, clientID, redirectURI);
 
   // set the auth url
   let authUrl = new URL(loginURL);
@@ -37,12 +38,9 @@ const handleMessage = (e: MessageEvent, authOrigin: string) => {
   if (e.origin === authOrigin && e.data.is_authenticated) {
     // set Farcaster user data here
     const { account } = useAccount.getState();
+    const neynarUser = { id: e.data.fid, signer: e.data.signer_uuid };
     useAccount.setState({
-      account: {
-        ...account,
-        fid: e.data.fid,
-        neynar_signer: e.data.signer_uuid,
-      },
+      account: { ...account, farcaster: neynarUser },
     });
 
     // clean up
