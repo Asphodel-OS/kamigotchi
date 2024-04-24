@@ -1,5 +1,5 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
-import { useAccount } from 'layers/react/store';
+import { FarcasterUser } from './users';
 
 export const client = new NeynarAPIClient(import.meta.env.VITE_NEYNAR_API_KEY!);
 
@@ -11,16 +11,13 @@ export const handleSignIn = () => {
   const clientID = import.meta.env.VITE_NEYNAR_CLIENT_ID;
   const redirectURI = import.meta.env.VITE_NEYNAR_REDIRECT_URI;
   if (!loginURL || !clientID) {
-    console.error(
+    return console.error(
       'Required environment variable(s) not set.',
       `NEYNAR_LOGIN_URL: ${loginURL}`,
       `NEYNAR_CLIENT_ID: ${clientID}`
     );
-    return;
   }
-
   console.log('Connecting to Farcaster with Neynar');
-  console.log(loginURL, clientID, redirectURI);
 
   // set the auth url
   let authUrl = new URL(loginURL);
@@ -36,15 +33,20 @@ export const handleSignIn = () => {
 // sets the farcaster user in the Account Store from a subscribed message event
 const handleMessage = (e: MessageEvent, authOrigin: string) => {
   if (e.origin === authOrigin && e.data.is_authenticated) {
-    // set Farcaster user data here
-    const { account } = useAccount.getState();
-    const neynarUser = { id: e.data.fid, signer: e.data.signer_uuid };
-    useAccount.setState({
-      account: { ...account, farcaster: neynarUser },
-    });
-
-    // clean up
+    updateLocalStorage(e.data.fid, e.data.signer_uuid);
     if (authWindow) authWindow.close();
     window.removeEventListener('message', (e) => handleMessage(e, authOrigin));
   }
 };
+
+// update local storage with Farcaster User/Auth data
+async function updateLocalStorage(fid: number, uuid: string) {
+  const response = await client.fetchBulkUsers([fid], {});
+  if (response.users.length > 0) {
+    const user = response.users[0] as FarcasterUser;
+    user.signer_uuid = uuid;
+    localStorage.setItem('farcasterUser', JSON.stringify(user));
+    window.dispatchEvent(new StorageEvent('local-storage', { key: 'farcasterUser' }));
+    console.log('set farcaster user in localstorage', user);
+  }
+}

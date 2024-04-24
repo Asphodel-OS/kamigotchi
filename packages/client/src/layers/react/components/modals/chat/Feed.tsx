@@ -3,15 +3,12 @@ import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { Account } from 'layers/network/shapes/Account';
 import { ActionButton, Tooltip } from 'layers/react/components/library';
-import { FarcasterUser, emptyFaracasterUser, pollChannelCasts } from 'src/clients/neynar';
-import { likeCast, unlikeCast } from 'src/clients/neynar/casts';
-import { useLocalStorage } from 'usehooks-ts';
+import { useAccount } from 'layers/react/store';
+import { likeCast, pollChannelCasts, unlikeCast } from 'src/clients/neynar';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  account: Account;
   max: number; // max number of casts to disable polling at
   casts: CastWithInteractions[];
   setCasts: (casts: CastWithInteractions[]) => void;
@@ -19,15 +16,16 @@ interface Props {
 
 export const Feed = (props: Props) => {
   const baseUrl = 'https://warpcast.com';
-  const { account, max, casts, setCasts } = props;
-  const [farcasterUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
+  const { max, casts, setCasts } = props;
+  const { account } = useAccount();
+
   const [scrollBottom, setScrollBottom] = useState(0);
   const [feed, setFeed] = useState<FeedResponse>();
   const [isPolling, setIsPolling] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
 
   /////////////////
-  // DATA HANDLING
+  // SUBSCRIPTION
 
   useEffect(() => {
     pollMore();
@@ -71,8 +69,9 @@ export const Feed = (props: Props) => {
 
   // checks whether the cast has been liked by the current user
   const isLiked = (cast: CastWithInteractions) => {
-    if (account.fid == 0) return false;
-    return !!cast.reactions.likes.find((l) => l.fid == account.fid);
+    const fAccount = account.farcaster;
+    if (fAccount.id == 0) return false;
+    return !!cast.reactions.likes.find((l) => l.fid == fAccount.id);
   };
 
   /////////////////
@@ -126,12 +125,13 @@ export const Feed = (props: Props) => {
 
   // trigger a like of a cast
   async function handleCastLike(cast: CastWithInteractions) {
-    if (!farcasterUser.signer_uuid) return;
-    const response = await likeCast(farcasterUser.signer_uuid, cast.hash);
+    const fAccount = account.farcaster;
+    if (!fAccount.signer) return;
+    const response = await likeCast(fAccount.signer, cast.hash);
 
     // update the list of casts
     if (response.success) {
-      cast.reactions.likes.push({ fid: farcasterUser.fid });
+      cast.reactions.likes.push({ fid: fAccount.id });
       for (const [i, cast] of casts.entries()) {
         if (casts.find((c) => c.hash === cast.hash)) {
           casts[i] = cast;
@@ -144,12 +144,13 @@ export const Feed = (props: Props) => {
 
   // trigger an unlike of a cast
   async function handleCastUnlike(cast: CastWithInteractions) {
-    if (!farcasterUser.signer_uuid) return;
-    const response = await unlikeCast(farcasterUser.signer_uuid, cast.hash);
+    const fAccount = account.farcaster;
+    if (!fAccount.signer) return;
+    const response = await unlikeCast(fAccount.signer, cast.hash);
 
     // update the list of casts
     if (response.success) {
-      const index = cast.reactions.likes.findIndex((l) => l.fid == farcasterUser.fid);
+      const index = cast.reactions.likes.findIndex((l) => l.fid == fAccount.id);
       if (index > -1) cast.reactions.likes.splice(index, 1);
       for (const [i, cast] of casts.entries()) {
         if (casts.find((c) => c.hash === cast.hash)) {

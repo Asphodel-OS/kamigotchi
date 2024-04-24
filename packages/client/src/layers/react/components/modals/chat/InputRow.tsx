@@ -38,16 +38,15 @@ export const InputRow = (props: Props) => {
   // check whether the client is authenticated through neynar
   useEffect(() => {
     const fAccount = kamiAccount.farcaster;
-    // console.log('checking authentication', fAccount.id, fAccount.signer);
-    // console.log('checking authentication', !!fAccount.id, !!fAccount.signer);
-    setIsAuthenticated(!!fAccount.id && !!fAccount.signer);
+    const isAuthenticated = !!fAccount.id && !!fAccount.signer;
+    setIsAuthenticated(isAuthenticated);
   }, [kamiAccount.farcaster]);
 
   // check whether this kami account is linked to the authenticated farcaster account
   useEffect(() => {
     const fAccount = kamiAccount.farcaster;
-    // console.log('checking authorization', isAuthenticated, fAccount.id, account.fid);
-    setIsAuthorized(isAuthenticated && fAccount.id == account.fid);
+    const isAuthorized = isAuthenticated && fAccount.id == account.fid;
+    setIsAuthorized(isAuthorized);
   }, [isAuthenticated, kamiAccount.farcaster, account.fid]);
 
   /////////////////
@@ -56,9 +55,10 @@ export const InputRow = (props: Props) => {
   // send a message to chat
   // TODO: don't assume success here
   const sendCast = async (text: string) => {
-    if (!farcasterUser.signer_uuid) return;
+    const fAccount = kamiAccount.farcaster;
+    if (!fAccount.signer) return;
     setIsSending(true);
-    const response = await neynarClient.publishCast(farcasterUser.signer_uuid, text, {
+    const response = await neynarClient.publishCast(fAccount.signer, text, {
       channelId: 'kamigotchi',
     });
 
@@ -67,7 +67,6 @@ export const InputRow = (props: Props) => {
     cast.author = farcasterUser;
     cast.hash = response.hash;
     cast.text = response.text;
-
     props.actions.pushCast(cast);
     setIsSending(false);
   };
@@ -117,9 +116,9 @@ export const InputRow = (props: Props) => {
 
 const Container = styled.div`
   padding: 0.6vw 0.6vw;
-
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+  gap: 0.6vw;
 `;

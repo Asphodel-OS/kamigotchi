@@ -6,7 +6,7 @@ import { Account } from 'layers/network/shapes/Account';
 import { ActionSystem } from 'layers/network/systems/ActionSystem';
 import { IconButton, Tooltip } from 'layers/react/components/library';
 import { useAccount, useNetwork } from 'layers/react/store';
-import { FarcasterUser, client, emptyFaracasterUser, handleSignIn } from 'src/clients/neynar';
+import { FarcasterUser, emptyFaracasterUser, handleSignIn } from 'src/clients/neynar';
 
 interface Props {
   actionSystem: ActionSystem;
@@ -14,10 +14,14 @@ interface Props {
   size?: 'small' | 'medium' | 'large';
 }
 
+// This component populates the fid / neynar signer populated in the kami
+// account in Account Store with the Farcaster Account in Localstorage.
+// It's a bit of a bad pattern as we may reuse this component in multple
+// places. We'll fix it eventually.. pls no copy.
 export const FarcasterConnect = (props: Props) => {
   const { actionSystem, account, size } = props;
   const { selectedAddress, apis } = useNetwork();
-  const [fUser, setFUser] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
+  const [fUser, _] = useLocalStorage<FarcasterUser>('farcasterUser', emptyFaracasterUser);
   const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,27 +30,27 @@ export const FarcasterConnect = (props: Props) => {
   /////////////////
   // SUBSCRIPTION
 
+  // on load, copy the farcaster details from localstorage to the Kami Account in Store
+  useEffect(() => {
+    if (!fUser) return;
+    if (kamiAccount.farcaster.id === fUser.fid) return;
+    const neynarDetails = { id: fUser.fid, signer: fUser.signer_uuid ?? '' };
+    setKamiAccount({ ...kamiAccount, farcaster: neynarDetails });
+  }, [fUser]);
+
   // check whether the client is authenticated through neynar
   useEffect(() => {
     const fAccount = kamiAccount.farcaster;
-    setIsAuthenticated(!!fAccount.id && !!fAccount.signer);
+    const isAuthenticated = !!fAccount.id && !!fAccount.signer;
+    setIsAuthenticated(isAuthenticated);
   }, [kamiAccount.farcaster]);
 
   // check whether this kami account is linked to the authenticated farcaster account
   useEffect(() => {
     const fAccount = kamiAccount.farcaster;
-    setIsAuthorized(isAuthenticated && fAccount.id == account.fid);
+    const isAuthorized = isAuthenticated && fAccount.id == account.fid;
+    setIsAuthorized(isAuthorized);
   }, [isAuthenticated, kamiAccount.farcaster, account.fid]);
-
-  // update farcaster user in localstorage when the account store value changes
-  useEffect(() => {
-    const fAccount = kamiAccount.farcaster; // farcaster user in account store
-    const isMismatched = fUser.fid != fAccount.id || fUser.signer_uuid !== fAccount.signer;
-    if (isAuthenticated && isMismatched) {
-      console.log('updating farcaster id and/or signer');
-      updateLocalStorageFUser();
-    }
-  }, [kamiAccount.farcaster]);
 
   /////////////////
   // ACTION
@@ -70,9 +74,9 @@ export const FarcasterConnect = (props: Props) => {
   // INTERACTION
 
   const logout = () => {
-    localStorage.removeItem('fUser');
-    const neynarDetails = { id: 0, signer: '' };
-    setKamiAccount({ ...kamiAccount, farcaster: neynarDetails });
+    console.log('logging out');
+    localStorage.removeItem('farcasterUser');
+    window.dispatchEvent(new StorageEvent('local-storage', { key: 'farcasterUser' }));
   };
 
   /////////////////
@@ -112,20 +116,4 @@ export const FarcasterConnect = (props: Props) => {
       />
     </Tooltip>
   );
-
-  /////////////////
-  // HELPERS
-
-  // set the farcaster user in localstorage, based on the fid found in Account Store
-  async function updateLocalStorageFUser() {
-    const fid = kamiAccount.farcaster.id!;
-    const signer_uuid = kamiAccount.farcaster.signer!;
-    const response = await client.fetchBulkUsers([fid], {});
-    if (response.users.length > 0) {
-      const user = response.users[0] as FarcasterUser;
-      console.log('setting farcaster user in localstorage', user);
-      user.signer_uuid = signer_uuid;
-      setFUser(user);
-    }
-  }
 };

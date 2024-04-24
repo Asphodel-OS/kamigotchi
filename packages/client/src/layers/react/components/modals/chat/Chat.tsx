@@ -58,7 +58,7 @@ export function registerChatModal() {
           footer={<InputRow account={account} actions={{ pushCast }} actionSystem={actions} />}
           canExit
         >
-          <Feed account={account} max={maxCasts} casts={casts} setCasts={setCasts} />
+          <Feed max={maxCasts} casts={casts} setCasts={setCasts} />
         </ModalWrapper>
       );
     }

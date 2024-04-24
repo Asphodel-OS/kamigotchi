@@ -68,6 +68,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 0.6vw;
 `;
 
 const InputGroup = styled.div`
@@ -105,4 +106,8 @@ const Input = styled.input`
 
   justify-content: center;
   align-items: center;
+
+  &:disabled {
+    background-color: #ccc;
+  }
 `;
