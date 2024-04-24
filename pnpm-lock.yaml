@@ -309,8 +309,8 @@ importers:
         specifier: 7.2.0
         version: 7.2.0
       solady:
-        specifier: Vectorized/solady
-        version: github.com/Vectorized/solady/cc312d3e854fdccd748fc52dac0c78b257177a80
+        specifier: github:Vectorized/solady
+        version: github.com/Vectorized/solady/a34977e56cc1437b7ac07e6356261d2b303da686
       solmate:
         specifier: github:transmissions11/solmate
         version: github.com/transmissions11/solmate/c892309933b25c03d32b1b0d674df7ae292ba925
@@ -8992,7 +8992,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /event-emitter@0.3.5:
     resolution: {integrity: sha512-D9rRn9y7kLPnJ+hMq7S/nhvoKwwvVJahBi2BPmx3bvbsEdK3W9ii8cBSGjP+72/LnM4n6fo3+dkCX5FeTQruXA==}
@@ -15605,10 +15604,10 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  github.com/Vectorized/solady/cc312d3e854fdccd748fc52dac0c78b257177a80:
-    resolution: {tarball: https://codeload.github.com/Vectorized/solady/tar.gz/cc312d3e854fdccd748fc52dac0c78b257177a80}
+  github.com/Vectorized/solady/a34977e56cc1437b7ac07e6356261d2b303da686:
+    resolution: {tarball: https://codeload.github.com/Vectorized/solady/tar.gz/a34977e56cc1437b7ac07e6356261d2b303da686}
     name: solady
-    version: 0.0.177
+    version: 0.0.192
     dev: false
 
   github.com/brockelmore/memmove/d577ecd1bc43656f4032edf4daa9797f756a8ad2:

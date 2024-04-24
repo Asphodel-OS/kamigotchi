@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
-import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import "./TestSetupImports.sol";
 
@@ -1002,10 +1002,10 @@ abstract contract SetupTemplate is TestSetupImports {
   function _initHarvestConfigs() internal {
     // Harvest Rates
     // [prec, base, base_prec, mult_prec]
-    _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 7, 0, 0, 0, 0]);
+    _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
     // [base, up, down]
-    _setConfigArray("HARVEST_RATE_MULT_AFF", [uint32(100), 150, 50, 0, 0, 0, 0, 0]);
-    _setConfig("HARVEST_RATE_MULT_AFF_PREC", 2);
+    _setConfigArray("HARVEST_RATE_MULT_AFF", [uint32(1000), 1500, 500, 0, 0, 0, 0, 0]);
+    _setConfig("HARVEST_RATE_MULT_AFF_PREC", 3);
   }
 
   function _initLiquidationConfigs() internal {

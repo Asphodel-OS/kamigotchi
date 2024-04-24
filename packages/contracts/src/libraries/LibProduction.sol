@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibString } from "solady/utils/LibString.sol";
-import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
@@ -149,9 +149,7 @@ library LibProduction {
       components,
       "HARVEST_RATE_MULT_AFF",
       petID,
-      "HARVEST_AFFINITY_NETURAL",
-      "HARVEST_AFFINITY_STRONG",
-      "HARVEST_AFFINITY_WEAK"
+      "HARVEST_AFFINITY_MULT"
     );
 
     // layer the multipliers due to each trait on top of each other

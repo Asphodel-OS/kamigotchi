@@ -71,7 +71,7 @@
     "dotenv-cli": "^7.2.1",
     "erc721a": "^4.2.3",
     "glob": "7.2.0",
-    "solady": "Vectorized/solady",
+    "solady": "github:Vectorized/solady",
     "solmate": "github:transmissions11/solmate"
   }
 }

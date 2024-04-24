@@ -96,10 +96,10 @@ export function setupWorldAPI(systems: any, provider: any) {
     // NOTE: precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
     // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
     // [prec, base, base_prec, mult_prec]
-    await api.config.set.array('HARVEST_RATE', [9, 250, 2, 7]);
+    await api.config.set.array('HARVEST_RATE', [9, 250, 2, 9]);
     // [base, up, down]
-    await api.config.set.array('HARVEST_RATE_MULT_AFF', [100, 150, 50]);
-    await api.config.set.number('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
+    await api.config.set.array('HARVEST_RATE_MULT_AFF', [1000, 1500, 500]);
+    await api.config.set.number('HARVEST_RATE_MULT_AFF_PREC', 3); // 2, not actually used
 
     // Kami Health Drain/Heal Rates
     // DrainRate = HarvestRate * DrainBaseRate

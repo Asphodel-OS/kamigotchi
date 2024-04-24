@@ -69,8 +69,7 @@ contract HarvestTest is SetupTemplate {
     uint256 multAffinity = _calcAffinityMultiplier(
       prodID,
       petID,
-      LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_STRONG"), // not implemented
-      LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_WEAK") // not implemented
+      LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_MULT")
     );
     uint256 multBonus = _calcBonusMultiplier(LibBonus.getRaw(components, petID, "HARVEST_OUTPUT"));
     uint256 multPrec = 10 ** uint256(configs[3]);
@@ -86,14 +85,13 @@ contract HarvestTest is SetupTemplate {
   }
 
   function _calcAffinityMultiplier(uint prodID, uint petID) internal view returns (uint) {
-    return _calcAffinityMultiplier(prodID, petID, 0, 0);
+    return _calcAffinityMultiplier(prodID, petID, 0);
   }
 
   function _calcAffinityMultiplier(
     uint prodID,
     uint petID,
-    int256 bonusUp,
-    int256 bonusDown
+    int256 bonus
   ) internal view returns (uint) {
     string memory nodeAff = LibNode.getAffinity(
       components,
@@ -106,9 +104,7 @@ contract HarvestTest is SetupTemplate {
     for (uint256 i = 0; i < petAffs.length; i++)
       totMultiplier *= LibAffinity.getMultiplier(
         LibConfig.getArray(components, "HARVEST_RATE_MULT_AFF"),
-        0, // netural bonus
-        bonusUp,
-        bonusDown,
+        bonus,
         LibAffinity.getHarvestStrength(components, petAffs[i], nodeAff)
       );
 

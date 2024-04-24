@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.sol";
 import { LibString } from "solady/utils/LibString.sol";
-import { SafeCastLib } from "libraries/utils/SafeCastLib.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
@@ -164,8 +164,6 @@ library LibPet {
     return
       LibAffinity.getMultiplier(
         LibConfig.getArray(components, "LIQ_THRESH_MULT_AFF"),
-        0, // TODO: implement affinity attack/defense bonus
-        0, // TODO: implement affinity attack/defense bonus
         0, // TODO: implement affinity attack/defense bonus
         LibAffinity.getAttackStrength(components, sourceAff, targetAff)
       );

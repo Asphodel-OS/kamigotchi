@@ -42,8 +42,17 @@ library LibAffinity {
     else return mult.base;
   }
 
+  function getMultiplier(
+    uint32[8] memory baseVals, // [base, up, down]
+    int256 bonus, // bonus applies to all values here
+    Effectiveness eff
+  ) internal pure returns (uint256) {
+    Multipliers memory mult = calcMultipliers(baseVals, bonus);
+    return getMultiplier(mult, eff);
+  }
+
   /// @notice gets the final multiplier
-  /// @dev wrapper function for easier multipliers handling
+  /// @dev wrapper function for easier multipliers handling. individual bonus
   function getMultiplier(
     uint32[8] memory baseVals, // [base, up, down]
     int256 bonusBase,
@@ -52,28 +61,6 @@ library LibAffinity {
     Effectiveness eff
   ) internal pure returns (uint256) {
     Multipliers memory mult = calcMultipliers(baseVals, bonusBase, bonusUp, bonusDown);
-    return getMultiplier(mult, eff);
-  }
-
-  /// @notice gets the final multiplier
-  /// @dev wrapper function for easy bonus/config handling
-  function getMultiplier(
-    IUintComp components,
-    string memory config, // assumes format [base, up, down]
-    uint256 holderID,
-    string memory bonusBase,
-    string memory bonusUp,
-    string memory bonusDown,
-    Effectiveness eff
-  ) internal view returns (uint256) {
-    Multipliers memory mult = calcMultipliers(
-      components,
-      config,
-      holderID,
-      bonusBase,
-      bonusUp,
-      bonusDown
-    );
     return getMultiplier(mult, eff);
   }
 
@@ -113,6 +100,39 @@ library LibAffinity {
 
   /////////////////////
   // CALCS
+
+  /// @notice calculates a Multiplier struct from a given base, up, and down bonuses
+  /// @dev for a universal bonus
+  function calcMultipliers(
+    uint32[8] memory baseVals, // [base, up, down]
+    int256 bonus
+  ) internal pure returns (Multipliers memory) {
+    Multipliers memory mult = Multipliers({
+      base: uint256(baseVals[0]),
+      up: uint256(baseVals[1]),
+      down: uint256(baseVals[2])
+    });
+
+    mult.base = LibBonus.calcSigned(mult.base, bonus);
+    mult.up = LibBonus.calcSigned(mult.up, bonus);
+    mult.down = LibBonus.calcSigned(mult.down, bonus);
+    return mult;
+  }
+
+  /// @notice calculates a Multiplier struct from a given base, up, and down bonuses
+  /// @dev for a universal bonus, wrapper function for easier config and bonus handling
+  function calcMultipliers(
+    IUintComp components,
+    string memory config, // assumes format [base, up, down]
+    uint256 holderID,
+    string memory bonus
+  ) internal view returns (Multipliers memory) {
+    return
+      calcMultipliers(
+        LibConfig.getArray(components, config),
+        bonus.eq("") ? int(0) : LibBonus.getRaw(components, holderID, bonus)
+      );
+  }
 
   /// @notice calculates a Multiplier struct from a given base, up, and down bonuses
   function calcMultipliers(
