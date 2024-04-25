@@ -38,7 +38,6 @@ export const InputRow = (props: Props) => {
 
   // check whether the client is authenticated through neynar
   useEffect(() => {
-    console.log('checking auth', kamiAccount.farcaster);
     const fAccount = kamiAccount.farcaster;
     const isAuthenticated = !!fAccount.id && !!fAccount.signer;
     setIsAuthenticated(isAuthenticated);

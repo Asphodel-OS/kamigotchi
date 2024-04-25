@@ -6,6 +6,7 @@ import { chatIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
+import moment from 'moment';
 import { InputRow } from './InputRow';
 import { Feed } from './feed/Feed';
 
@@ -44,10 +45,26 @@ export function registerChatModal() {
         setCasts([cast, ...casts]);
       };
 
-      // filter out duplicates and sort by timestamp
-      // possibly limit the length of the list
-      const setCastsFiltered = (newCasts: CastWithInteractions[]) => {
-        setCasts(newCasts.filter((cast) => !casts.find((c) => c.hash === cast.hash)));
+      const pushCasts = (newCasts: CastWithInteractions[]) => {
+        // split the new casts into unique and duplicates
+        const uniqueCasts = [];
+        for (const [i, cast] of newCasts.entries()) {
+          if (casts.find((c) => c.hash === cast.hash)) casts[i] = cast;
+          else uniqueCasts.push(cast);
+        }
+
+        // sort the casts
+        const allCasts = [...uniqueCasts, ...casts];
+        allCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
+        setCasts(allCasts);
+
+        console.log(
+          `casts pushed`,
+          `old: ${casts.length} `,
+          `new: ${uniqueCasts.length} `,
+          `repeated: ${newCasts.length - uniqueCasts.length}`,
+          `total: ${allCasts.length}`
+        );
       };
 
       return (
@@ -58,7 +75,7 @@ export function registerChatModal() {
           footer={<InputRow account={account} actions={{ pushCast }} actionSystem={actions} />}
           canExit
         >
-          <Feed max={maxCasts} casts={casts} setCasts={setCasts} />
+          <Feed max={maxCasts} casts={casts} actions={{ setCasts, pushCasts }} />
         </ModalWrapper>
       );
     }

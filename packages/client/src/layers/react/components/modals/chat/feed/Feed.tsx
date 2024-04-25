@@ -1,5 +1,4 @@
 import { CastWithInteractions, FeedResponse } from '@neynar/nodejs-sdk/build/neynar-api/v2';
-import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -11,11 +10,15 @@ import { Message } from './Message';
 interface Props {
   max: number; // max number of casts to disable polling at
   casts: CastWithInteractions[];
-  setCasts: (casts: CastWithInteractions[]) => void;
+  actions: {
+    pushCasts: (casts: CastWithInteractions[]) => void;
+    setCasts: (casts: CastWithInteractions[]) => void;
+  };
 }
 
 export const Feed = (props: Props) => {
-  const { max, casts, setCasts } = props;
+  const { max, casts } = props;
+  const { pushCasts, setCasts } = props.actions;
   const { account } = useAccount();
 
   const [scrollBottom, setScrollBottom] = useState(0);
@@ -50,7 +53,7 @@ export const Feed = (props: Props) => {
     return () => {
       if (node) node.removeEventListener('scroll', handleScroll);
     };
-  }, [feed?.next.cursor, isPolling]);
+  }, [feed?.next.cursor, isPolling, casts]);
 
   // update the scroll position accordingly when new casts come in
   useEffect(() => {
@@ -96,34 +99,14 @@ export const Feed = (props: Props) => {
     const cursor = feed?.next.cursor ?? '';
     const newFeed = await pollChannelCasts('kamigotchi', cursor);
     setFeed(newFeed);
-
-    // adds new casts to the current list, with preference for new data, and sorts the list
-    const currCasts = [...casts];
-    for (const [i, cast] of newFeed.casts.entries()) {
-      if (currCasts.find((c) => c.hash === cast.hash)) currCasts[i] = cast;
-      else currCasts.push(cast);
-    }
-    currCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
-    setCasts(currCasts);
+    pushCasts(newFeed.casts);
     setIsPolling(false);
   }
 
-  // poll for new messages from the feed and update the list of current casts. do not update the Feed state
+  // poll for new messages. do not update the Feed state/cursor
   async function pollNew() {
-    const cursor = feed?.next.cursor ?? '';
-    const newFeed = await pollChannelCasts('kamigotchi', cursor, 5);
-
-    // adds new casts to the current list, with preference for new data, and sorts the list
-    const currCasts = [...casts];
-    for (const [i, cast] of newFeed.casts.entries()) {
-      if (currCasts.find((c) => c.hash === cast.hash)) {
-        currCasts[i] = cast;
-      } else {
-        currCasts.push(cast);
-      }
-    }
-    currCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
-    setCasts(currCasts);
+    const newFeed = await pollChannelCasts('kamigotchi', '', 5);
+    pushCasts(newFeed.casts);
   }
 };
 
