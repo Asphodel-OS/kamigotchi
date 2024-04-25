@@ -6,8 +6,8 @@ import { chatIcon } from 'assets/images/icons/menu';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { ModalHeader, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { Feed } from './Feed';
 import { InputRow } from './InputRow';
+import { Feed } from './feed/Feed';
 
 // make sure to set your NEYNAR_API_KEY .env
 
