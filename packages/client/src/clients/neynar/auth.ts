@@ -1,5 +1,5 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
-import { FarcasterUser } from './users';
+import { getUser } from './users';
 
 export const client = new NeynarAPIClient(import.meta.env.VITE_NEYNAR_API_KEY!);
 
@@ -41,9 +41,8 @@ const handleMessage = (e: MessageEvent, authOrigin: string) => {
 
 // update local storage with Farcaster User/Auth data
 async function updateLocalStorage(fid: number, uuid: string) {
-  const response = await client.fetchBulkUsers([fid], {});
-  if (response.users.length > 0) {
-    const user = response.users[0] as FarcasterUser;
+  const user = await getUser(fid);
+  if (user) {
     user.signer_uuid = uuid;
     localStorage.setItem('farcasterUser', JSON.stringify(user));
     window.dispatchEvent(new StorageEvent('local-storage', { key: 'farcasterUser' }));

@@ -1,4 +1,5 @@
 import { User } from '@neynar/nodejs-sdk/build/neynar-api/v2';
+import { client } from './auth';
 
 interface UUIDHolder {
   signer_uuid?: string;
@@ -22,3 +23,13 @@ export const emptyFaracasterUser: FarcasterUser = {
   profile: { bio: { text: '', mentioned_profiles: [] } },
   power_badge: false,
 };
+
+// get a farcaster user by their
+export async function getUser(fid: number) {
+  try {
+    const response = await client.fetchBulkUsers([fid], {});
+    return response.users[0] as FarcasterUser;
+  } catch (e) {
+    console.error(e);
+  }
+}

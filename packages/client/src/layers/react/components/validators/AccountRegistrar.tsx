@@ -14,14 +14,14 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { getAccountByName } from 'layers/network/shapes/Account';
+import { Account, getAccountByOwner, getAccountIndexByName } from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import {
-  Account,
+  Account as KamiAccount,
   emptyAccountDetails,
   useAccount,
   useNetwork,
@@ -61,10 +61,11 @@ export function registerAccountRegistrar() {
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
-      const { IsAccount, AccountIndex, Name, OperatorAddress, OwnerAddress } = components;
+      const { IsAccount, AccountIndex, FarcasterIndex, Name, OperatorAddress, OwnerAddress } =
+        components;
 
       // TODO?: replace this with getAccount shape
-      const getAccountDetails = (entityIndex: EntityIndex): Account => {
+      const getAccountDetails = (entityIndex: EntityIndex): KamiAccount => {
         if (!entityIndex) return emptyAccountDetails();
         return {
           id: world.entities[entityIndex],
@@ -73,18 +74,33 @@ export function registerAccountRegistrar() {
           ownerAddress: getComponentValue(OwnerAddress, entityIndex)?.value as string,
           operatorAddress: getComponentValue(OperatorAddress, entityIndex)?.value as string,
           name: getComponentValue(Name, entityIndex)?.value as string,
-          farcaster: { id: 0, signer: '' },
+          farcaster: {
+            id: getComponentValue(FarcasterIndex, entityIndex)?.value as number,
+            signer: '',
+          },
+        };
+      };
+
+      // takes in a standard Account shape and converts it to a Kami Account shape
+      // defaults any missing values to the current Kami Account in the store.
+      const getKamiAccount = (account: Account, fallback: KamiAccount): KamiAccount => {
+        return {
+          id: account.id ?? fallback.id,
+          entityIndex: account.entityIndex ?? fallback.entityIndex,
+          index: account.index ?? fallback.index,
+          ownerAddress: account.ownerEOA ?? fallback.ownerAddress,
+          operatorAddress: account.operatorEOA ?? fallback.operatorAddress,
+          name: account.name ?? fallback.name,
+          farcaster: {
+            id: account.fid ?? fallback.farcaster.id,
+            signer: fallback.farcaster.signer,
+          },
         };
       };
 
       const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
         const accountIndex = Array.from(
-          runQuery([
-            Has(IsAccount),
-            HasValue(OwnerAddress, {
-              value: ownerAddress,
-            }),
-          ])
+          runQuery([Has(IsAccount), HasValue(OwnerAddress, { value: ownerAddress })])
         )[0];
         return accountIndex;
       };
@@ -98,16 +114,15 @@ export function registerAccountRegistrar() {
         map(() => {
           const { selectedAddress } = useNetwork.getState();
           const accountIndexUpdatedByWorld = getAccountIndexFromOwner(selectedAddress);
-          const kamiAccountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
+          const accountFromWorldUpdate = getAccountDetails(accountIndexUpdatedByWorld);
           const operatorAddresses = new Set(OperatorAddress.values.value.values());
           return {
             data: {
-              kamiAccountFromWorldUpdate,
+              accountFromWorldUpdate,
               operatorAddresses,
             },
             functions: {
-              getAccountIndexFromOwner,
-              getAccountDetails,
+              getKamiAccount,
             },
             network,
           };
@@ -116,8 +131,8 @@ export function registerAccountRegistrar() {
     },
 
     ({ data, functions, network }) => {
-      const { kamiAccountFromWorldUpdate, operatorAddresses } = data;
-      const { getAccountDetails, getAccountIndexFromOwner } = functions;
+      const { accountFromWorldUpdate, operatorAddresses } = data;
+      const { getKamiAccount } = functions;
       const { actions, components, world } = network;
 
       const {
@@ -128,32 +143,28 @@ export function registerAccountRegistrar() {
       } = useNetwork();
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
-      const { setAccount, validations, setValidations } = useAccount();
+      const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
+      const { validations, setValidations } = useAccount();
 
       const [isVisible, setIsVisible] = useState(false);
       const [accountExists, setAccountExists] = useState(false);
-      const [nameTaken, setNameTaken] = useState(false);
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
 
       // run the primary check(s) for this validator
       // track in store for easy access and update any local state variables accordingly
       useEffect(() => {
-        const accountIndex = getAccountIndexFromOwner(selectedAddress);
-        const accountExists = !!accountIndex; // locally overloaded variable yes
-        setValidations({ ...validations, accountExists });
+        const account = getAccountByOwner(world, components, selectedAddress);
+        const accountExists = !!account;
         setAccountExists(accountExists);
-        if (accountExists) {
-          const kamiAccount = getAccountDetails(accountIndex);
-          setAccount(kamiAccount);
-        }
-      }, [selectedAddress, kamiAccountFromWorldUpdate]);
+        setValidations({ ...validations, accountExists });
+        if (accountExists) setKamiAccount(getKamiAccount(account, kamiAccount));
+      }, [selectedAddress, accountFromWorldUpdate]);
 
       // determine visibility based on above/prev checks
       useEffect(() => {
-        setIsVisible(
-          networkValidations.authenticated && networkValidations.chainMatches && !accountExists
-        );
+        const validated = Object.values(networkValidations).every(Boolean);
+        setIsVisible(validated && !accountExists);
       }, [networkValidations, selectedAddress, accountExists]);
 
       // adjust actual visibility of windows based on above determination
@@ -169,14 +180,36 @@ export function registerAccountRegistrar() {
         }
       }, [isVisible, validators.walletConnector]);
 
-      // validation for username input
-      useEffect(() => {
-        const account = getAccountByName(world, components, name);
-        setNameTaken(!!account.id);
-      }, [name]);
+      /////////////////
+      // ACTION
+
+      const createAccount = (username: string) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+        console.log(`CREATING ACCOUNT (${username}): ${selectedAddress}`);
+
+        const connectedBurner = burnerAddress;
+        const actionID = uuid() as EntityID;
+        actions.add({
+          id: actionID,
+          action: 'AccountCreate',
+          params: [connectedBurner, username],
+          description: `Creating Account for ${username}`,
+          execute: async () => {
+            return api.account.register(connectedBurner, username);
+          },
+        });
+        return actionID;
+      };
 
       /////////////////
-      // ACTIONS
+      // INTERACTION
+
+      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+          handleAccountCreation(name);
+        }
+      };
 
       const copyBurnerAddress = () => {
         navigator.clipboard.writeText(burnerAddress);
@@ -198,33 +231,16 @@ export function registerAccountRegistrar() {
         }
       };
 
-      const createAccount = (username: string) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-        console.log(`CREATING ACCOUNT (${username}): ${selectedAddress}`);
-
-        const connectedBurner = burnerAddress;
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'AccountCreate',
-          params: [connectedBurner, username],
-          description: `Creating Account for ${username}`,
-          execute: async () => {
-            return api.account.register(connectedBurner, username);
-          },
-        });
-        return actionID;
-      };
-
       const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
       };
 
-      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-          handleAccountCreation(name);
-        }
+      /////////////////
+      // INTERPRETATION
+
+      const isNameTaken = () => {
+        const account = getAccountIndexByName(components, name);
+        return !!account;
       };
 
       /////////////////
@@ -332,7 +348,7 @@ export function registerAccountRegistrar() {
           let button = (
             <ActionButton
               text='Submit'
-              disabled={addressTaken || name === '' || nameTaken || /\s/.test(name)}
+              disabled={addressTaken || name === '' || isNameTaken() || /\s/.test(name)}
               onClick={() => handleAccountCreation(name)}
               size='vending'
             />
@@ -340,8 +356,8 @@ export function registerAccountRegistrar() {
 
           let tooltip: string[] = [];
           if (addressTaken) tooltip = ['That Avatar is already taken.'];
-          else if (nameTaken) tooltip = ['That name is already taken.'];
           else if (name === '') tooltip = [`Name cannot be empty.`];
+          else if (isNameTaken()) tooltip = ['That name is already taken.'];
           else if (/\s/.test(name)) tooltip = [`Name cannot contain whitespace.`];
           if (tooltip.length > 0) button = <Tooltip text={tooltip}>{button}</Tooltip>;
 

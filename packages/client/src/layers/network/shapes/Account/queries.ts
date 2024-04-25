@@ -38,15 +38,9 @@ export const getAccountByIndex = (
 };
 
 // get an Account by its Username
-export const getAccountByName = (
-  world: World,
-  components: Components,
-  name: string,
-  options?: AccountOptions
-) => {
+export const getAccountIndexByName = (components: Components, name: string) => {
   const { IsAccount, Name } = components;
-  const entityIndex = Array.from(runQuery([Has(IsAccount), HasValue(Name, { value: name })]))[0];
-  return getAccount(world, components, entityIndex, options);
+  return Array.from(runQuery([Has(IsAccount), HasValue(Name, { value: name })]))[0];
 };
 
 // get an Account by its Operator EOA
@@ -74,7 +68,7 @@ export const getAccountByOwner = (
   const entityIndex = Array.from(
     runQuery([Has(IsAccount), HasValue(OwnerAddress, { value: ownerEOA })])
   )[0];
-  return getAccount(world, components, entityIndex, options);
+  if (entityIndex) return getAccount(world, components, entityIndex, options);
 };
 
 // get an Account, assuming the currently connected burner is the Operator

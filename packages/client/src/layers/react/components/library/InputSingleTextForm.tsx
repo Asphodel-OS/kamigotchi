@@ -9,22 +9,27 @@ import { Tooltip } from './Tooltip';
 interface Props {
   fullWidth?: boolean; // whether the input should take up the full width of its container
   label?: string; // the label for the input
-  placeholder?: string; // placeholder for empty input
   maxLen?: number; // the maximum length of the input
+  placeholder?: string; // placeholder for empty input
   initialValue?: string; // the initial value of the input
-  hasButton?: boolean; // whether the input has a submit button
   onSubmit?: (text: string) => void; // the function to call when the submit button is clicked
-  disabled?: boolean; // whether the input is disabled
+  hasButton?: boolean; // whether the input has a submit button
   buttonIcon?: string; // the icon to display on the button
+  disabled?: boolean; // whether the input is disabled
 }
 
 // InputSingleTextForm is a styled input field with some additional frills
 export const InputSingleTextForm = (props: Props) => {
   const { maxLen, fullWidth, label, placeholder, onSubmit } = props;
   const { hasButton, buttonIcon } = props;
+  const disabled = !!props.disabled;
+
   const [value, setValue] = useState(props.initialValue || '');
   let styleOverride = {};
   if (fullWidth) styleOverride = { width: '100%' };
+
+  /////////////////
+  // INTERACTION
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
@@ -42,22 +47,38 @@ export const InputSingleTextForm = (props: Props) => {
     if (event.key === 'Enter' && value.length > 0) handleSubmit();
   };
 
+  /////////////////
+  // INTERPRETATION
+
+  const isButtonDisabled = () => {
+    return disabled || value.length === 0;
+  };
+
+  const getButtonTooltip = () => {
+    if (isButtonDisabled()) return [];
+    return ['submit'];
+  };
+
   return (
     <Container style={styleOverride}>
       <InputGroup>
         {label && <Label>{label}</Label>}
         <Input
           type='text'
-          placeholder={placeholder}
           value={value}
+          placeholder={placeholder}
           onKeyDown={(e) => catchKeys(e)}
           onChange={(e) => handleChange(e)}
-          disabled={props.disabled}
+          disabled={disabled}
         />
       </InputGroup>
       {hasButton && (
-        <Tooltip text={['submit']}>
-          <IconButton img={buttonIcon ?? PlaceholderIcon} onClick={() => handleSubmit()} />
+        <Tooltip text={getButtonTooltip()}>
+          <IconButton
+            img={buttonIcon ?? PlaceholderIcon}
+            onClick={() => handleSubmit()}
+            disabled={isButtonDisabled()}
+          />
         </Tooltip>
       )}
     </Container>

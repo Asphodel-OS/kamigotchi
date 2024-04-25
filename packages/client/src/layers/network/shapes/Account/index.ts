@@ -2,10 +2,10 @@ export { calcStamina, calcStaminaPercent } from './functions';
 export {
   getAccountByID,
   getAccountByIndex,
-  getAccountByName,
   getAccountByOperator,
   getAccountByOwner,
   getAccountFromBurner,
+  getAccountIndexByName,
   getAllAccounts,
 } from './queries';
 export { getAccount } from './types';
