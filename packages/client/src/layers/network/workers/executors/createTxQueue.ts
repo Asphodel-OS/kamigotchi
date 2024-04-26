@@ -1,6 +1,5 @@
 import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, deferred, mapObject, uuid } from '@mud-classic/utils';
-import { UnsignedTransactionRequest } from '@privy-io/react-auth';
 import { Mutex } from 'async-mutex';
 import { BaseContract, BigNumber, BigNumberish, CallOverrides, Overrides } from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
@@ -130,37 +129,12 @@ export function createTxQueue<C extends Contracts>(
         const configOverrides = { ...overrides, nonce };
 
         // Populate tx
-        console.log(argsWithoutOverrides);
-        console.log(configOverrides);
-        console.log(await member(...argsWithoutOverrides, configOverrides));
-        const rawPopulatedTx = await member(...argsWithoutOverrides, configOverrides);
-        const populatedTx: UnsignedTransactionRequest = {
-          data: rawPopulatedTx.data,
-          to: rawPopulatedTx.to,
-          value: rawPopulatedTx.value?.toString(),
-          nonce: nonce,
-          chainId: network.config.chainId,
-          type: 2,
-          gasLimit: gasLimit.toString(),
-          maxPriorityFeePerGas: BigNumber.from(
-            await (target.provider as JsonRpcProvider).send('eth_maxPriorityFeePerGas', [])
-          ).toString(),
-          // maxFeePerGas: rawPopulatedTx.maxFeePerGas,
-        };
-        // populatedTx.nonce = nonce;
-        // populatedTx.chainId = network.config.chainId;
-        // populatedTx.type = 2;
-        // populatedTx.gasLimit = BigNumber.from(gasLimit);
-        // populatedTx.maxPriorityFeePerGas = BigNumber.from(
-        //   await (target.provider as JsonRpcProvider).send('eth_maxPriorityFeePerGas', [])
-        // );
-        // populatedTx.maxFeePerGas = populatedTx.maxPriorityFeePerGas.mul(2);a
-
-        // populatedTx.maxPriorityFeePerGas = utils.parseUnits('2', 'gwei');
-        // populatedTx.gasPrice = utils.parseUnits('2', 'gwei');
-        console.log('feedata', await target.signer.getFeeData());
-        console.log('Populated tx', populatedTx);
-        console.log('time sent', new Date(Date.now()).toLocaleTimeString());
+        const populatedTx = await member(...argsWithoutOverrides, configOverrides);
+        populatedTx.maxPriorityFeePerGas = BigNumber.from(
+          await (target.provider as JsonRpcProvider).send('eth_maxPriorityFeePerGas', [])
+        )
+          .mul(125)
+          .div(100);
 
         // Execute tx
         let hash: string;
@@ -170,9 +144,6 @@ export function createTxQueue<C extends Contracts>(
           hash = await (target.provider as JsonRpcProvider).perform('sendTransaction', {
             signedTransaction: signedTx,
           });
-          // const tx = await sendTransaction(populatedTx);
-          // hash = tx.transactionHash;
-          console.log('sender');
         } catch (e) {
           // Some signers don't support signing without sending (looking at you MetaMask),
           // so sign+send using the signer as a fallback
@@ -188,7 +159,6 @@ export function createTxQueue<C extends Contracts>(
           const txConfirmed = await target.provider.waitForTransaction(hash, 1, 45000);
           if (txConfirmed?.status === 0) {
             // if tx did not complete, initiate tx.wait() to throw regular error
-            console.log('tx did not complete', new Date(Date.now()).toLocaleTimeString());
             return (await response).wait();
           }
           return txConfirmed;
@@ -273,7 +243,6 @@ export function createTxQueue<C extends Contracts>(
         console.log(
           `[TXQueue] TX Sent (error=${!!error}, isMutationError=${!!isNonViewTransaction} incNonce=${!!shouldIncreaseNonce} resetNonce=${!!shouldResetNonce})`
         );
-        console.log('Time confirmed', new Date(Date.now()).toLocaleTimeString());
         // Nonce handeling
         if (shouldIncreaseNonce) incNonce();
         if (shouldResetNonce) await resetNonce();
