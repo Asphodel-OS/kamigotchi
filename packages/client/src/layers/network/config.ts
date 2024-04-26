@@ -88,9 +88,10 @@ function createConfigRawLocal(externalProvider?: ExternalProvider): NetworkConfi
 // Get the network config of a deployment to Optimism testnet
 function createConfigRawOPSepolia(externalProvider?: ExternalProvider): NetworkConfig {
   let config: NetworkConfig = <NetworkConfig>{
+    devMode: false,
     jsonRpc: 'https://go.getblock.io/19cc856d2ae14db5907bfad3688d59b7',
     wsRpc: 'wss://go.getblock.io/b32c8ea4f9a94c41837c68df4881d52f',
-    snapshotServiceUrl: 'https://snapshot.asphodel.io',
+    // snapshotServiceUrl: 'https://snapshot.asphodel.io',
 
     chainId: 11155420,
     worldAddress: '0x40aEaA59D096ff56Cb25cDD7f8198108fb67A519',

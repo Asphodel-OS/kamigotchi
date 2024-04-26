@@ -38,14 +38,14 @@ export const Engine: React.FC<{
     },
   });
 
-  const deafultTransport =
+  const defaultTransport =
     mode === 'development' ? http() : http(import.meta.env.VITE_RPC_TRANSPORT_URL);
   const wagmiConfig = createConfig({
     chains: [defaultChain],
     transports: {
-      [defaultChain.id]: deafultTransport,
+      [defaultChain.id]: defaultTransport,
     },
-    pollingInterval: 2000, // TODO: set this with a config value
+    pollingInterval: 1000, // TODO: set this with a config value
   });
 
   const privyConfig: PrivyClientConfig = {
