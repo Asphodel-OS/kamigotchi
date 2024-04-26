@@ -46,25 +46,20 @@ export function registerChatModal() {
       };
 
       const pushCasts = (newCasts: CastWithInteractions[]) => {
+        const oldCasts = [...casts];
+
         // split the new casts into unique and duplicates
         const uniqueCasts = [];
-        for (const [i, cast] of newCasts.entries()) {
-          if (casts.find((c) => c.hash === cast.hash)) casts[i] = cast;
-          else uniqueCasts.push(cast);
+        for (const [_, newCast] of newCasts.entries()) {
+          const collisionIndex = oldCasts.findIndex((c) => c.hash === newCast.hash);
+          if (collisionIndex != -1) oldCasts[collisionIndex] = newCast;
+          else uniqueCasts.push(newCast);
         }
 
-        // sort the casts
-        const allCasts = [...uniqueCasts, ...casts];
+        // sort the full set of casts by timestamp
+        const allCasts = [...uniqueCasts, ...oldCasts];
         allCasts.sort((a, b) => moment(b.timestamp).diff(moment(a.timestamp)));
         setCasts(allCasts);
-
-        console.log(
-          `casts pushed`,
-          `old: ${casts.length} `,
-          `new: ${uniqueCasts.length} `,
-          `repeated: ${newCasts.length - uniqueCasts.length}`,
-          `total: ${allCasts.length}`
-        );
       };
 
       return (

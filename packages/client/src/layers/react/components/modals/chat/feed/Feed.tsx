@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'layers/react/components/library';
-import { useAccount } from 'layers/react/store';
+import { useAccount, useVisibility } from 'layers/react/store';
 import { pollChannelCasts } from 'src/clients/neynar';
 import { Message } from './Message';
 
@@ -20,48 +20,58 @@ export const Feed = (props: Props) => {
   const { max, casts } = props;
   const { pushCasts, setCasts } = props.actions;
   const { account } = useAccount();
+  const { modals } = useVisibility();
 
   const [scrollBottom, setScrollBottom] = useState(0);
   const [feed, setFeed] = useState<FeedResponse>();
   const [isPolling, setIsPolling] = useState(false);
+
   const feedRef = useRef<HTMLDivElement>(null);
 
   /////////////////
   // SUBSCRIPTION
 
+  // populating the initial feed
+  // TODO: set the scroll position to the bottom whenever the modal is reopened
   useEffect(() => {
     pollMore();
   }, []);
 
-  // scrolling effects
+  // time-based autopolling of new messages (10s atm)
+  // TODO: autoexpand and contract this polling based on detected activity
   useEffect(() => {
+    const pollTimerId = setInterval(pollNew, 10000);
+    return function cleanup() {
+      clearInterval(pollTimerId);
+    };
+  }, [modals.chat, casts]);
+
+  // scrolling effects
+  // when scrolling, autopoll when nearing the top and set the scroll position
+  // as distance from the bottom to ensure feed visualization stays consistent
+  useEffect(() => {
+    if (!feedRef.current) return;
     const node = feedRef.current;
+
     const handleScroll = async () => {
-      // start polling when scrolling to top
-      const isNearTop = node && node.scrollTop < 20;
+      const isNearTop = node.scrollTop < 20;
       if (!isPolling && isNearTop && feed?.next.cursor) await pollMore();
-
-      // set the new scroll position as distance from bottom
-      if (node) {
-        const { scrollTop, scrollHeight, clientHeight } = node;
-        const scrollBottom = scrollHeight - scrollTop - clientHeight;
-        setScrollBottom(scrollBottom);
-      }
+      const { scrollTop, scrollHeight, clientHeight } = node;
+      const scrollBottom = scrollHeight - scrollTop - clientHeight;
+      setScrollBottom(scrollBottom);
     };
 
-    if (node) node.addEventListener('scroll', handleScroll);
-    return () => {
-      if (node) node.removeEventListener('scroll', handleScroll);
-    };
+    node.addEventListener('scroll', handleScroll);
+    return () => node.removeEventListener('scroll', handleScroll);
   }, [feed?.next.cursor, isPolling, casts]);
 
-  // update the scroll position accordingly when new casts come in
+  // As new casts come in, set scroll position to bottom
+  // if already there. Otherwise hold the line.
   useEffect(() => {
     if (!feedRef.current) return;
     const node = feedRef.current;
     const { clientHeight, scrollHeight } = node;
 
-    // set scroll position to bottom if already there, otherwise ensure position is maintained
     if (scrollBottom < 5) node.scrollTop = scrollHeight;
     else node.scrollTop = scrollHeight - scrollBottom - clientHeight;
   }, [casts.length]);
@@ -103,10 +113,12 @@ export const Feed = (props: Props) => {
     setIsPolling(false);
   }
 
-  // poll for new messages. do not update the Feed state/cursor
+  // poll for recent messages. do not update the Feed state/cursor
   async function pollNew() {
-    const newFeed = await pollChannelCasts('kamigotchi', '', 5);
-    pushCasts(newFeed.casts);
+    if (modals.chat) {
+      const newFeed = await pollChannelCasts('kamigotchi', '', 5);
+      pushCasts(newFeed.casts);
+    }
   }
 };
 
