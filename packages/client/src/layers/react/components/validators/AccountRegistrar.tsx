@@ -83,7 +83,7 @@ export function registerAccountRegistrar() {
       // takes in a standard Account shape and converts it to a Kami Account shape
       // defaults any missing values to the current Kami Account in the store.
       const getKamiAccount = (account: Account, fallback: KamiAccount): KamiAccount => {
-        const doot = {
+        return {
           id: account.id ?? fallback.id,
           entityIndex: account.entityIndex ?? fallback.entityIndex,
           index: account.index ?? fallback.index,
@@ -95,8 +95,6 @@ export function registerAccountRegistrar() {
             signer: fallback.farcaster.signer,
           },
         };
-        console.log('Kami Account:', doot);
-        return doot;
       };
 
       const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
