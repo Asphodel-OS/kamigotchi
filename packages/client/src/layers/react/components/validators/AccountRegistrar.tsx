@@ -48,7 +48,6 @@ import { playSignup } from 'utils/sounds';
  * abomination birthed out of necessity and should be treated as such.
  */
 
-// TODO: check for whether an account with the burner address already exists
 export function registerAccountRegistrar() {
   registerUIComponent(
     'AccountRegistrar',
@@ -84,7 +83,7 @@ export function registerAccountRegistrar() {
       // takes in a standard Account shape and converts it to a Kami Account shape
       // defaults any missing values to the current Kami Account in the store.
       const getKamiAccount = (account: Account, fallback: KamiAccount): KamiAccount => {
-        return {
+        const doot = {
           id: account.id ?? fallback.id,
           entityIndex: account.entityIndex ?? fallback.entityIndex,
           index: account.index ?? fallback.index,
@@ -96,6 +95,8 @@ export function registerAccountRegistrar() {
             signer: fallback.farcaster.signer,
           },
         };
+        console.log('Kami Account:', doot);
+        return doot;
       };
 
       const getAccountIndexFromOwner = (ownerAddress: string): EntityIndex => {
@@ -107,6 +108,8 @@ export function registerAccountRegistrar() {
 
       return merge(
         IsAccount.update$,
+        AccountIndex.update$,
+        FarcasterIndex.update$,
         Name.update$,
         OperatorAddress.update$,
         OwnerAddress.update$
@@ -158,6 +161,7 @@ export function registerAccountRegistrar() {
         const accountExists = !!account;
         setAccountExists(accountExists);
         setValidations({ ...validations, accountExists });
+        console.log(accountExists);
         if (accountExists) setKamiAccount(getKamiAccount(account, kamiAccount));
       }, [selectedAddress, accountFromWorldUpdate]);
 
