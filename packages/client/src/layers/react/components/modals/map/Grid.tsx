@@ -73,7 +73,7 @@ export const Grid = (props: Props) => {
             {row.map((room, j) => {
               const isRoom = room.index != 0;
               const isCurrRoom = room.index == index;
-              const isExit = rooms.get(index)?.exits?.find((e) => e === room.index);
+              const isExit = !!rooms.get(index)?.exits?.find((e) => e === room.index);
 
               let color, opacity;
               let onClick: MouseEventHandler | undefined;
@@ -84,8 +84,6 @@ export const Grid = (props: Props) => {
                 color = '#f85';
                 opacity = 0.6;
                 onClick = () => handleRoomMove(room?.index ?? 0);
-              } else if (isRoom) {
-                color = '#d33';
               }
 
               return (
@@ -94,6 +92,7 @@ export const Grid = (props: Props) => {
                   style={{ backgroundColor: color, opacity }}
                   onClick={onClick}
                   hasRoom={isRoom}
+                  isHighlighted={isCurrRoom || isExit}
                   onMouseEnter={() => {
                     if (isRoom) actions.setHoveredRoom(room.index);
                   }}
@@ -142,7 +141,7 @@ const Row = styled.div`
   flex-grow: 1;
 `;
 
-const Tile = styled.div<{ hasRoom: boolean }>`
+const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean }>`
   opacity: 0.2;
   border-right: 0.01vw solid black;
   border-top: 0.01vw solid black;
@@ -162,7 +161,16 @@ const Tile = styled.div<{ hasRoom: boolean }>`
     &:hover {
       opacity: 0.9;
       cursor: help;
+      border-left: 0.01vw solid black;
+      border-bottom: 0.01vw solid black;
     }
+  `}
+
+  ${({ isHighlighted }) =>
+    isHighlighted &&
+    `
+    border-left: 0.01vw solid black;
+    border-bottom: 0.01vw solid black;
   `}
 
   ${({ onClick }) =>
