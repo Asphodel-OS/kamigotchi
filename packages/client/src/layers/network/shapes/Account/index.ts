@@ -13,4 +13,5 @@ export type {
   Account,
   Friends as AccountFriends,
   Inventories as AccountInventories,
+  AccountOptions,
 } from './types';

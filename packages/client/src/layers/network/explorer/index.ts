@@ -1,18 +1,17 @@
 import { Component, EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
-import { getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
+import { AccountOptions, getAccountByIndex, getAllAccounts } from 'layers/network/shapes/Account';
 import { getAllItems, getItemByIndex } from 'layers/network/shapes/Item';
-import { getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';
+import { KamiOptions, getAllKamis, getKamiByIndex } from 'layers/network/shapes/Kami';
 import { getAllMerchants, getMerchantByIndex } from 'layers/network/shapes/Merchant';
-import { getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
+import { NodeOptions, getAllNodes, getNodeByIndex } from 'layers/network/shapes/Node';
 import { getQuestByIndex, getRegistryQuests } from 'layers/network/shapes/Quest';
 import { getAllRooms, getRoomByIndex } from 'layers/network/shapes/Room';
 import { getRegistrySkills, getSkillByIndex } from 'layers/network/shapes/Skill';
 import { getRegistryTraits, getTraitByIndex } from 'layers/network/shapes/Trait';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
-// TODO: implement Item, Quest, Skill, Trait paths (registries)
 export const initExplorer = (world: World, components: Components) => {
   // parses a component value based on its schema
   function parseValue(c: Component, v: any) {
@@ -39,7 +38,7 @@ export const initExplorer = (world: World, components: Components) => {
 
   return {
     accounts: {
-      all: (options?: {}) => getAllAccounts(world, components, options),
+      all: (options?: AccountOptions) => getAllAccounts(world, components, options),
       get: (index: number, options?: {}) => {
         return getAccountByIndex(world, components, index, options);
       },
@@ -48,7 +47,7 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     kamis: {
-      all: (options?: {}) => getAllKamis(world, components, options),
+      all: (options?: KamiOptions) => getAllKamis(world, components, options),
       get: (index: number, options?: {}) => {
         return getKamiByIndex(world, components, index, options);
       },
@@ -57,7 +56,7 @@ export const initExplorer = (world: World, components: Components) => {
     },
 
     nodes: {
-      all: (options?: {}) => getAllNodes(world, components, options),
+      all: (options?: NodeOptions) => getAllNodes(world, components, options),
       get: (index: number, options?: {}) => {
         return getNodeByIndex(world, components, index, options);
       },

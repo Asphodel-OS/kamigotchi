@@ -22,4 +22,4 @@ export {
 export { getAllKamis, getKamiByIndex, queryKamiEntitiesX, queryKamisX } from './queries';
 export type { QueryOptions } from './queries';
 export { getKami } from './types';
-export type { Kami, Options } from './types';
+export type { Kami, Options as KamiOptions } from './types';
