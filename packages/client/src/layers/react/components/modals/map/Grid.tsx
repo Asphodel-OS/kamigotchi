@@ -144,7 +144,8 @@ const Row = styled.div`
 
 const Tile = styled.div<{ hasRoom: boolean }>`
   opacity: 0.2;
-  border: 0.1vw solid black;
+  border-right: 0.01vw solid black;
+  border-top: 0.01vw solid black;
   flex-grow: 1;
 
   display: flex;
