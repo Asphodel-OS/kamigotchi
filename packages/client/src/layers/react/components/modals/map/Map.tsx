@@ -135,7 +135,7 @@ const Column = styled.div`
 `;
 
 const FooterRow = styled.div`
-  height: 6vw;
+  height: 9vh;
   display: flex;
   flex-direction: row;
 `;

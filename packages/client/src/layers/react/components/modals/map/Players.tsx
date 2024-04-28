@@ -55,14 +55,13 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  border-bottom: solid #eee 0.1vw;
-  padding: 0.45vw;
+  padding: 0.6vh;
   width: 100%;
   background-color: #eee;
 
   color: #333;
   font-family: Pixel;
-  font-size: 0.6vw;
+  font-size: 0.9vh;
   text-align: left;
 `;
 
@@ -71,7 +70,7 @@ const PlayerRow = styled.div`
   flex-flow: row wrap;
   align-items: flex-start;
   padding: 0.3vw;
-  padding-top: 1.5vw;
+  padding-top: 2.4vh;
 
   width: 100%;
   height: 100%;
@@ -83,9 +82,9 @@ const Player = styled.div`
   padding: 0.3vw;
 
   font-family: Pixel;
-  font-size: 0.6vw;
+  font-size: 0.9vh;
   text-align: left;
-  line-height: 0.9vw;
+  line-height: 1.2vh;
 
   &:hover {
     opacity: 0.6;
