@@ -12,7 +12,7 @@ import { utils } from 'ethers';
 
 import { Components } from 'layers/network';
 import { getConfigFieldValueWei } from './Config';
-import { Kami, Options as KamiOptions, queryKamisX } from './Kami';
+import { Kami, KamiOptions, queryKamisX } from './Kami';
 
 export const GACHA_ID = utils.solidityKeccak256(['string'], ['gacha.id']);
 

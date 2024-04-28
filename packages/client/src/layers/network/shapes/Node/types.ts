@@ -9,7 +9,7 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
-import { Kami, getKami } from './Kami';
+import { Kami, getKami } from '../Kami';
 
 // standardized shape of a Node Entity
 export interface Node {
@@ -24,12 +24,12 @@ export interface Node {
   kamis?: NodeKamis;
 }
 
-export interface NodeKamis {
+interface NodeKamis {
   allies: Kami[];
   enemies: Kami[];
 }
 
-interface Options {
+export interface Options {
   kamis?: boolean;
   accountID?: EntityID;
 }
@@ -114,25 +114,4 @@ export const getNode = (
   }
 
   return node;
-};
-
-export const getNodeByIndex = (
-  world: World,
-  components: Components,
-  index: number,
-  options?: Options
-): Node => {
-  const { IsNode, NodeIndex } = components;
-  const entityIndex = Array.from(runQuery([Has(IsNode), HasValue(NodeIndex, { value: index })]))[0];
-
-  return getNode(world, components, entityIndex, options);
-};
-
-export const getAllNodes = (world: World, components: Components, options?: Options): Node[] => {
-  const { IsNode } = components;
-  const entityIndices = Array.from(runQuery([Has(IsNode)]));
-
-  return entityIndices.map((entityIndex) => {
-    return getNode(world, components, entityIndex, options);
-  });
 };
