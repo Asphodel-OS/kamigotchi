@@ -21,7 +21,7 @@ export function registerMapModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 50,
+      rowEnd: 60,
     },
 
     // Requirement
@@ -135,6 +135,7 @@ const Column = styled.div`
 `;
 
 const FooterRow = styled.div`
+  height: 6vw;
   display: flex;
   flex-direction: row;
 `;
