@@ -73,7 +73,7 @@ const Wrapper = styled.div<Wrapper>`
 
 const Content = styled.div`
   position: relative;
-  border: solid black 2px;
+  border: solid black 0.15vw;
   border-radius: 10px;
 
   background-color: white;

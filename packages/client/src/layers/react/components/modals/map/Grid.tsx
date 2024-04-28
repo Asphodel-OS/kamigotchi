@@ -110,6 +110,7 @@ export const Grid = (props: Props) => {
 };
 
 const Container = styled.div`
+  border-right: solid black 0.15vw;
   position: relative;
   height: 100%;
   display: flex;
