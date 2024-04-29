@@ -10,7 +10,6 @@ import { ModalHeader } from 'layers/react/components/library/ModalHeader';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
-import 'layers/react/styles/font.css';
 import { SectionContent } from './SectionContent';
 import { CopyInfo } from './copy';
 import { HelpTabs } from './types';

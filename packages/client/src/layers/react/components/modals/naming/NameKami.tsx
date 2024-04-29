@@ -7,7 +7,6 @@ import { InputSingleTextForm } from 'layers/react/components/library/InputSingle
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useSelected, useVisibility } from 'layers/react/store';
-import 'layers/react/styles/font.css';
 
 export function registerNameKamiModal() {
   registerUIComponent(

@@ -12,8 +12,6 @@ import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork } from 'layers/react/store';
 
-import 'layers/react/styles/font.css';
-
 export function registerERC721BridgeModal() {
   registerUIComponent(
     'ERC721Bridge',

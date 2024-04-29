@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 
+import 'layers/react/styles/font.css';
 import { Layers } from 'src/types';
 import { registerUIComponents } from './components';
 import { Engine } from './engine/Engine';

@@ -9,7 +9,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
-import 'layers/react/styles/font.css';
+
 import { playScribble, playSuccess } from 'utils/sounds';
 
 // TODO: check for whether an account with the burner address already exists

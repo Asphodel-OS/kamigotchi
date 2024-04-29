@@ -10,7 +10,7 @@ import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
-import 'layers/react/styles/font.css';
+
 import { playFund, playSuccess } from 'utils/sounds';
 import { formatEther } from 'viem';
 
