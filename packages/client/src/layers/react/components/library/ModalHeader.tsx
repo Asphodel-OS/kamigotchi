@@ -18,7 +18,7 @@ export const ModalHeader = (props: Props) => {
 };
 
 const Wrapper = styled.div`
-  padding: 0.8vw 1vw;
+  padding: 0.6vw 1vw;
   gap: 0.7vw;
 
   display: flex;
