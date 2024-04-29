@@ -13,6 +13,7 @@ import {
 
 import { registerAccountInfoFixture } from './fixtures/AccountInfo';
 import { registerNotificationFixture } from './fixtures/Notifications';
+import { registerScene } from './fixtures/canvas';
 import { registerLoginFixture } from './fixtures/login';
 import { registerActionQueueFixture } from './fixtures/queue/';
 
@@ -93,4 +94,7 @@ export function registerUIComponents() {
   registerOperatorUpdater();
   registerWalletConnecter();
   registerGasHarasser();
+
+  // Game Scene
+  registerScene();
 }

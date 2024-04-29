@@ -1,0 +1,1 @@
+export { registerScene } from './Scene';
