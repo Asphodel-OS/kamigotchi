@@ -1,4 +1,4 @@
-import { bgPlaytest, path15 } from 'assets/images/rooms/16_techno-temple';
+import { bgPlaytest } from 'assets/images/rooms/16_techno-temple';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -13,11 +13,9 @@ export const room16: Room = {
     path: cave,
   },
   objects: [
-    {
-      key: 'technofloor',
-      path: path15,
-      offset: { x: 0, y: 59.1 },
-      dialogue: 161,
-    },
+    // {
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 161,
+    // },
   ],
 };

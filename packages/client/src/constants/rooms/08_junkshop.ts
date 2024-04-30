@@ -1,9 +1,4 @@
-import {
-  bgPlaytest,
-  objectMonitors,
-  objectPoster,
-  objectVendingWall,
-} from 'assets/images/rooms/8_junkshop';
+import { bgPlaytest } from 'assets/images/rooms/8_junkshop';
 import { abandoned } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -18,23 +13,20 @@ export const room08: Room = {
     path: abandoned,
   },
   objects: [
-    {
-      key: 'junkmonitors',
-      path: objectMonitors,
-      offset: { x: 54, y: 17 },
-      dialogue: 81,
-    },
-    {
-      key: 'junkvendingwall',
-      path: objectVendingWall,
-      offset: { x: -47.5, y: -4.5 },
-      dialogue: 82,
-    },
-    {
-      key: 'poster',
-      path: objectPoster,
-      offset: { x: 35.5, y: -1.4 },
-      dialogue: 83,
-    },
+    // {
+    //   // junkmonitors
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 81,
+    // },
+    // {
+    //   // junkvendingwall
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 82,
+    // },
+    // {
+    //   // poster
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 83,
+    // },
   ],
 };

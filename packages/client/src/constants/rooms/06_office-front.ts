@@ -1,8 +1,4 @@
-import {
-  bgPlaytestDay,
-  objectBuildingLogo,
-  objectFoxStatues,
-} from 'assets/images/rooms/6_office-front';
+import { bgPlaytestDay } from 'assets/images/rooms/6_office-front';
 import { amusement } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -18,15 +14,18 @@ export const room06: Room = {
   },
   objects: [
     {
-      key: 'abuildinglogo',
-      path: objectBuildingLogo,
-      offset: { x: 0, y: -45 },
+      // building logo
+      coordinates: { x1: 49, y1: 4, x2: 79, y2: 34 },
       dialogue: 61,
     },
     {
-      key: 'foxstatues',
-      path: objectFoxStatues,
-      offset: { x: 0, y: 28 },
+      // fox statue 1
+      coordinates: { x1: 1, y1: 63, x2: 38, y2: 120 },
+      dialogue: 62,
+    },
+    {
+      // fox statue 2
+      coordinates: { x1: 90, y1: 63, x2: 128, y2: 120 },
       dialogue: 62,
     },
   ],

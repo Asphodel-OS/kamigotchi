@@ -1,11 +1,4 @@
-import {
-  bgPlaytestDay,
-  objectBeetle1,
-  objectBeetle2,
-  objectBeetle3,
-  objectBeetle4,
-  objectSmallMushrooms,
-} from 'assets/images/rooms/9_forest';
+import { bgPlaytestDay } from 'assets/images/rooms/9_forest';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -21,33 +14,28 @@ export const room09: Room = {
   },
   objects: [
     {
-      key: 'beetle1',
-      path: objectBeetle1,
-      offset: { x: 53.5, y: -53.35 },
+      // beetle1
+      coordinates: { x1: 0, y1: 42, x2: 10, y2: 56 },
       dialogue: 91,
     },
     {
-      key: 'beetle2',
-      path: objectBeetle2,
-      offset: { x: 11.5, y: -7 },
+      // beetle2
+      coordinates: { x1: 66, y1: 48, x2: 85, y2: 66 },
       dialogue: 92,
     },
     {
-      key: 'beetle3',
-      path: objectBeetle3,
-      offset: { x: -59.5, y: -15.5 },
+      // beetle3
+      coordinates: { x1: 110, y1: 3, x2: 125, y2: 19 },
       dialogue: 93,
     },
     {
-      key: 'beetle4',
-      path: objectBeetle4,
-      offset: { x: 43.5, y: 2 },
+      // beetle4
+      coordinates: { x1: 103, y1: 62, x2: 112, y2: 70 },
       dialogue: 94,
     },
     {
-      key: 'smallmushrooms',
-      path: objectSmallMushrooms,
-      offset: { x: -52, y: 58 },
+      // smallmushrooms
+      coordinates: { x1: 5, y1: 117, x2: 19, y2: 127 },
       dialogue: 95,
     },
   ],

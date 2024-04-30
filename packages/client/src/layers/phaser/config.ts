@@ -8,9 +8,6 @@ export type PhaserConfig = {
     default: string;
     arcade: {
       debug: boolean;
-      gravity: {
-        y: number;
-      };
     };
   };
   scene: [ReturnType<typeof defineScene>];
@@ -20,20 +17,19 @@ export type PhaserConfig = {
 
 export const phaserConfig: PhaserConfig = {
   parent: 'phaser-game',
-  pixelArt: true,
   physics: {
     default: 'arcade',
     arcade: {
       debug: false,
-      gravity: { y: 0 },
     },
   },
-  scene: [GameScene],
-  title: 'Kamigotchi',
+  pixelArt: true,
   scale: {
     width: window.innerWidth,
     height: window.innerHeight,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    mode: Phaser.Scale.FIT,
   },
+  scene: [GameScene],
+  title: 'Kamigotchi',
 };

@@ -1,4 +1,4 @@
-import { bgPlaytest, path15, path19, path20 } from 'assets/images/rooms/18_cave-crossroads';
+import { bgPlaytest } from 'assets/images/rooms/18_cave-crossroads';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -13,23 +13,20 @@ export const room18: Room = {
     path: cave,
   },
   objects: [
-    {
-      key: 'cavefloor',
-      path: path15,
-      offset: { x: 25, y: 53.1 },
-      dialogue: 181,
-    },
-    {
-      key: 'cavecrossleft',
-      path: path19,
-      offset: { x: -46, y: -5.8 },
-      dialogue: 182,
-    },
-    {
-      key: 'cavecrossright',
-      path: path20,
-      offset: { x: 18.5, y: -19.7 },
-      dialogue: 183,
-    },
+    // {
+    //   // cavefloor
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 181,
+    // },
+    // {
+    //   // cavecrossleft
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 182,
+    // },
+    // {
+    //   // cavecrossright
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 183,
+    // },
   ],
 };

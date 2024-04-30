@@ -19,6 +19,7 @@ export const Grid = (props: Props) => {
 
   useEffect(() => {
     const z = rooms.get(index)?.location.z;
+    if (!z) return;
 
     // establish the grid size
     let maxX = 0;

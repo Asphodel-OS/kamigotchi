@@ -1,4 +1,4 @@
-import { bgPlaytestNight, objectVendingMachine } from 'assets/images/rooms/4_junkyard';
+import { bgPlaytestNight } from 'assets/images/rooms/4_junkyard';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerPetMintModal } from 'layers/phaser/utils/triggers/triggerPetMintModal';
@@ -15,9 +15,8 @@ export const room04: Room = {
   },
   objects: [
     {
-      key: 'vendingmachine',
-      path: objectVendingMachine,
-      offset: { x: -33.5, y: 9.5 },
+      // vending machine
+      coordinates: { x1: 15, y1: 56, x2: 46, y2: 90 },
       onClick: triggerPetMintModal,
     },
   ],

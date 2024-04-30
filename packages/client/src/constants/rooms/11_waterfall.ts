@@ -1,10 +1,4 @@
-import {
-  bgPlaytestDay,
-  objectEmaBoard,
-  objectSmallShrine,
-  objectStoneLantern,
-  objectWaterfall,
-} from 'assets/images/rooms/11_waterfall';
+import { bgPlaytestDay } from 'assets/images/rooms/11_waterfall';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerPetNamingModal } from 'layers/phaser/utils/triggers/triggerPetNamingModal';
@@ -21,27 +15,23 @@ export const room11: Room = {
   },
   objects: [
     {
-      key: 'emaboard',
-      path: objectEmaBoard,
-      offset: { x: 45.5, y: 31 },
+      // emaboard
+      coordinates: { x1: 92, y1: 76, x2: 127, y2: 115 },
       onClick: triggerPetNamingModal,
     },
     {
-      key: 'stonelantern',
-      path: objectStoneLantern,
-      offset: { x: -50.4, y: 34.6 },
+      // stonelantern
+      coordinates: { x1: 3, y1: 88, x2: 24, y2: 110 },
       dialogue: 111,
     },
     {
-      key: 'smallshrine',
-      path: objectSmallShrine,
-      offset: { x: -5.48, y: 16.1 },
+      // smallshrine
+      coordinates: { x1: 39, y1: 62, x2: 77, y2: 108 },
       dialogue: 112,
     },
     {
-      key: 'waterfall',
-      path: objectWaterfall,
-      offset: { x: 22.6, y: -33.5 },
+      // waterfall
+      coordinates: { x1: 59, y1: 30, x2: 117, y2: 60 },
       dialogue: 113,
     },
   ],

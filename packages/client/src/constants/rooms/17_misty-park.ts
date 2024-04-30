@@ -13,4 +13,5 @@ export const room17: Room = {
     key: 'cave',
     path: cave,
   },
+  objects: [],
 };

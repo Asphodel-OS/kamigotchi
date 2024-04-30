@@ -1,10 +1,7 @@
 import Phaser from 'phaser';
 
-import { backgrounds } from 'assets/images/backgrounds';
 import { Room } from 'constants/rooms';
-import { checkModalCoverage } from '../utils/checkModalCoverage';
 import { checkDuplicateRooms } from '../utils/rooms';
-import { triggerDialogueModal } from '../utils/triggers/triggerDialogueModal';
 
 // an additional field for the Phaser Scene for the GameScene
 // this allows us to set shaped data we can reliably pull
@@ -29,65 +26,19 @@ export class GameScene extends Phaser.Scene implements GameScene {
   }
 
   preload() {
-    this.load.image('wallpaper', backgrounds.kamiPatternWide);
+    // this.load.image('wallpaper', backgrounds.kamiPatternWide);
 
     if (this.room) {
       const room = this.room;
-      if (room.background) this.load.image(room.background.key, room.background.path);
-      if (room.objects) room.objects.map((obj) => this.load.image(obj.key, obj.path));
+      // if (room.background) this.load.image(room.background.key, room.background.path);
+      // if (room.objects) room.objects.map((obj) => this.load.image(obj.key, obj.path));
       if (room.music) this.load.audio(room.music.key, room.music.path);
     }
   }
 
   create() {
-    const { width: gameWidth, height: gameHeight } = this.sys.game.canvas;
-    this.game.scene.scenes[0].sound.pauseOnBlur = false;
-
-    // set the wallpaper behind the game
-    let wallpaper = this.add.image(gameWidth / 2, gameHeight / 2, 'wallpaper');
-    let wpHeightScale = (1 * gameHeight) / wallpaper.height;
-    let wpWidthScale = (1 * gameWidth) / wallpaper.width;
-    wallpaper.setScale(Math.max(wpHeightScale, wpWidthScale));
-
     if (this.room) {
       const room = this.room;
-      let scale = 1; // scale of image assets
-
-      // set the room image
-      if (room.background) {
-        let bg = this.add.image(gameWidth / 2, gameHeight / 2, room.background.key);
-        scale = (1 * gameHeight) / bg.height;
-        bg.setScale(scale);
-      }
-
-      // generate all in-room visual assets
-      if (room.objects) {
-        room.objects.map((obj) => {
-          const { key, offset, onClick, dialogue } = obj;
-          let posX: number = gameWidth / 2;
-          let posY: number = gameHeight / 2;
-
-          if (offset) {
-            posX += offset.x * scale;
-            posY += offset.y * scale;
-          }
-
-          let image = this.add.image(posX, posY, key);
-          image.setScale(scale);
-          image.setInteractive({ useHandCursor: true });
-
-          // TODO: remove this once room objects are cleaned up
-          if (onClick) {
-            image.on('pointerdown', (e: Phaser.Input.Pointer) => {
-              if (!checkModalCoverage(e)) onClick();
-            });
-          } else if (dialogue) {
-            image.on('pointerdown', (e: Phaser.Input.Pointer) => {
-              if (!checkModalCoverage(e)) triggerDialogueModal(dialogue);
-            });
-          }
-        });
-      }
 
       if (room.music) {
         const settings = JSON.parse(localStorage.getItem('settings') ?? '{}');

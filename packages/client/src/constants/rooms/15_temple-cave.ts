@@ -1,4 +1,4 @@
-import { bgPlaytest, path11, path16, path18 } from 'assets/images/rooms/15_temple-cave';
+import { bgPlaytest } from 'assets/images/rooms/15_temple-cave';
 import { cave } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -13,23 +13,20 @@ export const room15: Room = {
     path: cave,
   },
   objects: [
-    {
-      key: 'templegrass',
-      path: path11,
-      offset: { x: -8.5, y: 57 },
-      dialogue: 151,
-    },
-    {
-      key: 'templedoor',
-      path: path16,
-      offset: { x: 41.3, y: -8.7 },
-      dialogue: 152,
-    },
-    {
-      key: 'templecave',
-      path: path18,
-      offset: { x: -18, y: -15 },
-      dialogue: 153,
-    },
+    // {
+    //   // templegrass
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 151,
+    // },
+    // {
+    //   // templedoor
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 152,
+    // },
+    // {
+    //   // templecave
+    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
+    //   dialogue: 153,
+    // },
   ],
 };

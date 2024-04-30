@@ -1,10 +1,4 @@
-import {
-  bgPlaytestDay,
-  objectBeetle4,
-  objectCentipede,
-  objectHollowTrunk,
-  objectTermiteMound,
-} from 'assets/images/rooms/10_forest-insect';
+import { bgPlaytestDay } from 'assets/images/rooms/10_forest-insect';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerNodeModal } from 'layers/phaser/utils/triggers/triggerNodeModal';
@@ -21,27 +15,23 @@ export const room10: Room = {
   },
   objects: [
     {
-      key: '10beetle4',
-      path: objectBeetle4,
-      offset: { x: -42.55, y: 38.6 },
+      // beetle 5
+      coordinates: { x1: 13, y1: 95, x2: 31, y2: 110 },
       dialogue: 101,
     },
     {
-      key: 'centipedeandgrub',
-      path: objectCentipede,
-      offset: { x: 41.6, y: 52.5 },
+      // centipede and grub
+      coordinates: { x1: 86, y1: 107, x2: 125, y2: 125 },
       dialogue: 102,
     },
     {
-      key: 'foresttrunk',
-      path: objectHollowTrunk,
-      offset: { x: -53, y: -7 },
+      // forest trunk
+      coordinates: { x1: 5, y1: 45, x2: 20, y2: 70 },
       dialogue: 103,
     },
     {
-      key: 'termitemound',
-      path: objectTermiteMound,
-      offset: { x: 5.4, y: 1.5 },
+      // termite mound
+      coordinates: { x1: 30, y1: 25, x2: 108, y2: 110 },
       onClick: () => triggerNodeModal(3),
     },
   ],

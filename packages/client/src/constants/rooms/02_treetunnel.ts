@@ -1,9 +1,4 @@
-import {
-  bgPlaytestDay,
-  objectGate,
-  objectHollowStump,
-  objectShopDoor,
-} from 'assets/images/rooms/2_tree-tunnel';
+import { bgPlaytestDay } from 'assets/images/rooms/2_tree-tunnel';
 import { arrival } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 
@@ -19,21 +14,18 @@ export const room02: Room = {
   },
   objects: [
     {
-      key: 'hollowstump',
-      path: objectHollowStump,
-      offset: { x: -48.5, y: 29.5 },
+      // hollow stump
+      coordinates: { x1: 0, y1: 70, x2: 31, y2: 115 },
       dialogue: 21,
     },
     {
-      key: 'gate',
-      path: objectGate,
-      offset: { x: -39.5, y: -33.5 },
+      // torii gate
+      coordinates: { x1: 16, y1: 23, x2: 33, y2: 40 },
       dialogue: 22,
     },
     {
-      key: 'shopdoor',
-      path: objectShopDoor,
-      offset: { x: 5, y: -7 },
+      // shop door
+      coordinates: { x1: 55, y1: 32, x2: 83, y2: 82 },
       dialogue: 23,
     },
   ],

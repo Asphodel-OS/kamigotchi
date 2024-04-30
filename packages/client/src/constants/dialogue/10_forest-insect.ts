@@ -15,7 +15,8 @@ const centipedeandgrub: DialogueNode = {
 const foresttrunk: DialogueNode = {
   index: 103,
   text: [
-    "A hollow tree-trunk. This should obviously have a secret item or something in it, right? To be honest, we haven't implemented those yet.",
+    'A hollow tree-trunk. This should obviously have a secret item or something in it, right?',
+    "To be honest, we haven't implemented those yet.",
   ],
 };
 

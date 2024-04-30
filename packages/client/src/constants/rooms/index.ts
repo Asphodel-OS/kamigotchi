@@ -50,18 +50,20 @@ import { room49 } from './49_clearing';
 // represents a room in all its glory
 export interface Room {
   roomIndex: number;
-  background?: RoomAsset;
+  background: RoomBackground;
+  objects: RoomAsset[];
   music?: RoomMusic;
-  objects?: RoomAsset[];
 }
 
-// represents the configuration of a visual media asset in a room
-interface RoomAsset {
+interface RoomBackground {
   key: string;
   path: string;
-  offset?: { x: number; y: number };
+}
+// represents the configuration of a visual media asset in a room
+export interface RoomAsset {
+  coordinates?: { x1: number; y1: number; x2: number; y2: number };
   dialogue?: number;
-  onClick?: Function; // TODO: wipe this in favor of inputs
+  onClick?: React.MouseEventHandler<HTMLDivElement>; // TODO: wipe this in favor of inputs
 }
 
 // represents the music in a room
@@ -81,7 +83,7 @@ export const duplicateRoomMusic = [
 
 // all our lovely, hardcoded room details
 export const rooms: Room[] = [
-  { roomIndex: 0 },
+  { roomIndex: 0, background: { key: 'room00', path: '' }, objects: [] },
   room01,
   room02,
   room03,
@@ -123,7 +125,7 @@ export const rooms: Room[] = [
   room39,
   room40,
   room41,
-  { roomIndex: 42 },
+  { roomIndex: 42, background: { key: 'room42', path: '' }, objects: [] },
   room43,
   room44,
   room45,

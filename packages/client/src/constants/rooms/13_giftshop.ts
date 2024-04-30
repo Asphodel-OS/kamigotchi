@@ -1,9 +1,4 @@
-import {
-  bgPlaytest,
-  objectCashRegister,
-  objectClock,
-  objectMinaRed,
-} from 'assets/images/rooms/13_giftshop';
+import { bgPlaytest } from 'assets/images/rooms/13_giftshop';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
 import { triggerShopModal } from 'layers/phaser/utils/triggers/triggerShopModal';
@@ -20,21 +15,18 @@ export const room13: Room = {
   },
   objects: [
     {
-      key: 'clock',
-      path: objectClock,
-      offset: { x: 31.5, y: -33.5 },
+      // clock
+      coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
       dialogue: 131,
     },
     {
-      key: 'mina',
-      path: objectMinaRed,
-      offset: { x: -16.5, y: -25 },
+      // mina
+      coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
       dialogue: 132,
     },
     {
-      key: 'cashregister',
-      path: objectCashRegister,
-      offset: { x: -50.5, y: -8.02 },
+      // cashregister
+      coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
       onClick: () => triggerShopModal(1),
     },
   ],

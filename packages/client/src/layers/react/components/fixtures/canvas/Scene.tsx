@@ -8,9 +8,12 @@ import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useSelected } from 'layers/react/store';
 import { Room } from './Room';
 
+// The Scene Fixture paints the wallpaper and the room.
+// It updates the selected room index in the Selected store whenever the
+// player switches rooms or changes the connected account.
 export function registerScene() {
   registerUIComponent(
-    'Scene',
+    'SceneFixture',
     {
       colStart: 1,
       colEnd: 100,
