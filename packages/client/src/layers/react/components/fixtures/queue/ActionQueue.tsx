@@ -70,7 +70,7 @@ const Content = styled.div`
   bottom: 3vh;
   max-height: 23vh;
 
-  border: solid black 2px;
+  border: solid black 0.15vw;
   border-radius: 10px;
 
   background-color: white;

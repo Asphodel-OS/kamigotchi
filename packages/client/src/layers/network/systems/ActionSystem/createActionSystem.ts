@@ -133,7 +133,7 @@ export function createActionSystem<M = undefined>(
       return false;
     }
 
-    updateComponent(Action, index, { state: ActionState.Cancelled });
+    updateComponent(Action, index, { state: ActionState.Canceled });
     // remove(index);
     return true;
   }

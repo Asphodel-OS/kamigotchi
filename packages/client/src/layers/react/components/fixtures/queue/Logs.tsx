@@ -1,5 +1,4 @@
 import { EntityIndex, getComponentValueStrict } from '@mud-classic/recs';
-import PendingIcon from '@mui/icons-material/Pending';
 import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
@@ -129,7 +128,7 @@ const Text = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 1.2vw;
+  width: 1.5vw;
   margin: 0.3vw;
   align-self: center;
 `;
@@ -137,9 +136,10 @@ const Icon = styled.img`
 // Color coded icon mapping of action queue
 type ColorMapping = { [key: string]: any };
 const statusIcons: ColorMapping = {
-  executing: <PendingIcon style={{ color: 'yellow', width: '1.2vw', marginLeft: '0.3vw' }} />,
-  pending: <PendingIcon style={{ color: 'orange', width: '1.2vw', marginLeft: '0.3vw' }} />,
+  requested: <Icon src={IndicatorIcons.requested} />,
+  executing: <Icon src={IndicatorIcons.executing} />,
+  pending: <Icon src={IndicatorIcons.pending} />,
   complete: <Icon src={IndicatorIcons.success} />,
   failed: <Icon src={IndicatorIcons.failure} />,
-  cancelled: <Icon src={IndicatorIcons.failure} />,
+  canceled: <Icon src={IndicatorIcons.failure} />,
 };
