@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import { RoomAsset, rooms } from 'constants/rooms';
 import { triggerDialogueModal } from 'layers/phaser/utils/triggers/triggerDialogueModal';
-import { playClick } from 'utils/sounds';
 
 interface Props {
   index: number;
@@ -27,9 +26,6 @@ export const Room = (props: Props) => {
     let coords = object.coordinates;
     if (!coords) return;
     const scale = 100 / 128;
-
-    // coords = { x1: 59, y1: 30, x2: 117, y2: 60 };
-
     const x1 = coords.x1 * scale;
     const y1 = coords.y1 * scale;
     const x2 = coords.x2 * scale;
@@ -38,11 +34,6 @@ export const Room = (props: Props) => {
     let onClick = (() => {}) as React.MouseEventHandler<HTMLDivElement>;
     if (object.dialogue) onClick = () => triggerDialogueModal(object.dialogue!);
     else if (object.onClick) onClick = object.onClick;
-
-    const handler = () => {
-      console.log('click');
-      playClick();
-    };
     return <Clickbox x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />;
   };
 
