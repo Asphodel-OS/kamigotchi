@@ -188,18 +188,8 @@ library LibQuests {
     return block.timestamp > timeStart + duration;
   }
 
-  // splits based on logicType. requirements are simpler than objectives
-  // list of logicTypes:
-  // AT: equal, current roomIndex
-  // COMPLETE: equal, if index is completed
-  // HAVE: min current balance
-  // GREATER: min current balance
-  // LESSER: max current balance
-  // EQUAL: equal current balance
-  // USE: min current balance, but consumes resource
   function checkRequirements(
     IUintComp components,
-    uint256 questID,
     uint32 questIndex,
     uint256 accountID
   ) internal view returns (bool result) {
@@ -359,18 +349,10 @@ library LibQuests {
     LOGIC logic
   ) internal view returns (bool result) {
     string memory _type = getType(components, conditionID);
+    uint32 index = getIndex(components, conditionID);
+    uint256 value = getBalance(components, conditionID);
 
-    if (LibString.eq(_type, "QUEST")) {
-      uint32 questIndex = getIndex(components, conditionID);
-      result = checkAccQuestComplete(components, questIndex, accountID);
-    } else if (LibString.eq(_type, "ROOM")) {
-      result = LibAccount.getRoom(components, accountID) == getIndex(components, conditionID);
-    } else {
-      require(false, "Unknown bool condition type");
-    }
-
-    if (logic == LOGIC.NOT) result = !result;
-    else require(logic == LOGIC.IS, "Unknown bool logic operator");
+    return LibBoolean.checkBool(components, accountID, index, value, _type, logic);
   }
 
   // checks if an account has completed a quest
@@ -497,7 +479,8 @@ library LibQuests {
   // GETTERS
 
   function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
-    return BalanceComponent(getAddressById(components, BalCompID)).get(id);
+    BalanceComponent comp = BalanceComponent(getAddressById(components, BalCompID));
+    return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getLogicType(IUintComp components, uint256 id) internal view returns (string memory) {
@@ -525,9 +508,8 @@ library LibQuests {
   }
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    if (hasIndex(components, id))
-      return IndexComponent(getAddressById(components, IndexCompID)).get(id);
-    else return 0;
+    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
+    return comp.has(id) ? comp.get(id) : 0;
   }
 
   function getPoints(IUintComp components, uint256 id) internal view returns (uint256) {

@@ -284,6 +284,36 @@ contract RoomTest is SetupTemplate {
     _AssertAccRoom(accountIndex, 4);
   }
 
+  function testGoalGate() public {
+    uint32 goalIndex = 1;
+    uint256 goalAmt = 1111;
+    uint256 goalID = _createGoal(goalIndex, 1, Condition("COIN", "CURR_MIN", 0, goalAmt));
+    _createRoom("1", Location(1, 1, 0), 1); // original room, goal located here
+    _createRoom("2", Location(0, 1, 0), 2); // room to be gated
+    _createRoomGate(2, 0, 0, LibGoals.genGoalID(goalIndex), "COMPLETE_COMP", "BOOL_IS");
+
+    // alice tries to move to room 2, but its closed
+    vm.prank(alice.operator);
+    vm.expectRevert("AccMove: inaccessible room");
+    _AccountMoveSystem.executeTyped(2);
+
+    // partial goal contribution
+    _fundAccount(alice.index, 1);
+    vm.prank(alice.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 1);
+    // try move
+    vm.prank(alice.operator);
+    vm.expectRevert("AccMove: inaccessible room");
+    _AccountMoveSystem.executeTyped(2);
+
+    // full goal contribution
+    _fundAccount(alice.index, goalAmt);
+    vm.prank(alice.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, goalAmt);
+    _moveAccount(alice.index, 2);
+    _AssertAccRoom(uint32(alice.index), 2);
+  }
+
   //////////////
   // UTILS TEST
 

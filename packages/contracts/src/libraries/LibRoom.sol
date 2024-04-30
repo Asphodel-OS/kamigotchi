@@ -54,8 +54,8 @@ library LibRoom {
     uint32 sourceIndex, // optional: if condition specific from Room A->B
     uint32 condIndex,
     uint256 condValue,
-    string memory logicType,
-    string memory type_
+    string memory type_,
+    string memory logicType
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     LibBoolean.create(components, id, type_, logicType);

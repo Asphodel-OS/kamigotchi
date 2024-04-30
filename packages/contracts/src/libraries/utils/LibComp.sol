@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
+import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 
 /// @notice a library for useful component operations
 library LibComp {
@@ -138,5 +139,18 @@ library LibComp {
     bytes[] memory values = new bytes[](entities.length);
     for (uint256 i; i < entities.length; i++) values[i] = abi.encode(value);
     component.setBatch(entities, values);
+  }
+
+  /////////////////
+  // CALCS
+
+  function inc(IUintComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
+    val = safeGetUint256(component, id) + amt;
+    component.set(id, val);
+  }
+
+  function dec(IUintComp component, uint256 id, uint256 amt) internal returns (uint256 val) {
+    val = safeGetUint256(component, id) - amt;
+    component.set(id, val);
   }
 }

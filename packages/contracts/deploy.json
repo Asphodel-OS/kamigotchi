@@ -59,6 +59,7 @@
     "IsEquippedComponent",
     "IsFriendshipComponent",
     "IsInventoryComponent",
+    "IsGoalComponent",
     "IsKillComponent",
     "IsListingComponent",
     "IsLogComponent",
@@ -119,6 +120,58 @@
     {
       "name": "_ConfigSetSystem",
       "writeAccess": ["BareValueComponent"]
+    },
+    {
+      "name": "_GoalCreateSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "DescriptionComponent",
+        "IsGoalComponent",
+        "IndexComponent",
+        "IndexRoomComponent",
+        "LogicTypeComponent",
+        "NameComponent",
+        "TypeComponent"
+      ]
+    },
+    {
+      "name": "_GoalCreateRequirementSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "IdOwnsConditionComponent",
+        "IsRequirementComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "TypeComponent"
+      ]
+    },
+    {
+      "name": "_GoalCreateRewardSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "IdOwnsConditionComponent",
+        "IsRewardComponent",
+        "IndexComponent",
+        "LogicTypeComponent",
+        "TypeComponent"
+      ]
+    },
+    {
+      "name": "_GoalDeleteSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "DescriptionComponent",
+        "IdOwnsConditionComponent",
+        "IsGoalComponent",
+        "IsRequirementComponent",
+        "IsRewardComponent",
+        "IsCompleteComponent",
+        "IndexComponent",
+        "IndexRoomComponent",
+        "LogicTypeComponent",
+        "NameComponent",
+        "TypeComponent"
+      ]
     },
     {
       "name": "_ListingSetSystem",
@@ -519,6 +572,20 @@
       ]
     },
     {
+      "name": "GoalContributeSystem",
+      "writeAccess": [
+        "BalanceComponent",
+        "BareValueComponent",
+        "CoinComponent",
+        "IsCompleteComponent",
+        "TimeLastComponent"
+      ]
+    },
+    {
+      "name": "GoalClaimSystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "FriendRequestSystem",
       "writeAccess": [
         "IdAccountComponent",
@@ -916,6 +983,7 @@
     "LibExperience",
     "LibFriend",
     "LibGacha",
+    "LibGoals",
     "LibInventory",
     "LibKill",
     "LibListing",

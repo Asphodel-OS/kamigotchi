@@ -6,6 +6,7 @@ import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import "./TestSetupImports.sol";
 
+import { Condition } from "libraries/utils/LibBoolean.sol";
 import { Location } from "libraries/LibRoom.sol";
 import { Stat } from "components/types/StatComponent.sol";
 
@@ -373,6 +374,32 @@ abstract contract SetupTemplate is TestSetupImports {
 
   /////////////////
   // WORLD POPULATION
+
+  function _createGoal(
+    uint32 index,
+    uint32 roomIndex,
+    Condition memory condition
+  ) internal returns (uint256) {
+    vm.prank(deployer);
+    return
+      abi.decode(
+        __GoalCreateSystem.executeTyped(index, "name", "description", roomIndex, condition),
+        (uint256)
+      );
+  }
+
+  function _createGoalRequirement(
+    uint32 index,
+    Condition memory condition
+  ) internal returns (uint256) {
+    vm.prank(deployer);
+    return abi.decode(__GoalCreateRequirementSystem.executeTyped(index, condition), (uint256));
+  }
+
+  function _createGoalReward(uint32 index, Condition memory condition) internal returns (uint256) {
+    vm.prank(deployer);
+    return abi.decode(__GoalCreateRewardSystem.executeTyped(index, condition), (uint256));
+  }
 
   function _createRoom(
     string memory name,

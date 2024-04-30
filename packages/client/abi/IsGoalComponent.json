@@ -1,0 +1,530 @@
+{
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "world",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "authorizeWriter",
+      "inputs": [
+        {
+          "name": "writer",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "extract",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "extractBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool[]",
+          "internalType": "bool[]"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "extractRaw",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "extractRawBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes[]",
+          "internalType": "bytes[]"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "get",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool[]",
+          "internalType": "bool[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getEntities",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getEntitiesWithValue",
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getRaw",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getRawBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes[]",
+          "internalType": "bytes[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getSchema",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "keys",
+          "type": "string[]",
+          "internalType": "string[]"
+        },
+        {
+          "name": "values",
+          "type": "uint8[]",
+          "internalType": "enum LibTypes.SchemaValue[]"
+        }
+      ],
+      "stateMutability": "pure"
+    },
+    {
+      "type": "function",
+      "name": "has",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "id",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "registerIndexer",
+      "inputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "registerWorld",
+      "inputs": [
+        {
+          "name": "_world",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "remove",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "removeBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "set",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "set",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "value",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "values",
+          "type": "bytes[]",
+          "internalType": "bytes[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setBatch",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "values",
+          "type": "bool[]",
+          "internalType": "bool[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "unauthorizeWriter",
+      "inputs": [
+        {
+          "name": "writer",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "world",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "writeAccess",
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "BareComponent__NotImplemented",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "BatchOp_UnexpectedLength",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "OwnableWritable__NotWriter",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotOwner",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Ownable__NotTransitiveOwner",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroValueNotAllowed",
+      "inputs": []
+    }
+  ],
+  "methodIdentifiers": {
+    "authorizeWriter(address)": "4fef6a38",
+    "extract(uint256)": "85b39782",
+    "extractBatch(uint256[])": "dc5c22cd",
+    "extractRaw(uint256)": "e9ff6c76",
+    "extractRawBatch(uint256[])": "12b11155",
+    "get(uint256)": "9507d39a",
+    "getBatch(uint256[])": "088dd0b9",
+    "getEntities()": "31b933b9",
+    "getEntitiesWithValue(bytes)": "b361be46",
+    "getRaw(uint256)": "dd98e3c9",
+    "getRawBatch(uint256[])": "4323c4ef",
+    "getSchema()": "6b122fe0",
+    "has(uint256)": "cccf7a8e",
+    "id()": "af640d0f",
+    "owner()": "8da5cb5b",
+    "registerIndexer(address)": "75c0669c",
+    "registerWorld(address)": "9d2c76b4",
+    "remove(uint256)": "4cc82215",
+    "removeBatch(uint256[])": "8482643e",
+    "set(uint256)": "60fe47b1",
+    "set(uint256,bytes)": "8b282947",
+    "setBatch(uint256[],bool[])": "504b4291",
+    "setBatch(uint256[],bytes[])": "13ca8b6a",
+    "transferOwnership(address)": "f2fde38b",
+    "unauthorizeWriter(address)": "bf4fe57e",
+    "world()": "30b67baa",
+    "writeAccess(address)": "861eb905"
+  }
+}

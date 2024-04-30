@@ -2,6 +2,10 @@
 import _721BatchMinterSystem from "../abi/_721BatchMinterSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
 import _devGiveTokensSystem from "../abi/_devGiveTokensSystem.json";
+import _GoalCreateRequirementSystem from "../abi/_GoalCreateRequirementSystem.json";
+import _GoalCreateRewardSystem from "../abi/_GoalCreateRewardSystem.json";
+import _GoalCreateSystem from "../abi/_GoalCreateSystem.json";
+import _GoalDeleteSystem from "../abi/_GoalDeleteSystem.json";
 import _ListingSetSystem from "../abi/_ListingSetSystem.json";
 import _NodeCreateSystem from "../abi/_NodeCreateSystem.json";
 import _NodeDeleteSystem from "../abi/_NodeDeleteSystem.json";
@@ -43,6 +47,8 @@ import FriendAcceptSystem from "../abi/FriendAcceptSystem.json";
 import FriendBlockSystem from "../abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../abi/FriendCancelSystem.json";
 import FriendRequestSystem from "../abi/FriendRequestSystem.json";
+import GoalClaimSystem from "../abi/GoalClaimSystem.json";
+import GoalContributeSystem from "../abi/GoalContributeSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
 import LootboxExecuteRevealSystem from "../abi/LootboxExecuteRevealSystem.json";
@@ -83,6 +89,10 @@ export const SystemAbis = {
   "system.Pet721.BatchMint": _721BatchMinterSystem.abi,
   "system._Config.Set": _ConfigSetSystem.abi,
   "system._devGiveTokens": _devGiveTokensSystem.abi,
+  "system.Goal.Create.Requirement": _GoalCreateRequirementSystem.abi,
+  "system.Goal.Create.Reward": _GoalCreateRewardSystem.abi,
+  "system.Goal.Create": _GoalCreateSystem.abi,
+  "system.Goal.Delete": _GoalDeleteSystem.abi,
   "system._Listing.Set": _ListingSetSystem.abi,
   "system._Node.Create": _NodeCreateSystem.abi,
   "system._Node.Delete": _NodeDeleteSystem.abi,
@@ -124,6 +134,8 @@ export const SystemAbis = {
   "system.Friend.Block": FriendBlockSystem.abi,
   "system.Friend.Cancel": FriendCancelSystem.abi,
   "system.Friend.Request": FriendRequestSystem.abi,
+  "system.Goal.Claim": GoalClaimSystem.abi,
+  "system.Goal.Contribute": GoalContributeSystem.abi,
   "system.Listing.Buy": ListingBuySystem.abi,
   "system.Listing.Sell": ListingSellSystem.abi,
   "system.Lootbox.Reveal.Execute": LootboxExecuteRevealSystem.abi,

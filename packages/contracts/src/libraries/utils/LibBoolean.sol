@@ -12,6 +12,7 @@ import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IdAccountComponent, ID as IdAccountCompID } from "components/IdAccountComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IndexComponent, ID as IndexCompID } from "components/IndexComponent.sol";
+import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
 import { LevelComponent, ID as LevelCompID } from "components/LevelComponent.sol";
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -21,6 +22,8 @@ import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibQuests } from "libraries/LibQuests.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
 enum LOGIC {
@@ -38,6 +41,13 @@ enum HANDLER {
   BOOLEAN
 }
 
+struct Condition {
+  string type_;
+  string logic;
+  uint32 index;
+  uint256 value;
+}
+
 /** @notice Library for the Condition entity and generalised combination of boolean checks
  * Basic Condition structure:
  * - TypeComponent (key)
@@ -49,6 +59,8 @@ enum HANDLER {
  * heavily inspired by Quest condition checks. Does not yet support increase/decrease checks, but can in future
  */
 library LibBoolean {
+  using LibString for string;
+
   ///////////////////////
   // ENTITY
 
@@ -62,9 +74,18 @@ library LibBoolean {
     uint256 id,
     string memory type_,
     string memory logicType
-  ) internal returns (uint256) {
+  ) internal {
     setType(components, id, type_);
     setLogicType(components, id, logicType);
+  }
+
+  /// @notice creates a condition entity owned by another entity
+  /// @dev overload to set via struct
+  function create(IUintComp components, uint256 id, Condition memory details) internal {
+    create(components, id, details.type_, details.logic);
+
+    if (details.index != 0) setIndex(components, id, details.index);
+    if (details.value != 0) setBalance(components, id, details.value);
   }
 
   function remove(IUintComp components, uint256 id) internal {
@@ -106,16 +127,18 @@ library LibBoolean {
     uint256 targetID,
     uint32 index,
     uint256 expected,
-    string memory logicType,
-    string memory type_
+    string memory type_,
+    string memory logicType
   ) internal view returns (bool) {
     (HANDLER handler, LOGIC logic) = parseLogic(logicType);
     if (handler == HANDLER.CURRENT)
       return checkCurr(components, targetID, index, expected, type_, logic);
+    else if (handler == HANDLER.BOOLEAN)
+      return checkBool(components, targetID, index, expected, type_, logic);
     else require(false, "Handler not yet implemented");
   }
 
-  /// @notice implements a check against an account
+  /// @notice checks for a current value against an account
   function checkCurr(
     IUintComp components,
     uint256 targetID,
@@ -126,6 +149,30 @@ library LibBoolean {
   ) internal view returns (bool) {
     uint256 value = getBalanceOf(components, targetID, _type, index);
     return _checkLogicOperator(value, expected, logic);
+  }
+
+  /// @notice checks for a boolean value against
+  function checkBool(
+    IUintComp components,
+    uint256 targetID,
+    uint32 index,
+    uint256 expected,
+    string memory _type,
+    LOGIC logic
+  ) internal view returns (bool result) {
+    if (_type.eq("COMPLETE_COMP")) {
+      // check if entity has isCompleteComp, with expectedValue acting as entityID
+      result = IsCompleteComponent(getAddressById(components, IsCompleteCompID)).has(expected);
+    } else if (_type.eq("QUEST")) {
+      result = LibQuests.checkAccQuestComplete(components, index, targetID);
+    } else if (_type.eq("ROOM")) {
+      result = LibRoom.getIndex(components, targetID) == index;
+    } else {
+      require(false, "Unknown bool condition type");
+    }
+
+    if (logic == LOGIC.NOT) result = !result;
+    else require(logic == LOGIC.IS, "Unknown bool logic operator");
   }
 
   //////////////
@@ -150,13 +197,20 @@ library LibBoolean {
     TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
   }
 
-  function unsetIndex(IUintComp components, uint256 id) internal {
-    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
-    if (comp.has(id)) comp.remove(id);
+  function unsetAll(IUintComp components, uint256 id) internal {
+    TypeComponent(getAddressById(components, TypeCompID)).remove(id);
+    LogicTypeComponent(getAddressById(components, LogicTypeCompID)).remove(id);
+    unsetBalance(components, id);
+    unsetIndex(components, id);
   }
 
   function unsetBalance(IUintComp components, uint256 id) internal {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
+    if (comp.has(id)) comp.remove(id);
+  }
+
+  function unsetIndex(IUintComp components, uint256 id) internal {
+    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
     if (comp.has(id)) comp.remove(id);
   }
 
@@ -170,17 +224,17 @@ library LibBoolean {
     string memory _type,
     uint32 index
   ) public view returns (uint256 balance) {
-    if (LibString.eq(_type, "ITEM")) {
+    if (_type.eq("ITEM")) {
       balance = LibInventory.getBalanceOf(components, id, index);
-    } else if (LibString.eq(_type, "COIN")) {
+    } else if (_type.eq("COIN")) {
       balance = LibCoin.get(components, id);
-    } else if (LibString.eq(_type, "LEVEL")) {
+    } else if (_type.eq("LEVEL")) {
       balance = LibExperience.getLevel(components, id);
-    } else if (LibString.eq(_type, "KAMI")) {
+    } else if (_type.eq("KAMI")) {
       balance = LibAccount.getPetsOwned(components, id).length;
-    } else if (LibString.eq(_type, "KAMI_LEVEL_HIGHEST")) {
+    } else if (_type.eq("KAMI_LEVEL_HIGHEST")) {
       balance = getTopLevel(components, LibAccount.getPetsOwned(components, id));
-    } else if (LibString.eq(_type, "SKILL")) {
+    } else if (_type.eq("SKILL")) {
       balance = LibSkill.getPointsOf(components, id, index);
     } else {
       balance = LibDataEntity.get(components, id, index, _type);
@@ -197,9 +251,22 @@ library LibBoolean {
     return highestLevel;
   }
 
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256 result) {
+  function getBalance(IUintComp components, uint256 id) internal view returns (uint256) {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    if (comp.has(id)) result = comp.get(id);
+    return comp.has(id) ? comp.get(id) : 0;
+  }
+
+  function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
+    IndexComponent comp = IndexComponent(getAddressById(components, IndexCompID));
+    return comp.has(id) ? comp.get(id) : 0;
+  }
+
+  function getLogic(IUintComp components, uint256 id) internal view returns (string memory) {
+    return LogicTypeComponent(getAddressById(components, LogicTypeCompID)).get(id);
+  }
+
+  function getType(IUintComp components, uint256 id) internal view returns (string memory) {
+    return TypeComponent(getAddressById(components, TypeCompID)).get(id);
   }
 
   ///////////////////////
@@ -211,17 +278,17 @@ library LibBoolean {
     HANDLER handler;
     LOGIC operator;
 
-    if (LibString.startsWith(logicType, "CURR")) handler = HANDLER.CURRENT;
-    else if (LibString.startsWith(logicType, "INC")) handler = HANDLER.INCREASE;
-    else if (LibString.startsWith(logicType, "DEC")) handler = HANDLER.DECREASE;
-    else if (LibString.startsWith(logicType, "BOOL")) handler = HANDLER.BOOLEAN;
+    if (logicType.startsWith("CURR")) handler = HANDLER.CURRENT;
+    else if (logicType.startsWith("INC")) handler = HANDLER.INCREASE;
+    else if (logicType.startsWith("DEC")) handler = HANDLER.DECREASE;
+    else if (logicType.startsWith("BOOL")) handler = HANDLER.BOOLEAN;
     else require(false, "Unknown condition handler");
 
-    if (LibString.endsWith(logicType, "MIN")) operator = LOGIC.MIN;
-    else if (LibString.endsWith(logicType, "MAX")) operator = LOGIC.MAX;
-    else if (LibString.endsWith(logicType, "EQUAL")) operator = LOGIC.EQUAL;
-    else if (LibString.endsWith(logicType, "IS")) operator = LOGIC.IS;
-    else if (LibString.endsWith(logicType, "NOT")) operator = LOGIC.NOT;
+    if (logicType.endsWith("MIN")) operator = LOGIC.MIN;
+    else if (logicType.endsWith("MAX")) operator = LOGIC.MAX;
+    else if (logicType.endsWith("EQUAL")) operator = LOGIC.EQUAL;
+    else if (logicType.endsWith("IS")) operator = LOGIC.IS;
+    else if (logicType.endsWith("NOT")) operator = LOGIC.NOT;
     else require(false, "Unknown condition operator");
 
     return (handler, operator);

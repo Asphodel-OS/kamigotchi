@@ -20,10 +20,7 @@ contract QuestAcceptSystem is System {
 
     uint256 accountID = LibAccount.getByOperator(components, msg.sender);
 
-    require(
-      LibQuests.checkRequirements(components, regID, index, accountID),
-      "QuestAccept: reqs not met"
-    );
+    require(LibQuests.checkRequirements(components, index, accountID), "QuestAccept: reqs not met");
 
     uint256 questID = LibQuests.queryAccountQuestIndex(components, accountID, index);
     if (LibQuests.isRepeatable(components, regID)) {

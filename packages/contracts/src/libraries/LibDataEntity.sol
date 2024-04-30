@@ -29,6 +29,13 @@ library LibDataEntity {
   /////////////////
   // INTERACTIONS
 
+  function inc(IUintComp components, uint256 dataID, uint256 amt) internal returns (uint256) {
+    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
+    comp.set(dataID, value + amt);
+    return value + amt;
+  }
+
   function inc(
     IUintComp components,
     uint256 holderID,
@@ -37,11 +44,14 @@ library LibDataEntity {
     uint256 amt
   ) internal returns (uint256) {
     uint256 dataID = getID(holderID, index, type_);
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    return inc(components, dataID, amt);
+  }
 
+  function dec(IUintComp components, uint256 dataID, uint256 amt) internal returns (uint256) {
+    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
     uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
-    comp.set(dataID, value + amt);
-    return value + amt;
+    comp.set(dataID, value - amt);
+    return value - amt;
   }
 
   function dec(
@@ -52,11 +62,11 @@ library LibDataEntity {
     uint256 amt
   ) internal returns (uint256) {
     uint256 dataID = getID(holderID, index, type_);
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    return dec(components, dataID, amt);
+  }
 
-    uint256 value = comp.has(dataID) ? comp.get(dataID) : 0;
-    comp.set(dataID, value - amt);
-    return value - amt;
+  function set(IUintComp components, uint256 dataID, uint256 value) internal {
+    BareValueComponent(getAddressById(components, ValueCompID)).set(dataID, value);
   }
 
   function set(
@@ -67,64 +77,24 @@ library LibDataEntity {
     uint256 value
   ) internal {
     uint256 dataID = getID(holderID, index, type_);
-    BareValueComponent(getAddressById(components, ValueCompID)).set(dataID, value);
-  }
-
-  function incArr(
-    IUintComp components,
-    uint256 holderID,
-    uint32 index,
-    string memory type_,
-    uint32[8] memory amt
-  ) internal {
-    uint256 dataID = getID(holderID, index, type_);
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
-
-    uint32[8] memory value = comp.has(dataID)
-      ? LibPack.unpackArrU32(comp.get(dataID))
-      : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
-    for (uint256 i; i < 8; i++) value[i] = value[i] + amt[i];
-    comp.set(dataID, LibPack.packArrU32(value));
-  }
-
-  function decArr(
-    IUintComp components,
-    uint256 holderID,
-    uint32 index,
-    string memory type_,
-    uint32[8] memory amt
-  ) internal {
-    uint256 dataID = getID(holderID, index, type_);
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
-
-    uint32[8] memory value = comp.has(dataID)
-      ? LibPack.unpackArrU32(comp.get(dataID))
-      : [uint32(0), 0, 0, 0, 0, 0, 0, 0];
-    for (uint256 i; i < 8; i++) value[i] = value[i] - amt[i];
-    comp.set(dataID, LibPack.packArrU32(value));
-  }
-
-  function setArr(
-    IUintComp components,
-    uint256 holderID,
-    uint32 index,
-    string memory type_,
-    uint32[8] memory value
-  ) internal {
-    return set(components, holderID, index, type_, LibPack.packArrU32(value));
+    set(components, dataID, value);
   }
 
   /////////////////
   // GETTERS
+
+  function get(IUintComp components, uint256 dataID) internal view returns (uint256) {
+    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
+    return comp.has(dataID) ? comp.get(dataID) : 0;
+  }
 
   function get(
     IUintComp components,
     uint256 holderID,
     uint32 index,
     string memory type_
-  ) internal view returns (uint256 result) {
+  ) internal view returns (uint256) {
     uint256 dataID = getID(holderID, index, type_);
-    BareValueComponent comp = BareValueComponent(getAddressById(components, ValueCompID));
-    if (comp.has(dataID)) result = comp.get(dataID);
+    return get(components, dataID);
   }
 }

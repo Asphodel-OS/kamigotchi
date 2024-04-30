@@ -128,6 +128,26 @@ library LibAccount {
     }
   }
 
+  // decreases the balance of X (type+index) of an account
+  function decBalanceOf(
+    IUintComp components,
+    uint256 id,
+    string memory _type,
+    uint32 index,
+    uint256 amount
+  ) public {
+    uint256 inventoryID;
+    if (LibString.eq(_type, "ITEM")) {
+      inventoryID = LibInventory.get(components, id, index);
+      if (inventoryID == 0) inventoryID = LibInventory.create(components, id, index);
+      LibInventory.dec(components, inventoryID, amount);
+    } else if (LibString.eq(_type, "COIN")) {
+      LibCoin.dec(components, id, amount);
+    } else {
+      require(false, "LibAccount: unknown type");
+    }
+  }
+
   /////////////////
   // SETTERS
 
