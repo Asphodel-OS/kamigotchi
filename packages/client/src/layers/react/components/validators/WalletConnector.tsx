@@ -1,5 +1,6 @@
 import { ExternalProvider } from '@ethersproject/providers';
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
+import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
@@ -41,43 +42,43 @@ export function registerWalletConnecter() {
       const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
 
-      const [isVisible, setIsVisible] = useState(false);
       const [isUpdating, setIsUpdating] = useState(false);
       const [state, setState] = useState('');
 
-      // update the modal state and network settings/validations on relevant network updates
+      // update network settings/validations on relevant network updates
       useEffect(() => {
+        if (!ready) return;
         const chainMatches = chain?.id === defaultChain.id;
-        setIsVisible(!authenticated || !chainMatches);
-        setValidations({ ...validations, authenticated, chainMatches });
-
-        if (ready && !authenticated) setState('disconnected');
-        else if (!chainMatches) setState('wrongChain');
+        if (!chainMatches) setState('wrongChain');
+        else if (!authenticated) setState('disconnected');
         else updateNetworkSettings();
-      }, [ready, authenticated, chain, wallets]);
 
-      // log the user out if mismatch of privy injected wallet and wagmi connector
-      useEffect(() => {
-        const injectedWallet = getInjectedWallet(wallets);
-        if (injectedWallet) {
-          const injectedAddress = injectedWallet.address;
-          const addressesMatch = connectorAddress === injectedAddress;
-          if (!addressesMatch) logout();
+        if (!isEqual(validations, { authenticated, chainMatches })) {
+          setValidations({ authenticated, chainMatches });
         }
-      }, [wallets, connectorAddress]);
+      }, [ready, authenticated, chain, wallets]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
+        const isVisible = !validations.authenticated || !validations.chainMatches;
         if (isVisible) {
           toggleModals(false);
           toggleButtons(false);
           toggleFixtures(false);
         }
         if (isVisible != validators.walletConnector) {
-          const { validators } = useVisibility.getState();
           setValidators({ ...validators, walletConnector: isVisible });
         }
-      }, [isVisible]);
+      }, [validations]);
+
+      // log the user out if mismatch of privy injected wallet and wagmi connector
+      useEffect(() => {
+        const injectedWallet = getInjectedWallet(wallets);
+        if (injectedWallet) {
+          const injectedAddress = injectedWallet.address;
+          if (connectorAddress !== injectedAddress) logout();
+        }
+      }, [wallets, connectorAddress]);
 
       /////////////////
       // ACTIONS
@@ -149,8 +150,8 @@ export function registerWalletConnecter() {
       };
 
       const handleClick = () => {
-        if (ready && !authenticated) login();
-        else if (chain?.id !== defaultChain.id) updateConnectedChain();
+        if (!validations.chainMatches) updateConnectedChain();
+        else if (!authenticated) login();
       };
 
       /////////////////

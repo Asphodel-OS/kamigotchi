@@ -147,40 +147,41 @@ export function registerAccountRegistrar() {
       const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
       const { validations, setValidations } = useAccount();
 
-      const [isVisible, setIsVisible] = useState(false);
-      const [accountExists, setAccountExists] = useState(false);
       const [step, setStep] = useState(0);
       const [name, setName] = useState('');
 
-      // run the primary check(s) for this validator
-      // track in store for easy access and update any local state variables accordingly
+      // update the Kami Account and validation based on changes to the
+      // connected address and detected account in the world
       useEffect(() => {
         const account = getAccountByOwner(world, components, selectedAddress);
-        const accountExists = !!account;
-        setAccountExists(accountExists);
-        setValidations({ ...validations, accountExists });
-        console.log(accountExists);
-        if (accountExists) setKamiAccount(getKamiAccount(account, kamiAccount));
+        if (!!account == validations.accountExists) return; // no change
+        if (!!account) setKamiAccount(getKamiAccount(account, kamiAccount));
+        else setKamiAccount(emptyAccountDetails());
+
+        console.log('setting validations', { ...validations, accountExists: !!account });
+        setValidations({ ...validations, accountExists: !!account });
       }, [selectedAddress, accountFromWorldUpdate]);
 
-      // determine visibility based on above/prev checks
+      // adjust visibility of windows based on above determination
       useEffect(() => {
-        const validated = Object.values(networkValidations).every(Boolean);
-        setIsVisible(validated && !accountExists);
-      }, [networkValidations, selectedAddress, accountExists]);
+        const isVisible =
+          networkValidations.authenticated &&
+          networkValidations.chainMatches &&
+          !validations.accountExists;
 
-      // adjust actual visibility of windows based on above determination
-      useEffect(() => {
         if (isVisible) {
           toggleModals(false);
           toggleButtons(false);
+          toggleFixtures(false);
+        } else if (!validators.walletConnector) {
+          toggleButtons(true);
+          toggleFixtures(true);
         }
-        toggleFixtures(!isVisible && !validators.walletConnector);
+
         if (isVisible != validators.accountRegistrar) {
-          const { validators } = useVisibility.getState();
           setValidators({ ...validators, accountRegistrar: isVisible });
         }
-      }, [isVisible, validators.walletConnector]);
+      }, [networkValidations, validations.accountExists, validators.walletConnector]);
 
       /////////////////
       // ACTION

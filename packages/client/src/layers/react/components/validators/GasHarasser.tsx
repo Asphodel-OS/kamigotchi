@@ -31,10 +31,8 @@ export function registerGasHarasser() {
 
       const { account, validations, setValidations } = useAccount();
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
-      const { validators, setValidators } = useVisibility();
+      const { validators, setValidators, toggleModals } = useVisibility();
 
-      const [hasGas, setHasGas] = useState(false);
-      const [isVisible, setIsVisible] = useState(false);
       const [value, setValue] = useState(0.05);
 
       /////////////////
@@ -53,34 +51,33 @@ export function registerGasHarasser() {
 
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
-        const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > 0;
-        setHasGas(hasGas);
-        setValidations({ ...validations, operatorHasGas: hasGas });
-      }, [balance]);
+        if (!validations.operatorMatches) return;
 
-      // determine visibility based on above/prev checks
-      useEffect(() => {
-        setIsVisible(
-          networkValidations.authenticated &&
-            networkValidations.chainMatches &&
-            validations.accountExists &&
-            validations.operatorMatches &&
-            !hasGas
-        );
-      }, [networkValidations, validations, hasGas]);
+        const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > 0;
+        if (hasGas == validations.operatorHasGas) return; // no change
+
+        console.log('setting validations', { ...validations, operatorHasGas: hasGas });
+        setValidations({ ...validations, operatorHasGas: hasGas });
+      }, [validations.operatorMatches, balance]);
 
       // adjust actual visibility of windows based on above determination
       useEffect(() => {
+        const isVisible =
+          networkValidations.authenticated &&
+          networkValidations.chainMatches &&
+          validations.accountExists &&
+          validations.operatorMatches &&
+          !validations.operatorHasGas;
+
+        if (isVisible) toggleModals(false);
         if (isVisible != validators.gasHarasser) {
-          const { validators } = useVisibility.getState();
           setValidators({ ...validators, gasHarasser: isVisible });
         }
-      }, [
-        isVisible,
-        validators.walletConnector,
-        validators.accountRegistrar,
-        validators.operatorUpdater,
-      ]);
+      }, [networkValidations, validations.operatorHasGas, validators.operatorUpdater]);
+
+      useEffect(() => {
+        console.log('getting validations', validations, networkValidations);
+      }, [validations, networkValidations]);
 
       /////////////////
       // ACTIONS
