@@ -15,22 +15,22 @@ export const room11: Room = {
   },
   objects: [
     {
-      // emaboard
+      name: 'ema board',
       coordinates: { x1: 92, y1: 76, x2: 127, y2: 115 },
       onClick: triggerPetNamingModal,
     },
     {
-      // stonelantern
+      name: 'stone lantern',
       coordinates: { x1: 3, y1: 88, x2: 24, y2: 110 },
       dialogue: 111,
     },
     {
-      // smallshrine
+      name: 'small shrine',
       coordinates: { x1: 39, y1: 62, x2: 77, y2: 108 },
       dialogue: 112,
     },
     {
-      // waterfall
+      name: 'waterfall',
       coordinates: { x1: 59, y1: 30, x2: 117, y2: 60 },
       dialogue: 113,
     },

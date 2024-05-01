@@ -15,7 +15,7 @@ export const room03: Room = {
   },
   objects: [
     {
-      // torii gate
+      name: 'torii gate',
       coordinates: { x1: 48, y1: 29, x2: 123, y2: 85 },
       onClick: () => triggerNodeModal(1),
     },

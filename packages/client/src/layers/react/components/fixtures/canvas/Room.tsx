@@ -1,6 +1,6 @@
 import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { RoomAsset, rooms } from 'constants/rooms';
 import { triggerDialogueModal } from 'layers/react/triggers/triggerDialogueModal';
@@ -51,7 +51,7 @@ export const Room = (props: Props) => {
     let onClick = (() => {}) as React.MouseEventHandler<HTMLDivElement>;
     if (object.dialogue) onClick = () => triggerDialogueModal(object.dialogue!);
     else if (object.onClick) onClick = object.onClick;
-    return <Clickbox x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />;
+    return <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />;
   };
 
   ///////////////////
@@ -87,7 +87,6 @@ interface Coordinates {
 }
 
 const Clickbox = styled.div<Coordinates>`
-  background-color: blue;
   position: absolute;
   top: ${(props) => props.y1}%;
   left: ${(props) => props.x1}%;
@@ -97,4 +96,19 @@ const Clickbox = styled.div<Coordinates>`
   cursor: pointer;
   pointer-events: auto;
   opacity: 0.2;
+
+  &:hover {
+    animation: ${({}) => shimmer} 2s linear infinite;
+    background: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 1) 25%, transparent 50%);
+    background-size: 200% 100%;
+  }
+`;
+
+const shimmer = keyframes`
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 `;

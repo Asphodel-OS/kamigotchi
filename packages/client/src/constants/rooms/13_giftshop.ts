@@ -15,17 +15,17 @@ export const room13: Room = {
   },
   objects: [
     {
-      // clock
+      name: 'clock',
       coordinates: { x1: 85, y1: 20, x2: 106, y2: 41 },
       dialogue: 131,
     },
     {
-      // mina
+      name: 'mina',
       coordinates: { x1: 33, y1: 20, x2: 66, y2: 68 },
       dialogue: 132,
     },
     {
-      // cashregister
+      name: 'cashregister',
       coordinates: { x1: 0, y1: 38, x2: 27, y2: 73 },
       onClick: () => triggerShopModal(1),
     },

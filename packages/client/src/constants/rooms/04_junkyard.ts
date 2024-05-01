@@ -15,7 +15,7 @@ export const room04: Room = {
   },
   objects: [
     {
-      // vending machine
+      name: 'vending machine',
       coordinates: { x1: 15, y1: 56, x2: 46, y2: 90 },
       onClick: triggerPetMintModal,
     },

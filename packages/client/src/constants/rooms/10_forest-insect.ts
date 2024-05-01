@@ -15,22 +15,22 @@ export const room10: Room = {
   },
   objects: [
     {
-      // beetle 5
+      name: 'beetle 5',
       coordinates: { x1: 13, y1: 95, x2: 31, y2: 110 },
       dialogue: 101,
     },
     {
-      // centipede and grub
+      name: 'centipede and grub',
       coordinates: { x1: 86, y1: 107, x2: 125, y2: 125 },
       dialogue: 102,
     },
     {
-      // forest trunk
+      name: 'forest trunk',
       coordinates: { x1: 5, y1: 45, x2: 20, y2: 70 },
       dialogue: 103,
     },
     {
-      // termite mound
+      name: 'termite mound',
       coordinates: { x1: 30, y1: 25, x2: 108, y2: 110 },
       onClick: () => triggerNodeModal(3),
     },

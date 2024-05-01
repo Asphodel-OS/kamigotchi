@@ -14,7 +14,7 @@ export const room01: Room = {
   },
   objects: [
     {
-      // mooring post
+      name: 'mooring post',
       coordinates: { x1: 40, y1: 87, x2: 50, y2: 106 }, // TODO: remove this once room objects are cleaned up
       dialogue: 11,
     },

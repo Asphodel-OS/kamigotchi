@@ -14,17 +14,17 @@ export const room02: Room = {
   },
   objects: [
     {
-      // hollow stump
+      name: 'hollow stump',
       coordinates: { x1: 0, y1: 70, x2: 31, y2: 115 },
       dialogue: 21,
     },
     {
-      // torii gate
+      name: 'torii gate',
       coordinates: { x1: 16, y1: 23, x2: 33, y2: 40 },
       dialogue: 22,
     },
     {
-      // shop door
+      name: 'shop door',
       coordinates: { x1: 55, y1: 32, x2: 83, y2: 82 },
       dialogue: 23,
     },
