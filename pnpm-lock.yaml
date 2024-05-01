@@ -79,9 +79,6 @@ importers:
       '@improbable-eng/grpc-web':
         specifier: ^0.15.0
         version: 0.15.0(google-protobuf@3.21.2)
-      '@mud-classic/phaserx':
-        specifier: 0.0.4
-        version: 0.0.4(phaser@3.60.0-beta.4)(react@18.2.0)
       '@mud-classic/recs':
         specifier: 0.0.4
         version: 0.0.4
@@ -175,9 +172,6 @@ importers:
       observable-webworker:
         specifier: 4.0.1
         version: 4.0.1(rxjs@7.8.1)
-      phaser:
-        specifier: 3.60.0-beta.4
-        version: 3.60.0-beta.4
       protobufjs:
         specifier: ^6.11.2
         version: 6.11.4
@@ -3280,18 +3274,6 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@mud-classic/phaserx@0.0.4(phaser@3.60.0-beta.4)(react@18.2.0):
-    resolution: {integrity: sha512-gtxbx1iB12SyC52kAAIA79X1yYXGkL2ym/uDCYQC4w0uRU+pTxIyEEhbjqENB/gbfNv1g4ZO/DxNTt3R3ir9mA==}
-    peerDependencies:
-      phaser: 3.60.0-beta.14
-      react: ^18.2.0
-    dependencies:
-      '@mud-classic/utils': 0.0.3
-      '@use-gesture/vanilla': 10.2.9
-      phaser: 3.60.0-beta.4
-      react: 18.2.0
-    dev: false
-
   /@mud-classic/recs@0.0.4:
     resolution: {integrity: sha512-ZKN7iYtvtDS+bszmBNs6o1vWvXjkKsm8UNsm2xvxqg5P4eDY0EqxacH7H5NMGeDrcV+9Ne/XOQyFqAniWhrRaQ==}
     dependencies:
@@ -4077,7 +4059,7 @@ packages:
       chalk: 4.1.2
       cosmiconfig: 5.2.1
       deepmerge: 4.3.1
-      glob: 7.2.0
+      glob: 7.2.3
       joi: 17.12.2
     transitivePeerDependencies:
       - encoding
@@ -4132,7 +4114,7 @@ packages:
       chalk: 4.1.2
       execa: 5.1.1
       fast-xml-parser: 4.3.6
-      glob: 7.2.0
+      glob: 7.2.3
       logkitty: 0.7.1
     transitivePeerDependencies:
       - encoding
@@ -4145,7 +4127,7 @@ packages:
       chalk: 4.1.2
       execa: 5.1.1
       fast-xml-parser: 4.3.6
-      glob: 7.2.0
+      glob: 7.2.3
       ora: 5.4.1
     transitivePeerDependencies:
       - encoding
@@ -4304,7 +4286,7 @@ packages:
       '@babel/parser': 7.24.1
       '@babel/preset-env': 7.24.3(@babel/core@7.24.3)
       flow-parser: 0.206.0
-      glob: 7.2.0
+      glob: 7.2.3
       invariant: 2.2.4
       jscodeshift: 0.14.0(@babel/preset-env@7.24.3)
       mkdirp: 0.5.6
@@ -6337,16 +6319,6 @@ packages:
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
-
-  /@use-gesture/core@10.2.9:
-    resolution: {integrity: sha512-MsPUCWZ6BSir8XqSrfQCyrFuBz405YI2D0hfZ7TXX/hhF0kekN+noPhHjg7m85vMyCYf92fjt3J5AbjoGV4eMw==}
-    dev: false
-
-  /@use-gesture/vanilla@10.2.9:
-    resolution: {integrity: sha512-DVH5d0Owaw1qsviNPt6o632q8YqSXM4GMPkeMlPevzpeXwRvPPFh3ngKX/zTRER9LXKvCDOMSL7WFY1l4J+a6Q==}
-    dependencies:
-      '@use-gesture/core': 10.2.9
-    dev: false
 
   /@vitejs/plugin-react@4.2.1(vite@5.1.6):
     resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
@@ -9015,10 +8987,6 @@ packages:
 
   /eventemitter3@4.0.4:
     resolution: {integrity: sha512-rlaVLnVxtxvoyLsQQFBx53YmXHDxRIzzTLbdfxqi4yocpSjAxXwkU0cScM5JgSKMqEhrZpnvQ2D9gjylR0AimQ==}
-    dev: false
-
-  /eventemitter3@4.0.7:
-    resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
     dev: false
 
   /eventemitter3@5.0.1:
@@ -11875,12 +11843,6 @@ packages:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
     dev: false
 
-  /phaser@3.60.0-beta.4:
-    resolution: {integrity: sha512-/DxXNuFyW5mnP3GerI4TKpR6KJu6uB1xWnEOM2JR67SzL4NR5CEWAaS1GAAXZmcnpJuPNMKaev9aD7f62b8Ggw==}
-    dependencies:
-      eventemitter3: 4.0.7
-    dev: false
-
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
@@ -13314,7 +13276,7 @@ packages:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
     hasBin: true
     dependencies:
-      glob: 7.2.0
+      glob: 7.2.3
     dev: false
 
   /rimraf@3.0.2:

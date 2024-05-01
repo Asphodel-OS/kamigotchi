@@ -30,7 +30,7 @@ export function registerWalletConnecter() {
     },
     (layers) => of(layers),
     (layers) => {
-      const { network, phaser } = layers;
+      const { network } = layers;
       const { address: connectorAddress, chain } = useAccount();
       const { ready, authenticated, login, logout } = usePrivy();
       const { wallets } = useWallets();
@@ -115,8 +115,7 @@ export function registerWalletConnecter() {
         if (burnerAddress !== embeddedAddress) {
           console.log(`Updating base network 0x..${embeddedAddress.slice(-6)}`);
           const provider = (await wallet.getWeb3jsProvider()) as ExternalProvider;
-          const networkLayer = await updateNetworkLayer(network, provider);
-          phaser.setChangeRoomSystem(networkLayer);
+          await updateNetworkLayer(network, provider);
           setBurnerAddress(embeddedAddress);
         }
       };

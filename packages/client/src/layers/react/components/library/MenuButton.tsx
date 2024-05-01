@@ -30,13 +30,6 @@ export const MenuButton = (props: Props) => {
     setModals(nextModals);
   };
 
-  // catch clicks on modal, prevents duplicate Phaser3 triggers
-  const handleClicks = (event: any) => {
-    event.stopPropagation();
-  };
-  const element = document.getElementById(id);
-  element?.addEventListener('mousedown', handleClicks);
-
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>

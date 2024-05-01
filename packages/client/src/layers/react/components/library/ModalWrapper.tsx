@@ -30,13 +30,6 @@ export const ModalWrapper = (props: Props) => {
     }
   }, [modals[divName]]);
 
-  // catch clicks on modal, prevents duplicate Phaser3 triggers
-  const handleClicks = (event: any) => {
-    event.stopPropagation();
-  };
-  const element = document.getElementById(id);
-  element?.addEventListener('mousedown', handleClicks);
-
   // conditional stlying for modals overlayed on top
   const zindex = overlay ? { position: 'relative', zIndex: '2' } : {};
 

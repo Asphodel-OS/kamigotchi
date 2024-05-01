@@ -1,7 +1,7 @@
 import { bgPlaytestDay } from 'assets/images/rooms/11_waterfall';
 import { glitter } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
-import { triggerPetNamingModal } from 'layers/phaser/utils/triggers/triggerPetNamingModal';
+import { triggerPetNamingModal } from 'layers/react/triggers/triggerPetNamingModal';
 
 export const room11: Room = {
   roomIndex: 11,

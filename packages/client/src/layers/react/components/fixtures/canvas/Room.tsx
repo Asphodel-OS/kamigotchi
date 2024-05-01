@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { RoomAsset, rooms } from 'constants/rooms';
-import { triggerDialogueModal } from 'layers/phaser/utils/triggers/triggerDialogueModal';
+import { triggerDialogueModal } from 'layers/react/triggers/triggerDialogueModal';
 
 interface Props {
   index: number;
