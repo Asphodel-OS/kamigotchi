@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { backgrounds } from 'assets/images/backgrounds';
-import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getAccountByOwner } from 'layers/network/shapes/Account';
 import { registerUIComponent } from 'layers/react/engine/store';
-import { useAccount, useSelected } from 'layers/react/store';
+import { useAccount, useNetwork, useSelected } from 'layers/react/store';
 import { Room } from './Room';
 
 // The Scene Fixture paints the wallpaper and the room.
@@ -22,12 +22,12 @@ export function registerScene() {
     },
     (layers) => {
       const { network } = layers;
-      const { components } = network;
-      const { OperatorAddress, RoomIndex } = components;
+      const { world, components } = network;
 
-      return merge(RoomIndex.update$, OperatorAddress.update$).pipe(
+      return interval(1000).pipe(
         map(() => {
-          const account = getAccountFromBurner(network);
+          const { selectedAddress } = useNetwork.getState();
+          const account = getAccountByOwner(world, components, selectedAddress);
           return {
             data: { account },
           };
@@ -36,15 +36,14 @@ export function registerScene() {
     },
 
     ({ data }) => {
-      const account = data.account;
+      const { account } = data;
       const { roomIndex, setRoom } = useSelected();
       const { validations } = useAccount();
 
       useEffect(() => {
-        if (!account) return;
-        const index = account.roomIndex;
-        setRoom(index);
-      }, [account.roomIndex, validations.accountExists]);
+        const newRoomIndex = account?.roomIndex ?? 0;
+        if (roomIndex != newRoomIndex) setRoom(newRoomIndex);
+      }, [account, validations]);
 
       /////////////////
       // DISPLAY
