@@ -1,0 +1,1 @@
+export { registerNotificationFixture } from './Notifications';

@@ -13,7 +13,7 @@ import { Room } from './Room';
 // player switches rooms or changes the connected account.
 export function registerScene() {
   registerUIComponent(
-    'SceneFixture',
+    'Scene',
     {
       colStart: 1,
       colEnd: 100,

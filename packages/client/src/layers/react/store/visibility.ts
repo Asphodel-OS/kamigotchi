@@ -49,13 +49,13 @@ export const toggleButtons = (isOn: boolean): Buttons => ({
 // FIXTURES
 
 export interface Fixtures {
-  accountInfo: boolean;
+  header: boolean;
   actionQueue: boolean;
   notification: boolean;
 }
 
 export const toggleFixtures = (isOn: boolean): Fixtures => ({
-  accountInfo: isOn,
+  header: isOn,
   actionQueue: isOn,
   notification: isOn,
 });
@@ -139,7 +139,7 @@ export const useVisibility = create<State & Actions>((set) => {
       settings: false,
     },
     fixtures: {
-      accountInfo: false,
+      header: false,
       actionQueue: false,
       notification: true,
     },

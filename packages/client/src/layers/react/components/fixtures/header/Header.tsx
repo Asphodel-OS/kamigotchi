@@ -18,9 +18,9 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store';
 
-export function registerAccountInfoFixture() {
+export function registerHeaderFixture() {
   registerUIComponent(
-    'AccountInfo',
+    'HeaderFixture',
     {
       colStart: 33,
       colEnd: 67,
@@ -143,7 +143,7 @@ export function registerAccountInfoFixture() {
       const borderLeftStyle = { borderLeft: '.1vw solid black' };
       return (
         account && (
-          <Container id='accountInfo' style={{ display: fixtures.accountInfo ? 'block' : 'none' }}>
+          <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
             <Row>
               <TextBox>
                 {account.name} - {room.name}

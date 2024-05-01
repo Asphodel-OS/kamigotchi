@@ -10,12 +10,12 @@ export default defineConfig({
   resolve: {
     alias: {
       abi: path.resolve(__dirname, './abi'),
+      src: path.resolve(__dirname, './src'),
+      types: path.resolve(__dirname, './types'),
       assets: path.resolve(__dirname, './src/assets'),
       constants: path.resolve(__dirname, './src/constants'),
       layers: path.resolve(__dirname, './src/layers'),
       utils: path.resolve(__dirname, './src/utils'),
-      src: path.resolve(__dirname, './src'),
-      types: path.resolve(__dirname, './types'),
     },
   },
   build: {

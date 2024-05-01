@@ -1,0 +1,1 @@
+export { registerHeaderFixture } from './Header';

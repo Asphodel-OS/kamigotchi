@@ -1,5 +1,7 @@
 import { registerLoadingState } from './LoadingState';
 
+import { registerScene } from './canvas';
+
 import {
   registerAccountButton,
   registerChatButton,
@@ -11,10 +13,9 @@ import {
   registerSettingsButton,
 } from './fixtures/buttons';
 
-import { registerAccountInfoFixture } from './fixtures/AccountInfo';
-import { registerNotificationFixture } from './fixtures/Notifications';
-import { registerScene } from './fixtures/canvas';
+import { registerHeaderFixture } from './fixtures/header';
 import { registerLoginFixture } from './fixtures/login';
+import { registerNotificationFixture } from './fixtures/notifications';
 import { registerActionQueueFixture } from './fixtures/queue/';
 
 import { registerAccountModal } from './modals/account';
@@ -60,7 +61,7 @@ export function registerUIComponents() {
   registerSettingsButton();
 
   // other fixtures
-  registerAccountInfoFixture();
+  registerHeaderFixture();
   registerActionQueueFixture();
   registerLoginFixture();
   registerNotificationFixture();
@@ -77,7 +78,6 @@ export function registerUIComponents() {
   // game modals
   registerBuyModal();
   registerDialogueModal();
-  // registerERC20BridgeModal();
   registerERC721BridgeModal();
   registerEMABoardModal();
   registerFundOperatorModal();
