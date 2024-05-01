@@ -73,6 +73,7 @@ export const getSkill = (
   )[0];
 
   let skill: Skill = {
+    ObjectType: 'SKILL',
     id: world.entities[entityIndex],
     index: skillIndex,
     name: getComponentValue(Name, registryIndex)?.value || ('' as string),

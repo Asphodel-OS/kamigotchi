@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 import { playClick } from 'utils/sounds';
+import { Tooltip } from './Tooltip';
 
 interface Props {
   onClick: Function;
@@ -10,6 +11,7 @@ interface Props {
   inverted?: boolean;
   size?: 'small' | 'medium' | 'large' | 'vending' | 'menu' | 'icon-medium';
   pulse?: boolean;
+  tooltip?: string[];
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -78,18 +80,24 @@ export const ActionButton = (props: Props) => {
     return styles;
   };
 
+  let result: JSX.Element;
+
   if (props.pulse)
-    return (
+    result = (
       <PulseButton onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         {props.text}
       </PulseButton>
     );
   else
-    return (
+    result = (
       <Button onClick={!props.disabled ? handleClick : () => {}} style={setStyles()}>
         {props.text}
       </Button>
     );
+
+  if (props.tooltip) result = <Tooltip text={props.tooltip}>{result}</Tooltip>;
+
+  return result;
 };
 
 const Button = styled.button`

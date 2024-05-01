@@ -27,6 +27,7 @@ import { registerSettingsModal } from './modals/settings';
 import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
 
+import { registerGoalModal } from './modals/goals/Goal';
 import {
   registerAccountRegistrar,
   registerGasHarasser,
@@ -67,6 +68,7 @@ export function registerUIComponents() {
   registerMerchantModal();
   registerNameKamiModal();
   registerNodeModal();
+  registerGoalModal();
 
   // validators
   registerAccountRegistrar();

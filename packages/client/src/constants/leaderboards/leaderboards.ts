@@ -6,6 +6,8 @@ export interface Details {
   scorePrefix?: string;
 }
 
+export type LeaderboardKey = keyof typeof leaderboardsDetails;
+
 export const leaderboardsDetails = {
   default: {
     title: 'Leaderboard',

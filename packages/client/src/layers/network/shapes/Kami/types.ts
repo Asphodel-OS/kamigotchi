@@ -102,6 +102,7 @@ export const getKami = (
 
   // populate the base Kami data
   let kami: Kami = {
+    ObjectType: 'KAMI',
     id: world.entities[entityIndex],
     index: getComponentValue(PetIndex, entityIndex)?.value as number,
     entityIndex,

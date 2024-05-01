@@ -1,5 +1,7 @@
 import { utils } from 'ethers';
 
+import { getGoalID } from 'layers/network/shapes/Goal';
+
 import droptablesCSV from 'assets/data/items/droptables.csv';
 import itemsCSV from 'assets/data/items/items.csv';
 import nodesCSV from 'assets/data/nodes/nodes.csv';
@@ -33,6 +35,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await initSkills();
     await initTraits();
     await initRelationships();
+    await initGoals();
 
     const mode = import.meta.env.MODE;
     if (!mode || mode === 'development') {
@@ -131,6 +134,31 @@ export function setupWorldAPI(systems: any, provider: any) {
   }
 
   ////////////////////
+  // GOALS
+
+  async function initGoals() {
+    await api.goal.create(
+      1,
+      'Door-kun',
+      `This is a cruel world, and someone just decided to make it even crueler by locking up this door. Although, not everything is lost: they're demanding $800 KAMI to open it. We're pooling up funds — chip in?`,
+      47,
+      'COIN',
+      'CURR_MIN',
+      0,
+      800
+    );
+    await api.goal.add.reward(1, 'Door unlock', 'DISPLAY_ONLY', 0, 0);
+    await api.goal.add.reward(1, 'ITEM', 'PROPORTIONAL', 2, 400);
+    await api.goal.add.reward(1, 'ITEM', 'EQUAL', 1, 1);
+  }
+
+  async function deleteGoals(indices: number[]) {
+    for (let i = 0; i < indices.length; i++) {
+      await api.goal.delete(indices[i]);
+    }
+  }
+
+  ////////////////////
   // ROOMS
 
   async function initRoom(roomIndex: number) {
@@ -173,6 +201,17 @@ export function setupWorldAPI(systems: any, provider: any) {
     // load bearing test to initialse IndexSourceComponent - queries wont work without
     try {
       api.room.createGate(1, 1, 0, 0, 'CURR_MIN', 'KAMI');
+    } catch (e) {
+      console.log('gate creation failure:', e);
+    }
+
+    initGates();
+  }
+
+  async function initGates() {
+    try {
+      // creating goal gate from to the scrapyard
+      await api.room.createGate(31, 0, 0, getGoalID(1), 'COMPLETE_COMP', 'BOOL_IS');
     } catch (e) {
       console.log('gate creation failure:', e);
     }
@@ -592,6 +631,10 @@ export function setupWorldAPI(systems: any, provider: any) {
     init: initAll,
     config: {
       init: () => initConfig(),
+    },
+    goals: {
+      init: () => initGoals(),
+      delete: (indices: number[]) => deleteGoals(indices),
     },
     items: {
       init: () => initItems(),

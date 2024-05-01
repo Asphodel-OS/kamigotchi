@@ -39,6 +39,7 @@ export const getItem = (world: World, components: Components, entityIndex: Entit
     components;
 
   let Item: Item = {
+    ObjectType: 'ITEM',
     entityIndex,
     id: world.entities[entityIndex],
     index: getComponentValue(ItemIndex, entityIndex)?.value as number,

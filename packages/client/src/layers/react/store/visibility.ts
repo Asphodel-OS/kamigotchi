@@ -47,6 +47,7 @@ export interface Modals {
   dialogue: boolean;
   emaBoard: boolean;
   gacha: boolean;
+  goal: boolean;
   help: boolean;
   inventory: boolean;
   kami: boolean;
@@ -72,6 +73,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   dialogue: isOn,
   emaBoard: isOn,
   gacha: isOn,
+  goal: isOn,
   help: isOn,
   inventory: isOn,
   kami: isOn,
@@ -118,6 +120,7 @@ export const useVisibility = create<State & Actions>((set) => {
       dialogue: false,
       emaBoard: false,
       gacha: false,
+      goal: false,
       help: false,
       inventory: false,
       kami: false,

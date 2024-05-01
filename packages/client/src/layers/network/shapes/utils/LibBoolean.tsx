@@ -1,4 +1,4 @@
-import { EntityID, World, hasComponent } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue, hasComponent } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
 import { Account } from '../Account';
@@ -11,8 +11,12 @@ import { hasCompletedQuest } from '../Quest';
  * A client equivalent to LibBoolean. For supporting other shapes
  */
 
-export type HANDLER = 'CURR' | 'INC' | 'DEC' | 'BOOL';
-export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
+export interface Condition {
+  id: EntityID;
+  logic: string;
+  target: Target;
+  status?: Status;
+}
 
 // the Target of a Condition (eg Objective, Requirement, Reward)
 export interface Target {
@@ -27,15 +31,43 @@ export interface Status {
   completable: boolean;
 }
 
-export interface Condition {
-  id: EntityID;
-  logic: string;
-  target: Target;
-  status?: Status;
-}
+export type HANDLER = 'CURR' | 'INC' | 'DEC' | 'BOOL';
+export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
+
+export const getCondition = (
+  world: World,
+  components: Components,
+  entityIndex: EntityIndex | undefined
+): Condition => {
+  const { Balance, Index, LogicType, Type } = components;
+
+  if (!entityIndex)
+    return { id: '0' as EntityID, logic: '', target: { type: '' }, status: undefined };
+
+  return {
+    id: world.entities[entityIndex],
+    logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
+    target: {
+      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
+      index: getComponentValue(Index, entityIndex)?.value,
+      value: getComponentValue(Balance, entityIndex)?.value,
+    },
+  };
+};
 
 ///////////////////
 // CHECKERS
+
+export const passesConditions = (
+  world: World,
+  components: Components,
+  conditions: Condition[],
+  holder: Account | Kami
+): boolean => {
+  return checkConditions(world, components, conditions, holder).every(
+    (val: Status) => val.completable
+  );
+};
 
 export const checkConditions = (
   world: World,

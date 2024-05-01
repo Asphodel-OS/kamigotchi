@@ -1,14 +1,14 @@
-import { leaderboardsDetails } from 'constants/leaderboards/leaderboards';
+import { LeaderboardKey } from 'constants/leaderboards/leaderboards';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
-export const triggerLeaderboardModal = (index?: keyof typeof leaderboardsDetails) => {
+export const triggerLeaderboardModal = (index?: LeaderboardKey) => {
   const { modals } = useVisibility.getState();
-  const { leaderboardIndex } = useSelected.getState();
+  const { leaderboardKey } = useSelected.getState();
   playClick();
 
   if (!index) index = 'default';
-  useSelected.setState({ leaderboardIndex: index });
+  useSelected.setState({ leaderboardKey: index });
   if (!modals.leaderboard) {
     useVisibility.setState({
       modals: {

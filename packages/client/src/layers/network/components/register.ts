@@ -37,6 +37,7 @@ export function createComponents(world: World) {
     IsCondition: defineBoolEZ('IsCondition', 'component.is.condition'),
     IsEffect: defineBoolEZ('IsEffect', 'component.is.effect'),
     IsFriendship: defineBoolEZ('IsFriendship', 'component.is.friendship'),
+    IsGoal: defineBoolEZ('IsGoal', 'component.is.goal'),
     IsInventory: defineBoolEZ('IsInventory', 'component.is.inventory'),
     IsKill: defineBoolEZ('IsKill', 'component.is.kill'),
     IsListing: defineBoolEZ('IsListing', 'component.is.listing'),

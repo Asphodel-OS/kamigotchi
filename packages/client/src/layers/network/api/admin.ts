@@ -49,6 +49,65 @@ export function createAdminAPI(systems: any) {
   }
 
   /////////////////
+  //  GOALS
+
+  async function createGoal(
+    goalIndex: number,
+    name: string,
+    description: string,
+    roomIndex: number,
+    type: string,
+    logic: string,
+    conIndex: number,
+    conValue: number
+  ) {
+    await sleepIf();
+    return systems['system.Goal.Create'].executeTyped(goalIndex, name, description, roomIndex, [
+      type,
+      logic,
+      conIndex,
+      conValue,
+    ]);
+  }
+
+  async function createGoalRequirement(
+    goalIndex: number,
+    type: string,
+    logic: string,
+    conIndex: number,
+    conValue: number
+  ) {
+    await sleepIf();
+    return systems['system.Goal.Create.Requirement'].executeTyped(goalIndex, [
+      type,
+      logic,
+      conIndex,
+      conValue,
+    ]);
+  }
+
+  async function createGoalReward(
+    goalIndex: number,
+    type: string,
+    logic: string,
+    conIndex: number,
+    conValue: number
+  ) {
+    await sleepIf();
+    return systems['system.Goal.Create.Reward'].executeTyped(goalIndex, [
+      type,
+      logic,
+      conIndex,
+      conValue,
+    ]);
+  }
+
+  async function deleteGoal(goalIndex: number) {
+    await sleepIf();
+    return systems['system.Goal.Delete'].executeTyped(goalIndex);
+  }
+
+  /////////////////
   //  NPCs
 
   // (creates an NPC with the name at the specified roomIndex
@@ -241,9 +300,9 @@ export function createAdminAPI(systems: any) {
     roomIndex: number,
     sourceIndex: number,
     conditionIndex: number,
-    conditionValue: number,
-    logicType: string,
-    type: string
+    conditionValue: BigNumberish,
+    type: string,
+    logicType: string
   ) {
     await sleepIf();
     return systems['system._Room.Create.Gate'].executeTyped(
@@ -251,8 +310,8 @@ export function createAdminAPI(systems: any) {
       sourceIndex,
       conditionIndex,
       conditionValue,
-      logicType,
-      type
+      type,
+      logicType
     );
   }
 
@@ -509,6 +568,14 @@ export function createAdminAPI(systems: any) {
         number: setConfig,
         string: setConfigString,
       },
+    },
+    goal: {
+      create: createGoal,
+      add: {
+        requirement: createGoalRequirement,
+        reward: createGoalReward,
+      },
+      delete: deleteGoal,
     },
     listing: {
       set: setListing,

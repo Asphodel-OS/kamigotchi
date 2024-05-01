@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { Details, leaderboardsDetails } from 'constants/leaderboards/leaderboards';
+import { Details, LeaderboardKey, leaderboardsDetails } from 'constants/leaderboards/leaderboards';
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'layers/network/shapes/Score';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
@@ -40,7 +40,7 @@ export function registerLeaderboardModal() {
     ({ network, data }) => {
       const { world, components } = network;
       const { modals } = useVisibility();
-      const { leaderboardIndex } = useSelected();
+      const { leaderboardKey } = useSelected();
       const [filter, setFilter] = useState<ScoresFilter>({
         epoch: 1,
         type: 'TOTAL_SPENT',
@@ -50,13 +50,13 @@ export function registerLeaderboardModal() {
 
       // update details based on selected
       useEffect(() => {
-        const dets = leaderboardsDetails[leaderboardIndex as keyof typeof leaderboardsDetails];
+        const dets = leaderboardsDetails[leaderboardKey as LeaderboardKey];
         setLbDetails(dets);
         setFilter({
           epoch: filter.epoch,
           type: dets ? dets.type : '',
         });
-      }, [leaderboardIndex]);
+      }, [leaderboardKey]);
 
       // table data update
       useEffect(() => {

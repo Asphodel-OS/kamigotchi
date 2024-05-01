@@ -93,7 +93,7 @@ library LibGoals {
 
   /// @notice adds a reward to a goal
   /// @dev rewards are either split according to contribution %, or given out equally
-  /// @dev piggybacks off LibBoolean. reward.logic is either "PROPORTIONAL" or "EQUAL"
+  /// @dev piggybacks off LibBoolean. reward.logic is either "PROPORTIONAL", "EQUAL", or "DISPLAY_ONLY"
   function addReward(
     IWorld world,
     IUintComp components,
@@ -108,7 +108,9 @@ library LibGoals {
 
     IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
     require(
-      reward.logic.eq("PROPORTIONAL") || reward.logic.eq("EQUAL"),
+      reward.logic.eq("PROPORTIONAL") ||
+        reward.logic.eq("EQUAL") ||
+        reward.logic.eq("DISPLAY_ONLY"),
       "LibGoals: invalid reward distribution"
     );
     LibBoolean.create(components, id, reward);
@@ -212,6 +214,7 @@ library LibGoals {
     uint256 accID,
     Condition memory reward
   ) internal {
+    if (reward.logic.eq("DISPLAY_ONLY")) return;
     if (reward.logic.eq("PROPORTIONAL")) {
       // gets proportional amount based on contribution
       BalanceComponent balComp = BalanceComponent(getAddressById(components, BalCompID));

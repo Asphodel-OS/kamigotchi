@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -11,15 +10,17 @@ interface Props {
     max?: number;
     step?: number;
   };
+  hasButton?: boolean;
   buttonText?: string;
   fullWidth?: boolean;
-  hasButton?: boolean;
   initialValue?: number;
   label?: string;
   placeholder?: string;
   onSubmit?: Function;
   watch?: (value: number) => void;
   stepper?: boolean;
+  disabled?: boolean;
+  tooltip?: string[];
 }
 
 const disabledStepperStyle = {
@@ -82,26 +83,66 @@ export const InputSingleNumberForm = (props: Props) => {
 
   return (
     <Container id={props.id} style={styleOverride}>
-      <InputGroup style={styleOverride}>
-        {props.label && <Label>{props.label}</Label>}
-        <Input
-          type='number'
-          placeholder={props.placeholder?.toString()}
-          value={value}
-          onKeyDown={(e) => catchKeys(e)}
-          onChange={(e) => handleChange(e)}
-          step='1'
-        />
-        {props.stepper && Stepper()}
-      </InputGroup>
-      {props.hasButton ? (
-        <ActionButton text={props.buttonText || 'Submit'} onClick={() => handleSubmit()} />
-      ) : (
-        <div />
-      )}
+      <Box>
+        <InputGroup style={styleOverride}>
+          {props.label && <Label>{props.label}</Label>}
+          <Input
+            type='number'
+            placeholder={props.placeholder?.toString()}
+            value={value}
+            onKeyDown={(e) => catchKeys(e)}
+            onChange={(e) => handleChange(e)}
+            step='1'
+          />
+          {props.stepper && Stepper()}
+        </InputGroup>
+        {props.hasButton ? (
+          <Button onClick={() => handleSubmit()} disabled={props.disabled}>
+            {props.buttonText || 'Submit'}
+          </Button>
+        ) : (
+          <div />
+        )}
+      </Box>
     </Container>
   );
 };
+
+const Box = styled.div`
+  display: flex;
+  flex-direction: row;
+  border-color: black;
+  border-radius: 0.4vw;
+  border-style: solid;
+  border-width: 0.16vw;
+  color: black;
+
+  overflow: hidden;
+`;
+
+const Button = styled.button`
+  background-color: #ffffff;
+
+  color: black;
+  justify-content: center;
+  border: none;
+
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: center;
+  text-decoration: none;
+
+  padding: 0.1vh 0.2vw;
+
+  cursor: pointer;
+  pointer-events: auto;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+  &:active {
+    background-color: #c4c4c4;
+  }
+`;
 
 const Container = styled.div`
   display: flex;
@@ -115,12 +156,6 @@ const InputGroup = styled.div`
   flex-direction: row;
   align-items: center;
   max-width: 8vw;
-
-  border-color: black;
-  border-radius: 0.4vw;
-  border-style: solid;
-  border-width: 0.16vw;
-  color: black;
 `;
 
 const Label = styled.label`
@@ -142,7 +177,7 @@ const Input = styled.input`
   cursor: pointer;
   font-family: Pixel;
   font-size: 1vw;
-  text-align: left;
+  text-align: center;
   text-decoration: none;
   justify-content: center;
   align-items: center;

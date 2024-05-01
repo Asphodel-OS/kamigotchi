@@ -38,7 +38,7 @@ export const AccountCard = (props: Props) => {
   // INTERACTION
 
   // toggle the kami modal settings depending on its current state
-  const accountOnClick = () => {
+  const handleClick = () => {
     setAccount(account.index);
     if (!modals.account) setModals({ ...modals, account: true });
     playClick();
@@ -65,7 +65,7 @@ export const AccountCard = (props: Props) => {
   const Title = () => {
     return (
       <Tooltip text={[account.ownerEOA]}>
-        <TitleText key='title' onClick={() => accountOnClick()}>
+        <TitleText key='title' onClick={() => handleClick()}>
           {account.name}
         </TitleText>
       </Tooltip>
@@ -75,7 +75,7 @@ export const AccountCard = (props: Props) => {
   return (
     <Card
       image={account.pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
-      imageOnClick={() => accountOnClick()}
+      imageOnClick={() => handleClick()}
       titleBarContent={[<Title key='title' />]}
       content={[
         <ContentColumn key='col-1'>

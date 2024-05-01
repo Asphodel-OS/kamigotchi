@@ -8,11 +8,9 @@ import { Score } from 'layers/network/shapes/Score';
 
 interface Props {
   data: Score[];
-  prefix: string;
 }
 
-// the table rendering of the leaderboard modal
-export const Table = (props: Props) => {
+export const Leaderboard = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
 
@@ -34,7 +32,7 @@ export const Table = (props: Props) => {
       <Row key={index} onClick={() => handleClick(entry.account)}>
         <SideText style={{ flexBasis: '10%' }}>{index + 1}</SideText>
         <NameText style={{ flexBasis: '70%' }}>{entry.account.name}</NameText>
-        <SideText style={{ flexBasis: '20%' }}>{props.prefix + entry.score}</SideText>
+        <SideText style={{ flexBasis: '20%' }}>{entry.score}</SideText>
       </Row>
     ));
   };
@@ -43,14 +41,13 @@ export const Table = (props: Props) => {
 };
 
 const Container = styled.div`
-  margin: 0 1vw;
+  margin: 2vh 3vw;
   border: solid black 0.15vw;
   border-radius: 0.75vw;
 
   overflow: auto;
   scroll: auto;
   height: 100%;
-  margin-bottom: 1vh;
 `;
 
 const Row = styled.div`

@@ -91,6 +91,19 @@ export function createPlayerAPI(systems: any) {
   }
 
   /////////////////
+  //  GOALS
+
+  // @dev contributes to a goal
+  function goalContribute(goalIndex: number, amt: number) {
+    return systems['system.Goal.Contribute'].executeTyped(goalIndex, amt);
+  }
+
+  // @dev claims a reward from a goal
+  function goalClaim(goalIndex: number) {
+    return systems['system.Goal.Claim'].executeTyped(goalIndex);
+  }
+
+  /////////////////
   //  FRIENDS
 
   // @dev send a friend request
@@ -343,6 +356,10 @@ export function createPlayerAPI(systems: any) {
         cancel: cancelFriendship,
         request: sendFriendRequest,
       },
+    },
+    goal: {
+      contribute: goalContribute,
+      claim: goalClaim,
     },
     listing: {
       buy: buyFromListing,
