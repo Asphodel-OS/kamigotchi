@@ -3,6 +3,7 @@ import { Components } from 'layers/network';
 import { Account } from '../Account';
 import { getData } from '../Data';
 import { Kami, isDead, isOffWorld, isStarving, isWithAccount } from '../Kami';
+import { checkCondition } from '../utils/LibBoolean';
 import { Effect, Requirement, Skill } from './types';
 
 export const getInstance = (target: Account | Kami, rSkill: Skill) => {
@@ -20,12 +21,6 @@ export const getUpgradeError = (
   kami: Kami,
   registry: Map<number, Skill>
 ) => {
-  // status/roomIndex check
-  if (isDead(kami)) return [`${kami.name} is Dead`];
-  if (isOffWorld(kami)) return [`${kami.name} is Off World`];
-  if (isStarving(kami)) return [`${kami.name} is Starving`];
-  if (!isWithAccount(kami)) return [`${kami.name} is too far away.`];
-
   // registry check
   const rSkill = registry.get(index);
   if (!rSkill) return ['Skill not found'];
@@ -34,6 +29,12 @@ export const getUpgradeError = (
   const maxPoints = rSkill.points.max;
   const kSkill = kami.skills?.find((s) => s.index === rSkill.index);
   if ((kSkill?.points.current ?? 0) >= maxPoints) return [`Maxed Out [${maxPoints}/${maxPoints}]`];
+
+  // status/roomIndex check
+  if (isDead(kami)) return [`${kami.name} is Dead`];
+  if (isOffWorld(kami)) return [`${kami.name} is Off World`];
+  if (isStarving(kami)) return [`${kami.name} is Starving`];
+  if (!isWithAccount(kami)) return [`${kami.name} is too far away.`];
 
   // tree check
   if (rSkill.treeTier > 0) {
@@ -45,7 +46,7 @@ export const getUpgradeError = (
 
   // requirements check
   for (let req of rSkill.requirements ?? []) {
-    if (!meetsRequirement(req, kami))
+    if (!checkCondition(world, components, req, kami).completable)
       return [`Unmet Requirement:`, `- ${parseRequirementText(req, registry)}`];
   }
 
@@ -94,15 +95,15 @@ export const parseRequirementText = (
   requirement: Requirement,
   registry: Map<number, Skill>
 ): string => {
-  const index = (requirement.index ?? 0) * 1;
+  const index = (requirement.target.index ?? 0) * 1;
 
-  switch (requirement.type) {
+  switch (requirement.target.type) {
     case 'LEVEL':
-      return `Kami Lvl${requirement.value}`;
+      return `Kami Lvl${requirement.target.value}`;
     case 'SKILL':
       const skillName = registry.get(index!)?.name;
-      if (requirement.value ?? 0 == 0) return `Cannot have [${skillName}]`;
-      return `Lvl${(requirement.value ?? 0) * 1} [${skillName}]`;
+      if (requirement.target.value ?? 0 == 0) return `Cannot have [${skillName}]`;
+      return `Lvl${(requirement.target.value ?? 0) * 1} [${skillName}]`;
     default:
       return ' ???';
   }
@@ -133,25 +134,6 @@ export const isMaxxed = (skill: Skill, holder: Account | Kami) => {
 // check whether a holder has enough skill points to meet the cost of a skill
 export const meetsCost = (skill: Skill, holder: Account | Kami): boolean => {
   return holder.skillPoints >= skill.cost;
-};
-
-// check whether a holder meets a requirement of a skill
-export const meetsRequirement = (requirement: Requirement, holder: Account | Kami) => {
-  let target, current, skill;
-  switch (requirement.type) {
-    case 'LEVEL':
-      target = requirement.value ?? 0;
-      current = holder.level;
-      return current >= target;
-    case 'SKILL':
-      target = requirement.value ?? 0;
-      skill = holder.skills?.find((s) => s.index === requirement.index);
-      current = skill?.points.current || 0;
-      return current >= target;
-    default:
-      console.warn('Unknown requirement type', requirement.type);
-      return false;
-  }
 };
 
 ///////////////////////

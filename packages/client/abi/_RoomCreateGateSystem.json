@@ -60,12 +60,12 @@
           "internalType": "uint256"
         },
         {
-          "name": "logicType",
+          "name": "type_",
           "type": "string",
           "internalType": "string"
         },
         {
-          "name": "type_",
+          "name": "logicType",
           "type": "string",
           "internalType": "string"
         }

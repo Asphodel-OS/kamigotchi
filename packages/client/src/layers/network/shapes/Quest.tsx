@@ -12,10 +12,17 @@ import {
 } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
-import { checkerSwitch } from 'layers/network/shapes/utils/LibBoolean';
+import {
+  Condition,
+  Status,
+  Target,
+  checkBoolean,
+  checkCurrent,
+  checkLogicOperator,
+  checkerSwitch,
+} from 'layers/network/shapes/utils/LibBoolean';
 import { Account } from './Account';
 import { getData } from './Data';
-import { getInventoryByIndex } from './Inventory';
 
 /////////////////
 // GETTERS
@@ -62,6 +69,21 @@ export const getQuestByIndex = (
   return queryQuestsX(world, components, { index: index, registry: true })[0];
 };
 
+export const hasCompletedQuest = (
+  world: World,
+  components: Components,
+  questIndex: number,
+  account: Account
+): boolean => {
+  const quests = queryQuestsX(world, components, {
+    account: account.id,
+    index: questIndex,
+    completed: true,
+  });
+
+  return quests.length > 0;
+};
+
 /////////////////
 // SHAPES
 
@@ -79,27 +101,6 @@ export interface Quest {
   rewards: Reward[];
   points: number;
 }
-
-// the Target of a Condition (Objective, Requirement, Reward)
-export interface Target {
-  type: string;
-  index?: number;
-  value?: number;
-}
-
-export interface Status {
-  target?: number;
-  current?: number;
-  completable: boolean;
-}
-
-export interface Condition {
-  id: EntityID;
-  logic: string;
-  target: Target;
-  status?: Status;
-}
-
 export interface Objective extends Condition {
   name: string;
 }
@@ -391,23 +392,6 @@ export const checkObjective = (
   );
 };
 
-const checkCurrent = (
-  world: World,
-  components: Components,
-  condition: Target,
-  account: Account
-): ((opt: any) => Status) => {
-  const accVal = getAccBal(world, components, account, condition.index, condition.type) || 0;
-
-  return (opt: any) => {
-    return {
-      target: condition.value,
-      current: accVal,
-      completable: checkLogicOperator(accVal, condition.value ?? 0, opt),
-    };
-  };
-};
-
 const checkIncrease = (
   world: World,
   components: Components,
@@ -464,132 +448,4 @@ const checkDecrease = (
       ),
     };
   };
-};
-
-const checkBoolean = (
-  world: World,
-  components: Components,
-  condition: Target,
-  account: Account
-): ((opt: any) => Status) => {
-  const _type = condition.type;
-  let current: number | undefined;
-  let target: number | undefined;
-  let result = false;
-
-  switch (_type) {
-    case 'QUEST':
-      result = checkQuestComplete(world, components, condition.index as number, account);
-      break;
-    case 'ROOM':
-      current = account.roomIndex;
-      target = condition.index;
-      result = current == target;
-      break;
-    default:
-      result = false; // should not get here
-  }
-
-  return (opt: any) => {
-    return {
-      current,
-      target,
-      completable: opt === 'IS' ? result : !result,
-    };
-  };
-};
-
-const checkQuestComplete = (
-  world: World,
-  components: Components,
-  questIndex: number,
-  account: Account
-): boolean => {
-  const quests = queryQuestsX(world, components, {
-    account: account.id,
-    index: questIndex,
-    completed: true,
-  });
-
-  return quests.length > 0;
-};
-
-const getAccBal = (
-  world: World,
-  components: Components,
-  account: Account,
-  index: number | undefined,
-  type: string
-): number => {
-  let balance = 0;
-  if (type === 'ITEM') {
-    balance = getInventoryBalance(account, index, type);
-  } else if (type === 'COIN') {
-    balance = getData(world, components, account.id, 'COIN_TOTAL', 0) || 0;
-  } else if (type === 'KAMI') {
-    balance = account.kamis?.length || 0;
-  } else if (type === 'KAMI_LEVEL_HIGHEST') {
-    account.kamis?.forEach((kami) => {
-      if (kami.level > balance) balance = kami.level;
-    });
-  } else if (type === 'ROOM') {
-    balance = account.roomIndex || 0;
-  } else {
-    balance = getData(world, components, account.id, type, index ?? 0);
-  }
-  return Number(balance);
-};
-
-///////////////////////
-// UTILS
-
-const getInventoryBalance = (account: Account, index: number | undefined, type: string): number => {
-  if (index === undefined) return 0; // should not reach here
-  if (account.inventories === undefined) return 0; // should not reach here
-
-  let balance = 0;
-  switch (type) {
-    case 'EQUIP':
-      balance = getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
-    case 'FOOD':
-      balance = getInventoryByIndex(account.inventories.food, index)?.balance || 0;
-    case 'MOD':
-      balance = getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
-    case 'REVIVE':
-      balance = getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
-    default:
-      balance = 0; // should not reach here
-  }
-
-  return Number(balance);
-};
-
-const checkLogicOperator = (
-  a: number,
-  b: number,
-  logic: 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT'
-): boolean => {
-  if (logic == 'MIN') return a >= b;
-  else if (logic == 'MAX') return a <= b;
-  else if (logic == 'EQUAL') return a == b;
-  else return false; // should not reach here
-};
-
-// parses common human readable words into machine types
-export const parseToLogicType = (str: string): string => {
-  const is = ['IS', 'COMPLETE', 'AT'];
-  const min = ['MIN', 'HAVE', 'GREATER'];
-  const max = ['MAX', 'LESSER'];
-  const equal = ['EQUAL'];
-  const not = ['NOT'];
-
-  if (is.includes(str)) return 'BOOL_IS';
-  else if (min.includes(str)) return 'CURR_MIN';
-  else if (max.includes(str)) return 'CURR_MAX';
-  else if (equal.includes(str)) return 'CURR_EQUAL';
-  else if (not.includes(str)) return 'BOOL_NOT';
-  else {
-    console.error('unrecognized logic type');
-    return '';
-  }
 };

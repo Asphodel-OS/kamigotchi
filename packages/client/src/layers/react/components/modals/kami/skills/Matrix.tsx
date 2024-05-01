@@ -99,11 +99,9 @@ export const Matrix = (props: Props) => {
       </TopRow>
       <Content>
         {getNodes()}
-        <Tooltip text={['Skill points available']}>
-          <PointsText style={{ position: 'absolute', bottom: '0.8vw', left: '0.8vw' }}>
-            {kami.skillPoints}
-          </PointsText>
-        </Tooltip>
+        <PointsText style={{ position: 'absolute', bottom: '0.8vw', right: '0.8vw' }}>
+          {kami.skillPoints} unused point{kami.skillPoints != 1 ? 's' : ''}
+        </PointsText>
       </Content>
     </Container>
   );

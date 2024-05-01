@@ -240,9 +240,14 @@ library LibSkill {
   }
 
   /// @notice uses a skill point in a skill tree
-  function logUseTreePoint(IUintComp components, uint256 holderID, uint256 registryID) internal {
-    (bool has, string memory tree, uint256 tier) = LibRegistrySkill.getTree(components, registryID);
-    if (has) LibDataEntity.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), 1);
+  function logUseTreePoint(
+    IUintComp components,
+    uint256 holderID,
+    uint256 registryID,
+    uint256 cost
+  ) internal {
+    (bool has, string memory tree, ) = LibRegistrySkill.getTree(components, registryID);
+    if (has) LibDataEntity.inc(components, holderID, 0, tree.concat("SKILL_POINTS_USE"), cost);
   }
 
   //////////////////////

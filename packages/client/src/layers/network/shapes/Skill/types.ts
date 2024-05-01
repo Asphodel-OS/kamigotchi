@@ -12,6 +12,7 @@ import { BigNumber } from 'ethers';
 import { baseURI } from 'constants/media';
 import { Components } from 'layers/network';
 import { DetailedEntity } from '../utils/EntityTypes';
+import { Condition } from '../utils/LibBoolean';
 import { querySkillEffects, querySkillRequirements } from './queries';
 
 /////////////////
@@ -38,13 +39,7 @@ export interface Effect {
   value: number;
 }
 
-export interface Requirement {
-  id: EntityID;
-  logic: string;
-  type: string;
-  index?: number;
-  value?: number;
-}
+export interface Requirement extends Condition {}
 
 export interface Options {
   requirements?: boolean;
@@ -127,13 +122,13 @@ export const getRequirement = (
 ): Requirement => {
   const { Balance, Index, LogicType, Type } = components;
 
-  let requirement: Requirement = {
+  return {
     id: world.entities[entityIndex],
     logic: getComponentValue(LogicType, entityIndex)?.value || ('' as string),
-    type: getComponentValue(Type, entityIndex)?.value || ('' as string),
+    target: {
+      type: getComponentValue(Type, entityIndex)?.value || ('' as string),
+      index: getComponentValue(Index, entityIndex)?.value,
+      value: getComponentValue(Balance, entityIndex)?.value,
+    },
   };
-
-  requirement.index = getComponentValue(Index, entityIndex)?.value;
-  requirement.value = getComponentValue(Balance, entityIndex)?.value;
-  return requirement;
 };

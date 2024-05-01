@@ -12,7 +12,7 @@ import colorCSV from 'assets/data/traits/colors.csv';
 import faceCSV from 'assets/data/traits/faces.csv';
 import handCSV from 'assets/data/traits/hands.csv';
 
-import { parseToLogicType } from 'layers/network/shapes/Quest';
+import { parseToLogicType } from 'layers/network/shapes/utils/LibBoolean';
 import { createAdminAPI } from './admin';
 import { createPlayerAPI } from './player';
 

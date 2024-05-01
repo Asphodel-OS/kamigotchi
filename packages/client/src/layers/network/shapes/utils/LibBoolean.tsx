@@ -1,19 +1,11 @@
-// import {
-//   EntityID,
-//   EntityIndex,
-//   Has,
-//   HasValue,
-//   Not,
-//   QueryFragment,
-//   getComponentValue,
-//   hasComponent,
-//   runQuery,
-// } from '@mud-classic/recs';
+import { EntityID, World, hasComponent } from '@mud-classic/recs';
 
-// import { NetworkLayer } from 'layers/network/types';
-// import { Account } from './Account';
-// import { getData } from './Data';
-// import { getInventoryByIndex } from './Inventory';
+import { Components } from 'layers/network';
+import { Account } from '../Account';
+import { getData } from '../Data';
+import { getInventoryByIndex } from '../Inventory';
+import { Kami } from '../Kami';
+import { hasCompletedQuest } from '../Quest';
 
 /**
  * A client equivalent to LibBoolean. For supporting other shapes
@@ -21,6 +13,189 @@
 
 export type HANDLER = 'CURR' | 'INC' | 'DEC' | 'BOOL';
 export type OPERATOR = 'MIN' | 'MAX' | 'EQUAL' | 'IS' | 'NOT';
+
+// the Target of a Condition (eg Objective, Requirement, Reward)
+export interface Target {
+  type: string;
+  index?: number;
+  value?: number;
+}
+
+export interface Status {
+  target?: number;
+  current?: number;
+  completable: boolean;
+}
+
+export interface Condition {
+  id: EntityID;
+  logic: string;
+  target: Target;
+  status?: Status;
+}
+
+///////////////////
+// CHECKERS
+
+export const checkConditions = (
+  world: World,
+  components: Components,
+  conditions: Condition[],
+  holder: Account | Kami
+): Status[] => {
+  return conditions.map((condition) => checkCondition(world, components, condition, holder));
+};
+
+export const checkCondition = (
+  world: World,
+  components: Components,
+  condition: Condition,
+  holder: Account | Kami
+): Status => {
+  return checkerSwitch(
+    condition.logic,
+    checkCurrent(world, components, condition.target, holder),
+    undefined,
+    undefined,
+    checkBoolean(world, components, condition.target, holder),
+    { completable: false }
+  );
+};
+
+export const checkCurrent = (
+  world: World,
+  components: Components,
+  target: Target,
+  holder: Account | Kami
+): ((opt: any) => Status) => {
+  const accVal = getBalance(world, components, holder, target.index, target.type) || 0;
+
+  return (opt: any) => {
+    return {
+      target: target.value,
+      current: accVal,
+      completable: checkLogicOperator(accVal, target.value ?? 0, opt),
+    };
+  };
+};
+
+export const checkBoolean = (
+  world: World,
+  components: Components,
+  target: Target,
+  holder: Account | Kami
+): ((opt: any) => Status) => {
+  const result = getBool(world, components, holder, target.index, target.value, target.type);
+
+  return (opt: any) => {
+    return {
+      completable: opt === 'IS' ? result : !result,
+    };
+  };
+};
+
+///////////////////
+// GETTERS
+
+export const getBalance = (
+  world: World,
+  components: Components,
+  holder: Account | Kami,
+  index: number | undefined,
+  type: string
+): number => {
+  // universal gets - account and kami shape compatible
+  if (type === 'COIN') {
+    return getData(world, components, holder.id, 'COIN_TOTAL', 0) || 0;
+  } else if (type === 'SKILL') {
+    const skill = holder.skills?.find((s) => s.index === index);
+    return skill?.points.current || 0;
+  }
+
+  // account specific, check if holder is account shaped
+  if ('kamis' in holder) {
+    if (type === 'ITEM') {
+      return getInventoryBalance(holder, index, type);
+    } else if (type === 'COIN') {
+      return getData(world, components, holder.id, 'COIN_TOTAL', 0) || 0;
+    } else if (type === 'KAMI') {
+      return holder.kamis?.length || 0;
+    } else if (type === 'KAMI_LEVEL_HIGHEST') {
+      let top = 0;
+      holder.kamis?.forEach((kami) => {
+        if (kami.level > top) top = kami.level;
+      });
+    } else if (type === 'ROOM') {
+      return holder.roomIndex || 0;
+    }
+  }
+
+  // kami specific, check if holder is kami shaped (nothing here rn)
+  if ('account' in holder) {
+  }
+
+  // if everything else doesnt match, get from dataEntity (returns 0 if not found)
+  return getData(world, components, holder.id, type, index ?? 0);
+};
+
+export const getBool = (
+  world: World,
+  components: Components,
+  holder: Account | Kami,
+  index: number | undefined,
+  value: number | undefined,
+  type: string
+): boolean => {
+  const { IsComplete } = components;
+
+  // universal gets - account and kami shape compatible
+  if (type === 'COMPLETE_COMP') {
+    // converted
+    const rawEntityID = BigInt(value ?? 0).toString() as EntityID; // force value to entityID
+    const entityIndex = world.entityToIndex.get(rawEntityID);
+    return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
+  }
+
+  // account specific, check if holder is account shaped
+  if ('kamis' in holder) {
+    if (type === 'QUEST') {
+      return hasCompletedQuest(world, components, index as number, holder);
+    } else if (type === 'ROOM') {
+      return holder.roomIndex == value;
+    }
+  }
+
+  // kami specific, check if holder is kami shaped (nothing here rn)
+  if ('account' in holder) {
+  }
+
+  // if nothing else doesnt match, return false (should not reach here)
+  return false;
+};
+
+const getInventoryBalance = (account: Account, index: number | undefined, type: string): number => {
+  if (index === undefined) return 0; // should not reach here
+  if (account.inventories === undefined) return 0; // should not reach here
+
+  let balance = 0;
+  switch (type) {
+    case 'EQUIP':
+      balance = getInventoryByIndex(account.inventories.gear, index)?.balance || 0;
+    case 'FOOD':
+      balance = getInventoryByIndex(account.inventories.food, index)?.balance || 0;
+    case 'MOD':
+      balance = getInventoryByIndex(account.inventories.mods, index)?.balance || 0;
+    case 'REVIVE':
+      balance = getInventoryByIndex(account.inventories.revives, index)?.balance || 0;
+    default:
+      balance = 0; // should not reach here
+  }
+
+  return Number(balance);
+};
+
+//////////////
+// UTILS
 
 export const checkerSwitch = (
   logic: string,

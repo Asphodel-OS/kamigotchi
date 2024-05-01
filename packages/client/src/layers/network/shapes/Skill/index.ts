@@ -4,7 +4,6 @@ export {
   getTreePoints,
   isMaxxed as isSkillMaxxed,
   meetsCost as meetsSkillCost,
-  meetsRequirement as meetsSkillRequirement,
   parseEffectText,
   parseRequirementText,
   parseTreeRequirementText,

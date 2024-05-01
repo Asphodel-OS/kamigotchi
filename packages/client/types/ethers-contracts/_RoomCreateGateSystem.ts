@@ -131,8 +131,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
       sourceIndex: PromiseOrValue<BigNumberish>,
       conditionIndex: PromiseOrValue<BigNumberish>,
       conditionValue: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -154,8 +154,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
     sourceIndex: PromiseOrValue<BigNumberish>,
     conditionIndex: PromiseOrValue<BigNumberish>,
     conditionValue: PromiseOrValue<BigNumberish>,
-    logicType: PromiseOrValue<string>,
     type_: PromiseOrValue<string>,
+    logicType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -177,8 +177,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
       sourceIndex: PromiseOrValue<BigNumberish>,
       conditionIndex: PromiseOrValue<BigNumberish>,
       conditionValue: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -212,8 +212,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
       sourceIndex: PromiseOrValue<BigNumberish>,
       conditionIndex: PromiseOrValue<BigNumberish>,
       conditionValue: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -236,8 +236,8 @@ export interface _RoomCreateGateSystem extends BaseContract {
       sourceIndex: PromiseOrValue<BigNumberish>,
       conditionIndex: PromiseOrValue<BigNumberish>,
       conditionValue: PromiseOrValue<BigNumberish>,
-      logicType: PromiseOrValue<string>,
       type_: PromiseOrValue<string>,
+      logicType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
