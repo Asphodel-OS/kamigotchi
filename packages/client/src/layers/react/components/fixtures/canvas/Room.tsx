@@ -1,3 +1,4 @@
+import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -12,17 +13,33 @@ interface Props {
 export const Room = (props: Props) => {
   const { index } = props;
   const [room, setRoom] = useState(rooms[0]);
+  const [bgm, setBgm] = useState<Howl>();
 
+  // Set the new room when the index changes. If the new room has new music,
+  // stop the old bgm and play the new one. Global howler audio is controlled
+  // in the Volume Settings modal. This recreates any new music from scratch,
+  // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
-    if (!!index) setRoom(rooms[index]);
+    if (!index || index == room.roomIndex) return;
+    const newRoom = rooms[index];
+    const music = newRoom.music;
+    if (music && music.path !== room.music?.path) {
+      const newBgm = new Howl({ src: [music.path], loop: true });
+      if (bgm) bgm.stop();
+      newBgm.play();
+      setBgm(newBgm);
+    }
+
+    setRoom(newRoom);
   }, [index]);
 
+  // return the background path for now
+  // TODO: have this detect time of day based on kamidays (32hrs) and return the correct bg
   const getBackground = () => {
     return room.background.path;
   };
 
   const getClickbox = (object: RoomAsset) => {
-    console.log(object);
     let coords = object.coordinates;
     if (!coords) return;
     const scale = 100 / 128;

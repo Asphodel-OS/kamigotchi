@@ -1,3 +1,4 @@
+import { Howler } from 'howler';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
@@ -16,6 +17,7 @@ export const Volume = () => {
 
   useEffect(() => {
     setSettings({ ...settings, volume: { bgm: bgmVolume, fx: fxVolume } });
+    Howler.volume(bgmVolume);
   }, [bgmVolume, fxVolume]);
 
   const toggleVolume = (type: string) => {
