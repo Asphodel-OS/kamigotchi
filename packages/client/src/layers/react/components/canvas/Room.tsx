@@ -87,6 +87,7 @@ interface Coordinates {
 }
 
 const Clickbox = styled.div<Coordinates>`
+  border-radius: 3vw;
   position: absolute;
   top: ${(props) => props.y1}%;
   left: ${(props) => props.x1}%;
@@ -98,17 +99,27 @@ const Clickbox = styled.div<Coordinates>`
   opacity: 0.2;
 
   &:hover {
-    animation: ${({}) => shimmer} 2s linear infinite;
-    background: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 1) 25%, transparent 50%);
-    background-size: 200% 100%;
+    animation: ${({}) => shimmer} 1.5s linear infinite;
+    background: radial-gradient(
+      closest-side,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(80, 80, 205, 1) 70%,
+      rgba(80, 80, 80, 0) 90%
+    );
   }
 `;
 
 const shimmer = keyframes`
-  from {
-    background-position: 200% 0;
+  0% {
+    transform: scale(1);
+    opacity: 0;
   }
-  to {
-    background-position: -200% 0;
+  20% {
+    transform: scale(1.2);
+    opacity: .2;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
   }
 `;
