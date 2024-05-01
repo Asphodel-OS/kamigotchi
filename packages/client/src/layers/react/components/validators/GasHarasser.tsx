@@ -52,11 +52,8 @@ export function registerGasHarasser() {
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
         if (!validations.operatorMatches) return;
-
         const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > 0;
         if (hasGas == validations.operatorHasGas) return; // no change
-
-        console.log('setting validations', { ...validations, operatorHasGas: hasGas });
         setValidations({ ...validations, operatorHasGas: hasGas });
       }, [validations.operatorMatches, balance]);
 
@@ -74,10 +71,6 @@ export function registerGasHarasser() {
           setValidators({ ...validators, gasHarasser: isVisible });
         }
       }, [networkValidations, validations.operatorHasGas, validators.operatorUpdater]);
-
-      useEffect(() => {
-        console.log('getting validations', validations, networkValidations);
-      }, [validations, networkValidations]);
 
       /////////////////
       // ACTIONS

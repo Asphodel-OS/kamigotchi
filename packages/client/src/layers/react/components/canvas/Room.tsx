@@ -20,8 +20,11 @@ export const Room = (props: Props) => {
   // in the Volume Settings modal. This recreates any new music from scratch,
   // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
+    console.log('Room index detected', index);
     if (!index || index == room.roomIndex) return;
+    console.log('Switching to room', index);
     const newRoom = rooms[index];
+
     const music = newRoom.music;
     if (music && music.path !== room.music?.path) {
       const newBgm = new Howl({ src: [music.path], loop: true });

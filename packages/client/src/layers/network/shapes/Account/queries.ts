@@ -3,6 +3,19 @@ import { EntityID, EntityIndex, Has, HasValue, World, runQuery } from '@mud-clas
 import { Components, NetworkLayer } from 'layers/network';
 import { AccountOptions, getAccount } from './types';
 
+// get an Account by its Username
+export const getAccountEntityIndexByName = (components: Components, name: string) => {
+  const { IsAccount, Name } = components;
+  return Array.from(runQuery([Has(IsAccount), HasValue(Name, { value: name })]))[0];
+};
+
+// get an Account by its Owner Address
+export const getAccountEntityIndexByOwner = (components: Components, address: string) => {
+  const { IsAccount, OwnerAddress } = components;
+  return Array.from(runQuery([Has(IsAccount), HasValue(OwnerAddress, { value: address })]))[0];
+};
+
+// get all accounts
 export const getAllAccounts = (world: World, components: Components, options?: AccountOptions) => {
   const { IsAccount } = components;
   return Array.from(runQuery([Has(IsAccount)])).map((entityIndex) =>
@@ -35,12 +48,6 @@ export const getAccountByIndex = (
     ])
   )[0];
   return getAccount(world, components, entityIndex, options);
-};
-
-// get an Account by its Username
-export const getAccountIndexByName = (components: Components, name: string) => {
-  const { IsAccount, Name } = components;
-  return Array.from(runQuery([Has(IsAccount), HasValue(Name, { value: name })]))[0];
 };
 
 // get an Account by its Operator EOA

@@ -50,8 +50,10 @@ export function registerWalletConnecter() {
         if (!ready) return;
         const chainMatches = chain?.id === defaultChain.id;
         if (!chainMatches) setState('wrongChain');
-        else if (!authenticated) setState('disconnected');
-        else updateNetworkSettings();
+        else if (!authenticated) {
+          setState('disconnected');
+          setSelectedAddress('');
+        } else updateNetworkSettings();
 
         if (!isEqual(validations, { authenticated, chainMatches })) {
           setValidations({ authenticated, chainMatches });

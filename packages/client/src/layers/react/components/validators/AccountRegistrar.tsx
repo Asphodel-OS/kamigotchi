@@ -14,7 +14,12 @@ import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { Account, getAccountByOwner, getAccountIndexByName } from 'layers/network/shapes/Account';
+import {
+  Account,
+  getAccount,
+  getAccountEntityIndexByName,
+  getAccountEntityIndexByOwner,
+} from 'layers/network/shapes/Account';
 import { ActionButton } from 'layers/react/components/library/ActionButton';
 import { CopyButton } from 'layers/react/components/library/CopyButton';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -153,13 +158,16 @@ export function registerAccountRegistrar() {
       // update the Kami Account and validation based on changes to the
       // connected address and detected account in the world
       useEffect(() => {
-        const account = getAccountByOwner(world, components, selectedAddress);
-        if (!!account == validations.accountExists) return; // no change
-        if (!!account) setKamiAccount(getKamiAccount(account, kamiAccount));
-        else setKamiAccount(emptyAccountDetails());
-
-        console.log('setting validations', { ...validations, accountExists: !!account });
-        setValidations({ ...validations, accountExists: !!account });
+        const accountEntityIndex = getAccountEntityIndexByOwner(components, selectedAddress);
+        if (!!accountEntityIndex == validations.accountExists) return; // no change
+        if (!!accountEntityIndex) {
+          const account = getAccount(world, components, accountEntityIndex);
+          setKamiAccount(getKamiAccount(account, kamiAccount));
+          setValidations({ ...validations, accountExists: true });
+        } else {
+          setKamiAccount(emptyAccountDetails());
+          setValidations({ accountExists: false, operatorMatches: false, operatorHasGas: false });
+        }
       }, [selectedAddress, accountFromWorldUpdate]);
 
       // adjust visibility of windows based on above determination
@@ -242,7 +250,7 @@ export function registerAccountRegistrar() {
       // INTERPRETATION
 
       const isNameTaken = () => {
-        const account = getAccountIndexByName(components, name);
+        const account = getAccountEntityIndexByName(components, name);
         return !!account;
       };
 

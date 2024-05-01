@@ -4,8 +4,9 @@ export {
   getAccountByIndex,
   getAccountByOperator,
   getAccountByOwner,
+  getAccountEntityIndexByName,
+  getAccountEntityIndexByOwner,
   getAccountFromBurner,
-  getAccountIndexByName,
   getAllAccounts,
 } from './queries';
 export { getAccount } from './types';

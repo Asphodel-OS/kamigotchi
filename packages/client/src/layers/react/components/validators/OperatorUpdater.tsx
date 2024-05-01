@@ -29,18 +29,16 @@ export function registerOperatorUpdater() {
       const { account: kamiAccount, validations, setValidations } = useAccount();
       const { burnerAddress, selectedAddress } = useNetwork();
       const { apis, validations: networkValidations } = useNetwork();
-      const { toggleButtons, toggleModals } = useVisibility();
+      const { toggleModals } = useVisibility();
       const { validators, setValidators } = useVisibility();
 
-      // run the primary check(s) for this validator, track in store for easy access
+      // run the primary check(s) for this validator, track in store for easy saccess
       useEffect(() => {
         if (!validations.accountExists) return;
 
-        console.log('kamiAccount:', burnerAddress, kamiAccount);
         const operatorMatches = kamiAccount.operatorAddress === burnerAddress && !!burnerAddress;
         if (operatorMatches == validations.operatorMatches) return; // no change
 
-        console.log('setting validations', { ...validations, operatorMatches });
         setValidations({ ...validations, operatorMatches });
       }, [validations.accountExists, burnerAddress, kamiAccount.operatorAddress]);
 
