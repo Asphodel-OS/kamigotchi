@@ -31,7 +31,7 @@ export function registerNotificationFixture() {
     },
 
     ({ notifications, list }) => {
-      const { modals, setModals } = useVisibility();
+      const { fixtures, modals, setModals } = useVisibility();
 
       const handleClick = (targetModal: string | undefined) => {
         if (targetModal === undefined) return;
@@ -53,7 +53,7 @@ export function registerNotificationFixture() {
       };
 
       return (
-        <Wrapper>
+        <Wrapper style={{ display: fixtures.notifications ? 'block' : 'none' }}>
           <Scrollable>{list.map((id) => SingleNotif(id))}</Scrollable>
         </Wrapper>
       );
