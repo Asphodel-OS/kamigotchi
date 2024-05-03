@@ -54,13 +54,13 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  padding: 0.6vh;
+  padding: 0.6vw;
   width: 100%;
   background-color: #eee;
 
   color: #333;
   font-family: Pixel;
-  font-size: 0.9vh;
+  font-size: 0.9vw;
   text-align: left;
 `;
 
@@ -68,7 +68,7 @@ const Options = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  padding-top: 2.4vh;
+  padding-top: 2.7vw;
 
   width: 100%;
   height: 100%;
@@ -79,12 +79,13 @@ const Options = styled.div`
 const ClickableDescription = styled.div`
   color: #333;
   cursor: pointer;
-  padding: 0.45vh 0.9vh;
+  padding: 0.3vw 0.6vw;
   border-radius: 0.45vw;
   width: 100%;
 
-  font-size: 0.9vh;
   font-family: Pixel;
+  font-size: 0.75vw;
+  line-height: 1.2vw;
   text-align: left;
   &:hover {
     background-color: #ddd;

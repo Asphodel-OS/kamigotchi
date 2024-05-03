@@ -12,7 +12,6 @@ import { useSelected, useVisibility } from 'layers/react/store';
 import { Exits } from './Exits';
 import { Grid } from './Grid';
 import { Players } from './Players';
-import { RoomInfo } from './RoomInfo';
 
 export function registerMapModal() {
   registerUIComponent(
@@ -21,7 +20,7 @@ export function registerMapModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 60,
+      rowEnd: 99,
     },
 
     // Requirement
@@ -104,12 +103,12 @@ export function registerMapModal() {
           noPadding
         >
           <Container>
-            <Column>
+            <Row>
               <Grid index={selectedRoom} rooms={roomMap} actions={{ move, setHoveredRoom }} />
-            </Column>
-            <Column>
+            </Row>
+            {/* <Row>
               <RoomInfo index={displayedRoom} rooms={roomMap} />
-            </Column>
+            </Row> */}
           </Container>
         </ModalWrapper>
       );
@@ -121,21 +120,20 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
 `;
 
-const Column = styled.div`
-  width: auto;
-  height: 100%;
+const Row = styled.div`
+  height: auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  flex-grow: 1;
 `;
 
 const FooterRow = styled.div`
-  height: 9vh;
+  height: 9vw;
   display: flex;
   flex-direction: row;
 `;

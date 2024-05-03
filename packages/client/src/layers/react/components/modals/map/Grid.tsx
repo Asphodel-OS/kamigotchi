@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { mapBackgrounds } from 'assets/images/map';
 import { Room, emptyRoom } from 'layers/network/shapes/Room';
 import { playClick } from 'utils/sounds';
+import { Tooltip } from '../../library';
 
 interface Props {
   index: number; // index of current room
@@ -87,7 +88,7 @@ export const Grid = (props: Props) => {
                 onClick = () => handleRoomMove(room?.index ?? 0);
               }
 
-              return (
+              let tile = (
                 <Tile
                   key={j}
                   style={{ backgroundColor: color, opacity }}
@@ -102,6 +103,13 @@ export const Grid = (props: Props) => {
                   }}
                 />
               );
+              if (isRoom)
+                tile = (
+                  <Tooltip key={j} text={[room.name, '', room.description, '']} grow>
+                    {tile}
+                  </Tooltip>
+                );
+              return tile;
             })}
           </Row>
         ))}
@@ -111,24 +119,22 @@ export const Grid = (props: Props) => {
 };
 
 const Container = styled.div`
-  border-right: solid black 0.15vw;
   position: relative;
-  height: 100%;
+  width: 100%;
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
-  flex-grow: 1;
 `;
 
 const Background = styled.img`
+  width: 100%;
   height: 100%;
-  width: auto;
 `;
 
 const Overlay = styled.div`
   position: absolute;
-  height: 100%;
   width: 100%;
+  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;
@@ -139,6 +145,7 @@ const Row = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
+  align-content: stretch;
   align-items: stretch;
   flex-grow: 1;
 `;
@@ -147,15 +154,12 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean }>`
   opacity: 0.2;
   border-right: 0.01vw solid black;
   border-top: 0.01vw solid black;
-  flex-grow: 1;
 
   display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-family: Pixel;
-  font-size: 0.8vw;
-  text-align: center;
+  align-content: stretch;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-grow: 1;
 
   ${({ hasRoom }) =>
     hasRoom &&
