@@ -1,3 +1,4 @@
+import { room00 } from './00_loading';
 import { room01 } from './01_mistyriver';
 import { room02 } from './02_treetunnel';
 import { room03 } from './03_gate';
@@ -84,7 +85,7 @@ export const duplicateRoomMusic = [
 
 // all our lovely, hardcoded room details
 export const rooms: Room[] = [
-  { roomIndex: 0, background: { key: 'room00', path: '' }, objects: [] },
+  room00,
   room01,
   room02,
   room03,
