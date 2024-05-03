@@ -23,7 +23,7 @@ export function registerAccountModal() {
       colStart: 2,
       colEnd: 33,
       rowStart: 8,
-      rowEnd: 75,
+      rowEnd: 99,
     },
 
     // Requirement
