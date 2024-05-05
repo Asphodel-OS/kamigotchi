@@ -100,7 +100,7 @@ library LibGoals {
     id = world.getUniqueEntityId();
     IdOwnsConditionComponent(getAddressById(components, IdOwnsCondCompID)).set(
       id,
-      genRewPtr(goalIndex)
+      genRwdPtr(goalIndex)
     );
 
     IsRewardComponent(getAddressById(components, IsRewardCompID)).set(id);
@@ -313,7 +313,7 @@ library LibGoals {
     IUintComp components,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return getConditions(components, genRewPtr(goalIndex));
+    return getConditions(components, genRwdPtr(goalIndex));
   }
 
   function getConditions(
@@ -355,7 +355,7 @@ library LibGoals {
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRewPtr(uint32 index) internal pure returns (uint256) {
+  function genRwdPtr(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.reward", index)));
   }
 }

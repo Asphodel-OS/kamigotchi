@@ -119,7 +119,7 @@ library LibRegistryQuests {
     string memory type_
   ) internal returns (uint256) {
     uint256 id = world.getUniqueEntityId();
-    setConditionOwner(components, id, genRewPtr(questIndex));
+    setConditionOwner(components, id, genRwdPtr(questIndex));
 
     setIsRegistry(components, id);
     setIsReward(components, id);
@@ -383,7 +383,7 @@ library LibRegistryQuests {
     IUintComp components,
     uint32 index
   ) internal view returns (uint256[] memory) {
-    return getConditionsByQuestIndex(components, genRewPtr(index));
+    return getConditionsByQuestIndex(components, genRwdPtr(index));
   }
 
   function getConditionsByQuestIndex(
@@ -410,7 +410,7 @@ library LibRegistryQuests {
   }
 
   /// @notice Retrieve the ID of a reward array
-  function genRewPtr(uint32 index) internal pure returns (uint256) {
+  function genRwdPtr(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("registry.quest.reward", index)));
   }
 
