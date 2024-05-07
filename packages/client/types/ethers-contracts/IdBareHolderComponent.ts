@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IsScoreComponentInterface extends utils.Interface {
+export interface IdBareHolderComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "extract(uint256)": FunctionFragment;
@@ -48,10 +48,10 @@ export interface IsScoreComponentInterface extends utils.Interface {
     "registerWorld(address)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "removeBatch(uint256[])": FunctionFragment;
-    "set(uint256)": FunctionFragment;
+    "set(uint256,uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "setBatch(uint256[],bytes[])": FunctionFragment;
-    "setBatch(uint256[],bool[])": FunctionFragment;
+    "setBatch(uint256[],uint256[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "world()": FunctionFragment;
@@ -79,10 +79,10 @@ export interface IsScoreComponentInterface extends utils.Interface {
       | "registerWorld"
       | "remove"
       | "removeBatch"
-      | "set(uint256)"
+      | "set(uint256,uint256)"
       | "set(uint256,bytes)"
       | "setBatch(uint256[],bytes[])"
-      | "setBatch(uint256[],bool[])"
+      | "setBatch(uint256[],uint256[])"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "world"
@@ -157,8 +157,8 @@ export interface IsScoreComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "set(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
@@ -169,8 +169,8 @@ export interface IsScoreComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatch(uint256[],bool[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<boolean>[]]
+    functionFragment: "setBatch(uint256[],uint256[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -233,7 +233,7 @@ export interface IsScoreComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256)",
+    functionFragment: "set(uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,7 +245,7 @@ export interface IsScoreComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBatch(uint256[],bool[])",
+    functionFragment: "setBatch(uint256[],uint256[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -281,12 +281,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface IsScoreComponent extends BaseContract {
+export interface IdBareHolderComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IsScoreComponentInterface;
+  interface: IdBareHolderComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -336,12 +336,12 @@ export interface IsScoreComponent extends BaseContract {
     get(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[BigNumber]>;
 
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<[boolean[]]>;
+    ): Promise<[BigNumber[]]>;
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
@@ -393,8 +393,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -410,9 +411,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[],uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
+      values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -462,12 +463,12 @@ export interface IsScoreComponent extends BaseContract {
   get(
     entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<boolean>;
+  ): Promise<BigNumber>;
 
   getBatch(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
-  ): Promise<boolean[]>;
+  ): Promise<BigNumber[]>;
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -519,8 +520,9 @@ export interface IsScoreComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256)"(
+  "set(uint256,uint256)"(
     entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -536,9 +538,9 @@ export interface IsScoreComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "setBatch(uint256[],bool[])"(
+  "setBatch(uint256[],uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<boolean>[],
+    values: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -568,12 +570,12 @@ export interface IsScoreComponent extends BaseContract {
     extract(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
 
     extractBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<boolean[]>;
+    ): Promise<BigNumber[]>;
 
     extractRaw(
       entity: PromiseOrValue<BigNumberish>,
@@ -588,12 +590,12 @@ export interface IsScoreComponent extends BaseContract {
     get(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
 
     getBatch(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<boolean[]>;
+    ): Promise<BigNumber[]>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -645,8 +647,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "set(uint256)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -662,9 +665,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[],uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
+      values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -781,8 +784,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -798,9 +802,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[],uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
+      values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -906,8 +910,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256)"(
+    "set(uint256,uint256)"(
       entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -923,9 +928,9 @@ export interface IsScoreComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBatch(uint256[],bool[])"(
+    "setBatch(uint256[],uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<boolean>[],
+      values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -1,54 +1,85 @@
-import React from 'react';
 import styled from 'styled-components';
 
+import { useSelected, useVisibility } from 'layers/react/store';
+import { playClick } from 'utils/sounds';
+
+import { Account } from 'layers/network/shapes/Account';
 import { Score } from 'layers/network/shapes/Score';
 
 interface Props {
   data: Score[];
+  prefix: string;
 }
 
 // the table rendering of the leaderboard modal
 export const Table = (props: Props) => {
-  const Rows = () => {
-    return props.data.map((row, index) => (
-      <React.Fragment key={index}>
-        <GridCell>{index + 1}</GridCell>
-        <GridCell>{row.account.name}</GridCell>
-        <GridCell isLast>{row.score}</GridCell>
-      </React.Fragment>
+  const { modals, setModals } = useVisibility();
+  const { setAccount } = useSelected();
+
+  /////////////////
+  // INTERACTION
+
+  // toggle the account modal settings depending on its current state
+  const accountOnClick = (account: Account) => {
+    setAccount(account.index);
+    if (!modals.account) setModals({ ...modals, account: true });
+    playClick();
+  };
+
+  /////////////////
+  // DISPLAY
+
+  const Rows = (data: Score[]) => {
+    return data.map((entry, index) => (
+      <Row key={index} onClick={() => accountOnClick(entry.account)}>
+        <SideText style={{ flexBasis: '10%' }}>{index + 1}</SideText>
+        <NameText style={{ flexBasis: '70%' }}>{entry.account.name}</NameText>
+        <SideText style={{ flexBasis: '20%' }}>{props.prefix + entry.score}</SideText>
+      </Row>
     ));
   };
 
-  return (
-    <GridContainer>
-      <GridCell isBold>rank</GridCell>
-      <GridCell isBold>player</GridCell>
-      <GridCell isLast isBold>
-        score
-      </GridCell>
-      {Rows()}
-    </GridContainer>
-  );
+  return <Container>{Rows(props.data)}</Container>;
 };
 
-const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-row-gap: 5px;
+const Container = styled.div`
   margin: 0 1vw;
+  border: solid black 0.15vw;
+  border-radius: 0.75vw;
+
+  overflow: auto;
+  scroll: auto;
+  height: 100%;
+  margin-bottom: 1vh;
 `;
 
-interface GridCellProps {
-  isLast?: boolean;
-  isBold?: boolean;
-}
+const Row = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2vw 1vw;
 
-const GridCell = styled.div<GridCellProps>`
-  padding: 5px;
+  &:hover {
+    background-color: #eee;
+  }
+`;
+
+const NameText = styled.p`
+  font-size: 1.2vw;
   font-family: Pixel;
-  color: black;
+  text-align: left;
+  color: #333;
+
+  flex-basis: 80%;
+  padding: 0 1vw;
+`;
+
+const SideText = styled.p`
+  font-size: 1.2vw;
+  font-family: Pixel;
   text-align: center;
-  border-left: 1px solid #000;
-  border-right: ${({ isLast }) => (isLast ? '1px solid #000' : 'none')};
-  font-weight: ${({ isBold }) => (isBold ? 'bold' : 'normal')};
+  color: #333;
+
+  flex-basis: 10%;
 `;

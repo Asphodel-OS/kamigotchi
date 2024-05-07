@@ -55,7 +55,6 @@ export function createComponents(world: World) {
     IsRequirement: defineBoolEZ('IsRequirement', 'component.is.requirement'),
     IsReward: defineBoolEZ('IsReward', 'component.is.reward'),
     IsRoom: defineBoolEZ('IsRoom', 'component.is.room'),
-    IsScore: defineBoolEZ('IsScore', 'component.is.score'),
     IsSkill: defineBoolEZ('IsSkill', 'component.is.skill'),
     IsTrade: defineBoolEZ('IsTrade', 'component.is.trade'),
 
@@ -67,6 +66,7 @@ export function createComponents(world: World) {
 
     // IDs
     AccountID: defineStringEZ('AccountID', 'component.id.account'),
+    BareHolderID: defineStringEZ('BareHolderID', 'component.id.holder.bare'),
     DelegateeID: defineStringEZ('DelegateeID', 'component.id.delegatee'),
     DelegatorID: defineStringEZ('DelegatorID', 'component.id.delegator'),
     HolderID: defineStringEZ('HolderID', 'component.id.holder'),
@@ -81,6 +81,7 @@ export function createComponents(world: World) {
     RequesterID: defineStringEZ('RequesterID', 'component.id.requester'),
     RoomID: defineStringEZ('RoomID', 'component.id.room'),
     SourceID: defineStringEZ('SourceID', 'component.id.source'),
+    ScoreTypeID: defineStringEZ('ScoreTypeID', 'component.id.score.type'),
     TargetID: defineStringEZ('TargetID', 'component.id.target'),
 
     // Indices

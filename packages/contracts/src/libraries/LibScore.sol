@@ -9,8 +9,8 @@ import { getAddressById, getComponentById } from "solecs/utils.sol";
 import { Strings } from "utils/Strings.sol";
 import { LibPack } from "libraries/utils/LibPack.sol";
 
-import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
-import { IsScoreComponent, ID as IsScoreCompID } from "components/IsScoreComponent.sol";
+import { IdBareHolderComponent, ID as IdBareHolderCompID } from "components/IdBareHolderComponent.sol";
+import { IdScoreTypeComponent, ID as IdScoreTypeCompID } from "components/IdScoreTypeComponent.sol";
 import { EpochComponent, ID as EpochCompID } from "components/EpochComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
@@ -24,98 +24,71 @@ uint256 constant LEADERBOARD_EPOCH_ID = uint256(keccak256("Leaderboard.Epoch"));
 // like reaping production
 
 // Components:
-// [hashed] IdHolder
-// [hashed] Epoch: The current epoch the score is gained
-// [hashed] Type: The type of action being tracked (e.g. COLLECT | LIQUIDATE | FEED)
-// BareVaue: Score balance
+// EntityID: hash(IdHolder, score type, epoch)
+// IdScoreType: reverse map to score type (e.g. hash(score type, epoch), goalID)
+// Balance: Score balance
 
 library LibScore {
-  function getID(
-    uint256 holderID,
-    uint256 epoch,
-    string memory type_
-  ) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("is.score", holderID, epoch, type_)));
-  }
-
   /////////////////
   // INTERACTIONS
 
-  /// @notice creates a score entity for a holder
   function create(
     IUintComp components,
     uint256 id,
     uint256 holderID,
-    uint256 epoch,
-    string memory type_
+    uint256 typeID
   ) internal returns (uint256) {
-    IdHolderComponent(getAddressById(components, IdHolderCompID)).set(id, holderID);
-    IsScoreComponent(getAddressById(components, IsScoreCompID)).set(id);
-    EpochComponent(getAddressById(components, EpochCompID)).set(id, epoch);
-    TypeComponent(getAddressById(components, TypeCompID)).set(id, type_);
-    return id;
+    IdBareHolderComponent(getAddressById(components, IdBareHolderCompID)).set(id, holderID);
+    IdScoreTypeComponent(getAddressById(components, IdScoreTypeCompID)).set(id, typeID);
   }
 
-  /// @notice adds score based on current epoch.
-  /// @dev to be called with any action that should be scored
-  function inc(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
-    uint256 epoch = getCurentEpoch(components);
-    uint256 id = getID(holderID, epoch, _type);
-
+  /// @notice increments score balance, creates score if needed
+  function inc(
+    IUintComp components,
+    uint256 id,
+    uint256 holderID,
+    uint256 typeID,
+    uint256 amt
+  ) internal {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     uint256 bal;
     if (comp.has(id)) bal = comp.get(id);
-    else create(components, id, holderID, epoch, _type);
+    else create(components, id, holderID, typeID);
     bal += amt;
     comp.set(id, bal);
   }
 
-  /// @notice decs score based on current epoch.
-  /// @dev to be called with any action that should be scored
-  function dec(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
+  /// @notice adds score based on current epoch.
+  /// @dev wrapper function for epoch/type handling
+  function inc(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
     uint256 epoch = getCurentEpoch(components);
-    uint256 id = getID(holderID, epoch, _type);
+    uint256 id = genScoreID(holderID, epoch, _type);
+    inc(components, id, holderID, genTypeID(_type, epoch), amt);
+  }
 
+  /// @notice decrements score balance, creates score if needed
+  function dec(
+    IUintComp components,
+    uint256 id,
+    uint256 holderID,
+    uint256 typeID,
+    uint256 amt
+  ) internal {
     BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
     uint256 bal;
     if (comp.has(id)) bal = comp.get(id);
-    else create(components, id, holderID, epoch, _type);
+    else create(components, id, holderID, typeID);
     bal -= amt;
     comp.set(id, bal);
   }
 
-  function incArr(
-    IUintComp components,
-    uint256 holderID,
-    string memory _type,
-    uint32[8] memory amt
-  ) internal {
+  /// @notice decs score based on current epoch.
+  /// @dev wrapper function for epoch/type handling
+  function dec(IUintComp components, uint256 holderID, string memory _type, uint256 amt) internal {
     uint256 epoch = getCurentEpoch(components);
-    uint256 id = getID(holderID, epoch, _type);
+    uint256 id = genScoreID(holderID, epoch, _type);
 
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    uint32[8] memory bal = [uint32(0), 0, 0, 0, 0, 0, 0, 0];
-    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.get(id));
-    else create(components, id, holderID, epoch, _type);
-    for (uint256 i; i < 8; i++) bal[i] += amt[i];
-    comp.set(id, LibPack.packArrU32(bal));
-  }
-
-  function decArr(
-    IUintComp components,
-    uint256 holderID,
-    string memory _type,
-    uint32[8] memory amt
-  ) internal {
-    uint256 epoch = getCurentEpoch(components);
-    uint256 id = getID(holderID, epoch, _type);
-
-    BalanceComponent comp = BalanceComponent(getAddressById(components, BalanceCompID));
-    uint32[8] memory bal = [uint32(0), 0, 0, 0, 0, 0, 0, 0];
-    if (comp.has(id)) bal = LibPack.unpackArrU32(comp.get(id));
-    else create(components, id, holderID, epoch, _type);
-    for (uint256 i; i < 8; i++) bal[i] -= amt[i];
-    comp.set(id, LibPack.packArrU32(bal));
+    dec(components, id, holderID, genTypeID(_type, epoch), amt);
   }
 
   /////////////////
@@ -137,5 +110,20 @@ library LibScore {
   function setCurrentEpoch(IUintComp components, uint256 epoch) internal {
     uint256 id = LibConfig.getID("LEADERBOARD_EPOCH");
     LibConfig.setValue(components, id, epoch);
+  }
+
+  /////////////////
+  // UTILS
+
+  function genScoreID(
+    uint256 holderID,
+    uint256 epoch,
+    string memory type_
+  ) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("is.score", holderID, epoch, type_)));
+  }
+
+  function genTypeID(string memory scoreType, uint256 epoch) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("score.type", scoreType, epoch)));
   }
 }

@@ -9,6 +9,7 @@ export interface State {
   nodeIndex: number;
   npcIndex: number;
   roomIndex: number;
+  leaderboardIndex: string;
 }
 
 interface Actions {
@@ -19,6 +20,7 @@ interface Actions {
   setNode: (nodeIndex: number) => void;
   setNpc: (npcIndex: number) => void;
   setRoom: (roomIndex: number) => void;
+  setLeaderboardIndex: (leaderboardIndex: string) => void;
 }
 
 export const useSelected = create<State & Actions>((set) => {
@@ -30,6 +32,7 @@ export const useSelected = create<State & Actions>((set) => {
     nodeIndex: 0 as number,
     npcIndex: 0 as number,
     roomIndex: 0 as number,
+    leaderboardIndex: '',
   };
 
   return {
@@ -42,5 +45,7 @@ export const useSelected = create<State & Actions>((set) => {
     setNode: (nodeIndex: number) => set((state: State) => ({ ...state, nodeIndex })),
     setNpc: (npcIndex: number) => set((state: State) => ({ ...state, npcIndex })),
     setRoom: (roomIndex: number) => set((state: State) => ({ ...state, roomIndex })),
+    setLeaderboardIndex: (leaderboardIndex: string) =>
+      set((state: State) => ({ ...state, leaderboardIndex })),
   };
 });

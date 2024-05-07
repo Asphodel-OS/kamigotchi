@@ -10,18 +10,18 @@ interface Props {
 }
 
 export const Filters = (props: Props) => {
-  const EpochFilter = () => {
-    const text = !!props.filter.epoch ? `Epoch: ${props.filter.epoch * 1}` : 'Epoch';
-    const epochsSorted = props.epochOptions.sort((a, b) => b - a);
-    const options = epochsSorted.map((epoch: number) => {
-      return {
-        text: (epoch * 1).toString(),
-        onClick: () => props.setFilter({ ...props.filter, epoch }),
-      };
-    });
+  // const EpochFilter = () => {
+  //   const text = !!props.filter.epoch ? `Epoch: ${props.filter.epoch * 1}` : 'Epoch';
+  //   const epochsSorted = props.epochOptions.sort((a, b) => b - a);
+  //   const options = epochsSorted.map((epoch: number) => {
+  //     return {
+  //       text: (epoch * 1).toString(),
+  //       onClick: () => props.setFilter({ ...props.filter, epoch }),
+  //     };
+  //   });
 
-    return <ActionListButton id={'epoch-props.filter'} text={text} options={options} />;
-  };
+  //   return <ActionListButton id={'epoch-props.filter'} text={text} options={options} />;
+  // };
 
   const TypeFilter = () => {
     const text = !!props.filter.type ? `Type: ${props.filter.type}` : 'Type';
@@ -38,7 +38,7 @@ export const Filters = (props: Props) => {
 
   return (
     <Row>
-      {EpochFilter()}
+      {/* {EpochFilter()} */}
       {TypeFilter()}
     </Row>
   );

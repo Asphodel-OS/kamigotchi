@@ -9,6 +9,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListing } from "libraries/LibListing.sol";
 import { LibNPC } from "libraries/LibNPC.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
 uint256 constant ID = uint256(keccak256("system.Listing.Buy"));
 
@@ -42,6 +43,7 @@ contract ListingBuySystem is System {
     LibInventory.logIncItemTotal(components, accountID, itemIndex, amt);
     LibListing.logEarnCoin(components, accountID, amt * price);
     LibListing.logIncItemBuy(components, accountID, itemIndex, amt);
+    LibScore.inc(components, accountID, "TOTAL_SPENT", amt * price);
     LibAccount.updateLastTs(components, accountID);
     return "";
   }

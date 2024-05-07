@@ -1,6 +1,7 @@
 import { bgPlaytest } from 'assets/images/rooms/13_giftshop';
 import { mystique } from 'assets/sound/ost';
 import { Room } from 'constants/rooms';
+import { triggerLeaderboardModal } from 'layers/react/triggers/triggerLeaderboardModal';
 import { triggerShopModal } from 'layers/react/triggers/triggerShopModal';
 
 export const room13: Room = {
@@ -28,6 +29,11 @@ export const room13: Room = {
       name: 'cashregister',
       coordinates: { x1: 0, y1: 38, x2: 27, y2: 73 },
       onClick: () => triggerShopModal(1),
+    },
+    {
+      name: 'shop door',
+      coordinates: { x1: 118, y1: 30, x2: 127, y2: 47 },
+      onClick: () => triggerLeaderboardModal('minaSpent'),
     },
   ],
 };

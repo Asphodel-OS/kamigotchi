@@ -23,6 +23,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibBoolean } from "libraries/utils/LibBoolean.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibScore } from "libraries/LibScore.sol";
 
 /**
  * @notice LibGoals handles goals - a community quests that can be contributed to by many players
@@ -39,7 +40,9 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
  *   - Stores current goal progress
  *
  * Contributing to goals results in a Contribution Entity (goal+account)
- * - stores Contribution Points in BalanceComponent
+ * - Contributions uses LibScore to track points for leaderboard compatibility
+ *   - epoch is not used
+ * - stores Contribution Points in BalanceComponent (via score)
  * - stores whether the goal has been completed in IsCompleteComponent
  */
 library LibGoals {
@@ -168,7 +171,7 @@ library LibGoals {
 
     // inc goal's balance & inc account contribution
     balComp.set(goalID, currBal + amt);
-    balComp.inc(genContributionID(goalID, accID), amt);
+    incContribution(components, accID, goalID, amt);
 
     return amt;
   }
@@ -283,6 +286,16 @@ library LibGoals {
 
   ///////////////////
   // SETTERS
+
+  function incContribution(
+    IUintComp components,
+    uint256 holderID,
+    uint256 goalID,
+    uint256 amt
+  ) internal {
+    uint256 id = genContributionID(goalID, holderID);
+    LibScore.inc(components, id, holderID, goalID, amt);
+  }
 
   function setComplete(IUintComp components, uint256 id) internal {
     IsCompleteComponent(getAddressById(components, IsCompleteCompID)).set(id);
