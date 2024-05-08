@@ -13,3 +13,16 @@ export const getAddressFromPrivateKey = (privateKey: string): string => {
   } catch (e) {}
   return address;
 };
+
+export const getAbbreviatedAddress = (
+  address: string,
+  prefix: boolean = false,
+  suffix: boolean = true
+): string => {
+  if (!address) return '';
+
+  let display = '0x';
+  if (prefix) display += address.slice(2, 6);
+  if (suffix) display += `..${address.slice(-4)}`;
+  return display;
+};

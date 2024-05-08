@@ -50,12 +50,11 @@ export const ActionButton = (props: Props) => {
       styles.borderRadius = '5px';
       styles.borderWidth = '2px';
     } else if (size === 'menu') {
-      styles.fontSize = '10px';
-      styles.margin = '0px';
-      styles.padding = '3px 6px';
-      styles.borderRadius = '10px';
-      styles.borderWidth = '1px';
-      styles.height = '36px';
+      styles.fontSize = '0.9vh';
+      styles.padding = '0vh .6vh';
+      styles.borderRadius = '0.9vh';
+      styles.borderWidth = '.15vw';
+      styles.height = '4.2vh';
     } else if (size === 'icon-medium') {
       styles.fontSize = '.8vw';
       styles.margin = '.2vw';
