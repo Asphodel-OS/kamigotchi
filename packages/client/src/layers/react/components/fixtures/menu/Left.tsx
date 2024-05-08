@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useVisibility } from 'layers/react/store';
 import styled from 'styled-components';
 import { AccountMenuButton, MapMenuButton, PartyMenuButton } from './buttons';
 
@@ -15,8 +16,10 @@ export function registerMenuLeft() {
     },
     (layers) => of(layers),
     () => {
+      const { fixtures } = useVisibility();
+
       return (
-        <Wrapper>
+        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <AccountMenuButton />
           <MapMenuButton />
           <PartyMenuButton />
@@ -27,7 +30,6 @@ export function registerMenuLeft() {
 }
 
 const Wrapper = styled.div`
-  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;

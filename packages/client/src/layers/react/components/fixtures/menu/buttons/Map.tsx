@@ -1,9 +1,8 @@
 import { mapIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
-import { Modals, useVisibility } from 'layers/react/store';
+import { Modals } from 'layers/react/store';
 
 export const MapMenuButton = () => {
-  const { buttons } = useVisibility();
   const modalsToHide: Partial<Modals> = {
     account: false,
     bridgeERC20: false,
@@ -21,9 +20,8 @@ export const MapMenuButton = () => {
       id='map_button'
       image={mapIcon}
       tooltip={`Map`}
-      targetDiv='map'
+      targetModal='map'
       hideModals={modalsToHide}
-      visible={buttons.map}
     />
   );
 };

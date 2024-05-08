@@ -4,59 +4,33 @@ import { create } from 'zustand';
 // OVERVIEW
 
 interface State {
-  buttons: Buttons;
   fixtures: Fixtures;
   modals: Modals;
   validators: Validators;
 }
 
 interface Actions {
-  setButtons: (data: Buttons) => void;
   setFixtures: (data: Fixtures) => void;
   setModals: (data: Modals) => void;
   setValidators: (data: Validators) => void;
-  toggleButtons: (isOn: boolean) => void;
   toggleModals: (isOn: boolean) => void;
   toggleFixtures: (isOn: boolean) => void;
 }
 
 ////////////////
-// BUTTONS
-
-export interface Buttons {
-  account: boolean;
-  help: boolean;
-  inventory: boolean;
-  map: boolean;
-  party: boolean;
-  quests: boolean;
-  settings: boolean;
-  chat: boolean;
-}
-
-export const toggleButtons = (isOn: boolean): Buttons => ({
-  account: isOn,
-  help: isOn,
-  inventory: isOn,
-  map: isOn,
-  party: isOn,
-  quests: isOn,
-  settings: isOn,
-  chat: isOn,
-});
-
-////////////////
 // FIXTURES
 
 export interface Fixtures {
-  header: boolean;
   actionQueue: boolean;
+  header: boolean;
+  menu: boolean;
   notifications: boolean;
 }
 
 export const toggleFixtures = (isOn: boolean): Fixtures => ({
-  header: isOn,
   actionQueue: isOn,
+  header: isOn,
+  menu: isOn,
   notifications: isOn,
 });
 
@@ -128,19 +102,10 @@ export interface Validators {
 
 export const useVisibility = create<State & Actions>((set) => {
   const initialState: State = {
-    buttons: {
-      account: false,
-      chat: false,
-      help: false,
-      inventory: false,
-      map: false,
-      party: false,
-      quests: false,
-      settings: false,
-    },
     fixtures: {
-      header: false,
       actionQueue: false,
+      header: false,
+      menu: false,
       notifications: true,
     },
     modals: {
@@ -177,12 +142,9 @@ export const useVisibility = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setButtons: (data: Buttons) => set((state: State) => ({ ...state, buttons: data })),
     setFixtures: (data: Fixtures) => set((state: State) => ({ ...state, fixtures: data })),
     setModals: (data: Modals) => set((state: State) => ({ ...state, modals: data })),
     setValidators: (data: Validators) => set((state: State) => ({ ...state, validators: data })),
-    toggleButtons: (isOn: boolean) =>
-      set((state: State) => ({ ...state, buttons: toggleButtons(isOn) })),
     toggleFixtures: (isOn: boolean) =>
       set((state: State) => ({ ...state, fixtures: toggleFixtures(isOn) })),
     toggleModals: (isOn: boolean) =>

@@ -39,7 +39,7 @@ export function registerWalletConnecter() {
       const { apis, addAPI } = useNetwork();
       const { burnerAddress, setBurnerAddress, setSelectedAddress } = useNetwork();
       const { validations, setValidations } = useNetwork();
-      const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
+      const { toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
 
       const [isUpdating, setIsUpdating] = useState(false);
@@ -65,7 +65,6 @@ export function registerWalletConnecter() {
         const isVisible = !validations.authenticated || !validations.chainMatches;
         if (isVisible) {
           toggleModals(false);
-          toggleButtons(false);
           toggleFixtures(false);
         }
         if (isVisible != validators.walletConnector) {

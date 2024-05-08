@@ -1,10 +1,9 @@
 import { settingsIcon } from 'assets/images/icons/menu';
 
 import { MenuButton } from 'layers/react/components/library/MenuButton';
-import { Modals, useVisibility } from 'layers/react/store';
+import { Modals } from 'layers/react/store';
 
 export const SettingsMenuButton = () => {
-  const { buttons } = useVisibility();
   const modalsToHide: Partial<Modals> = {
     bridgeERC20: false,
     bridgeERC721: false,
@@ -24,9 +23,8 @@ export const SettingsMenuButton = () => {
       id='settings_button'
       image={settingsIcon}
       tooltip='Settings'
-      targetDiv='settings'
+      targetModal='settings'
       hideModals={modalsToHide}
-      visible={buttons.settings}
     />
   );
 };

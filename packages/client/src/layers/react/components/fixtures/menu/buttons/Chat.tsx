@@ -1,9 +1,8 @@
 import { chatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
-import { Modals, useVisibility } from 'layers/react/store';
+import { Modals } from 'layers/react/store';
 
 export const ChatMenuButton = () => {
-  const { buttons } = useVisibility();
   const modalsToHide: Partial<Modals> = {
     bridgeERC20: false,
     bridgeERC721: false,
@@ -23,9 +22,8 @@ export const ChatMenuButton = () => {
       id='chat-button'
       image={chatIcon}
       tooltip='Chat'
-      targetDiv='chat'
+      targetModal='chat'
       hideModals={modalsToHide}
-      visible={buttons.chat}
     />
   );
 };

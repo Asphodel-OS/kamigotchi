@@ -1,9 +1,8 @@
 import { inventoryIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
-import { Modals, useVisibility } from 'layers/react/store';
+import { Modals } from 'layers/react/store';
 
 export const InventoryMenuButton = () => {
-  const { buttons } = useVisibility();
   const modalsToHide: Partial<Modals> = {
     bridgeERC20: false,
     bridgeERC721: false,
@@ -23,9 +22,8 @@ export const InventoryMenuButton = () => {
       id='inventory-button'
       image={inventoryIcon}
       tooltip='Inventory'
-      targetDiv='inventory'
+      targetModal='inventory'
       hideModals={modalsToHide}
-      visible={buttons.inventory}
     />
   );
 };

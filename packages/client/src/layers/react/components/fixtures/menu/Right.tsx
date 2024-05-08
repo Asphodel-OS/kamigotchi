@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
 
 import { registerUIComponent } from 'layers/react/engine/store';
+import { useVisibility } from 'layers/react/store';
 import styled from 'styled-components';
 import {
   ChatMenuButton,
@@ -22,8 +23,9 @@ export function registerMenuRight() {
     },
     (layers) => of(layers),
     () => {
+      const { fixtures } = useVisibility();
       return (
-        <Wrapper>
+        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
           <ChatMenuButton />
           <QuestMenuButton />
           <InventoryMenuButton />
@@ -37,7 +39,6 @@ export function registerMenuRight() {
 }
 
 const Wrapper = styled.div`
-  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;

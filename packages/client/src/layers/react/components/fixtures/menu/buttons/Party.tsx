@@ -1,9 +1,8 @@
 import { kamiIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
-import { Modals, useVisibility } from 'layers/react/store';
+import { Modals } from 'layers/react/store';
 
 export const PartyMenuButton = () => {
-  const { buttons } = useVisibility();
   const modalsToHide: Partial<Modals> = {
     account: false,
     bridgeERC20: false,
@@ -21,9 +20,8 @@ export const PartyMenuButton = () => {
       id='party_button'
       image={kamiIcon}
       tooltip='Party'
-      targetDiv='party'
+      targetModal='party'
       hideModals={modalsToHide}
-      visible={buttons.party}
     />
   );
 };

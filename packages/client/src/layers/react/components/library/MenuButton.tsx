@@ -8,8 +8,7 @@ interface Props {
   id: string;
   image: string;
   tooltip: string;
-  targetDiv: keyof Modals;
-  visible: boolean;
+  targetModal?: keyof Modals;
   hideModals?: Partial<Modals>;
   onClick?: () => void;
 }
@@ -17,15 +16,16 @@ interface Props {
 // MenuButton renders a button that toggles a target modal.
 export const MenuButton = (props: Props) => {
   const { modals, setModals } = useVisibility();
-  const { id, image, tooltip, targetDiv, visible, hideModals, onClick } = props;
+  const { id, image, tooltip, targetModal, hideModals, onClick } = props;
 
   // toggles the target modal open and closed
   const handleToggle = () => {
     playClick();
     if (onClick) onClick();
+    if (!targetModal) return;
 
-    const isModalOpen = modals[targetDiv];
-    let nextModals = { ...modals, [targetDiv]: !isModalOpen };
+    const isModalOpen = modals[targetModal];
+    let nextModals = { ...modals, [targetModal]: !isModalOpen };
     if (!isModalOpen) nextModals = { ...nextModals, ...hideModals };
     setModals(nextModals);
   };
@@ -33,7 +33,7 @@ export const MenuButton = (props: Props) => {
   return (
     <Tooltip text={[tooltip]}>
       <div id={id}>
-        <Button style={{ display: visible ? 'flex' : 'none' }} onClick={handleToggle}>
+        <Button onClick={handleToggle}>
           <Image src={image} alt={id} />
         </Button>
       </div>

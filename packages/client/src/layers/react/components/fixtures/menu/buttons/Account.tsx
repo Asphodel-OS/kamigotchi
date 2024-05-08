@@ -1,9 +1,8 @@
 import { operatorIcon } from 'assets/images/icons/menu';
 import { MenuButton } from 'layers/react/components/library/MenuButton';
-import { Modals, useAccount, useSelected, useVisibility } from 'layers/react/store';
+import { Modals, useAccount, useSelected } from 'layers/react/store';
 
 export const AccountMenuButton = () => {
-  const { buttons } = useVisibility();
   const { setAccount } = useSelected();
   const { account } = useAccount();
 
@@ -24,8 +23,7 @@ export const AccountMenuButton = () => {
       id='account_button'
       image={operatorIcon}
       tooltip={`Account`}
-      targetDiv='account'
-      visible={buttons.account}
+      targetModal='account'
       hideModals={modalsToHide}
       onClick={() => setAccount(account.index)}
     />

@@ -147,7 +147,7 @@ export function registerAccountRegistrar() {
         apis,
         validations: networkValidations,
       } = useNetwork();
-      const { toggleButtons, toggleModals, toggleFixtures } = useVisibility();
+      const { toggleModals, toggleFixtures } = useVisibility();
       const { validators, setValidators } = useVisibility();
       const { account: kamiAccount, setAccount: setKamiAccount } = useAccount();
       const { validations, setValidations } = useAccount();
@@ -179,10 +179,8 @@ export function registerAccountRegistrar() {
 
         if (isVisible) {
           toggleModals(false);
-          toggleButtons(false);
           toggleFixtures(false);
         } else if (!validators.walletConnector) {
-          toggleButtons(true);
           toggleFixtures(true);
         }
 
