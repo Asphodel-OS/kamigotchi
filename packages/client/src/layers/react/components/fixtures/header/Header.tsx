@@ -1,6 +1,6 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
-import { erc20Abi, formatEther, formatUnits } from 'viem';
+import { erc20Abi, formatEther } from 'viem';
 import { useBalance, useReadContract, useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
@@ -12,11 +12,10 @@ import {
   getAccountFromBurner,
 } from 'layers/network/shapes/Account';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
-import { Battery } from 'layers/react/components/library/Battery';
-import { Gauge } from 'layers/react/components/library/Gauge';
-import { Tooltip } from 'layers/react/components/library/Tooltip';
+import { Battery, GasGauge, Tooltip } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store';
+import { parseTokenBalance } from 'utils/balances';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -99,16 +98,6 @@ export function registerAccountHeader() {
         return 100 * Math.min(level, 1.0);
       };
 
-      // parses a wagmi FetchBalanceResult
-      const parseTokenBalance = (
-        balance: bigint = BigInt(0),
-        decimals: number = 18,
-        precision: number = 3
-      ) => {
-        const formatted = formatUnits(balance, decimals);
-        return Number(formatted).toFixed(precision);
-      };
-
       const parseStaminaString = (account: Account) => {
         const staminaCurr = calcStamina(account);
         const staminaTotal = account.stamina.total;
@@ -166,7 +155,7 @@ export function registerAccountHeader() {
                     {parseTokenBalance(
                       ownerMint20Balance?.[0]?.result,
                       ownerMint20Balance?.[1]?.result
-                    )}
+                    ).toFixed(3)}
                   </TextBox>
                 </Tooltip>
               </Cell>
@@ -174,8 +163,12 @@ export function registerAccountHeader() {
                 <Tooltip text={getGasTooltip()}>
                   <TextBox>
                     Gas:{' '}
-                    {parseTokenBalance(operatorEthBalance?.value, operatorEthBalance?.decimals)}Ξ
-                    <Gauge level={calcGaugeSetting(operatorEthBalance?.value)} />
+                    {parseTokenBalance(
+                      operatorEthBalance?.value,
+                      operatorEthBalance?.decimals
+                    ).toFixed(3)}
+                    Ξ
+                    <GasGauge level={calcGaugeSetting(operatorEthBalance?.value)} />
                   </TextBox>
                 </Tooltip>
               </Cell>
