@@ -5,7 +5,6 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';
-import { NetworkLayer } from 'layers/network';
 import { GasGauge, IconButton, Tooltip } from 'layers/react/components/library';
 import { useAccount } from 'layers/react/store';
 import { parseTokenBalance } from 'utils/balances';
@@ -13,7 +12,6 @@ import { parseTokenBalance } from 'utils/balances';
 interface Props {
   mode: number;
   setMode: Function;
-  network: NetworkLayer;
 }
 
 export const Controls = (props: Props) => {
@@ -48,6 +46,13 @@ export const Controls = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
+  // calculated the gas gauge level
+  const calcGaugeSetting = (balance: bigint = BigInt(0)): number => {
+    const formatted = Number(formatEther(balance));
+    const level = formatted / GasConstants.Full;
+    return Math.min(level, 1.0);
+  };
+
   const getGaugeTooltip = (balance: number) => {
     const tooltip = ['Operator Gas', ''];
     let description = 'Tank Full ^-^ Happy';
@@ -58,11 +63,9 @@ export const Controls = (props: Props) => {
     return [...tooltip, description];
   };
 
-  // calculated the gas gauge level
-  const calcGaugeSetting = (balance: bigint = BigInt(0)): number => {
-    const formatted = Number(formatEther(balance));
-    const level = formatted / GasConstants.Full;
-    return 100 * Math.min(level, 1.0);
+  const getBalanceTooltip = (balance: number) => {
+    const eth = balance.toFixed(5);
+    return [`${eth}Ξ`, '', '(1 ETH = 1000 milliETH)'];
   };
 
   //////////////////
@@ -74,8 +77,8 @@ export const Controls = (props: Props) => {
         <Tooltip text={getGaugeTooltip(burnerGasBalance)}>
           <GasGauge level={calcGaugeSetting(operatorBalance?.value)} />
         </Tooltip>
-        <Tooltip text={getGaugeTooltip(burnerGasBalance)}>
-          <Text>{(burnerGasBalance * 1000).toFixed(2)}mΞ</Text>
+        <Tooltip text={getBalanceTooltip(burnerGasBalance)}>
+          <Text>{(burnerGasBalance * 1000).toFixed(2)}mETH</Text>
         </Tooltip>
       </RowPrefix>
       <IconButton onClick={() => toggleMode()} img={iconMapping[mode]} />
@@ -102,8 +105,8 @@ const RowPrefix = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: 0.9vw;
   color: #333;
   text-align: left;
   font-family: Pixel;
+  font-size: 0.9vw;
 `;

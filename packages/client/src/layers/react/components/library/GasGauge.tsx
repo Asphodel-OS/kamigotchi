@@ -4,16 +4,11 @@ import { useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 
 type GaugeProps = {
-  level: number;
-};
-
-const getColor = (level: number) => {
-  if (level <= 20) return '#FF6600';
-  if (level <= 50) return '#FFD000';
-  return '#23AD41';
+  level: number; // [0, 1]
 };
 
 export const GasGauge = (props: GaugeProps) => {
+  const { level } = props;
   const { modals, setModals } = useVisibility();
 
   const handleClick = () => {
@@ -21,15 +16,21 @@ export const GasGauge = (props: GaugeProps) => {
     setModals({ ...modals, operatorFund: !modals.operatorFund });
   };
 
-  const arrowStyles = {
-    backgroundColor: getColor(props.level),
-    transform: `rotate(${props.level * 1.6 - 80}deg)`,
+  const levelToAngle = (level: number) => {
+    const bounded = Math.max(0, Math.min(1, level)); // bound between 0 and 1 if not
+    const angle = bounded * 180 - 90; // scale to [0, 180] and shift to [-90, 90]
+    return angle;
   };
 
   return (
     <Container onClick={handleClick}>
-      <GaugeOutline />
-      <GaugeArrow style={arrowStyles} />
+      <Meter>
+        <Arrow angle={levelToAngle(level)}>
+          <Tip />
+          <Arm />
+        </Arrow>
+        <Pivot />
+      </Meter>
     </Container>
   );
 };
@@ -39,24 +40,56 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.4vw;
   cursor: pointer;
 `;
 
-const GaugeOutline = styled.div`
-  border-radius: 1vw 1vw 0 0;
-  border: 0.125vw solid #444;
-  border-bottom: 0;
-
-  width: 1.75vw;
-  height: 0.875vw;
-
-  display: flex;
+const Meter = styled.div`
+  position: relative;
+  border: 0.15vw solid #333;
+  border-radius: 1.2vw 1.2vw 0.3vw 0.3vw;
+  width: 2.4vw;
+  height: 1.5vw;
+  background: conic-gradient(from 180deg at 50% 100%, red, red, orange, yellow, green, green);
 `;
 
-const GaugeArrow = styled.div`
+const Arrow = styled.div<{ angle: number }>`
   position: absolute;
-  border: 0.05vw solid #444;
-  height: 0.5vw;
+  bottom: -0.07vw;
+  left: 50%;
+
+  height: 75%;
+  transform: translateX(-50%) rotate(${(props) => props.angle}deg);
   transform-origin: bottom center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Arm = styled.div`
+  position: relative;
+  background-color: #333;
+  width: 0.15vw;
+  height: 100%;
+`;
+
+const Tip = styled.div`
+  position: absolute;
+  border: solid #333 0.12vw;
+  bottom: 80%;
+  right: 50%;
+
+  transform: rotate(45deg);
+  transform-origin: bottom right;
+`;
+
+const Pivot = styled.div`
+  position: absolute;
+  background-color: #333;
+  border-radius: 0.15vw;
+  width: 0.3vw;
+  height: 0.3vw;
+  bottom: -18%;
+  right: 50%;
+  transform-origin: bottom center;
+  transform: translateX(50%);
 `;

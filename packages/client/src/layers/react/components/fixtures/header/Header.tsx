@@ -95,7 +95,7 @@ export function registerAccountHeader() {
       const calcGaugeSetting = (balance: bigint = BigInt(0)): number => {
         const formatted = Number(formatEther(balance));
         const level = formatted / GasConstants.Full;
-        return 100 * Math.min(level, 1.0);
+        return Math.min(level, 1.0);
       };
 
       const parseStaminaString = (account: Account) => {
