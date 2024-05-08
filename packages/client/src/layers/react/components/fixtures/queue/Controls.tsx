@@ -54,18 +54,20 @@ export const Controls = (props: Props) => {
   };
 
   const getGaugeTooltip = (balance: number) => {
-    const tooltip = ['Operator Gas', ''];
-    let description = 'Tank Full ^-^ Happy';
+    const tooltip = ['Gas Tank', ''];
+    let description = '';
 
     if (balance < GasConstants.Low) description = 'Tank STARVING T-T feed NAO';
-    else if (balance < GasConstants.Quarter) description = 'Tank Hongry ._. feed soon';
-    else if (balance < GasConstants.Half) description = 'Tank ok ^^ could eat';
+    else if (balance < GasConstants.Quarter) description = 'Tank Hongry :| feed soon?';
+    else if (balance < GasConstants.Half) description = 'Tank.. kinda hongry ._.';
+    else if (balance < GasConstants.Full) description = 'Tank ok ^^ could eat';
+    else description = 'Tank Full ^-^ Happy';
     return [...tooltip, description];
   };
 
   const getBalanceTooltip = (balance: number) => {
     const eth = balance.toFixed(5);
-    return [`${eth}Ξ`, '', '(1 ETH = 1000 milliETH)'];
+    return ['1 ETH = 1000 milliETH', '', `${eth}Ξ`];
   };
 
   //////////////////
@@ -87,26 +89,28 @@ export const Controls = (props: Props) => {
 };
 
 const Row = styled.div`
-  padding: 0.3vw;
-  padding-left: 0.5vw;
-  gap: 0.7vw;
-
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
 `;
 
 const RowPrefix = styled.div`
+  border-left: 0.15vw solid #333;
+  border-bottom: 0.15vw solid #333;
+  border-radius: 0 0 0 0.4vw;
+  margin 0.2vw;
+  padding: 0.3vw;
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
-  gap: 0.9vw;
+  align-items: flex-end;
+  gap: 0.6vw;
 `;
 
 const Text = styled.div`
   color: #333;
+  padding-bottom: 0.09vw;
   text-align: left;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.75vw;
 `;

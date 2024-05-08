@@ -90,9 +90,10 @@ export const Logs = (props: Props) => {
 
 const Content = styled.div`
   border: solid grey 0.14vw;
-  border-radius: 10px;
+  border-radius: 0.4vw;
 
   background-color: #ddd;
+  margin: 0.2vw;
   padding: 0.2vw;
   overflow-y: scroll;
 
