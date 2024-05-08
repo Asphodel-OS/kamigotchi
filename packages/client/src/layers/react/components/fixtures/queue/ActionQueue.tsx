@@ -1,8 +1,8 @@
+import { EntityIndex, getComponentEntities } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { map } from 'rxjs';
+import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
-import { EntityIndex, getComponentEntities } from '@mud-classic/recs';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store';
 import { Controls } from './Controls';
@@ -19,18 +19,19 @@ export function registerActionQueue() {
     },
 
     (layers) => {
-      const {
-        network: { actions },
-      } = layers;
-      return actions!.Action.update$.pipe(
+      const { network } = layers;
+      const { actions, components } = network;
+      const { LoadingState } = components;
+
+      return merge(actions.Action.update$, LoadingState.update$).pipe(
         map(() => {
-          return { layers };
+          return { network };
         })
       );
     },
 
-    ({ layers }) => {
-      const ActionComponent = layers.network.actions!.Action;
+    ({ network }) => {
+      const ActionComponent = network.actions.Action;
       const { fixtures } = useVisibility();
       const [mode, setMode] = useState<number>(1);
       const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
@@ -44,8 +45,8 @@ export function registerActionQueue() {
       return (
         <Wrapper style={{ display: fixtures.actionQueue ? 'block' : 'none' }}>
           <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
-            {mode !== 0 && <Logs actionIndices={actionIndices} network={layers.network} />}
-            <Controls mode={mode} setMode={setMode} network={layers.network} />
+            {mode !== 0 && <Logs actionIndices={actionIndices} network={network} />}
+            <Controls mode={mode} setMode={setMode} network={network} />
           </Content>
         </Wrapper>
       );
@@ -54,7 +55,6 @@ export function registerActionQueue() {
 }
 
 const Wrapper = styled.div`
-  display: block;
   align-items: left;
 `;
 

@@ -67,16 +67,25 @@ export const Logs = (props: Props) => {
     let metadata = actionData.metadata ?? '';
     return (
       <Row key={`action${entityIndex}`}>
-        <RowSection1>
+        <RowSegment>
           {Status(state, metadata)}
           {Description(actionData)}
-        </RowSection1>
-        <RowSection2>{Time(actionData.time)}</RowSection2>
+        </RowSegment>
+        <RowSegment>{Time(actionData.time)}</RowSegment>
       </Row>
     );
   };
 
-  return <Content id='tx-logs'>{actionIndices.map((entityIndex) => Log(entityIndex))}</Content>;
+  return (
+    <Content id='tx-logs'>
+      <Row style={{ justifyContent: 'space-evenly' }}>
+        <Bar />
+        <Text>TxQueue</Text>
+        <Bar />
+      </Row>
+      {actionIndices.map((entityIndex) => Log(entityIndex))}
+    </Content>
+  );
 };
 
 const Content = styled.div`
@@ -106,17 +115,17 @@ const Row = styled.div`
   text-align: left;
 `;
 
-const RowSection1 = styled.div`
+const RowSegment = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   gap: 0.2vw;
 `;
 
-const RowSection2 = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
+const Bar = styled.div`
+  border-top: 0.1vw solid #888;
+  width: 40%;
+  padding: 0.1vw;
 `;
 
 const Text = styled.div`
