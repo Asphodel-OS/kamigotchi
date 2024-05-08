@@ -6,7 +6,7 @@ export { CopyButton } from './CopyButton';
 export { Countdown } from './Countdown';
 export { ExitButton } from './ExitButton';
 export { FarcasterConnect } from './FarcasterConnect';
-export { Gauge } from './Gauge';
+export { GasGauge } from './GasGauge';
 export { HelpIcon } from './HelpIcon';
 export { IconButton } from './IconButton';
 export { IconListButton } from './IconListButton';
