@@ -42,5 +42,6 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  padding-right: 0.32vw;
   gap: 0.9vh;
 `;
