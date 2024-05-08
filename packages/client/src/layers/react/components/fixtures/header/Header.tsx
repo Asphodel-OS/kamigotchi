@@ -18,7 +18,7 @@ import { Tooltip } from 'layers/react/components/library/Tooltip';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store';
 
-export function registerHeaderFixture() {
+export function registerAccountHeader() {
   registerUIComponent(
     'HeaderFixture',
     {

@@ -42,7 +42,8 @@ export const MenuButton = (props: Props) => {
 };
 
 const Button = styled.button`
-  border-radius: 10px;
+  border-radius: 0.9vh;
+  border: solid black 0.15vw;
   cursor: pointer;
   pointer-events: auto;
 
@@ -52,6 +53,8 @@ const Button = styled.button`
 `;
 
 const Image = styled.img`
-  height: 100%;
+  height: 3.6vh;
   width: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 `;

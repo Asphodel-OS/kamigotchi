@@ -1,1 +1,0 @@
-export { registerLoginFixture } from './Login';

@@ -1,1 +1,1 @@
-export { registerActionQueueFixture } from './ActionQueue';
+export { registerActionQueue } from './ActionQueue';

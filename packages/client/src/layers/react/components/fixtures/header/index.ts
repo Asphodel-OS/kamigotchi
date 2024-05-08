@@ -1,1 +1,1 @@
-export { registerHeaderFixture } from './Header';
+export { registerAccountHeader } from './Header';

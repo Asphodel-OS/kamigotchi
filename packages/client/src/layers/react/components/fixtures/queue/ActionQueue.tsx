@@ -8,7 +8,7 @@ import { useVisibility } from 'layers/react/store';
 import { Controls } from './Controls';
 import { Logs } from './Logs';
 
-export function registerActionQueueFixture() {
+export function registerActionQueue() {
   registerUIComponent(
     'ActionQueue',
     {

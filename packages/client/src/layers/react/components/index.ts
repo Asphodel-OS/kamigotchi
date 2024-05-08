@@ -2,21 +2,10 @@ import { registerLoadingState } from './LoadingState';
 
 import { registerScene } from './canvas';
 
-import {
-  registerAccountButton,
-  registerChatButton,
-  registerHelpButton,
-  registerInventoryButton,
-  registerMapButton,
-  registerPartyButton,
-  registerQuestsButton,
-  registerSettingsButton,
-} from './fixtures/buttons';
-
-import { registerHeaderFixture } from './fixtures/header';
-import { registerLoginFixture } from './fixtures/login';
+import { registerAccountHeader } from './fixtures/header';
+import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
 import { registerNotificationFixture } from './fixtures/notifications';
-import { registerActionQueueFixture } from './fixtures/queue/';
+import { registerActionQueue } from './fixtures/queue/';
 
 import { registerAccountModal } from './modals/account';
 import { registerChatModal } from './modals/chat/';
@@ -48,26 +37,16 @@ import {
 export function registerUIComponents() {
   registerLoadingState();
 
-  registerChatButton();
-  registerChatModal();
-
-  // buttons
-  registerAccountButton();
-  registerHelpButton();
-  registerInventoryButton();
-  registerMapButton();
-  registerPartyButton();
-  registerQuestsButton();
-  registerSettingsButton();
-
-  // other fixtures
-  registerHeaderFixture();
-  registerActionQueueFixture();
-  registerLoginFixture();
+  // fixtures
+  registerAccountHeader();
+  registerActionQueue();
+  registerMenuLeft();
+  registerMenuRight();
   registerNotificationFixture();
 
   // menu modals
   registerAccountModal();
+  registerChatModal();
   registerHelpModal();
   registerInventoryModal();
   registerMapModal();

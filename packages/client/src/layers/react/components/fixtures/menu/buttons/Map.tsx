@@ -1,0 +1,29 @@
+import { mapIcon } from 'assets/images/icons/menu';
+import { MenuButton } from 'layers/react/components/library/MenuButton';
+import { Modals, useVisibility } from 'layers/react/store';
+
+export const MapMenuButton = () => {
+  const { buttons } = useVisibility();
+  const modalsToHide: Partial<Modals> = {
+    account: false,
+    bridgeERC20: false,
+    bridgeERC721: false,
+    dialogue: false,
+    emaBoard: false,
+    kami: false,
+    leaderboard: false,
+    nameKami: false,
+    party: false,
+  };
+
+  return (
+    <MenuButton
+      id='map_button'
+      image={mapIcon}
+      tooltip={`Map`}
+      targetDiv='map'
+      hideModals={modalsToHide}
+      visible={buttons.map}
+    />
+  );
+};
