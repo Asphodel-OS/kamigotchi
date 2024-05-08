@@ -8,6 +8,7 @@ interface Props {
   img: string;
   options: Option[];
   disabled?: boolean;
+  noMargin?: boolean;
 }
 
 export interface Option {
@@ -17,11 +18,12 @@ export interface Option {
 }
 
 export function IconListButton(props: Props) {
+  const { img, options, disabled, noMargin } = props;
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!props.disabled) {
+    if (!disabled) {
       playClick();
       setAnchorEl(event.currentTarget);
     }
@@ -40,7 +42,7 @@ export function IconListButton(props: Props) {
 
   const setStyles = () => {
     var styles: any = {};
-    if (props.disabled) styles.backgroundColor = '#bbb';
+    if (disabled) styles.backgroundColor = '#bbb';
     return styles;
   };
 
@@ -64,9 +66,15 @@ export function IconListButton(props: Props) {
 
   return (
     <div>
-      <Button ref={toggleRef} onClick={handleClick} style={setStyles()} disabled={!!props.disabled}>
+      <Button
+        ref={toggleRef}
+        onClick={handleClick}
+        style={setStyles()}
+        disabled={!!disabled}
+        noMargin={!!noMargin}
+      >
         <Corner />
-        <Image src={props.img} />
+        <Image src={img} />
       </Button>
       <Popover
         id={id}
@@ -75,20 +83,22 @@ export function IconListButton(props: Props) {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Menu>{props.options.map((option, i) => element(option, i))}</Menu>
+        <Menu>{options.map((option, i) => element(option, i))}</Menu>
       </Popover>
     </div>
   );
 }
 
-const Button = styled.button<{ disabled: boolean }>`
+const Button = styled.button<{ disabled: boolean; noMargin: boolean }>`
   position: relative;
   background-color: #fff;
   border: solid black 0.15vw;
   border-radius: 0.4vw;
   color: black;
 
-  margin: 0.2vw;
+  margin: ${(props) => {
+    return props.noMargin ? '0vw' : '0.2vw';
+  }};
   padding: 0.4vw;
 
   display: flex;

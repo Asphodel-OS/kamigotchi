@@ -163,7 +163,12 @@ export const Kards = (props: Props) => {
 
     return (
       <Tooltip text={[tooltip]}>
-        <IconListButton img={feedIcon} disabled={tooltip !== 'feed kami'} options={feedOptions} />
+        <IconListButton
+          img={feedIcon}
+          disabled={tooltip !== 'feed kami'}
+          options={feedOptions}
+          noMargin
+        />
       </Tooltip>
     );
   };
@@ -180,6 +185,7 @@ export const Kards = (props: Props) => {
           img={reviveIcon}
           onClick={() => actions.revive(kami, account.inventories!.revives[0].item.index)}
           disabled={!hasRevive(account) || onCooldown(kami)}
+          noMargin
         />
       </Tooltip>
     );

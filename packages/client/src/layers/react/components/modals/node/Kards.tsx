@@ -166,6 +166,7 @@ export const Kards = (props: Props) => {
           onClick={() => actions.collect(kami)}
           img={collectIcon}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
+          noMargin
         />
       </Tooltip>
     );
@@ -207,7 +208,12 @@ export const Kards = (props: Props) => {
 
     return (
       <Tooltip key='feed-tooltip' text={[tooltip]}>
-        <IconListButton img={feedIcon} disabled={tooltip !== 'feed kami'} options={feedOptions} />
+        <IconListButton
+          img={feedIcon}
+          disabled={tooltip !== 'feed kami'}
+          options={feedOptions}
+          noMargin
+        />
       </Tooltip>
     );
   };
@@ -220,6 +226,7 @@ export const Kards = (props: Props) => {
           img={stopIcon}
           onClick={() => actions.stop(kami)}
           disabled={kami.production === undefined || getDisabledReason(kami) !== ''}
+          noMargin
         />
       </Tooltip>
     );
@@ -243,6 +250,7 @@ export const Kards = (props: Props) => {
           img={liquidateIcon}
           options={actionOptions}
           disabled={actionOptions.length == 0}
+          noMargin
         />
       </Tooltip>
     );

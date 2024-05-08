@@ -144,6 +144,8 @@ const TitleCorner = styled.div`
 
 const ContentColumn = styled.div`
   flex-grow: 1;
+  margin: 0.2vw;
+  padding-top: 0.2vw;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -171,13 +173,15 @@ const ContentActions = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+  gap: 0.4vw;
 `;
 
 const TextBig = styled.p`
-  padding-bottom: 0.05vw;
+  padding: 0.2vw;
 
-  font-size: 0.9vw;
   font-family: Pixel;
+  font-size: 0.75vw;
+  line-height: 0.9vw;
   text-align: left;
 
   ${({ onClick }) =>
@@ -192,9 +196,9 @@ const TextBig = styled.p`
 `;
 
 const TextMedium = styled.p`
-  font-size: 0.7vw;
+  font-size: 0.6vw;
   font-family: Pixel;
+  line-height: 1vw;
   text-align: left;
-  padding-top: 0.4vw;
-  padding-left: 0.2vw;
+  padding-left: 0.5vw;
 `;

@@ -9,21 +9,24 @@ interface Props {
   size?: 'small' | 'medium' | 'large' | 'book';
   color?: string;
   pulse?: boolean;
+  noMargin?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
 export const IconButton = (props: Props) => {
+  const { onClick, img, disabled, color, pulse, noMargin } = props;
+
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
-    await props.onClick();
+    await onClick();
   };
 
   // override styles for sizes and disabling
   const setStyles = () => {
     let styles: any = {};
 
-    const size = props.size || 'medium';
+    const size = props.size ?? 'medium';
     if (size === 'small') {
       styles.width = '1.5vw';
       styles.height = '1.5vw';
@@ -55,21 +58,22 @@ export const IconButton = (props: Props) => {
       styles.boxShadow = '0 0 1vw 0 rgba(0, 0, 0, 0.5)';
     }
 
-    if (props.color) styles.backgroundColor = props.color;
-    if (props.disabled) styles.backgroundColor = '#b2b2b2';
+    if (noMargin) styles.margin = '0vw';
+    if (color) styles.backgroundColor = color;
+    if (disabled) styles.backgroundColor = '#b2b2b2';
 
     return styles;
   };
 
   return (
     <Button
-      onClick={!props.disabled ? handleClick : () => {}}
+      onClick={!disabled ? handleClick : () => {}}
       style={setStyles()}
-      color={props.color}
-      disabled={props.disabled}
-      pulse={props.pulse}
+      color={color}
+      disabled={disabled}
+      pulse={pulse}
     >
-      <Image src={props.img} />
+      <Image src={img} />
     </Button>
   );
 };

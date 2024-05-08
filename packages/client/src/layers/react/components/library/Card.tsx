@@ -21,20 +21,20 @@ export const Card = (props: Props) => {
   };
 
   return (
-    <Container key={props.image} fullWidth={props.fullWidth}>
+    <Wrapper key={props.image} fullWidth={props.fullWidth}>
       <Image onClick={() => imageOnClick()} src={props.image} size={props.size} />
-      <ContentContainer>
+      <Container>
         {props.titleBarContent ? <TitleBar>{props.titleBarContent}</TitleBar> : null}
         <Content>{props.content}</Content>
-      </ContentContainer>
-    </Container>
+      </Container>
+    </Wrapper>
   );
 };
 
-const Container = styled.div<{ fullWidth?: boolean }>`
+const Wrapper = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
   border: 0.15vw solid black;
-  border-radius: 0.35vw;
+  border-radius: 0.6vw;
   color: black;
   margin: 0.15vw;
 
@@ -58,19 +58,19 @@ const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
   }
 
   height: ${(props) => {
-    if (props.size === 'small') return '7vw';
-    else if (props.size === 'large') return '12vw';
-    else return '9vw';
+    if (props.size === 'small') return '6vw';
+    if (props.size === 'large') return '12vw';
+    return '9vw';
   }};
 
   width: ${(props) => {
-    if (props.size === 'small') return '7vw';
-    else if (props.size === 'large') return '12vw';
-    else return '9vw';
+    if (props.size === 'small') return '6vw';
+    if (props.size === 'large') return '12vw';
+    return '9vw';
   }};
 `;
 
-const ContentContainer = styled.div`
+const Container = styled.div`
   border-color: black;
   border-width: 0.15vw;
   color: black;
@@ -90,11 +90,12 @@ const TitleBar = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const Content = styled.div`
   flex-grow: 1;
-  padding: 0.7vw;
+  padding: 0.2vw;
 
   display: flex;
   flex-flow: row nowrap;
