@@ -48,7 +48,7 @@ const Image = styled.img<{ size?: 'small' | 'medium' | 'large' }>`
   border-style: solid;
   border-width: 0vw 0.15vw 0vw 0vw;
   border-color: black;
-  border-radius: 0.15vw 0vw 0vw 0.15vw;
+  border-radius: 0.45vw 0vw 0vw 0.45vw;
   object-fit: cover;
   object-position: 100% 0;
 
