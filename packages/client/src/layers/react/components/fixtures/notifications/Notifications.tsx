@@ -10,7 +10,7 @@ export function registerNotificationFixture() {
     'NotificationFixture',
     {
       colStart: 72,
-      colEnd: 99,
+      colEnd: 100,
       rowStart: 8,
       rowEnd: 30,
     },
@@ -33,12 +33,18 @@ export function registerNotificationFixture() {
     ({ notifications, list }) => {
       const { fixtures, modals, setModals } = useVisibility();
 
+      /////////////////
+      // INTERACTION
+
       const handleClick = (targetModal: string | undefined) => {
         if (targetModal === undefined) return;
 
         const target = targetModal as keyof Modals;
         setModals({ ...modals, [target]: true });
       };
+
+      /////////////////
+      // VISUALIZATION
 
       const SingleNotif = (id: EntityIndex) => {
         const notification = getComponentValue(notifications.Notification, id);
@@ -52,9 +58,12 @@ export function registerNotificationFixture() {
         );
       };
 
+      /////////////////
+      // RENDER
+
       return (
         <Wrapper style={{ display: fixtures.notifications ? 'block' : 'none' }}>
-          <Scrollable>{list.map((id) => SingleNotif(id))}</Scrollable>
+          {list.map((id) => SingleNotif(id))}
         </Wrapper>
       );
     }
@@ -62,30 +71,48 @@ export function registerNotificationFixture() {
 }
 
 const Wrapper = styled.div`
+  background-color: #fff;
+  border: 0.15vw solid black;
+  border-radius: 0.6vw;
+
+  width: 99%;
+  padding: 0.2vw;
+
   display: block;
   align-items: left;
-  pointer-events: auto;
 
-  width: 100%;
+  overflow-y: scroll;
 `;
 
 const Card = styled.button`
   background-color: #fff;
-  border-color: black;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  color: black;
+  border: 0.15vw solid #333;
+  border-radius: 0.4vw;
   padding: 0.7vh 0.7vw;
-  margin: 0 0 1vh 0;
   width: 100%;
 
   display: flex;
-  flex-flow: column;
+  flex-flow: column nowrap;
 
   &:hover {
     opacity: 0.8;
+    background-color: #ddd;
   }
+
+  pointer-events: auto;
+  cursor: pointer;
+`;
+
+const Title = styled.p`
+  font-family: Pixel;
+  font-size: 1vw;
+  text-align: left;
+  text-wrap: wrap;
+  justify-content: flex-start;
+  color: #333;
+  padding: 1vh 0.5vw 0 0.5vw;
+
+  max-width: 100%;
 `;
 
 const Description = styled.div`
@@ -97,25 +124,6 @@ const Description = styled.div`
   line-height: 1.2vw;
   font-size: 0.7vw;
   padding: 0.4vh 0.5vw;
-
-  max-width: 100%;
-`;
-
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
-  padding: 1vw;
-`;
-
-const Title = styled.p`
-  font-family: Pixel;
-  font-size: 1vw;
-  text-align: left;
-  text-wrap: wrap;
-  justify-content: flex-start;
-  color: #333;
-  padding: 1vh 0.5vw 0 0.5vw;
 
   max-width: 100%;
 `;
