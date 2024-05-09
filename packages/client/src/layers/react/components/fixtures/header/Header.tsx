@@ -1,10 +1,7 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
-import { erc20Abi, formatEther } from 'viem';
-import { useBalance, useReadContract, useReadContracts, useWatchBlockNumber } from 'wagmi';
 
-import { abi as Mint20ProxySystemABI } from 'abi/Mint20ProxySystem.json';
-import { GasConstants } from 'constants/gas';
+import musuIcon from 'assets/images/icons/musu.png';
 import {
   Account,
   calcStamina,
@@ -12,10 +9,9 @@ import {
   getAccountFromBurner,
 } from 'layers/network/shapes/Account';
 import { getRoomByIndex } from 'layers/network/shapes/Room';
-import { Battery, GasGauge, Tooltip } from 'layers/react/components/library';
+import { Battery, Tooltip } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useVisibility } from 'layers/react/store';
-import { parseTokenBalance } from 'utils/balances';
 
 export function registerAccountHeader() {
   registerUIComponent(
@@ -34,7 +30,6 @@ export function registerAccountHeader() {
         map(() => {
           const account = getAccountFromBurner(network);
           return {
-            network,
             data: {
               account,
               room: getRoomByIndex(world, components, account.roomIndex),
@@ -43,65 +38,34 @@ export function registerAccountHeader() {
         })
       );
     },
-    ({ network, data }) => {
+    ({ data }) => {
       // console.log('mAccountInfo:', data);
       const { account, room } = data;
       const { fixtures } = useVisibility();
 
       /////////////////
-      // SUBSCRIPTIONS
-
-      useWatchBlockNumber({
-        onBlockNumber: (n) => {
-          refetchMint20Addy();
-          refetchOwnerMint20Balance();
-          refetchOperatorEthBalance();
-        },
-      });
-
-      // Operator Eth Balance
-      const { data: operatorEthBalance, refetch: refetchOperatorEthBalance } = useBalance({
-        address: account.operatorEOA as `0x${string}`,
-      });
-
-      // $KAMI Contract Address
-      const { data: mint20Addy, refetch: refetchMint20Addy } = useReadContract({
-        address: network.systems['system.Mint20.Proxy']?.address as `0x${string}`,
-        abi: Mint20ProxySystemABI,
-        functionName: 'getTokenAddy',
-      });
-
-      // $KAMI Balance
-      const { data: ownerMint20Balance, refetch: refetchOwnerMint20Balance } = useReadContracts({
-        contracts: [
-          {
-            abi: erc20Abi,
-            address: mint20Addy as `0x${string}`,
-            functionName: 'balanceOf',
-            args: [account.ownerEOA as `0x${string}`],
-          },
-          {
-            abi: erc20Abi,
-            address: mint20Addy as `0x${string}`,
-            functionName: 'decimals',
-          },
-        ],
-      });
-
-      /////////////////
       // INTERPRETATION
-
-      // calculated the gas gauge level
-      const calcGaugeSetting = (balance: bigint = BigInt(0)): number => {
-        const formatted = Number(formatEther(balance));
-        const level = formatted / GasConstants.Full;
-        return Math.min(level, 1.0);
-      };
 
       const parseStaminaString = (account: Account) => {
         const staminaCurr = calcStamina(account);
         const staminaTotal = account.stamina.total;
         return `${staminaCurr}/${staminaTotal * 1}`;
+      };
+
+      // parses and input epoch time in seconds to KamiWorld Military Time (36h days)
+      const parseTimeString = (time: number) => {
+        time = Math.floor(time);
+        const seconds = time % 60;
+        time = Math.floor(time / 60);
+        const minutes = time % 60;
+        time = Math.floor(time / 60);
+        const hours = time % 36;
+
+        const hourString = hours.toString().padStart(2, '0');
+        const minuteString = minutes.toString().padStart(2, '0');
+        const secondString = seconds.toString().padStart(2, '0');
+
+        return `${hourString}:${minuteString}:${secondString}`;
       };
 
       /////////////////
@@ -113,90 +77,70 @@ export function registerAccountHeader() {
         return [
           `Account Stamina (${staminaString})`,
           '',
-          `Determines how far your Operator can travel. Recovers every ${recoveryPeriod}s`,
+          `Determines how far your Operator can travel. Recovers by 1 every ${recoveryPeriod}s`,
         ];
       };
 
-      const getKAMITooltip = () => {
-        return [`$KAMI Balance`, '', `Use this to mint your party of Kamigotchi.`];
+      const getTimeTooltip = () => {
+        return [`Kami World Clock`, '', `Kamigotchi World operates on a 36h day.`];
       };
 
-      const getGasTooltip = () => {
+      const getMusuTooltip = () => {
         return [
-          `Operator Gas`,
+          'Musubi (musu)',
           '',
-          `Your Operator won't function without this. Make sure to stay topped up for the journey!`,
+          'The interconnecting energy of the universe. Collect it from nodes with your Kamis.',
         ];
       };
 
-      const borderLeftStyle = { borderLeft: '.1vw solid black' };
       return (
-        account && (
-          <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
-            <Row>
-              <TextBox>
-                {account.name} - {room.name}
-              </TextBox>
-            </Row>
-            <Line />
-            <Row>
-              <Cell>
-                <Tooltip text={getStaminaTooltip(account)}>
-                  <TextBox>
-                    {`${calcStaminaPercent(account)}%`}
-                    <Battery level={calcStaminaPercent(account)} />
-                  </TextBox>
-                </Tooltip>
-              </Cell>
-              <Cell style={borderLeftStyle}>
-                <Tooltip text={getKAMITooltip()}>
-                  <TextBox>
-                    $KAMI:{' '}
-                    {parseTokenBalance(
-                      ownerMint20Balance?.[0]?.result,
-                      ownerMint20Balance?.[1]?.result
-                    ).toFixed(3)}
-                  </TextBox>
-                </Tooltip>
-              </Cell>
-              <Cell style={borderLeftStyle}>
-                <Tooltip text={getGasTooltip()}>
-                  <TextBox>
-                    Gas:{' '}
-                    {parseTokenBalance(
-                      operatorEthBalance?.value,
-                      operatorEthBalance?.decimals
-                    ).toFixed(3)}
-                    Ξ
-                    <GasGauge level={calcGaugeSetting(operatorEthBalance?.value)} />
-                  </TextBox>
-                </Tooltip>
-              </Cell>
-            </Row>
-          </Container>
-        )
+        <Container id='header' style={{ display: fixtures.header ? 'block' : 'none' }}>
+          <Row>
+            <TextBox>{`${account.name} - ${room.name}`}</TextBox>
+          </Row>
+          <Line />
+          <Row>
+            <Cell>
+              <Tooltip text={getStaminaTooltip(account)}>
+                <TextBox>
+                  {`${calcStaminaPercent(account)}%`}
+                  <Battery level={calcStaminaPercent(account)} />
+                </TextBox>
+              </Tooltip>
+            </Cell>
+            <Cell>
+              <Tooltip text={getTimeTooltip()}>
+                <TextBox>{parseTimeString(Date.now() / 1000)}</TextBox>
+              </Tooltip>
+            </Cell>
+            <Cell style={{ borderWidth: 0 }}>
+              <Tooltip text={getMusuTooltip()}>
+                <TextBox>
+                  <Icon src={musuIcon} />
+                  {account.coin}
+                </TextBox>
+              </Tooltip>
+            </Cell>
+          </Row>
+        </Container>
       );
     }
   );
 }
 
 const Container = styled.div`
-  pointer-events: auto;
-  border-color: black;
-  border-width: 2px;
-  border-radius: 10px;
-  border-style: solid;
   background-color: white;
-  &:active {
-    background-color: #ddd;
-  }
+  border: 0.15vw solid black;
+  border-radius: 0.6vw;
   width: 99%;
-  padding: 0.2vw 0vw;
+  height: 9vh;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
+
+  pointer-events: auto;
 `;
 
 const Row = styled.div`
@@ -204,36 +148,41 @@ const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
-`;
+  height: 50%;
 
-const Cell = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5vw;
-  width: 33%;
-
-  color: black;
-  font-family: Pixel;
-  font-size: 0.8vw;
+  flex-grow: 1;
 `;
 
 const Line = styled.div`
-  border-top: 0.1vw solid black;
+  border-top: 0.15vw solid black;
   width: 100%;
-  height: 1px;
 `;
 
-const TextBox = styled.div`
+const Cell = styled.div`
+  border-right: 0.15vw solid black;
+  width: 33%;
+
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  padding: 0.8vw 0vw;
-  gap: 0.5vw;
+`;
+
+const TextBox = styled.div`
+  padding: 1.2vh;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6vh;
 
   color: black;
   font-family: Pixel;
-  font-size: 0.8vw;
+  font-size: 1.2vh;
+`;
+
+const Icon = styled.img`
+  width: 2.4vh;
+  height: auto;
 `;
