@@ -54,7 +54,7 @@ export const ActionButton = (props: Props) => {
       styles.padding = '0vh .6vh';
       styles.borderRadius = '0.9vh';
       styles.borderWidth = '.15vw';
-      styles.height = '4.2vh';
+      styles.height = '4.5vh';
     } else if (size === 'icon-medium') {
       styles.fontSize = '.8vw';
       styles.margin = '.2vw';

@@ -42,7 +42,7 @@ export const MenuButton = (props: Props) => {
 };
 
 const Button = styled.button`
-  height: 4.2vh;
+  height: 4.5vh;
   border-radius: 0.9vh;
   border: solid black 0.15vw;
   cursor: pointer;

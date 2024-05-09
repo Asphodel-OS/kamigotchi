@@ -33,5 +33,5 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.9vh;
+  gap: 0.6vh;
 `;
