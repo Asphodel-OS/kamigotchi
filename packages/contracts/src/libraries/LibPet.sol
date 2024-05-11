@@ -367,7 +367,7 @@ library LibPet {
   // Check whether a pet is on cooldown after its last Standard Action
   function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
     uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
+    uint256 idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
     return idleTime < idleRequirement;
   }
 

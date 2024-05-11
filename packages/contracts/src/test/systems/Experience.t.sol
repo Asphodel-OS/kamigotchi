@@ -15,7 +15,7 @@ contract ExperienceTest is SetupTemplate {
     super.setUp();
 
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
-    _idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
+    _idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
 
     _numPets = 5;
     _petIDs = _mintPets(0, _numPets);

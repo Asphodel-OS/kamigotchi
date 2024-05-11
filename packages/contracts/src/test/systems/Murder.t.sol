@@ -28,7 +28,7 @@ contract MurderTest is SetupTemplate {
     _nodeIDs.push(_createHarvestingNode(5, 3, "Test Node", "this is a node", "NORMAL"));
 
     // starting states
-    _idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
+    _idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
   }
 
   /////////////////
@@ -257,7 +257,7 @@ contract MurderTest is SetupTemplate {
     }
 
     // check that we CANNOT liquidate anytime before the idle requirement is met
-    uint numIncrements = 7; // KAMI_IDLE_REQ must not be divisible by this number
+    uint numIncrements = 7; // STANDARD_COOLDOWN must not be divisible by this number
     for (uint i = 0; i < numIncrements; i++) {
       _fastForward(_idleRequirement / numIncrements);
 

@@ -1009,7 +1009,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function _initKamiConfigs() internal {
     // Idle Requirements
-    _setConfig("KAMI_IDLE_REQ", 300);
+    _setConfig("STANDARD_COOLDOWN", 300);
 
     // Kami Stats
     _setConfig("KAMI_BASE_HEALTH", 50);

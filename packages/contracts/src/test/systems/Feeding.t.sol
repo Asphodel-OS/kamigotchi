@@ -16,7 +16,7 @@ contract FeedingTest is SetupTemplate {
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
     _npcID = _createNPC(1, 1, "Test NPC");
 
-    _idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
+    _idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
   }
 
   /////////////////

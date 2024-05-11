@@ -117,7 +117,7 @@ export const getKami = (
     time: {
       cooldown: {
         last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
-        requirement: getConfigFieldValue(world, components, 'KAMI_IDLE_REQ'),
+        requirement: getConfigFieldValue(world, components, 'STANDARD_COOLDOWN'),
       },
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,

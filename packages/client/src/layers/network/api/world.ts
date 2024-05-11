@@ -70,7 +70,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 
     // Kami Idle Requirement
-    await api.config.set.number('KAMI_IDLE_REQ', 180);
+    await api.config.set.number('STANDARD_COOLDOWN', 180);
 
     // Kami Mint Price and Limits
     // to be 5, set at 500 for testing
@@ -124,7 +124,7 @@ export function setupWorldAPI(systems: any, provider: any) {
   async function initLocalConfig() {
     await api.config.set.number('MINT_ACCOUNT_MAX', 50000000);
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
-    await api.config.set.number('KAMI_IDLE_REQ', 10);
+    await api.config.set.number('STANDARD_COOLDOWN', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
     await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 9]); // in respect to power
     await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 10000, 2, 3]); // in respect to harmony

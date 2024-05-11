@@ -26,7 +26,7 @@ contract HarvestTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _idleRequirement = LibConfig.get(components, "KAMI_IDLE_REQ");
+    _idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
   }
 
   /////////////////
@@ -480,7 +480,7 @@ contract HarvestTest is SetupTemplate {
     uint256 timeDelta = 15 minutes;
 
     // setup
-    _setConfig("KAMI_IDLE_REQ", 0);
+    _setConfig("STANDARD_COOLDOWN", 0);
     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", "");
     uint256 petID = _mintPet(0);
     // setting up power and health
@@ -507,7 +507,7 @@ contract HarvestTest is SetupTemplate {
     vm.assume(health > 0 && health < 2147483);
 
     // setup
-    _setConfig("KAMI_IDLE_REQ", 0);
+    _setConfig("STANDARD_COOLDOWN", 0);
     uint256[] memory seeds = _randomUints(3);
     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", _getFuzzAffinity(seeds[0], true));
     uint256 petID = _mintPet(0);
