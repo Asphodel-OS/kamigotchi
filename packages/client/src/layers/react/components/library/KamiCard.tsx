@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Kami, calcCooldownRemaining, calcHealth, isUnrevealed } from 'layers/network/shapes/Kami';
+import { Kami, calcCooldown, calcHealth, isUnrevealed } from 'layers/network/shapes/Kami';
 import { useSelected, useVisibility } from 'layers/react/store';
 import { playClick } from 'utils/sounds';
 import { Battery } from './Battery';
@@ -71,7 +71,7 @@ export const KamiCard = (props: Props) => {
   };
 
   const CornerContent = (kami: Kami) => {
-    const cooldown = calcCooldownRemaining(kami);
+    const cooldown = calcCooldown(kami);
     const cooldownString = `Cooldown: ${Math.max(cooldown, 0).toFixed(0)}s`;
     const totalHealth = kami.stats.health.total;
     const batteryString = !isUnrevealed(kami)

@@ -73,7 +73,7 @@ contract ProductionLiquidateSystem is System {
     uint256 standardActionTs = LibBonus.processBonus(
       components,
       petID,
-      "ATTACK_COOLDOWN",
+      "STANDARD_COOLDOWN",
       block.timestamp
     );
     LibPet.setLastActionTs(components, petID, standardActionTs);

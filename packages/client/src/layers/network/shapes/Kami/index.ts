@@ -1,5 +1,5 @@
 export {
-  calcCooldownRemaining,
+  calcCooldown,
   calcHarvestTime,
   calcHealth,
   calcIdleTime,

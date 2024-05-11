@@ -82,16 +82,16 @@ export const calcHarvestTime = (kami: Kami): number => {
 };
 
 // calculate the cooldown remaining on kami standard actions
-export const calcCooldownRemaining = (kami: Kami): number => {
+export const calcCooldown = (kami: Kami): number => {
   const now = Date.now() / 1000;
-  const lastStandardActionTime = kami.time.cooldown.last;
-  const remainingTime = kami.time.cooldown.requirement + lastStandardActionTime - now;
+  const cooldown = kami.time.cooldown;
+  const remainingTime = cooldown.requirement - (now - cooldown.last);
   return Math.max(0, remainingTime);
 };
 
 // determine whether the kami is still on cooldown
 export const onCooldown = (kami: Kami): boolean => {
-  return calcCooldownRemaining(kami) > 0;
+  return calcCooldown(kami) > 0;
 };
 
 ////////////////

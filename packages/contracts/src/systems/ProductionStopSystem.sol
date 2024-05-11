@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
@@ -54,7 +55,13 @@ contract ProductionStopSystem is System {
     LibPet.setState(components, petID, "RESTING");
 
     // Update ts for Standard Action Cooldowns
-    LibPet.setLastActionTs(components, petID, block.timestamp);
+    uint256 standardActionTs = LibBonus.processBonus(
+      components,
+      petID,
+      "STANDARD_COOLDOWN",
+      block.timestamp
+    );
+    LibPet.setLastActionTs(components, petID, standardActionTs);
 
     // standard logging and tracking
     uint256 nodeID = LibProduction.getNode(components, id);

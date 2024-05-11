@@ -5,7 +5,7 @@ import { Account } from 'layers/network/shapes/Account';
 import { Inventory } from 'layers/network/shapes/Inventory';
 import {
   Kami,
-  calcCooldownRemaining,
+  calcCooldown,
   calcHealth,
   calcLiqThresholdValue,
   calcOutput,
@@ -85,7 +85,7 @@ export const Kards = (props: Props) => {
   const getDisabledReason = (kami: Kami): string => {
     let reason = '';
     if (onCooldown(kami)) {
-      reason = 'On cooldown (' + calcCooldownRemaining(kami).toFixed(0) + 's left)';
+      reason = 'On cooldown (' + calcCooldown(kami).toFixed(0) + 's left)';
     } else if (isStarving(kami)) {
       reason = 'starving :(';
     }
