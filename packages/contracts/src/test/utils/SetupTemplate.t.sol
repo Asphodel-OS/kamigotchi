@@ -1033,7 +1033,7 @@ abstract contract SetupTemplate is TestSetupImports {
     // [prec, base, base_prec, mult_prec]
     _setConfigArray("HARVEST_RATE", [uint32(9), 1000, 3, 9, 0, 0, 0, 0]);
     // [base, up, down]
-    _setConfigArray("HARVEST_RATE_MULT_AFF", [uint32(1000), 1500, 500, 0, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_HARV_EFFICACY", [uint32(1000), 1500, 500, 0, 0, 0, 0, 0]);
   }
 
   function _initLiquidationConfigs() internal {

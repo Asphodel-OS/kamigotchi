@@ -108,10 +108,10 @@ export async function run() {
       api.config.set.number('HARVEST_RATE_BASE', 250); // in respect to power
       api.config.set.number('HARVEST_RATE_BASE_PREC', 2); // i.e. x/100
       api.config.set.number('HARVEST_RATE_MULT_PREC', 7); // 2 affinities and 1 bonus multiplier with precision of 2
-      api.config.set.number('HARVEST_RATE_MULT_AFF_BASE', 100);
-      api.config.set.number('HARVEST_RATE_MULT_AFF_UP', 150);
-      api.config.set.number('HARVEST_RATE_MULT_AFF_DOWN', 50);
-      api.config.set.number('HARVEST_RATE_MULT_AFF_PREC', 2); // 2, not actually used
+      api.config.set.number('KAMI_HARV_EFFICACY_BASE', 100);
+      api.config.set.number('KAMI_HARV_EFFICACY_UP', 150);
+      api.config.set.number('KAMI_HARV_EFFICACY_DOWN', 50);
+      api.config.set.number('KAMI_HARV_EFFICACY_PREC', 2); // 2, not actually used
 
       // Kami Health Drain/Heal Rates
       // DrainRate = HarvestRate * DrainBaseRate

@@ -34,7 +34,7 @@ contract FeedingTest is SetupTemplate {
 
   function _calcHarvestingPetHealth(uint petID) internal view returns (uint) {
     uint productionID = LibPet.getProduction(components, petID);
-    uint output = LibProduction.calcOutput(components, productionID);
+    uint output = LibProduction.calcBounty(components, productionID);
     uint drain = LibPet.calcDrain(components, petID, output);
     uint health = uint(int(LibStat.getHealth(components, petID).sync));
     health = (health > drain) ? health - drain : 0;

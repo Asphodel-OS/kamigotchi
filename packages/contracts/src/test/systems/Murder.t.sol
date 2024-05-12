@@ -65,7 +65,7 @@ contract MurderTest is SetupTemplate {
   function _isLiquidatableBy(uint productionID, uint attackerID) internal view returns (bool) {
     uint victimID = LibProduction.getPet(components, productionID);
     uint totalHealth = uint(int(LibPet.calcTotalHealth(components, victimID)));
-    uint output = LibProduction.calcOutput(components, productionID);
+    uint output = LibProduction.calcBounty(components, productionID);
     uint drain = LibPet.calcDrain(components, victimID, output);
     uint health = uint(int(LibStat.getHealth(components, victimID).sync));
     health = (health > drain) ? health - drain : 0;

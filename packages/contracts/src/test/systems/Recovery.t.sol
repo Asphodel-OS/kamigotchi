@@ -77,7 +77,15 @@ contract RecoveryTest is SetupTemplate {
 
     // checking recovery rate
     uint256 rate = _calcRate(harmony.toUint256());
+<<<<<<< HEAD
+<<<<<<< HEAD
     // assertEq(rate, LibPet.calcMetabolism(components, petID), "Rate calc mismatch");
+=======
+    assertEq(rate, LibPet.calcMetabolism(components, petID), "Rate calc mismatch");
+>>>>>>> d9c80366 (refine kami heal logic)
+=======
+    // assertEq(rate, LibPet.calcMetabolism(components, petID), "Rate calc mismatch");
+>>>>>>> 8ece43dc (cleanups)
     assertEq(
       0, // no time passed, should be 0
       LibPet.calcRecovery(components, petID),
@@ -88,7 +96,15 @@ contract RecoveryTest is SetupTemplate {
     _fastForward(timeDelta);
 
     // checking recovery rate - should be same as above
+<<<<<<< HEAD
+<<<<<<< HEAD
     // assertEq(rate, LibPet.calcMetabolism(components, petID), "Rate calc post mismatch");
+=======
+    assertEq(rate, LibPet.calcMetabolism(components, petID), "Rate calc post mismatch");
+>>>>>>> d9c80366 (refine kami heal logic)
+=======
+    // assertEq(rate, LibPet.calcMetabolism(components, petID), "Rate calc post mismatch");
+>>>>>>> 8ece43dc (cleanups)
     uint256 recovery = _calcRecovery(rate, bonus, timeDelta);
     assertEq(recovery, LibPet.calcRecovery(components, petID), "Recovery calc mismatch");
 

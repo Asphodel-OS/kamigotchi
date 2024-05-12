@@ -98,10 +98,9 @@ export function setupWorldAPI(systems: any, provider: any) {
     // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
 
     // Harvest Effects
+    await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500]); // affinity-based efficacy shifts [base, up, down]
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 2500, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
-    // [base, up, down]
-    await api.config.set.array('HARVEST_RATE_MULT_AFF', [1000, 1500, 500]);
 
     // Kami Health Drain Rate
     await api.config.set.array('HEALTH_RATE_DRAIN_BASE', [20, 2]);

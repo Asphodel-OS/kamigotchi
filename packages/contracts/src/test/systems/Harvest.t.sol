@@ -107,9 +107,9 @@ pragma solidity ^0.8.0;
 //     uint256 totMultiplier = 1;
 //     for (uint256 i = 0; i < petAffs.length; i++)
 //       totMultiplier *= LibAffinity.getMultiplier(
-//         LibConfig.getArray(components, "HARVEST_RATE_MULT_AFF"),
+//         LibConfig.getArray(components, "KAMI_HARV_EFFICACY"),
 //         bonus,
-//         LibAffinity.getHarvestEfficacy(petAffs[i], nodeAff)
+//         LibAffinity.getHarvestEffectiveness(petAffs[i], nodeAff)
 //       );
 
 //     return totMultiplier;
@@ -199,7 +199,7 @@ pragma solidity ^0.8.0;
 //      */
 
 //     // setup
-//     _setConfigArray("HARVEST_RATE_MULT_AFF", [uint32(5), 7, 3, 0, 0, 0, 0, 0]);
+//     _setConfigArray("KAMI_HARV_EFFICACY", [uint32(5), 7, 3, 0, 0, 0, 0, 0]);
 //     uint nodeID = _createHarvestingNode(1, 1, "testNode", "", nodeAff);
 //     uint petID = _mintPet(0);
 //     registerTrait(127, 0, 5, 5, 0, 0, 5, bodyAff, "Test Body", "BODY");
@@ -575,7 +575,7 @@ pragma solidity ^0.8.0;
 //     assertEq(timeDelta, LibProduction.calcDuration(components, prodID), "Duration calc mismatch");
 //     assertEq(
 //       _calcOutput(rate, timeDelta),
-//       LibProduction.calcOutput(components, prodID),
+//       LibProduction.calcBounty(components, prodID),
 //       "Output calc mismatch"
 //     );
 //     assertEq(

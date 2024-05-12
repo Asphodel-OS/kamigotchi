@@ -34,7 +34,7 @@ export const getProduction = (
   const { Coin, NodeID, PetID, LastTime, Rate, State, StartTime } = components;
   const kamiID = getComponentValue(PetID, index)?.value as EntityID;
   const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
-  const kami = getKami(world, components, kamiEntityIndex, { account: true });
+  const kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
 
   let production: Production = {
     id: world.entities[index],

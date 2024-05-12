@@ -84,7 +84,7 @@ library LibProduction {
   // snapshot a production's the balance and time. return the balance delta
   function sync(IUintComp components, uint256 id) public returns (uint256 delta) {
     if (isActive(components, id)) {
-      delta = calcOutput(components, id);
+      delta = calcBounty(components, id);
       LibCoin.inc(components, id, delta);
       setLastTs(components, id, block.timestamp);
     }
@@ -98,10 +98,9 @@ library LibProduction {
     return block.timestamp - getLastTs(components, id);
   }
 
-  // Calculate the accrued output of the production since the pet's last snapshot
-  function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
+  // Calculate the accrued output of a harvest since the pet's last sync.
+  function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
-
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
     uint256 boostBonus = uint256(LibBonus.getRaw(components, petID, "HARVEST_OUTPUT"));
@@ -112,63 +111,66 @@ library LibProduction {
     uint256 duration = calcDuration(components, id);
     uint256 boost = uint256(config[6]) + boostBonus;
 
-    // precision is only divided this time as applied > final (0)
+    // precision is only divided this time as applied > final (1e0)
     uint256 precision = uint256(config[1] + config[3] + config[7]);
     return (rate * duration * boost) / (10 ** precision);
   }
 
-  // Calculate the rate of harvest production, measured in $MUSU/s (1e9 precision)
+  // Calculate the rate of harvest, measured in musu/s (1e9 precision)
   function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
-
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
-    uint256 base = LibPet.calcTotalPower(components, petID).toUint256();
-    uint256 ratio = uint256(config[2]);
 
-    // atm we keep this as close to how it's already implemented by simply
-    // scaling down the affinity mult output to match our expected precision.
-    uint256 boostBonus = calcAffinityMult(components, id, petID) / 1e3;
-
-    // What we want to do instead is track the unchanging neutral multiplier
-    // and the overall precision of the affinity mult on the config (1000, 3).
-    // we should then shift that value based on any pos/neg affinity matchups
-    // so that the application is ADDITIVE rather than MULTIPLICATIVE.
-    // this should lead to some saner precision handling
-    uint256 boost = uint256(config[6]) + boostBonus;
-    boost -= uint256(config[6]); // omit this line once above implementation is corrected
-
+    uint256 power = LibPet.calcTotalPower(components, petID).toUint256();
+    uint256 core = uint256(config[2]);
+    uint256 efficacy = calcEfficacy(components, id, int(uint(config[6])));
     uint256 precision = FERTILITY_PREC - uint256(config[3] + config[7]);
-    return ((10 ** precision) * (base * ratio * boost)) / 3600;
+    return ((10 ** precision) * (power * core * efficacy)) / 3600;
   }
 
-  // Calculate the harvesting multiplier resulting from affinity matching
-  // (precision set by HARVEST_RATE_MULT_PREC)
-  function calcAffinityMult(
+  // Calculate the efficacy of the core harvesting calc (min 0).
+  // Efficacy is a Boost on Fertility and precision is set by its (F's) config.
+  function calcEfficacy(
     IUintComp components,
     uint256 id,
-    uint256 petID
+    int256 base
   ) internal view returns (uint256) {
+    uint256 petID = getPet(components, id);
     uint256 nodeID = getNode(components, id);
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_EFFICACY");
+
+    // pull the base efficacy shifts from the config
+    LibAffinity.Shifts memory baseEfficacyShifts = LibAffinity.Shifts({
+      base: int(uint(config[0])),
+      up: int(uint(config[1])),
+      down: int(uint(config[2])) * -1
+    });
+
+    // pull the bonus efficacy shifts from the pet
+    LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
+      base: int(0),
+      up: LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_MULT"),
+      down: int(0)
+    });
+
+    // sum each applied shift with the base efficacy value to get the final value
+    int256 efficacy = base;
     string memory nodeAff = LibNode.getAffinity(components, nodeID);
     string[] memory petAffs = LibPet.getAffinities(components, petID);
-
-    // get affinity multipliers, with bonuses
-    LibAffinity.Multipliers memory mults = LibAffinity.calcMultipliers(
-      components,
-      "HARVEST_RATE_MULT_AFF",
-      petID,
-      "HARVEST_AFFINITY_MULT"
-    );
-
-    // layer the multipliers due to each trait on top of each other
-    uint256 totMultiplier = 1;
-    for (uint256 i = 0; i < petAffs.length; i++)
-      totMultiplier *= LibAffinity.getMultiplier(
-        mults,
-        LibAffinity.getHarvestEfficacy(petAffs[i], nodeAff)
+    for (uint256 i = 0; i < petAffs.length; i++) {
+      LibAffinity.Effectiveness effectiveness = LibAffinity.getHarvestEffectiveness(
+        petAffs[i],
+        nodeAff
       );
-    return totMultiplier;
+      efficacy += LibAffinity.calcEfficacyShift(
+        effectiveness,
+        baseEfficacyShifts,
+        bonusEfficacyShifts
+      );
+    }
+
+    return (efficacy < 0) ? 0 : uint(efficacy);
   }
 
   /////////////////

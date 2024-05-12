@@ -30,6 +30,12 @@ library LibAffinity {
     uint256 down;
   }
 
+  struct Shifts {
+    int256 base;
+    int256 up;
+    int256 down;
+  }
+
   //////////////////
   // INTERACTIONS
 
@@ -64,8 +70,19 @@ library LibAffinity {
     return getMultiplier(mults, eff);
   }
 
+  // gets the shift to efficacy from effectiveness using basse config and bonus
+  function calcEfficacyShift(
+    Effectiveness effectiveness,
+    Shifts memory configs,
+    Shifts memory bonuses
+  ) internal pure returns (int256) {
+    if (effectiveness == Effectiveness.Strong) return configs.up + bonuses.up;
+    if (effectiveness == Effectiveness.Weak) return configs.down + bonuses.down;
+    return configs.base + bonuses.base;
+  }
+
   /// @notice return the multiplier between a single source affinity and single target affinity.
-  function getAttackEfficacy(
+  function getAttackEffectiveness(
     string memory sourceAff,
     string memory targetAff
   ) public pure returns (Effectiveness) {
@@ -78,20 +95,20 @@ library LibAffinity {
     } else if (LibString.eq(sourceAff, "INSECT")) {
       if (LibString.eq(targetAff, "EERIE")) return Effectiveness.Strong;
       if (LibString.eq(targetAff, "SCRAP")) return Effectiveness.Weak;
-    } else return Effectiveness.Netural; // Normal or no Affinity means 1x multiplier
+    }
+    return Effectiveness.Netural; // Normal or no Affinity means 1x multiplier
   }
 
   /// @notice return the multiplier between a single source affinity and single node affinity.
-  function getHarvestEfficacy(
+  function getHarvestEffectiveness(
     string memory sourceAff,
     string memory targetAff
   ) public pure returns (Effectiveness) {
-    // default case is misalignment
     if (LibString.eq(sourceAff, "NORMAL")) return Effectiveness.Netural;
-    else if (LibString.eq(targetAff, "NORMAL")) return Effectiveness.Netural;
-    else if (LibString.eq(targetAff, "")) return Effectiveness.Netural;
-    else if (LibString.eq(sourceAff, targetAff)) return Effectiveness.Strong;
-    else return Effectiveness.Weak;
+    if (LibString.eq(targetAff, "NORMAL")) return Effectiveness.Netural;
+    if (LibString.eq(targetAff, "")) return Effectiveness.Netural;
+    if (LibString.eq(sourceAff, targetAff)) return Effectiveness.Strong;
+    return Effectiveness.Weak;
   }
 
   /////////////////////
