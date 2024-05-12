@@ -57,6 +57,4 @@ const Image = styled.img`
   height: 100%;
   width: auto;
   padding: 0.15vh;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
 `;
