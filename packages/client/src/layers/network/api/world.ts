@@ -105,10 +105,11 @@ export function setupWorldAPI(systems: any, provider: any) {
     // DrainRate = HarvestRate * DrainBaseRate
     // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
     // HealRate = Harmony * HealBaseRate
-    // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
+    // HealBaseRate = KAMI_RESTING_RATE / 10^KAMI_RESTING_RATE_PREC
     await api.config.set.array('HEALTH_RATE_DRAIN_BASE', [20, 2]);
     // (prec, base, base_prec, mult_prec)
-    await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 120, 2, 3]);
+    await api.config.set.array('KAMI_RESTING_RATE', [9, 120, 2, 3]);
+    await api.config.set.array('KAMI_RESTING_RATE', [0, 0, 20, 2, 0, 0, 1000, 3]);
 
     // Liquidation Calcs
     await api.config.set.array('LIQ_THRESH_BASE', [40, 2]);
@@ -127,7 +128,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('STANDARD_COOLDOWN', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
     await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 9]); // in respect to power
-    await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 10000, 2, 3]); // in respect to harmony
+    await api.config.set.array('KAMI_RESTING_RATE', [9, 10000, 2, 3]); // in respect to harmony
   }
 
   ////////////////////
