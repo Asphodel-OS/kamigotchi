@@ -242,7 +242,7 @@ export const getKami = (
     const harmony = kami.stats.harmony;
 
     const totHarmony = (1.0 + harmony.boost / 1000) * (harmony.base + harmony.shift);
-    const metabolismConfig = getConfigFieldValueArray(world, components, 'KAMI_RESTING_RATE');
+    const metabolismConfig = getConfigFieldValueArray(world, components, 'KAMI_REST_METABOLISM');
     const boostBonus = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY');
     const ratio = metabolismConfig[2];
     const boost = metabolismConfig[6] + boostBonus;

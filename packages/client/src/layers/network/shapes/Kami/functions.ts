@@ -105,6 +105,7 @@ export const calcHealth = (kami: Kami): number => {
 
   let health = kami.stats.health.sync;
   health += kami.stats.health.rate * duration;
+  health = Math.floor(health);
   health = Math.min(Math.max(health, 0), kami.stats.health.total);
   return health;
 };

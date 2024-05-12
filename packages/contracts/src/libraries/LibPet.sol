@@ -211,7 +211,7 @@ library LibPet {
     uint256 id
   ) internal view returns (uint256, uint256) {
     uint256 rootPrecision = 9; // root precision of this AsphoAST Node
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_RESTING_RATE");
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
     uint256 boostBonus = uint256(LibBonus.getRaw(components, id, "RESTING_RECOVERY"));
     uint256 base = calcTotalHarmony(components, id).toUint256();
     uint256 ratio = uint256(config[2]);
