@@ -36,7 +36,7 @@ export function registerOperatorUpdater() {
       useEffect(() => {
         if (!validations.accountExists) return;
 
-        const operatorMatches = kamiAccount.operatorAddress === burnerAddress && !!burnerAddress;
+        const operatorMatches = !!burnerAddress && kamiAccount.operatorAddress === burnerAddress;
         if (operatorMatches == validations.operatorMatches) return; // no change
 
         setValidations({ ...validations, operatorMatches });

@@ -66,12 +66,16 @@ export function registerGasHarasser() {
           validations.operatorMatches &&
           !validations.operatorHasGas;
 
-        console.log('gasHarasser: ', isVisible, validators, validations);
         if (isVisible) toggleModals(false);
         if (isVisible != validators.gasHarasser) {
           setValidators({ ...validators, gasHarasser: isVisible });
         }
-      }, [networkValidations, validations.operatorHasGas, validators.operatorUpdater]);
+      }, [
+        networkValidations,
+        validations.operatorMatches,
+        validations.operatorHasGas,
+        validators.operatorUpdater,
+      ]);
 
       /////////////////
       // ACTIONS
