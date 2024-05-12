@@ -96,7 +96,6 @@ export const getKami = (
     StartTime,
     State,
     TargetID,
-    Type,
     OwnsPetID,
   } = components;
 
@@ -242,13 +241,14 @@ export const getKami = (
     healthRate = (-1 * productionRate * drainBase * multiplier) / (1000 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
     const harmony = kami.stats.harmony;
+
     const totHarmony = (1.0 + harmony.boost / 1000) * (harmony.base + harmony.shift);
-    const healBaseArr = getConfigFieldValueArray(world, components, 'HEALTH_RATE_HEAL_BASE');
-    const healBase = healBaseArr[1];
-    const healBasePrecision = 10 ** healBaseArr[2];
-    const bonusMult = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY', true);
-    const multPrecision = 10 ** healBaseArr[3];
-    healthRate = (totHarmony * healBase * bonusMult) / (3600 * healBasePrecision * multPrecision);
+    const metabolismConfig = getConfigFieldValueArray(world, components, 'KAMI_REST_METABOLISM');
+    const boostBonus = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY');
+    const ratio = metabolismConfig[2];
+    const boost = metabolismConfig[6] + boostBonus;
+    const precision = 10 ** (metabolismConfig[3] + metabolismConfig[7]);
+    healthRate = (totHarmony * ratio * boost) / (precision * 3600);
   }
   kami.stats.health.rate = healthRate;
 

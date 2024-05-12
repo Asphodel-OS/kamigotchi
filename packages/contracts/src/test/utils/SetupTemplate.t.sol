@@ -1025,7 +1025,7 @@ abstract contract SetupTemplate is TestSetupImports {
 
     // Kami Health Heal Rates
     // (prec, base, base_prec, mult_prec)
-    _setConfigArray("HEALTH_RATE_HEAL_BASE", [uint32(6), 1000, 3, 3, 0, 0, 0, 0]);
+    _setConfigArray("KAMI_REST_METABOLISM", [uint32(6), 1000, 3, 3, 0, 0, 0, 0]);
   }
 
   function _initHarvestConfigs() internal {

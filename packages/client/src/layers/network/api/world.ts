@@ -94,24 +94,19 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
     await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 
+    // SKILL EFFECT AsphoAST Nodes
+    // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
+
     // Harvest Rates
-    // HarvestRate = power * base * multiplier
-    // NOTE: precisions are represented as powers of 10 (e.g. 3 => 10^3 = 1000)
-    // so BASE=100 and BASE_PREC=3 means 100/1e3 = 0.1
-    // mult_prec come from 10e6 from affinity bonuses and 1e3 from flat harvest bonus
-    // [prec, base, base_prec, mult_prec]
     await api.config.set.array('HARVEST_RATE', [9, 250, 2, 9]);
     // [base, up, down]
     await api.config.set.array('HARVEST_RATE_MULT_AFF', [1000, 1500, 500]);
 
-    // Kami Health Drain/Heal Rates
-    // DrainRate = HarvestRate * DrainBaseRate
-    // DrainBaseRate = HEALTH_RATE_DRAIN_BASE / 10^HEALTH_RATE_DRAIN_BASE_PREC
-    // HealRate = Harmony * HealBaseRate
-    // HealBaseRate = HEALTH_RATE_HEAL_BASE / 10^HEALTH_RATE_HEAL_BASE_PREC
+    // Kami Health Drain Rate
     await api.config.set.array('HEALTH_RATE_DRAIN_BASE', [20, 2]);
-    // (prec, base, base_prec, mult_prec)
-    await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 120, 2, 3]);
+
+    // HealRate = Harmony * HealBaseRate
+    await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 20, 2, 0, 0, 1000, 3]);
 
     // Liquidation Calcs
     await api.config.set.array('LIQ_THRESH_BASE', [40, 2]);
@@ -130,7 +125,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('STANDARD_COOLDOWN', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
     await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 9]); // in respect to power
-    await api.config.set.array('HEALTH_RATE_HEAL_BASE', [9, 10000, 2, 3]); // in respect to harmony
+    await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 2, 0, 0, 1000, 3]);
   }
 
   ////////////////////

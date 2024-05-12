@@ -135,7 +135,7 @@ library LibPet {
       uint256 damage = calcDrain(components, id, deltaBalance);
       drain(components, id, damage.toInt32());
     } else if (LibString.eq(state, "RESTING")) {
-      uint256 recovery = calcRestingRecovery(components, id);
+      uint256 recovery = calcRecovery(components, id);
       heal(components, id, recovery.toInt32());
     }
 
@@ -198,31 +198,27 @@ library LibPet {
     return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
   }
 
-  // Calculate the recovery of the kami from resting. This assumes the Kami is actually resting.
-  function calcRestingRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE");
-
+  // Calculate resting recovery (HP) of a Kami. This assume Kami is resting.
+  function calcRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
+    (uint256 rate, uint256 ratePrecision) = calcMetabolism(components, id);
     uint256 duration = block.timestamp - getLastTs(components, id);
-    uint256 rate = calcRestingRecoveryRate(components, id);
-    uint256 precision = 10 ** uint256(configVals[0]);
-    uint256 bonusMult = LibBonus.getPercent(components, id, "RESTING_RECOVERY");
-    uint256 multPrecision = 10 ** uint256(configVals[3]);
-
-    return (duration * rate * bonusMult) / (precision * multPrecision);
+    return (duration * rate) / (10 ** ratePrecision);
   }
 
-  // calculates the health recovery rate of the Kami per second. Assumed resting.
-  function calcRestingRecoveryRate(
+  // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
+  function calcMetabolism(
     IUintComp components,
     uint256 id
-  ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_HEAL_BASE");
-    uint256 totalHarmony = calcTotalHarmony(components, id).toUint256();
-
-    uint256 precision = 10 ** uint256(configVals[0]);
-    uint256 base = uint256(configVals[1]);
-    uint256 basePrecision = 10 ** uint256(configVals[2]);
-    return (totalHarmony * base * precision) / (3600 * basePrecision);
+  ) internal view returns (uint256, uint256) {
+    uint256 rootPrecision = 9; // root precision of this AsphoAST Node
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
+    uint256 boostBonus = uint256(LibBonus.getRaw(components, id, "RESTING_RECOVERY"));
+    uint256 base = calcTotalHarmony(components, id).toUint256();
+    uint256 ratio = uint256(config[2]);
+    uint256 boost = uint256(config[6]) + boostBonus;
+    uint256 precision = rootPrecision - uint256(config[3] + config[7]);
+    uint256 metabolism = ((10 ** precision) * (base * ratio * boost)) / 3600;
+    return (metabolism, rootPrecision);
   }
 
   // Calculate the liquidation threshold for target pet, attacked by the source pet.
