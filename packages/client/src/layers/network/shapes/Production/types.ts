@@ -1,9 +1,9 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
-import { getConfigFieldValueArray } from '../Config';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
+import { calcRate } from './functions';
 
 // standardized shape of an Production Entity
 export interface Production {
@@ -15,13 +15,12 @@ export interface Production {
     last: number;
     start: number;
   };
-  kami?: Kami;
+  kami: Kami;
   node?: Node;
 }
 
 // optional data to populate for a Production Entity
 export interface ProductionOptions {
-  kami?: boolean;
   node?: boolean;
 }
 
@@ -33,11 +32,15 @@ export const getProduction = (
   options?: ProductionOptions
 ): Production => {
   const { Coin, NodeID, PetID, LastTime, Rate, State, StartTime } = components;
+  const kamiID = getComponentValue(PetID, index)?.value as EntityID;
+  const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
+  const kami = getKami(world, components, kamiEntityIndex, { account: true });
 
   let production: Production = {
     id: world.entities[index],
+    kami,
+    rate: 0,
     balance: ((getComponentValue(Coin, index)?.value as number) ?? 0) * 1,
-    rate: getComponentValue(Rate, index)?.value as number,
     state: getComponentValue(State, index)?.value as string,
     time: {
       last: (getComponentValue(LastTime, index)?.value as number) * 1,
@@ -50,14 +53,6 @@ export const getProduction = (
 
   if (!options) return production;
 
-  // populate Kami
-  if (options.kami) {
-    const kamiID = getComponentValue(PetID, index)?.value as EntityID;
-    const kamiEntityIndex = world.entityToIndex.get(kamiID);
-    if (kamiEntityIndex)
-      production.kami = getKami(world, components, kamiEntityIndex, { account: true });
-  }
-
   // populate Node
   if (options.node) {
     const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
@@ -67,9 +62,6 @@ export const getProduction = (
 
   /////////////////
   // ADJUSTMENTS
-
-  const ratePrecision = 10 ** getConfigFieldValueArray(world, components, 'HARVEST_RATE')[0];
-  production.rate /= ratePrecision;
-
+  production.rate = calcRate(world, components, production);
   return production;
 };

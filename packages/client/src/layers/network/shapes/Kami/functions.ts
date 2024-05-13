@@ -121,7 +121,7 @@ export const isFull = (kami: Kami): boolean => {
 
 // calculate the expected output from a pet production based on start time
 export const calcOutput = (kami: Kami): number => {
-  if (!isHarvesting(kami)) return 0;
+  if (!isHarvesting(kami) || !kami.production) return 0;
   else return calcProductionOutput(kami.production);
 };
 
