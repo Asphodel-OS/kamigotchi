@@ -117,7 +117,7 @@ export const getKami = (
     time: {
       cooldown: {
         last: (getComponentValue(LastActionTime, entityIndex)?.value as number) * 1,
-        requirement: getConfigFieldValue(world, components, 'STANDARD_COOLDOWN'),
+        requirement: getConfigFieldValue(world, components, 'KAMI_STANDARD_COOLDOWN'),
       },
       last: (getComponentValue(LastTime, entityIndex)?.value as number) * 1,
       start: (getComponentValue(StartTime, entityIndex)?.value as number) * 1,
@@ -232,13 +232,14 @@ export const getKami = (
   // health change rate for harvesting/resting kami
   let healthRate = 0;
   if (kami.state === 'HARVESTING') {
-    let productionRate = 0;
-    if (kami.production) productionRate = calcProductionRate(world, components, kami.production);
-    const drainBaseArr = getConfigFieldValueArray(world, components, 'HEALTH_RATE_DRAIN_BASE');
-    const drainBase = drainBaseArr[0];
-    const drainBasePrecision = 10 ** drainBaseArr[1];
-    const multiplier = kami.bonuses.harvest.drain;
-    healthRate = (-1 * productionRate * drainBase * multiplier) / (1000 * drainBasePrecision);
+    let harvestRate = 0;
+    if (kami.production) harvestRate = calcProductionRate(world, components, kami.production);
+    const strainConfig = getConfigFieldValueArray(world, components, 'KAMI_MUSU_STRAIN');
+    const boostBonus = getBonusValue(world, components, kami.id, 'HARVEST_DRAIN');
+    const ratio = strainConfig[2];
+    const boost = strainConfig[6] + boostBonus;
+    const precision = 10 ** (strainConfig[3] + strainConfig[7]);
+    healthRate = (-1 * harvestRate * ratio * boost) / precision;
   } else if (kami.state === 'RESTING') {
     const metabolismConfig = getConfigFieldValueArray(world, components, 'KAMI_REST_METABOLISM');
     const boostBonus = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY');

@@ -33,7 +33,7 @@ struct HarvestRates {
   uint8 multiplierPrec;
 }
 
-uint256 constant FERTILITY_PREC = 9;
+uint256 constant RATE_PREC = 9;
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -112,7 +112,7 @@ library LibProduction {
     uint256 boost = uint256(config[6]) + boostBonus;
 
     // precision is only divided this time as applied > final (1e0)
-    uint256 precision = uint256(config[1] + config[3] + config[7]);
+    uint256 precision = uint256(RATE_PREC + config[3] + config[7]);
     return (rate * duration * boost) / (10 ** precision);
   }
 
@@ -125,7 +125,7 @@ library LibProduction {
     uint256 power = LibPet.calcTotalPower(components, petID).toUint256();
     uint256 core = uint256(config[2]);
     uint256 efficacy = calcEfficacy(components, id, int(uint(config[6])));
-    uint256 precision = FERTILITY_PREC - uint256(config[3] + config[7]);
+    uint256 precision = RATE_PREC - uint256(config[3] + config[7]);
     return ((10 ** precision) * (power * core * efficacy)) / 3600;
   }
 

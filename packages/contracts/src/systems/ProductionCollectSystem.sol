@@ -49,7 +49,7 @@ contract ProductionCollectSystem is System {
     uint256 standardActionTs = LibBonus.processBonus(
       components,
       petID,
-      "STANDARD_COOLDOWN",
+      "KAMI_STANDARD_COOLDOWN",
       block.timestamp
     );
     LibPet.setLastActionTs(components, petID, standardActionTs);

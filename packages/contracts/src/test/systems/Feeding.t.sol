@@ -16,7 +16,7 @@ contract FeedingTest is SetupTemplate {
     _nodeID = _createHarvestingNode(1, 1, "Test Node", "this is a node", "NORMAL");
     _npcID = _createNPC(1, 1, "Test NPC");
 
-    _idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
+    _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
   }
 
   /////////////////
@@ -35,7 +35,7 @@ contract FeedingTest is SetupTemplate {
   function _calcHarvestingPetHealth(uint petID) internal view returns (uint) {
     uint productionID = LibPet.getProduction(components, petID);
     uint output = LibProduction.calcBounty(components, productionID);
-    uint drain = LibPet.calcDrain(components, petID, output);
+    uint drain = LibPet.calcStrain(components, petID, output);
     uint health = uint(int(LibStat.getHealth(components, petID).sync));
     health = (health > drain) ? health - drain : 0;
     return health;

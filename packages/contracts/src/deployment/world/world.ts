@@ -78,7 +78,7 @@ export async function run() {
       api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 
       // Kami Idle Requirement
-      api.config.set.number('STANDARD_COOLDOWN', 180);
+      api.config.set.number('KAMI_STANDARD_COOLDOWN', 180);
 
       // Kami Mint Price and Limits
       // to be 5, set at 500 for testing
@@ -140,7 +140,7 @@ export async function run() {
     // local config settings for faster testing
     function initLocalConfig(api: StateAPI) {
       api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
-      api.config.set.number('STANDARD_COOLDOWN', 10);
+      api.config.set.number('KAMI_STANDARD_COOLDOWN', 10);
       api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
       api.config.set.number('HARVEST_RATE_BASE', 10000); // in respect to power
       api.config.set.number('KAMI_REST_METABOLISM', 10000); // in respect to harmony

@@ -60,7 +60,7 @@ contract ProductionLiquidateSystem is System {
     // collect the money to the production. drain accordingly
     uint256 balance = LibProduction.getBalance(components, targetProductionID);
     uint256 bounty = LibPet.calcBounty(components, petID, balance);
-    uint256 recoil = LibPet.calcDrain(components, petID, bounty);
+    uint256 recoil = LibPet.calcStrain(components, petID, bounty);
     LibCoin.inc(components, productionID, bounty);
     LibPet.drain(components, petID, SafeCastLib.toInt32(recoil));
 
@@ -73,7 +73,7 @@ contract ProductionLiquidateSystem is System {
     uint256 standardActionTs = LibBonus.processBonus(
       components,
       petID,
-      "STANDARD_COOLDOWN",
+      "KAMI_STANDARD_COOLDOWN",
       block.timestamp
     );
     LibPet.setLastActionTs(components, petID, standardActionTs);

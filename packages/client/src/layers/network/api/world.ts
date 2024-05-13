@@ -72,9 +72,6 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('BASE_FRIENDS_LIMIT', 10);
     await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 
-    // Kami Idle Requirement
-    await api.config.set.number('STANDARD_COOLDOWN', 180);
-
     // Kami Mint Price and Limits
     // to be 5, set at 500 for testing
     await api.config.set.number('MINT_ACCOUNT_MAX', 5);
@@ -94,7 +91,11 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
     await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 
-    // SKILL EFFECT AsphoAST Nodes
+    // Kami Standard Cooldown Requirement
+    await api.config.set.number('KAMI_STANDARD_COOLDOWN', 180);
+
+    ////////////////////
+    // SKILL EFFECT (AsphoAST Nodes)
     // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
 
     // Harvest Effects
@@ -102,10 +103,8 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 2500, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
 
-    // Kami Health Drain Rate
-    await api.config.set.array('HEALTH_RATE_DRAIN_BASE', [20, 2]);
-
-    // HealRate = Harmony * HealBaseRate
+    // Health Effects
+    await api.config.set.array('KAMI_MUSU_STRAIN', [0, 0, 200, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 200, 3, 0, 0, 1000, 3]);
 
     // Liquidation Calcs
@@ -122,8 +121,8 @@ export function setupWorldAPI(systems: any, provider: any) {
   async function initLocalConfig() {
     await api.config.set.number('MINT_ACCOUNT_MAX', 50000000);
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
-    await api.config.set.number('STANDARD_COOLDOWN', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
+    await api.config.set.number('KAMI_STANDARD_COOLDOWN', 10);
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100000, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 3, 0, 0, 1000, 3]);
   }

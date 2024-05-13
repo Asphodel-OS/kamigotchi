@@ -26,7 +26,7 @@ pragma solidity ^0.8.0;
 //   function setUp() public override {
 //     super.setUp();
 
-//     _idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
+//     _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
 //   }
 
 //   /////////////////
@@ -480,7 +480,7 @@ pragma solidity ^0.8.0;
 //     uint256 timeDelta = 15 minutes;
 
 //     // setup
-//     _setConfig("STANDARD_COOLDOWN", 0);
+//     _setConfig("KAMI_STANDARD_COOLDOWN", 0);
 //     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", "");
 //     uint256 petID = _mintPet(0);
 //     // setting up power and health
@@ -507,7 +507,7 @@ pragma solidity ^0.8.0;
 //     vm.assume(health > 0 && health < 2147483);
 
 //     // setup
-//     _setConfig("STANDARD_COOLDOWN", 0);
+//     _setConfig("KAMI_STANDARD_COOLDOWN", 0);
 //     uint256[] memory seeds = _randomUints(3);
 //     uint256 nodeID = _createHarvestingNode(1, 1, "testNode", "", _getFuzzAffinity(seeds[0], true));
 //     uint256 petID = _mintPet(0);
@@ -580,7 +580,7 @@ pragma solidity ^0.8.0;
 //     );
 //     assertEq(
 //       _calcHealthDrain(_calcOutput(rate, timeDelta)),
-//       LibPet.calcDrain(components, petID, _calcOutput(rate, timeDelta)),
+//       LibPet.calcStrain(components, petID, _calcOutput(rate, timeDelta)),
 //       "Health drain calc mismatch"
 //     );
 

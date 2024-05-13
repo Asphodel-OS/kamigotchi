@@ -132,7 +132,7 @@ library LibPet {
     if (LibString.eq(state, "HARVESTING")) {
       uint256 productionID = getProduction(components, id);
       uint256 deltaBalance = LibProduction.sync(components, productionID);
-      uint256 damage = calcDrain(components, id, deltaBalance);
+      uint256 damage = calcStrain(components, id, deltaBalance);
       drain(components, id, damage.toInt32());
     } else if (LibString.eq(state, "RESTING")) {
       uint256 recovery = calcRecovery(components, id);
@@ -182,20 +182,20 @@ library LibPet {
     return (amt * base) / precision;
   }
 
-  // NOTE: consider using this for calcProductionDrain
-  // Calculate the drain for a pet, based on coins received
-  function calcDrain(
+  // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
+  function calcMetabolism(
     IUintComp components,
-    uint256 id,
-    uint256 amt
-  ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "HEALTH_RATE_DRAIN_BASE");
-
-    uint256 base = uint256(configVals[0]);
-    uint256 basePrecision = 10 ** uint256(configVals[1]);
-    uint256 multiplier = LibBonus.getPercent(components, id, "HARVEST_DRAIN");
-    uint256 totalPrecision = basePrecision * 1000; // 1000 from bonus multiplier
-    return (amt * base * multiplier + (totalPrecision / 2)) / totalPrecision;
+    uint256 id
+  ) internal view returns (uint256, uint256) {
+    uint256 rootPrecision = 9; // root precision of this AsphoAST Node
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
+    uint256 boostBonus = uint256(LibBonus.getRaw(components, id, "RESTING_RECOVERY"));
+    uint256 harmony = calcTotalHarmony(components, id).toUint256();
+    uint256 core = uint256(config[2]);
+    uint256 boost = uint256(config[6]) + boostBonus;
+    uint256 precision = rootPrecision - uint256(config[3] + config[7]);
+    uint256 metabolism = ((10 ** precision) * (harmony * core * boost)) / 3600;
+    return (metabolism, rootPrecision);
   }
 
   // Calculate resting recovery (HP) of a Kami. This assume Kami is resting.
@@ -205,20 +205,18 @@ library LibPet {
     return (duration * rate) / (10 ** ratePrecision);
   }
 
-  // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
-  function calcMetabolism(
+  // Calculate the HP strain on pet from accrual of musu
+  function calcStrain(
     IUintComp components,
-    uint256 id
-  ) internal view returns (uint256, uint256) {
-    uint256 rootPrecision = 9; // root precision of this AsphoAST Node
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
-    uint256 boostBonus = uint256(LibBonus.getRaw(components, id, "RESTING_RECOVERY"));
-    uint256 base = calcTotalHarmony(components, id).toUint256();
-    uint256 ratio = uint256(config[2]);
-    uint256 boost = uint256(config[6]) + boostBonus;
-    uint256 precision = rootPrecision - uint256(config[3] + config[7]);
-    uint256 metabolism = ((10 ** precision) * (base * ratio * boost)) / 3600;
-    return (metabolism, rootPrecision);
+    uint256 id,
+    uint256 amt
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_MUSU_STRAIN");
+    int256 bonusBoost = LibBonus.getRaw(components, id, "HARVEST_DRAIN");
+    uint256 core = uint256(config[2]);
+    uint256 boost = uint(int(uint(config[6])) + bonusBoost);
+    uint256 precision = 10 ** uint256(config[3] + config[7]);
+    return (amt * core * boost + (precision / 2)) / precision; // round up
   }
 
   // Calculate the liquidation threshold for target pet, attacked by the source pet.
@@ -363,7 +361,7 @@ library LibPet {
   // Check whether a pet is on cooldown after its last Standard Action
   function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
     uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = LibConfig.get(components, "STANDARD_COOLDOWN");
+    uint256 idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
     return idleTime < idleRequirement;
   }
 
