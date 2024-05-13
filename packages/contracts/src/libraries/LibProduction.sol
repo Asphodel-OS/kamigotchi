@@ -17,13 +17,13 @@ import { StateComponent, ID as StateCompID } from "components/StateComponent.sol
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
+import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
-import { LibAffinity } from "libraries/LibAffinity.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 struct HarvestRates {
@@ -32,6 +32,8 @@ struct HarvestRates {
   uint8 basePrec;
   uint8 multiplierPrec;
 }
+
+uint256 constant FERTILITY_PREC = 9;
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -70,7 +72,6 @@ library LibProduction {
   function start(IUintComp components, uint256 id) public {
     setState(components, id, "ACTIVE");
     LibCoin._set(components, id, 0);
-    setRate(components, id, calcRate(components, id)); // always last
     setStartTs(components, id, block.timestamp);
     setLastTs(components, id, block.timestamp);
   }
@@ -78,7 +79,6 @@ library LibProduction {
   // Stops an _existing_ production. All potential proceeds will be lost after this point.
   function stop(IUintComp components, uint256 id) internal {
     setState(components, id, "INACTIVE");
-    setRate(components, id, 0);
   }
 
   // snapshot a production's the balance and time. return the balance delta
@@ -86,7 +86,6 @@ library LibProduction {
     if (isActive(components, id)) {
       delta = calcOutput(components, id);
       LibCoin.inc(components, id, delta);
-      setRate(components, id, calcRate(components, id));
       setLastTs(components, id, block.timestamp);
     }
   }
@@ -101,47 +100,57 @@ library LibProduction {
 
   // Calculate the accrued output of the production since the pet's last snapshot
   function calcOutput(IUintComp components, uint256 id) internal view returns (uint256) {
-    uint256 rate = getRate(components, id);
-    uint256 duration = calcDuration(components, id);
-    uint256 precision = 10 ** uint256(LibConfig.getArray(components, "HARVEST_RATE")[0]);
-    return (rate * duration) / precision;
-  }
-
-  // Calculate the rate of a production, measured in $MUSU/s (precision set by HARVEST_RATE_PREC)
-  function calcRate(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
 
-    uint32[8] memory values = LibConfig.getArray(components, "HARVEST_RATE");
-
     uint256 petID = getPet(components, id);
-    uint256 power = uint256(uint32(LibPet.calcTotalPower(components, petID)));
-    uint256 precision = 10 ** uint256(values[0]);
-    uint256 base = uint256(values[1]);
-    uint256 basePrecision = 10 ** uint256(values[2]);
-    uint256 mult = calcRateMultiplier(components, id);
-    uint256 multPrecision = 10 ** uint256(values[3]);
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
+    uint256 boostBonus = uint256(LibBonus.getRaw(components, petID, "HARVEST_OUTPUT"));
 
-    return (precision * base * power * mult) / (3600 * basePrecision * multPrecision);
+    uint256 fertility = calcFertility(components, id);
+    uint256 dedication = 0; //  getDedication(components, id);
+    uint256 rate = fertility + dedication;
+    uint256 duration = calcDuration(components, id);
+    uint256 boost = uint256(config[6]) + boostBonus;
+
+    // precision is only divided this time as applied > final (0)
+    uint256 precision = uint256(config[1] + config[3] + config[7]);
+    return (rate * duration * boost) / (10 ** precision);
   }
 
-  // Calculate the multiplier for harvesting
-  function calcRateMultiplier(IUintComp components, uint256 id) internal view returns (uint256) {
+  // Calculate the rate of harvest production, measured in $MUSU/s (1e9 precision)
+  function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (!isActive(components, id)) return 0;
+
     uint256 petID = getPet(components, id);
-    uint256 bonusMults = LibBonus.getPercent(components, petID, "HARVEST_OUTPUT");
-    uint256 affinityMult = calcRateAffinityMultiplier(components, id, petID);
-    return affinityMult * bonusMults;
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
+    uint256 base = LibPet.calcTotalPower(components, petID).toUint256();
+    uint256 ratio = uint256(config[2]);
+
+    // atm we keep this as close to how it's already implemented by simply
+    // scaling down the affinity mult output to match our expected precision.
+    uint256 boostBonus = calcAffinityMult(components, id, petID) / 1e3;
+
+    // What we want to do instead is track the unchanging neutral multiplier
+    // and the overall precision of the affinity mult on the config (1000, 3).
+    // we should then shift that value based on any pos/neg affinity matchups
+    // so that the application is ADDITIVE rather than MULTIPLICATIVE.
+    // this should lead to some saner precision handling
+    uint256 boost = uint256(config[6]) + boostBonus;
+    boost -= uint256(config[6]); // omit this line once above implementation is corrected
+
+    uint256 precision = FERTILITY_PREC - uint256(config[3] + config[7]);
+    return ((10 ** precision) * (base * ratio * boost)) / 3600;
   }
 
   // Calculate the harvesting multiplier resulting from affinity matching
   // (precision set by HARVEST_RATE_MULT_PREC)
-  function calcRateAffinityMultiplier(
+  function calcAffinityMult(
     IUintComp components,
     uint256 id,
     uint256 petID
   ) internal view returns (uint256) {
     uint256 nodeID = getNode(components, id);
     string memory nodeAff = LibNode.getAffinity(components, nodeID);
-
     string[] memory petAffs = LibPet.getAffinities(components, petID);
 
     // get affinity multipliers, with bonuses
@@ -198,10 +207,6 @@ library LibProduction {
     }
   }
 
-  function setRate(IUintComp components, uint256 id, uint256 rate) internal {
-    RateComponent(getAddressById(components, RateCompID)).set(id, rate);
-  }
-
   function setState(IUintComp components, uint256 id, string memory state) internal {
     StateComponent(getAddressById(components, StateCompID)).set(id, state);
   }
@@ -231,10 +236,6 @@ library LibProduction {
 
   function getPet(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdPetComponent(getAddressById(components, IdPetCompID)).get(id);
-  }
-
-  function getRate(IUintComp components, uint256 id) internal view returns (uint256) {
-    return RateComponent(getAddressById(components, RateCompID)).get(id);
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {
