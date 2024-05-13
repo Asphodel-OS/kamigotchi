@@ -97,8 +97,9 @@ export function setupWorldAPI(systems: any, provider: any) {
     // SKILL EFFECT AsphoAST Nodes
     // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
 
-    // Harvest Rates
-    await api.config.set.array('HARVEST_RATE', [9, 250, 2, 9]);
+    // Harvest Effects
+    await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 2500, 3, 0, 0, 1000, 3]);
+    await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
     // [base, up, down]
     await api.config.set.array('HARVEST_RATE_MULT_AFF', [1000, 1500, 500]);
 
@@ -106,7 +107,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.array('HEALTH_RATE_DRAIN_BASE', [20, 2]);
 
     // HealRate = Harmony * HealBaseRate
-    await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 20, 2, 0, 0, 1000, 3]);
+    await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 200, 3, 0, 0, 1000, 3]);
 
     // Liquidation Calcs
     await api.config.set.array('LIQ_THRESH_BASE', [40, 2]);
@@ -124,8 +125,8 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('STANDARD_COOLDOWN', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
-    await api.config.set.array('HARVEST_RATE', [9, 10000, 2, 9]); // in respect to power
-    await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 2, 0, 0, 1000, 3]);
+    await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100000, 3, 0, 0, 1000, 3]);
+    await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 3, 0, 0, 1000, 3]);
   }
 
   ////////////////////

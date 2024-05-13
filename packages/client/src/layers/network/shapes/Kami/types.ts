@@ -14,7 +14,7 @@ import { Account, getAccount } from '../Account';
 import { Bonuses, getBonusValue, getBonuses } from '../Bonus';
 import { getConfigFieldValue, getConfigFieldValueArray } from '../Config';
 import { Kill, getKill } from '../Kill';
-import { Production, getProduction } from '../Production';
+import { Production, calcProductionRate, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
@@ -233,22 +233,19 @@ export const getKami = (
   let healthRate = 0;
   if (kami.state === 'HARVESTING') {
     let productionRate = 0;
-    if (kami.production) productionRate = kami.production.rate;
+    if (kami.production) productionRate = calcProductionRate(world, components, kami.production);
     const drainBaseArr = getConfigFieldValueArray(world, components, 'HEALTH_RATE_DRAIN_BASE');
     const drainBase = drainBaseArr[0];
     const drainBasePrecision = 10 ** drainBaseArr[1];
     const multiplier = kami.bonuses.harvest.drain;
     healthRate = (-1 * productionRate * drainBase * multiplier) / (1000 * drainBasePrecision);
   } else if (kami.state === 'RESTING') {
-    const harmony = kami.stats.harmony;
-
-    const totHarmony = (1.0 + harmony.boost / 1000) * (harmony.base + harmony.shift);
     const metabolismConfig = getConfigFieldValueArray(world, components, 'KAMI_REST_METABOLISM');
     const boostBonus = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY');
     const ratio = metabolismConfig[2];
     const boost = metabolismConfig[6] + boostBonus;
     const precision = 10 ** (metabolismConfig[3] + metabolismConfig[7]);
-    healthRate = (totHarmony * ratio * boost) / (precision * 3600);
+    healthRate = (kami.stats.harmony.total * ratio * boost) / (precision * 3600);
   }
   kami.stats.health.rate = healthRate;
 
