@@ -3,7 +3,7 @@ import { Components } from 'layers/network';
 import { Account } from '../Account';
 import { getData } from '../Data';
 import { Kami, isDead, isOffWorld, isStarving, isWithAccount } from '../Kami';
-import { checkCondition } from '../utils/LibBoolean';
+import { checkCondition } from '../utils/Conditionals';
 import { Effect, Requirement, Skill } from './types';
 
 export const getInstance = (target: Account | Kami, rSkill: Skill) => {

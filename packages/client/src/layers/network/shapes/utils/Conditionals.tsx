@@ -8,7 +8,7 @@ import { Kami } from '../Kami';
 import { hasCompletedQuest } from '../Quest';
 
 /**
- * A client equivalent to LibBoolean. For supporting other shapes
+ * A client equivalent to Conditionals. For supporting other shapes
  */
 
 export interface Condition {
@@ -183,7 +183,7 @@ export const getBool = (
   // universal gets - account and kami shape compatible
   if (type === 'COMPLETE_COMP') {
     // converted
-    const rawEntityID = BigInt(value ?? 0).toString() as EntityID; // force value to entityID
+    const rawEntityID = ('0x' + BigInt(value ?? 0).toString(16)) as EntityID; // force value to entityID
     const entityIndex = world.entityToIndex.get(rawEntityID);
     return entityIndex !== undefined && hasComponent(IsComplete, entityIndex);
   }

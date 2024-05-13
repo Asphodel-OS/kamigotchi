@@ -27,14 +27,21 @@ export const Exits = (props: Props) => {
     <Container>
       <Title>Exits</Title>
       <Options>
-        {rooms.get(index)!.exits!.map((exitIndex) => {
-          const exit = rooms.get(exitIndex)!;
-          if (!exit) return;
-          return (
-            <ClickableDescription key={exit.index} onClick={() => handleClick(exit.index)}>
-              → {exit.name}
-            </ClickableDescription>
-          );
+        {rooms.get(index)!.exits.map((exit) => {
+          const room = rooms.get(exit.toIndex)!;
+          if (!room) return;
+          else if (exit.blocked)
+            return (
+              <UnclickableDescription key={room.index}>
+                → {room.name} (blocked)
+              </UnclickableDescription>
+            );
+          else
+            return (
+              <ClickableDescription key={room.index} onClick={() => handleClick(room.index)}>
+                → {room.name}
+              </ClickableDescription>
+            );
         })}
       </Options>
     </Container>
@@ -93,4 +100,20 @@ const ClickableDescription = styled.div`
   &:active {
     background-color: #bbb;
   }
+`;
+
+// TODO: merge this with Description using props
+const UnclickableDescription = styled.div`
+  color: #555;
+  cursor: pointer;
+  padding: 0.3vw 0.6vw;
+  border-radius: 0.45vw;
+  width: 100%;
+
+  font-family: Pixel;
+  font-size: 0.75vw;
+  line-height: 1.2vw;
+  text-align: left;
+
+  background-color: #eee;
 `;

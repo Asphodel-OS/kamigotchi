@@ -75,13 +75,19 @@ export const Grid = (props: Props) => {
             {row.map((room, j) => {
               const isRoom = room.index != 0;
               const isCurrRoom = room.index == index;
-              const isExit = !!rooms.get(index)?.exits?.find((e) => e === room.index);
+
+              const currExit = rooms.get(index)?.exits?.find((e) => e.toIndex === room.index);
+              const isExit = !!currExit;
+              const isBlocked = currExit?.blocked; // blocked exit
 
               let color, opacity;
               let onClick: MouseEventHandler | undefined;
               if (isCurrRoom) {
                 color = '#3b3';
                 opacity = 0.9;
+              } else if (isBlocked) {
+                color = '#000';
+                opacity = 0.3;
               } else if (isExit) {
                 color = '#f85';
                 opacity = 0.6;
@@ -105,7 +111,16 @@ export const Grid = (props: Props) => {
               );
               if (isRoom)
                 tile = (
-                  <Tooltip key={j} text={[room.name, '', room.description, '']} grow>
+                  <Tooltip
+                    key={j}
+                    text={[
+                      `${room.name} ${isBlocked ? '(blocked)' : ''}`,
+                      '',
+                      room.description,
+                      '',
+                    ]}
+                    grow
+                  >
                     {tile}
                   </Tooltip>
                 );

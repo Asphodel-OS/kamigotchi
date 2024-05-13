@@ -20,7 +20,7 @@ import {
   checkCurrent,
   checkLogicOperator,
   checkerSwitch,
-} from 'layers/network/shapes/utils/LibBoolean';
+} from 'layers/network/shapes/utils/Conditionals';
 import { Account } from './Account';
 import { getData } from './Data';
 

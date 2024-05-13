@@ -21,7 +21,7 @@ import { useSelected, useVisibility } from 'layers/react/store';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Score } from 'layers/network/shapes/Score';
-import { getBalance } from 'layers/network/shapes/utils/LibBoolean';
+import { getBalance } from 'layers/network/shapes/utils/Conditionals';
 import { getDescribedEntity } from 'layers/network/shapes/utils/parseDescription';
 import { waitForActionCompletion } from 'layers/network/utils';
 import { ActionBar } from './ActionBar';

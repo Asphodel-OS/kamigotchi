@@ -38,7 +38,6 @@ export function registerMapModal() {
 
     // Render
     ({ network, data }) => {
-      // console.log('mRoom: ', data)
       const { actions, api, components, world } = network;
       const { roomIndex: selectedRoom, setRoom: setSelectedRoom } = useSelected();
       const { modals } = useVisibility();
@@ -54,7 +53,10 @@ export function registerMapModal() {
       // query the set of rooms whenever the selected room changes
       useEffect(() => {
         const roomMap = new Map<number, Room>();
-        const queriedRooms = getAllRooms(world, components, { players: true, exits: true });
+        const queriedRooms = getAllRooms(world, components, {
+          checkExits: { account: data.account },
+          players: true,
+        });
         for (const room of queriedRooms) {
           roomMap.set(room.index, room);
         }

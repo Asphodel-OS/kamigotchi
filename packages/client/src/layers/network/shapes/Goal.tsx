@@ -10,7 +10,11 @@ import {
 
 import { utils } from 'ethers';
 import { Components } from 'layers/network';
-import { Condition, getCondition, passesConditions } from 'layers/network/shapes/utils/LibBoolean';
+import {
+  Condition,
+  getCondition,
+  passesConditions,
+} from 'layers/network/shapes/utils/Conditionals';
 import { Account } from './Account';
 import { Score, getScoresByType } from './Score';
 
