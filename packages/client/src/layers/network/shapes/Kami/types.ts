@@ -12,7 +12,12 @@ import {
 import { Components } from 'layers/network';
 import { Account, getAccount } from '../Account';
 import { KamiBonuses, getKamiBonuses } from '../Bonus';
-import { getConfigFieldValue, getConfigFieldValueArray, getKamiConfig } from '../Config';
+import {
+  KamiConfig,
+  getConfigFieldValue,
+  getConfigFieldValueArray,
+  getKamiConfig,
+} from '../Config';
 import { Kill, getKill } from '../Kill';
 import { Production, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
@@ -33,6 +38,7 @@ export interface Kami extends DetailedEntity {
   skillPoints: number;
   stats: Stats;
   bonuses: KamiBonuses;
+  config: KamiConfig;
   time: {
     cooldown: {
       last: number;
@@ -127,8 +133,8 @@ export const getKami = (
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
     stats: getStats(components, entityIndex),
     bonuses: getKamiBonuses(world, components, entityIndex),
+    config: getKamiConfig(world, components),
   };
-  const config = getKamiConfig(world, components);
 
   /////////////////
   // OPTIONAL DATA
@@ -170,15 +176,6 @@ export const getKami = (
     kami.kills = kills;
   }
 
-  // populate Production
-  if (options?.production) {
-    const productionIndex = Array.from(
-      runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
-    )[0];
-    if (productionIndex)
-      kami.production = getProduction(world, components, productionIndex, { node: true }, kami);
-  }
-
   // populate Skills
   if (options?.skills) {
     kami.skills = getHolderSkills(world, components, kami.id);
@@ -212,11 +209,20 @@ export const getKami = (
     kami.affinities = [kami.traits.body.affinity, kami.traits.hand.affinity];
   }
 
+  // populate Production
+  // NOTE: productions should come after traits for harvest calcs to work correctly
+  if (options?.production) {
+    const productionIndex = Array.from(
+      runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
+    )[0];
+    if (productionIndex)
+      kami.production = getProduction(world, components, productionIndex, { node: true }, kami);
+  }
   /////////////////
   // ADJUSTMENTS
 
   kami.time.cooldown.requirement += kami.bonuses.general.cooldown;
-  kami.stats.health.rate = calcHealthRate(kami, config);
+  kami.stats.health.rate = calcHealthRate(kami);
 
   // TODO: move these over to functions.ts now that we've standardized calcs
   // experience threshold calculation according to level

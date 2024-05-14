@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { FixedPointMathLib as LibFPMath } from "solady/utils/FixedPointMathLib.sol";
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
@@ -42,10 +41,12 @@ import { Gaussian } from "utils/Gaussian.sol";
 
 // placeholders for config values
 string constant UNREVEALED_URI = "https://kamigotchi.nyc3.cdn.digitaloceanspaces.com/placeholder.gif";
+uint256 constant METABOLISM_PREC = 9;
 
 library LibPet {
-  using LibFPMath for int256;
   using SafeCastLib for int32;
+  using SafeCastLib for uint32;
+  using SafeCastLib for int256;
   using SafeCastLib for uint256;
 
   ///////////////////////
@@ -97,9 +98,6 @@ library LibPet {
     setState(components, id, "721_EXTERNAL");
     setOwner(components, id, 0);
   }
-
-  ///////////////////////
-  // STATS INTERACTIONS
 
   // Drains HP from a pet. Opposite of healing
   function drain(IUintComp components, uint256 id, int32 amt) internal {
@@ -153,67 +151,28 @@ library LibPet {
   /////////////////
   // CALCULATIONS
 
-  function calcCooldownDuration(IUintComp components, uint256 id) internal view returns (uint256) {
+  // Calculate the full cooldown duration of a Kami's Standard Action
+  function calcCooldown(IUintComp components, uint256 id) internal view returns (uint256) {
     int256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN").toInt256();
-    int256 bonus = LibBonus.getRaw(components, id, "STD_COOLDOWN");
-    int256 cooldown = base + bonus;
+    int256 shift = LibBonus.getRaw(components, id, "STD_COOLDOWN");
+    int256 cooldown = base + shift;
     if (cooldown < 0) return 0;
-    return uint256(cooldown);
-  }
-
-  // Calculate the affinity multiplier (1e2 precision) for attacks between two kamis
-  function calcAttackAffinityMultiplier(
-    IUintComp components,
-    uint256 sourceID,
-    uint256 targetID
-  ) internal view returns (uint256) {
-    string memory targetAff = getAffinities(components, targetID)[0];
-    string memory sourceAff = getAffinities(components, sourceID)[1];
-    return
-      LibAffinity.getMultiplier(
-        LibConfig.getArray(components, "LIQ_THRESH_MULT_AFF"),
-        0, // TODO: implement affinity attack/defense bonus
-        LibAffinity.getAttackEffectiveness(sourceAff, targetAff)
-      );
-  }
-
-  // Calculate the reward for liquidating a specified Coin balance
-  function calcBounty(
-    IUintComp components,
-    uint256 id, // unused atm, but will be used for skill multipliers
-    uint256 amt
-  ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "LIQ_BOUNTY_BASE");
-
-    uint256 base = uint256(configVals[0]);
-    uint256 precision = 10 ** uint256(configVals[1]);
-    return (amt * base) / precision;
+    return cooldown.toUint256();
   }
 
   // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
-  function calcMetabolism(
-    IUintComp components,
-    uint256 id
-  ) internal view returns (uint256, uint256) {
-    uint256 rootPrecision = 9; // root precision of this AsphoAST Node
+  function calcMetabolism(IUintComp components, uint256 id) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
-    uint256 boostBonus = uint256(LibBonus.getRaw(components, id, "REST_METABOLISM_BOOST"));
-    uint256 harmony = calcTotalHarmony(components, id).toUint256();
-    uint256 core = uint256(config[2]);
-    uint256 boost = uint256(config[6]) + boostBonus;
-    uint256 precision = rootPrecision - uint256(config[3] + config[7]);
-    uint256 metabolism = ((10 ** precision) * (harmony * core * boost)) / 3600;
-    return (metabolism, rootPrecision);
+    uint256 boostBonus = LibBonus.getRaw(components, id, "REST_METABOLISM_BOOST").toUint256();
+    uint256 base = calcTotalHarmony(components, id).toUint256();
+    uint256 ratio = config[2]; // metabolism core
+    uint256 boost = config[6] + boostBonus;
+    uint256 precision = 10 ** (METABOLISM_PREC - (config[3] + config[7]));
+    uint256 metabolism = (precision * base * ratio * boost) / 3600;
+    return (metabolism);
   }
 
-  // Calculate resting recovery (HP) of a Kami. This assume Kami is resting.
-  function calcRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
-    (uint256 rate, uint256 ratePrecision) = calcMetabolism(components, id);
-    uint256 duration = block.timestamp - getLastTs(components, id);
-    return (duration * rate) / (10 ** ratePrecision);
-  }
-
-  // Calculate the HP strain on pet from accrual of musu
+  // Calculate the HP strain on pet from accrual of musu. Round up.
   function calcStrain(
     IUintComp components,
     uint256 id,
@@ -221,42 +180,17 @@ library LibPet {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_MUSU_STRAIN");
     int256 bonusBoost = LibBonus.getRaw(components, id, "STD_STRAIN_BOOST");
-    uint256 core = uint256(config[2]);
-    uint256 boost = uint(int(uint(config[6])) + bonusBoost);
-    uint256 precision = 10 ** uint256(config[3] + config[7]);
-    return (amt * core * boost + (precision / 2)) / precision; // round up
+    uint256 core = config[2];
+    uint256 boost = uint(config[6].toInt256() + bonusBoost);
+    uint256 precision = 10 ** uint(config[3] + config[7]);
+    return (amt * core * boost + (precision - 1)) / precision;
   }
 
-  // Calculate the liquidation threshold for target pet, attacked by the source pet.
-  // This is measured as a proportion of total health with 1e18 precision. (i.e. 1e18 = 100%)
-  function calcThreshold(
-    IUintComp components,
-    uint256 sourceID,
-    uint256 targetID
-  ) internal view returns (uint256) {
-    uint256 baseThreshold = calcThresholdBase(components, sourceID, targetID);
-    uint256 affinityMultiplier = calcAttackAffinityMultiplier(components, sourceID, targetID);
-    uint256 affinityMultiplierPrecision = 10 **
-      LibConfig.get(components, "LIQ_THRESH_MULT_AFF_PREC");
-    return (affinityMultiplier * baseThreshold) / affinityMultiplierPrecision; // adjust for affinity multiplier precision
-  }
-
-  // Calculate the base liquidation threshold for target pet, attacked by the source pet.
-  // LT = .2 * Φ(ln(V_s / H_t)) (as proportion of total health with 1e18 precision).
-  function calcThresholdBase(
-    IUintComp components,
-    uint256 sourceID,
-    uint256 targetID
-  ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "LIQ_THRESH_BASE");
-
-    uint256 base = uint256(configVals[0]);
-    uint256 basePrecision = 10 ** uint256(configVals[1]);
-    uint256 sourceViolence = calcTotalViolence(components, sourceID).toUint256();
-    uint256 targetHarmony = calcTotalHarmony(components, targetID).toUint256();
-    int256 ratio = int256((1e18 * sourceViolence) / targetHarmony);
-    int256 weight = Gaussian.cdf(LibFPMath.lnWad(ratio));
-    return (uint256(weight) * base) / basePrecision;
+  // Calculate resting recovery (HP) of a Kami. This assume Kami is resting. Round down.
+  function calcRecovery(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 rate = calcMetabolism(components, id);
+    uint256 duration = block.timestamp - getLastTs(components, id);
+    return (duration * rate) / (10 ** METABOLISM_PREC);
   }
 
   // Calculate and return the total harmony of a pet (including equips)
@@ -369,8 +303,8 @@ library LibPet {
   // Check whether a pet is on cooldown after its last Standard Action
   function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
     uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = calcCooldownDuration(components, id);
-    return idleTime < idleRequirement;
+    uint256 idleRequirement = calcCooldown(components, id);
+    return idleTime <= idleRequirement;
   }
 
   function assertAccountBatch(

@@ -1,4 +1,3 @@
-import { KamiConfig } from '../Config';
 import { Kami } from '../Kami';
 import { Production } from './types';
 
@@ -30,36 +29,29 @@ export const calcBounty = (production: Production): number => {
 };
 
 // calculate the expected output rate from a production
-export const calcRate = (production: Production, kami: Kami, kamiConfig: KamiConfig): number => {
-  const config = kamiConfig.harvest.bounty;
-  const base = calcFertility(production, kami, kamiConfig);
+export const calcRate = (production: Production, kami: Kami): number => {
+  if (production.state !== 'ACTIVE') return 0;
+  const config = kami.config.harvest.bounty;
+  const base = calcFertility(production, kami);
   const nudge = calcDedication();
   const boost = config.boost.value + kami.bonuses.harvest.bounty.boost;
   return (base + nudge) * boost;
 };
 
-export const calcFertility = (
-  production: Production,
-  kami: Kami,
-  kamiConfig: KamiConfig
-): number => {
-  const config = kamiConfig.harvest.fertility;
+export const calcFertility = (production: Production, kami: Kami): number => {
+  const config = kami.config.harvest.fertility;
   const ratio = config.ratio.value;
-  const efficacy = config.boost.value + calcEfficacyShift(production, kami, kamiConfig);
+  const efficacy = config.boost.value + calcEfficacyShift(production, kami);
   return (kami.stats.power.total * ratio * efficacy) / 3600;
 };
 
 export const calcDedication = () => 0;
 
-export const calcEfficacyShift = (
-  production: Production,
-  kami: Kami,
-  kamiConfig: KamiConfig
-): number => {
+export const calcEfficacyShift = (production: Production, kami: Kami): number => {
   const node = production.node;
   if (!node || !kami.affinities || !node.affinity || node.affinity === 'NORMAL') return 0;
 
-  const config = kamiConfig.harvest.efficacy;
+  const config = kami.config.harvest.efficacy;
   const neutShift = config.base;
   const upShift = config.up + kami.bonuses.harvest.fertility.boost;
   const downShift = config.down;

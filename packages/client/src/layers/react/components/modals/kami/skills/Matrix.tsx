@@ -51,7 +51,7 @@ export const Matrix = (props: Props) => {
     }
     result.push(skillRow[exclusive.length]);
 
-    return <NodeRow>{result}</NodeRow>;
+    return <NodeRow key={skillIndices[0]}>{result}</NodeRow>;
   };
 
   const Node = (skillIndex: number) => {
@@ -66,7 +66,7 @@ export const Matrix = (props: Props) => {
     const titleText = [`${skill.name} [${kSkill?.points.current ?? 0}/${skill.points.max}]`];
 
     return (
-      <NodeWrapper style={{ opacity: acquirable ? '1' : '0.6' }}>
+      <NodeWrapper key={skillIndex} style={{ opacity: acquirable ? '1' : '0.6' }}>
         <ItemIcon
           key={skillIndex}
           item={skill}

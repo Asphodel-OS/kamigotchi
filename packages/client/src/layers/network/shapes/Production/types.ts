@@ -1,7 +1,6 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
-import { getKamiConfig } from '../Config';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './functions';
@@ -44,15 +43,6 @@ export const getProduction = (
     },
   };
 
-  // retrieve the kami if it's not passed in
-  if (!kami) {
-    const kamiID = getComponentValue(PetID, index)?.value as EntityID;
-    const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
-    kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
-  }
-  const kamiConfig = getKamiConfig(world, components);
-  production.rate = calcRate(production, kami, kamiConfig);
-
   /////////////////
   // OPTIONAL DATA
 
@@ -65,6 +55,15 @@ export const getProduction = (
 
   /////////////////
   // ADJUSTMENTS
+
+  // retrieve the kami if it's not passed in
+  // NOTE: rate calcs only work if the node is set
+  if (!kami) {
+    const kamiID = getComponentValue(PetID, index)?.value as EntityID;
+    const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
+    kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
+  }
+  production.rate = calcRate(production, kami);
 
   return production;
 };

@@ -22,6 +22,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibCoin } from "libraries/LibCoin.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibDataEntity } from "libraries/LibDataEntity.sol";
+import { LibKill } from "libraries/LibKill.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPet } from "libraries/LibPet.sol";
 import { LibStat } from "libraries/LibStat.sol";
@@ -40,6 +41,10 @@ uint256 constant RATE_PREC = 9;
  */
 library LibProduction {
   using SafeCastLib for int32;
+  using SafeCastLib for uint32;
+  using SafeCastLib for int256;
+  using SafeCastLib for uint256;
+
   /////////////////
   // INTERACTIONS
 
@@ -93,40 +98,27 @@ library LibProduction {
   /////////////////////
   // CALCULATIONS
 
-  // Calculate the duration since a production last started, measured in seconds.
-  function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    return block.timestamp - getLastTs(components, id);
-  }
-
   // Calculate the accrued output of a harvest since the pet's last sync.
   function calcBounty(IUintComp components, uint256 id) internal view returns (uint256) {
     if (!isActive(components, id)) return 0;
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
-    uint256 boostBonus = uint256(LibBonus.getRaw(components, petID, "HARV_BOUNTY_BOOST"));
+    int256 boostBonus = LibBonus.getRaw(components, petID, "HARV_BOUNTY_BOOST");
 
-    uint256 fertility = calcFertility(components, id);
-    uint256 dedication = 0; //  getDedication(components, id);
-    uint256 rate = fertility + dedication;
-    uint256 duration = calcDuration(components, id);
-    uint256 boost = uint256(config[6]) + boostBonus;
+    uint256 base = calcFertility(components, id);
+    uint256 nudge = 0; //  getDedication(components, id);
+    uint256 rate = base + nudge;
+    uint256 ratio = calcDuration(components, id);
+    uint256 boost = (config[6].toInt256() + boostBonus).toUint256();
 
     // precision is only divided this time as applied > final (1e0)
-    uint256 precision = uint256(RATE_PREC + config[3] + config[7]);
-    return (rate * duration * boost) / (10 ** precision);
+    uint256 precision = 10 ** (RATE_PREC + config[3] + config[7]);
+    return (rate * ratio * boost) / precision;
   }
 
-  // Calculate the rate of harvest, measured in musu/s (1e9 precision)
-  function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (!isActive(components, id)) return 0;
-    uint256 petID = getPet(components, id);
-    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
-
-    uint256 power = LibPet.calcTotalPower(components, petID).toUint256();
-    uint256 core = uint256(config[2]);
-    uint256 efficacy = calcEfficacy(components, id, int(uint(config[6])));
-    uint256 precision = RATE_PREC - uint256(config[3] + config[7]);
-    return ((10 ** precision) * (power * core * efficacy)) / 3600;
+  // Calculate the duration since a production last started, measured in seconds.
+  function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
+    return block.timestamp - getLastTs(components, id);
   }
 
   // Calculate the efficacy of the core harvesting calc (min 0).
@@ -134,7 +126,7 @@ library LibProduction {
   function calcEfficacy(
     IUintComp components,
     uint256 id,
-    int256 base
+    uint256 base
   ) internal view returns (uint256) {
     uint256 petID = getPet(components, id);
     uint256 nodeID = getNode(components, id);
@@ -142,9 +134,9 @@ library LibProduction {
 
     // pull the base efficacy shifts from the config
     LibAffinity.Shifts memory baseEfficacyShifts = LibAffinity.Shifts({
-      base: int(uint(config[0])),
-      up: int(uint(config[1])),
-      down: int(uint(config[2])) * -1
+      base: config[0].toInt256(),
+      up: config[1].toInt256(),
+      down: config[2].toInt256() * -1
     });
 
     // pull the bonus efficacy shifts from the pet
@@ -155,22 +147,31 @@ library LibProduction {
     });
 
     // sum each applied shift with the base efficacy value to get the final value
-    int256 efficacy = base;
+    int256 efficacy = base.toInt256();
     string memory nodeAff = LibNode.getAffinity(components, nodeID);
     string[] memory petAffs = LibPet.getAffinities(components, petID);
     for (uint256 i = 0; i < petAffs.length; i++) {
-      LibAffinity.Effectiveness effectiveness = LibAffinity.getHarvestEffectiveness(
-        petAffs[i],
-        nodeAff
-      );
       efficacy += LibAffinity.calcEfficacyShift(
-        effectiveness,
+        LibAffinity.getHarvestEffectiveness(petAffs[i], nodeAff),
         baseEfficacyShifts,
         bonusEfficacyShifts
       );
     }
 
     return (efficacy < 0) ? 0 : uint(efficacy);
+  }
+
+  // Calculate the rate of harvest, measured in musu/s (1e9 precision)
+  function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
+    if (!isActive(components, id)) return 0;
+    uint256 petID = getPet(components, id);
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
+
+    uint256 power = LibPet.calcTotalPower(components, petID).toUint256();
+    uint256 ratio = config[2]; // fertility core
+    uint256 efficacy = calcEfficacy(components, id, config[6]);
+    uint256 precision = 10 ** (RATE_PREC - (config[3] + config[7]));
+    return (precision * power * ratio * efficacy) / 3600;
   }
 
   /////////////////
@@ -188,10 +189,9 @@ library LibProduction {
     uint256 targetPetID,
     uint256 sourcePetID
   ) public view returns (bool) {
-    uint256 health = (LibStat.getHealth(components, targetPetID).sync).toUint256();
-    uint256 totalHealth = LibPet.calcTotalHealth(components, targetPetID).toUint256();
-    uint256 threshold = LibPet.calcThreshold(components, sourcePetID, targetPetID); // 1e18 precision
-    return threshold * totalHealth > health * 1e18;
+    uint256 currHealth = (LibStat.getHealth(components, targetPetID).sync).toUint256();
+    uint256 threshold = LibKill.calcThreshold(components, sourcePetID, targetPetID);
+    return threshold > currHealth;
   }
 
   /////////////////

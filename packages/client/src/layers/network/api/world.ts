@@ -109,7 +109,7 @@ export function setupWorldAPI(systems: any, provider: any) {
 
     // Liquidation Effects
     await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
-    await api.config.set.array('KAMI_LIQ_HOSTILITY', [0, 0, 400, 3]); // nontraditional AST node
+    await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // nontraditional AST node
     await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
 
     // Liquidation Bounty

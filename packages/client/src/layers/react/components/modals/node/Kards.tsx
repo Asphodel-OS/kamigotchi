@@ -124,16 +124,16 @@ export const Kards = (props: Props) => {
     }
 
     // check what the liquidation threshold is for any kamis that have made it to
-    const valid = available.filter((kami) => canMog(kami, target, kamiConfig));
+    const valid = available.filter((kami) => canMog(kami, target));
     if (valid.length == 0 && reason === '') {
       // get the details of the highest cap liquidation
-      const thresholds = available.map((ally) => calcThreshold(ally, target, kamiConfig));
+      const thresholds = available.map((ally) => calcThreshold(ally, target));
       const [threshold, index] = thresholds.reduce(
         (a, b, i) => (a[0] < b ? [b, i] : a),
         [Number.MIN_VALUE, -1]
       );
       const champion = available[index];
-      reason = `${champion.name} can liquidate at ${Math.round(threshold)} Health`;
+      reason = `${champion.name} can liquidate below ${Math.round(threshold)} Health`;
     }
 
     if (reason === '') reason = 'Liquidate this Kami';
@@ -234,7 +234,7 @@ export const Kards = (props: Props) => {
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options = allies.filter((ally) => canLiquidate(ally, target, kamiConfig));
+    const options = allies.filter((ally) => canLiquidate(ally, target));
     const actionOptions = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
