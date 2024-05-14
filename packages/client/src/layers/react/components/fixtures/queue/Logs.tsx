@@ -36,7 +36,9 @@ export const Logs = (props: Props) => {
     let tooltip = [status];
     if (/\S/.test(metadata)) {
       const event = metadata.substring(0, metadata.indexOf(':'));
-      const reason = metadata.substring(metadata.indexOf(':') + 1);
+      // const reason = metadata.substring(metadata.indexOf(':') + 1);
+      const reasonStart = metadata.substring(metadata.indexOf('message\\":\\"') + 12);
+      const reason = reasonStart.substring(0, reasonStart.indexOf('\\"'));
       tooltip = [`${status} (${event})`, '', `${reason}`];
     }
 
