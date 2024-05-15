@@ -157,6 +157,7 @@ export const getBalance = (
       holder.kamis?.forEach((kami) => {
         if (kami.level > top) top = kami.level;
       });
+      return top;
     } else if (type === 'ROOM') {
       return holder.roomIndex || 0;
     }
