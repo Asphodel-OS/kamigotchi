@@ -103,7 +103,7 @@ library LibProduction {
     if (!isActive(components, id)) return 0;
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_BOUNTY");
-    uint256 boostBonus = uint256(LibBonus.getRaw(components, petID, "HARVEST_OUTPUT"));
+    uint256 boostBonus = uint256(LibBonus.getRaw(components, petID, "HARV_BOUNTY_BOOST"));
 
     uint256 fertility = calcFertility(components, id);
     uint256 dedication = 0; //  getDedication(components, id);
@@ -150,7 +150,7 @@ library LibProduction {
     // pull the bonus efficacy shifts from the pet
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
       base: int(0),
-      up: LibBonus.getRaw(components, petID, "HARVEST_AFFINITY_MULT"),
+      up: LibBonus.getRaw(components, petID, "HARV_FERTILITY_BOOST"),
       down: int(0)
     });
 

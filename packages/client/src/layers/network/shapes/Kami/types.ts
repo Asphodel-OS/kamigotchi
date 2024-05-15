@@ -11,14 +11,15 @@ import {
 
 import { Components } from 'layers/network';
 import { Account, getAccount } from '../Account';
-import { Bonuses, getBonusValue, getBonuses } from '../Bonus';
-import { getConfigFieldValue, getConfigFieldValueArray } from '../Config';
+import { KamiBonuses, getKamiBonuses } from '../Bonus';
+import { getConfigFieldValue, getConfigFieldValueArray, getKamiConfig } from '../Config';
 import { Kill, getKill } from '../Kill';
-import { Production, calcProductionRate, getProduction } from '../Production';
+import { Production, getProduction } from '../Production';
 import { Skill, getHolderSkills } from '../Skill';
 import { Stats, getStats } from '../Stats';
 import { TraitIndices, Traits, getTraits } from '../Trait';
 import { DetailedEntity } from '../utils/EntityTypes';
+import { calcHealthRate } from './functions';
 
 // standardized shape of a Kami Entity
 export interface Kami extends DetailedEntity {
@@ -31,7 +32,7 @@ export interface Kami extends DetailedEntity {
   state: string;
   skillPoints: number;
   stats: Stats;
-  bonuses: Bonuses;
+  bonuses: KamiBonuses;
   time: {
     cooldown: {
       last: number;
@@ -125,8 +126,9 @@ export const getKami = (
     rerolls: (getComponentValue(Reroll, entityIndex)?.value ?? (0 as number)) * 1,
     skillPoints: (getComponentValue(SkillPoint, entityIndex)?.value ?? (0 as number)) * 1,
     stats: getStats(components, entityIndex),
-    bonuses: getBonuses(world, components, entityIndex),
+    bonuses: getKamiBonuses(world, components, entityIndex),
   };
+  const config = getKamiConfig(world, components);
 
   /////////////////
   // OPTIONAL DATA
@@ -174,7 +176,7 @@ export const getKami = (
       runQuery([Has(IsProduction), HasValue(PetID, { value: kami.id })])
     )[0];
     if (productionIndex)
-      kami.production = getProduction(world, components, productionIndex, { node: true });
+      kami.production = getProduction(world, components, productionIndex, { node: true }, kami);
   }
 
   // populate Skills
@@ -212,8 +214,11 @@ export const getKami = (
 
   /////////////////
   // ADJUSTMENTS
-  // TODO: move these over to functions.ts now that we've standardized calcs
 
+  kami.time.cooldown.requirement += kami.bonuses.general.cooldown;
+  kami.stats.health.rate = calcHealthRate(kami, config);
+
+  // TODO: move these over to functions.ts now that we've standardized calcs
   // experience threshold calculation according to level
   if (kami.level) {
     const experienceBase = getConfigFieldValue(world, components, 'KAMI_LVL_REQ_BASE');
@@ -228,27 +233,6 @@ export const getKami = (
       experienceBase * ((1.0 * experienceExponent) / exponentPrecision) ** (kami.level - 1)
     );
   }
-
-  // health change rate for harvesting/resting kami
-  let healthRate = 0;
-  if (kami.state === 'HARVESTING') {
-    let harvestRate = 0;
-    if (kami.production) harvestRate = calcProductionRate(world, components, kami.production);
-    const strainConfig = getConfigFieldValueArray(world, components, 'KAMI_MUSU_STRAIN');
-    const boostBonus = getBonusValue(world, components, kami.id, 'HARVEST_DRAIN');
-    const ratio = strainConfig[2];
-    const boost = strainConfig[6] + boostBonus;
-    const precision = 10 ** (strainConfig[3] + strainConfig[7]);
-    healthRate = (-1 * harvestRate * ratio * boost) / precision;
-  } else if (kami.state === 'RESTING') {
-    const metabolismConfig = getConfigFieldValueArray(world, components, 'KAMI_REST_METABOLISM');
-    const boostBonus = getBonusValue(world, components, kami.id, 'RESTING_RECOVERY');
-    const ratio = metabolismConfig[2];
-    const boost = metabolismConfig[6] + boostBonus;
-    const precision = 10 ** (metabolismConfig[3] + metabolismConfig[7]);
-    healthRate = (kami.stats.harmony.total * ratio * boost) / (precision * 3600);
-  }
-  kami.stats.health.rate = healthRate;
 
   return kami;
 };

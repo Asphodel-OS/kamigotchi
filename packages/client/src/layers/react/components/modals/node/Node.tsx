@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { getAccountFromBurner } from 'layers/network/shapes/Account';
+import { getKamiConfig } from 'layers/network/shapes/Config';
 import { Kami } from 'layers/network/shapes/Kami';
-import { getLiquidationConfig } from 'layers/network/shapes/LiquidationConfig';
 import { Node, getNodeByIndex } from 'layers/network/shapes/Node';
 import { ModalWrapper } from 'layers/react/components/library/ModalWrapper';
 import { registerUIComponent } from 'layers/react/engine/store';
@@ -34,7 +34,7 @@ export function registerNodeModal() {
           const { nodeIndex } = useSelected.getState();
 
           const account = getAccountFromBurner(network, { kamis: true, inventory: true });
-          const liquidationConfig = getLiquidationConfig(world, components);
+          const kamiConfig = getKamiConfig(world, components);
           const node = getNodeByIndex(world, components, nodeIndex, {
             kamis: true,
             accountID: account?.id,
@@ -42,7 +42,7 @@ export function registerNodeModal() {
 
           return {
             network,
-            data: { account, liquidationConfig, node },
+            data: { account, kamiConfig, node },
           };
         })
       ),
@@ -50,7 +50,7 @@ export function registerNodeModal() {
     // Render
     ({ data, network }) => {
       // console.log('NodeM: data', data);
-      const { account, liquidationConfig } = data;
+      const { account, kamiConfig } = data;
       const { actions, api, components, world } = network;
       const [tab, setTab] = useState('allies');
       const { nodeIndex } = useSelected();
@@ -155,7 +155,7 @@ export function registerNodeModal() {
             allies={node.kamis?.allies!}
             enemies={node.kamis?.enemies!}
             actions={{ collect, feed, liquidate, stop }}
-            battleConfig={liquidationConfig}
+            battleConfig={kamiConfig}
             tab={tab}
           />
         </ModalWrapper>

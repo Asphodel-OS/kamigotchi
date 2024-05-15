@@ -1,8 +1,5 @@
-import { World } from '@mud-classic/recs';
-
-import { Components } from 'layers/network';
-import { getBonusValue } from '../Bonus';
-import { getConfigFieldValueArray } from '../Config';
+import { KamiConfig } from '../Config';
+import { Kami } from '../Kami';
 import { Production } from './types';
 
 /////////////////
@@ -24,64 +21,59 @@ export const calcLifeTime = (production?: Production): number => {
 // OUTPUT CALCS
 
 // calculate the expected output from a production
-export const calcOutput = (production: Production): number => {
-  if (!production) return 0;
+// assumes the production rate has been updated
+export const calcBounty = (production: Production): number => {
   let output = production.balance;
   const duration = calcIdleTime(production);
   output += Math.floor(duration * production.rate);
   return Math.max(0, output);
 };
 
-export const calcRate = (world: World, components: Components, production: Production): number => {
-  if (!production.kami) return 0;
-  const kami = production.kami;
-  const config = getConfigFieldValueArray(world, components, 'KAMI_HARV_BOUNTY');
-  const boostBonus = getBonusValue(world, components, kami.id, 'HARVEST_OUTPUT');
-  const fertility = calcFertility(world, components, production);
-  const dedication = calcDedication();
-  const boost = config[6] + boostBonus;
-  const precision = 10 ** config[7];
-  return ((fertility + dedication) * boost) / precision;
+// calculate the expected output rate from a production
+export const calcRate = (production: Production, kami: Kami, kamiConfig: KamiConfig): number => {
+  const config = kamiConfig.harvest.bounty;
+  const base = calcFertility(production, kami, kamiConfig);
+  const nudge = calcDedication();
+  const boost = config.boost.value + kami.bonuses.harvest.bounty.boost;
+  return (base + nudge) * boost;
 };
 
 export const calcFertility = (
-  world: World,
-  components: Components,
-  production: Production
+  production: Production,
+  kami: Kami,
+  kamiConfig: KamiConfig
 ): number => {
-  if (!production.kami) return 0;
-  const kami = production.kami;
-  const config = getConfigFieldValueArray(world, components, 'KAMI_HARV_FERTILITY');
-  const core = config[2];
-  const efficacy = config[6] + calcEfficacyShift(world, components, production); // TODO: fix this to actually calculate efficacy
-  const precision = 10 ** (config[3] + config[7]);
-  return (kami.stats.power.total * core * efficacy) / (precision * 3600);
+  const config = kamiConfig.harvest.fertility;
+  const ratio = config.ratio.value;
+  const efficacy = config.boost.value + calcEfficacyShift(production, kami, kamiConfig);
+  return (kami.stats.power.total * ratio * efficacy) / 3600;
 };
 
 export const calcDedication = () => 0;
 
 export const calcEfficacyShift = (
-  world: World,
-  components: Components,
-  production: Production
+  production: Production,
+  kami: Kami,
+  kamiConfig: KamiConfig
 ): number => {
-  const kami = production.kami;
   const node = production.node;
-  if (!kami || !node || !kami.affinities || !node.affinity || node.affinity === 'NORMAL') return 0;
-  const config = getConfigFieldValueArray(world, components, 'KAMI_HARV_EFFICACY');
-  const neutralShift = config[0];
-  const upShift = config[1] + getBonusValue(world, components, kami.id, 'HARVEST_AFFINITY_MULT');
-  const downShift = -config[2];
+  if (!node || !kami.affinities || !node.affinity || node.affinity === 'NORMAL') return 0;
+
+  const config = kamiConfig.harvest.efficacy;
+  const neutShift = config.base;
+  const upShift = config.up + kami.bonuses.harvest.fertility.boost;
+  const downShift = config.down;
 
   // calculate based on matchups
   let shift = 0;
   kami.affinities?.forEach((affinity) => {
-    if (affinity === 'NORMAL') shift += neutralShift;
+    if (affinity === 'NORMAL') shift += neutShift;
     else if (affinity === node.affinity) shift += upShift;
     else shift += downShift;
   });
   return shift;
 };
+
 /////////////////
 // MISCELLANEOUS
 

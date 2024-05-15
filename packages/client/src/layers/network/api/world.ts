@@ -99,7 +99,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     // [nudge, nudge_prec, ratio, ratio_prec, shift, shift_prec, boost, boost_prec]
 
     // Harvest Effects
-    await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500]); // affinity-based efficacy shifts [base, up, down]
+    await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 2500, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
 
@@ -107,11 +107,10 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.array('KAMI_MUSU_STRAIN', [0, 0, 200, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 200, 3, 0, 0, 1000, 3]);
 
-    // Liquidation Calcs
-    await api.config.set.array('LIQ_THRESH_BASE', [40, 2]);
-    // [base, up, down]
-    await api.config.set.array('LIQ_THRESH_MULT_AFF', [100, 200, 50]);
-    await api.config.set.number('LIQ_THRESH_MULT_AFF_PREC', 2);
+    // Liquidation Effects
+    await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
+    await api.config.set.array('KAMI_LIQ_HOSTILITY', [0, 0, 400, 3]); // nontraditional AST node
+    await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
 
     // Liquidation Bounty
     await api.config.set.array('LIQ_BOUNTY_BASE', [50, 2]);
@@ -122,7 +121,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('MINT_ACCOUNT_MAX', 50000000);
     await api.config.set.number('ACCOUNT_STAMINA_RECOVERY_PERIOD', 10);
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
-    await api.config.set.number('KAMI_STANDARD_COOLDOWN', 10);
+    await api.config.set.number('KAMI_STANDARD_COOLDOWN', 30);
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100000, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 3, 0, 0, 1000, 3]);
   }

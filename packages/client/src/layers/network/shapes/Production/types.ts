@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'layers/network';
+import { getKamiConfig } from '../Config';
 import { Kami, getKami } from '../Kami';
 import { Node, getNode } from '../Node';
 import { calcRate } from './functions';
@@ -15,7 +16,6 @@ export interface Production {
     last: number;
     start: number;
   };
-  kami: Kami;
   node?: Node;
 }
 
@@ -29,16 +29,12 @@ export const getProduction = (
   world: World,
   components: Components,
   index: EntityIndex,
-  options?: ProductionOptions
+  options?: ProductionOptions,
+  kami?: Kami
 ): Production => {
-  const { Coin, NodeID, PetID, LastTime, Rate, State, StartTime } = components;
-  const kamiID = getComponentValue(PetID, index)?.value as EntityID;
-  const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
-  const kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
-
+  const { Coin, NodeID, PetID, LastTime, State, StartTime } = components;
   let production: Production = {
     id: world.entities[index],
-    kami,
     rate: 0,
     balance: ((getComponentValue(Coin, index)?.value as number) ?? 0) * 1,
     state: getComponentValue(State, index)?.value as string,
@@ -48,13 +44,20 @@ export const getProduction = (
     },
   };
 
+  // retrieve the kami if it's not passed in
+  if (!kami) {
+    const kamiID = getComponentValue(PetID, index)?.value as EntityID;
+    const kamiEntityIndex = world.entityToIndex.get(kamiID) ?? (0 as EntityIndex);
+    kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
+  }
+  const kamiConfig = getKamiConfig(world, components);
+  production.rate = calcRate(production, kami, kamiConfig);
+
   /////////////////
   // OPTIONAL DATA
 
-  if (!options) return production;
-
   // populate Node
-  if (options.node) {
+  if (options?.node) {
     const nodeID = getComponentValue(NodeID, index)?.value as EntityID;
     const nodeIndex = world.entityToIndex.get(nodeID);
     if (nodeIndex) production.node = getNode(world, components, nodeIndex);
@@ -62,6 +65,6 @@ export const getProduction = (
 
   /////////////////
   // ADJUSTMENTS
-  production.rate = calcRate(world, components, production);
+
   return production;
 };

@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { collectIcon, feedIcon, liquidateIcon, stopIcon } from 'assets/images/icons/actions';
 import { Account } from 'layers/network/shapes/Account';
+import { KamiConfig } from 'layers/network/shapes/Config';
 import { Inventory } from 'layers/network/shapes/Inventory';
 import {
   Kami,
   calcCooldown,
   calcHealth,
-  calcLiqThresholdValue,
   calcOutput,
+  calcThreshold,
   canLiquidate,
   canMog,
   isFull,
@@ -16,7 +17,6 @@ import {
   isStarving,
   onCooldown,
 } from 'layers/network/shapes/Kami';
-import { LiquidationConfig } from 'layers/network/shapes/LiquidationConfig';
 import { IconButton } from 'layers/react/components/library/IconButton';
 import { IconListButton } from 'layers/react/components/library/IconListButton';
 import { KamiCard } from 'layers/react/components/library/KamiCard';
@@ -34,12 +34,12 @@ interface Props {
   };
   allies: Kami[];
   enemies: Kami[];
-  battleConfig: LiquidationConfig;
+  kamiConfig: KamiConfig;
   tab: string;
 }
 
 export const Kards = (props: Props) => {
-  const { actions, account, battleConfig } = props;
+  const { actions, account, kamiConfig } = props;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount } = useSelected();
 
@@ -124,10 +124,10 @@ export const Kards = (props: Props) => {
     }
 
     // check what the liquidation threshold is for any kamis that have made it to
-    const valid = available.filter((kami) => canMog(kami, target, battleConfig));
+    const valid = available.filter((kami) => canMog(kami, target, kamiConfig));
     if (valid.length == 0 && reason === '') {
       // get the details of the highest cap liquidation
-      const thresholds = available.map((ally) => calcLiqThresholdValue(ally, target, battleConfig));
+      const thresholds = available.map((ally) => calcThreshold(ally, target, kamiConfig));
       const [threshold, index] = thresholds.reduce(
         (a, b, i) => (a[0] < b ? [b, i] : a),
         [Number.MIN_VALUE, -1]
@@ -234,7 +234,7 @@ export const Kards = (props: Props) => {
 
   // button for liquidating production
   const LiquidateButton = (target: Kami, allies: Kami[]) => {
-    const options = allies.filter((ally) => canLiquidate(ally, target, battleConfig));
+    const options = allies.filter((ally) => canLiquidate(ally, target, kamiConfig));
     const actionOptions = options.map((myKami) => {
       return {
         text: `${myKami.name}`,
