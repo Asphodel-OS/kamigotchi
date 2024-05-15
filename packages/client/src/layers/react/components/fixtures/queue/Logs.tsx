@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { OpenInNewIcon } from 'assets/images/icons/misc';
 import { NetworkLayer } from 'layers/network';
 import { ActionState, ActionStateString } from 'layers/network/systems/ActionSystem/constants';
 import { Tooltip } from 'layers/react/components/library/Tooltip';
@@ -36,7 +37,6 @@ export const Logs = (props: Props) => {
     let tooltip = [status];
     if (/\S/.test(metadata)) {
       const event = metadata.substring(0, metadata.indexOf(':'));
-      // const reason = metadata.substring(metadata.indexOf(':') + 1);
       const reasonStart = metadata.substring(metadata.indexOf('message\\":\\"') + 12);
       const reason = reasonStart.substring(0, reasonStart.indexOf('\\"'));
       tooltip = [`${status} (${event})`, '', `${reason}`];
@@ -57,8 +57,20 @@ export const Logs = (props: Props) => {
 
   const Time = (time: number) => {
     return (
-      <Tooltip text={[moment(time).format()]}>
+      <Tooltip text={[moment(time).format('Do MMMM, h:mm:ss a')]}>
         <Text>{moment(time).fromNow()}</Text>
+      </Tooltip>
+    );
+  };
+
+  const EtherscanButton = (hash: string | undefined) => {
+    if (!hash) return <></>;
+    return (
+      <Tooltip text={[`View on Etherscan`]}>
+        <OpenIcon
+          src={OpenInNewIcon}
+          onClick={() => window.open(`https://sepolia-optimism.etherscan.io//tx/${hash}`, '_blank')}
+        />
       </Tooltip>
     );
   };
@@ -73,7 +85,10 @@ export const Logs = (props: Props) => {
           {Status(state, metadata)}
           {Description(actionData)}
         </RowSegment>
-        <RowSegment>{Time(actionData.time)}</RowSegment>
+        <RowSegment>
+          {Time(actionData.time)}
+          {EtherscanButton(actionData.txHash)}
+        </RowSegment>
       </Row>
     );
   };
@@ -137,6 +152,17 @@ const Text = styled.div`
   text-align: left;
   margin: 0.2vw;
   font-family: Pixel;
+`;
+
+const OpenIcon = styled.img`
+  cursor: pointer;
+
+  width: 1.5vw;
+  margin-right: 0.4vw;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const Icon = styled.img`

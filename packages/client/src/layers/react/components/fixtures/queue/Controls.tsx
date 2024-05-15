@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { formatEther } from 'viem';
-import { useBalance, useWatchBlockNumber } from 'wagmi';
+import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants } from 'constants/gas';
@@ -20,6 +20,7 @@ export const Controls = (props: Props) => {
   const iconMapping = [triggerIcons.eyeClosed, triggerIcons.eyeHalf, triggerIcons.eyeOpen];
 
   const [burnerGasBalance, setBurnerGasBalance] = useState<number>(0);
+  const [gasPrice, setGasPrice] = useState<bigint>(0n);
 
   /////////////////
   // SUBSCRIPTION
@@ -28,6 +29,10 @@ export const Controls = (props: Props) => {
     onBlockNumber: (n) => {
       refetchOperatorBalance();
       setBurnerGasBalance(parseTokenBalance(operatorBalance?.value, operatorBalance?.decimals));
+      if (n % 5n == 0n) {
+        refetchGasPrice();
+        setGasPrice((gasPriceData ?? 0n) / 10n ** 6n); // Mwei
+      }
     },
   });
 
@@ -35,6 +40,8 @@ export const Controls = (props: Props) => {
   const { data: operatorBalance, refetch: refetchOperatorBalance } = useBalance({
     address: kamiAccount.operatorAddress as `0x${string}`,
   });
+
+  const { data: gasPriceData, refetch: refetchGasPrice } = useGasPrice();
 
   /////////////////
   // INTERACTION
@@ -54,7 +61,7 @@ export const Controls = (props: Props) => {
   };
 
   const getGaugeTooltip = (balance: number) => {
-    const tooltip = ['Gas Tank', ''];
+    const tooltip = [`Gas Tank`, ''];
     let description = '';
 
     if (balance < GasConstants.Low) description = 'Tank STARVING T-T feed NAO';
@@ -71,6 +78,28 @@ export const Controls = (props: Props) => {
   };
 
   //////////////////
+  // DISPLAY
+
+  const PriceWarning = () => {
+    if (gasPrice > 10n)
+      return (
+        <Tooltip
+          text={[
+            // `Gas price: ${gasPrice / 10n ** 3n} Gwei`,
+            // '',
+            'Warning:',
+            '',
+            'Spike in testnet gas prices',
+            'Tank may drain faster',
+          ]}
+        >
+          <WarningEmoji>⚠️</WarningEmoji>
+        </Tooltip>
+      );
+    else return <></>;
+  };
+
+  //////////////////
   // CONTENT
 
   return (
@@ -82,6 +111,7 @@ export const Controls = (props: Props) => {
         <Tooltip text={getBalanceTooltip(burnerGasBalance)}>
           <Text>{(burnerGasBalance * 1000).toFixed(2)}mETH</Text>
         </Tooltip>
+        {PriceWarning()}
       </RowPrefix>
       <IconButton onClick={() => toggleMode()} img={iconMapping[mode]} />
     </Row>
@@ -113,4 +143,14 @@ const Text = styled.div`
   text-align: left;
   font-family: Pixel;
   font-size: 0.75vw;
+`;
+
+const WarningEmoji = styled.div`
+  flex-grow: 2;
+
+  margin-bottom: -0.3vw;
+  margin-right: -0.2vw;
+
+  text-align: center;
+  font-size: 1.25vw;
 `;

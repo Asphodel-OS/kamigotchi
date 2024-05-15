@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
+import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
+import { GasConstants } from 'constants/gas';
 import { ActionButton, ModalWrapper } from 'layers/react/components/library';
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork } from 'layers/react/store';
@@ -128,8 +130,8 @@ export function registerFundOperatorModal() {
       const StateBox = (fundState: boolean) => {
         const text = fundState ? 'Owner' : 'Operator';
         const balance = fundState
-          ? Number(OwnerBalance?.formatted).toFixed(4)
-          : Number(OperatorBalance?.formatted).toFixed(4);
+          ? Number(formatUnits(OwnerBalance?.value ?? 0n, 18)).toFixed(4)
+          : Number(formatUnits(OperatorBalance?.value ?? 0n, 18)).toFixed(4);
         const color = fundState == isFunding ? 'grey' : 'white';
         const textColor = fundState == isFunding ? 'white' : 'black';
         return (
@@ -141,9 +143,9 @@ export function registerFundOperatorModal() {
       };
 
       useEffect(() => {
-        const curBal = isFunding
-          ? Number(OwnerBalance?.formatted)
-          : Number(OperatorBalance?.formatted);
+        const curBal = Number(
+          formatUnits((isFunding ? OwnerBalance : OperatorBalance)?.value ?? 0n, 18)
+        );
 
         if (amount > curBal) {
           setStatusText('Insufficient balance');
@@ -154,8 +156,12 @@ export function registerFundOperatorModal() {
         } else {
           setStatusColor('grey');
           // placeholder gas estimation
-          if (isFunding) setStatusText('This should last you for approximately 1000 transactions');
-          else {
+          if (isFunding) {
+            if (amount < GasConstants.Low)
+              setStatusText('This might not last very long. Consider more?');
+            else if (amount < GasConstants.Full) setStatusText('This should last you for a while');
+            else setStatusText('This should last you for quite a while');
+          } else {
             const remainBal = curBal - amount;
             setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
           }
@@ -234,6 +240,7 @@ const Grid = styled.div`
   height: 100%;
 
   padding: 1vh 1vw;
+  margin: 2vh 0;
 `;
 
 const Row = styled.div`

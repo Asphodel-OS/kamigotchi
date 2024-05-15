@@ -1,8 +1,9 @@
 export const GasConstants = {
-  Max: 0.1,
-  Full: 0.05,
-  Half: 0.025,
-  Quarter: 0.0125,
-  Low: 0.005,
+  Max: 0.25,
+  Full: 0.08,
+  Half: 0.04,
+  Quarter: 0.02,
+  Low: 0.01,
+  Warning: 0.005,
   Empty: 0,
 };

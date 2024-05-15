@@ -11,6 +11,7 @@ import { ValidatorWrapper } from 'layers/react/components/library/ValidatorWrapp
 import { registerUIComponent } from 'layers/react/engine/store';
 import { useAccount, useNetwork, useVisibility } from 'layers/react/store';
 
+import { GasConstants } from 'constants/gas';
 import { playFund, playSuccess } from 'utils/sounds';
 import { formatEther } from 'viem';
 
@@ -33,7 +34,7 @@ export function registerGasHarasser() {
       const { selectedAddress, apis, validations: networkValidations } = useNetwork();
       const { validators, setValidators, toggleModals } = useVisibility();
 
-      const [value, setValue] = useState(0.05);
+      const [value, setValue] = useState(0.075);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -52,7 +53,7 @@ export function registerGasHarasser() {
       // run the primary check(s) for this validator, track in store for easy access
       useEffect(() => {
         if (!validations.operatorMatches) return;
-        const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > 0;
+        const hasGas = Number(formatEther(balance?.value ?? BigInt(0))) > GasConstants.Warning;
         if (hasGas == validations.operatorHasGas) return; // no change
         setValidations({ ...validations, operatorHasGas: hasGas });
       }, [validations.operatorMatches, balance]);
@@ -102,8 +103,8 @@ export function registerGasHarasser() {
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let newValue = Number(event.target.value);
-        newValue = Math.max(0.01, newValue);
-        newValue = Math.min(0.1, newValue);
+        newValue = Math.max(GasConstants.Low, newValue);
+        newValue = Math.min(GasConstants.Max, newValue);
         setValue(newValue);
       };
 
