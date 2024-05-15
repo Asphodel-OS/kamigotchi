@@ -153,6 +153,14 @@ library LibPet {
   /////////////////
   // CALCULATIONS
 
+  function calcCooldownDuration(IUintComp components, uint256 id) internal view returns (uint256) {
+    int256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN").toInt256();
+    int256 bonus = LibBonus.getRaw(components, id, "STD_COOLDOWN");
+    int256 cooldown = base + bonus;
+    if (cooldown < 0) return 0;
+    return uint256(cooldown);
+  }
+
   // Calculate the affinity multiplier (1e2 precision) for attacks between two kamis
   function calcAttackAffinityMultiplier(
     IUintComp components,
@@ -361,7 +369,7 @@ library LibPet {
   // Check whether a pet is on cooldown after its last Standard Action
   function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
     uint256 idleTime = block.timestamp - getLastActionTs(components, id);
-    uint256 idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");
+    uint256 idleRequirement = calcCooldownDuration(components, id);
     return idleTime < idleRequirement;
   }
 

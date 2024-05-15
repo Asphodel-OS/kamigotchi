@@ -39,15 +39,7 @@ contract ProductionStartSystem is System {
     else LibProduction.setNode(components, id, nodeID);
     LibProduction.start(components, id);
     LibPet.setState(components, petID, "HARVESTING");
-
-    // Update ts for Standard Action Cooldowns
-    uint256 standardActionTs = LibBonus.processBonus(
-      components,
-      petID,
-      "KAMI_STANDARD_COOLDOWN",
-      block.timestamp
-    );
-    LibPet.setLastActionTs(components, petID, standardActionTs);
+    LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accountID);

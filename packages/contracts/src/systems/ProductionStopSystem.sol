@@ -50,18 +50,10 @@ contract ProductionStopSystem is System {
     uint256 output = LibProduction.claim(components, id);
     LibExperience.inc(components, petID, output);
 
-    // stop production
+    // process harvest stop
     LibProduction.stop(components, id);
     LibPet.setState(components, petID, "RESTING");
-
-    // Update ts for Standard Action Cooldowns
-    uint256 standardActionTs = LibBonus.processBonus(
-      components,
-      petID,
-      "KAMI_STANDARD_COOLDOWN",
-      block.timestamp
-    );
-    LibPet.setLastActionTs(components, petID, standardActionTs);
+    LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
     uint256 nodeID = LibProduction.getNode(components, id);

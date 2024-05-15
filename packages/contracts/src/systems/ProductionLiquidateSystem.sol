@@ -68,15 +68,7 @@ contract ProductionLiquidateSystem is System {
     LibPet.kill(components, targetPetID);
     LibProduction.stop(components, targetProductionID);
     LibKill.create(world, components, petID, targetPetID, nodeID, balance, bounty);
-
-    // Update ts for Standard Action Cooldowns
-    uint256 standardActionTs = LibBonus.processBonus(
-      components,
-      petID,
-      "KAMI_STANDARD_COOLDOWN",
-      block.timestamp
-    );
-    LibPet.setLastActionTs(components, petID, standardActionTs);
+    LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking
     LibScore.inc(components, accountID, "LIQUIDATE", 1);
