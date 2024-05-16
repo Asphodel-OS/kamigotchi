@@ -58,16 +58,22 @@ contract ProductionLiquidateSystem is System {
     );
 
     // collect the money to the production. drain accordingly
-    uint256 balance = LibProduction.getBalance(components, targetProductionID);
-    uint256 bounty = LibKill.calcSpoils(components, petID, balance);
-    uint256 recoil = LibPet.calcStrain(components, petID, bounty);
-    LibCoin.inc(components, productionID, bounty);
+    uint256 bounty = LibProduction.getBalance(components, targetProductionID);
+    uint256 salvage = LibKill.calcSalvage(components, targetPetID, bounty);
+    uint256 spoils = LibKill.calcSpoils(components, petID, bounty - salvage);
+    uint256 recoil = LibPet.calcStrain(components, petID, spoils);
+
+    if (salvage > 0) {
+      uint256 victimAccountID = LibPet.getAccount(components, targetPetID);
+      LibCoin.inc(components, victimAccountID, salvage);
+    }
+    LibCoin.inc(components, productionID, spoils);
     LibPet.drain(components, petID, SafeCastLib.toInt32(recoil));
 
     // kill the target and shut off the production
     LibPet.kill(components, targetPetID);
     LibProduction.stop(components, targetProductionID);
-    LibKill.create(world, components, petID, targetPetID, nodeID, balance, bounty);
+    LibKill.create(world, components, petID, targetPetID, nodeID, bounty, spoils);
     LibPet.setLastActionTs(components, petID, block.timestamp);
 
     // standard logging and tracking

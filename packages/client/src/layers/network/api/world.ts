@@ -111,9 +111,8 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.array('KAMI_LIQ_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
     await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // nontraditional AST node
     await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
-
-    // Liquidation Bounty
-    await api.config.set.array('LIQ_BOUNTY_BASE', [50, 2]);
+    await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 0, 0, 3, 0, 0, 0, 0]);
+    await api.config.set.array('KAMI_LIQ_SPOILS', [0, 0, 500, 3, 0, 0, 0, 0]);
   }
 
   // local config settings for faster testing

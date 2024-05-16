@@ -19,8 +19,8 @@ interface HarvestConfig {
 interface LiquidationConfig {
   animosity: AsphoAST;
   threshold: AsphoAST;
-  // salvage: AsphoAST;
-  // spoils: AsphoAST;
+  salvage: AsphoAST;
+  spoils: AsphoAST;
   efficacy: Efficacy;
 }
 
@@ -63,8 +63,8 @@ export const getConfig = (world: World, components: Components): Config => {
     liquidation: {
       animosity: getASTNode(world, components, 'KAMI_LIQ_ANIMOSITY'),
       threshold: getASTNode(world, components, 'KAMI_LIQ_THRESHOLD'),
-      // salvage: getASTNode(world, components, 'KAMI_LIQ_SALVAGE'),
-      // spoils: getASTNode(world, components, 'KAMI_LIQ_SPOILS'),
+      salvage: getASTNode(world, components, 'KAMI_LIQ_SALVAGE'),
+      spoils: getASTNode(world, components, 'KAMI_LIQ_SPOILS'),
       efficacy: getEfficacyNode(world, components, 'KAMI_LIQ_EFFICACY'),
     },
     rest: {

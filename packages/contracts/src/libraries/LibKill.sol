@@ -146,16 +146,28 @@ library LibKill {
     return (uint(postShiftVal) * totalHealth) / precision;
   }
 
+  function calcSalvage(
+    IUintComp components,
+    uint256 id, // unused atm, but will be used for skill multipliers
+    uint256 amt
+  ) internal view returns (uint256) {
+    uint32[8] memory configVals = LibConfig.getArray(components, "KAMI_LIQ_SALVAGE");
+    int256 ratioBonus = LibBonus.getRaw(components, id, "DEF_SALVAGE_RATIO");
+    uint256 ratio = configVals[2] + ratioBonus.toUint256();
+    uint256 precision = 10 ** uint256(configVals[3]);
+    return (amt * ratio) / precision;
+  }
+
   // Calculate the reward for liquidating a specified Coin balance
   function calcSpoils(
     IUintComp components,
     uint256 id, // unused atm, but will be used for skill multipliers
     uint256 amt
   ) internal view returns (uint256) {
-    uint32[8] memory configVals = LibConfig.getArray(components, "LIQ_BOUNTY_BASE");
-
-    uint256 base = configVals[0];
-    uint256 precision = 10 ** uint256(configVals[1]);
-    return (amt * base) / precision;
+    uint32[8] memory configVals = LibConfig.getArray(components, "KAMI_LIQ_SPOILS");
+    int256 ratioBonus = LibBonus.getRaw(components, id, "ATK_SPOILS_RATIO");
+    uint256 ratio = configVals[2] + ratioBonus.toUint256();
+    uint256 precision = 10 ** uint256(configVals[3]);
+    return (amt * ratio) / precision;
   }
 }
