@@ -106,6 +106,7 @@
     "TimelockComponent",
     "TimeLastActionComponent",
     "TimeLastComponent",
+    "TimeResetComponent",
     "TimeStartComponent",
     "TypeComponent",
     "ValueComponent",
@@ -735,6 +736,7 @@
         "IndexComponent",
         "RateComponent",
         "TimeLastComponent",
+        "TimeResetComponent",
         "TimeStartComponent",
         "TypeComponent",
         "ValueComponent"
@@ -880,6 +882,7 @@
         "StateComponent",
         "TimeLastActionComponent",
         "TimeLastComponent",
+        "TimeResetComponent",
         "TimeStartComponent"
       ]
     },

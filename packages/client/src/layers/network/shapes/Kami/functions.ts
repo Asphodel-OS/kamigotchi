@@ -206,9 +206,12 @@ const calcAnimosity = (attacker: Kami, defender: Kami): number => {
 // calculate the liquidation threshold b/w two kamis
 export const calcThreshold = (attacker: Kami, defender: Kami): number => {
   const thresholdConfig = attacker.config.liquidation.threshold;
+  const attBonus = attacker.bonuses.attack.threshold;
+  const defBonus = defender.bonuses.defense.threshold;
+
   const base = calcAnimosity(attacker, defender);
   const ratio = calcEfficacy(attacker, defender);
-  const shift = thresholdConfig.shift.value + attacker.bonuses.attack.threshold.shift;
+  const shift = thresholdConfig.shift.value + attBonus.shift + defBonus.shift;
   const boost = defender.stats.health.total;
   const threshold = (base * ratio + shift) * boost;
   return Math.floor(threshold);

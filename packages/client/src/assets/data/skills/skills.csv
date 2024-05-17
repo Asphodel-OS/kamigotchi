@@ -46,7 +46,7 @@
 ,221,Focus,For Implementation,Skill,Enlightened,2,1,3,+1 Power / Level,"Dedication alone is enough to get things done. ",,,,,,,
 ,221,,For Implementation,Effect,,,,,,,,STAT,POWER,,1,,
 ,222,Warmup Exercise,For Implementation,Skill,Enlightened,2,2,3,+10% Intensity Effect / Level,,,,,,,,
-,222,,For Implementation,Effect,,,,,,,,HARV,INTENSITY_NUDGE,,10,,
+,222,,For Implementation,Effect,,,,,,,,HARV,INTENSITY_NUDGE,,100,,
 ,223,Protector,For Implementation,Skill,Enlightened,2,2,3,+1 Harmony / Level,,,,,,,Defensiveness - Level 3,Harmony
 ,223,,For Implementation,Effect,,,,,,,,STAT,HARMONY,,1,,
 ,231,Meditative Breathing,For Implementation,Skill,Enlightened,3,2,1,-20% Harvest Drain (ME),,,,,,,,

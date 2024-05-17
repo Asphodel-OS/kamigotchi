@@ -15,6 +15,7 @@ import { IsProductionComponent, ID as IsProdCompID } from "components/IsProducti
 import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
+import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 
 import { LibAffinity } from "libraries/LibAffinity.sol";
@@ -35,6 +36,7 @@ struct HarvestRates {
 }
 
 uint256 constant RATE_PREC = 9;
+uint256 constant INTENSITY_PREC = 9;
 
 /*
  * LibProduction handles all retrieval and manipulation of mining nodes/productions
@@ -73,11 +75,16 @@ library LibProduction {
     return balance;
   }
 
+  function resetIntensity(IUintComp components, uint256 id) public {
+    setResetTs(components, id, block.timestamp);
+  }
+
   // Starts an _existing_ production if not already started.
   function start(IUintComp components, uint256 id) public {
     setState(components, id, "ACTIVE");
     LibCoin._set(components, id, 0);
     setStartTs(components, id, block.timestamp);
+    setResetTs(components, id, block.timestamp); // intensity reset time
     setLastTs(components, id, block.timestamp);
   }
 
@@ -96,6 +103,18 @@ library LibProduction {
   }
 
   /////////////////////
+  // CALCULATIONS (time)
+
+  // Calculate the duration since a production last started, measured in seconds.
+  function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
+    return block.timestamp - getLastTs(components, id);
+  }
+
+  function calcIntensityDuration(IUintComp components, uint256 id) internal view returns (uint256) {
+    return block.timestamp - getResetTs(components, id);
+  }
+
+  /////////////////////
   // CALCULATIONS
 
   // Calculate the accrued output of a harvest since the pet's last sync.
@@ -106,7 +125,7 @@ library LibProduction {
     int256 boostBonus = LibBonus.getRaw(components, petID, "HARV_BOUNTY_BOOST");
 
     uint256 base = calcFertility(components, id);
-    uint256 nudge = 0; //  getDedication(components, id);
+    uint256 nudge = calcDedication(components, id);
     uint256 rate = base + nudge;
     uint256 ratio = calcDuration(components, id);
     uint256 boost = (config[6].toInt256() + boostBonus).toUint256();
@@ -116,9 +135,12 @@ library LibProduction {
     return (rate * ratio * boost) / precision;
   }
 
-  // Calculate the duration since a production last started, measured in seconds.
-  function calcDuration(IUintComp components, uint256 id) internal view returns (uint256) {
-    return block.timestamp - getLastTs(components, id);
+  function calcDedication(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_DEDICATION");
+    uint256 intensity = calcIntensity(components, id);
+    uint256 ratio = config[2]; // dedication core
+    uint256 precision = 10 ** (2 * INTENSITY_PREC + config[3] - RATE_PREC);
+    return (intensity * intensity * ratio) / precision;
   }
 
   // Calculate the efficacy of the core harvesting calc (min 0).
@@ -136,7 +158,7 @@ library LibProduction {
     LibAffinity.Shifts memory baseEfficacyShifts = LibAffinity.Shifts({
       base: config[0].toInt256(),
       up: config[1].toInt256(),
-      down: config[2].toInt256() * -1
+      down: -1 * config[2].toInt256()
     });
 
     // pull the bonus efficacy shifts from the pet
@@ -161,17 +183,28 @@ library LibProduction {
     return (efficacy < 0) ? 0 : uint(efficacy);
   }
 
-  // Calculate the rate of harvest, measured in musu/s (1e9 precision)
+  // Calculate the rate of harvest, measured in musu/s. Assume active (1e9 precision).
   function calcFertility(IUintComp components, uint256 id) internal view returns (uint256) {
-    if (!isActive(components, id)) return 0;
     uint256 petID = getPet(components, id);
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_FERTILITY");
 
     uint256 power = LibPet.calcTotalPower(components, petID).toUint256();
     uint256 ratio = config[2]; // fertility core
-    uint256 efficacy = calcEfficacy(components, id, config[6]);
+    uint256 boost = calcEfficacy(components, id, config[6]);
     uint256 precision = 10 ** (RATE_PREC - (config[3] + config[7]));
-    return (precision * power * ratio * efficacy) / 3600;
+    return (precision * power * ratio * boost) / 3600;
+  }
+
+  // Calculate the intensity of a production, measured in musu/s (1e9 precision)
+  function calcIntensity(IUintComp components, uint256 id) internal view returns (uint256) {
+    uint256 petID = getPet(components, id);
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_INTENSITY");
+
+    uint256 base = calcIntensityDuration(components, id);
+    uint256 nudge = LibBonus.getRaw(components, petID, "HARV_INTENSITY_NUDGE").toUint256();
+    uint256 ratio = config[2]; // period. inverted
+    uint256 precision = 10 ** (INTENSITY_PREC + config[3]); // ratio is inverted here
+    return (precision * (base + nudge)) / ratio;
   }
 
   /////////////////
@@ -217,6 +250,10 @@ library LibProduction {
     TimeLastComponent(getAddressById(components, TimeLastCompID)).set(id, timeStart);
   }
 
+  function setResetTs(IUintComp components, uint256 id, uint256 timeReset) internal {
+    TimeResetComponent(getAddressById(components, TimeResetCompID)).set(id, timeReset);
+  }
+
   function setStartTs(IUintComp components, uint256 id, uint256 timeStart) internal {
     TimeStartComponent(getAddressById(components, TimeStartCompID)).set(id, timeStart);
   }
@@ -238,6 +275,10 @@ library LibProduction {
 
   function getPet(IUintComp components, uint256 id) internal view returns (uint256) {
     return IdPetComponent(getAddressById(components, IdPetCompID)).get(id);
+  }
+
+  function getResetTs(IUintComp components, uint256 id) internal view returns (uint256) {
+    return TimeResetComponent(getAddressById(components, TimeResetCompID)).get(id);
   }
 
   function getState(IUintComp components, uint256 id) internal view returns (string memory) {

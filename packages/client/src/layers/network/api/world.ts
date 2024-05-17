@@ -102,6 +102,8 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.array('KAMI_HARV_EFFICACY', [0, 500, 500, 3]); // [neut, up, down, prec]
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 2500, 3, 0, 0, 1000, 3]);
     await api.config.set.array('KAMI_HARV_BOUNTY', [0, 9, 0, 0, 0, 0, 1000, 3]);
+    await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 10800, 0, 0, 0, 0, 0]);
+    await api.config.set.array('KAMI_HARV_DEDICATION', [0, 0, 1500, 3]); // nontraditional AST node, but similar
 
     // Health Effects
     await api.config.set.array('KAMI_MUSU_STRAIN', [0, 0, 200, 3, 0, 0, 1000, 3]);
@@ -122,6 +124,7 @@ export function setupWorldAPI(systems: any, provider: any) {
     await api.config.set.number('KAMI_LVL_REQ_BASE', 5); // experience required for level 1->2
     await api.config.set.number('KAMI_STANDARD_COOLDOWN', 30);
     await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100000, 3, 0, 0, 1000, 3]);
+    await api.config.set.array('KAMI_HARV_INTENSITY', [0, 0, 300, 0, 0, 0, 0, 0]);
     await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100000, 3, 0, 0, 1000, 3]);
   }
 

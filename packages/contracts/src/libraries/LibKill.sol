@@ -76,15 +76,15 @@ library LibKill {
     LibAffinity.Shifts memory baseEfficacyShifts = LibAffinity.Shifts({
       base: config[0].toInt256(),
       up: config[1].toInt256(),
-      down: config[2].toInt256() * -1
+      down: -1 * config[2].toInt256() // configs unable to support negative values
     });
 
     // pull the bonus efficacy shifts from the pets
-    int256 attBonus = LibBonus.getRaw(components, sourceID, "ATK_THRESHOLD_RATIO");
+    int256 atkBonus = LibBonus.getRaw(components, sourceID, "ATK_THRESHOLD_RATIO");
     int256 defBonus = LibBonus.getRaw(components, targetID, "DEF_THRESHOLD_RATIO");
     LibAffinity.Shifts memory bonusEfficacyShifts = LibAffinity.Shifts({
       base: int(0),
-      up: attBonus + defBonus,
+      up: atkBonus + defBonus,
       down: int(0)
     });
 
@@ -136,7 +136,7 @@ library LibKill {
     uint256 shiftPrec = 10 ** (ANIMOSITY_PREC + config[3] - config[5]);
     int256 shiftAttBonus = LibBonus.getRaw(components, sourceID, "ATK_THRESHOLD_SHIFT");
     int256 shiftDefBonus = LibBonus.getRaw(components, targetID, "DEF_THRESHOLD_SHIFT");
-    int256 shift = (config[4].toInt256() + shiftAttBonus + shiftDefBonus) * int(shiftPrec);
+    int256 shift = (shiftAttBonus + shiftDefBonus) * int(shiftPrec);
 
     int256 postShiftVal = int(base * ratio) + shift;
     if (postShiftVal < 0) return 0;

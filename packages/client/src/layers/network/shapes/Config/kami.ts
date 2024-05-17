@@ -11,9 +11,11 @@ export interface Config {
 }
 
 interface HarvestConfig {
-  fertility: AsphoAST;
   bounty: AsphoAST;
+  fertility: AsphoAST;
   efficacy: Efficacy;
+  intensity: AsphoAST;
+  dedication: AsphoAST;
 }
 
 interface LiquidationConfig {
@@ -56,9 +58,11 @@ interface Efficacy {
 export const getConfig = (world: World, components: Components): Config => {
   return {
     harvest: {
-      fertility: getASTNode(world, components, 'KAMI_HARV_FERTILITY'),
       bounty: getASTNode(world, components, 'KAMI_HARV_BOUNTY'),
       efficacy: getEfficacyNode(world, components, 'KAMI_HARV_EFFICACY'),
+      fertility: getASTNode(world, components, 'KAMI_HARV_FERTILITY'),
+      intensity: getASTNode(world, components, 'KAMI_HARV_INTENSITY'),
+      dedication: getASTNode(world, components, 'KAMI_HARV_DEDICATION'),
     },
     liquidation: {
       animosity: getASTNode(world, components, 'KAMI_LIQ_ANIMOSITY'),

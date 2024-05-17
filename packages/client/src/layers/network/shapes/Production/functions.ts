@@ -7,13 +7,18 @@ import { Production } from './types';
 // calculate the duration since a production has been collected from
 export const calcIdleTime = (production?: Production): number => {
   if (!production) return 0;
-  return Date.now() / 1000 - production.time.last;
+  return Math.floor(Date.now() / 1000 - production.time.last);
+};
+
+export const calcIntensityTime = (production: Production): number => {
+  if (!production) return 0;
+  return Math.floor(Date.now() / 1000 - production.time.reset); // intensity period
 };
 
 // calculate the duration since a production was started
 export const calcLifeTime = (production?: Production): number => {
   if (!production) return 0;
-  return Date.now() / 1000 - production.time.start;
+  return Math.floor(Date.now() / 1000 - production.time.start);
 };
 
 /////////////////
@@ -33,7 +38,7 @@ export const calcRate = (production: Production, kami: Kami): number => {
   if (production.state !== 'ACTIVE') return 0;
   const config = kami.config.harvest.bounty;
   const base = calcFertility(production, kami);
-  const nudge = calcDedication();
+  const nudge = calcDedication(production, kami);
   const boost = config.boost.value + kami.bonuses.harvest.bounty.boost;
   return (base + nudge) * boost;
 };
@@ -45,7 +50,14 @@ export const calcFertility = (production: Production, kami: Kami): number => {
   return (kami.stats.power.total * ratio * efficacy) / 3600;
 };
 
-export const calcDedication = () => 0;
+export const calcDedication = (production: Production, kami: Kami) => {
+  const precision = 1e9;
+  const config = kami.config.harvest.dedication;
+  const ratio = config.ratio.value;
+  const intensity = calcIntensity(production, kami);
+  const dedication = Math.floor(precision * ratio * intensity ** 2) / precision;
+  return dedication;
+};
 
 export const calcEfficacyShift = (production: Production, kami: Kami): number => {
   const node = production.node;
@@ -64,6 +76,16 @@ export const calcEfficacyShift = (production: Production, kami: Kami): number =>
     else shift += downShift;
   });
   return shift;
+};
+
+export const calcIntensity = (production: Production, kami: Kami): number => {
+  const precision = 1e9;
+  const config = kami.config.harvest.intensity;
+  const base = calcIntensityTime(production);
+  const nudge = kami.bonuses.harvest.intensity.nudge;
+  const ratio = config.ratio.value; // intensity period
+  const intensity = Math.floor(precision * ((base + nudge) / ratio)) / precision;
+  return intensity;
 };
 
 /////////////////

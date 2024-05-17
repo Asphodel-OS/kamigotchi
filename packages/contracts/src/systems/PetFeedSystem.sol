@@ -10,6 +10,7 @@ import { LibDataEntity } from "libraries/LibDataEntity.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibPet } from "libraries/LibPet.sol";
+import { LibProduction } from "libraries/LibProduction.sol";
 import { LibRegistryItem } from "libraries/LibRegistryItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -52,6 +53,12 @@ contract PetFeedSystem is System {
     // execute feeding actions
     LibPet.heal(components, id, LibStat.getHealth(components, registryID).sync);
     LibExperience.inc(components, id, LibExperience.get(components, registryID));
+
+    // reset the pet's intensity
+    if (LibPet.isHarvesting(components, id)) {
+      uint256 productionID = LibPet.getProduction(components, id);
+      LibProduction.resetIntensity(components, productionID);
+    }
 
     // standard logging and tracking
     LibScore.inc(components, accountID, "FEED", 1);

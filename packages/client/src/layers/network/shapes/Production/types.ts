@@ -13,6 +13,7 @@ export interface Production {
   state: string;
   time: {
     last: number;
+    reset: number;
     start: number;
   };
   node?: Node;
@@ -31,7 +32,7 @@ export const getProduction = (
   options?: ProductionOptions,
   kami?: Kami
 ): Production => {
-  const { Coin, NodeID, PetID, LastTime, State, StartTime } = components;
+  const { NodeID, PetID, Coin, State, LastTime, ResetTime, StartTime } = components;
   let production: Production = {
     id: world.entities[index],
     rate: 0,
@@ -39,6 +40,7 @@ export const getProduction = (
     state: getComponentValue(State, index)?.value as string,
     time: {
       last: (getComponentValue(LastTime, index)?.value as number) * 1,
+      reset: (getComponentValue(ResetTime, index)?.value as number) * 1,
       start: (getComponentValue(StartTime, index)?.value as number) * 1,
     },
   };
@@ -64,6 +66,5 @@ export const getProduction = (
     kami = getKami(world, components, kamiEntityIndex, { account: true, traits: true });
   }
   production.rate = calcRate(production, kami);
-
   return production;
 };

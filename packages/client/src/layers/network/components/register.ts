@@ -152,6 +152,7 @@ export function createComponents(world: World) {
     RevealBlock: defineNumberEZ('BlockReveal', 'component.block.reveal'),
     LastActionTime: defineNumberEZ('LastActionTime', 'component.Time.LastAction'),
     LastTime: defineNumberEZ('LastTime', 'component.Time.Last'),
+    ResetTime: defineNumberEZ('ResetTime', 'component.Time.Reset'),
     StartTime: defineNumberEZ('StartTime', 'component.Time.Start'),
     Time: defineNumberEZ('Time', 'component.Time'),
     Timelock: defineTimelockComponent(world),
